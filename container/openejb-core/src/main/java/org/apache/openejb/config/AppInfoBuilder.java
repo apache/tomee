@@ -19,7 +19,6 @@ package org.apache.openejb.config;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.ClientInfo;
-import org.apache.openejb.assembler.classic.CommonInfoObject;
 import org.apache.openejb.assembler.classic.ConnectorInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
@@ -66,7 +65,6 @@ import org.apache.openejb.util.MakeTxLookup;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.References;
 
-import javax.sql.DataSource;
 import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
@@ -108,6 +106,8 @@ class AppInfoBuilder {
 
         if (appInfo.appId == null) throw new IllegalArgumentException("AppInfo.appId cannot be null");
         if (appInfo.path == null) appInfo.path = appInfo.appId;
+
+        buildAppResources(appModule, appInfo);
 
         //
         //  J2EE Connectors
@@ -170,7 +170,6 @@ class AppInfoBuilder {
                 ejbJarInfo.portInfos.addAll(configureWebservices(ejbModule.getWebservices()));
                 ejbJarInfo.uniqueId = ejbModule.getUniqueId();
                 ejbJarInfo.repositories = ejbModule.getRepositories();
-                copyDatasources(ejbModule, ejbJarInfo);
                 configureWebserviceSecurity(ejbJarInfo, ejbModule);
 
                 ejbJarInfos.put(ejbModule, ejbJarInfo);
@@ -271,18 +270,16 @@ class AppInfoBuilder {
 
     }
 
-    private void copyDatasources(Module module, CommonInfoObject info) {
+    private void buildAppResources(AppModule module, AppInfo info) {
         for (Resource def : module.getResources()) {
-            if (!DataSource.class.getName().equals(def.getType())) {
-                continue;
-            }
-
             ResourceInfo resourceInfo = new ResourceInfo();
-            resourceInfo.id = module.getUniqueId() + "/" + def.getJndi().replace("java:", "");
+            resourceInfo.id = module.getModuleId() + "/" + def.getJndi().replace("java:", "");
 
             resourceInfo.service = "Resource";
             resourceInfo.types.add(def.getType());
             resourceInfo.properties = def.getProperties();
+
+            info.resourceInfos.add(resourceInfo);
         }
     }
 

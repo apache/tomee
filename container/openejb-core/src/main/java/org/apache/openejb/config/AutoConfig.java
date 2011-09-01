@@ -146,6 +146,8 @@ public class AutoConfig implements DynamicDeployer {
     public synchronized AppModule deploy(AppModule appModule) throws OpenEJBException {
         AppResources appResources = new AppResources(appModule);
 
+        processDataSourceDefinitions(appModule);
+
         for (EjbModule ejbModule : appModule.getEjbModules()) {
             processActivationConfig(ejbModule);
         }
@@ -766,8 +768,6 @@ public class AutoConfig implements DynamicDeployer {
             ejbModule.setOpenejbJar(openejbJar);
         }
 
-        processDataSourceDefinitions(ejbModule);
-
         Map<String, EjbDeployment> deployments = openejbJar.getDeploymentsByEjbName();
 
         for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
@@ -827,7 +827,7 @@ public class AutoConfig implements DynamicDeployer {
         }
     }
 
-    private void processDataSourceDefinitions(Module module) throws OpenEJBException {
+    private void processDataSourceDefinitions(AppModule module) throws OpenEJBException {
         Collection<Resource> datasources = module.getResources();
 
         for (Resource datasource : datasources) {
@@ -844,7 +844,7 @@ public class AutoConfig implements DynamicDeployer {
             properties.remove("LoginTimeout");
 
             ResourceInfo resourceInfo = configFactory.configureService(datasource, ResourceInfo.class);
-            installResource(module.getUniqueId(), resourceInfo);
+            installResource(module.getModuleId(), resourceInfo);
         }
 
         datasources.clear();
