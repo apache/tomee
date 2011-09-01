@@ -95,6 +95,7 @@ import static org.apache.openejb.tomcat.common.NamingUtil.setStaticValue;
 
 public class TomcatJndiBuilder {
     private static final Collection<BeanContext> ALREADY_BOUND = new ArrayList<BeanContext>();
+    private static final Map<Context, Map<String, ContextValue>> CONTEXT_VALUES = new HashMap<Context, Map<String, ContextValue>>();
 
     private final StandardContext standardContext;
     private final WebAppInfo webAppInfo;
@@ -181,18 +182,22 @@ public class TomcatJndiBuilder {
             AppContext ac = mc.getAppContext();
 
             Context moduleContext = mc.getModuleJndiContext();
-            // copyContext("", moduleContext, root); // TODO: manage map<????, context> + a facade context?
+            try {
+                copyContext("", moduleContext, root, mc.getUniqueId());
+            } catch (NamingException ignored) {
+                // no-op
+            }
 
             Context appContext = ac.getAppJndiContext();
             try {
-                copyContext("", appContext, root);
+                copyContext("", appContext, root, null);
             } catch (NamingException ignored) {
                 // no-op
             }
 
             Context globalContext = ac.getGlobalJndiContext();
             try {
-                copyContext("", globalContext, root);
+                copyContext("", globalContext, root, null);
             } catch (NamingException ignored) {
                 // no-op
             }
@@ -200,7 +205,7 @@ public class TomcatJndiBuilder {
         ContextAccessController.setReadOnly(standardContext.getNamingContextListener().getName());
     }
 
-    private static void copyContext(String prefix, Context from, Context to) throws NamingException {
+    private static void copyContext(String prefix, Context from, Context to, String linkPrefix) throws NamingException {
         String usedPrefix;
         if (prefix.isEmpty()) {
             usedPrefix = prefix;
@@ -219,13 +224,53 @@ public class TomcatJndiBuilder {
                 } catch (NameAlreadyBoundException ne) {
                     // ignored
                 }
-                copyContext(contextPrefix, (Context) object, to);
+                copyContext(contextPrefix, (Context) object, to, linkPrefix);
             } else {
                 String name = usedPrefix + binding.getName();
-                try {
-                    to.bind(name, object);
-                } catch (NamingException ne) {
-                    // ignored
+                if (linkPrefix == null) {
+                    try {
+                        to.bind(name, object);
+                    } catch (NamingException ne) {
+                        // ignored
+                    }
+                } else {
+                    String link = ContextValue.linkName(linkPrefix, name);
+
+                    // create subcontexts if necessary
+                    String[] contexts = link.split("/");
+                    String current = "";
+                    for (int i = 0; i < contexts.length - 1; i++) {
+                        if (current.isEmpty()) {
+                            current += contexts[i];
+                        } else {
+                            current += "/" + contexts[i];
+                        }
+                        try {
+                            to.createSubcontext(current);
+                        } catch (NameAlreadyBoundException ne) {
+                            // ignored
+                        }
+                    }
+
+                    to.bind(link, object);
+
+                    // don't do a lookup here because it is a link!
+                    Map<String, ContextValue> contextValues = CONTEXT_VALUES.get(to);
+                    if (contextValues == null) {
+                        contextValues = new HashMap<String, ContextValue>();
+                        CONTEXT_VALUES.put(to, contextValues);
+                    }
+                    ContextValue cv = contextValues.get(name);
+                    if (cv == null) {
+                        cv = new ContextValue(name);
+                        try {
+                            to.bind(name, cv);
+                            contextValues.put(name, cv);
+                        } catch (NamingException ignored) {
+                            // ignored
+                        }
+                    }
+                    cv.addValue(link);
                 }
             }
         }
