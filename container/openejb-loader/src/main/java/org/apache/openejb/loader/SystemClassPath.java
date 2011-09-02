@@ -93,7 +93,7 @@ public class SystemClassPath extends BasicURLClassPath {
                     URLClassLoader loader = getSystemLoader();
                     Object cp = getURLClassPath(loader);
                     Class<?> clazz = cp.getClass();
-                    return clazz.getDeclaredMethod("getURLs", URL.class);
+                    return clazz.getDeclaredMethod("getURLs");
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }

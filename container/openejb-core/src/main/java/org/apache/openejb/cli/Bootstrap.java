@@ -87,6 +87,7 @@ public class Bootstrap {
             systemCP.addJarsToPath(lib);
         } catch (Exception e) {
             System.err.println("Error setting up the classpath: " + e.getClass() + ": " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
