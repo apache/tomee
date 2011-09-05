@@ -16,13 +16,17 @@
  */
 package org.apache.openejb.util;
 
+import static org.apache.openejb.util.StringUtilities.join;
+
+import java.io.IOException;
+import java.io.NotSerializableException;
+
 import javax.ejb.EJBException;
 import javax.naming.AuthenticationException;
 import javax.naming.NamingException;
 import javax.transaction.RollbackException;
-import java.io.IOException;
-import java.io.NotSerializableException;
-import java.rmi.RemoteException;
+
+import org.apache.openejb.OpenEjbContainer.NoModulesFoundException;
 
 /**
  * @version $Rev$ $Date$
@@ -90,6 +94,18 @@ public class Exceptions {
 
     public static NotSerializableException newNotSerializableException(Throwable cause){
         return initCause(new NotSerializableException(), cause);
+    }
+    
+    public static NoModulesFoundException newNoModulesFoundException()
+    {
+    	return new NoModulesFoundException(join("No modules found to deploy.",
+    			"1)Maybe descriptors are placed in incorrect location.",
+    			"Descriptors could go under: ", 
+                "<base-dir>/META-INF or <base-dir>/WEB-INF", "but not directly under <base-dir>",
+                "Check 'Application Discovery via the Classpath' docs page for more info",
+                "2)Maybe no modules are present in the classpath.",
+                "Is 'openejb.base' system property pointing to the intended location?")
+                );
     }
 
 
