@@ -95,6 +95,7 @@ import static org.apache.openejb.tomcat.catalina.BackportUtil.getNamingContextLi
 public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     public static final String OPENEJB_CROSSCONTEXT_PROPERTY = "openejb.crosscontext";
     public static final String OPENEJB_JSESSION_ID_SUPPORT = "openejb.jsessionid-support";
+    public static final String OPENEJB_MYFACES_DISABLE_DEFAULT_VALUES = "openejb.myfaces.disable-default-values";
 
     /**
      * Flag for ignore context
@@ -259,6 +260,46 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     }
 
     /**
+     * just to avoid a lot of log lines which are often useless.
+     *
+     * @param context the servlet context to init.
+     */
+    private static void addMyFacesDefaultParameters(ClassLoader classLoader, ServletContext context) {
+        if (!Boolean.getBoolean(OPENEJB_MYFACES_DISABLE_DEFAULT_VALUES)) {
+            if (classLoader != null) {
+                try { // if myfaces is not here we doesn't need any trick
+                    classLoader.loadClass("org.apache.myfaces.shared.config.MyfacesConfig");
+                } catch (ClassNotFoundException cnfe) {
+                    return;
+                }
+            }
+
+            setInitParameter(context, "org.apache.myfaces.PRETTY_HTML", "true");
+            setInitParameter(context, "org.apache.myfaces.ALLOW_JAVASCRIPT", "true");
+            setInitParameter(context, "org.apache.myfaces.RENDER_CLEAR_JAVASCRIPT_FOR_BUTTON", "false");
+            setInitParameter(context, "org.apache.myfaces.RENDER_HIDDEN_FIELDS_FOR_LINK_PARAMS", "false");
+            setInitParameter(context, "org.apache.myfaces.SAVE_FORM_SUBMIT_LINK_IE", "false");
+            setInitParameter(context, "org.apache.myfaces.READONLY_AS_DISABLED_FOR_SELECTS", "true");
+            setInitParameter(context, "org.apache.myfaces.RENDER_VIEWSTATE_ID", "true");
+            setInitParameter(context, "org.apache.myfaces.STRICT_XHTML_LINKS", "true");
+            setInitParameter(context, "org.apache.myfaces.RENDER_FORM_SUBMIT_SCRIPT_INLINE", "false");
+            setInitParameter(context, "org.apache.myfaces.CONFIG_REFRESH_PERIOD", "2");
+            setInitParameter(context, "org.apache.myfaces.VIEWSTATE_JAVASCRIPT", "false");
+            setInitParameter(context, "org.apache.myfaces.REFRESH_TRANSIENT_BUILD_ON_PSS", "auto");
+            setInitParameter(context, "org.apache.myfaces.REFRESH_TRANSIENT_BUILD_ON_PSS_PRESERVE_STATE", "false");
+            setInitParameter(context, "org.apache.myfaces.VALIDATE_XML", "false");
+            setInitParameter(context, "org.apache.myfaces.WRAP_SCRIPT_CONTENT_WITH_XML_COMMENT_TAG", "true");
+            setInitParameter(context, "org.apache.myfaces.DEBUG_PHASE_LISTENER", "false");
+        }
+    }
+
+    private static void setInitParameter(ServletContext context, String key, String value) {
+        if (context.getInitParameter(key) == null) {
+            context.setInitParameter(key, value);
+        }
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -330,6 +371,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             standardContext.getNamingResources().setTransaction(contextTransaction);
             startInternal(standardContext);
         }
+        addMyFacesDefaultParameters(standardContext.getLoader().getClassLoader(), standardContext.getServletContext());
     }
 
     /**
