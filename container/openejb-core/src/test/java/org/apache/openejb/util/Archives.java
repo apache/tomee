@@ -33,8 +33,8 @@ import static junit.framework.Assert.assertTrue;
 
 
 /**
-* @version $Rev$ $Date$
-*/
+ * @version $Rev$ $Date$
+ */
 public class Archives {
 
     public static File fileArchive(Class[] classes) throws IOException {
@@ -48,7 +48,7 @@ public class Archives {
         File classpath = File.createTempFile("test", "archive");
         assertTrue(classpath.delete());
         assertTrue(classpath.mkdirs());
-        System.out.println("Archive file path:"+classpath.getCanonicalPath());
+        System.out.println("Archive file path:" + classpath.getCanonicalPath());
 
         for (Class clazz : classes) {
             String name = clazz.getName().replace('.', File.separatorChar) + ".class";
@@ -97,8 +97,8 @@ public class Archives {
         return jarArchive(new HashMap<String, String>(), "temp", classes);
     }
 
-    
-    public static File jarArchive(Map<String, String> entries, String archiveNamePrefix,Class... classes) throws IOException {
+
+    public static File jarArchive(Map<String, String> entries, String archiveNamePrefix, Class... classes) throws IOException {
 
         ClassLoader loader = Archives.class.getClassLoader();
 
