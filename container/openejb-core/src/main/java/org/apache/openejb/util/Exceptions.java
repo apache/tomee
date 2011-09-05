@@ -25,8 +25,6 @@ import javax.transaction.RollbackException;
 import java.io.IOException;
 import java.io.NotSerializableException;
 
-import static org.apache.openejb.util.StringUtilities.join;
-
 /**
  * @version $Rev$ $Date$
  */
@@ -97,13 +95,7 @@ public class Exceptions {
     }
 
     public static NoModulesFoundException newNoModulesFoundException() {
-        return new NoModulesFoundException(join("No modules found to deploy.",
-                "1)Maybe descriptors are placed in incorrect location.",
-                "Descriptors could go under: ",
-                "<base-dir>/META-INF or <base-dir>/WEB-INF", "but not directly under <base-dir>",
-                "Check 'Application Discovery via the Classpath' docs page for more info",
-                "2)Maybe no modules are present in the classpath.",
-                "Is 'openejb.base' system property pointing to the intended location?")
+        return new NoModulesFoundException(Join.join("\n", "No modules found to deploy.", "1)Maybe descriptors are placed in incorrect location.", "Descriptors could go under: ", "<base-dir>/META-INF or <base-dir>/WEB-INF", "but not directly under <base-dir>", "Check 'Application Discovery via the Classpath' docs page for more info", "2)Maybe no modules are present in the classpath.", "Is 'openejb.base' system property pointing to the intended location?")
         );
     }
 
