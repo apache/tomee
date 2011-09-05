@@ -109,13 +109,6 @@ public class Installer {
         }
     }
 
-    public static void main(String[] args) throws IOException {
-        File src = new File("/Users/dblevins/.m2/repository/org/apache/openejb/javaee-api-embedded/6.0-SNAPSHOT/javaee-api-embedded-6.0-SNAPSHOT.jar");
-        File dest = new File("/tmp/annotations.jar");
-
-
-        copyClasses2(src, dest, "javax/annotation/.*");
-    }
     private void addJavaeeInEndorsed() {
 
         File endorsed = new File(paths.getCatalinaHomeDir(), "endorsed");
@@ -128,20 +121,15 @@ public class Installer {
     }
 
     private void copyClasses(File sourceJar, File destinationJar, String pattern) {
+        if (sourceJar == null) throw new NullPointerException("sourceJar");
+        if (destinationJar == null) throw new NullPointerException("destinationJar");
+        if (pattern == null) throw new NullPointerException("pattern");
 
         if (destinationJar.exists()) return;
 
         try {
-            copyClasses2(sourceJar, destinationJar, pattern);
-        } catch (IOException e) {
-            alerts.addError(e.getMessage());
-        }
-    }
 
-    private static File copyClasses2(File sourceFile, File destinationFile, String pattern) throws IOException {
-
-        try {
-            final ZipInputStream source = new ZipInputStream(new FileInputStream(sourceFile));
+            final ZipInputStream source = new ZipInputStream(new FileInputStream(sourceJar));
 
             final ByteArrayOutputStream destinationBuffer = new ByteArrayOutputStream(524288);
             final ZipOutputStream destination = new ZipOutputStream(destinationBuffer);
@@ -159,12 +147,10 @@ public class Installer {
             close(source);
             close(destination);
 
-            writeToFile(destinationFile, destinationBuffer);
-
-        } catch (Exception e) {
-            e.printStackTrace();
+            writeToFile(destinationJar, destinationBuffer);
+        } catch (IOException e) {
+            alerts.addError(e.getMessage());
         }
-        return destinationFile;
     }
 
     public static void copy(InputStream from, OutputStream to) throws IOException {
