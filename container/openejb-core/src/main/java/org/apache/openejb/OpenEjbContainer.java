@@ -41,11 +41,13 @@ import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.util.Exceptions;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.OptionsLog;
 import org.apache.openejb.util.ServiceManagerProxy;
+import org.apache.openejb.util.StringUtilities;
 import org.apache.xbean.naming.context.ContextFlyweight;
 
 import javax.ejb.EJBException;
@@ -406,8 +408,7 @@ public class OpenEjbContainer extends EJBContainer {
 
 
             if (moduleLocations.isEmpty()) {
-
-                throw new NoModulesFoundException("No modules to deploy found");
+            	throw Exceptions.newNoModulesFoundException();
 
             }
 

@@ -97,7 +97,8 @@ public class AppValidator {
                 new CheckPersistenceRefs(),
                 new CheckDependsOn(),
                 new CheckUserTransactionRefs(),
-                new CheckAsynchronous()
+                new CheckAsynchronous(),
+                new CheckDescriptorLocation()
         };
         return rules;
     }

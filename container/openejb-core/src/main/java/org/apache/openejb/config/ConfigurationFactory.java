@@ -376,6 +376,11 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 }
 
 
+                if (jarFiles.size() == 0) {
+                	logger.warning("config.noModulesFoundToDeploy");
+
+                }
+
             } catch (OpenEJBException alreadyHandled) {
             }
 
