@@ -19,16 +19,20 @@ package org.apache.openejb.tomcat.common;
 
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
-import static org.apache.openejb.tomcat.common.NamingUtil.JNDI_NAME;
-import static org.apache.openejb.tomcat.common.NamingUtil.JNDI_PROVIDER_ID;
-import static org.apache.openejb.tomcat.common.NamingUtil.getProperty;
+import org.apache.openejb.util.Strings;
 
 import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.naming.Name;
+import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 import javax.naming.Reference;
 import javax.naming.spi.ObjectFactory;
 import java.util.Hashtable;
+
+import static org.apache.openejb.tomcat.common.NamingUtil.JNDI_NAME;
+import static org.apache.openejb.tomcat.common.NamingUtil.JNDI_PROVIDER_ID;
+import static org.apache.openejb.tomcat.common.NamingUtil.getProperty;
 
 public abstract class AbstractObjectFactory implements ObjectFactory {
     public Object getObjectInstance(Object object, Name name, Context context, Hashtable environment) throws Exception {
@@ -44,7 +48,16 @@ public abstract class AbstractObjectFactory implements ObjectFactory {
         }
 
         // look up the reference
-        Object value = lookup(jndiProviderId, jndiName);
+        Object value;
+        try {
+            value = lookup(jndiProviderId, jndiName);
+        } catch (NameNotFoundException nnfe) { // EE.5.18: try using java:module/<shortName> prefix
+            try {
+                value = new InitialContext().lookup("java:module/" + Strings.lastPart(ref.getClassName(), '.'));
+            } catch (NameNotFoundException ignored) { // throw the previous exception
+                throw nnfe;
+            }
+        }
         return value;
     }
 

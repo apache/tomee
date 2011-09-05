@@ -16,10 +16,12 @@
  */
 package org.apache.openejb.core.ivm.naming;
 
+import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.util.Strings;
 
 public class IntraVmJndiReference extends Reference {
 
@@ -37,6 +39,8 @@ public class IntraVmJndiReference extends Reference {
         ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         try {
             return containerSystem.getJNDIContext().lookup(jndiName);
+        } catch (NameNotFoundException e) { // EE.5.18: try using java:module/<shortName> prefix
+            return containerSystem.getJNDIContext().lookup("java:module/" + Strings.lastPart(getClassName(), '.'));
         } catch (NamingException e) {
             throw (NamingException)new NamingException("could not look up " + jndiName).initCause(e);
         }
