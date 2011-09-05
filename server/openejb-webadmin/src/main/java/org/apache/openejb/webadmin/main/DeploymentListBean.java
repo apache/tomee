@@ -24,6 +24,7 @@ import java.util.HashMap;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.Strings;
 import org.apache.openejb.webadmin.HttpRequest;
 import org.apache.openejb.webadmin.HttpResponse;
 import org.apache.openejb.webadmin.WebAdminBean;
@@ -41,7 +42,6 @@ import org.apache.openejb.assembler.classic.ResourceEnvReferenceInfo;
 import org.apache.openejb.assembler.classic.PersistenceUnitReferenceInfo;
 import org.apache.openejb.assembler.classic.PersistenceContextReferenceInfo;
 import org.apache.openejb.assembler.classic.ServiceReferenceInfo;
-import org.apache.openejb.util.StringUtilities;
 
 import javax.ejb.Stateless;
 import javax.ejb.RemoteHome;
@@ -135,7 +135,7 @@ public class DeploymentListBean extends WebAdminBean {
         printRow("Name", bean.ejbName, body);
         printRow(
             "Description",
-            StringUtilities.replaceNullOrBlankStringWithNonBreakingSpace(bean.description),
+            Strings.replaceNullOrBlankStringWithNonBreakingSpace(bean.description),
             body);
 
         String type = null;

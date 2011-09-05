@@ -23,7 +23,7 @@ import org.apache.openejb.util.Base64;
 import org.apache.openejb.util.HexConverter;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.StringUtilities;
+import org.apache.openejb.util.Strings;
 
 import javax.naming.NamingException;
 import javax.security.auth.Subject;
@@ -118,7 +118,7 @@ public class SQLLoginModule implements LoginModule {
         digest = optionsMap.get(Option.DIGEST);
         encoding = optionsMap.get(Option.ENCODING);
 
-        if (!StringUtilities.checkNullBlankString(digest)) {
+        if (!Strings.checkNullBlankString(digest)) {
             // Check if the digest algorithm is available
             try {
                 MessageDigest.getInstance(digest);
@@ -201,7 +201,7 @@ public class SQLLoginModule implements LoginModule {
 
         cbUsername = ((NameCallback) callbacks[0]).getName();
 
-        if (StringUtilities.checkNullBlankString(cbUsername)) {
+        if (Strings.checkNullBlankString(cbUsername)) {
             throw new FailedLoginException();
         }
 
@@ -369,7 +369,7 @@ public class SQLLoginModule implements LoginModule {
         }
 
         // Both are non-null
-        if (StringUtilities.checkNullBlankString(digest)) {
+        if (Strings.checkNullBlankString(digest)) {
             // No digest algorithm is used
             return real.equals(provided);
         }
