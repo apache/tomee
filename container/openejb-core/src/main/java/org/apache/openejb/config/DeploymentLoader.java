@@ -834,35 +834,32 @@ public class DeploymentLoader implements DeploymentFilterable {
         File warFile = new File(webModule.getJarLocation());
         WebApp webApp = webModule.getWebApp();
         if (webApp != null) {
-            List<ParamValue> contextParam = webApp.getContextParam();
-            for (ParamValue value : contextParam) {
-                boolean foundContextParam = value.getParamName().trim().equals("javax.faces.CONFIG_FILES");
-                if (foundContextParam) {
-                    // the value is a comma separated list of config files
-                    String commaDelimitedListOfFiles = value.getParamValue().trim();
-                    String[] configFiles = commaDelimitedListOfFiles.split(",");
-                    // trim any extra spaces in each file
-                    String[] trimmedConfigFiles = new String[configFiles.length];
-                    for (int i = 0; i < configFiles.length; i++) {
-                        trimmedConfigFiles[i] = configFiles[i].trim();
-                    }
-                    // convert each file to a URL and add it to facesConfigLocations
-                    for (String location : trimmedConfigFiles) {
-                        if (!location.startsWith("/"))
-                            logger.error("A faces configuration file should be context relative when specified in web.xml. Please fix the value of context parameter javax.faces.CONFIG_FILES for the file " + location);
-                        try {
-                            File file = new File(warFile, location).getCanonicalFile().getAbsoluteFile();
-                            URL url = file.toURI().toURL();
-                            facesConfigLocations.add(url);
-
-                        } catch (IOException e) {
-                            logger.error("Faces configuration file location bad: " + location, e);
-                        }
-                    }
-                    break;
+            String foundContextParam = webApp.contextParamsAsMap().get("javax.faces.CONFIG_FILES");
+            if (foundContextParam != null && foundContextParam != null) {
+                // the value is a comma separated list of config files
+                String commaDelimitedListOfFiles = foundContextParam.trim();
+                String[] configFiles = commaDelimitedListOfFiles.split(",");
+                // trim any extra spaces in each file
+                String[] trimmedConfigFiles = new String[configFiles.length];
+                for (int i = 0; i < configFiles.length; i++) {
+                    trimmedConfigFiles[i] = configFiles[i].trim();
                 }
-            }
+                // convert each file to a URL and add it to facesConfigLocations
+                for (String location : trimmedConfigFiles) {
+                    if (!location.startsWith("/"))
+                        logger.error("A faces configuration file should be context relative when specified in web.xml. Please fix the value of context parameter javax.faces.CONFIG_FILES for the file " + location);
+                    try {
+                        File file = new File(warFile, location).getCanonicalFile().getAbsoluteFile();
+                        URL url = file.toURI().toURL();
+                        facesConfigLocations.add(url);
 
+                    } catch (IOException e) {
+                        logger.error("Faces configuration file location bad: " + location, e);
+                    }
+                }
+            } else if (foundContextParam == null) {
+                logger.error("faces config file is null");
+            }
         }
 
         // Search for WEB-INF/faces-config.xml
