@@ -29,18 +29,14 @@
   <modules>
     <module>openejb-ejbd</module>
     <module>openejb-admin</module>
-    <module>openejb-webadmin</module>
     <module>openejb-server</module>
     <module>openejb-client</module>
     <module>openejb-http</module>
-    <module>openejb-telnet</module>
     <module>openejb-activemq</module>
-    <module>openejb-corba</module>
     <module>openejb-derbynet</module>
     <module>openejb-hsql</module>
     <module>openejb-webservices</module>
     <module>openejb-axis</module>
-    <module>openejb-axis2</module>
     <module>openejb-cxf</module>
     <module>openejb-multicast</module>
     <module>openejb-daemon</module>
