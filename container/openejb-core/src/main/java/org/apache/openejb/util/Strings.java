@@ -92,4 +92,12 @@ public class Strings {
             return stringToCheckForNull;
         }
     }
+
+    public static String lastPart(String className, char sep) {
+        int idx = className.lastIndexOf(sep);
+        if (idx >= 0) {
+            return className.substring(idx + 1, className.length());
+        }
+        return className;
+    }
 }
