@@ -16,41 +16,41 @@
  */
 package org.apache.openejb.config;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
+import static org.junit.Assert.assertTrue;
 
 public class CheckDescriptorLocationTestFileDeletionHelper {
 
-	@Test
-	public void deleteFile() {
-		File fileLocation = new File(System.getProperty("java.io.tmpdir"));
-		assertTrue(fileLocation.isDirectory());
-		List<File> asList = Arrays.asList(fileLocation.listFiles());
-		deleteTestCreatedFiles(asList);
+    @Test
+    public void deleteFile() {
+        File fileLocation = new File(System.getProperty("java.io.tmpdir"));
+        assertTrue(fileLocation.isDirectory());
+        List<File> asList = Arrays.asList(fileLocation.listFiles());
+        deleteTestCreatedFiles(asList);
 
-	}
+    }
 
-	private void deleteTestCreatedFiles(List<File> asList) {
-		for (File file : asList) {
-			deleteOrMarkForDelete(file);
-		}
-	}
+    private void deleteTestCreatedFiles(List<File> asList) {
+        for (File file : asList) {
+            deleteOrMarkForDelete(file);
+        }
+    }
 
-	private void deleteOrMarkForDelete(File file) {
-		if (file.getName().contains(
-				CheckDescriptorLocationTest.JAR_FILENAME_PREFIX)) {
+    private void deleteOrMarkForDelete(File file) {
+        if (file.getName().contains(
+                CheckDescriptorLocationTest.JAR_FILENAME_PREFIX)) {
 
-			boolean deleted = file.delete();
-			if (!deleted) {
-				file.deleteOnExit();
-			}
+            boolean deleted = file.delete();
+            if (!deleted) {
+                file.deleteOnExit();
+            }
 
-		}
-	}
+        }
+    }
 
 }

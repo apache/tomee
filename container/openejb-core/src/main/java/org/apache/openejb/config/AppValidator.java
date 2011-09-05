@@ -16,10 +16,6 @@
  */
 package org.apache.openejb.config;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -30,9 +26,22 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.cli.SystemExitException;
-import org.apache.openejb.config.rules.*;
+import org.apache.openejb.config.rules.CheckAssemblyBindings;
+import org.apache.openejb.config.rules.CheckAsynchronous;
+import org.apache.openejb.config.rules.CheckCallbacks;
+import org.apache.openejb.config.rules.CheckClasses;
+import org.apache.openejb.config.rules.CheckDependsOn;
+import org.apache.openejb.config.rules.CheckDescriptorLocation;
+import org.apache.openejb.config.rules.CheckInjectionTargets;
+import org.apache.openejb.config.rules.CheckMethods;
+import org.apache.openejb.config.rules.CheckPersistenceRefs;
+import org.apache.openejb.config.rules.CheckUserTransactionRefs;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.OpenEjbVersion;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @version $Rev$ $Date$
@@ -69,7 +78,8 @@ public class AppValidator {
         ValidationResults[] ejbSets = new ValidationResults[sets.size()];
         return sets.toArray(ejbSets);
     }
-// START SNIPPET : code2
+
+    // START SNIPPET : code2
     public AppModule validate(final AppModule appModule) {
         try {
             ValidationRule[] rules = getValidationRules();
@@ -85,7 +95,8 @@ public class AppValidator {
         }
         return appModule;
     }
-// END SNIPPET : code2    
+
+    // END SNIPPET : code2
 // START SNIPPET : code1
     protected ValidationRule[] getValidationRules() {
         ValidationRule[] rules = new ValidationRule[]{
@@ -102,7 +113,8 @@ public class AppValidator {
         };
         return rules;
     }
-// END SNIPPET : code1
+
+    // END SNIPPET : code1
     public void printResults(ValidationResults set) {
         if (!set.hasErrors() && !set.hasFailures() && (!PRINT_WARNINGS || !set.hasWarnings())) {
             return;
@@ -257,7 +269,7 @@ public class AppValidator {
 
     private static void help(Options options) {
         HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("validate [options] <file> [<file>...]", "\n"+ AppValidator.i18n("cmd.validate.description"), options, "\n");
+        formatter.printHelp("validate [options] <file> [<file>...]", "\n" + AppValidator.i18n("cmd.validate.description"), options, "\n");
     }
 
     private static Option option(String shortOpt, String longOpt, String description) {

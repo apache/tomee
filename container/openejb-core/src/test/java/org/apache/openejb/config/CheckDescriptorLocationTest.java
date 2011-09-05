@@ -59,5 +59,4 @@ public class CheckDescriptorLocationTest {
         public void sayCheese() {
         }
     }
-
 }

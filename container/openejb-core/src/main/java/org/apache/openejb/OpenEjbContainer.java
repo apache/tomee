@@ -16,7 +16,6 @@
  */
 package org.apache.openejb;
 
-import javax.validation.ValidationException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.cdi.OWBInjector;
@@ -47,7 +46,6 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.OptionsLog;
 import org.apache.openejb.util.ServiceManagerProxy;
-import org.apache.openejb.util.StringUtilities;
 import org.apache.xbean.naming.context.ContextFlyweight;
 
 import javax.ejb.EJBException;
@@ -57,6 +55,7 @@ import javax.naming.Context;
 import javax.naming.Name;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
+import javax.validation.ValidationException;
 import java.io.File;
 import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
@@ -233,7 +232,7 @@ public class OpenEjbContainer extends EJBContainer {
                 for (String caller : callers) {
 
                     if (!isValid(caller)) continue;
-                    
+
                     final ManagedBean bean = ejbJar.addEnterpriseBean(new ManagedBean(caller, caller));
 
                     // set it to bean so it can get UserTransaction injection
@@ -341,7 +340,7 @@ public class OpenEjbContainer extends EJBContainer {
             if (modules instanceof String) {
 
                 moduleLocations = configurationFactory.getModulesFromClassPath(null, classLoader);
-                for (Iterator<File> i = moduleLocations.iterator(); i.hasNext();) {
+                for (Iterator<File> i = moduleLocations.iterator(); i.hasNext(); ) {
                     File file = i.next();
                     if (!match((String) modules, file)) {
                         i.remove();
@@ -355,7 +354,7 @@ public class OpenEjbContainer extends EJBContainer {
 
                 int matched = 0;
 
-                for (Iterator<File> i = moduleLocations.iterator(); i.hasNext();) {
+                for (Iterator<File> i = moduleLocations.iterator(); i.hasNext(); ) {
                     File file = i.next();
                     boolean remove = true;
                     for (String s : (String[]) modules) {
@@ -408,7 +407,7 @@ public class OpenEjbContainer extends EJBContainer {
 
 
             if (moduleLocations.isEmpty()) {
-            	throw Exceptions.newNoModulesFoundException();
+                throw Exceptions.newNoModulesFoundException();
 
             }
 
