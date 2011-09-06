@@ -103,7 +103,7 @@
 
   <properties>
     <!-- This is used by a manifest classpath entry -->
-    <xbeanVersion>3.8-SNAPSHOT</xbeanVersion>
+    <xbeanVersion>3.8</xbeanVersion>
 
     <!-- OSGi bundles properties -->
     <openejb.osgi.import.pkg>*</openejb.osgi.import.pkg>
@@ -137,8 +137,8 @@
     <org.springframework.version>3.0.5.RELEASE</org.springframework.version>
     <junit.version>4.8.1</junit.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
-    <org.apache.openwebbeans.version>1.1.1-SNAPSHOT</org.apache.openwebbeans.version>
-    <geronimo.connector.version>3.1.1-SNAPSHOT</geronimo.connector.version>
+    <org.apache.openwebbeans.version>1.1.1</org.apache.openwebbeans.version>
+    <geronimo.connector.version>3.1.1</geronimo.connector.version>
   </properties>
 
   <build>
