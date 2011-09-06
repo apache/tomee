@@ -24,14 +24,13 @@ import org.apache.commons.dbcp.managed.TransactionRegistry;
 import org.apache.commons.dbcp.managed.XAConnectionFactory;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.resource.XAResourceWrapper;
-import org.apache.xbean.recipe.ObjectRecipe;
-import org.apache.xbean.recipe.Option;
 
 import javax.sql.DataSource;
 import javax.sql.XADataSource;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.SQLException;
-import java.util.Map;
 
 /**
  * @version $Rev$ $Date$
@@ -88,8 +87,13 @@ public class DataSourceFactory {
         @Override
         public void setJdbcUrl(String string) {
             // TODO This is a big whole and we will need to rework this
-            if (dataSource instanceof org.hsqldb.jdbc.jdbcDataSource) {
-                ((org.hsqldb.jdbc.jdbcDataSource)dataSource).setDatabase(string);
+            try {
+                final Class<?> hsql = this.getClass().getClassLoader().loadClass("org.hsqldb.jdbc.jdbcDataSource");
+                final Method setDatabase = hsql.getMethod("setDatabase", String.class);
+                setDatabase.setAccessible(true);
+                setDatabase.invoke(dataSource, string);
+            } catch (Exception e) {
+                // only works if hsql is available and datasource is an HSQL jdbcDataSource
             }
         }
     }
