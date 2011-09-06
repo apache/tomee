@@ -16,26 +16,26 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.spi.PersistenceProvider;
-import javax.persistence.spi.PersistenceUnitTransactionType;
-import javax.persistence.SharedCacheMode;
-import javax.persistence.ValidationMode;
-import javax.sql.DataSource;
-import javax.naming.Context;
-import javax.naming.NamingException;
-import javax.validation.ValidatorFactory;
-
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
 import org.apache.openejb.persistence.PersistenceUnitInfoImpl;
 import org.apache.openejb.spi.ContainerSystem;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.util.Logger;
+
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.SharedCacheMode;
+import javax.persistence.ValidationMode;
+import javax.persistence.spi.PersistenceUnitTransactionType;
+import javax.sql.DataSource;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 public class PersistenceBuilder {
 
@@ -192,14 +192,11 @@ public class PersistenceBuilder {
 
         final long start = System.nanoTime();
         try {
-            Class clazz = classLoader.loadClass(persistenceProviderClassName);
-            PersistenceProvider persistenceProvider = (PersistenceProvider) clazz.newInstance();
-
-            // Create entity manager factories with the validator factory
-            Map<String, Object> properties = new HashMap<String, Object>();
-            properties.put("javax.persistence.validator.ValidatorFactory", new ValidatorFactoryWrapper());
-            EntityManagerFactory emf = persistenceProvider.createContainerEntityManagerFactory(unitInfo, properties);
-            return emf;
+            final ExecutorService executor = Executors.newSingleThreadExecutor(new EntityManagerFactoryThreadFactory(classLoader));
+            final Future<EntityManagerFactory> future = executor.submit(
+                    new EntityManagerFactoryCallable(persistenceProviderClassName, unitInfo)
+            );
+            return future.get(10, TimeUnit.MINUTES);
         } finally {
             final long time = TimeUnit.MILLISECONDS.convert(System.nanoTime() - start, TimeUnit.NANOSECONDS);
             logger.info("assembler.buildingPersistenceUnit", unitInfo.getPersistenceUnitName(), unitInfo.getPersistenceProviderClassName(), time+"");
