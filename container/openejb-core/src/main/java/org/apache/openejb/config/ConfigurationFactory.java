@@ -197,6 +197,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         chain.add(new ApplyOpenejbJar());
         chain.add(new MappedNameBuilder());
+        chain.add(new ActivationConfigPropertyOverride());
 
         // TODO: How do we want this plugged in?
         chain.add(new OutputGeneratedDescriptors());
@@ -215,9 +216,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         sys = configuration;
     }
 
-    public ConfigurationFactory(boolean offline,
-                                Chain deployerChain,
-                                OpenEjbConfiguration configuration) {
+    public ConfigurationFactory(boolean offline, Chain deployerChain, OpenEjbConfiguration configuration) {
         this.offline = offline;
         this.deploymentLoader = new DeploymentLoader();
         this.deployer = deployerChain;
@@ -979,16 +978,22 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     }
 
     protected static Properties getSystemProperties(String serviceId, String serviceType) {
-        String fullPrefix = serviceType.toUpperCase() + "." + serviceId + ".";
-        String fullPrefix2 = serviceType.toUpperCase() + "." + serviceId + "|";
-        String shortPrefix = serviceId + ".";
-        String shortPrefix2 = serviceId + "|";
-
         // Override with system properties
-        Properties serviceProperties = new Properties();
-        Properties sysProps = new Properties(System.getProperties());
+        final Properties sysProps = new Properties(System.getProperties());
         sysProps.putAll(SystemInstance.get().getProperties());
-        for (Map.Entry<Object, Object> entry : sysProps.entrySet()) {
+
+
+        return getOverrides(sysProps, serviceId, serviceType);
+    }
+
+    protected static Properties getOverrides(Properties properties, String serviceId, String serviceType) {
+        final String fullPrefix = serviceType.toUpperCase() + "." + serviceId + ".";
+        final String fullPrefix2 = serviceType.toUpperCase() + "." + serviceId + "|";
+        final String shortPrefix = serviceId + ".";
+        final String shortPrefix2 = serviceId + "|";
+
+        final Properties overrides = new Properties();
+        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
 
             String name = (String) entry.getKey();
 
@@ -1000,13 +1005,13 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                     // TODO: Maybe use xbean-reflect to get the string value
                     String value = entry.getValue().toString();
 
-                    serviceProperties.setProperty(name, value);
+                    overrides.setProperty(name, value);
                     break;
                 }
             }
 
         }
-        return serviceProperties;
+        return overrides;
     }
 
     static Map<String, Class<? extends ContainerInfo>> containerTypes = new HashMap<String, Class<? extends ContainerInfo>>();

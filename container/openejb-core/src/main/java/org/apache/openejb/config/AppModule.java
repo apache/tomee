@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -38,6 +39,7 @@ import java.util.TreeSet;
  */
 public class AppModule implements DeploymentModule {
 
+    private final Properties properties = new Properties();
     private final Application application;
     private final ValidationContext validation;
     private final List<URL> additionalLibraries = new ArrayList<URL>();
@@ -83,6 +85,10 @@ public class AppModule implements DeploymentModule {
         } else {
             throw new IllegalArgumentException("Unknown module type: " + type.getName());
         }
+    }
+
+    public Properties getProperties() {
+        return properties;
     }
 
     public AppModule(ClassLoader classLoader, String jarLocation, Application application, boolean standaloneModule) {
