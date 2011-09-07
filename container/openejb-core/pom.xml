@@ -40,6 +40,7 @@
       org.eclipse.persistence.*;resolution:=optional,
       org.hibernate.*;resolution:=optional,
       org.quartz.*;resolution:=optional,
+      org.hsqldb.jdbc;resolution:=optional,
       javax.enterprise.deploy*;resolution:=optional,
       javax.jms*;resolution:=optional,
       javax.mail*;resolution:=optional,
