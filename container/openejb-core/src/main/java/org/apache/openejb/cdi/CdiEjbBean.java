@@ -89,18 +89,19 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
     protected T getInstance(CreationalContext<T> creationalContext) {
 
         final List<Class> classes = beanContext.getBusinessLocalInterfaces();
-        final Class mainInterface = classes.get(0);
-
-        List<Class> interfaces = ProxyInterfaceResolver.getInterfaces(beanContext.getBeanClass(), mainInterface, classes);
-        BeanContext.BusinessLocalHome home = beanContext.getBusinessLocalHome(interfaces, mainInterface);
-
         CurrentCreationalContext currentCreationalContext = beanContext.get(CurrentCreationalContext.class);
-
         CreationalContext existing = currentCreationalContext.get();
+        currentCreationalContext.set(creationalContext);
         try {
-            currentCreationalContext.set(creationalContext);
-
-            return (T) home.create();
+            if (classes.size() == 0 && beanContext.isLocalbean()) {
+                BeanContext.BusinessLocalBeanHome home = beanContext.getBusinessLocalBeanHome();
+                return (T) home.create();
+            } else {
+                final Class<?> mainInterface = classes.get(0);
+                List<Class> interfaces = ProxyInterfaceResolver.getInterfaces(beanContext.getBeanClass(), mainInterface, classes);
+                BeanContext.BusinessLocalHome home = beanContext.getBusinessLocalHome(interfaces, mainInterface);
+                return (T) home.create();
+            }
         } finally {
             currentCreationalContext.set(existing);
         }
