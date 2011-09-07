@@ -39,6 +39,7 @@ import java.net.URL;
 import java.security.ProtectionDomain;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -48,6 +49,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * The goal of this class is to support persistence providers that need to do
@@ -330,6 +332,10 @@ public class PersistenceBootstrap {
 
     private static class NullDataSource implements DataSource {
         public Connection getConnection() throws SQLException {
+            return null;
+        }
+
+        public Logger getParentLogger() throws SQLFeatureNotSupportedException {
             return null;
         }
 

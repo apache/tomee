@@ -20,6 +20,8 @@ import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
+import java.util.logging.Logger;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
@@ -94,6 +96,13 @@ public class RoutedDataSource implements DataSource {
         }
         return (T) callByReflection(getTargetDataSource(), "unwrap",
                 new Class<?>[]{Class.class}, new Object[]{iface});
+    }
+
+    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        if (getTargetDataSource() == null) {
+            return null;
+        }
+        return (Logger) callByReflection(getTargetDataSource(), "getParentLogger", new Class<?>[0], null);
     }
 
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
