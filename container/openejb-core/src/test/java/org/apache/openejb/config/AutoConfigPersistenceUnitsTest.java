@@ -37,8 +37,10 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * @version $Revision$ $Date$
@@ -1420,6 +1422,10 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
     public static class Driver implements java.sql.Driver {
         public boolean acceptsURL(String url) throws SQLException {
             return false;
+        }
+
+        public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+            return null;
         }
 
         public Connection connect(String url, Properties info) throws SQLException {
