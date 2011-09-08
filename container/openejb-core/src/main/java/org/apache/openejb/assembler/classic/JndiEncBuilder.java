@@ -451,6 +451,9 @@ public class JndiEncBuilder {
         }
 
         OpenEjbConfiguration config = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
+        
+        if(config !=null){
+            
         for (ResourceInfo resource : config.facilities.resources) {
             String jndiName = resource.jndiName;
             if (jndiName != null && !jndiName.isEmpty()) {
@@ -460,7 +463,8 @@ public class JndiEncBuilder {
                 bindings.put(boundName, reference);
             }
         }
-
+        
+       }
         return bindings;
     }
 
