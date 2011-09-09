@@ -1332,13 +1332,11 @@ public class BeanContext extends DeploymentContext {
         }                        
     }
 
-    protected <X> X getBean(Class<X> clazz, Bean<?> bean)
-    {
+    protected <X> X getBean(Class<X> clazz, Bean<?> bean) {
         return clazz.cast(bean);
     }
 
-    public <T> void inject(T instance, CreationalContext<T> ctx)
-    {
+    public <T> void inject(T instance, CreationalContext<T> ctx) {
 
         WebBeansContext webBeansContext = getModuleContext().getAppContext().getWebBeansContext();
 
@@ -1350,24 +1348,20 @@ public class BeanContext extends DeploymentContext {
             beanDefinition = beanConstructor;
         }
 
-        if(!(ctx instanceof CreationalContextImpl))
-        {
+        if (!(ctx instanceof CreationalContextImpl)) {
             ctx = webBeansContext.getCreationalContextFactory().wrappedCreationalContext(ctx, beanDefinition);
         }
 
         Object oldInstanceUnderInjection = AbstractInjectable.instanceUnderInjection.get();
         boolean isInjectionToAnotherBean = false;
-        try
-        {
+        try {
             Contextual<?> contextual = null;
-            if(ctx instanceof CreationalContextImpl)
-            {
-                contextual = ((CreationalContextImpl)ctx).getBean();
+            if (ctx instanceof CreationalContextImpl) {
+                contextual = ((CreationalContextImpl) ctx).getBean();
                 isInjectionToAnotherBean = contextual == getBean(InjectionTargetBean.class, beanDefinition) ? false : true;
             }
 
-            if(!isInjectionToAnotherBean)
-            {
+            if (!isInjectionToAnotherBean) {
                 AbstractInjectable.instanceUnderInjection.set(instance);
             }
 
@@ -1378,15 +1372,10 @@ public class BeanContext extends DeploymentContext {
             bean.injectSuperMethods(instance, ctx);
             bean.injectFields(instance, ctx);
             bean.injectMethods(instance, ctx);
-        }
-        finally
-        {
-            if(oldInstanceUnderInjection != null)
-            {
+        } finally {
+            if (oldInstanceUnderInjection != null) {
                 AbstractInjectable.instanceUnderInjection.set(oldInstanceUnderInjection);
-            }
-            else
-            {
+            } else {
                 AbstractInjectable.instanceUnderInjection.set(null);
                 AbstractInjectable.instanceUnderInjection.remove();
             }
