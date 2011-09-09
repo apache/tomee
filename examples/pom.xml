@@ -73,6 +73,7 @@
     <module>lookup-of-ejbs-with-descriptor</module>
     <module>lookup-of-ejbs</module>
     <module>schedule-methods</module>
+    <module>schedule-expression</module>
     <module>movies-complete-meta</module>
     <module>movies-complete</module>
     <module>schedule-methods-meta</module>
