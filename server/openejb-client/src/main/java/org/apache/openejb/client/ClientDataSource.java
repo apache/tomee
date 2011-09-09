@@ -23,6 +23,8 @@ import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
+import java.util.logging.Logger;
 
 /**
  * @version $Rev$ $Date$
@@ -108,5 +110,9 @@ public class ClientDataSource implements DataSource {
             return (T) this;
         }
         throw new SQLException(getClass().getName() + " does not implement " + iface.getName());
+    }
+
+    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        return null;
     }
 }
