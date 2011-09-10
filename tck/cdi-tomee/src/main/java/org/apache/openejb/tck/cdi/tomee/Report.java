@@ -47,7 +47,7 @@ public class Report {
 
     private void main() throws Exception {
 //        final File file = new File("/Users/dblevins/work/uber/geronimo-tck-public-trunk/jcdi-tck-runner/target/surefire-reports/testng-results.xml");
-        final File file = new File("/Users/dblevins/work/uber/openejb/tck/cdi-embedded/target/surefire-reports/testng-results.xml");
+        final File file = new File("/Users/dblevins/work/all/openejb/tck/cdi-tomee/target/failsafe-reports/testng-results.xml");
 //        final File file = new File("/Users/dblevins/work/uber/testng-results.xml");
 
         final SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
@@ -85,12 +85,9 @@ public class Report {
         final File report = new File(file.getParentFile(), file.getName().replaceAll(".xml$", "-passing.xml"));
         final PrintStream out = new PrintStream(new FileOutputStream(report));
 
-        out.println("" +
+        out.println(header +
                 "<suite name=\"CDI TCK\" verbose=\"0\">\n" +
-                "  <listeners>\n" +
-                "    <listener class-name=\"org.apache.openejb.tck.cdi.embedded.RequestScopeTestListener\" />\n" +
-                "  </listeners>\n" +
-                "  <test name=\"CDI TCK\">" +
+                "  <test name=\"CDI TCK\">\n" +
                 "    <packages>\n" +
                 "        <package name=\"org.jboss.jsr299.tck.tests.*\"/>\n" +
                 "        <package name=\"org.jboss.jsr299.tck.interceptors.tests.*\"/>\n" +
@@ -124,6 +121,7 @@ public class Report {
         final File report = new File(file.getParentFile(), file.getName().replaceAll(".xml$", "-failing.xml"));
         final PrintStream out = new PrintStream(new FileOutputStream(report));
 
+        out.println(header);
         out.println("<suite name=\"CDI TCK\" verbose=\"0\">");
         out.println("  <test name=\"CDI TCK\">");
         out.println("    <!--<packages>-->\n" +
@@ -240,4 +238,23 @@ public class Report {
             return this.name.compareTo(o.name);
         }
     }
+
+    private static final String header = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+            "<!--\n" +
+            "\n" +
+            "    Licensed to the Apache Software Foundation (ASF) under one or more\n" +
+            "    contributor license agreements.  See the NOTICE file distributed with\n" +
+            "    this work for additional information regarding copyright ownership.\n" +
+            "    The ASF licenses this file to You under the Apache License, Version 2.0\n" +
+            "    (the \"License\"); you may not use this file except in compliance with\n" +
+            "    the License.  You may obtain a copy of the License at\n" +
+            "\n" +
+            "       http://www.apache.org/licenses/LICENSE-2.0\n" +
+            "\n" +
+            "    Unless required by applicable law or agreed to in writing, software\n" +
+            "    distributed under the License is distributed on an \"AS IS\" BASIS,\n" +
+            "    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n" +
+            "    See the License for the specific language governing permissions and\n" +
+            "    limitations under the License.\n" +
+            "-->\n";
 }
