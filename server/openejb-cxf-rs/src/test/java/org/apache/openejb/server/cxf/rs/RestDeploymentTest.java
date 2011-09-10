@@ -17,6 +17,7 @@
 package org.apache.openejb.server.cxf.rs;
 
 import org.apache.cxf.jaxrs.client.WebClient;
+import org.apache.openejb.AppContext;
 import org.apache.openejb.Injection;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
@@ -114,7 +115,7 @@ public class RestDeploymentTest {
         annotationDeployer.deploy(appModule);
 
         AppInfo appInfo = factory.configureApplication(appModule);
-        assembler.createApplication(appInfo);
+        final AppContext application = assembler.createApplication(appInfo);
 
         Context ctx = (Context) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[]{Context.class}, new InvocationHandler() {
             @Override public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -126,7 +127,7 @@ public class RestDeploymentTest {
         });
 
         CoreContainerSystem containerSystem = new CoreContainerSystem(new IvmJndiFactory());
-        WebContext webContext = new WebContext();
+        WebContext webContext = new WebContext(application);
         webContext.setId(webApp.getId());
         webContext.setClassLoader(webModule.getClassLoader());
         webContext.getInjections().add(new Injection("SimpleEJBLocalBean", "simple", RestWithInjections.class));

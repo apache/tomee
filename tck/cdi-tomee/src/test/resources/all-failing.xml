@@ -16,6 +16,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
+
 <suite name="CDI TCK" verbose="0">
   <test name="CDI TCK">
     <!--<packages>-->
@@ -23,7 +24,6 @@
         <!--<package name="org.jboss.jsr299.tck.interceptors.tests.*"/>-->
     <!--</packages>-->
     <classes>
-      <class name="org.jboss.jsr299.tck.tests.context.application.ApplicationContextTest"/>
       <class name="org.jboss.jsr299.tck.tests.context.conversation.ClientConversationContextTest"/>
       <class name="org.jboss.jsr299.tck.tests.context.conversation.InvalidatingSessionDestroysConversationTest"/>
       <class name="org.jboss.jsr299.tck.tests.context.conversation.LongRunningConversationPropagatedByFacesContextTest"/>
@@ -32,27 +32,13 @@
       <class name="org.jboss.jsr299.tck.tests.context.passivating.broken.dependentScopedProducerFieldReturnsNonSerializableObjectForInjectionIntoStatefulSessionBean.EnterpriseBeanWithIllegalDependencyTest"/>
       <class name="org.jboss.jsr299.tck.tests.context.passivating.broken.dependentScopedProducerMethodReturnsNonSerializableObjectForInjectionIntoStatefulSessionBean.EnterpriseBeanWithIllegalDependencyTest"/>
       <class name="org.jboss.jsr299.tck.tests.context.passivating.broken.enterpriseBeanWithNonPassivatingDecorator.EnterpriseBeanWithNonPassivatingDecoratorTest"/>
-      <class name="org.jboss.jsr299.tck.tests.context.request.RequestContextTest"/>
-      <class name="org.jboss.jsr299.tck.tests.context.request.ejb.EJBRequestContextTest"/>
-      <class name="org.jboss.jsr299.tck.tests.context.session.SessionContextTest"/>
-      <class name="org.jboss.jsr299.tck.tests.definition.stereotype.broken.nonEmptyNamed.NonEmptyNamedTest"/>
-      <class name="org.jboss.jsr299.tck.tests.definition.stereotype.broken.tooManyScopes.TooManyScopeTypesTest"/>
       <class name="org.jboss.jsr299.tck.tests.deployment.packaging.bundledLibrary.LibraryInEarTest"/>
       <class name="org.jboss.jsr299.tck.tests.deployment.packaging.bundledLibrary.LibraryInWarTest"/>
       <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.lifecycle.EnterpriseBeanLifecycleTest"/>
-      <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.remove.EnterpriseBeanRemoveMethodTest"/>
-      <class name="org.jboss.jsr299.tck.tests.implementation.producer.method.definition.enterprise.EnterpriseProducerMethodDefinitionTest"/>
-      <class name="org.jboss.jsr299.tck.tests.implementation.simple.resource.env.EnvInjectionTest"/>
+      <class name="org.jboss.jsr299.tck.tests.implementation.simple.resource.ejb.EjbInjectionTest"/>
       <class name="org.jboss.jsr299.tck.tests.implementation.simple.resource.persistenceContext.PersistenceContextInjectionTest"/>
       <class name="org.jboss.jsr299.tck.tests.implementation.simple.resource.resource.InjectionOfResourceTest"/>
-      <class name="org.jboss.jsr299.tck.tests.inheritance.specialization.enterprise.EnterpriseBeanSpecializationIntegrationTest"/>
-      <class name="org.jboss.jsr299.tck.tests.inheritance.specialization.enterprise.EnterpriseBeanSpecializationTest"/>
-      <class name="org.jboss.jsr299.tck.tests.inheritance.specialization.enterprise.broken.directlyExtendsNothing.DirectlyExtendsNothingTest"/>
-      <class name="org.jboss.jsr299.tck.tests.inheritance.specialization.enterprise.broken.directlyExtendsSimpleBean.DirectlyExtendsSimpleBeanTest"/>
-      <class name="org.jboss.jsr299.tck.tests.inheritance.specialization.enterprise.broken.implementInterfaceAndExtendsNothing.ImplementsInterfaceAndExtendsNothingTest"/>
-      <class name="org.jboss.jsr299.tck.tests.inheritance.specialization.enterprise.broken.sameName.SameNameTest"/>
       <class name="org.jboss.jsr299.tck.tests.interceptors.definition.enterprise.nonContextualReference.SessionBeanInterceptorOnNonContextualEjbReferenceTest"/>
-      <class name="org.jboss.jsr299.tck.tests.lookup.clientProxy.incontainer.ClientProxyTest"/>
       <class name="org.jboss.jsr299.tck.tests.lookup.el.ResolutionByNameTest"/>
       <class name="org.jboss.jsr299.tck.tests.lookup.el.integration.IntegrationWithUnifiedELTest"/>
       <class name="org.jboss.jsr299.tck.tests.lookup.injection.non.contextual.InjectionIntoNonContextualComponentTest"/>

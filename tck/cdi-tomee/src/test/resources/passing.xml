@@ -23,16 +23,6 @@
         <package name="org.jboss.jsr299.tck.interceptors.tests.*"/>
     </packages>
     <classes>
-      <class name="org.jboss.jsr299.tck.tests.context.application.ApplicationContextTest">
-        <methods>
-          <exclude name="testApplicationContextSharedBetweenServletRequests"/>
-          <exclude name="testApplicationScopeActiveDuringDoFilterMethod"/>
-          <exclude name="testApplicationScopeActiveDuringHttpSessionListenerInvocation"/>
-          <exclude name="testApplicationScopeActiveDuringServiceMethod"/>
-          <exclude name="testApplicationScopeActiveDuringServletContextListenerInvocation"/>
-          <exclude name="testApplicationScopeActiveDuringServletRequestListenerInvocation"/>
-        </methods>
-      </class>
       <class name="org.jboss.jsr299.tck.tests.context.conversation.ClientConversationContextTest">
         <methods>
           <exclude name="testBeanWithDefaultQualifier"/>
@@ -93,22 +83,6 @@
           <exclude name="testEnterpriseBeanWithNonPassivatingDecoratorFails"/>
         </methods>
       </class>
-      <class name="org.jboss.jsr299.tck.tests.context.request.RequestContextTest">
-        <methods>
-          <exclude name="testRequestScopeActiveDuringServiceMethod"/>
-          <exclude name="testRequestScopeActiveDuringServletFilter"/>
-          <exclude name="testRequestScopeIsDestroyedAfterServletRequest"/>
-        </methods>
-      </class>
-      <class name="org.jboss.jsr299.tck.tests.context.session.SessionContextTest">
-        <methods>
-          <exclude name="testSessionContextDestroyedWhenHttpSessionInvalidated"/>
-          <exclude name="testSessionContextDestroyedWhenHttpSessionTimesOut"/>
-          <exclude name="testSessionContextSharedBetweenServletRequestsInSameHttpSession"/>
-          <exclude name="testSessionScopeActiveDuringDoFilterMethod"/>
-          <exclude name="testSessionScopeActiveDuringServiceMethod"/>
-        </methods>
-      </class>
       <class name="org.jboss.jsr299.tck.tests.deployment.packaging.bundledLibrary.LibraryInEarTest">
         <methods>
           <exclude name="test"/>
@@ -133,10 +107,10 @@
       <class name="org.jboss.jsr299.tck.tests.implementation.simple.resource.persistenceContext.PersistenceContextInjectionTest">
         <methods>
           <exclude name="testBeanTypesAndBindingTypesOfPersistenceContext"/>
-          <exclude name="testInjectionOfPersistenceContext"/>
           <exclude name="testInjectionOfPersistenceUnit"/>
-          <exclude name="testPassivationOfPersistenceContext"/>
+          <exclude name="testInjectionOfPersistenceContext"/>
           <exclude name="testPassivationOfPersistenceUnit"/>
+          <exclude name="testPassivationOfPersistenceContext"/>
         </methods>
       </class>
       <class name="org.jboss.jsr299.tck.tests.implementation.simple.resource.resource.InjectionOfResourceTest">
@@ -149,11 +123,6 @@
       <class name="org.jboss.jsr299.tck.tests.interceptors.definition.enterprise.nonContextualReference.SessionBeanInterceptorOnNonContextualEjbReferenceTest">
         <methods>
           <exclude name="testNonContextualSessionBeanReferenceIsIntercepted"/>
-        </methods>
-      </class>
-      <class name="org.jboss.jsr299.tck.tests.lookup.clientProxy.incontainer.ClientProxyTest">
-        <methods>
-          <exclude name="testInvocationIsProcessedOnCurrentInstance"/>
         </methods>
       </class>
       <class name="org.jboss.jsr299.tck.tests.lookup.el.ResolutionByNameTest">
@@ -171,16 +140,8 @@
       </class>
       <class name="org.jboss.jsr299.tck.tests.lookup.injection.non.contextual.InjectionIntoNonContextualComponentTest">
         <methods>
-          <exclude name="testFilterInitializerMethodCalled"/>
-          <exclude name="testInjectionIntoFilter"/>
           <exclude name="testInjectionIntoJSFManagedBean"/>
-          <exclude name="testInjectionIntoServlet"/>
-          <exclude name="testInjectionIntoServletListener"/>
           <exclude name="testInjectionIntoTagHandler"/>
-          <exclude name="testInjectionIntoTagLibraryListener"/>
-          <exclude name="testServletInitializerMethodCalled"/>
-          <exclude name="testServletListenerInitializerMethodCalled"/>
-          <exclude name="testTagLibraryListenerInitializerMethodCalled"/>
         </methods>
       </class>
       <class name="org.jboss.jsr299.tck.tests.lookup.injection.non.contextual.ws.InjectionIntoWebServiceEndPointTest">

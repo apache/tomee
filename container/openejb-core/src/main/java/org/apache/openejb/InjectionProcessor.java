@@ -25,6 +25,7 @@ import org.apache.xbean.recipe.Option;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.LinkedHashMap;
@@ -40,7 +41,7 @@ public class InjectionProcessor<T> {
     
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, InjectionProcessor.class);
     private final Class<? extends T> beanClass;
-    private final List<Injection> injections;
+    private final Collection<Injection> injections;
     private final Map<String, Object> properties = new LinkedHashMap<String, Object>();
     private final List<Method> postConstructMethods;
     private final List<Method> preDestroyMethods;
@@ -48,7 +49,7 @@ public class InjectionProcessor<T> {
     private T instance;
     private T suppliedInstance;
 
-    public InjectionProcessor(T suppliedInstance, List<Injection> injections, Context context) {
+    public InjectionProcessor(T suppliedInstance, Collection<Injection> injections, Context context) {
         this.beanClass = null;
         this.suppliedInstance = suppliedInstance;
         this.injections = injections;
@@ -57,7 +58,7 @@ public class InjectionProcessor<T> {
         preDestroyMethods = null;
     }
 
-    public InjectionProcessor(Class<? extends T> beanClass, List<Injection> injections, Context context) {
+    public InjectionProcessor(Class<? extends T> beanClass, Collection<Injection> injections, Context context) {
         this.beanClass = beanClass;
         this.injections = injections;
         this.context = context;
@@ -65,7 +66,7 @@ public class InjectionProcessor<T> {
         preDestroyMethods = null;
     }
 
-    public InjectionProcessor(Class<? extends T> beanClass, List<Injection> injections, List<Method> postConstructMethods, List<Method> preDestroyMethods, Context context) {
+    public InjectionProcessor(Class<? extends T> beanClass, Collection<Injection> injections, List<Method> postConstructMethods, List<Method> preDestroyMethods, Context context) {
         this.beanClass = beanClass;
         this.injections = injections;
         this.postConstructMethods = postConstructMethods;

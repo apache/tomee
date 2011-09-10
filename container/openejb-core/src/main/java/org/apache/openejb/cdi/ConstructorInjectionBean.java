@@ -52,10 +52,19 @@ public class ConstructorInjectionBean<T> extends AbstractInjectionTargetBean<T> 
         if (definitionUtil == null) throw new NullPointerException("definitionUtil");
 
         definitionUtil.addConstructorInjectionPointMetaData(this, constructor);
+    }
 
+    public ConstructorInjectionBean<T> complete() {
         // these are not used immediately in createInstance()
-//        definitionUtil.defineInjectedFields(this);
-//        definitionUtil.defineInjectedMethods(this);
+        try {
+            final DefinitionUtil definitionUtil = getWebBeansContext().getDefinitionUtil();
+            definitionUtil.defineInjectedFields(this);
+            definitionUtil.defineInjectedMethods(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return this;
     }
 
     @Override

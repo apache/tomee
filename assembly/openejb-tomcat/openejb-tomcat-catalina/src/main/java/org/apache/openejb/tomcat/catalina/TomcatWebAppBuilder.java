@@ -64,6 +64,7 @@ import org.apache.openejb.tomcat.loader.TomcatHelper;
 import org.apache.openejb.util.LinkResolver;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.tomcat.InstanceManager;
 import org.apache.webbeans.config.WebBeansContext;
 import org.omg.CORBA.ORB;
 
@@ -460,12 +461,19 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 jndiBuilder.mergeJndi();
 
                 // add WebDeploymentInfo to ContainerSystem
-                WebContext webContext = new WebContext();
+                final WebContext webContext = new WebContext(appContext);
                 webContext.setId(webAppInfo.moduleId);
-                webContext.setClassLoader(standardContext.getLoader().getClassLoader());
+                final StandardContext context = standardContext;
+                webContext.setClassLoader(context.getLoader().getClassLoader());
                 webContext.getInjections().addAll(injections);
                 appContext.getWebContexts().add(webContext);
                 cs.addWebContext(webContext);
+
+
+                standardContext.setInstanceManager(new JavaeeInstanceManager(webContext, context));
+
+                standardContext.getServletContext().setAttribute(InstanceManager.class.getName(), standardContext.getInstanceManager());
+
             } catch (Exception e) {
                 logger.error("Error merging OpenEJB JNDI entries in to war " + standardContext.getPath() + ": Exception: " + e.getMessage(), e);
             }
@@ -1094,4 +1102,5 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             return false;
         }
     }
+
 }

@@ -16,23 +16,37 @@
  */
 package org.apache.openejb.core;
 
+import org.apache.openejb.AppContext;
 import org.apache.openejb.Injection;
+import org.apache.openejb.InjectionProcessor;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.cdi.ConstructorInjectionBean;
+import org.apache.webbeans.component.InjectionTargetBean;
+import org.apache.webbeans.config.WebBeansContext;
+import org.apache.webbeans.inject.AbstractInjectable;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.enterprise.context.spi.CreationalContext;
 import javax.naming.Context;
-import java.util.Collection;
-
-
-import org.apache.openejb.Injection;
-
-import javax.naming.Context;
-import java.util.Collection;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class WebContext {
     private String id;
     private ClassLoader classLoader;
     private final Collection<Injection> injections = new ArrayList<Injection>();
     private Context jndiEnc;
+    private final AppContext appContext;
+
+    public WebContext(AppContext appContext) {
+        this.appContext = appContext;
+    }
 
     public String getId() {
         return id;
@@ -61,4 +75,52 @@ public class WebContext {
     public void setJndiEnc(Context jndiEnc) {
         this.jndiEnc = jndiEnc;
     }
+
+    public AppContext getAppContext() {
+        return appContext;
+    }
+
+    public Object newInstance(Class beanClass) throws OpenEJBException {
+
+        try {
+            final WebBeansContext webBeansContext = getAppContext().getWebBeansContext();
+
+            final ConstructorInjectionBean<Object> beanDefinition = new ConstructorInjectionBean<Object>(webBeansContext, beanClass).complete();
+
+            final CreationalContext<Object> creationalContext = webBeansContext.getBeanManagerImpl().createCreationalContext(beanDefinition);
+
+            // Create bean instance
+            final Object o = beanDefinition.create(creationalContext);
+            final Context initialContext = (Context) new InitialContext().lookup("java:");
+            final Context unwrap = InjectionProcessor.unwrap(initialContext);
+            final InjectionProcessor injectionProcessor = new InjectionProcessor(o, injections, unwrap);
+
+            final Object beanInstance = injectionProcessor.createInstance();
+
+            final Object oldInstanceUnderInjection = AbstractInjectable.instanceUnderInjection.get();
+
+            try {
+                AbstractInjectable.instanceUnderInjection.set(null);
+
+                InjectionTargetBean<Object> bean = InjectionTargetBean.class.cast(beanDefinition);
+
+                bean.injectResources(beanInstance, creationalContext);
+                bean.injectSuperFields(beanInstance, creationalContext);
+                bean.injectSuperMethods(beanInstance, creationalContext);
+                bean.injectFields(beanInstance, creationalContext);
+                bean.injectMethods(beanInstance, creationalContext);
+            } finally {
+                if (oldInstanceUnderInjection != null) {
+                    AbstractInjectable.instanceUnderInjection.set(oldInstanceUnderInjection);
+                } else {
+                    AbstractInjectable.instanceUnderInjection.remove();
+                }
+            }
+
+            return beanInstance;
+        } catch (NamingException e) {
+            throw new OpenEJBException(e);
+        }
+    }
+
 }
