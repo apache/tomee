@@ -61,7 +61,11 @@ public class JavaeeInstanceManager implements InstanceManager {
 
     @Override
     public void newInstance(Object o) throws IllegalAccessException, InvocationTargetException, NamingException {
-        new Exception("INJECT").fillInStackTrace().printStackTrace();
+        try {
+            webContext.inject(o);
+        } catch (OpenEJBException e) {
+            throw new InjectionFailedException(e);
+        }
     }
 
     @Override
