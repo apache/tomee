@@ -123,4 +123,46 @@ public class WebContext {
         }
     }
 
+    public Object inject(Object o) throws OpenEJBException {
+
+        try {
+            final WebBeansContext webBeansContext = getAppContext().getWebBeansContext();
+
+            final ConstructorInjectionBean<Object> beanDefinition = new ConstructorInjectionBean(webBeansContext, o.getClass()).complete();
+
+            final CreationalContext<Object> creationalContext = webBeansContext.getBeanManagerImpl().createCreationalContext(beanDefinition);
+
+            // Create bean instance
+            final Context initialContext = (Context) new InitialContext().lookup("java:");
+            final Context unwrap = InjectionProcessor.unwrap(initialContext);
+            final InjectionProcessor injectionProcessor = new InjectionProcessor(o, injections, unwrap);
+
+            final Object beanInstance = injectionProcessor.createInstance();
+
+            final Object oldInstanceUnderInjection = AbstractInjectable.instanceUnderInjection.get();
+
+            try {
+                AbstractInjectable.instanceUnderInjection.set(null);
+
+                InjectionTargetBean<Object> bean = InjectionTargetBean.class.cast(beanDefinition);
+
+                bean.injectResources(beanInstance, creationalContext);
+                bean.injectSuperFields(beanInstance, creationalContext);
+                bean.injectSuperMethods(beanInstance, creationalContext);
+                bean.injectFields(beanInstance, creationalContext);
+                bean.injectMethods(beanInstance, creationalContext);
+            } finally {
+                if (oldInstanceUnderInjection != null) {
+                    AbstractInjectable.instanceUnderInjection.set(oldInstanceUnderInjection);
+                } else {
+                    AbstractInjectable.instanceUnderInjection.remove();
+                }
+            }
+
+            return beanInstance;
+        } catch (NamingException e) {
+            throw new OpenEJBException(e);
+        }
+    }
+
 }
