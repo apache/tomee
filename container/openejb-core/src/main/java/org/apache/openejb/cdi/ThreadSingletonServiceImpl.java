@@ -25,18 +25,14 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.OpenWebBeansConfiguration;
 import org.apache.webbeans.config.WebBeansContext;
-import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.el.el22.EL22Adaptor;
-import org.apache.webbeans.jsf.DefaultConversationService;
 import org.apache.webbeans.spi.ContainerLifecycle;
 import org.apache.webbeans.spi.ContextsService;
 import org.apache.webbeans.spi.ConversationService;
-import org.apache.webbeans.spi.JNDIService;
 import org.apache.webbeans.spi.ResourceInjectionService;
 import org.apache.webbeans.spi.ScannerService;
 import org.apache.webbeans.spi.SecurityService;
 import org.apache.webbeans.spi.TransactionService;
-import org.apache.webbeans.spi.ValidatorService;
 import org.apache.webbeans.spi.adaptor.ELAdaptor;
 
 import java.util.Collections;
@@ -77,10 +73,12 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
 
         services.put(TransactionService.class, new OpenEJBTransactionService());
         services.put(ELAdaptor.class, new EL22Adaptor());
-        services.put(ConversationService.class, new DefaultConversationService());
         services.put(ContextsService.class, new CdiAppContextsService(true));
         services.put(ResourceInjectionService.class, new CdiResourceInjectionService());
         services.put(ScannerService.class, new CdiScanner());
+
+        optional(services, ConversationService.class, "org.apache.webbeans.jsf.DefaultConversationService");
+
         WebBeansContext webBeansContext = new WebBeansContext(services, properties);
         startupObject.getAppContext().set(WebBeansContext.class, webBeansContext);
         Object old = contextEntered(webBeansContext);
@@ -93,6 +91,19 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
             }
         } finally {
             contextExited(old);
+        }
+    }
+
+    private <T> void optional(Map<Class<?>, Object> services, Class<T> type, String implementation) {
+        try {
+            Class clazz = this.getClass().getClassLoader().loadClass(implementation);
+            services.put(type, type.cast(clazz.newInstance()));
+
+            logger.debug(String.format("CDI Service Installed: %s = %s", type.getName(), implementation));
+        } catch (ClassNotFoundException e) {
+            logger.debug(String.format("CDI Service not installed: %s", type.getName()));
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
         }
     }
 

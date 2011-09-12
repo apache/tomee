@@ -74,6 +74,10 @@
        <!--<version>${version.arquillian}</version>-->
     <!--</dependency>-->
     <dependency>
+      <groupId>org.apache.openwebbeans</groupId>
+      <artifactId>openwebbeans-jsf</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-impl</artifactId>
       <version>2.1.2</version>
