@@ -23,44 +23,6 @@
         <package name="org.jboss.jsr299.tck.interceptors.tests.*"/>
     </packages>
     <classes>
-      <class name="org.jboss.jsr299.tck.tests.context.conversation.ClientConversationContextTest">
-        <methods>
-          <exclude name="testBeanWithDefaultQualifier"/>
-          <exclude name="testBeanWithNameJavaxEnterpriseContextConversation"/>
-          <exclude name="testBeanWithRequestScope"/>
-          <exclude name="testBeginAlreadyLongRunningConversationThrowsException"/>
-          <exclude name="testConversationActiveDuringNonFacesRequest"/>
-          <exclude name="testConversationBeginMakesConversationLongRunning"/>
-          <exclude name="testConversationEndMakesConversationTransient"/>
-          <exclude name="testConversationHasDefaultTimeout"/>
-          <exclude name="testConversationIdMayBeSetByApplication"/>
-          <exclude name="testConversationIdMayBeSetByContainer"/>
-          <exclude name="testConversationIdSetByContainerIsUnique"/>
-          <exclude name="testConversationsDontCrossSessionBoundary1"/>
-          <exclude name="testConversationsDontCrossSessionBoundary2"/>
-          <exclude name="testEndTransientConversationThrowsException"/>
-          <exclude name="testLongRunningConversationInstancesNotDestroyedAtRequestEnd"/>
-          <exclude name="testSetConversationTimeoutOverride"/>
-          <exclude name="testTransientConversationHasNullId"/>
-          <exclude name="testTransientConversationInstancesDestroyedAtRequestEnd"/>
-        </methods>
-      </class>
-      <class name="org.jboss.jsr299.tck.tests.context.conversation.InvalidatingSessionDestroysConversationTest">
-        <methods>
-          <exclude name="testInvalidatingSessionDestroysConversation"/>
-        </methods>
-      </class>
-      <class name="org.jboss.jsr299.tck.tests.context.conversation.LongRunningConversationPropagatedByFacesContextTest">
-        <methods>
-          <exclude name="testConversationPropagated"/>
-          <exclude name="testConversationPropagatedOverRedirect"/>
-        </methods>
-      </class>
-      <class name="org.jboss.jsr299.tck.tests.context.conversation.ManualCidPropagationTest">
-        <methods>
-          <exclude name="testManualCidPropagation"/>
-        </methods>
-      </class>
       <class name="org.jboss.jsr299.tck.tests.context.dependent.DependentContextTest">
         <methods>
           <exclude name="testContextIsActiveWhenEvaluatingElExpression"/>
@@ -134,13 +96,7 @@
       </class>
       <class name="org.jboss.jsr299.tck.tests.lookup.el.integration.IntegrationWithUnifiedELTest">
         <methods>
-          <exclude name="testELResolverRegisteredWithJsf"/>
           <exclude name="testELResolverRegisteredWithServletContainer"/>
-        </methods>
-      </class>
-      <class name="org.jboss.jsr299.tck.tests.lookup.injection.non.contextual.InjectionIntoNonContextualComponentTest">
-        <methods>
-          <exclude name="testInjectionIntoJSFManagedBean"/>
         </methods>
       </class>
       <class name="org.jboss.jsr299.tck.tests.lookup.injection.non.contextual.ws.InjectionIntoWebServiceEndPointTest">

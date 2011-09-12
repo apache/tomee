@@ -46,6 +46,7 @@ import java.util.Properties;
  * @version $Rev$ $Date$
  */
 public class Container {
+
     private Bootstrap bootstrap;
     protected Configuration configuration;
     private File catalinaDirectory;
@@ -53,12 +54,22 @@ public class Container {
     private ConfigurationFactory configurationFactory;
     private Assembler assembler;
 
-    protected void setup(Configuration configuration) {
+    public Container() {
+        final Configuration configuration = new Configuration();
+        configuration.setHttpPort(23880);
+        configuration.setStopPort(23881);
+        setup(configuration);
+        final Class<Bootstrap> bootstrapClass = Bootstrap.class;
+    }
+
+    public void setup(Configuration configuration) {
         this.configuration = configuration;
     }
 
-    protected void startInternal() throws Exception {
-        catalinaDirectory = new File(configuration.getDir());
+    public void start() throws Exception {
+        final String dir = getBaseDir();
+
+        catalinaDirectory = new File(dir);
         if (catalinaDirectory.exists()) {
             catalinaDirectory.delete();
         }
@@ -122,18 +133,29 @@ public class Container {
         configurationFactory = new ConfigurationFactory();
     }
 
-    protected void stopInternal() throws Exception {
+    private String getBaseDir() {
+        try {
+            final String dir = configuration.getDir();
+            if (dir != null) return dir;
+            final File file = File.createTempFile("apache-tomee", "-home");
+            return file.getAbsolutePath();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void stop() throws Exception {
         bootstrap.stopServer();
         deleteTree(catalinaDirectory);
     }
 
-    protected void deploy(String name, File file) throws OpenEJBException, IOException, NamingException {
+    public void deploy(String name, File file) throws OpenEJBException, IOException, NamingException {
         AppInfo appInfo = configurationFactory.configureApplication(file);
         assembler.createApplication(appInfo);
         moduleIds.put(name, appInfo.path);
     }
 
-    protected void undeploy(String name) throws UndeployException, NoSuchApplicationException {
+    public void undeploy(String name) throws UndeployException, NoSuchApplicationException {
         String moduleId = moduleIds.get(name);
         assembler.destroyApplication(moduleId);
     }

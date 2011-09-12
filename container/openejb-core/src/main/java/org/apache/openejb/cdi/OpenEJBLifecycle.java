@@ -78,7 +78,7 @@ import org.apache.webbeans.xml.WebBeansXMLConfigurator;
 public class OpenEJBLifecycle implements ContainerLifecycle {
 
     //Logger instance
-    protected WebBeansLogger logger = WebBeansLogger.getLogger(OpenEJBLifecycle.class);
+    protected static WebBeansLogger logger = WebBeansLogger.getLogger(OpenEJBLifecycle.class);
 
     /**Discover bean classes*/
     protected ScannerService scannerService;
@@ -504,29 +504,33 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
     {
     }
 
-    public void startServletContext(final ServletContext startupObject) {
-        String strDelay = webBeansContext.getOpenWebBeansConfiguration().getProperty(OpenWebBeansConfiguration.CONVERSATION_PERIODIC_DELAY, "150000");
+    public void startServletContext(final ServletContext servletContext) {
+        service = initializeServletContext(servletContext, webBeansContext);
+    }
+
+    public static ScheduledExecutorService initializeServletContext(final ServletContext servletContext, WebBeansContext context) {
+        String strDelay = context.getOpenWebBeansConfiguration().getProperty(OpenWebBeansConfiguration.CONVERSATION_PERIODIC_DELAY, "150000");
         long delay = Long.parseLong(strDelay);
 
-        service = Executors.newScheduledThreadPool(1, new ThreadFactory() {
+        final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1, new ThreadFactory() {
             @Override
             public Thread newThread(Runnable runable) {
-                Thread t = new Thread(runable, "OwbConversationCleaner-" + ((ServletContext) (startupObject)).getContextPath());
+                Thread t = new Thread(runable, "OwbConversationCleaner-" + servletContext.getContextPath());
                 t.setDaemon(true);
                 return t;
             }
         });
-        service.scheduleWithFixedDelay(new ConversationCleaner(webBeansContext), delay, delay, TimeUnit.MILLISECONDS);
+        executorService.scheduleWithFixedDelay(new ConversationCleaner(context), delay, delay, TimeUnit.MILLISECONDS);
 
-        ELAdaptor elAdaptor = webBeansContext.getService(ELAdaptor.class);
+        ELAdaptor elAdaptor = context.getService(ELAdaptor.class);
         ELResolver resolver = elAdaptor.getOwbELResolver();
         //Application is configured as JSP
-        if (webBeansContext.getOpenWebBeansConfiguration().isJspApplication()) {
+        if (context.getOpenWebBeansConfiguration().isJspApplication()) {
             logger.debug("Application is configured as JSP. Adding EL Resolver.");
 
             JspFactory factory = JspFactory.getDefaultFactory();
             if (factory != null) {
-                JspApplicationContext applicationCtx = factory.getJspApplicationContext((ServletContext) (startupObject));
+                JspApplicationContext applicationCtx = factory.getJspApplicationContext(servletContext);
                 applicationCtx.addELResolver(resolver);
             } else {
                 logger.debug("Default JSPFactroy instance has not found");
@@ -534,9 +538,9 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         }
 
         // Add BeanManager to the 'javax.enterprise.inject.spi.BeanManager' servlet context attribute
-        ServletContext servletContext = (ServletContext) (startupObject);
-        servletContext.setAttribute(BeanManager.class.getName(), getBeanManager());
+        servletContext.setAttribute(BeanManager.class.getName(), context.getBeanManagerImpl());
 
+        return executorService;
     }
 
     /**
