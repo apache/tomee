@@ -12,181 +12,174 @@ In this case, it is to respond to the user. The `respond` method shows how a Mes
 
 
 #Code
-<pre><code>
-@MessageDriven
-public class ChatBean implements MessageListener {
-    @Resource
-    private ConnectionFactory connectionFactory;
+    @MessageDriven
+    public class ChatBean implements MessageListener {
+        @Resource
+        private ConnectionFactory connectionFactory;
 
-    @Resource(name = "AnswerQueue")
-    private Queue answerQueue;
+        @Resource(name = "AnswerQueue")
+        private Queue answerQueue;
 
-    public void onMessage(Message message) {
-        try {
+        public void onMessage(Message message) {
+            try {
 
-            final TextMessage textMessage = (TextMessage) message;
-            final String question = textMessage.getText();
+                final TextMessage textMessage = (TextMessage) message;
+                final String question = textMessage.getText();
 
-            if ("Hello World!".equals(question)) {
+                if ("Hello World!".equals(question)) {
 
-                respond("Hello, Test Case!");
+                    respond("Hello, Test Case!");
 
-            } else if ("How are you?".equals(question)) {
+                } else if ("How are you?".equals(question)) {
 
-                respond("I'm doing well.");
+                    respond("I'm doing well.");
 
-            } else if ("Still spinning?".equals(question)) {
+                } else if ("Still spinning?".equals(question)) {
 
-                respond("Once every day, as usual.");
+                    respond("Once every day, as usual.");
 
+                }
+            } catch (JMSException e) {
+                throw new IllegalStateException(e);
             }
-        } catch (JMSException e) {
-            throw new IllegalStateException(e);
+        }
+
+        private void respond(String text) throws JMSException {
+
+            Connection connection = null;
+            Session session = null;
+
+            try {
+                connection = connectionFactory.createConnection();
+                connection.start();
+
+                // Create a Session
+                session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+
+                // Create a MessageProducer from the Session to the Topic or Queue
+                MessageProducer producer = session.createProducer(answerQueue);
+                producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
+
+                // Create a message
+                TextMessage message = session.createTextMessage(text);
+
+                // Tell the producer to send the message
+                producer.send(message);
+            } finally {
+                // Clean up
+                if (session != null) session.close();
+                if (connection != null) connection.close();
+            }
         }
     }
-
-    private void respond(String text) throws JMSException {
-
-        Connection connection = null;
-        Session session = null;
-
-        try {
-            connection = connectionFactory.createConnection();
-            connection.start();
-
-            // Create a Session
-            session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-
-            // Create a MessageProducer from the Session to the Topic or Queue
-            MessageProducer producer = session.createProducer(answerQueue);
-            producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
-
-            // Create a message
-            TextMessage message = session.createTextMessage(text);
-
-            // Tell the producer to send the message
-            producer.send(message);
-        } finally {
-            // Clean up
-            if (session != null) session.close();
-            if (connection != null) connection.close();
-        }
-    }
-}
-</code></pre>
 
 #Test
-<pre><code>
-public class ChatBeanTest extends TestCase {
-    @Resource
-    private ConnectionFactory connectionFactory;
+    public class ChatBeanTest extends TestCase {
+        @Resource
+        private ConnectionFactory connectionFactory;
 
-    @Resource(name = "ChatBean")
-    private Queue questionQueue;
+        @Resource(name = "ChatBean")
+        private Queue questionQueue;
 
-    @Resource(name = "AnswerQueue")
-    private Queue answerQueue;
+        @Resource(name = "AnswerQueue")
+        private Queue answerQueue;
 
-    public void test() throws Exception {
-        EJBContainer.createEJBContainer().getContext().bind("inject", this);
-
-
-        final Connection connection = connectionFactory.createConnection();
-
-        connection.start();
-
-        final Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-
-        final MessageProducer questions = session.createProducer(questionQueue);
-
-        final MessageConsumer answers = session.createConsumer(answerQueue);
+        public void test() throws Exception {
+            EJBContainer.createEJBContainer().getContext().bind("inject", this);
 
 
-        sendText("Hello World!", questions, session);
+            final Connection connection = connectionFactory.createConnection();
 
-        assertEquals("Hello, Test Case!", receiveText(answers));
+            connection.start();
+
+            final Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+
+            final MessageProducer questions = session.createProducer(questionQueue);
+
+            final MessageConsumer answers = session.createConsumer(answerQueue);
 
 
-        sendText("How are you?", questions, session);
+            sendText("Hello World!", questions, session);
 
-        assertEquals("I'm doing well.", receiveText(answers));
+            assertEquals("Hello, Test Case!", receiveText(answers));
 
 
-        sendText("Still spinning?", questions, session);
+            sendText("How are you?", questions, session);
 
-        assertEquals("Once every day, as usual.", receiveText(answers));
+            assertEquals("I'm doing well.", receiveText(answers));
+
+
+            sendText("Still spinning?", questions, session);
+
+            assertEquals("Once every day, as usual.", receiveText(answers));
+
+        }
+
+        private void sendText(String text, MessageProducer questions, Session session) throws JMSException {
+
+            questions.send(session.createTextMessage(text));
+
+        }
+
+        private String receiveText(MessageConsumer answers) throws JMSException {
+
+            return ((TextMessage) answers.receive(1000)).getText();
+
+        }
 
     }
-
-    private void sendText(String text, MessageProducer questions, Session session) throws JMSException {
-
-        questions.send(session.createTextMessage(text));
-
-    }
-
-    private String receiveText(MessageConsumer answers) throws JMSException {
-
-        return ((TextMessage) answers.receive(1000)).getText();
-
-    }
-
-}
-</pre>
-</code>
 
 #Running
-<pre><code>
--------------------------------------------------------
- T E S T S
--------------------------------------------------------
-Running org.superbiz.mdb.ChatBeanTest
-Apache OpenEJB 4.0.0-SNAPSHOT    build: 20110801-04:02
-http://openejb.apache.org/
-INFO - openejb.home = G:\Workspace\fullproject\openejb3\examples\simple-mdb
-INFO - openejb.base = G:\Workspace\fullproject\openejb3\examples\simple-mdb
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
-INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
-INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
-INFO - Found EjbModule in classpath: g:\Workspace\fullproject\openejb3\examples\simple-mdb\target\classes
-INFO - Beginning load: g:\Workspace\fullproject\openejb3\examples\simple-mdb\target\classes
-INFO - Configuring enterprise application: g:\Workspace\fullproject\openejb3\examples\simple-mdb
-INFO - Auto-configuring a message driven bean ChatBean destination ChatBean to be destinationType javax.jms.Queue
-INFO - Configuring Service(id=Default MDB Container, type=Container, provider-id=Default MDB Container)
-INFO - Auto-creating a container for bean ChatBean: Container(type=MESSAGE, id=Default MDB Container)
-INFO - Configuring Service(id=Default JMS Resource Adapter, type=Resource, provider-id=Default JMS Resource Adapter)
-INFO - Configuring Service(id=Default JMS Connection Factory, type=Resource, provider-id=Default JMS Connection Factory)
-INFO - Auto-creating a Resource with id 'Default JMS Connection Factory' of type 'javax.jms.ConnectionFactory for 'ChatBean'.
-INFO - Auto-linking resource-ref 'java:comp/env/org.superbiz.mdb.ChatBean/connectionFactory' in bean ChatBean to Resource(id=Default JMS Connection Factory)
-INFO - Configuring Service(id=AnswerQueue, type=Resource, provider-id=Default Queue)
-INFO - Auto-creating a Resource with id 'AnswerQueue' of type 'javax.jms.Queue for 'ChatBean'.
-INFO - Auto-linking resource-env-ref 'java:comp/env/AnswerQueue' in bean ChatBean to Resource(id=AnswerQueue)
-INFO - Configuring Service(id=ChatBean, type=Resource, provider-id=Default Queue)
-INFO - Auto-creating a Resource with id 'ChatBean' of type 'javax.jms.Queue for 'ChatBean'.
-INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
-INFO - Auto-creating a container for bean org.superbiz.mdb.ChatBeanTest: Container(type=MANAGED, id=Default Managed Container)
-INFO - Auto-linking resource-ref 'java:comp/env/org.superbiz.mdb.ChatBeanTest/connectionFactory' in bean org.superbiz.mdb.ChatBeanTest to Resource(id=Default JMS Connection Factory)
-INFO - Auto-linking resource-env-ref 'java:comp/env/AnswerQueue' in bean org.superbiz.mdb.ChatBeanTest to Resource(id=AnswerQueue)
-INFO - Auto-linking resource-env-ref 'java:comp/env/ChatBean' in bean org.superbiz.mdb.ChatBeanTest to Resource(id=ChatBean)
-INFO - Enterprise application "g:\Workspace\fullproject\openejb3\examples\simple-mdb" loaded.
-INFO - Assembling app: g:\Workspace\fullproject\openejb3\examples\simple-mdb
-INFO - Jndi(name="java:global/EjbModule1696446139/org.superbiz.mdb.ChatBeanTest!org.superbiz.mdb.ChatBeanTest")
-INFO - Jndi(name="java:global/EjbModule1696446139/org.superbiz.mdb.ChatBeanTest")
-INFO - Created Ejb(deployment-id=org.superbiz.mdb.ChatBeanTest, ejb-name=org.superbiz.mdb.ChatBeanTest, container=Default Managed Container)
-INFO - Created Ejb(deployment-id=ChatBean, ejb-name=ChatBean, container=Default MDB Container)
-INFO - Started Ejb(deployment-id=org.superbiz.mdb.ChatBeanTest, ejb-name=org.superbiz.mdb.ChatBeanTest, container=Default Managed Container)
-INFO - Started Ejb(deployment-id=ChatBean, ejb-name=ChatBean, container=Default MDB Container)
-INFO - Deployed Application(path=g:\Workspace\fullproject\openejb3\examples\simple-mdb)
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 7.152 sec
+    -------------------------------------------------------
+     T E S T S
+    -------------------------------------------------------
+    Running org.superbiz.mdb.ChatBeanTest
+    Apache OpenEJB 4.0.0-SNAPSHOT    build: 20110801-04:02
+    http://openejb.apache.org/
+    INFO - openejb.home = G:\Workspace\fullproject\openejb3\examples\simple-mdb
+    INFO - openejb.base = G:\Workspace\fullproject\openejb3\examples\simple-mdb
+    INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+    INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+    INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+    INFO - Found EjbModule in classpath: g:\Workspace\fullproject\openejb3\examples\simple-mdb\target\classes
+    INFO - Beginning load: g:\Workspace\fullproject\openejb3\examples\simple-mdb\target\classes
+    INFO - Configuring enterprise application: g:\Workspace\fullproject\openejb3\examples\simple-mdb
+    INFO - Auto-configuring a message driven bean ChatBean destination ChatBean to be destinationType javax.jms.Queue
+    INFO - Configuring Service(id=Default MDB Container, type=Container, provider-id=Default MDB Container)
+    INFO - Auto-creating a container for bean ChatBean: Container(type=MESSAGE, id=Default MDB Container)
+    INFO - Configuring Service(id=Default JMS Resource Adapter, type=Resource, provider-id=Default JMS Resource Adapter)
+    INFO - Configuring Service(id=Default JMS Connection Factory, type=Resource, provider-id=Default JMS Connection Factory)
+    INFO - Auto-creating a Resource with id 'Default JMS Connection Factory' of type 'javax.jms.ConnectionFactory for 'ChatBean'.
+    INFO - Auto-linking resource-ref 'java:comp/env/org.superbiz.mdb.ChatBean/connectionFactory' in bean ChatBean to Resource(id=Default JMS Connection Factory)
+    INFO - Configuring Service(id=AnswerQueue, type=Resource, provider-id=Default Queue)
+    INFO - Auto-creating a Resource with id 'AnswerQueue' of type 'javax.jms.Queue for 'ChatBean'.
+    INFO - Auto-linking resource-env-ref 'java:comp/env/AnswerQueue' in bean ChatBean to Resource(id=AnswerQueue)
+    INFO - Configuring Service(id=ChatBean, type=Resource, provider-id=Default Queue)
+    INFO - Auto-creating a Resource with id 'ChatBean' of type 'javax.jms.Queue for 'ChatBean'.
+    INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+    INFO - Auto-creating a container for bean org.superbiz.mdb.ChatBeanTest: Container(type=MANAGED, id=Default Managed Container)
+    INFO - Auto-linking resource-ref 'java:comp/env/org.superbiz.mdb.ChatBeanTest/connectionFactory' in bean org.superbiz.mdb.ChatBeanTest to Resource(id=Default JMS Connection Factory)
+    INFO - Auto-linking resource-env-ref 'java:comp/env/AnswerQueue' in bean org.superbiz.mdb.ChatBeanTest to Resource(id=AnswerQueue)
+    INFO - Auto-linking resource-env-ref 'java:comp/env/ChatBean' in bean org.superbiz.mdb.ChatBeanTest to Resource(id=ChatBean)
+    INFO - Enterprise application "g:\Workspace\fullproject\openejb3\examples\simple-mdb" loaded.
+    INFO - Assembling app: g:\Workspace\fullproject\openejb3\examples\simple-mdb
+    INFO - Jndi(name="java:global/EjbModule1696446139/org.superbiz.mdb.ChatBeanTest!org.superbiz.mdb.ChatBeanTest")
+    INFO - Jndi(name="java:global/EjbModule1696446139/org.superbiz.mdb.ChatBeanTest")
+    INFO - Created Ejb(deployment-id=org.superbiz.mdb.ChatBeanTest, ejb-name=org.superbiz.mdb.ChatBeanTest, container=Default Managed Container)
+    INFO - Created Ejb(deployment-id=ChatBean, ejb-name=ChatBean, container=Default MDB Container)
+    INFO - Started Ejb(deployment-id=org.superbiz.mdb.ChatBeanTest, ejb-name=org.superbiz.mdb.ChatBeanTest, container=Default Managed Container)
+    INFO - Started Ejb(deployment-id=ChatBean, ejb-name=ChatBean, container=Default MDB Container)
+    INFO - Deployed Application(path=g:\Workspace\fullproject\openejb3\examples\simple-mdb)
+    Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 7.152 sec
 
-Results :
+    Results :
 
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+    Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
 
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD SUCCESS
-[INFO] ------------------------------------------------------------------------
-[INFO] Total time: 12.247s
-[INFO] Finished at: Wed Aug 03 21:06:30 IST 2011
-[INFO] Final Memory: 7M/105M
-[INFO] ------------------------------------------------------------------------
-</code></pre>
+    [INFO] ------------------------------------------------------------------------
+    [INFO] BUILD SUCCESS
+    [INFO] ------------------------------------------------------------------------
+    [INFO] Total time: 12.247s
+    [INFO] Finished at: Wed Aug 03 21:06:30 IST 2011
+    [INFO] Final Memory: 7M/105M
+    [INFO] ------------------------------------------------------------------------
