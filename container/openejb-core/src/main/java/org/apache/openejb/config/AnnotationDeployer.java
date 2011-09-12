@@ -3746,8 +3746,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 return cls.getMethod("lookup", null);
             } catch (NoSuchMethodException e) {
                 logger.error("lookup method is not available for " + cls.getName()
-                    + ". You probably have an old API -" + getSourceIfExists(cls) + "- in the classpath. "
-                    + getSourceIfExists(cls));
+                    + ". You probably have an old API -" + getSourceIfExists(cls) + "- in the classpath. ");
                 return null;
             }
         }
