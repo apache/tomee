@@ -1079,8 +1079,6 @@
         <groupId>org.apache.tomcat</groupId>
         <artifactId>tomcat-catalina</artifactId>
         <version>${tomcat.version}</version>
-        <optional>true</optional>
-        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.quartz-scheduler</groupId>
@@ -1212,6 +1210,11 @@
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-impl</artifactId>
+        <version>${org.apache.openwebbeans.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.openwebbeans</groupId>
+        <artifactId>openwebbeans-jsf</artifactId>
         <version>${org.apache.openwebbeans.version}</version>
       </dependency>
       <dependency>

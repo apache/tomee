@@ -90,8 +90,8 @@ public class ContainersImpl implements Containers {
             Thread.currentThread().setContextClassLoader(new URLClassLoader(new URL[]{ file.toURI().toURL() }, originalClassLoader));
             container = EJBContainer.createEJBContainer(map);
 
-            final WebBeansContext webBeansContext = ThreadSingletonServiceImpl.get();
-            dump(webBeansContext.getBeanManagerImpl());
+//            final WebBeansContext webBeansContext = ThreadSingletonServiceImpl.get();
+//            dump(webBeansContext.getBeanManagerImpl());
         } catch (Exception e) {
             if (e instanceof EJBException && e.getCause() instanceof ValidationException) {
                 exception = ValidationException.class.cast(e.getCause());

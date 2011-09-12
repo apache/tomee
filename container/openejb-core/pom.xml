@@ -422,6 +422,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
+      <artifactId>openwebbeans-jsf</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-ee</artifactId>
     </dependency>
     <dependency>

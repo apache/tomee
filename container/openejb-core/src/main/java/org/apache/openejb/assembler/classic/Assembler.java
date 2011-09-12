@@ -86,7 +86,12 @@ import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.UndeployException;
 import org.apache.openejb.assembler.dynamic.PassthroughFactory;
+import org.apache.openejb.cdi.CdiAppContextsService;
 import org.apache.openejb.cdi.CdiBuilder;
+import org.apache.openejb.cdi.CdiResourceInjectionService;
+import org.apache.openejb.cdi.CdiScanner;
+import org.apache.openejb.cdi.ManagedSecurityService;
+import org.apache.openejb.cdi.OpenEJBTransactionService;
 import org.apache.openejb.core.ConnectorReference;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.CoreUserTransaction;
@@ -125,6 +130,10 @@ import org.apache.openejb.util.SafeToolkit;
 import org.apache.openejb.util.proxy.ProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
 import org.apache.webbeans.config.WebBeansContext;
+import org.apache.webbeans.spi.ContextsService;
+import org.apache.webbeans.spi.ResourceInjectionService;
+import org.apache.webbeans.spi.ScannerService;
+import org.apache.webbeans.spi.TransactionService;
 import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
@@ -822,7 +831,18 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     private void ensureWebBeansContext(AppContext appContext) {
         WebBeansContext webBeansContext = appContext.get(WebBeansContext.class);
         if (webBeansContext == null) webBeansContext = appContext.getWebBeansContext();
-        if (webBeansContext == null) webBeansContext = new WebBeansContext();
+        if (webBeansContext == null) {
+
+            final Map<Class<?>, Object> services = new HashMap<Class<?>, Object>();
+
+            services.put(TransactionService.class, new OpenEJBTransactionService());
+            services.put(ContextsService.class, new CdiAppContextsService(true));
+            services.put(ResourceInjectionService.class, new CdiResourceInjectionService());
+            services.put(ScannerService.class, new CdiScanner());
+            final Properties properties = new Properties();
+            properties.setProperty(org.apache.webbeans.spi.SecurityService.class.getName(), ManagedSecurityService.class.getName());
+            webBeansContext = new WebBeansContext(services, properties);
+        }
 
         appContext.set(WebBeansContext.class, webBeansContext);
         appContext.setWebBeansContext(webBeansContext);

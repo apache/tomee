@@ -17,6 +17,9 @@
 package org.apache.openejb.tomcat.catalina;
 
 import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.deploy.Injectable;
+import org.apache.catalina.deploy.InjectionTarget;
+import org.apache.catalina.deploy.NamingResources;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.WebContext;
 import org.apache.tomcat.InstanceManager;
@@ -27,6 +30,9 @@ import javax.naming.NamingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
 * @version $Rev$ $Date$
@@ -39,10 +45,61 @@ public class JavaeeInstanceManager implements InstanceManager {
     public JavaeeInstanceManager(WebContext webContext, StandardContext context) {
         this.webContext = webContext;
         this.context = context;
+
+        final Map<String, Map<String, String>> map = getMap();
+        map.size();
+    }
+
+    private Map<String, Map<String, String>> getMap() {
+        return buildInjectionMap(this.context.getNamingResources());
+    }
+
+    private Map<String, Map<String, String>> buildInjectionMap(NamingResources namingResources) {
+        Map<String, Map<String, String>> injectionMap = new HashMap<String, Map<String, String>>();
+        for (Injectable resource: namingResources.findLocalEjbs()) {
+            addInjectionTarget(resource, injectionMap);
+        }
+        for (Injectable resource: namingResources.findEjbs()) {
+            addInjectionTarget(resource, injectionMap);
+        }
+        for (Injectable resource: namingResources.findEnvironments()) {
+            addInjectionTarget(resource, injectionMap);
+        }
+        for (Injectable resource: namingResources.findMessageDestinationRefs()) {
+            addInjectionTarget(resource, injectionMap);
+        }
+        for (Injectable resource: namingResources.findResourceEnvRefs()) {
+            addInjectionTarget(resource, injectionMap);
+        }
+        for (Injectable resource: namingResources.findResources()) {
+            addInjectionTarget(resource, injectionMap);
+        }
+        for (Injectable resource: namingResources.findServices()) {
+            addInjectionTarget(resource, injectionMap);
+        }
+        return injectionMap;
+    }
+
+    private void addInjectionTarget(Injectable resource, Map<String, Map<String, String>> injectionMap) {
+        List<InjectionTarget> injectionTargets = resource.getInjectionTargets();
+        if (injectionTargets != null && injectionTargets.size() > 0) {
+            String jndiName = resource.getName();
+            for (InjectionTarget injectionTarget: injectionTargets) {
+                String clazz = injectionTarget.getTargetClass();
+                Map<String, String> injections = injectionMap.get(clazz);
+                if (injections == null) {
+                    injections = new HashMap<String, String>();
+                    injectionMap.put(clazz, injections);
+                }
+                injections.put(injectionTarget.getTargetName(), jndiName);
+            }
+        }
     }
 
     @Override
     public Object newInstance(String className) throws IllegalAccessException, InvocationTargetException, NamingException, InstantiationException, ClassNotFoundException {
+        final Map<String, Map<String, String>> map = getMap();
+        map.size();
         final ClassLoader classLoader = webContext.getClassLoader();
         return newInstance(className, classLoader);
     }

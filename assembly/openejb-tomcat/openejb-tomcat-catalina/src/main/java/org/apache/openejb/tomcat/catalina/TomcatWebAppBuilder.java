@@ -19,7 +19,9 @@ package org.apache.openejb.tomcat.catalina;
 import org.apache.catalina.Container;
 import org.apache.catalina.Engine;
 import org.apache.catalina.LifecycleListener;
+import org.apache.catalina.Pipeline;
 import org.apache.catalina.Service;
+import org.apache.catalina.Valve;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.ContainerBase;
 import org.apache.catalina.core.NamingContextListener;
@@ -30,6 +32,8 @@ import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.ContextTransaction;
+import org.apache.catalina.deploy.FilterDef;
+import org.apache.catalina.deploy.FilterMap;
 import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.startup.ContextConfig;
 import org.apache.catalina.startup.HostConfig;
@@ -590,7 +594,22 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         }
 
         OpenEJBValve openejbValve = new OpenEJBValve();
-        standardContext.getPipeline().addValve(openejbValve);
+        final Pipeline pipeline = standardContext.getPipeline();
+        pipeline.addValve(openejbValve);
+
+        final String[] valves = SystemInstance.get().getProperty("tomee.valves", "").split(" *, *");
+        for (String className : valves) {
+            if ("".equals(className)) continue;
+            try {
+                final Class<?> clazz = standardContext.getLoader().getClassLoader().loadClass(className);
+                if (Valve.class.isAssignableFrom(clazz)) {
+                    final Valve valve = (Valve) clazz.newInstance();
+                    pipeline.addValve(valve);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private WebBeansListener getWebBeansContext(ContextInfo contextInfo) {

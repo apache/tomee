@@ -26,14 +26,25 @@ import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.OpenWebBeansConfiguration;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
+import org.apache.webbeans.el.el22.EL22Adaptor;
+import org.apache.webbeans.jsf.DefaultConversationService;
 import org.apache.webbeans.spi.ContainerLifecycle;
+import org.apache.webbeans.spi.ContextsService;
+import org.apache.webbeans.spi.ConversationService;
+import org.apache.webbeans.spi.JNDIService;
 import org.apache.webbeans.spi.ResourceInjectionService;
+import org.apache.webbeans.spi.ScannerService;
 import org.apache.webbeans.spi.SecurityService;
+import org.apache.webbeans.spi.TransactionService;
 import org.apache.webbeans.spi.ValidatorService;
+import org.apache.webbeans.spi.adaptor.ELAdaptor;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * @version $Rev:$ $Date:$
@@ -53,7 +64,24 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
     @Override
     public void initialize(StartupObject startupObject) {
         //initialize owb context, cf geronimo's OpenWebBeansGBean
-        WebBeansContext webBeansContext = new WebBeansContext();
+        Properties properties = new Properties();
+        Map<Class<?>, Object> services = new HashMap<Class<?>, Object>();
+        properties.setProperty(OpenWebBeansConfiguration.APPLICATION_IS_JSP, "true");
+        properties.setProperty(OpenWebBeansConfiguration.USE_EJB_DISCOVERY, "true");
+        //from CDI builder
+        properties.setProperty(OpenWebBeansConfiguration.INTERCEPTOR_FORCE_NO_CHECKED_EXCEPTIONS, "false");
+        properties.setProperty(SecurityService.class.getName(), ManagedSecurityService.class.getName());
+        properties.setProperty(OpenWebBeansConfiguration.CONVERSATION_PERIODIC_DELAY, "1800000");
+        properties.setProperty(OpenWebBeansConfiguration.APPLICATION_SUPPORTS_CONVERSATION, "true");
+        properties.setProperty(OpenWebBeansConfiguration.IGNORED_INTERFACES, "org.apache.aries.proxy.weaving.WovenProxy");
+
+        services.put(TransactionService.class, new OpenEJBTransactionService());
+        services.put(ELAdaptor.class, new EL22Adaptor());
+        services.put(ConversationService.class, new DefaultConversationService());
+        services.put(ContextsService.class, new CdiAppContextsService(true));
+        services.put(ResourceInjectionService.class, new CdiResourceInjectionService());
+        services.put(ScannerService.class, new CdiScanner());
+        WebBeansContext webBeansContext = new WebBeansContext(services, properties);
         startupObject.getAppContext().set(WebBeansContext.class, webBeansContext);
         Object old = contextEntered(webBeansContext);
         try {
@@ -89,7 +117,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         return enter(newOWBContext);
     }
 
-    public static Object enter(WebBeansContext newOWBContext) {
+    public static WebBeansContext enter(WebBeansContext newOWBContext) {
         WebBeansContext oldContext = contexts.get();
         contexts.set(newOWBContext);
         contextMessage(newOWBContext, "Enter:");

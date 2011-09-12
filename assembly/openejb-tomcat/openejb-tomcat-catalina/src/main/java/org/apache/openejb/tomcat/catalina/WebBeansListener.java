@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.tomcat.catalina;
 
+import org.apache.openejb.cdi.OpenEJBLifecycle;
+import org.apache.openejb.cdi.ThreadSingletonServiceImpl;
 import org.apache.webbeans.component.InjectionPointBean;
 import org.apache.webbeans.config.OWBLogConst;
 import org.apache.webbeans.config.WebBeansContext;
@@ -29,6 +31,8 @@ import org.apache.webbeans.web.context.WebContextsService;
 
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
 import javax.servlet.http.HttpServletRequest;
@@ -40,7 +44,9 @@ import javax.servlet.http.HttpSessionListener;
 /**
  * @version $Rev$ $Date$
  */
-public class WebBeansListener implements ServletRequestListener, HttpSessionListener, HttpSessionActivationListener {
+public class WebBeansListener implements ServletContextListener, ServletRequestListener, HttpSessionListener, HttpSessionActivationListener {
+
+    private final String contextKey = this.getClass().getName() + "@" + hashCode();
 
     /**
      * Logger instance
@@ -73,29 +79,35 @@ public class WebBeansListener implements ServletRequestListener, HttpSessionList
             logger.debug("Destroying a request : [{0}]", event.getServletRequest().getRemoteAddr());
         }
 
-        if (failoverService != null &&
-                failoverService.isSupportFailOver()) {
-            Object request = event.getServletRequest();
-            if (request instanceof HttpServletRequest) {
-                HttpServletRequest httpRequest = (HttpServletRequest) request;
-                HttpSession session = httpRequest.getSession(false);
-                if (session != null) {
-                    failoverService.sessionIsIdle(session);
+        final Object oldContext = event.getServletRequest().getAttribute(contextKey);
+
+        try {
+            if (failoverService != null &&
+                    failoverService.isSupportFailOver()) {
+                Object request = event.getServletRequest();
+                if (request instanceof HttpServletRequest) {
+                    HttpServletRequest httpRequest = (HttpServletRequest) request;
+                    HttpSession session = httpRequest.getSession(false);
+                    if (session != null) {
+                        failoverService.sessionIsIdle(session);
+                    }
                 }
             }
-        }
 
-        // clean up the EL caches after each request
-        ELContextStore elStore = ELContextStore.getInstance(false);
-        if (elStore != null) {
-            elStore.destroyELContextStore();
-        }
+            // clean up the EL caches after each request
+            ELContextStore elStore = ELContextStore.getInstance(false);
+            if (elStore != null) {
+                elStore.destroyELContextStore();
+            }
 
-        if (this.lifeCycle != null) {
-            this.lifeCycle.getContextService().endContext(RequestScoped.class, event);
-        }
+            if (this.lifeCycle != null) {
+                this.lifeCycle.getContextService().endContext(RequestScoped.class, event);
+            }
 
-        this.cleanupRequestThreadLocals();
+            this.cleanupRequestThreadLocals();
+        } finally {
+            ThreadSingletonServiceImpl.enter((WebBeansContext) oldContext);
+        }
     }
 
     /**
@@ -113,6 +125,9 @@ public class WebBeansListener implements ServletRequestListener, HttpSessionList
      * {@inheritDoc}
      */
     public void requestInitialized(ServletRequestEvent event) {
+        final Object oldContext = ThreadSingletonServiceImpl.enter(this.webBeansContext);
+        event.getServletRequest().setAttribute(contextKey, oldContext);
+
         try {
             if (logger.wblWillLogDebug()) {
                 logger.debug("Starting a new request : [{0}]", event.getServletRequest().getRemoteAddr());
@@ -175,5 +190,18 @@ public class WebBeansListener implements ServletRequestListener, HttpSessionList
             HttpSession session = event.getSession();
             failoverService.restoreBeans(session);
         }
+    }
+
+    @Override
+    public void contextInitialized(ServletContextEvent servletContextEvent) {
+        try {
+            OpenEJBLifecycle.initializeServletContext(servletContextEvent.getServletContext(), webBeansContext);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void contextDestroyed(ServletContextEvent servletContextEvent) {
     }
 }
