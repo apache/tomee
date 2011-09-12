@@ -109,7 +109,6 @@ import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.WebserviceDescription;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.resource.jdbc.DataSourceFactory;
 import org.apache.openejb.util.AnnotationUtil;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.LogCategory;
@@ -3747,10 +3746,18 @@ public class AnnotationDeployer implements DynamicDeployer {
                 return cls.getMethod("lookup", null);
             } catch (NoSuchMethodException e) {
                 logger.error("lookup method is not available for " + cls.getName()
-                    + ". You probably have an old API in the classpath."
-                    + "Tomcat is known to have an old annotations-api.jar, maybe you should replace it.");
+                    + ". You probably have an old API -" + getSourceIfExists(cls) + "- in the classpath. "
+                    + getSourceIfExists(cls));
                 return null;
             }
+        }
+
+        private static String getSourceIfExists(Class<?> cls) {
+            if (cls.getProtectionDomain() != null && cls.getProtectionDomain().getCodeSource() != null
+                && cls.getProtectionDomain().getCodeSource().getLocation() != null) {
+                return cls.getProtectionDomain().getCodeSource().getLocation().toString();
+            }
+            return "";
         }
 
         private static String getLookupName(Resource resource) {
