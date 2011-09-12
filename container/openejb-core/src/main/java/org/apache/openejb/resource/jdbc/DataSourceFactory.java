@@ -28,9 +28,10 @@ import org.apache.openejb.resource.XAResourceWrapper;
 import javax.sql.DataSource;
 import javax.sql.XADataSource;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
+import java.util.logging.Logger;
 
 /**
  * @version $Rev$ $Date$
@@ -96,6 +97,10 @@ public class DataSourceFactory {
                 // only works if hsql is available and datasource is an HSQL jdbcDataSource
             }
         }
+
+        public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+            return dataSource.getParentLogger();
+        }
     }
 
     public static class DbcpManagedDataSource extends BasicManagedDataSource {
@@ -133,6 +138,10 @@ public class DataSourceFactory {
                 setTransactionRegistry(xaConnectionFactory.getTransactionRegistry());
                 return xaConnectionFactory;
             }
+        }
+
+        public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+            return dataSource.getParentLogger();
         }
 
         public void setTransactionRegistry(TransactionRegistry registry) {
