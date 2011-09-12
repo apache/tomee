@@ -28,6 +28,7 @@ import org.apache.openejb.resource.XAResourceWrapper;
 import javax.sql.DataSource;
 import javax.sql.XADataSource;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
@@ -99,7 +100,11 @@ public class DataSourceFactory {
         }
 
         public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-            return dataSource.getParentLogger();
+            try {
+                return (Logger) DataSource.class.getDeclaredMethod("getParentLogger").invoke(dataSource);
+            } catch (Exception e) {
+                return null;
+            }
         }
     }
 
@@ -141,7 +146,11 @@ public class DataSourceFactory {
         }
 
         public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-            return dataSource.getParentLogger();
+            try {
+                return (Logger) DataSource.class.getDeclaredMethod("getParentLogger").invoke(dataSource);
+            } catch (Exception e) {
+                return null;
+            }
         }
 
         public void setTransactionRegistry(TransactionRegistry registry) {
