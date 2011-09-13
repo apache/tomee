@@ -4481,7 +4481,7 @@ public class AnnotationDeployer implements DynamicDeployer {
          * @return
          */
         private AnnotationFinder createFinder(Class<?>... classes) {
-            List<Class<?>> parents = new ArrayList<Class<?>>();
+            Set<Class<?>> parents = new HashSet<Class<?>>();
             for (Class<?> clazz : classes) {
                 parents.addAll(ancestors(clazz));
             }
