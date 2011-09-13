@@ -32,8 +32,6 @@ import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.ContextTransaction;
-import org.apache.catalina.deploy.FilterDef;
-import org.apache.catalina.deploy.FilterMap;
 import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.startup.ContextConfig;
 import org.apache.catalina.startup.HostConfig;
@@ -473,9 +471,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 appContext.getWebContexts().add(webContext);
                 cs.addWebContext(webContext);
 
-
                 standardContext.setInstanceManager(new JavaeeInstanceManager(webContext, context));
-
                 standardContext.getServletContext().setAttribute(InstanceManager.class.getName(), standardContext.getInstanceManager());
 
             } catch (Exception e) {
@@ -1121,5 +1117,4 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             return false;
         }
     }
-
 }

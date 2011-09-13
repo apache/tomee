@@ -41,4 +41,13 @@ public class Injection {
     public Class getTarget() {
         return target;
     }
+
+    @Override
+    public String toString() {
+        return "Injection{" +
+                "target=" + ((target != null) ? target.getName() : null) +
+                ", name='" + name + '\'' +
+                ", jndiName='" + jndiName + '\'' +
+                '}';
+    }
 }
