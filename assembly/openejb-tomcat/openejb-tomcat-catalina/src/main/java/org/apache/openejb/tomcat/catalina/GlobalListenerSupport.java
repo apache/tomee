@@ -27,9 +27,6 @@ import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.core.StandardServer;
-import org.apache.catalina.deploy.ContextTransaction;
-import org.apache.naming.factory.Constants;
-import org.apache.openejb.tomcat.common.UserTransactionFactory;
 import org.apache.openejb.tomcat.loader.TomcatHelper;
 
 import java.beans.PropertyChangeEvent;

@@ -68,14 +68,18 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.tomcat.InstanceManager;
 import org.apache.webbeans.config.WebBeansContext;
+import org.apache.webbeans.spi.adaptor.ELAdaptor;
 import org.omg.CORBA.ORB;
 
 import javax.ejb.spi.HandleDelegate;
+import javax.el.ELResolver;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.servlet.ServletContext;
 import javax.servlet.SessionTrackingMode;
+import javax.servlet.jsp.JspApplicationContext;
+import javax.servlet.jsp.JspFactory;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 import java.io.File;
@@ -374,6 +378,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             standardContext.getNamingResources().setTransaction(contextTransaction);
             startInternal(standardContext);
         }
+
+        // clear a bit log for default case
         addMyFacesDefaultParameters(standardContext.getLoader().getClassLoader(), standardContext.getServletContext());
     }
 
@@ -454,7 +460,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             }
 
             try {
-                // determind the injections
+                // determine the injections
                 InjectionBuilder injectionBuilder = new InjectionBuilder(standardContext.getLoader().getClassLoader());
                 List<Injection> injections = injectionBuilder.buildInjections(webAppInfo.jndiEnc);
 
@@ -476,6 +482,21 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
 
             } catch (Exception e) {
                 logger.error("Error merging OpenEJB JNDI entries in to war " + standardContext.getPath() + ": Exception: " + e.getMessage(), e);
+            }
+
+            // CDI
+            if (Thread.currentThread().getContextClassLoader().getResource("WEB-INF/beans.xml") != null) {
+                WebBeansContext context = appContext.getWebBeansContext();
+                if (context != null) {
+                    // Registering ELResolver with JSP container
+                    ELAdaptor elAdaptor = context.getService(ELAdaptor.class);
+                    ELResolver resolver = elAdaptor.getOwbELResolver();
+                    JspFactory factory = JspFactory.getDefaultFactory();
+                    if (factory != null)  {
+                        JspApplicationContext applicationCtx = factory.getJspApplicationContext(standardContext.getServletContext());
+                        applicationCtx.addELResolver(resolver);
+                    }
+                }
             }
         }
     }

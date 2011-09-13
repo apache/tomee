@@ -35,7 +35,7 @@
       </includes>
       <excludes>
         <exclude>**/bin/**/*</exclude>
-        <exclude>**/lib/annotations-api.jar</exclude>
+        <exclude>**/lib/tomcat-annotations-api*.jar</exclude>
       </excludes>
     </fileSet>
     <fileSet>
