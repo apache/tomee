@@ -160,6 +160,8 @@ public class TomcatJndiBuilder {
         ContextTransaction contextTransaction = new ContextTransaction();
         contextTransaction.setProperty(Constants.FACTORY, UserTransactionFactory.class.getName());
         naming.setTransaction(contextTransaction);
+
+
     }
 
     public static void mergeJava(StandardContext standardContext) {

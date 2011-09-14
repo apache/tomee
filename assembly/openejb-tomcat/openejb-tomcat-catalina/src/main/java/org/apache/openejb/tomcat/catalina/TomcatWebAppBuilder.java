@@ -482,7 +482,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 standardContext.getServletContext().setAttribute(InstanceManager.class.getName(), standardContext.getInstanceManager());
 
             } catch (Exception e) {
-                logger.error("Error merging OpenEJB JNDI entries in to war " + standardContext.getPath() + ": Exception: " + e.getMessage(), e);
+                logger.error("Error merging Java EE JNDI entries in to war " + standardContext.getPath() + ": Exception: " + e.getMessage(), e);
             }
 
             JspFactory factory = JspFactory.getDefaultFactory();
