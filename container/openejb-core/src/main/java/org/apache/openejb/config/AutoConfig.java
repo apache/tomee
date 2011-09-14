@@ -1014,7 +1014,7 @@ public class AutoConfig implements DynamicDeployer {
             return ref.getType();
         }
         if (classLoader != null) {
-            List<InjectionTarget> injections = ref.getInjectionTarget();
+            Set<InjectionTarget> injections = ref.getInjectionTarget();
             for (InjectionTarget injection : injections) {
                 try {
                     Class target = classLoader.loadClass(injection.getInjectionTargetClass().trim());
