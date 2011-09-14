@@ -53,7 +53,7 @@ import java.io.Serializable;
 public class FourthMoment extends ThirdMoment implements Serializable{
 
     /** Serializable version identifier */
-    private static final long serialVersionUID = 4763990447117157611L;
+    private static final long serialVersionUID = 1233990447117157611L;
 
     /** fourth moment of values that have been added */
     protected double m4;

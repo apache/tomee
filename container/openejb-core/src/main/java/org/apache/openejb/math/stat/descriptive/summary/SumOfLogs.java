@@ -44,7 +44,7 @@ import org.apache.openejb.math.stat.descriptive.AbstractStorelessUnivariateStati
 public class SumOfLogs extends AbstractStorelessUnivariateStatistic implements Serializable {
 
     /** Serializable version identifier */
-    private static final long serialVersionUID = -370076995648386763L;
+    private static final long serialVersionUID = -123076995648386763L;
 
     /**Number of values that have been added */
     private int n;

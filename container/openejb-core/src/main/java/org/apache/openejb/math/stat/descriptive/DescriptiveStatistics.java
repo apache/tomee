@@ -63,7 +63,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
     public static final int INFINITE_WINDOW = -1;
 
     /** Serialization UID */
-    private static final long serialVersionUID = 4133067267405273064L;
+    private static final long serialVersionUID = 1233067267405273064L;
 
     /** Name of the setQuantile method. */
     private static final String SET_QUANTILE_METHOD_NAME = "setQuantile";

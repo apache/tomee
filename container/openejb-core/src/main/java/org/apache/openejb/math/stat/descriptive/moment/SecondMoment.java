@@ -45,7 +45,7 @@ import java.io.Serializable;
 public class SecondMoment extends FirstMoment implements Serializable {
 
     /** Serializable version identifier */
-    private static final long serialVersionUID = 3942403127395076445L;
+    private static final long serialVersionUID = 1232403127395076445L;
 
     /** second moment of values that have been added */
     protected double m2;

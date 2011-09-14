@@ -45,7 +45,7 @@ import org.apache.openejb.math.stat.descriptive.AbstractStorelessUnivariateStati
 public class Kurtosis extends AbstractStorelessUnivariateStatistic implements Serializable {
 
     /** Serializable version identifier */
-    private static final long serialVersionUID = 2784465764798260919L;
+    private static final long serialVersionUID = 1234465764798260919L;
 
     /**Fourth Moment on which this statistic is based */
     protected FourthMoment moment;
