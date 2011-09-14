@@ -16,25 +16,86 @@
  */
 package org.apache.openejb.tck.cdi.tomee.embedded;
 
+import org.apache.el.ExpressionFactoryImpl;
+import org.apache.el.lang.FunctionMapperImpl;
+import org.apache.el.lang.VariableMapperImpl;
+import org.apache.webbeans.el.WebBeansELResolver;
+import org.apache.webbeans.el.WrappedExpressionFactory;
+
+import javax.el.ArrayELResolver;
+import javax.el.BeanELResolver;
+import javax.el.CompositeELResolver;
 import javax.el.ELContext;
+import javax.el.ELContextEvent;
+import javax.el.ELResolver;
+import javax.el.ExpressionFactory;
+import javax.el.FunctionMapper;
+import javax.el.ListELResolver;
+import javax.el.MapELResolver;
+import javax.el.ResourceBundleELResolver;
+import javax.el.VariableMapper;
 
 /**
  * @version $Rev$ $Date$
  */
 public class ELImpl implements org.jboss.jsr299.tck.spi.EL {
 
-    @Override
-    public <T> T evaluateValueExpression(String expression, Class<T> expectedType) {
-        return null;
+    private static final ExpressionFactory EXPRESSION_FACTORY = new WrappedExpressionFactory(new ExpressionFactoryImpl());
+
+    public ELImpl() {
     }
 
-    @Override
+    public static ELResolver getELResolver() {
+        CompositeELResolver composite = new CompositeELResolver();
+        composite.add(new BeanELResolver());
+        composite.add(new ArrayELResolver());
+        composite.add(new MapELResolver());
+        composite.add(new ListELResolver());
+        composite.add(new ResourceBundleELResolver());
+        composite.add(new WebBeansELResolver());
+
+        return composite;
+    }
+
+    public static class ELContextImpl extends ELContext {
+        @Override
+        public ELResolver getELResolver() {
+            return ELImpl.getELResolver();
+        }
+
+        @Override
+        public FunctionMapper getFunctionMapper() {
+            return new FunctionMapperImpl();
+        }
+
+        @Override
+        public VariableMapper getVariableMapper() {
+            return new VariableMapperImpl();
+        }
+
+    }
+
+    @SuppressWarnings("unchecked")
     public <T> T evaluateMethodExpression(String expression, Class<T> expectedType, Class<?>[] expectedParamTypes, Object[] expectedParams) {
-        return null;
+        ELContext context = createELContext();
+        Object object = EXPRESSION_FACTORY.createMethodExpression(context, expression, expectedType, expectedParamTypes).invoke(context, expectedParams);
+
+        return (T) object;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T evaluateValueExpression(String expression, Class<T> expectedType) {
+        ELContext context = createELContext();
+        Object object = EXPRESSION_FACTORY.createValueExpression(context, expression, expectedType).getValue(context);
+
+        return (T) object;
     }
 
     @Override
     public ELContext createELContext() {
-        return null;
+        ELContext context = new ELContextImpl();
+        ELContextEvent event = new ELContextEvent(context);
+
+        return context;
     }
 }

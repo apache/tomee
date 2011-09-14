@@ -73,6 +73,7 @@ import org.omg.CORBA.ORB;
 
 import javax.ejb.spi.HandleDelegate;
 import javax.el.ELResolver;
+import javax.el.ExpressionFactory;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
@@ -484,18 +485,15 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 logger.error("Error merging OpenEJB JNDI entries in to war " + standardContext.getPath() + ": Exception: " + e.getMessage(), e);
             }
 
-            // CDI
-            if (Thread.currentThread().getContextClassLoader().getResource("WEB-INF/beans.xml") != null) {
+            JspFactory factory = JspFactory.getDefaultFactory();
+            if (factory != null && Thread.currentThread().getContextClassLoader().getResource("WEB-INF/beans.xml") != null) {
+                JspApplicationContext applicationCtx = factory.getJspApplicationContext(standardContext.getServletContext());
                 WebBeansContext context = appContext.getWebBeansContext();
                 if (context != null) {
                     // Registering ELResolver with JSP container
                     ELAdaptor elAdaptor = context.getService(ELAdaptor.class);
                     ELResolver resolver = elAdaptor.getOwbELResolver();
-                    JspFactory factory = JspFactory.getDefaultFactory();
-                    if (factory != null)  {
-                        JspApplicationContext applicationCtx = factory.getJspApplicationContext(standardContext.getServletContext());
-                        applicationCtx.addELResolver(resolver);
-                    }
+                    applicationCtx.addELResolver(resolver);
                 }
             }
         }
