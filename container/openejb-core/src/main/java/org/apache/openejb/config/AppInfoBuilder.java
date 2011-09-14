@@ -336,7 +336,6 @@ class AppInfoBuilder {
             }
 
             appInfo.webApps.add(webAppInfo);
-            appInfo.webApps.add(webAppInfo);
         }
     }
 

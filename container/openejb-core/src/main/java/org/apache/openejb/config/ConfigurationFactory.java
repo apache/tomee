@@ -198,10 +198,9 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         chain.add(new ApplyOpenejbJar());
         chain.add(new MappedNameBuilder());
         chain.add(new ActivationConfigPropertyOverride());
-
-        // TODO: How do we want this plugged in?
         chain.add(new OutputGeneratedDescriptors());
 
+        chain.add(new MergeWebappJndiContext());
         this.deployer = chain;
     }
 

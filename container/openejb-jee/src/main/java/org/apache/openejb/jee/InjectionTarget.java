@@ -85,4 +85,23 @@ public class InjectionTarget {
         this.injectionTargetName = value;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        InjectionTarget that = (InjectionTarget) o;
+
+        if (injectionTargetClass != null ? !injectionTargetClass.equals(that.injectionTargetClass) : that.injectionTargetClass != null) return false;
+        if (injectionTargetName != null ? !injectionTargetName.equals(that.injectionTargetName) : that.injectionTargetName != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = injectionTargetClass != null ? injectionTargetClass.hashCode() : 0;
+        result = 31 * result + (injectionTargetName != null ? injectionTargetName.hashCode() : 0);
+        return result;
+    }
 }

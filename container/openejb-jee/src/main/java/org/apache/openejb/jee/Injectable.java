@@ -17,11 +17,12 @@
 package org.apache.openejb.jee;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @version $Rev$ $Date$
  */
 public interface Injectable {
-    public List<InjectionTarget> getInjectionTarget();
+    public Set<InjectionTarget> getInjectionTarget();
 
 }

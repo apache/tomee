@@ -79,4 +79,8 @@ public class Module {
     public void setAppModule(AppModule appModule) {
         this.appModule = appModule;
     }
+
+    public AppModule getAppModule() {
+        return appModule;
+    }
 }

@@ -30,8 +30,10 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -117,7 +119,7 @@ public class ServiceRef implements JndiReference {
     @XmlElement(name = "lookup-name")
     protected String lookupName;
     @XmlElement(name = "injection-target", required = true)
-    protected List<InjectionTarget> injectionTarget;
+    protected Set<InjectionTarget> injectionTarget;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -293,9 +295,9 @@ public class ServiceRef implements JndiReference {
         this.lookupName = lookupName;
     }
 
-    public List<InjectionTarget> getInjectionTarget() {
+    public Set<InjectionTarget> getInjectionTarget() {
         if (injectionTarget == null) {
-            injectionTarget = new ArrayList<InjectionTarget>();
+            injectionTarget = new HashSet<InjectionTarget>();
         }
         return this.injectionTarget;
     }

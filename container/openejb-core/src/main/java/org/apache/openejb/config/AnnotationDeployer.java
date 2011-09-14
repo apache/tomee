@@ -1832,32 +1832,16 @@ public class AnnotationDeployer implements DynamicDeployer {
             IAnnotationFinder finder = webModule.getFinder();
 
             if (finder != null) {
-                String[] webComponentAnnotations = {
-                        "javax.faces.bean.ManagedBean",
-                        "javax.servlet.annotation.WebServlet",
-                        "javax.servlet.annotation.WebServletContextListener",
-                        "javax.servlet.annotation.WebFilter",
-                };
-
-                List<Class<? extends Annotation>> annotations = new ArrayList<Class<? extends Annotation>>();
-                for (String componentAnnotationName : webComponentAnnotations) {
+                // Add all the classes of the previous finder
+                // TODO this part can be optimized
+                final List<String> classNames = finder.getAnnotatedClassNames();
+                for (String className : classNames) {
                     try {
-                        Class<?> clazz = classLoader.loadClass(componentAnnotationName);
-                        annotations.add(clazz.asSubclass(Annotation.class));
+                        Class clazz = classLoader.loadClass(className);
+                        classes.add(clazz);
                     } catch (ClassNotFoundException e) {
-                        logger.debug("Support not enabled: " + componentAnnotationName);
+                        logger.debug("Unable to load class for scanning: " + className);
                     }
-                }
-
-
-                for (Class<? extends Annotation> annotation : annotations) {
-                    logger.debug("Scanning for @" + annotation.getName());
-                    List<Class<?>> list = finder.findAnnotatedClasses(annotation);
-                    if (logger.isDebugEnabled()) for (Class clazz : list) {
-                        logger.debug("Found " + clazz.getName());
-                    }
-
-                    classes.addAll(list);
                 }
             }
 
@@ -3151,7 +3135,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             return list.size() == 0;
         }
 
-        public void buildAnnotatedRefs(JndiConsumer consumer, AnnotationFinder annotationFinder, ClassLoader classLoader) throws OpenEJBException {
+        public void buildAnnotatedRefs(JndiConsumer consumer, IAnnotationFinder annotationFinder, ClassLoader classLoader) throws OpenEJBException {
             //
             // @EJB
             //
@@ -3676,10 +3660,14 @@ public class AnnotationDeployer implements DynamicDeployer {
                         consumer.getEnvEntry().add(envEntry);
                         reference = envEntry;
                     } else {
-                        /*
-                         * Can't add env-entry since @Resource.lookup is not set and it is NOT in a shareable JNDI name space
-                         */
-                        return;
+                        EnvEntry envEntry = new EnvEntry();
+                        envEntry.setName(refName);
+                        consumer.getEnvEntry().add(envEntry);
+                        reference = envEntry;
+//                        /*
+//                         * Can't add env-entry since @Resource.lookup is not set and it is NOT in a shareable JNDI name space
+//                         */
+//                        return;
                     }
                 } else {
                     /*
