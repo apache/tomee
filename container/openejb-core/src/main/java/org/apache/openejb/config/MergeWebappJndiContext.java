@@ -71,6 +71,25 @@ public class MergeWebappJndiContext implements DynamicDeployer {
             merge(bean.getPersistenceUnitRefMap(), webApp.getPersistenceUnitRefMap());
         }
 
+        for (EnterpriseBean a : ejbJar.getEnterpriseBeans()) {
+
+            // Merge the bean namespaces together too
+            for (EnterpriseBean b : ejbJar.getEnterpriseBeans()) {
+                if (a == b) continue;
+
+                merge(a.getEnvEntryMap(), b.getEnvEntryMap());
+                merge(a.getEjbRefMap(), b.getEjbRefMap());
+                merge(a.getEjbLocalRefMap(), b.getEjbLocalRefMap());
+                merge(a.getServiceRefMap(), b.getServiceRefMap());
+                merge(a.getResourceRefMap(), b.getResourceRefMap());
+                merge(a.getResourceEnvRefMap(), b.getResourceEnvRefMap());
+                merge(a.getMessageDestinationRefMap(), b.getMessageDestinationRefMap());
+                merge(a.getPersistenceContextRefMap(), b.getPersistenceContextRefMap());
+                merge(a.getPersistenceUnitRefMap(), b.getPersistenceUnitRefMap());
+
+            }
+        }
+
         removePrivateReferences(webApp);
     }
 
