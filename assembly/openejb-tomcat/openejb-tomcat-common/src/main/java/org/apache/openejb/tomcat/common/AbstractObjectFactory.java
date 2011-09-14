@@ -48,17 +48,28 @@ public abstract class AbstractObjectFactory implements ObjectFactory {
         }
 
         // look up the reference
-        Object value;
         try {
-            value = lookup(jndiProviderId, jndiName);
+            return lookup(jndiProviderId, jndiName);
         } catch (NameNotFoundException nnfe) { // EE.5.18: try using java:module/<shortName> prefix
-            try {
-                value = new InitialContext().lookup("java:module/" + Strings.lastPart(ref.getClassName(), '.'));
-            } catch (NameNotFoundException ignored) { // throw the previous exception
-                throw nnfe;
+
+            // 2nd try
+            if (jndiName.startsWith("java:")) {
+                try {
+                    return new InitialContext().lookup(jndiName);
+                } catch (NameNotFoundException ignored) {
+                }
             }
+
+            // 3rd try
+            if (ref.getClassName() != null) {
+                try {
+                    return new InitialContext().lookup("java:module/" + Strings.lastPart(ref.getClassName(), '.'));
+                } catch (NameNotFoundException ignored) {
+                }
+            }
+
+            throw nnfe;
         }
-        return value;
     }
 
     protected abstract String buildJndiName(Reference reference) throws NamingException;
