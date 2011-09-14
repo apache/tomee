@@ -505,7 +505,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
      * {@inheritDoc}
      */
     @Override
-    public void afterStart(StandardContext standardContext) {
+    public void afterStart(final StandardContext standardContext) {
         if (isIgnored(standardContext)) return;
 
         // if appInfo is null this is a failed deployment... just ignore
@@ -610,9 +610,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             standardContext.addApplicationLifecycleListener(webBeansListener);
         }
 
-        OpenEJBValve openejbValve = new OpenEJBValve();
+        LinkageErrorProtection.preload(standardContext);
+
         final Pipeline pipeline = standardContext.getPipeline();
-        pipeline.addValve(openejbValve);
+        pipeline.addValve(new OpenEJBValve());
 
         final String[] valves = SystemInstance.get().getProperty("tomee.valves", "").split(" *, *");
         for (String className : valves) {
