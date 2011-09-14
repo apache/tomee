@@ -50,7 +50,7 @@ import org.apache.openejb.math.stat.descriptive.summary.SumOfLogs;
 public class GeometricMean extends AbstractStorelessUnivariateStatistic implements Serializable {
 
     /** Serializable version identifier */
-    private static final long serialVersionUID = -8178734905303459453L;
+    private static final long serialVersionUID = -1238734905303459453L;
 
     /** Wrapped SumOfLogs instance */
     private StorelessUnivariateStatistic sumOfLogs;

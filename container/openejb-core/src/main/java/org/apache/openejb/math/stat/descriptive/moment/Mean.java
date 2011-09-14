@@ -60,7 +60,7 @@ public class Mean extends AbstractStorelessUnivariateStatistic
     implements Serializable, WeightedEvaluation {
 
     /** Serializable version identifier */
-    private static final long serialVersionUID = -1296043746617791564L;
+    private static final long serialVersionUID = -1236043746617791564L;
 
     /** First moment on which this statistic is based. */
     protected FirstMoment moment;

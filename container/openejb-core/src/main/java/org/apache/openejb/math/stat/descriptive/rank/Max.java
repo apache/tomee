@@ -40,7 +40,7 @@ import org.apache.openejb.math.stat.descriptive.AbstractStorelessUnivariateStati
 public class Max extends AbstractStorelessUnivariateStatistic implements Serializable {
 
     /** Serializable version identifier */
-    private static final long serialVersionUID = -5593383832225844641L;
+    private static final long serialVersionUID = -1233383832225844641L;
 
     /** Number of values that have been added */
     private long n;

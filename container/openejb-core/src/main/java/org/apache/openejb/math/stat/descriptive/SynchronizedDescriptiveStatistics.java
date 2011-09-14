@@ -32,7 +32,7 @@ package org.apache.openejb.math.stat.descriptive;
 public class SynchronizedDescriptiveStatistics extends DescriptiveStatistics {
 
     /** Serialization UID */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     /**
      * Construct an instance with infinite window

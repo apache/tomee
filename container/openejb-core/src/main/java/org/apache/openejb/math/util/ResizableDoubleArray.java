@@ -80,7 +80,7 @@ public class ResizableDoubleArray implements DoubleArray, Serializable {
     public static final int MULTIPLICATIVE_MODE = 0;
 
     /** Serializable version identifier */
-    private static final long serialVersionUID = -3485529955529426875L;
+    private static final long serialVersionUID = -1235529955529426875L;
 
     /**
      * The contraction criteria determines when the internal array will be

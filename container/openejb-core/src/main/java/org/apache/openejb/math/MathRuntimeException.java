@@ -37,7 +37,7 @@ import java.util.ResourceBundle;
 public class MathRuntimeException extends RuntimeException {
 
     /** Serializable version identifier. */
-    private static final long serialVersionUID = -5128983364075381060L;
+    private static final long serialVersionUID = -1238983364075381060L;
 
     /**
      * Pattern used to build the message.

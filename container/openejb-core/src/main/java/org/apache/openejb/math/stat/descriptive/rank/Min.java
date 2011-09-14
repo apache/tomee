@@ -40,7 +40,7 @@ import org.apache.openejb.math.stat.descriptive.AbstractStorelessUnivariateStati
 public class Min extends AbstractStorelessUnivariateStatistic implements Serializable {
 
     /** Serializable version identifier */
-    private static final long serialVersionUID = -2941995784909003131L;
+    private static final long serialVersionUID = -1231995784909003131L;
 
     /**Number of values that have been added */
     private long n;
