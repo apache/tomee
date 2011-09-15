@@ -1776,8 +1776,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                     try {
                         Class clazz = classLoader.loadClass(className);
                         classes.add(clazz);
-                    } catch (ClassNotFoundException e) {
-                        logger.debug("Unable to load class for scanning: " + className);
+                    } catch (Throwable e) {
+                        logger.debug(String.format("%s: Unable to load class for scanning: %s", e.getClass().getName(), className));
                     }
                 }
             }
