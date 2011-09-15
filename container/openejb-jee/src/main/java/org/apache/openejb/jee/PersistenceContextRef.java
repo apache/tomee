@@ -211,4 +211,14 @@ public class PersistenceContextRef implements JndiReference, PersistenceRef {
         this.persistenceProperty = persistenceProperty;
     }
 
+    @Override
+    public String toString() {
+        return "PersistenceContextRef{" +
+                "name='" + persistenceContextRefName + '\'' +
+                ", unit='" + persistenceUnitName + '\'' +
+                ", context=" + persistenceContextType +
+                ", mappedName='" + mappedName + '\'' +
+                ", lookupName='" + lookupName + '\'' +
+                '}';
+    }
 }

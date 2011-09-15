@@ -178,4 +178,13 @@ public class PersistenceUnitRef implements JndiReference, PersistenceRef {
         this.id = value;
     }
 
+    @Override
+    public String toString() {
+        return "PersistenceUnitRef{" +
+                "name='" + persistenceUnitRefName + '\'' +
+                ", unit='" + persistenceUnitName + '\'' +
+                ", mappedName='" + mappedName + '\'' +
+                ", lookupName='" + lookupName + '\'' +
+                '}';
+    }
 }

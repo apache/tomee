@@ -182,4 +182,13 @@ public class ResourceEnvRef implements JndiReference {
         this.id = value;
     }
 
+    @Override
+    public String toString() {
+        return "ResourceEnvRef{" +
+                "name='" + resourceEnvRefName + '\'' +
+                ", type='" + resourceEnvRefType + '\'' +
+                ", mappedName='" + mappedName + '\'' +
+                ", lookupName='" + lookupName + '\'' +
+                '}';
+    }
 }

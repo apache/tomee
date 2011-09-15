@@ -209,4 +209,14 @@ public class ResourceRef implements JndiReference {
     public void setId(String value) {
         this.id = value;
     }
+
+    @Override
+    public String toString() {
+        return "ResourceRef{" +
+                "name='" + resRefName + '\'' +
+                ", type='" + resType + '\'' +
+                ", mappedName='" + mappedName + '\'' +
+                ", lookupName='" + lookupName + '\'' +
+                '}';
+    }
 }

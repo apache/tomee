@@ -310,4 +310,16 @@ public class ServiceRef implements JndiReference {
         this.id = value;
     }
 
+    @Override
+    public String toString() {
+        return "ServiceRef{" +
+                "name='" + serviceRefName + '\'' +
+                ", interface='" + serviceInterface + '\'' +
+                ", type='" + serviceRefType + '\'' +
+                ", wsdl='" + wsdlFile + '\'' +
+                ", qname=" + serviceQname +
+                ", mappedName='" + mappedName + '\'' +
+                ", lookupName='" + lookupName + '\'' +
+                '}';
+    }
 }
