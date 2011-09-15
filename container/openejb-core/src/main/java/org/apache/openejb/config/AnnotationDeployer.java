@@ -38,6 +38,7 @@ import org.apache.openejb.jee.ConcurrentMethod;
 import org.apache.openejb.jee.ConfigProperty;
 import org.apache.openejb.jee.ContainerConcurrency;
 import org.apache.openejb.jee.ContainerTransaction;
+import org.apache.openejb.jee.DataSource;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EjbLocalRef;
 import org.apache.openejb.jee.EjbRef;
@@ -59,6 +60,7 @@ import org.apache.openejb.jee.InjectionTarget;
 import org.apache.openejb.jee.Interceptor;
 import org.apache.openejb.jee.InterceptorBinding;
 import org.apache.openejb.jee.Invokable;
+import org.apache.openejb.jee.IsolationLevel;
 import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.jee.JndiReference;
 import org.apache.openejb.jee.License;
@@ -187,7 +189,6 @@ import javax.resource.spi.ConnectionDefinitions;
 import javax.resource.spi.Connector;
 import javax.resource.spi.SecurityPermission;
 import javax.resource.spi.work.WorkContext;
-import javax.sql.DataSource;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Context;
@@ -422,8 +423,6 @@ public class AnnotationDeployer implements DynamicDeployer {
                     clientModule.setApplicationClient(new ApplicationClient());
                 }
             }
-
-            addDatasourceDefinitions(clientModule, finder);
 
             return clientModule;
         }
@@ -690,8 +689,6 @@ public class AnnotationDeployer implements DynamicDeployer {
 				}
         	}
 
-            addDatasourceDefinitions(connectorModule, finder);
-        	
             return connectorModule;
         }
 
@@ -1001,8 +998,6 @@ public class AnnotationDeployer implements DynamicDeployer {
                 webModule.getRestApplications().add(app.getName());
             }
 
-            addDatasourceDefinitions(webModule, finder);
-
             return webModule;
         }
 
@@ -1268,65 +1263,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
-            addDatasourceDefinitions(ejbModule, finder);
-
             return ejbModule;
-        }
-
-        private void addDatasourceDefinitions(Module module, IAnnotationFinder finder) {
-            List<DataSourceDefinition> datasources = new ArrayList<DataSourceDefinition>();
-
-            List<Annotated<Class<?>>> dataSourceDefinitionsClasses = finder.findMetaAnnotatedClasses(DataSourceDefinitions.class);
-            for (Annotated<Class<?>> dsDefsClass : dataSourceDefinitionsClasses) {
-                DataSourceDefinitions defs = dsDefsClass.getAnnotation(DataSourceDefinitions.class);
-                for (DataSourceDefinition dsDef : defs.value()) {
-                    datasources.add(dsDef);
-                }
-            }
-
-            List<Annotated<Class<?>>> dataSourceDefinitionClasses = finder.findMetaAnnotatedClasses(DataSourceDefinition.class);
-            for (Annotated<Class<?>> dsDefsClass : dataSourceDefinitionClasses) {
-                datasources.add(dsDefsClass.getAnnotation(DataSourceDefinition.class));
-            }
-
-            for (DataSourceDefinition dsDef : datasources) {
-                org.apache.openejb.config.sys.Resource def = getDatasourceDefinitaion(dsDef);
-                module.addResource(def);
-            }
-        }
-
-        private org.apache.openejb.config.sys.Resource getDatasourceDefinitaion(DataSourceDefinition dsDef) {
-            String name = dsDef.name();
-            name = name.replaceFirst("java:comp/env/", "");
-            name = name.replaceFirst("java:", "");
-
-            org.apache.openejb.config.sys.Resource def = new org.apache.openejb.config.sys.Resource(name, DataSource.class.getName());
-            def.setJndi(dsDef.name().replaceFirst("java:", ""));
-            def.setType("javax.sql.DataSource");
-
-            Properties properties = def.getProperties();
-            properties.put("JtaManaged", dsDef.transactional());
-            properties.put("InitialSize", dsDef.initialPoolSize());
-            properties.put("DefaultIsolationLevel", dsDef.isolationLevel());
-            properties.put("LoginTimeout", Math.max(dsDef.loginTimeout(), 1));
-            properties.put("MinEvictableIdleTimeMillis", dsDef.maxIdleTime());
-            properties.put("MaxIdle", dsDef.maxPoolSize());
-            properties.put("MinIdle", dsDef.minPoolSize());
-            properties.put("MaxStatements", dsDef.maxStatements());
-            properties.put("Password", dsDef.password());
-            properties.put("JdbcUrl", dsDef.url());
-            properties.put("UserName", dsDef.user());
-            properties.put("JdbcDriver", dsDef.className());
-            properties.put("PortNumber", dsDef.portNumber());
-            properties.put("DatabaseName", dsDef.databaseName());
-            properties.put("Description", dsDef.description());
-            properties.put("ServerName", dsDef.serverName());
-            properties.put("Properties", dsDef.properties());
-
-            // to force it to be bound in JndiEncBuilder
-            properties.put("JndiName", def.getJndi());
-
-            return def;
         }
 
         private List<String> getBeanClasses(IAnnotationFinder finder) {
@@ -3311,6 +3248,22 @@ public class AnnotationDeployer implements DynamicDeployer {
                 Member member = new MethodMember(method.get());
                 buildPersistenceContext(consumer, pcFactory.create(pCtx, member), member);
             }
+
+            //
+            // @DataSourceDefinition
+            //
+
+            for (Annotated<Class<?>> annotated : annotationFinder.findMetaAnnotatedClasses(DataSourceDefinitions.class)) {
+                DataSourceDefinitions defs = annotated.getAnnotation(DataSourceDefinitions.class);
+                for (DataSourceDefinition definition : defs.value()) {
+                    buildDataSourceDefinition(consumer, definition);
+                }
+            }
+
+            for (Annotated<Class<?>> annotated : annotationFinder.findMetaAnnotatedClasses(DataSourceDefinition.class)) {
+                DataSourceDefinition definition = annotated.getAnnotation(DataSourceDefinition.class);
+                buildDataSourceDefinition(consumer, definition);
+            }
         }
 
         private void buildContext(JndiConsumer consumer, Member member) {
@@ -3928,6 +3881,42 @@ public class AnnotationDeployer implements DynamicDeployer {
                     persistenceContextRef.getInjectionTarget().add(target);
                 }
             }
+        }
+
+        private void buildDataSourceDefinition(JndiConsumer consumer, DataSourceDefinition d) {
+            final org.apache.openejb.jee.DataSource dataSource = new org.apache.openejb.jee.DataSource();
+
+            dataSource.setName(d.name());
+            dataSource.setClassName(d.className());
+            dataSource.setTransactional(d.transactional());
+
+            final DataSource existing = consumer.getDataSourceMap().get(dataSource.getKey());
+
+            if (existing != null) return;
+
+            // Optional properties
+            if (d.databaseName() != "") dataSource.setDatabaseName(d.databaseName());
+            if (d.initialPoolSize() != -1) dataSource.setInitialPoolSize(d.initialPoolSize());
+            if (d.isolationLevel() != -1) dataSource.setIsolationLevel(IsolationLevel.fromFlag(d.isolationLevel()));
+            if (d.loginTimeout() != 0) dataSource.setLoginTimeout(d.loginTimeout());
+            if (d.maxIdleTime() != -1) dataSource.setMaxIdleTime(d.maxIdleTime());
+            if (d.maxPoolSize() != -1) dataSource.setMaxPoolSize(d.maxPoolSize());
+            if (d.maxStatements() != -1) dataSource.setMaxStatements(d.maxStatements());
+            if (d.minPoolSize() != -1) dataSource.setMinPoolSize(d.minPoolSize());
+            if (d.password() != "") dataSource.setPassword(d.password());
+            if (d.portNumber() != -1) dataSource.setPortNumber(d.portNumber());
+            if (d.serverName() != "localhost") dataSource.setServerName(d.serverName());
+            if (d.url() != "") dataSource.setUrl(d.url());
+            if (d.user() != "") dataSource.setUrl(d.user());
+
+            for (String s : d.properties()) {
+                final String key = s.substring(0, s.indexOf('='));
+                final String value = s.substring(s.indexOf('='));
+
+                dataSource.property(key, value);
+            }
+
+            consumer.getDataSource().add(dataSource);
         }
 
 

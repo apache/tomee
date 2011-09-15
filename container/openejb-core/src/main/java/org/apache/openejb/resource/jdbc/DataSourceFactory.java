@@ -24,14 +24,20 @@ import org.apache.commons.dbcp.managed.TransactionRegistry;
 import org.apache.commons.dbcp.managed.XAConnectionFactory;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.resource.XAResourceWrapper;
+import org.apache.xbean.recipe.ObjectRecipe;
+import org.apache.xbean.recipe.Option;
 
 import javax.sql.DataSource;
 import javax.sql.XADataSource;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
+import java.util.Map;
+import java.util.Properties;
 import java.util.logging.Logger;
 
 /**
@@ -39,10 +45,20 @@ import java.util.logging.Logger;
  */
 public class DataSourceFactory {
 
-    public static DataSource create(boolean managed, Class impl) throws IllegalAccessException, InstantiationException {
+    public static DataSource create(boolean managed, Class impl, String definition) throws IllegalAccessException, InstantiationException, IOException {
+
+
         org.apache.commons.dbcp.BasicDataSource ds;
         if (DataSource.class.isAssignableFrom(impl)) {
-            DataSource dataSource = (DataSource) impl.newInstance();
+
+            final ObjectRecipe recipe = new ObjectRecipe(impl);
+            recipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
+            recipe.allow(Option.IGNORE_MISSING_PROPERTIES);
+            recipe.allow(Option.NAMED_PARAMETERS);
+            recipe.setAllProperties(asProperties(definition));
+
+            DataSource dataSource = (DataSource) recipe.create();
+
             if (managed) {
                 ds = new DbcpManagedDataSource(dataSource);
             } else {
@@ -56,6 +72,13 @@ public class DataSourceFactory {
         ds.setDriverClassName(impl.getName());
 
         return ds;
+    }
+
+    private static Map<?, ?> asProperties(String definition) throws IOException {
+        final ByteArrayInputStream in = new ByteArrayInputStream(definition.getBytes());
+        final Properties properties = new Properties();
+        properties.load(in);
+        return properties;
     }
 
     public static DataSource create(boolean managed) {

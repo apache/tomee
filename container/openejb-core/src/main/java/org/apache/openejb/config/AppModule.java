@@ -48,7 +48,7 @@ public class AppModule implements DeploymentModule {
     private final List<ClientModule> clientModules = new ArrayList<ClientModule>();
     private final List<EjbModule> ejbModules = new ArrayList<EjbModule>();
     private final List<PersistenceModule> persistenceModules = new ArrayList<PersistenceModule>();
-    private final Collection<Resource> resources = new ArrayList<Resource>();
+    private final Collection<Resource> resources = new HashSet<Resource>();
     private final ClassLoader classLoader;
     private EntityMappings cmpMappings;
     private final Map<String,Object> altDDs = new HashMap<String,Object>();

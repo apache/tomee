@@ -830,6 +830,18 @@ public class AutoConfig implements DynamicDeployer {
     private void processDataSourceDefinitions(AppModule module) throws OpenEJBException {
         Collection<Resource> datasources = module.getResources();
 
+        if (datasources.size() == 0) return;
+
+        List<JndiConsumer> jndiConsumers = new ArrayList<JndiConsumer>();
+        for (WebModule webModule : module.getWebModules()) {
+            final JndiConsumer consumer = webModule.getWebApp();
+            jndiConsumers.add(consumer);
+        }
+
+        for (EjbModule ejbModule : module.getEjbModules()) {
+            Collections.addAll(jndiConsumers, ejbModule.getEjbJar().getEnterpriseBeans());
+        }
+
         for (Resource datasource : datasources) {
             if (!DataSource.class.getName().equals(datasource.getType())) {
                 continue;
@@ -844,10 +856,36 @@ public class AutoConfig implements DynamicDeployer {
             properties.remove("LoginTimeout");
 
             ResourceInfo resourceInfo = configFactory.configureService(datasource, ResourceInfo.class);
+            resourceInfo.id = module.getModuleId() + "/" + resourceInfo.id;
+
+            final ResourceRef dataSourceRef = new ResourceRef(dataSourceLookupName(datasource), DataSource.class.getName());
+            dataSourceRef.setMappedName(resourceInfo.id);
+
+            for (JndiConsumer consumer : jndiConsumers) {
+
+                final ResourceRef existing = consumer.getResourceRefMap().get(dataSourceRef.getKey());
+                if (existing != null) {
+                    existing.setMappedName(dataSourceRef.getMappedName());
+                } else {
+                    consumer.getResourceRef().add(dataSourceRef);
+                }
+            }
+
+
             installResource(module.getModuleId(), resourceInfo);
         }
 
         datasources.clear();
+    }
+
+    private String dataSourceLookupName(Resource datasource) {
+        final String jndi = datasource.getJndi();
+        if (jndi.startsWith("java:")) return jndi;
+        if (jndi.startsWith("comp/env/")) return "java:" + jndi;
+        if (jndi.startsWith("module/")) return "java:" + jndi;
+        if (jndi.startsWith("global/")) return "java:" + jndi;
+        if (jndi.startsWith("app/")) return "java:" + jndi;
+        return "java:comp/env/" + jndi;
     }
 
     private static String getVendorUrl(Properties properties) {
