@@ -217,4 +217,15 @@ public class EjbRef implements EjbReference {
         this.id = value;
     }
 
+    @Override
+    public String toString() {
+        return "EjbRef{" +
+                "name='" + ejbRefName + '\'' +
+                ", ejbRefType=" + ejbRefType +
+                ", remote='" + remote + '\'' +
+                ", ejbLink='" + ejbLink + '\'' +
+                ", mappedName='" + mappedName + '\'' +
+                ", lookupName='" + lookupName + '\'' +
+                '}';
+    }
 }

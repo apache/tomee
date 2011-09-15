@@ -211,4 +211,15 @@ public class MessageDestinationRef implements JndiReference {
         this.id = value;
     }
 
+    @Override
+    public String toString() {
+        return "MessageDestinationRef{" +
+                "name='" + messageDestinationRefName + '\'' +
+                ", type='" + messageDestinationType + '\'' +
+                ", usage=" + messageDestinationUsage +
+                ", link='" + messageDestinationLink + '\'' +
+                ", mappedName='" + mappedName + '\'' +
+                ", lookupName='" + lookupName + '\'' +
+                '}';
+    }
 }

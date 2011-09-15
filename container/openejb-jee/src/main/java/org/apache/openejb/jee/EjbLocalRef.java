@@ -270,4 +270,14 @@ public class EjbLocalRef implements EjbReference {
         this.id = value;
     }
 
+    @Override
+    public String toString() {
+        return "EjbLocalRef{" +
+                "name='" + ejbRefName + '\'' +
+                ", local=" + local +
+                ", link='" + ejbLink + '\'' +
+                ", mappedName='" + mappedName + '\'' +
+                ", lookupName='" + lookupName + '\'' +
+                '}';
+    }
 }

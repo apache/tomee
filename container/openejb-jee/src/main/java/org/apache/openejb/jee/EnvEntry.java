@@ -71,12 +71,6 @@ import java.util.Set;
         })
 public class EnvEntry implements JndiReference {
 
-    @Override
-    public String toString() {
-        return "EnvEntry [envEntryName=" + envEntryName + ", envEntryType=" + envEntryType + ", envEntryValue="
-                + envEntryValue + "]";
-    }
-
     @XmlTransient
     protected TextMap description = new TextMap();
     @XmlElement(name = "env-entry-name", required = true)
@@ -207,4 +201,14 @@ public class EnvEntry implements JndiReference {
         this.id = value;
     }
 
+    @Override
+    public String toString() {
+        return "EnvEntry{" +
+                "name='" + envEntryName + '\'' +
+                ", type='" + envEntryType + '\'' +
+                ", value='" + envEntryValue + '\'' +
+                ", mappedName='" + mappedName + '\'' +
+                ", lookupName='" + lookupName + '\'' +
+                '}';
+    }
 }
