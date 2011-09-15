@@ -221,9 +221,8 @@ public class EjbRef implements EjbReference {
     public String toString() {
         return "EjbRef{" +
                 "name='" + ejbRefName + '\'' +
-                ", ejbRefType=" + ejbRefType +
                 ", remote='" + remote + '\'' +
-                ", ejbLink='" + ejbLink + '\'' +
+                ", link='" + ejbLink + '\'' +
                 ", mappedName='" + mappedName + '\'' +
                 ", lookupName='" + lookupName + '\'' +
                 '}';
