@@ -23,13 +23,6 @@
         <package name="org.jboss.jsr299.tck.interceptors.tests.*"/>
     </packages>
     <classes>
-      <class name="org.jboss.jsr299.tck.tests.context.dependent.DependentContextTest">
-        <methods>
-          <exclude name="testContextIsActiveWhenEvaluatingElExpression"/>
-          <exclude name="testDependentsDestroyedWhenElEvaluationCompletes"/>
-          <exclude name="testInstanceUsedForElEvaluationNotShared"/>
-        </methods>
-      </class>
       <class name="org.jboss.jsr299.tck.tests.context.passivating.broken.dependentScopedProducerFieldReturnsNonSerializableObjectForInjectionIntoStatefulSessionBean.EnterpriseBeanWithIllegalDependencyTest">
         <methods>
           <exclude name="test"/>
@@ -61,11 +54,6 @@
           <exclude name="testSerializeSFSB"/>
         </methods>
       </class>
-      <class name="org.jboss.jsr299.tck.tests.implementation.simple.resource.ejb.EjbInjectionTest">
-        <methods>
-          <exclude name="testPassivationOfEjbs"/>
-        </methods>
-      </class>
       <class name="org.jboss.jsr299.tck.tests.implementation.simple.resource.persistenceContext.PersistenceContextInjectionTest">
         <methods>
           <exclude name="testBeanTypesAndBindingTypesOfPersistenceContext"/>
@@ -85,18 +73,6 @@
       <class name="org.jboss.jsr299.tck.tests.interceptors.definition.enterprise.nonContextualReference.SessionBeanInterceptorOnNonContextualEjbReferenceTest">
         <methods>
           <exclude name="testNonContextualSessionBeanReferenceIsIntercepted"/>
-        </methods>
-      </class>
-      <class name="org.jboss.jsr299.tck.tests.lookup.el.ResolutionByNameTest">
-        <methods>
-          <exclude name="testContextCreatesNewInstanceForInjection"/>
-          <exclude name="testELResolverReturnsContextualInstance"/>
-          <exclude name="testQualifiedNameLookup"/>
-        </methods>
-      </class>
-      <class name="org.jboss.jsr299.tck.tests.lookup.el.integration.IntegrationWithUnifiedELTest">
-        <methods>
-          <exclude name="testELResolverRegisteredWithServletContainer"/>
         </methods>
       </class>
       <class name="org.jboss.jsr299.tck.tests.lookup.injection.non.contextual.ws.InjectionIntoWebServiceEndPointTest">
