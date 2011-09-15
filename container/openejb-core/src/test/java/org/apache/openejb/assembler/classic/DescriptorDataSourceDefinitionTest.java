@@ -1,19 +1,16 @@
 package org.apache.openejb.assembler.classic;
 
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.ResourceRef;
+import org.apache.openejb.jee.SingletonBean;
+import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.junit.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Resource;
-import javax.annotation.sql.DataSourceDefinition;
-import javax.annotation.sql.DataSourceDefinitions;
 import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.ejb.Stateless;
 import javax.sql.DataSource;
-import javax.transaction.UserTransaction;
-import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -24,58 +21,80 @@ import java.util.List;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
-/**
- * Note: to make this test work under JavaSE 6 you should add geronimo-annotation_1.1_spec in your endorsed dir.
- * It is automatically done with maven.
- *
- * @author rmannibucau
- */
 @RunWith(ApplicationComposer.class)
-public class DataSourceDefinitionTest {
+public class DescriptorDataSourceDefinitionTest {
 
-    @EJB private DatasourceDefinitionBean uniqueDataSource;
-    @EJB private DatasourceDefinitionsBean multipleDatasources;
+    @EJB
+    private OrangeBean orange;
 
-    @Module public Class<?>[] app() throws Exception {
-        return new Class<?>[]{ DatasourceDefinitionBean.class, DatasourceDefinitionsBean.class };
+    @EJB
+    private YellowBean yellow;
+
+    @Module
+    public EjbJar application() throws Exception {
+        final EjbJar ejbJar = new EjbJar();
+        final SingletonBean orange = ejbJar.addEnterpriseBean(new SingletonBean(OrangeBean.class));
+
+        orange.getDataSource().add(new org.apache.openejb.jee.DataSource()
+                .name("java:comp/env/superDS")
+                .className("org.hsqldb.jdbc.jdbcDataSource")
+                .user("sa")
+                .password("")
+                .url("jdbc:hsqldb:mem:superDS")
+        );
+
+        orange.getResourceRef().add(new ResourceRef()
+                .lookup("java:comp/env/superDS")
+                .injectionTarget(OrangeBean.class, "ds")
+        );
+
+        final StatelessBean yellow = ejbJar.addEnterpriseBean(new StatelessBean(YellowBean.class));
+
+        yellow.getDataSource().add(new org.apache.openejb.jee.DataSource()
+                .name("java:comp/env/superMegaDS")
+                .className("org.hsqldb.jdbc.jdbcDataSource")
+                .user("sa")
+                .password("")
+                .url("jdbc:hsqldb:mem:superDS")
+        );
+
+        yellow.getResourceRef().add(new ResourceRef()
+                .lookup("java:comp/env/superMegaDS")
+                .injectionTarget(YellowBean.class, "mega")
+        );
+
+
+        yellow.getDataSource().add(new org.apache.openejb.jee.DataSource()
+                .name("java:comp/env/superGigaDS")
+                .className("org.hsqldb.jdbc.jdbcDataSource")
+                .user("sa")
+                .password("")
+                .url("jdbc:hsqldb:mem:superDS")
+        );
+
+        yellow.getResourceRef().add(new ResourceRef()
+                .lookup("java:comp/env/superGigaDS")
+                .injectionTarget(YellowBean.class, "giga")
+        );
+
+
+        return ejbJar;
     }
 
-    @DataSourceDefinition(
-        name = "java:comp/env/superDS",
-        className = "org.hsqldb.jdbc.jdbcDataSource",
-        user = "sa",
-        password = "",
-        url = "jdbc:hsqldb:mem:superDS"
-    )
-    @Singleton
-    public static class DatasourceDefinitionBean {
-        @Resource(name = "java:comp/env/superDS") private DataSource ds;
+    public static class OrangeBean {
+
+        private DataSource ds;
 
         public DataSource getDs() {
             return ds;
         }
     }
 
-    @DataSourceDefinitions({
-        @DataSourceDefinition(
-            name = "java:comp/env/superMegaDS",
-            className = "org.hsqldb.jdbc.jdbcDataSource",
-            user = "sa",
-            password = "",
-            url = "jdbc:hsqldb:mem:superDS"
-        ),
-        @DataSourceDefinition(
-            name = "java:comp/env/superGigaDS",
-            className = "org.hsqldb.jdbc.jdbcDataSource",
-            user = "sa",
-            password = "",
-            url = "jdbc:hsqldb:mem:superDS"
-        )
-    })
-    @Stateless
-    public static class DatasourceDefinitionsBean {
-        @Resource(name = "java:comp/env/superMegaDS") private DataSource mega;
-        @Resource(name = "java:comp/env/superGigaDS") private DataSource giga;
+    public static class YellowBean {
+
+        private DataSource mega;
+
+        private DataSource giga;
 
         public DataSource getMega() {
             return mega;
@@ -86,13 +105,15 @@ public class DataSourceDefinitionTest {
         }
     }
 
-    @Test public void assertDataSourceDefinition() throws Exception {
-        assertDataSourceDefinitionValues(uniqueDataSource.getDs(), "org.hsqldb.jdbc.jdbcDataSource", "sa", "");
+    @Test
+    public void assertDataSourceDefinition() throws Exception {
+        assertDataSourceDefinitionValues(orange.getDs(), "org.hsqldb.jdbc.jdbcDataSource", "sa", "");
     }
 
-    @Test public void assertDatasourceDefinitions() throws Exception {
-        assertDataSourceDefinitionValues(multipleDatasources.getMega(), "org.hsqldb.jdbc.jdbcDataSource", "foo1", "bar1");
-        assertDataSourceDefinitionValues(multipleDatasources.getGiga(), "org.hsqldb.jdbc.jdbcDataSource", "foo2", "bar2");
+    @Test
+    public void assertDatasourceDefinitions() throws Exception {
+        assertDataSourceDefinitionValues(yellow.getMega(), "org.hsqldb.jdbc.jdbcDataSource", "foo1", "bar1");
+        assertDataSourceDefinitionValues(yellow.getGiga(), "org.hsqldb.jdbc.jdbcDataSource", "foo2", "bar2");
     }
 
     private void assertDataSourceDefinitionValues(DataSource dataSource, String clazz, String user, String password) throws Exception {
@@ -115,25 +136,6 @@ public class DataSourceDefinitionTest {
 
         Connection connection = dataSource.getConnection();
         connection.prepareStatement("DROP TABLE movie").execute();
-//        assertEquals("configuration should be ok - class", "org.hsqldb.jdbc.jdbcDataSource", dataSource.getClass().getName());
-//        assertEqualsByReflection("configuration should be ok - user", dataSource, "user", user);
-//        assertEqualsByReflection("configuration should be ok - password", dataSource, "password", password);
-    }
-
-    private void assertEqualsByReflection(String message, Object value, String name, Object expected) throws Exception {
-        Class<?> clazz = value.getClass();
-        Field field = clazz.getDeclaredField(name);
-        boolean acc = field.isAccessible();
-        if (!acc) {
-            field.setAccessible(true);
-        }
-        try {
-            Object fieldValue = field.get(value);
-            assertEquals(message, expected, fieldValue);
-        } finally {
-            field.setAccessible(acc);
-        }
-
     }
 
     public static class Movies {

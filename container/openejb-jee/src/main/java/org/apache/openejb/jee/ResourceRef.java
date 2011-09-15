@@ -109,6 +109,47 @@ public class ResourceRef implements JndiReference {
         this.resSharingScope = resSharingScope;
     }
 
+//  pbpaste | grep protected | perl -pe 's/.*protected ([^ ]+) ([^ ]+);/public ResourceRef $2($1 $2) { this.$2 = $2; return this; }/'
+
+    public ResourceRef name(String resRefName) {
+        this.resRefName = resRefName;
+        return this;
+    }
+
+    public ResourceRef type(String resType) {
+        this.resType = resType;
+        return this;
+    }
+
+    public ResourceRef auth(ResAuth resAuth) {
+        this.resAuth = resAuth;
+        return this;
+    }
+
+    public ResourceRef mappedName(String mappedName) {
+        this.mappedName = mappedName;
+        return this;
+    }
+
+    public ResourceRef lookup(String lookupName) {
+        this.lookupName = lookupName;
+        return this;
+    }
+
+    public ResourceRef injectionTarget(String className, String property) {
+        getInjectionTarget().add(new InjectionTarget(className, property));
+
+        if (this.resRefName == null) {
+            this.resRefName = "java:comp/env/" + className + "/" + property;
+        }
+
+        return this;
+    }
+
+    public ResourceRef injectionTarget(Class clazz, String property) {
+        return injectionTarget(clazz.getName(), property);
+    }
+
     @XmlTransient
     public String getName() {
         return getResRefName();

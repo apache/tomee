@@ -517,8 +517,10 @@
           service="Resource"
           types="javax.sql.DataSource, DataSource"
           factory-name="create"
-          constructor="JtaManaged, JdbcDriver"
+          constructor="JtaManaged, JdbcDriver, Definition"
           class-name="org.apache.openejb.resource.jdbc.DataSourceFactory">
+
+    Definition
 
     # Determines wether or not this data source should be JTA managed
     # or user managed.  If set to 'true' it will automatically be enrolled
@@ -713,8 +715,10 @@
           service="Resource"
           types="javax.sql.DataSource, DataSource"
           factory-name="create"
-          constructor="JtaManaged, JdbcDriver"
+          constructor="JtaManaged, JdbcDriver, Definition"
           class-name="org.apache.openejb.resource.jdbc.DataSourceFactory">
+
+    Definition
 
     JtaManaged = false
 

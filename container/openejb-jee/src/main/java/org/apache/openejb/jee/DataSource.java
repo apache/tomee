@@ -135,6 +135,101 @@ public class DataSource implements Keyable<String> {
         return description.toArray();
     }
 
+    public DataSource() {
+    }
+
+    public DataSource(String name, String className) {
+        this.name = name;
+        this.className = className;
+    }
+
+//    pbpaste | grep protected | perl -pe 's/.*protected ([^ ]+) ([^ ]+);/public DataSource $2($1 $2) { this.$2 = $2; return this; }/'
+
+    public DataSource name(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public DataSource className(String className) {
+        this.className = className;
+        return this;
+    }
+
+    public DataSource serverName(String serverName) {
+        this.serverName = serverName;
+        return this;
+    }
+
+    public DataSource portNumber(Integer portNumber) {
+        this.portNumber = portNumber;
+        return this;
+    }
+
+    public DataSource databaseName(String databaseName) {
+        this.databaseName = databaseName;
+        return this;
+    }
+
+    public DataSource url(String url) {
+        this.url = url;
+        return this;
+    }
+
+    public DataSource user(String user) {
+        this.user = user;
+        return this;
+    }
+
+    public DataSource password(String password) {
+        this.password = password;
+        return this;
+    }
+
+    public DataSource property(String name, String value) {
+        getProperty().add(new Property(name, value));
+        return this;
+    }
+
+    public DataSource loginTimeout(Integer loginTimeout) {
+        this.loginTimeout = loginTimeout;
+        return this;
+    }
+
+    public DataSource transactional(Boolean transactional) {
+        this.transactional = transactional;
+        return this;
+    }
+
+    public DataSource isolationLevel(IsolationLevel isolationLevel) {
+        this.isolationLevel = isolationLevel;
+        return this;
+    }
+
+    public DataSource initialPoolSize(Integer initialPoolSize) {
+        this.initialPoolSize = initialPoolSize;
+        return this;
+    }
+
+    public DataSource maxPoolSize(Integer maxPoolSize) {
+        this.maxPoolSize = maxPoolSize;
+        return this;
+    }
+
+    public DataSource minPoolSize(Integer minPoolSize) {
+        this.minPoolSize = minPoolSize;
+        return this;
+    }
+
+    public DataSource maxIdleTime(Integer maxIdleTime) {
+        this.maxIdleTime = maxIdleTime;
+        return this;
+    }
+
+    public DataSource maxStatements(Integer maxStatements) {
+        this.maxStatements = maxStatements;
+        return this;
+    }
+
     public void setDescriptions(Text[] text) {
         description.set(text);
     }
@@ -187,6 +282,7 @@ public class DataSource implements Keyable<String> {
     public String getUrl() {
         return url;
     }
+
 
     public void setUrl(String value) {
         this.url = value;
