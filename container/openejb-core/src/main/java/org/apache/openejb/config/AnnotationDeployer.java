@@ -3895,7 +3895,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             if (existing != null) return;
 
             // Optional properties
-            if (d.databaseName() != "") dataSource.setDatabaseName(d.databaseName());
+            if (!d.databaseName().isEmpty()) dataSource.setDatabaseName(d.databaseName());
             if (d.initialPoolSize() != -1) dataSource.setInitialPoolSize(d.initialPoolSize());
             if (d.isolationLevel() != -1) dataSource.setIsolationLevel(IsolationLevel.fromFlag(d.isolationLevel()));
             if (d.loginTimeout() != 0) dataSource.setLoginTimeout(d.loginTimeout());
@@ -3903,11 +3903,11 @@ public class AnnotationDeployer implements DynamicDeployer {
             if (d.maxPoolSize() != -1) dataSource.setMaxPoolSize(d.maxPoolSize());
             if (d.maxStatements() != -1) dataSource.setMaxStatements(d.maxStatements());
             if (d.minPoolSize() != -1) dataSource.setMinPoolSize(d.minPoolSize());
-            if (d.password() != "") dataSource.setPassword(d.password());
+            if (!d.password().isEmpty()) dataSource.setPassword(d.password());
             if (d.portNumber() != -1) dataSource.setPortNumber(d.portNumber());
-            if (d.serverName() != "localhost") dataSource.setServerName(d.serverName());
-            if (d.url() != "") dataSource.setUrl(d.url());
-            if (d.user() != "") dataSource.setUrl(d.user());
+            if (!"localhost".equals(d.serverName())) dataSource.setServerName(d.serverName());
+            if (!d.url().isEmpty()) dataSource.setUrl(d.url());
+            if (!d.user().isEmpty()) dataSource.setUser(d.user());
 
             for (String s : d.properties()) {
                 final String key = s.substring(0, s.indexOf('='));

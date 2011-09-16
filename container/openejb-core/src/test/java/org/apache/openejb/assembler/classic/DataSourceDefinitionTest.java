@@ -74,8 +74,8 @@ public class DataSourceDefinitionTest {
     })
     @Stateless
     public static class DatasourceDefinitionsBean {
-        @Resource(name = "java:comp/env/superMegaDS") private DataSource mega;
-        @Resource(name = "java:comp/env/superGigaDS") private DataSource giga;
+        @Resource(lookup = "java:comp/env/superMegaDS") private DataSource mega;
+        @Resource(lookup = "java:comp/env/superGigaDS") private DataSource giga;
 
         public DataSource getMega() {
             return mega;
@@ -114,6 +114,7 @@ public class DataSourceDefinitionTest {
         assertEquals("Movies.getMovies()", 0, movies.getMovies().size());
 
         Connection connection = dataSource.getConnection();
+        connection.setAutoCommit(true);
         connection.prepareStatement("DROP TABLE movie").execute();
 //        assertEquals("configuration should be ok - class", "org.hsqldb.jdbc.jdbcDataSource", dataSource.getClass().getName());
 //        assertEqualsByReflection("configuration should be ok - user", dataSource, "user", user);
