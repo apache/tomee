@@ -73,19 +73,13 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
- * TODO: This class is essentially an over glorified sym-linker.  The names
- * we were linking to are no longer guaranteed to be what we assume them to
- * be.  We need to come up with a different internal naming structure for
- * the global JNDI and finally create the default which will be the default
- * symlinked version of all the components.
+ * TODO: This class is essentially an over glorified sym-linker.  The names we were linking to are no longer guaranteed to be what we assume them to be.  We need to come up with a
+ * different internal naming structure for the global JNDI and finally create the default which will be the default symlinked version of all the components.
  */
 public class JndiEncBuilder {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, JndiEncBuilder.class.getPackage().getName());
@@ -148,19 +142,19 @@ public class JndiEncBuilder {
         }
 
         Map<String, Object> bindings = buildMap();
-        switch(type) {
-        case comp:
-            addSpecialCompBindings(bindings);
-            break;
-        case module:
-            addSpecialModuleBindings(bindings);
-            break;
-        case app:
-            addSpecialAppBindings(bindings);
-            break;
-        case global:
-            addSpecialGlobalBindings(bindings);
-            break;
+        switch (type) {
+            case comp:
+                addSpecialCompBindings(bindings);
+                break;
+            case module:
+                addSpecialModuleBindings(bindings);
+                break;
+            case app:
+                addSpecialAppBindings(bindings);
+                break;
+            case global:
+                addSpecialGlobalBindings(bindings);
+                break;
         }
 
         return jndiFactory.createComponentContext(bindings);
@@ -178,7 +172,7 @@ public class JndiEncBuilder {
 
             if (referenceInfo.location != null) {
                 reference = buildReferenceLocation(referenceInfo.location);
-            } else if (referenceInfo.ejbDeploymentId == null){
+            } else if (referenceInfo.ejbDeploymentId == null) {
                 reference = new LazyEjbReference(new Ref(referenceInfo), moduleUri, useCrossClassLoaderRef);
             } else {
                 String jndiName = "openejb/Deployment/" + JndiBuilder.format(referenceInfo.ejbDeploymentId, referenceInfo.interfaceClassName, InterfaceType.BUSINESS_REMOTE);
@@ -196,7 +190,7 @@ public class JndiEncBuilder {
 
             if (referenceInfo.location != null) {
                 reference = buildReferenceLocation(referenceInfo.location);
-            } else if (referenceInfo.ejbDeploymentId == null){
+            } else if (referenceInfo.ejbDeploymentId == null) {
                 reference = new LazyEjbReference(new Ref(referenceInfo), moduleUri, false);
             } else {
                 String jndiName = "openejb/Deployment/" + JndiBuilder.format(referenceInfo.ejbDeploymentId, referenceInfo.interfaceClassName, referenceInfo.localbean ? InterfaceType.LOCALBEAN : InterfaceType.BUSINESS_LOCAL);
@@ -214,7 +208,7 @@ public class JndiEncBuilder {
             }
 
             //It is possible that the value and location are both null, as it is allowed to use @Resource(name="java:global/env/abc") with no value is specified in DD            
-            if(entry.value == null) {
+            if (entry.value == null) {
                 continue;
             }
 
@@ -343,7 +337,7 @@ public class JndiEncBuilder {
         }
 
         for (PersistenceUnitReferenceInfo referenceInfo : jndiEnc.persistenceUnitRefs) {
-            if (referenceInfo.location != null){
+            if (referenceInfo.location != null) {
                 Reference reference = buildReferenceLocation(referenceInfo.location);
                 bindings.put(normalize(referenceInfo.referenceName), reference);
                 continue;
@@ -355,7 +349,7 @@ public class JndiEncBuilder {
         }
 
         for (PersistenceContextReferenceInfo contextInfo : jndiEnc.persistenceContextRefs) {
-            if (contextInfo.location != null){
+            if (contextInfo.location != null) {
                 Reference reference = buildReferenceLocation(contextInfo.location);
                 bindings.put(normalize(contextInfo.referenceName), reference);
                 continue;
@@ -376,7 +370,7 @@ public class JndiEncBuilder {
         }
 
         for (ServiceReferenceInfo referenceInfo : jndiEnc.serviceRefs) {
-            if (referenceInfo.location != null){
+            if (referenceInfo.location != null) {
                 Reference reference = buildReferenceLocation(referenceInfo.location);
                 bindings.put(normalize(referenceInfo.referenceName), reference);
                 continue;
@@ -388,7 +382,7 @@ public class JndiEncBuilder {
                 try {
                     serviceClass = classLoader.loadClass(referenceInfo.serviceType).asSubclass(Service.class);
                 } catch (Exception e) {
-                    throw new OpenEJBException("Could not load service type class "+ referenceInfo.serviceType, e);
+                    throw new OpenEJBException("Could not load service type class " + referenceInfo.serviceType, e);
                 }
             }
 
@@ -461,20 +455,20 @@ public class JndiEncBuilder {
         }
 
         OpenEjbConfiguration config = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
-        
-        if(config !=null){
-            
-        for (ResourceInfo resource : config.facilities.resources) {
-            String jndiName = resource.jndiName;
-            if (jndiName != null && !jndiName.isEmpty()) {
-                String refName = "openejb/Resource/" + resource.id;
-                Object reference = new IntraVmJndiReference(refName);
-                String boundName = normalize(jndiName);
-                bindings.put(boundName, reference);
+
+        if (config != null) {
+
+            for (ResourceInfo resource : config.facilities.resources) {
+                String jndiName = resource.jndiName;
+                if (jndiName != null && !jndiName.isEmpty()) {
+                    String refName = "openejb/Resource/" + resource.id;
+                    Object reference = new IntraVmJndiReference(refName);
+                    String boundName = normalize(jndiName);
+                    bindings.put(boundName, reference);
+                }
             }
+
         }
-        
-       }
         return bindings;
     }
 
@@ -537,7 +531,7 @@ public class JndiEncBuilder {
     }
 
     private Reference buildReferenceLocation(ReferenceLocationInfo location) {
-        if (location.jndiProviderId != null){
+        if (location.jndiProviderId != null) {
             String subContextName = "openejb/remote_jndi_contexts/" + location.jndiProviderId;
             return new JndiReference(subContextName, location.jndiName);
         } else {
@@ -603,7 +597,7 @@ public class JndiEncBuilder {
         }
 
         public EjbResolver.Type getRefType() {
-            if (info instanceof EjbLocalReferenceInfo){
+            if (info instanceof EjbLocalReferenceInfo) {
                 return EjbResolver.Type.LOCAL;
             } else if (info.homeClassName != null) {
                 return EjbResolver.Type.REMOTE;
