@@ -27,9 +27,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -97,13 +95,56 @@ public class EnvEntry implements JndiReference {
     }
 
     public EnvEntry(String envEntryName, String envEntryType, String envEntryValue) {
-        this.envEntryName = envEntryName;
-        this.envEntryType = envEntryType;
-        this.envEntryValue = envEntryValue;
+        this.setEnvEntryName(envEntryName);
+        this.setEnvEntryType(envEntryType);
+        this.setEnvEntryValue(envEntryValue);
     }
 
     public EnvEntry(String envEntryName, Class<?> envEntryType, String envEntryValue) {
         this(envEntryName, envEntryType.getName(), envEntryValue);
+    }
+
+    public EnvEntry name(String envEntryName) {
+        this.setEnvEntryName(envEntryName);
+        return this;
+    }
+
+    public EnvEntry type(String envEntryType) {
+        this.setEnvEntryType(envEntryType);
+        return this;
+    }
+
+    public EnvEntry type(Class<?> envEntryType) {
+        return type(envEntryType.getName());
+    }
+
+    public EnvEntry value(String envEntryValue) {
+        this.setEnvEntryValue(envEntryValue);
+        return this;
+    }
+
+    public EnvEntry mappedName(String mappedName) {
+        this.setMappedName(mappedName);
+        return this;
+    }
+
+    public EnvEntry lookup(String lookupName) {
+        this.setLookupName(lookupName);
+        return this;
+    }
+
+    public EnvEntry injectionTarget(String className, String property) {
+        getInjectionTarget().add(new InjectionTarget(className, property));
+
+        if (this.getEnvEntryName() == null) {
+            this.setEnvEntryName("java:comp/env/" + className + "/" + property);
+        }
+
+        return this;
+    }
+
+    public EnvEntry injectionTarget(Class<?> clazz, String property) {
+        return injectionTarget(clazz.getName(), property);
     }
 
     @XmlTransient
@@ -204,11 +245,11 @@ public class EnvEntry implements JndiReference {
     @Override
     public String toString() {
         return "EnvEntry{" +
-                "name='" + envEntryName + '\'' +
-                ", type='" + envEntryType + '\'' +
-                ", value='" + envEntryValue + '\'' +
-                ", mappedName='" + mappedName + '\'' +
-                ", lookupName='" + lookupName + '\'' +
+                "name='" + getEnvEntryName() + '\'' +
+                ", type='" + getEnvEntryType() + '\'' +
+                ", value='" + getEnvEntryValue() + '\'' +
+                ", mappedName='" + getMappedName() + '\'' +
+                ", lookupName='" + getLookupName() + '\'' +
                 '}';
     }
 }

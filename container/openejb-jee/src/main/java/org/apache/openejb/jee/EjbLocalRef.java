@@ -116,6 +116,63 @@ public class EjbLocalRef implements EjbReference {
         this.localHome = ref.getHome();
     }
 
+    public EjbLocalRef name(String ejbRefName) {
+        this.ejbRefName = ejbRefName;
+        return this;
+    }
+
+    public EjbLocalRef type(EjbRefType ejbRefType) {
+        this.ejbRefType = ejbRefType;
+        return this;
+    }
+
+    public EjbLocalRef link(String link) {
+        this.ejbLink = link;
+        return this;
+    }
+
+    public EjbLocalRef local(String local) {
+        this.local = local;
+        return this;
+    }
+
+    public EjbLocalRef local(Class<?> local) {
+        return local(local.getName());
+    }
+
+    public EjbLocalRef localHome(String localHome) {
+        this.localHome = localHome;
+        return this;
+    }
+
+    public EjbLocalRef localHome(Class<?> localHome) {
+        return localHome(localHome.getName());
+    }
+
+    public EjbLocalRef mappedName(String mappedName) {
+        this.mappedName = mappedName;
+        return this;
+    }
+
+    public EjbLocalRef lookup(String lookupName) {
+        this.lookupName = lookupName;
+        return this;
+    }
+
+    public EjbLocalRef injectionTarget(String className, String property) {
+        getInjectionTarget().add(new InjectionTarget(className, property));
+
+        if (this.ejbRefName == null) {
+            this.ejbRefName = "java:comp/env/" + className + "/" + property;
+        }
+
+        return this;
+    }
+
+    public EjbLocalRef injectionTarget(Class<?> clazz, String property) {
+        return injectionTarget(clazz.getName(), property);
+    }
+
     public String getName() {
         return getEjbRefName();
     }

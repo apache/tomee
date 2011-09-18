@@ -111,6 +111,51 @@ public class PersistenceContextRef implements JndiReference, PersistenceRef {
         this.persistenceProperty = persistenceProperty;
     }
 
+    public PersistenceContextRef name(String persistenceContextRefName) {
+        this.persistenceContextRefName = persistenceContextRefName;
+        return this;
+    }
+
+    public PersistenceContextRef unit(String persistenceUnit) {
+        this.persistenceUnitName = persistenceUnit;
+        return this;
+    }
+
+    public PersistenceContextRef type(PersistenceContextType persistenceContextType) {
+        this.persistenceContextType = persistenceContextType;
+        return this;
+    }
+
+    public PersistenceContextRef mappedName(String mappedName) {
+        this.mappedName = mappedName;
+        return this;
+    }
+
+    public PersistenceContextRef lookup(String lookupName) {
+        this.lookupName = lookupName;
+        return this;
+    }
+
+    public PersistenceContextRef injectionTarget(String className, String property) {
+        getInjectionTarget().add(new InjectionTarget(className, property));
+
+        // TODO move this to getKey()
+        if (this.persistenceContextRefName == null) {
+            this.persistenceContextRefName = "java:comp/env/" + className + "/" + property;
+        }
+
+        return this;
+    }
+
+    public PersistenceContextRef injectionTarget(Class<?> clazz, String property) {
+        return injectionTarget(clazz.getName(), property);
+    }
+    
+    public PersistenceContextRef property(String name, String value) {
+        getPersistenceProperty().add(new Property(name, value));
+        return this;
+    }
+
     public String getName() {
         return getPersistenceContextRefName();
     }

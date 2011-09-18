@@ -105,6 +105,50 @@ public class MessageDestinationRef implements JndiReference {
         return "java:comp/env/" + name;
     }
 
+    public MessageDestinationRef name(String messageDestinationRefName) {
+        this.messageDestinationRefName = messageDestinationRefName;
+        return this;
+    }
+
+    public MessageDestinationRef type(String messageDestinationType) {
+        this.messageDestinationType = messageDestinationType;
+        return this;
+    }
+
+    public MessageDestinationRef type(Class<?> messageDestinationType) {
+        return type(messageDestinationType.getName());
+    }
+
+    public MessageDestinationRef link(String messageDestinationLink) {
+        this.messageDestinationLink = messageDestinationLink;
+        return this;
+    }
+
+    public MessageDestinationRef mappedName(String mappedName) {
+        this.mappedName = mappedName;
+        return this;
+    }
+
+    public MessageDestinationRef lookup(String lookupName) {
+        this.lookupName = lookupName;
+        return this;
+    }
+
+    public MessageDestinationRef injectionTarget(String className, String property) {
+        getInjectionTarget().add(new InjectionTarget(className, property));
+
+        // TODO move this to getKey()
+        if (this.messageDestinationRefName == null) {
+            this.messageDestinationRefName = "java:comp/env/" + className + "/" + property;
+        }
+
+        return this;
+    }
+
+    public MessageDestinationRef injectionTarget(Class<?> clazz, String property) {
+        return injectionTarget(clazz.getName(), property);
+    }
+
     @XmlTransient
     public String getType() {
         return getMessageDestinationType();

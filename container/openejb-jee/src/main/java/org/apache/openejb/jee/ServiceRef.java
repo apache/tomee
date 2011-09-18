@@ -125,6 +125,60 @@ public class ServiceRef implements JndiReference {
     @XmlID
     protected String id;
 
+    public ServiceRef name(String serviceRefName) {
+        this.serviceRefName = serviceRefName;
+        return this;
+    }
+
+    public ServiceRef type(String serviceRefType) {
+        this.serviceRefType = serviceRefType;
+        return this;
+    }
+
+    public ServiceRef type(Class<?> serviceRefType) {
+        return type(serviceRefType.getName());
+    }
+
+    public ServiceRef wsdl(String wsdlFile) {
+        this.wsdlFile = wsdlFile;
+        return this;
+    }
+
+    public ServiceRef qname(QName serviceQname) {
+        this.serviceQname = serviceQname;
+        return this;
+    }
+
+    public ServiceRef jaxrpcMappingFile(String jaxrpcMappingFile) {
+        this.jaxrpcMappingFile = jaxrpcMappingFile;
+        return this;
+    }
+
+    public ServiceRef mappedName(String mappedName) {
+        this.mappedName = mappedName;
+        return this;
+    }
+
+    public ServiceRef lookup(String lookupName) {
+        this.lookupName = lookupName;
+        return this;
+    }
+
+    public ServiceRef injectionTarget(String className, String property) {
+        getInjectionTarget().add(new InjectionTarget(className, property));
+
+        // TODO move this to getKey()
+        if (this.serviceRefName == null) {
+            this.serviceRefName = "java:comp/env/" + className + "/" + property;
+        }
+
+        return this;
+    }
+
+    public ServiceRef injectionTarget(Class<?> clazz, String property) {
+        return injectionTarget(clazz.getName(), property);
+    }
+
     public String getName() {
         return getServiceRefName();
     }
