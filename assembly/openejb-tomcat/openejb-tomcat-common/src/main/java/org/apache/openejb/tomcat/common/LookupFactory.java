@@ -17,7 +17,9 @@
 package org.apache.openejb.tomcat.common;
 
 import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.naming.Name;
+import javax.naming.NameNotFoundException;
 import javax.naming.Reference;
 import javax.naming.spi.ObjectFactory;
 import java.util.Hashtable;
@@ -26,6 +28,7 @@ import static org.apache.openejb.tomcat.common.NamingUtil.JNDI_NAME;
 import static org.apache.openejb.tomcat.common.NamingUtil.getProperty;
 
 /**
+ * TODO Add infinite lookup loop protection
  * @version $Rev$ $Date$
  */
 public class LookupFactory implements ObjectFactory {
@@ -39,9 +42,11 @@ public class LookupFactory implements ObjectFactory {
 
         if (jndiName == null) return null;
 
-        jndiName = jndiName.replaceFirst("^java:","");
-
-        return context.lookup(jndiName);
+        try {
+            return context.lookup(jndiName.replaceFirst("^java:", ""));
+        } catch (NameNotFoundException e) {
+            return new InitialContext().lookup(jndiName);
+        }
     }
 
 }
