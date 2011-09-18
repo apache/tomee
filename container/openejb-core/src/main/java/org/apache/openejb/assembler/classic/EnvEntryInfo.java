@@ -21,5 +21,4 @@ public class EnvEntryInfo extends InjectableInfo {
     public String type;
     public String value;
 
-    public ReferenceLocationInfo location;
 }

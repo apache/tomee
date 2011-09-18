@@ -187,6 +187,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
 
         chain.add(new ConvertDataSourceDefinitions());
+        chain.add(new CleanEnvEntries());
 
         if (offline) {
             AutoConfig autoConfig = new AutoConfig(this);
@@ -202,7 +203,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         chain.add(new ActivationConfigPropertyOverride());
         chain.add(new OutputGeneratedDescriptors());
 
-        chain.add(new MergeWebappJndiContext());
+//        chain.add(new MergeWebappJndiContext());
         this.deployer = chain;
     }
 

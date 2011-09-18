@@ -25,4 +25,6 @@ import java.util.ArrayList;
 public class InjectableInfo extends InfoObject {
     public final List<InjectionInfo> targets = new ArrayList<InjectionInfo>();
     public String referenceName;
+
+    public ReferenceLocationInfo location;
 }
