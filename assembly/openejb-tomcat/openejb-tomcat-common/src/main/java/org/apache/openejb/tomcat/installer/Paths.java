@@ -231,6 +231,10 @@ public class Paths {
         return findOpenEJBJar("openejb-core");
     }
 
+    public File geOpenEJBTomcatCommonJar() {
+        return findOpenEJBJar("openejb-tomcat-common");
+    }
+
     private File findOpenEJBJar(String namePrefix) {
         File openEJBLibDir = getOpenEJBLibDir();
         if (openEJBLibDir == null) return null;
