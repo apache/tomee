@@ -858,7 +858,10 @@ public class AutoConfig implements DynamicDeployer {
 
             Properties properties = datasource.getProperties();
             if (properties.get("JdbcUrl") == null) {
-                properties.put("JdbcUrl", getVendorUrl(properties));
+                final String url = getVendorUrl(properties);
+                if (url != null) {
+                    properties.put("JdbcUrl", url);
+                }
             }
 
             // this property is not supported by dbcp
@@ -901,7 +904,7 @@ public class AutoConfig implements DynamicDeployer {
 
         final String driver = properties.getProperty("JdbcDriver");
         final String serverName = properties.getProperty("ServerName");
-        final int port = (Integer) properties.get("PortNumber");
+        final int port = getInt(properties.get("PortNumber"));
         final boolean remote = port != -1;
         final String databaseName = properties.getProperty("DatabaseName");
 
@@ -934,6 +937,18 @@ public class AutoConfig implements DynamicDeployer {
         }
 
         return null;
+    }
+
+    private static int getInt(Object number) {
+        try {
+            return (Integer) number;
+        } catch (Exception e) {
+            try {
+                return Integer.parseInt(number+"");
+            } catch (NumberFormatException e1) {
+                return -1;
+            }
+        }
     }
 
     private void set(Properties properties, String key, String value) {
@@ -993,6 +1008,14 @@ public class AutoConfig implements DynamicDeployer {
         // skip references such as URLs which are automatically handled by the server
         if (ignoredReferenceTypes.contains(refType)) {
             return;
+        }
+
+        try {
+            final Class<?> clazz = classLoader.loadClass(refType);
+            if (clazz.isAnnotationPresent(ManagedBean.class)) {
+                return;
+            }
+        } catch (Throwable t) {
         }
 
         ResourceLink link = ejbDeployment.getResourceLink(refName);
