@@ -84,6 +84,7 @@ public class Container {
         System.out.println("Starting TomEE from: " + catalinaDirectory.getAbsolutePath());
 
         String catalinaBase = catalinaDirectory.getAbsolutePath();
+        System.setProperty("openejb.logging.embedded", "true");
         System.setProperty("openejb.deployments.classpath", "false");
         System.setProperty("catalina.home", catalinaBase);
         System.setProperty("catalina.base", catalinaBase);
