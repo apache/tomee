@@ -378,7 +378,10 @@ public class Installer {
      * from openejb core jar file and installs them under the conf directory
      * of tomcat. if there is already a conf/logging.properties file available
      * then this method appends the contents of openejb logging.properties file
-     * to the exisiting properties file. 
+     * to the exisiting properties file.
+     *
+     * Replace web.xml to set jasper in production mode instead of dev mode.
+     *
      * NOTE:- If the existing conf/logging.properties file already has some openejb specific
      * configuration, then this method will just leave the logging.properties file alone
      */
@@ -445,6 +448,27 @@ public class Installer {
                     alerts.addInfo("Append OpenEJB config to logging.properties");
                 }
             }
+        }
+
+        //
+        // conf/web.xml
+        //
+
+        JarFile openejbTomcatCommonJar;
+        try {
+            openejbTomcatCommonJar = new JarFile(paths.geOpenEJBTomcatCommonJar());
+        } catch (IOException e) {
+            return;
+        }
+        File webXmlFile = new File(confDir, "web.xml");
+        if (webXmlFile.exists()) {
+            if (!webXmlFile.delete()) {
+                alerts.addError("can't replace web.xml");
+            }
+        }
+        String webXml = Installers.readEntry(openejbTomcatCommonJar, "conf/web.xml", alerts);
+        if (Installers.writeAll(webXmlFile, webXml, alerts)) {
+            alerts.addInfo("Set jasper in production mode in TomEE web.xml");
         }
     }
 
