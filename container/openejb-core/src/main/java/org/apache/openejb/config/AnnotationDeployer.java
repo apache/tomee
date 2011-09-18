@@ -3673,10 +3673,6 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
-            if (reference.getType() == null && member != null) {
-                reference.setType(member.getType().getName());
-            }
-
             /*
              * Fill in the injection information <injection-target>
              */
