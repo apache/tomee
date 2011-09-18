@@ -170,6 +170,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.enterprise.inject.Specializes;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Extension;
 import javax.interceptor.ExcludeClassInterceptors;
 import javax.interceptor.ExcludeDefaultInterceptors;
@@ -243,6 +244,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             "javax.jms.Topic",
             "javax.xml.ws.WebServiceContext",
             "javax.ejb.TimerService",
+            "javax.enterprise.inject.spi.BeanManager",
             "javax.validation.Validator",
             "javax.validation.ValidatorFactory"
     ));
@@ -264,12 +266,16 @@ public class AnnotationDeployer implements DynamicDeployer {
     private final ProcessAnnotatedBeans processAnnotatedBeans;
     private final EnvEntriesPropertiesDeployer envEntriesPropertiesDeployer;
     private final MBeanDeployer mBeanDeployer;
+    private final BuiltInEnvironmentEntries builtInEnvironmentEntries;
+    private final MergeWebappJndiContext mergeWebappJndiContext;
 
     public AnnotationDeployer() {
         discoverAnnotatedBeans = new DiscoverAnnotatedBeans();
         processAnnotatedBeans = new ProcessAnnotatedBeans();
+        builtInEnvironmentEntries = new BuiltInEnvironmentEntries();
         envEntriesPropertiesDeployer = new EnvEntriesPropertiesDeployer();
         mBeanDeployer = new MBeanDeployer();
+        mergeWebappJndiContext = new MergeWebappJndiContext();
     }
 
     public AppModule deploy(AppModule appModule) throws OpenEJBException {
@@ -277,7 +283,10 @@ public class AnnotationDeployer implements DynamicDeployer {
         try {
             appModule = discoverAnnotatedBeans.deploy(appModule);
             appModule = envEntriesPropertiesDeployer.deploy(appModule);
+            appModule = mergeWebappJndiContext.deploy(appModule);
+            appModule = builtInEnvironmentEntries.deploy(appModule);
             appModule = processAnnotatedBeans.deploy(appModule);
+            appModule = mergeWebappJndiContext.deploy(appModule);
             appModule = mBeanDeployer.deploy(appModule);
             return appModule;
         } finally {
@@ -3613,10 +3622,17 @@ public class AnnotationDeployer implements DynamicDeployer {
                         consumer.getEnvEntry().add(envEntry);
                         reference = envEntry;
                     } else {
-                        EnvEntry envEntry = new EnvEntry();
-                        envEntry.setName(refName);
-                        consumer.getEnvEntry().add(envEntry);
-                        reference = envEntry;
+
+                        final String shortName = normalize(member.getName());
+                        reference = consumer.getEnvEntryMap().get(shortName);
+
+                        if (reference == null) {
+                            EnvEntry envEntry = new EnvEntry();
+                            envEntry.setName(refName);
+                            consumer.getEnvEntry().add(envEntry);
+                            reference = envEntry;
+                        }
+
 //                        /*
 //                         * Can't add env-entry since @Resource.lookup is not set and it is NOT in a shareable JNDI name space
 //                         */
@@ -3655,6 +3671,10 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                     reference = resourceRef;
                 }
+            }
+
+            if (reference.getType() == null && member != null) {
+                reference.setType(member.getType().getName());
             }
 
             /*

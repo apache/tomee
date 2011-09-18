@@ -23,5 +23,4 @@ public class ResourceReferenceInfo extends InjectableInfo {
     public String resourceID;
     public java.util.Properties properties;
 
-    public ReferenceLocationInfo location;
 }

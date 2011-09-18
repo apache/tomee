@@ -20,6 +20,7 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.EnvEntry;
+import org.apache.openejb.jee.InjectionTarget;
 import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.jee.JndiReference;
 import org.apache.openejb.jee.ResourceEnvRef;
@@ -27,10 +28,17 @@ import org.apache.openejb.jee.ResourceEnvRef;
 import javax.ejb.EJBContext;
 import javax.ejb.MessageDrivenContext;
 import javax.ejb.SessionContext;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.Map;
 
 /**
+ * In a webapp all ejbs will share the JNDI namespace of the servlets
+ * This means no private namespace for each EJB.
+ *
+ * To make this happen we merge the JNDI entries of each ejb into
+ *
  * @version $Rev$ $Date$
  */
 public class MergeWebappJndiContext implements DynamicDeployer {
@@ -128,6 +136,10 @@ public class MergeWebappJndiContext implements DynamicDeployer {
                 if (eb.getEnvEntryValue() == null) {
                     eb.setEnvEntryValue(ea.getEnvEntryValue());
                 }
+
+                if (eb.getEnvEntryType() == null) {
+                    eb.setEnvEntryType(ea.getEnvEntryType());
+                }
             }
         }
     }
@@ -151,8 +163,4 @@ public class MergeWebappJndiContext implements DynamicDeployer {
         }
         return invalid;
     }
-
-    private void yank(ResourceEnvRef ref, Class<EJBContext> ejbContextClass, Class<SessionContext> sessionContextClass, Class<MessageDrivenContext> messageDrivenContextClass) {
-    }
-
 }

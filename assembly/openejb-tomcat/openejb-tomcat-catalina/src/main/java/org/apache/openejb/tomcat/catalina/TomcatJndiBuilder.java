@@ -36,6 +36,7 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.EjbLocalReferenceInfo;
 import org.apache.openejb.assembler.classic.EjbReferenceInfo;
 import org.apache.openejb.assembler.classic.EnvEntryInfo;
+import org.apache.openejb.assembler.classic.InjectableInfo;
 import org.apache.openejb.assembler.classic.PersistenceContextReferenceInfo;
 import org.apache.openejb.assembler.classic.PersistenceUnitReferenceInfo;
 import org.apache.openejb.assembler.classic.PortRefInfo;
@@ -51,6 +52,8 @@ import org.apache.openejb.persistence.JtaEntityManager;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.tomcat.common.EjbFactory;
+import org.apache.openejb.tomcat.common.EnumFactory;
+import org.apache.openejb.tomcat.common.LookupFactory;
 import org.apache.openejb.tomcat.common.NamingUtil;
 import org.apache.openejb.tomcat.common.PersistenceContextFactory;
 import org.apache.openejb.tomcat.common.PersistenceUnitFactory;
@@ -86,6 +89,7 @@ import static org.apache.openejb.tomcat.common.NamingUtil.LOCALBEAN;
 import static org.apache.openejb.tomcat.common.NamingUtil.NAME;
 import static org.apache.openejb.tomcat.common.NamingUtil.RESOURCE_ID;
 import static org.apache.openejb.tomcat.common.NamingUtil.UNIT;
+import static org.apache.openejb.tomcat.common.EnumFactory.ENUM_VALUE;
 import static org.apache.openejb.tomcat.common.NamingUtil.WSDL_URL;
 import static org.apache.openejb.tomcat.common.NamingUtil.WS_CLASS;
 import static org.apache.openejb.tomcat.common.NamingUtil.WS_ID;
@@ -157,11 +161,10 @@ public class TomcatJndiBuilder {
         for (ServiceReferenceInfo ref : webAppInfo.jndiEnc.serviceRefs) {
             mergeRef(naming, ref);
         }
+
         ContextTransaction contextTransaction = new ContextTransaction();
         contextTransaction.setProperty(Constants.FACTORY, UserTransactionFactory.class.getName());
         naming.setTransaction(contextTransaction);
-
-
     }
 
     public static void mergeJava(StandardContext standardContext) {
@@ -279,6 +282,40 @@ public class TomcatJndiBuilder {
     }
 
     public void mergeRef(NamingResources naming, EnvEntryInfo ref) {
+
+        if ("java.lang.Class".equals(ref.type)) {
+            ContextResourceEnvRef resourceEnv = new ContextResourceEnvRef();
+            resourceEnv.setName(ref.referenceName.replaceAll("^comp/env/", ""));
+            resourceEnv.setProperty(Constants.FACTORY, ResourceFactory.class.getName());
+            resourceEnv.setType(ref.type);
+            resourceEnv.setProperty(RESOURCE_ID, ref.value);
+            resourceEnv.setOverride(false);
+            naming.addResourceEnvRef(resourceEnv);
+
+            return;
+        }
+
+
+        try {
+            final ClassLoader loader = this.standardContext.getLoader().getClassLoader();
+            final Class<?> type = loader.loadClass(ref.type);
+            if (Enum.class.isAssignableFrom(type)) {
+
+                final ContextResourceEnvRef enumRef = new ContextResourceEnvRef();
+                enumRef.setName(ref.referenceName.replaceAll("^comp/env/", ""));
+                enumRef.setProperty(Constants.FACTORY, EnumFactory.class.getName());
+                enumRef.setProperty(ENUM_VALUE, ref.value);
+                enumRef.setType(ref.type);
+                enumRef.setOverride(false);
+                naming.addResourceEnvRef(enumRef);
+
+                return;
+            }
+        } catch (Throwable e) {
+        }
+
+        if (isLookupRef(naming, ref)) return;
+
         ContextEnvironment environment = naming.findEnvironment(ref.referenceName.replaceAll("^comp/env/", ""));
         boolean addEntry = false;
         if (environment == null) {
@@ -289,6 +326,7 @@ public class TomcatJndiBuilder {
 
         environment.setType(ref.type);
         environment.setValue(ref.value);
+        environment.setOverride(false);
 
         if (addEntry) {
             naming.addEnvironment(environment);
@@ -302,7 +340,27 @@ public class TomcatJndiBuilder {
         }
     }
 
+    private boolean isLookupRef(NamingResources naming, InjectableInfo ref) {
+        if (ref.location == null) return false;
+        if (ref.location.jndiName == null) return false;
+        if (!ref.location.jndiName.startsWith("java:")) return false;
+
+        final ContextResourceEnvRef lookup = new ContextResourceEnvRef();
+
+        lookup.setName(ref.referenceName.replaceAll("^comp/env/", ""));
+        lookup.setProperty(Constants.FACTORY, LookupFactory.class.getName());
+        lookup.setProperty(JNDI_NAME, ref.location.jndiName);
+        lookup.setType(Object.class.getName());
+        lookup.setOverride(false);
+
+        naming.addResourceEnvRef(lookup);
+
+        return true;
+    }
+
     public void mergeRef(NamingResources naming, EjbReferenceInfo ref) {
+        if (isLookupRef(naming, ref)) return;
+
         ContextEjb ejb = naming.findEjb(ref.referenceName.replaceAll("^comp/env/", ""));
         boolean addEntry = false;
         if (ejb == null) {
@@ -343,6 +401,8 @@ public class TomcatJndiBuilder {
     }
 
     public void mergeRef(NamingResources naming, EjbLocalReferenceInfo ref) {
+        if (isLookupRef(naming, ref)) return;
+
         // NamingContextListener.addLocalEjb is empty so we'll just use an ejb ref
         ContextEjb ejb = naming.findEjb(ref.referenceName.replaceAll("^comp/env/", ""));
         boolean addEntry = false;
@@ -383,6 +443,8 @@ public class TomcatJndiBuilder {
 
     @SuppressWarnings({"UnusedDeclaration"})
     public void mergeRef(NamingResources naming, PersistenceContextReferenceInfo ref, URI moduleUri) {
+        if (isLookupRef(naming, ref)) return;
+
         ContextResource resource = naming.findResource(ref.referenceName.replaceAll("^comp/env/", ""));
         boolean addEntry = false;
         if (resource == null) {
@@ -435,6 +497,8 @@ public class TomcatJndiBuilder {
 
     @SuppressWarnings({"UnusedDeclaration"})
     public void mergeRef(NamingResources naming, PersistenceUnitReferenceInfo ref, URI moduleUri) {
+        if (isLookupRef(naming, ref)) return;
+
         ContextResource resource = naming.findResource(ref.referenceName.replaceAll("^comp/env/", ""));
         boolean addEntry = false;
         if (resource == null) {
@@ -479,6 +543,8 @@ public class TomcatJndiBuilder {
     }
 
     public void mergeRef(NamingResources naming, ResourceReferenceInfo ref) {
+        if (isLookupRef(naming, ref)) return;
+
         ContextResource resource = naming.findResource(ref.referenceName.replaceAll("^comp/env/", ""));
         boolean addEntry = false;
         if (resource == null) {
@@ -518,6 +584,8 @@ public class TomcatJndiBuilder {
     }
 
     public void mergeRef(NamingResources naming, ResourceEnvReferenceInfo ref) {
+        if (isLookupRef(naming, ref)) return;
+
         ContextResourceEnvRef resourceEnv = naming.findResourceEnvRef(ref.referenceName.replaceAll("^comp/env/", ""));
         boolean addEntry = false;
         if (resourceEnv == null) {
@@ -557,6 +625,8 @@ public class TomcatJndiBuilder {
     }
 
     public void mergeRef(NamingResources naming, ServiceReferenceInfo ref) {
+        if (isLookupRef(naming, ref)) return;
+
         ContextResource resource = naming.findResource(ref.referenceName.replaceAll("^comp/env/", ""));
         boolean addEntry = false;
         if (resource == null) {

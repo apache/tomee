@@ -38,5 +38,4 @@ public class ServiceReferenceInfo extends InjectableInfo {
     public final List<HandlerChainInfo> handlerChains = new ArrayList<HandlerChainInfo>();
     public final List<PortRefInfo> portRefs =new ArrayList<PortRefInfo>();
     
-    public ReferenceLocationInfo location;
 }

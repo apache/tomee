@@ -51,6 +51,7 @@ import javax.annotation.ManagedBean;
 import javax.ejb.EJBContext;
 import javax.ejb.TimerService;
 import javax.ejb.spi.HandleDelegate;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.naming.Context;
 import javax.naming.LinkRef;
 import javax.naming.Name;
@@ -302,12 +303,15 @@ public class JndiEncBuilder {
                 continue;
             }
 
-            Class<?> type = getType(referenceInfo.resourceEnvRefType, referenceInfo);
+            final Class<?> type = getType(referenceInfo.resourceEnvRefType, referenceInfo);
+            final Object reference;
 
-            Object reference;
             if (EJBContext.class.isAssignableFrom(type)) {
                 String jndiName = "comp/EJBContext";
                 reference = new LinkRef(jndiName);
+
+                // Let the container bind this into JNDI
+                if (jndiName.equals(referenceInfo.referenceName)) continue;
             } else if (Validator.class.equals(type)) {
                 String jndiName = "comp/Validator";
                 reference = new LinkRef(jndiName);
@@ -320,6 +324,12 @@ public class JndiEncBuilder {
             } else if (TimerService.class.equals(type)) {
                 String jndiName = "comp/TimerService";
                 reference = new LinkRef(jndiName);
+
+                // TODO Bind the BeanManager
+            } else if (BeanManager.class.equals(type)) {
+                String jndiName = "app/BeanManager";
+                reference = new LinkRef(jndiName);
+
             } else if (UserTransaction.class.equals(type)) {
                 reference = new IntraVmJndiReference("comp/UserTransaction");
             } else if (referenceInfo.resourceID != null) {
@@ -491,9 +501,9 @@ public class JndiEncBuilder {
     }
 
     private void addSpecialModuleBindings(Map<String, Object> bindings) {
-        if (moduleId != null) {
-            bindings.put("module/ModuleName", moduleId);
-        }
+//        if (moduleId != null) {
+//            bindings.put("module/ModuleName", moduleId);
+//        }
         // ensure the bindings will be non-empty
         if (bindings.isEmpty()) {
             bindings.put("module/dummy", "dummy");
@@ -501,9 +511,9 @@ public class JndiEncBuilder {
     }
 
     private void addSpecialAppBindings(Map<String, Object> bindings) {
-        if (moduleId != null) {
-            bindings.put("app/AppName", moduleId);
-        }
+//        if (moduleId != null) {
+//            bindings.put("app/AppName", moduleId);
+//        }
         // ensure the bindings will be non-empty
         if (bindings.isEmpty()) {
             bindings.put("app/dummy", "dummy");

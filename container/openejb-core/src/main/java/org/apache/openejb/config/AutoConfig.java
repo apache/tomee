@@ -16,7 +16,12 @@
  */
 package org.apache.openejb.config;
 
+import javax.ejb.TimerService;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.sql.DataSource;
+import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
+import javax.transaction.UserTransaction;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Request;
@@ -102,11 +107,15 @@ public class AutoConfig implements DynamicDeployer {
         // URLs are automatically handled
         ignoredReferenceTypes.add("java.net.URL");
         // User transaction is automatically handled
-        ignoredReferenceTypes.add("javax.transaction.UserTransaction");
-        ignoredReferenceTypes.add("javax.ejb.TimerService");
+        ignoredReferenceTypes.add(UserTransaction.class.getName());
+        ignoredReferenceTypes.add(TransactionManager.class.getName());
+        ignoredReferenceTypes.add(TransactionSynchronizationRegistry.class.getName());
+        ignoredReferenceTypes.add(TimerService.class.getName());
         // Bean Validation is automatically handled
         ignoredReferenceTypes.add(Validator.class.getName());
         ignoredReferenceTypes.add(ValidatorFactory.class.getName());
+        // CDI BeanManager is handled
+        ignoredReferenceTypes.add(BeanManager.class.getName());
         // REST injections done via @Context and bound into a resource env...
         ignoredReferenceTypes.add(Request.class.getName());
         ignoredReferenceTypes.add(UriInfo.class.getName());

@@ -30,11 +30,22 @@ import java.util.Hashtable;
 
 public class ResourceFactory extends AbstractObjectFactory {
     public Object getObjectInstance(Object object, Name name, Context context, Hashtable environment) throws Exception {
-        Reference reference = ((Reference) object);
-        if (reference.getClassName().equals("java.net.URL")) {
-            String resourceId = getProperty(reference, RESOURCE_ID);
+
+        final Reference reference = ((Reference) object);
+
+        final String type = reference.getClassName();
+
+        if ("java.net.URL".equals(type)) {
+            final String resourceId = getProperty(reference, RESOURCE_ID);
             return new URL(resourceId);
         }
+
+        if ("java.lang.Class".equals(type)) {
+            final ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            final String resourceId = getProperty(reference, RESOURCE_ID);
+            return loader.loadClass(resourceId);
+        }
+
         return super.getObjectInstance(object, name, context, environment);
     }
 

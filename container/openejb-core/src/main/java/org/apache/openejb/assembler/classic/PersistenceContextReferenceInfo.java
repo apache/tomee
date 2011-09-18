@@ -27,5 +27,4 @@ public class PersistenceContextReferenceInfo extends InjectableInfo {
     public boolean extended;
     public final Properties properties = new Properties();
 
-    public ReferenceLocationInfo location;
 }

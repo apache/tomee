@@ -15,7 +15,9 @@ public class OpenEJBNamingResource extends NamingResources {
 
     @Override
     public void addEnvironment(ContextEnvironment environment) {
-        normalize(environment);
+        if (environment.getType() == null) {
+            normalize(environment);
+        }
         super.addEnvironment(environment);
     }
 

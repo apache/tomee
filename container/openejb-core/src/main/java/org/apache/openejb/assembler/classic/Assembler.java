@@ -722,6 +722,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             ensureWebBeansContext(appContext);
 
+            appJndiContext.bind("app/BeanManager", appContext.getBeanManager());
+
             // now that everything is configured, deploy to the container
             if (start) {
                 // deploy
