@@ -1,12 +1,10 @@
 package org.apache.openejb.tomcat.catalina;
 
-import org.apache.openejb.BeanContext;
-import org.apache.openejb.core.ThreadContext;
-
+import java.util.Collection;
+import java.util.TreeSet;
 import javax.naming.LinkRef;
 import javax.naming.NamingException;
-import java.util.ArrayList;
-import java.util.Collection;
+import org.apache.openejb.core.ThreadContext;
 
 /**
  * @author rmannibucau
@@ -14,7 +12,7 @@ import java.util.Collection;
 public class ContextValue extends LinkRef {
     public static final String MODULES_PREFIX = "openejb/modules/";
 
-    private final Collection<String> links = new ArrayList<String>();
+    private final Collection<String> links = new TreeSet<String>();
 
     public ContextValue(String linkName) {
         super(linkName);
@@ -25,7 +23,7 @@ public class ContextValue extends LinkRef {
             return "java:" + links.iterator().next();
         }
 
-        // else try to get BeanContextN to get linkname
+        // else try to get BeanContext to get linkname
         ThreadContext tc = ThreadContext.getThreadContext();
         if (tc != null && tc.getBeanContext() != null) {
             return "java:" + linkName(tc.getBeanContext().getModuleID(), super.getLinkName());
@@ -37,6 +35,10 @@ public class ContextValue extends LinkRef {
 
     public void addValue(String link) {
         links.add(link);
+    }
+
+    public boolean hasLink(String link) {
+        return links.contains(link);
     }
 
     public static String linkName(String moduleId, String name) {
