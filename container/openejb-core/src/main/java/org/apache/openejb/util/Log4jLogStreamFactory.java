@@ -63,9 +63,11 @@ public class Log4jLogStreamFactory implements LogStreamFactory {
         // OpenJPA should use Log4j also
         System.setProperty("openjpa.Log", "log4j");
 
+        final boolean embedded = System.getProperty("openejb.logging.embedded", "false").equalsIgnoreCase("true");
+
         File confDir = SystemInstance.get().getBase().getDirectory("conf");
         File loggingPropertiesFile = new File(confDir, LOGGING_PROPERTIES_FILE);
-        if (confDir.exists()) {
+        if (!embedded && confDir.exists()) {
             if (loggingPropertiesFile.exists()) {
                 // load logging.properties file
                 BufferedInputStream bis = new BufferedInputStream(new FileInputStream(loggingPropertiesFile));
