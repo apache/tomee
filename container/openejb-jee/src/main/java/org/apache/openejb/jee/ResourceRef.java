@@ -146,7 +146,7 @@ public class ResourceRef implements JndiReference {
         return this;
     }
 
-    public ResourceRef injectionTarget(Class clazz, String property) {
+    public ResourceRef injectionTarget(Class<?> clazz, String property) {
         return injectionTarget(clazz.getName(), property);
     }
 

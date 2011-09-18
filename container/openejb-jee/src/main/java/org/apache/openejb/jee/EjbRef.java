@@ -27,9 +27,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 
@@ -99,6 +97,64 @@ public class EjbRef implements EjbReference {
 
     @XmlTransient
     protected Type refType = Type.REMOTE;
+
+    
+    public EjbRef name(String ejbRefName) {
+        this.ejbRefName = ejbRefName;
+        return this;
+    }
+
+    public EjbRef type(EjbRefType ejbRefType) {
+        this.ejbRefType = ejbRefType;
+        return this;
+    }
+
+    public EjbRef link(String link) {
+        this.ejbLink = link;
+        return this;
+    }
+
+    public EjbRef remote(String remote) {
+        this.remote = remote;
+        return this;
+    }
+
+    public EjbRef remote(Class<?> remote) {
+        return remote(remote.getName());
+    }
+
+    public EjbRef home(String home) {
+        this.home = home;
+        return this;
+    }
+
+    public EjbRef home(Class<?> home) {
+        return home(home.getName());
+    }
+
+    public EjbRef mappedName(String mappedName) {
+        this.mappedName = mappedName;
+        return this;
+    }
+
+    public EjbRef lookup(String lookupName) {
+        this.lookupName = lookupName;
+        return this;
+    }
+
+    public EjbRef injectionTarget(String className, String property) {
+        getInjectionTarget().add(new InjectionTarget(className, property));
+
+        if (this.ejbRefName == null) {
+            this.ejbRefName = "java:comp/env/" + className + "/" + property;
+        }
+
+        return this;
+    }
+
+    public EjbRef injectionTarget(Class<?> clazz, String property) {
+        return injectionTarget(clazz.getName(), property);
+    }
 
     public Type getRefType() {
         return refType;

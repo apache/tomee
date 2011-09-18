@@ -98,6 +98,44 @@ public class ResourceEnvRef implements JndiReference {
         this(resourceEnvRefName, resourceEnvRefType.getName());
     }
 
+    public ResourceEnvRef name(String resourceEnvRefName) {
+        this.resourceEnvRefName = resourceEnvRefName;
+        return this;
+    }
+
+    public ResourceEnvRef type(String resourceEnvRefType) {
+        this.resourceEnvRefType = resourceEnvRefType;
+        return this;
+    }
+
+    public ResourceEnvRef type(Class<?> resourceEnvRefType) {
+        return type(resourceEnvRefType.getName());
+    }
+
+    public ResourceEnvRef mappedName(String mappedName) {
+        this.mappedName = mappedName;
+        return this;
+    }
+
+    public ResourceEnvRef lookup(String lookupName) {
+        this.lookupName = lookupName;
+        return this;
+    }
+
+    public ResourceEnvRef injectionTarget(String className, String property) {
+        getInjectionTarget().add(new InjectionTarget(className, property));
+
+        if (this.resourceEnvRefName == null) {
+            this.resourceEnvRefName = "java:comp/env/" + className + "/" + property;
+        }
+
+        return this;
+    }
+
+    public ResourceEnvRef injectionTarget(Class<?> clazz, String property) {
+        return injectionTarget(clazz.getName(), property);
+    }
+
     @XmlTransient
     public String getName() {
         return getResourceEnvRefName();

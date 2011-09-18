@@ -97,6 +97,40 @@ public class PersistenceUnitRef implements JndiReference, PersistenceRef {
         this.persistenceUnitName = persistenceUnitName;
     }
 
+    public PersistenceUnitRef name(String persistenceUnitRefName) {
+        this.persistenceUnitRefName = persistenceUnitRefName;
+        return this;
+    }
+
+    public PersistenceUnitRef unit(String persistenceUnit) {
+        this.persistenceUnitName = persistenceUnit;
+        return this;
+    }
+
+    public PersistenceUnitRef mappedName(String mappedName) {
+        this.mappedName = mappedName;
+        return this;
+    }
+
+    public PersistenceUnitRef lookup(String lookupName) {
+        this.lookupName = lookupName;
+        return this;
+    }
+
+    public PersistenceUnitRef injectionTarget(String className, String property) {
+        getInjectionTarget().add(new InjectionTarget(className, property));
+
+        if (this.persistenceUnitRefName == null) {
+            this.persistenceUnitRefName = "java:comp/env/" + className + "/" + property;
+        }
+
+        return this;
+    }
+
+    public PersistenceUnitRef injectionTarget(Class<?> clazz, String property) {
+        return injectionTarget(clazz.getName(), property);
+    }
+    
     public String getName() {
         return getPersistenceUnitRefName();
     }
