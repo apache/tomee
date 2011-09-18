@@ -24,10 +24,13 @@ import org.apache.openejb.jee.InjectionTarget;
 import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.jee.JndiReference;
 import org.apache.openejb.jee.ResourceEnvRef;
+import org.apache.openejb.jee.sun.ResourceRef;
 
 import javax.ejb.EJBContext;
+import javax.ejb.EntityContext;
 import javax.ejb.MessageDrivenContext;
 import javax.ejb.SessionContext;
+import javax.transaction.UserTransaction;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Iterator;
@@ -63,8 +66,6 @@ public class MergeWebappJndiContext implements DynamicDeployer {
     private void merge(EjbModule ejbModule, WebModule webModule) {
         final JndiConsumer webApp = webModule.getWebApp();
 
-        removePrivateReferences(webApp);
-
         final EjbJar ejbJar = ejbModule.getEjbJar();
 
         for (EnterpriseBean bean : ejbJar.getEnterpriseBeans()) {
@@ -98,7 +99,6 @@ public class MergeWebappJndiContext implements DynamicDeployer {
             }
         }
 
-        removePrivateReferences(webApp);
     }
 
     /**
@@ -115,6 +115,9 @@ public class MergeWebappJndiContext implements DynamicDeployer {
 
     private <R extends JndiReference> void copy(Map<String, R> from, Map<String, R> to) {
         for (R a : from.values()) {
+
+            if (isPrivateReference(a)) continue;
+
             final R b = to.get(a.getKey());
 
             // New entry
@@ -144,23 +147,19 @@ public class MergeWebappJndiContext implements DynamicDeployer {
         }
     }
 
-    private void removePrivateReferences(JndiConsumer webApp) {
-        Class[] types = {EJBContext.class, SessionContext.class, MessageDrivenContext.class};
-        final Iterator<ResourceEnvRef> refs = webApp.getResourceEnvRef().iterator();
-        while (refs.hasNext()) {
-            final ResourceEnvRef ref = refs.next();
-            if (isInvalid(types, ref)) refs.remove();
+    private <R extends JndiReference> boolean isPrivateReference(R a) {
+        if (!isResourceRef(a)) return false;
+
+        Class[] types = {EJBContext.class, EntityContext.class, SessionContext.class, MessageDrivenContext.class, UserTransaction.class};
+
+        for (Class type : types) {
+            if (type.getName().equals(a.getType())) return true;
         }
+
+        return false;
     }
 
-    private boolean isInvalid(Class[] types, ResourceEnvRef ref) {
-        boolean invalid = false;
-        for (Class type : types) {
-            if (type.getName().equals(ref.getType())) {
-                invalid= true;
-                break;
-            }
-        }
-        return invalid;
+    private <R extends JndiReference> boolean isResourceRef(R a) {
+        return a instanceof ResourceRef || a instanceof ResourceEnvRef;
     }
 }
