@@ -17,6 +17,23 @@
  */
 package org.apache.openejb.tomcat.catalina;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.naming.Binding;
+import javax.naming.Context;
+import javax.naming.NameAlreadyBoundException;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.transaction.UserTransaction;
 import org.apache.catalina.core.NamingContextListener;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.deploy.ContextEjb;
@@ -61,24 +78,7 @@ import org.apache.openejb.tomcat.common.ResourceFactory;
 import org.apache.openejb.tomcat.common.UserTransactionFactory;
 import org.apache.openejb.tomcat.common.WsFactory;
 
-import javax.naming.Binding;
-import javax.naming.Context;
-import javax.naming.NameAlreadyBoundException;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.transaction.UserTransaction;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import static org.apache.openejb.tomcat.common.EnumFactory.ENUM_VALUE;
 import static org.apache.openejb.tomcat.common.NamingUtil.DEPLOYMENT_ID;
 import static org.apache.openejb.tomcat.common.NamingUtil.EXTENDED;
 import static org.apache.openejb.tomcat.common.NamingUtil.EXTERNAL;
@@ -89,7 +89,6 @@ import static org.apache.openejb.tomcat.common.NamingUtil.LOCALBEAN;
 import static org.apache.openejb.tomcat.common.NamingUtil.NAME;
 import static org.apache.openejb.tomcat.common.NamingUtil.RESOURCE_ID;
 import static org.apache.openejb.tomcat.common.NamingUtil.UNIT;
-import static org.apache.openejb.tomcat.common.EnumFactory.ENUM_VALUE;
 import static org.apache.openejb.tomcat.common.NamingUtil.WSDL_URL;
 import static org.apache.openejb.tomcat.common.NamingUtil.WS_CLASS;
 import static org.apache.openejb.tomcat.common.NamingUtil.WS_ID;
@@ -98,8 +97,7 @@ import static org.apache.openejb.tomcat.common.NamingUtil.WS_QNAME;
 import static org.apache.openejb.tomcat.common.NamingUtil.setStaticValue;
 
 public class TomcatJndiBuilder {
-    private static final Collection<BeanContext> ALREADY_BOUND = new ArrayList<BeanContext>();
-    private static final Map<Context, Map<String, ContextValue>> CONTEXT_VALUES = new HashMap<Context, Map<String, ContextValue>>();
+    private static final Map<Context, Map<String, ContextValueHelper>> CONTEXT_VALUES = new HashMap<Context, Map<String, ContextValueHelper>>();
 
     private final StandardContext standardContext;
     private final WebAppInfo webAppInfo;
@@ -177,11 +175,15 @@ public class TomcatJndiBuilder {
             // no-op
         }
 
+        String path = standardContext.getEncodedPath();
+        if (path.startsWith("/")) {
+            path = path.substring(1);
+        }
+
         for (BeanContext bc : cs.deployments()) {
-            if (ALREADY_BOUND.contains(bc)) {
+            if (!(bc.getDeploymentID() instanceof String && ((String) bc.getDeploymentID()).startsWith(path))) {
                 continue;
             }
-            ALREADY_BOUND.add(bc);
 
             ModuleContext mc = bc.getModuleContext();
             AppContext ac = mc.getAppContext();
@@ -207,6 +209,7 @@ public class TomcatJndiBuilder {
                 // no-op
             }
         }
+
         ContextAccessController.setReadOnly(standardContext.getNamingContextListener().getName());
     }
 
@@ -260,22 +263,23 @@ public class TomcatJndiBuilder {
                     to.bind(link, object);
 
                     // don't do a lookup here because it is a link!
-                    Map<String, ContextValue> contextValues = CONTEXT_VALUES.get(to);
+                    Map<String, ContextValueHelper> contextValues = CONTEXT_VALUES.get(to);
                     if (contextValues == null) {
-                        contextValues = new HashMap<String, ContextValue>();
+                        contextValues = new HashMap<String, ContextValueHelper>();
                         CONTEXT_VALUES.put(to, contextValues);
                     }
-                    ContextValue cv = contextValues.get(name);
-                    if (cv == null) {
-                        cv = new ContextValue(name);
+                    ContextValueHelper cvh = contextValues.get(name);
+                    if (cvh == null) {
+                        cvh = new ContextValueHelper(name);
+                        ContextValue cv = cvh.contextValue;
                         try {
                             to.bind(name, cv);
-                            contextValues.put(name, cv);
+                            contextValues.put(name, cvh);
                         } catch (NamingException ignored) {
                             // ignored
                         }
                     }
-                    cv.addValue(link);
+                    cvh.addValue(name, link);
                 }
             }
         }
@@ -761,6 +765,23 @@ public class TomcatJndiBuilder {
 
         public void setProperty(String name, Object value) {
             contextResource.setProperty(name, value);
+        }
+    }
+
+
+    private static class ContextValueHelper {
+        public ContextValue contextValue;
+        public Collection<String> keys = new ArrayList<String>();
+
+        public ContextValueHelper(String name) {
+            contextValue = new ContextValue(name);
+        }
+
+        public void addValue(String name, String link) {
+            if (!keys.contains(name)) {
+                contextValue.addValue(link);
+                keys.add(name);
+            } // else some magic could be done here, probably for ears...
         }
     }
 }
