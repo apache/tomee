@@ -182,14 +182,16 @@ public class TomcatJndiBuilder {
 
         final WebContext webContext = cs.getWebContext(path);
 
-        for (Map.Entry<String, Object> entry : webContext.getBindings().entrySet()) {
-            try {
-                final String key = entry.getKey();
-                Object value = normalize(entry.getValue());
-                mkdirs(root, key);
-                root.rebind(key, value);
-            } catch (NamingException e) {
-                e.printStackTrace();
+        if (webContext != null && webContext.getBindings() != null) {
+            for (Map.Entry<String, Object> entry : webContext.getBindings().entrySet()) {
+                try {
+                    final String key = entry.getKey();
+                    Object value = normalize(entry.getValue());
+                    mkdirs(root, key);
+                    root.rebind(key, value);
+                } catch (NamingException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -214,6 +216,8 @@ public class TomcatJndiBuilder {
             final RefAddr refAddr = ref.getAll().nextElement();
 
             final String address = refAddr.getContent().toString();
+
+            if (address.startsWith("openejb:")) return value;
 
             if (!address.startsWith("java:")) {
                 return new LinkRef("java:" + address);
