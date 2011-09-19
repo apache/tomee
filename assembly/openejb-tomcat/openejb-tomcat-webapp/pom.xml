@@ -115,6 +115,10 @@
           <groupId>org.apache.openejb</groupId>
           <artifactId>javaee-api</artifactId>
         </exclusion>
+        <exclusion> <!-- 'provided' -->
+          <groupId>org.apache.tomcat</groupId>
+          <artifactId>tomcat-catalina</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -216,6 +220,10 @@
           <groupId>org.apache.openejb</groupId>
           <artifactId>javaee-api</artifactId>
         </exclusion>
+        <exclusion> <!-- 'provided' -->
+          <groupId>org.apache.tomcat</groupId>
+          <artifactId>tomcat-catalina</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -301,12 +309,6 @@
           <artifactId>javaee-api</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-catalina</artifactId>
-      <version>${tomcat.version}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>

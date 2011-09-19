@@ -87,7 +87,7 @@ class SetupCommand {
 
   def execute() {
     execute("6.0.32")
-    execute("7.0.16")
+    execute("7.0.21")
   }
 
   def execute(tomcatVersion) {

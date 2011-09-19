@@ -50,7 +50,7 @@
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-jasper-el</artifactId>
-      <version>7.0.16</version>
+      <version>${tomcat.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

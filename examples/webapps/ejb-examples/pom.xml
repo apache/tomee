@@ -61,7 +61,7 @@
         <configuration>
           <tomcatHttpPort>9999</tomcatHttpPort>
           <tomcatShutdownPort>9998</tomcatShutdownPort>
-          <tomcatVersion>7.0.16</tomcatVersion>
+          <tomcatVersion>7.0.21</tomcatVersion>
           <webapps>
             <webappArtifact>
               <groupId>org.apache.openejb</groupId>
