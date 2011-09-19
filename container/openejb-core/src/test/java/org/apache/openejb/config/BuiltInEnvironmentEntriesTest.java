@@ -47,14 +47,22 @@ public class BuiltInEnvironmentEntriesTest {
     @EJB
     private Blue blue;
 
+    @EJB
+    private Red red;
+
     @Module
-    public SingletonBean fantastic() {
-        return new SingletonBean(Blue.class);
+    public Class[] fantastic() {
+        return new Class[]{Blue.class, Red.class};
     }
 
     @Test
-    public void test() throws Exception {
+    public void testBlue() throws Exception {
         blue.test();
+    }
+
+    @Test
+    public void testRed() throws Exception {
+        red.test();
     }
 
     @Singleton
@@ -103,6 +111,43 @@ public class BuiltInEnvironmentEntriesTest {
             Assert.assertEquals("app", "BuiltInEnvironmentEntriesTest", app);
             Assert.assertEquals("module", module, "fantastic");
             Assert.assertEquals("component", component, "Blue");
+        }
+
+    }
+
+    @Singleton
+    @TransactionManagement(value = TransactionManagementType.BEAN)
+    public static class Red {
+
+        @Resource
+        private EJBContext ejbContext;
+
+        @Resource
+        private Validator validator;
+
+        @Resource
+        private ValidatorFactory validatorFactory;
+
+        @Resource
+        private TransactionManager transactionManager;
+
+        @Resource
+        private TransactionSynchronizationRegistry transactionSynchronizationRegistry;
+
+        @Resource
+        private UserTransaction userTransaction;
+
+        @Resource
+        private BeanManager beanManager;
+
+        public void test() throws Exception {
+
+            final Field[] fields = this.getClass().getDeclaredFields();
+
+            for (Field field : fields) {
+                SetAccessible.on(field);
+                Assert.assertNotNull(field.getName(), field.get(this));
+            }
         }
 
     }

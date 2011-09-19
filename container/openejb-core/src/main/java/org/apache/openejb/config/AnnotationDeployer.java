@@ -1199,6 +1199,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                 if (enterpriseBean instanceof SessionBean) {
                     SessionBean sessionBean = (SessionBean) enterpriseBean;
                     sessionBean.setSessionType(SessionType.MANAGED);
+
+                    final TransactionType transactionType = sessionBean.getTransactionType();
+                    if (transactionType == null) sessionBean.setTransactionType(TransactionType.BEAN);
                 }
             }
 

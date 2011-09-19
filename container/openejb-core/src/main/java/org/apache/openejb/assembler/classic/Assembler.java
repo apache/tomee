@@ -61,7 +61,6 @@ import javax.resource.spi.ResourceAdapter;
 import javax.resource.spi.ResourceAdapterInternalException;
 import javax.resource.spi.XATerminator;
 import javax.resource.spi.work.WorkManager;
-import javax.sql.DataSource;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 import javax.validation.ValidationException;
@@ -85,7 +84,6 @@ import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.UndeployException;
-import org.apache.openejb.assembler.dynamic.PassthroughFactory;
 import org.apache.openejb.cdi.CdiAppContextsService;
 import org.apache.openejb.cdi.CdiBuilder;
 import org.apache.openejb.cdi.CdiResourceInjectionService;
@@ -529,11 +527,19 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         //Construct the global and app jndi contexts for this app
-        InjectionBuilder injectionBuilder = new InjectionBuilder(classLoader);
-        List<Injection> appInjections = injectionBuilder.buildInjections(appInfo.globalJndiEnc);
-        appInjections.addAll(injectionBuilder.buildInjections(appInfo.appJndiEnc));
-        Context globalJndiContext = new JndiEncBuilder(appInfo.globalJndiEnc, appInjections, null, null, GLOBAL_UNIQUE_ID, classLoader).build(JndiEncBuilder.JndiScope.global);
-        Context appJndiContext = new JndiEncBuilder(appInfo.appJndiEnc, appInjections, appInfo.appId, null, appInfo.appId, classLoader).build(JndiEncBuilder.JndiScope.app);
+        final InjectionBuilder injectionBuilder = new InjectionBuilder(classLoader);
+
+        Set<Injection> injections = new HashSet<Injection>();
+        injections.addAll(injectionBuilder.buildInjections(appInfo.globalJndiEnc));
+        injections.addAll(injectionBuilder.buildInjections(appInfo.appJndiEnc));
+
+        final JndiEncBuilder globalBuilder = new JndiEncBuilder(appInfo.globalJndiEnc, injections, null, null, GLOBAL_UNIQUE_ID, classLoader);
+        final Map<String, Object> globalBindings = globalBuilder.buildBindings(JndiEncBuilder.JndiScope.global);
+        final Context globalJndiContext = globalBuilder.build(globalBindings);
+
+        final JndiEncBuilder appBuilder = new JndiEncBuilder(appInfo.appJndiEnc, injections, appInfo.appId, null, appInfo.appId, classLoader);
+        final Map<String, Object> appBindings = appBuilder.buildBindings(JndiEncBuilder.JndiScope.app);
+        final Context appJndiContext = appBuilder.build(appBindings);
 
         try {
             // Generate the cmp2/cmp1 concrete subclasses
@@ -543,10 +549,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 classLoader = ClassLoaderUtil.createClassLoader(appInfo.path, new URL []{generatedJar.toURI().toURL()}, classLoader);
             }
 
-            AppContext appContext = new AppContext(appInfo.appId, SystemInstance.get(), classLoader, globalJndiContext, appJndiContext, appInfo.standaloneModule);
+            final AppContext appContext = new AppContext(appInfo.appId, SystemInstance.get(), classLoader, globalJndiContext, appJndiContext, appInfo.standaloneModule);
+            appContext.getInjections().addAll(injections);
+            appContext.getBindings().putAll(globalBindings);
+            appContext.getBindings().putAll(appBindings);
+
             containerSystem.addAppContext(appContext);
 
-            Context containerSystemContext = containerSystem.getJNDIContext();
+            final Context containerSystemContext = containerSystem.getJNDIContext();
             
             if (!SystemInstance.get().hasProperty("openejb.geronimo")) {
                 // Bean Validation
@@ -626,7 +636,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             // EJB
             EjbJarBuilder ejbJarBuilder = new EjbJarBuilder(props, appContext);
             for (EjbJarInfo ejbJar : appInfo.ejbJars) {
-                HashMap<String, BeanContext> deployments = ejbJarBuilder.build(ejbJar, appInjections);
+                HashMap<String, BeanContext> deployments = ejbJarBuilder.build(ejbJar, injections);
 
                 JaccPermissionsBuilder jaccPermissionsBuilder = new JaccPermissionsBuilder();
                 PolicyContext policyContext = jaccPermissionsBuilder.build(ejbJar, deployments);
@@ -723,6 +733,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             ensureWebBeansContext(appContext);
 
             appJndiContext.bind("app/BeanManager", appContext.getBeanManager());
+            appContext.getBindings().put("app/BeanManager", appContext.getBeanManager());
 
             // now that everything is configured, deploy to the container
             if (start) {
@@ -757,10 +768,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             // App Client
             for (ClientInfo clientInfo : appInfo.clients) {
                 // determine the injections
-                List<Injection> injections = injectionBuilder.buildInjections(clientInfo.jndiEnc);
+                List<Injection> clientInjections = injectionBuilder.buildInjections(clientInfo.jndiEnc);
 
                 // build the enc
-                JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(clientInfo.jndiEnc, injections, "Bean", clientInfo.moduleId, null, clientInfo.uniqueId, classLoader);
+                JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(clientInfo.jndiEnc, clientInjections, "Bean", clientInfo.moduleId, null, clientInfo.uniqueId, classLoader);
                 // if there is at least a remote client classes
                 // or if there is no local client classes
                 // then, we can set the client flag
@@ -784,7 +795,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 if (clientInfo.callbackHandler != null) {
                     context.bind("info/callbackHandler", clientInfo.callbackHandler);
                 }
-                context.bind("info/injections", injections);
+                context.bind("info/injections", clientInjections);
 
                 for (String clientClassName : clientInfo.remoteClients) {
                     containerSystemContext.bind("openejb/client/" + clientClassName, clientInfo.moduleId);

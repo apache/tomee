@@ -28,9 +28,11 @@ import java.util.List;
 import java.util.Map;
 import javax.naming.Binding;
 import javax.naming.Context;
+import javax.naming.LinkRef;
 import javax.naming.NameAlreadyBoundException;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
+import javax.naming.RefAddr;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.transaction.UserTransaction;
@@ -45,10 +47,7 @@ import org.apache.catalina.deploy.NamingResources;
 import org.apache.naming.ContextAccessController;
 import org.apache.naming.ContextBindings;
 import org.apache.naming.factory.Constants;
-import org.apache.openejb.AppContext;
-import org.apache.openejb.BeanContext;
 import org.apache.openejb.Injection;
-import org.apache.openejb.ModuleContext;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.EjbLocalReferenceInfo;
 import org.apache.openejb.assembler.classic.EjbReferenceInfo;
@@ -62,6 +61,7 @@ import org.apache.openejb.assembler.classic.ResourceReferenceInfo;
 import org.apache.openejb.assembler.classic.ServiceReferenceInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.assembler.classic.WsBuilder;
+import org.apache.openejb.core.WebContext;
 import org.apache.openejb.core.webservices.HandlerChainData;
 import org.apache.openejb.core.webservices.PortRefData;
 import org.apache.openejb.loader.SystemInstance;
@@ -101,12 +101,12 @@ public class TomcatJndiBuilder {
 
     private final StandardContext standardContext;
     private final WebAppInfo webAppInfo;
-    private final List<Injection> injections;
+    private final Collection<Injection> injections;
     private final boolean replaceEntry;
     private boolean useCrossClassLoaderRef = true;
     private NamingContextListener namingContextListener;
 
-    public TomcatJndiBuilder(StandardContext standardContext, WebAppInfo webAppInfo, List<Injection> injections) {
+    public TomcatJndiBuilder(StandardContext standardContext, WebAppInfo webAppInfo, Collection<Injection> injections) {
         this.injections = injections;
         this.standardContext = standardContext;
         this.namingContextListener = BackportUtil.getNamingContextListener(standardContext);
@@ -180,113 +180,72 @@ public class TomcatJndiBuilder {
             path = path.substring(1);
         }
 
-        for (BeanContext bc : cs.deployments()) {
-            if (!(bc.getDeploymentID() instanceof String && ((String) bc.getDeploymentID()).startsWith(path))) {
-                continue;
-            }
+        final WebContext webContext = cs.getWebContext(path);
 
-            ModuleContext mc = bc.getModuleContext();
-            AppContext ac = mc.getAppContext();
-
-            Context moduleContext = mc.getModuleJndiContext();
+        for (Map.Entry<String, Object> entry : webContext.getBindings().entrySet()) {
             try {
-                copyContext("", moduleContext, root, mc.getUniqueId());
-            } catch (NamingException ignored) {
-                // no-op
-            }
-
-            Context appContext = ac.getAppJndiContext();
-            try {
-                copyContext("", appContext, root, null);
-            } catch (NamingException ignored) {
-                // no-op
-            }
-
-            Context globalContext = ac.getGlobalJndiContext();
-            try {
-                copyContext("", globalContext, root, null);
-            } catch (NamingException ignored) {
-                // no-op
+                final String key = entry.getKey();
+                Object value = normalize(entry.getValue());
+                mkdirs(root, key);
+                root.rebind(key, value);
+            } catch (NamingException e) {
+                e.printStackTrace();
             }
         }
 
         ContextAccessController.setReadOnly(standardContext.getNamingContextListener().getName());
     }
 
-    private static void copyContext(String prefix, Context from, Context to, String linkPrefix) throws NamingException {
-        String usedPrefix;
-        if (prefix.isEmpty()) {
-            usedPrefix = prefix;
-        } else {
-            usedPrefix = prefix + "/";
+    /**
+     * LinkRef addresses need to be prefixed with java: or they won't resolve
+     *
+     * OpenEJB is fine with this, but Tomcat needs them
+     *
+     * @param value
+     * @return
+     */
+    private static Object normalize(final Object value) {
+        try {
+
+            if (!(value instanceof LinkRef)) return value;
+
+            final LinkRef ref = (LinkRef) value;
+
+            final RefAddr refAddr = ref.getAll().nextElement();
+
+            final String address = refAddr.getContent().toString();
+
+            if (!address.startsWith("java:")) {
+                return new LinkRef("java:" + address);
+            }
+
+        } catch (Exception e) {
         }
 
-        NamingEnumeration<Binding> bindings = from.listBindings("");
-        while (bindings.hasMoreElements()) {
-            Binding binding = bindings.nextElement();
-            Object object = binding.getObject();
-            if (object instanceof Context) {
-                String contextPrefix = usedPrefix + binding.getName();
+        return value;
+    }
+
+    private static void mkdirs(Context context, String key) {
+        final String[] parts = key.split("/");
+
+        int i = 0;
+        for (String part : parts) {
+            if (++i == parts.length) return;
+
+            try {
+                context = context.createSubcontext(part);
+            } catch (NamingException e) {
                 try {
-                    to.createSubcontext(contextPrefix);
-                } catch (NameAlreadyBoundException ne) {
-                    // ignored
-                }
-                copyContext(contextPrefix, (Context) object, to, linkPrefix);
-            } else {
-                String name = usedPrefix + binding.getName();
-                if (linkPrefix == null) {
-                    try {
-                        to.bind(name, object);
-                    } catch (NamingException ne) {
-                        // ignored
-                    }
-                } else {
-                    String link = ContextValue.linkName(linkPrefix, name);
-
-                    // create subcontexts if necessary
-                    String[] contexts = link.split("/");
-                    String current = "";
-                    for (int i = 0; i < contexts.length - 1; i++) {
-                        if (current.isEmpty()) {
-                            current += contexts[i];
-                        } else {
-                            current += "/" + contexts[i];
-                        }
-                        try {
-                            to.createSubcontext(current);
-                        } catch (NameAlreadyBoundException ne) {
-                            // ignored
-                        }
-                    }
-
-                    to.bind(link, object);
-
-                    // don't do a lookup here because it is a link!
-                    Map<String, ContextValueHelper> contextValues = CONTEXT_VALUES.get(to);
-                    if (contextValues == null) {
-                        contextValues = new HashMap<String, ContextValueHelper>();
-                        CONTEXT_VALUES.put(to, contextValues);
-                    }
-                    ContextValueHelper cvh = contextValues.get(name);
-                    if (cvh == null) {
-                        cvh = new ContextValueHelper(name);
-                        ContextValue cv = cvh.contextValue;
-                        try {
-                            to.bind(name, cv);
-                            contextValues.put(name, cvh);
-                        } catch (NamingException ignored) {
-                            // ignored
-                        }
-                    }
-                    cvh.addValue(name, link);
+                    context = (Context) context.lookup(part);
+                } catch (NamingException e1) {
+                    return;
                 }
             }
         }
     }
 
     public void mergeRef(NamingResources naming, EnvEntryInfo ref) {
-
+//        if (!ref.referenceName.startsWith("comp/")) return;
         if ("java.lang.Class".equals(ref.type)) {
             ContextResourceEnvRef resourceEnv = new ContextResourceEnvRef();
             resourceEnv.setName(ref.referenceName.replaceAll("^comp/env/", ""));

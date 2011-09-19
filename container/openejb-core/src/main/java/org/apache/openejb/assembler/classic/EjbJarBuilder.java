@@ -26,6 +26,7 @@ import org.apache.openejb.util.Messages;
 
 import javax.naming.Context;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
@@ -44,7 +45,7 @@ public class EjbJarBuilder {
         this.context = context;
     }
 
-    public HashMap<String, BeanContext> build(EjbJarInfo ejbJar, List<Injection> appInjections) throws OpenEJBException {
+    public HashMap<String, BeanContext> build(EjbJarInfo ejbJar, Collection<Injection> appInjections) throws OpenEJBException {
         InjectionBuilder injectionBuilder = new InjectionBuilder(context.getClassLoader());
         List<Injection> moduleInjections = injectionBuilder.buildInjections(ejbJar.moduleJndiEnc);
         moduleInjections.addAll(appInjections);

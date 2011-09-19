@@ -34,6 +34,7 @@ import javax.xml.ws.handler.HandlerResolver;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,11 +48,11 @@ public class JaxWsServiceReference extends Reference {
     private final Class<?> referenceClass;
     private final URL wsdlUrl;
     private final List<HandlerChainData> handlerChains = new ArrayList<HandlerChainData>();
-    private final List<Injection> injections;
+    private final Collection<Injection> injections;
     private PortAddressRegistry portAddressRegistry;
     private final List<PortRefData> portRefs = new ArrayList<PortRefData>();
 
-    public JaxWsServiceReference(String id, QName serviceQName, Class<? extends Service> serviceClass, QName portQName, Class<?> referenceClass, URL wsdlUrl, List<PortRefData> portRefs, List<HandlerChainData> handlerChains, List<Injection> injections) {
+    public JaxWsServiceReference(String id, QName serviceQName, Class<? extends Service> serviceClass, QName portQName, Class<?> referenceClass, URL wsdlUrl, List<PortRefData> portRefs, List<HandlerChainData> handlerChains, Collection<Injection> injections) {
         this.id = id;
         this.serviceQName = serviceQName;
         this.serviceClass = serviceClass;

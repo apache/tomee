@@ -36,6 +36,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
 public class WebContext {
     private String id;
@@ -43,6 +44,7 @@ public class WebContext {
     private final Collection<Injection> injections = new ArrayList<Injection>();
     private Context jndiEnc;
     private final AppContext appContext;
+    private Map<String,Object> bindings;
 
     public WebContext(AppContext appContext) {
         this.appContext = appContext;
@@ -165,4 +167,11 @@ public class WebContext {
         }
     }
 
+    public void setBindings(Map<String, Object> bindings) {
+        this.bindings = bindings;
+    }
+
+    public Map<String, Object> getBindings() {
+        return bindings;
+    }
 }

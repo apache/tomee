@@ -26,6 +26,7 @@ import javax.naming.NameAlreadyBoundException;
 import javax.naming.Context;
 import javax.jms.MessageListener;
 
+import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.ModuleContext;
@@ -611,11 +612,14 @@ public class JndiBuilder {
     //ee6 specified ejb bindings in module, app, and global contexts
 
     private void bindJava(BeanContext cdi, Class intrface, Reference ref, Bindings bindings, EnterpriseBeanInfo beanInfo) throws NamingException {
-        Context moduleContext = cdi.getModuleContext().getModuleJndiContext();
-        Context appContext = cdi.getModuleContext().getAppContext().getAppJndiContext();
-        Context globalContext = cdi.getModuleContext().getAppContext().getGlobalJndiContext();
+        final ModuleContext module = cdi.getModuleContext();
+        final AppContext application = module.getAppContext();
 
-        String appName = cdi.getModuleContext().getAppContext().isStandaloneModule() ? "" : cdi.getModuleContext().getAppContext().getId() + "/";
+        Context moduleContext = module.getModuleJndiContext();
+        Context appContext = application.getAppJndiContext();
+        Context globalContext = application.getGlobalJndiContext();
+
+        String appName = application.isStandaloneModule() ? "" : application.getId() + "/";
         String moduleName = cdi.getModuleName() + "/";
         String beanName = cdi.getEjbName();
         if (intrface != null) {
@@ -628,15 +632,19 @@ public class JndiBuilder {
                 logger.info(String.format("Jndi(name=\"java:%s\")", globalName));
             }
             globalContext.bind(globalName, ref);
+            application.getBindings().put(globalName, ref);
+
             bind("openejb/global/" + globalName, ref, bindings, beanInfo, intrface);
         } catch (NameAlreadyBoundException e) {
             //one interface in more than one role (e.g. both Local and Remote
             return;
         }
-        
+
         appContext.bind("app/" + moduleName + beanName, ref);
-        
+        application.getBindings().put("app/" + moduleName + beanName, ref);
+
         moduleContext.bind("module/" + beanName, ref);
+        application.getBindings().put("module/" + beanName, ref);
     }
     
     
