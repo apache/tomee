@@ -74,7 +74,6 @@ import org.omg.CORBA.ORB;
 
 import javax.ejb.spi.HandleDelegate;
 import javax.el.ELResolver;
-import javax.el.ExpressionFactory;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
