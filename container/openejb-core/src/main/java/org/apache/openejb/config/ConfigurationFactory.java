@@ -188,6 +188,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         chain.add(new ConvertDataSourceDefinitions());
         chain.add(new CleanEnvEntries());
+        chain.add(new LinkBuiltInTypes());
 
         if (offline) {
             AutoConfig autoConfig = new AutoConfig(this);

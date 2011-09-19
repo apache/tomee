@@ -19,6 +19,7 @@ package org.apache.openejb.assembler.classic;
 import org.apache.openejb.Injection;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.SystemException;
 import org.apache.openejb.core.CoreUserTransaction;
 import org.apache.openejb.core.JndiFactory;
 import org.apache.openejb.core.TransactionSynchronizationRegistryWrapper;
@@ -73,6 +74,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,17 +98,17 @@ public class JndiEncBuilder {
     private final URI moduleUri;
     private final String moduleId;
     private final String uniqueId;
-    private final List<Injection> injections;
+    private final Collection<Injection> injections;
     private final ClassLoader classLoader;
 
     private boolean useCrossClassLoaderRef = true;
     private boolean client = false;
 
-    public JndiEncBuilder(JndiEncInfo jndiEnc, List<Injection> injections, String moduleId, URI moduleUri, String uniqueId, ClassLoader classLoader) throws OpenEJBException {
+    public JndiEncBuilder(JndiEncInfo jndiEnc, Collection<Injection> injections, String moduleId, URI moduleUri, String uniqueId, ClassLoader classLoader) throws OpenEJBException {
         this(jndiEnc, injections, null, moduleId, moduleUri, uniqueId, classLoader);
     }
 
-    public JndiEncBuilder(JndiEncInfo jndiEnc, List<Injection> injections, String transactionType, String moduleId, URI moduleUri, String uniqueId, ClassLoader classLoader) throws OpenEJBException {
+    public JndiEncBuilder(JndiEncInfo jndiEnc, Collection<Injection> injections, String transactionType, String moduleId, URI moduleUri, String uniqueId, ClassLoader classLoader) throws OpenEJBException {
         this.jndiEnc = jndiEnc;
         this.injections = injections;
         beanManagedTransactions = transactionType != null && transactionType.equalsIgnoreCase("Bean");
@@ -135,12 +137,22 @@ public class JndiEncBuilder {
     }
 
     public Context build(JndiScope type) throws OpenEJBException {
+        Map<String, Object> bindings = buildBindings(type);
+
+        return build(bindings);
+    }
+
+    public Context build(Map<String, Object> bindings) throws SystemException {
         JndiFactory jndiFactory = SystemInstance.get().getComponent(JndiFactory.class);
 
         if (SystemInstance.get().hasProperty("openejb.geronimo")) {
             return jndiFactory.createComponentContext(new HashMap());
         }
 
+        return jndiFactory.createComponentContext(bindings);
+    }
+
+    public Map<String, Object> buildBindings(JndiScope type) throws OpenEJBException {
         Map<String, Object> bindings = buildMap();
         switch (type) {
             case comp:
@@ -156,8 +168,7 @@ public class JndiEncBuilder {
                 addSpecialGlobalBindings(bindings);
                 break;
         }
-
-        return jndiFactory.createComponentContext(bindings);
+        return bindings;
     }
 
     public Map<String, Object> buildMap() throws OpenEJBException {
@@ -321,7 +332,7 @@ public class JndiEncBuilder {
 
                 // TODO Bind the BeanManager
             } else if (BeanManager.class.equals(type)) {
-                String jndiName = "app/BeanManager";
+                String jndiName = "java:app/BeanManager";
                 reference = new LinkRef(jndiName);
 
             } else if (UserTransaction.class.equals(type)) {
@@ -495,9 +506,9 @@ public class JndiEncBuilder {
     }
 
     private void addSpecialModuleBindings(Map<String, Object> bindings) {
-//        if (moduleId != null) {
-//            bindings.put("module/ModuleName", moduleId);
-//        }
+        if (moduleId != null) {
+            bindings.put("module/ModuleName", moduleId);
+        }
         // ensure the bindings will be non-empty
         if (bindings.isEmpty()) {
             bindings.put("module/dummy", "dummy");
@@ -505,9 +516,9 @@ public class JndiEncBuilder {
     }
 
     private void addSpecialAppBindings(Map<String, Object> bindings) {
-//        if (moduleId != null) {
-//            bindings.put("app/AppName", moduleId);
-//        }
+        if (moduleId != null) {
+            bindings.put("app/AppName", moduleId);
+        }
         // ensure the bindings will be non-empty
         if (bindings.isEmpty()) {
             bindings.put("app/dummy", "dummy");

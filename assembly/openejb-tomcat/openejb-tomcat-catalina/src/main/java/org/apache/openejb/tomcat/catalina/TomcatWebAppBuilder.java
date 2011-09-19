@@ -45,6 +45,7 @@ import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ConnectorInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.InjectionBuilder;
+import org.apache.openejb.assembler.classic.JndiEncBuilder;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.config.AppModule;
@@ -414,6 +415,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         AppContext appContext = null;
         //Look for context info, maybe context is already scanned
         ContextInfo contextInfo = getContextInfo(standardContext);
+        final ClassLoader classLoader = standardContext.getLoader().getClassLoader();
         if (contextInfo == null) {
             AppModule appModule = loadApplication(standardContext);
             if (appModule != null) {
@@ -422,7 +424,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                     AppInfo appInfo = configurationFactory.configureApplication(appModule);
                     contextInfo.appInfo = appInfo;
 
-                    appContext = a.createApplication(contextInfo.appInfo, standardContext.getLoader().getClassLoader());
+                    appContext = a.createApplication(contextInfo.appInfo, classLoader);
                     // todo add watched resources to context
                 } catch (Exception e) {
                     logger.error("Unable to deploy collapsed ear in war " + standardContext.getPath() + ": Exception: " + e.getMessage(), e);
@@ -461,24 +463,31 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             }
 
             try {
+
                 // determine the injections
-                InjectionBuilder injectionBuilder = new InjectionBuilder(standardContext.getLoader().getClassLoader());
-                List<Injection> injections = injectionBuilder.buildInjections(webAppInfo.jndiEnc);
+                final Set<Injection> injections = new HashSet<Injection>();
+                injections.addAll(appContext.getInjections());
+                injections.addAll(new InjectionBuilder(classLoader).buildInjections(webAppInfo.jndiEnc));
+
+                // jndi bindings
+                final Map<String, Object> bindings = new HashMap<String, Object>();
+                bindings.putAll(appContext.getBindings());
+                bindings.putAll(getJndiBuilder(classLoader, webAppInfo, injections).buildBindings(JndiEncBuilder.JndiScope.comp));
 
                 // merge OpenEJB jndi into Tomcat jndi
-                TomcatJndiBuilder jndiBuilder = new TomcatJndiBuilder(standardContext, webAppInfo, injections);
+                final TomcatJndiBuilder jndiBuilder = new TomcatJndiBuilder(standardContext, webAppInfo, injections);
                 jndiBuilder.mergeJndi();
 
                 // add WebDeploymentInfo to ContainerSystem
                 final WebContext webContext = new WebContext(appContext);
+                webContext.setClassLoader(classLoader);
                 webContext.setId(webAppInfo.moduleId);
-                final StandardContext context = standardContext;
-                webContext.setClassLoader(context.getLoader().getClassLoader());
+                webContext.setBindings(bindings);
                 webContext.getInjections().addAll(injections);
                 appContext.getWebContexts().add(webContext);
                 cs.addWebContext(webContext);
 
-                standardContext.setInstanceManager(new JavaeeInstanceManager(webContext, context));
+                standardContext.setInstanceManager(new JavaeeInstanceManager(webContext, standardContext));
                 standardContext.getServletContext().setAttribute(InstanceManager.class.getName(), standardContext.getInstanceManager());
 
             } catch (Exception e) {
@@ -497,6 +506,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 }
             }
         }
+    }
+
+    private JndiEncBuilder getJndiBuilder(ClassLoader classLoader, WebAppInfo webAppInfo, Set<Injection> injections) throws OpenEJBException {
+        return new JndiEncBuilder(webAppInfo.jndiEnc, injections, webAppInfo.moduleId, "Bean", null, webAppInfo.uniqueId, classLoader);
     }
 
     /**

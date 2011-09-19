@@ -24,7 +24,11 @@ import org.apache.webbeans.config.WebBeansContext;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.naming.Context;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -44,13 +48,15 @@ public class AppContext extends DeploymentContext {
     private final Context appJndiContext;
     private final boolean standaloneModule;
     private WebBeansContext webBeansContext;
+    private final Collection<Injection> injections = new HashSet<Injection>();
+    private final Map<String, Object> bindings = new HashMap<String, Object>();
 
     private BlockingQueue<Runnable> blockingQueue;
     private ExecutorService asynchPool;
 
     // TODO perhaps to be deleted
     private final List<BeanContext> beanContexts = new ArrayList<BeanContext>();
-    private final List<WebContext> webcontexts = new ArrayList<WebContext>();
+    private final List<WebContext> webContexts = new ArrayList<WebContext>();
 
     public AppContext(String id, SystemInstance systemInstance, ClassLoader classLoader, Context globalJndiContext, Context appJndiContext, boolean standaloneModule) {
         super(id, systemInstance.getOptions());
@@ -61,6 +67,14 @@ public class AppContext extends DeploymentContext {
         this.standaloneModule = standaloneModule;
         this.blockingQueue = new LinkedBlockingQueue<Runnable>();
         this.asynchPool = new ThreadPoolExecutor(10, 20, 60, TimeUnit.SECONDS, blockingQueue, new DaemonThreadFactory("@Asynch", id));
+    }
+
+    public Collection<Injection> getInjections() {
+        return injections;
+    }
+
+    public Map<String, Object> getBindings() {
+        return bindings;
     }
 
     public BeanManager getBeanManager() {
@@ -76,7 +90,7 @@ public class AppContext extends DeploymentContext {
     }
 
     public List<WebContext> getWebContexts() {
-        return webcontexts;
+        return webContexts;
     }
 
     @Override

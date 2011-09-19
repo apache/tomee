@@ -28,17 +28,18 @@ import javax.xml.ws.handler.HandlerResolver;
 import javax.xml.ws.handler.LogicalHandler;
 import javax.xml.ws.handler.PortInfo;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 public class HandlerResolverImpl implements HandlerResolver {
     private final List<HandlerChainData> handlerChains;
-    private final List<Injection> injections;
+    private final Collection<Injection> injections;
     private final Context context;
     private final List<InjectionProcessor<Handler>> handlerInstances = new ArrayList<InjectionProcessor<Handler>>();
 
-    public HandlerResolverImpl(List<HandlerChainData> handlerChains, List<Injection> injections, Context context) {
+    public HandlerResolverImpl(List<HandlerChainData> handlerChains, Collection<Injection> injections, Context context) {
         this.handlerChains = handlerChains;
         this.injections = injections;
         this.context = context;

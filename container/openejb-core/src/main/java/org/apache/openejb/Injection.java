@@ -50,4 +50,24 @@ public class Injection {
                 ", jndiName='" + jndiName + '\'' +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Injection)) return false;
+
+        Injection injection = (Injection) o;
+
+        if (name != null ? !name.equals(injection.name) : injection.name != null) return false;
+        if (target != null ? !target.equals(injection.target) : injection.target != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = target != null ? target.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        return result;
+    }
 }
