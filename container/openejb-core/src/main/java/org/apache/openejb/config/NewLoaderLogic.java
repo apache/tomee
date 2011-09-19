@@ -157,7 +157,6 @@ public class NewLoaderLogic {
                 "axis-",
                 "axis2-",
                 "bcprov-",
-                "bsh-",
                 "bval-core",
                 "bval-jsr",
                 "catalina-",
