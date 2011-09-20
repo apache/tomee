@@ -91,7 +91,7 @@ public class CleanEnvEntriesTest extends TestCase {
 
         final Map<String, EnvEntryInfo> entries = map(ejbJarInfo.enterpriseBeans.get(0).jndiEnc.envEntries);
 
-        assertNotNull(entries.get("comp/env/control"));
+        assertNotNull(entries.get("comp/env/message"));
         assertNotNull(entries.get("comp/env/value-but-no-type1"));
         assertNotNull(entries.get("comp/env/value-but-no-type2"));
 
