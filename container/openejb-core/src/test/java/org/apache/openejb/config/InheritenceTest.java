@@ -127,6 +127,16 @@ public class InheritenceTest extends TestCase {
 
         assertSecurityRoleReferenceInfos("securityRoleReferences", expected.securityRoleReferences, actual.securityRoleReferences);
 
+        // comp/ComponentName is different
+        assertEquals(1, expected.jndiEnc.envEntries.size());
+        assertEquals(1, actual.jndiEnc.envEntries.size());
+        assertEquals("comp/ComponentName", expected.jndiEnc.envEntries.get(0).referenceName);
+        assertEquals("Color", expected.jndiEnc.envEntries.get(0).value);
+        assertEquals("comp/ComponentName", actual.jndiEnc.envEntries.get(0).referenceName);
+        assertEquals("Red", actual.jndiEnc.envEntries.get(0).value);
+        expected.jndiEnc.envEntries.clear();
+        actual.jndiEnc.envEntries.clear();
+
         assertEquals("jndiEnc", expected.jndiEnc, actual.jndiEnc);
     }
 
