@@ -325,9 +325,9 @@
       <artifactId>openwebbeans-jsf</artifactId>
     </dependency>
     <dependency>
-      <groupId>jstl</groupId>
-      <artifactId>jstl</artifactId>
-      <version>1.2</version>
+      <groupId>org.apache.openejb.patch</groupId>
+      <artifactId>openejb-jstl</artifactId>
+      <version>1.2-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.apache.derby</groupId>
@@ -391,8 +391,8 @@
               <artifactId>bval-core</artifactId>
             </exclusion>
             <exclusion>
-              <groupId>org.apache.bval</groupId>
-              <artifactId>bval-jsr303</artifactId>
+              <groupId>org.apache.openejb.patch</groupId>
+              <artifactId>openejb-bval</artifactId>
             </exclusion>
           </exclusions>
         </dependency>
@@ -428,9 +428,5 @@
       </dependencies>
     </profile>
   </profiles>
-
-  <properties>
-    <myfaces.version>2.1.2</myfaces.version>
-  </properties>
 </project>
 

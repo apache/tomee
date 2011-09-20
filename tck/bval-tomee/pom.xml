@@ -20,9 +20,9 @@
       <version>0.3-incubating</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.bval</groupId>
-      <artifactId>bval-jsr303</artifactId>
-      <version>0.3-incubating</version>
+      <groupId>org.apache.openejb.patch</groupId>
+      <artifactId>openejb-bval</artifactId>
+      <version>0.3-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
@@ -175,20 +175,6 @@
 
                 <!-- validator provider property -->
                 <copy file="src/main/tomcat/conf/system.properties" tofile="${project.build.directory}/apache-tomee-${project.version}/conf/system.properties"/>
-
-                <!-- replacing ValidationParser of apache bval -->
-                <mkdir dir="${project.build.directory}/bval-jsr303"/>
-                <unjar src="${settings.localRepository}/org/apache/bval/bval-jsr303/0.3-incubating/bval-jsr303-0.3-incubating.jar"
-dest="${project.build.directory}/bval-jsr303">
-                    <patternset>
-                        <include name="**/**"/>
-                        <exclude name="**/ValidationParser.class"/>
-                    </patternset>
-                </unjar>
-                <copy file="${project.build.directory}/classes/org/apache/bval/jsr303/xml/ValidationParser.class" tofile="${project.build.directory}/bval-jsr303/org/apache/bval/jsr303/xml/ValidationParser.class"/>
-                <jar destfile="${project.build.directory}/apache-tomee-${project.version}/webapps/openejb/lib/bval-jsr303-0.3-incubating-patched.jar"
-                     basedir="${project.build.directory}/bval-jsr303"/>
-                <delete file="${project.build.directory}/apache-tomee-${project.version}/webapps/openejb/lib/bval-jsr303-0.3-incubating.jar" />
               </target>
             </configuration>
           </execution>
