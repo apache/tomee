@@ -101,7 +101,8 @@ public class Installer {
 
         installConfigFiles();
 
-        removeAnnotationApiJar();
+        removeTomcatLibJar("annotations-api.jar");
+        removeTomcatLibJar("el-api.jar");
         addJavaeeInEndorsed();
         
         if (!alerts.hasErrors()) {
@@ -186,15 +187,12 @@ public class Installer {
         fileOutputStream.close();
     }
 
-    /**
-     * javaee-api* contains all classes in annotation-api which is outdated so we simply strip it.
-     */
-    private void removeAnnotationApiJar() {
-        File annotationApi = new File(paths.getCatalinaLibDir(), "annotations-api.jar");
+    private void removeTomcatLibJar(String name) {
+        File annotationApi = new File(paths.getCatalinaLibDir(), name);
         if (annotationApi.exists()) {
             if (!annotationApi.delete()) {
                 annotationApi.deleteOnExit();
-                System.err.println("Please restart the server or delete manually annotations-api.jar");
+                System.err.println("Please restart the server or delete manually " + name);
             }
         }
     }

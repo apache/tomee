@@ -441,8 +441,8 @@
       <artifactId>bval-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.bval</groupId>
-      <artifactId>bval-jsr303</artifactId>
+      <groupId>org.apache.openejb.patch</groupId>
+      <artifactId>openejb-bval</artifactId>
     </dependency>
   </dependencies>
   <profiles>

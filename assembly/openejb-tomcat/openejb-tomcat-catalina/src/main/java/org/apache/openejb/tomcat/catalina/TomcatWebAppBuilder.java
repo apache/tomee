@@ -493,11 +493,12 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 logger.error("Error merging Java EE JNDI entries in to war " + standardContext.getPath() + ": Exception: " + e.getMessage(), e);
             }
 
+            // TODO RMB: JspFactory.setDefaultFactory();
             JspFactory factory = JspFactory.getDefaultFactory();
-            if (factory != null && Thread.currentThread().getContextClassLoader().getResource("WEB-INF/beans.xml") != null) {
+            if (factory != null) {
                 JspApplicationContext applicationCtx = factory.getJspApplicationContext(standardContext.getServletContext());
                 WebBeansContext context = appContext.getWebBeansContext();
-                if (context != null) {
+                if (context != null && context.getBeanManagerImpl().isInUse()) {
                     // Registering ELResolver with JSP container
                     ELAdaptor elAdaptor = context.getService(ELAdaptor.class);
                     ELResolver resolver = elAdaptor.getOwbELResolver();

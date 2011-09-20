@@ -53,5 +53,9 @@
       </snapshots>
     </repository>
   </repositories>
+
+  <properties>
+    <myfaces.version>2.1.2</myfaces.version>
+  </properties>
 </project>
 
