@@ -73,7 +73,8 @@ public class AltDDPrefixTest extends TestCase {
         assertEquals("EjbJar.interceptors.size()", 1, ejbJar.interceptors.size());
 
         // was the test.env-entries.properties picked up
-        assertEquals("EjbJar.enterpriseBeans.get(0).jndiEnc.envEntries.size()", 4, ejbJar.enterpriseBeans.get(0).jndiEnc.envEntries.size());
+        // 4 + ComponentName
+        assertEquals("EjbJar.enterpriseBeans.get(0).jndiEnc.envEntries.size()", 5, ejbJar.enterpriseBeans.get(0).jndiEnc.envEntries.size());
 
 
     }
