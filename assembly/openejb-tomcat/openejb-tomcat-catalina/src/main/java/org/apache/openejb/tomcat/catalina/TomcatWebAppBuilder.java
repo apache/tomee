@@ -219,17 +219,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         for (WebAppInfo webApp : appInfo.webApps) {
             if (getContextInfo(webApp) == null) {
                 StandardContext standardContext = new StandardContext();
-                standardContext.setCrossContext(Boolean.parseBoolean(System.getProperty(OPENEJB_CROSSCONTEXT_PROPERTY, "false")));
-                standardContext.setNamingResources(new OpenEJBNamingResource());
-
-                String s = File.pathSeparator;
-                File contextXmlFile = new File(webApp.path + s + "META-INF" + s + "context.xml");
-                if (contextXmlFile.exists()) {
-                    BackportUtil.getAPI().setConfigFile(standardContext, contextXmlFile);
-                    standardContext.setOverride(true);
-                }
-                ContextConfig contextConfig = new OpenEJBContextConfig();
-                standardContext.addLifecycleListener(contextConfig);
 
                 if (webApp.contextRoot != null && webApp.contextRoot.startsWith("/")) {
                     standardContext.setPath(webApp.contextRoot);
@@ -239,13 +228,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 standardContext.setDocBase(webApp.path);
                 standardContext.setParentClassLoader(classLoader);
                 standardContext.setDelegate(true);
-
-                // force manually the namingContextListener to merge jndi in an easier way
-                NamingContextListener ncl = new NamingContextListener();
-                ncl.setName(standardContext.getName());
-                standardContext.setNamingContextListener(ncl);
-                standardContext.addLifecycleListener(ncl);
-                standardContext.addLifecycleListener(new TomcatJavaJndiBinder());
 
 
                 String host = webApp.host;
@@ -351,6 +333,32 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
      */
     @Override
     public void init(StandardContext standardContext) {
+        standardContext.setCrossContext(Boolean.parseBoolean(System.getProperty(OPENEJB_CROSSCONTEXT_PROPERTY, "false")));
+        standardContext.setNamingResources(new OpenEJBNamingResource());
+
+        if (standardContext.getConfigFile() == null) {
+            String s = File.pathSeparator;
+            File contextXmlFile = new File(standardContext.getDocBase() + s + "META-INF" + s + "context.xml");
+            if (contextXmlFile.exists()) {
+                BackportUtil.getAPI().setConfigFile(standardContext, contextXmlFile);
+                standardContext.setOverride(true);
+            }
+        }
+
+        LifecycleListener[] listeners = standardContext.findLifecycleListeners();
+        for (LifecycleListener l : listeners) {
+            if (l instanceof ContextConfig) {
+                standardContext.removeLifecycleListener(l);
+            }
+        }
+        standardContext.addLifecycleListener(new OpenEJBContextConfig());
+
+        // force manually the namingContextListener to merge jndi in an easier way
+        NamingContextListener ncl = new NamingContextListener();
+        ncl.setName(standardContext.getName());
+        standardContext.setNamingContextListener(ncl);
+        standardContext.addLifecycleListener(ncl);
+        standardContext.addLifecycleListener(new TomcatJavaJndiBinder());
     }
 
     /**
