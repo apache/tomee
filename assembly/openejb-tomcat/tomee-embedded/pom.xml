@@ -75,39 +75,53 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-jsf</artifactId>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-impl</artifactId>
       <version>2.1.2</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-api</artifactId>
       <version>2.1.2</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>jstl</groupId>
       <artifactId>jstl</artifactId>
       <version>1.2</version>
+      <scope>compile</scope>
     </dependency>
 
     <dependency>
        <groupId>org.apache.tomcat</groupId>
        <artifactId>tomcat-catalina</artifactId>
       <version>${tomcat.version}</version>
+      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat-catalina-ha</artifactId>
+      <version>${tomcat.version}</version>
+      <scope>compile</scope>
     </dependency>
 
     <dependency>
        <groupId>org.apache.tomcat</groupId>
        <artifactId>tomcat-coyote</artifactId>
        <version>${tomcat.version}</version>
+       <scope>compile</scope>
     </dependency>
 
     <dependency>
        <groupId>org.apache.tomcat</groupId>
        <artifactId>tomcat-jasper</artifactId>
        <version>${tomcat.version}</version>
+      <scope>compile</scope>
        <exclusions>
          <exclusion>
            <groupId>org.eclipse.jdt.core.compiler</groupId>
@@ -142,11 +156,13 @@
       <artifactId>ecj</artifactId>
       <version>3.5.1</version>
       <type>jar</type>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
       <version>6.0-1</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.velocity</groupId>

@@ -89,9 +89,12 @@ public class LinkageErrorProtection {
             };
 
             for (String className : classNames) {
-                load(className, standardContext);
+                try {
+                    load(className, standardContext);
+                } catch (Throwable e) {
+                }
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             // not critical, this is only to avoid possible jsp LinkageError in Oracle JDK 1.6
         }
     }
@@ -101,6 +104,7 @@ public class LinkageErrorProtection {
         try {
             classLoader.loadClass(className);
         } catch (ClassNotFoundException e) {
+        } catch (LinkageError e) {
             try {
                 classLoader.loadClass(className);
             } catch (ClassNotFoundException e2) {

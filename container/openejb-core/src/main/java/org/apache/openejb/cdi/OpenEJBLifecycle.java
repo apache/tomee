@@ -24,7 +24,6 @@ import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
@@ -38,7 +37,6 @@ import javax.el.ELResolver;
 import javax.enterprise.inject.Specializes;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.inject.spi.Extension;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.jsp.JspApplicationContext;
@@ -182,8 +180,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
 
         //Resournce Injection Service
         CdiResourceInjectionService injectionService = (CdiResourceInjectionService) webBeansContext.getService(ResourceInjectionService.class);
-        injectionService.setAppModule(stuff.getAppInfo());
-        injectionService.setClassLoader(appContext.getClassLoader());
+        injectionService.setAppContext(stuff.getAppContext());
 
         //Deploy the beans
         try {
@@ -208,14 +205,6 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
 
             //Scan
             this.scannerService.scan();
-
-            //Deploy bean from XML. Also configures deployments, interceptors, decorators.
-
-//            final CdiScanner cdiScanner = buildScanner();
-
-            //Build injections for managed beans
-            // TODO Maybe we should build injections after the bean discovery
-            injectionService.buildInjections(scannerService.getBeanClasses());
 
             //Deploy bean from XML. Also configures deployments, interceptors, decorators.
             deployer.deployFromXML(scannerService);

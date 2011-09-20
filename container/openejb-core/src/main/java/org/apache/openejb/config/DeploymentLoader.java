@@ -23,6 +23,7 @@ import org.apache.openejb.api.LocalClient;
 import org.apache.openejb.api.RemoteClient;
 import org.apache.openejb.jee.Application;
 import org.apache.openejb.jee.ApplicationClient;
+import org.apache.openejb.jee.Beans;
 import org.apache.openejb.jee.Connector;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.FacesConfig;
@@ -55,6 +56,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -605,6 +607,27 @@ public class DeploymentLoader implements DeploymentFilterable {
             appModule.getAdditionalLibraries().addAll(webModule.getUrls());
         }
 
+        {
+            List<URL> persistenceXmls = (List<URL>) appModule.getAltDDs().get("persistence.xml");
+            if (persistenceXmls == null) {
+                persistenceXmls = new ArrayList<URL>();
+                appModule.getAltDDs().put("persistence.xml", persistenceXmls);
+            }
+
+            final Object o = webModule.getAltDDs().get("persistence.xml");
+
+            if (o instanceof URL) {
+                URL url = (URL) o;
+                persistenceXmls.add(url);
+            }
+
+            if (o instanceof List) {
+                List<URL> urls = (List<URL>) o;
+                persistenceXmls.addAll(urls);
+            }
+        }
+
+
         // Per the Spec version of the Collapsed EAR there
         // aren't individual EjbModules inside a war.
         // The war itself is one big EjbModule if certain
@@ -677,7 +700,45 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         // load faces configuration files
         addFacesConfigs(webModule);
+
+        addBeansXmls(webModule);
+
         return webModule;
+    }
+
+    private void addBeansXmls(WebModule webModule) {
+        final List<URL> urls = webModule.getUrls();
+        final URLClassLoader loader = new URLClassLoader(urls.toArray(new URL[urls.size()]));
+
+        final ArrayList<URL> xmls;
+        try {
+            xmls = Collections.list(loader.getResources("META-INF/beans.xml"));
+            xmls.add((URL) webModule.getAltDDs().get("beans.xml"));
+        } catch (IOException e) {
+
+            return;
+        }
+
+        Beans complete = null;
+        for (URL url : xmls) {
+            if (url == null) continue;
+            try {
+                final Beans beans = ReadDescriptors.readBeans(url);
+
+                if (complete == null) {
+                    complete = beans;
+                } else {
+                    complete.getAlternativeClasses().addAll(beans.getAlternativeClasses());
+                    complete.getAlternativeStereotypes().addAll(beans.getAlternativeStereotypes());
+                    complete.getDecorators().addAll(beans.getDecorators());
+                    complete.getInterceptors().addAll(beans.getInterceptors());
+                }
+            } catch (OpenEJBException e) {
+                logger.error("Unable to read beans.xml from :"+ url.toExternalForm());
+            }
+        }
+
+        webModule.getAltDDs().put("beans.xml", complete);
     }
 
     protected String getContextRoot() {

@@ -1059,6 +1059,11 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                         }
                     }
+
+                    final String name = ejbModule.getModuleId() + "." + BeanContext.Comp.class.getSimpleName();
+                    final org.apache.openejb.jee.ManagedBean managedBean = new org.apache.openejb.jee.ManagedBean(name, BeanContext.Comp.class);
+                    managedBean.setTransactionType(TransactionType.BEAN);
+                    ejbModule.getEjbJar().addEnterpriseBean(managedBean);
                 } else {
                     managedClasses = new ArrayList<String>();
                 }
@@ -1314,10 +1319,19 @@ public class AnnotationDeployer implements DynamicDeployer {
             if (url.getPath().endsWith("WEB-INF/classes/")) return true;
             try {
                 final URLClassLoader loader = new URLClassLoader(new URL[]{url});
-                return loader.findResource("/WEB-INF/beans.xml") != null || loader.findResource("/META-INF/beans.xml") != null;
+                String[] paths = {
+                        "META-INF/beans.xml",
+                        "WEB-INF/beans.xml",
+                        "/WEB-INF/beans.xml",
+                        "/META-INF/beans.xml",
+                };
+
+                for (String path : paths) {
+                    if (loader.findResource(path) != null) return true;
+                }
             } catch (Exception e) {
-                return false;
             }
+            return false;
         }
 
         private String getEjbName(MessageDriven mdb, Class<?> beanClass) {
@@ -2233,6 +2247,14 @@ public class AnnotationDeployer implements DynamicDeployer {
                 processWebServiceHandlers(ejbModule, bean);
 
                 processWebServiceClientHandlers(bean, classLoader);
+
+                try {
+                    if (BeanContext.Comp.class.getName().equals(bean.getEjbClass())) {
+                        buildAnnotatedRefs(bean, ejbModule.getFinder(), classLoader);
+                    }
+                } catch (OpenEJBException e) {
+                    logger.error("Processing of @Resource, @EJB, and other references failed for CDI managed beans", e);
+                }
             }
 
             for (Interceptor interceptor : ejbModule.getEjbJar().getInterceptors()) {

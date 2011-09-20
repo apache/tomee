@@ -48,6 +48,7 @@ import org.apache.webbeans.context.creational.CreationalContextImpl;
 import org.apache.webbeans.inject.AbstractInjectable;
 import org.apache.xbean.recipe.ConstructionException;
 
+import javax.annotation.ManagedBean;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
@@ -106,6 +107,15 @@ public class BeanContext extends DeploymentContext {
     }
 
     public interface Timeout {
+    }
+
+    /**
+     * This ManagedBean is added to all EjbModules to effectively
+     * create a sharable "comp" namespace which can be used in
+     * for components with undefined namespace such as CDI
+     */
+    public static class Comp {
+
     }
     
     private final ModuleContext moduleContext;
