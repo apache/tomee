@@ -728,6 +728,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             allDeployments = sort(allDeployments);
 
+            appContext.getBeanContexts().addAll(allDeployments);
+
             new CdiBuilder().build(appInfo, appContext, allDeployments);
 
             ensureWebBeansContext(appContext);
@@ -825,8 +827,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             deployedApplications.put(appInfo.path, appInfo);
             fireAfterApplicationCreated(appInfo);
-
-            appContext.getBeanContexts().addAll(allDeployments);
 
             return appContext;
         } catch (ValidationException ve) {

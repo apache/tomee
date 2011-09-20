@@ -19,11 +19,7 @@
 <suite name="CDI TCK" verbose="0">
   <test name="CDI TCK">
     <classes>
-      <class name="org.jboss.jsr299.tck.tests.lookup.injection.non.contextual.InjectionIntoNonContextualComponentTest">
-        <methods>
-          <include name="testInjectionIntoJSFManagedBean"/>
-        </methods>
-      </class>
+      <class name="org.jboss.jsr299.tck.tests.deployment.packaging.bundledLibrary.LibraryInWarTest"/>
     </classes>
   </test>
 </suite>
