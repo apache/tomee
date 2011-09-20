@@ -63,13 +63,6 @@
           <exclude name="testPassivationOfPersistenceUnit"/>
         </methods>
       </class>
-      <class name="org.jboss.jsr299.tck.tests.implementation.simple.resource.resource.InjectionOfResourceTest">
-        <methods>
-          <exclude name="testInjectionOfResource"/>
-          <exclude name="testPassivatingResource"/>
-          <exclude name="testProduceResourceProxy"/>
-        </methods>
-      </class>
       <class name="org.jboss.jsr299.tck.tests.interceptors.definition.enterprise.nonContextualReference.SessionBeanInterceptorOnNonContextualEjbReferenceTest">
         <methods>
           <exclude name="testNonContextualSessionBeanReferenceIsIntercepted"/>
@@ -83,11 +76,6 @@
       <class name="org.jboss.jsr299.tck.tests.lookup.injectionpoint.broken.not.bean.InjectionPointTest">
         <methods>
           <exclude name="testDefinitionErrorDetected"/>
-        </methods>
-      </class>
-      <class name="org.jboss.jsr299.tck.tests.lookup.manager.jndi.ManagerTest">
-        <methods>
-          <exclude name="testManagerLookupInJndi"/>
         </methods>
       </class>
     </classes>
