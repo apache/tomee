@@ -110,7 +110,7 @@ public class XmlOverridesTest extends TestCase {
         assertEquals("Enc.ejbLocalReferences.get(0).link", "BarBean", enc.ejbLocalReferences.get(0).link);
         assertEquals("Enc.ejbReferences.size()", 0, enc.ejbReferences.size());
 
-        assertEquals("Enc.envEntries.size()", 10, enc.envEntries.size());
+        assertEquals("Enc.envEntries.size()", 11, enc.envEntries.size()); // 10 + ComponentName
         Map<String, EnvEntryInfo> entries = map(enc.envEntries);
 
         assertEnvEntry(entries, name("striing"), "java.lang.Integer", "2");
