@@ -228,7 +228,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                     BackportUtil.getAPI().setConfigFile(standardContext, contextXmlFile);
                     standardContext.setOverride(true);
                 }
-                ContextConfig contextConfig = new ContextConfig();
+                ContextConfig contextConfig = new OpenEJBContextConfig();
                 standardContext.addLifecycleListener(contextConfig);
 
                 if (webApp.contextRoot != null && webApp.contextRoot.startsWith("/")) {
