@@ -38,40 +38,7 @@
       </plugin>
     </plugins>
   </build>
-  <properties>
-      <version.cdi-api>1.0</version.cdi-api>
-      <version.arquillian>1.0.0.Alpha5</version.arquillian>
-   </properties>
   <dependencies>
-    <!--<dependency>-->
-       <!--<groupId>org.jboss.arquillian</groupId>-->
-       <!--<artifactId>arquillian-spi</artifactId>-->
-       <!--<version>${version.arquillian}</version>-->
-    <!--</dependency>-->
-
-    <!--<dependency>-->
-      <!--<groupId>org.jboss.arquillian.protocol</groupId>-->
-      <!--<artifactId>arquillian-protocol-servlet</artifactId>-->
-      <!--<version>${version.arquillian}</version>-->
-    <!--</dependency>-->
-
-    <!--<dependency>-->
-       <!--<groupId>org.jboss.arquillian.testenricher</groupId>-->
-       <!--<artifactId>arquillian-testenricher-cdi</artifactId>-->
-       <!--<version>${version.arquillian}</version>-->
-    <!--</dependency>-->
-
-    <!--<dependency>-->
-       <!--<groupId>org.jboss.arquillian.testenricher</groupId>-->
-       <!--<artifactId>arquillian-testenricher-resource</artifactId>-->
-       <!--<version>${version.arquillian}</version>-->
-    <!--</dependency>-->
-
-    <!--<dependency>-->
-       <!--<groupId>org.jboss.arquillian.testenricher</groupId>-->
-       <!--<artifactId>arquillian-testenricher-ejb</artifactId>-->
-       <!--<version>${version.arquillian}</version>-->
-    <!--</dependency>-->
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-jsf</artifactId>
@@ -97,8 +64,8 @@
     </dependency>
 
     <dependency>
-       <groupId>org.apache.tomcat</groupId>
-       <artifactId>tomcat-catalina</artifactId>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat-catalina</artifactId>
       <version>${tomcat.version}</version>
       <scope>compile</scope>
     </dependency>
@@ -111,44 +78,30 @@
     </dependency>
 
     <dependency>
-       <groupId>org.apache.tomcat</groupId>
-       <artifactId>tomcat-coyote</artifactId>
-       <version>${tomcat.version}</version>
-       <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-       <groupId>org.apache.tomcat</groupId>
-       <artifactId>tomcat-jasper</artifactId>
-       <version>${tomcat.version}</version>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat-coyote</artifactId>
+      <version>${tomcat.version}</version>
       <scope>compile</scope>
-       <exclusions>
-         <exclusion>
-           <groupId>org.eclipse.jdt.core.compiler</groupId>
-           <artifactId>ecj</artifactId>
-         </exclusion>
-       </exclusions>
     </dependency>
 
-    <!--<dependency>-->
-      <!--<groupId>org.jboss.arquillian</groupId>-->
-      <!--<artifactId>arquillian-junit</artifactId>-->
-      <!--<version>${version.arquillian}</version>-->
-      <!--<scope>test</scope>-->
-    <!--</dependency>-->
-
-    <!--<dependency>-->
-      <!--<groupId>javax.enterprise</groupId>-->
-      <!--<artifactId>cdi-api</artifactId>-->
-      <!--<version>${version.cdi-api}</version>-->
-      <!--<scope>test</scope>-->
-    <!--</dependency>-->
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat-jasper</artifactId>
+      <version>${tomcat.version}</version>
+      <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.eclipse.jdt.core.compiler</groupId>
+          <artifactId>ecj</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
 
     <dependency>
-       <groupId>junit</groupId>
-       <artifactId>junit</artifactId>
-       <version>4.8.1</version>
-       <scope>test</scope>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.8.1</version>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
