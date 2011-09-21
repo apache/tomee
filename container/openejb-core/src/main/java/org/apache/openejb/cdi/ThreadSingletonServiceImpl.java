@@ -19,6 +19,8 @@
 package org.apache.openejb.cdi;
 
 import org.apache.openejb.AppContext;
+import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
@@ -59,6 +61,10 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
 
     @Override
     public void initialize(StartupObject startupObject) {
+        AppContext appContext = startupObject.getAppContext();
+
+        appContext.setCdiEnabled(hasBeans(startupObject.getAppInfo()));
+
         //initialize owb context, cf geronimo's OpenWebBeansGBean
         Properties properties = new Properties();
         Map<Class<?>, Object> services = new HashMap<Class<?>, Object>();
@@ -71,8 +77,9 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         properties.setProperty(OpenWebBeansConfiguration.APPLICATION_SUPPORTS_CONVERSATION, "true");
         properties.setProperty(OpenWebBeansConfiguration.IGNORED_INTERFACES, "org.apache.aries.proxy.weaving.WovenProxy");
 
+        services.put(AppContext.class, appContext);
         services.put(TransactionService.class, new OpenEJBTransactionService());
-        services.put(ELAdaptor.class, new EL22Adaptor());
+        services.put(ELAdaptor.class,(ELAdaptor) new CustomELAdapter(appContext));
         services.put(ContextsService.class, new CdiAppContextsService(true));
         services.put(ResourceInjectionService.class, new CdiResourceInjectionService());
         services.put(ScannerService.class, new CdiScanner());
@@ -80,7 +87,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         optional(services, ConversationService.class, "org.apache.webbeans.jsf.DefaultConversationService");
 
         WebBeansContext webBeansContext = new WebBeansContext(services, properties);
-        startupObject.getAppContext().set(WebBeansContext.class, webBeansContext);
+        appContext.set(WebBeansContext.class, webBeansContext);
         Object old = contextEntered(webBeansContext);
         try {
             setConfiguration(webBeansContext.getOpenWebBeansConfiguration());
@@ -92,6 +99,13 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         } finally {
             contextExited(old);
         }
+    }
+
+    private boolean hasBeans(AppInfo appInfo) {
+        for (EjbJarInfo ejbJar : appInfo.ejbJars) {
+            if (ejbJar.beans != null) return true;
+        }
+        return false;
     }
 
     private <T> void optional(Map<Class<?>, Object> services, Class<T> type, String implementation) {

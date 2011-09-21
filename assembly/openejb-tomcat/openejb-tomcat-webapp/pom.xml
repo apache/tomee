@@ -107,6 +107,18 @@
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-jsf</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.openejb</groupId>
+          <artifactId>javaee-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-tomcat-loader</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
@@ -319,10 +331,6 @@
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-api</artifactId>
       <version>${myfaces.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openwebbeans</groupId>
-      <artifactId>openwebbeans-jsf</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.patch</groupId>

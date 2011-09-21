@@ -88,6 +88,7 @@ import org.apache.openejb.cdi.CdiAppContextsService;
 import org.apache.openejb.cdi.CdiBuilder;
 import org.apache.openejb.cdi.CdiResourceInjectionService;
 import org.apache.openejb.cdi.CdiScanner;
+import org.apache.openejb.cdi.CustomELAdapter;
 import org.apache.openejb.cdi.ManagedSecurityService;
 import org.apache.openejb.cdi.OpenEJBTransactionService;
 import org.apache.openejb.core.ConnectorReference;
@@ -132,6 +133,7 @@ import org.apache.webbeans.spi.ContextsService;
 import org.apache.webbeans.spi.ResourceInjectionService;
 import org.apache.webbeans.spi.ScannerService;
 import org.apache.webbeans.spi.TransactionService;
+import org.apache.webbeans.spi.adaptor.ELAdaptor;
 import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
@@ -848,13 +850,16 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             final Map<Class<?>, Object> services = new HashMap<Class<?>, Object>();
 
+            services.put(AppContext.class, appContext);
             services.put(TransactionService.class, new OpenEJBTransactionService());
             services.put(ContextsService.class, new CdiAppContextsService(true));
             services.put(ResourceInjectionService.class, new CdiResourceInjectionService());
             services.put(ScannerService.class, new CdiScanner());
+            services.put(ELAdaptor.class, (ELAdaptor) new CustomELAdapter(appContext));
             final Properties properties = new Properties();
             properties.setProperty(org.apache.webbeans.spi.SecurityService.class.getName(), ManagedSecurityService.class.getName());
             webBeansContext = new WebBeansContext(services, properties);
+            appContext.setCdiEnabled(false);
         }
 
         appContext.set(WebBeansContext.class, webBeansContext);
