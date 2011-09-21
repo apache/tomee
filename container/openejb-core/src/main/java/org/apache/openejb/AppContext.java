@@ -47,6 +47,7 @@ public class AppContext extends DeploymentContext {
     private final Context globalJndiContext;
     private final Context appJndiContext;
     private final boolean standaloneModule;
+    private boolean cdiEnabled = false;
     private WebBeansContext webBeansContext;
     private final Collection<Injection> injections = new HashSet<Injection>();
     private final Map<String, Object> bindings = new HashMap<String, Object>();
@@ -93,6 +94,15 @@ public class AppContext extends DeploymentContext {
         return webContexts;
     }
 
+
+    public boolean isCdiEnabled() {
+        return cdiEnabled;
+    }
+
+    public void setCdiEnabled(boolean cdiEnabled) {
+        this.cdiEnabled = cdiEnabled;
+    }
+
     @Override
     public String getId() {
         return super.getId();
@@ -137,6 +147,5 @@ public class AppContext extends DeploymentContext {
     public boolean removeTask(Runnable task) {
         return blockingQueue.remove(task);
     }
-
 
 }
