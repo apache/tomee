@@ -30,29 +30,36 @@ import java.util.Set;
 public class TomEEJarScanner extends StandardJarScanner {
 
     public void scan(ServletContext context, ClassLoader classLoader, JarScannerCallback callback, Set<String> jarsToIgnore) {
-        String openejbWar = System.getProperty("openejb.war");
-
-        if (openejbWar == null) {
+        if ("FragmentJarScannerCallback".equals(callback.getClass().getSimpleName())) {
             EmbeddedJarScanner embeddedJarScanner = new EmbeddedJarScanner();
             embeddedJarScanner.scan(context, classLoader, callback, jarsToIgnore);
-            return;
+        } else {
+            super.scan(context, classLoader, callback, jarsToIgnore);
         }
 
-        Set<String> newIgnores = new HashSet<String>();
-        if (jarsToIgnore != null) {
-            newIgnores.addAll(jarsToIgnore);
-        }
-
-        if (openejbWar != null && "FragmentJarScannerCallback".equals(callback.getClass().getSimpleName())) {
-            File openejbApp = new File(openejbWar);
-            File libFolder = new File(openejbApp, "lib");
-            for (File f : libFolder.listFiles()) {
-                if (f.getName().toLowerCase().endsWith(".jar")) {
-                    newIgnores.add(f.getName());
-                }
-            }
-        }
-
-        super.scan(context, classLoader, callback, newIgnores);
+//        String openejbWar = System.getProperty("openejb.war");
+//
+//        if (openejbWar == null) {
+//            EmbeddedJarScanner embeddedJarScanner = new EmbeddedJarScanner();
+//            embeddedJarScanner.scan(context, classLoader, callback, jarsToIgnore);
+//            return;
+//        }
+//
+//        Set<String> newIgnores = new HashSet<String>();
+//        if (jarsToIgnore != null) {
+//            newIgnores.addAll(jarsToIgnore);
+//        }
+//
+//        if (openejbWar != null && "FragmentJarScannerCallback".equals(callback.getClass().getSimpleName())) {
+//            File openejbApp = new File(openejbWar);
+//            File libFolder = new File(openejbApp, "lib");
+//            for (File f : libFolder.listFiles()) {
+//                if (f.getName().toLowerCase().endsWith(".jar")) {
+//                    newIgnores.add(f.getName());
+//                }
+//            }
+//        }
+//
+//        super.scan(context, classLoader, callback, newIgnores);
     }
 }
