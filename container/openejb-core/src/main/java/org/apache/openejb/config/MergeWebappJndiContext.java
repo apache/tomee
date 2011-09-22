@@ -25,6 +25,7 @@ import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.jee.JndiReference;
 import org.apache.openejb.jee.ResourceEnvRef;
 import org.apache.openejb.jee.ResourceRef;
+import org.apache.openejb.jee.TransactionType;
 
 import javax.ejb.EJBContext;
 import javax.ejb.EntityContext;
@@ -78,6 +79,11 @@ public class MergeWebappJndiContext implements DynamicDeployer {
             merge(bean.getMessageDestinationRefMap(), webApp.getMessageDestinationRefMap());
             merge(bean.getPersistenceContextRefMap(), webApp.getPersistenceContextRefMap());
             merge(bean.getPersistenceUnitRefMap(), webApp.getPersistenceUnitRefMap());
+
+            mergeUserTransaction(bean.getResourceRefMap(), webApp.getResourceRefMap(), webApp);
+            mergeUserTransaction(bean.getResourceEnvRefMap(), webApp.getResourceEnvRefMap(), webApp);
+            mergeUserTransaction(webApp.getResourceRefMap(), bean.getResourceRefMap(), bean);
+            mergeUserTransaction(webApp.getResourceEnvRefMap(), bean.getResourceEnvRefMap(), bean);
         }
 
         for (EnterpriseBean a : ejbJar.getEnterpriseBeans()) {
@@ -96,14 +102,10 @@ public class MergeWebappJndiContext implements DynamicDeployer {
                 merge(a.getPersistenceContextRefMap(), b.getPersistenceContextRefMap());
                 merge(a.getPersistenceUnitRefMap(), b.getPersistenceUnitRefMap());
 
+                mergeUserTransaction(a.getResourceRefMap(), b.getResourceRefMap(), b);
+                mergeUserTransaction(a.getResourceEnvRefMap(), b.getResourceEnvRefMap(), b);
             }
         }
-
-        for (EnterpriseBean bean : ejbJar.getEnterpriseBeans()) {
-            mergeUserTransaction(bean.getResourceRefMap(), webApp.getResourceRefMap());
-            mergeUserTransaction(bean.getResourceEnvRefMap(), webApp.getResourceEnvRefMap());
-        }
-
     }
 
     /**
@@ -168,7 +170,12 @@ public class MergeWebappJndiContext implements DynamicDeployer {
         return a instanceof ResourceRef || a instanceof ResourceEnvRef;
     }
 
-    private <R extends JndiReference> void mergeUserTransaction(Map<String, R> from, Map<String, R> to) {
+    private <R extends JndiReference> void mergeUserTransaction(Map<String, R> from, Map<String, R> to, JndiConsumer consumer) {
+        if (consumer instanceof EnterpriseBean) {
+            final EnterpriseBean enterpriseBean = (EnterpriseBean) consumer;
+            if (enterpriseBean.getTransactionType() != TransactionType.BEAN) return;
+        }
+
         for (R a : from.values()) {
 
             if (!UserTransaction.class.getName().equals(a.getType())) continue;
