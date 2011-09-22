@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.tck.cdi.tomee.embedded;
 
+import org.apache.openejb.core.ivm.IntraVmCopyMonitor;
 import org.apache.openejb.core.ivm.IntraVmProxy;
 
 import java.io.ByteArrayInputStream;
@@ -36,11 +37,16 @@ public class BeansImpl implements org.jboss.jsr299.tck.spi.Beans {
 
     @Override
     public byte[] serialize(Object instance) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ObjectOutputStream os = new ObjectOutputStream(baos);
-        os.writeObject(instance);
-        os.flush();
-        return baos.toByteArray();
+        IntraVmCopyMonitor.prePassivationOperation();
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ObjectOutputStream os = new ObjectOutputStream(baos);
+            os.writeObject(instance);
+            os.flush();
+            return baos.toByteArray();
+        } finally {
+            IntraVmCopyMonitor.postPassivationOperation();
+        }
     }
 
     @Override
