@@ -37,6 +37,7 @@ import org.apache.openejb.jee.TldTaglib;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.WebserviceDescription;
 import org.apache.openejb.jee.Webservices;
+import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.AnnotationFinder;
@@ -48,6 +49,9 @@ import org.apache.openejb.util.UrlCache;
 import org.apache.xbean.finder.IAnnotationFinder;
 import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.finder.UrlSet;
+import org.apache.xbean.finder.archive.Archive;
+import org.apache.xbean.finder.archive.CompositeArchive;
+import org.apache.xbean.finder.archive.JarArchive;
 import org.xml.sax.SAXException;
 
 import javax.xml.bind.JAXBException;
@@ -512,6 +516,9 @@ public class DeploymentLoader implements DeploymentFilterable {
                 }
             }
 
+
+            addBeansXmls(appModule);
+
             // Persistence Units
             Properties p = new Properties();
             p.put(appModule.getModuleId(), appModule.getJarLocation());
@@ -739,6 +746,53 @@ public class DeploymentLoader implements DeploymentFilterable {
         }
 
         webModule.getAltDDs().put("beans.xml", complete);
+    }
+
+    private void addBeansXmls(AppModule appModule) {
+        final List<URL> urls = appModule.getAdditionalLibraries();
+        final URLClassLoader loader = new URLClassLoader(urls.toArray(new URL[urls.size()]));
+
+        final ArrayList<URL> xmls;
+        try {
+            xmls = Collections.list(loader.getResources("META-INF/beans.xml"));
+        } catch (IOException e) {
+
+            return;
+        }
+
+        List<Archive> jars = new ArrayList<Archive>();
+
+        Beans complete = null;
+        for (URL url : xmls) {
+            if (url == null) continue;
+            try {
+
+                final Beans beans = ReadDescriptors.readBeans(url);
+
+                if (complete == null) {
+                    complete = beans;
+                } else {
+                    complete.getAlternativeClasses().addAll(beans.getAlternativeClasses());
+                    complete.getAlternativeStereotypes().addAll(beans.getAlternativeStereotypes());
+                    complete.getDecorators().addAll(beans.getDecorators());
+                    complete.getInterceptors().addAll(beans.getInterceptors());
+                }
+                File file = URLs.toFile(url);
+                jars.add(new JarArchive(appModule.getClassLoader(), url));
+//            } catch (MalformedURLException e) {
+//                logger.error("Unable to resolve jar path of beans.xml:"+ url.toExternalForm(), e);
+            } catch (OpenEJBException e) {
+                logger.error("Unable to read beans.xml from :"+ url.toExternalForm(), e);
+            }
+        }
+
+        if (complete == null) return;
+
+        EjbModule ejbModule = new EjbModule(appModule.getClassLoader(), "ear-scoped-cdi-beans", new EjbJar(), new OpenejbJar());
+        ejbModule.setBeans(complete);
+        ejbModule.setFinder(new org.apache.xbean.finder.AnnotationFinder(new AggregatedArchive(appModule.getClassLoader(), xmls)));
+
+        appModule.getEjbModules().add(ejbModule);
     }
 
     protected String getContextRoot() {

@@ -1317,6 +1317,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         private boolean hasBeansXml(URL url) {
             if (url.getPath().endsWith("WEB-INF/classes/")) return true;
+            if (url.getPath().endsWith("!/META-INF/beans.xml")) return true;
             try {
                 final URLClassLoader loader = new URLClassLoader(new URL[]{url});
                 String[] paths = {

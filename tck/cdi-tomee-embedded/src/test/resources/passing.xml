@@ -19,7 +19,7 @@
 <suite name="CDI TCK" verbose="0">
   <test name="CDI TCK">
     <classes>
-      <class name="org.jboss.jsr299.tck.tests.deployment.packaging.bundledLibrary.LibraryInWarTest"/>
+      <class name="org.jboss.jsr299.tck.tests.deployment.packaging.bundledLibrary.LibraryInEarTest"/>
     </classes>
   </test>
 </suite>

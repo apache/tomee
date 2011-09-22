@@ -109,33 +109,7 @@ public class CdiResourceInjectionService implements ResourceInjectionService {
             for (Injection injection : beanContext.getInjections()) {
                 if (!injection.getTarget().isAssignableFrom(clazz)) continue;
                 try {
-                    String jndiName = injection.getJndiName();
-
-                    if (!jndiName.startsWith("java:")) {
-                        jndiName = "java:" + jndiName;
-                    }
-
-                    Object value;
-                    try {
-                        value = InjectionProcessor.unwrap(beanContext.getJndiContext()).lookup(jndiName);
-                    } catch (NamingException e) {
-                        // Fallback and try the Context on the current thread
-                        //
-                        // We attempt to create a Context instance for each
-                        // individual CDI bean.  This isn't really accurate
-                        // however, and in a webapp all the beans will share
-                        // the same JNDI Context.  This fallback will cover
-                        // the situation where we did not accurately create
-                        // a Context for each bean and instead the Context
-                        // on the thread (the webapp context) has the data
-                        // we need to lookup.
-
-                        try {
-                            value = new InitialContext().lookup(jndiName);
-                        } catch (NamingException e1) {
-                            throw e;
-                        }
-                    }
+                    Object value = lookup(beanContext, injection);
 
                     String prefix;
                     if (usePrefix) {
@@ -150,6 +124,43 @@ public class CdiResourceInjectionService implements ResourceInjectionService {
                 }
 
             }
+        }
+    }
+
+    private Object lookup(BeanContext beanContext, Injection injection) throws NamingException {
+        String jndiName = injection.getJndiName();
+
+        try {
+            return beanContext.getJndiContext().lookup(jndiName);
+        } catch (NamingException e) {
+
+            if (!jndiName.startsWith("java:")) {
+                jndiName = "java:" + jndiName;
+            }
+
+            Object value;
+            try {
+
+                value = InjectionProcessor.unwrap(beanContext.getJndiContext()).lookup(jndiName);
+            } catch (NamingException e1) {
+                // Fallback and try the Context on the current thread
+                //
+                // We attempt to create a Context instance for each
+                // individual CDI bean.  This isn't really accurate
+                // however, and in a webapp all the beans will share
+                // the same JNDI Context.  This fallback will cover
+                // the situation where we did not accurately create
+                // a Context for each bean and instead the Context
+                // on the thread (the webapp context) has the data
+                // we need to lookup.
+
+                try {
+                    value = new InitialContext().lookup(jndiName);
+                } catch (NamingException e2) {
+                    throw e;
+                }
+            }
+            return value;
         }
     }
 
