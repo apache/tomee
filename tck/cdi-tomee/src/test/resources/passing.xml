@@ -38,30 +38,14 @@
           <exclude name="testEnterpriseBeanWithNonPassivatingDecoratorFails"/>
         </methods>
       </class>
-      <class name="org.jboss.jsr299.tck.tests.deployment.packaging.bundledLibrary.LibraryInEarTest">
-        <methods>
-          <exclude name="test"/>
-        </methods>
-      </class>
       <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.lifecycle.EnterpriseBeanLifecycleTest">
         <methods>
           <exclude name="testCreateSFSB"/>
-          <exclude name="testSerializeSFSB"/>
-        </methods>
-      </class>
-      <class name="org.jboss.jsr299.tck.tests.interceptors.definition.enterprise.nonContextualReference.SessionBeanInterceptorOnNonContextualEjbReferenceTest">
-        <methods>
-          <exclude name="testNonContextualSessionBeanReferenceIsIntercepted"/>
         </methods>
       </class>
       <class name="org.jboss.jsr299.tck.tests.lookup.injection.non.contextual.ws.InjectionIntoWebServiceEndPointTest">
         <methods>
           <exclude name="testInjectionIntoWebServiceEndpoint"/>
-        </methods>
-      </class>
-      <class name="org.jboss.jsr299.tck.tests.lookup.injectionpoint.broken.not.bean.InjectionPointTest">
-        <methods>
-          <exclude name="testDefinitionErrorDetected"/>
         </methods>
       </class>
     </classes>
