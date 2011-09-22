@@ -24,7 +24,7 @@ import org.apache.openejb.jee.InjectionTarget;
 import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.jee.JndiReference;
 import org.apache.openejb.jee.ResourceEnvRef;
-import org.apache.openejb.jee.sun.ResourceRef;
+import org.apache.openejb.jee.ResourceRef;
 
 import javax.ejb.EJBContext;
 import javax.ejb.EntityContext;
@@ -99,6 +99,11 @@ public class MergeWebappJndiContext implements DynamicDeployer {
             }
         }
 
+        for (EnterpriseBean bean : ejbJar.getEnterpriseBeans()) {
+            mergeUserTransaction(bean.getResourceRefMap(), webApp.getResourceRefMap());
+            mergeUserTransaction(bean.getResourceEnvRefMap(), webApp.getResourceEnvRefMap());
+        }
+
     }
 
     /**
@@ -162,4 +167,25 @@ public class MergeWebappJndiContext implements DynamicDeployer {
     private <R extends JndiReference> boolean isResourceRef(R a) {
         return a instanceof ResourceRef || a instanceof ResourceEnvRef;
     }
+
+    private <R extends JndiReference> void mergeUserTransaction(Map<String, R> from, Map<String, R> to) {
+        for (R a : from.values()) {
+
+            if (!UserTransaction.class.getName().equals(a.getType())) continue;
+
+            final R b = to.get(a.getKey());
+
+            // New entry
+            if (b == null) {
+                to.put(a.getKey(), a);
+                continue;
+            }
+
+            // Update existing entry
+            // merge injection points
+            b.getInjectionTarget().addAll(a.getInjectionTarget());
+        }
+    }
+
+
 }
