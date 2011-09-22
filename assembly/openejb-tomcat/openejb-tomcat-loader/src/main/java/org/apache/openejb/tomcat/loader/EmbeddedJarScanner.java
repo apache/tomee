@@ -67,7 +67,10 @@ public class EmbeddedJarScanner implements JarScanner {
 
         try {
             final UrlSet classpath = new UrlSet(classloader);
-            final UrlSet excluded = classpath.exclude(".*/WEB-INF/lib/.*");
+
+            UrlSet excluded = classpath.exclude(".*/WEB-INF/lib/.*");
+            excluded = excluded.exclude(".*myfaces-impl-.*");
+            excluded = excluded.exclude(".*openejb-jsf-.*");
 
             final UrlSet scan = classpath.exclude(excluded);
 
