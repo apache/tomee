@@ -32,6 +32,7 @@ import org.apache.openejb.config.rules.CheckCallbacks;
 import org.apache.openejb.config.rules.CheckClasses;
 import org.apache.openejb.config.rules.CheckDependsOn;
 import org.apache.openejb.config.rules.CheckDescriptorLocation;
+import org.apache.openejb.config.rules.CheckInjectionPointUsage;
 import org.apache.openejb.config.rules.CheckInjectionTargets;
 import org.apache.openejb.config.rules.CheckMethods;
 import org.apache.openejb.config.rules.CheckPersistenceRefs;
@@ -105,6 +106,7 @@ public class AppValidator {
                 new CheckCallbacks(),
                 new CheckAssemblyBindings(),
                 new CheckInjectionTargets(),
+                new CheckInjectionPointUsage(),
                 new CheckPersistenceRefs(),
                 new CheckDependsOn(),
                 new CheckUserTransactionRefs(),
