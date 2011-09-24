@@ -58,8 +58,6 @@ import org.apache.openejb.core.ivm.naming.SystemComponentReference;
 import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.server.rest.RESTService;
-import org.apache.openejb.server.webservices.WsService;
 import org.apache.openejb.tomcat.common.LegacyAnnotationProcessor;
 import org.apache.openejb.tomcat.common.TomcatVersion;
 import org.apache.openejb.tomcat.common.UserTransactionFactory;
@@ -88,7 +86,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -150,13 +147,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
      * TODO can we use the SPI interface instead?
      */
     private CoreContainerSystem containerSystem;
-
-    /**
-     * WsService
-     */
-    private WsService wsService;
-
-    private RESTService rsService;
 
     /**
      * Creates a new web application builder
@@ -587,19 +577,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         // required for Pojo Web Services because when Assembler creates the application
         // the CoreContainerSystem does not contain the WebContext
         // see also the start method getContainerSystem().addWebDeployment(webContext);
-        WsService wsService = getWsService();
-        if (wsService != null) {
-            List<WebAppInfo> webApps = contextInfo.appInfo.webApps;
-            for (WebAppInfo webApp : webApps) {
-                wsService.afterApplicationCreated(webApp);
-            }
-        }
-
-        RESTService rsService = getRsService();
-        if (rsService != null) {
-            List<WebAppInfo> webApps = contextInfo.appInfo.webApps;
-            for (WebAppInfo webApp : webApps) {
-                rsService.afterApplicationCreated(webApp);
+        WebDeploymentListeners listeners = SystemInstance.get().getComponent(WebDeploymentListeners.class);
+        if (listeners != null) {
+            for (WebAppInfo webApp : contextInfo.appInfo.webApps) {
+                listeners.afterApplicationCreated(webApp);
             }
         }
 
@@ -1010,24 +991,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         return containerSystem;
     }
 
-    /**
-     * Gets WsService implementation.
-     *
-     * @return wsService
-     */
-    private WsService getWsService() {
-        if (wsService == null) {
-            wsService = SystemInstance.get().getComponent(WsService.class);
-        }
-        return wsService;
-    }
-
-    private RESTService getRsService() {
-        if (rsService == null) {
-            rsService = SystemInstance.get().getComponent(RESTService.class);
-        }
-        return rsService;
-    }
 
     /**
      * Gets id of the context. Context id

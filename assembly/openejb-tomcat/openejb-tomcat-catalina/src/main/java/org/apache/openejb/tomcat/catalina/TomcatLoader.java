@@ -23,7 +23,6 @@ import org.apache.catalina.Host;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
-import org.apache.catalina.Service;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardServer;
 import org.apache.openejb.OpenEJB;
@@ -31,13 +30,13 @@ import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.Loader;
+import org.apache.openejb.loader.SystemClassPath;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.ServiceManager;
 import org.apache.openejb.server.ejbd.EjbServer;
-import org.apache.openejb.server.rest.RsRegistry;
-import org.apache.openejb.server.webservices.WsRegistry;
+import org.apache.openejb.spi.Service;
 import org.apache.openejb.tomcat.installer.Installer;
 import org.apache.openejb.tomcat.installer.Paths;
 import org.apache.openejb.tomcat.loader.TomcatHelper;
@@ -81,6 +80,8 @@ import java.util.Properties;
  * @version $Revision: 617255 $ $Date: 2008-01-31 13:58:36 -0800 (Thu, 31 Jan 2008) $
  */
 public class TomcatLoader implements Loader {
+
+    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, TomcatLoader.class);
 
     /**
      * OpenEJB Server Daemon
@@ -176,6 +177,7 @@ public class TomcatLoader implements Loader {
         // Install tomcat thread context listener
         ThreadContext.addThreadContextListener(new TomcatThreadContextListener());
 
+
         // Install tomcat war builder
         TomcatWebAppBuilder tomcatWebAppBuilder = (TomcatWebAppBuilder) SystemInstance.get().getComponent(WebAppBuilder.class);
         if (tomcatWebAppBuilder == null) {
@@ -184,18 +186,11 @@ public class TomcatLoader implements Loader {
             SystemInstance.get().setComponent(WebAppBuilder.class, tomcatWebAppBuilder);
         }
 
-        // Install the Tomcat webservice registry
-        TomcatWsRegistry tomcatSoapHandler = (TomcatWsRegistry) SystemInstance.get().getComponent(WsRegistry.class);
-        if (tomcatSoapHandler == null) {
-            tomcatSoapHandler = new TomcatWsRegistry();
-            SystemInstance.get().setComponent(WsRegistry.class, tomcatSoapHandler);
-        }
+        // Web Services will be installed into the WebDeploymentListeners list
+        SystemInstance.get().setComponent(WebDeploymentListeners.class, new WebDeploymentListeners());
 
-        TomcatRsRegistry tomcatRestHandler = (TomcatRsRegistry) SystemInstance.get().getComponent(RsRegistry.class);
-        if (tomcatRestHandler == null) {
-            tomcatRestHandler = new TomcatRsRegistry();
-            SystemInstance.get().setComponent(RsRegistry.class, tomcatRestHandler);
-        }
+        optionalService(properties, "org.apache.tomee.webservices.TomeeJaxRsService");
+        optionalService(properties, "org.apache.tomee.webservices.TomeeJaxWsService");
 
         // Start OpenEJB
         ejbServer = new EjbServer();
@@ -243,7 +238,6 @@ public class TomcatLoader implements Loader {
                 services.add(restService);
             } catch (ClassNotFoundException ignored) {
             } catch (Exception e) {
-                Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, getClass());
                 logger.error("REST failed to start", e);
             }
         }
@@ -256,6 +250,17 @@ public class TomcatLoader implements Loader {
                 }
             }
         });
+    }
+
+    private void optionalService(Properties properties, String className) {
+        try {
+            Service service = (Service) Class.forName(className).newInstance();
+            service.init(properties);
+        } catch (ClassNotFoundException e) {
+            logger.info("Optional service not installed: " + className);
+        } catch (Exception e) {
+            logger.error("Failed to start: " + className, e);
+        }
     }
 
     private void setIfNull(Properties properties, String key, String value) {
@@ -305,7 +310,7 @@ public class TomcatLoader implements Loader {
      * @param standardServer      tomcat server instance
      */
     private void processRunningApplications(TomcatWebAppBuilder tomcatWebAppBuilder, StandardServer standardServer) {
-        for (Service service : standardServer.findServices()) {
+        for (org.apache.catalina.Service service : standardServer.findServices()) {
             if (service.getContainer() instanceof Engine) {
                 Engine engine = (Engine) service.getContainer();
                 for (Container engineChild : engine.findChildren()) {
