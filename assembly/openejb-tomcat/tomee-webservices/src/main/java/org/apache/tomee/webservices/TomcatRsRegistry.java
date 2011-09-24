@@ -14,9 +14,17 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.openejb.tomcat.catalina;
+package org.apache.tomee.webservices;
 
-import org.apache.catalina.*;
+import org.apache.catalina.Container;
+import org.apache.catalina.Context;
+import org.apache.catalina.Engine;
+import org.apache.catalina.Host;
+import org.apache.catalina.Lifecycle;
+import org.apache.catalina.LifecycleEvent;
+import org.apache.catalina.LifecycleListener;
+import org.apache.catalina.Service;
+import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardServer;
 import org.apache.openejb.server.httpd.HttpListener;
@@ -54,7 +62,8 @@ public class TomcatRsRegistry implements RsRegistry {
         }
     }
 
-    @Override public List<String> createRsHttpListener(HttpListener listener, ClassLoader classLoader, String completePath, String virtualHost) {
+    @Override
+    public List<String> createRsHttpListener(HttpListener listener, ClassLoader classLoader, String completePath, String virtualHost) {
         String path = completePath;
         if (path == null) {
             throw new NullPointerException("contextRoot is null");
@@ -81,16 +90,16 @@ public class TomcatRsRegistry implements RsRegistry {
         Context context = (Context) host.findChild(webContext);
         context.addLifecycleListener(new LifecycleListener() {
             public void lifecycleEvent(LifecycleEvent event) {
-            	Context context = (Context) event.getLifecycle();
-            	if (event.getType().equals(Lifecycle.BEFORE_START_EVENT)) {
-            		context.getServletContext().setAttribute(IGNORE_CONTEXT, "true");
-            	}
-            	if (event.getType().equals(Lifecycle.START_EVENT) || event.getType().equals(Lifecycle.BEFORE_START_EVENT) || event.getType().equals("configure_start")) {
+                Context context = (Context) event.getLifecycle();
+                if (event.getType().equals(Lifecycle.BEFORE_START_EVENT)) {
+                    context.getServletContext().setAttribute(IGNORE_CONTEXT, "true");
+                }
+                if (event.getType().equals(Lifecycle.START_EVENT) || event.getType().equals(Lifecycle.BEFORE_START_EVENT) || event.getType().equals("configure_start")) {
                     context.setConfigured(true);
                 }
             }
         });
-        
+
 
         Wrapper wrapper = context.createWrapper();
         final String name = "rest_" + listener.hashCode();
@@ -124,7 +133,8 @@ public class TomcatRsRegistry implements RsRegistry {
         return addresses;
     }
 
-    @Override public HttpListener removeListener(final String completePath) {
+    @Override
+    public HttpListener removeListener(final String completePath) {
         String path = completePath;
         if (path == null) {
             return listeners.get(path);
@@ -134,7 +144,7 @@ public class TomcatRsRegistry implements RsRegistry {
         if (!path.startsWith("/")) path = "/" + path;
 
         if (TomcatHelper.isTomcat7() && TomcatHelper.isStopping()) {
-        	return listeners.get(path);
+            return listeners.get(path);
         }
 
         Context context = contexts.remove(path);

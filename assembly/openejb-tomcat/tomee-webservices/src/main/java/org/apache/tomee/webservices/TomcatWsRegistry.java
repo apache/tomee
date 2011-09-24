@@ -15,15 +15,8 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.tomcat.catalina;
+package org.apache.tomee.webservices;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.Engine;
@@ -46,7 +39,16 @@ import org.apache.catalina.deploy.SecurityConstraint;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.webservices.WsRegistry;
 import org.apache.openejb.server.webservices.WsServlet;
+import org.apache.openejb.tomcat.catalina.OpenEJBValve;
 import org.apache.openejb.tomcat.loader.TomcatHelper;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static org.apache.openejb.tomcat.catalina.BackportUtil.getServlet;
 import static org.apache.openejb.tomcat.catalina.TomcatWebAppBuilder.IGNORE_CONTEXT;
@@ -177,14 +179,14 @@ public class TomcatWsRegistry implements WsRegistry {
         // configured true, or it will treat it as a failed deployment
         context.addLifecycleListener(new LifecycleListener() {
             public void lifecycleEvent(LifecycleEvent event) {
-            	Context context = (Context) event.getLifecycle();
+                Context context = (Context) event.getLifecycle();
 
-            	if (event.getType().equals(Lifecycle.BEFORE_START_EVENT)) {
-            		context.getServletContext().setAttribute(IGNORE_CONTEXT, "true");
-            	}
+                if (event.getType().equals(Lifecycle.BEFORE_START_EVENT)) {
+                    context.getServletContext().setAttribute(IGNORE_CONTEXT, "true");
+                }
 
 
-            	if (event.getType().equals(Lifecycle.START_EVENT) || event.getType().equals(Lifecycle.BEFORE_START_EVENT) || event.getType().equals("configure_start")) {
+                if (event.getType().equals(Lifecycle.START_EVENT) || event.getType().equals(Lifecycle.BEFORE_START_EVENT) || event.getType().equals("configure_start")) {
                     context.setConfigured(true);
                 }
             }
@@ -279,9 +281,9 @@ public class TomcatWsRegistry implements WsRegistry {
         if (!path.startsWith("/")) path = "/" + path;
 
         if (TomcatHelper.isTomcat7() && TomcatHelper.isStopping()) {
-        	return;
+            return;
         }
-        
+
         Context context = webserviceContexts.remove(path);
         try {
             context.stop();
