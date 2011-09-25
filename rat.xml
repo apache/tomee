@@ -1,0 +1,111 @@
+<?xml version='1.0'?> 
+<!--
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+      http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ 
+--> 
+ 
+<project default="scan" name="Ant task examples"> 
+  <description> 
+    A few examples of using the Ant task, for more examples see the
+    AntUnit tests
+  </description> 
+ 
+ 
+  <target name="scan" depends="-taskdef"
+    description="runs the task over RAT's source tree"> 
+    <rat:report xmlns:rat="antlib:org.apache.rat.anttasks"> 
+      <fileset dir="."> 
+        <patternset id="exclusions"> 
+          <exclude name="**/target/**"/>
+          <exclude name="**/*.iml"/>
+          <exclude name="**/*.log"/>
+          <exclude name="**/*.rej"/>
+          <exclude name="**/*.orig"/>
+          <exclude name="**/README.md"/>
+          <exclude name="**/README.mdtext"/>
+
+          <exclude name="container/openejb-core/src/main/resources/META-INF/services/javax.ejb.spi.EJBContainerProvider"/>
+          <exclude name="assembly/openejb-standalone/src/main/resources/service.readme.txt"/>
+          <exclude name="container/openejb-junit/src/main/resources/META-INF/openejb-test-login.config"/>
+          <exclude name="examples/datasource-ciphered-password/src/test/resources/META-INF/beans.xml"/>
+          <exclude name="examples/decorators/src/main/resources/META-INF/beans.xml"/>
+          <exclude name="examples/webapps/rest-example/TODO"/>
+          <exclude name="container/openejb-jee/src/main/xsdlist/xsdlist.txt"/>
+
+          <!-- user-owned config files.  see httpds default.httpd.conf for precident --> 
+          <exclude name="**/default.openejb.conf"/> 
+          <exclude name="**/groups.properties"/> 
+          <exclude name="**/users.properties"/> 
+          <exclude name="**/logging.properties"/> 
+          <exclude name="**/login.config"/> 
+ 
+          <!-- license in this file results in bad generated release notes --> 
+          <exclude name="**/release-notes.vm"/> 
+ 
+          <!-- empty placeholder --> 
+          <exclude name="**/assembly/openejb-standalone/src/main/resources/DATA-README.txt"/> 
+ 
+          <!-- tiny plugin descriptors - some user owned --> 
+          <exclude name="**/META-INF/org.apache.openejb.cli/**"/> 
+          <exclude name="**/META-INF/org.apache.openejb.client.IdentityResolver/**"/> 
+          <exclude name="**/META-INF/org.apache.openejb.server.ServerService/**"/> 
+          <exclude name="**/META-INF/org.apache.openejb.resource.jdbc.DataSourcePlugin/**"/> 
+          <exclude name="**/META-INF/org.apache.openejb.resource.jdbc.PasswordCipher/**"/> 
+          <exclude name="**/META-INF/services/org/apache/activemq/broker/**"/> 
+          <exclude name="**/META-INF/org.apache.openejb.tomcat/ServerClassLoader"/> 
+          <exclude name="**/server/openejb-cxf/src/main/resources/META-INF/cxf.extension"/> 
+ 
+ 
+          <!-- insignificant test descriptors --> 
+          <exclude name="**/container/openejb-core/src/test/resources/altddPU1/**/*.xml"/> 
+          <exclude name="**/container/openejb-core/src/test/resources/altddapp1/**/*.xml"/> 
+          <exclude name="**/container/openejb-core/src/test/resources/altddapp2/**/*.xml"/> 
+          <exclude name="**/container/openejb-core/src/test/resources/altddapp2/**/*.properties"/> 
+          <exclude name="**/container/openejb-core/src/test/resources/convert/**/*.xml"/> 
+          <exclude name="**/container/openejb-core/src/test/resources/mixedcase/**/*.xml"/> 
+          <exclude name="**/container/openejb-spring/src/test/resources/META-INF/ejb-jar.xml"/> 
+ 
+          <!-- empty or insignificant descriptors from examples --> 
+          <exclude name="**/examples/**/src/*/resources/META-INF/ejb-jar.xml"/> 
+          <exclude name="**/examples/**/src/*/resources/META-INF/application-client.xml"/> 
+          <exclude name="**/examples/alternate-descriptors/src/main/resources/META-INF/test.ejb-jar.xml"/> 
+          <exclude name="**/examples/simple-cmp2/src/main/resources/META-INF/openejb-jar.xml"/> 
+          <exclude name="**/examples/webapps/struts/src/main/webapp/prelude.jspf"/> 
+ 
+          <!-- boiler plate --> 
+          <exclude name="**/examples/webservice-ws-security/src/*/resources/META-INF/CalculatorImpl*.properties"/> 
+ 
+          <!-- W3C licensed --> 
+          <exclude name="**/container/openejb-jee/src/main/resources/META-INF/schema/xml.xsd"/> 
+          <exclude name="**/server/openejb-axis/src/main/resources/META-INF/schema/soap_encoding_1_1.xsd"/> 
+
+          <!-- CDDL licensed -->
+          <exclude name="container/openejb-jee/src/main/resources/META-INF/schema/*.xsd"/>
+        </patternset>
+      </fileset> 
+    </rat:report> 
+  </target> 
+ 
+  <target name="-taskdef"> 
+    <typedef resource="org/apache/rat/anttasks/antlib.xml"
+             uri="antlib:org.apache.rat.anttasks"> 
+      <classpath> 
+        <fileset dir="/usr/local/apache-rat-0.7/"> 
+           <include name="apache-rat*.jar"/> 
+           <include name="lib/**/commons-*.jar"/> 
+        </fileset> 
+      </classpath> 
+    </typedef> 
+  </target> 
+</project> 
