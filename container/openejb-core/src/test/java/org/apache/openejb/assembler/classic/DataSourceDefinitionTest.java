@@ -74,8 +74,8 @@ public class DataSourceDefinitionTest {
     })
     @Stateless
     public static class DatasourceDefinitionsBean {
-        @Resource(lookup = "java:comp/env/superMegaDS") private DataSource mega;
-        @Resource(lookup = "java:comp/env/superGigaDS") private DataSource giga;
+        @Resource(name = "java:comp/env/superMegaDS") private DataSource mega;
+        @Resource(name = "java:comp/env/superGigaDS") private DataSource giga;
 
         public DataSource getMega() {
             return mega;
