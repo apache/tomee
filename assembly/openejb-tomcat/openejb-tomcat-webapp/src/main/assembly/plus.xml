@@ -20,7 +20,7 @@
 <!-- $Rev: 576067 $ $Date: 2007-09-16 03:17:08 -0700 (Sun, 16 Sep 2007) $ -->
 
 <assembly>
-  <id>war</id>
+  <id>plus</id>
   <formats>
     <format>war</format>
   </formats>
@@ -71,20 +71,7 @@
       <outputDirectory>lib</outputDirectory>
       <scope>runtime</scope>
       <excludes>
-        <!--<exclude>org.apache.tomcat:tomcat-catalina</exclude>-->
-        <!--<exclude>org.apache.openejb:tomee-webservices</exclude>-->
-        <!--<exclude>org.apache.openejb:openejb-webservices</exclude>-->
-        <!--<exclude>wsdl4j:wsdl4j</exclude>-->
-        <!--<exclude>org.apache.openejb:openejb-rest</exclude>-->
-        <!--<exclude>org.apache.openejb:openejb-cxf-transport</exclude>-->
-        <!--<exclude>org.apache.cxf:cxf-bundle</exclude>-->
-        <!--<exclude>org.apache.ws.xmlschema:xmlschema-core</exclude>-->
-        <!--<exclude>org.apache.openejb:openejb-cxf</exclude>-->
-        <!--<exclude>org.apache.ws.security:wss4j</exclude>-->
-        <!--<exclude>org.opensaml:openws</exclude>-->
-        <!--<exclude>org.apache.openejb:openejb-cxf-rs</exclude>-->
-        <!--<exclude>org.apache.activemq:activemq-core</exclude>-->
-        <!--<exclude>org.apache.activemq:activemq-ra</exclude>-->
+          <exclude>org.apache.tomcat:tomcat-catalina</exclude>
           <!--<exclude>org.apache.openejb:javaee-api</exclude>-->
       </excludes>
     </dependencySet>

@@ -96,131 +96,30 @@
   </build>
   <dependencies>
     <dependency>
+      <groupId>org.apache.geronimo.javamail</groupId>
+      <artifactId>geronimo-javamail_1.4_mail</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.myfaces.core</groupId>
+      <artifactId>myfaces-api</artifactId>
+      <version>${myfaces.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.myfaces.core</groupId>
+      <artifactId>myfaces-impl</artifactId>
+      <version>${myfaces.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb.patch</groupId>
+      <artifactId>openejb-jstl</artifactId>
+      <version>1.2-SNAPSHOT</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
       <classifier>tomcat</classifier>
       <version>${javaee-api.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.swizzle</groupId>
-      <artifactId>swizzle-stream</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-jsf</artifactId>
-      <version>${project.version}</version>
-      <scope>runtime</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.openejb</groupId>
-          <artifactId>javaee-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>tomee-webservices</artifactId>
-      <version>${project.version}</version>
-      <scope>runtime</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.openejb</groupId>
-          <artifactId>javaee-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-tomcat-loader</artifactId>
-      <version>${project.version}</version>
-      <scope>runtime</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.openejb</groupId>
-          <artifactId>javaee-api</artifactId>
-        </exclusion>
-        <exclusion> <!-- 'provided' -->
-          <groupId>org.apache.tomcat</groupId>
-          <artifactId>tomcat-catalina</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-tomcat-catalina</artifactId>
-      <version>${project.version}</version>
-      <scope>runtime</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.openejb</groupId>
-          <artifactId>javaee-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-webservices</artifactId>
-      <version>${project.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.openejb</groupId>
-          <artifactId>javaee-api</artifactId>
-        </exclusion>
-      </exclusions>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-rest</artifactId>
-      <version>${project.version}</version>
-      <scope>runtime</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.openejb</groupId>
-          <artifactId>javaee-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-cxf-transport</artifactId>
-      <version>${project.version}</version>
-      <scope>runtime</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.openejb</groupId>
-          <artifactId>javaee-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-cxf</artifactId>
-      <version>${project.version}</version>
-      <scope>runtime</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.openejb</groupId>
-          <artifactId>javaee-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-cxf-rs</artifactId>
-      <version>${project.version}</version>
-      <scope>runtime</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.openejb</groupId>
-          <artifactId>javaee-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo.javamail</groupId>
-      <artifactId>geronimo-javamail_1.4_mail</artifactId>
-      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
@@ -236,7 +135,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-tomcat-common</artifactId>
+      <artifactId>openejb-core</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
       <exclusions>
@@ -244,21 +143,21 @@
           <groupId>org.apache.openejb</groupId>
           <artifactId>javaee-api</artifactId>
         </exclusion>
-        <exclusion> <!-- 'provided' -->
-          <groupId>org.apache.tomcat</groupId>
-          <artifactId>tomcat-catalina</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-server</artifactId>
-      <version>${project.version}</version>
-      <scope>runtime</scope>
-      <exclusions>
         <exclusion>
-          <groupId>org.apache.openejb</groupId>
-          <artifactId>javaee-api</artifactId>
+          <groupId>org.apache.activemq</groupId>
+          <artifactId>activemq-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.activemq</groupId>
+          <artifactId>activemq-ra</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.geronimo.components</groupId>
+          <artifactId>geronimo-connector</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-j2ee-connector_1.6_spec</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -288,7 +187,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-derbynet</artifactId>
+      <artifactId>openejb-http</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
       <exclusions>
@@ -300,9 +199,9 @@
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-http</artifactId>
+      <artifactId>openejb-itests-beans</artifactId>
       <version>${project.version}</version>
-      <scope>runtime</scope>
+      <scope>test</scope>
       <exclusions>
         <exclusion>
           <groupId>org.apache.openejb</groupId>
@@ -324,9 +223,9 @@
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-itests-beans</artifactId>
+      <artifactId>openejb-jsf</artifactId>
       <version>${project.version}</version>
-      <scope>test</scope>
+      <scope>runtime</scope>
       <exclusions>
         <exclusion>
           <groupId>org.apache.openejb</groupId>
@@ -335,29 +234,68 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.myfaces.core</groupId>
-      <artifactId>myfaces-impl</artifactId>
-      <version>${myfaces.version}</version>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-server</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.openejb</groupId>
+          <artifactId>javaee-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.myfaces.core</groupId>
-      <artifactId>myfaces-api</artifactId>
-      <version>${myfaces.version}</version>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-tomcat-catalina</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.openejb</groupId>
+          <artifactId>javaee-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.tomcat</groupId>
+          <artifactId>tomcat-catalina</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb.patch</groupId>
-      <artifactId>openejb-jstl</artifactId>
-      <version>1.2-SNAPSHOT</version>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-tomcat-common</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.openejb</groupId>
+          <artifactId>javaee-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.tomcat</groupId>
+          <artifactId>tomcat-catalina</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derby</artifactId>
-      <version>10.6.1.0</version>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-tomcat-loader</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.openejb</groupId>
+          <artifactId>javaee-api</artifactId>
+        </exclusion>
+        <exclusion> <!-- 'provided' -->
+          <groupId>org.apache.tomcat</groupId>
+          <artifactId>tomcat-catalina</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derbyclient</artifactId>
-      <version>10.6.1.0</version>
+      <groupId>org.codehaus.swizzle</groupId>
+      <artifactId>swizzle-stream</artifactId>
     </dependency>
   </dependencies>
   <profiles>
@@ -444,6 +382,50 @@
               <artifactId>geronimo-security</artifactId>
             </exclusion>
           </exclusions>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>plus</id>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>war</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>attached</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <descriptors>
+                <descriptor>src/main/assembly/plus.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+      <dependencies>
+        <dependency>
+          <groupId>org.apache.activemq</groupId>
+          <artifactId>activemq-core</artifactId>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.activemq</groupId>
+          <artifactId>activemq-ra</artifactId>
+        </dependency>
+        <dependency><groupId>org.apache.openejb</groupId><artifactId>openejb-cxf-rs</artifactId><version>${project.version}</version><scope>runtime</scope><exclusions><exclusion><groupId>org.apache.openejb</groupId><artifactId>javaee-api</artifactId></exclusion></exclusions></dependency>
+        <dependency><groupId>org.apache.openejb</groupId><artifactId>openejb-cxf-transport</artifactId><version>${project.version}</version><scope>runtime</scope><exclusions><exclusion><groupId>org.apache.openejb</groupId><artifactId>javaee-api</artifactId></exclusion></exclusions></dependency>
+        <dependency><groupId>org.apache.openejb</groupId><artifactId>openejb-cxf</artifactId><version>${project.version}</version><scope>runtime</scope><exclusions><exclusion><groupId>org.apache.openejb</groupId><artifactId>javaee-api</artifactId></exclusion></exclusions></dependency>
+        <dependency><groupId>org.apache.openejb</groupId><artifactId>openejb-rest</artifactId><version>${project.version}</version><scope>runtime</scope><exclusions><exclusion><groupId>org.apache.openejb</groupId><artifactId>javaee-api</artifactId></exclusion></exclusions></dependency>
+        <dependency><groupId>org.apache.openejb</groupId><artifactId>openejb-webservices</artifactId><version>${project.version}</version><exclusions><exclusion><groupId>org.apache.openejb</groupId><artifactId>javaee-api</artifactId></exclusion></exclusions><scope>runtime</scope></dependency>
+        <dependency><groupId>org.apache.openejb</groupId><artifactId>tomee-webservices</artifactId><version>${project.version}</version><scope>runtime</scope><exclusions><exclusion><groupId>org.apache.openejb</groupId><artifactId>javaee-api</artifactId></exclusion></exclusions></dependency>
+        <dependency>
+          <groupId>org.apache.geronimo.components</groupId>
+          <artifactId>geronimo-connector</artifactId>
         </dependency>
       </dependencies>
     </profile>
