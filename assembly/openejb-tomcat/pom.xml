@@ -35,11 +35,11 @@
     <module>openejb-tomcat-catalina</module>
     <module>openejb-tomcat-common</module>
     <module>openejb-tomcat-webapp</module>
+    <module>openejb-tomcat-plus-webapp</module>
     <module>openejb-tomcat-bundle</module>
     <module>tomee-webservices</module>
     <module>tomee-itests</module>
     <module>tomee-embedded</module>
-    <module>openejb-tomcat-enterprise-webapp</module>
   </modules>
 
   <repositories>

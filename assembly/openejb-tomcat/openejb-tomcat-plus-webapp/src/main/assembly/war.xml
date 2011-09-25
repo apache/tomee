@@ -75,8 +75,7 @@
         <exclude>org.springframework:*</exclude>
 
         <!-- wars -->
-        <exclude>org.apache.openejb:openejb-tomcat-webapp</exclude>
-        <exclude>org.apache.openejb:openejb-tomcat-enterprise-webapp</exclude>
+        <exclude>*:war</exclude>
       </excludes>
     </dependencySet>
     <dependencySet>
