@@ -98,12 +98,18 @@
   </target> 
  
   <target name="-taskdef"> 
+    <dirname property="download.dir" file="${java.io.tmpdir}/rat"/>
+    <mkdir dir="${download.dir}"/>
+    <get src="http://archive.apache.org/dist/incubator/rat/apache-rat-incubating-current-bin.zip" dest="${java.io.tmpdir}/rat.zip"/>
+    <unzip src="${java.io.tmpdir}/rat.zip" dest="${java.io.tmpdir}/rat"/>
+
     <typedef resource="org/apache/rat/anttasks/antlib.xml"
-             uri="antlib:org.apache.rat.anttasks"> 
-      <classpath> 
-        <fileset dir="/usr/local/apache-rat-0.7/"> 
-           <include name="apache-rat*.jar"/> 
-           <include name="lib/**/commons-*.jar"/> 
+             uri="antlib:org.apache.rat.anttasks">
+
+      <classpath>
+        <fileset dir="${java.io.tmpdir}/rat/">
+           <include name="**/apache-rat*.jar"/>
+           <include name="**/lib/**/commons-*.jar"/>
         </fileset> 
       </classpath> 
     </typedef> 
