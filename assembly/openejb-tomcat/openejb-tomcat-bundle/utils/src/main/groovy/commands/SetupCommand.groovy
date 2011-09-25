@@ -82,10 +82,12 @@ class SetupCommand {
 	}
 
 	def execute() {
+		def workDir = require('tomee.workdir')
+		def webapp = require('tomee.webapp')
 		def tomcatVersion = require('tomcat.version')
 		System.setProperty('tomcat.version', tomcatVersion)
 		def localRepo = require('localRepository')
-		def openejbHome = "${project.build.directory}/apache-tomcat-${tomcatVersion}"
+		def openejbHome = "${workDir}/apache-tomcat-${tomcatVersion}"
 		def examplesVersion = require('examples.version')
 
 		def proxyHost = get('http.proxy.host', '')
@@ -107,8 +109,8 @@ class SetupCommand {
 		}
 		
 		def source = ""
-		def dest = "${project.build.directory}/apache-tomcat-${tomcatVersion}.zip"
-		def catalinaHome = "${project.build.directory}/apache-tomcat-${tomcatVersion}"
+		def dest = "${workDir}/apache-tomcat-${tomcatVersion}.zip"
+		def catalinaHome = "${workDir}/apache-tomcat-${tomcatVersion}"
 
 		if (tomcatVersion =~ /^7\./) {
 			source = "http://archive.apache.org/dist/tomcat/tomcat-7/v${tomcatVersion}/bin/apache-tomcat-${tomcatVersion}.zip"
@@ -124,11 +126,11 @@ class SetupCommand {
 
 //		ant.get(src: source, dest: dest)
 
-		ant.unzip(src: dest, dest: "${project.build.directory}")
+		ant.unzip(src: dest, dest: "${workDir}")
 
 		ant.echo("Deploying the openejb war")
-		ant.unzip(src: "${localRepo}/org/apache/openejb/openejb-tomcat-webapp/${project.version}/openejb-tomcat-webapp-${project.version}.war",
-				dest: "${project.build.directory}/apache-tomcat-${tomcatVersion}/webapps/openejb")
+		ant.unzip(src: "${localRepo}/org/apache/openejb/${webapp}/${project.version}/${webapp}-${project.version}.war",
+				dest: "${workDir}/apache-tomcat-${tomcatVersion}/webapps/openejb")
 
 		ant.echo("Installing to: ${catalinaHome}")
 
@@ -139,12 +141,12 @@ class SetupCommand {
 		installer.installAll()
 
 		ant.echo("Assigning execute privileges to scripts in Tomcat bin directory")
-		ant.chmod(dir: "${project.build.directory}/apache-tomcat-${tomcatVersion}/bin", perm: "u+x", includes: "**/*.sh")
+		ant.chmod(dir: "${workDir}/apache-tomcat-${tomcatVersion}/bin", perm: "u+x", includes: "**/*.sh")
 
 //		ant.echo("Deploying the examples war")
 //		ant.unzip(src: "${localRepo}/org/superbiz/ejb-examples/${examplesVersion}/ejb-examples-${examplesVersion}.war",
-//				dest: "${project.build.directory}/apache-tomcat-${tomcatVersion}/webapps/ejb-examples")
-        ant.delete(dir: "${project.build.directory}/apache-tomcat-${tomcatVersion}/webapps/examples")
+//				dest: "${workDir}/apache-tomcat-${tomcatVersion}/webapps/ejb-examples")
+        ant.delete(dir: "${workDir}/apache-tomcat-${tomcatVersion}/webapps/examples")
 	}
 }
 

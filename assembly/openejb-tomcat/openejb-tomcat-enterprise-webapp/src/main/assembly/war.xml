@@ -20,20 +20,20 @@
 <!-- $Rev: 576067 $ $Date: 2007-09-16 03:17:08 -0700 (Sun, 16 Sep 2007) $ -->
 
 <assembly>
-  <id>plus</id>
+  <id>war</id>
   <formats>
     <format>war</format>
   </formats>
   <includeBaseDirectory>false</includeBaseDirectory>
   <fileSets>
     <fileSet>
-      <directory>${basedir}</directory>
+      <directory>${project.basedir}</directory>
       <includes>
         <include>README.txt</include>
       </includes>
     </fileSet>
     <fileSet>
-      <directory>${basedir}/target/classes</directory>
+      <directory>${project.basedir}/target/classes</directory>
       <outputDirectory>/</outputDirectory>
       <includes>
         <include>README.txt</include>
@@ -42,11 +42,11 @@
       </includes>
     </fileSet>
     <fileSet>
-      <directory>${basedir}/src/main/webapp</directory>
+      <directory>${project.basedir}/src/main/webapp</directory>
       <outputDirectory>/</outputDirectory>
     </fileSet>
     <fileSet>
-      <directory>${basedir}/target/classes</directory>
+      <directory>${project.basedir}/target/classes</directory>
       <outputDirectory>/</outputDirectory>
       <excludes>
           <exclude>org/**</exclude>
@@ -55,15 +55,12 @@
       </excludes>
     </fileSet>
     <fileSet>
-      <directory>${basedir}/target/classes</directory>
+      <directory>${project.basedir}/target/classes</directory>
       <outputDirectory>WEB-INF/classes</outputDirectory>
     </fileSet>
     <fileSet>
-      <directory>${basedir}/target</directory>
+      <directory>${project.build.directory}/${project.artifactId}-${project.version}/lib</directory>
       <outputDirectory>lib</outputDirectory>
-      <includes>
-        <include>openejb-tomcat*.jar</include>
-      </includes>
     </fileSet>
   </fileSets>
   <dependencySets>
@@ -71,8 +68,15 @@
       <outputDirectory>lib</outputDirectory>
       <scope>runtime</scope>
       <excludes>
-          <exclude>org.apache.tomcat:tomcat-catalina</exclude>
-          <!--<exclude>org.apache.openejb:javaee-api</exclude>-->
+        <!-- provided -->
+        <exclude>org.apache.tomcat:*</exclude>
+
+        <!-- should be in a pom exclusion but it does perfectly the trick -->
+        <exclude>org.springframework:*</exclude>
+
+        <!-- wars -->
+        <exclude>org.apache.openejb:openejb-tomcat-webapp</exclude>
+        <exclude>org.apache.openejb:openejb-tomcat-enterprise-webapp</exclude>
       </excludes>
     </dependencySet>
     <dependencySet>
