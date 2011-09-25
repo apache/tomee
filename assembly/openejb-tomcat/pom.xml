@@ -39,6 +39,7 @@
     <module>tomee-webservices</module>
     <module>tomee-itests</module>
     <module>tomee-embedded</module>
+    <module>openejb-tomcat-enterprise-webapp</module>
   </modules>
 
   <repositories>

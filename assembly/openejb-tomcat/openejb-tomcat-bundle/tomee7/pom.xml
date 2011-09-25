@@ -27,7 +27,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>apache-tomee</artifactId>
-  <packaging>jar</packaging>
+  <packaging>pom</packaging>
   <name>OpenEJB :: Assembly :: TomEE :: Tomcat 7</name>
 
   <dependencies>
@@ -102,7 +102,7 @@
         <version>2.3</version>
         <executions>
           <execution>
-            <id>copy</id>
+            <id>copy-tomcat-for-webprofile</id>
             <phase>prepare-package</phase>
             <goals>
               <goal>copy</goal>
@@ -114,7 +114,25 @@
                   <artifactId>apache-tomcat</artifactId>
                   <version>${tomcat.version}</version>
                   <type>zip</type>
-                  <outputDirectory>${project.build.directory}</outputDirectory>
+                  <outputDirectory>${webprofile.work-dir}</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+          <execution>
+            <id>copy-tomcat-for-enterprise</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.apache.openejb</groupId>
+                  <artifactId>apache-tomcat</artifactId>
+                  <version>${tomcat.version}</version>
+                  <type>zip</type>
+                  <outputDirectory>${enterprise.work-dir}</outputDirectory>
                 </artifactItem>
               </artifactItems>
             </configuration>
@@ -127,13 +145,49 @@
         <artifactId>gmaven-plugin</artifactId>
         <executions>
           <execution>
-            <id>execute-installer</id>
+            <id>execute-web-profile-installer</id>
             <phase>prepare-package</phase>
             <goals>
               <goal>execute</goal>
             </goals>
             <configuration>
               <source>new commands.SetupCommand(this).execute()</source>
+              <properties>
+                <tomee.workdir>${webprofile.work-dir}</tomee.workdir>
+                <tomee.webapp>openejb-tomcat-webapp</tomee.webapp>
+              </properties>
+              <classpath>
+                <element>
+                  <groupId>jline</groupId>
+                  <artifactId>jline</artifactId>
+                  <version>0.9.94</version>
+                </element>
+                <element>
+                  <groupId>org.apache.ant</groupId>
+                  <artifactId>ant-nodeps</artifactId>
+                  <version>1.7.1</version>
+                  <type>jar</type>
+                </element>
+                <element>
+                  <groupId>org.apache.openejb</groupId>
+                  <artifactId>openejb-tomee-utils</artifactId>
+                  <version>${project.version}</version>
+                </element>
+              </classpath>
+            </configuration>
+          </execution>
+          <execution>
+            <id>execute-enterprise-installer</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>execute</goal>
+            </goals>
+            <configuration>
+              <source>new commands.SetupCommand(this).execute()</source>
+              <properties>
+                <tomee.workdir>${enterprise.work-dir}</tomee.workdir>
+                <tomee.webapp>openejb-tomcat-enterprise-webapp</tomee.webapp>
+              </properties>
               <classpath>
                 <element>
                   <groupId>jline</groupId>
@@ -160,14 +214,28 @@
         <artifactId>maven-assembly-plugin</artifactId>
         <executions>
           <execution>
-            <id>bin</id>
+            <id>web-profile</id>
             <phase>package</phase>
             <configuration>
               <descriptors>
                 <descriptor>src/main/assembly/tomee.xml</descriptor>
               </descriptors>
               <appendAssemblyId>false</appendAssemblyId>
-              <finalName>apache-tomee-${project.version}</finalName>
+              <finalName>apache-tomee-webprofile-${project.version}</finalName>
+            </configuration>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>enterprise</id>
+            <phase>package</phase>
+            <configuration>
+              <descriptors>
+                <descriptor>src/main/assembly/tomee.xml</descriptor>
+              </descriptors>
+              <appendAssemblyId>false</appendAssemblyId>
+              <finalName>apache-tomee-enterprise-${project.version}</finalName>
             </configuration>
             <goals>
               <goal>single</goal>
@@ -186,6 +254,9 @@
     <http.proxy.username>${settings.activeProxy.username}</http.proxy.username>
     <http.proxy.password>${settings.activeProxy.password}</http.proxy.password>
     <http.proxy.nonProxyHosts>${settings.activeProxy.nonProxyHosts}</http.proxy.nonProxyHosts>
+
+    <webprofile.work-dir>${project.build.directory}/webprofile-work-dir</webprofile.work-dir>
+    <enterprise.work-dir>${project.build.directory}/enterprise-work-dir</enterprise.work-dir>
   </properties>
 
 </project>

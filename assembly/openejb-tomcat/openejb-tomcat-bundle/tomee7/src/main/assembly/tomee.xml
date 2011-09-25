@@ -20,7 +20,7 @@
 <!-- $Rev: 576067 $ $Date: 2007-09-16 03:17:08 -0700 (Sun, 16 Sep 2007) $ -->
 
 <assembly>
-  <id>bin</id>
+  <id>web-profile</id>
   <formats>
     <format>tar.gz</format>
     <format>zip</format>
@@ -29,7 +29,6 @@
   <fileSets>
     <fileSet>
       <directory>${basedir}/target/apache-tomcat-${tomcat.version}</directory>
-      <outputDirectory>/apache-tomee-${project.version}</outputDirectory>
       <includes>
         <include>**/*</include>
       </includes>
@@ -40,7 +39,6 @@
     </fileSet>
     <fileSet>
       <directory>${basedir}/target/apache-tomcat-${tomcat.version}</directory>
-      <outputDirectory>/apache-tomee-${project.version}</outputDirectory>
       <includes>
         <include>**/bin/**/*</include>
       </includes>
