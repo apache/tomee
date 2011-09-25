@@ -28,8 +28,8 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>openejb-tomcat-enterprise-webapp</artifactId>
-  <name>OpenEJB :: Assembly :: Tomcat :: Enterprise Webapp</name>
+  <artifactId>openejb-tomcat-plus-webapp</artifactId>
+  <name>OpenEJB :: Assembly :: Tomcat :: Plus Webapp</name>
   <packaging>war</packaging>
 
   <dependencies>
