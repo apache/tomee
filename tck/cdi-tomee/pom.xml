@@ -28,7 +28,7 @@
   <name>OpenEJB :: TCK :: CDI TomEE</name>
   <properties>
     <!-- where we will unpack tomcat -->
-    <openejb.home>${project.build.directory}${file.separator}apache-tomee-${project.version}</openejb.home>
+    <openejb.home>${project.build.directory}${file.separator}apache-tomee-webprofile-${project.version}</openejb.home>
   </properties>
   <dependencies>
     <dependency>
