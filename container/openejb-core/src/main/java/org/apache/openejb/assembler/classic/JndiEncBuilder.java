@@ -252,7 +252,7 @@ public class JndiEncBuilder {
                 } else if (type.isEnum()) {
                     obj = Enum.valueOf(type, entry.value.trim());
                 } else {
-                    throw new IllegalArgumentException("Invalid env-ref-type " + type);
+                    throw new IllegalArgumentException("Invalid env-entry-type " + type);
                 }
 
                 bindings.put(normalize(entry.referenceName), obj);
