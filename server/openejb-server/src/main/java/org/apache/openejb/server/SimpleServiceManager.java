@@ -16,6 +16,13 @@
  */
 package org.apache.openejb.server;
 
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.monitoring.ManagedMBean;
+import org.apache.openejb.monitoring.ObjectNameBuilder;
+import org.apache.xbean.finder.ResourceFinder;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
@@ -24,23 +31,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.monitoring.ManagedMBean;
-import org.apache.openejb.monitoring.ObjectNameBuilder;
-import org.apache.xbean.finder.ResourceFinder;
-
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-
 /**
  * @version $Rev$ $Date$
  * @org.apache.xbean.XBean element="simpleServiceManager"
  */
 public class SimpleServiceManager extends ServiceManager {
 
+    private static ObjectName objectName = null;
+
     private ServerService[] daemons;
     private boolean stop = false;
+
 
     public SimpleServiceManager() {
     }
@@ -79,7 +80,7 @@ public class SimpleServiceManager extends ServiceManager {
         public Map mapAvailableServices(Class interfase) throws IOException, ClassNotFoundException {
             Map services = resourceFinder.mapAvailableProperties(ServerService.class.getName());
 
-            for (Iterator iterator = services.entrySet().iterator(); iterator.hasNext();) {
+            for (Iterator iterator = services.entrySet().iterator(); iterator.hasNext(); ) {
                 Map.Entry entry = (Map.Entry) iterator.next();
                 String name = (String) entry.getKey();
                 Properties properties = (Properties) entry.getValue();
@@ -103,6 +104,16 @@ public class SimpleServiceManager extends ServiceManager {
         }
     }
 
+    private static ObjectName getObjectName() {
+        if (null == objectName) {
+            final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb");
+            jmxName.set("type", "Server");
+            jmxName.set("name", "DiscoveryRegistry");
+            objectName = jmxName.build();
+        }
+        return objectName;
+    }
+
     @Override
     public void init() throws Exception {
         try {
@@ -110,24 +121,17 @@ public class SimpleServiceManager extends ServiceManager {
             InetAddress localhost = InetAddress.getLocalHost();
             org.apache.log4j.MDC.put("HOST", localhost.getHostName());
         } catch (Throwable e) {
+            //Ignore
         }
 
         DiscoveryRegistry registry = new DiscoveryRegistry();
 
         // register the mbean
         try {
-            MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-
-            ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb");
-            jmxName.set("type", "Server");
-            jmxName.set("name", "DiscoveryRegistry");
-
-            ObjectName objectName = jmxName.build();
-            server.registerMBean(new ManagedMBean(registry), objectName);
-        } catch (Exception e) {
-            logger.error("Unable to register MBean ", e);
+            ManagementFactory.getPlatformMBeanServer().registerMBean(new ManagedMBean(registry), getObjectName());
+        } catch (Throwable e) {
+            logger.error("Failed to register 'openejb' MBean", e);
         }
-
 
         SystemInstance.get().setComponent(DiscoveryRegistry.class, registry);
 
@@ -196,13 +200,30 @@ public class SimpleServiceManager extends ServiceManager {
         logger.info("Stopping server services");
         stop = true;
 
-        for (int i = 0; i < daemons.length; i++) {
+        final ServerService[] services = daemons.clone();
+
+        for (int i = 0; i < services.length; i++) {
             try {
-                daemons[i].stop();
+                services[i].stop();
             } catch (ServiceException e) {
-                logger.fatal("Service Shutdown Failed: " + daemons[i].getName() + ".  Exception: " + e.getMessage(), e);
+                logger.fatal("Service Shutdown Failed: " + services[i].getName() + ".  Exception: " + e.getMessage(), e);
             }
         }
+
+        // De-register the mbean
+        try {
+
+            final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+            final ObjectName objectName = getObjectName();
+
+            if (server.isRegistered(objectName)) {
+                server.unregisterMBean(objectName);
+            }
+
+        } catch (Throwable e) {
+            logger.warning("Failed to de-register the 'openejb' mbean", e);
+        }
+
         notifyAll();
     }
 
