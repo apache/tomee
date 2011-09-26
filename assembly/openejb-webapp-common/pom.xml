@@ -38,11 +38,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
       <classifier>tomcat</classifier>
       <version>${javaee-api.version}</version>

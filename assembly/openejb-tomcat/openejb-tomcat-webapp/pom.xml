@@ -135,34 +135,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-core</artifactId>
-      <version>${project.version}</version>
-      <scope>runtime</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.openejb</groupId>
-          <artifactId>javaee-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.activemq</groupId>
-          <artifactId>activemq-core</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.activemq</groupId>
-          <artifactId>activemq-ra</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.geronimo.components</groupId>
-          <artifactId>geronimo-connector</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>geronimo-j2ee-connector_1.6_spec</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-ejbd</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
@@ -298,93 +270,5 @@
       <artifactId>swizzle-stream</artifactId>
     </dependency>
   </dependencies>
-  <profiles>
-    <profile>
-      <id>openjpa</id>
-      <dependencies>
-        <dependency>
-          <groupId>${project.groupId}</groupId>
-          <artifactId>openejb-core</artifactId>
-          <version>${project.version}</version>
-          <scope>runtime</scope>
-          <exclusions>
-            <exclusion>
-              <groupId>org.apache.geronimo.modules</groupId>
-              <artifactId>geronimo-kernel</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.geronimo.modules</groupId>
-              <artifactId>geronimo-webservices</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.geronimo.modules</groupId>
-              <artifactId>geronimo-naming</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.geronimo.modules</groupId>
-              <artifactId>geronimo-timer</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.geronimo.modules</groupId>
-              <artifactId>geronimo-security</artifactId>
-            </exclusion>
-          </exclusions>
-        </dependency>
-      </dependencies>
-    </profile>
-    <profile>
-      <id>hibernate</id>
-      <dependencies>
-        <dependency> <!-- to avoid to force exclusions everywhere -->
-          <groupId>${project.groupId}</groupId>
-          <artifactId>openejb-core</artifactId>
-          <version>${project.version}</version>
-          <exclusions>
-            <exclusion>
-              <groupId>org.apache.openjpa</groupId>
-              <artifactId>openjpa</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.bval</groupId>
-              <artifactId>bval-core</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.openejb.patch</groupId>
-              <artifactId>openejb-bval</artifactId>
-            </exclusion>
-          </exclusions>
-        </dependency>
-        <dependency>
-          <groupId>${project.groupId}</groupId>
-          <artifactId>openejb-core-hibernate</artifactId>
-          <type>pom</type>
-          <version>${project.version}</version>
-          <scope>runtime</scope>
-          <exclusions>
-            <exclusion>
-              <groupId>org.apache.geronimo.modules</groupId>
-              <artifactId>geronimo-kernel</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.geronimo.modules</groupId>
-              <artifactId>geronimo-webservices</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.geronimo.modules</groupId>
-              <artifactId>geronimo-naming</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.geronimo.modules</groupId>
-              <artifactId>geronimo-timer</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.geronimo.modules</groupId>
-              <artifactId>geronimo-security</artifactId>
-            </exclusion>
-          </exclusions>
-        </dependency>
-      </dependencies>
-    </profile>
-  </profiles>
 </project>
 
