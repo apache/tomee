@@ -232,7 +232,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                     ContextInfo contextInfo = addContextInfo(host, standardContext);
                     contextInfo.appInfo = appInfo;
                     contextInfo.deployer = deployer;
-                    contextInfo.standardContext = standardContext;
                     deployer.manageApp(standardContext);
                 }
             }
@@ -491,7 +490,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 logger.error("Error merging Java EE JNDI entries in to war " + standardContext.getPath() + ": Exception: " + e.getMessage(), e);
             }
 
-            // TODO RMB: JspFactory.setDefaultFactory();
             JspFactory factory = JspFactory.getDefaultFactory();
             if (factory != null) {
                 JspApplicationContext applicationCtx = factory.getJspApplicationContext(standardContext.getServletContext());
@@ -520,6 +518,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         // if appInfo is null this is a failed deployment... just ignore
         ContextInfo contextInfo = getContextInfo(standardContext);
         if (contextInfo != null && contextInfo.appInfo == null) {
+            return;
+        } else if (contextInfo == null) { // openejb webapp loaded from the LoaderServlet
             return;
         }
 
@@ -1052,6 +1052,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         ContextInfo contextInfo = infos.get(id);
         if (contextInfo == null) {
             contextInfo = new ContextInfo();
+            contextInfo.standardContext = standardContext;
             infos.put(id, contextInfo);
         }
         return contextInfo;
