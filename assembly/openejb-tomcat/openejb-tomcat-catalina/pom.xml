@@ -53,11 +53,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-tomcat-common</artifactId>
       <version>${project.version}</version>
     </dependency>
