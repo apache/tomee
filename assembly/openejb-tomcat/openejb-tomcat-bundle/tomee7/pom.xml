@@ -218,7 +218,9 @@
         </executions>
       </plugin>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.2.1</version>
         <executions>
           <execution>
             <id>webprofile</id>
@@ -227,6 +229,7 @@
               <descriptors>
                 <descriptor>src/main/assembly/tomee-webprofile.xml</descriptor>
               </descriptors>
+              <attach>false</attach>
               <appendAssemblyId>false</appendAssemblyId>
               <finalName>apache-tomee-webprofile-${project.version}</finalName>
             </configuration>
@@ -241,12 +244,52 @@
               <descriptors>
                 <descriptor>src/main/assembly/tomee-plus.xml</descriptor>
               </descriptors>
+              <attach>false</attach>
               <appendAssemblyId>false</appendAssemblyId>
               <finalName>apache-tomee-plus-${project.version}</finalName>
             </configuration>
             <goals>
               <goal>single</goal>
             </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>1.7</version>
+        <executions>
+          <execution>
+            <id>attach-artifacts</id>
+            <phase>package</phase>
+            <goals>
+              <goal>attach-artifact</goal>
+            </goals>
+            <configuration>
+              <artifacts>
+                <artifact>
+                  <file>${project.build.directory}/apache-tomee-webprofile-${project.version}.zip</file>
+                  <type>zip</type>
+                  <classifier>webprofile</classifier>
+                </artifact>
+                <artifact>
+                  <file>${project.build.directory}/apache-tomee-webprofile-${project.version}.tar.gz</file>
+                  <type>tar.gz</type>
+                  <classifier>webprofile</classifier>
+                </artifact>
+                <artifact>
+                  <file>${project.build.directory}/apache-tomee-plus-${project.version}.zip</file>
+                  <type>zip</type>
+                  <classifier>plus</classifier>
+                </artifact>
+                <artifact>
+                  <file>${project.build.directory}/apache-tomee-plus-${project.version}.tar.gz</file>
+                  <type>tar.gz</type>
+                  <classifier>plus</classifier>
+                </artifact>
+              </artifacts>
+            </configuration>
           </execution>
         </executions>
       </plugin>
