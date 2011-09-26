@@ -88,8 +88,7 @@ public class TempClassLoader extends URLClassLoader {
          * 2. Since this class loader uses Class.forName to load classes starting with java, javax or sun, it cannot load javax.faces.FacesServlet
          * 3. Result is , AnnotationDeployer throws a ClassNotFoundException
          */
-        if ((!name.startsWith("javax.faces.")) && (!name.startsWith("javax.servlet.jsp.jstl")) && (name.startsWith("java.") || name.startsWith("javax.") || name.startsWith("sun.") ||
-                name.startsWith("org.apache.openejb.api.") || name.startsWith("org.apache.openjpa.persistence."))) {
+        if (skip(name)) {
             return Class.forName(name, resolve, getClass().getClassLoader());
         }
 //        ( && !name.startsWith("javax.faces.") )||
@@ -140,6 +139,44 @@ public class TempClassLoader extends URLClassLoader {
             // possible prohibited package: defer to the parent
             return super.loadClass(name, resolve);
         }
+    }
+
+    private boolean skip(String name) {
+        if (name.startsWith("javax.faces.")) return false;
+        if (name.startsWith("javax.servlet.jsp.jstl")) return false;
+
+        if (name.startsWith("java.")) return true;
+        if (name.startsWith("javax.")) return true;
+        if (name.startsWith("sun.")) return true;
+        if (name.startsWith("org.apache.openjpa.")) return true;
+        if (name.startsWith("org.apache.derby.")) return true;
+        if (name.startsWith("org.apache.xbean.")) return true;
+        if (name.startsWith("org.eclipse.jdt.")) return true;
+        if (name.startsWith("org.apache.openejb.jee.")) return true;
+        if (name.startsWith("org.apache.commons.")) return true;
+        if (name.startsWith("javassist")) return true;
+        if (name.startsWith("org.codehaus.swizzle")) return true;
+        if (name.startsWith("org.w3c.dom")) return true;
+        if (name.startsWith("org.apache.webbeans.")) return true;
+        if (name.startsWith("org.apache.geronimo.")) return true;
+        if (name.startsWith("com.sun.org.apache.")) return true;
+        if (name.startsWith("org.apache.coyote")) return true;
+        if (name.startsWith("org.quartz")) return true;
+        if (name.startsWith("serp.bytecode")) return true;
+
+//        if (name.startsWith("org.apache.myfaces.")) return true;
+//        if (name.startsWith("org.apache.taglibs.")) return true;
+//        if (name.startsWith("org.apache.tomcat.")) return true;
+//        if (name.startsWith("org.apache.el.")) return true;
+//        if (name.startsWith("org.apache.jasper.")) return true;
+//        if (name.startsWith("org.apache.catalina")) return true;
+//        if (name.startsWith("org.apache.jsp")) return true;
+//        if (name.startsWith("org.apache.log4j")) return true;
+//        if (name.startsWith("org.apache.naming")) return true;
+//        if (name.startsWith("org.apache.openejb")) return true;
+
+        System.out.println("LLOAD: " + name);
+        return false;
     }
 
     public static enum Skip {
