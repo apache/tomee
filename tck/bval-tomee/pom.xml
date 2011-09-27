@@ -191,7 +191,7 @@
                 <replace file="${openejb.home}/conf/server.xml" token="8009" value="${tomee.ajp.port}"/>
 
                 <!-- validator provider property -->
-                <copy file="src/main/tomcat/conf/system.properties" tofile="${project.build.directory}/apache-tomee-${project.version}/conf/system.properties"/>
+                <copy file="src/main/tomcat/conf/system.properties" tofile="${project.build.directory}/apache-tomee-webprofile-${project.version}/conf/system.properties"/>
               </target>
             </configuration>
           </execution>
@@ -256,6 +256,6 @@
     </plugins>
   </build>
   <properties>
-    <openejb.home>${project.build.directory}${file.separator}apache-tomee-${project.version}</openejb.home>
+    <openejb.home>${project.build.directory}${file.separator}apache-tomee-webprofile-${project.version}</openejb.home>
   </properties>
 </project>
