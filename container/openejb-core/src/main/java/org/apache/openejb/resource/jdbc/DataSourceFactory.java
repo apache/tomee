@@ -78,7 +78,12 @@ public class DataSourceFactory {
         final ByteArrayInputStream in = new ByteArrayInputStream(definition.getBytes());
         final Properties properties = new Properties();
         properties.load(in);
+        trimNotSupportedDataSourceProperties(properties);
         return properties;
+    }
+
+    public static void trimNotSupportedDataSourceProperties(Properties properties) {
+        properties.remove("LoginTimeout");
     }
 
     public static DataSource create(boolean managed) {

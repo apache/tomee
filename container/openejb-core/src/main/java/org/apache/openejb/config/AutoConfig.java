@@ -91,6 +91,7 @@ import static java.util.Arrays.asList;
 import static org.apache.openejb.config.ServiceUtils.ANY;
 import static org.apache.openejb.config.ServiceUtils.NONE;
 import static org.apache.openejb.config.ServiceUtils.hasServiceProvider;
+import static org.apache.openejb.resource.jdbc.DataSourceFactory.trimNotSupportedDataSourceProperties;
 import static org.apache.openejb.util.Join.join;
 
 public class AutoConfig implements DynamicDeployer, JndiConstants {
@@ -856,6 +857,13 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         }
 
         for (Resource resource : resources) {
+            Properties properties = resource.getProperties();
+
+            if (DataSource.class.getName().equals(resource.getType())
+                || DataSource.class.getSimpleName().equals(resource.getType())) {
+                trimNotSupportedDataSourceProperties(properties);
+            }
+
             ResourceInfo resourceInfo = configFactory.configureService(resource, ResourceInfo.class);
             final ResourceRef resourceRef = new ResourceRef();
             resourceRef.setResType(resource.getType());
@@ -863,20 +871,16 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             if (DataSource.class.getName().equals(resource.getType())
                     && resource.getProperties().containsKey(ORIGIN_FLAG)
                     && resource.getProperties().getProperty(ORIGIN_FLAG).equals(ORIGIN_ANNOTATION)) {
+                properties.remove(ORIGIN_FLAG);
 
                 resourceInfo.id = module.getModuleId() + "/" + resourceInfo.id;
 
-                Properties properties = resource.getProperties();
                 if (properties.get("JdbcUrl") == null) {
                     final String url = getVendorUrl(properties);
                     if (url != null) {
                         properties.put("JdbcUrl", url);
                     }
                 }
-
-                // these properties are not supported by dbcp
-                properties.remove("LoginTimeout");
-                properties.remove(ORIGIN_FLAG);
 
                 resourceRef.setResRefName(dataSourceLookupName(resource));
             } else {
