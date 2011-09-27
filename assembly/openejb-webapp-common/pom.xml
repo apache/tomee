@@ -79,12 +79,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-telnet</artifactId>
-      <version>${project.version}</version>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-cxf</artifactId>
       <version>${project.version}</version>
       <optional>true</optional>
