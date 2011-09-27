@@ -29,7 +29,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-lite</artifactId>
   <packaging>pom</packaging>
-  <name>OpenEJB :: Assembly :: iTests Standalone Client</name>
+  <name>OpenEJB :: Assembly :: All In One EJB Lite jar</name>
   <build>
     <defaultGoal>install</defaultGoal>
     <plugins>
