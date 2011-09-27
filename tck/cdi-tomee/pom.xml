@@ -212,7 +212,7 @@
             <server.http.port>${tomee.http.port}</server.http.port>
             <server.shutdown.port>${tomee.shutdown.port}</server.shutdown.port>
             <java.opts>-Xmx512m -Xms256m -XX:PermSize=64m -XX:MaxPermSize=256m -XX:ReservedCodeCacheSize=64m</java.opts>
-            <openejb.home>${project.build.directory}${file.separator}apache-tomee-${project.version}</openejb.home>
+            <openejb.home>${openejb.home}</openejb.home>
           </systemPropertyVariables>
         </configuration>
         <executions>
