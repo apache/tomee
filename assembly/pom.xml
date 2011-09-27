@@ -34,7 +34,6 @@
     <module>openejb-webapp-common</module>
     <module>openejb-itests-standalone-client</module>
     <module>openejb-tomcat</module>
-    <module>openejb-jetty</module>
     <module>openejb-standalone</module>
     <module>openejb-lite</module>
     <module>openejb-logging</module>
