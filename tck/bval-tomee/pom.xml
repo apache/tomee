@@ -30,6 +30,10 @@
   <name>OpenEJB :: TCK :: Bean Validation TomEE</name>
   <description>Aggregates dependencies and runs the JSR-303 TCK in TomEE</description>
 
+  <properties>
+    <openejb.home>${project.build.directory}${file.separator}apache-tomee-webprofile-${project.version}</openejb.home>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.bval</groupId>
@@ -193,7 +197,7 @@
                 <replace file="${openejb.home}/conf/server.xml" token="8009" value="${tomee.ajp.port}"/>
 
                 <!-- validator provider property -->
-                <copy file="src/main/tomcat/conf/system.properties" tofile="${project.build.directory}/apache-tomee-webprofile-${project.version}/conf/system.properties"/>
+                <copy file="src/main/tomcat/conf/system.properties" tofile="${openejb.home}/conf/system.properties"/>
               </target>
             </configuration>
           </execution>
@@ -235,7 +239,7 @@
             <server.http.port>${tomee.http.port}</server.http.port>
             <server.shutdown.port>${tomee.shutdown.port}</server.shutdown.port>
             <java.opts>-Xmx512m -Xms256m -XX:PermSize=64m -XX:MaxPermSize=256m -XX:ReservedCodeCacheSize=64m</java.opts>
-            <openejb.home>${project.build.directory}${file.separator}apache-tomee-${project.version}</openejb.home>
+            <openejb.home>${openejb.home}</openejb.home>
           </systemPropertyVariables>
         </configuration>
         <executions>
@@ -257,7 +261,4 @@
       </plugin>
     </plugins>
   </build>
-  <properties>
-    <openejb.home>${project.build.directory}${file.separator}apache-tomee-webprofile-${project.version}</openejb.home>
-  </properties>
 </project>
