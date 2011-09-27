@@ -23,7 +23,7 @@
         Tests OpenEJB distribution using the OpenEJB iTest suite.
     </description>
 
-    <property name="openejb.version" value="4.0.0-SNAPSHOT"/>
+    <property name="openejb.version" value="4.0.0-beta-1-SNAPSHOT"/>
     <property name="repo" location="${basedir}/repo"/>
     <property name="maven.repo" value="file:${user.home}/.m2/repository"/>
     <property name="target.dir" location="${basedir}/target"/>
