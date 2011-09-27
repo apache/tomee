@@ -79,6 +79,7 @@ import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.Container;
 import org.apache.openejb.DuplicateDeploymentIdException;
 import org.apache.openejb.Injection;
+import org.apache.openejb.JndiConstants;
 import org.apache.openejb.MethodContext;
 import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.OpenEJB;
@@ -139,18 +140,11 @@ import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 import org.apache.xbean.recipe.UnsetPropertiesRecipe;
 
-public class Assembler extends AssemblerTool implements org.apache.openejb.spi.Assembler {
+public class Assembler extends AssemblerTool implements org.apache.openejb.spi.Assembler, JndiConstants {
 
     static {
         AsmParameterNameLoader.install();
     }
-
-    public static final String JAVA_OPENEJB_NAMING_CONTEXT = "openejb/";
-
-    public static final String PERSISTENCE_UNIT_NAMING_CONTEXT = JAVA_OPENEJB_NAMING_CONTEXT + "PersistenceUnit/";
-
-    public static final String VALIDATOR_FACTORY_NAMING_CONTEXT = JAVA_OPENEJB_NAMING_CONTEXT + "ValidatorFactory/";
-    public static final String VALIDATOR_NAMING_CONTEXT = JAVA_OPENEJB_NAMING_CONTEXT + "Validator/";
 
     private static final String OPENEJB_URL_PKG_PREFIX = "org.apache.openejb.core.ivm.naming";
 
@@ -1469,7 +1463,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         try {
-            final String name = "openejb/Resource/" + serviceInfo.id;
+            final String name = OPENEJB_RESOURCE_JNDI_PREFIX + serviceInfo.id;
             containerSystem.getJNDIContext().bind(name, service);
         } catch (NamingException e) {
             throw new OpenEJBException("Cannot bind resource adapter with id " + serviceInfo.id, e);

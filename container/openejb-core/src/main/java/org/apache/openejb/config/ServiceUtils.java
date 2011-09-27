@@ -18,7 +18,6 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.config.sys.ServiceProvider;
 import org.apache.openejb.config.sys.ServicesJar;
 import org.apache.openejb.config.sys.JaxbOpenejb;
@@ -48,7 +47,7 @@ public class ServiceUtils {
      * 2. If in a full server containing a "conf" directory "org.apache.openejb" </br>
      * 3. Embedded mode "org.apache.openejb.embedded" </br>
      */
-    public static final String defaultProviderURL;
+    public static final String DEFAULT_PROVIDER_URL;
     static {
         String defaultValue = "org.apache.openejb";
         try {
@@ -58,7 +57,7 @@ public class ServiceUtils {
             }
         } catch (Exception ignored) {
         }
-        defaultProviderURL = SystemInstance.get().getOptions().get("openejb.provider.default", defaultValue);
+        DEFAULT_PROVIDER_URL = SystemInstance.get().getOptions().get("openejb.provider.default", defaultValue);
     }
 
 
@@ -129,7 +128,7 @@ public class ServiceUtils {
         ArrayList<ServiceProvider> providers = new ArrayList<ServiceProvider>();
         if (type == null) return providers;
 
-        List<ServiceProvider> services = getServiceProviders(defaultProviderURL);
+        List<ServiceProvider> services = getServiceProviders(DEFAULT_PROVIDER_URL);
 
         for (ServiceProvider service : services) {
             if (service.getService().equals(type)) {
@@ -149,7 +148,7 @@ public class ServiceUtils {
         if (type == null) return null;
         if (required == null) required = new Properties();
 
-        List<ServiceProvider> services = getServiceProviders(defaultProviderURL);
+        List<ServiceProvider> services = getServiceProviders(DEFAULT_PROVIDER_URL);
 
         for (ServiceProvider service : services) {
             if (service.getTypes().contains(type) && implies(required, service.getProperties())) {
@@ -197,7 +196,7 @@ public class ServiceUtils {
     }
 
     public static List<ServiceProvider> getServiceProviders() throws OpenEJBException {
-        return getServiceProviders(defaultProviderURL);
+        return getServiceProviders(DEFAULT_PROVIDER_URL);
     }
 
     public static List<ServiceProvider> getServiceProviders(String packageName) throws OpenEJBException {
@@ -244,7 +243,7 @@ public class ServiceUtils {
             providerName = id.substring(0, id.indexOf(":"));
             serviceName = id.substring(id.indexOf(":") + 1);
         } else {
-            providerName = defaultProviderURL;
+            providerName = DEFAULT_PROVIDER_URL;
             serviceName = id;
         }
 

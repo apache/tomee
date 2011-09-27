@@ -18,7 +18,6 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.config.sys.Resource;
-import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.DataSource;
 import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.jee.KeyedCollection;
@@ -84,6 +83,7 @@ public class ConvertDataSourceDefinitions implements DynamicDeployer {
         put(p, "Description", datasource.getDescription());
         put(p, "ServerName", datasource.getServerName());
         put(p, "Definition", rawDefinition(datasource));
+        put(p, AutoConfig.ORIGIN_FLAG, AutoConfig.ORIGIN_ANNOTATION);
         setProperties(datasource, p);
 
         // to force it to be bound in JndiEncBuilder
