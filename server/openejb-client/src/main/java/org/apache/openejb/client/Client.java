@@ -106,13 +106,15 @@ public class Client {
             throw new RemoteException("Unable to connect", e);
         }
 
+        OutputStream out = null;
+        InputStream in = null;
+
         try {
 
 
             /*----------------------------------*/
             /* Get output streams */
             /*----------------------------------*/
-            OutputStream out;
             try {
 
                 out = conn.getOuputStream();
@@ -200,7 +202,7 @@ public class Client {
             /*----------------------------------*/
             /* Get input streams               */
             /*----------------------------------*/
-            InputStream in;
+
             try {
 
                 in = conn.getInputStream();
@@ -310,13 +312,31 @@ public class Client {
             throw new RemoteException("Error while communicating with server: ", error);
 
         } finally {
-            try {
-                if (conn != null) {
-                    conn.close();
+
+            if(null != out){
+                try {
+                    out.close();
+                } catch (Throwable e) {
+                    //Ignore
                 }
-            } catch (Throwable t) {
-                logger.log(Level.WARNING, "Error closing connection with server: " + t.getMessage(), t);
             }
+
+            if(null != in){
+                try {
+                    in.close();
+                } catch (Throwable e) {
+                    //Ignore
+                }
+            }
+
+            if (null != conn) {
+                try {
+                    conn.close();
+                } catch (Throwable t) {
+                    logger.log(Level.WARNING, "Error closing connection with server: " + t.getMessage(), t);
+                }
+            }
+
         }
         return res;
     }
@@ -347,6 +367,6 @@ public class Client {
     }
 
     private boolean getRetry() {
-        return retry = new Boolean(System.getProperty("openejb.client.requestretry", retry + ""));
+        return retry = Boolean.valueOf(System.getProperty("openejb.client.requestretry", retry + ""));
     }
 }
