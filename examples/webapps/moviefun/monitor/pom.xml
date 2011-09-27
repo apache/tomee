@@ -41,12 +41,12 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-api</artifactId>
-      <version>4.0.0-SNAPSHOT</version>
+      <version>4.0.0-beta-1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>4.0.0-SNAPSHOT</version>
+      <version>4.0.0-beta-1-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>icu4j</artifactId>
