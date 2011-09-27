@@ -68,6 +68,7 @@
       <artifactId>apache-tomee</artifactId>
       <type>zip</type>
       <version>${project.version}</version>
+      <classifier>webprofile</classifier>
     </dependency>
     <dependency>
       <groupId>org.testng</groupId>
@@ -139,6 +140,7 @@
                   <artifactId>apache-tomee</artifactId>
                   <version>${project.version}</version>
                   <type>zip</type>
+                  <classifier>webprofile</classifier>
                   <outputDirectory>${project.build.directory}</outputDirectory>
                 </artifactItem>
               </artifactItems>
