@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.config;
 
-import org.apache.openejb.config.sys.Openejb;
+import org.apache.openejb.config.sys.Resources;
 import org.apache.openejb.jee.bval.ValidationConfigType;
 
 import java.util.HashMap;
@@ -33,7 +33,7 @@ public class Module {
     private final Map<String, Object> altDDs = new HashMap<String, Object>();
     private String uniqueId;
     private AppModule appModule = null;
-    private Openejb openejb;
+    private Resources resources;
 
     public Module() {
         uniqueId = Integer.toString(currentId++);
@@ -81,8 +81,8 @@ public class Module {
         }
 
         this.appModule = appModule;
-        if (openejb != null) {
-            this.appModule.getResources().addAll(openejb.getResource());
+        if (resources != null) {
+            this.appModule.getResources().addAll(resources.getResource());
         }
     }
 
@@ -90,11 +90,11 @@ public class Module {
         return appModule;
     }
 
-    public void initOpenejb(Openejb openejb) {
-        if (this.openejb != null) {
-            throw new UnsupportedOperationException("openejb.xml is already set");
+    public void initResources(Resources resources) {
+        if (this.resources != null) {
+            throw new UnsupportedOperationException("resources.xml is already set");
         }
 
-        this.openejb = openejb;
+        this.resources = resources;
     }
 }

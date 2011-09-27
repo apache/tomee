@@ -48,6 +48,7 @@ public class AppModule implements DeploymentModule {
     private final List<ClientModule> clientModules = new ArrayList<ClientModule>();
     private final List<EjbModule> ejbModules = new ArrayList<EjbModule>();
     private final List<PersistenceModule> persistenceModules = new ArrayList<PersistenceModule>();
+    // TODO We could turn this into the Resources JAXB object and support containers and other things as well
     private final Collection<Resource> resources = new HashSet<Resource>();
     private final ClassLoader classLoader;
     private EntityMappings cmpMappings;

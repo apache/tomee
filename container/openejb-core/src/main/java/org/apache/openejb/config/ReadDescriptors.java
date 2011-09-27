@@ -19,6 +19,7 @@ package org.apache.openejb.config;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.config.sys.JaxbOpenejb;
 import org.apache.openejb.config.sys.Openejb;
+import org.apache.openejb.config.sys.Resources;
 import org.apache.openejb.core.webservices.WsdlResolver;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.Beans;
@@ -155,33 +156,21 @@ public class ReadDescriptors implements DynamicDeployer {
     }
 
     private void readOpenEJBXml(Module module) {
-        URL url = getUrl(module, "openejb.xml");
+        URL url = getUrl(module, "resources.xml");
         if (url != null) {
             try {
-                Openejb openejb = JaxbOpenejb.unmarshal(Openejb.class, url.openStream());
-                module.initOpenejb(openejb);
+                Resources openejb = JaxbOpenejb.unmarshal(Resources.class, url.openStream());
+                module.initResources(openejb);
 
                 // warn if other entities than resources were declared
                 if (openejb.getContainer().size() > 0) {
                     logger.warning("containers can't be declared at module level");
-                }
-                if (openejb.getDeployments().size() > 0) {
-                    logger.warning("deployments can't be declared at module level");
-                }
-                if (openejb.getSecurityService() != null) {
-                    logger.warning("security service can't be declared at module level");
                 }
                 if (openejb.getConnectionManager() != null) {
                     logger.warning("connection manager can't be declared at module level");
                 }
                 if (openejb.getJndiProvider().size() > 0) {
                     logger.warning("jndi providers can't be declared at module level");
-                }
-                if (openejb.getTransactionManager() != null) {
-                    logger.warning("transaction manager can't be declared at module level");
-                }
-                if (openejb.getProxyFactory() != null) {
-                    logger.warning("proxy factory can't be declared at module level");
                 }
             } catch (Exception e) {
                 logger.warning("can't read " + url.toString() + " to load resources for module " + module.toString(), e);
