@@ -35,6 +35,7 @@
     <module>struts</module>
     <module>moviefun</module>
     <module>rest-example</module>
+    <module>resources-declared-in-webapp</module>
   </modules>
 
   <!--
