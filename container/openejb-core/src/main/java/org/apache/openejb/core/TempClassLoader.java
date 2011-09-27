@@ -153,6 +153,7 @@ public class TempClassLoader extends URLClassLoader {
         if (name.startsWith("org.apache.xbean.")) return true;
         if (name.startsWith("org.eclipse.jdt.")) return true;
         if (name.startsWith("org.apache.openejb.jee.")) return true;
+        if (name.startsWith("org.apache.openejb.api.")) return true;
         if (name.startsWith("org.apache.commons.")) return true;
         if (name.startsWith("javassist")) return true;
         if (name.startsWith("org.codehaus.swizzle")) return true;
