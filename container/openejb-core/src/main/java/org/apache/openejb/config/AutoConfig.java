@@ -16,18 +16,7 @@
  */
 package org.apache.openejb.config;
 
-import javax.ejb.TimerService;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.sql.DataSource;
-import javax.transaction.TransactionManager;
-import javax.transaction.TransactionSynchronizationRegistry;
-import javax.transaction.UserTransaction;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.Request;
-import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.ext.ContextResolver;
+import org.apache.openejb.JndiConstants;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.ContainerInfo;
 import org.apache.openejb.assembler.classic.ResourceInfo;
@@ -69,10 +58,22 @@ import org.apache.openejb.util.URISupport;
 import org.apache.openejb.util.UniqueDefaultLinkResolver;
 
 import javax.annotation.ManagedBean;
+import javax.ejb.TimerService;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.jms.Queue;
 import javax.jms.Topic;
+import javax.sql.DataSource;
+import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
+import javax.transaction.UserTransaction;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import javax.ws.rs.core.Application;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.Request;
+import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.ext.ContextResolver;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -92,11 +93,14 @@ import static org.apache.openejb.config.ServiceUtils.NONE;
 import static org.apache.openejb.config.ServiceUtils.hasServiceProvider;
 import static org.apache.openejb.util.Join.join;
 
-public class AutoConfig implements DynamicDeployer {
+public class AutoConfig implements DynamicDeployer, JndiConstants {
+    public static final String ORIGIN_ANNOTATION = "Annotation";
+    public static final String ORIGIN_FLAG = "Origin";
 
     public static Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, AutoConfig.class);
 
     private static Set<String> ignoredReferenceTypes = new TreeSet<String>();
+
     static{
         // Context objects are automatically handled
         ignoredReferenceTypes.add("javax.ejb.SessionContext");
@@ -837,9 +841,9 @@ public class AutoConfig implements DynamicDeployer {
     }
 
     private void processDataSourceDefinitions(AppModule module) throws OpenEJBException {
-        Collection<Resource> datasources = module.getResources();
+        Collection<Resource> resources = module.getResources();
 
-        if (datasources.size() == 0) return;
+        if (resources.size() == 0) return;
 
         List<JndiConsumer> jndiConsumers = new ArrayList<JndiConsumer>();
         for (WebModule webModule : module.getWebModules()) {
@@ -851,43 +855,49 @@ public class AutoConfig implements DynamicDeployer {
             Collections.addAll(jndiConsumers, ejbModule.getEjbJar().getEnterpriseBeans());
         }
 
-        for (Resource datasource : datasources) {
-            if (!DataSource.class.getName().equals(datasource.getType())) {
-                continue;
-            }
+        for (Resource resource : resources) {
+            ResourceInfo resourceInfo = configFactory.configureService(resource, ResourceInfo.class);
+            final ResourceRef resourceRef = new ResourceRef();
+            resourceRef.setResType(resource.getType());
 
-            Properties properties = datasource.getProperties();
-            if (properties.get("JdbcUrl") == null) {
-                final String url = getVendorUrl(properties);
-                if (url != null) {
-                    properties.put("JdbcUrl", url);
+            if (DataSource.class.getName().equals(resource.getType())
+                    && resource.getProperties().containsKey(ORIGIN_FLAG)
+                    && resource.getProperties().getProperty(ORIGIN_FLAG).equals(ORIGIN_ANNOTATION)) {
+
+                resourceInfo.id = module.getModuleId() + "/" + resourceInfo.id;
+
+                Properties properties = resource.getProperties();
+                if (properties.get("JdbcUrl") == null) {
+                    final String url = getVendorUrl(properties);
+                    if (url != null) {
+                        properties.put("JdbcUrl", url);
+                    }
                 }
+
+                // these properties are not supported by dbcp
+                properties.remove("LoginTimeout");
+                properties.remove(ORIGIN_FLAG);
+
+                resourceRef.setResRefName(dataSourceLookupName(resource));
+            } else {
+                resourceRef.setResRefName(OPENEJB_RESOURCE_JNDI_PREFIX + resourceInfo.id);
             }
 
-            // this property is not supported by dbcp
-            properties.remove("LoginTimeout");
-
-            ResourceInfo resourceInfo = configFactory.configureService(datasource, ResourceInfo.class);
-            resourceInfo.id = module.getModuleId() + "/" + resourceInfo.id;
-
-            final ResourceRef dataSourceRef = new ResourceRef(dataSourceLookupName(datasource), DataSource.class.getName());
-            dataSourceRef.setMappedName(resourceInfo.id);
+            resourceRef.setMappedName(resourceInfo.id);
 
             for (JndiConsumer consumer : jndiConsumers) {
-
-                final ResourceRef existing = consumer.getResourceRefMap().get(dataSourceRef.getKey());
+                final ResourceRef existing = consumer.getResourceRefMap().get(resourceRef.getKey());
                 if (existing != null) {
-                    existing.setMappedName(dataSourceRef.getMappedName());
+                    existing.setMappedName(resourceRef.getMappedName());
                 } else {
-                    consumer.getResourceRef().add(dataSourceRef);
+                    consumer.getResourceRef().add(resourceRef);
                 }
             }
-
 
             installResource(module.getModuleId(), resourceInfo);
         }
 
-        datasources.clear();
+        resources.clear();
     }
 
     private String dataSourceLookupName(Resource datasource) {

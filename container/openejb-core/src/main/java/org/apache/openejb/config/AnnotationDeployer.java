@@ -170,7 +170,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.enterprise.inject.Specializes;
-import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Extension;
 import javax.interceptor.ExcludeClassInterceptors;
 import javax.interceptor.ExcludeDefaultInterceptors;
@@ -349,7 +348,7 @@ public class AnnotationDeployer implements DynamicDeployer {
     public static class DiscoverAnnotatedBeans implements DynamicDeployer {
         public AppModule deploy(AppModule appModule) throws OpenEJBException {
             for (EjbModule ejbModule : appModule.getEjbModules()) {
-                ejbModule.setAppModule(appModule);
+                ejbModule.initAppModule(appModule);
                 setModule(ejbModule);
                 try {
                     deploy(ejbModule);
@@ -358,7 +357,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
             for (ClientModule clientModule : appModule.getClientModules()) {
-                clientModule.setAppModule(appModule);
+                clientModule.initAppModule(appModule);
                 setModule(clientModule);
                 try {
                     deploy(clientModule);
@@ -367,7 +366,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
             for (ConnectorModule connectorModule : appModule.getConnectorModules()) {
-                connectorModule.setAppModule(appModule);
+                connectorModule.initAppModule(appModule);
                 setModule(connectorModule);
                 try {
                     deploy(connectorModule);
@@ -376,7 +375,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
             for (WebModule webModule : appModule.getWebModules()) {
-                webModule.setAppModule(appModule);
+                webModule.initAppModule(appModule);
                 setModule(webModule);
                 try {
                     deploy(webModule);

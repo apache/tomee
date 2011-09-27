@@ -18,6 +18,7 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.config.sys.JaxbOpenejb;
+import org.apache.openejb.config.sys.Openejb;
 import org.apache.openejb.core.webservices.WsdlResolver;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.Beans;
@@ -86,21 +87,25 @@ public class ReadDescriptors implements DynamicDeployer {
 
             readValidationConfigType(ejbModule);
             readCmpOrm(ejbModule);
+            readOpenEJBXml(ejbModule);
         }
 
         for (ClientModule clientModule : appModule.getClientModules()) {
             readAppClient(clientModule, appModule);
             readValidationConfigType(clientModule);
+            readOpenEJBXml(clientModule);
         }
 
         for (ConnectorModule connectorModule : appModule.getConnectorModules()) {
             readConnector(connectorModule, appModule);
             readValidationConfigType(connectorModule);
+            readOpenEJBXml(connectorModule);
         }
 
         for (WebModule webModule : appModule.getWebModules()) {
             readWebApp(webModule, appModule);
             readValidationConfigType(webModule);
+            readOpenEJBXml(webModule);
         }
 
         List<URL> persistenceUrls = (List<URL>) appModule.getAltDDs().get("persistence.xml");
@@ -138,17 +143,62 @@ public class ReadDescriptors implements DynamicDeployer {
 
     }
 
+    private URL getUrl(Module module, String name) {
+        URL url = (URL) module.getAltDDs().get(name);
+        if (url == null && module.getClassLoader() != null) {
+            if (module instanceof WebModule) {
+                url = module.getClassLoader().getResource("WEB-INF/" + name);
+            } else {
+                url = module.getClassLoader().getResource("META-INF/" + name);
+            }
+
+            if (url != null) {
+                module.getAltDDs().put(name, url);
+            }
+        }
+        return url;
+    }
+
+    private void readOpenEJBXml(Module module) {
+        URL url = getUrl(module, "openejb.xml");
+        if (url != null) {
+            try {
+                Openejb openejb = JaxbOpenejb.unmarshal(Openejb.class, url.openStream());
+                module.initOpenejb(openejb);
+
+                // warn if other entities than resources were declared
+                if (openejb.getContainer().size() > 0) {
+                    logger.warning("containers can't be declared at module level");
+                }
+                if (openejb.getDeployments().size() > 0) {
+                    logger.warning("deployments can't be declared at module level");
+                }
+                if (openejb.getSecurityService() != null) {
+                    logger.warning("security service can't be declared at module level");
+                }
+                if (openejb.getConnectionManager() != null) {
+                    logger.warning("connection manager can't be declared at module level");
+                }
+                if (openejb.getJndiProvider().size() > 0) {
+                    logger.warning("jndi providers can't be declared at module level");
+                }
+                if (openejb.getTransactionManager() != null) {
+                    logger.warning("transaction manager can't be declared at module level");
+                }
+                if (openejb.getProxyFactory() != null) {
+                    logger.warning("proxy factory can't be declared at module level");
+                }
+            } catch (Exception e) {
+                logger.warning("can't read " + url.toString() + " to load resources for module " + module.toString(), e);
+            }
+        }
+    }
+
     private void readValidationConfigType(Module module) throws OpenEJBException {
         if (module.getValidationConfig() != null) {
             return;
         }
-        URL url = (URL) module.getAltDDs().get("validation.xml");
-        if (url == null && module.getClassLoader() != null) { // library but not a module case
-            url = module.getClassLoader().getResource("META-INF/validation.xml");
-            if (url != null) {
-                module.getAltDDs().put("validation.xml", url);
-            }
-        }
+        URL url = getUrl(module, "validation.xml");
         if (url != null) {
             ValidationConfigType validationConfigType;
             try {

@@ -231,6 +231,13 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                     ejbModule.setFinder(new AnnotationFinder(new ClassesArchive(beans)).link());
                     ejbModule.setBeans(new Beans());
                     appModule.getEjbModules().add(ejbModule);
+                } else if (obj instanceof Class) {
+
+                    final Class bean = (Class) obj;
+                    final EjbModule ejbModule = new EjbModule(new EjbJar(method.getName()));
+                    ejbModule.setFinder(new AnnotationFinder(new ClassesArchive(bean)).link());
+                    ejbModule.setBeans(new Beans());
+                    appModule.getEjbModules().add(ejbModule);
                 }
             }
 
