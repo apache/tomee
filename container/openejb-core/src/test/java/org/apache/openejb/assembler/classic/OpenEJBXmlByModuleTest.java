@@ -65,7 +65,7 @@ public class OpenEJBXmlByModuleTest {
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new SingletonBean(UselessBean.class));
         app.getEjbModules().add(new EjbModule(ejbJar));
-        app.getEjbModules().iterator().next().getAltDDs().put("openejb.xml", getClass().getClassLoader().getResource("META-INF/resource/appresource.openejb.xml"));
+        app.getEjbModules().iterator().next().getAltDDs().put("resources.xml", getClass().getClassLoader().getResource("META-INF/resource/appresource.openejb.xml"));
 
         assembler.createApplication(config.configureApplication(app));
 
