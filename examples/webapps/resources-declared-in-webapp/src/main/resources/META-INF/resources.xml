@@ -16,6 +16,6 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<openejb>
+<resources>
   <Resource id="My Manager Team" type="org.superbiz.resource.ManagerResource" provider="org.superbiz#ManagerResource" />
-</openejb>
+</resources>
