@@ -20,11 +20,12 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.apache.openejb.patch</groupId>
-    <artifactId>openejb-patch-parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <groupId>org.apache.openejb</groupId>
+    <artifactId>deps</artifactId>
+    <version>4.0.0-SNAPSHOT</version>
   </parent>
 
+  <groupId>org.apache.openejb.patch</groupId>
   <artifactId>openejb-jstl</artifactId>
   <version>1.2-SNAPSHOT</version>
   <name>Apache OpenEJB Patch :: JSTL</name>
