@@ -1,0 +1,10 @@
+<openejb>
+  <Resource id="DS" type="javax.sql.DataSource">
+    JdbcDriver  org.hsqldb.jdbcDriver
+    JdbcUrl     not:used:url
+    UserName    foo
+    Password    bar
+  </Resource>
+
+  <Resource id="My Resource" type="org.apache.openejb.assembler.classic.OpenEJBXmlByModuleTest$MyResource" provider="resource#MyResource" />
+</openejb>
