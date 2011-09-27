@@ -175,7 +175,6 @@ public class TempClassLoader extends URLClassLoader {
 //        if (name.startsWith("org.apache.naming")) return true;
 //        if (name.startsWith("org.apache.openejb")) return true;
 
-        System.out.println("LLOAD: " + name);
         return false;
     }
 
