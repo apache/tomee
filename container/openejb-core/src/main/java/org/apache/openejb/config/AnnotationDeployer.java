@@ -233,6 +233,7 @@ public class AnnotationDeployer implements DynamicDeployer {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, AnnotationDeployer.class.getPackage().getName());
     public static final Logger startupLogger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, "org.apache.openejb.util.resources");
     private static final ThreadLocal<DeploymentModule> currentModule = new ThreadLocal<DeploymentModule>();
+    private static final Set<String> lookupMissing = new HashSet<String>(2);
 
     public static final Set<String> knownResourceEnvTypes = new TreeSet<String>(asList(
             "javax.ejb.EJBContext",
@@ -437,26 +438,26 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         public ConnectorModule deploy(ConnectorModule connectorModule) throws OpenEJBException {
-        	
+
         	org.apache.openejb.jee.Connector connector = connectorModule.getConnector();
         	if (connector == null) {
         		connector = new org.apache.openejb.jee.Connector();
         	}
-        	
+
         	// JCA 1.6 - 18.3.1 do not look at annotations if the provided connector
         	// deployment descriptor is "meta-data complete".
-        	
+
         	float specVersion = 0;
         	try {
         		specVersion = Float.parseFloat(connector.getVersion());
         	} catch (Exception e) {
         	}
-        	
+
 			if (specVersion < 1.6 || Boolean.TRUE.equals(connector.isMetadataComplete())) {
 				return connectorModule;
 			}
-        	
-        	
+
+
         	IAnnotationFinder finder = connectorModule.getFinder();
         	if (finder == null) {
         		try {
@@ -467,26 +468,26 @@ public class AnnotationDeployer implements DynamicDeployer {
 					return connectorModule;
 				}
         	}
-        	
+
         	List<Class<?>> connectorClasses = finder.findAnnotatedClasses(Connector.class);
-        	
+
         	// are we allowed to have more than one connector class? Not without a deployment descriptor
         	if (connector.getResourceAdapter() == null || connector.getResourceAdapter().getResourceAdapterClass() == null ||  connector.getResourceAdapter().getResourceAdapterClass().length() == 0) {
         		if (connectorClasses.size() == 0) {
         			// fail some validation here too
         		}
-        		
+
         		if (connectorClasses.size() > 1) {
         			// too many connector classes, this is against the spec
         			// something like connectorModule.getValidation().fail(ejbName, "abstractAnnotatedAsBean", annotationClass.getSimpleName(), beanClass.get().getName());
         		}
         	}
-        	
+
         	Class<?> connectorClass = null;
         	if (connectorClasses.size() == 1) {
         		connectorClass = connectorClasses.get(0);
         	}
-        	
+
         	if (connectorClasses.size() > 1) {
         		for (Class<?> cls : connectorClasses) {
         			if (cls.getName().equals(connector.getResourceAdapter().getResourceAdapterClass())) {
@@ -495,29 +496,29 @@ public class AnnotationDeployer implements DynamicDeployer {
         			}
         		}
         	}
-        	
+
         	if (connectorClass != null) {
 	    		if (connector.getResourceAdapter() == null) {
 	    			connector.setResourceAdapter(new ResourceAdapter());
 	    		}
-	    			
+
 	    		if (connector.getResourceAdapter().getResourceAdapterClass() == null || connector.getResourceAdapter().getResourceAdapterClass().length() == 0) {
 	    			connector.getResourceAdapter().setResourceAdapterClass(connectorClass.getName().toString());
 	    		}
-	    		
+
 	    		Connector connectorAnnotation = connectorClass.getAnnotation(Connector.class);
-	    		
+
 	    		connector.setDisplayNames(getTexts(connector.getDisplayNames(), connectorAnnotation.displayName()));
 	    		connector.setDescriptions(getTexts(connector.getDescriptions(), connectorAnnotation.description()));
-	    		
+
 	    		connector.setEisType(getString(connector.getEisType(), connectorAnnotation.eisType()));
 	    		connector.setVendorName(getString(connector.getVendorName(), connectorAnnotation.vendorName()));
 	    		connector.setResourceAdapterVersion(getString(connector.getResourceAdapterVersion(), connectorAnnotation.version()));
-	    		
+
 	    		if (connector.getIcons().isEmpty()) {
 	    			int smallIcons = connectorAnnotation.smallIcon().length;
 	    			int largeIcons = connectorAnnotation.largeIcon().length;
-	    			
+
 	    			for (int i = 0; i < smallIcons && i < largeIcons; i++) {
 	    				Icon icon = new Icon();
                         // locale can't be specified in the annotation and it is en by default
@@ -526,24 +527,24 @@ public class AnnotationDeployer implements DynamicDeployer {
 	    				if (i < smallIcons) {
 	    					icon.setSmallIcon(connectorAnnotation.smallIcon()[i]);
 	    				}
-	    				
+
 	    				if (i < largeIcons) {
 	    					icon.setLargeIcon(connectorAnnotation.largeIcon()[i]);
 	    				}
-	    				
+
 	    				connector.getIcons().add(icon);
 	    			}
 	    		}
-	    		
+
 	    		if (connector.getLicense() == null) {
 	    			License license = new License();
 					connector.setLicense(license);
 					license.setLicenseRequired(connectorAnnotation.licenseRequired());
 	    		}
-	    		
+
 	    		connector.getLicense().setDescriptions(getTexts(connector.getLicense().getDescriptions(), connectorAnnotation.licenseDescription()));
-	    		
-	    		
+
+
 	    		SecurityPermission[] annotationSecurityPermissions = connectorAnnotation.securityPermissions();
 				List<org.apache.openejb.jee.SecurityPermission> securityPermission = connector.getResourceAdapter().getSecurityPermission();
 				if (securityPermission == null || securityPermission.size() == 0) {
@@ -554,7 +555,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 						securityPermission.add(permission);
 					}
 				}
-				
+
 				Class<? extends WorkContext>[] annotationRequiredWorkContexts = connectorAnnotation.requiredWorkContexts();
 				List<String> requiredWorkContext = connector.getRequiredWorkContext();
 				if (requiredWorkContext.size() == 0) {
@@ -562,13 +563,13 @@ public class AnnotationDeployer implements DynamicDeployer {
 						requiredWorkContext.add(cls.getName());
 					}
 				}
-				
+
 				OutboundResourceAdapter outboundResourceAdapter = connector.getResourceAdapter().getOutboundResourceAdapter();
 				if (outboundResourceAdapter == null) {
 					outboundResourceAdapter = new OutboundResourceAdapter();
 					connector.getResourceAdapter().setOutboundResourceAdapter(outboundResourceAdapter);
 				}
-				
+
 				List<AuthenticationMechanism> authenticationMechanisms = outboundResourceAdapter.getAuthenticationMechanism();
 				javax.resource.spi.AuthenticationMechanism[] authMechanisms = connectorAnnotation.authMechanisms();
 				if (authenticationMechanisms.size() == 0) {
@@ -577,15 +578,15 @@ public class AnnotationDeployer implements DynamicDeployer {
 						authMechanism.setAuthenticationMechanismType(am.authMechanism());
 						authMechanism.setCredentialInterface(am.credentialInterface().toString());
 						authMechanism.setDescriptions(stringsToTexts(am.description()));
-						
+
 						authenticationMechanisms.add(authMechanism);
 					}
 				}
-				
+
 				if (outboundResourceAdapter.getTransactionSupport() == null) {
 					outboundResourceAdapter.setTransactionSupport(TransactionSupportType.fromValue(connectorAnnotation.transactionSupport().toString()));
 				}
-				
+
 				if (outboundResourceAdapter.isReauthenticationSupport() == null) {
 					outboundResourceAdapter.setReauthenticationSupport(connectorAnnotation.reauthenticationSupport());
 				}
@@ -598,31 +599,31 @@ public class AnnotationDeployer implements DynamicDeployer {
         	for (Class<?> cls : classes) {
 				ConnectionDefinitions connectionDefinitionsAnnotation = cls.getAnnotation(ConnectionDefinitions.class);
 				ConnectionDefinition[] definitions = connectionDefinitionsAnnotation.value();
-				
+
 				for (ConnectionDefinition definition : definitions) {
 					processConnectionDescription(connector.getResourceAdapter(), definition, cls);
 				}
 			}
-        	
+
         	classes = finder.findAnnotatedClasses(ConnectionDefinition.class);
         	for (Class<?> cls : classes) {
 				ConnectionDefinition connectionDefinitionAnnotation = cls.getAnnotation(ConnectionDefinition.class);
 				processConnectionDescription(connector.getResourceAdapter(), connectionDefinitionAnnotation, cls);
 			}
-        	
-        	
+
+
         	InboundResourceadapter inboundResourceAdapter = connector.getResourceAdapter().getInboundResourceAdapter();
         	if (inboundResourceAdapter == null) {
         		inboundResourceAdapter = new InboundResourceadapter();
         		connector.getResourceAdapter().setInboundResourceAdapter(inboundResourceAdapter);
         	}
-        	
+
         	MessageAdapter messageAdapter = inboundResourceAdapter.getMessageAdapter();
         	if (messageAdapter == null) {
         		messageAdapter = new MessageAdapter();
         		inboundResourceAdapter.setMessageAdapter(messageAdapter);
         	}
-        	
+
         	classes = finder.findAnnotatedClasses(Activation.class);
         	for (Class<?> cls : classes) {
         		MessageListener messageListener = null;
@@ -635,44 +636,44 @@ public class AnnotationDeployer implements DynamicDeployer {
 						break;
 					}
 				}
-				
+
 				if (messageListener == null) {
 					Class<?>[] listeners = activationAnnotation.messageListeners();
 					for (Class<?> listener : listeners) {
-						messageAdapter.addMessageListener(new MessageListener(listener.getName(), cls.getName()));	
+						messageAdapter.addMessageListener(new MessageListener(listener.getName(), cls.getName()));
 					}
 				}
 			}
-        	
+
         	classes = finder.findAnnotatedClasses(AdministeredObject.class);
         	List<AdminObject> adminObjects = connector.getResourceAdapter().getAdminObject();
         	for (Class<?> cls : classes) {
 				AdministeredObject administeredObjectAnnotation = cls.getAnnotation(AdministeredObject.class);
 				Class[] adminObjectInterfaces = administeredObjectAnnotation.adminObjectInterfaces();
-				
+
 				AdminObject adminObject = null;
 				for (AdminObject admObj : adminObjects) {
 					if (admObj.getAdminObjectClass().equals(cls.getName())) {
 						adminObject = admObj;
 					}
 				}
-				
+
 				if (adminObject == null) {
 					for (Class iface : adminObjectInterfaces) {
 						AdminObject newAdminObject = new AdminObject();
 						newAdminObject.setAdminObjectClass(cls.getName());
 						newAdminObject.setAdminObjectInterface(iface.getName());
-						adminObjects.add(newAdminObject);	
+						adminObjects.add(newAdminObject);
 					}
 				}
 			}
-        	
+
         	// need to make a list of classes to process for config properties
-        	
+
         	// resource adapter
         	String raCls = connector.getResourceAdapter().getResourceAdapterClass();
         	process(connectorModule.getClassLoader(), raCls, connector.getResourceAdapter());
-        	
+
         	// managedconnectionfactory
         	if (connector.getResourceAdapter() != null && connector.getResourceAdapter().getOutboundResourceAdapter() != null) {
 	        	List<org.apache.openejb.jee.ConnectionDefinition> connectionDefinitions = connector.getResourceAdapter().getOutboundResourceAdapter().getConnectionDefinition();
@@ -680,7 +681,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 	        		process(connectorModule.getClassLoader(), connectionDefinition.getManagedConnectionFactoryClass(), connectionDefinition);
 				}
         	}
-        	
+
         	// administeredobject
         	if (connector.getResourceAdapter() != null) {
 	        	List<AdminObject> raAdminObjects = connector.getResourceAdapter().getAdminObject();
@@ -688,7 +689,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 					process(connectorModule.getClassLoader(), raAdminObject.getAdminObjectClass(), raAdminObject);
 				}
         	}
-        	
+
         	// activationspec
         	if (connector.getResourceAdapter() != null && connector.getResourceAdapter().getInboundResourceAdapter() != null && connector.getResourceAdapter().getInboundResourceAdapter().getMessageAdapter() != null) {
 	        	List<MessageListener> messageListeners = connector.getResourceAdapter().getInboundResourceAdapter().getMessageAdapter().getMessageListener();
@@ -709,49 +710,49 @@ public class AnnotationDeployer implements DynamicDeployer {
 				configProperties = (List<ConfigProperty>) object.getClass().getDeclaredMethod("getConfigProperty").invoke(object);
 			} catch (Exception e) {
 			}
-			
+
 			if (configProperties == null) {
 				// can't get config properties
 				return;
 			}
-			
+
 			ClassLoader classLoader = cl;
 			if (classLoader == null) {
 				classLoader = Thread.currentThread().getContextClassLoader();
 			}
-			
+
 			final List<String> allowedTypes = Arrays.asList(new String[] { Boolean.class.getName(), String.class.getName(), Integer.class.getName(), Double.class.getName(), Byte.class.getName(), Short.class.getName(), Long.class.getName(), Float.class.getName(), Character.class.getName()});
-			
+
 			try {
 				Class<?> clazz = classLoader.loadClass(cls);
 				Object o = clazz.newInstance();
-				
+
 				// add any introspected properties
 				BeanInfo beanInfo = Introspector.getBeanInfo(clazz);
 				PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
-				
+
 				for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
 					String name = propertyDescriptor.getName();
 					Class<?> type = propertyDescriptor.getPropertyType();
 					if (type.isPrimitive()) {
 						type = getWrapper(type.getName());
 					}
-					
+
 					if (! allowedTypes.contains(type.getName())) {
 						continue;
 					}
-					
+
 					if (! containsConfigProperty(configProperties, name)) {
 						if (type != null) {
 							ConfigProperty configProperty = new ConfigProperty();
 							configProperties.add(configProperty);
-							
+
 							Object value = null;
 							try {
 								value = propertyDescriptor.getReadMethod().invoke(o);
 							} catch (Exception e) {
 							}
-							
+
 							javax.resource.spi.ConfigProperty annotation = propertyDescriptor.getWriteMethod().getAnnotation(javax.resource.spi.ConfigProperty.class);
                             if (annotation == null) {
                                 try {
@@ -761,13 +762,13 @@ public class AnnotationDeployer implements DynamicDeployer {
                                     // no-op : getDeclaredField() throws exceptions and does not return null
                                 }
                             }
-							
+
 							configProperty.setConfigPropertyName(name);
 							configProperty.setConfigPropertyType(getConfigPropertyType(annotation, type));
 							if (value != null) {
 								configProperty.setConfigPropertyValue(value.toString());
 							}
-							
+
 							if (annotation != null) {
 								if (annotation.defaultValue() != null && annotation.defaultValue().length() > 0) {
 									configProperty.setConfigPropertyValue(annotation.defaultValue());
@@ -780,12 +781,12 @@ public class AnnotationDeployer implements DynamicDeployer {
 						}
 					}
 				}
-				
+
 				// add any annotated fields we haven't already picked up
 				Field[] declaredFields = clazz.getDeclaredFields();
 				for (Field field : declaredFields) {
 					javax.resource.spi.ConfigProperty annotation = field.getAnnotation(javax.resource.spi.ConfigProperty.class);
-					
+
 					String name = field.getName();
 					Object value = null;
 					try {
@@ -795,17 +796,17 @@ public class AnnotationDeployer implements DynamicDeployer {
 
 					if (! containsConfigProperty(configProperties, name)) {
 						String type = getConfigPropertyType(annotation, field.getType());
-						
+
 						if (type != null) {
 							ConfigProperty configProperty = new ConfigProperty();
 							configProperties.add(configProperty);
-							
+
 							configProperty.setConfigPropertyName(name);
 							configProperty.setConfigPropertyType(type);
 							if (value != null) {
 								configProperty.setConfigPropertyValue(value.toString());
 							}
-							
+
 							if (annotation != null) {
 								if (annotation.defaultValue() != null) {
 									configProperty.setConfigPropertyValue(annotation.defaultValue());
@@ -827,11 +828,11 @@ public class AnnotationDeployer implements DynamicDeployer {
 			if (t == null || t.equals(Object.class)) {
 				t = type;
 			}
-			
+
 			if (t.isPrimitive()) {
 				t = getWrapper(t.getName());
 			}
-			
+
 			return t.getName();
 		}
 
@@ -841,7 +842,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 					return true;
 				}
 			}
-			
+
 			return false;
 		}
 
@@ -857,21 +858,21 @@ public class AnnotationDeployer implements DynamicDeployer {
 			       builtInMap.put("void", Void.class);
 			       builtInMap.put("short", Short.class);
 			}
-			
+
 			return builtInMap.get(primitiveType);
 		}
 
 		private void processConnectionDescription(ResourceAdapter resourceAdapter, ConnectionDefinition connectionDefinitionAnnotation, Class<?> cls) {
 			// try and find the managed connection factory
-			
+
 			OutboundResourceAdapter outboundResourceAdapter = resourceAdapter.getOutboundResourceAdapter();
 			if (outboundResourceAdapter == null) {
 				outboundResourceAdapter = new OutboundResourceAdapter();
 				resourceAdapter.setOutboundResourceAdapter(outboundResourceAdapter);
 			}
-			
+
 			List<org.apache.openejb.jee.ConnectionDefinition> connectionDefinition = outboundResourceAdapter.getConnectionDefinition();
-			
+
 			org.apache.openejb.jee.ConnectionDefinition definition = null;
 			for (org.apache.openejb.jee.ConnectionDefinition cd : connectionDefinition) {
 				if (cd.getManagedConnectionFactoryClass().equals(cls.getName())) {
@@ -879,28 +880,28 @@ public class AnnotationDeployer implements DynamicDeployer {
 					break;
 				}
 			}
-			
+
 			if (definition == null) {
 				definition = new org.apache.openejb.jee.ConnectionDefinition();
 				outboundResourceAdapter.getConnectionDefinition().add(definition);
 			}
-			
+
 			if (definition.getManagedConnectionFactoryClass() == null) {
 				definition.setManagedConnectionFactoryClass(cls.getName());
 			}
-			
+
 			if (definition.getConnectionInterface() == null) {
 				definition.setConnectionInterface(connectionDefinitionAnnotation.connection().getName());
 			}
-			
+
 			if (definition.getConnectionImplClass() == null) {
 				definition.setConnectionImplClass(connectionDefinitionAnnotation.connectionImpl().getName());
 			}
-			
+
 			if (definition.getConnectionFactoryInterface() == null) {
 				definition.setConnectionFactoryInterface(connectionDefinitionAnnotation.connectionFactory().getName());
 			}
-			
+
 			if (definition.getConnectionFactoryImplClass() == null) {
 				definition.setConnectionFactoryImplClass(connectionDefinitionAnnotation.connectionFactoryImpl().getName());
 			}
@@ -910,13 +911,13 @@ public class AnnotationDeployer implements DynamicDeployer {
 			if (strings == null) {
 				return null;
 			}
-			
+
 			Text[] result = new Text[strings.length];
 			for (int i = 0; i < result.length; i++) {
 				result[i] = new Text();
 				result[i].setValue(strings[i]);
 			}
-			
+
 			return result;
 		}
 
@@ -924,11 +925,11 @@ public class AnnotationDeployer implements DynamicDeployer {
 			if (descriptorString != null && descriptorString.length() > 0) {
 				return descriptorString;
 			}
-			
+
 			if (annotationString != null && annotationString.length() > 0) {
 				return annotationString;
 			}
-			
+
 			return null;
 		}
 
@@ -2671,12 +2672,12 @@ public class AnnotationDeployer implements DynamicDeployer {
                         return;
                     }
                 }
-                
+
                 //alway set Local View for ManagedBean
                 if (beanClass.isAnnotationPresent(ManagedBean.class)){
                     sessionBean.setLocalBean(new Empty());
                 }
-                
+
 
                 /**
                  * Track any interfaces we didn't use
@@ -3725,21 +3726,27 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         private static Method getLookupMethod(Class cls) {
-            try {
-                return cls.getMethod("lookup", null);
-            } catch (NoSuchMethodException e) {
-                logger.error("lookup method is not available for " + cls.getName()
-                    + ". You probably have an old API -" + getSourceIfExists(cls) + "- in the classpath. ");
-                return null;
+            final String name = cls.getName();
+            if (!lookupMissing.contains(name)) {
+                try {
+                    return cls.getMethod("lookup", null);
+                } catch (NoSuchMethodException e) {
+                    lookupMissing.add(name);
+                    final String exists = getSourceIfExists(cls);
+                    logger.warning("Method 'lookup' is not available for '" + name + "'"
+                            + (null != exists ? ". The old API '" + exists + "' was found on the classpath." : ". Probably using an older Runtime."));
+                }
             }
+
+            return null;
         }
 
         private static String getSourceIfExists(Class<?> cls) {
             if (cls.getProtectionDomain() != null && cls.getProtectionDomain().getCodeSource() != null
-                && cls.getProtectionDomain().getCodeSource().getLocation() != null) {
+                    && cls.getProtectionDomain().getCodeSource().getLocation() != null) {
                 return cls.getProtectionDomain().getCodeSource().getLocation().toString();
             }
-            return "";
+            return null;
         }
 
         private static String getLookupName(Resource resource) {
