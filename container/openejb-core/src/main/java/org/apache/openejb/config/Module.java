@@ -72,6 +72,10 @@ public class Module {
     }
 
     public void initAppModule(AppModule appModule) {
+        if (this.appModule == appModule) {
+            return;
+        }
+
         if (this.appModule != null) {
             throw new UnsupportedOperationException("AppModule is already set");
         }

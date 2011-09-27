@@ -146,12 +146,7 @@ public class ReadDescriptors implements DynamicDeployer {
     private URL getUrl(Module module, String name) {
         URL url = (URL) module.getAltDDs().get(name);
         if (url == null && module.getClassLoader() != null) {
-            if (module instanceof WebModule) {
-                url = module.getClassLoader().getResource("WEB-INF/" + name);
-            } else {
-                url = module.getClassLoader().getResource("META-INF/" + name);
-            }
-
+            url = module.getClassLoader().getResource("META-INF/" + name);
             if (url != null) {
                 module.getAltDDs().put(name, url);
             }
