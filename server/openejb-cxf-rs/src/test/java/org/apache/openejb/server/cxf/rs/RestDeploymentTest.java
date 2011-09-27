@@ -156,9 +156,15 @@ public class RestDeploymentTest {
     }
 
     @AfterClass public static void close() throws ServiceException {
-        service.stop();
-        daemon.stop();
-        server.stop();
+        if (service != null) {
+            service.stop();
+        }
+        if (daemon != null) {
+            daemon.stop();
+        }
+        if (server != null) {
+            server.stop();
+        }
     }
 
     @Test public void first() {
