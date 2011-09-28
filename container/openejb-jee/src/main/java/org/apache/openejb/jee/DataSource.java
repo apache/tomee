@@ -72,7 +72,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "data-sourceType", propOrder = {
-    "description",
+    "descriptions",
     "name",
     "className",
     "serverName",
