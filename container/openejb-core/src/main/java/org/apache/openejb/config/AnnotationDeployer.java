@@ -19,6 +19,7 @@ package org.apache.openejb.config;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.api.LocalClient;
+import org.apache.openejb.api.Proxy;
 import org.apache.openejb.api.RemoteClient;
 import org.apache.openejb.cdi.CdiBeanInfo;
 import org.apache.openejb.core.webservices.JaxWsUtils;
@@ -1386,7 +1387,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
-            if (beanClass.get().getAnnotation(PersistenceContext.class) == null // not a dynamic proxy implemented bean
+            // not a dynamic proxy implemented bean
+            if (beanClass.get().getAnnotation(PersistenceContext.class) == null
+                    && beanClass.get().getAnnotation(Proxy.class) == null
                     && beanClass.get().isInterface()) {
                 ejbModule.getValidation().fail(ejbName, "interfaceAnnotatedAsBean", annotationClass.getSimpleName(), beanClass.get().getName());
                 return false;
@@ -2455,14 +2458,16 @@ public class AnnotationDeployer implements DynamicDeployer {
                  * javax.ejb.*
                  */
                 List<Class<?>> interfaces = new ArrayList<Class<?>>();
-                for (Class<?> interfce : clazz.getInterfaces()) {
-                    String name = interfce.getName();
-                    if (!name.equals("java.io.Serializable") &&
-                            !name.equals("java.io.Externalizable") &&
-                            !name.startsWith("javax.ejb.") &&
-                            !descriptor.contains(interfce.getName()) &&
-                            !interfce.isSynthetic()) {
-                        interfaces.add(interfce);
+                if (!clazz.isInterface()) { // dynamic proxy implementation
+                    for (Class<?> interfce : clazz.getInterfaces()) {
+                        String name = interfce.getName();
+                        if (!name.equals("java.io.Serializable") &&
+                                !name.equals("java.io.Externalizable") &&
+                                !name.startsWith("javax.ejb.") &&
+                                !descriptor.contains(interfce.getName()) &&
+                                !interfce.isSynthetic()) {
+                            interfaces.add(interfce);
+                        }
                     }
                 }
 
@@ -2654,7 +2659,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                         && all.remote.isEmpty()
                         ) {
 
-                    if (interfaces.size() == 0 || AnnotationUtil.getAnnotation(PersistenceContext.class, clazz) != null) {
+                    if (interfaces.size() == 0 ||
+                        (AnnotationUtil.getAnnotation(PersistenceContext.class, clazz) != null
+                            && AnnotationUtil.getAnnotation(Proxy.class, clazz) != null)) {
                         // No interfaces?  Then @LocalBean
 
                         sessionBean.setLocalBean(new Empty());
@@ -3480,7 +3487,9 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         private boolean isKnownDynamicallyImplemented(Class<?> clazz) {
-            return clazz.isInterface() && AnnotationUtil.getAnnotation(PersistenceContext.class, clazz) != null;
+            return clazz.isInterface()
+                && (AnnotationUtil.getAnnotation(PersistenceContext.class, clazz) != null
+                    || AnnotationUtil.getAnnotation(Proxy.class, clazz) != null);
         }
 
         private boolean isKnownLocalBean(Class clazz) {

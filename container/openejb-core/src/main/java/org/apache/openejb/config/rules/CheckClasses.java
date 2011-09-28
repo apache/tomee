@@ -17,6 +17,7 @@
 package org.apache.openejb.config.rules;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.api.Proxy;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.RemoteBean;
 import org.apache.openejb.jee.EntityBean;
@@ -214,7 +215,8 @@ public class CheckClasses extends ValidationBase {
         String ejbName = b.getEjbName();
 
         Class<?> beanClass = lookForClass(b.getEjbClass(), "ejb-class", ejbName);
-        boolean isDynamicProxyImpl = beanClass.getAnnotation(PersistenceContext.class) != null;
+        boolean isDynamicProxyImpl = beanClass.getAnnotation(PersistenceContext.class) != null
+            || beanClass.getAnnotation(Proxy.class) != null;
 
         if (beanClass == null) return null;
         
