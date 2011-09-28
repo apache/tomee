@@ -27,10 +27,10 @@ public final class AnnotationUtil {
         // no-op
     }
 
-    public static Annotation getAnnotation(Class<? extends Annotation> a, Class<?> clazz) {
+    public static <T extends Annotation> T getAnnotation(Class<T> a, Class<?> clazz) {
         Class<?> current = clazz;
         do {
-            Annotation annotation = current.getAnnotation(a);
+            T annotation = current.getAnnotation(a);
             if (annotation != null) {
                 return annotation;
             }

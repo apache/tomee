@@ -44,6 +44,7 @@ public class AuthorBean implements EntityBean, Cmp2Entity {
                     Author.class,
                     null, null,
                     null,
+                    null,
                     String.class, 
                     BeanType.CMP_ENTITY, false);
             ((BeanContext) deploymentInfo).createMethodMap();

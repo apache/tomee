@@ -182,6 +182,7 @@ public class BeanContext extends DeploymentContext {
 
     private Set<Class<?>> asynchronousClasses =  new HashSet<Class<?>>();
     private Set<String> asynchronousMethodSignatures = new HashSet<String>();
+    private Class<?> proxyClass;
 
     public Class getInterface(InterfaceType interfaceType) {
         switch(interfaceType){
@@ -259,6 +260,7 @@ public class BeanContext extends DeploymentContext {
                               Class remoteInterface,
                               Class localHomeInterface,
                               Class localInterface,
+                              Class proxy,
                               Class serviceEndpointInterface, List<Class> businessLocals, List<Class> businessRemotes, Class pkClass,
                               BeanType componentType,
                               boolean localBean) throws SystemException {
@@ -266,6 +268,8 @@ public class BeanContext extends DeploymentContext {
 
         if (beanClass == null) throw new NullPointerException("beanClass input parameter is null");
         this.pkClass = pkClass;
+
+        proxyClass = proxy;
 
         this.homeInterface = homeInterface;
         this.remoteInterface = remoteInterface;
@@ -1437,6 +1441,10 @@ public class BeanContext extends DeploymentContext {
         }
 
         return viewContext.initMethodContext(method);
+    }
+
+    public Class<?> getProxyClass() {
+        return proxyClass;
     }
 
     public class ViewContext {

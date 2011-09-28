@@ -17,6 +17,7 @@
  */
 package org.apache.openejb.util;
 
+import org.apache.openejb.api.Proxy;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.jee.StatelessBean;
@@ -42,6 +43,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -62,6 +65,11 @@ public class DynamicEJBImplTest {
     @EJB private UserDAO dao = null;
     @EJB private UtilBean util = null;
     @EJB private UserDAOChild child = null;
+    @EJB private DynamicCustomProxy custom = null;
+
+    @Test public void custom() {
+        assertEquals("method = foo", custom.foo());
+    }
 
     @Before public void initDatabaseIfNotDone() {
         if (!initDone) {
@@ -294,6 +302,18 @@ public class DynamicEJBImplTest {
         }
     }
 
+    public static class Handler implements InvocationHandler {
+        @Override public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            return "method = " + method.getName();
+        }
+    }
+
+    @Singleton
+    @Proxy(Handler.class)
+    public static interface DynamicCustomProxy {
+        public String foo();
+    }
+
     @Configuration public Properties config() {
         final Properties p = new Properties();
         p.put("bvalDatabase", "new://Resource?type=DataSource");
@@ -305,6 +325,7 @@ public class DynamicEJBImplTest {
     @Module public EjbJar app() throws Exception {
         EjbJar ejbJar = new EjbJar("dynamic");
         ejbJar.addEnterpriseBean(new SingletonBean(UtilBean.class));
+        ejbJar.addEnterpriseBean(new SingletonBean(DynamicCustomProxy.class));
         ejbJar.addEnterpriseBean(new StatelessBean(UserDAO.class));
         ejbJar.addEnterpriseBean(new StatelessBean(UserDAOChild.class));
         return ejbJar;

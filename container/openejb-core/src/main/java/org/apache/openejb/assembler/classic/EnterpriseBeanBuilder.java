@@ -16,6 +16,26 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import org.apache.openejb.BeanContext;
+import org.apache.openejb.BeanType;
+import org.apache.openejb.Injection;
+import org.apache.openejb.ModuleContext;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.api.Proxy;
+import org.apache.openejb.core.cmp.CmpUtil;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.util.AnnotationUtil;
+import org.apache.openejb.util.Duration;
+import org.apache.openejb.util.Index;
+import org.apache.openejb.util.Messages;
+import org.apache.openejb.util.SafeToolkit;
+
+import javax.ejb.TimedObject;
+import javax.ejb.Timer;
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.persistence.EntityManagerFactory;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,25 +45,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-
-import javax.ejb.TimedObject;
-import javax.ejb.Timer;
-import javax.naming.Context;
-import javax.naming.NamingException;
-import javax.persistence.EntityManagerFactory;
-
-import org.apache.openejb.BeanContext;
-import org.apache.openejb.BeanType;
-import org.apache.openejb.Injection;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.ModuleContext;
-import org.apache.openejb.core.cmp.CmpUtil;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.spi.ContainerSystem;
-import org.apache.openejb.util.Duration;
-import org.apache.openejb.util.Index;
-import org.apache.openejb.util.Messages;
-import org.apache.openejb.util.SafeToolkit;
 
 class EnterpriseBeanBuilder {
     protected static final Messages messages = new Messages("org.apache.openejb.util.resources");
@@ -88,10 +89,15 @@ class EnterpriseBeanBuilder {
             remote = loadClass(bean.remote, "classNotFound.remote");
         }
 
-        Class localhome = null;
-        Class local = null;
+        Class<?> localhome = null;
+        Class<?> local = null;
+        Class<?> proxy = null;
         if (ejbClass.isInterface()) { // dynamic proxy implementation
             local = ejbClass;
+            Proxy proxyAnnotation = AnnotationUtil.getAnnotation(Proxy.class, ejbClass);
+            if (proxyAnnotation != null) {
+                proxy = proxyAnnotation.value();
+            }
         }
         if (bean.localHome != null) {
             localhome = loadClass(bean.localHome, "classNotFound.localHome");
@@ -148,7 +154,7 @@ class EnterpriseBeanBuilder {
 
         BeanContext deployment;
         if (BeanType.MESSAGE_DRIVEN != ejbType) {
-            deployment = new BeanContext(bean.ejbDeploymentId, compJndiContext, moduleContext, ejbClass, home, remote, localhome, local, serviceEndpoint, businessLocals, businessRemotes, primaryKey, ejbType, bean.localbean && ejbType.isSession());
+            deployment = new BeanContext(bean.ejbDeploymentId, compJndiContext, moduleContext, ejbClass, home, remote, localhome, local, proxy, serviceEndpoint, businessLocals, businessRemotes, primaryKey, ejbType, bean.localbean && ejbType.isSession());
         } else {
             MessageDrivenBeanInfo messageDrivenBeanInfo = (MessageDrivenBeanInfo) bean;
             Class mdbInterface = loadClass(messageDrivenBeanInfo.mdbInterface, "classNotFound.mdbInterface");
