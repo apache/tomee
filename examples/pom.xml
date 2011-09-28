@@ -88,6 +88,7 @@
     <module>rest-on-ejb</module>
     <module>dynamic-dao-implementation</module>
     <module>cdi-produces-disposes</module>
+    <module>dynamic-implementation</module>
   </modules>
   <profiles>
     <profile>
