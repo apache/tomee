@@ -16,16 +16,13 @@
  */
 package org.apache.openejb.config.rules;
 
-import org.apache.openejb.BeanContext;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.jee.EnterpriseBean;
-import org.apache.openejb.jee.PersistenceContextRef;
-import org.apache.openejb.jee.SessionBean;
-import org.apache.openejb.jee.SessionType;
-import org.apache.openejb.jee.PersistenceContextType;
-import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.jee.EntityBean;
-import org.apache.openejb.BeanType;
+import org.apache.openejb.jee.MessageDrivenBean;
+import org.apache.openejb.jee.PersistenceContextRef;
+import org.apache.openejb.jee.PersistenceContextType;
+import org.apache.openejb.jee.SessionBean;
 
 /**
  * @version $Rev$ $Date$
@@ -36,7 +33,7 @@ public class CheckPersistenceRefs extends ValidationBase {
         for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
 
             String beanType = getType(bean);
-            if (beanType.equals("Stateful") || "org.apache.openejb.BeanContext$Comp".equals(bean.getEjbClass())) {
+            if (beanType.equals("Stateful")) {
                 continue; // skip statefuls and Comp ManagedBean
             }
 
