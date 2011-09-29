@@ -42,9 +42,43 @@
 <supplement><project><groupId>com.sun.xml.bind</groupId><artifactId>jaxb-impl</artifactId><name>Sun JAXB Reference Implementation Runtime</name><organization><name>Sun Microsystems</name><url>http://www.sun.com/</url></organization><licenses><license><name>COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0</name><url>http://www.sun.com/cddl/cddl.html</url></license></licenses></project></supplement>
 <supplement><project><groupId>com.sun.xml.bind</groupId><artifactId>jaxb-impl</artifactId><version>2.1.11</version><name>Sun JAXB Reference Implementation Runtime</name><url>https://jaxb.dev.java.net/</url><organization><name>Sun Microsystems, Inc</name><url>http://www.sun.com/</url></organization><licenses><license><name>Dual license consisting of the CDDL v1.0 and GPL v2</name><url>https://glassfish.dev.java.net/public/CDDL+GPL.html</url></license></licenses></project></supplement>
 <supplement><project><groupId>com.sun.xml.bind</groupId><artifactId>jaxb-xjc</artifactId><name>Sun JAXB Reference Implementation Tools</name><organization><name>Sun Microsystems</name><url>http://www.sun.com/</url></organization><licenses><license><name>COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0</name><url>http://www.sun.com/cddl/cddl.html</url></license></licenses></project></supplement>
-<supplement><project><groupId>com.sun.xml.messaging.saaj</groupId><artifactId>saaj-impl</artifactId><name>Sun SAAJ Reference Implementation</name><organization><name>Sun Microsystems</name><url>http://www.sun.com/</url></organization><licenses><license><name>COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0</name><url>http://www.sun.com/cddl/cddl.html</url></license></licenses></project></supplement>
-<supplement><project><groupId>com.sun.xml.messaging.saaj</groupId><artifactId>saaj-impl</artifactId><version>1.3.3</version><name>Sun SAAJ Standard Implementation</name><url>https://saaj.dev.java.net/</url><organization><name>Sun Microsystems, Inc</name><url>http://www.sun.com/</url></organization><licenses><license><name>Dual license consisting of the CDDL v1.0 and GPL v2</name><url>https://glassfish.dev.java.net/public/CDDL+GPL.html</url></license></licenses></project></supplement>
-<supplement><project><groupId>com.sun.xml.stream.buffer</groupId><artifactId>streambuffer</artifactId><version>0.9</version><name>XML Stream Buffer Project</name><url>https://xmlstreambuffer.dev.java.net/</url><organization><name>Sun Microsystems, Inc</name><url>http://www.sun.com/</url></organization><licenses><license><name>Dual license consisting of the CDDL v1.0 and GPL v2</name><url>https://glassfish.dev.java.net/public/CDDL+GPL.html</url></license></licenses></project></supplement>
+  <supplement>
+    <project>
+      <groupId>com.sun.xml.messaging.saaj</groupId>
+      <artifactId>saaj-impl</artifactId>
+      <name>Sun SAAJ Reference Implementation</name>
+      <organization>
+        <name>Sun Microsystems</name>
+        <url>http://www.sun.com/</url>
+      </organization>
+      <licenses>
+        <license>
+          <name>COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0</name>
+          <url>http://www.sun.com/cddl/cddl.html</url>
+        </license>
+      </licenses>
+    </project>
+  </supplement>
+  <supplement>
+    <project>
+      <groupId>com.sun.xml.messaging.saaj</groupId>
+      <artifactId>saaj-impl</artifactId>
+      <version>1.3.3</version>
+      <name>Sun SAAJ Standard Implementation</name>
+      <url>https://saaj.dev.java.net/</url>
+      <organization>
+        <name>Sun Microsystems, Inc</name>
+        <url>http://www.sun.com/</url>
+      </organization>
+      <licenses>
+        <license>
+          <name>Dual license consisting of the CDDL v1.0 and GPL v2</name>
+          <url>https://glassfish.dev.java.net/public/CDDL+GPL.html</url>
+        </license>
+      </licenses>
+    </project>
+  </supplement>
+  <supplement><project><groupId>com.sun.xml.stream.buffer</groupId><artifactId>streambuffer</artifactId><version>0.9</version><name>XML Stream Buffer Project</name><url>https://xmlstreambuffer.dev.java.net/</url><organization><name>Sun Microsystems, Inc</name><url>http://www.sun.com/</url></organization><licenses><license><name>Dual license consisting of the CDDL v1.0 and GPL v2</name><url>https://glassfish.dev.java.net/public/CDDL+GPL.html</url></license></licenses></project></supplement>
 <supplement><project><groupId>com.sun</groupId><artifactId>tools</artifactId><version>1.5.0</version><licenses><license><name>COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1</name><url>http://www.opensource.org/licenses/cddl1</url><distribution>repo</distribution></license></licenses></project></supplement>
 <supplement><project><groupId>com.thoughtworks.xstream</groupId><artifactId>xstream</artifactId><name>XStream Core</name><url>http://xstream.codehaus.org/</url><organization><name>Codehaus</name><url>http://www.codehaus.org/</url></organization><licenses><license><name>The BSD License</name><url>http://xstream.codehaus.com/license.html</url></license></licenses></project></supplement>
 <supplement><project><groupId>commons-beanutils</groupId><artifactId>commons-beanutils</artifactId><name>Apache Commons Beanutils</name><url>http://jakarta.apache.org/commons/beanutils/</url><organization><name>Apache Software Foundation</name><url>http://www.apache.org/</url></organization></project></supplement>
@@ -178,23 +212,6 @@
 <supplement><project><groupId>org.slf4j</groupId><artifactId>slf4j-jdk14</artifactId><name>SLF4J JDK14 Binding</name><organization><name>QOS.ch</name><url>http://www.qos.ch</url></organization><licenses><license><name>MIT style</name><url>http://www.slf4j.org/license.html</url></license></licenses></project></supplement>
 <supplement><project><groupId>org.slf4j</groupId><artifactId>slf4j-log4j12</artifactId><name>SLF4J JDK14 Binding</name><organization><name>QOS.ch</name><url>http://www.qos.ch</url></organization><licenses><license><name>MIT style</name><url>http://www.slf4j.org/license.html</url></license></licenses></project></supplement>
 <supplement><project><groupId>org.slf4j</groupId><artifactId>slf4j-log4j12</artifactId><version>1.5.8</version><licenses><license><name>MIT License</name><url>http://www.opensource.org/licenses/mit-license.php</url><distribution>repo</distribution></license></licenses></project></supplement>
-<supplement><project><groupId>org.springframework.osgi</groupId><artifactId>spring-osgi-annotation</artifactId><name>Spring OSGi Annotations</name><url>http://www.springframework.org/osgi/</url><organization><name>Spring Framework</name><url>http://www.springframework.org/</url></organization><licenses><license><name>The Apache Software License, Version 2.0</name><url>http://www.apache.org/licenses/LICENSE-2.0.txt</url></license></licenses></project></supplement>
-<supplement><project><groupId>org.springframework.osgi</groupId><artifactId>spring-osgi-core</artifactId><name>Spring OSGi Core</name><url>http://www.springframework.org/osgi/</url><organization><name>Spring Framework</name><url>http://www.springframework.org/</url></organization><licenses><license><name>The Apache Software License, Version 2.0</name><url>http://www.apache.org/licenses/LICENSE-2.0.txt</url></license></licenses></project></supplement>
-<supplement><project><groupId>org.springframework.osgi</groupId><artifactId>spring-osgi-extender</artifactId><name>Spring OSGi Extender</name><url>http://www.springframework.org/osgi/</url><organization><name>Spring Framework</name><url>http://www.springframework.org/</url></organization><licenses><license><name>The Apache Software License, Version 2.0</name><url>http://www.apache.org/licenses/LICENSE-2.0.txt</url></license></licenses></project></supplement>
-<supplement><project><groupId>org.springframework.osgi</groupId><artifactId>spring-osgi-io</artifactId><name>Spring OSGi IO</name><url>http://www.springframework.org/osgi/</url><organization><name>Spring Framework</name><url>http://www.springframework.org/</url></organization><licenses><license><name>The Apache Software License, Version 2.0</name><url>http://www.apache.org/licenses/LICENSE-2.0.txt</url></license></licenses></project></supplement>
-<supplement><project><groupId>org.springframework</groupId><artifactId>spring-aop</artifactId><licenses><license><name>Apache License, Version 2.0</name><url>http://www.apache.org/licenses/LICENSE-2.0.txt</url><distribution>repo</distribution><comments>Distributed within spring-framework-3.0.5.RELEASE</comments></license></licenses><organization><name>Spring Framework Project</name><url>http://www.springframework.org</url></organization></project></supplement>
-<supplement><project><groupId>org.springframework</groupId><artifactId>spring-asm</artifactId><licenses><license><name>Apache License, Version 2.0</name><url>http://www.apache.org/licenses/LICENSE-2.0.txt</url><distribution>repo</distribution><comments>Distributed within spring-framework-3.0.5.RELEASE</comments></license></licenses><organization><name>Spring Framework Project</name><url>http://www.springframework.org</url></organization></project></supplement>
-<supplement><project><groupId>org.springframework</groupId><artifactId>spring-beans</artifactId><licenses><license><name>Apache License, Version 2.0</name><url>http://www.apache.org/licenses/LICENSE-2.0.txt</url><distribution>repo</distribution><comments>Distributed within spring-framework-3.0.5.RELEASE</comments></license></licenses><organization><name>Spring Framework Project</name><url>http://www.springframework.org</url></organization></project></supplement>
-<supplement><project><groupId>org.springframework</groupId><artifactId>spring-context</artifactId><licenses><license><name>Apache License, Version 2.0</name><url>http://www.apache.org/licenses/LICENSE-2.0.txt</url><distribution>repo</distribution><comments>Distributed within spring-framework-3.0.5.RELEASE</comments></license></licenses><organization><name>Spring Framework Project</name><url>http://www.springframework.org</url></organization></project></supplement>
-<supplement><project><groupId>org.springframework</groupId><artifactId>spring-core</artifactId><licenses><license><name>Apache License, Version 2.0</name><url>http://www.apache.org/licenses/LICENSE-2.0.txt</url><distribution>repo</distribution><comments>Distributed within spring-framework-3.0.5.RELEASE</comments></license></licenses><organization><name>Spring Framework Project</name><url>http://www.springframework.org</url></organization></project></supplement>
-<supplement><project><groupId>org.springframework</groupId><artifactId>spring-expression</artifactId><licenses><license><name>ApApache License, Version 2.0</name><url>http://www.apache.org/licenses/LICENSE-2.0.txt</url><distribution>repo</distribution><comments>Distributed within spring-framework-3.0.5.RELEASE</comments></license></licenses><organization><name>Spring Framework Project</name><url>http://www.springframework.org</url></organization></project></supplement>
-<supplement><project><groupId>org.springframework</groupId><artifactId>spring-expression</artifactId><licenses><license><name>Apache License, Version 2.0</name><url>http://www.apache.org/licenses/LICENSE-2.0.txt</url><distribution>repo</distribution><comments>Distributed within spring-framework-3.0.5.RELEASE</comments></license></licenses><organization><name>Spring Framework Project</name><url>http://www.springframework.org</url></organization></project></supplement>
-<supplement><project><groupId>org.springframework</groupId><artifactId>spring-jdbc</artifactId><licenses><license><name>Apache License, Version 2.0</name><url>http://www.apache.org/licenses/LICENSE-2.0.txt</url><distribution>repo</distribution><comments>Distributed within spring-framework-3.0.5.RELEASE</comments></license></licenses><organization><name>Spring Framework Project</name><url>http://www.springframework.org</url></organization></project></supplement>
-<supplement><project><groupId>org.springframework</groupId><artifactId>spring-jms</artifactId><licenses><license><name>Apache License, Version 2.0</name><url>http://www.apache.org/licenses/LICENSE-2.0.txt</url><distribution>repo</distribution><comments>Distributed within spring-framework-3.0.5.RELEASE</comments></license></licenses><organization><name>Spring Framework Project</name><url>http://www.springframework.org</url></organization></project></supplement>
-<supplement><project><groupId>org.springframework</groupId><artifactId>spring-orm</artifactId><licenses><license><name>Apache License, Version 2.0</name><url>http://www.apache.org/licenses/LICENSE-2.0.txt</url><distribution>repo</distribution><comments>Distributed within spring-framework-3.0.5.RELEASE</comments></license></licenses><organization><name>Spring Framework Project</name><url>http://www.springframework.org</url></organization></project></supplement>
-<supplement><project><groupId>org.springframework</groupId><artifactId>spring-tx</artifactId><licenses><license><name>Apache License, Version 2.0</name><url>http://www.apache.org/licenses/LICENSE-2.0.txt</url><distribution>repo</distribution><comments>Distributed within spring-framework-3.0.5.RELEASE</comments></license></licenses><organization><name>Spring Framework Project</name><url>http://www.springframework.org</url></organization></project></supplement>
-<supplement><project><groupId>org.springframework</groupId><artifactId>spring-web</artifactId><licenses><license><name>Apache License, Version 2.0</name><url>http://www.apache.org/licenses/LICENSE-2.0.txt</url><distribution>repo</distribution><comments>Distributed within spring-framework-3.0.5.RELEASE</comments></license></licenses><organization><name>Spring Framework Project</name><url>http://www.springframework.org</url></organization></project></supplement>
-<supplement><project><groupId>relaxngDatatype</groupId><artifactId>relaxngDatatype</artifactId><version>20020414</version><licenses><license><name>Java Web Services Developer Pack License, v1.5</name><url>http://download.oracle.com/docs/cd/E17802_01/webservices/webservices/docs/1.5/LICENSE</url><distribution>repo</distribution></license></licenses></project></supplement>
 <supplement><project><groupId>saxpath</groupId><artifactId>saxpath</artifactId><version>1.0-FCS</version><licenses><license><name>Werken Apache-style License</name><url>http://www.saxpath.org/</url><distribution>repo</distribution></license></licenses></project></supplement>
 <supplement><project><groupId>stax</groupId><artifactId>stax-api</artifactId><version>1.0.1</version><organization><name>Codehaus</name><url>http://codehaus.org</url></organization></project></supplement>
 <supplement><project><groupId>taglibs</groupId><artifactId>standard</artifactId><name>JSP Standard Tag Library Implementation</name><url>http://jakarta.apache.org/taglibs/doc/standard-1.0-doc/intro.html</url><organization><name>Apache Software Foundation</name><url>http://www.apache.org/</url></organization></project></supplement>
@@ -214,6 +231,33 @@
 <supplement><project><name>Watchmaker Framework</name><groupId>org.uncommons.watchmaker</groupId><artifactId>watchmaker-framework</artifactId><url>https://watchmaker.dev.java.net/</url><licenses><license><name>The Apache Software License, Version 2.0</name><url>http://www.apache.org/licenses/LICENSE-2.0</url></license></licenses></project></supplement><!-- watchmaker swing  -->
 <supplement><project><name>Watchmaker Swing</name><groupId>org.uncommons.watchmaker</groupId><artifactId>watchmaker-swing</artifactId><url>https://watchmaker.dev.java.net/</url><licenses><license><name>The Apache Software License, Version 2.0</name><url>http://www.apache.org/licenses/LICENSE-2.0</url></license></licenses></project></supplement><!-- Xpp3  -->
 <supplement><project><name>Xml Pull Parser 3rd Edition</name><groupId>xpp3</groupId><artifactId>xpp3_min</artifactId><url>http://www.extreme.indiana.edu/xgws/xsoap/xpp/mxp1/</url><licenses><license><name>Public Domain</name><url>http://www.xmlpull.org/</url></license></licenses></project></supplement>
+  <supplement>
+    <project>
+      <name>JSTL</name>
+      <groupId>javax.servlet</groupId>
+      <artifactId>jstl</artifactId>
+      <licenses>
+        <license>
+          <name>CDDL 1.0</name>
+          <url>http://www.opensource.org/licenses/cddl1.txt</url>
+        </license>
+      </licenses>
+    </project>
+  </supplement>
+
+  <supplement>
+    <project>
+      <name>JSP API</name>
+      <groupId>javax.servlet</groupId>
+      <artifactId>jsp-api</artifactId>
+      <licenses>
+        <license>
+          <name>CDDL 1.0</name>
+          <url>http://www.opensource.org/licenses/cddl1.txt</url>
+        </license>
+      </licenses>
+    </project>
+  </supplement>
 
 </supplementalDataModels>
 
