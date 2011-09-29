@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.config.rules;
 
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.PersistenceContextRef;
@@ -35,7 +36,9 @@ public class CheckPersistenceRefs extends ValidationBase {
         for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
 
             String beanType = getType(bean);
-            if (beanType.equals("Stateful")) continue; // skip statefuls
+            if (beanType.equals("Stateful") || "org.apache.openejb.BeanContext$Comp".equals(bean.getEjbClass())) {
+                continue; // skip statefuls and Comp ManagedBean
+            }
 
             for (PersistenceContextRef ref : bean.getPersistenceContextRef()) {
                 if (isExtented(ref)) {
