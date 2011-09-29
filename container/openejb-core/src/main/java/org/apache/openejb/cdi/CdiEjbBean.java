@@ -123,11 +123,18 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
     @SuppressWarnings("unchecked")
     public List<Class<?>> getBusinessLocalInterfaces() {
         List<Class<?>> clazzes = new ArrayList<Class<?>>();
-        List<Class> cl = this.beanContext.getBusinessLocalInterfaces();
 
-        if (cl != null && !cl.isEmpty()) {
-            for (Class<?> c : cl) {
-                clazzes.add(c);
+        if (beanContext.isLocalbean()) {
+            clazzes.add(beanContext.getBeanClass());
+        } else if (beanContext.getProxyClass() != null) {
+            clazzes.add(beanContext.getProxyClass());
+        } else {
+            List<Class> cl = this.beanContext.getBusinessLocalInterfaces();
+
+            if (cl != null && !cl.isEmpty()) {
+                for (Class<?> c : cl) {
+                    clazzes.add(c);
+                }
             }
         }
 
