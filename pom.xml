@@ -32,20 +32,20 @@
 
   <groupId>org.apache.openejb</groupId>
   <artifactId>openejb</artifactId>
-  <name>OpenEJB</name>
   <packaging>pom</packaging>
 
   <version>4.0.0-beta-1-SNAPSHOT</version>
 
-  <description>
-    Apache OpenEJB is an open source, modular, configurable and extendable EJB Container System and EJB Server.
-  </description>
+  <name>Apache OpeEJB</name>
+  <description>Apache OpenEJB is an open source, modular, configurable and extendable EJB Container System and EJB Server.</description>
+  <url>http://openejb.apache.org/</url>
+  <inceptionYear>1999</inceptionYear>
 
   <issueManagement>
     <system>jira</system>
     <url>http://issues.apache.org/jira/browse/OPENEJB</url>
   </issueManagement>
-  <inceptionYear>1999</inceptionYear>
+
   <mailingLists>
     <mailingList>
       <name>OpenEJB Commits List</name>
