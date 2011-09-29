@@ -93,7 +93,7 @@
   </files>
   <dependencySets>
     <dependencySet>
-      <outputFileNameMapping>${artifactId}-${version}.${extension}</outputFileNameMapping>
+      <!--<outputFileNameMapping>${artifactId}-${version}.${format}</outputFileNameMapping>-->
       <outputDirectory>lib</outputDirectory>
       <scope>runtime</scope>
       <excludes>
