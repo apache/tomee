@@ -27,18 +27,13 @@
   <includeBaseDirectory>false</includeBaseDirectory>
   <fileSets>
     <fileSet>
+      <directory>target/maven-shared-archive-resources</directory>
+      <outputDirectory>/</outputDirectory>
+    </fileSet>
+    <fileSet>
       <directory>${basedir}</directory>
       <includes>
         <include>README.txt</include>
-      </includes>
-    </fileSet>
-    <fileSet>
-      <directory>${basedir}/target/classes</directory>
-      <outputDirectory>/</outputDirectory>
-      <includes>
-        <include>README.txt</include>
-        <include>NOTICE.txt</include>
-        <include>LICENSE.txt</include>
       </includes>
     </fileSet>
     <fileSet>
@@ -49,14 +44,22 @@
       <directory>${basedir}/target/classes</directory>
       <outputDirectory>/</outputDirectory>
       <excludes>
-          <exclude>org/**</exclude>
-          <exclude>META-INF/LICENSE</exclude>
-          <exclude>META-INF/NOTICE</exclude>
+        <exclude>org/**</exclude>
+        <exclude>**/LICENSE</exclude>
+        <exclude>**/NOTICE</exclude>
+        <exclude>**/LICENSE.txt</exclude>
+        <exclude>**/NOTICE.txt</exclude>
       </excludes>
     </fileSet>
     <fileSet>
       <directory>${basedir}/target/classes</directory>
       <outputDirectory>WEB-INF/classes</outputDirectory>
+      <excludes>
+        <exclude>**/LICENSE</exclude>
+        <exclude>**/NOTICE</exclude>
+        <exclude>**/LICENSE.txt</exclude>
+        <exclude>**/NOTICE.txt</exclude>
+      </excludes>
     </fileSet>
     <fileSet>
       <directory>${basedir}/target</directory>
@@ -85,15 +88,15 @@
         <!--<exclude>org.apache.openejb:openejb-cxf-rs</exclude>-->
         <!--<exclude>org.apache.activemq:activemq-core</exclude>-->
         <!--<exclude>org.apache.activemq:activemq-ra</exclude>-->
-          <!--<exclude>org.apache.openejb:javaee-api</exclude>-->
+        <!--<exclude>org.apache.openejb:javaee-api</exclude>-->
       </excludes>
     </dependencySet>
     <dependencySet>
       <outputDirectory>WEB-INF/lib</outputDirectory>
       <scope>runtime</scope>
       <includes>
-          <include>org.apache.openejb:openejb-tomcat-loader</include>
-          <include>org.codehaus.swizzle:swizzle-stream</include>
+        <include>org.apache.openejb:openejb-tomcat-loader</include>
+        <include>org.codehaus.swizzle:swizzle-stream</include>
       </includes>
     </dependencySet>
   </dependencySets>

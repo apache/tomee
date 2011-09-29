@@ -27,18 +27,13 @@
   <includeBaseDirectory>false</includeBaseDirectory>
   <fileSets>
     <fileSet>
+      <directory>target/maven-shared-archive-resources</directory>
+      <outputDirectory>/</outputDirectory>
+    </fileSet>
+    <fileSet>
       <directory>${project.basedir}</directory>
       <includes>
         <include>README.txt</include>
-      </includes>
-    </fileSet>
-    <fileSet>
-      <directory>${project.basedir}/target/classes</directory>
-      <outputDirectory>/</outputDirectory>
-      <includes>
-        <include>README.txt</include>
-        <include>NOTICE.txt</include>
-        <include>LICENSE.txt</include>
       </includes>
     </fileSet>
     <fileSet>
@@ -49,14 +44,18 @@
       <directory>${project.basedir}/target/classes</directory>
       <outputDirectory>/</outputDirectory>
       <excludes>
-          <exclude>org/**</exclude>
-          <exclude>META-INF/LICENSE</exclude>
-          <exclude>META-INF/NOTICE</exclude>
+        <exclude>org/**</exclude>
+        <exclude>META-INF/LICENSE</exclude>
+        <exclude>META-INF/NOTICE</exclude>
       </excludes>
     </fileSet>
     <fileSet>
       <directory>${project.basedir}/target/classes</directory>
       <outputDirectory>WEB-INF/classes</outputDirectory>
+      <excludes>
+        <exclude>META-INF/LICENSE</exclude>
+        <exclude>META-INF/NOTICE</exclude>
+      </excludes>
     </fileSet>
     <fileSet>
       <directory>${project.build.directory}/${project.artifactId}-${project.version}/lib</directory>

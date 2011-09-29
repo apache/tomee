@@ -147,6 +147,8 @@ class SetupCommand {
 //		ant.unzip(src: "${localRepo}/org/superbiz/ejb-examples/${examplesVersion}/ejb-examples-${examplesVersion}.war",
 //				dest: "${workDir}/apache-tomcat-${tomcatVersion}/webapps/ejb-examples")
         ant.delete(dir: "${workDir}/apache-tomcat-${tomcatVersion}/webapps/examples")
+        ant.delete(file: "${workDir}/apache-tomcat-${tomcatVersion}/webapps/openejb/META-INF/LICENSE")
+        ant.delete(file: "${workDir}/apache-tomcat-${tomcatVersion}/webapps/openejb/META-INF/NOTICE")
 	}
 }
 
