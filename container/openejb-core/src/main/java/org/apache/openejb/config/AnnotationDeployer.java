@@ -214,6 +214,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -2255,6 +2256,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 try {
                     if (BeanContext.Comp.class.getName().equals(bean.getEjbClass())) {
                         buildAnnotatedRefs(bean, ejbModule.getFinder(), classLoader);
+                        removeExtendedPersistenceContext(bean);
                     }
                 } catch (OpenEJBException e) {
                     logger.error("Processing of @Resource, @EJB, and other references failed for CDI managed beans", e);
@@ -2319,6 +2321,15 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             return ejbModule;
+        }
+
+        private void removeExtendedPersistenceContext(JndiConsumer consumer) {
+            Map<String,PersistenceContextRef> map = consumer.getPersistenceContextRefMap();
+            for (Map.Entry<String, PersistenceContextRef> pc : map.entrySet()) {
+                if (PersistenceContextType.EXTENDED.equals(pc.getValue().getPersistenceContextType())) {
+                    map.remove(pc.getKey());
+                }
+            }
         }
 
         private void processAsynchronous(EnterpriseBean bean, AnnotationFinder annotationFinder) {
