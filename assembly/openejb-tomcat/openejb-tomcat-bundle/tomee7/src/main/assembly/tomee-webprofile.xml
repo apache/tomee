@@ -34,6 +34,8 @@
         <include>**/*</include>
       </includes>
       <excludes>
+        <exclude>LICENSE</exclude>
+        <exclude>NOTICE</exclude>
         <exclude>**/bin/**/*</exclude>
         <exclude>**/lib/tomcat-annotations-api*.jar</exclude>
       </excludes>
@@ -45,6 +47,20 @@
         <include>**/bin/**/*</include>
       </includes>
       <fileMode>0755</fileMode>
+    </fileSet>
+    <fileSet>
+      <directory>${basedir}/target/maven-shared-archive-resources/META-INF/</directory>
+      <outputDirectory>/apache-tomee-webprofile-${project.version}</outputDirectory>
+      <includes>
+        <include>LICENSE</include>
+      </includes>
+    </fileSet>
+    <fileSet>
+      <directory>${basedir}/src/main/resources/META-INF/webprofile/</directory>
+      <outputDirectory>/apache-tomee-webprofile-${project.version}</outputDirectory>
+      <includes>
+        <include>*</include>
+      </includes>
     </fileSet>
   </fileSets>
 </assembly>
