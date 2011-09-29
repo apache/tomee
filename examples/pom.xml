@@ -69,6 +69,7 @@
     <module>transaction-rollback</module>
     <module>troubleshooting</module>
     <module>access-timeout</module>
+    <module>access-timeout-meta</module>
     <module>async-methods</module>
     <module>lookup-of-ejbs-with-descriptor</module>
     <module>lookup-of-ejbs</module>
