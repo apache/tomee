@@ -23,7 +23,7 @@
   <parent>
     <artifactId>server</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.0.0-beta-2-SNAPSHOT</version>
+    <version>4.0.0-beta-1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-ejbd</artifactId>
@@ -79,7 +79,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>6.0-3-SNAPSHOT</version>
+      <version>${javaee-api.version}</version>
     </dependency>
     <dependency>
       <groupId>idb</groupId>

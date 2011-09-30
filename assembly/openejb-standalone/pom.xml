@@ -19,11 +19,12 @@
 
 <!-- $Rev$ $Date$ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>assembly</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.0.0-beta-2-SNAPSHOT</version>
+    <version>4.0.0-beta-1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-standalone</artifactId>
@@ -54,7 +55,7 @@
             </goals>
             <configuration>
               <target>
-                <mkdir dir="${basedir}/target/classes/empty" />
+                <mkdir dir="${basedir}/target/classes/empty"/>
               </target>
             </configuration>
           </execution>
@@ -63,8 +64,8 @@
             <phase>package</phase>
             <configuration>
               <target>
-                <delete dir="${basedir}/target/classes" />
-                <delete dir="${basedir}/target/archive-tmp" />
+                <delete dir="${basedir}/target/classes"/>
+                <delete dir="${basedir}/target/archive-tmp"/>
               </target>
             </configuration>
             <goals>
@@ -136,7 +137,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>6.0-3-SNAPSHOT</version>
+      <version>${javaee-api.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.javamail</groupId>
@@ -241,36 +242,39 @@
                 </goals>
                 <configuration>
                   <target>
-                    <property name="targetDir" value="${basedir}/target/" />
-                    <property name="openejb.home" value="${targetDir}/openejb-${project.version}" />
-                    <property name="openejb.dist" value="${targetDir}/openejb-${project.version}-bin.zip" />
-                    <property name="openejb.version" value="${project.version}" />
+                    <property name="targetDir" value="${basedir}/target/"/>
+                    <property name="openejb.home" value="${targetDir}/openejb-${project.version}"/>
+                    <property name="openejb.dist" value="${targetDir}/openejb-${project.version}-bin.zip"/>
+                    <property name="openejb.version" value="${project.version}"/>
 
-                    <unjar src="${openejb.dist}" dest="${targetDir}" />
-                    <copy file="${targetDir}/openejb-${project.version}-test.jar" todir="${openejb.home}/apps" />
+                    <unjar src="${openejb.dist}" dest="${targetDir}"/>
+                    <copy file="${targetDir}/openejb-${project.version}-test.jar" todir="${openejb.home}/apps"/>
 
                     <java classname="org.apache.openejb.test.Main" fork="yes">
                       <classpath>
-                        <pathelement location="${targetDir}/openejb-${project.version}-test.jar" />
+                        <pathelement location="${targetDir}/openejb-${project.version}-test.jar"/>
                         <fileset dir="${openejb.home}/lib">
-                          <include name="*.jar" />
+                          <include name="*.jar"/>
                         </fileset>
                       </classpath>
-                      <sysproperty key="openejb.home" value="${openejb.home}" />
-                      <jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=${openejb.debug.suspend},address=${openejb.debug.port}" />
-                      <arg value="local" />
+                      <sysproperty key="openejb.home" value="${openejb.home}"/>
+                      <jvmarg
+                          value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=${openejb.debug.suspend},address=${openejb.debug.port}"/>
+                      <arg value="local"/>
                     </java>
 
                     <java jar="target/openejb-${openejb.version}-test.jar" fork="yes">
-                      <sysproperty key="openejb.home" value="${openejb.home}" />
-                      <jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=${openejb.debug.suspend},address=${openejb.debug.port}" />
-                      <arg value="remote" />
+                      <sysproperty key="openejb.home" value="${openejb.home}"/>
+                      <jvmarg
+                          value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=${openejb.debug.suspend},address=${openejb.debug.port}"/>
+                      <arg value="remote"/>
                     </java>
 
                     <java jar="target/openejb-${openejb.version}-test.jar" fork="yes">
-                      <sysproperty key="openejb.home" value="${openejb.home}" />
-                      <jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=${openejb.debug.suspend},address=${openejb.debug.port}" />
-                      <arg value="http" />
+                      <sysproperty key="openejb.home" value="${openejb.home}"/>
+                      <jvmarg
+                          value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=${openejb.debug.suspend},address=${openejb.debug.port}"/>
+                      <arg value="http"/>
                     </java>
 
                   </target>

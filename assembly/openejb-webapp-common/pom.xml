@@ -19,11 +19,12 @@
 
 <!-- $Rev: 893979 $ $Date: 2009-12-26 15:20:24 +0100 (Sat, 26 Dec 2009) $ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>assembly</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.0.0-beta-2-SNAPSHOT</version>
+    <version>4.0.0-beta-1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-webapp-common</artifactId>
@@ -39,7 +40,7 @@
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
       <classifier>tomcat</classifier>
-      <version>6.0-3-SNAPSHOT</version>
+      <version>${javaee-api.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.javamail</groupId>
