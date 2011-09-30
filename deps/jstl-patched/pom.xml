@@ -60,6 +60,7 @@
             </goals>
             <configuration>
               <excludes>org/apache/taglibs/standard/tag/common/xml/TransformSupport.class</excludes>
+              <excludes>**/LICENSE*</excludes>
               <artifactItems>
                 <artifactItem>
                   <groupId>javax.servlet</groupId>
