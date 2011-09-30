@@ -33,7 +33,7 @@
   <artifactId>openejb</artifactId>
   <packaging>pom</packaging>
 
-  <version>4.0.0-beta-1</version>
+  <version>4.0.0-beta-2-SNAPSHOT</version>
 
   <name>Apache OpenEJB</name>
   <description>Apache OpenEJB is an open source, modular, configurable and extendable EJB Container System and EJB Server.</description>
@@ -81,9 +81,9 @@
   </ciManagement>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/openejb/tags/openejb-4.0.0-beta-1</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/openejb/tags/openejb-4.0.0-beta-1</developerConnection>
-    <url>https://svn.apache.org/repos/asf/openejb/tags/openejb-4.0.0-beta-1</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/openejb/trunk/openejb3</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/openejb/trunk/openejb3</developerConnection>
+    <url>https://svn.apache.org/repos/asf/openejb/trunk/openejb3</url>
   </scm>
 
   <properties>
@@ -433,7 +433,7 @@
       <dependency>
         <groupId>org.apache.openejb</groupId>
         <artifactId>javaee-api</artifactId>
-        <version>6.0-2</version>
+        <version>6.0-3-SNAPSHOT</version>
         <classifier>tomcat</classifier>
         <exclusions>
           <exclusion>
@@ -549,7 +549,7 @@
       <dependency>
         <groupId>org.apache.openejb</groupId>
         <artifactId>javaee-api</artifactId>
-        <version>6.0-2</version>
+        <version>6.0-3-SNAPSHOT</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -729,7 +729,7 @@
       <dependency>
         <groupId>org.apache.openejb.patch</groupId>
         <artifactId>openejb-bval</artifactId>
-        <version>0.3</version>
+        <version>0.4-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>commons-cli</groupId>

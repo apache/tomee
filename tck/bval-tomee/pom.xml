@@ -20,7 +20,7 @@
   <parent>
     <artifactId>tck</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.0.0-beta-1</version>
+    <version>4.0.0-beta-2-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -41,7 +41,7 @@
     <dependency>
       <groupId>org.apache.openejb.patch</groupId>
       <artifactId>openejb-bval</artifactId>
-      <version>0.3</version>
+      <version>0.4-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
