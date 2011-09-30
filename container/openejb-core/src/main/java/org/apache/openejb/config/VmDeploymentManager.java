@@ -81,7 +81,7 @@ public class VmDeploymentManager implements DeploymentManager {
     private boolean deployerLocal;
 
     public VmDeploymentManager() {
-        String openejbHome = System.getProperty("openejb.home", "target/openejb-3.1-SNAPSHOT");
+        String openejbHome = System.getProperty("openejb.home", "target/openejb-never-used-TODO-delete-me");
         File openejbHomeDir = new File(openejbHome);
         if (!openejbHomeDir.exists()) {
             throw new IllegalArgumentException("OpenEJB home dir does not exist: " + openejbHomeDir);
