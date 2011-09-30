@@ -75,7 +75,7 @@ Running the example should generate output similar to the following
      T E S T S
     -------------------------------------------------------
     Running org.superbiz.stateless.basic.CalculatorTest
-    Apache OpenEJB 4.0.0-SNAPSHOT    build: 20110523-12:19
+    Apache OpenEJB 4.0.0-beta-1    build: 20110523-12:19
     http://openejb.apache.org/
     INFO - openejb.home = /Users/dblevins/work/uber/openejb/examples/simple-stateless
     INFO - openejb.base = /Users/dblevins/work/uber/openejb/examples/simple-stateless

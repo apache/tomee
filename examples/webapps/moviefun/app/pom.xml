@@ -150,7 +150,7 @@
                 <webappArtifact>
                   <groupId>org.apache.openejb</groupId>
                   <artifactId>openejb-tomcat-webapp</artifactId>
-                  <version>4.0.0-beta-1-SNAPSHOT</version>
+                  <version>4.0.0-beta-1</version>
                   <contextPath>openejb</contextPath>
                 </webappArtifact>
               </webapps>

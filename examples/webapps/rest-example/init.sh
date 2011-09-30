@@ -15,7 +15,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 #
-base=http://localhost:1234/rest-example-1.0-SNAPSHOT
+base=http://localhost:1234/rest-example-1.0
 
 for i in {1..3}; do
 	curl -i -H "Accept: application/json" -X PUT "$base/api/user/create?name=Wizard$i&pwd=simplest&&mail=supername$i@supercompany.com"

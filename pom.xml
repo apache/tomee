@@ -102,7 +102,7 @@
     <openejb.osgi.symbolic.name>${project.groupId}.${project.artifactId}</openejb.osgi.symbolic.name>
 
     <!-- to change easily the javaee api version -->
-    <javaee-api.version>6.0-2-SNAPSHOT</javaee-api.version>
+    <javaee-api.version>6.0-2</javaee-api.version>
 
     <!-- Used mainly in assembly/openejb-tomcat* projects  -->
     <tomcat.version>7.0.21</tomcat.version>

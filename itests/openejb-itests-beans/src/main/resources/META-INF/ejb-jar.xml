@@ -1561,7 +1561,7 @@
         <!-- incorrect mapping generated -->
         <!--
     <entity name="Order2" class="openejb.org.apache.openejb.test.entity.cmr.cmrmapping.Order2">
-        <description>openejb-itests-beans-4.0.0-SNAPSHOT.jar#OneInverseSideBean</description>
+        <description>openejb-itests-beans-4.0.0-beta-1.jar#OneInverseSideBean</description>
         <attributes>
             <id name="id"/>
             <one-to-many name="manyOwningSide" mapped-by="oneInverseSide"/>

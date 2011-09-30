@@ -82,8 +82,8 @@
         <bundle>wrap:mvn:wsdl4j/wsdl4j/1.6.1</bundle>
         <bundle>wrap:mvn:org.apache.xbean/xbean-asm-shaded/3.6</bundle>
         <bundle>wrap:mvn:org.apache.xbean/xbean-finder-shaded/3.6</bundle>
-        <bundle>mvn:org.apache.xbean/xbean-naming/3.7-SNAPSHOT</bundle>
-        <bundle>mvn:org.apache.xbean/xbean-reflect/3.7-SNAPSHOT</bundle>
+        <bundle>mvn:org.apache.xbean/xbean-naming/3.8</bundle>
+        <bundle>mvn:org.apache.xbean/xbean-reflect/3.8</bundle>
 
         <bundle>mvn:org.apache.openejb/openejb-core/${version}</bundle>
     </feature>
