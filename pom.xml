@@ -19,7 +19,8 @@
 
 <!-- $Rev$ $Date$ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -33,7 +34,7 @@
   <artifactId>openejb</artifactId>
   <packaging>pom</packaging>
 
-  <version>4.0.0-beta-2-SNAPSHOT</version>
+  <version>4.0.0-beta-1-SNAPSHOT</version>
 
   <name>Apache OpenEJB</name>
   <description>Apache OpenEJB is an open source, modular, configurable and extendable EJB Container System and EJB Server.</description>
@@ -93,7 +94,7 @@
     <!-- OSGi bundles properties -->
     <openejb.osgi.import.pkg>*</openejb.osgi.import.pkg>
     <openejb.osgi.private.pkg>!*</openejb.osgi.private.pkg>
-    <openejb.osgi.dynamic.import.pkg />
+    <openejb.osgi.dynamic.import.pkg></openejb.osgi.dynamic.import.pkg>
     <openejb.osgi.export>${openejb.osgi.export.pkg}*;version=${openejb.osgi.export.version}</openejb.osgi.export>
     <openejb.osgi.export.pkg>org.apache.openejb</openejb.osgi.export.pkg>
     <openejb.osgi.export.version>${project.version}</openejb.osgi.export.version>
@@ -433,7 +434,7 @@
       <dependency>
         <groupId>org.apache.openejb</groupId>
         <artifactId>javaee-api</artifactId>
-        <version>6.0-3-SNAPSHOT</version>
+        <version>${javaee-api.version}</version>
         <classifier>tomcat</classifier>
         <exclusions>
           <exclusion>
@@ -549,7 +550,7 @@
       <dependency>
         <groupId>org.apache.openejb</groupId>
         <artifactId>javaee-api</artifactId>
-        <version>6.0-3-SNAPSHOT</version>
+        <version>${javaee-api.version}</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -729,7 +730,7 @@
       <dependency>
         <groupId>org.apache.openejb.patch</groupId>
         <artifactId>openejb-bval</artifactId>
-        <version>0.4-SNAPSHOT</version>
+        <version>0.3-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>commons-cli</groupId>
