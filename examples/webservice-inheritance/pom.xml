@@ -19,13 +19,12 @@
 
 <!-- $Rev: 751189 $ $Date: 2009-03-07 04:37:34 +0100 (sam., 07 mars 2009) $ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>webservice-inheritance</artifactId>
   <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   <name>OpenEJB :: Examples :: Webservice Inheritance</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -55,7 +54,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>6.0-2-SNAPSHOT</version>
+      <version>6.0-2</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -70,7 +69,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-cxf</artifactId>
-      <version>4.0.0-beta-1-SNAPSHOT</version>
+      <version>4.0.0-beta-1</version>
       <scope>test</scope>
     </dependency>
     <!-- This is required on IBM JDKs (and potentially others) because saaj-impl depends
