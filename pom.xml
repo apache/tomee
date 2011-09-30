@@ -36,7 +36,7 @@
 
   <version>4.0.0-beta-1-SNAPSHOT</version>
 
-  <name>Apache OpeEJB</name>
+  <name>Apache OpenEJB</name>
   <description>Apache OpenEJB is an open source, modular, configurable and extendable EJB Container System and EJB Server.</description>
   <url>http://openejb.apache.org/</url>
   <inceptionYear>1999</inceptionYear>
