@@ -29,6 +29,7 @@
   <artifactId>tomee-embedded</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: Assembly :: TomEE Embedded</name>
+  <version>1.0.0-beta-1</version>
   <build>
     <plugins>
       <plugin>
@@ -46,7 +47,13 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-jsf</artifactId>
-      <version>${project.version}</version>
+      <version>4.0.0-beta-1</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-core</artifactId>
+      <version>4.0.0-beta-1</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
