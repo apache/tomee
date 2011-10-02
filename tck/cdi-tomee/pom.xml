@@ -28,7 +28,7 @@
   <name>OpenEJB :: TCK :: CDI TomEE</name>
   <properties>
     <!-- where we will unpack tomcat -->
-    <openejb.home>${project.build.directory}${file.separator}apache-tomee-webprofile-${project.version}</openejb.home>
+    <openejb.home>${project.build.directory}${file.separator}apache-tomee-webprofile-1.0.0-beta-1</openejb.home>
   </properties>
   <dependencies>
     <dependency>
@@ -45,7 +45,7 @@
       <groupId>org.apache.openejb</groupId>
       <artifactId>apache-tomee</artifactId>
       <type>zip</type>
-      <version>${project.version}</version>
+      <version>1.0.0-beta-1</version>
       <classifier>webprofile</classifier>
     </dependency>
     <dependency>
@@ -125,7 +125,7 @@
                 <artifactItem>
                   <groupId>org.apache.openejb</groupId>
                   <artifactId>apache-tomee</artifactId>
-                  <version>${project.version}</version>
+                  <version>1.0.0-beta-1</version>
                   <type>zip</type>
                   <classifier>webprofile</classifier>
                   <outputDirectory>${project.build.directory}</outputDirectory>
