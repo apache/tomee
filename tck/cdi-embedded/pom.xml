@@ -26,7 +26,7 @@
   <artifactId>cdi-embedded</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: TCK :: CDI Embedded</name>
-  <version>1.0.0-beta-1</version>
+  <version>1.0.0-beta-2-SNAPSHOT</version>
 
   <dependencies>
     <dependency>
@@ -38,12 +38,12 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tck-common</artifactId>
-      <version>4.0.0-beta-1</version>
+      <version>4.0.0-beta-2-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>4.0.0-beta-1</version>
+      <version>4.0.0-beta-2-SNAPSHOT</version>
     </dependency>
 
     <dependency>
