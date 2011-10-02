@@ -18,6 +18,7 @@ package org.apache.openejb.tomcat.catalina;
 
 import org.apache.catalina.Container;
 import org.apache.catalina.Engine;
+import org.apache.catalina.Host;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Pipeline;
 import org.apache.catalina.Service;
@@ -128,6 +129,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
      */
     //Key is the host name
     private final Map<String, HostConfig> deployers = new TreeMap<String, HostConfig>();
+    private final Map<String, Host> hosts = new TreeMap<String, Host>();
     /**
      * Deployed web applications
      */
@@ -168,6 +170,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 for (Container engineChild : engine.findChildren()) {
                     if (engineChild instanceof StandardHost) {
                         StandardHost host = (StandardHost) engineChild;
+                        hosts.put(host.getName(), host);
                         for (LifecycleListener listener : host.findLifecycleListeners()) {
                             if (listener instanceof HostConfig) {
                                 HostConfig hostConfig = (HostConfig) listener;
@@ -226,13 +229,21 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 }
                 
                 // TODO: instead of storing deployers, we could just lookup the right hostconfig for the server.
-                HostConfig deployer = deployers.get(host);
+                final HostConfig deployer = deployers.get(host);
                 if (deployer != null) {
                     // host isn't set until we call deployer.manageApp, so pass it
                     ContextInfo contextInfo = addContextInfo(host, standardContext);
                     contextInfo.appInfo = appInfo;
                     contextInfo.deployer = deployer;
                     deployer.manageApp(standardContext);
+                } else if (hosts.containsKey(host)){
+                    Host theHost = hosts.get(host);
+
+                    ContextInfo contextInfo = addContextInfo(host, standardContext);
+                    contextInfo.appInfo = appInfo;
+                    contextInfo.host = theHost;
+
+                    theHost.addChild(standardContext);
                 }
             }
         }
@@ -285,10 +296,16 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     public void undeployWebApps(AppInfo appInfo) throws Exception {
         for (WebAppInfo webApp : appInfo.webApps) {
             ContextInfo contextInfo = getContextInfo(webApp);
+
             if (contextInfo != null && contextInfo.deployer != null) {
                 StandardContext standardContext = contextInfo.standardContext;
                 HostConfig deployer = contextInfo.deployer;
-                deployer.unmanageApp(standardContext.getPath());
+
+                if (deployer != null) {
+                    deployer.unmanageApp(standardContext.getPath());
+                } else if (contextInfo.host != null) {
+                    contextInfo.host.removeChild(standardContext);
+                }
                 deleteDir(new File(standardContext.getServletContext().getRealPath("")));
                 removeContextInfo(standardContext);
             }
@@ -1073,6 +1090,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         public AppInfo appInfo;
         public StandardContext standardContext;
         public HostConfig deployer;
+        public Host host;
         public LinkResolver<EntityManagerFactory> emfLinkResolver;
     }
 
