@@ -29,9 +29,5 @@
 
   <modules>
     <module>mbean-annotation-api</module>
-    <module>bval-patched</module>
-    <module>jstl-patched</module>
-    <module>openwebbeans-jsf-patched</module>
-    <module>javaee-api</module>
   </modules>
 </project>
