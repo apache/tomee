@@ -114,16 +114,23 @@ public class TomcatLoader implements Loader {
     public void init(Properties properties) throws Exception {
 
         // Enable System EJBs like the MEJB and DeployerEJB
+        initDefaults(properties);
+
+        // Loader maybe the first thing executed in a new classloader
+        // so we must attempt to initialize the system instance.
+        SystemInstance.init(properties);
+        initialize(properties);
+    }
+
+    public void initDefaults(Properties properties) {
         setIfNull(properties, "openejb.deployments.classpath", "true");
         setIfNull(properties, "openejb.deployments.classpath.filter.systemapps", "false");
 
         //Sets default service provider
         setIfNull(properties, "openejb.provider.default", "org.apache.openejb." + platform);
+    }
 
-        // Loader maybe the first thing executed in a new classloader
-        // so we must attempt to initialize the system instance.
-        SystemInstance.init(properties);
-
+    public void initialize(Properties properties) throws Exception {
         //Install Log
         OptionsLog.install();
 

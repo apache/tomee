@@ -273,10 +273,15 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         if (SystemInstance.get().hasProperty("openejb.geronimo")) return;
 
         /* Add IntraVM JNDI service /////////////////////*/
+        installNaming(OPENEJB_URL_PKG_PREFIX);
+        /*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+    }
+
+    public static void installNaming(String prefix) {
         Properties systemProperties = System.getProperties();
         synchronized (systemProperties) {
             String str = systemProperties.getProperty(Context.URL_PKG_PREFIXES);
-            String naming = OPENEJB_URL_PKG_PREFIX;
+            String naming = prefix;
             if (str == null) {
                 str = naming;
             } else if (str.indexOf(naming) == -1) {
@@ -284,7 +289,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
             systemProperties.setProperty(Context.URL_PKG_PREFIXES, str);
         }
-        /*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
     }
 
     private static ThreadLocal<Map<String, Object>> context = new ThreadLocal<Map<String, Object>>();

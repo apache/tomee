@@ -29,6 +29,7 @@ import org.apache.catalina.Realm;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardServer;
+import org.apache.openejb.loader.SystemInstance;
 
 public class TomcatHelper {
 
@@ -44,8 +45,11 @@ public class TomcatHelper {
 
 	public static StandardServer getServer() {
 		StandardServer server = null;
-		
-		// first try to use Tomcat's ServerFactory class to give us a reference to the server
+
+        server = SystemInstance.get().getComponent(StandardServer.class);
+        if (server != null) return server;
+
+        // first try to use Tomcat's ServerFactory class to give us a reference to the server
 		
 		try {
 			Class<?> tomcatServerFactory = Class.forName("org.apache.catalina.ServerFactory");

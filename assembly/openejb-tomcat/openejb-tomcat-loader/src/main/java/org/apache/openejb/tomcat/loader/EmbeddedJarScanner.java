@@ -69,8 +69,15 @@ public class EmbeddedJarScanner implements JarScanner {
             final UrlSet classpath = new UrlSet(classloader);
 
             UrlSet excluded = classpath.exclude(".*/WEB-INF/lib/.*");
-            excluded = excluded.exclude(".*myfaces-impl-.*");
-            excluded = excluded.exclude(".*openejb-jsf-.*");
+
+            // TODO Commenting out these two lines can have an impact on JSF
+            // There's something that gets pulled from the classpath here
+            // lets figure out what it is so we can optimize it as the effect
+            // of adding myfaces here is that the entire jar is scanned, which
+            // is really slow.
+
+//            excluded = excluded.exclude(".*myfaces-impl-.*");
+//            excluded = excluded.exclude(".*openejb-jsf-.*");
 
             final UrlSet scan = classpath.exclude(excluded);
 
