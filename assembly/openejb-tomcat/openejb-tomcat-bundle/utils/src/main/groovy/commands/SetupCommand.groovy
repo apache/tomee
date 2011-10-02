@@ -86,6 +86,8 @@ class SetupCommand {
 		def webapp = require('tomee.webapp')
 		def tomcatVersion = require('tomcat.version')
 		System.setProperty('tomcat.version', tomcatVersion)
+		def openejbVersion = require('openejb.version')
+		System.setProperty('openejb.version', openejbVersion)
 		def localRepo = require('localRepository')
 		def openejbHome = "${workDir}/apache-tomcat-${tomcatVersion}"
 		def examplesVersion = require('examples.version')
@@ -129,7 +131,7 @@ class SetupCommand {
 		ant.unzip(src: dest, dest: "${workDir}")
 
 		ant.echo("Deploying the openejb war")
-		ant.unzip(src: "${localRepo}/org/apache/openejb/${webapp}/${project.version}/${webapp}-${project.version}.war",
+		ant.unzip(src: "${localRepo}/org/apache/openejb/${webapp}/${openejbVersion}/${webapp}-${openejbVersion}.war",
 				dest: "${workDir}/apache-tomcat-${tomcatVersion}/webapps/openejb")
 
 		ant.echo("Installing to: ${catalinaHome}")

@@ -29,7 +29,7 @@
   <description>Aggregates dependencies and runs the JSR-303 TCK in TomEE</description>
 
   <properties>
-    <openejb.home>${project.build.directory}${file.separator}apache-tomee-webprofile-${project.version}</openejb.home>
+    <openejb.home>${project.build.directory}${file.separator}apache-tomee-webprofile-1.0.0-beta-1</openejb.home>
   </properties>
 
   <dependencies>
@@ -69,7 +69,7 @@
       <groupId>org.apache.openejb</groupId>
       <artifactId>apache-tomee</artifactId>
       <type>zip</type>
-      <version>${project.version}</version>
+      <version>1.0.0-beta-1</version>
       <classifier>webprofile</classifier>
     </dependency>
     <dependency>
@@ -140,7 +140,7 @@
                 <artifactItem>
                   <groupId>org.apache.openejb</groupId>
                   <artifactId>apache-tomee</artifactId>
-                  <version>${project.version}</version>
+                  <version>1.0.0-beta-1</version>
                   <type>zip</type>
                   <classifier>webprofile</classifier>
                   <outputDirectory>${project.build.directory}</outputDirectory>
