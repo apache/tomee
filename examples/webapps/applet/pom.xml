@@ -112,7 +112,7 @@
                 <artifactItem>
                   <groupId>org.apache.openejb</groupId>
                   <artifactId>openejb-client</artifactId>
-                  <version>4.0.0-beta-2-SNAPSHOT-SNAPSHOT</version>
+                  <version>4.0.0-beta-2-SNAPSHOT</version>
                   <outputDirectory>${project.build.directory}/${project.build.finalName}</outputDirectory>
                   <destFileName>openejb-client.jar</destFileName>
                 </artifactItem>
