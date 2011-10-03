@@ -67,6 +67,7 @@
   </build>
   <dependencies>
     <dependency>
+
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
     </dependency>
