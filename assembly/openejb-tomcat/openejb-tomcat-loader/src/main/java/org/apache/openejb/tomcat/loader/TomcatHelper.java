@@ -19,6 +19,7 @@ package org.apache.openejb.tomcat.loader;
 
 import java.io.File;
 import java.lang.management.ManagementFactory;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.Principal;
 
@@ -46,8 +47,18 @@ public class TomcatHelper {
 	public static StandardServer getServer() {
 		StandardServer server = null;
 
-        server = SystemInstance.get().getComponent(StandardServer.class);
-        if (server != null) return server;
+        Class<?> systemInstanceClass = null;
+        try {
+            // server = SystemInstance.get().getComponent(StandardServer.class)
+            systemInstanceClass = Thread.currentThread().getContextClassLoader().loadClass("org.apache.openejb.loader.SystemInstance");
+            Object instance = systemInstanceClass.getDeclaredMethod("get").invoke(null);
+            server = (StandardServer) systemInstanceClass.getDeclaredMethod("getComponent", Class.class).invoke(instance, StandardServer.class);
+        } catch (Exception classNotFoundException) {
+            // ignored
+        }
+        if (server != null) {
+            return server;
+        }
 
         // first try to use Tomcat's ServerFactory class to give us a reference to the server
 		
@@ -56,8 +67,8 @@ public class TomcatHelper {
 			Method getServerMethod = tomcatServerFactory.getMethod("getServer");
 			server = (StandardServer) getServerMethod.invoke(null);
 		} catch (Exception e) {
+            // ignored
 		}
-		
 		if (server != null) {
 			return server;
 		}
@@ -67,10 +78,11 @@ public class TomcatHelper {
 			MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
 			server = (StandardServer) mbeanServer.getAttribute(new ObjectName("Catalina:type=Server"), "managedResource");
 		} catch (Exception e) {
+            // ignored
 		}
 
 		// if this still fails, that's too bad.
-		
+
 		return server;
 	}
 	
