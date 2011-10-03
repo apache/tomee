@@ -18,14 +18,12 @@
 package org.apache.openejb.util.proxy;
 
 import org.apache.openejb.BeanContext;
-import org.apache.openejb.Injection;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import java.lang.reflect.Method;
-import java.util.List;
 
 /**
  * @author rmannibucau
@@ -33,29 +31,9 @@ import java.util.List;
 public class DynamicProxyImplFactory {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, BeanContext.class);
 
-    public static Object newProxy(BeanContext context) {
-        java.lang.reflect.InvocationHandler invocationHandler = null;
-        if (context.getProxyClass() != null) {
-            Class<?> proxyClass = context.getProxyClass();
-            if (java.lang.reflect.InvocationHandler.class.isAssignableFrom(context.getProxyClass())) {
-                try {
-                    invocationHandler = (java.lang.reflect.InvocationHandler) proxyClass.newInstance();
-                } catch (InstantiationException e) {
-                    LOGGER.warning("can't instantiate " + proxyClass.getName(), e);
-                } catch (IllegalAccessException e) {
-                    LOGGER.warning("can't access " + proxyClass.getName(), e);
-                }
-            }
-        }
-
-        // by default QueryProxy is used
-        if (invocationHandler == null) {
-            List<Injection> injection = context.getInjections(); // the entity manager
-            if (injection.size() < 1) {
-                throw new RuntimeException("a query dynamic bean should have at least one PersistenceContext annotation");
-            }
-
-            String emLookupName = injection.get(injection.size() - 1).getJndiName();
+    public static Object newProxy(BeanContext context, java.lang.reflect.InvocationHandler invocationHandler) {
+        if (invocationHandler instanceof QueryProxy) {
+            String emLookupName = context.getInjections().get(context.getInjections().size() - 1).getJndiName();
             EntityManager em;
             try {
                 em = (EntityManager) context.getJndiEnc().lookup(emLookupName);
@@ -63,7 +41,7 @@ public class DynamicProxyImplFactory {
                 throw new RuntimeException("a dynamic bean should reference at least one correct PersistenceContext", e);
             }
 
-            invocationHandler = new QueryProxy(em);
+            ((QueryProxy) invocationHandler).setEntityManager(em);
         }
 
         try {

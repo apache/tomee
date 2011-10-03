@@ -71,7 +71,7 @@ public class QueryProxy implements InvocationHandler {
         NAMED, NATIVE, OTHER
     }
 
-    public QueryProxy(EntityManager entityManager) {
+    public void setEntityManager(EntityManager entityManager) {
         em = entityManager;
     }
 
