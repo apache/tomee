@@ -41,6 +41,7 @@ import org.apache.openejb.util.Index;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.proxy.DynamicProxyImplFactory;
+import org.apache.openejb.util.proxy.QueryProxy;
 import org.apache.webbeans.component.AbstractInjectionTargetBean;
 import org.apache.webbeans.component.InjectionTargetBean;
 import org.apache.webbeans.config.WebBeansContext;
@@ -62,6 +63,7 @@ import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.naming.Context;
 import javax.persistence.EntityManagerFactory;
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -1227,23 +1229,33 @@ public class BeanContext extends DeploymentContext {
 		this.statefulTimeout = statefulTimeout;
 	}
 
+
+    public Class<Object> getManagedClass() {
+        if (isDynamicallyImplemented()) {
+            return (Class<Object>) getProxyClass();
+        }
+        return beanClass;
+    }
+
     public InstanceContext newInstance() throws Exception {
         ThreadContext callContext = new ThreadContext(this, null, Operation.INJECTION);
         ThreadContext oldContext = ThreadContext.enter(callContext);
 
         WebBeansContext webBeansContext = null;
         AbstractInjectionTargetBean<Object> beanDefinition = null;
-        ConstructorInjectionBean<Object> beanConstructor = null;
-        if (!isDynamicallyImplemented()) { // not a dynamic proxy implementation
-            webBeansContext = getModuleContext().getAppContext().getWebBeansContext();
 
-            beanDefinition = get(CdiEjbBean.class);
+        webBeansContext = getModuleContext().getAppContext().getWebBeansContext();
+        beanDefinition = get(CdiEjbBean.class);
 
-            beanConstructor = new ConstructorInjectionBean<Object>(webBeansContext, beanClass);
-
-            if (beanDefinition == null) {
-                beanDefinition = beanConstructor;
+        if (isDynamicallyImplemented()) {
+            if (!InvocationHandler.class.isAssignableFrom(getProxyClass())) {
+                throw new OpenEJBException("proxy class can only be InvocationHandler");
             }
+        }
+
+        ConstructorInjectionBean<Object> beanConstructor = new ConstructorInjectionBean<Object>(webBeansContext, getManagedClass());
+        if (beanDefinition == null) {
+            beanDefinition = beanConstructor;
         }
 
         try {
@@ -1253,20 +1265,20 @@ public class BeanContext extends DeploymentContext {
             CurrentCreationalContext<Object> currentCreationalContext = get(CurrentCreationalContext.class);
             CreationalContext<Object> creationalContext = (currentCreationalContext != null) ? currentCreationalContext.get() : null;
 
-            if (creationalContext == null && !isDynamicallyImplemented()) {
+            if (creationalContext == null) {
                 creationalContext = webBeansContext.getBeanManagerImpl().createCreationalContext(beanDefinition);
             }
 
             // Create bean instance
             final Object beanInstance;
+            final InjectionProcessor injectionProcessor = new InjectionProcessor(beanConstructor.create(creationalContext), this.getInjections(), InjectionProcessor.unwrap(ctx));
             if (!isDynamicallyImplemented()) {
-                final InjectionProcessor injectionProcessor = new InjectionProcessor(beanConstructor.create(creationalContext), this.getInjections(), InjectionProcessor.unwrap(ctx));
-
                 beanInstance = injectionProcessor.createInstance();
-
                 inject(beanInstance, creationalContext);
             } else {
-                beanInstance = DynamicProxyImplFactory.newProxy(this);
+                InvocationHandler handler = (InvocationHandler) injectionProcessor.createInstance();
+                beanInstance = DynamicProxyImplFactory.newProxy(this, handler);
+                inject(handler, creationalContext);
             }
 
             // Create interceptors
@@ -1356,7 +1368,7 @@ public class BeanContext extends DeploymentContext {
 
         AbstractInjectionTargetBean<Object> beanDefinition = get(CdiEjbBean.class);
 
-        final ConstructorInjectionBean<Object> beanConstructor = new ConstructorInjectionBean<Object>(webBeansContext, beanClass);
+        final ConstructorInjectionBean<Object> beanConstructor = new ConstructorInjectionBean<Object>(webBeansContext, getManagedClass());
 
         if (beanDefinition == null) {
             beanDefinition = beanConstructor;
@@ -1444,6 +1456,9 @@ public class BeanContext extends DeploymentContext {
     }
 
     public Class<?> getProxyClass() {
+        if (isDynamicallyImplemented() && proxyClass == null) {
+            return QueryProxy.class;
+        }
         return proxyClass;
     }
 

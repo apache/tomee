@@ -19,12 +19,14 @@ package org.superbiz.dynamic;
 import org.apache.openejb.api.Proxy;
 
 import javax.ejb.Singleton;
+import javax.interceptor.Interceptors;
 
 /**
  * @author rmannibucau
  */
 @Singleton
 @Proxy(SocialHandler.class)
+@Interceptors(SocialInterceptor.class)
 public interface SocialBean {
     public String facebookStatus();
     public String twitterStatus();
