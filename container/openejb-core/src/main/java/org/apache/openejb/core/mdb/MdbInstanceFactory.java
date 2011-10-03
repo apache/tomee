@@ -169,6 +169,9 @@ public class MdbInstanceFactory {
             List<InterceptorData> callbackInterceptors = beanContext.getCallbackInterceptors();
             InterceptorStack interceptorStack = new InterceptorStack(instance.bean, remove, Operation.PRE_DESTROY, callbackInterceptors, instance.interceptors);
             interceptorStack.invoke();
+            if (instance.creationalContext != null) {
+                instance.creationalContext.release();
+            }
         } catch (Throwable re) {
             MdbInstanceFactory.logger.error("The bean instance " + instance.bean + " threw a system exception:" + re, re);
         } finally {
@@ -209,7 +212,7 @@ public class MdbInstanceFactory {
                 ejbCreate.invoke();
             }
 
-            return new Instance(context.getBean(), context.getInterceptors());
+            return new Instance(context.getBean(), context.getInterceptors(), context.getCreationalContext());
         } catch (Throwable e) {
             if (e instanceof java.lang.reflect.InvocationTargetException) {
                 e = ((java.lang.reflect.InvocationTargetException) e).getTargetException();

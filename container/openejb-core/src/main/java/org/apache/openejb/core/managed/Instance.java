@@ -25,6 +25,7 @@ import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.Index;
 import org.apache.openejb.util.PojoSerialization;
 
+import javax.enterprise.context.spi.CreationalContext;
 import javax.persistence.EntityManagerFactory;
 import javax.transaction.Transaction;
 import java.io.ObjectStreamException;
@@ -40,6 +41,7 @@ public class Instance implements Serializable {
     public final BeanContext beanContext;
     public final Object primaryKey;
     public final Object bean;
+    public final CreationalContext creationalContext;
     public final Map<String, Object> interceptors;
 
     private boolean inUse;
@@ -53,16 +55,17 @@ public class Instance implements Serializable {
     private Map<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker> entityManagers;
     private final JtaEntityManagerRegistry.EntityManagerTracker[] entityManagerArray;
 
-    public Instance(BeanContext beanContext, Object primaryKey, Object bean, Map<String, Object> interceptors, Map<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker> entityManagers) {
+    public Instance(BeanContext beanContext, Object primaryKey, Object bean, Map<String, Object> interceptors, CreationalContext creationalContext, Map<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker> entityManagers) {
         this.beanContext = beanContext;
         this.primaryKey = primaryKey;
         this.bean = bean;
         this.interceptors = interceptors;
+        this.creationalContext = creationalContext;
         this.entityManagers = entityManagers;
         this.entityManagerArray = null;
     }
 
-    public Instance(Object deploymentId, Object primaryKey, Object bean, Map<String, Object> interceptors, JtaEntityManagerRegistry.EntityManagerTracker[] entityManagerArray) {
+    public Instance(Object deploymentId, Object primaryKey, Object bean, Map<String, Object> interceptors, CreationalContext creationalContext, JtaEntityManagerRegistry.EntityManagerTracker[] entityManagerArray) {
         this.beanContext = SystemInstance.get().getComponent(ContainerSystem.class).getBeanContext(deploymentId);
         if (beanContext == null) {
             throw new IllegalArgumentException("Unknown deployment " + deploymentId);
@@ -70,6 +73,7 @@ public class Instance implements Serializable {
         this.primaryKey = primaryKey;
         this.bean = bean;
         this.interceptors = interceptors;
+        this.creationalContext = creationalContext;
         this.entityManagerArray = entityManagerArray;
     }
 
@@ -147,12 +151,14 @@ public class Instance implements Serializable {
         public final Object primaryKey;
         public final Object bean;
         public final Map<String, Object> interceptors;
+        public final CreationalContext creationalContext;
         public final JtaEntityManagerRegistry.EntityManagerTracker[] entityManagerArray;
 
         public Serialization(Instance i) {
             deploymentId = i.beanContext.getDeploymentID();
             primaryKey = i.primaryKey;
             bean = toSerializable(i.bean);
+            creationalContext = i.creationalContext;
 
             interceptors = new HashMap<String, Object>(i.interceptors.size());
             for (Map.Entry<String, Object> e : i.interceptors.entrySet()) {
@@ -185,7 +191,7 @@ public class Instance implements Serializable {
             // Anything wrapped with PojoSerialization will have been automatically
             // unwrapped via it's own readResolve so passing in the raw bean
             // and interceptors variables is totally fine.
-            return new Instance(deploymentId, primaryKey, bean, interceptors, entityManagerArray);
+            return new Instance(deploymentId, primaryKey, bean, interceptors, creationalContext, entityManagerArray);
         }
     }
 }

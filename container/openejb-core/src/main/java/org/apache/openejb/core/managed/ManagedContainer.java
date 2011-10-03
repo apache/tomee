@@ -330,6 +330,8 @@ public class ManagedContainer implements RpcContainer {
             default:
                 return businessMethod(beanContext, primKey, callInterface, callMethod, args, type);
         }
+
+
     }
 
     protected ProxyInfo createEJBObject(BeanContext beanContext, Method callMethod, Object[] args, InterfaceType interfaceType) throws OpenEJBException {
@@ -369,7 +371,7 @@ public class ManagedContainer implements RpcContainer {
                     final InstanceContext context = beanContext.newInstance();
 
                     // Wrap-up everthing into a object
-                    instance = new Instance(beanContext, primaryKey, context.getBean(), context.getInterceptors(), entityManagers);
+                    instance = new Instance(beanContext, primaryKey, context.getBean(), context.getInterceptors(), context.getCreationalContext(), entityManagers);
 
                 } catch (Throwable throwable) {
                     ThreadContext callContext = ThreadContext.getThreadContext();
@@ -691,8 +693,11 @@ public class ManagedContainer implements RpcContainer {
             return;
         }
 
-        checkedOutInstances.remove(primaryKey);
+        Instance instance = checkedOutInstances.remove(primaryKey);
         cache.remove(primaryKey);
+        if (instance.creationalContext != null) {
+            instance.creationalContext.release();
+        }
     }
 
     private void checkAuthorization(Method callMethod, InterfaceType interfaceType) throws ApplicationException {

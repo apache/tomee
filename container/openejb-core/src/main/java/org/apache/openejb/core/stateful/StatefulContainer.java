@@ -386,7 +386,7 @@ public class StatefulContainer implements RpcContainer {
                     final InstanceContext context = beanContext.newInstance();
 
                     // Wrap-up everthing into a object
-                    instance = new Instance(beanContext, primaryKey, context.getBean(), context.getInterceptors(), entityManagers);
+                    instance = new Instance(beanContext, primaryKey, context.getBean(),  context.getCreationalContext(), context.getInterceptors(), entityManagers);
 
                 } catch (Throwable throwable) {
                     ThreadContext callContext = ThreadContext.getThreadContext();
@@ -770,8 +770,11 @@ public class StatefulContainer implements RpcContainer {
             return;
         }
 
-        checkedOutInstances.remove(primaryKey);
+        Instance instance = checkedOutInstances.remove(primaryKey);
         cache.remove(primaryKey);
+        if (instance.creationalContext != null) {
+            instance.creationalContext.release();
+        }
     }
 
     private void checkAuthorization(Method callMethod, InterfaceType interfaceType) throws ApplicationException {

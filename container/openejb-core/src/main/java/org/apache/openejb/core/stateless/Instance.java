@@ -18,6 +18,7 @@ package org.apache.openejb.core.stateless;
 
 import org.apache.openejb.util.Pool;
 
+import javax.enterprise.context.spi.CreationalContext;
 import java.util.Map;
 
 /**
@@ -26,12 +27,14 @@ import java.util.Map;
 public class Instance {
     public final Object bean;
     public final Map<String, Object> interceptors;
+    public CreationalContext creationalContext;
 
     private Pool<Instance>.Entry poolEntry;
 
-    public Instance(Object bean, Map<String, Object> interceptors) {
+    public Instance(Object bean, Map<String, Object> interceptors, CreationalContext creationalContext) {
         this.bean = bean;
         this.interceptors = interceptors;
+        this.creationalContext = creationalContext;
     }
 
     public Pool<Instance>.Entry getPoolEntry() {
