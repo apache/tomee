@@ -190,7 +190,7 @@ public class StatelessInstanceManager {
                 }
             }
 
-            return new Instance(context.getBean(), context.getInterceptors());
+            return new Instance(context.getBean(), context.getInterceptors(), context.getCreationalContext());
         } catch (Throwable e) {
             if (e instanceof InvocationTargetException) {
                 e = ((InvocationTargetException) e).getTargetException();
@@ -261,6 +261,10 @@ public class StatelessInstanceManager {
             InterceptorStack interceptorStack = new InterceptorStack(instance.bean, remove, Operation.PRE_DESTROY, callbackInterceptors, instance.interceptors);
 
             interceptorStack.invoke();
+
+            if (instance.creationalContext != null) {
+                instance.creationalContext.release();
+            }
         } catch (Throwable re) {
             logger.error("The bean instance " + instance + " threw a system exception:" + re, re);
         }

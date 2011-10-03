@@ -196,7 +196,7 @@ public class SingletonInstanceManager {
                 lock = new ReentrantReadWriteLock();
             }
 
-            return new Instance(context.getBean(), context.getInterceptors(), lock);
+            return new Instance(context.getBean(), context.getInterceptors(), context.getCreationalContext(), lock);
         } catch (Throwable e) {
             if (e instanceof java.lang.reflect.InvocationTargetException) {
                 e = ((java.lang.reflect.InvocationTargetException) e).getTargetException();
@@ -256,6 +256,9 @@ public class SingletonInstanceManager {
             try{
                 //Call the chain
                 interceptorStack.invoke();
+                if (instance.creationalContext != null) {
+                    instance.creationalContext.release();
+                }
             } catch(Throwable e) {
                 //RollBack Transaction
                 EjbTransactionUtil.handleSystemException(transactionPolicy, e, callContext);
