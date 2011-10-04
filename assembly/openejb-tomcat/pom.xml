@@ -102,7 +102,7 @@
         <dependency> <!-- to avoid to force exclusions everywhere -->
           <groupId>${project.groupId}</groupId>
           <artifactId>openejb-core</artifactId>
-          <version>${project.version}</version>
+          <version>${project.parent.version}</version>
           <exclusions>
             <exclusion>
               <groupId>org.apache.openjpa</groupId>
@@ -142,7 +142,7 @@
           <groupId>${project.groupId}</groupId>
           <artifactId>openejb-core-hibernate</artifactId>
           <type>pom</type>
-          <version>${project.version}</version>
+          <version>${project.parent.version}</version>
           <exclusions>
             <exclusion>
               <groupId>org.apache.openejb</groupId>
