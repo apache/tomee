@@ -61,6 +61,13 @@
       <directory>${project.build.directory}/${project.artifactId}-${project.version}/lib</directory>
       <outputDirectory>lib</outputDirectory>
     </fileSet>
+    <fileSet>
+      <directory>${project.build.directory}/${project.artifactId}-${project.version}/</directory>
+      <outputDirectory>/</outputDirectory>
+      <includes>
+        <include>**/*.jsp</include>
+      </includes>
+    </fileSet>
   </fileSets>
   <dependencySets>
     <dependencySet>
@@ -81,8 +88,8 @@
       <outputDirectory>WEB-INF/lib</outputDirectory>
       <scope>runtime</scope>
       <includes>
-          <include>org.apache.openejb:openejb-tomcat-loader</include>
-          <include>org.codehaus.swizzle:swizzle-stream</include>
+        <include>org.apache.openejb:openejb-tomcat-loader</include>
+        <include>org.codehaus.swizzle:swizzle-stream</include>
       </includes>
     </dependencySet>
   </dependencySets>
