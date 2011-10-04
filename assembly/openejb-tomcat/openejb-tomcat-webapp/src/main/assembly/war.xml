@@ -29,6 +29,9 @@
     <fileSet>
       <directory>target/maven-shared-archive-resources</directory>
       <outputDirectory>/</outputDirectory>
+      <excludes>
+        <exclude>*.pom</exclude>
+      </excludes>
     </fileSet>
     <fileSet>
       <directory>${basedir}</directory>
