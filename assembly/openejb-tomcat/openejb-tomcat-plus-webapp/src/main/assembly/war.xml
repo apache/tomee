@@ -65,7 +65,7 @@
         <include>**/*.css</include>
         <include>**/*.html</include>
         <include>images/*.gif</include>
-        <include>lib</include>
+        <include>lib/*.jar</include>
       </includes>
     </fileSet>
   </fileSets>
