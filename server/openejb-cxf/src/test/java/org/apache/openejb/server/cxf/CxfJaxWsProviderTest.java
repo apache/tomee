@@ -40,84 +40,90 @@ public class CxfJaxWsProviderTest extends TestCase {
     private InitialContext initialContext;
 
     protected void setUp() throws Exception {
-	Properties properties = new Properties();
-	properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
-	properties.setProperty("openejb.embedded.remotable", "true");
+        Properties properties = new Properties();
+        properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
+        properties.setProperty("openejb.embedded.remotable", "true");
 
-	initialContext = new InitialContext(properties);
+        initialContext = new InitialContext(properties);
     }
     //END SNIPPET: setup    
 
     public void test00_runCheckedException() {
-	try {
-	    AuthenticatorService withHandler = Service.create(
-		    new URL("http://localhost:4204/AuthenticatorServiceBean?wsdl"), 
-		    new QName("http://superbiz.org/wsdl", "AuthenticatorServiceBeanService"))
-		    .getPort(AuthenticatorService.class);
-	    assertNotNull(withHandler);
+        try {
+            AuthenticatorService withHandler = Service.create(
+                new URL("http://localhost:4204/AuthenticatorServiceBean?wsdl"),
+                new QName("http://superbiz.org/wsdl", "AuthenticatorServiceBeanService"))
+                .getPort(AuthenticatorService.class);
+            assertNotNull(withHandler);
 
-	    AuthenticatorService noHandler = Service.create(
-		    new URL("http://localhost:4204/AuthenticatorServiceBeanNoHandler?wsdl"), 
-		    new QName("http://superbiz.org/wsdl", "AuthenticatorServiceBeanNoHandlerService"))
-		    .getPort(AuthenticatorService.class);
-	    assertNotNull(noHandler);
+            AuthenticatorService noHandler = Service.create(
+                new URL("http://localhost:4204/AuthenticatorServiceBeanNoHandler?wsdl"),
+                new QName("http://superbiz.org/wsdl", "AuthenticatorServiceBeanNoHandlerService"))
+                .getPort(AuthenticatorService.class);
+            assertNotNull(noHandler);
 
-	    try {
-		withHandler.authenticate("John", "Doe");
-	    } catch (WrongPasswordException e) {
-		System.out.println("My lovely checked exception...");
-	    } catch (Throwable e) {
-		fail("A throwable instead of a checked exception...");
-	    }
+            try {
+                withHandler.authenticate("John", "Doe");
+            } catch (WrongPasswordException e) {
+                System.out.println("My lovely checked exception...");
+            } catch (Throwable e) {
+                e.printStackTrace();
+                fail("A throwable instead of a checked exception...");
+            }
 
-	    try {
-		noHandler.authenticate("John", "Doe");
-	    } catch (WrongPasswordException e) {
-		System.out.println("My lovely checked exception...");
-	    } catch (Throwable e) {
-		fail("A throwable instead of a checked exception...");
-	    }
+            try {
+                noHandler.authenticate("John", "Doe");
+            } catch (WrongPasswordException e) {
+                System.out.println("My lovely checked exception...");
+            } catch (Throwable e) {
+                e.printStackTrace();
+                fail("A throwable instead of a checked exception...");
+            }
 
-	} catch (MalformedURLException e) {
-	    fail("?!? invalid URL ???");
-	}
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            fail("?!? invalid URL ???");
+        }
 
     }
 
     public void test01_runRuntimeException() {
-	try {
-	    AuthenticatorService withHandler = Service.create(
-		    new URL("http://localhost:4204/AuthenticatorServiceBean?wsdl"), 
-		    new QName("http://superbiz.org/wsdl", "AuthenticatorServiceBeanService"))
-		    .getPort(AuthenticatorService.class);
-	    assertNotNull(withHandler);
+        try {
+            AuthenticatorService withHandler = Service.create(
+                new URL("http://localhost:4204/AuthenticatorServiceBean?wsdl"),
+                new QName("http://superbiz.org/wsdl", "AuthenticatorServiceBeanService"))
+                .getPort(AuthenticatorService.class);
+            assertNotNull(withHandler);
 
-	    AuthenticatorService noHandler = Service.create(
-		    new URL("http://localhost:4204/AuthenticatorServiceBeanNoHandler?wsdl"), 
-		    new QName("http://superbiz.org/wsdl", "AuthenticatorServiceBeanNoHandlerService"))
-		    .getPort(AuthenticatorService.class);
-	    assertNotNull(noHandler);
+            AuthenticatorService noHandler = Service.create(
+                new URL("http://localhost:4204/AuthenticatorServiceBeanNoHandler?wsdl"),
+                new QName("http://superbiz.org/wsdl", "AuthenticatorServiceBeanNoHandlerService"))
+                .getPort(AuthenticatorService.class);
+            assertNotNull(noHandler);
 
-	    try {
-		withHandler.authenticateRuntime("John", "Doe");
-	    } catch (WrongPasswordRuntimeException e) {
-		fail("My checked exception instead of a throwableS...");
-	    } catch (Throwable e) {
-		System.out.println("A throwable exception...");
-	    }
+            try {
+                withHandler.authenticateRuntime("John", "Doe");
+            } catch (WrongPasswordRuntimeException e) {
+                e.printStackTrace();
+                fail("My checked exception instead of a throwableS...");
+            } catch (Throwable e) {
+                System.out.println("A throwable exception...");
+            }
 
 
-	    try {
-		noHandler.authenticateRuntime("John", "Doe");
-	    } catch (WrongPasswordRuntimeException e) {
-		fail("My checked exception instead of a throwableS...");
-	    } catch (Throwable e) {
-		System.out.println("A throwable exception...");
-	    }
+            try {
+                noHandler.authenticateRuntime("John", "Doe");
+            } catch (WrongPasswordRuntimeException e) {
+                e.printStackTrace();
+                fail("My checked exception instead of a throwableS...");
+            } catch (Throwable e) {
+                System.out.println("A throwable exception...");
+            }
 
-	} catch (MalformedURLException e) {
-	    fail("?!? invalid URL ???");
-	}
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            fail("?!? invalid URL ???");
+        }
 
     }
 
