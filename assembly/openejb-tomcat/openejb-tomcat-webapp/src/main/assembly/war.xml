@@ -89,6 +89,7 @@
         <!--<exclude>org.apache.activemq:activemq-core</exclude>-->
         <!--<exclude>org.apache.activemq:activemq-ra</exclude>-->
         <!--<exclude>org.apache.openejb:javaee-api</exclude>-->
+        <exclude>*:pom</exclude>
       </excludes>
     </dependencySet>
     <dependencySet>

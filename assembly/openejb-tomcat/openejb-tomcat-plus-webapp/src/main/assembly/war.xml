@@ -80,8 +80,9 @@
         <!-- should be in a pom exclusion but it does perfectly the trick -->
         <exclude>org.springframework:*</exclude>
 
-        <!-- wars -->
+        <!-- wars and pom -->
         <exclude>*:war</exclude>
+        <exclude>*:pom</exclude>
       </excludes>
     </dependencySet>
     <dependencySet>

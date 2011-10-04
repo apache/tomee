@@ -399,6 +399,11 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
+    <repository>
+      <id>terracotta</id>
+      <name>Terracotta</name>
+      <url>http://repo.terracotta.org/maven2/</url>
+    </repository>
     <!--<repository>-->
     <!--<id>java.net</id>-->
     <!--<url>http://download.java.net/maven/1</url>-->
