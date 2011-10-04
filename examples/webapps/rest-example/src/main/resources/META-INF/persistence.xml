@@ -27,6 +27,8 @@
     <class>org.superbiz.rest.model.User</class>
     <class>org.superbiz.rest.model.Post</class>
     <class>org.superbiz.rest.model.Comment</class>
+	<class>org.superbiz.rest.model.Model</class>
+	<class>org.superbiz.rest.model.DatedModel</class>
     <properties>
       <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
     </properties>
