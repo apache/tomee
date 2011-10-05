@@ -79,11 +79,6 @@
       <artifactId>tomcat-catalina</artifactId>
       <version>${tomcat.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.apache.myfaces.core</groupId>
-      <artifactId>myfaces-api</artifactId>
-      <version>${myfaces.version}</version>
-    </dependency>
   </dependencies>
 </project>
 

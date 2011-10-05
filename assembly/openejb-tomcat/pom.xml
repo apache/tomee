@@ -169,9 +169,5 @@
       </dependencies>
     </profile>
   </profiles>
-
-  <properties>
-    <myfaces.version>2.1.2</myfaces.version>
-  </properties>
 </project>
 
