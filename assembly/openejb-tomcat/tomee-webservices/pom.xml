@@ -100,12 +100,6 @@
       <version>${tomcat.version}</version>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>org.apache.myfaces.core</groupId>
-      <artifactId>myfaces-api</artifactId>
-      <version>${myfaces.version}</version>
-      <scope>provided</scope>
-    </dependency>
   </dependencies>
 </project>
 
