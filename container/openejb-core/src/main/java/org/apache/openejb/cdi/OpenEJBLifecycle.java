@@ -153,6 +153,14 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
     @Override
     public void startApplication(Object startupObject)
     {
+        if (startupObject instanceof ServletContextEvent) {
+            startServletContext((ServletContext) getServletContext(startupObject)); // TODO: check it is relevant
+            return;
+        } else if (!(startupObject instanceof StartupObject)) {
+            // ignored
+            return;
+        }
+
         StartupObject stuff = (StartupObject) startupObject;
         // Initalize Application Context
         logger.info(OWBLogConst.INFO_0005);
@@ -522,7 +530,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
                 JspApplicationContext applicationCtx = factory.getJspApplicationContext(servletContext);
                 applicationCtx.addELResolver(resolver);
             } else {
-                logger.debug("Default JSPFactroy instance has not found");
+                logger.debug("Default JSPFactory instance has not found");
             }
         }
 
