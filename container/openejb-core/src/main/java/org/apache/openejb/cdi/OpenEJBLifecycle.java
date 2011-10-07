@@ -14,8 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-
 package org.apache.openejb.cdi;
 
 import java.io.BufferedInputStream;
@@ -157,7 +155,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             startServletContext((ServletContext) getServletContext(startupObject)); // TODO: check it is relevant
             return;
         } else if (!(startupObject instanceof StartupObject)) {
-            // ignored
+            logger.debug("startupObject is not of StartupObject type; ignored");
             return;
         }
 
@@ -530,7 +528,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
                 JspApplicationContext applicationCtx = factory.getJspApplicationContext(servletContext);
                 applicationCtx.addELResolver(resolver);
             } else {
-                logger.debug("Default JSPFactory instance has not found");
+                logger.debug("Default JspFactory instance was not found");
             }
         }
 
