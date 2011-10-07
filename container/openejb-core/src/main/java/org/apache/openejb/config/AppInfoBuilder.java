@@ -568,7 +568,27 @@ class AppInfoBuilder {
         public static final String DEFAULT_RUNTIME_UNENHANCED_CLASSES = "supported";
         public static final String REMOVE_DEFAULT_RUNTIME_UNENHANCED_CLASSES = "disable";
 
+        public static final String PROVIDER_PROP = "javax.persistence.provider";
+        public static final String TRANSACTIONTYPE_PROP = "javax.persistence.transactionType";
+        public static final String JTADATASOURCE_PROP = "javax.persistence.jtaDataSource";
+        public static final String NON_JTADATASOURCE_PROP = "javax.persistence.nonJtaDataSource";
+        private static final String DEFAULT_PERSISTENCE_PROVIDER = "org.apache.openjpa.persistence.PersistenceProviderImpl";
+
+        private static String providerEnv;
+        private static String transactionTypeEnv;
+        private static String jtaDataSourceEnv;
+        private static String nonJtaDataSourceEnv;
+
+        static {
+            providerEnv = System.getProperty(PROVIDER_PROP);
+            transactionTypeEnv = System.getProperty(TRANSACTIONTYPE_PROP);
+            jtaDataSourceEnv = System.getProperty(JTADATASOURCE_PROP);
+            nonJtaDataSourceEnv = System.getProperty(NON_JTADATASOURCE_PROP);
+        }
+
         private static void apply(PersistenceUnitInfo info) {
+            overrideFromSystemProp(info);
+
             // The result is that OpenEJB-specific configuration can be avoided when
             // using OpenEJB + Hibernate or another vendor.  A second benefit is that
             // if another vendor is used in production, the value will automatically
@@ -658,6 +678,24 @@ class AppInfoBuilder {
 
             // Apply the overrides that apply to just this persistence unit
             override(info);
+        }
+
+        private static void overrideFromSystemProp(PersistenceUnitInfo info) {
+            if (providerEnv != null) {
+                info.provider = providerEnv;
+            }
+            if (info.provider == null) {
+                info.provider = DEFAULT_PERSISTENCE_PROVIDER;
+            }
+            if (jtaDataSourceEnv != null) {
+                info.jtaDataSource = jtaDataSourceEnv;
+            }
+            if (transactionTypeEnv != null) {
+                info.transactionType = transactionTypeEnv.toUpperCase();
+            }
+            if (nonJtaDataSourceEnv != null) {
+                info.nonJtaDataSource = nonJtaDataSourceEnv;
+            }
         }
 
         private static void override(PersistenceUnitInfo info) {
