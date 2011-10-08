@@ -911,7 +911,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
 
         // create the web module
         String path = standardContext.getPath();
-        System.out.println("context path = " + path);
+        logger.debug("context path = " + path);
         webModule.setHost(standardContext.getHostname());
         // Add all Tomcat env entries to context so they can be overriden by the env.properties file
         NamingResources naming = standardContext.getNamingResources();
