@@ -1433,6 +1433,11 @@ public class DeploymentLoader implements DeploymentFilterable {
             return ConnectorModule.class;
         }
 
+        // Tomcat's context.xml, possibly no web.xml as it's optional since Servlet 3.0
+        if (descriptors.containsKey("context.xml")) {
+            return WebModule.class;
+        }
+
         Map<String, URL> webDescriptors = getWebDescriptors(getFile(baseUrl));
         if (webDescriptors.containsKey("web.xml") || path.endsWith(".war")) {
             return WebModule.class;
