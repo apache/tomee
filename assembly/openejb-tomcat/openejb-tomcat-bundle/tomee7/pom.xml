@@ -60,28 +60,28 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-webapp-common</artifactId>
-      <version>4.0.0-beta-2-SNAPSHOT</version>
+      <version>${openejb.version}</version>
       <type>jar</type>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>4.0.0-beta-2-SNAPSHOT</version>
+      <version>${openejb.version}</version>
       <type>jar</type>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-tomcat-common</artifactId>
-      <version>4.0.0-beta-2-SNAPSHOT</version>
+      <version>${openejb.version}</version>
       <type>jar</type>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-tomee-utils</artifactId>
-      <version>4.0.0-beta-2-SNAPSHOT</version>
+      <version>${openejb.version}</version>
       <type>jar</type>
       <scope>compile</scope>
     </dependency>
@@ -102,7 +102,7 @@
     <dependency> <!-- to be sure to have it -->
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-tomcat-plus-webapp</artifactId>
-      <version>4.0.0-beta-2-SNAPSHOT</version>
+      <version>${openejb.version}</version>
       <type>war</type>
       <scope>provided</scope>
     </dependency>
@@ -192,7 +192,7 @@
                 <element>
                   <groupId>org.apache.openejb</groupId>
                   <artifactId>openejb-tomee-utils</artifactId>
-                  <version>4.0.0-beta-2-SNAPSHOT</version>
+                  <version>${openejb.version}</version>
                 </element>
               </classpath>
             </configuration>
@@ -224,7 +224,7 @@
                 <element>
                   <groupId>org.apache.openejb</groupId>
                   <artifactId>openejb-tomee-utils</artifactId>
-                  <version>4.0.0-beta-2-SNAPSHOT</version>
+                  <version>${openejb.version}</version>
                 </element>
               </classpath>
             </configuration>
