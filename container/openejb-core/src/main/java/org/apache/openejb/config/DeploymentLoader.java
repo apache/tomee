@@ -676,13 +676,16 @@ public class DeploymentLoader implements DeploymentFilterable {
         try {
             descriptors = getWebDescriptors(warFile);
         } catch (IOException e) {
-            throw new OpenEJBException("Unable to determine descriptors in jar.", e);
+            throw new OpenEJBException("Unable to collect descriptors in web module: " + contextRoot, e);
         }
 
         WebApp webApp = null;
         URL webXmlUrl = descriptors.get("web.xml");
         if (webXmlUrl != null) {
             webApp = ReadDescriptors.readWebApp(webXmlUrl);
+        } else {
+            // no-web.xml webapp - possible since Servlet 3.0
+            webApp = new WebApp();
         }
 
         // determine war class path
