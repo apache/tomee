@@ -44,7 +44,7 @@ import java.util.Properties;
  * set openejb.libs -> $openejb.war/lib
  *
  * With these properties setup, this class with construct an {@link Embedder}
- * using the "org.apache.openejb.tomcat.catalina.TomcatLoader" as the loader.
+ * using the "org.apache.tomee.catalina.TomcatLoader" as the loader.
  *
  * The Embedder will use the openejb.libs property to find all the jars to be loaded
  * then it will use the openejb.loader property to find out *how* to add them into
@@ -52,7 +52,7 @@ import java.util.Properties;
  * class loader, it loads the {@link org.apache.openejb.loader.Loader} implementation
  * and calls it's {@link org.apache.openejb.loader.Loader#init} method.
  *
- * See org.apache.openejb.tomcat.catalina.TomcatLoader for the next part of the story
+ * See org.apache.tomee.catalina.TomcatLoader for the next part of the story
  */
 class TomcatHook {
     
@@ -159,7 +159,7 @@ class TomcatHook {
 
             // This guy does the magic of squishing the openejb libraries into the parent classloader
             // and kicking off the reall integration.
-            Embedder embedder = new Embedder("org.apache.openejb.tomcat.catalina.TomcatLoader");
+            Embedder embedder = new Embedder("org.apache.tomee.catalina.TomcatLoader");
             embedder.init(properties);
         } catch (Exception e) {
             e.printStackTrace();
