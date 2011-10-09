@@ -31,7 +31,7 @@
 
   <modules>
     <module>openejb-webapp-common</module>
-    <module>openejb-tomcat</module>
+    <module>tomee</module>
     <module>openejb-standalone</module>
     <module>openejb-lite</module>
     <module>openejb-logging</module>

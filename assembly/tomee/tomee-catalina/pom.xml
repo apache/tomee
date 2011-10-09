@@ -21,14 +21,14 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
-    <artifactId>openejb-tomcat</artifactId>
+    <artifactId>tomee</artifactId>
     <groupId>org.apache.openejb</groupId>
     <version>4.0.0-beta-2-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>tomee-webservices</artifactId>
+  <artifactId>tomee-catalina</artifactId>
   <packaging>jar</packaging>
-  <name>OpenEJB :: Assembly :: Tomcat :: Web Services</name>
+  <name>OpenEJB :: Assembly :: Tomcat :: Catalina</name>
   <description>This module contains the classes that will be added to the catalina class loader</description>
   <build>
     <plugins>
@@ -51,32 +51,12 @@
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-webservices</artifactId>
+      <artifactId>tomee-common</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-rest</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-cxf-rs</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-tomcat-common</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-tomcat-loader</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-tomcat-catalina</artifactId>
+      <artifactId>tomee-loader</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -98,7 +78,6 @@
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-catalina</artifactId>
       <version>${tomcat.version}</version>
-      <scope>provided</scope>
     </dependency>
   </dependencies>
 </project>

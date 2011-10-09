@@ -69,7 +69,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>openejb-tomcat-common</artifactId>
+      <artifactId>tomee-common</artifactId>
       <version>${project.version}</version>
       <type>jar</type>
       <scope>compile</scope>

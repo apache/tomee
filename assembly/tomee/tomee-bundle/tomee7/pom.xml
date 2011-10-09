@@ -73,7 +73,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>openejb-tomcat-common</artifactId>
+      <artifactId>tomee-common</artifactId>
       <version>${openejb.version}</version>
       <type>jar</type>
       <scope>compile</scope>
@@ -101,7 +101,7 @@
     </dependency>
     <dependency> <!-- to be sure to have it -->
       <groupId>${project.groupId}</groupId>
-      <artifactId>openejb-tomcat-plus-webapp</artifactId>
+      <artifactId>tomee-plus-webapp</artifactId>
       <version>${openejb.version}</version>
       <type>war</type>
       <scope>provided</scope>
@@ -175,7 +175,7 @@
               <source>new commands.SetupCommand(this).execute()</source>
               <properties>
                 <tomee.workdir>${webprofile.work-dir}</tomee.workdir>
-                <tomee.webapp>openejb-tomcat-webapp</tomee.webapp>
+                <tomee.webapp>tomee-webapp</tomee.webapp>
               </properties>
               <classpath>
                 <element>
@@ -207,7 +207,7 @@
               <source>new commands.SetupCommand(this).execute()</source>
               <properties>
                 <tomee.workdir>${plus.work-dir}</tomee.workdir>
-                <tomee.webapp>openejb-tomcat-plus-webapp</tomee.webapp>
+                <tomee.webapp>tomee-plus-webapp</tomee.webapp>
               </properties>
               <classpath>
                 <element>
