@@ -459,11 +459,6 @@ public class Installer {
             return;
         }
         File webXmlFile = new File(confDir, "web.xml");
-        if (webXmlFile.exists()) {
-            if (!webXmlFile.delete()) {
-                alerts.addError("can't replace web.xml");
-            }
-        }
         String webXml = Installers.readEntry(openejbTomcatCommonJar, "conf/web.xml", alerts);
         if (Installers.writeAll(webXmlFile, webXml, alerts)) {
             alerts.addInfo("Set jasper in production mode in TomEE web.xml");
