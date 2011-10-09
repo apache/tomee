@@ -29,6 +29,7 @@ java.util.Properties
 <%@ page import="javax.naming.NamingException" %>
 <%@ page import="java.lang.reflect.Method" %>
 <%@ page import="java.lang.reflect.Field" %>
+<%@ page import="org.apache.openejb.util.proxy.LocalBeanProxyGeneratorImpl" %>
 <html>
 <head>
     <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -197,7 +198,9 @@ This is the private namespace of an Enterprise JavaBean.
             if (obj instanceof Context) {
                 node.type = Node.CONTEXT;
                 buildNode(node, (Context) obj);
-            } else if (obj instanceof java.rmi.Remote || obj instanceof org.apache.openejb.core.ivm.IntraVmProxy) {
+            } else if (obj instanceof java.rmi.Remote
+                || obj instanceof org.apache.openejb.core.ivm.IntraVmProxy
+                || (obj != null && LocalBeanProxyGeneratorImpl.isLocalBean(obj.getClass()))) {
                 node.type = Node.BEAN;
             } else {
                 node.type = Node.OTHER;
