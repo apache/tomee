@@ -19,12 +19,8 @@
 
 package commands
 
-import org.apache.commons.lang.SystemUtils
-import org.apache.openejb.webapp.common.Installers
-import org.apache.openejb.webapp.common.Alerts
-import java.io.File
-import org.apache.openejb.tomcat.installer.Installer;
-import org.apache.openejb.tomcat.installer.Paths;
+import org.apache.tomee.installer.Installer;
+import org.apache.tomee.installer.Paths;
 import org.apache.tools.ant.taskdefs.optional.net.SetProxy
 
 class SetupCommand {
