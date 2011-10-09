@@ -201,6 +201,7 @@ import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -998,15 +999,24 @@ public class AnnotationDeployer implements DynamicDeployer {
                 webApp.getServlet().add(servlet);
             }
 
-            /*
-             * REST
-             */
+           /*
+                    * REST
+                    */
             // get by annotations
             webModule.getRestClasses().addAll(findRestClasses(webModule, finder));
-            // Applications
+            // Applications with a default constructor
             List<Class<? extends Application>> applications = finder.findSubclasses(Application.class);
             for (Class<? extends Application> app : applications) {
-                webModule.getRestApplications().add(app.getName());
+                if (app.getConstructors().length == 0) {
+                    webModule.getRestApplications().add(app.getName());
+                } else {
+                    for (Constructor<?> ctr : app.getConstructors()) {
+                        if (ctr.getParameterTypes().length == 0) {
+                            webModule.getRestApplications().add(app.getName());
+                            break;
+                        }
+                    }
+                }
             }
 
             return webModule;
