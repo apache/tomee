@@ -115,6 +115,9 @@ public class OpenEJBListener implements LifecycleListener {
     		if(container instanceof StandardContext) {
     			StandardContext standardContext = (StandardContext)container;
     			File contextDocBase = new File(standardContext.getDocBase());
+                if (!contextDocBase.isDirectory() && standardContext.getOriginalDocBase() != null) {
+                    contextDocBase = new File(standardContext.getOriginalDocBase());
+                }
     			if(contextDocBase.isDirectory()) {
 	    			File openEjbWar = findOpenEjbWarInContext(contextDocBase);
 	    	        if (openEjbWar != null) {
