@@ -92,11 +92,6 @@ public class TomcatLoader implements Loader {
      */
     private ServiceManager manager;
 
-    /**
-     * Platform OpenEJB works
-     */
-    private final String platform;
-
     /** other services */
     private List<ServerService> services = new ArrayList<ServerService> ();
 
@@ -104,7 +99,6 @@ public class TomcatLoader implements Loader {
      * Creates a new instance.
      */
     public TomcatLoader() {
-        platform = "tomcat";
     }
 
     /**
@@ -126,7 +120,7 @@ public class TomcatLoader implements Loader {
         setIfNull(properties, "openejb.deployments.classpath.filter.systemapps", "false");
 
         //Sets default service provider
-        setIfNull(properties, "openejb.provider.default", "org.apache.openejb." + platform);
+        setIfNull(properties, "openejb.provider.default", "org.apache.tomee");
     }
 
     public void initialize(Properties properties) throws Exception {
