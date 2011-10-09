@@ -19,7 +19,7 @@
 
 <!-- $Rev: 597221 $ $Date: 2007-11-21 22:51:05 +0100 (Wed, 21 Nov 2007) $ -->
 
-<%@ page import="org.apache.openejb.tomcat.installer.Installer" %>
+<%@ page import="org.apache.tomee.installer.Installer" %>
 <html>
 <head>
     <META http-equiv="Content-Type" content="text/html; charset=UTF-8">

@@ -39,8 +39,8 @@ import org.apache.catalina.deploy.SecurityConstraint;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.webservices.WsRegistry;
 import org.apache.openejb.server.webservices.WsServlet;
-import org.apache.openejb.tomcat.catalina.OpenEJBValve;
-import org.apache.openejb.tomcat.loader.TomcatHelper;
+import org.apache.tomee.catalina.OpenEJBValve;
+import org.apache.tomee.loader.TomcatHelper;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -50,8 +50,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static org.apache.openejb.tomcat.catalina.BackportUtil.getServlet;
-import static org.apache.openejb.tomcat.catalina.TomcatWebAppBuilder.IGNORE_CONTEXT;
+import static org.apache.tomee.catalina.BackportUtil.getServlet;
+import static org.apache.tomee.catalina.TomcatWebAppBuilder.IGNORE_CONTEXT;
 
 public class TomcatWsRegistry implements WsRegistry {
     private final Map<String, Context> webserviceContexts = new TreeMap<String, Context>();

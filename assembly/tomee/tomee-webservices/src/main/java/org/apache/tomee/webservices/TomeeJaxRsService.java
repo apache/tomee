@@ -21,8 +21,8 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.rest.RESTService;
 import org.apache.openejb.server.rest.RsRegistry;
 import org.apache.openejb.spi.Service;
-import org.apache.openejb.tomcat.catalina.WebDeploymentListener;
-import org.apache.openejb.tomcat.catalina.WebDeploymentListeners;
+import org.apache.tomee.catalina.WebDeploymentListener;
+import org.apache.tomee.catalina.WebDeploymentListeners;
 
 import java.util.Properties;
 

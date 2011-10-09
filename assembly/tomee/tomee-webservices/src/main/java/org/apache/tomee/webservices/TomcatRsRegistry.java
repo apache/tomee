@@ -30,7 +30,7 @@ import org.apache.catalina.core.StandardServer;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.rest.RsRegistry;
 import org.apache.openejb.server.rest.RsServlet;
-import org.apache.openejb.tomcat.loader.TomcatHelper;
+import org.apache.tomee.loader.TomcatHelper;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static org.apache.openejb.tomcat.catalina.TomcatWebAppBuilder.IGNORE_CONTEXT;
+import static org.apache.tomee.catalina.TomcatWebAppBuilder.IGNORE_CONTEXT;
 
 public class TomcatRsRegistry implements RsRegistry {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_STARTUP, TomcatRsRegistry.class);

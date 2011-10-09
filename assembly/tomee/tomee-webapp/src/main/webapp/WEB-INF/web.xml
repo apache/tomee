@@ -26,7 +26,7 @@
 
   <servlet>
     <servlet-name>LoaderServlet</servlet-name>
-    <servlet-class>org.apache.openejb.tomcat.loader.LoaderServlet</servlet-class>
+    <servlet-class>org.apache.tomee.loader.LoaderServlet</servlet-class>
     <load-on-startup>0</load-on-startup>
   </servlet>
 
@@ -37,7 +37,7 @@
 
   <servlet>
     <servlet-name>InstallerServlet</servlet-name>
-    <servlet-class>org.apache.openejb.tomcat.installer.InstallerServlet</servlet-class>
+    <servlet-class>org.apache.tomee.installer.InstallerServlet</servlet-class>
   </servlet>
 
   <servlet-mapping>
