@@ -149,7 +149,7 @@ public class OpenEJBListener implements LifecycleListener {
         }
         // iterate over the libs looking for the openejb-loader-*.jar
         for (File file : webInfLib.listFiles()) {
-            if (file.getName().startsWith("openejb-tomcat-loader-") && file.getName().endsWith(".jar")) {
+            if (file.getName().startsWith("tomee-loader-") && file.getName().endsWith(".jar")) {
                 // this should be the openejb war...
                 // make sure it has a lib directory
                 if (new File(contextDir, "lib").isDirectory()) {
