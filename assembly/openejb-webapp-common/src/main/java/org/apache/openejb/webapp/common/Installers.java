@@ -22,6 +22,7 @@ import org.apache.openejb.webapp.common.Alerts;
 
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.ByteArrayInputStream;
@@ -94,6 +95,23 @@ public class Installers {
     }
 
     public static boolean writeAll(File file, String text, Alerts alerts) {
+    	// compare text with existing file content - to stop the file being touched
+    	
+    	if (file.exists()) {
+    		try {
+				FileInputStream is = new FileInputStream(file);
+				String oldText = readAll(is);
+				if (oldText.equals(text)) {
+					return true;
+				}
+			} catch (Exception e) {
+			}
+    		
+            if (! file.delete()) {
+                    alerts.addError("can't replace " + file.getName());
+            }
+    	}
+    	
         FileOutputStream fileOutputStream = null;
         try {
             fileOutputStream = new FileOutputStream(file);
