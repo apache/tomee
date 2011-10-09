@@ -259,7 +259,7 @@ public class Container {
     }
 
     private void copyFileTo(File targetDir, String filename) throws IOException {
-        InputStream is = getClass().getResourceAsStream("/org/apache/openejb/tomee/configs/" + filename);
+        InputStream is = getClass().getResourceAsStream("/org/apache/tomee/configs/" + filename);
         FileOutputStream os = new FileOutputStream(new File(targetDir, filename));
 
         copyStream(is, os);
