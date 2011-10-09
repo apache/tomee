@@ -83,7 +83,7 @@
           <webapps>
             <webappArtifact>
               <groupId>org.apache.openejb</groupId>
-              <artifactId>openejb-tomcat-plus-webapp</artifactId>
+              <artifactId>tomee-plus-webapp</artifactId>
               <version>${openejb.version}</version>
               <contextPath>openejb</contextPath>
             </webappArtifact>

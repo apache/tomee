@@ -67,7 +67,7 @@ import java.util.Properties;
  * <h1>Integration Actions</h1>
  * <p/>
  * <ul>
- * <li/>Setup ServiceJar: set openejb.provider.default -> org.apache.openejb.tomcat
+ * <li/>Setup ServiceJar: set openejb.provider.default -> org.apache.tomee
  * We therefore will load this file: META-INF/org.apache.openejb.tomcat/service-jar.xml
  * <li/>Init SystemInstance and OptionsLog
  * <li/>

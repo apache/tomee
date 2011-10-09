@@ -234,7 +234,7 @@ public class Installer {
         }
 
         // does the server.xml contain our listener name... it is possible that they commented out our listener, but that would be a PITA to detect
-        if (serverXmlOriginal.contains("org.apache.openejb.tomcat.loader.OpenEJBListener")) {
+        if (serverXmlOriginal.contains("org.apache.tomee.loader.OpenEJBListener")) {
             alerts.addWarning("OpenEJB Listener already declared in Tomcat server.xml file.");
             return;
         }
@@ -253,7 +253,7 @@ public class Installer {
                     ">",
                     ">\r\n" +
                             "  <!-- OpenEJB plugin for Tomcat -->\r\n" +
-                            "  <Listener className=\"org.apache.openejb.tomcat.loader.OpenEJBListener\" />");
+                            "  <Listener className=\"org.apache.tomee.loader.OpenEJBListener\" />");
         } catch (IOException e) {
             alerts.addError("Error while adding listener to server.xml file", e);
         }

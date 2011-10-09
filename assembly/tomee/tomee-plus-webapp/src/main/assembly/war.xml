@@ -89,7 +89,7 @@
       <outputDirectory>WEB-INF/lib</outputDirectory>
       <scope>runtime</scope>
       <includes>
-        <include>org.apache.openejb:openejb-tomcat-loader</include>
+        <include>org.apache.openejb:tomee-loader</include>
         <include>org.codehaus.swizzle:swizzle-stream</include>
       </includes>
     </dependencySet>
