@@ -73,8 +73,8 @@ public class TomcatEmbedder {
             Class<?> webappClClass = catalinaCl.loadClass("org.apache.catalina.loader.WebappClassLoader");
             ClassLoader childCl = (ClassLoader) webappClClass.getConstructor(ClassLoader.class).newInstance(catalinaCl);
 
-            // childCl.addRepository(openejb-tomcat-loader.jar)
-            // Use reflection to add the openejb-tomcat-loader.jar file to the repository of WebappClassLoader. 
+            // childCl.addRepository(tomee-loader.jar)
+            // Use reflection to add the tomee-loader.jar file to the repository of WebappClassLoader. 
             // WebappClassLoader will now search for classes in this jar too
             File thisJar = getThisJar();
             String thisJarUrl = thisJar.toURI().toString();
@@ -93,7 +93,7 @@ public class TomcatEmbedder {
             webappClClass.getMethod("start").invoke(childCl);
 
             // TomcatHook.hook()
-            //This is loaded by childCl and is defined in the openejb-tomcat-loader
+            //This is loaded by childCl and is defined in the tomee-loader
             Class<?> tomcatUtilClass = childCl.loadClass("org.apache.tomee.loader.TomcatHook");
             Method hookMethod = tomcatUtilClass.getDeclaredMethod("hook", Properties.class);
             hookMethod.setAccessible(true);
@@ -108,7 +108,7 @@ public class TomcatEmbedder {
     /**
      * Return path to jar file that contains this class.
      * <p>
-     * Normally, openejb.war/lib/openejb-tomcat-loader.jar
+     * Normally, openejb.war/lib/tomee-loader.jar
      * </p>
      * @return path to jar file that contains this class
      */

@@ -62,7 +62,7 @@ class TomcatHook {
      * 
      * <p>
      * This method is called from {@link TomcatEmbedder#embed(Properties, ClassLoader)}
-     * method from classloader that contains openejb-loader and openejb-tomcat-loader 
+     * method from classloader that contains openejb-loader and tomee-loader 
      * with CatalinaClassLoader as the parent.
      * </p>
      * @param properties properties file
