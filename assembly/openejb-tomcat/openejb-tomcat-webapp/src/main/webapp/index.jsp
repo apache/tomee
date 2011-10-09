@@ -71,7 +71,7 @@
                             <br>
                             <img src="images/dotTrans.gif" hspace="0" height="7" border="0"><br>
                             <span class="pageTitle">
-                            OpenEJB and Tomcat Integration Page
+                            Apache TomEE
                             </span>
                             <br>
                             <img src="images/dotTrans.gif" hspace="0" height="1" border="0"></td>
@@ -79,10 +79,8 @@
                 </table>
                 <p>
                 <FONT SIZE='2'>
-                <B>Welcome to the OpenEJB/Tomcat integration!</B><br><BR>
-                Now that OpenEJB has been installed, click on
-                the "Testing your setup" link below to verify it.  When everything
-                is setup well, feel free to play around with the tools provided below!
+                <B>Welcome to Apache TomEE</B><br><BR>
+                You can test your setup and play around with the tools provided below!
                 <BR><BR>
                 <B>Setup</B><BR>
                 <A HREF="testhome.jsp">Testing your setup</A><BR>
@@ -101,18 +99,18 @@
                 <BR>
 <% } %>
                 <B>Tools</B><BR>
-                <A HREF="viewjndi.jsp">OpenEJB JNDI Browser</A><BR>
-                <A HREF="viewclass.jsp">OpenEJB Class Viewer</A><BR>
-                <A HREF="viewejb.jsp">OpenEJB EJB Viewer</A><BR>
-                <A HREF="invokeobj.jsp">OpenEJB Object Invoker</A><BR>
+                <A HREF="viewjndi.jsp">JNDI Browser</A><BR>
+                <A HREF="viewclass.jsp">Class Viewer</A><BR>
+                <A HREF="viewejb.jsp">EJB Viewer</A><BR>
+                <A HREF="invokeobj.jsp">Object Invoker</A><BR>
                 <BR>
-<%--
+<!--
                 <B>FAQs</B><BR>
                 <A HREF="howitworks.html">How does the integration work</A><BR>
                 <A HREF="ejbclasses.html">Where to put your bean classes</A><BR>
                 <A HREF="ejbref.html">How to configure java:comp/env lookups</A><BR>
                 <BR>
---%>                
+-->                
                 </FONT>
                 </p>
                 <p>
