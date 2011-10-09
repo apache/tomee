@@ -93,8 +93,15 @@ public class LocalBeanProxyGeneratorImpl implements LocalBeanProxyGenerator, Opc
         return createProxy(clsToProxy, proxyName, cl);
     }
 
-    private String generateProxyName(String clsName) {
+    private static String generateProxyName(String clsName) {
         return clsName + "$LocalBeanProxy";
+    }
+
+    public static boolean isLocalBean(Class<?> clazz) {
+        if (clazz.getSuperclass() == null) {
+            return false;
+        }
+        return clazz.getName().equals(LocalBeanProxyGeneratorImpl.generateProxyName(clazz.getSuperclass().getName()));
     }
 
     private Class createProxy(Class<?> clsToProxy, String proxyName, ClassLoader cl) {
