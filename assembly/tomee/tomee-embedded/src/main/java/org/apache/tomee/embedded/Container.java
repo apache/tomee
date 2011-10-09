@@ -248,7 +248,7 @@ public class Container {
         Velocity.setProperty("class.resource.loader.description", "Velocity Classpath Resource Loader");
         Velocity.setProperty("class.resource.loader.class", ClasspathResourceLoader.class.getName());
         Velocity.init();
-        Template template = Velocity.getTemplate("/org/apache/openejb/tomee/configs/" + filename);
+        Template template = Velocity.getTemplate("/org/apache/tomee/configs/" + filename);
         VelocityContext context = new VelocityContext();
         context.put("tomcatHttpPort", Integer.toString(configuration.getHttpPort()));
         context.put("tomcatShutdownPort", Integer.toString(configuration.getStopPort()));
