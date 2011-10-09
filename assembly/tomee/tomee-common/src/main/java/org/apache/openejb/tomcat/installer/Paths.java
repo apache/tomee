@@ -207,11 +207,11 @@ public class Paths {
         return new File(openejbWarDir, "lib");
     }
     /**
-     * Returns the openejb-tomcat-loader.jar file
-     * @return the openejb-tomcat-loader.jar file
+     * Returns the tomee-loader.jar file
+     * @return the tomee-loader.jar file
      */
     public File getOpenEJBTomcatLoaderJar() {
-        return findOpenEJBJar("openejb-tomcat-loader");
+        return findOpenEJBJar("tomee-loader");
     }
     public File getJavaEEAPIJAr() {
         return findOpenEJBJar("javaee-api");
@@ -232,7 +232,7 @@ public class Paths {
     }
 
     public File geOpenEJBTomcatCommonJar() {
-        return findOpenEJBJar("openejb-tomcat-common");
+        return findOpenEJBJar("tomee-common");
     }
 
     private File findOpenEJBJar(String namePrefix) {
