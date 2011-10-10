@@ -528,7 +528,7 @@ OF SUCH DAMAGE.
 
 
 =========================================================================
-  - HSQLDB (http://hsqldb.org/) hsqldb:hsqldb:jar:1.8.0.10
+  - HSQLDB (http://hsqldb.org/) org.hsqldb:hsqldb:jar:224
     License: HSQLDB License  (http://hsqldb.org/web/hsqlLicense.html)
 -------------------------------------------------------------------------
 

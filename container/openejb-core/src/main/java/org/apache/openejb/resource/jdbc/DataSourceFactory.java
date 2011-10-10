@@ -118,7 +118,7 @@ public class DataSourceFactory {
         public void setJdbcUrl(String string) {
             // TODO This is a big whole and we will need to rework this
             try {
-                final Class<?> hsql = this.getClass().getClassLoader().loadClass("org.hsqldb.jdbc.jdbcDataSource");
+                final Class<?> hsql = this.getClass().getClassLoader().loadClass("org.hsqldb.jdbc.JDBCDataSource");
                 final Method setDatabase = hsql.getMethod("setDatabase", String.class);
                 setDatabase.setAccessible(true);
                 setDatabase.invoke(dataSource, string);
@@ -147,8 +147,8 @@ public class DataSourceFactory {
         @Override
         public void setJdbcUrl(String string) {
             // TODO This is a big whole and we will need to rework this
-            if (dataSource instanceof org.hsqldb.jdbc.jdbcDataSource) {
-                ((org.hsqldb.jdbc.jdbcDataSource)dataSource).setDatabase(string);
+            if (dataSource instanceof org.hsqldb.jdbc.JDBCDataSource) {
+                ((org.hsqldb.jdbc.JDBCDataSource)dataSource).setDatabase(string);
             }
         }
 

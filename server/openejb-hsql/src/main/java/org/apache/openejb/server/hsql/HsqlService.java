@@ -27,10 +27,10 @@ import org.apache.openejb.spi.ContainerSystem;
 import org.hsqldb.Database;
 import org.hsqldb.DatabaseManager;
 import org.hsqldb.Server;
-import org.hsqldb.ServerConfiguration;
-import org.hsqldb.ServerConstants;
 import org.hsqldb.jdbcDriver;
 import org.hsqldb.persist.HsqlProperties;
+import org.hsqldb.server.ServerConfiguration;
+import org.hsqldb.server.ServerConstants;
 
 import javax.naming.Binding;
 import javax.naming.NameNotFoundException;
@@ -49,6 +49,14 @@ import java.util.TreeSet;
  * @version $Rev$ $Date$
  */
 public class HsqlService implements ServerService, SelfManaging {
+    // copied from org.hsqldb.server.ServerProperties since it uses package visibility
+    private static final java.lang.String sc_key_port = "server.port";
+    private static final java.lang.String sc_key_silent = "server.silent";
+    private static final java.lang.String sc_key_dbname = "server.dbname";
+    private static final java.lang.String sc_key_address = "server.address";
+    private static final java.lang.String sc_key_database = "server.database";
+    private static final java.lang.String sc_key_no_system_exit = "server.no_system_exit";
+
     private int port = ServerConfiguration.getDefaultPort(ServerConstants.SC_PROTOCOL_HSQL, false);
     private String ip = ServerConstants.SC_DEFAULT_ADDRESS;
     private Server server;
@@ -69,34 +77,34 @@ public class HsqlService implements ServerService, SelfManaging {
     public void init(Properties p) throws Exception {
         Properties properties = new Properties();
         for (Map.Entry<Object, Object> entry : p.entrySet()) {
-            // Somtimes the properties object has non string values
+            // Sometimes the properties object has non string values
             if (!(entry.getKey() instanceof String)) continue;
             if (!(entry.getValue() instanceof String)) continue;
 
             String property = (String) entry.getKey();
             String value = (String) entry.getValue();
 
-            if (property.startsWith(ServerConstants.SC_KEY_DBNAME + ".") ||
-                    property.startsWith(ServerConstants.SC_KEY_DATABASE + ".")) {
+            if (property.startsWith(sc_key_dbname + ".") ||
+                    property.startsWith(sc_key_database + ".")) {
 
                 throw new ServiceException("Databases cannot be declared in the hsql.properties.  " +
                         "Instead declare a database connection in the openejb.conf file");
             }
 
             if ("port".equals(property)) {
-                properties.setProperty(ServerConstants.SC_KEY_PORT, value);
+                properties.setProperty(sc_key_port, value);
             } else if ("bind".equals(property)) {
-                properties.setProperty(ServerConstants.SC_KEY_ADDRESS, value);
+                properties.setProperty(sc_key_address, value);
             } else {
                 properties.setProperty(property, value);
             }
         }
-        properties.setProperty(ServerConstants.SC_KEY_NO_SYSTEM_EXIT, "true");
+        properties.setProperty(sc_key_no_system_exit, "true");
 
         boolean disabled = Boolean.parseBoolean(properties.getProperty("disabled"));
         ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         if (!disabled && containerSystem != null) {
-            NamingEnumeration<Binding> bindings = null;
+            NamingEnumeration<Binding> bindings;
             try {
                 bindings = containerSystem.getJNDIContext().listBindings("openejb/Resource/");
                 Set<String> dbnames = new TreeSet<String>();
@@ -112,8 +120,8 @@ public class HsqlService implements ServerService, SelfManaging {
                             String dbname = path.substring(path.lastIndexOf(':') + 1);
                             dbname = dbname.substring(dbname.lastIndexOf('/') + 1);
                             if (!dbnames.contains(dbname)) {
-                                properties.put(ServerConstants.SC_KEY_DBNAME + "." + dbnames.size(), dbname);
-                                properties.put(ServerConstants.SC_KEY_DATABASE + "." + dbnames.size(), path);
+                                properties.put(sc_key_dbname + "." + dbnames.size(), dbname);
+                                properties.put(sc_key_database + "." + dbnames.size(), path);
                                 dbnames.add(dbname);
                             }
                         }
@@ -125,7 +133,7 @@ public class HsqlService implements ServerService, SelfManaging {
             // create the server
             server = new Server();
             // add the silent property
-            properties.setProperty(ServerConstants.SC_KEY_SILENT, "true");
+            properties.setProperty(sc_key_silent, "true");
             // set the log and error writers
             server.setLogWriter(new HsqlPrintWriter(false));
             server.setErrWriter(new HsqlPrintWriter(true));
