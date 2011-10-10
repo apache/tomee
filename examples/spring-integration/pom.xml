@@ -83,11 +83,23 @@
       <version>1.2.16</version>
       <scope>test</scope>
     </dependency>
-    <!-- START SNIPPET: required -->
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-core</artifactId>
+      <artifactId>openejb-core-hibernate</artifactId>
       <version>4.0.0-beta-2-SNAPSHOT</version>
+      <type>pom</type>
+      <exclusions>
+        <exclusion>
+          <groupId>hsqldb</groupId>
+          <artifactId>hsqldb</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.hsqldb</groupId>
+      <artifactId>hsqldb</artifactId>
+      <version>2.2.4</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
@@ -97,6 +109,10 @@
         <exclusion>
           <groupId>org.springframework</groupId>
           <artifactId>spring</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.openejb</groupId>
+          <artifactId>openejb-core</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -120,35 +136,6 @@
       <artifactId>spring-orm</artifactId>
       <version>3.0.4.RELEASE</version>
     </dependency>
-    <!-- END SNIPPET: required -->
-    <!-- START SNIPPET: optional -->
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-entitymanager</artifactId>
-      <version>3.6.0.CR1</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.hibernate.javax.persistence</groupId>
-          <artifactId>hibernate-jpa-2.0-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>javax.persistence</groupId>
-          <artifactId>persistence-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>javax.transaction</groupId>
-          <artifactId>jta</artifactId>
-        </exclusion>
-      </exclusions>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-validator</artifactId>
-      <version>4.1.0.Final</version>
-      <scope>test</scope>
-    </dependency>
-    <!-- END SNIPPET: optional -->
   </dependencies>
   <!--
   This section allows you to configure where to publish libraries for sharing.

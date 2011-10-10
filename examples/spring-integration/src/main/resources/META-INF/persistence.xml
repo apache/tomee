@@ -23,6 +23,7 @@
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
     <jta-data-source>MovieDatabase</jta-data-source>
     <non-jta-data-source>MovieDatabaseUnmanaged</non-jta-data-source>
+    <class>org.superbiz.spring.Movie</class>
     <properties>
       <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
     </properties>
