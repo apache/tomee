@@ -386,7 +386,7 @@
           <method-name>findEmptyCollection</method-name>
           <method-params/>
         </query-method>
-        <ejb-ql>SELECT o FROM AllowedOperationsCmp2Bean o WHERE 'true' = 'false'</ejb-ql>
+        <ejb-ql>SELECT o FROM AllowedOperationsCmp2Bean o WHERE 1 = 0</ejb-ql>
       </query>
     </entity>
 
