@@ -18,6 +18,7 @@ package org.superbiz;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 import javax.annotation.Resource;
@@ -26,6 +27,8 @@ import javax.naming.Context;
 import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.apache.openejb.resource.jdbc.PasswordCipher;
+import org.apache.openejb.resource.jdbc.StaticDESPasswordCipher;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -35,14 +38,21 @@ import static junit.framework.Assert.assertNotNull;
  * @author Romain Manni-Bucau
  */
 public class DataSourceCipheredExampleTest {
-    private static final String USER = DataSourceCipheredExampleTest.class.getSimpleName();
+    private static final String USER = DataSourceCipheredExampleTest.class.getSimpleName().toUpperCase();
     private static final String PASSWORD = "YouLLN3v3rFindM3";
     private static final String DATASOURCE_URL = "jdbc:hsqldb:mem:protected";
 
     @Resource private DataSource dataSource;
 
     @BeforeClass public static void addDatabaseUserWithPassword() throws Exception {
-        sql("CREATE USER " + USER + " PASSWORD " + PASSWORD + ";");
+        Class.forName("org.hsqldb.jdbcDriver");
+        Connection conn = DriverManager.getConnection(DATASOURCE_URL, "sa", "");
+        conn.setAutoCommit(true);
+        Statement st = conn.createStatement();
+        st.executeUpdate("CREATE USER " + USER + " PASSWORD '" + PASSWORD + "';");
+        st.close();
+        conn.commit();
+        conn.close();
     }
 
     @Test public void accessDatasource() throws Exception{
@@ -57,7 +67,8 @@ public class DataSourceCipheredExampleTest {
         properties.setProperty("ProtectedDatasource.JtaManaged", "true");
 
         // start the context and makes junit test injections
-        Context context = EJBContainer.createEJBContainer(properties).getContext();
+        EJBContainer container = EJBContainer.createEJBContainer(properties);
+        Context context = container.getContext();
         context.bind("inject", this);
 
         // test the datasource
@@ -65,7 +76,7 @@ public class DataSourceCipheredExampleTest {
         assertNotNull(dataSource.getConnection());
 
         // closing the context
-        context.close();
+        container.close();
     }
 
     @Test public void accessDatasourceWithMyImplementation() throws Exception{
@@ -80,7 +91,8 @@ public class DataSourceCipheredExampleTest {
         properties.setProperty("ProtectedDatasource.JtaManaged", "true");
 
         // start the context and makes junit test injections
-        Context context = EJBContainer.createEJBContainer(properties).getContext();
+        EJBContainer container = EJBContainer.createEJBContainer(properties);
+        Context context = container.getContext();
         context.bind("inject", this);
 
         // test the datasource
@@ -88,7 +100,7 @@ public class DataSourceCipheredExampleTest {
         assertNotNull(dataSource.getConnection());
 
         // closing the context
-        context.close();
+        container.close();
     }
 
     public static class ReverseEncryption implements PasswordCipher {
@@ -99,14 +111,5 @@ public class DataSourceCipheredExampleTest {
         @Override public String decrypt(char[] encryptedPassword) {
             return new String(encrypt(new String(encryptedPassword)));
         }
-    }
-
-    private static void sql(String query) throws Exception {
-        Class.forName("org.hsqldb.jdbcDriver");
-        Connection conn = DriverManager.getConnection(DATASOURCE_URL, "sa", "");
-        Statement st = conn.createStatement();
-        st.executeUpdate(query);
-        st.close();
-        conn.close();
     }
 }
