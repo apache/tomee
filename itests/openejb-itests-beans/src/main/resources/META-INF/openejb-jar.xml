@@ -36,7 +36,7 @@
         <method-name>findEmptyCollection</method-name>
         <method-params/>
       </query-method>
-      <object-ql>SELECT o FROM BasicCmpBean o WHERE 'true' = 'false'</object-ql>
+      <object-ql>SELECT o FROM BasicCmpBean o WHERE 1 = 0</object-ql>
     </query>
   </ejb-deployment>
   <ejb-deployment ejb-name="ComplexCmpBean" deployment-id="client/tests/entity/cmp/ComplexCmpHome">
@@ -55,7 +55,7 @@
         <method-name>findEmptyCollection</method-name>
         <method-params/>
       </query-method>
-      <object-ql>SELECT o FROM ComplexCmpBean o WHERE 'true' = 'false'</object-ql>
+      <object-ql>SELECT o FROM ComplexCmpBean o WHERE 1 = 0</object-ql>
     </query>
   </ejb-deployment>
   <ejb-deployment ejb-name="UnknownCmpBean" deployment-id="client/tests/entity/cmp/UnknownCmpHome">
@@ -74,7 +74,7 @@
         <method-name>findEmptyCollection</method-name>
         <method-params/>
       </query-method>
-      <object-ql>SELECT o FROM UnknownCmpBean o WHERE 'true' = 'false'</object-ql>
+      <object-ql>SELECT o FROM UnknownCmpBean o WHERE 1 = 0</object-ql>
     </query>
   </ejb-deployment>
   <ejb-deployment ejb-name="BasicCmp2Bean" deployment-id="client/tests/entity/cmp2/BasicCmpHome">
@@ -93,7 +93,7 @@
         <method-name>findEmptyCollection</method-name>
         <method-params/>
       </query-method>
-      <object-ql>SELECT o FROM BasicCmp2Bean o WHERE 'true' = 'false'</object-ql>
+      <object-ql>SELECT o FROM BasicCmp2Bean o WHERE 1 = 0</object-ql>
     </query>
   </ejb-deployment>
   <ejb-deployment ejb-name="ComplexCmp2Bean" deployment-id="client/tests/entity/cmp2/ComplexCmpHome">
@@ -112,7 +112,7 @@
         <method-name>findEmptyCollection</method-name>
         <method-params/>
       </query-method>
-      <object-ql>SELECT o FROM ComplexCmp2Bean o WHERE 'true' = 'false'</object-ql>
+      <object-ql>SELECT o FROM ComplexCmp2Bean o WHERE 1 = 0</object-ql>
     </query>
   </ejb-deployment>
   <ejb-deployment ejb-name="UnknownCmp2Bean" deployment-id="client/tests/entity/cmp2/UnknownCmpHome">
@@ -131,7 +131,7 @@
         <method-name>findEmptyCollection</method-name>
         <method-params/>
       </query-method>
-      <object-ql>SELECT o FROM UnknownCmp2Bean o WHERE 'true' = 'false'</object-ql>
+      <object-ql>SELECT o FROM UnknownCmp2Bean o WHERE 1 = 0</object-ql>
     </query>
   </ejb-deployment>
   <ejb-deployment ejb-name="AOBasicCmpBean" deployment-id="client/tests/entity/cmp/allowed_operations/EntityHome">
@@ -151,7 +151,7 @@
         <method-name>findEmptyCollection</method-name>
         <method-params/>
       </query-method>
-      <object-ql>SELECT o FROM AOBasicCmpBean o WHERE 'true' = 'false'</object-ql>
+      <object-ql>SELECT o FROM AOBasicCmpBean o WHERE 1 = 0</object-ql>
     </query>
   </ejb-deployment>
   <ejb-deployment ejb-name="AOBasicCmp2Bean" deployment-id="client/tests/entity/cmp2/allowed_operations/EntityHome">
