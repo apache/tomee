@@ -122,8 +122,9 @@ public class ReadDescriptors implements DynamicDeployer {
 
                 String rootUrl = moduleName;
 
-                if (persistenceUrl.toExternalForm().contains("WEB-INF/classes/META-INF/")) {
-                    rootUrl = persistenceUrl.toExternalForm().replace("(WEB-INF/classes)/META-INF/.*", "$1");
+                String extForm = persistenceUrl.toExternalForm();
+                if (extForm.contains("WEB-INF/classes/META-INF/")) {
+                    rootUrl = extForm.substring(0, extForm.indexOf("/META-INF"));
                 }
 
                 try {
