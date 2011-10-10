@@ -150,7 +150,7 @@ public class DynamicUserDaoTest {
 
         params.remove("name");
         params.put("age", 1);
-        users = dao.query("SELECT u FROM User AS u WHERE u.age LIKE :age", params);
+        users = dao.query("SELECT u FROM User AS u WHERE u.age = :age", params);
         assertEquals(3, users.size());
     }
 
