@@ -53,7 +53,7 @@ public class DescriptorDataSourceDefinitionTest {
 
         orange.getDataSource().add(new org.apache.openejb.jee.DataSource()
                 .name("java:comp/env/superDS")
-                .className("org.hsqldb.jdbc.jdbcDataSource")
+                .className("org.hsqldb.jdbc.JDBCDataSource")
                 .user("sa")
                 .password("")
                 .url("jdbc:hsqldb:mem:superDS")
@@ -68,7 +68,7 @@ public class DescriptorDataSourceDefinitionTest {
 
         yellow.getDataSource().add(new org.apache.openejb.jee.DataSource()
                 .name("java:comp/env/superMegaDS")
-                .className("org.hsqldb.jdbc.jdbcDataSource")
+                .className("org.hsqldb.jdbc.JDBCDataSource")
                 .user("sa")
                 .password("")
                 .url("jdbc:hsqldb:mem:superDS")
@@ -82,7 +82,7 @@ public class DescriptorDataSourceDefinitionTest {
 
         yellow.getDataSource().add(new org.apache.openejb.jee.DataSource()
                 .name("java:comp/env/superGigaDS")
-                .className("org.hsqldb.jdbc.jdbcDataSource")
+                .className("org.hsqldb.jdbc.JDBCDataSource")
                 .user("sa")
                 .password("")
                 .url("jdbc:hsqldb:mem:superDS")
@@ -123,13 +123,13 @@ public class DescriptorDataSourceDefinitionTest {
 
     @Test
     public void assertDataSourceDefinition() throws Exception {
-        assertDataSourceDefinitionValues(orange.getDs(), "org.hsqldb.jdbc.jdbcDataSource", "sa", "");
+        assertDataSourceDefinitionValues(orange.getDs(), "org.hsqldb.jdbc.JDBCDataSource", "sa", "");
     }
 
     @Test
     public void assertDatasourceDefinitions() throws Exception {
-        assertDataSourceDefinitionValues(yellow.getMega(), "org.hsqldb.jdbc.jdbcDataSource", "foo1", "bar1");
-        assertDataSourceDefinitionValues(yellow.getGiga(), "org.hsqldb.jdbc.jdbcDataSource", "foo2", "bar2");
+        assertDataSourceDefinitionValues(yellow.getMega(), "org.hsqldb.jdbc.JDBCDataSource", "foo1", "bar1");
+        assertDataSourceDefinitionValues(yellow.getGiga(), "org.hsqldb.jdbc.JDBCDataSource", "foo2", "bar2");
     }
 
     private void assertDataSourceDefinitionValues(DataSource dataSource, String clazz, String user, String password) throws Exception {

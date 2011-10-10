@@ -58,7 +58,7 @@ public class DataSourceDefinitionTest {
 
     @DataSourceDefinition(
         name = "java:comp/env/superDS",
-        className = "org.hsqldb.jdbc.jdbcDataSource",
+        className = "org.hsqldb.jdbc.JDBCDataSource",
         user = "sa",
         password = "",
         url = "jdbc:hsqldb:mem:superDS"
@@ -75,14 +75,14 @@ public class DataSourceDefinitionTest {
     @DataSourceDefinitions({
         @DataSourceDefinition(
             name = "java:comp/env/superMegaDS",
-            className = "org.hsqldb.jdbc.jdbcDataSource",
+            className = "org.hsqldb.jdbc.JDBCDataSource",
             user = "sa",
             password = "",
             url = "jdbc:hsqldb:mem:superDS"
         ),
         @DataSourceDefinition(
             name = "java:comp/env/superGigaDS",
-            className = "org.hsqldb.jdbc.jdbcDataSource",
+            className = "org.hsqldb.jdbc.JDBCDataSource",
             user = "sa",
             password = "",
             url = "jdbc:hsqldb:mem:superDS"
@@ -103,12 +103,12 @@ public class DataSourceDefinitionTest {
     }
 
     @Test public void assertDataSourceDefinition() throws Exception {
-        assertDataSourceDefinitionValues(uniqueDataSource.getDs(), "org.hsqldb.jdbc.jdbcDataSource", "sa", "");
+        assertDataSourceDefinitionValues(uniqueDataSource.getDs(), "org.hsqldb.jdbc.JDBCDataSource", "sa", "");
     }
 
     @Test public void assertDatasourceDefinitions() throws Exception {
-        assertDataSourceDefinitionValues(multipleDatasources.getMega(), "org.hsqldb.jdbc.jdbcDataSource", "foo1", "bar1");
-        assertDataSourceDefinitionValues(multipleDatasources.getGiga(), "org.hsqldb.jdbc.jdbcDataSource", "foo2", "bar2");
+        assertDataSourceDefinitionValues(multipleDatasources.getMega(), "org.hsqldb.jdbc.JDBCDataSource", "foo1", "bar1");
+        assertDataSourceDefinitionValues(multipleDatasources.getGiga(), "org.hsqldb.jdbc.JDBCDataSource", "foo2", "bar2");
     }
 
     private void assertDataSourceDefinitionValues(DataSource dataSource, String clazz, String user, String password) throws Exception {

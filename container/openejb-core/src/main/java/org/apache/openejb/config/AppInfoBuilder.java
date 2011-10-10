@@ -609,7 +609,7 @@ class AppInfoBuilder {
 
                 String className = info.properties.getProperty(lookupProperty);
 
-                info.persistenceUnitRootUrl = null; // to avoid HHH015010
+                // info.persistenceUnitRootUrl = null; // to avoid HHH015010
 
                 if (className == null || className.startsWith("org.hibernate.transaction")){
                     info.properties.setProperty(lookupProperty, openejbLookupClass);

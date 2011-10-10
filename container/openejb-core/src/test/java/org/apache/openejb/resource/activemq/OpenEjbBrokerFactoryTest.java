@@ -44,7 +44,7 @@ import org.apache.openejb.core.ivm.naming.IvmJndiFactory;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.xbean.naming.context.ImmutableContext;
-import org.hsqldb.jdbc.jdbcDataSource;
+import org.hsqldb.jdbc.JDBCDataSource;
 
 public class OpenEjbBrokerFactoryTest extends TestCase {
     private int brokerPort = NetworkUtil.getNextAvailablePort(new int[]{61616, 0});
@@ -94,7 +94,7 @@ public class OpenEjbBrokerFactoryTest extends TestCase {
 
         final Properties properties = new Properties();
 
-        final jdbcDataSource dataSource = new jdbcDataSource();
+        final JDBCDataSource dataSource = new JDBCDataSource();
         dataSource.setDatabase("jdbc:hsqldb:mem:testdb" + System.currentTimeMillis());
         dataSource.setUser("sa");
         dataSource.setPassword("");
@@ -128,7 +128,7 @@ public class OpenEjbBrokerFactoryTest extends TestCase {
 
         final Properties properties = new Properties();
 
-        final jdbcDataSource dataSource = new jdbcDataSource();
+        final JDBCDataSource dataSource = new JDBCDataSource();
         dataSource.setDatabase("jdbc:hsqldb:mem:testdb" + System.currentTimeMillis());
         dataSource.setUser("sa");
         dataSource.setPassword("");

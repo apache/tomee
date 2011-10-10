@@ -209,8 +209,8 @@ W3C Consortium (http://www.w3c.org/).
 Use of the source code, thus licensed, and the resultant binary are
 subject to the terms and conditions of the following license.
 
-W3C¨ SOFTWARE NOTICE AND LICENSE
-Copyright © 1994-2002 World Wide Web Consortium, (Massachusetts Institute of
+W3Cï¿½ SOFTWARE NOTICE AND LICENSE
+Copyright ï¿½ 1994-2002 World Wide Web Consortium, (Massachusetts Institute of
 Technology, Institut National de Recherche en Informatique et en Automatique,
 Keio University). All Rights Reserved. http://www.w3.org/Consortium/Legal/
 
@@ -231,7 +231,7 @@ modifications, that you make:
    2. Any pre-existing intellectual property disclaimers, notices, or terms
          and conditions. If none exist, a short notice of the following form
          (hypertext is preferred, text is permitted) should be used within
-         the body of any redistributed or derivative code: "Copyright ©
+         the body of any redistributed or derivative code: "Copyright ï¿½
          [$date-of-software] World Wide Web Consortium, (Massachusetts Institute
          of Technology, Institut National de Recherche en Informatique et en
          Automatique, Keio University). All Rights Reserved.
@@ -256,7 +256,7 @@ times remain with copyright holders.
 
 
 =========================================================================
-  - HSQLDB (http://hsqldb.org/) hsqldb:hsqldb:jar:1.8.0.10
+  - HSQLDB (http://hsqldb.org/) org.hsqldb:hsqldb:jar:224
     License: HSQLDB License  (http://hsqldb.org/web/hsqlLicense.html)
 -------------------------------------------------------------------------
 
