@@ -92,20 +92,6 @@ public class SQLLoginModuleTest {
 
         conn.commit();
         conn.close();
-
-
-        // debug
-        conn = DriverManager.getConnection("jdbc:hsqldb:mem:sqltest", new Properties());
-        PreparedStatement statement = conn.prepareStatement("SELECT username, password FROM users");
-        ResultSet result = statement.executeQuery();
-        int i = 0;
-        while (result.next()) {
-            i++;
-            String userName = result.getString(1);
-            String userPassword = result.getString(2);
-            System.out.println(userName + "/" + userPassword);
-        }
-        System.out.println(i);
     }
 
 	@AfterClass
