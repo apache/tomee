@@ -86,7 +86,7 @@ public class ConversionTest extends TestCase {
         }
     }
 
-    private <T>InputStream getInputStream(String xmlFileName) {
+    private InputStream getInputStream(String xmlFileName) {
         return getClass().getClassLoader().getResourceAsStream(xmlFileName);
     }
 
