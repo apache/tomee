@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.config;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EnterpriseBean;
@@ -205,11 +206,21 @@ public class CleanEnvEntries implements DynamicDeployer {
             }
 
             // TODO Technically we should match by case
+            final String bestName = "set" + StringUtils.capitalize(target.getInjectionTargetName());
             final String name = "set" + target.getInjectionTargetName().toLowerCase();
+            Class<?> found = null;
             for (Method method : clazz.getDeclaredMethods()) {
-                if (method.getParameterTypes().length == 1 && method.getName().toLowerCase().equals(name)) {
-                    return method.getParameterTypes()[0];
+                if (method.getParameterTypes().length == 1) {
+                    if (method.getName().equals(bestName)) {
+                        return method.getParameterTypes()[0];
+                    } else if (method.getName().toLowerCase().equals(name)) {
+                        found = method.getParameterTypes()[0];
+                    }
                 }
+            }
+
+            if (found != null) {
+                return found;
             }
 
         } catch (Throwable e) {
