@@ -205,10 +205,6 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
     }
 
     public void setRootUrlAndJarUrls(String persistenceUnitRootUrl, List<String> jarFiles) throws MalformedURLException {
-        if (persistenceUnitRootUrl == null) { // can be the case for hibernate
-            return;
-        }
-
         File root;
         try{
             final URI rootUri = URI.create(persistenceUnitRootUrl);
