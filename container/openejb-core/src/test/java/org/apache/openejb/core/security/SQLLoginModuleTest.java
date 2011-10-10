@@ -21,7 +21,9 @@ import static junit.framework.Assert.assertEquals;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.Driver;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
 
@@ -41,7 +43,7 @@ import org.junit.Test;
 public class SQLLoginModuleTest {
 
 	private static Connection conn;
-	
+
 	@BeforeClass
     public static void setUp() throws Exception {
         String path = System.getProperty("java.security.auth.login.config");
@@ -57,11 +59,11 @@ public class SQLLoginModuleTest {
         // Create the data source and initialize the database tables
         Driver hsqlDriver = (Driver) Class.forName("org.hsqldb.jdbcDriver").newInstance();
         Properties info = new Properties();
-        info.put("shutdown", true);
+        info.setProperty("shutdown", "false");
         Connection conn = hsqlDriver.connect("jdbc:hsqldb:mem:sqltest", info);
 //        Connection conn = DriverManager.getConnection("jdbc:hsqldb:mem:sqltest");
-        conn.createStatement().execute("CREATE TABLE users (user VARCHAR(255), password VARCHAR(255))");
-        conn.createStatement().execute("CREATE TABLE groups (grp VARCHAR(255), user VARCHAR(255))");
+        conn.createStatement().execute("CREATE TABLE users (username VARCHAR(255), password VARCHAR(255))");
+        conn.createStatement().execute("CREATE TABLE groups (grp VARCHAR(255), username VARCHAR(255))");
 
         // Add users
         PreparedStatement st = conn.prepareStatement("INSERT INTO users VALUES(?, ?)");
@@ -72,7 +74,7 @@ public class SQLLoginModuleTest {
         st.setString(2, "password");
         st.execute();
         st.close();
-        
+
         // Add roles (groups)
         st = conn.prepareStatement("INSERT INTO groups VALUES(?, ?)");
         st.setString(1, "committer");
@@ -87,10 +89,25 @@ public class SQLLoginModuleTest {
         st.setString(2, "daniel");
         st.execute();
         st.close();
-        
+
+        conn.commit();
         conn.close();
+
+
+        // debug
+        conn = DriverManager.getConnection("jdbc:hsqldb:mem:sqltest", new Properties());
+        PreparedStatement statement = conn.prepareStatement("SELECT username, password FROM users");
+        ResultSet result = statement.executeQuery();
+        int i = 0;
+        while (result.next()) {
+            i++;
+            String userName = result.getString(1);
+            String userPassword = result.getString(2);
+            System.out.println(userName + "/" + userPassword);
+        }
+        System.out.println(i);
     }
-	
+
 	@AfterClass
 	public static void tearDown() {
 		if (conn != null) {
