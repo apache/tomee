@@ -35,7 +35,6 @@
     <module>tomee-common</module>
     <module>tomee-webapp</module>
     <module>tomee-plus-webapp</module>
-    <module>tomee-bundle</module>
     <module>tomee-webservices</module>
     <module>tomee-embedded</module>
     <module>apache-tomee</module>
