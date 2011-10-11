@@ -176,7 +176,7 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
 
     @Override public void afterApplicationCreated(final AppInfo appInfo) {
         if (deployedApplications.add(appInfo)) {
-            if (appInfo.standaloneModule) {
+            if (appInfo.webApps.size() == 0) {
                 Map<String, EJBRestServiceInfo> restEjbs = getRestEjbs(appInfo);
                 for (Map.Entry<String, EJBRestServiceInfo> ejb : restEjbs.entrySet()) {
                     deployEJB(ejb.getValue().path, ejb.getValue().context);
