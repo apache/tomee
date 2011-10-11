@@ -106,11 +106,6 @@
     </pluginManagement>
   </build>
 
-  <properties>
-    <localRepository>${settings.localRepository}</localRepository>
-    <examples.version>1.1-SNAPSHOT</examples.version>
-  </properties>
-
   <modules>
     <module>utils</module>
     <module>tomee7</module>

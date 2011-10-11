@@ -85,8 +85,6 @@ class SetupCommand {
 		def openejbVersion = require('openejb.version')
 		System.setProperty('openejb.version', openejbVersion)
 		def localRepo = require('localRepository')
-		def openejbHome = "${workDir}/apache-tomcat-${tomcatVersion}"
-		def examplesVersion = require('examples.version')
 
 		def proxyHost = get('http.proxy.host', '')
 		def proxyPort = get('http.proxy.port', '')
@@ -95,7 +93,7 @@ class SetupCommand {
 		def proxyNonProxyHosts = get('http.proxy.nonProxyHosts', '')
 
 		if ((proxyHost != null && proxyHost.length() > 0) || (proxyPort != null && proxyPort.length() > 0)) {
-			ant.echo("Setting proxy host=${proxyHost} and proxy port=${proxyPort}")
+			log.info("Setting proxy host=${proxyHost} and proxy port=${proxyPort}")
 			
 			def setProxy = new SetProxy();
 			setProxy.setProxyHost(proxyHost)
@@ -106,31 +104,17 @@ class SetupCommand {
 			setProxy.execute()
 		}
 		
-		def source = ""
 		def dest = "${workDir}/apache-tomcat-${tomcatVersion}.zip"
 		def catalinaHome = "${workDir}/apache-tomcat-${tomcatVersion}"
 
-		if (tomcatVersion =~ /^7\./) {
-			source = "http://archive.apache.org/dist/tomcat/tomcat-7/v${tomcatVersion}/bin/apache-tomcat-${tomcatVersion}.zip"
-		}
-
-		if (tomcatVersion =~ /^6\./) {
-			source = "http://archive.apache.org/dist/tomcat/tomcat-6/v${tomcatVersion}/bin/apache-tomcat-${tomcatVersion}.zip"
-		}
-
-		if (tomcatVersion =~ /^5\.5/) {
-			source = "http://archive.apache.org/dist/tomcat/tomcat-5/v${tomcatVersion}/bin/apache-tomcat-${tomcatVersion}.zip"
-		}
-
-//		ant.get(src: source, dest: dest)
-
+        log.info("extracting ${catalinaHome}")
 		ant.unzip(src: dest, dest: "${workDir}")
 
-		ant.echo("Deploying the openejb war")
+		log.info("Deploying the openejb war")
 		ant.unzip(src: "${localRepo}/org/apache/openejb/${webapp}/${openejbVersion}/${webapp}-${openejbVersion}.war",
 				dest: "${workDir}/apache-tomcat-${tomcatVersion}/webapps/openejb")
 
-		ant.echo("Installing to: ${catalinaHome}")
+		log.info("Installing to: ${catalinaHome}")
 
 		System.setProperty("catalina.home", "${catalinaHome}")
 		System.setProperty("catalina.base", "${catalinaHome}")
@@ -138,12 +122,9 @@ class SetupCommand {
 		Installer installer = new Installer(paths, true)
 		installer.installAll()
 
-		ant.echo("Assigning execute privileges to scripts in Tomcat bin directory")
+		log.info("Assigning execute privileges to scripts in Tomcat bin directory")
 		ant.chmod(dir: "${workDir}/apache-tomcat-${tomcatVersion}/bin", perm: "u+x", includes: "**/*.sh")
 
-//		ant.echo("Deploying the examples war")
-//		ant.unzip(src: "${localRepo}/org/superbiz/ejb-examples/${examplesVersion}/ejb-examples-${examplesVersion}.war",
-//				dest: "${workDir}/apache-tomcat-${tomcatVersion}/webapps/ejb-examples")
         ant.delete(dir: "${workDir}/apache-tomcat-${tomcatVersion}/webapps/examples")
         ant.delete(file: "${workDir}/apache-tomcat-${tomcatVersion}/webapps/openejb/META-INF/LICENSE")
         ant.delete(file: "${workDir}/apache-tomcat-${tomcatVersion}/webapps/openejb/META-INF/NOTICE")
