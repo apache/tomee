@@ -38,6 +38,7 @@
     <module>tomee-bundle</module>
     <module>tomee-webservices</module>
     <module>tomee-embedded</module>
+    <module>apache-tomee</module>
   </modules>
 
   <repositories>
