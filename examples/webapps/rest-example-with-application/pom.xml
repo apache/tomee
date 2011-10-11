@@ -100,4 +100,19 @@
       <scope>provided</scope>
     </dependency>
   </dependencies>
+  <!--
+  This section allows you to configure where to publish libraries for sharing.
+  It is not required and may be deleted.  For more information see:
+  http://maven.apache.org/plugins/maven-deploy-plugin/
+  -->
+  <distributionManagement>
+    <repository>
+      <id>local-release-repo</id>
+      <url>file://${project.build.outputDirectory}/repo/</url>
+    </repository>
+    <snapshotRepository>
+      <id>local-snapshot-repo</id>
+      <url>file://${project.build.outputDirectory}/repo/</url>
+    </snapshotRepository>
+  </distributionManagement>
 </project>
