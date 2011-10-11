@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import javax.naming.Context;
+import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.UriBuilder;
 import org.apache.openejb.BeanContext;
@@ -73,7 +74,7 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
     private List<String> services = new ArrayList<String>();
     private String virtualHost;
 
-    public void afterApplicationCreated(final WebAppInfo webApp) {
+    public void afterApplicationCreated(final WebAppInfo webApp, Map<String, EJBRestServiceInfo> restEjbs) {
         final WebContext webContext = containerSystem.getWebContext(webApp.moduleId);
         if (webContext == null) {
             return;
@@ -101,30 +102,67 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
 
         if (webApp.restApplications.isEmpty()) {
             for (String clazz : webApp.restClass) {
-                try {
-                    Class<?> loadedClazz = classLoader.loadClass(clazz);
-                    deployPojo(webApp.contextRoot, loadedClazz, null, classLoader, injections, context);
-                } catch (ClassNotFoundException e) {
-                    throw new OpenEJBRestRuntimeException("can't find class " + clazz, e);
+                if (restEjbs.containsKey(clazz)) {
+                    deployEJB(webApp.contextRoot, restEjbs.get(clazz).context);
+                    LOGGER.info("REST EJB deployed: " + clazz);
+                } else {
+                    try {
+                        Class<?> loadedClazz = classLoader.loadClass(clazz);
+                        deployPojo(webApp.contextRoot, loadedClazz, null, classLoader, injections, context);
+                    } catch (ClassNotFoundException e) {
+                        throw new OpenEJBRestRuntimeException("can't find class " + clazz, e);
+                    }
+                    LOGGER.info("REST service deployed: " + clazz);
                 }
-                LOGGER.info("REST service deployed: " + clazz);
             }
         } else {
             for (String app : webApp.restApplications) { // normally a unique one but we support more
+                String appPrefix = webApp.contextRoot;
+                if (!appPrefix.endsWith("/")) {
+                    appPrefix += "/";
+                }
+
                 Application appInstance;
+                Class<?> appClazz;
                 try {
-                    appInstance = Application.class.cast(load(classLoader, app));
-                } catch (ClassNotFoundException e) {
-                    throw new OpenEJBRestRuntimeException("can't find class " + app, e);
+                    appClazz = classLoader.loadClass(app);
+                    appInstance = Application.class.cast(appClazz.newInstance());
+                } catch (Exception e) {
+                    throw new OpenEJBRestRuntimeException("can't create class " + app, e);
+                }
+
+                ApplicationPath path = appClazz.getAnnotation(ApplicationPath.class);
+                if (path != null) {
+                    String appPath = path.value();
+                    if (appPath.startsWith("/")) {
+                        appPrefix += appPath.substring(1);
+                    } else {
+                        appPrefix += appPath;
+                    }
                 }
 
                 for (Object o : appInstance.getSingletons()) {
-                    deploySingleton(webApp.contextRoot, o, appInstance, classLoader);
-                    LOGGER.info("deployed REST singleton: " + o);
+                    if (o == null) {
+                        continue;
+                    }
+
+                    if (restEjbs.containsKey(o.getClass().getName())) {
+                        // no more a singleton if the ejb i not a singleton...but it is a weird case
+                        deployEJB(appPrefix, restEjbs.get(o.getClass().getName()).context);
+                        LOGGER.info("deployed REST EJB: " + o);
+                    } else {
+                        deploySingleton(appPrefix, o, appInstance, classLoader);
+                        LOGGER.info("deployed REST singleton: " + o);
+                    }
                 }
                 for (Class<?> clazz : appInstance.getClasses()) {
-                    deployPojo(webApp.contextRoot, clazz, appInstance, classLoader, injections, context);
-                    LOGGER.info("deployed REST class: " + clazz);
+                    if (restEjbs.containsKey(clazz.getName())) {
+                        deployEJB(appPrefix, restEjbs.get(clazz.getName()).context);
+                        LOGGER.info("deployed REST EJB: " + clazz);
+                    } else {
+                        deployPojo(appPrefix, clazz, appInstance, classLoader, injections, context);
+                        LOGGER.info("deployed REST class: " + clazz);
+                    }
                 }
 
                 LOGGER.info("REST application deployed: " + app);
@@ -132,19 +170,23 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
         }
     }
 
+    private static class EJBRestServiceInfo {
+        public String path;
+        public BeanContext context;
+
+        public EJBRestServiceInfo(String path, BeanContext context) {
+            if (context == null) {
+                throw new OpenEJBRestRuntimeException("can't find context");
+            }
+
+            this.path = path;
+            this.context = context;
+        }
+    }
+
     @Override public void afterApplicationCreated(final AppInfo appInfo) {
         if (deployedApplications.add(appInfo)) {
-            for (final WebAppInfo webApp : appInfo.webApps) {
-                afterApplicationCreated(webApp);
-            }
-
-            Map<String, String> webContextByEjb = new HashMap<String, String>();
-            for (WebAppInfo webApp : appInfo.webApps) {
-                for (String ejb : webApp.ejbRestServices) {
-                    webContextByEjb.put(ejb, webApp.contextRoot);
-                }
-            }
-
+            Map<String, BeanContext> beanContexts = new HashMap<String, BeanContext>();
             for (EjbJarInfo ejbJar : appInfo.ejbJars) {
                 for (EnterpriseBeanInfo bean : ejbJar.enterpriseBeans) {
                     if (bean.restService) {
@@ -153,10 +195,36 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
                             continue;
                         }
 
-                        deployEJB(webContextByEjb.get(bean.ejbClass), beanContext);
+                        beanContexts.put(bean.ejbClass, beanContext);
                     }
                 }
             }
+
+            Map<String, EJBRestServiceInfo> restEjbs = new HashMap<String, EJBRestServiceInfo>();
+            for (WebAppInfo webApp : appInfo.webApps) {
+                for (String ejb : webApp.ejbRestServices) {
+                    restEjbs.put(ejb, new EJBRestServiceInfo(webApp.contextRoot, beanContexts.get(ejb)));
+                }
+            }
+            for (Map.Entry<String, BeanContext> ejbs : beanContexts.entrySet()) {
+                final String clazz = ejbs.getKey();
+                if (!restEjbs.containsKey(clazz)) {
+                    // null is important, it means there is no webroot path in standalone
+                    restEjbs.put(clazz, new EJBRestServiceInfo(null, beanContexts.get(clazz)));
+                }
+            }
+            beanContexts.clear();
+
+            for (final WebAppInfo webApp : appInfo.webApps) {
+                afterApplicationCreated(webApp, restEjbs);
+            }
+
+            if (appInfo.standaloneModule) { // other it is already managed
+                for (Map.Entry<String, EJBRestServiceInfo> ejb : restEjbs.entrySet()) {
+                    deployEJB(ejb.getValue().path, ejb.getValue().context);
+                }
+            }
+            restEjbs.clear();
         }
     }   
 
@@ -226,26 +294,6 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
 
     private void undeployRestObject(String context) {
         RsHttpListener.class.cast(rsRegistry.removeListener(context)).undeploy();
-    }
-
-    private Object load(ClassLoader classLoader, String clazz) throws ClassNotFoundException {
-        Class<?> loaded;
-        loaded = classLoader.loadClass(clazz);
-        return instantiate(loaded);
-    }
-
-    private <T> T instantiate(Class<T> clazz) {
-        try {
-            return clazz.newInstance();
-        } catch (InstantiationException e) {
-            final String msg = "can't instantiate REST object " + clazz;
-            LOGGER.error(msg, e);
-            throw new OpenEJBRestRuntimeException(msg, e);
-        } catch (IllegalAccessException e) {
-            final String msg = "can't access REST object " + clazz + clazz;
-            LOGGER.error(msg, e);
-            throw new OpenEJBRestRuntimeException(msg, e);
-        }
     }
 
     private static ClassLoader getClassLoader(ClassLoader classLoader) {
