@@ -16,6 +16,7 @@
  */
 package org.apache.tomee.catalina;
 
+import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 
 import java.util.ArrayList;
@@ -32,9 +33,9 @@ public class WebDeploymentListeners implements WebDeploymentListener {
     }
 
     @Override
-    public void afterApplicationCreated(WebAppInfo webApp) {
+    public void afterApplicationCreated(AppInfo appInfo, WebAppInfo webApp) {
         for (WebDeploymentListener listener : listeners) {
-            listener.afterApplicationCreated(webApp);
+            listener.afterApplicationCreated(appInfo, webApp);
         }
     }
 

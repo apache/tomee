@@ -16,6 +16,7 @@
  */
 package org.apache.tomee.catalina;
 
+import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 
 /**
@@ -23,6 +24,6 @@ import org.apache.openejb.assembler.classic.WebAppInfo;
  */
 public interface WebDeploymentListener {
 
-    public void afterApplicationCreated(final WebAppInfo webApp);
+    public void afterApplicationCreated(final AppInfo appInfo,final WebAppInfo webApp);
 
 }
