@@ -79,7 +79,7 @@ public class RestDeploymentTest {
     private static CxfRSService service;
     private static HttpServer server;
     private static ServiceDaemon daemon;
-    public static final String BASE_URL = "http://localhost:4204/my-web-app";
+    public static final String BASE_URL = "http://localhost:4204/my-web-app/my-app";
 
     @BeforeClass public static void start() throws Exception {
         WebApp webApp = new WebApp();
