@@ -50,11 +50,11 @@ public class DAO {
     }
 
     public <E> List<E> find(Class<E> clazz, String query, int min, int max) {
-        return queryRange(em.createQuery(query), min, max).getResultList();
+        return queryRange(em.createQuery(query, clazz), min, max).getResultList();
     }
 
     public <E> List<E> namedFind(Class<E> clazz, String query, int min, int max) {
-        return queryRange(em.createNamedQuery(query), min, max).getResultList();
+        return queryRange(em.createNamedQuery(query, clazz), min, max).getResultList();
     }
 
     private static Query queryRange(Query query, int min, int max) {
