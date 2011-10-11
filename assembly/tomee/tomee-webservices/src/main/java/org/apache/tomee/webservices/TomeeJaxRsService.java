@@ -16,6 +16,7 @@
  */
 package org.apache.tomee.webservices;
 
+import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.rest.RESTService;
@@ -45,13 +46,13 @@ public class TomeeJaxRsService implements Service, WebDeploymentListener {
     }
 
     @Override
-    public void afterApplicationCreated(WebAppInfo webApp) {
+    public void afterApplicationCreated(AppInfo appInfo, WebAppInfo webApp) {
         // required for Pojo Web Services because when Assembler creates the application
         // the CoreContainerSystem does not contain the WebContext
         // see also the start method getContainerSystem().addWebDeployment(webContext);
         RESTService component = SystemInstance.get().getComponent(RESTService.class);
         if (component == null) return;
-        component.afterApplicationCreated(webApp);
+        component.afterApplicationCreated(appInfo, webApp);
     }
 
 }

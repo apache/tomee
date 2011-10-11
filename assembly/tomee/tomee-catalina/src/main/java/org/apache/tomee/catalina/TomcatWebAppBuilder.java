@@ -597,7 +597,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         WebDeploymentListeners listeners = SystemInstance.get().getComponent(WebDeploymentListeners.class);
         if (listeners != null) {
             for (WebAppInfo webApp : contextInfo.appInfo.webApps) {
-                listeners.afterApplicationCreated(webApp);
+                listeners.afterApplicationCreated(contextInfo.appInfo, webApp);
             }
         }
 

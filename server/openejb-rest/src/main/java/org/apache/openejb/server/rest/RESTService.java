@@ -74,7 +74,9 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
     private List<String> services = new ArrayList<String>();
     private String virtualHost;
 
-    public void afterApplicationCreated(final WebAppInfo webApp, Map<String, EJBRestServiceInfo> restEjbs) {
+    public void afterApplicationCreated(final AppInfo appInfo, final WebAppInfo webApp) {
+        final Map<String, EJBRestServiceInfo> restEjbs = getRestEjbs(appInfo);
+
         final WebContext webContext = containerSystem.getWebContext(webApp.moduleId);
         if (webContext == null) {
             return;
@@ -168,65 +170,58 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
                 LOGGER.info("REST application deployed: " + app);
             }
         }
-    }
 
-    private static class EJBRestServiceInfo {
-        public String path;
-        public BeanContext context;
-
-        public EJBRestServiceInfo(String path, BeanContext context) {
-            if (context == null) {
-                throw new OpenEJBRestRuntimeException("can't find context");
-            }
-
-            this.path = path;
-            this.context = context;
-        }
+        restEjbs.clear();
     }
 
     @Override public void afterApplicationCreated(final AppInfo appInfo) {
         if (deployedApplications.add(appInfo)) {
-            Map<String, BeanContext> beanContexts = new HashMap<String, BeanContext>();
-            for (EjbJarInfo ejbJar : appInfo.ejbJars) {
-                for (EnterpriseBeanInfo bean : ejbJar.enterpriseBeans) {
-                    if (bean.restService) {
-                        BeanContext beanContext = containerSystem.getBeanContext(bean.ejbDeploymentId);
-                        if (beanContext == null) {
-                            continue;
-                        }
-
-                        beanContexts.put(bean.ejbClass, beanContext);
-                    }
-                }
-            }
-
-            Map<String, EJBRestServiceInfo> restEjbs = new HashMap<String, EJBRestServiceInfo>();
-            for (WebAppInfo webApp : appInfo.webApps) {
-                for (String ejb : webApp.ejbRestServices) {
-                    restEjbs.put(ejb, new EJBRestServiceInfo(webApp.contextRoot, beanContexts.get(ejb)));
-                }
-            }
-            for (Map.Entry<String, BeanContext> ejbs : beanContexts.entrySet()) {
-                final String clazz = ejbs.getKey();
-                if (!restEjbs.containsKey(clazz)) {
-                    // null is important, it means there is no webroot path in standalone
-                    restEjbs.put(clazz, new EJBRestServiceInfo(null, beanContexts.get(clazz)));
-                }
-            }
-            beanContexts.clear();
-
-            for (final WebAppInfo webApp : appInfo.webApps) {
-                afterApplicationCreated(webApp, restEjbs);
-            }
-
-            if (appInfo.standaloneModule) { // other it is already managed
+            if (appInfo.standaloneModule) {
+                Map<String, EJBRestServiceInfo> restEjbs = getRestEjbs(appInfo);
                 for (Map.Entry<String, EJBRestServiceInfo> ejb : restEjbs.entrySet()) {
                     deployEJB(ejb.getValue().path, ejb.getValue().context);
                 }
+                restEjbs.clear();
+            } else {
+                for (final WebAppInfo webApp : appInfo.webApps) {
+                    afterApplicationCreated(appInfo, webApp);
+                }
             }
-            restEjbs.clear();
         }
-    }   
+    }
+
+    protected Map<String,EJBRestServiceInfo> getRestEjbs(AppInfo appInfo) {
+        Map<String, BeanContext> beanContexts = new HashMap<String, BeanContext>();
+        for (EjbJarInfo ejbJar : appInfo.ejbJars) {
+            for (EnterpriseBeanInfo bean : ejbJar.enterpriseBeans) {
+                if (bean.restService) {
+                    BeanContext beanContext = containerSystem.getBeanContext(bean.ejbDeploymentId);
+                    if (beanContext == null) {
+                        continue;
+                    }
+
+                    beanContexts.put(bean.ejbClass, beanContext);
+                }
+            }
+        }
+
+        Map<String, EJBRestServiceInfo> restEjbs = new HashMap<String, EJBRestServiceInfo>();
+        for (WebAppInfo webApp : appInfo.webApps) {
+            for (String ejb : webApp.ejbRestServices) {
+                restEjbs.put(ejb, new EJBRestServiceInfo(webApp.contextRoot, beanContexts.get(ejb)));
+            }
+        }
+        for (Map.Entry<String, BeanContext> ejbs : beanContexts.entrySet()) {
+            final String clazz = ejbs.getKey();
+            if (!restEjbs.containsKey(clazz)) {
+                // null is important, it means there is no webroot path in standalone
+                restEjbs.put(clazz, new EJBRestServiceInfo(null, beanContexts.get(clazz)));
+            }
+        }
+        beanContexts.clear();
+
+        return restEjbs;
+    }
 
     private void deploySingleton(String contextRoot, Object o, Application appInstance, ClassLoader classLoader) {
         final String nopath = getAddress(contextRoot, o.getClass()) + "/.*";
@@ -377,5 +372,19 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
 
     public void setVirtualHost(String virtualHost) {
         this.virtualHost = virtualHost;
+    }
+
+    public static class EJBRestServiceInfo {
+        public String path;
+        public BeanContext context;
+
+        public EJBRestServiceInfo(String path, BeanContext context) {
+            if (context == null) {
+                throw new OpenEJBRestRuntimeException("can't find context");
+            }
+
+            this.path = path;
+            this.context = context;
+        }
     }
 }
