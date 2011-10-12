@@ -26,6 +26,7 @@ import org.apache.catalina.startup.Bootstrap;
 import org.apache.catalina.startup.CatalinaProperties;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.coyote.http11.Http11Protocol;
+import org.apache.openejb.AppContext;
 import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.UndeployException;
@@ -40,6 +41,7 @@ import org.apache.velocity.app.Velocity;
 import org.apache.velocity.runtime.log.Log4JLogChute;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 
+import javax.naming.Context;
 import javax.naming.NamingException;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -188,6 +190,10 @@ public class Container {
         configurationFactory = new ConfigurationFactory();
     }
 
+    public Context getLastJndiContext() {
+        return assembler.getContainerSystem().getJNDIContext();
+    }
+
     private String getBaseDir() {
         try {
             final String dir = configuration.getDir();
@@ -204,10 +210,11 @@ public class Container {
         deleteTree(base);
     }
 
-    public void deploy(String name, File file) throws OpenEJBException, IOException, NamingException {
+    public AppContext deploy(String name, File file) throws OpenEJBException, IOException, NamingException {
         AppInfo appInfo = configurationFactory.configureApplication(file);
-        assembler.createApplication(appInfo);
+        AppContext context = assembler.createApplication(appInfo);
         moduleIds.put(name, appInfo.path);
+        return context;
     }
 
     public void undeploy(String name) throws UndeployException, NoSuchApplicationException {
