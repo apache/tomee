@@ -24,6 +24,7 @@ import org.apache.openejb.server.DiscoveryListener;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.loader.Options;
+import org.apache.openejb.util.OptionsLog;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,7 +40,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class MultipointDiscoveryAgent implements DiscoveryAgent, ServerService, SelfManaging {
 
-    private static final Logger log = Logger.getInstance(LogCategory.OPENEJB_SERVER.createChild("discovery"), MultipointDiscoveryAgent.class);
+    private static final Logger log = Logger.getInstance(LogCategory.OPENEJB_SERVER.createChild("discovery").createChild("multipoint"), MultipointDiscoveryAgent.class);
 
     private AtomicBoolean running = new AtomicBoolean(false);
 
@@ -56,6 +57,8 @@ public class MultipointDiscoveryAgent implements DiscoveryAgent, ServerService, 
     public void init(Properties props) {
 
         Options options = new Options(props);
+        options.setLogger(new OptionsLog(log));
+
         host = props.getProperty("bind", host);
         port = options.get("port", port);
         initialServers = options.get("initialServers", initialServers);
@@ -63,6 +66,7 @@ public class MultipointDiscoveryAgent implements DiscoveryAgent, ServerService, 
 
 
         Tracker.Builder builder = new Tracker.Builder();
+        builder.setHeartRate(heartRate);
         builder.setGroup(props.getProperty("group", builder.getGroup()));
         builder.setMaxMissedHeartbeats(options.get("max_missed_heartbeats", builder.getMaxMissedHeartbeats()));
         builder.setMaxReconnectDelay(options.get("max_reconnect_delay", builder.getMaxReconnectDelay()));

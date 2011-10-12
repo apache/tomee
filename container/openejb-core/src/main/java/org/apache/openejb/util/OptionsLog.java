@@ -24,7 +24,15 @@ import org.apache.openejb.loader.SystemInstance;
  */
 public class OptionsLog implements Options.Log {
 
-    private final Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("options"), OptionsLog.class);
+    private final Logger logger;
+
+    public OptionsLog() {
+        this(Logger.getInstance(LogCategory.OPENEJB.createChild("options"), OptionsLog.class));
+    }
+
+    public OptionsLog(final Logger logger) {
+        this.logger = logger;
+    }
 
     public static void install() {
         SystemInstance.get().getOptions().setLogger(new OptionsLog());
