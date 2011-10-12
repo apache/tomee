@@ -20,6 +20,8 @@ import junit.framework.TestCase;
 import org.apache.openejb.server.DiscoveryListener;
 import org.apache.openejb.server.DiscoveryRegistry;
 import org.apache.openejb.util.Join;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -35,6 +37,7 @@ import java.util.concurrent.TimeUnit;
 public class MultipointDiscoveryAgentTest extends TestCase {
 
     public void test() throws Exception {
+        System.setProperty("log4j.category.OpenEJB.server.discovery", "debug");
 
         final URI testService = new URI("green://localhost:0");
 
@@ -112,6 +115,8 @@ public class MultipointDiscoveryAgentTest extends TestCase {
             }
 
             props.put("initialServers", Join.join(",", uris));
+            props.put("max_missed_heartbeats", "2");
+            props.put("heart_rate", "200");
             agent.init(props);
 
             this.registry = new DiscoveryRegistry(agent);

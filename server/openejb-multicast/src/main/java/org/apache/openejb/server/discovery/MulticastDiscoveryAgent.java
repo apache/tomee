@@ -24,6 +24,7 @@ import org.apache.openejb.server.DiscoveryListener;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.loader.Options;
+import org.apache.openejb.util.OptionsLog;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,7 +46,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, SelfManaging {
 
-    private static final Logger log = Logger.getInstance(LogCategory.OPENEJB_SERVER.createChild("discovery"), MulticastDiscoveryAgent.class);
+    private static final Logger log = Logger.getInstance(LogCategory.OPENEJB_SERVER.createChild("discovery").createChild("multicast"), MulticastDiscoveryAgent.class);
 
     private AtomicBoolean running = new AtomicBoolean(false);
 
@@ -63,6 +64,8 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
     public void init(Properties props) {
 
         Options options = new Options(props);
+        options.setLogger(new OptionsLog(log));
+
         host = props.getProperty("bind", host);
         loopbackMode = options.get("loopback_mode", loopbackMode);
         port = options.get("port", port);
@@ -71,6 +74,7 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
 
         Tracker.Builder builder = new Tracker.Builder();
         builder.setGroup(props.getProperty("group", builder.getGroup()));
+        builder.setHeartRate(heartRate);
         builder.setMaxMissedHeartbeats(options.get("max_missed_heartbeats", builder.getMaxMissedHeartbeats()));
         builder.setMaxReconnectDelay(options.get("max_reconnect_delay", builder.getMaxReconnectDelay()));
         builder.setReconnectDelay(options.get("reconnect_delay", builder.getReconnectDelay()));

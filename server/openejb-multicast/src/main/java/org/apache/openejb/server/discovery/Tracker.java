@@ -37,7 +37,7 @@ import java.io.IOException;
 */
 public class Tracker {
     
-    private static final Logger log = Logger.getInstance(LogCategory.OPENEJB_SERVER.createChild("discovery"), Tracker.class);
+    private final Logger log;
     
     private final String group;
     private final String groupPrefix;
@@ -49,7 +49,7 @@ public class Tracker {
     private final long exponentialBackoff;
     private final boolean useExponentialBackOff;
 
-    public Tracker(String group, long heartRate, int maxMissedHeartbeats, long reconnectDelay, long maxReconnectDelay, int maxReconnectAttempts, long exponentialBackoff) {
+    public Tracker(String group, long heartRate, int maxMissedHeartbeats, long reconnectDelay, long maxReconnectDelay, int maxReconnectAttempts, long exponentialBackoff, final Logger log) {
         this.group = group;
         this.groupPrefix = group + ":";
 
@@ -60,6 +60,9 @@ public class Tracker {
         this.maxReconnectAttempts = maxReconnectAttempts;
         this.exponentialBackoff = exponentialBackoff;
         this.useExponentialBackOff = exponentialBackoff > 1;
+        this.log = log;
+
+        this.log.info("Created " + this);
     }
 
     private Map<String, Service> registeredServices = new ConcurrentHashMap<String, Service>();
@@ -135,9 +138,18 @@ public class Tracker {
     }
 
     public void checkServices() {
-        long expireTime = System.currentTimeMillis() - (heartRate * maxMissedHeartbeats);
+        final long threshold = heartRate * maxMissedHeartbeats;
+
+        final long now = System.currentTimeMillis();
+
+        final long expireTime = now - threshold;
+
         for (ServiceVitals serviceVitals : discoveredServices.values()) {
             if (serviceVitals.getLastHeartbeat() < expireTime && !isSelf(serviceVitals.service)) {
+
+                if (log.isDebugEnabled()) {
+                    log.debug("Expired " + serviceVitals.service + String.format(" Timeout{lastSeen=%s, threshold=%s}", serviceVitals.getLastHeartbeat() - now, threshold ));
+                }
 
                 ServiceVitals vitals = discoveredServices.remove(serviceVitals.service.broadcastString);
                 if (vitals != null && !vitals.isDead()) {
@@ -156,6 +168,10 @@ public class Tracker {
     });
 
     private void fireServiceRemovedEvent(final URI uri) {
+        if (log.isDebugEnabled()) {
+            log.debug(String.format("Removed Service{uri=%s}", uri));
+        }
+
         if (discoveryListener != null) {
             final DiscoveryListener discoveryListener = this.discoveryListener;
 
@@ -173,6 +189,10 @@ public class Tracker {
     }
 
     private void fireServiceAddedEvent(final URI uri) {
+        if (log.isDebugEnabled()) {
+            log.debug(String.format("Added Service{uri=%s}", uri));
+        }
+
         if (discoveryListener != null) {
             final DiscoveryListener discoveryListener = this.discoveryListener;
 
@@ -211,6 +231,14 @@ public class Tracker {
             uri = new URI(uri.getSchemeSpecificPart());
             this.uri = uri;
             this.broadcastString = uriString;
+        }
+
+        @Override
+        public String toString() {
+            return "Service{" +
+                    "uri=" + uri +
+                    ", broadcastString='" + broadcastString + '\'' +
+                    '}';
         }
     }
 
@@ -305,6 +333,16 @@ public class Tracker {
         public boolean isDead() {
             return dead;
         }
+
+        @Override
+        public String toString() {
+            return service + "Vitals{" +
+                    ", lastHeartBeat=" + lastHeartBeat +
+                    ", recoveryTime=" + recoveryTime +
+                    ", failureCount=" + failureCount +
+                    ", dead=" + dead +
+                    '}';
+        }
     }
 
 
@@ -318,6 +356,7 @@ public class Tracker {
         private long maxReconnectDelay = 1000 * 30;
         private long exponentialBackoff = 0;
         private int maxReconnectAttempts = 10; // todo: check this out
+        private Logger logger;
         // ---------------------------------
 
 
@@ -377,9 +416,34 @@ public class Tracker {
             this.maxReconnectDelay = maxReconnectDelay;
         }
 
+        public Logger getLogger() {
+            return logger;
+        }
+
+        public void setLogger(Logger logger) {
+            this.logger = logger;
+        }
+
         public Tracker build() {
-            return new Tracker(group, heartRate, maxMissedHeartbeats, reconnectDelay, maxReconnectDelay, maxReconnectAttempts, exponentialBackoff);
+            logger = Logger.getInstance(LogCategory.OPENEJB_SERVER.createChild("discovery"), Tracker.class);
+            return new Tracker(group, heartRate, maxMissedHeartbeats, reconnectDelay, maxReconnectDelay, maxReconnectAttempts, exponentialBackoff, logger);
         }
     }
 
+    @Override
+    public String toString() {
+        return "Tracker{" +
+                "group='" + group + '\'' +
+                ", groupPrefix='" + groupPrefix + '\'' +
+                ", heartRate=" + heartRate +
+                ", maxMissedHeartbeats=" + maxMissedHeartbeats +
+                ", reconnectDelay=" + reconnectDelay +
+                ", maxReconnectDelay=" + maxReconnectDelay +
+                ", maxReconnectAttempts=" + maxReconnectAttempts +
+                ", exponentialBackoff=" + exponentialBackoff +
+                ", useExponentialBackOff=" + useExponentialBackOff +
+                ", registeredServices=" + registeredServices.size() +
+                ", discoveredServices=" + discoveredServices.size() +
+                '}';
+    }
 }
