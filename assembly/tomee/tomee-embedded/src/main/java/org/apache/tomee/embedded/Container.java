@@ -190,10 +190,6 @@ public class Container {
         configurationFactory = new ConfigurationFactory();
     }
 
-    public Context getLastJndiContext() {
-        return assembler.getContainerSystem().getJNDIContext();
-    }
-
     private String getBaseDir() {
         try {
             final String dir = configuration.getDir();
