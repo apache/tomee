@@ -214,8 +214,13 @@ public class Container {
     }
 
     public void undeploy(String name) throws UndeployException, NoSuchApplicationException {
-        String moduleId = moduleIds.get(name);
-        assembler.destroyApplication(moduleId);
+        /* Don't do it:
+                *
+                * String moduleId = moduleIds.get(name);
+                * assembler.destroyApplication(moduleId);
+                *
+                * It is done in Tomcat listener.
+                */
     }
 
     private void deleteTree(File file) {
