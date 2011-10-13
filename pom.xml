@@ -108,7 +108,7 @@
     <tomcat.version>7.0.21</tomcat.version>
 
     <!-- used mainly by jetty modules -->
-    <cxf.version>2.4.1</cxf.version>
+    <cxf.version>2.4.3</cxf.version>
     <jetty.version>7.4.2.v20110526</jetty.version>
 
     <!--
