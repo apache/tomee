@@ -694,7 +694,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         if (isIgnored(standardContext)) return;
 
         ContextInfo contextInfo = getContextInfo(standardContext);
-        if (contextInfo != null && contextInfo.appInfo != null && contextInfo.deployer == null) {
+        if (contextInfo != null && contextInfo.appInfo != null && contextInfo.deployer == null
+            && getAssembler().getDeployedApplications().contains(contextInfo.appInfo)) {
             try {
                 getAssembler().destroyApplication(contextInfo.appInfo.path);
             } catch (Exception e) {
