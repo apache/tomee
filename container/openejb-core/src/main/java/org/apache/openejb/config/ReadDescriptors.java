@@ -126,6 +126,9 @@ public class ReadDescriptors implements DynamicDeployer {
                 if (extForm.contains("WEB-INF/classes/META-INF/")) {
                     rootUrl = extForm.substring(0, extForm.indexOf("/META-INF"));
                 }
+                if (rootUrl.endsWith(".war")) {
+                    rootUrl = rootUrl.substring(0, rootUrl.length() - ".war".length());
+                }
 
                 try {
                     Persistence persistence = JaxbPersistenceFactory.getPersistence(persistenceUrl);
