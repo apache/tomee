@@ -206,11 +206,10 @@ public class Container {
         deleteTree(base);
     }
 
-    public AppContext deploy(String name, File file) throws OpenEJBException, IOException, NamingException {
+    public void deploy(String name, File file) throws OpenEJBException, IOException, NamingException {
         AppInfo appInfo = configurationFactory.configureApplication(file);
-        AppContext context = assembler.createApplication(appInfo);
+        assembler.createApplication(appInfo);
         moduleIds.put(name, appInfo.path);
-        return context;
     }
 
     public void undeploy(String name) throws UndeployException, NoSuchApplicationException {
