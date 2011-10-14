@@ -66,6 +66,7 @@ public class Container {
     protected Configuration configuration;
     private File base;
     private Map<String, String> moduleIds = new HashMap<String, String>();
+    private Map<String, AppContext> appContexts = new HashMap<String, AppContext>();
     private ConfigurationFactory configurationFactory;
     private Assembler assembler;
     private final Tomcat tomcat;
@@ -208,13 +209,19 @@ public class Container {
 
     public void deploy(String name, File file) throws OpenEJBException, IOException, NamingException {
         AppInfo appInfo = configurationFactory.configureApplication(file);
-        assembler.createApplication(appInfo);
+        appContexts.put(name, assembler.createApplication(appInfo));
         moduleIds.put(name, appInfo.path);
     }
 
     public void undeploy(String name) throws UndeployException, NoSuchApplicationException {
         String moduleId = moduleIds.get(name);
         assembler.destroyApplication(moduleId);
+        moduleIds.remove(name);
+        appContexts.remove(name);
+    }
+
+    public AppContext getAppContexts(String moduleId) {
+        return appContexts.get(moduleId);
     }
 
     private void deleteTree(File file) {
