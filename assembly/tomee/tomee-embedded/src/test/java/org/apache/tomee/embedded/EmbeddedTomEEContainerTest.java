@@ -5,18 +5,14 @@ import org.apache.openejb.util.IOUtils;
 import org.junit.Test;
 
 import javax.ejb.embeddable.EJBContainer;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.naming.Context;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
-import java.util.jar.JarFile;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
 
 /**
  * @author rmannibucau
@@ -30,30 +26,41 @@ public class EmbeddedTomEEContainerTest {
     }
 
     @Test public void containerTest() throws Exception {
+        File war = createWar();
         Properties p = new Properties();
         p.setProperty(EJBContainer.APP_NAME, "test");
         p.setProperty(EJBContainer.PROVIDER, EmbeddedTomEEContainer.class.getName());
-        p.setProperty(EJBContainer.MODULES, createWar());
+        p.setProperty(EJBContainer.MODULES, war.getAbsolutePath());
         try {
             EJBContainer container = EJBContainer.createEJBContainer(p);
             assertNotNull(container);
             assertNotNull(container.getContext());
+            URL url = new URL("http://127.0.0.1:8080/" + war.getName() + "/index.html");
+            assertEquals("true", IOUtils.readProperties(url).getProperty("ok"));
             container.close();
         } finally {
-            new File(p.getProperty(EJBContainer.MODULES)).delete();
+            if (!war.delete()) {
+                war.deleteOnExit();
+            }
         }
     }
 
-    private String createWar() throws IOException {
+    private File createWar() throws IOException {
         File file = new File(System.getProperty("java.io.tmpdir") + "/tomee-" + Math.random());
-        file.mkdirs();
+        if (!file.mkdirs() && !file.exists()) {
+            throw new RuntimeException("can't create " + file.getAbsolutePath());
+        }
+
         write("ok=true", new File(file, "index.html"));
-        write("<beans />", new File(file, "META-INF/beans.xml"));
-        return file.getAbsolutePath();
+        write("<beans />", new File(file, "WEB-INF/classes/META-INF/beans.xml"));
+        return file;
     }
 
     private static void write(String content, File file) throws IOException {
-        file.getParentFile().mkdirs();
+        if (!file.getParentFile().mkdirs() && !file.getParentFile().exists()) {
+            throw new RuntimeException("can't create " + file.getParent());
+        }
+
         FileWriter index = new FileWriter(file);
         index.write(content);
         index.close();
