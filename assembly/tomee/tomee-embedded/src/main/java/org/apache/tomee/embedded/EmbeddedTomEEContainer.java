@@ -2,6 +2,7 @@ package org.apache.tomee.embedded;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.util.Exceptions;
+import org.apache.openejb.util.NetworkUtil;
 
 import javax.ejb.EJBException;
 import javax.ejb.embeddable.EJBContainer;
@@ -59,7 +60,20 @@ public class EmbeddedTomEEContainer extends EJBContainer {
             tomEEContainer = new EmbeddedTomEEContainer(appId);
             Configuration configuration = new Configuration();
             if (properties.containsKey(TOMEE_EJBCONTAINER_HTTP_PORT)) {
-                configuration.setHttpPort((Integer) properties.get(TOMEE_EJBCONTAINER_HTTP_PORT));
+                int port;
+                Object portValue = properties.get(TOMEE_EJBCONTAINER_HTTP_PORT);
+                if (portValue instanceof Integer) {
+                    port = (Integer) portValue;
+                } else if (portValue instanceof String) {
+                    port = Integer.parseInt((String) portValue);
+                } else {
+                    throw new RuntimeException("port value should be an integer or a string");
+                }
+                if (port <= 0) {
+                    port = NetworkUtil.getNextAvailablePort();
+                    System.setProperty(TOMEE_EJBCONTAINER_HTTP_PORT, Integer.toString(port));
+                }
+                configuration.setHttpPort(port);
             }
             tomEEContainer.container.setup(configuration);
             try {

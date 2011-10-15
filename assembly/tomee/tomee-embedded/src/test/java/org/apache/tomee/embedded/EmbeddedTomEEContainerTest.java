@@ -31,11 +31,12 @@ public class EmbeddedTomEEContainerTest {
         p.setProperty(EJBContainer.APP_NAME, "test");
         p.setProperty(EJBContainer.PROVIDER, EmbeddedTomEEContainer.class.getName());
         p.setProperty(EJBContainer.MODULES, war.getAbsolutePath());
+        p.setProperty(EmbeddedTomEEContainer.TOMEE_EJBCONTAINER_HTTP_PORT, "-1");
         try {
             EJBContainer container = EJBContainer.createEJBContainer(p);
             assertNotNull(container);
             assertNotNull(container.getContext());
-            URL url = new URL("http://127.0.0.1:8080/" + war.getName() + "/index.html");
+            URL url = new URL("http://127.0.0.1:" + System.getProperty(EmbeddedTomEEContainer.TOMEE_EJBCONTAINER_HTTP_PORT) + "/" + war.getName() + "/index.html");
             assertEquals("true", IOUtils.readProperties(url).getProperty("ok"));
             container.close();
         } finally {
