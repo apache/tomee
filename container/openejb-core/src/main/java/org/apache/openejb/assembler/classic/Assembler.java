@@ -71,6 +71,7 @@ import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.AsmParameterNameLoader;
+import org.apache.openejb.util.ContextUtil;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
@@ -822,6 +823,21 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 globalEjbResolver.addAll(appInfo.ejbJars);
             }
 
+            // bind all global values on global context
+            for (Map.Entry<String, Object> value : appContext.getBindings().entrySet()) {
+                String path = value.getKey();
+                if (path.startsWith("global")) {
+                    path = "java:" + path;
+                }
+                if (!path.startsWith("java:global")) {
+                    continue;
+                }
+
+                ContextUtil.mkdirs(containerSystemContext, path);
+                containerSystemContext.rebind(path, value);
+            }
+
+
             logger.info("createApplication.success", appInfo.path);
 
             deployedApplications.put(appInfo.path, appInfo);
@@ -1017,6 +1033,27 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         fireBeforeApplicationDestroyed(appInfo);
 
         final AppContext appContext = containerSystem.getAppContext(appInfo.appId);
+
+        for (Map.Entry<String, Object> value : appContext.getBindings().entrySet()) {
+            String path = value.getKey();
+            if (path.startsWith("global")) {
+                path = "java:" + path;
+            }
+            if (!path.startsWith("java:global")) {
+                continue;
+            }
+
+            try {
+                containerSystem.getJNDIContext().unbind(path);
+            } catch (NamingException ignored) {
+                // no-op
+            }
+        }
+        try {
+            containerSystem.getJNDIContext().unbind("java:global");
+        } catch (NamingException ignored) {
+            // no-op
+        }
 
         EjbResolver globalResolver = new EjbResolver(null, EjbResolver.Scope.GLOBAL);
         for (AppInfo info : deployedApplications.values()) {
