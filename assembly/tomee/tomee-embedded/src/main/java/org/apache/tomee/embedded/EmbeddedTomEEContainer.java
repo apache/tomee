@@ -40,7 +40,7 @@ public class EmbeddedTomEEContainer extends EJBContainer {
     }
 
     @Override public Context getContext() {
-        return tomEEContainer.container.getAppContexts(appId).getGlobalJndiContext();
+        return tomEEContainer.container.getJndiContext();
     }
 
     public static class EmbeddedTomEEContainerProvider implements EJBContainerProvider {
@@ -83,6 +83,14 @@ public class EmbeddedTomEEContainer extends EJBContainer {
                     tomEEContainer.container.deploy(appId, ((File) modules));
                 } else if (modules instanceof String) {
                     tomEEContainer.container.deploy(appId, new File((String) modules));
+                } else if (modules instanceof String[]) {
+                    for (String path : (String[]) modules) {
+                        tomEEContainer.container.deploy(appId, new File(path));
+                    }
+                } else if (modules instanceof File[]) {
+                    for (File file : (File[]) modules) {
+                        tomEEContainer.container.deploy(appId, file);
+                    }
                 } else {
                     try {
                         tomEEContainer.close();
