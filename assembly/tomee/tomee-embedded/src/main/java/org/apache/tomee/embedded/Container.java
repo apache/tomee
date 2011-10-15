@@ -220,6 +220,10 @@ public class Container {
         appContexts.remove(name);
     }
 
+    public Context getJndiContext() {
+        return assembler.getContainerSystem().getJNDIContext();
+    }
+
     public AppContext getAppContexts(String moduleId) {
         return appContexts.get(moduleId);
     }

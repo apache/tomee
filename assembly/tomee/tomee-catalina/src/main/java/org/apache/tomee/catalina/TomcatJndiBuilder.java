@@ -65,6 +65,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.persistence.JtaEntityManager;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.util.ContextUtil;
 import org.apache.tomee.common.EjbFactory;
 import org.apache.tomee.common.EnumFactory;
 import org.apache.tomee.common.LookupFactory;
@@ -184,7 +185,7 @@ public class TomcatJndiBuilder {
                 try {
                     final String key = entry.getKey();
                     Object value = normalize(entry.getValue());
-                    mkdirs(root, key);
+                    ContextUtil.mkdirs(root, key);
                     root.rebind(key, value);
                 } catch (NamingException e) {
                     e.printStackTrace();
@@ -224,25 +225,6 @@ public class TomcatJndiBuilder {
         }
 
         return value;
-    }
-
-    private static void mkdirs(Context context, String key) {
-        final String[] parts = key.split("/");
-
-        int i = 0;
-        for (String part : parts) {
-            if (++i == parts.length) return;
-
-            try {
-                context = context.createSubcontext(part);
-            } catch (NamingException e) {
-                try {
-                    context = (Context) context.lookup(part);
-                } catch (NamingException e1) {
-                    return;
-                }
-            }
-        }
     }
 
     public void mergeRef(NamingResources naming, EnvEntryInfo ref) {
