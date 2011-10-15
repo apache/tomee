@@ -16,6 +16,7 @@ import java.util.Map;
  * @author rmannibucau
  */
 public class EmbeddedTomEEContainer extends EJBContainer {
+    public static final String TOMEE_EJBCONTAINER_HTTP_PORT = "tomee.ejbcontainer.http.port";
     private static EmbeddedTomEEContainer tomEEContainer;
 
     private Container container = new Container();
@@ -56,6 +57,11 @@ public class EmbeddedTomEEContainer extends EJBContainer {
             final Object modules = properties.get(EJBContainer.MODULES);
 
             tomEEContainer = new EmbeddedTomEEContainer(appId);
+            Configuration configuration = new Configuration();
+            if (properties.containsKey(TOMEE_EJBCONTAINER_HTTP_PORT)) {
+                configuration.setHttpPort((Integer) properties.get(TOMEE_EJBCONTAINER_HTTP_PORT));
+            }
+            tomEEContainer.container.setup(configuration);
             try {
                 tomEEContainer.container.start();
 
