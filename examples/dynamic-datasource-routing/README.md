@@ -5,7 +5,23 @@
 The openejb dynamic datasource api aims to allow to use multiple data sources as one from an application point of view.
 
 It can be useful for technical reasons (load balancing for example) or more generally
-functionnal reasons (filtering, aggregation, enriching...).
+functionnal reasons (filtering, aggregation, enriching...). However please note you can choose
+only one datasource by transaction. It means the goal of this feature is not to switch more than
+once of datasource in a transaction. The following code will not work:
+
+    @Stateless
+    public class MyEJB {
+        @Resource private MyRouter router;
+        @PersistenceContext private EntityManager em;
+
+        public void workWithDataSources() {
+            router.setDataSource("ds1");
+            em.persist(new MyEntity());
+
+            router.setDataSource("ds2"); // same transaction -> this invocation doesn't work
+            em.persist(new MyEntity());
+        }
+    }
 
 In this example the implementation simply use a datasource from its name and needs to be set before using any JPA
 operation in the transaction (to keep the logic simple in the example).
