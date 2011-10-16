@@ -51,7 +51,7 @@ public class UserService {
         return dao.list(first, max);
     }
 
-    @Path("/show") @GET public User show(@PathParam("id") long id) {
+    @Path("/show/{id}") @GET public User show(@PathParam("id") long id) {
         return dao.find(id);
     }
 
