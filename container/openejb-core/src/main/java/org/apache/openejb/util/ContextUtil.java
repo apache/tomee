@@ -11,22 +11,26 @@ public class ContextUtil {
         // no-op
     }
 
-    public static void mkdirs(Context context, String key) {
+    public static Context mkdirs(Context context, String key) {
         final String[] parts = key.split("/");
 
         int i = 0;
+        Context lastContext = context;
         for (String part : parts) {
-            if (++i == parts.length) return;
+            if (++i == parts.length) {
+                return lastContext;
+            }
 
             try {
-                context = context.createSubcontext(part);
+                lastContext = lastContext.createSubcontext(part);
             } catch (NamingException e) {
                 try {
-                    context = (Context) context.lookup(part);
+                    lastContext = (Context) lastContext.lookup(part);
                 } catch (NamingException e1) {
-                    return;
+                    return lastContext;
                 }
             }
         }
+        return lastContext;
     }
 }

@@ -1,5 +1,6 @@
 package org.apache.tomee.embedded;
 
+import org.apache.geronimo.osgi.locator.ProviderLocator;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.util.Exceptions;
 import org.apache.openejb.util.NetworkUtil;
@@ -46,7 +47,15 @@ public class EmbeddedTomEEContainer extends EJBContainer {
     public static class EmbeddedTomEEContainerProvider implements EJBContainerProvider {
         @Override public EJBContainer createEJBContainer(Map<?, ?> properties) {
             Object provider = properties.get(EJBContainer.PROVIDER);
-            if (provider != null && !provider.equals(EmbeddedTomEEContainer.class) && !provider.equals(EmbeddedTomEEContainer.class.getName())) {
+            int ejbContainerProviders = 1;
+            try {
+                ejbContainerProviders = ProviderLocator.getServices(EJBContainerProvider.class.getName(), EJBContainer.class, Thread.currentThread().getContextClassLoader()).size();
+            } catch (Exception e) {
+                 // no-op
+            }
+
+            if ((provider == null && ejbContainerProviders > 1)
+                    || (!provider.equals(EmbeddedTomEEContainer.class) && !provider.equals(EmbeddedTomEEContainer.class.getName()))) {
                 return null;
             }
 
