@@ -12,6 +12,8 @@ import javax.naming.Context;
 import javax.validation.ValidationException;
 import java.io.File;
 import java.net.MalformedURLException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,6 +22,7 @@ import java.util.Map;
 public class EmbeddedTomEEContainer extends EJBContainer {
     public static final String TOMEE_EJBCONTAINER_HTTP_PORT = "tomee.ejbcontainer.http.port";
     private static EmbeddedTomEEContainer tomEEContainer;
+    private static final List<String> CONTAINER_NAMES = Arrays.asList(EmbeddedTomEEContainer.class.getName(), "tomee-embedded", "embedded-tomee");
 
     private Container container = new Container();
     private String appId;
@@ -55,7 +58,8 @@ public class EmbeddedTomEEContainer extends EJBContainer {
             }
 
             if ((provider == null && ejbContainerProviders > 1)
-                    || (!provider.equals(EmbeddedTomEEContainer.class) && !provider.equals(EmbeddedTomEEContainer.class.getName()))) {
+                    || (!provider.equals(EmbeddedTomEEContainer.class)
+                            && !CONTAINER_NAMES.contains(provider))) {
                 return null;
             }
 
