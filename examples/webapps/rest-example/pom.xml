@@ -26,6 +26,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <openejb.version>4.0.0-beta-2-SNAPSHOT</openejb.version>
+    <tomee.version>1.0.0-beta-2-SNAPSHOT</tomee.version>
   </properties>
   <repositories>
     <repository>
@@ -129,6 +130,18 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>tomee-embedded</artifactId>
+      <version>${tomee.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.0.1</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

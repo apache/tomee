@@ -826,15 +826,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             // bind all global values on global context
             for (Map.Entry<String, Object> value : appContext.getBindings().entrySet()) {
                 String path = value.getKey();
-                if (path.startsWith("global")) {
-                    path = "java:" + path;
-                }
-                if (!path.startsWith("java:global")) {
+                if (!path.startsWith("global")) {
                     continue;
                 }
 
-                ContextUtil.mkdirs(containerSystemContext, path);
-                containerSystemContext.rebind(path, value);
+                // a bit weird but just to be consistent if user doesn't lookup directly the resource
+                Context lastContext = ContextUtil.mkdirs(containerSystemContext, path);
+                lastContext.bind(path.substring(path.lastIndexOf("/") + 1, path.length()), value.getValue());
+                containerSystemContext.rebind(path, value.getValue());
             }
 
 
@@ -868,7 +867,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             services.put(ContextsService.class, new CdiAppContextsService(true));
             services.put(ResourceInjectionService.class, new CdiResourceInjectionService());
             services.put(ScannerService.class, new CdiScanner());
-            services.put(ELAdaptor.class, (ELAdaptor) new CustomELAdapter(appContext));
+            services.put(ELAdaptor.class, new CustomELAdapter(appContext));
             final Properties properties = new Properties();
             properties.setProperty(org.apache.webbeans.spi.SecurityService.class.getName(), ManagedSecurityService.class.getName());
             webBeansContext = new WebBeansContext(services, properties);
