@@ -510,16 +510,12 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             JspFactory factory = JspFactory.getDefaultFactory();
             if (factory != null) {
                 JspApplicationContext applicationCtx = factory.getJspApplicationContext(standardContext.getServletContext());
-                try {
-	                WebBeansContext context = appContext.getWebBeansContext();
-	                if (context != null && context.getBeanManagerImpl().isInUse()) {
-	                    // Registering ELResolver with JSP container
-	                    ELAdaptor elAdaptor = context.getService(ELAdaptor.class);
-	                    ELResolver resolver = elAdaptor.getOwbELResolver();
-	                    applicationCtx.addELResolver(resolver);
-	                }
-                } catch (Exception e) {
-                	logger.error("Error registering EL resolver for " + standardContext.getPath() + ": Exception: " + e.getMessage(), e);
+                WebBeansContext context = appContext.getWebBeansContext();
+                if (context != null && context.getBeanManagerImpl().isInUse()) {
+                    // Registering ELResolver with JSP container
+                    ELAdaptor elAdaptor = context.getService(ELAdaptor.class);
+                    ELResolver resolver = elAdaptor.getOwbELResolver();
+                    applicationCtx.addELResolver(resolver);
                 }
             }
         }
