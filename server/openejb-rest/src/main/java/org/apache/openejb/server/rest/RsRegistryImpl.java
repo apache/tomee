@@ -19,19 +19,31 @@ package org.apache.openejb.server.rest;
 
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.httpd.OpenEJBHttpRegistry;
+import org.apache.openejb.server.httpd.util.HttpUtil;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Romain Manni-Bucau
  */
 public class RsRegistryImpl extends OpenEJBHttpRegistry implements RsRegistry {
-    @Override public List<String> createRsHttpListener(HttpListener listener, ClassLoader classLoader, String path, String virtualHost) {
+    private Map<String, String> addresses = new HashMap<String, String>();
+
+    @Override public String createRsHttpListener(HttpListener listener, ClassLoader classLoader, String path, String virtualHost) {
+        String address = HttpUtil.selectSingleAddress(getResolvedAddresses(path));
         addWrappedHttpListener(listener, classLoader, path);
-        return getResolvedAddresses(path);
+        addresses.put(address, path);
+        return address;
     }
 
     @Override public HttpListener removeListener(String context) {
-        return registry.removeHttpListener(context);
+        String regex = addresses.get(context);
+        if (regex != null) {
+            HttpListener listener = registry.removeHttpListener(regex);
+            if (listener instanceof ClassLoaderHttpListener)
+            return ((ClassLoaderHttpListener) listener).getDelegate();
+        }
+        return null;
     }
 }

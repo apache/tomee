@@ -17,6 +17,30 @@
 
 package org.apache.openejb.server.rest;
 
+import org.apache.openejb.BeanContext;
+import org.apache.openejb.Injection;
+import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.DeploymentListener;
+import org.apache.openejb.assembler.classic.EjbJarInfo;
+import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
+import org.apache.openejb.assembler.classic.WebAppInfo;
+import org.apache.openejb.core.CoreContainerSystem;
+import org.apache.openejb.core.WebContext;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.server.SelfManaging;
+import org.apache.openejb.server.ServerService;
+import org.apache.openejb.server.ServiceException;
+import org.apache.openejb.server.httpd.HttpListener;
+import org.apache.openejb.server.httpd.HttpListenerRegistry;
+import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+
+import javax.naming.Context;
+import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.core.Application;
+import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -32,29 +56,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import javax.naming.Context;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.UriBuilder;
-import org.apache.openejb.BeanContext;
-import org.apache.openejb.Injection;
-import org.apache.openejb.assembler.classic.AppInfo;
-import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.DeploymentListener;
-import org.apache.openejb.assembler.classic.EjbJarInfo;
-import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
-import org.apache.openejb.assembler.classic.WebAppInfo;
-import org.apache.openejb.core.CoreContainerSystem;
-import org.apache.openejb.core.WebContext;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.server.SelfManaging;
-import org.apache.openejb.server.ServerService;
-import org.apache.openejb.server.ServiceException;
-import org.apache.openejb.server.httpd.HttpListenerRegistry;
-import org.apache.openejb.server.httpd.util.HttpUtil;
-import org.apache.openejb.spi.ContainerSystem;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
 
 /**
  * @author Romain Manni-Bucau
@@ -226,8 +227,7 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
     private void deploySingleton(String contextRoot, Object o, Application appInstance, ClassLoader classLoader) {
         final String nopath = getAddress(contextRoot, o.getClass()) + "/.*";
         final RsHttpListener listener = createHttpListener();
-        final List<String> addresses = rsRegistry.createRsHttpListener(listener, classLoader, nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost);
-        final String address = HttpUtil.selectSingleAddress(addresses);
+        final String address = rsRegistry.createRsHttpListener(listener, classLoader, nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost);
 
         services.add(address);
         listener.deploySingleton(getFullContext(address, contextRoot), o, appInstance);
@@ -236,8 +236,7 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
     private void deployPojo(String contextRoot, Class<?> loadedClazz, Application app, ClassLoader classLoader, Collection<Injection> injections, Context context) {
         final String nopath = getAddress(contextRoot, loadedClazz) + "/.*";
         final RsHttpListener listener = createHttpListener();
-        final List<String> addresses = rsRegistry.createRsHttpListener(listener, classLoader, nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost);
-        final String address = HttpUtil.selectSingleAddress(addresses);
+        final String address = rsRegistry.createRsHttpListener(listener, classLoader, nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost);
 
         services.add(address);
         listener.deployPojo(getFullContext(address, contextRoot), loadedClazz, app, injections, context);
@@ -246,8 +245,7 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
     private void deployEJB(String context, BeanContext beanContext) {
         final String nopath = getAddress(context, beanContext.getBeanClass()) + "/.*";
         final RsHttpListener listener = createHttpListener();
-        final List<String> addresses = rsRegistry.createRsHttpListener(listener, beanContext.getClassLoader(), nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost);
-        final String address = HttpUtil.selectSingleAddress(addresses);
+        final String address = rsRegistry.createRsHttpListener(listener, beanContext.getClassLoader(), nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost);
 
         services.add(address);
         listener.deployEJB(getFullContext(address, context), beanContext);
@@ -288,7 +286,10 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
     }
 
     private void undeployRestObject(String context) {
-        RsHttpListener.class.cast(rsRegistry.removeListener(context)).undeploy();
+        HttpListener listener = rsRegistry.removeListener(context);
+        if (listener != null) {
+            RsHttpListener.class.cast(listener).undeploy();
+        }
     }
 
     private static ClassLoader getClassLoader(ClassLoader classLoader) {
@@ -338,6 +339,10 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
     }
 
     @Override public void stop() throws ServiceException {
+        for (String address : services) {
+            undeployRestObject(address);
+        }
+
         if (assembler != null) {
             assembler.removeDeploymentListener(this);
             for (AppInfo appInfo : new ArrayList<AppInfo>(deployedApplications)) {

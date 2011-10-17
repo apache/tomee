@@ -59,8 +59,8 @@
       <artifactId>log4j</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-bundle</artifactId>
+      <groupId>org.apache.openejb.patch</groupId>
+      <artifactId>openejb-cxf-bundle</artifactId>
       <exclusions>
         <exclusion>
           <groupId>antlr</groupId>

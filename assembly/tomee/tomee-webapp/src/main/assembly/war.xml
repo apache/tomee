@@ -84,6 +84,7 @@
         <!--<exclude>org.apache.openejb:openejb-rest</exclude>-->
         <!--<exclude>org.apache.openejb:openejb-cxf-transport</exclude>-->
         <!--<exclude>org.apache.cxf:cxf-bundle</exclude>-->
+        <!--<exclude>org.apache.openejb.patch:openejb-cxf-bundle</exclude>-->
         <!--<exclude>org.apache.ws.xmlschema:xmlschema-core</exclude>-->
         <!--<exclude>org.apache.openejb:openejb-cxf</exclude>-->
         <!--<exclude>org.apache.ws.security:wss4j</exclude>-->
