@@ -28,6 +28,7 @@ import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardServer;
 import org.apache.openejb.server.httpd.HttpListener;
+import org.apache.openejb.server.httpd.util.HttpUtil;
 import org.apache.openejb.server.rest.RsRegistry;
 import org.apache.openejb.server.rest.RsServlet;
 import org.apache.tomee.loader.TomcatHelper;
@@ -63,7 +64,7 @@ public class TomcatRsRegistry implements RsRegistry {
     }
 
     @Override
-    public List<String> createRsHttpListener(HttpListener listener, ClassLoader classLoader, String completePath, String virtualHost) {
+    public String createRsHttpListener(HttpListener listener, ClassLoader classLoader, String completePath, String virtualHost) {
         String path = completePath;
         if (path == null) {
             throw new NullPointerException("contextRoot is null");
@@ -115,9 +116,6 @@ public class TomcatRsRegistry implements RsRegistry {
         wrapper.addInitParameter(HttpListener.class.getName(), listenerId);
         context.getServletContext().setAttribute(listenerId, listener);
 
-        contexts.put(path, context);
-        listeners.put(path, listener);
-
         // register wsdl locations for service-ref resolution
         List<String> addresses = new ArrayList<String>();
         for (Connector connector : connectors) {
@@ -130,7 +128,12 @@ public class TomcatRsRegistry implements RsRegistry {
             }
             addresses.add(address.toString());
         }
-        return addresses;
+
+        path = HttpUtil.selectSingleAddress(addresses);
+        contexts.put(path, context);
+        listeners.put(path, listener);
+
+        return path;
     }
 
     @Override
@@ -141,9 +144,11 @@ public class TomcatRsRegistry implements RsRegistry {
         }
 
         // assure context root with a leading slash
-        if (!path.startsWith("/")) path = "/" + path;
+        if (!path.startsWith("/") && !path.startsWith("http://") && !path.startsWith("https://")) {
+            path = "/" + path;
+        }
 
-        if (TomcatHelper.isTomcat7() && TomcatHelper.isStopping()) {
+        if (TomcatHelper.isTomcat7() && TomcatHelper.isStopping() && listeners.containsKey(path)) {
             return listeners.get(path);
         }
 

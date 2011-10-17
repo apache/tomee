@@ -41,19 +41,19 @@ import static junit.framework.Assert.assertNotNull;
  * @author Romain Manni-Bucau
  */
 public class EjbDeploymentTest {
-    private static Context context;
+    private static EJBContainer container;
     private static RESTIsCool service;
 
     @BeforeClass public static void start() throws Exception {
         Properties properties = new Properties();
         properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
-        context = EJBContainer.createEJBContainer(properties).getContext();
-        service = (RESTIsCool) context.lookup("java:/global/openejb-cxf-rs/RESTIsCool");
+        container = EJBContainer.createEJBContainer(properties);
+        service = (RESTIsCool) container.getContext().lookup("java:/global/openejb-cxf-rs/RESTIsCool");
     }
 
     @AfterClass public static void close() throws Exception {
-        if (context != null) {
-            context.close();
+        if (container != null) {
+            container.close();
         }
     }
 

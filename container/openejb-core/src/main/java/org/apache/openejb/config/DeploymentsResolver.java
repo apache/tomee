@@ -325,6 +325,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
         urlSet = urlSet.exclude(".*/com\\.ibm\\.ws\\.[^/]*.jar(!/)?");
         urlSet = urlSet.exclude(".*/commons-(logging|logging-api|cli|pool|lang|collections|dbcp|dbcp-all)(-[\\d.r-]+)?.jar(!/)?");
         urlSet = urlSet.exclude(".*/cxf-bundle(-[\\d.]+)?(incubator)?.jar(!/)?");
+        urlSet = urlSet.exclude(".*/openejb-cxf-bundle(-[\\d.]+)?(incubator)?.jar(!/)?");
         urlSet = urlSet.exclude(".*/derby(-[\\d.]+)?.jar(!/)?");
         urlSet = urlSet.exclude(".*/ejb31-api-experimental(-[\\d.]+)?.jar(!/)?");
         urlSet = urlSet.exclude(".*/geronimo-(connector|transaction)(-[\\d.]+)?.jar(!/)?");

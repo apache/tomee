@@ -80,7 +80,7 @@ public class OpenEJBHttpRegistry {
         return  addresses;
     }
 
-    private static class ClassLoaderHttpListener implements HttpListener {
+    protected static class ClassLoaderHttpListener implements HttpListener {
         private final HttpListener delegate;
         private final ClassLoader classLoader;
 
@@ -97,6 +97,10 @@ public class OpenEJBHttpRegistry {
             } finally {
                 Thread.currentThread().setContextClassLoader(oldCl);
             }
+        }
+
+        public HttpListener getDelegate() {
+            return delegate;
         }
     }
 }
