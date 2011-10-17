@@ -196,6 +196,10 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             //Initialize contexts
             this.contextsService.init(startupObject);
 
+            //Configure Default Beans
+            // need to be done before fireBeforeBeanDiscoveryEvent
+            deployer.configureDefaultBeans();
+
             //Fire Event
             deployer.fireBeforeBeanDiscoveryEvent();
 
@@ -217,9 +221,6 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
 
             //Checking stereotype conditions
             deployer.checkStereoTypes(scannerService);
-
-            //Configure Default Beans
-            deployer.configureDefaultBeans();
 
             //Discover classpath classes
             deployManagedBeans(scannerService.getBeanClasses(), stuff.getBeanContexts());
