@@ -27,7 +27,6 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.OpenWebBeansConfiguration;
 import org.apache.webbeans.config.WebBeansContext;
-import org.apache.webbeans.el.el22.EL22Adaptor;
 import org.apache.webbeans.spi.ContainerLifecycle;
 import org.apache.webbeans.spi.ContextsService;
 import org.apache.webbeans.spi.ConversationService;
@@ -79,7 +78,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
 
         services.put(AppContext.class, appContext);
         services.put(TransactionService.class, new OpenEJBTransactionService());
-        services.put(ELAdaptor.class,(ELAdaptor) new CustomELAdapter(appContext));
+        services.put(ELAdaptor.class,new CustomELAdapter(appContext));
         services.put(ContextsService.class, new CdiAppContextsService(true));
         services.put(ResourceInjectionService.class, new CdiResourceInjectionService());
         services.put(ScannerService.class, new CdiScanner());
