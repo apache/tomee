@@ -39,6 +39,7 @@ import org.apache.openejb.util.Logger;
 
 import javax.naming.Context;
 import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.Path;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
@@ -276,8 +277,17 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
         if (context != null) {
             root += context;
         }
+
+        Class<?> usedClass = clazz;
+        while (usedClass.getAnnotation(Path.class) == null && usedClass.getSuperclass() != null) {
+            usedClass = usedClass.getSuperclass();
+        }
+        if (usedClass == null) {
+            throw new IllegalArgumentException("no @Path annotation on " + clazz.getName());
+        }
+
         try {
-            return UriBuilder.fromUri(new URI(root)).path(clazz).build().toURL().toString();
+            return UriBuilder.fromUri(new URI(root)).path(usedClass).build().toURL().toString();
         } catch (MalformedURLException e) {
             throw new OpenEJBRestRuntimeException("url is malformed", e);
         } catch (URISyntaxException e) {
