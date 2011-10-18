@@ -175,6 +175,7 @@ import javax.enterprise.inject.spi.Extension;
 import javax.interceptor.ExcludeClassInterceptors;
 import javax.interceptor.ExcludeDefaultInterceptors;
 import javax.interceptor.Interceptors;
+import javax.jms.Queue;
 import javax.jws.HandlerChain;
 import javax.jws.WebService;
 import javax.persistence.EntityManager;
@@ -2203,13 +2204,25 @@ public class AnnotationDeployer implements DynamicDeployer {
                     MessageDrivenBean mdb = (MessageDrivenBean) bean;
                     MessageDriven messageDriven = clazz.getAnnotation(MessageDriven.class);
                     if (messageDriven != null) {
-                        javax.ejb.ActivationConfigProperty[] configProperties = messageDriven.activationConfig();
-                        if (configProperties != null) {
-                            ActivationConfig activationConfig = mdb.getActivationConfig();
-                            if (activationConfig == null) {
-                                activationConfig = new ActivationConfig();
+                        ActivationConfig activationConfig = mdb.getActivationConfig();
+                        if (activationConfig == null) {
+                            activationConfig = new ActivationConfig();
+                        }
+
+                        if (!messageDriven.mappedName().isEmpty()) {
+                            if (mdb.getActivationConfig() == null) {
                                 mdb.setActivationConfig(activationConfig);
                             }
+                            activationConfig.addProperty("destinationType", Queue.class.getName());
+                            activationConfig.addProperty("destination", messageDriven.mappedName());
+                        }
+
+                        javax.ejb.ActivationConfigProperty[] configProperties = messageDriven.activationConfig();
+                        if (configProperties != null) {
+                            if (mdb.getActivationConfig() == null) {
+                                mdb.setActivationConfig(activationConfig);
+                            }
+
                             Properties properties = activationConfig.toProperties();
                             for (javax.ejb.ActivationConfigProperty property : configProperties) {
                                 if (!properties.containsKey(property.propertyName())) {
