@@ -226,17 +226,12 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 String host = webApp.host;
                 if (host == null) {
                     host = "localhost";
+                    logger.warning("using default host: " + host);
                 }
                 
                 // TODO: instead of storing deployers, we could just lookup the right hostconfig for the server.
                 final HostConfig deployer = deployers.get(host);
-                if (deployer != null) {
-                    // host isn't set until we call deployer.manageApp, so pass it
-                    ContextInfo contextInfo = addContextInfo(host, standardContext);
-                    contextInfo.appInfo = appInfo;
-                    contextInfo.deployer = deployer;
-                    deployer.manageApp(standardContext);
-                } else if (hosts.containsKey(host)){
+                if (hosts.containsKey(host)){
                     Host theHost = hosts.get(host);
 
                     ContextInfo contextInfo = addContextInfo(host, standardContext);
@@ -244,6 +239,13 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                     contextInfo.host = theHost;
 
                     theHost.addChild(standardContext);
+                } else if (deployer != null) {
+                    // host isn't set until we call deployer.manageApp, so pass it
+                    // ?? host is set through an event and it can be null here :(
+                    ContextInfo contextInfo = addContextInfo(host, standardContext);
+                    contextInfo.appInfo = appInfo;
+                    contextInfo.deployer = deployer;
+                    deployer.manageApp(standardContext);
                 }
             }
         }
