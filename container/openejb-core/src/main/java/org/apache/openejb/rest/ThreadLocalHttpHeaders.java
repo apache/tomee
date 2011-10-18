@@ -47,7 +47,7 @@ public class ThreadLocalHttpHeaders extends AbstractThreadLocalProxy<HttpHeaders
     }
 
     public MultivaluedMap<String, String> getRequestHeaders() {
-        return get().getRequestHeaders();
+        return new MultivaluedMapWithCaseInsensitiveKeySet<String>(get().getRequestHeaders());
     }
 
     public List<Locale> getAcceptableLanguages() {
