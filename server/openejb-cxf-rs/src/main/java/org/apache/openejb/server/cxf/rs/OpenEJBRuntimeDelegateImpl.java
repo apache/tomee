@@ -14,6 +14,8 @@ import java.util.Map;
  * see org.apache.geronimo.osgi.locator.ProviderLocator#locateServiceClassName(java.lang.String, java.lang.Class<?>, java.lang.ClassLoader)
  * which need to be overriden or we have to do something to be the first.
  *
+ * That's why openejb-cxf-bundle was created.
+ *
  * @author rmannibucau
  */
 public class OpenEJBRuntimeDelegateImpl extends RuntimeDelegateImpl {
@@ -22,18 +24,20 @@ public class OpenEJBRuntimeDelegateImpl extends RuntimeDelegateImpl {
     }
 
     private static class OpenEJBUriBuilderImpl extends UriBuilderImpl {
-        private static final String[][] PREFIX = new String[][]{ { "http:/", "http://"}, { "https:/", "https://" } };
+        private static final String[][] PREFIX = new String[][]{ { "http:/", "http://" }, { "https:/", "https://" } };
 
-        @Override public URI build(Object... values) throws IllegalArgumentException, UriBuilderException {
-            String uri = getFixedUri(super.build(values).toString());
-            try {
-                return new URI(uri);
-            } catch (URISyntaxException e) {
-                throw new UriBuilderException(e);
+        @Override public UriBuilder replacePath(String path) {
+            if (path == null) {
+                throw new IllegalArgumentException("path is null");
             }
+            return super.replacePath(path);
         }
 
-        private String getFixedUri(final String s) {
+        @Override public URI build(Object... values) throws IllegalArgumentException, UriBuilderException {
+            return getFixedUri(super.build(values).toString());
+        }
+
+        private URI getFixedUri(final String s) throws UriBuilderException {
             String uri = s;
             for (String[] prefix : PREFIX) {
                 if (uri.startsWith(prefix[0]) && !uri.startsWith(prefix[1])) {
@@ -41,34 +45,24 @@ public class OpenEJBRuntimeDelegateImpl extends RuntimeDelegateImpl {
                     break;
                 }
             }
-            return uri;
+
+            try {
+                return new URI(uri);
+            } catch (URISyntaxException e) {
+                throw new UriBuilderException(e);
+            }
         }
 
         @Override public URI buildFromEncoded(Object... values) throws IllegalArgumentException, UriBuilderException {
-            String uri = getFixedUri(super.buildFromEncoded(values).toString());
-            try {
-                return new URI(uri);
-            } catch (URISyntaxException e) {
-                throw new UriBuilderException(e);
-            }
+            return getFixedUri(super.buildFromEncoded(values).toString());
         }
 
         @Override public URI buildFromEncodedMap(Map<String, ?> map) throws IllegalArgumentException, UriBuilderException {
-            String uri = getFixedUri(super.buildFromEncodedMap(map).toString());
-            try {
-                return new URI(uri);
-            } catch (URISyntaxException e) {
-                throw new UriBuilderException(e);
-            }
+            return getFixedUri(super.buildFromEncodedMap(map).toString());
         }
 
         @Override public URI buildFromMap(Map<String, ?> map) throws IllegalArgumentException, UriBuilderException {
-            String uri = getFixedUri(super.buildFromMap(map).toString());
-            try {
-                return new URI(uri);
-            } catch (URISyntaxException e) {
-                throw new UriBuilderException(e);
-            }
+            return getFixedUri(super.buildFromMap(map).toString());
         }
     }
 }
