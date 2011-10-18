@@ -108,7 +108,6 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
             for (String clazz : webApp.restClass) {
                 if (restEjbs.containsKey(clazz)) {
                     deployEJB(webApp.contextRoot, restEjbs.get(clazz).context);
-                    LOGGER.info("REST EJB deployed: " + clazz);
                 } else {
                     try {
                         Class<?> loadedClazz = classLoader.loadClass(clazz);
@@ -116,7 +115,6 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
                     } catch (ClassNotFoundException e) {
                         throw new OpenEJBRestRuntimeException("can't find class " + clazz, e);
                     }
-                    LOGGER.info("REST service deployed: " + clazz);
                 }
             }
         } else {
@@ -153,19 +151,15 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
                     if (restEjbs.containsKey(o.getClass().getName())) {
                         // no more a singleton if the ejb i not a singleton...but it is a weird case
                         deployEJB(appPrefix, restEjbs.get(o.getClass().getName()).context);
-                        LOGGER.info("deployed REST EJB: " + o);
                     } else {
                         deploySingleton(appPrefix, o, appInstance, classLoader);
-                        LOGGER.info("deployed REST singleton: " + o);
                     }
                 }
                 for (Class<?> clazz : appInstance.getClasses()) {
                     if (restEjbs.containsKey(clazz.getName())) {
                         deployEJB(appPrefix, restEjbs.get(clazz.getName()).context);
-                        LOGGER.info("deployed REST EJB: " + clazz);
                     } else {
                         deployPojo(appPrefix, clazz, appInstance, classLoader, injections, context);
-                        LOGGER.info("deployed REST class: " + clazz);
                     }
                 }
 
@@ -232,15 +226,23 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
 
         services.add(address);
         listener.deploySingleton(getFullContext(address, contextRoot), o, appInstance);
+
+        LOGGER.info("deployed REST singleton: " + o);
     }
 
     private void deployPojo(String contextRoot, Class<?> loadedClazz, Application app, ClassLoader classLoader, Collection<Injection> injections, Context context) {
+        if (loadedClazz.isInterface()) {
+            return;
+        }
+
         final String nopath = getAddress(contextRoot, loadedClazz) + "/.*";
         final RsHttpListener listener = createHttpListener();
         final String address = rsRegistry.createRsHttpListener(listener, classLoader, nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost);
 
         services.add(address);
         listener.deployPojo(getFullContext(address, contextRoot), loadedClazz, app, injections, context);
+
+        LOGGER.info("deployed POJO class: " + loadedClazz.getName());
     }
 
     private void deployEJB(String context, BeanContext beanContext) {
@@ -250,6 +252,8 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
 
         services.add(address);
         listener.deployEJB(getFullContext(address, context), beanContext);
+
+        LOGGER.info("REST EJB deployed: " + beanContext.getBeanClass().getName());
     }
 
     /**

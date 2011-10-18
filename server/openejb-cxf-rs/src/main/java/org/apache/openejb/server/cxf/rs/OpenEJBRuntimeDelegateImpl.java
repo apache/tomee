@@ -25,12 +25,16 @@ public class OpenEJBRuntimeDelegateImpl extends RuntimeDelegateImpl {
 
     private static class OpenEJBUriBuilderImpl extends UriBuilderImpl {
         private static final String[][] PREFIX = new String[][]{ { "http:/", "http://" }, { "https:/", "https://" } };
+        private boolean init = false;
 
-        @Override public UriBuilder replacePath(String path) {
-            if (path == null) {
-                throw new IllegalArgumentException("path is null");
+        @Override public UriBuilder replacePath(String value) {
+            // UriBuilder.fromPath("foo").replacePath(null) is ok
+            // but not UriBuilder.fromPath(null)
+            if (value == null && !init) {
+                throw new IllegalArgumentException("value is null");
             }
-            return super.replacePath(path);
+            init = true;
+            return super.replacePath(value);
         }
 
         @Override public URI build(Object... values) throws IllegalArgumentException, UriBuilderException {
