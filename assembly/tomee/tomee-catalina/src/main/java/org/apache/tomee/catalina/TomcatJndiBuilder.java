@@ -26,12 +26,15 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.ejb.spi.HandleDelegate;
 import javax.naming.Context;
 import javax.naming.LinkRef;
 import javax.naming.NamingException;
 import javax.naming.RefAddr;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.UserTransaction;
 import org.apache.catalina.core.NamingContextListener;
 import org.apache.catalina.core.StandardContext;
@@ -59,6 +62,7 @@ import org.apache.openejb.assembler.classic.ServiceReferenceInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.assembler.classic.WsBuilder;
 import org.apache.openejb.core.WebContext;
+import org.apache.openejb.core.ivm.naming.SystemComponentReference;
 import org.apache.openejb.core.webservices.HandlerChainData;
 import org.apache.openejb.core.webservices.PortRefData;
 import org.apache.openejb.loader.SystemInstance;
@@ -73,10 +77,13 @@ import org.apache.tomee.common.NamingUtil;
 import org.apache.tomee.common.PersistenceContextFactory;
 import org.apache.tomee.common.PersistenceUnitFactory;
 import org.apache.tomee.common.ResourceFactory;
+import org.apache.tomee.common.SystemComponentFactory;
 import org.apache.tomee.common.UserTransactionFactory;
 import org.apache.tomee.common.WsFactory;
+import org.omg.CORBA.ORB;
 
 import static org.apache.tomee.common.EnumFactory.ENUM_VALUE;
+import static org.apache.tomee.common.NamingUtil.COMPONENT_TYPE;
 import static org.apache.tomee.common.NamingUtil.DEPLOYMENT_ID;
 import static org.apache.tomee.common.NamingUtil.EXTENDED;
 import static org.apache.tomee.common.NamingUtil.EXTERNAL;
@@ -191,6 +198,23 @@ public class TomcatJndiBuilder {
                     e.printStackTrace();
                 }
             }
+        }
+
+        // try to force some binding which probably failed earlier (see in TomcatWebappBuilder)
+        try {
+            Context comp = (Context) ContextBindings.getClassLoader().lookup("comp");
+            TransactionManager transactionManager = SystemInstance.get().getComponent(TransactionManager.class);
+            comp.rebind("TransactionManager", transactionManager);
+
+            // bind TransactionSynchronizationRegistry
+            TransactionSynchronizationRegistry synchronizationRegistry = SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class);
+            comp.rebind("TransactionSynchronizationRegistry", synchronizationRegistry);
+
+            comp.rebind("ORB", new SystemComponentReference(ORB.class));
+            comp.rebind("HandleDelegate", new SystemComponentReference(HandleDelegate.class));
+        } catch (Exception ignored) {
+            ignored.printStackTrace();
+            // no-op
         }
 
         ContextAccessController.setReadOnly(standardContext.getNamingContextListener().getName());
@@ -540,13 +564,24 @@ public class TomcatJndiBuilder {
             addEntry = true;
         }
 
+        resourceEnv.setType(ref.resourceEnvRefType);
         if (UserTransaction.class.getName().equals(ref.resourceEnvRefType)) {
             resourceEnv.setProperty(Constants.FACTORY, UserTransactionFactory.class.getName());
-            resourceEnv.setType(ref.resourceEnvRefType);
+        } else if (TransactionManager.class.getName().equals(ref.resourceEnvRefType)) {
+            resourceEnv.setProperty(Constants.FACTORY, SystemComponentFactory.class.getName());
+            resourceEnv.setProperty(COMPONENT_TYPE, TransactionManager.class.getName());
+        } else if (TransactionSynchronizationRegistry.class.getName().equals(ref.resourceEnvRefType)) {
+            resourceEnv.setProperty(Constants.FACTORY, SystemComponentFactory.class.getName());
+            resourceEnv.setProperty(COMPONENT_TYPE, TransactionSynchronizationRegistry.class.getName());
+        } else if (ORB.class.getName().equals(ref.resourceEnvRefType)) {
+            resourceEnv.setProperty(Constants.FACTORY, SystemComponentFactory.class.getName());
+            resourceEnv.setProperty(COMPONENT_TYPE, ORB.class.getName());
+        } else if (HandleDelegate.class.getName().equals(ref.resourceEnvRefType)) {
+            resourceEnv.setProperty(Constants.FACTORY, SystemComponentFactory.class.getName());
+            resourceEnv.setProperty(COMPONENT_TYPE, HandleDelegate.class.getName());
         } else {
             resourceEnv.setProperty(Constants.FACTORY, ResourceFactory.class.getName());
             resourceEnv.setProperty(NAME, ref.referenceName.replaceAll("^comp/env/", ""));
-            resourceEnv.setType(ref.resourceEnvRefType);
 
             if (ref.resourceID != null) {
                 resourceEnv.setProperty(RESOURCE_ID, ref.resourceID);
