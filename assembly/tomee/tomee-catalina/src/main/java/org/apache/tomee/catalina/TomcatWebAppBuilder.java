@@ -562,7 +562,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             openejbContext = (Context) openejbContext.lookup("openejb");
 
             Context root = (Context) ContextBindings.getClassLoader().lookup("");
-            Context comp = (Context) ContextBindings.getClassLoader().lookup("comp");
+            Context comp = (Context) ContextBindings.getClassLoader().lookup("comp"); // usually fails
 
             // Context root = ncl.getNamingContext();
             // Context comp = (Context) root.lookup("comp");
