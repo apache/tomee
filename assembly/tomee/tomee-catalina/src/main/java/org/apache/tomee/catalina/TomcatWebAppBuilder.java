@@ -59,14 +59,14 @@ import org.apache.openejb.core.ivm.naming.SystemComponentReference;
 import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.tomee.common.LegacyAnnotationProcessor;
-import org.apache.tomee.common.TomcatVersion;
-import org.apache.tomee.common.UserTransactionFactory;
-import org.apache.tomee.loader.TomcatHelper;
 import org.apache.openejb.util.LinkResolver;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.tomcat.InstanceManager;
+import org.apache.tomee.common.LegacyAnnotationProcessor;
+import org.apache.tomee.common.TomcatVersion;
+import org.apache.tomee.common.UserTransactionFactory;
+import org.apache.tomee.loader.TomcatHelper;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.spi.adaptor.ELAdaptor;
 import org.omg.CORBA.ORB;
@@ -231,16 +231,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 
                 // TODO: instead of storing deployers, we could just lookup the right hostconfig for the server.
                 final HostConfig deployer = deployers.get(host);
-                boolean isReady = false;
-                if (deployer != null) {
-                    // TODO: find something more sexy
-                    try {
-                        isReady = deployer.getClass().getDeclaredField("host").get(deployer) != null;
-                    } catch (Exception e) {
-                        // no-op
-                    }
-                }
-                if (deployer != null && isReady) { // if not ready using directly host to avoid a NPE
+                if (isReady(deployer)) { // if not ready using directly host to avoid a NPE
                     // host isn't set until we call deployer.manageApp, so pass it
                     // ?? host is set through an event and it can be null here :(
                     ContextInfo contextInfo = addContextInfo(host, standardContext);
@@ -258,6 +249,18 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 }
             }
         }
+    }
+
+    private static boolean isReady(HostConfig deployer) {
+        if (deployer != null) {
+            // TODO: find something more sexy
+            try {
+                return deployer.getClass().getDeclaredField("host").get(deployer) != null;
+            } catch (Exception e) {
+                // no-op
+            }
+        }
+        return false;
     }
 
     /**
@@ -451,6 +454,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                     appContext = a.createApplication(contextInfo.appInfo, classLoader);
                     // todo add watched resources to context
                 } catch (Exception e) {
+                    undeploy(standardContext, contextInfo);
                     logger.error("Unable to deploy collapsed ear in war " + standardContext.getPath() + ": Exception: " + e.getMessage(), e);
                 }
             }
@@ -529,6 +533,14 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                     applicationCtx.addELResolver(resolver);
                 }
             }
+        }
+    }
+
+    private static void undeploy(StandardContext standardContext, ContextInfo contextInfo) {
+        if (isReady(contextInfo.deployer)) {
+            contextInfo.deployer.unmanageApp(standardContext.getName());
+        } else if (contextInfo.host != null) {
+            contextInfo.host.removeChild(standardContext);
         }
     }
 
