@@ -30,7 +30,6 @@ import javax.naming.InitialContext;
 import org.apache.openejb.assembler.Deployer;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.client.RemoteInitialContextFactory;
-import org.apache.openejb.config.Deploy;
 import org.apache.openejb.config.RemoteServer;
 import org.apache.openejb.config.ValidationException;
 import org.apache.openejb.loader.Options;
@@ -47,6 +46,7 @@ public class ContainersImplTomEE implements Containers {
     private static final String tmpDir = System.getProperty("java.io.tmpdir");
     private Exception exception;
     private AppInfo appInfo;
+    private File currentFile = null;
 
     private Deployer lookup() {
         final Options options = new Options(System.getProperties());
@@ -76,14 +76,14 @@ public class ContainersImplTomEE implements Containers {
 
         System.out.println("Deploying " + archive + " with name " + name);
 
-        File fileName = getFile(name);
-        System.out.println(fileName);
-        writeToFile(fileName, archive);
+        currentFile = getFile(name);
+        System.out.println(currentFile);
+        writeToFile(currentFile, archive);
         try {
             if (deployer == null) {
                 deployer = lookup();
             }
-            appInfo = deployer.deploy(fileName.getAbsolutePath());
+            appInfo = deployer.deploy(currentFile.getAbsolutePath());
         } catch (Exception ex) {
             Exception e = ex;
             if (e.getCause() instanceof ValidationException) {
@@ -152,6 +152,12 @@ public class ContainersImplTomEE implements Containers {
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
+        }
+
+        if (currentFile != null && currentFile.exists()) {
+            if (!currentFile.delete()) {
+                currentFile.deleteOnExit();
+            }
         }
     }
     @Override
