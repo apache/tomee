@@ -16,31 +16,6 @@
  */
 package org.apache.openejb.core.stateless;
 
-import java.io.Flushable;
-import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
-import javax.ejb.ConcurrentAccessTimeoutException;
-import javax.ejb.EJBContext;
-import javax.ejb.SessionBean;
-import javax.ejb.SessionContext;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-import javax.naming.Context;
-import javax.naming.NamingException;
-
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBException;
@@ -65,8 +40,42 @@ import org.apache.openejb.util.SafeToolkit;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
+import javax.ejb.ConcurrentAccessTimeoutException;
+import javax.ejb.EJBContext;
+import javax.ejb.SessionBean;
+import javax.ejb.SessionContext;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import javax.naming.Context;
+import javax.naming.NamingException;
+import java.io.Flushable;
+import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 public class StatelessInstanceManager {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
+    private static final Method removeSessionBeanMethod;
+    static { // initialize it only once
+        Method foundRemoveMethod;
+        try {
+            foundRemoveMethod = SessionBean.class.getDeclaredMethod("ejbRemove");
+        } catch (NoSuchMethodException e) {
+            foundRemoveMethod = null;
+        }
+        removeSessionBeanMethod = foundRemoveMethod;
+    }
 
     protected Duration accessTimeout;
     protected Duration closeTimeout;
@@ -255,7 +264,7 @@ public class StatelessInstanceManager {
             callContext.setCurrentOperation(Operation.PRE_DESTROY);
             BeanContext beanContext = callContext.getBeanContext();
 
-            Method remove = instance.bean instanceof SessionBean? beanContext.getCreateMethod(): null;
+            Method remove = instance.bean instanceof SessionBean? removeSessionBeanMethod : null;
 
             List<InterceptorData> callbackInterceptors = beanContext.getCallbackInterceptors();
             InterceptorStack interceptorStack = new InterceptorStack(instance.bean, remove, Operation.PRE_DESTROY, callbackInterceptors, instance.interceptors);
