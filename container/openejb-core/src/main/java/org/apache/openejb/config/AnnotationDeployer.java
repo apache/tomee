@@ -831,6 +831,9 @@ public class AnnotationDeployer implements DynamicDeployer {
 			if (t == null || t.equals(Object.class)) {
 				t = type;
 			}
+            if (t == null) { // t == null && type == null
+                return null;
+            }
 
 			if (t.isPrimitive()) {
 				t = getWrapper(t.getName());
