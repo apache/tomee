@@ -84,6 +84,7 @@ import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -251,11 +252,19 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         }
     }
 
+    // TODO: find something more sexy
+    private static Field HOST_CONFIG_HOST = null;
+    static {
+        try { // do it only once
+            HOST_CONFIG_HOST = HostConfig.class.getDeclaredField("host");
+        } catch (NoSuchFieldException e) {
+            // no-op
+        }
+    }
     private static boolean isReady(HostConfig deployer) {
-        if (deployer != null) {
-            // TODO: find something more sexy
+        if (deployer != null && HOST_CONFIG_HOST != null) {
             try {
-                return deployer.getClass().getDeclaredField("host").get(deployer) != null;
+                return HOST_CONFIG_HOST.get(deployer) != null;
             } catch (Exception e) {
                 // no-op
             }
