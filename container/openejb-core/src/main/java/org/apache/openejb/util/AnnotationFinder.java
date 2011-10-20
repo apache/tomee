@@ -16,28 +16,29 @@
  */
 package org.apache.openejb.util;
 
+import org.apache.xbean.asm.AnnotationVisitor;
+import org.apache.xbean.asm.Attribute;
 import org.apache.xbean.asm.ClassReader;
 import org.apache.xbean.asm.ClassVisitor;
-import org.apache.xbean.asm.Attribute;
 import org.apache.xbean.asm.FieldVisitor;
 import org.apache.xbean.asm.MethodVisitor;
-import org.apache.xbean.asm.AnnotationVisitor;
 import org.apache.xbean.finder.UrlSet;
 
-import java.util.List;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.JarURLConnection;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.jar.JarInputStream;
+import java.util.Enumeration;
+import java.util.List;
 import java.util.jar.JarEntry;
-import java.net.URL;
-import java.net.JarURLConnection;
-import java.net.URLDecoder;
-import java.io.IOException;
-import java.io.File;
-import java.io.InputStream;
-import java.io.BufferedInputStream;
+import java.util.jar.JarFile;
+import java.util.jar.JarInputStream;
 
 /**
  * ClassFinder searches the classpath of the specified classloader for
@@ -211,13 +212,30 @@ public class AnnotationFinder {
             jarPath = jarPath.substring(0, jarPath.indexOf("!"));
         }
         URL url = new URL(jarPath);
-        InputStream in = url.openStream();
-        try {
-            JarInputStream jarStream = new JarInputStream(in);
-            return jar(jarStream);
-        } finally {
-            in.close();
+        if ("file".equals(url.getProtocol())) { // ZipFile is faster than ZipInputStream
+            JarFile jarFile = new JarFile(url.getFile().replace("%20", " "));
+            return jar(jarFile);
+        } else {
+            InputStream in = url.openStream();
+            try {
+                JarInputStream jarStream = new JarInputStream(in);
+                return jar(jarStream);
+            } finally {
+                in.close();
+            }
         }
+    }
+
+    private List<String> jar(JarFile jarFile) {
+        List<String> classNames = new ArrayList<String>();
+
+        Enumeration<? extends JarEntry> jarEntries =jarFile.entries();
+        while (jarEntries.hasMoreElements()) {
+            JarEntry entry = jarEntries.nextElement();
+            addClassName(classNames, entry);
+        }
+
+        return classNames;
     }
 
     private List<String> jar(JarInputStream jarStream) throws IOException {
@@ -225,17 +243,23 @@ public class AnnotationFinder {
 
         JarEntry entry;
         while ((entry = jarStream.getNextJarEntry()) != null) {
-            if (entry.isDirectory() || !entry.getName().endsWith(".class")) {
-                continue;
-            }
-            String className = entry.getName();
-            className = className.replaceFirst(".class$", "");
-            if (className.contains(".")) continue;
-            className = className.replace('/', '.');
-            classNames.add(className);
+            addClassName(classNames, entry);
         }
 
         return classNames;
+    }
+
+    private void addClassName(List<String> classNames, JarEntry entry) {
+        if (entry.isDirectory() || !entry.getName().endsWith(".class")) {
+            return;
+        }
+        String className = entry.getName();
+        className = className.replaceFirst(".class$", "");
+        if (className.contains(".")) {
+            return;
+        }
+        className = className.replace(File.separatorChar, '.');
+        classNames.add(className);
     }
 
     private void readClassDef(String className, ClassVisitor visitor) {
