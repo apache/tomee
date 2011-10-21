@@ -180,6 +180,8 @@ public class TomcatJndiBuilder {
             // no-op
         }
 
+        // TODO: uniformize webapp moduleId?
+        // classical deployment - needed because can be overriden through META-INF/context.xml
         String path = standardContext.getHostname();
         if (standardContext.getPath().startsWith("/")) {
             path += standardContext.getPath();
@@ -187,7 +189,10 @@ public class TomcatJndiBuilder {
             path += "/" + standardContext.getPath();
         }
 
-        final WebContext webContext = cs.getWebContext(path);
+        WebContext webContext = cs.getWebContext(path);
+        if (webContext == null) { // tomee-embedded deployment
+            webContext = cs.getWebContext(standardContext.getPath().replaceFirst("/", ""));
+        }
 
         if (webContext != null && webContext.getBindings() != null) {
             for (Map.Entry<String, Object> entry : webContext.getBindings().entrySet()) {
