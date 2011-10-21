@@ -36,6 +36,7 @@ import org.apache.catalina.deploy.ContextTransaction;
 import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.startup.Constants;
 import org.apache.catalina.startup.ContextConfig;
+import org.apache.catalina.startup.ContextRuleSet;
 import org.apache.catalina.startup.HostConfig;
 import org.apache.naming.ContextAccessController;
 import org.apache.naming.ContextBindings;
@@ -213,8 +214,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     private static Digester createDigester() {
         Digester digester = new Digester();
         digester.setValidating(false);
-        digester.addObjectCreate("Context", "org.apache.catalina.core.StandardContext", "className");
-        digester.addSetProperties("Context");
+        digester.addRuleSet(new ContextRuleSet());
         return (digester);
     }
 
