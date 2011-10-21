@@ -38,6 +38,8 @@ import org.apache.catalina.startup.Constants;
 import org.apache.catalina.startup.ContextConfig;
 import org.apache.catalina.startup.ContextRuleSet;
 import org.apache.catalina.startup.HostConfig;
+import org.apache.catalina.startup.RealmRuleSet;
+import org.apache.catalina.startup.SetNextNamingRule;
 import org.apache.naming.ContextAccessController;
 import org.apache.naming.ContextBindings;
 import org.apache.openejb.AppContext;
@@ -211,11 +213,28 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         globalListenerSupport.stop();
     }
 
-    private static Digester createDigester() {
+    private static synchronized Digester createDigester() {
+        if (CONTEXT_DIGESTER != null) {
+            return CONTEXT_DIGESTER;
+        }
+
         Digester digester = new Digester();
         digester.setValidating(false);
-        digester.addRuleSet(new ContextRuleSet());
-        return (digester);
+        digester.addObjectCreate("Context", "org.apache.catalina.core.StandardContext", "className");
+        digester.addSetProperties("Context");
+        digester.addObjectCreate("Context/Loader", "org.apache.catalina.loader.WebappLoader", "className");
+        digester.addSetProperties("Context/Loader");
+        digester.addSetNext("Context/Loader", "setLoader", "org.apache.catalina.Loader");
+        digester.addObjectCreate("Context/Manager", "org.apache.catalina.session.StandardManager", "className");
+        digester.addSetProperties("Context/Manager");
+        digester.addSetNext("Context/Manager", "setManager", "org.apache.catalina.Manager");
+        digester.addObjectCreate("Context/Manager/Store", null, "className");
+        digester.addSetProperties("Context/Manager/Store");
+        digester.addSetNext("Context/Manager/Store", "setStore", "org.apache.catalina.Store");
+        digester.addRuleSet(new RealmRuleSet("Context/"));
+        digester.addCallMethod("Context/WatchedResource", "addWatchedResource", 0);
+
+        return digester;
     }
 
     //
@@ -234,6 +253,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 File cXml = new File(war, Constants.ApplicationContextXml);
                 if (cXml.exists()) {
                     contextXml = new FileInputStream(cXml);
+                    System.out.println("using context file " + cXml.getAbsolutePath());
                 }
             } else { // war
                 JarFile warAsJar = new JarFile(war);
@@ -245,11 +265,15 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
 
             StandardContext standardContext;
             if (contextXml != null) {
-                try {
-                    standardContext = (StandardContext) CONTEXT_DIGESTER.parse(contextXml);
-                } catch (Exception e) {
-                    logger.error("can't parse context xml for webapp " + webApp.path);
-                    standardContext = new StandardContext();
+                synchronized (CONTEXT_DIGESTER) {
+                    try {
+                        standardContext = (StandardContext) CONTEXT_DIGESTER.parse(contextXml);
+                    } catch (Exception e) {
+                        logger.error("can't parse context xml for webapp " + webApp.path, e);
+                        standardContext = new StandardContext();
+                    } finally {
+                        CONTEXT_DIGESTER.reset();
+                    }
                 }
             } else {
                 standardContext = new StandardContext();
