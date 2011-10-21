@@ -180,9 +180,11 @@ public class TomcatJndiBuilder {
             // no-op
         }
 
-        String path = standardContext.getEncodedPath();
-        if (path.startsWith("/")) {
-            path = path.substring(1);
+        String path = standardContext.getHostname();
+        if (standardContext.getPath().startsWith("/")) {
+            path += standardContext.getPath();
+        } else {
+            path += "/" + standardContext.getPath();
         }
 
         final WebContext webContext = cs.getWebContext(path);
@@ -212,6 +214,8 @@ public class TomcatJndiBuilder {
 
             comp.rebind("ORB", new SystemComponentReference(ORB.class));
             comp.rebind("HandleDelegate", new SystemComponentReference(HandleDelegate.class));
+
+            comp.rebind("BeanManager", webContext.getAppContext().getBeanManager());
         } catch (Exception ignored) {
             ignored.printStackTrace();
             // no-op
