@@ -34,6 +34,7 @@ import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.ContextTransaction;
 import org.apache.catalina.deploy.NamingResources;
+import org.apache.catalina.startup.Constants;
 import org.apache.catalina.startup.ContextConfig;
 import org.apache.catalina.startup.HostConfig;
 import org.apache.naming.ContextAccessController;
@@ -63,6 +64,7 @@ import org.apache.openejb.util.LinkResolver;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.tomcat.InstanceManager;
+import org.apache.tomcat.util.digester.Digester;
 import org.apache.tomee.common.LegacyAnnotationProcessor;
 import org.apache.tomee.common.TomcatVersion;
 import org.apache.tomee.common.UserTransactionFactory;
@@ -83,7 +85,9 @@ import javax.servlet.jsp.JspFactory;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -91,6 +95,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import static org.apache.tomee.catalina.BackportUtil.getNamingContextListener;
 
@@ -112,6 +118,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
      * Logger instance
      */
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("tomcat"), "org.apache.openejb.util.resources");
+
+    private static final Digester CONTEXT_DIGESTER = createDigester();
 
     /**
      * Context information for web applications
@@ -202,6 +210,14 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         globalListenerSupport.stop();
     }
 
+    private static Digester createDigester() {
+        Digester digester = new Digester();
+        digester.setValidating(false);
+        digester.addObjectCreate("Context", "org.apache.catalina.core.StandardContext", "className");
+        digester.addSetProperties("Context");
+        return (digester);
+    }
+
     //
     // OpenEJB WebAppBuilder
     //
@@ -211,15 +227,59 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     @Override
     public void deployWebApps(AppInfo appInfo, ClassLoader classLoader) throws Exception {
         for (WebAppInfo webApp : appInfo.webApps) {
-            if (getContextInfo(webApp) == null) {
-                StandardContext standardContext = new StandardContext();
-
-                if (webApp.contextRoot != null && webApp.contextRoot.startsWith("/")) {
-                    standardContext.setPath(webApp.contextRoot);
-                } else {
-                    standardContext.setPath("/" + webApp.contextRoot);
+            // look for context.xml
+            File war = new File(webApp.path);
+            InputStream contextXml = null;
+            if (war.isDirectory()) {
+                File cXml = new File(war, Constants.ApplicationContextXml);
+                if (cXml.exists()) {
+                    contextXml = new FileInputStream(cXml);
                 }
-                standardContext.setDocBase(webApp.path);
+            } else { // war
+                JarFile warAsJar = new JarFile(war);
+                JarEntry entry = warAsJar.getJarEntry(Constants.ApplicationContextXml);
+                if (entry != null) {
+                    contextXml = warAsJar.getInputStream(entry);
+                }
+            }
+
+            StandardContext standardContext;
+            if (contextXml != null) {
+                try {
+                    standardContext = (StandardContext) CONTEXT_DIGESTER.parse(contextXml);
+                } catch (Exception e) {
+                    logger.error("can't parse context xml for webapp " + webApp.path);
+                    standardContext = new StandardContext();
+                }
+            } else {
+                standardContext = new StandardContext();
+            }
+
+            if (standardContext.getPath() != null) {
+                webApp.contextRoot = standardContext.getPath().replaceFirst("/", "");
+            }
+            if (webApp.contextRoot.startsWith("/")) {
+                webApp.contextRoot.replaceFirst("/", "");
+            }
+            // /!\ take care, StandardContext default host = "_" and not null or localhost
+            if (standardContext.getHostname() != null && !"_".equals(standardContext.getHostname())) {
+                webApp.host = standardContext.getHostname();
+            }
+
+            if (getContextInfo(webApp.host, webApp.contextRoot) == null) {
+                if (standardContext.getPath() == null) {
+                    if (webApp.contextRoot != null && webApp.contextRoot.startsWith("/")) {
+                        standardContext.setPath(webApp.contextRoot);
+                    } else {
+                        standardContext.setPath("/" + webApp.contextRoot);
+                    }
+                }
+                if (standardContext.getDocBase() == null) {
+                    standardContext.setDocBase(webApp.path);
+                }
+                if (standardContext.getDocBase() != null && standardContext.getDocBase().endsWith(".war")) {
+                    standardContext.setDocBase(standardContext.getDocBase().substring(0, standardContext.getDocBase().length() - 4));
+                }
                 standardContext.setParentClassLoader(classLoader);
                 standardContext.setDelegate(true);
 
@@ -318,7 +378,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     @Override
     public void undeployWebApps(AppInfo appInfo) throws Exception {
         for (WebAppInfo webApp : appInfo.webApps) {
-            ContextInfo contextInfo = getContextInfo(webApp);
+            ContextInfo contextInfo = getContextInfo(webApp.host, webApp.contextRoot);
 
             if (contextInfo != null && contextInfo.deployer != null) {
                 StandardContext standardContext = contextInfo.standardContext;
@@ -437,7 +497,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
      */
 //    @Override
     private void startInternal(StandardContext standardContext) {
-        System.out.println("TomcatWebAppBuilder.start");
+        System.out.println("TomcatWebAppBuilder.start " + standardContext.getPath());
         if (isIgnored(standardContext)) return;
         
         CoreContainerSystem cs = getContainerSystem();
@@ -1072,15 +1132,14 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     /**
      * Gets context info for given web app info.
      *
-     * @param webAppInfo web application info
      * @return context info
      */
-    private ContextInfo getContextInfo(WebAppInfo webAppInfo) {
-        String host = webAppInfo.host;
+    private ContextInfo getContextInfo(String webAppHost, String webAppContextRoot) {
+        String host = webAppHost;
         if (host == null) {
             host = "localhost";
         }
-        String contextRoot = webAppInfo.contextRoot;
+        String contextRoot = webAppContextRoot;
         String id = host + "/" + contextRoot;
         ContextInfo contextInfo = infos.get(id);
         return contextInfo;
