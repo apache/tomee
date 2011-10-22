@@ -308,6 +308,10 @@ public class Container {
 
         return dir;
     }
+    
+    public void await() {
+    	tomcat.getServer().await();
+    }
 
     private static class TomcatWithFastSessionIDs extends Tomcat {
 
