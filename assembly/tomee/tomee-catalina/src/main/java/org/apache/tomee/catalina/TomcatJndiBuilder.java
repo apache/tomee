@@ -180,18 +180,23 @@ public class TomcatJndiBuilder {
             // no-op
         }
 
-        // TODO: uniformize webapp moduleId?
         // classical deployment - needed because can be overriden through META-INF/context.xml
-        String path = standardContext.getHostname();
-        if (standardContext.getPath().startsWith("/")) {
-            path += standardContext.getPath();
-        } else {
-            path += "/" + standardContext.getPath();
+        String path = standardContext.findParameter(TomcatWebAppBuilder.OPENEJB_WEBAPP_MODULE_ID);
+        if (path == null) { // standardContext not created by OpenEJB
+            path = standardContext.getHostname();
+            if (standardContext.getPath().startsWith("/")) {
+                path += standardContext.getPath();
+            } else {
+                path += "/" + standardContext.getPath();
+            }
         }
 
         WebContext webContext = cs.getWebContext(path);
         if (webContext == null) { // tomee-embedded deployment
             webContext = cs.getWebContext(standardContext.getPath().replaceFirst("/", ""));
+            if (webContext == null) {
+                webContext = cs.getWebContext(standardContext.getPath());
+            }
         }
 
         if (webContext != null && webContext.getBindings() != null) {
@@ -220,7 +225,9 @@ public class TomcatJndiBuilder {
             comp.rebind("ORB", new SystemComponentReference(ORB.class));
             comp.rebind("HandleDelegate", new SystemComponentReference(HandleDelegate.class));
 
-            comp.rebind("BeanManager", webContext.getAppContext().getBeanManager());
+            if (webContext != null) {
+                comp.rebind("BeanManager", webContext.getAppContext().getBeanManager());
+            }
         } catch (Exception ignored) {
             ignored.printStackTrace();
             // no-op
