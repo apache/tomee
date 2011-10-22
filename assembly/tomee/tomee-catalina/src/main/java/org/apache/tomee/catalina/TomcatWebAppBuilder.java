@@ -29,6 +29,7 @@ import org.apache.catalina.core.NamingContextListener;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.core.StandardServer;
+import org.apache.catalina.deploy.ApplicationParameter;
 import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ContextResourceLink;
@@ -123,6 +124,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("tomcat"), "org.apache.openejb.util.resources");
 
     private static final Digester CONTEXT_DIGESTER = createDigester();
+    public static final String OPENEJB_WEBAPP_MODULE_ID = "openejb.webapp.moduleId";
 
     /**
      * Context information for web applications
@@ -289,6 +291,11 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             if (standardContext.getHostname() != null && !"_".equals(standardContext.getHostname())) {
                 webApp.host = standardContext.getHostname();
             }
+
+            ApplicationParameter appParam = new ApplicationParameter();
+            appParam.setName(OPENEJB_WEBAPP_MODULE_ID);
+            appParam.setValue(webApp.moduleId);
+            standardContext.addApplicationParameter(appParam);
 
             if (getContextInfo(webApp.host, webApp.contextRoot) == null) {
                 if (standardContext.getPath() == null) {
