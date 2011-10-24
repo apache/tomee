@@ -43,8 +43,8 @@
           <artifactId>bval-core</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>org.apache.openejb.patch</groupId>
-          <artifactId>openejb-bval</artifactId>
+          <groupId>org.apache.bval</groupId>
+          <artifactId>bval-jsr303</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
