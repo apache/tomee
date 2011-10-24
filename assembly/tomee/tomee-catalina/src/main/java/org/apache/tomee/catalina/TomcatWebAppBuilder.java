@@ -35,17 +35,15 @@ import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.ContextTransaction;
 import org.apache.catalina.deploy.NamingResources;
-import org.apache.catalina.startup.Catalina;
 import org.apache.catalina.startup.Constants;
 import org.apache.catalina.startup.ContextConfig;
-import org.apache.catalina.startup.ContextRuleSet;
 import org.apache.catalina.startup.HostConfig;
 import org.apache.catalina.startup.RealmRuleSet;
-import org.apache.catalina.startup.SetNextNamingRule;
 import org.apache.naming.ContextAccessController;
 import org.apache.naming.ContextBindings;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.Injection;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
@@ -312,9 +310,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 if (standardContext.getDocBase() != null && standardContext.getDocBase().endsWith(".war")) {
                     standardContext.setDocBase(standardContext.getDocBase().substring(0, standardContext.getDocBase().length() - 4));
                 }
-                // standardContext.setParentClassLoader(classLoader); // don't do it to avoid duplicated things in the classloader
-                standardContext.setParentClassLoader(Catalina.class.getClassLoader());
-                standardContext.setDelegate(true);
+                standardContext.setParentClassLoader(OpenEJB.class.getClassLoader());
+                standardContext.setDelegate(false);
 
                 String host = webApp.host;
                 if (host == null) {
@@ -456,6 +453,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     public void init(StandardContext standardContext) {
         standardContext.setCrossContext(Boolean.parseBoolean(System.getProperty(OPENEJB_CROSSCONTEXT_PROPERTY, "false")));
         standardContext.setNamingResources(new OpenEJBNamingResource());
+        standardContext.setParentClassLoader(OpenEJB.class.getClassLoader());
+        standardContext.setDelegate(false);
 
         if (standardContext.getConfigFile() == null) {
             String s = File.pathSeparator;
