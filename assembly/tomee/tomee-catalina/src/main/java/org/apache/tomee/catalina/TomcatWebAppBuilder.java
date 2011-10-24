@@ -35,6 +35,7 @@ import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.ContextTransaction;
 import org.apache.catalina.deploy.NamingResources;
+import org.apache.catalina.startup.Catalina;
 import org.apache.catalina.startup.Constants;
 import org.apache.catalina.startup.ContextConfig;
 import org.apache.catalina.startup.ContextRuleSet;
@@ -311,9 +312,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 if (standardContext.getDocBase() != null && standardContext.getDocBase().endsWith(".war")) {
                     standardContext.setDocBase(standardContext.getDocBase().substring(0, standardContext.getDocBase().length() - 4));
                 }
-                standardContext.setParentClassLoader(classLoader);
+                // standardContext.setParentClassLoader(classLoader); // don't do it to avoid duplicated things in the classloader
+                standardContext.setParentClassLoader(Catalina.class.getClassLoader());
                 standardContext.setDelegate(true);
-
 
                 String host = webApp.host;
                 if (host == null) {
