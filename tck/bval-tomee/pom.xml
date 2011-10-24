@@ -39,9 +39,9 @@
       <version>0.3-incubating</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb.patch</groupId>
-      <artifactId>openejb-bval</artifactId>
-      <version>0.4-SNAPSHOT</version>
+      <groupId>org.apache.bval</groupId>
+      <artifactId>bval-jsr303</artifactId>
+      <version>0.3-incubating</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
