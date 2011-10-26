@@ -546,7 +546,7 @@ class AppInfoBuilder {
                 info.jarFiles.addAll(persistenceUnit.getJarFile());
                 info.classes.addAll(persistenceUnit.getClazz());
                 info.mappingFiles.addAll(persistenceUnit.getMappingFile());
-                
+
                 info.persistenceXMLSchemaVersion = persistence.getVersion();
                 info.sharedCacheMode = persistenceUnit.getSharedCacheMode().toString();
                 info.validationMode = persistenceUnit.getValidationMode().toString();
@@ -709,9 +709,8 @@ class AppInfoBuilder {
             Properties overrides = ConfigurationFactory.getSystemProperties(prefix, "PersistenceUnit");
 
             for (Map.Entry<Object, Object> entry : overrides.entrySet()) {
-
-                final Object property = (prefix.equalsIgnoreCase(info.name)) ? entry.getKey() : prefix + "." + entry.getKey();
-                final Object value = entry.getValue();
+                final String property = (String) (prefix.equalsIgnoreCase(info.name) ? entry.getKey() : prefix + "." + entry.getKey());
+                final String value = (String) entry.getValue();
 
                 if (info.properties.contains(property)){
                     logger.debug("Overriding persistence-unit "+info.name +" property " + property + "="+value);
@@ -719,6 +718,10 @@ class AppInfoBuilder {
                     logger.debug("Adding persistence-unit "+info.name +" property " + property + "="+value);
                 }
                 info.properties.put(property, value);
+
+                if (property.endsWith("openjpa.Specification")) {
+                    info.persistenceXMLSchemaVersion = "2.0";
+                }
             }
         }
     }
