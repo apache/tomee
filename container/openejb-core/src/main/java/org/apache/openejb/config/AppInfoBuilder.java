@@ -720,7 +720,7 @@ class AppInfoBuilder {
                 info.properties.put(property, value);
 
                 if (property.endsWith("openjpa.Specification")) {
-                    info.persistenceXMLSchemaVersion = "2.0";
+                    info.persistenceXMLSchemaVersion = value.replace("JPA ", "");
                 }
             }
         }
