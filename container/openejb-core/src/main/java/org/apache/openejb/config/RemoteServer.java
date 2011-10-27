@@ -268,7 +268,7 @@ public class RemoteServer {
             try {
                 System.out.println("[] STOP SERVER");
 
-                String command = "SHUTDOWN";
+                String command = "SHUTDOWN" + Character.toString((char) 0); // SHUTDOWN + EOF
 
                 Socket socket = new Socket("localhost", shutdownPort);
                 OutputStream out = socket.getOutputStream();
