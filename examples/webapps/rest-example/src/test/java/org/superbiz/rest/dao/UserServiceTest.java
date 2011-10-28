@@ -52,7 +52,7 @@ public class UserServiceTest {
     }
 
     @Test public void create() throws NamingException {
-        UserDAO dao = (UserDAO) container.getContext().lookup("java:global/" + webApp.getName() + "/UserDAO");
+        UserDAO dao = (UserDAO) container.getContext().lookup("java:global/rest-example/UserDAO");
         User user = dao.create("foo", "dummy", "foo@dummy.org");
         assertNotNull(dao.find(user.getId()));
 
