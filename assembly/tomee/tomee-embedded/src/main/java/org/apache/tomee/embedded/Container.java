@@ -29,6 +29,7 @@ import org.apache.coyote.http11.Http11Protocol;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.NoSuchApplicationException;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.UndeployException;
 import org.apache.openejb.assembler.classic.AppInfo;
@@ -209,6 +210,7 @@ public class Container {
     public void stop() throws Exception {
         tomcat.stop();
         deleteTree(base);
+        OpenEJB.destroy();
     }
 
     public AppContext deploy(String name, File file) throws OpenEJBException, IOException, NamingException {
