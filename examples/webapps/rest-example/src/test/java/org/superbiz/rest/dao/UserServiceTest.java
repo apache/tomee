@@ -31,7 +31,7 @@ public class UserServiceTest {
     @BeforeClass public static void start() throws IOException {
         webApp = createWebApp();
         Properties p = new Properties();
-        p.setProperty(EJBContainer.APP_NAME, "test");
+        p.setProperty(EJBContainer.APP_NAME, "rest-example");
         p.setProperty(EJBContainer.PROVIDER, "tomee-embedded"); // need web feature
         p.setProperty(EJBContainer.MODULES, webApp.getAbsolutePath());
         p.setProperty(EmbeddedTomEEContainer.TOMEE_EJBCONTAINER_HTTP_PORT, "-1"); // random port
