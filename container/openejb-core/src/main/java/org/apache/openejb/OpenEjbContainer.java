@@ -207,7 +207,11 @@ public class OpenEjbContainer extends EJBContainer {
 
 
             try {
-                System.setProperty(Context.URL_PKG_PREFIXES, null); // reset to be able to run this container then tomee one etc...
+                // reset to be able to run this container then tomee one etc...
+                if (System.getProperties().containsKey(Context.URL_PKG_PREFIXES)) {
+                    System.getProperties().remove(Context.URL_PKG_PREFIXES);
+                }
+
                 Properties properties = new Properties();
                 properties.putAll(map);
 
