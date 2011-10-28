@@ -65,8 +65,8 @@ public class Container {
     private Bootstrap bootstrap;
     protected Configuration configuration;
     private File base;
-    private Map<String, String> moduleIds = new HashMap<String, String>();
-    private Map<String, AppContext> appContexts = new HashMap<String, AppContext>();
+    private Map<String, String> moduleIds = new HashMap<String, String>(); // TODO: manage multimap
+    private Map<String, AppContext> appContexts = new HashMap<String, AppContext>(); // TODO: manage multimap
     private ConfigurationFactory configurationFactory;
     private Assembler assembler;
     private final Tomcat tomcat;
@@ -207,10 +207,12 @@ public class Container {
         deleteTree(base);
     }
 
-    public void deploy(String name, File file) throws OpenEJBException, IOException, NamingException {
+    public AppContext deploy(String name, File file) throws OpenEJBException, IOException, NamingException {
         AppInfo appInfo = configurationFactory.configureApplication(file);
-        appContexts.put(name, assembler.createApplication(appInfo));
+        AppContext context = assembler.createApplication(appInfo);
+        appContexts.put(name, context);
         moduleIds.put(name, appInfo.path);
+        return context;
     }
 
     public void undeploy(String name) throws UndeployException, NoSuchApplicationException {
