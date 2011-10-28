@@ -1076,7 +1076,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                         }
                     }
 
-                    final String name = ejbModule.getModuleId() + "." + BeanContext.Comp.class.getSimpleName();
+                    final String name = BeanContext.Comp.openejbCompName(ejbModule.getModuleId());
                     final org.apache.openejb.jee.ManagedBean managedBean = new org.apache.openejb.jee.ManagedBean(name, BeanContext.Comp.class);
                     managedBean.setTransactionType(TransactionType.BEAN);
                     ejbModule.getEjbJar().addEnterpriseBean(managedBean);

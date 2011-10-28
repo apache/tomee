@@ -93,16 +93,16 @@ public class EmbeddedTomEEContainer extends EJBContainer {
                 tomEEContainer.container.start();
 
                 if (modules instanceof File) {
-                    tomEEContainer.container.deploy(appId, ((File) modules));
+                    tomEEContainer.container.deploy(appId, ((File) modules), true);
                 } else if (modules instanceof String) {
-                    tomEEContainer.container.deploy(appId, new File((String) modules));
+                    tomEEContainer.container.deploy(appId, new File((String) modules), true);
                 } else if (modules instanceof String[]) {
                     for (String path : (String[]) modules) {
-                        tomEEContainer.container.deploy(appId, new File(path));
+                        tomEEContainer.container.deploy(appId, new File(path), true);
                     }
                 } else if (modules instanceof File[]) {
                     for (File file : (File[]) modules) {
-                        tomEEContainer.container.deploy(appId, file);
+                        tomEEContainer.container.deploy(appId, file, true);
                     }
                 } else {
                     try {

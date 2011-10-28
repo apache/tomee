@@ -117,7 +117,9 @@ public class BeanContext extends DeploymentContext {
      * for components with undefined namespace such as CDI
      */
     public static class Comp {
-
+        public static String openejbCompName(String module) {
+            return module + "." + Comp.class.getSimpleName();
+        }
     }
     
     private final ModuleContext moduleContext;
