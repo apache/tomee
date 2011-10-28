@@ -146,7 +146,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         AsmParameterNameLoader.install();
     }
 
-    private static final String OPENEJB_URL_PKG_PREFIX = "org.apache.openejb.core.ivm.naming";
+    public static final String OPENEJB_URL_PKG_PREFIX = IvmContext.class.getPackage().getName();
 
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, Assembler.class);
 
@@ -279,11 +279,15 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     public static void installNaming(String prefix) {
+        installNaming(prefix, false);
+    }
+
+    public static void installNaming(String prefix, boolean clean) {
         Properties systemProperties = System.getProperties();
         synchronized (systemProperties) {
             String str = systemProperties.getProperty(Context.URL_PKG_PREFIXES);
             String naming = prefix;
-            if (str == null) {
+            if (str == null || clean) {
                 str = naming;
             } else if (str.indexOf(naming) == -1) {
                 str = str + ":" + naming;
