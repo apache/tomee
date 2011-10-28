@@ -65,7 +65,7 @@ public class Container {
 
     static {
         // org.apache.naming
-        Assembler.installNaming("org.apache.naming");
+        Assembler.installNaming("org.apache.naming", true);
     }
     private Bootstrap bootstrap;
     protected Configuration configuration;
