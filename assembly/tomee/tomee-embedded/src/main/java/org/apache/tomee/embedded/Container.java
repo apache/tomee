@@ -27,11 +27,16 @@ import org.apache.catalina.startup.CatalinaProperties;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.coyote.http11.Http11Protocol;
 import org.apache.openejb.AppContext;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.UndeployException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.BeansInfo;
+import org.apache.openejb.assembler.classic.EjbJarInfo;
+import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
+import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.tomee.catalina.TomcatLoader;
@@ -208,7 +213,30 @@ public class Container {
     }
 
     public AppContext deploy(String name, File file) throws OpenEJBException, IOException, NamingException {
+        return deploy(name, file, false);
+    }
+
+    public AppContext deploy(String name, File file, boolean overrideName) throws OpenEJBException, IOException, NamingException {
         AppInfo appInfo = configurationFactory.configureApplication(file);
+        if (overrideName) {
+            appInfo.appId = name;
+            for (EjbJarInfo ejbJar : appInfo.ejbJars) {
+                if (file.getName().equals(ejbJar.moduleName)) {
+                    ejbJar.moduleName = name;
+                }
+                for (EnterpriseBeanInfo ejb : ejbJar.enterpriseBeans) {
+                    if (BeanContext.Comp.openejbCompName(file.getName()).equals(ejb.ejbName)) {
+                        ejb.ejbName = BeanContext.Comp.openejbCompName(name);
+                    }
+                }
+            }
+            for (WebAppInfo webApp : appInfo.webApps) {
+                if (file.getName().equals(webApp.moduleId)) {
+                    webApp.moduleId = name;
+                }
+            }
+        }
+
         AppContext context = assembler.createApplication(appInfo);
         appContexts.put(name, context);
         moduleIds.put(name, appInfo.path);
