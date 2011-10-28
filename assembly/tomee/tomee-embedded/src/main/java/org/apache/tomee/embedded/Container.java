@@ -33,7 +33,6 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.UndeployException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.BeansInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
@@ -356,8 +355,7 @@ public class Container {
                         StandardManager m = (StandardManager) c.getManager();
                         if (m == null) {
                             m = new StandardManager();
-                            m.setSecureRandomClass(
-                                    "org.apache.catalina.startup.FastNonSecureRandom");
+                            m.setSecureRandomClass("org.apache.catalina.startup.FastNonSecureRandom");
                             c.setManager(m);
                         }
                     }
