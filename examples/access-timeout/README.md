@@ -22,7 +22,7 @@ When explicitly set on a bean class or method, it has three possible meanings:
  - `@AccessTimeout(0)` - Never wait. Immediately throw `ConcurrentAccessException` if a wait condition would have occurred.
  - `@AccessTimout(30, TimeUnit.SECONDS)` - Wait up to 30 seconds if a wait condition occurs.  After that, throw `ConcurrentAccessTimeoutExcpetion`
 
-# No standard default
+## No standard default
 
 Note that the `value` attribute has no default.  This was intentional and intended to communicate that if `@AccessTimeout` is not explicitly used, the behavior you get is vendor-specific.
 
