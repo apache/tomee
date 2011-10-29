@@ -22,7 +22,7 @@
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>TomEE Arquillian Adaptor :: Tests</name>
+  <name>OpenEJB :: TomEE Arquillian Adaptor :: Tests</name>
 
   <dependencies>
     <dependency>

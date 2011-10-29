@@ -40,6 +40,8 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
 public abstract class TomEEContainer implements DeployableContainer<TomEEConfiguration> {
+    protected static final String LOCALHOST = "localhost";
+    protected static final String SHUTDOWN_COMMAND = "SHUTDOWN" + Character.toString((char) -1);
     protected TomEEConfiguration configuration;
     protected Map<String, String> moduleIds = new HashMap<String, String>();
 
@@ -55,11 +57,9 @@ public abstract class TomEEContainer implements DeployableContainer<TomEEConfigu
 
     public void stop() throws LifecycleException {
         try {
-            String command = "SHUTDOWN";
-
-            Socket socket = new Socket("localhost", configuration.getStopPort());
+            Socket socket = new Socket(LOCALHOST, configuration.getStopPort());
             OutputStream out = socket.getOutputStream();
-            out.write(command.getBytes());
+            out.write(SHUTDOWN_COMMAND.getBytes());
 
             waitForShutdown(10);
         } catch (Exception e) {
@@ -70,7 +70,7 @@ public abstract class TomEEContainer implements DeployableContainer<TomEEConfigu
     protected void waitForShutdown(int tries) {
         try {
 
-            Socket socket = new Socket("localhost", configuration.getStopPort());
+            Socket socket = new Socket(LOCALHOST, configuration.getStopPort());
             OutputStream out = socket.getOutputStream();
             out.close();
         } catch (Exception e) {
@@ -99,7 +99,7 @@ public abstract class TomEEContainer implements DeployableContainer<TomEEConfigu
 
             Properties properties = new Properties();
             properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
-            properties.setProperty(Context.PROVIDER_URL, "http://localhost:" + configuration.getHttpPort() + "/openejb/ejb");
+            properties.setProperty(Context.PROVIDER_URL, "http://" + LOCALHOST + ":" + configuration.getHttpPort() + "/openejb/ejb");
             InitialContext context = new InitialContext(properties);
 
             Deployer deployer = (Deployer) context.lookup("openejb/DeployerBusinessRemote");
@@ -107,7 +107,7 @@ public abstract class TomEEContainer implements DeployableContainer<TomEEConfigu
 
             moduleIds.put(archive.getName(), file.getAbsolutePath());
 
-            HTTPContext httpContext = new HTTPContext("0.0.0.0", configuration.getHttpPort());
+            HTTPContext httpContext = new HTTPContext(LOCALHOST, configuration.getHttpPort());
             if (archive instanceof WebArchive) {
             	httpContext.add(new Servlet("ArquillianServletRunner", "/" + getArchiveNameWithoutExtension(archive)));
             } else {
@@ -140,7 +140,7 @@ public abstract class TomEEContainer implements DeployableContainer<TomEEConfigu
         try {
             Properties properties = new Properties();
             properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
-            properties.setProperty(Context.PROVIDER_URL, "http://localhost:" + configuration.getHttpPort() + "/openejb/ejb");
+            properties.setProperty(Context.PROVIDER_URL, "http://" + LOCALHOST + ":" + configuration.getHttpPort() + "/openejb/ejb");
             InitialContext context = new InitialContext(properties);
             String appId = moduleIds.get(archive.getName());
             Deployer deployer = (Deployer) context.lookup("openejb/DeployerBusinessRemote");
