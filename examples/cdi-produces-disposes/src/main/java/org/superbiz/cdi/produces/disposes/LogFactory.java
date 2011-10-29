@@ -37,7 +37,7 @@ public class LogFactory {
 
     }
 
-    public void closeLogHandler (@Disposes LogHandler handler) {
+    public void closeLogHandler(@Disposes LogHandler handler) {
         switch (type) {
             case 1:
                 System.out.println("Closing File handler!");

@@ -20,7 +20,7 @@ public class DatabaseHandler implements LogHandler {
 
     private String name;
 
-    public DatabaseHandler (String name) {
+    public DatabaseHandler(String name) {
         this.name = name;
     }
 

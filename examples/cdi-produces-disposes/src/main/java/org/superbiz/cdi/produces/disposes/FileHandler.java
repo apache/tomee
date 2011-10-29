@@ -20,7 +20,7 @@ public class FileHandler implements LogHandler {
 
     private String name;
 
-    public FileHandler (String name) {
+    public FileHandler(String name) {
         this.name = name;
     }
 

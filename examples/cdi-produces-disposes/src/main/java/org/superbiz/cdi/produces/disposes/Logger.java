@@ -18,7 +18,7 @@ package org.superbiz.cdi.produces.disposes;
 
 public interface Logger {
 
-    public void log (String s);
+    public void log(String s);
 
     public LogHandler getHandler();
 

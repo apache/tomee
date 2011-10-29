@@ -20,6 +20,6 @@
 <!-- $Rev$ -->
 <ServiceJar>
   <ServiceProvider id="ManagerResource" service="Resource"
-           type="org.superbiz.resource.ManagerResource"
-           class-name="org.superbiz.resource.ManagerResource" />
+                   type="org.superbiz.resource.ManagerResource"
+                   class-name="org.superbiz.resource.ManagerResource"/>
 </ServiceJar>

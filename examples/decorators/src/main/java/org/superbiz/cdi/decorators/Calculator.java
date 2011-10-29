@@ -17,8 +17,8 @@
 package org.superbiz.cdi.decorators;
 
 /**
-* @version $Revision$ $Date$
-*/
+ * @version $Revision$ $Date$
+ */
 public interface Calculator {
 
     public int add(int a, int b);

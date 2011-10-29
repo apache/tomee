@@ -45,11 +45,14 @@ import java.util.List;
 @Path("/user")
 @Produces(MediaType.APPLICATION_XML)
 public class UserService {
-    @PersistenceContext private EntityManager em;
+    @PersistenceContext
+    private EntityManager em;
 
-    @Path("/create") @PUT public User create(@QueryParam("name") String name,
-                                             @QueryParam("pwd") String pwd,
-                                             @QueryParam("mail") String mail) {
+    @Path("/create")
+    @PUT
+    public User create(@QueryParam("name") String name,
+                       @QueryParam("pwd") String pwd,
+                       @QueryParam("mail") String mail) {
         User user = new User();
         user.setFullname(name);
         user.setPassword(pwd);
@@ -58,7 +61,9 @@ public class UserService {
         return user;
     }
 
-    @Path("/list") @GET public List<User> list(@QueryParam("first") @DefaultValue("0") int first,
+    @Path("/list")
+    @GET
+    public List<User> list(@QueryParam("first") @DefaultValue("0") int first,
                            @QueryParam("max") @DefaultValue("20") int max) {
         List<User> users = new ArrayList<User>();
         List<User> found = em.createNamedQuery("user.list", User.class).setFirstResult(first).setMaxResults(max).getResultList();
@@ -68,7 +73,9 @@ public class UserService {
         return users;
     }
 
-    @Path("/show/{id}") @GET public User find(@PathParam("id") long id) {
+    @Path("/show/{id}")
+    @GET
+    public User find(@PathParam("id") long id) {
         User user = em.find(User.class, id);
         if (user == null) {
             return null;
@@ -77,20 +84,24 @@ public class UserService {
 
     }
 
-    @Path("/delete/{id}") @DELETE public void delete(@PathParam("id") long id) {
+    @Path("/delete/{id}")
+    @DELETE
+    public void delete(@PathParam("id") long id) {
         User user = em.find(User.class, id);
         if (user != null) {
             em.remove(user);
         }
     }
 
-    @Path("/update/{id}") @POST public Response update(@PathParam("id") long id,
-                                                       @QueryParam("name") String name,
-                                                       @QueryParam("pwd") String pwd,
-                                                       @QueryParam("mail") String mail) {
+    @Path("/update/{id}")
+    @POST
+    public Response update(@PathParam("id") long id,
+                           @QueryParam("name") String name,
+                           @QueryParam("pwd") String pwd,
+                           @QueryParam("mail") String mail) {
         User user = em.find(User.class, id);
         if (user == null) {
-            throw  new IllegalArgumentException("user id " + id + " not found");
+            throw new IllegalArgumentException("user id " + id + " not found");
         }
 
         user.setFullname(name);

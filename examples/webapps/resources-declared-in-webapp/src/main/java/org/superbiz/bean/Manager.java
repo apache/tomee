@@ -26,7 +26,8 @@ import javax.ejb.Singleton;
  */
 @Singleton
 public class Manager {
-    @Resource(name = "My Manager Team", type = ManagerResource.class) private ManagerResource resource;
+    @Resource(name = "My Manager Team", type = ManagerResource.class)
+    private ManagerResource resource;
 
     public String work() {
         return "manage a resource of type " + resource.resourceType();

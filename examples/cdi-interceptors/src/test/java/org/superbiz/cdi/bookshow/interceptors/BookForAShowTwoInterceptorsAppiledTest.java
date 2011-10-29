@@ -16,27 +16,29 @@
  */
 package org.superbiz.cdi.bookshow.interceptors;
 
-import java.util.List;
-
-import javax.ejb.EJB;
-import javax.ejb.embeddable.EJBContainer;
 import junit.framework.TestCase;
 import org.superbiz.cdi.bookshow.beans.BookForAShowTwoInterceptorsApplied;
 import org.superbiz.cdi.bookshow.tracker.InterceptionOrderTracker;
+
+import javax.ejb.EJB;
+import javax.ejb.embeddable.EJBContainer;
+import java.util.List;
 
 public class BookForAShowTwoInterceptorsAppiledTest extends TestCase {
     @EJB
     private BookForAShowTwoInterceptorsApplied bookForAShowBean;
     EJBContainer ejbContainer;
+
     /**
      * Bootstrap the Embedded EJB Container
-     * 
+     *
      * @throws Exception
      */
     protected void setUp() throws Exception {
         ejbContainer = EJBContainer.createEJBContainer();
         ejbContainer.getContext().bind("inject", this);
     }
+
     /**
      * Interceptors should be applied in order as defined in beans.xml
      */
@@ -49,6 +51,7 @@ public class BookForAShowTwoInterceptorsAppiledTest extends TestCase {
         int indexOfTimeBasedRestrictor = interceptedByList.indexOf("TimeBasedRestrictingInterceptor");
         assertTrue(indexOfLogger < indexOfTimeBasedRestrictor);
     }
+
     public void testTwoInterceptorsWereInvoked() {
         // action
         bookForAShowBean.getDiscountedPrice(100);
@@ -56,6 +59,7 @@ public class BookForAShowTwoInterceptorsAppiledTest extends TestCase {
         List<String> interceptedByList = InterceptionOrderTracker.getInterceptedByList();
         assertTrue(interceptedByList.contains("BookForAShowLoggingInterceptor") && interceptedByList.contains("TimeBasedRestrictingInterceptor"));
     }
+
     protected void tearDown() {
         // clear the lists after each test
         InterceptionOrderTracker.getInterceptedByList().clear();

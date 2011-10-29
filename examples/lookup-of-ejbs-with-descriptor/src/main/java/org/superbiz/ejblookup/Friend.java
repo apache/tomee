@@ -16,8 +16,6 @@
  */
 package org.superbiz.ejblookup;
 
-import javax.ejb.Local;
-
 /**
  * This is an EJB 3 local business interface
  * A local business interface may be annotated with the @Local

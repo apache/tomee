@@ -16,17 +16,20 @@ import static junit.framework.Assert.assertNotNull;
 public class UserDaoTest {
     private static EJBContainer container;
 
-    @BeforeClass public static void start() {
+    @BeforeClass
+    public static void start() {
         container = EJBContainer.createEJBContainer();
     }
 
-    @AfterClass public static void stop() {
+    @AfterClass
+    public static void stop() {
         if (container != null) {
             container.close();
         }
     }
 
-    @Test public void create() throws NamingException {
+    @Test
+    public void create() throws NamingException {
         UserDAO dao = (UserDAO) container.getContext().lookup("java:global/rest-example/UserDAO");
         User user = dao.create("foo", "dummy", "foo@bar.org");
         assertNotNull(dao.find(user.getId()));

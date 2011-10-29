@@ -16,25 +16,26 @@
  */
 package org.superbiz.cdi.bookshow.beans;
 
+import org.superbiz.cdi.bookshow.interceptorbinding.Log;
+import org.superbiz.cdi.bookshow.interceptorbinding.TimeRestricted;
+
+import javax.ejb.Stateful;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.ejb.Stateful;
-
-import org.superbiz.cdi.bookshow.interceptorbinding.Log;
-import org.superbiz.cdi.bookshow.interceptorbinding.TimeRestricted;
 
 @Log
 @Stateful
 public class BookForAShowTwoInterceptorsApplied implements Serializable {
     private static final long serialVersionUID = 6350400892234496909L;
+
     public List<String> getMoviesList() {
         List<String> moviesAvailable = new ArrayList<String>();
         moviesAvailable.add("12 Angry Men");
         moviesAvailable.add("Kings speech");
         return moviesAvailable;
     }
+
     @TimeRestricted
     public Integer getDiscountedPrice(int ticketPrice) {
         return ticketPrice - 50;

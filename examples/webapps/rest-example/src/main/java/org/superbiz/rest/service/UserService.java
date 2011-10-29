@@ -17,7 +17,6 @@
 package org.superbiz.rest.service;
 
 import org.superbiz.rest.dao.UserDAO;
-import org.superbiz.rest.model.Post;
 import org.superbiz.rest.model.User;
 
 import javax.ejb.EJB;
@@ -36,33 +35,44 @@ import java.util.List;
  * @author Romain Manni-Bucau
  */
 @Path("/api/user")
-@Produces({ "text/xml", "application/json" })
+@Produces({"text/xml", "application/json"})
 public class UserService {
-    @EJB private UserDAO dao;
+    @EJB
+    private UserDAO dao;
 
-    @Path("/create") @PUT public User create(@QueryParam("name") String name,
-                                        @QueryParam("pwd") String pwd,
-                                        @QueryParam("mail") String mail) {
+    @Path("/create")
+    @PUT
+    public User create(@QueryParam("name") String name,
+                       @QueryParam("pwd") String pwd,
+                       @QueryParam("mail") String mail) {
         return dao.create(name, pwd, mail);
     }
 
-    @Path("/list") @GET public List<User> list(@QueryParam("first") @DefaultValue("0") int first,
-                                          @QueryParam("max") @DefaultValue("20") int max) {
+    @Path("/list")
+    @GET
+    public List<User> list(@QueryParam("first") @DefaultValue("0") int first,
+                           @QueryParam("max") @DefaultValue("20") int max) {
         return dao.list(first, max);
     }
 
-    @Path("/show/{id}") @GET public User show(@PathParam("id") long id) {
+    @Path("/show/{id}")
+    @GET
+    public User show(@PathParam("id") long id) {
         return dao.find(id);
     }
 
-    @Path("/delete/{id}") @DELETE public void delete(@PathParam("id") long id) {
+    @Path("/delete/{id}")
+    @DELETE
+    public void delete(@PathParam("id") long id) {
         dao.delete(id);
     }
 
-    @Path("/update/{id}") @POST public User update(@PathParam("id") long id,
-                                        @QueryParam("name") String name,
-                                        @QueryParam("pwd") String pwd,
-                                        @QueryParam("mail") String mail) {
+    @Path("/update/{id}")
+    @POST
+    public User update(@PathParam("id") long id,
+                       @QueryParam("name") String name,
+                       @QueryParam("pwd") String pwd,
+                       @QueryParam("mail") String mail) {
         return dao.update(id, name, pwd, mail);
     }
 }

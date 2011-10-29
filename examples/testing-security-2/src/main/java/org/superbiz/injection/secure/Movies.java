@@ -30,7 +30,7 @@ import javax.persistence.Query;
 import java.util.List;
 
 @Stateful
-public class Movies  {
+public class Movies {
 
     @PersistenceContext(unitName = "movie-unit", type = PersistenceContextType.EXTENDED)
     private EntityManager entityManager;

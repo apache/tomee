@@ -17,7 +17,6 @@
 package org.superbiz.injection.secure.api;
 
 import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import java.lang.annotation.ElementType;

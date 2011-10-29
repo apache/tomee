@@ -28,8 +28,6 @@ import javax.persistence.PersistenceContextType;
 import javax.persistence.Query;
 import java.util.List;
 
-import static javax.ejb.TransactionAttributeType.MANDATORY;
-
 //START SNIPPET: code
 @Stateful
 public class Movies {

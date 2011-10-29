@@ -37,25 +37,34 @@ import java.util.List;
 @Path("/api/comment")
 @Produces({"text/xml", "application/json"})
 public class CommentService {
-    @EJB private CommentDAO commentDao;
+    @EJB
+    private CommentDAO commentDao;
 
-    @Path("/create") @PUT public Comment create(@QueryParam("author") String author,
-                                                @QueryParam("content") String content,
-                                                @QueryParam("postId") long postId) {
+    @Path("/create")
+    @PUT
+    public Comment create(@QueryParam("author") String author,
+                          @QueryParam("content") String content,
+                          @QueryParam("postId") long postId) {
         return commentDao.create(author, content, postId);
     }
 
-    @Path("/list/{postId}") @GET public List<Comment> list(@PathParam("postId") long postId) {
+    @Path("/list/{postId}")
+    @GET
+    public List<Comment> list(@PathParam("postId") long postId) {
         return commentDao.list(postId);
     }
 
-    @Path("/delete/{id}") @DELETE public void delete(@PathParam("id") long id) {
+    @Path("/delete/{id}")
+    @DELETE
+    public void delete(@PathParam("id") long id) {
         commentDao.delete(id);
     }
 
-    @Path("/update/{id}") @POST public Comment update(@PathParam("id") long id,
-                                                      @QueryParam("author") String author,
-                                                      @QueryParam("content") String content) {
+    @Path("/update/{id}")
+    @POST
+    public Comment update(@PathParam("id") long id,
+                          @QueryParam("author") String author,
+                          @QueryParam("content") String content) {
         return commentDao.update(id, author, content);
     }
 }

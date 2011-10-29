@@ -17,5 +17,5 @@
     limitations under the License.
 -->
 <resources>
-  <Resource id="My Manager Team" type="org.superbiz.resource.ManagerResource" provider="org.superbiz#ManagerResource" />
+  <Resource id="My Manager Team" type="org.superbiz.resource.ManagerResource" provider="org.superbiz#ManagerResource"/>
 </resources>

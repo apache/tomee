@@ -16,20 +16,21 @@
  */
 package org.superbiz.cdi.bookshow.interceptorbinding;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import javax.interceptor.InterceptorBinding;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
-import javax.interceptor.InterceptorBinding;
+
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  *This InterceptorBinding inherits from @Log and @TimeRestricted Interceptor-Bindings.
  */
 @Inherited
 @InterceptorBinding
-@Target({ TYPE, METHOD })
+@Target({TYPE, METHOD})
 @Retention(RUNTIME)
 @Log
 @TimeRestricted

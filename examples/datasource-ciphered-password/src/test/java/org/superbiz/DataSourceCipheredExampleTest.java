@@ -16,21 +16,19 @@
  */
 package org.superbiz;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Properties;
+import org.apache.commons.lang.StringUtils;
+import org.apache.openejb.resource.jdbc.PasswordCipher;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import javax.annotation.Resource;
 import javax.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 import javax.sql.DataSource;
-import org.apache.commons.lang.StringUtils;
-import org.apache.openejb.resource.jdbc.PasswordCipher;
-import org.apache.openejb.resource.jdbc.StaticDESPasswordCipher;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
+import java.util.Properties;
 
 import static junit.framework.Assert.assertNotNull;
 
@@ -42,9 +40,11 @@ public class DataSourceCipheredExampleTest {
     private static final String PASSWORD = "YouLLN3v3rFindM3";
     private static final String DATASOURCE_URL = "jdbc:hsqldb:mem:protected";
 
-    @Resource private DataSource dataSource;
+    @Resource
+    private DataSource dataSource;
 
-    @BeforeClass public static void addDatabaseUserWithPassword() throws Exception {
+    @BeforeClass
+    public static void addDatabaseUserWithPassword() throws Exception {
         Class.forName("org.hsqldb.jdbcDriver");
         Connection conn = DriverManager.getConnection(DATASOURCE_URL, "sa", "");
         conn.setAutoCommit(true);
@@ -55,7 +55,8 @@ public class DataSourceCipheredExampleTest {
         conn.close();
     }
 
-    @Test public void accessDatasource() throws Exception{
+    @Test
+    public void accessDatasource() throws Exception {
         // define the datasource
         Properties properties = new Properties();
         properties.setProperty("ProtectedDatasource", "new://Resource?type=DataSource");
@@ -79,7 +80,8 @@ public class DataSourceCipheredExampleTest {
         container.close();
     }
 
-    @Test public void accessDatasourceWithMyImplementation() throws Exception{
+    @Test
+    public void accessDatasourceWithMyImplementation() throws Exception {
         // define the datasource
         Properties properties = new Properties();
         properties.setProperty("ProtectedDatasource", "new://Resource?type=DataSource");
@@ -104,11 +106,13 @@ public class DataSourceCipheredExampleTest {
     }
 
     public static class ReverseEncryption implements PasswordCipher {
-        @Override public char[] encrypt(String plainPassword) {
+        @Override
+        public char[] encrypt(String plainPassword) {
             return StringUtils.reverse(plainPassword).toCharArray();
         }
 
-        @Override public String decrypt(char[] encryptedPassword) {
+        @Override
+        public String decrypt(char[] encryptedPassword) {
             return new String(encrypt(new String(encryptedPassword)));
         }
     }

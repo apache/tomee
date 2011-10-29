@@ -3,8 +3,8 @@
   Explicitly declaring decorators is required by the CDI specification.
   The order decorators are listed in the xml is the order in which they are invoked.
   -->
-   <decorators>
-      <class>org.superbiz.cdi.decorators.CalculatorSecurity</class>
-      <class>org.superbiz.cdi.decorators.CalculatorLogging</class>
-   </decorators>
+  <decorators>
+    <class>org.superbiz.cdi.decorators.CalculatorSecurity</class>
+    <class>org.superbiz.cdi.decorators.CalculatorLogging</class>
+  </decorators>
 </beans>

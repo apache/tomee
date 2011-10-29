@@ -28,6 +28,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 
-@PersistenceContext(name ="movie-unit", unitName = "movie-unit", type = PersistenceContextType.EXTENDED)
+@PersistenceContext(name = "movie-unit", unitName = "movie-unit", type = PersistenceContextType.EXTENDED)
 public @interface MovieUnit {
 }

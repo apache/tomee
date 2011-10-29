@@ -18,7 +18,6 @@ package org.superbiz.cdi.decorators;
 
 import javax.decorator.Decorator;
 import javax.decorator.Delegate;
-import javax.ejb.ApplicationException;
 import javax.inject.Inject;
 import java.util.logging.Logger;
 

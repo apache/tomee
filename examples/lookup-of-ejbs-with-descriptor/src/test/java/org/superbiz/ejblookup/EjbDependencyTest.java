@@ -20,8 +20,6 @@ import junit.framework.TestCase;
 
 import javax.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
-import javax.naming.InitialContext;
-import java.util.Properties;
 
 //START SNIPPET: code
 public class EjbDependencyTest extends TestCase {

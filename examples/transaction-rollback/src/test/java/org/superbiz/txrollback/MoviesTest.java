@@ -17,13 +17,10 @@
 package org.superbiz.txrollback;
 
 import junit.framework.TestCase;
-import org.apache.openejb.api.LocalClient;
 
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.embeddable.EJBContainer;
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.RollbackException;

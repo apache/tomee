@@ -25,10 +25,12 @@ import static junit.framework.Assert.assertNotNull;
  * @author rmannibucau
  */
 public class UserServiceTest {
+
     private static EJBContainer container;
     private static File webApp;
 
-    @BeforeClass public static void start() throws IOException {
+    @BeforeClass
+    public static void start() throws IOException {
         webApp = createWebApp();
         Properties p = new Properties();
         p.setProperty(EJBContainer.APP_NAME, "rest-example");
@@ -38,7 +40,8 @@ public class UserServiceTest {
         container = EJBContainer.createEJBContainer(p);
     }
 
-    @AfterClass public static void stop() {
+    @AfterClass
+    public static void stop() {
         if (container != null) {
             container.close();
         }
@@ -51,7 +54,8 @@ public class UserServiceTest {
         }
     }
 
-    @Test public void create() throws NamingException {
+    @Test
+    public void create() throws NamingException {
         UserDAO dao = (UserDAO) container.getContext().lookup("java:global/rest-example/UserDAO");
         User user = dao.create("foo", "dummy", "foo@dummy.org");
         assertNotNull(dao.find(user.getId()));
@@ -77,13 +81,16 @@ public class UserServiceTest {
     }
 
     /**
-       * a simple copy of the unique method i want to use from my service.
-       * It allows to use cxf proxy to call remotely our rest service.
-       * Any other way to do it is good.
-       */
+     * a simple copy of the unique method i want to use from my service.
+     * It allows to use cxf proxy to call remotely our rest service.
+     * Any other way to do it is good.
+     */
     @Path("/api/user")
-    @Produces({ "text/xml", "application/json" })
+    @Produces({"text/xml", "application/json"})
     public static interface UserServiceClientAPI {
-        @Path("/show/{id}") @GET User show(@PathParam("id") long id);
+
+        @Path("/show/{id}")
+        @GET
+        User show(@PathParam("id") long id);
     }
 }

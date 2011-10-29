@@ -34,7 +34,7 @@ public class MovieTest extends TestCase {
 
     @EJB
     private Movies movies;
-    
+
     @EJB(beanName = "ManagerBean")
     private Caller manager;
 
@@ -127,7 +127,7 @@ public class MovieTest extends TestCase {
     public interface Caller {
         public <V> V call(Callable<V> callable) throws Exception;
     }
-    
+
     /**
      * This little bit of magic allows our test code to execute in
      * the desired security scope.

@@ -22,9 +22,9 @@ import java.util.List;
  * @version $Revision: 607077 $ $Date: 2007-12-27 06:55:23 -0800 (Thu, 27 Dec 2007) $
  */
 public interface Movies {
-    void addMovie(Movie movie) throws Exception ;
+    void addMovie(Movie movie) throws Exception;
 
-    void deleteMovie(Movie movie) throws Exception ;
+    void deleteMovie(Movie movie) throws Exception;
 
-    List<Movie> getMovies() throws Exception ;
+    List<Movie> getMovies() throws Exception;
 }

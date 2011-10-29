@@ -33,12 +33,15 @@ public class InterceptionOrderTracker {
      * Contains the name of the interceptor class that intercepted a method
      */
     private static List<String> interceptedByList = new ArrayList<String>();
+
     public static List<String> getInterceptedByList() {
         return interceptedByList;
     }
+
     public static void setInterceptedByList(List<String> interceptedByList) {
         InterceptionOrderTracker.interceptedByList = interceptedByList;
     }
+
     public static List<String> getMethodsInterceptedList() {
         return methodsInterceptedList;
     }

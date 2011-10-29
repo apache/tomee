@@ -16,27 +16,29 @@
  */
 package org.superbiz.cdi.bookshow.interceptors;
 
-import java.util.List;
-
-import javax.ejb.EJB;
-import javax.ejb.embeddable.EJBContainer;
 import junit.framework.TestCase;
 import org.superbiz.cdi.bookshow.beans.BookShowInterceptorBindingInheritanceExplored;
 import org.superbiz.cdi.bookshow.tracker.InterceptionOrderTracker;
+
+import javax.ejb.EJB;
+import javax.ejb.embeddable.EJBContainer;
+import java.util.List;
 
 public class BookShowInterceptorBindingInheritanceTest extends TestCase {
     @EJB
     private BookShowInterceptorBindingInheritanceExplored bookForAShowBean;
     EJBContainer ejbContainer;
+
     /**
      * Bootstrap the Embedded EJB Container
-     * 
+     *
      * @throws Exception
      */
     protected void setUp() throws Exception {
         ejbContainer = EJBContainer.createEJBContainer();
         ejbContainer.getContext().bind("inject", this);
     }
+
     public void testInterceptorBindingCanInheritFromAnotherBinding() {
         // action
         bookForAShowBean.getDiscountedPrice(100);
@@ -45,6 +47,7 @@ public class BookShowInterceptorBindingInheritanceTest extends TestCase {
         System.out.println("Intercepted by:" + interceptedByList);
         assertTrue(interceptedByList.contains("BookForAShowLoggingInterceptor") && interceptedByList.contains("TimeBasedRestrictingInterceptor"));
     }
+
     protected void tearDown() {
         // clear the list after each test
         InterceptionOrderTracker.getInterceptedByList().clear();

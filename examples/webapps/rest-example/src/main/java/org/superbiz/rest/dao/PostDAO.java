@@ -28,7 +28,8 @@ import java.util.List;
  */
 @Stateless
 public class PostDAO {
-    @EJB private DAO dao;
+    @EJB
+    private DAO dao;
 
     public Post create(String title, String content, long userId) {
         User user = dao.find(User.class, userId);
@@ -54,12 +55,12 @@ public class PostDAO {
     public Post update(long id, long userId, String title, String content) {
         User user = dao.find(User.class, userId);
         if (user == null) {
-            throw  new IllegalArgumentException("user id " + id + " not found");
+            throw new IllegalArgumentException("user id " + id + " not found");
         }
 
         Post post = dao.find(Post.class, id);
         if (post == null) {
-            throw  new IllegalArgumentException("post id " + id + " not found");
+            throw new IllegalArgumentException("post id " + id + " not found");
         }
 
         post.setTitle(title);

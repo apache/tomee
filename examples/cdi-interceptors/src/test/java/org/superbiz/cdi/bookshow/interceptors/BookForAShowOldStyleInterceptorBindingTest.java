@@ -16,27 +16,28 @@
  */
 package org.superbiz.cdi.bookshow.interceptors;
 
-import javax.ejb.EJB;
-import javax.ejb.embeddable.EJBContainer;
-
 import junit.framework.TestCase;
-
 import org.superbiz.cdi.bookshow.beans.BookForAShowOldStyleInterceptorBinding;
 import org.superbiz.cdi.bookshow.tracker.InterceptionOrderTracker;
+
+import javax.ejb.EJB;
+import javax.ejb.embeddable.EJBContainer;
 
 public class BookForAShowOldStyleInterceptorBindingTest extends TestCase {
     @EJB
     private BookForAShowOldStyleInterceptorBinding bookForAShowBean;
     EJBContainer ejbContainer;
+
     /**
      * Bootstrap the Embedded EJB Container
-     * 
+     *
      * @throws Exception
      */
     protected void setUp() throws Exception {
         ejbContainer = EJBContainer.createEJBContainer();
         ejbContainer.getContext().bind("inject", this);
     }
+
     /**
      * Test basic interception
      */
@@ -46,6 +47,7 @@ public class BookForAShowOldStyleInterceptorBindingTest extends TestCase {
         // verify
         assertTrue(InterceptionOrderTracker.getMethodsInterceptedList().contains("getMoviesList"));
     }
+
     protected void tearDown() {
         // clear the lists after each test
         InterceptionOrderTracker.getInterceptedByList().clear();

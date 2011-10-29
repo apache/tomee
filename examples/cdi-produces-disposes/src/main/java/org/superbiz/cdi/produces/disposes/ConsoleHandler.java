@@ -20,7 +20,7 @@ public class ConsoleHandler implements LogHandler {
 
     private String name;
 
-    public ConsoleHandler (String name) {
+    public ConsoleHandler(String name) {
         this.name = name;
     }
 

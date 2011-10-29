@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.bval.BeanValidationAppendixInterceptor;
 import org.junit.AfterClass;
@@ -28,7 +29,6 @@ import javax.ejb.EJBException;
 import javax.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 import javax.validation.ConstraintViolationException;
-
 import java.util.Properties;
 
 import static junit.framework.Assert.assertEquals;
@@ -41,30 +41,38 @@ import static junit.framework.Assert.fail;
 public class OlympicGamesTest {
     private static Context context;
 
-    @EJB private OlympicGamesManager gamesManager;
-    @EJB private PoleVaultingManager poleVaultingManager;
+    @EJB
+    private OlympicGamesManager gamesManager;
 
-    @BeforeClass public static void start() {
+    @EJB
+    private PoleVaultingManager poleVaultingManager;
+
+    @BeforeClass
+    public static void start() {
         Properties properties = new Properties();
         properties.setProperty(BeanContext.USER_INTERCEPTOR_KEY, BeanValidationAppendixInterceptor.class.getName());
         context = EJBContainer.createEJBContainer(properties).getContext();
     }
 
-    @Before public void inject() throws Exception {
+    @Before
+    public void inject() throws Exception {
         context.bind("inject", this);
     }
 
-    @AfterClass public static void stop() throws Exception {
+    @AfterClass
+    public static void stop() throws Exception {
         if (context != null) {
             context.close();
         }
     }
 
-    @Test public void sportMenOk() throws Exception {
+    @Test
+    public void sportMenOk() throws Exception {
         assertEquals("IWin [FR]", gamesManager.addSportMan("IWin", "FR"));
     }
 
-    @Test public void sportMenKoBecauseOfName() throws Exception {
+    @Test
+    public void sportMenKoBecauseOfName() throws Exception {
         try {
             gamesManager.addSportMan("I lose", "EN");
             fail("no space should be in names");
@@ -75,7 +83,8 @@ public class OlympicGamesTest {
         }
     }
 
-    @Test public void sportMenKoBecauseOfCountry() throws Exception {
+    @Test
+    public void sportMenKoBecauseOfCountry() throws Exception {
         try {
             gamesManager.addSportMan("ILoseTwo", "TOO-LONG");
             fail("country should be between 2 and 4 characters");
@@ -86,11 +95,13 @@ public class OlympicGamesTest {
         }
     }
 
-    @Test public void polVaulting() throws Exception {
+    @Test
+    public void polVaulting() throws Exception {
         assertEquals(100, poleVaultingManager.points(220));
     }
 
-    @Test public void tooShortPolVaulting() throws Exception {
+    @Test
+    public void tooShortPolVaulting() throws Exception {
         try {
             poleVaultingManager.points(119);
             fail("the jump is too short");

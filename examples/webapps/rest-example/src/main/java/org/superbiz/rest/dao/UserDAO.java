@@ -27,7 +27,8 @@ import java.util.List;
  */
 @Stateless
 public class UserDAO {
-    @EJB private DAO dao;
+    @EJB
+    private DAO dao;
 
     public User create(String name, String pwd, String mail) {
         User user = new User();
@@ -52,7 +53,7 @@ public class UserDAO {
     public User update(long id, String name, String pwd, String mail) {
         User user = dao.find(User.class, id);
         if (user == null) {
-            throw  new IllegalArgumentException("setUser id " + id + " not found");
+            throw new IllegalArgumentException("setUser id " + id + " not found");
         }
 
         user.setFullname(name);
