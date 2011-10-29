@@ -29,7 +29,7 @@
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>TomEE Arquillian Adaptor :: Common</name>
+  <name>OpenEJB :: TomEE Arquillian Adaptor :: Common</name>
 
   <dependencies>
 
