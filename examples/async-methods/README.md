@@ -1,8 +1,10 @@
-# @asynchronous Method
+# @Asynchronous Method
 
-The @asynchronous annotation was introduced in EJB 3.1 as a simple way of creating asynchronous processing.
+The @Asynchronous annotation was introduced in EJB 3.1 as a simple way of creating asynchronous processing.
 
-Asynchronous Processing is when a caller returns immediately without waiting for the invoked method to complete.
+Every time a method annotated `@Asynchronous` is invoked by anyone it will immediately return regardless of how long the method actually takes.  Each invocation returns a [Future][1] object that essentially starts out *empty* and will later have its value filled in by the container when the related method call actually completes.  Returning a `Future` object is not required and `@Asynchronous` methods can of course return `void`.
+
+# Example
 
 Here, in `JobProcessorTest`,
 
@@ -11,14 +13,13 @@ proceeds to the next statement,
 
 `final Future<String> orange = processor.addJob("orange");`
 
-without waiting for the addJob() method to complete. And later we could ask for the result using the Future<?>.get() method like
+without waiting for the addJob() method to complete. And later we could ask for the result using the `Future<?>.get()` method like
 
 `assertEquals("blue", blue.get());`
 
 It waits for the processing to complete (if its not completed already) and gets the result. If you did not care about the result, you could simply have your asynchronous method as a void method.
 
-
-[Future](http://download.oracle.com/javase/6/docs/api/java/util/concurrent/Future.html) Object from docs,
+[Future][1] Object from docs,
 
 > A Future represents the result of an asynchronous computation. Methods are provided to check if the computation is complete, to wait for its completion, and to retrieve the result of the computation. The result can only be retrieved using method get when the computation has completed, blocking if necessary until it is ready. Cancellation is performed by the cancel method. Additional methods are provided to determine if the task completed normally or was cancelled. Once a computation has completed, the computation cannot be cancelled. If you would like to use a Future for the sake of cancellability but not provide a usable result, you can declare types of the form Future<?> and return null as a result of the underlying task
 
@@ -128,6 +129,24 @@ It waits for the processing to complete (if its not completed already) and gets 
     [INFO] Final Memory: 13M/145M
     [INFO] ------------------------------------------------------------------------
 
+# How it works<small>under the covers</small>
+
+Under the covers what makes this work is:
+
+  - The `JobProcessor` the caller sees is not actually an instance of `JobProcessor`.  Rather it's a subclass or proxy that has all the methods overridden.  Methods that are supposed to be asynchronous are handled differently.
+  - Calls to an asynchronous method simply result in a `Runnable` being created that wraps the method and parameters you gave.  This runnable is given to an [Executor][3] which is simply a work queue attached to a thread pool.
+  - After adding the work to the queue, the proxied version of the method returns an implementation of `Future` that is linked to the `Runnable` which is now waiting on the queue.
+  - When the `Runnable` finally executes the method on the *real* `JobProcessor` instance, it will take the return value and set it into the `Future` making it available to the caller.
+
+Important to note that the `AsyncResult` object the `JobProcessor` returns is not the same `Future` object the caller is holding.  It would have been neat if the real `JobProcessor` could just return `String` and the caller's version of `JobProcessor` could return `Future<String>`, but we didn't see any way to do that without adding more complexity.  So the `AsyncResult` is a simple wrapper object.  The container will pull the `String` out, throw the `AsyncResult` away, then put the `String` in the *real* `Future` that the caller is holding.
+
+To get progress along the way, simply pass a thread-safe object like [AtomicInteger][4] to the `@Asynchronous` method and have the bean code periodically update it with the percent complete.
+
 #Related Examples
 
 For complex asynchronous processing, JavaEE's answer is `MessageDrivenBean`. Have a look at the simple-mdb example
+
+[1]: http://download.oracle.com/javase/6/docs/api/java/util/concurrent/Future.html
+[3]: http://download.oracle.com/javase/6/docs/api/java/util/concurrent/Executor.html
+[4]: http://download.oracle.com/javase/6/docs/api/java/util/concurrent/atomic/AtomicInteger.html
+
