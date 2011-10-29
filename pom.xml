@@ -269,6 +269,7 @@
     <module>server</module>
     <module>examples</module>
     <module>assembly</module>
+    <module>arquillian-tomee</module>
     <module>tck</module>
   </modules>
 
@@ -281,6 +282,7 @@
         <module>container</module>
         <module>server</module>
         <module>examples</module>
+        <module>arquillian-tomee</module>
         <module>assembly</module>
       </modules>
       <build>
