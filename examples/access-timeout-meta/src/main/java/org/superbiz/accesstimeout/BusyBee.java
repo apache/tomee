@@ -20,13 +20,11 @@ import org.superbiz.accesstimeout.api.AwaitBriefly;
 import org.superbiz.accesstimeout.api.AwaitForever;
 import org.superbiz.accesstimeout.api.AwaitNever;
 
-import javax.ejb.AccessTimeout;
 import javax.ejb.Asynchronous;
 import javax.ejb.Lock;
 import javax.ejb.Singleton;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 import static javax.ejb.LockType.WRITE;
 

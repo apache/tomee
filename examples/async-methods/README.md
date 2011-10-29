@@ -129,7 +129,7 @@ It waits for the processing to complete (if its not completed already) and gets 
     [INFO] Final Memory: 13M/145M
     [INFO] ------------------------------------------------------------------------
 
-# How it works<small>under the covers</small>
+# How it works <small>under the covers</small>
 
 Under the covers what makes this work is:
 
@@ -144,7 +144,7 @@ To get progress along the way, simply pass a thread-safe object like [AtomicInte
 
 #Related Examples
 
-For complex asynchronous processing, JavaEE's answer is `MessageDrivenBean`. Have a look at the simple-mdb example
+For complex asynchronous processing, JavaEE's answer is `@MessageDrivenBean`. Have a look at the [simple-mdb](../simple-mdb/README.html) example
 
 [1]: http://download.oracle.com/javase/6/docs/api/java/util/concurrent/Future.html
 [3]: http://download.oracle.com/javase/6/docs/api/java/util/concurrent/Executor.html

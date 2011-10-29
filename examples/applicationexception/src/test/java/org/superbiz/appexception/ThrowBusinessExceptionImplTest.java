@@ -24,6 +24,9 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import java.util.Properties;
 
+// TODO This test case does not actually show that the bean was not destroyed.  The effect of @ApplicationException is not demonstrated
+// Maybe have two methods that throw runtime exceptions and compare the behavior of both
+// TODO Remote the business interface and show only POJO usage
 public class ThrowBusinessExceptionImplTest {
 
     //START SNIPPET: setup
