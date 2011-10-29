@@ -185,6 +185,7 @@ public class RemoteTomEEContainer extends TomEEContainer {
     	// only stop the container if we started it
     	if (needsStart) {
     		container.stop();
+            FileUtils.delete(new File(configuration.getDir()));
     	}
     }
     

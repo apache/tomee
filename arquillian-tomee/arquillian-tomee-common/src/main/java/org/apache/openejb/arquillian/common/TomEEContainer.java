@@ -16,16 +16,6 @@
  */
 package org.apache.openejb.arquillian.common;
 
-import java.io.File;
-import java.io.OutputStream;
-import java.net.Socket;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
-
 import org.apache.openejb.assembler.Deployer;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.container.DeploymentException;
@@ -39,11 +29,23 @@ import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import java.io.File;
+import java.io.OutputStream;
+import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.logging.Logger;
+
 public abstract class TomEEContainer implements DeployableContainer<TomEEConfiguration> {
+    protected static final Logger LOGGER = Logger.getLogger(TomEEContainer.class.getName());
+
     protected static final String LOCALHOST = "localhost";
     protected static final String SHUTDOWN_COMMAND = "SHUTDOWN" + Character.toString((char) -1);
     protected TomEEConfiguration configuration;
-    protected Map<String, String> moduleIds = new HashMap<String, String>();
+    protected Map<String, File> moduleIds = new HashMap<String, File>();
 
     public Class<TomEEConfiguration> getConfigurationClass() {
         return TomEEConfiguration.class;
@@ -62,6 +64,11 @@ public abstract class TomEEContainer implements DeployableContainer<TomEEConfigu
             out.write(SHUTDOWN_COMMAND.getBytes());
 
             waitForShutdown(10);
+
+            File dir = new File(configuration.getDir());
+            if (dir.exists()) {
+                FileUtils.deleteOnExit(dir); // if we can avoid to delete it between each test it is better
+            }
         } catch (Exception e) {
             throw new LifecycleException("Unable to stop TomEE", e);
         }
@@ -93,8 +100,15 @@ public abstract class TomEEContainer implements DeployableContainer<TomEEConfigu
     public ProtocolMetaData deploy(Archive<?> archive) throws DeploymentException {
         try {
             String tmpDir = System.getProperty("java.io.tmpdir");
-            File file = new File(tmpDir + File.separator + archive.getName());
-            file.deleteOnExit();
+            File file;
+            int i = 0;
+            do { // be sure we don't override something existing
+                file = new File(tmpDir + File.separator + i + File.separator + archive.getName());
+            } while (file.exists());
+            if (!file.getParentFile().mkdirs()) {
+                LOGGER.warning("can't create " + file.getParent());
+            }
+
             archive.as(ZipExporter.class).exportTo(file, true);
 
             Properties properties = new Properties();
@@ -105,7 +119,15 @@ public abstract class TomEEContainer implements DeployableContainer<TomEEConfigu
             Deployer deployer = (Deployer) context.lookup("openejb/DeployerBusinessRemote");
             deployer.deploy(file.getAbsolutePath());
 
-            moduleIds.put(archive.getName(), file.getAbsolutePath());
+            moduleIds.put(archive.getName(), file);
+
+            final String fileName = file.getName();
+            if (fileName.endsWith(".war")) {
+                File extracted = new File(file.getParentFile(), fileName.substring(0, fileName.length() - 4));
+                if (extracted.exists()) {
+                    extracted.deleteOnExit();
+                }
+            }
 
             HTTPContext httpContext = new HTTPContext(LOCALHOST, configuration.getHttpPort());
             if (archive instanceof WebArchive) {
@@ -131,20 +153,17 @@ public abstract class TomEEContainer implements DeployableContainer<TomEEConfigu
         return archiveName;
     }
 
-    private Servlet getArquillianServlet() {
-        Servlet servlet = new Servlet("ArquillianServletRunner", "/");
-        return servlet;
-    }
-
     public void undeploy(Archive<?> archive) throws DeploymentException {
         try {
             Properties properties = new Properties();
             properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
             properties.setProperty(Context.PROVIDER_URL, "http://" + LOCALHOST + ":" + configuration.getHttpPort() + "/openejb/ejb");
             InitialContext context = new InitialContext(properties);
-            String appId = moduleIds.get(archive.getName());
+            File file = moduleIds.get(archive.getName());
             Deployer deployer = (Deployer) context.lookup("openejb/DeployerBusinessRemote");
-            deployer.undeploy(appId);
+            deployer.undeploy(file.getAbsolutePath());
+
+            FileUtils.delete(file.getParentFile()); // "i" folder
         } catch (Exception e) {
             e.printStackTrace();
             throw new DeploymentException("Unable to undeploy", e);
