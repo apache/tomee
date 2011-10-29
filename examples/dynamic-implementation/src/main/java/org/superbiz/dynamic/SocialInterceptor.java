@@ -7,7 +7,8 @@ import javax.interceptor.InvocationContext;
  * @author rmannibucau
  */
 public class SocialInterceptor {
-    @AroundInvoke public Object around(InvocationContext context) throws Exception {
+    @AroundInvoke
+    public Object around(InvocationContext context) throws Exception {
         String mtd = context.getMethod().getName();
         String address;
         if (mtd.toLowerCase().contains("facebook")) {
@@ -15,7 +16,7 @@ public class SocialInterceptor {
         } else if (mtd.toLowerCase().contains("twitter")) {
             address = "http://twitter.com";
         } else {
-            address ="no website for you";
+            address = "no website for you";
         }
 
         System.out.println("go on " + address);

@@ -23,7 +23,8 @@ import javax.ejb.Stateless;
  */
 @Stateless
 public class PoleVaultingManagerBean implements PoleVaultingManager {
-    @Override public int points(int centimeters) {
+    @Override
+    public int points(int centimeters) {
         return centimeters - 120;
     }
 }

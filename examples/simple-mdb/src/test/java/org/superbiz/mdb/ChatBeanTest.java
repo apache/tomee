@@ -81,7 +81,7 @@ public class ChatBeanTest extends TestCase {
     private String receiveText(MessageConsumer answers) throws JMSException {
 
         return ((TextMessage) answers.receive(1000)).getText();
-        
+
     }
 
 }

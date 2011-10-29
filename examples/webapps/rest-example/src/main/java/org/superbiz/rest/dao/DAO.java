@@ -30,7 +30,8 @@ import java.util.List;
  */
 @Stateless
 public class DAO {
-    @PersistenceContext(unitName = "blog") private EntityManager em;
+    @PersistenceContext(unitName = "blog")
+    private EntityManager em;
 
     public <E> E create(E e) {
         em.persist(e);

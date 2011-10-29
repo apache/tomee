@@ -23,7 +23,8 @@ import java.lang.reflect.Method;
  * @author rmannibucau
  */
 public class SocialHandler implements InvocationHandler {
-    @Override public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         String mtd = method.getName();
         if (mtd.toLowerCase().contains("facebook")) {
             return "You think you have a life!";

@@ -56,7 +56,7 @@ public class ChatBean implements MessageListener {
             } else if ("Still spinning?".equals(question)) {
 
                 respond("Once every day, as usual.");
-                
+
             }
         } catch (JMSException e) {
             throw new IllegalStateException(e);

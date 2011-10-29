@@ -31,7 +31,8 @@ import java.io.IOException;
  */
 @WebServlet(name = "manager servlet", urlPatterns = "/")
 public class ManagerServlet extends HttpServlet {
-    @EJB private Manager manager;
+    @EJB
+    private Manager manager;
 
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.getOutputStream().print(manager.work());

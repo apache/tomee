@@ -21,15 +21,8 @@ import org.superbiz.injection.tx.api.Delete;
 import org.superbiz.injection.tx.api.MovieUnit;
 import org.superbiz.injection.tx.api.Read;
 
-import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateful;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
 import javax.persistence.Query;
 import java.util.List;
 

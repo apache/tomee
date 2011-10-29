@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -68,14 +68,15 @@ import static org.junit.Assert.assertEquals;
  * @author Romain Manni-Bucau
  */
 public class DynamicDataSourceTest {
-    @Test public void route() throws Exception {
-        String[] databases = new String[] { "database1", "database2", "database3" };
+    @Test
+    public void route() throws Exception {
+        String[] databases = new String[]{"database1", "database2", "database3"};
 
         Properties properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
 
         // resources
-            // datasources
+        // datasources
         for (int i = 1; i <= databases.length; i++) {
             String dbName = databases[i - 1];
             properties.setProperty(dbName, "new://Resource?type=DataSource");
@@ -87,12 +88,12 @@ public class DynamicDataSourceTest {
             properties.setProperty(dbName + "JtaManaged", "true");
         }
 
-            // router
+        // router
         properties.setProperty("My Router", "new://Resource?provider=org.router:DeterminedRouter&type=" + DeterminedRouter.class.getName());
         properties.setProperty("My Router.DatasourceNames", "database1 database2 database3");
         properties.setProperty("My Router.DefaultDataSourceName", "database1");
 
-            // routed datasource
+        // routed datasource
         properties.setProperty("Routed Datasource", "new://Resource?provider=RoutedDataSource&type=" + Router.class.getName());
         properties.setProperty("Routed Datasource.Router", "My Router");
 

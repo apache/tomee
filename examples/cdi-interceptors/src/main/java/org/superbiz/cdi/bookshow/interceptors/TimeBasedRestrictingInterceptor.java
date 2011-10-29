@@ -16,18 +16,20 @@
  */
 package org.superbiz.cdi.bookshow.interceptors;
 
-import java.io.Serializable;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.Interceptor;
-import javax.interceptor.InvocationContext;
 import org.superbiz.cdi.AccessDeniedException;
 import org.superbiz.cdi.bookshow.interceptorbinding.TimeRestricted;
 import org.superbiz.cdi.bookshow.tracker.InterceptionOrderTracker;
+
+import javax.interceptor.AroundInvoke;
+import javax.interceptor.Interceptor;
+import javax.interceptor.InvocationContext;
+import java.io.Serializable;
 
 @Interceptor
 @TimeRestricted
 public class TimeBasedRestrictingInterceptor implements Serializable {
     private static final long serialVersionUID = 8139854519874743530L;
+
     @AroundInvoke
     public Object restrictAccessBasedOnTime(InvocationContext ctx) throws Exception {
         InterceptionOrderTracker.getMethodsInterceptedList().add(ctx.getMethod().getName());
@@ -37,6 +39,7 @@ public class TimeBasedRestrictingInterceptor implements Serializable {
         }
         return ctx.proceed();
     }
+
     private boolean isWorkingHours() {
         /*
          * int hourOfDay = Calendar.getInstance().get(Calendar.HOUR_OF_DAY); if (hourOfDay >= 9 && hourOfDay <= 21) {

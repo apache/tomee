@@ -34,7 +34,8 @@ import static junit.framework.Assert.assertEquals;
 public class GuessHowManyMBeanTest {
     private static final String OBJECT_NAME = "openejb.user.mbeans:group=org.superbiz.mbean,application=mbean-auto-registration,name=GuessHowManyMBean";
 
-    @Test public void play() throws Exception {
+    @Test
+    public void play() throws Exception {
         Properties properties = new Properties();
         properties.setProperty("openejb.user.mbeans.list", GuessHowManyMBean.class.getName());
         EJBContainer container = EJBContainer.createEJBContainer(properties);

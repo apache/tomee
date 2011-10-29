@@ -29,11 +29,13 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @NamedQueries({
-    @NamedQuery(name = "user.list", query = "select u from User u")
+        @NamedQuery(name = "user.list", query = "select u from User u")
 })
 @XmlRootElement(name = "user")
 public class User implements Cloneable {
-    @Id @GeneratedValue private long id;
+    @Id
+    @GeneratedValue
+    private long id;
     private String fullname;
     private String password;
     private String email;
@@ -70,7 +72,7 @@ public class User implements Cloneable {
         this.id = id;
     }
 
-    public User copy(){
+    public User copy() {
         User user = new User();
         user.setEmail(getEmail());
         user.setFullname(getFullname());
@@ -79,7 +81,8 @@ public class User implements Cloneable {
         return user;
     }
 
-    @Override public boolean equals(Object o) {
+    @Override
+    public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
@@ -92,7 +95,8 @@ public class User implements Cloneable {
         return id == user.id;
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return (int) (id ^ (id >>> 32));
     }
 }

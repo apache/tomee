@@ -29,6 +29,8 @@ import javax.interceptor.Interceptors;
 @Interceptors(SocialInterceptor.class)
 public interface SocialBean {
     public String facebookStatus();
+
     public String twitterStatus();
+
     public String status();
 }

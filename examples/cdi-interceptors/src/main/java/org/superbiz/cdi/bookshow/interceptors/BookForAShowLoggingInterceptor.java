@@ -32,21 +32,21 @@
  */
 package org.superbiz.cdi.bookshow.interceptors;
 
-import java.io.Serializable;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Logger;
+import org.superbiz.cdi.bookshow.interceptorbinding.Log;
+import org.superbiz.cdi.bookshow.tracker.InterceptionOrderTracker;
+
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
-
-import org.superbiz.cdi.bookshow.interceptorbinding.Log;
-import org.superbiz.cdi.bookshow.tracker.InterceptionOrderTracker;
+import java.io.Serializable;
+import java.util.logging.Logger;
 
 @Interceptor
 @Log
 public class BookForAShowLoggingInterceptor implements Serializable {
     private static final long serialVersionUID = 8139854519874743530L;
     private Logger logger = Logger.getLogger("BookForAShowApplicationLogger");
+
     @AroundInvoke
     public Object logMethodEntry(InvocationContext ctx) throws Exception {
         logger.info("Before entering method:" + ctx.getMethod().getName());

@@ -24,7 +24,7 @@
 
       <ejb-name>ChatBean</ejb-name>
       <ejb-class>org.superbiz.mdbdesc.ChatBean</ejb-class>
-      
+
       <messaging-type>javax.jms.MessageListener</messaging-type>
 
       <activation-config>

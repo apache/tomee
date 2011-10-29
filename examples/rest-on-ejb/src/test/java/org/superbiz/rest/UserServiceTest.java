@@ -45,7 +45,8 @@ public class UserServiceTest {
     private static UserService service;
     private static List<User> users = new ArrayList<User>();
 
-    @BeforeClass public static void start() throws NamingException {
+    @BeforeClass
+    public static void start() throws NamingException {
         Properties properties = new Properties();
         properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
         context = EJBContainer.createEJBContainer(properties).getContext();
@@ -56,13 +57,15 @@ public class UserServiceTest {
         users.add(service.create("bar", "barpwd", "bar@bar.com"));
     }
 
-    @AfterClass public static void close() throws NamingException {
+    @AfterClass
+    public static void close() throws NamingException {
         if (context != null) {
             context.close();
         }
     }
 
-    @Test public void create() {
+    @Test
+    public void create() {
         int expected = service.list(0, 100).size() + 1;
         Response response = WebClient.create("http://localhost:4204")
                 .path("/user/create")
@@ -80,7 +83,8 @@ public class UserServiceTest {
         fail("user was not added");
     }
 
-    @Test public void delete() throws Exception {
+    @Test
+    public void delete() throws Exception {
         User user = service.create("todelete", "dontforget", "delete@me.com");
 
         WebClient.create("http://localhost:4204").path("/user/delete/" + user.getId()).delete();
@@ -89,7 +93,8 @@ public class UserServiceTest {
         assertNull(user);
     }
 
-    @Test public void show() {
+    @Test
+    public void show() {
         User user = WebClient.create("http://localhost:4204")
                 .path("/user/show/" + users.iterator().next().getId())
                 .get(User.class);
@@ -98,28 +103,30 @@ public class UserServiceTest {
         assertEquals("foo@foo.com", user.getEmail());
     }
 
-    @Test public void list() throws Exception {
+    @Test
+    public void list() throws Exception {
         String users = WebClient.create("http://localhost:4204")
                 .path("/user/list")
                 .get(String.class);
         assertEquals(
-            "<users>" +
-                "<user>" +
-                    "<email>foo@foo.com</email>" +
-                    "<fullname>foo</fullname>" +
-                    "<id>1</id>" +
-                    "<password>foopwd</password>" +
-                "</user>" +
-                "<user>" +
-                    "<email>bar@bar.com</email>" +
-                    "<fullname>bar</fullname>" +
-                    "<id>2</id>" +
-                    "<password>barpwd</password>" +
-                "</user>" +
-            "</users>", users);
+                "<users>" +
+                        "<user>" +
+                        "<email>foo@foo.com</email>" +
+                        "<fullname>foo</fullname>" +
+                        "<id>1</id>" +
+                        "<password>foopwd</password>" +
+                        "</user>" +
+                        "<user>" +
+                        "<email>bar@bar.com</email>" +
+                        "<fullname>bar</fullname>" +
+                        "<id>2</id>" +
+                        "<password>barpwd</password>" +
+                        "</user>" +
+                        "</users>", users);
     }
 
-    @Test public void update() throws Exception {
+    @Test
+    public void update() throws Exception {
         User created = service.create("name", "pwd", "mail");
         Response response = WebClient.create("http://localhost:4204")
                 .path("/user/update/" + created.getId())

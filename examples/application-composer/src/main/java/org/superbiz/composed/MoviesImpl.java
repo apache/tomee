@@ -18,12 +18,13 @@ package org.superbiz.composed;
 
 import javax.ejb.Stateful;
 import javax.ejb.TransactionAttribute;
-import static javax.ejb.TransactionAttributeType.MANDATORY;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContextType;
 import javax.persistence.Query;
 import java.util.List;
+
+import static javax.ejb.TransactionAttributeType.MANDATORY;
 
 //START SNIPPET: code
 @Stateful(name = "Movies")

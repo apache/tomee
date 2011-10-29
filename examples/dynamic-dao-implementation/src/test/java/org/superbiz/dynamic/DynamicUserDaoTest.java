@@ -43,7 +43,8 @@ public class DynamicUserDaoTest {
     private static UserDao dao;
     private static Util util;
 
-    @BeforeClass public static void init() throws Exception {
+    @BeforeClass
+    public static void init() throws Exception {
         final Properties p = new Properties();
         p.put("jdbc/dynamicDB", "new://Resource?type=DataSource");
         p.put("jdbc/dynamicDB.JdbcDriver", "org.hsqldb.jdbcDriver");
@@ -58,18 +59,21 @@ public class DynamicUserDaoTest {
         util.init(); // init database
     }
 
-    @Test public void simple() {
+    @Test
+    public void simple() {
         User user = dao.findById(1);
         assertNotNull(user);
         assertEquals(1, user.getId());
     }
 
-    @Test public void findAll() {
+    @Test
+    public void findAll() {
         Collection<User> users = dao.findAll();
         assertEquals(10, users.size());
     }
 
-    @Test public void pagination() {
+    @Test
+    public void pagination() {
         Collection<User> users = dao.findAll(0, 5);
         assertEquals(5, users.size());
 
@@ -78,14 +82,16 @@ public class DynamicUserDaoTest {
         assertEquals(7, users.iterator().next().getId());
     }
 
-    @Test public void persist() {
+    @Test
+    public void persist() {
         User u = new User();
         dao.save(u);
         assertNotNull(u.getId());
         util.remove(u);
     }
 
-    @Test public void remove() {
+    @Test
+    public void remove() {
         User u = new User();
         dao.save(u);
         assertNotNull(u.getId());
@@ -98,7 +104,8 @@ public class DynamicUserDaoTest {
         }
     }
 
-    @Test public void merge() {
+    @Test
+    public void merge() {
         User u = new User();
         u.setAge(1);
         dao.save(u);
@@ -112,7 +119,8 @@ public class DynamicUserDaoTest {
         dao.delete(u);
     }
 
-    @Test public void oneCriteria() {
+    @Test
+    public void oneCriteria() {
         Collection<User> users = dao.findByName("foo");
         assertEquals(4, users.size());
         for (User user : users) {
@@ -120,7 +128,8 @@ public class DynamicUserDaoTest {
         }
     }
 
-    @Test public void twoCriteria() {
+    @Test
+    public void twoCriteria() {
         Collection<User> users = dao.findByNameAndAge("bar-1", 1);
         assertEquals(1, users.size());
 
@@ -129,8 +138,9 @@ public class DynamicUserDaoTest {
         assertEquals(1, user.getAge());
     }
 
-    @Test public void query() {
-        Map<String, Object> params = new HashMap<String, Object> ();
+    @Test
+    public void query() {
+        Map<String, Object> params = new HashMap<String, Object>();
         params.put("name", "foo");
 
         Collection<User> users = dao.namedQuery("dynamic-ejb-impl-test.query", params, 0, 100);
@@ -154,8 +164,10 @@ public class DynamicUserDaoTest {
         assertEquals(3, users.size());
     }
 
-    @Stateless public static class Util {
-        @PersistenceContext private EntityManager em;
+    @Stateless
+    public static class Util {
+        @PersistenceContext
+        private EntityManager em;
 
         public void remove(User o) {
             em.remove(em.find(User.class, o.getId()));

@@ -23,14 +23,8 @@ import org.superbiz.injection.secure.api.DeletePermission;
 import org.superbiz.injection.secure.api.MovieUnit;
 import org.superbiz.injection.secure.api.ReadPermission;
 
-import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateful;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
 import javax.persistence.Query;
 import java.util.List;
 

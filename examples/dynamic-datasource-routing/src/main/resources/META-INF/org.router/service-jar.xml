@@ -18,8 +18,8 @@
 -->
 <ServiceJar>
   <ServiceProvider id="DeterminedRouter" service="Resource"
-      type="org.apache.openejb.resource.jdbc.Router"
-      class-name="org.superbiz.dynamicdatasourcerouting.DeterminedRouter">
+                   type="org.apache.openejb.resource.jdbc.Router"
+                   class-name="org.superbiz.dynamicdatasourcerouting.DeterminedRouter">
     DataSourceNames
     DefaultDataSourceName
   </ServiceProvider>

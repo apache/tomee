@@ -16,15 +16,14 @@
  */
 package org.superbiz.cdi.bookshow.beans;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import org.superbiz.cdi.bookshow.interceptorbinding.Log;
+import org.superbiz.cdi.bookshow.interceptors.BookForAShowLoggingInterceptor;
 
 import javax.ejb.Stateful;
 import javax.interceptor.Interceptors;
-
-import org.superbiz.cdi.bookshow.interceptorbinding.Log;
-import org.superbiz.cdi.bookshow.interceptors.BookForAShowLoggingInterceptor;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * CDI supports binding an interceptor using @Interceptors
@@ -32,18 +31,20 @@ import org.superbiz.cdi.bookshow.interceptors.BookForAShowLoggingInterceptor;
  * Cannot be disabled easily
  * Order dependent on how it is listed in class
  * Instead, create interceptor bindings using @InterceptorBinding and bind them 
- * See {@link Log}, {@link BookForAShowOneInterceptorApplied}, {@link BookForAShowLoggingInterceptor} 
+ * See {@link Log}, {@link BookForAShowOneInterceptorApplied}, {@link BookForAShowLoggingInterceptor}
  */
 @Interceptors(BookForAShowLoggingInterceptor.class)
 @Stateful
 public class BookForAShowOldStyleInterceptorBinding implements Serializable {
     private static final long serialVersionUID = 6350400892234496909L;
+
     public List<String> getMoviesList() {
         List<String> moviesAvailable = new ArrayList<String>();
         moviesAvailable.add("KungFu Panda 2");
         moviesAvailable.add("Kings speech");
         return moviesAvailable;
     }
+
     public Integer getDiscountedPrice(int ticketPrice) {
         return ticketPrice - 50;
     }

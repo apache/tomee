@@ -18,7 +18,6 @@ package org.superbiz.injection.tx.api;
 
 import org.superbiz.injection.tx.DeleteInterceptor;
 
-import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;

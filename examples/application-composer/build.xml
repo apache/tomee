@@ -39,8 +39,8 @@
 
   ================================================================= -->
 
-  <artifact:remoteRepository id="apache.snapshot.repository" url="http://repository.apache.org/snapshots/" />
-  <artifact:remoteRepository id="m2.repository" url="http://repo1.maven.org/maven2/" />
+  <artifact:remoteRepository id="apache.snapshot.repository" url="http://repository.apache.org/snapshots/"/>
+  <artifact:remoteRepository id="m2.repository" url="http://repo1.maven.org/maven2/"/>
 
   <!-- Build Classpath -->
   <artifact:dependencies pathId="classpath.main">
@@ -55,8 +55,8 @@
 
   <!-- Test Run Classpath -->
   <artifact:dependencies pathId="classpath.test.run">
-    <remoteRepository refid="apache.snapshot.repository" />
-    <remoteRepository refid="m2.repository" />
+    <remoteRepository refid="apache.snapshot.repository"/>
+    <remoteRepository refid="m2.repository"/>
 
     <dependency groupId="org.apache.openejb" artifactId="openejb-core" version="4.0.0-beta-1"/>
     <dependency groupId="junit" artifactId="junit" version="4.3.1"/>
@@ -82,7 +82,7 @@
   <target name="compile" depends="init">
 
     <javac srcdir="${src.main.java}" destdir="${build.main}">
-      <classpath refid="classpath.main" />
+      <classpath refid="classpath.main"/>
     </javac>
     <copy todir="${build.main}">
       <fileset dir="${src.main.resources}"/>

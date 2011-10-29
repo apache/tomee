@@ -33,7 +33,7 @@ public class MovieTest extends TestCase {
 
     @EJB
     private Movies movies;
-    
+
     @EJB(name = "ManagerBean")
     private Caller manager;
 

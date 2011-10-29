@@ -16,13 +16,12 @@
  */
 package org.superbiz.cdi.basic;
 
-import javax.ejb.EJB;
-import javax.ejb.embeddable.EJBContainer;
-
+import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 
-import junit.framework.TestCase;
+import javax.ejb.EJB;
+import javax.ejb.embeddable.EJBContainer;
 
 public class CourseTest extends TestCase {
 

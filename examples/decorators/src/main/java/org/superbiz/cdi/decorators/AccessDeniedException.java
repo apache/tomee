@@ -19,8 +19,8 @@ package org.superbiz.cdi.decorators;
 import javax.ejb.ApplicationException;
 
 /**
-* @version $Revision$ $Date$
-*/
+ * @version $Revision$ $Date$
+ */
 @ApplicationException
 public class AccessDeniedException extends RuntimeException {
     public AccessDeniedException(String s) {

@@ -17,8 +17,6 @@
 package org.superbiz.injection.secure.api;
 
 import javax.annotation.security.RolesAllowed;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

@@ -31,16 +31,19 @@ public class SocialTest {
     private static SocialBean social;
     private static EJBContainer container;
 
-    @BeforeClass public static void init() throws Exception {
+    @BeforeClass
+    public static void init() throws Exception {
         container = EJBContainer.createEJBContainer();
         social = (SocialBean) container.getContext().lookup("java:global/dynamic-implementation/SocialBean");
     }
 
-    @AfterClass public static void close() {
+    @AfterClass
+    public static void close() {
         container.close();
     }
 
-    @Test public void simple() {
+    @Test
+    public void simple() {
         assertTrue(social.facebookStatus().contains("think"));
         assertTrue(social.twitterStatus().contains("eat"));
         assertTrue(social.status().contains("virtual"));

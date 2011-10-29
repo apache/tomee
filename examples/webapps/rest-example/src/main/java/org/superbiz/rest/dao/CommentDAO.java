@@ -29,7 +29,8 @@ import java.util.List;
  */
 @Stateless
 public class CommentDAO extends DAO {
-    @EJB private DAO dao;
+    @EJB
+    private DAO dao;
 
     public List<Comment> list(long postId) {
         Post post = dao.find(Post.class, postId);

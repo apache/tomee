@@ -16,7 +16,6 @@
  */
 package org.superbiz.cdi.decorators;
 
-import javax.annotation.Resource;
 import javax.decorator.Decorator;
 import javax.decorator.Delegate;
 import javax.ejb.SessionContext;

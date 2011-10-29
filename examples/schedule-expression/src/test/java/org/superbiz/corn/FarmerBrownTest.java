@@ -38,6 +38,6 @@ public class FarmerBrownTest extends TestCase {
         Thread.sleep(SECONDS.toMillis(5));
 
         final int checks = farmerBrown.getChecks();
-        assertTrue(checks+"", checks > 4);
+        assertTrue(checks + "", checks > 4);
     }
 }

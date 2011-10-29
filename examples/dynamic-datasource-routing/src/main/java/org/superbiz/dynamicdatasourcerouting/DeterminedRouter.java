@@ -61,7 +61,8 @@ public class DeterminedRouter extends AbstractRouter {
      *         or the default one
      *  @throws IllegalArgumentException if the data source is not found
      */
-    @Override public DataSource getDataSource() {
+    @Override
+    public DataSource getDataSource() {
         // lazy init of routed datasources
         if (dataSources == null) {
             init();
