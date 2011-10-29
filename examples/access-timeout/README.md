@@ -6,8 +6,6 @@ In a general sense this annotation portably specifies up to how long a caller wi
  - `@Stateful` - any method of the instance is being invoked and a second invocation occurs.  OR the @Stateful bean is in a transaction and the caller is invoking it from outside that transaction.
  - `@Stateless` - no instances are available in the pool. As noted, however, pooling sematics, if any, are not covered by the spec.  If the vendor's pooling semantics do involve a wait condition, the @AccessTimeout should apply.
 
-# Usage
-
 The `@AccessTimeout` is simply a convenience wrapper around the `long` and `TimeUnit` tuples commonly used in the `java.util.concurrent` API.
 
     import java.util.concurrent.TimeUnit;
