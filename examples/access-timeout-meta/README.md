@@ -1,12 +1,11 @@
 Title: @AccessTimeout the Meta-Annotation Way
 
-See the [access-timeout](../access-timeout/README.html) for the "before" of how `@AccessTimeout` looks without meta-annotations.
+Any annotation that takes parameters can benefit from meta-annotations.  Here we see how `@AccessTimeout` can be far more understandable and manageable through meta-annotations.
+We'll use the [access-timeout](../access-timeout/README.html) example as our use-case.
 
-Here we see how `@AccessTimeout` can be far more understandable and manageable through meta-annotations.
-
-Any annotation that takes parameters can benefit from some good old fashioned encapsulation.  The value of the parameters supplied to `@AccessTimeout` have a dramatic affect on
-how what that annotation actually does.  Moreover, `@AccessTimeout` has one of those designs where `-1` and `0` have signifcantly different meanings.  One means "wait forever",
-the other means "never wait".  Only a lucky few can remember which is which on a daily basis.  For the rest of us it is a constant source of bugs.
+The value of the parameters supplied to `@AccessTimeout` have a dramatic affect on how what that annotation actually does.  Moreover, `@AccessTimeout` has one of those designs
+where `-1` and `0` have signifcantly different meanings.  One means "wait forever", the other means "never wait".  Only a lucky few can remember which is which on a daily basis.
+For the rest of us it is a constant source of bugs.
 
 Meta-Annotations to the rescue!
 
