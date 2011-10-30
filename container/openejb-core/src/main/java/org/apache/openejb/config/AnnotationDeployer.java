@@ -216,7 +216,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -1076,7 +1075,15 @@ public class AnnotationDeployer implements DynamicDeployer {
                         }
                     }
 
-                    final String name = BeanContext.Comp.openejbCompName(ejbModule.getModuleId());
+                    // passing jar location to be able to manage maven classes/test-classes which have the same moduleId
+                    String id = ejbModule.getModuleId();
+                    if (ejbModule.getJarLocation().contains(ejbModule.getModuleId() + "/target/test-classes")) {
+                        // with maven if both src/main/java and src/test/java are deployed
+                        // moduleId.Comp exists twice so it fails
+                        // here we simply modify the test comp bean name to avoid it
+                        id += "_test";
+                    }
+                    final String name = BeanContext.Comp.openejbCompName(id);
                     final org.apache.openejb.jee.ManagedBean managedBean = new org.apache.openejb.jee.ManagedBean(name, BeanContext.Comp.class);
                     managedBean.setTransactionType(TransactionType.BEAN);
                     ejbModule.getEjbJar().addEnterpriseBean(managedBean);

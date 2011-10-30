@@ -49,7 +49,6 @@ import org.apache.webbeans.context.creational.CreationalContextImpl;
 import org.apache.webbeans.inject.AbstractInjectable;
 import org.apache.xbean.recipe.ConstructionException;
 
-import javax.annotation.ManagedBean;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
