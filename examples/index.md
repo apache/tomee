@@ -25,6 +25,7 @@
  - [cdi-interceptors](cdi-interceptors/README.html)
  - [cdi-produces-disposes](cdi-produces-disposes/README.html)
  - [decorators](decorators/README.html)
+ - [cdi-alternative-and-stereotypes](cdi-alternative-and-stereotypes/README.html)
 }
 
 }
