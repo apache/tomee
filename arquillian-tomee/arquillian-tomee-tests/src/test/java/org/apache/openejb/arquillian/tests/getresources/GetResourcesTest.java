@@ -1,6 +1,5 @@
 package org.apache.openejb.arquillian.tests.getresources;
 
-import org.apache.openejb.arquillian.tests.Tests;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -22,7 +21,7 @@ import static org.apache.openejb.arquillian.tests.Tests.assertOutput;
  * @author rmannibucau
  */
 @RunWith(Arquillian.class)
-public class GetResourcesTest {
+    public class GetResourcesTest {
     public static final String TEST_NAME = GetResourcesTest.class.getSimpleName();
 
     @Deployment(testable = false) public static WebArchive createDeployment() {
@@ -30,6 +29,7 @@ public class GetResourcesTest {
                 .addClass(GetResourcesServletExporter.class)
                 .addClass(GetResourcesListener.class)
                 .addClass(GetResourcesHolder.class)
+                .addAsWebResource(Thread.currentThread().getContextClassLoader().getResource("test.getresources"), "/config/test.getresources")
                 .addAsLibraries(new File("target/test-libs/junit.jar"))
                 .setWebXML(new StringAsset(
                       Descriptors.create(WebAppDescriptor.class)
@@ -37,6 +37,7 @@ public class GetResourcesTest {
     }
 
     @Test public void check() throws IOException {
-        assertOutput("http://localhost:9080/" + TEST_NAME + "/get-resources", "found=1");
+        assertOutput("http://localhost:9080/" + TEST_NAME + "/get-resources", "foundFromListener=1");
+        assertOutput("http://localhost:9080/" + TEST_NAME + "/get-resources", "servletContextGetResource=ok");
     }
 }
