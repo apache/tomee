@@ -16,6 +16,17 @@ public class GetResourcesServletExporter extends HttpServlet {
     @Override protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("text/plain");
         final PrintWriter writer = resp.getWriter();
-        writer.write("found=" + GetResourcesHolder.RESOURCE_NUMBER);
+        writer.write("foundFromListener=" + GetResourcesHolder.RESOURCE_NUMBER);
+
+        try {
+            // all this tests will throw an exception if it fails
+            getServletContext().getResource("/config/test.getresources").openStream().close();
+            getServletContext().getResourceAsStream("/config/test.getresources").close();
+            getServletContext().getResourcePaths("/config/").iterator().next();
+
+            writer.write("servletContextGetResource=ok");
+        } catch (Exception e) {
+            writer.write("servletContextGetResource=ko");
+        }
     }
 }
