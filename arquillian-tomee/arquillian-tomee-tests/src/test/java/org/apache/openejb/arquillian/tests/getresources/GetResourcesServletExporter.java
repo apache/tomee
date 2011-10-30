@@ -5,8 +5,11 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+
+import static junit.framework.Assert.assertTrue;
 
 /**
  * @author rmannibucau
@@ -23,6 +26,7 @@ public class GetResourcesServletExporter extends HttpServlet {
             getServletContext().getResource("/config/test.getresources").openStream().close();
             getServletContext().getResourceAsStream("/config/test.getresources").close();
             getServletContext().getResourcePaths("/config/").iterator().next();
+            assertTrue(new File(getServletContext().getRealPath("/config/test.getresources")).exists());
 
             writer.write("servletContextGetResource=ok");
         } catch (Exception e) {
