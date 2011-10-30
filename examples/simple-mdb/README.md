@@ -1,5 +1,7 @@
 Title: Simple MDB
 
+#Simple MDB
+
 Below is a fun app, a chat application that uses JMS. We create a message driven bean, by marking our class with `@MessageDriven`. A message driven bean has some similarities with a stateless session bean, in the part that it is pooled too.
 
 Well, lets tell our chat-app to listen for incoming messages. That we do by implementing `MessageListener` and overriding the `onMessage(Message message)`.
@@ -9,6 +11,10 @@ Then this app "listens" for incoming messages, and the messages picked up are pr
 That finishes our message driven bean implementation. The "processing" part could be anything that fits your business-requirement.
 
 In this case, it is to respond to the user. The `respond` method shows how a Message can be sent.
+
+This sequence diagram shows how a message is sent.
+
+<img src="../../images/mdb-flow.png" alt=""/>
 
 ## ChatBean
 
