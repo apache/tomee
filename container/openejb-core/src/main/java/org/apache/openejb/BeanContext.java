@@ -159,6 +159,8 @@ public class BeanContext extends DeploymentContext {
 
     private final BeanType componentType;
 
+    private boolean hidden = false;
+
     private final Map<Method, Method> postCreateMethodMap = new HashMap<Method, Method>();
     private final Map<Method, TransactionType> methodTransactionType = new HashMap<Method, TransactionType>();
     private final Map<Method, Method> methodMap = new HashMap<Method, Method>();
@@ -1480,5 +1482,13 @@ public class BeanContext extends DeploymentContext {
 
             return methodContext;
         }
+    }
+
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
     }
 }

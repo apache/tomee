@@ -238,7 +238,7 @@ public class OpenEjbContainer extends EJBContainer {
 
                     if (!isValid(caller)) continue;
 
-                    final ManagedBean bean = ejbJar.addEnterpriseBean(new ManagedBean(caller, caller));
+                    final ManagedBean bean = ejbJar.addEnterpriseBean(new ManagedBean(caller, caller, true));
 
                     // set it to bean so it can get UserTransaction injection
                     bean.setTransactionType(TransactionType.BEAN);

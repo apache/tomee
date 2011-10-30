@@ -27,7 +27,6 @@ import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.ConnectorModule;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.config.PersistenceModule;
-import org.apache.openejb.core.InstanceContext;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
@@ -165,7 +164,7 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
             {
                 final EjbJar ejbJar = new EjbJar();
                 final OpenejbJar openejbJar = new OpenejbJar();
-                final ManagedBean bean = ejbJar.addEnterpriseBean(new ManagedBean(javaClass));
+                final ManagedBean bean = ejbJar.addEnterpriseBean(new ManagedBean(javaClass.getSimpleName(), javaClass.getName(), true));
                 bean.setTransactionType(TransactionType.BEAN);
                 final EjbDeployment ejbDeployment = openejbJar.addEjbDeployment(bean);
                 ejbDeployment.setDeploymentId(javaClass.getName());
