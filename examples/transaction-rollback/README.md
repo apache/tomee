@@ -1,255 +1,9 @@
-[INFO] Scanning for projects...
-[INFO]                                                                         
-[INFO] ------------------------------------------------------------------------
-[INFO] Building OpenEJB :: Examples :: Transaction Rollback 1.0
-[INFO] ------------------------------------------------------------------------
-[INFO] 
-[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ transaction-rollback ---
-[INFO] Deleting /Users/dblevins/examples/transaction-rollback/target
-[INFO] 
-[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ transaction-rollback ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] Copying 1 resource
-[INFO] 
-[INFO] --- maven-compiler-plugin:2.3.2:compile (default-compile) @ transaction-rollback ---
-[INFO] Compiling 3 source files to /Users/dblevins/examples/transaction-rollback/target/classes
-[INFO] 
-[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ transaction-rollback ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Users/dblevins/examples/transaction-rollback/src/test/resources
-[INFO] 
-[INFO] --- maven-compiler-plugin:2.3.2:testCompile (default-testCompile) @ transaction-rollback ---
-[INFO] Compiling 1 source file to /Users/dblevins/examples/transaction-rollback/target/test-classes
-[INFO] 
-[INFO] --- maven-surefire-plugin:2.7.2:test (default-test) @ transaction-rollback ---
-[INFO] Surefire report directory: /Users/dblevins/examples/transaction-rollback/target/surefire-reports
+Title: Transaction Rollback
 
--------------------------------------------------------
- T E S T S
--------------------------------------------------------
-Running org.superbiz.txrollback.MoviesTest
-Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-http://openejb.apache.org/
-INFO - openejb.home = /Users/dblevins/examples/transaction-rollback
-INFO - openejb.base = /Users/dblevins/examples/transaction-rollback
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
-INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
-INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
-INFO - Configuring Service(id=movieDatabase, type=Resource, provider-id=Default JDBC Database)
-INFO - Found EjbModule in classpath: /Users/dblevins/examples/transaction-rollback/target/classes
-INFO - Beginning load: /Users/dblevins/examples/transaction-rollback/target/classes
-INFO - Configuring enterprise application: /Users/dblevins/examples/transaction-rollback
-WARN - Method 'lookup' is not available for 'javax.annotation.Resource'. Probably using an older Runtime.
-INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
-INFO - Auto-creating a container for bean Movies: Container(type=STATELESS, id=Default Stateless Container)
-INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
-INFO - Auto-creating a container for bean org.superbiz.txrollback.MoviesTest: Container(type=MANAGED, id=Default Managed Container)
-INFO - Configuring PersistenceUnit(name=movie-unit)
-INFO - Auto-creating a Resource with id 'movieDatabaseNonJta' of type 'DataSource for 'movie-unit'.
-INFO - Configuring Service(id=movieDatabaseNonJta, type=Resource, provider-id=movieDatabase)
-INFO - Adjusting PersistenceUnit movie-unit <non-jta-data-source> to Resource ID 'movieDatabaseNonJta' from 'movieDatabaseUnmanaged'
-INFO - Enterprise application "/Users/dblevins/examples/transaction-rollback" loaded.
-INFO - Assembling app: /Users/dblevins/examples/transaction-rollback
-INFO - PersistenceUnit(name=movie-unit, provider=org.apache.openjpa.persistence.PersistenceProviderImpl) - provider time 413ms
-INFO - Jndi(name="java:global/transaction-rollback/Movies!org.superbiz.txrollback.Movies")
-INFO - Jndi(name="java:global/transaction-rollback/Movies")
-INFO - Jndi(name="java:global/EjbModule1229322553/org.superbiz.txrollback.MoviesTest!org.superbiz.txrollback.MoviesTest")
-INFO - Jndi(name="java:global/EjbModule1229322553/org.superbiz.txrollback.MoviesTest")
-INFO - Created Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateless Container)
-INFO - Created Ejb(deployment-id=org.superbiz.txrollback.MoviesTest, ejb-name=org.superbiz.txrollback.MoviesTest, container=Default Managed Container)
-INFO - Started Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateless Container)
-INFO - Started Ejb(deployment-id=org.superbiz.txrollback.MoviesTest, ejb-name=org.superbiz.txrollback.MoviesTest, container=Default Managed Container)
-INFO - Deployed Application(path=/Users/dblevins/examples/transaction-rollback)
-WARN - The class "org.superbiz.testinjection.MoviesTest.Movie" listed in the openjpa.MetaDataFactory configuration property could not be loaded by sun.misc.Launcher$AppClassLoader@27a8c4e7; ignoring.
-WARN - The class "org.superbiz.testinjection.MoviesTest.Movie" listed in the openjpa.MetaDataFactory configuration property could not be loaded by sun.misc.Launcher$AppClassLoader@27a8c4e7; ignoring.
-WARN - The class "org.superbiz.testinjection.MoviesTest.Movie" listed in the openjpa.MetaDataFactory configuration property could not be loaded by sun.misc.Launcher$AppClassLoader@27a8c4e7; ignoring.
-INFO - Undeploying app: /Users/dblevins/examples/transaction-rollback
-INFO - Closing DataSource: movieDatabase
-INFO - Closing DataSource: movieDatabaseNonJta
-Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-http://openejb.apache.org/
-INFO - openejb.home = /Users/dblevins/examples/transaction-rollback
-INFO - openejb.base = /Users/dblevins/examples/transaction-rollback
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
-INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
-INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
-INFO - Configuring Service(id=movieDatabase, type=Resource, provider-id=Default JDBC Database)
-INFO - Found EjbModule in classpath: /Users/dblevins/examples/transaction-rollback/target/classes
-INFO - Beginning load: /Users/dblevins/examples/transaction-rollback/target/classes
-INFO - Configuring enterprise application: /Users/dblevins/examples/transaction-rollback
-INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
-INFO - Auto-creating a container for bean Movies: Container(type=STATELESS, id=Default Stateless Container)
-INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
-INFO - Auto-creating a container for bean org.superbiz.txrollback.MoviesTest: Container(type=MANAGED, id=Default Managed Container)
-INFO - Configuring PersistenceUnit(name=movie-unit)
-INFO - Auto-creating a Resource with id 'movieDatabaseNonJta' of type 'DataSource for 'movie-unit'.
-INFO - Configuring Service(id=movieDatabaseNonJta, type=Resource, provider-id=movieDatabase)
-INFO - Adjusting PersistenceUnit movie-unit <non-jta-data-source> to Resource ID 'movieDatabaseNonJta' from 'movieDatabaseUnmanaged'
-INFO - Enterprise application "/Users/dblevins/examples/transaction-rollback" loaded.
-INFO - Assembling app: /Users/dblevins/examples/transaction-rollback
-INFO - PersistenceUnit(name=movie-unit, provider=org.apache.openjpa.persistence.PersistenceProviderImpl) - provider time 8ms
-INFO - Jndi(name="java:global/transaction-rollback/Movies!org.superbiz.txrollback.Movies")
-INFO - Jndi(name="java:global/transaction-rollback/Movies")
-INFO - Jndi(name="java:global/EjbModule299704018/org.superbiz.txrollback.MoviesTest!org.superbiz.txrollback.MoviesTest")
-INFO - Jndi(name="java:global/EjbModule299704018/org.superbiz.txrollback.MoviesTest")
-INFO - Created Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateless Container)
-INFO - Created Ejb(deployment-id=org.superbiz.txrollback.MoviesTest, ejb-name=org.superbiz.txrollback.MoviesTest, container=Default Managed Container)
-INFO - Started Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateless Container)
-INFO - Started Ejb(deployment-id=org.superbiz.txrollback.MoviesTest, ejb-name=org.superbiz.txrollback.MoviesTest, container=Default Managed Container)
-INFO - Deployed Application(path=/Users/dblevins/examples/transaction-rollback)
-WARN - The class "org.superbiz.testinjection.MoviesTest.Movie" listed in the openjpa.MetaDataFactory configuration property could not be loaded by sun.misc.Launcher$AppClassLoader@27a8c4e7; ignoring.
-WARN - The class "org.superbiz.testinjection.MoviesTest.Movie" listed in the openjpa.MetaDataFactory configuration property could not be loaded by sun.misc.Launcher$AppClassLoader@27a8c4e7; ignoring.
-WARN - The class "org.superbiz.testinjection.MoviesTest.Movie" listed in the openjpa.MetaDataFactory configuration property could not be loaded by sun.misc.Launcher$AppClassLoader@27a8c4e7; ignoring.
-INFO - Undeploying app: /Users/dblevins/examples/transaction-rollback
-INFO - Closing DataSource: movieDatabase
-INFO - Closing DataSource: movieDatabaseNonJta
-Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-http://openejb.apache.org/
-INFO - openejb.home = /Users/dblevins/examples/transaction-rollback
-INFO - openejb.base = /Users/dblevins/examples/transaction-rollback
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
-INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
-INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
-INFO - Configuring Service(id=movieDatabase, type=Resource, provider-id=Default JDBC Database)
-INFO - Found EjbModule in classpath: /Users/dblevins/examples/transaction-rollback/target/classes
-INFO - Beginning load: /Users/dblevins/examples/transaction-rollback/target/classes
-INFO - Configuring enterprise application: /Users/dblevins/examples/transaction-rollback
-INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
-INFO - Auto-creating a container for bean Movies: Container(type=STATELESS, id=Default Stateless Container)
-INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
-INFO - Auto-creating a container for bean org.superbiz.txrollback.MoviesTest: Container(type=MANAGED, id=Default Managed Container)
-INFO - Configuring PersistenceUnit(name=movie-unit)
-INFO - Auto-creating a Resource with id 'movieDatabaseNonJta' of type 'DataSource for 'movie-unit'.
-INFO - Configuring Service(id=movieDatabaseNonJta, type=Resource, provider-id=movieDatabase)
-INFO - Adjusting PersistenceUnit movie-unit <non-jta-data-source> to Resource ID 'movieDatabaseNonJta' from 'movieDatabaseUnmanaged'
-INFO - Enterprise application "/Users/dblevins/examples/transaction-rollback" loaded.
-INFO - Assembling app: /Users/dblevins/examples/transaction-rollback
-INFO - PersistenceUnit(name=movie-unit, provider=org.apache.openjpa.persistence.PersistenceProviderImpl) - provider time 5ms
-INFO - Jndi(name="java:global/transaction-rollback/Movies!org.superbiz.txrollback.Movies")
-INFO - Jndi(name="java:global/transaction-rollback/Movies")
-INFO - Jndi(name="java:global/EjbModule1554270688/org.superbiz.txrollback.MoviesTest!org.superbiz.txrollback.MoviesTest")
-INFO - Jndi(name="java:global/EjbModule1554270688/org.superbiz.txrollback.MoviesTest")
-INFO - Created Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateless Container)
-INFO - Created Ejb(deployment-id=org.superbiz.txrollback.MoviesTest, ejb-name=org.superbiz.txrollback.MoviesTest, container=Default Managed Container)
-INFO - Started Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateless Container)
-INFO - Started Ejb(deployment-id=org.superbiz.txrollback.MoviesTest, ejb-name=org.superbiz.txrollback.MoviesTest, container=Default Managed Container)
-INFO - Deployed Application(path=/Users/dblevins/examples/transaction-rollback)
-WARN - The class "org.superbiz.testinjection.MoviesTest.Movie" listed in the openjpa.MetaDataFactory configuration property could not be loaded by sun.misc.Launcher$AppClassLoader@27a8c4e7; ignoring.
-WARN - The class "org.superbiz.testinjection.MoviesTest.Movie" listed in the openjpa.MetaDataFactory configuration property could not be loaded by sun.misc.Launcher$AppClassLoader@27a8c4e7; ignoring.
-WARN - The class "org.superbiz.testinjection.MoviesTest.Movie" listed in the openjpa.MetaDataFactory configuration property could not be loaded by sun.misc.Launcher$AppClassLoader@27a8c4e7; ignoring.
-INFO - Undeploying app: /Users/dblevins/examples/transaction-rollback
-INFO - Closing DataSource: movieDatabase
-INFO - Closing DataSource: movieDatabaseNonJta
-Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-http://openejb.apache.org/
-INFO - openejb.home = /Users/dblevins/examples/transaction-rollback
-INFO - openejb.base = /Users/dblevins/examples/transaction-rollback
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
-INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
-INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
-INFO - Configuring Service(id=movieDatabase, type=Resource, provider-id=Default JDBC Database)
-INFO - Found EjbModule in classpath: /Users/dblevins/examples/transaction-rollback/target/classes
-INFO - Beginning load: /Users/dblevins/examples/transaction-rollback/target/classes
-INFO - Configuring enterprise application: /Users/dblevins/examples/transaction-rollback
-INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
-INFO - Auto-creating a container for bean Movies: Container(type=STATELESS, id=Default Stateless Container)
-INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
-INFO - Auto-creating a container for bean org.superbiz.txrollback.MoviesTest: Container(type=MANAGED, id=Default Managed Container)
-INFO - Configuring PersistenceUnit(name=movie-unit)
-INFO - Auto-creating a Resource with id 'movieDatabaseNonJta' of type 'DataSource for 'movie-unit'.
-INFO - Configuring Service(id=movieDatabaseNonJta, type=Resource, provider-id=movieDatabase)
-INFO - Adjusting PersistenceUnit movie-unit <non-jta-data-source> to Resource ID 'movieDatabaseNonJta' from 'movieDatabaseUnmanaged'
-INFO - Enterprise application "/Users/dblevins/examples/transaction-rollback" loaded.
-INFO - Assembling app: /Users/dblevins/examples/transaction-rollback
-INFO - PersistenceUnit(name=movie-unit, provider=org.apache.openjpa.persistence.PersistenceProviderImpl) - provider time 6ms
-INFO - Jndi(name="java:global/transaction-rollback/Movies!org.superbiz.txrollback.Movies")
-INFO - Jndi(name="java:global/transaction-rollback/Movies")
-INFO - Jndi(name="java:global/EjbModule414795164/org.superbiz.txrollback.MoviesTest!org.superbiz.txrollback.MoviesTest")
-INFO - Jndi(name="java:global/EjbModule414795164/org.superbiz.txrollback.MoviesTest")
-INFO - Created Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateless Container)
-INFO - Created Ejb(deployment-id=org.superbiz.txrollback.MoviesTest, ejb-name=org.superbiz.txrollback.MoviesTest, container=Default Managed Container)
-INFO - Started Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateless Container)
-INFO - Started Ejb(deployment-id=org.superbiz.txrollback.MoviesTest, ejb-name=org.superbiz.txrollback.MoviesTest, container=Default Managed Container)
-INFO - Deployed Application(path=/Users/dblevins/examples/transaction-rollback)
-WARN - The class "org.superbiz.testinjection.MoviesTest.Movie" listed in the openjpa.MetaDataFactory configuration property could not be loaded by sun.misc.Launcher$AppClassLoader@27a8c4e7; ignoring.
-WARN - The class "org.superbiz.testinjection.MoviesTest.Movie" listed in the openjpa.MetaDataFactory configuration property could not be loaded by sun.misc.Launcher$AppClassLoader@27a8c4e7; ignoring.
-WARN - The class "org.superbiz.testinjection.MoviesTest.Movie" listed in the openjpa.MetaDataFactory configuration property could not be loaded by sun.misc.Launcher$AppClassLoader@27a8c4e7; ignoring.
-INFO - Undeploying app: /Users/dblevins/examples/transaction-rollback
-INFO - Closing DataSource: movieDatabase
-INFO - Closing DataSource: movieDatabaseNonJta
-Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-http://openejb.apache.org/
-INFO - openejb.home = /Users/dblevins/examples/transaction-rollback
-INFO - openejb.base = /Users/dblevins/examples/transaction-rollback
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
-INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
-INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
-INFO - Configuring Service(id=movieDatabase, type=Resource, provider-id=Default JDBC Database)
-INFO - Found EjbModule in classpath: /Users/dblevins/examples/transaction-rollback/target/classes
-INFO - Beginning load: /Users/dblevins/examples/transaction-rollback/target/classes
-INFO - Configuring enterprise application: /Users/dblevins/examples/transaction-rollback
-INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
-INFO - Auto-creating a container for bean Movies: Container(type=STATELESS, id=Default Stateless Container)
-INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
-INFO - Auto-creating a container for bean org.superbiz.txrollback.MoviesTest: Container(type=MANAGED, id=Default Managed Container)
-INFO - Configuring PersistenceUnit(name=movie-unit)
-INFO - Auto-creating a Resource with id 'movieDatabaseNonJta' of type 'DataSource for 'movie-unit'.
-INFO - Configuring Service(id=movieDatabaseNonJta, type=Resource, provider-id=movieDatabase)
-INFO - Adjusting PersistenceUnit movie-unit <non-jta-data-source> to Resource ID 'movieDatabaseNonJta' from 'movieDatabaseUnmanaged'
-INFO - Enterprise application "/Users/dblevins/examples/transaction-rollback" loaded.
-INFO - Assembling app: /Users/dblevins/examples/transaction-rollback
-INFO - PersistenceUnit(name=movie-unit, provider=org.apache.openjpa.persistence.PersistenceProviderImpl) - provider time 4ms
-INFO - Jndi(name="java:global/transaction-rollback/Movies!org.superbiz.txrollback.Movies")
-INFO - Jndi(name="java:global/transaction-rollback/Movies")
-INFO - Jndi(name="java:global/EjbModule838048857/org.superbiz.txrollback.MoviesTest!org.superbiz.txrollback.MoviesTest")
-INFO - Jndi(name="java:global/EjbModule838048857/org.superbiz.txrollback.MoviesTest")
-INFO - Created Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateless Container)
-INFO - Created Ejb(deployment-id=org.superbiz.txrollback.MoviesTest, ejb-name=org.superbiz.txrollback.MoviesTest, container=Default Managed Container)
-INFO - Started Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateless Container)
-INFO - Started Ejb(deployment-id=org.superbiz.txrollback.MoviesTest, ejb-name=org.superbiz.txrollback.MoviesTest, container=Default Managed Container)
-INFO - Deployed Application(path=/Users/dblevins/examples/transaction-rollback)
-WARN - The class "org.superbiz.testinjection.MoviesTest.Movie" listed in the openjpa.MetaDataFactory configuration property could not be loaded by sun.misc.Launcher$AppClassLoader@27a8c4e7; ignoring.
-WARN - The class "org.superbiz.testinjection.MoviesTest.Movie" listed in the openjpa.MetaDataFactory configuration property could not be loaded by sun.misc.Launcher$AppClassLoader@27a8c4e7; ignoring.
-WARN - The class "org.superbiz.testinjection.MoviesTest.Movie" listed in the openjpa.MetaDataFactory configuration property could not be loaded by sun.misc.Launcher$AppClassLoader@27a8c4e7; ignoring.
-INFO - Undeploying app: /Users/dblevins/examples/transaction-rollback
-INFO - Closing DataSource: movieDatabase
-INFO - Closing DataSource: movieDatabaseNonJta
-Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.465 sec
+*Help us document this example! Source available in [svn](http://svn.apache.org/repos/asf/openejb/trunk/openejb/examples/transaction-rollback) or [git](https://github.com/apache/openejb/tree/trunk/openejb/examples/transaction-rollback). Open a [JIRA](https://issues.apache.org/jira/browse/TOMEE) with patch or pull request*
 
-Results :
+## CustomRuntimeException
 
-Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
-
-[INFO] 
-[INFO] --- maven-jar-plugin:2.3.1:jar (default-jar) @ transaction-rollback ---
-[INFO] Building jar: /Users/dblevins/examples/transaction-rollback/target/transaction-rollback-1.0.jar
-[INFO] 
-[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ transaction-rollback ---
-[INFO] Installing /Users/dblevins/examples/transaction-rollback/target/transaction-rollback-1.0.jar to /Users/dblevins/.m2/repository/org/superbiz/transaction-rollback/1.0/transaction-rollback-1.0.jar
-[INFO] Installing /Users/dblevins/examples/transaction-rollback/pom.xml to /Users/dblevins/.m2/repository/org/superbiz/transaction-rollback/1.0/transaction-rollback-1.0.pom
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD SUCCESS
-[INFO] ------------------------------------------------------------------------
-[INFO] Total time: 6.534s
-[INFO] Finished at: Fri Oct 28 17:06:08 PDT 2011
-[INFO] Final Memory: 14M/81M
-[INFO] ------------------------------------------------------------------------
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
     package org.superbiz.txrollback;
     
     import javax.ejb.ApplicationException;
@@ -272,22 +26,9 @@ Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
             super(throwable);
         }
     }
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## Movie
+
     package org.superbiz.txrollback;
     
     import javax.persistence.Entity;
@@ -339,24 +80,10 @@ Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
             this.year = year;
         }
     
-    
     }
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## Movies
+
     package org.superbiz.txrollback;
     
     import javax.annotation.Resource;
@@ -403,32 +130,31 @@ Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
             throw new CustomRuntimeException("This is marked @ApplicationException, so no TX rollback");
         }
     }
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## persistence.xml
+
+    <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
+    
+      <persistence-unit name="movie-unit">
+        <jta-data-source>movieDatabase</jta-data-source>
+        <non-jta-data-source>movieDatabaseUnmanaged</non-jta-data-source>
+        <class>org.superbiz.testinjection.MoviesTest.Movie</class>
+    
+        <properties>
+          <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
+        </properties>
+      </persistence-unit>
+    </persistence>
+
+## MoviesTest
+
     package org.superbiz.txrollback;
     
     import junit.framework.TestCase;
-    import org.apache.openejb.api.LocalClient;
     
     import javax.annotation.Resource;
     import javax.ejb.EJB;
     import javax.ejb.embeddable.EJBContainer;
-    import javax.naming.Context;
-    import javax.naming.InitialContext;
     import javax.persistence.EntityManager;
     import javax.persistence.PersistenceContext;
     import javax.transaction.RollbackException;
@@ -483,7 +209,6 @@ Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
     
                 List<Movie> list = movies.getMovies();
                 assertEquals("List.size()", 3, list.size());
-    
             } finally {
                 userTransaction.commit();
             }
@@ -491,7 +216,6 @@ Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
             // Transaction was committed
             List<Movie> list = movies.getMovies();
             assertEquals("List.size()", 3, list.size());
-    
         }
     
         /**
@@ -509,7 +233,6 @@ Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
     
                 List<Movie> list = movies.getMovies();
                 assertEquals("List.size()", 3, list.size());
-    
             } finally {
                 userTransaction.rollback();
             }
@@ -517,7 +240,6 @@ Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
             // Transaction was rolled back
             List<Movie> list = movies.getMovies();
             assertEquals("List.size()", 0, list.size());
-    
         }
     
         /**
@@ -551,7 +273,6 @@ Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
             // Transaction was rolled back
             List<Movie> list = movies.getMovies();
             assertEquals("List.size()", 0, list.size());
-    
         }
     
         /**
@@ -589,7 +310,6 @@ Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
             // Transaction was rolled back
             List<Movie> list = movies.getMovies();
             assertEquals("List.size()", 0, list.size());
-    
         }
     
         /**
@@ -623,7 +343,205 @@ Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
             // Transaction was committed
             List<Movie> list = movies.getMovies();
             assertEquals("List.size()", 3, list.size());
-    
         }
     }
-    //END SNIPPET: code
+
+# Running
+
+    
+    -------------------------------------------------------
+     T E S T S
+    -------------------------------------------------------
+    Running org.superbiz.txrollback.MoviesTest
+    Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
+    http://openejb.apache.org/
+    INFO - openejb.home = /Users/dblevins/examples/transaction-rollback
+    INFO - openejb.base = /Users/dblevins/examples/transaction-rollback
+    INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+    INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+    INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+    INFO - Configuring Service(id=movieDatabase, type=Resource, provider-id=Default JDBC Database)
+    INFO - Found EjbModule in classpath: /Users/dblevins/examples/transaction-rollback/target/classes
+    INFO - Beginning load: /Users/dblevins/examples/transaction-rollback/target/classes
+    INFO - Configuring enterprise application: /Users/dblevins/examples/transaction-rollback
+    WARN - Method 'lookup' is not available for 'javax.annotation.Resource'. Probably using an older Runtime.
+    INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
+    INFO - Auto-creating a container for bean Movies: Container(type=STATELESS, id=Default Stateless Container)
+    INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+    INFO - Auto-creating a container for bean org.superbiz.txrollback.MoviesTest: Container(type=MANAGED, id=Default Managed Container)
+    INFO - Configuring PersistenceUnit(name=movie-unit)
+    INFO - Auto-creating a Resource with id 'movieDatabaseNonJta' of type 'DataSource for 'movie-unit'.
+    INFO - Configuring Service(id=movieDatabaseNonJta, type=Resource, provider-id=movieDatabase)
+    INFO - Adjusting PersistenceUnit movie-unit <non-jta-data-source> to Resource ID 'movieDatabaseNonJta' from 'movieDatabaseUnmanaged'
+    INFO - Enterprise application "/Users/dblevins/examples/transaction-rollback" loaded.
+    INFO - Assembling app: /Users/dblevins/examples/transaction-rollback
+    INFO - PersistenceUnit(name=movie-unit, provider=org.apache.openjpa.persistence.PersistenceProviderImpl) - provider time 412ms
+    INFO - Jndi(name="java:global/transaction-rollback/Movies!org.superbiz.txrollback.Movies")
+    INFO - Jndi(name="java:global/transaction-rollback/Movies")
+    INFO - Jndi(name="java:global/EjbModule1718375554/org.superbiz.txrollback.MoviesTest!org.superbiz.txrollback.MoviesTest")
+    INFO - Jndi(name="java:global/EjbModule1718375554/org.superbiz.txrollback.MoviesTest")
+    INFO - Created Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateless Container)
+    INFO - Created Ejb(deployment-id=org.superbiz.txrollback.MoviesTest, ejb-name=org.superbiz.txrollback.MoviesTest, container=Default Managed Container)
+    INFO - Started Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateless Container)
+    INFO - Started Ejb(deployment-id=org.superbiz.txrollback.MoviesTest, ejb-name=org.superbiz.txrollback.MoviesTest, container=Default Managed Container)
+    INFO - Deployed Application(path=/Users/dblevins/examples/transaction-rollback)
+    WARN - The class "org.superbiz.testinjection.MoviesTest.Movie" listed in the openjpa.MetaDataFactory configuration property could not be loaded by sun.misc.Launcher$AppClassLoader@39172e08; ignoring.
+    WARN - The class "org.superbiz.testinjection.MoviesTest.Movie" listed in the openjpa.MetaDataFactory configuration property could not be loaded by sun.misc.Launcher$AppClassLoader@39172e08; ignoring.
+    WARN - The class "org.superbiz.testinjection.MoviesTest.Movie" listed in the openjpa.MetaDataFactory configuration property could not be loaded by sun.misc.Launcher$AppClassLoader@39172e08; ignoring.
+    INFO - Undeploying app: /Users/dblevins/examples/transaction-rollback
+    INFO - Closing DataSource: movieDatabase
+    INFO - Closing DataSource: movieDatabaseNonJta
+    Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
+    http://openejb.apache.org/
+    INFO - openejb.home = /Users/dblevins/examples/transaction-rollback
+    INFO - openejb.base = /Users/dblevins/examples/transaction-rollback
+    INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+    INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+    INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+    INFO - Configuring Service(id=movieDatabase, type=Resource, provider-id=Default JDBC Database)
+    INFO - Found EjbModule in classpath: /Users/dblevins/examples/transaction-rollback/target/classes
+    INFO - Beginning load: /Users/dblevins/examples/transaction-rollback/target/classes
+    INFO - Configuring enterprise application: /Users/dblevins/examples/transaction-rollback
+    INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
+    INFO - Auto-creating a container for bean Movies: Container(type=STATELESS, id=Default Stateless Container)
+    INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+    INFO - Auto-creating a container for bean org.superbiz.txrollback.MoviesTest: Container(type=MANAGED, id=Default Managed Container)
+    INFO - Configuring PersistenceUnit(name=movie-unit)
+    INFO - Auto-creating a Resource with id 'movieDatabaseNonJta' of type 'DataSource for 'movie-unit'.
+    INFO - Configuring Service(id=movieDatabaseNonJta, type=Resource, provider-id=movieDatabase)
+    INFO - Adjusting PersistenceUnit movie-unit <non-jta-data-source> to Resource ID 'movieDatabaseNonJta' from 'movieDatabaseUnmanaged'
+    INFO - Enterprise application "/Users/dblevins/examples/transaction-rollback" loaded.
+    INFO - Assembling app: /Users/dblevins/examples/transaction-rollback
+    INFO - PersistenceUnit(name=movie-unit, provider=org.apache.openjpa.persistence.PersistenceProviderImpl) - provider time 5ms
+    INFO - Jndi(name="java:global/transaction-rollback/Movies!org.superbiz.txrollback.Movies")
+    INFO - Jndi(name="java:global/transaction-rollback/Movies")
+    INFO - Jndi(name="java:global/EjbModule935567559/org.superbiz.txrollback.MoviesTest!org.superbiz.txrollback.MoviesTest")
+    INFO - Jndi(name="java:global/EjbModule935567559/org.superbiz.txrollback.MoviesTest")
+    INFO - Created Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateless Container)
+    INFO - Created Ejb(deployment-id=org.superbiz.txrollback.MoviesTest, ejb-name=org.superbiz.txrollback.MoviesTest, container=Default Managed Container)
+    INFO - Started Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateless Container)
+    INFO - Started Ejb(deployment-id=org.superbiz.txrollback.MoviesTest, ejb-name=org.superbiz.txrollback.MoviesTest, container=Default Managed Container)
+    INFO - Deployed Application(path=/Users/dblevins/examples/transaction-rollback)
+    WARN - The class "org.superbiz.testinjection.MoviesTest.Movie" listed in the openjpa.MetaDataFactory configuration property could not be loaded by sun.misc.Launcher$AppClassLoader@39172e08; ignoring.
+    WARN - The class "org.superbiz.testinjection.MoviesTest.Movie" listed in the openjpa.MetaDataFactory configuration property could not be loaded by sun.misc.Launcher$AppClassLoader@39172e08; ignoring.
+    WARN - The class "org.superbiz.testinjection.MoviesTest.Movie" listed in the openjpa.MetaDataFactory configuration property could not be loaded by sun.misc.Launcher$AppClassLoader@39172e08; ignoring.
+    INFO - Undeploying app: /Users/dblevins/examples/transaction-rollback
+    INFO - Closing DataSource: movieDatabase
+    INFO - Closing DataSource: movieDatabaseNonJta
+    Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
+    http://openejb.apache.org/
+    INFO - openejb.home = /Users/dblevins/examples/transaction-rollback
+    INFO - openejb.base = /Users/dblevins/examples/transaction-rollback
+    INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+    INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+    INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+    INFO - Configuring Service(id=movieDatabase, type=Resource, provider-id=Default JDBC Database)
+    INFO - Found EjbModule in classpath: /Users/dblevins/examples/transaction-rollback/target/classes
+    INFO - Beginning load: /Users/dblevins/examples/transaction-rollback/target/classes
+    INFO - Configuring enterprise application: /Users/dblevins/examples/transaction-rollback
+    INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
+    INFO - Auto-creating a container for bean Movies: Container(type=STATELESS, id=Default Stateless Container)
+    INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+    INFO - Auto-creating a container for bean org.superbiz.txrollback.MoviesTest: Container(type=MANAGED, id=Default Managed Container)
+    INFO - Configuring PersistenceUnit(name=movie-unit)
+    INFO - Auto-creating a Resource with id 'movieDatabaseNonJta' of type 'DataSource for 'movie-unit'.
+    INFO - Configuring Service(id=movieDatabaseNonJta, type=Resource, provider-id=movieDatabase)
+    INFO - Adjusting PersistenceUnit movie-unit <non-jta-data-source> to Resource ID 'movieDatabaseNonJta' from 'movieDatabaseUnmanaged'
+    INFO - Enterprise application "/Users/dblevins/examples/transaction-rollback" loaded.
+    INFO - Assembling app: /Users/dblevins/examples/transaction-rollback
+    INFO - PersistenceUnit(name=movie-unit, provider=org.apache.openjpa.persistence.PersistenceProviderImpl) - provider time 5ms
+    INFO - Jndi(name="java:global/transaction-rollback/Movies!org.superbiz.txrollback.Movies")
+    INFO - Jndi(name="java:global/transaction-rollback/Movies")
+    INFO - Jndi(name="java:global/EjbModule1961109485/org.superbiz.txrollback.MoviesTest!org.superbiz.txrollback.MoviesTest")
+    INFO - Jndi(name="java:global/EjbModule1961109485/org.superbiz.txrollback.MoviesTest")
+    INFO - Created Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateless Container)
+    INFO - Created Ejb(deployment-id=org.superbiz.txrollback.MoviesTest, ejb-name=org.superbiz.txrollback.MoviesTest, container=Default Managed Container)
+    INFO - Started Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateless Container)
+    INFO - Started Ejb(deployment-id=org.superbiz.txrollback.MoviesTest, ejb-name=org.superbiz.txrollback.MoviesTest, container=Default Managed Container)
+    INFO - Deployed Application(path=/Users/dblevins/examples/transaction-rollback)
+    WARN - The class "org.superbiz.testinjection.MoviesTest.Movie" listed in the openjpa.MetaDataFactory configuration property could not be loaded by sun.misc.Launcher$AppClassLoader@39172e08; ignoring.
+    WARN - The class "org.superbiz.testinjection.MoviesTest.Movie" listed in the openjpa.MetaDataFactory configuration property could not be loaded by sun.misc.Launcher$AppClassLoader@39172e08; ignoring.
+    WARN - The class "org.superbiz.testinjection.MoviesTest.Movie" listed in the openjpa.MetaDataFactory configuration property could not be loaded by sun.misc.Launcher$AppClassLoader@39172e08; ignoring.
+    INFO - Undeploying app: /Users/dblevins/examples/transaction-rollback
+    INFO - Closing DataSource: movieDatabase
+    INFO - Closing DataSource: movieDatabaseNonJta
+    Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
+    http://openejb.apache.org/
+    INFO - openejb.home = /Users/dblevins/examples/transaction-rollback
+    INFO - openejb.base = /Users/dblevins/examples/transaction-rollback
+    INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+    INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+    INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+    INFO - Configuring Service(id=movieDatabase, type=Resource, provider-id=Default JDBC Database)
+    INFO - Found EjbModule in classpath: /Users/dblevins/examples/transaction-rollback/target/classes
+    INFO - Beginning load: /Users/dblevins/examples/transaction-rollback/target/classes
+    INFO - Configuring enterprise application: /Users/dblevins/examples/transaction-rollback
+    INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
+    INFO - Auto-creating a container for bean Movies: Container(type=STATELESS, id=Default Stateless Container)
+    INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+    INFO - Auto-creating a container for bean org.superbiz.txrollback.MoviesTest: Container(type=MANAGED, id=Default Managed Container)
+    INFO - Configuring PersistenceUnit(name=movie-unit)
+    INFO - Auto-creating a Resource with id 'movieDatabaseNonJta' of type 'DataSource for 'movie-unit'.
+    INFO - Configuring Service(id=movieDatabaseNonJta, type=Resource, provider-id=movieDatabase)
+    INFO - Adjusting PersistenceUnit movie-unit <non-jta-data-source> to Resource ID 'movieDatabaseNonJta' from 'movieDatabaseUnmanaged'
+    INFO - Enterprise application "/Users/dblevins/examples/transaction-rollback" loaded.
+    INFO - Assembling app: /Users/dblevins/examples/transaction-rollback
+    INFO - PersistenceUnit(name=movie-unit, provider=org.apache.openjpa.persistence.PersistenceProviderImpl) - provider time 5ms
+    INFO - Jndi(name="java:global/transaction-rollback/Movies!org.superbiz.txrollback.Movies")
+    INFO - Jndi(name="java:global/transaction-rollback/Movies")
+    INFO - Jndi(name="java:global/EjbModule419651577/org.superbiz.txrollback.MoviesTest!org.superbiz.txrollback.MoviesTest")
+    INFO - Jndi(name="java:global/EjbModule419651577/org.superbiz.txrollback.MoviesTest")
+    INFO - Created Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateless Container)
+    INFO - Created Ejb(deployment-id=org.superbiz.txrollback.MoviesTest, ejb-name=org.superbiz.txrollback.MoviesTest, container=Default Managed Container)
+    INFO - Started Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateless Container)
+    INFO - Started Ejb(deployment-id=org.superbiz.txrollback.MoviesTest, ejb-name=org.superbiz.txrollback.MoviesTest, container=Default Managed Container)
+    INFO - Deployed Application(path=/Users/dblevins/examples/transaction-rollback)
+    WARN - The class "org.superbiz.testinjection.MoviesTest.Movie" listed in the openjpa.MetaDataFactory configuration property could not be loaded by sun.misc.Launcher$AppClassLoader@39172e08; ignoring.
+    WARN - The class "org.superbiz.testinjection.MoviesTest.Movie" listed in the openjpa.MetaDataFactory configuration property could not be loaded by sun.misc.Launcher$AppClassLoader@39172e08; ignoring.
+    WARN - The class "org.superbiz.testinjection.MoviesTest.Movie" listed in the openjpa.MetaDataFactory configuration property could not be loaded by sun.misc.Launcher$AppClassLoader@39172e08; ignoring.
+    INFO - Undeploying app: /Users/dblevins/examples/transaction-rollback
+    INFO - Closing DataSource: movieDatabase
+    INFO - Closing DataSource: movieDatabaseNonJta
+    Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
+    http://openejb.apache.org/
+    INFO - openejb.home = /Users/dblevins/examples/transaction-rollback
+    INFO - openejb.base = /Users/dblevins/examples/transaction-rollback
+    INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+    INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+    INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+    INFO - Configuring Service(id=movieDatabase, type=Resource, provider-id=Default JDBC Database)
+    INFO - Found EjbModule in classpath: /Users/dblevins/examples/transaction-rollback/target/classes
+    INFO - Beginning load: /Users/dblevins/examples/transaction-rollback/target/classes
+    INFO - Configuring enterprise application: /Users/dblevins/examples/transaction-rollback
+    INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
+    INFO - Auto-creating a container for bean Movies: Container(type=STATELESS, id=Default Stateless Container)
+    INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+    INFO - Auto-creating a container for bean org.superbiz.txrollback.MoviesTest: Container(type=MANAGED, id=Default Managed Container)
+    INFO - Configuring PersistenceUnit(name=movie-unit)
+    INFO - Auto-creating a Resource with id 'movieDatabaseNonJta' of type 'DataSource for 'movie-unit'.
+    INFO - Configuring Service(id=movieDatabaseNonJta, type=Resource, provider-id=movieDatabase)
+    INFO - Adjusting PersistenceUnit movie-unit <non-jta-data-source> to Resource ID 'movieDatabaseNonJta' from 'movieDatabaseUnmanaged'
+    INFO - Enterprise application "/Users/dblevins/examples/transaction-rollback" loaded.
+    INFO - Assembling app: /Users/dblevins/examples/transaction-rollback
+    INFO - PersistenceUnit(name=movie-unit, provider=org.apache.openjpa.persistence.PersistenceProviderImpl) - provider time 4ms
+    INFO - Jndi(name="java:global/transaction-rollback/Movies!org.superbiz.txrollback.Movies")
+    INFO - Jndi(name="java:global/transaction-rollback/Movies")
+    INFO - Jndi(name="java:global/EjbModule15169271/org.superbiz.txrollback.MoviesTest!org.superbiz.txrollback.MoviesTest")
+    INFO - Jndi(name="java:global/EjbModule15169271/org.superbiz.txrollback.MoviesTest")
+    INFO - Created Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateless Container)
+    INFO - Created Ejb(deployment-id=org.superbiz.txrollback.MoviesTest, ejb-name=org.superbiz.txrollback.MoviesTest, container=Default Managed Container)
+    INFO - Started Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateless Container)
+    INFO - Started Ejb(deployment-id=org.superbiz.txrollback.MoviesTest, ejb-name=org.superbiz.txrollback.MoviesTest, container=Default Managed Container)
+    INFO - Deployed Application(path=/Users/dblevins/examples/transaction-rollback)
+    WARN - The class "org.superbiz.testinjection.MoviesTest.Movie" listed in the openjpa.MetaDataFactory configuration property could not be loaded by sun.misc.Launcher$AppClassLoader@39172e08; ignoring.
+    WARN - The class "org.superbiz.testinjection.MoviesTest.Movie" listed in the openjpa.MetaDataFactory configuration property could not be loaded by sun.misc.Launcher$AppClassLoader@39172e08; ignoring.
+    WARN - The class "org.superbiz.testinjection.MoviesTest.Movie" listed in the openjpa.MetaDataFactory configuration property could not be loaded by sun.misc.Launcher$AppClassLoader@39172e08; ignoring.
+    INFO - Undeploying app: /Users/dblevins/examples/transaction-rollback
+    INFO - Closing DataSource: movieDatabase
+    INFO - Closing DataSource: movieDatabaseNonJta
+    Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.586 sec
+    
+    Results :
+    
+    Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
+    

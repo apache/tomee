@@ -1,64 +1,9 @@
-[INFO] Scanning for projects...
-[INFO]                                                                         
-[INFO] ------------------------------------------------------------------------
-[INFO] Building OpenEJB :: Web Examples :: Signed Applet EJB Client 1.0
-[INFO] ------------------------------------------------------------------------
-[INFO] 
-[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ applet ---
-[INFO] Deleting /Users/dblevins/examples/webapps/applet/target
-[INFO] 
-[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ applet ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] Copying 0 resource
-[INFO] 
-[INFO] --- maven-dependency-plugin:2.1:copy (copy) @ applet ---
-[INFO] Configured Artifact: org.apache.openejb:openejb-client:4.0.0-beta-1:jar
-[INFO] Configured Artifact: org.apache.openejb:javaee-api:6.0-2:jar
-[INFO] Copying openejb-client-4.0.0-beta-1.jar to /Users/dblevins/examples/webapps/applet/target/applet/openejb-client.jar
-[INFO] Copying javaee-api-6.0-2.jar to /Users/dblevins/examples/webapps/applet/target/applet/javaee-api.jar
-[INFO] 
-[INFO] --- maven-compiler-plugin:2.3.2:compile (default-compile) @ applet ---
-[INFO] Compiling 3 source files to /Users/dblevins/examples/webapps/applet/target/classes
-[INFO] 
-[INFO] --- maven-antrun-plugin:1.5:run (default) @ applet ---
-[WARNING] Parameter tasks is deprecated, use target instead
-[INFO] Executing tasks
+Title: Applet
 
-main:
-      [jar] Building jar: /Users/dblevins/examples/webapps/applet/target/applet/app.jar
-  [signjar] Signing JAR: /Users/dblevins/examples/webapps/applet/target/applet/app.jar to /Users/dblevins/examples/webapps/applet/target/applet/app.jar as mykey
-  [signjar] jarsigner error: java.lang.RuntimeException: keystore load: /Users/dblevins/.keystore (No such file or directory)
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD FAILURE
-[INFO] ------------------------------------------------------------------------
-[INFO] Total time: 3.765s
-[INFO] Finished at: Fri Oct 28 17:03:48 PDT 2011
-[INFO] Final Memory: 11M/81M
-[INFO] ------------------------------------------------------------------------
-[ERROR] Failed to execute goal org.apache.maven.plugins:maven-antrun-plugin:1.5:run (default) on project applet: An Ant BuildException has occured: jarsigner returned: 1 -> [Help 1]
-[ERROR] 
-[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
-[ERROR] Re-run Maven using the -X switch to enable full debug logging.
-[ERROR] 
-[ERROR] For more information about the errors and possible solutions, please read the following articles:
-[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException
-    /**
-     *
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+*Help us document this example! Source available in [svn](http://svn.apache.org/repos/asf/openejb/trunk/openejb/examples/applet) or [git](https://github.com/apache/openejb/tree/trunk/openejb/examples/applet). Open a [JIRA](https://issues.apache.org/jira/browse/TOMEE) with patch or pull request*
+
+## Calculator
+
     package org.superbiz.applet;
     
     import javax.ejb.Remote;
@@ -67,31 +12,22 @@ main:
     public interface Calculator {
         public double add(double x, double y);
     }
-    /**
-     *
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## CalculatorApplet
+
     package org.superbiz.applet;
     
     import javax.naming.Context;
     import javax.naming.InitialContext;
     import javax.naming.NamingException;
     import javax.rmi.PortableRemoteObject;
-    import javax.swing.*;
-    import java.awt.*;
+    import javax.swing.JApplet;
+    import javax.swing.JButton;
+    import javax.swing.JLabel;
+    import javax.swing.JTextArea;
+    import javax.swing.JTextField;
+    import javax.swing.SwingUtilities;
+    import java.awt.GridLayout;
     import java.awt.event.ActionEvent;
     import java.awt.event.ActionListener;
     import java.util.Properties;
@@ -117,7 +53,6 @@ main:
             } catch (Exception e) {
                 System.err.println("createGUI didn't successfully complete");
             }
-    
         }
     
         private void createUI() {
@@ -161,29 +96,13 @@ main:
                     } catch (NamingException ex) {
                         throw new RuntimeException(ex);
                     }
-    
                 }
             });
-    
         }
     }
-    /**
-     *
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## CalculatorImpl
+
     package org.superbiz.applet;
     
     import javax.ejb.Stateless;
@@ -194,25 +113,24 @@ main:
         public double add(double x, double y) {
             return x + y;
         }
-    
     }
-    /**
-     *
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## web.xml
+
+    <web-app>
+      <servlet>
+        <servlet-name>ServerServlet</servlet-name>
+        <servlet-class>org.apache.openejb.server.httpd.ServerServlet</servlet-class>
+      </servlet>
+      <servlet-mapping>
+        <servlet-name>ServerServlet</servlet-name>
+        <url-pattern>/ejb/*</url-pattern>
+      </servlet-mapping>
+    </web-app>
+    
+
+## JNDILookupTest
+
     package org.superbiz;
     
     import org.junit.Assert;

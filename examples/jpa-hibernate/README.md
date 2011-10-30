@@ -1,100 +1,9 @@
-[INFO] Scanning for projects...
-[INFO]                                                                         
-[INFO] ------------------------------------------------------------------------
-[INFO] Building OpenEJB :: Examples :: JPA with Hibernate 1.0
-[INFO] ------------------------------------------------------------------------
-[INFO] 
-[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ jpa-hibernate ---
-[INFO] Deleting /Users/dblevins/examples/jpa-hibernate/target
-[INFO] 
-[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ jpa-hibernate ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] Copying 1 resource
-[INFO] 
-[INFO] --- maven-compiler-plugin:2.3.2:compile (default-compile) @ jpa-hibernate ---
-[INFO] Compiling 2 source files to /Users/dblevins/examples/jpa-hibernate/target/classes
-[INFO] 
-[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ jpa-hibernate ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Users/dblevins/examples/jpa-hibernate/src/test/resources
-[INFO] 
-[INFO] --- maven-compiler-plugin:2.3.2:testCompile (default-testCompile) @ jpa-hibernate ---
-[INFO] Compiling 1 source file to /Users/dblevins/examples/jpa-hibernate/target/test-classes
-[INFO] 
-[INFO] --- maven-surefire-plugin:2.7.2:test (default-test) @ jpa-hibernate ---
-[INFO] Surefire report directory: /Users/dblevins/examples/jpa-hibernate/target/surefire-reports
+Title: JPA Hibernate
 
--------------------------------------------------------
- T E S T S
--------------------------------------------------------
-Running org.superbiz.injection.h3jpa.MoviesTest
-Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-http://openejb.apache.org/
-INFO - openejb.home = /Users/dblevins/examples/jpa-hibernate
-INFO - openejb.base = /Users/dblevins/examples/jpa-hibernate
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
-INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
-INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
-INFO - Configuring Service(id=movieDatabase, type=Resource, provider-id=Default JDBC Database)
-INFO - Found EjbModule in classpath: /Users/dblevins/examples/jpa-hibernate/target/classes
-INFO - Beginning load: /Users/dblevins/examples/jpa-hibernate/target/classes
-INFO - Configuring enterprise application: /Users/dblevins/examples/jpa-hibernate
-INFO - Configuring Service(id=Default Stateful Container, type=Container, provider-id=Default Stateful Container)
-INFO - Auto-creating a container for bean Movies: Container(type=STATEFUL, id=Default Stateful Container)
-INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
-INFO - Auto-creating a container for bean org.superbiz.injection.h3jpa.MoviesTest: Container(type=MANAGED, id=Default Managed Container)
-INFO - Configuring PersistenceUnit(name=movie-unit, provider=org.hibernate.ejb.HibernatePersistence)
-INFO - Auto-creating a Resource with id 'movieDatabaseNonJta' of type 'DataSource for 'movie-unit'.
-INFO - Configuring Service(id=movieDatabaseNonJta, type=Resource, provider-id=movieDatabase)
-INFO - Adjusting PersistenceUnit movie-unit <non-jta-data-source> to Resource ID 'movieDatabaseNonJta' from 'movieDatabaseUnmanaged'
-INFO - Enterprise application "/Users/dblevins/examples/jpa-hibernate" loaded.
-INFO - Assembling app: /Users/dblevins/examples/jpa-hibernate
-INFO - PersistenceUnit(name=movie-unit, provider=org.hibernate.ejb.HibernatePersistence) - provider time 642ms
-INFO - Jndi(name="java:global/jpa-hibernate/Movies!org.superbiz.injection.h3jpa.Movies")
-INFO - Jndi(name="java:global/jpa-hibernate/Movies")
-INFO - Jndi(name="java:global/EjbModule1623810826/org.superbiz.injection.h3jpa.MoviesTest!org.superbiz.injection.h3jpa.MoviesTest")
-INFO - Jndi(name="java:global/EjbModule1623810826/org.superbiz.injection.h3jpa.MoviesTest")
-INFO - Created Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateful Container)
-INFO - Created Ejb(deployment-id=org.superbiz.injection.h3jpa.MoviesTest, ejb-name=org.superbiz.injection.h3jpa.MoviesTest, container=Default Managed Container)
-INFO - Started Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateful Container)
-INFO - Started Ejb(deployment-id=org.superbiz.injection.h3jpa.MoviesTest, ejb-name=org.superbiz.injection.h3jpa.MoviesTest, container=Default Managed Container)
-INFO - Deployed Application(path=/Users/dblevins/examples/jpa-hibernate)
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.251 sec
+*Help us document this example! Source available in [svn](http://svn.apache.org/repos/asf/openejb/trunk/openejb/examples/jpa-hibernate) or [git](https://github.com/apache/openejb/tree/trunk/openejb/examples/jpa-hibernate). Open a [JIRA](https://issues.apache.org/jira/browse/TOMEE) with patch or pull request*
 
-Results :
+## Movie
 
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-
-[INFO] 
-[INFO] --- maven-jar-plugin:2.3.1:jar (default-jar) @ jpa-hibernate ---
-[INFO] Building jar: /Users/dblevins/examples/jpa-hibernate/target/jpa-hibernate-1.0.jar
-[INFO] 
-[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ jpa-hibernate ---
-[INFO] Installing /Users/dblevins/examples/jpa-hibernate/target/jpa-hibernate-1.0.jar to /Users/dblevins/.m2/repository/org/superbiz/jpa-hibernate/1.0/jpa-hibernate-1.0.jar
-[INFO] Installing /Users/dblevins/examples/jpa-hibernate/pom.xml to /Users/dblevins/.m2/repository/org/superbiz/jpa-hibernate/1.0/jpa-hibernate-1.0.pom
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD SUCCESS
-[INFO] ------------------------------------------------------------------------
-[INFO] Total time: 5.066s
-[INFO] Finished at: Fri Oct 28 17:11:31 PDT 2011
-[INFO] Final Memory: 14M/81M
-[INFO] ------------------------------------------------------------------------
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
     package org.superbiz.injection.h3jpa;
     
     import javax.persistence.Entity;
@@ -146,24 +55,10 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
             this.year = year;
         }
     
-    
     }
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## Movies
+
     package org.superbiz.injection.h3jpa;
     
     import javax.ejb.Stateful;
@@ -191,24 +86,28 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
             Query query = entityManager.createQuery("SELECT m from Movie as m");
             return query.getResultList();
         }
-    
     }
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## persistence.xml
+
+    <persistence version="1.0"
+                 xmlns="http://java.sun.com/xml/ns/persistence"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
+      <persistence-unit name="movie-unit">
+        <provider>org.hibernate.ejb.HibernatePersistence</provider>
+        <jta-data-source>movieDatabase</jta-data-source>
+        <non-jta-data-source>movieDatabaseUnmanaged</non-jta-data-source>
+        <properties>
+          <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
+          <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
+        </properties>
+      </persistence-unit>
+    </persistence>
+    
+
+## MoviesTest
+
     package org.superbiz.injection.h3jpa;
     
     import junit.framework.TestCase;
@@ -246,3 +145,48 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
             assertEquals("Movies.getMovies()", 0, movies.getMovies().size());
         }
     }
+
+# Running
+
+    
+    -------------------------------------------------------
+     T E S T S
+    -------------------------------------------------------
+    Running org.superbiz.injection.h3jpa.MoviesTest
+    Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
+    http://openejb.apache.org/
+    INFO - openejb.home = /Users/dblevins/examples/jpa-hibernate
+    INFO - openejb.base = /Users/dblevins/examples/jpa-hibernate
+    INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+    INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+    INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+    INFO - Configuring Service(id=movieDatabase, type=Resource, provider-id=Default JDBC Database)
+    INFO - Found EjbModule in classpath: /Users/dblevins/examples/jpa-hibernate/target/classes
+    INFO - Beginning load: /Users/dblevins/examples/jpa-hibernate/target/classes
+    INFO - Configuring enterprise application: /Users/dblevins/examples/jpa-hibernate
+    INFO - Configuring Service(id=Default Stateful Container, type=Container, provider-id=Default Stateful Container)
+    INFO - Auto-creating a container for bean Movies: Container(type=STATEFUL, id=Default Stateful Container)
+    INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+    INFO - Auto-creating a container for bean org.superbiz.injection.h3jpa.MoviesTest: Container(type=MANAGED, id=Default Managed Container)
+    INFO - Configuring PersistenceUnit(name=movie-unit, provider=org.hibernate.ejb.HibernatePersistence)
+    INFO - Auto-creating a Resource with id 'movieDatabaseNonJta' of type 'DataSource for 'movie-unit'.
+    INFO - Configuring Service(id=movieDatabaseNonJta, type=Resource, provider-id=movieDatabase)
+    INFO - Adjusting PersistenceUnit movie-unit <non-jta-data-source> to Resource ID 'movieDatabaseNonJta' from 'movieDatabaseUnmanaged'
+    INFO - Enterprise application "/Users/dblevins/examples/jpa-hibernate" loaded.
+    INFO - Assembling app: /Users/dblevins/examples/jpa-hibernate
+    INFO - PersistenceUnit(name=movie-unit, provider=org.hibernate.ejb.HibernatePersistence) - provider time 631ms
+    INFO - Jndi(name="java:global/jpa-hibernate/Movies!org.superbiz.injection.h3jpa.Movies")
+    INFO - Jndi(name="java:global/jpa-hibernate/Movies")
+    INFO - Jndi(name="java:global/EjbModule1235930463/org.superbiz.injection.h3jpa.MoviesTest!org.superbiz.injection.h3jpa.MoviesTest")
+    INFO - Jndi(name="java:global/EjbModule1235930463/org.superbiz.injection.h3jpa.MoviesTest")
+    INFO - Created Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateful Container)
+    INFO - Created Ejb(deployment-id=org.superbiz.injection.h3jpa.MoviesTest, ejb-name=org.superbiz.injection.h3jpa.MoviesTest, container=Default Managed Container)
+    INFO - Started Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateful Container)
+    INFO - Started Ejb(deployment-id=org.superbiz.injection.h3jpa.MoviesTest, ejb-name=org.superbiz.injection.h3jpa.MoviesTest, container=Default Managed Container)
+    INFO - Deployed Application(path=/Users/dblevins/examples/jpa-hibernate)
+    Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.22 sec
+    
+    Results :
+    
+    Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+    

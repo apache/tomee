@@ -1,95 +1,9 @@
-[INFO] Scanning for projects...
-[INFO]                                                                         
-[INFO] ------------------------------------------------------------------------
-[INFO] Building OpenEJB :: Examples :: Expanded support for Env Entries 1.0
-[INFO] ------------------------------------------------------------------------
-[INFO] 
-[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ custom-injection ---
-[INFO] Deleting /Users/dblevins/examples/custom-injection/target
-[INFO] 
-[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ custom-injection ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] Copying 1 resource
-[INFO] 
-[INFO] --- maven-compiler-plugin:2.3.2:compile (default-compile) @ custom-injection ---
-[INFO] Compiling 4 source files to /Users/dblevins/examples/custom-injection/target/classes
-[INFO] 
-[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ custom-injection ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Users/dblevins/examples/custom-injection/src/test/resources
-[INFO] 
-[INFO] --- maven-compiler-plugin:2.3.2:testCompile (default-testCompile) @ custom-injection ---
-[INFO] Compiling 1 source file to /Users/dblevins/examples/custom-injection/target/test-classes
-[INFO] 
-[INFO] --- maven-surefire-plugin:2.7.2:test (default-test) @ custom-injection ---
-[INFO] Surefire report directory: /Users/dblevins/examples/custom-injection/target/surefire-reports
+Title: Custom Injection
 
--------------------------------------------------------
- T E S T S
--------------------------------------------------------
-Running org.superbiz.enventries.StratocasterTest
-Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-http://openejb.apache.org/
-INFO - openejb.home = /Users/dblevins/examples/custom-injection
-INFO - openejb.base = /Users/dblevins/examples/custom-injection
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
-INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
-INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
-INFO - Found EjbModule in classpath: /Users/dblevins/examples/custom-injection/target/classes
-INFO - Beginning load: /Users/dblevins/examples/custom-injection/target/classes
-INFO - Configuring enterprise application: /Users/dblevins/examples/custom-injection
-WARN - Method 'lookup' is not available for 'javax.annotation.Resource'. Probably using an older Runtime.
-INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
-INFO - Auto-creating a container for bean Stratocaster: Container(type=STATELESS, id=Default Stateless Container)
-INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
-INFO - Auto-creating a container for bean org.superbiz.enventries.StratocasterTest: Container(type=MANAGED, id=Default Managed Container)
-INFO - Enterprise application "/Users/dblevins/examples/custom-injection" loaded.
-INFO - Assembling app: /Users/dblevins/examples/custom-injection
-INFO - Jndi(name="java:global/custom-injection/Stratocaster!org.superbiz.enventries.Stratocaster")
-INFO - Jndi(name="java:global/custom-injection/Stratocaster")
-INFO - Jndi(name="java:global/EjbModule1821050251/org.superbiz.enventries.StratocasterTest!org.superbiz.enventries.StratocasterTest")
-INFO - Jndi(name="java:global/EjbModule1821050251/org.superbiz.enventries.StratocasterTest")
-INFO - Created Ejb(deployment-id=Stratocaster, ejb-name=Stratocaster, container=Default Stateless Container)
-INFO - Created Ejb(deployment-id=org.superbiz.enventries.StratocasterTest, ejb-name=org.superbiz.enventries.StratocasterTest, container=Default Managed Container)
-INFO - Started Ejb(deployment-id=Stratocaster, ejb-name=Stratocaster, container=Default Stateless Container)
-INFO - Started Ejb(deployment-id=org.superbiz.enventries.StratocasterTest, ejb-name=org.superbiz.enventries.StratocasterTest, container=Default Managed Container)
-INFO - Deployed Application(path=/Users/dblevins/examples/custom-injection)
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.109 sec
+*Help us document this example! Source available in [svn](http://svn.apache.org/repos/asf/openejb/trunk/openejb/examples/custom-injection) or [git](https://github.com/apache/openejb/tree/trunk/openejb/examples/custom-injection). Open a [JIRA](https://issues.apache.org/jira/browse/TOMEE) with patch or pull request*
 
-Results :
+## Pickup
 
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-
-[INFO] 
-[INFO] --- maven-jar-plugin:2.3.1:jar (default-jar) @ custom-injection ---
-[INFO] Building jar: /Users/dblevins/examples/custom-injection/target/custom-injection-1.0.jar
-[INFO] 
-[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ custom-injection ---
-[INFO] Installing /Users/dblevins/examples/custom-injection/target/custom-injection-1.0.jar to /Users/dblevins/.m2/repository/org/superbiz/custom-injection/1.0/custom-injection-1.0.jar
-[INFO] Installing /Users/dblevins/examples/custom-injection/pom.xml to /Users/dblevins/.m2/repository/org/superbiz/custom-injection/1.0/custom-injection-1.0.pom
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD SUCCESS
-[INFO] ------------------------------------------------------------------------
-[INFO] Total time: 4.030s
-[INFO] Finished at: Fri Oct 28 17:08:08 PDT 2011
-[INFO] Final Memory: 14M/81M
-[INFO] ------------------------------------------------------------------------
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
     package org.superbiz.enventries;
     
     
@@ -109,23 +23,9 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
             PropertyEditorManager.registerEditor(Pickup.class, PickupEditor.class);
         }
     }
-    //END SNIPPET: code
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## PickupEditor
+
     package org.superbiz.enventries;
     
     /**
@@ -150,23 +50,9 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
             else throw new IllegalStateException("H and S are the only supported Pickup aliases");
         }
     }
-    //END SNIPPET: code
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## Stratocaster
+
     package org.superbiz.enventries;
     
     import javax.annotation.Resource;
@@ -227,23 +113,9 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
             return certificateOfAuthenticity;
         }
     }
-    //END SNIPPET: code
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## Style
+
     package org.superbiz.enventries;
     
     /**
@@ -255,25 +127,10 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
         STANDARD,
         DELUX,
         VINTAGE;
-    
     }
-    //END SNIPPET: code
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## StratocasterTest
+
     package org.superbiz.enventries;
     
     import junit.framework.TestCase;
@@ -318,7 +175,45 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
             File file = new File("/tmp/strat-certificate.txt");
             assertEquals("Strat.getCertificateOfAuthenticity()", file, strat.getCertificateOfAuthenticity());
     
-    
         }
     }
-    //END SNIPPET: code
+
+# Running
+
+    
+    -------------------------------------------------------
+     T E S T S
+    -------------------------------------------------------
+    Running org.superbiz.enventries.StratocasterTest
+    Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
+    http://openejb.apache.org/
+    INFO - openejb.home = /Users/dblevins/examples/custom-injection
+    INFO - openejb.base = /Users/dblevins/examples/custom-injection
+    INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+    INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+    INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+    INFO - Found EjbModule in classpath: /Users/dblevins/examples/custom-injection/target/classes
+    INFO - Beginning load: /Users/dblevins/examples/custom-injection/target/classes
+    INFO - Configuring enterprise application: /Users/dblevins/examples/custom-injection
+    WARN - Method 'lookup' is not available for 'javax.annotation.Resource'. Probably using an older Runtime.
+    INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
+    INFO - Auto-creating a container for bean Stratocaster: Container(type=STATELESS, id=Default Stateless Container)
+    INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+    INFO - Auto-creating a container for bean org.superbiz.enventries.StratocasterTest: Container(type=MANAGED, id=Default Managed Container)
+    INFO - Enterprise application "/Users/dblevins/examples/custom-injection" loaded.
+    INFO - Assembling app: /Users/dblevins/examples/custom-injection
+    INFO - Jndi(name="java:global/custom-injection/Stratocaster!org.superbiz.enventries.Stratocaster")
+    INFO - Jndi(name="java:global/custom-injection/Stratocaster")
+    INFO - Jndi(name="java:global/EjbModule1663626738/org.superbiz.enventries.StratocasterTest!org.superbiz.enventries.StratocasterTest")
+    INFO - Jndi(name="java:global/EjbModule1663626738/org.superbiz.enventries.StratocasterTest")
+    INFO - Created Ejb(deployment-id=Stratocaster, ejb-name=Stratocaster, container=Default Stateless Container)
+    INFO - Created Ejb(deployment-id=org.superbiz.enventries.StratocasterTest, ejb-name=org.superbiz.enventries.StratocasterTest, container=Default Managed Container)
+    INFO - Started Ejb(deployment-id=Stratocaster, ejb-name=Stratocaster, container=Default Stateless Container)
+    INFO - Started Ejb(deployment-id=org.superbiz.enventries.StratocasterTest, ejb-name=org.superbiz.enventries.StratocasterTest, container=Default Managed Container)
+    INFO - Deployed Application(path=/Users/dblevins/examples/custom-injection)
+    Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.11 sec
+    
+    Results :
+    
+    Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+    

@@ -1,169 +1,9 @@
-[INFO] Scanning for projects...
-[INFO]                                                                         
-[INFO] ------------------------------------------------------------------------
-[INFO] Building OpenEJB :: Web Examples :: EJB WebService with WS-Security 1.0
-[INFO] ------------------------------------------------------------------------
-[INFO] 
-[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ webservice-ws-security ---
-[INFO] Deleting /Users/dblevins/examples/webservice-ws-security/target
-[INFO] 
-[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ webservice-ws-security ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] Copying 6 resources
-[INFO] 
-[INFO] --- maven-compiler-plugin:2.3.2:compile (default-compile) @ webservice-ws-security ---
-[INFO] Compiling 3 source files to /Users/dblevins/examples/webservice-ws-security/target/classes
-[INFO] 
-[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ webservice-ws-security ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] Copying 4 resources
-[INFO] 
-[INFO] --- maven-antrun-plugin:1.5:run (generate-keys) @ webservice-ws-security ---
-[INFO] Executing tasks
+Title: Webservice Ws Security
 
-generate keys:
+*Help us document this example! Source available in [svn](http://svn.apache.org/repos/asf/openejb/trunk/openejb/examples/webservice-ws-security) or [git](https://github.com/apache/openejb/tree/trunk/openejb/examples/webservice-ws-security). Open a [JIRA](https://issues.apache.org/jira/browse/TOMEE) with patch or pull request*
 
-do.sun.jdk:
-     [echo] *** Running on a Sun JDK ***
-     [echo] generate server keys
-     [java] Certificate stored in file </Users/dblevins/examples/webservice-ws-security/target/classes/META-INF/serverKey.rsa>
-     [echo] generate client keys
-     [java] Certificate stored in file </Users/dblevins/examples/webservice-ws-security/target/test-classes/META-INF/clientKey.rsa>
-     [echo] import client/server public keys in client/server keystores
-     [java] Certificate was added to keystore
-     [java] Certificate was added to keystore
+## CalculatorImpl
 
-do.ibm.jdk:
-
-run:
-     [echo] Running JDK specific keystore creation target
-[INFO] Executed tasks
-[INFO] 
-[INFO] --- maven-compiler-plugin:2.3.2:testCompile (default-testCompile) @ webservice-ws-security ---
-[INFO] Compiling 2 source files to /Users/dblevins/examples/webservice-ws-security/target/test-classes
-[INFO] 
-[INFO] --- maven-surefire-plugin:2.6:test (default-test) @ webservice-ws-security ---
-[INFO] Surefire report directory: /Users/dblevins/examples/webservice-ws-security/target/surefire-reports
-
--------------------------------------------------------
- T E S T S
--------------------------------------------------------
-Running org.superbiz.calculator.CalculatorTest
-Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-http://openejb.apache.org/
-INFO - openejb.home = /Users/dblevins/examples/webservice-ws-security
-INFO - openejb.base = /Users/dblevins/examples/webservice-ws-security
-INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
-INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
-INFO - Found EjbModule in classpath: /Users/dblevins/examples/webservice-ws-security/target/classes
-INFO - Beginning load: /Users/dblevins/examples/webservice-ws-security/target/classes
-INFO - Configuring enterprise application: /Users/dblevins/examples/webservice-ws-security/classpath.ear
-INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
-INFO - Auto-creating a container for bean CalculatorImplTimestamp1way: Container(type=STATELESS, id=Default Stateless Container)
-INFO - Enterprise application "/Users/dblevins/examples/webservice-ws-security/classpath.ear" loaded.
-INFO - Assembling app: /Users/dblevins/examples/webservice-ws-security/classpath.ear
-INFO - Jndi(name=CalculatorImplTimestamp1wayRemote) --> Ejb(deployment-id=CalculatorImplTimestamp1way)
-INFO - Jndi(name=global/classpath.ear/simple/CalculatorImplTimestamp1way!org.superbiz.calculator.CalculatorRemote) --> Ejb(deployment-id=CalculatorImplTimestamp1way)
-INFO - Jndi(name=global/classpath.ear/simple/CalculatorImplTimestamp1way) --> Ejb(deployment-id=CalculatorImplTimestamp1way)
-INFO - Jndi(name=CalculatorImplTimestamp2waysRemote) --> Ejb(deployment-id=CalculatorImplTimestamp2ways)
-INFO - Jndi(name=global/classpath.ear/simple/CalculatorImplTimestamp2ways!org.superbiz.calculator.CalculatorRemote) --> Ejb(deployment-id=CalculatorImplTimestamp2ways)
-INFO - Jndi(name=global/classpath.ear/simple/CalculatorImplTimestamp2ways) --> Ejb(deployment-id=CalculatorImplTimestamp2ways)
-INFO - Jndi(name=CalculatorImplUsernameTokenPlainPasswordRemote) --> Ejb(deployment-id=CalculatorImplUsernameTokenPlainPassword)
-INFO - Jndi(name=global/classpath.ear/simple/CalculatorImplUsernameTokenPlainPassword!org.superbiz.calculator.CalculatorRemote) --> Ejb(deployment-id=CalculatorImplUsernameTokenPlainPassword)
-INFO - Jndi(name=global/classpath.ear/simple/CalculatorImplUsernameTokenPlainPassword) --> Ejb(deployment-id=CalculatorImplUsernameTokenPlainPassword)
-INFO - Jndi(name=CalculatorImplUsernameTokenHashedPasswordRemote) --> Ejb(deployment-id=CalculatorImplUsernameTokenHashedPassword)
-INFO - Jndi(name=global/classpath.ear/simple/CalculatorImplUsernameTokenHashedPassword!org.superbiz.calculator.CalculatorRemote) --> Ejb(deployment-id=CalculatorImplUsernameTokenHashedPassword)
-INFO - Jndi(name=global/classpath.ear/simple/CalculatorImplUsernameTokenHashedPassword) --> Ejb(deployment-id=CalculatorImplUsernameTokenHashedPassword)
-INFO - Jndi(name=CalculatorImplUsernameTokenPlainPasswordEncryptRemote) --> Ejb(deployment-id=CalculatorImplUsernameTokenPlainPasswordEncrypt)
-INFO - Jndi(name=global/classpath.ear/simple/CalculatorImplUsernameTokenPlainPasswordEncrypt!org.superbiz.calculator.CalculatorRemote) --> Ejb(deployment-id=CalculatorImplUsernameTokenPlainPasswordEncrypt)
-INFO - Jndi(name=global/classpath.ear/simple/CalculatorImplUsernameTokenPlainPasswordEncrypt) --> Ejb(deployment-id=CalculatorImplUsernameTokenPlainPasswordEncrypt)
-INFO - Jndi(name=CalculatorImplSignRemote) --> Ejb(deployment-id=CalculatorImplSign)
-INFO - Jndi(name=global/classpath.ear/simple/CalculatorImplSign!org.superbiz.calculator.CalculatorRemote) --> Ejb(deployment-id=CalculatorImplSign)
-INFO - Jndi(name=global/classpath.ear/simple/CalculatorImplSign) --> Ejb(deployment-id=CalculatorImplSign)
-INFO - Jndi(name=CalculatorImplEncrypt2waysRemote) --> Ejb(deployment-id=CalculatorImplEncrypt2ways)
-INFO - Jndi(name=global/classpath.ear/simple/CalculatorImplEncrypt2ways!org.superbiz.calculator.CalculatorRemote) --> Ejb(deployment-id=CalculatorImplEncrypt2ways)
-INFO - Jndi(name=global/classpath.ear/simple/CalculatorImplEncrypt2ways) --> Ejb(deployment-id=CalculatorImplEncrypt2ways)
-INFO - Jndi(name=CalculatorImplSign2waysRemote) --> Ejb(deployment-id=CalculatorImplSign2ways)
-INFO - Jndi(name=global/classpath.ear/simple/CalculatorImplSign2ways!org.superbiz.calculator.CalculatorRemote) --> Ejb(deployment-id=CalculatorImplSign2ways)
-INFO - Jndi(name=global/classpath.ear/simple/CalculatorImplSign2ways) --> Ejb(deployment-id=CalculatorImplSign2ways)
-INFO - Jndi(name=CalculatorImplEncryptAndSign2waysRemote) --> Ejb(deployment-id=CalculatorImplEncryptAndSign2ways)
-INFO - Jndi(name=global/classpath.ear/simple/CalculatorImplEncryptAndSign2ways!org.superbiz.calculator.CalculatorRemote) --> Ejb(deployment-id=CalculatorImplEncryptAndSign2ways)
-INFO - Jndi(name=global/classpath.ear/simple/CalculatorImplEncryptAndSign2ways) --> Ejb(deployment-id=CalculatorImplEncryptAndSign2ways)
-INFO - Jndi(name=CalculatorImplRemote) --> Ejb(deployment-id=CalculatorImpl)
-INFO - Jndi(name=global/classpath.ear/simple/CalculatorImpl!org.superbiz.calculator.CalculatorRemote) --> Ejb(deployment-id=CalculatorImpl)
-INFO - Jndi(name=global/classpath.ear/simple/CalculatorImpl) --> Ejb(deployment-id=CalculatorImpl)
-INFO - Created Ejb(deployment-id=CalculatorImplUsernameTokenHashedPassword, ejb-name=CalculatorImplUsernameTokenHashedPassword, container=Default Stateless Container)
-INFO - Created Ejb(deployment-id=CalculatorImpl, ejb-name=CalculatorImpl, container=Default Stateless Container)
-INFO - Created Ejb(deployment-id=CalculatorImplSign, ejb-name=CalculatorImplSign, container=Default Stateless Container)
-INFO - Created Ejb(deployment-id=CalculatorImplEncryptAndSign2ways, ejb-name=CalculatorImplEncryptAndSign2ways, container=Default Stateless Container)
-INFO - Created Ejb(deployment-id=CalculatorImplTimestamp1way, ejb-name=CalculatorImplTimestamp1way, container=Default Stateless Container)
-INFO - Created Ejb(deployment-id=CalculatorImplSign2ways, ejb-name=CalculatorImplSign2ways, container=Default Stateless Container)
-INFO - Created Ejb(deployment-id=CalculatorImplEncrypt2ways, ejb-name=CalculatorImplEncrypt2ways, container=Default Stateless Container)
-INFO - Created Ejb(deployment-id=CalculatorImplUsernameTokenPlainPassword, ejb-name=CalculatorImplUsernameTokenPlainPassword, container=Default Stateless Container)
-INFO - Created Ejb(deployment-id=CalculatorImplTimestamp2ways, ejb-name=CalculatorImplTimestamp2ways, container=Default Stateless Container)
-INFO - Created Ejb(deployment-id=CalculatorImplUsernameTokenPlainPasswordEncrypt, ejb-name=CalculatorImplUsernameTokenPlainPasswordEncrypt, container=Default Stateless Container)
-INFO - Started Ejb(deployment-id=CalculatorImplUsernameTokenHashedPassword, ejb-name=CalculatorImplUsernameTokenHashedPassword, container=Default Stateless Container)
-INFO - Started Ejb(deployment-id=CalculatorImpl, ejb-name=CalculatorImpl, container=Default Stateless Container)
-INFO - Started Ejb(deployment-id=CalculatorImplSign, ejb-name=CalculatorImplSign, container=Default Stateless Container)
-INFO - Started Ejb(deployment-id=CalculatorImplEncryptAndSign2ways, ejb-name=CalculatorImplEncryptAndSign2ways, container=Default Stateless Container)
-INFO - Started Ejb(deployment-id=CalculatorImplTimestamp1way, ejb-name=CalculatorImplTimestamp1way, container=Default Stateless Container)
-INFO - Started Ejb(deployment-id=CalculatorImplSign2ways, ejb-name=CalculatorImplSign2ways, container=Default Stateless Container)
-INFO - Started Ejb(deployment-id=CalculatorImplEncrypt2ways, ejb-name=CalculatorImplEncrypt2ways, container=Default Stateless Container)
-INFO - Started Ejb(deployment-id=CalculatorImplUsernameTokenPlainPassword, ejb-name=CalculatorImplUsernameTokenPlainPassword, container=Default Stateless Container)
-INFO - Started Ejb(deployment-id=CalculatorImplTimestamp2ways, ejb-name=CalculatorImplTimestamp2ways, container=Default Stateless Container)
-INFO - Started Ejb(deployment-id=CalculatorImplUsernameTokenPlainPasswordEncrypt, ejb-name=CalculatorImplUsernameTokenPlainPasswordEncrypt, container=Default Stateless Container)
-INFO - Deployed Application(path=/Users/dblevins/examples/webservice-ws-security/classpath.ear)
-INFO - Initializing network services
-INFO - Creating ServerService(id=httpejbd)
-INFO - Creating ServerService(id=cxf)
-INFO - Creating ServerService(id=admin)
-INFO - Creating ServerService(id=ejbd)
-INFO - Creating ServerService(id=ejbds)
-INFO - Initializing network services
-  ** Starting Services **
-  NAME                 IP              PORT  
-  httpejbd             127.0.0.1       4204  
-  admin thread         127.0.0.1       4200  
-  ejbd                 127.0.0.1       4201  
-  ejbd                 127.0.0.1       4203  
--------
-Ready!
-Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.65 sec
-
-Results :
-
-Tests run: 7, Failures: 0, Errors: 0, Skipped: 0
-
-[INFO] 
-[INFO] --- maven-jar-plugin:2.3.1:jar (default-jar) @ webservice-ws-security ---
-[INFO] Building jar: /Users/dblevins/examples/webservice-ws-security/target/webservice-ws-security-1.0.jar
-[INFO] 
-[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ webservice-ws-security ---
-[INFO] Installing /Users/dblevins/examples/webservice-ws-security/target/webservice-ws-security-1.0.jar to /Users/dblevins/.m2/repository/org/superbiz/webservice-ws-security/1.0/webservice-ws-security-1.0.jar
-[INFO] Installing /Users/dblevins/examples/webservice-ws-security/pom.xml to /Users/dblevins/.m2/repository/org/superbiz/webservice-ws-security/1.0/webservice-ws-security-1.0.pom
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD SUCCESS
-[INFO] ------------------------------------------------------------------------
-[INFO] Total time: 14.451s
-[INFO] Finished at: Fri Oct 28 17:00:57 PDT 2011
-[INFO] Final Memory: 18M/81M
-[INFO] ------------------------------------------------------------------------
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
     package org.superbiz.calculator;
     
     import javax.annotation.security.DeclareRoles;
@@ -195,25 +35,10 @@ Tests run: 7, Failures: 0, Errors: 0, Skipped: 0
         public int multiply(int mul1, int mul2) {
             return mul1 * mul2;
         }
-    
     }
-    //END SNIPPET: code
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## CalculatorRemote
+
     package org.superbiz.calculator;
     
     import javax.ejb.Remote;
@@ -224,24 +49,10 @@ Tests run: 7, Failures: 0, Errors: 0, Skipped: 0
         public int sum(int add1, int add2);
     
         public int multiply(int mul1, int mul2);
-    
     }
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+
+## CalculatorWs
+
     package org.superbiz.calculator;
     
     import javax.jws.WebService;
@@ -261,22 +72,216 @@ Tests run: 7, Failures: 0, Errors: 0, Skipped: 0
     
         public int multiply(int mul1, int mul2);
     }
-    //END SNIPPET: code/**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+
+## ejb-jar.xml
+
+    <ejb-jar xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_0.xsd"
+             version="3.0" id="simple" metadata-complete="false">
+    
+      <enterprise-beans>
+    
+        <session>
+          <ejb-name>CalculatorImplTimestamp1way</ejb-name>
+          <service-endpoint>org.superbiz.calculator.CalculatorWs</service-endpoint>
+          <ejb-class>org.superbiz.calculator.CalculatorImpl</ejb-class>
+          <session-type>Stateless</session-type>
+          <transaction-type>Container</transaction-type>
+        </session>
+    
+        <session>
+          <ejb-name>CalculatorImplTimestamp2ways</ejb-name>
+          <service-endpoint>org.superbiz.calculator.CalculatorWs</service-endpoint>
+          <ejb-class>org.superbiz.calculator.CalculatorImpl</ejb-class>
+          <session-type>Stateless</session-type>
+          <transaction-type>Container</transaction-type>
+        </session>
+    
+        <session>
+          <ejb-name>CalculatorImplUsernameTokenPlainPassword</ejb-name>
+          <service-endpoint>org.superbiz.calculator.CalculatorWs</service-endpoint>
+          <ejb-class>org.superbiz.calculator.CalculatorImpl</ejb-class>
+          <session-type>Stateless</session-type>
+          <transaction-type>Container</transaction-type>
+        </session>
+    
+        <session>
+          <ejb-name>CalculatorImplUsernameTokenHashedPassword</ejb-name>
+          <service-endpoint>org.superbiz.calculator.CalculatorWs</service-endpoint>
+          <ejb-class>org.superbiz.calculator.CalculatorImpl</ejb-class>
+          <session-type>Stateless</session-type>
+          <transaction-type>Container</transaction-type>
+        </session>
+    
+        <session>
+          <ejb-name>CalculatorImplUsernameTokenPlainPasswordEncrypt</ejb-name>
+          <service-endpoint>org.superbiz.calculator.CalculatorWs</service-endpoint>
+          <ejb-class>org.superbiz.calculator.CalculatorImpl</ejb-class>
+          <session-type>Stateless</session-type>
+          <transaction-type>Container</transaction-type>
+        </session>
+    
+        <session>
+          <ejb-name>CalculatorImplSign</ejb-name>
+          <service-endpoint>org.superbiz.calculator.CalculatorWs</service-endpoint>
+          <ejb-class>org.superbiz.calculator.CalculatorImpl</ejb-class>
+          <session-type>Stateless</session-type>
+          <transaction-type>Container</transaction-type>
+        </session>
+    
+        <session>
+          <ejb-name>CalculatorImplEncrypt2ways</ejb-name>
+          <service-endpoint>org.superbiz.calculator.CalculatorWs</service-endpoint>
+          <ejb-class>org.superbiz.calculator.CalculatorImpl</ejb-class>
+          <session-type>Stateless</session-type>
+          <transaction-type>Container</transaction-type>
+        </session>
+    
+        <session>
+          <ejb-name>CalculatorImplSign2ways</ejb-name>
+          <service-endpoint>org.superbiz.calculator.CalculatorWs</service-endpoint>
+          <ejb-class>org.superbiz.calculator.CalculatorImpl</ejb-class>
+          <session-type>Stateless</session-type>
+          <transaction-type>Container</transaction-type>
+        </session>
+    
+        <session>
+          <ejb-name>CalculatorImplEncryptAndSign2ways</ejb-name>
+          <service-endpoint>org.superbiz.calculator.CalculatorWs</service-endpoint>
+          <ejb-class>org.superbiz.calculator.CalculatorImpl</ejb-class>
+          <session-type>Stateless</session-type>
+          <transaction-type>Container</transaction-type>
+        </session>
+    
+      </enterprise-beans>
+    
+    </ejb-jar>
+    
+
+## openejb-jar.xml
+
+    <openejb-jar xmlns="http://www.openejb.org/openejb-jar/1.1">
+    
+      <ejb-deployment ejb-name="CalculatorImpl">
+        <properties>
+          # webservice.security.realm
+          # webservice.security.securityRealm
+          # webservice.security.transportGarantee = NONE
+          webservice.security.authMethod = WS-SECURITY
+          wss4j.in.action = UsernameToken
+          wss4j.in.passwordType = PasswordText
+          wss4j.in.passwordCallbackClass = org.superbiz.calculator.CustomPasswordHandler
+    
+          # automatically added
+          wss4j.in.validator.{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd}UsernameToken = org.apache.openejb.server.cxf.OpenEJBLoginValidator
+        </properties>
+      </ejb-deployment>
+      <ejb-deployment ejb-name="CalculatorImplTimestamp1way">
+        <properties>
+          webservice.security.authMethod = WS-SECURITY
+          wss4j.in.action = Timestamp
+        </properties>
+      </ejb-deployment>
+      <ejb-deployment ejb-name="CalculatorImplTimestamp2ways">
+        <properties>
+          webservice.security.authMethod = WS-SECURITY
+          wss4j.in.action = Timestamp
+          wss4j.out.action = Timestamp
+        </properties>
+      </ejb-deployment>
+      <ejb-deployment ejb-name="CalculatorImplUsernameTokenPlainPassword">
+        <properties>
+          webservice.security.authMethod = WS-SECURITY
+          wss4j.in.action = UsernameToken
+          wss4j.in.passwordType = PasswordText
+          wss4j.in.passwordCallbackClass=org.superbiz.calculator.CustomPasswordHandler
+        </properties>
+      </ejb-deployment>
+      <ejb-deployment ejb-name="CalculatorImplUsernameTokenHashedPassword">
+        <properties>
+          webservice.security.authMethod = WS-SECURITY
+          wss4j.in.action = UsernameToken
+          wss4j.in.passwordType = PasswordDigest
+          wss4j.in.passwordCallbackClass=org.superbiz.calculator.CustomPasswordHandler
+        </properties>
+      </ejb-deployment>
+      <ejb-deployment ejb-name="CalculatorImplUsernameTokenPlainPasswordEncrypt">
+        <properties>
+          webservice.security.authMethod = WS-SECURITY
+          wss4j.in.action = UsernameToken Encrypt
+          wss4j.in.passwordType = PasswordText
+          wss4j.in.passwordCallbackClass=org.superbiz.calculator.CustomPasswordHandler
+          wss4j.in.decryptionPropFile = META-INF/CalculatorImplUsernameTokenPlainPasswordEncrypt-server.properties
+        </properties>
+      </ejb-deployment>
+      <ejb-deployment ejb-name="CalculatorImplSign">
+        <properties>
+          webservice.security.authMethod = WS-SECURITY
+          wss4j.in.action = Signature
+          wss4j.in.passwordCallbackClass=org.superbiz.calculator.CustomPasswordHandler
+          wss4j.in.signaturePropFile = META-INF/CalculatorImplSign-server.properties
+        </properties>
+      </ejb-deployment>
+    
+    </openejb-jar>
+    
+
+## webservices.xml
+
+    <webservices xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+    http://www.ibm.com/webservices/xsd/j2ee_web_services_1_1.xsd"
+                 xmlns:ger="http://ciaows.org/wsdl" version="1.1">
+    
+      <webservice-description>
+        <webservice-description-name>CalculatorWsService</webservice-description-name>
+        <port-component>
+          <port-component-name>CalculatorImplTimestamp1way</port-component-name>
+          <wsdl-port>CalculatorImplTimestamp1way</wsdl-port>
+          <service-endpoint-interface>org.superbiz.calculator.CalculatorWs</service-endpoint-interface>
+          <service-impl-bean>
+            <ejb-link>CalculatorImplTimestamp1way</ejb-link>
+          </service-impl-bean>
+        </port-component>
+        <port-component>
+          <port-component-name>CalculatorImplTimestamp2ways</port-component-name>
+          <wsdl-port>CalculatorImplTimestamp2ways</wsdl-port>
+          <service-endpoint-interface>org.superbiz.calculator.CalculatorWs</service-endpoint-interface>
+          <service-impl-bean>
+            <ejb-link>CalculatorImplTimestamp2ways</ejb-link>
+          </service-impl-bean>
+        </port-component>
+        <port-component>
+          <port-component-name>CalculatorImplUsernameTokenPlainPassword</port-component-name>
+          <wsdl-port>CalculatorImplUsernameTokenPlainPassword</wsdl-port>
+          <service-endpoint-interface>org.superbiz.calculator.CalculatorWs</service-endpoint-interface>
+          <service-impl-bean>
+            <ejb-link>CalculatorImplUsernameTokenPlainPassword</ejb-link>
+          </service-impl-bean>
+        </port-component>
+        <port-component>
+          <port-component-name>CalculatorImplUsernameTokenHashedPassword</port-component-name>
+          <wsdl-port>CalculatorImplUsernameTokenHashedPassword</wsdl-port>
+          <service-endpoint-interface>org.superbiz.calculator.CalculatorWs</service-endpoint-interface>
+          <service-impl-bean>
+            <ejb-link>CalculatorImplUsernameTokenHashedPassword</ejb-link>
+          </service-impl-bean>
+        </port-component>
+        <port-component>
+          <port-component-name>CalculatorImplUsernameTokenPlainPasswordEncrypt</port-component-name>
+          <wsdl-port>CalculatorImplUsernameTokenPlainPasswordEncrypt</wsdl-port>
+          <service-endpoint-interface>org.superbiz.calculator.CalculatorWs</service-endpoint-interface>
+          <service-impl-bean>
+            <ejb-link>CalculatorImplUsernameTokenPlainPasswordEncrypt</ejb-link>
+          </service-impl-bean>
+        </port-component>
+      </webservice-description>
+    
+    </webservices>
+    
+
+## CalculatorTest
+
     package org.superbiz.calculator;
     
     import junit.framework.TestCase;
@@ -570,22 +575,9 @@ Tests run: 7, Failures: 0, Errors: 0, Skipped: 0
         }
         //END SNIPPET: webservice
     }
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+
+## CustomPasswordHandler
+
     package org.superbiz.calculator;
     
     import org.apache.ws.security.WSPasswordCallback;
@@ -596,19 +588,127 @@ Tests run: 7, Failures: 0, Errors: 0, Skipped: 0
     import java.io.IOException;
     
     public class CustomPasswordHandler implements CallbackHandler {
-        @Override public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+        @Override
+        public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
             WSPasswordCallback pc = (WSPasswordCallback) callbacks[0];
     
             if (pc.getUsage() == WSPasswordCallback.USERNAME_TOKEN) {
                 // TODO get the password from the users.properties if possible
                 pc.setPassword("waterfall");
-    
             } else if (pc.getUsage() == WSPasswordCallback.DECRYPT) {
                 pc.setPassword("serverPassword");
-    
             } else if (pc.getUsage() == WSPasswordCallback.SIGNATURE) {
                 pc.setPassword("serverPassword");
-    
             }
         }
     }
+
+# Running
+
+    
+    generate keys:
+    
+    do.sun.jdk:
+         [echo] *** Running on a Sun JDK ***
+         [echo] generate server keys
+         [java] Certificate stored in file </Users/dblevins/examples/webservice-ws-security/target/classes/META-INF/serverKey.rsa>
+         [echo] generate client keys
+         [java] Certificate stored in file </Users/dblevins/examples/webservice-ws-security/target/test-classes/META-INF/clientKey.rsa>
+         [echo] import client/server public keys in client/server keystores
+         [java] Certificate was added to keystore
+         [java] Certificate was added to keystore
+    
+    do.ibm.jdk:
+    
+    run:
+         [echo] Running JDK specific keystore creation target
+    
+    -------------------------------------------------------
+     T E S T S
+    -------------------------------------------------------
+    Running org.superbiz.calculator.CalculatorTest
+    Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
+    http://openejb.apache.org/
+    INFO - openejb.home = /Users/dblevins/examples/webservice-ws-security
+    INFO - openejb.base = /Users/dblevins/examples/webservice-ws-security
+    INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+    INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+    INFO - Found EjbModule in classpath: /Users/dblevins/examples/webservice-ws-security/target/classes
+    INFO - Beginning load: /Users/dblevins/examples/webservice-ws-security/target/classes
+    INFO - Configuring enterprise application: /Users/dblevins/examples/webservice-ws-security/classpath.ear
+    INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
+    INFO - Auto-creating a container for bean CalculatorImplTimestamp1way: Container(type=STATELESS, id=Default Stateless Container)
+    INFO - Enterprise application "/Users/dblevins/examples/webservice-ws-security/classpath.ear" loaded.
+    INFO - Assembling app: /Users/dblevins/examples/webservice-ws-security/classpath.ear
+    INFO - Jndi(name=CalculatorImplTimestamp1wayRemote) --> Ejb(deployment-id=CalculatorImplTimestamp1way)
+    INFO - Jndi(name=global/classpath.ear/simple/CalculatorImplTimestamp1way!org.superbiz.calculator.CalculatorRemote) --> Ejb(deployment-id=CalculatorImplTimestamp1way)
+    INFO - Jndi(name=global/classpath.ear/simple/CalculatorImplTimestamp1way) --> Ejb(deployment-id=CalculatorImplTimestamp1way)
+    INFO - Jndi(name=CalculatorImplTimestamp2waysRemote) --> Ejb(deployment-id=CalculatorImplTimestamp2ways)
+    INFO - Jndi(name=global/classpath.ear/simple/CalculatorImplTimestamp2ways!org.superbiz.calculator.CalculatorRemote) --> Ejb(deployment-id=CalculatorImplTimestamp2ways)
+    INFO - Jndi(name=global/classpath.ear/simple/CalculatorImplTimestamp2ways) --> Ejb(deployment-id=CalculatorImplTimestamp2ways)
+    INFO - Jndi(name=CalculatorImplUsernameTokenPlainPasswordRemote) --> Ejb(deployment-id=CalculatorImplUsernameTokenPlainPassword)
+    INFO - Jndi(name=global/classpath.ear/simple/CalculatorImplUsernameTokenPlainPassword!org.superbiz.calculator.CalculatorRemote) --> Ejb(deployment-id=CalculatorImplUsernameTokenPlainPassword)
+    INFO - Jndi(name=global/classpath.ear/simple/CalculatorImplUsernameTokenPlainPassword) --> Ejb(deployment-id=CalculatorImplUsernameTokenPlainPassword)
+    INFO - Jndi(name=CalculatorImplUsernameTokenHashedPasswordRemote) --> Ejb(deployment-id=CalculatorImplUsernameTokenHashedPassword)
+    INFO - Jndi(name=global/classpath.ear/simple/CalculatorImplUsernameTokenHashedPassword!org.superbiz.calculator.CalculatorRemote) --> Ejb(deployment-id=CalculatorImplUsernameTokenHashedPassword)
+    INFO - Jndi(name=global/classpath.ear/simple/CalculatorImplUsernameTokenHashedPassword) --> Ejb(deployment-id=CalculatorImplUsernameTokenHashedPassword)
+    INFO - Jndi(name=CalculatorImplUsernameTokenPlainPasswordEncryptRemote) --> Ejb(deployment-id=CalculatorImplUsernameTokenPlainPasswordEncrypt)
+    INFO - Jndi(name=global/classpath.ear/simple/CalculatorImplUsernameTokenPlainPasswordEncrypt!org.superbiz.calculator.CalculatorRemote) --> Ejb(deployment-id=CalculatorImplUsernameTokenPlainPasswordEncrypt)
+    INFO - Jndi(name=global/classpath.ear/simple/CalculatorImplUsernameTokenPlainPasswordEncrypt) --> Ejb(deployment-id=CalculatorImplUsernameTokenPlainPasswordEncrypt)
+    INFO - Jndi(name=CalculatorImplSignRemote) --> Ejb(deployment-id=CalculatorImplSign)
+    INFO - Jndi(name=global/classpath.ear/simple/CalculatorImplSign!org.superbiz.calculator.CalculatorRemote) --> Ejb(deployment-id=CalculatorImplSign)
+    INFO - Jndi(name=global/classpath.ear/simple/CalculatorImplSign) --> Ejb(deployment-id=CalculatorImplSign)
+    INFO - Jndi(name=CalculatorImplEncrypt2waysRemote) --> Ejb(deployment-id=CalculatorImplEncrypt2ways)
+    INFO - Jndi(name=global/classpath.ear/simple/CalculatorImplEncrypt2ways!org.superbiz.calculator.CalculatorRemote) --> Ejb(deployment-id=CalculatorImplEncrypt2ways)
+    INFO - Jndi(name=global/classpath.ear/simple/CalculatorImplEncrypt2ways) --> Ejb(deployment-id=CalculatorImplEncrypt2ways)
+    INFO - Jndi(name=CalculatorImplSign2waysRemote) --> Ejb(deployment-id=CalculatorImplSign2ways)
+    INFO - Jndi(name=global/classpath.ear/simple/CalculatorImplSign2ways!org.superbiz.calculator.CalculatorRemote) --> Ejb(deployment-id=CalculatorImplSign2ways)
+    INFO - Jndi(name=global/classpath.ear/simple/CalculatorImplSign2ways) --> Ejb(deployment-id=CalculatorImplSign2ways)
+    INFO - Jndi(name=CalculatorImplEncryptAndSign2waysRemote) --> Ejb(deployment-id=CalculatorImplEncryptAndSign2ways)
+    INFO - Jndi(name=global/classpath.ear/simple/CalculatorImplEncryptAndSign2ways!org.superbiz.calculator.CalculatorRemote) --> Ejb(deployment-id=CalculatorImplEncryptAndSign2ways)
+    INFO - Jndi(name=global/classpath.ear/simple/CalculatorImplEncryptAndSign2ways) --> Ejb(deployment-id=CalculatorImplEncryptAndSign2ways)
+    INFO - Jndi(name=CalculatorImplRemote) --> Ejb(deployment-id=CalculatorImpl)
+    INFO - Jndi(name=global/classpath.ear/simple/CalculatorImpl!org.superbiz.calculator.CalculatorRemote) --> Ejb(deployment-id=CalculatorImpl)
+    INFO - Jndi(name=global/classpath.ear/simple/CalculatorImpl) --> Ejb(deployment-id=CalculatorImpl)
+    INFO - Created Ejb(deployment-id=CalculatorImplUsernameTokenHashedPassword, ejb-name=CalculatorImplUsernameTokenHashedPassword, container=Default Stateless Container)
+    INFO - Created Ejb(deployment-id=CalculatorImpl, ejb-name=CalculatorImpl, container=Default Stateless Container)
+    INFO - Created Ejb(deployment-id=CalculatorImplSign, ejb-name=CalculatorImplSign, container=Default Stateless Container)
+    INFO - Created Ejb(deployment-id=CalculatorImplEncryptAndSign2ways, ejb-name=CalculatorImplEncryptAndSign2ways, container=Default Stateless Container)
+    INFO - Created Ejb(deployment-id=CalculatorImplTimestamp1way, ejb-name=CalculatorImplTimestamp1way, container=Default Stateless Container)
+    INFO - Created Ejb(deployment-id=CalculatorImplSign2ways, ejb-name=CalculatorImplSign2ways, container=Default Stateless Container)
+    INFO - Created Ejb(deployment-id=CalculatorImplEncrypt2ways, ejb-name=CalculatorImplEncrypt2ways, container=Default Stateless Container)
+    INFO - Created Ejb(deployment-id=CalculatorImplUsernameTokenPlainPassword, ejb-name=CalculatorImplUsernameTokenPlainPassword, container=Default Stateless Container)
+    INFO - Created Ejb(deployment-id=CalculatorImplTimestamp2ways, ejb-name=CalculatorImplTimestamp2ways, container=Default Stateless Container)
+    INFO - Created Ejb(deployment-id=CalculatorImplUsernameTokenPlainPasswordEncrypt, ejb-name=CalculatorImplUsernameTokenPlainPasswordEncrypt, container=Default Stateless Container)
+    INFO - Started Ejb(deployment-id=CalculatorImplUsernameTokenHashedPassword, ejb-name=CalculatorImplUsernameTokenHashedPassword, container=Default Stateless Container)
+    INFO - Started Ejb(deployment-id=CalculatorImpl, ejb-name=CalculatorImpl, container=Default Stateless Container)
+    INFO - Started Ejb(deployment-id=CalculatorImplSign, ejb-name=CalculatorImplSign, container=Default Stateless Container)
+    INFO - Started Ejb(deployment-id=CalculatorImplEncryptAndSign2ways, ejb-name=CalculatorImplEncryptAndSign2ways, container=Default Stateless Container)
+    INFO - Started Ejb(deployment-id=CalculatorImplTimestamp1way, ejb-name=CalculatorImplTimestamp1way, container=Default Stateless Container)
+    INFO - Started Ejb(deployment-id=CalculatorImplSign2ways, ejb-name=CalculatorImplSign2ways, container=Default Stateless Container)
+    INFO - Started Ejb(deployment-id=CalculatorImplEncrypt2ways, ejb-name=CalculatorImplEncrypt2ways, container=Default Stateless Container)
+    INFO - Started Ejb(deployment-id=CalculatorImplUsernameTokenPlainPassword, ejb-name=CalculatorImplUsernameTokenPlainPassword, container=Default Stateless Container)
+    INFO - Started Ejb(deployment-id=CalculatorImplTimestamp2ways, ejb-name=CalculatorImplTimestamp2ways, container=Default Stateless Container)
+    INFO - Started Ejb(deployment-id=CalculatorImplUsernameTokenPlainPasswordEncrypt, ejb-name=CalculatorImplUsernameTokenPlainPasswordEncrypt, container=Default Stateless Container)
+    INFO - Deployed Application(path=/Users/dblevins/examples/webservice-ws-security/classpath.ear)
+    INFO - Initializing network services
+    INFO - Creating ServerService(id=httpejbd)
+    INFO - Creating ServerService(id=cxf)
+    INFO - Creating ServerService(id=admin)
+    INFO - Creating ServerService(id=ejbd)
+    INFO - Creating ServerService(id=ejbds)
+    INFO - Initializing network services
+      ** Starting Services **
+      NAME                 IP              PORT  
+      httpejbd             127.0.0.1       4204  
+      admin thread         127.0.0.1       4200  
+      ejbd                 127.0.0.1       4201  
+      ejbd                 127.0.0.1       4203  
+    -------
+    Ready!
+    Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.582 sec
+    
+    Results :
+    
+    Tests run: 7, Failures: 0, Errors: 0, Skipped: 0
+    

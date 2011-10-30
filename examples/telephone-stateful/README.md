@@ -1,101 +1,38 @@
-[INFO] Scanning for projects...
-[INFO]                                                                         
-[INFO] ------------------------------------------------------------------------
-[INFO] Building OpenEJB :: Examples :: Telephone Stateful Pojo 1.0
-[INFO] ------------------------------------------------------------------------
-[INFO] 
-[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ telephone-stateful ---
-[INFO] Deleting /Users/dblevins/examples/telephone-stateful/target
-[INFO] 
-[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ telephone-stateful ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] Copying 1 resource
-[INFO] 
-[INFO] --- maven-compiler-plugin:2.3.2:compile (default-compile) @ telephone-stateful ---
-[INFO] Compiling 2 source files to /Users/dblevins/examples/telephone-stateful/target/classes
-[INFO] 
-[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ telephone-stateful ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Users/dblevins/examples/telephone-stateful/src/test/resources
-[INFO] 
-[INFO] --- maven-compiler-plugin:2.3.2:testCompile (default-testCompile) @ telephone-stateful ---
-[INFO] Compiling 1 source file to /Users/dblevins/examples/telephone-stateful/target/test-classes
-[INFO] 
-[INFO] --- maven-surefire-plugin:2.7.2:test (default-test) @ telephone-stateful ---
-[INFO] Surefire report directory: /Users/dblevins/examples/telephone-stateful/target/surefire-reports
+Title: Telephone Stateful
 
--------------------------------------------------------
- T E S T S
--------------------------------------------------------
-Running org.superbiz.telephone.TelephoneTest
-Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-http://openejb.apache.org/
-INFO - openejb.home = /Users/dblevins/examples/telephone-stateful
-INFO - openejb.base = /Users/dblevins/examples/telephone-stateful
-INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
-INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
-INFO - Found EjbModule in classpath: /Users/dblevins/examples/telephone-stateful/target/classes
-INFO - Beginning load: /Users/dblevins/examples/telephone-stateful/target/classes
-INFO - Configuring enterprise application: /Users/dblevins/examples/telephone-stateful/classpath.ear
-INFO - Configuring Service(id=Default Stateful Container, type=Container, provider-id=Default Stateful Container)
-INFO - Auto-creating a container for bean TelephoneBean: Container(type=STATEFUL, id=Default Stateful Container)
-INFO - Enterprise application "/Users/dblevins/examples/telephone-stateful/classpath.ear" loaded.
-INFO - Assembling app: /Users/dblevins/examples/telephone-stateful/classpath.ear
-INFO - Jndi(name=TelephoneBeanRemote) --> Ejb(deployment-id=TelephoneBean)
-INFO - Jndi(name=global/classpath.ear/telephone-stateful/TelephoneBean!org.superbiz.telephone.Telephone) --> Ejb(deployment-id=TelephoneBean)
-INFO - Jndi(name=global/classpath.ear/telephone-stateful/TelephoneBean) --> Ejb(deployment-id=TelephoneBean)
-INFO - Created Ejb(deployment-id=TelephoneBean, ejb-name=TelephoneBean, container=Default Stateful Container)
-INFO - Started Ejb(deployment-id=TelephoneBean, ejb-name=TelephoneBean, container=Default Stateful Container)
-INFO - Deployed Application(path=/Users/dblevins/examples/telephone-stateful/classpath.ear)
-INFO - Initializing network services
-INFO - Creating ServerService(id=admin)
-INFO - Creating ServerService(id=ejbd)
-INFO - Creating ServerService(id=ejbds)
-INFO - Initializing network services
-  ** Starting Services **
-  NAME                 IP              PORT  
-  admin thread         127.0.0.1       4200  
-  ejbd                 127.0.0.1       4201  
-  ejbd                 127.0.0.1       4203  
--------
-Ready!
-Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.412 sec
+*Help us document this example! Source available in [svn](http://svn.apache.org/repos/asf/openejb/trunk/openejb/examples/telephone-stateful) or [git](https://github.com/apache/openejb/tree/trunk/openejb/examples/telephone-stateful). Open a [JIRA](https://issues.apache.org/jira/browse/TOMEE) with patch or pull request*
 
-Results :
+This example shows how to use OpenEJB's remoting capabilities in an embedded scenario.
 
-Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
+The basic recipe is the same for a standard embedded scenario but with these added
+ingreditents:
 
-[INFO] 
-[INFO] --- maven-jar-plugin:2.3.1:jar (default-jar) @ telephone-stateful ---
-[INFO] Building jar: /Users/dblevins/examples/telephone-stateful/target/telephone-stateful-1.0.jar
-[INFO] 
-[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ telephone-stateful ---
-[INFO] Installing /Users/dblevins/examples/telephone-stateful/target/telephone-stateful-1.0.jar to /Users/dblevins/.m2/repository/org/superbiz/telephone-stateful/1.0/telephone-stateful-1.0.jar
-[INFO] Installing /Users/dblevins/examples/telephone-stateful/pom.xml to /Users/dblevins/.m2/repository/org/superbiz/telephone-stateful/1.0/telephone-stateful-1.0.pom
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD SUCCESS
-[INFO] ------------------------------------------------------------------------
-[INFO] Total time: 4.641s
-[INFO] Finished at: Fri Oct 28 17:02:08 PDT 2011
-[INFO] Final Memory: 14M/81M
-[INFO] ------------------------------------------------------------------------
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
-    //START SNIPPET: code
+  * `openejb.embedded.remotable` property
+  * `openejb-ejbd` jar
+
+While creating the InitialContext, pass in the openejb.embedded.remotable property with
+the value of "true".  When this is seen by the LocalInitialContextFactory, it will boot up
+the Server ServiceManager in the VM which will in turn look for ServerServices in the
+classpath.
+
+Provided you have the openejb-ejbd jar in your classpath along with it's dependencies
+(openejb-server, openejb-client, openejb-core), then those services will be brought online
+and remote clients will be able to connect into your vm and invoke beans.
+
+If you want to add more ServerServices such as the http version of the ejbd protocol you'd
+simply add the openejb-httpejbd jar to your classpath.  A number of ServerServices are
+available currently:
+
+  * openejb-ejbd
+  * openejb-http
+  * openejb-telnet
+  * openejb-derbynet
+  * openejb-hsql
+  * openejb-activemq
+
+
+## Telephone
+
     package org.superbiz.telephone;
     
     public interface Telephone {
@@ -104,24 +41,9 @@ Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
     
         String listen();
     }
-    //END SNIPPET: code
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
-    //START SNIPPET: code
+
+## TelephoneBean
+
     package org.superbiz.telephone;
     
     import javax.ejb.Remote;
@@ -160,22 +82,9 @@ Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
             return answers[Math.abs(lastThingSaid.hashCode()) % answers.length];
         }
     }
-    //END SNIPPET: code/**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## TelephoneTest
+
     package org.superbiz.telephone;
     
     import junit.framework.TestCase;
@@ -188,8 +97,6 @@ Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
      * @version $Rev: 1090810 $ $Date: 2011-04-10 07:49:26 -0700 (Sun, 10 Apr 2011) $
      */
     public class TelephoneTest extends TestCase {
-    
-        //START SNIPPET: setup
     
         protected void setUp() throws Exception {
             Properties properties = new Properties();
@@ -204,14 +111,12 @@ Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
     
             new InitialContext(properties);
         }
-        //END SNIPPET: setup
-    
+
         /**
          * Lookup the Telephone bean via its remote interface but using the LocalInitialContextFactory
          *
          * @throws Exception
          */
-        //START SNIPPET: localcontext
         public void testTalkOverLocalNetwork() throws Exception {
     
             Properties properties = new Properties();
@@ -235,14 +140,12 @@ Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
     
             assertEquals("Oh, of course.", telephone.listen());
         }
-        //END SNIPPET: localcontext
-    
+
         /**
          * Lookup the Telephone bean via its remote interface using the RemoteInitialContextFactory
          *
          * @throws Exception
          */
-        //START SNIPPET: remotecontext
         public void testTalkOverRemoteNetwork() throws Exception {
             Properties properties = new Properties();
             properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
@@ -270,6 +173,49 @@ Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
     
             assertEquals("Definitely.", telephone.listen());
         }
-        //END SNIPPET: remotecontext
-    
     }
+
+# Running
+
+    
+    -------------------------------------------------------
+     T E S T S
+    -------------------------------------------------------
+    Running org.superbiz.telephone.TelephoneTest
+    Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
+    http://openejb.apache.org/
+    INFO - openejb.home = /Users/dblevins/examples/telephone-stateful
+    INFO - openejb.base = /Users/dblevins/examples/telephone-stateful
+    INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+    INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+    INFO - Found EjbModule in classpath: /Users/dblevins/examples/telephone-stateful/target/classes
+    INFO - Beginning load: /Users/dblevins/examples/telephone-stateful/target/classes
+    INFO - Configuring enterprise application: /Users/dblevins/examples/telephone-stateful/classpath.ear
+    INFO - Configuring Service(id=Default Stateful Container, type=Container, provider-id=Default Stateful Container)
+    INFO - Auto-creating a container for bean TelephoneBean: Container(type=STATEFUL, id=Default Stateful Container)
+    INFO - Enterprise application "/Users/dblevins/examples/telephone-stateful/classpath.ear" loaded.
+    INFO - Assembling app: /Users/dblevins/examples/telephone-stateful/classpath.ear
+    INFO - Jndi(name=TelephoneBeanRemote) --> Ejb(deployment-id=TelephoneBean)
+    INFO - Jndi(name=global/classpath.ear/telephone-stateful/TelephoneBean!org.superbiz.telephone.Telephone) --> Ejb(deployment-id=TelephoneBean)
+    INFO - Jndi(name=global/classpath.ear/telephone-stateful/TelephoneBean) --> Ejb(deployment-id=TelephoneBean)
+    INFO - Created Ejb(deployment-id=TelephoneBean, ejb-name=TelephoneBean, container=Default Stateful Container)
+    INFO - Started Ejb(deployment-id=TelephoneBean, ejb-name=TelephoneBean, container=Default Stateful Container)
+    INFO - Deployed Application(path=/Users/dblevins/examples/telephone-stateful/classpath.ear)
+    INFO - Initializing network services
+    INFO - Creating ServerService(id=admin)
+    INFO - Creating ServerService(id=ejbd)
+    INFO - Creating ServerService(id=ejbds)
+    INFO - Initializing network services
+      ** Starting Services **
+      NAME                 IP              PORT  
+      admin thread         127.0.0.1       4200  
+      ejbd                 127.0.0.1       4201  
+      ejbd                 127.0.0.1       4203  
+    -------
+    Ready!
+    Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.448 sec
+    
+    Results :
+    
+    Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
+    

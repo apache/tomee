@@ -1,114 +1,14 @@
-[INFO] Scanning for projects...
-[INFO]                                                                         
-[INFO] ------------------------------------------------------------------------
-[INFO] Building OpenEJB :: Examples :: Spring Integration 1.0
-[INFO] ------------------------------------------------------------------------
-[INFO] 
-[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ spring-integration ---
-[INFO] Deleting /Users/dblevins/examples/spring-integration/target
-[INFO] 
-[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ spring-integration ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] Copying 3 resources
-[INFO] 
-[INFO] --- maven-compiler-plugin:2.3.2:compile (default-compile) @ spring-integration ---
-[INFO] Compiling 8 source files to /Users/dblevins/examples/spring-integration/target/classes
-[INFO] 
-[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ spring-integration ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Users/dblevins/examples/spring-integration/src/test/resources
-[INFO] 
-[INFO] --- maven-compiler-plugin:2.3.2:testCompile (default-testCompile) @ spring-integration ---
-[INFO] Compiling 1 source file to /Users/dblevins/examples/spring-integration/target/test-classes
-[INFO] 
-[INFO] --- maven-surefire-plugin:2.7.2:test (default-test) @ spring-integration ---
-[INFO] Surefire report directory: /Users/dblevins/examples/spring-integration/target/surefire-reports
+Title: Spring Integration
 
--------------------------------------------------------
- T E S T S
--------------------------------------------------------
-Running org.superbiz.spring.MoviesTest
-log4j:WARN No appenders could be found for logger (org.springframework.context.support.ClassPathXmlApplicationContext).
-log4j:WARN Please initialize the log4j system properly.
-log4j:WARN See http://logging.apache.org/log4j/1.2/faq.html#noconfig for more info.
-Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-http://openejb.apache.org/
-INFO - openejb.home = /Users/dblevins/examples/spring-integration
-INFO - openejb.base = /Users/dblevins/examples/spring-integration
-INFO - Configuring Service(id=Default JDK 1.3 ProxyFactory, type=ProxyFactory, provider-id=Default JDK 1.3 ProxyFactory)
-INFO - Configuring Service(id=MovieDatabase, type=Resource, provider-id=Default JDBC Database)
-INFO - Configuring Service(id=MovieDatabaseUnmanaged, type=Resource, provider-id=Default JDBC Database)
-INFO - Found EjbModule in classpath: /Users/dblevins/examples/spring-integration/target/classes
-INFO - Beginning load: /Users/dblevins/examples/spring-integration/target/classes
-INFO - Configuring enterprise application: /Users/dblevins/examples/spring-integration/classpath.ear
-WARN - Method 'lookup' is not available for 'javax.annotation.Resource'. Probably using an older Runtime.
-INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
-INFO - Auto-creating a container for bean CineplexImpl: Container(type=STATELESS, id=Default Stateless Container)
-INFO - Auto-linking resource-ref 'java:comp/env/org.superbiz.spring.CineplexImpl/theaters' in bean CineplexImpl to Resource(id=theaters)
-INFO - Configuring Service(id=Default Stateful Container, type=Container, provider-id=Default Stateful Container)
-INFO - Auto-creating a container for bean Movies: Container(type=STATEFUL, id=Default Stateful Container)
-INFO - Configuring PersistenceUnit(name=movie-unit, provider=org.hibernate.ejb.HibernatePersistence)
-INFO - Enterprise application "/Users/dblevins/examples/spring-integration/classpath.ear" loaded.
-INFO - Assembling app: /Users/dblevins/examples/spring-integration/classpath.ear
-INFO - PersistenceUnit(name=movie-unit, provider=org.hibernate.ejb.HibernatePersistence) - provider time 672ms
-INFO - Jndi(name=CineplexImplLocal) --> Ejb(deployment-id=CineplexImpl)
-INFO - Jndi(name=global/classpath.ear/spring-integration/CineplexImpl!org.superbiz.spring.Cineplex) --> Ejb(deployment-id=CineplexImpl)
-INFO - Jndi(name=global/classpath.ear/spring-integration/CineplexImpl) --> Ejb(deployment-id=CineplexImpl)
-INFO - Jndi(name=MoviesLocal) --> Ejb(deployment-id=Movies)
-INFO - Jndi(name=global/classpath.ear/spring-integration/Movies!org.superbiz.spring.Movies) --> Ejb(deployment-id=Movies)
-INFO - Jndi(name=global/classpath.ear/spring-integration/Movies) --> Ejb(deployment-id=Movies)
-INFO - Created Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateful Container)
-INFO - Created Ejb(deployment-id=CineplexImpl, ejb-name=CineplexImpl, container=Default Stateless Container)
-INFO - Started Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateful Container)
-INFO - Started Ejb(deployment-id=CineplexImpl, ejb-name=CineplexImpl, container=Default Stateless Container)
-INFO - Deployed Application(path=/Users/dblevins/examples/spring-integration/classpath.ear)
-INFO - Exported EJB Movies with interface org.superbiz.spring.Movies to Spring bean MoviesLocal
-INFO - Exported EJB Movies with interface org.superbiz.spring.Movies to Spring bean global/classpath.ear/spring-integration/Movies!org.superbiz.spring.Movies
-INFO - Exported EJB CineplexImpl with interface org.superbiz.spring.Cineplex to Spring bean CineplexImplLocal
-INFO - Exported EJB CineplexImpl with interface org.superbiz.spring.Cineplex to Spring bean global/classpath.ear/spring-integration/CineplexImpl!org.superbiz.spring.Cineplex
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.429 sec
+*Help us document this example! Source available in [svn](http://svn.apache.org/repos/asf/openejb/trunk/openejb/examples/spring-integration) or [git](https://github.com/apache/openejb/tree/trunk/openejb/examples/spring-integration). Open a [JIRA](https://issues.apache.org/jira/browse/TOMEE) with patch or pull request*
 
-Results :
+## AvailableMovies
 
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-
-[INFO] 
-[INFO] --- maven-jar-plugin:2.3.1:jar (default-jar) @ spring-integration ---
-[INFO] Building jar: /Users/dblevins/examples/spring-integration/target/spring-integration-1.0.jar
-[INFO] 
-[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ spring-integration ---
-[INFO] Installing /Users/dblevins/examples/spring-integration/target/spring-integration-1.0.jar to /Users/dblevins/.m2/repository/org/superbiz/spring-integration/1.0/spring-integration-1.0.jar
-[INFO] Installing /Users/dblevins/examples/spring-integration/pom.xml to /Users/dblevins/.m2/repository/org/superbiz/spring-integration/1.0/spring-integration-1.0.pom
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD SUCCESS
-[INFO] ------------------------------------------------------------------------
-[INFO] Total time: 5.577s
-[INFO] Finished at: Fri Oct 28 17:09:39 PDT 2011
-[INFO] Final Memory: 15M/81M
-[INFO] ------------------------------------------------------------------------
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
     package org.superbiz.spring;
     
     import javax.annotation.PostConstruct;
     import javax.ejb.EJB;
     import java.util.List;
-    
-    //START SNIPPET: code
     
     /**
      * This is a simple Spring bean that we use as an easy way
@@ -144,23 +44,9 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
             this.moviesEjb = moviesEjb;
         }
     }
-    //END SNIPPET: code
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## Cineplex
+
     package org.superbiz.spring;
     
     import java.util.List;
@@ -168,31 +54,15 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
     public interface Cineplex {
     
         public List<Theater> getTheaters();
-    
     }
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## CineplexImpl
+
     package org.superbiz.spring;
     
     import javax.annotation.Resource;
     import javax.ejb.Stateless;
     import java.util.List;
-    
-    //START SNIPPET: code
     
     @Stateless
     public class CineplexImpl implements Cineplex {
@@ -207,23 +77,9 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
             return theaters.getTheaters();
         }
     }
-    //END SNIPPET: code
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## Movie
+
     package org.superbiz.spring;
     
     import javax.persistence.Entity;
@@ -275,23 +131,9 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
             this.year = year;
         }
     }
-    //END SNIPPET: code
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## Movies
+
     package org.superbiz.spring;
     
     import java.util.List;
@@ -305,22 +147,9 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
     
         Movie getMovieByTitle(String title) throws Exception;
     }
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## MoviesImpl
+
     package org.superbiz.spring;
     
     import javax.ejb.Stateful;
@@ -329,9 +158,7 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
     import javax.persistence.PersistenceContextType;
     import javax.persistence.Query;
     import java.util.List;
-    
-    //START SNIPPET: code
-    
+
     /**
      * A normal Stateful EJB that uses a JPA EntityManager.
      * <p/>
@@ -362,36 +189,17 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
             query.setParameter(1, title);
             return (Movie) query.getSingleResult();
         }
-    
     }
-    //END SNIPPET: code
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## Theater
+
     package org.superbiz.spring;
     
     import javax.inject.Inject;
     import javax.inject.Named;
-    import org.springframework.beans.factory.annotation.Autowired;
-    
     import java.util.ArrayList;
     import java.util.List;
-    
-    //START SNIPPET: code
-    
+
     /**
      * Spring bean that references the Movies EJB and the Movie JPA bean.
      * <p/>
@@ -412,7 +220,8 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
          *
          * @param movies
          */
-        @Inject @Named(value = "MoviesLocal")
+        @Inject
+        @Named(value = "MoviesLocal")
         public Theater(Movies movies) {
             this.movies = movies;
         }
@@ -434,24 +243,9 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
             return nowPlaying;
         }
     }
-    //END SNIPPET: code
-    
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## Theaters
+
     package org.superbiz.spring;
     
     import java.util.List;
@@ -472,24 +266,165 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
         public void setTheaters(List<Theater> theaters) {
             this.theaters = theaters;
         }
-    
     }
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## persistence.xml
+
+    <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
+    
+      <persistence-unit name="movie-unit">
+        <provider>org.hibernate.ejb.HibernatePersistence</provider>
+        <jta-data-source>MovieDatabase</jta-data-source>
+        <non-jta-data-source>MovieDatabaseUnmanaged</non-jta-data-source>
+        <class>org.superbiz.spring.Movie</class>
+        <properties>
+          <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
+        </properties>
+      </persistence-unit>
+    </persistence>
+
+
+## movies.xml
+
+    <beans xmlns="http://www.springframework.org/schema/beans"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:context="http://www.springframework.org/schema/context"
+           xmlns:tx="http://www.springframework.org/schema/tx"
+    
+           xsi:schemaLocation="http://www.springframework.org/schema/beans
+               http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+               http://www.springframework.org/schema/context
+               http://www.springframework.org/schema/context/spring-context-2.5.xsd
+               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
+    
+
+      <context:annotation-config/>
+    
+
+      <!--
+      Required:  Set up a TransactionManager for use by OpenEJB or Spring.
+      The Spring PlatformTransactionManager may be used instead.
+    
+      In future versions this will not be a required step.
+      -->
+      <bean name="TransactionManager" class="org.apache.geronimo.transaction.manager.GeronimoTransactionManager"/>
+    
+    
+      <!--
+      Required:  Set up a SecurityService for use by OpenEJB.
+      In future versions this will not be a required step.
+      -->
+      <bean name="SecurityService" class="org.apache.openejb.core.security.SecurityServiceImpl"/>
+    
+    
+      <!--
+      Loads the EJBs from the classpath just as when embedding OpenEJB via
+      the org.apache.openejb.client.LocalInitialContextFactory.  All the discovered
+      EJBs are imported into this context and available for injection here.
+      -->
+      <bean name="classPathApplication" class="org.apache.openejb.spring.ClassPathApplication"/>
+    
+      <bean name="MovieDatabase" class="org.apache.openejb.spring.Resource">
+        <property name="type" value="DataSource"/>
+        <property name="properties">
+          <props>
+            <prop key="JdbcDriver">org.hsqldb.jdbcDriver</prop>
+            <prop key="JdbcUrl">jdbc:hsqldb:mem:moviedb</prop>
+          </props>
+        </property>
+      </bean>
+    
+      <bean name="MovieDatabaseUnmanaged" class="org.apache.openejb.spring.Resource">
+        <property name="type" value="DataSource"/>
+        <property name="properties">
+          <props>
+            <prop key="JdbcDriver">org.hsqldb.jdbcDriver</prop>
+            <prop key="JdbcUrl">jdbc:hsqldb:mem:moviedb</prop>
+            <prop key="JtaManaged">false</prop>
+          </props>
+        </property>
+      </bean>
+    
+      <bean name="AvailableMovies" class="org.superbiz.spring.AvailableMovies">
+        <property name="movies">
+          <list>
+            <bean class="org.superbiz.spring.Movie">
+              <property name="title" value="Fargo"/>
+              <property name="director" value="Joel Coen"/>
+              <property name="year" value="1996"/>
+            </bean>
+            <bean class="org.superbiz.spring.Movie">
+              <property name="title" value="Reservoir Dogs"/>
+              <property name="director" value="Quentin Tarantino"/>
+              <property name="year" value="1992"/>
+            </bean>
+            <bean class="org.superbiz.spring.Movie">
+              <property name="title" value="The Big Lebowski"/>
+              <property name="director" value="Joel Coen"/>
+              <property name="year" value="1998"/>
+            </bean>
+            <bean class="org.superbiz.spring.Movie">
+              <property name="title" value="You, Me and Dupree"/>
+              <property name="director" value="Anthony Russo"/>
+              <property name="year" value="2006"/>
+            </bean>
+            <bean class="org.superbiz.spring.Movie">
+              <property name="title" value="Wedding Crashers"/>
+              <property name="director" value="David Dobkin"/>
+              <property name="year" value="2005"/>
+            </bean>
+            <bean class="org.superbiz.spring.Movie">
+              <property name="title" value="Zoolander"/>
+              <property name="director" value="Ben Stiller"/>
+              <property name="year" value="2001"/>
+            </bean>
+            <bean class="org.superbiz.spring.Movie">
+              <property name="title" value="Shanghai Noon"/>
+              <property name="director" value="Tom Dey"/>
+              <property name="year" value="2000"/>
+            </bean>
+          </list>
+        </property>
+        <!--property name="moviesEjb">
+          <ref bean="MoviesLocal" />
+        </property-->
+      </bean>
+    
+      <bean name="theater1" class="org.superbiz.spring.Theater">
+        <property name="nowPlaying">
+          <list>
+            <value>Fargo</value>
+            <value>Reservoir Dogs</value>
+            <value>The Big Lebowski</value>
+          </list>
+        </property>
+      </bean>
+    
+      <bean name="theater2" class="org.superbiz.spring.Theater">
+        <property name="nowPlaying">
+          <list>
+            <value>You, Me and Dupree</value>
+            <value>Wedding Crashers</value>
+            <value>Zoolander</value>
+            <value>Shanghai Noon</value>
+          </list>
+        </property>
+      </bean>
+    
+      <bean name="theaters" class="org.superbiz.spring.Theaters">
+        <property name="theaters">
+          <list>
+            <ref bean="theater1"/>
+            <ref bean="theater2"/>
+          </list>
+        </property>
+      </bean>
+
+    </beans>
+
+
+## MoviesTest
+
     package org.superbiz.spring;
     
     import junit.framework.TestCase;
@@ -497,7 +432,6 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
     
     import java.util.List;
     
-    //START SNIPPET: code
     public class MoviesTest extends TestCase {
     
         public void test() throws Exception {
@@ -550,4 +484,55 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
             assertEquals("Shanghai Noon", theaterTwoMovies.get(3).getTitle());
         }
     }
-    //END SNIPPET: code
+
+# Running
+
+    
+    -------------------------------------------------------
+     T E S T S
+    -------------------------------------------------------
+    Running org.superbiz.spring.MoviesTest
+    log4j:WARN No appenders could be found for logger (org.springframework.context.support.ClassPathXmlApplicationContext).
+    log4j:WARN Please initialize the log4j system properly.
+    log4j:WARN See http://logging.apache.org/log4j/1.2/faq.html#noconfig for more info.
+    Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
+    http://openejb.apache.org/
+    INFO - openejb.home = /Users/dblevins/examples/spring-integration
+    INFO - openejb.base = /Users/dblevins/examples/spring-integration
+    INFO - Configuring Service(id=Default JDK 1.3 ProxyFactory, type=ProxyFactory, provider-id=Default JDK 1.3 ProxyFactory)
+    INFO - Configuring Service(id=MovieDatabase, type=Resource, provider-id=Default JDBC Database)
+    INFO - Configuring Service(id=MovieDatabaseUnmanaged, type=Resource, provider-id=Default JDBC Database)
+    INFO - Found EjbModule in classpath: /Users/dblevins/examples/spring-integration/target/classes
+    INFO - Beginning load: /Users/dblevins/examples/spring-integration/target/classes
+    INFO - Configuring enterprise application: /Users/dblevins/examples/spring-integration/classpath.ear
+    WARN - Method 'lookup' is not available for 'javax.annotation.Resource'. Probably using an older Runtime.
+    INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
+    INFO - Auto-creating a container for bean CineplexImpl: Container(type=STATELESS, id=Default Stateless Container)
+    INFO - Auto-linking resource-ref 'java:comp/env/org.superbiz.spring.CineplexImpl/theaters' in bean CineplexImpl to Resource(id=theaters)
+    INFO - Configuring Service(id=Default Stateful Container, type=Container, provider-id=Default Stateful Container)
+    INFO - Auto-creating a container for bean Movies: Container(type=STATEFUL, id=Default Stateful Container)
+    INFO - Configuring PersistenceUnit(name=movie-unit, provider=org.hibernate.ejb.HibernatePersistence)
+    INFO - Enterprise application "/Users/dblevins/examples/spring-integration/classpath.ear" loaded.
+    INFO - Assembling app: /Users/dblevins/examples/spring-integration/classpath.ear
+    INFO - PersistenceUnit(name=movie-unit, provider=org.hibernate.ejb.HibernatePersistence) - provider time 648ms
+    INFO - Jndi(name=CineplexImplLocal) --> Ejb(deployment-id=CineplexImpl)
+    INFO - Jndi(name=global/classpath.ear/spring-integration/CineplexImpl!org.superbiz.spring.Cineplex) --> Ejb(deployment-id=CineplexImpl)
+    INFO - Jndi(name=global/classpath.ear/spring-integration/CineplexImpl) --> Ejb(deployment-id=CineplexImpl)
+    INFO - Jndi(name=MoviesLocal) --> Ejb(deployment-id=Movies)
+    INFO - Jndi(name=global/classpath.ear/spring-integration/Movies!org.superbiz.spring.Movies) --> Ejb(deployment-id=Movies)
+    INFO - Jndi(name=global/classpath.ear/spring-integration/Movies) --> Ejb(deployment-id=Movies)
+    INFO - Created Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateful Container)
+    INFO - Created Ejb(deployment-id=CineplexImpl, ejb-name=CineplexImpl, container=Default Stateless Container)
+    INFO - Started Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateful Container)
+    INFO - Started Ejb(deployment-id=CineplexImpl, ejb-name=CineplexImpl, container=Default Stateless Container)
+    INFO - Deployed Application(path=/Users/dblevins/examples/spring-integration/classpath.ear)
+    INFO - Exported EJB Movies with interface org.superbiz.spring.Movies to Spring bean MoviesLocal
+    INFO - Exported EJB Movies with interface org.superbiz.spring.Movies to Spring bean global/classpath.ear/spring-integration/Movies!org.superbiz.spring.Movies
+    INFO - Exported EJB CineplexImpl with interface org.superbiz.spring.Cineplex to Spring bean CineplexImplLocal
+    INFO - Exported EJB CineplexImpl with interface org.superbiz.spring.Cineplex to Spring bean global/classpath.ear/spring-integration/CineplexImpl!org.superbiz.spring.Cineplex
+    Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.407 sec
+    
+    Results :
+    
+    Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+    

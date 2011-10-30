@@ -1,4 +1,4 @@
-# @Asynchronous Method
+Title: @Asynchronous Methods
 
 The @Asynchronous annotation was introduced in EJB 3.1 as a simple way of creating asynchronous processing.
 

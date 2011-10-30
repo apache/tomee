@@ -1,103 +1,9 @@
-[INFO] Scanning for projects...
-[INFO]                                                                         
-[INFO] ------------------------------------------------------------------------
-[INFO] Building OpenEJB :: Examples :: JPA with EclipseLink 1.0
-[INFO] ------------------------------------------------------------------------
-[INFO] 
-[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ jpa-eclipselink ---
-[INFO] Deleting /Users/dblevins/examples/jpa-eclipselink/target
-[INFO] 
-[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ jpa-eclipselink ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] Copying 1 resource
-[INFO] 
-[INFO] --- maven-compiler-plugin:2.3.2:compile (default-compile) @ jpa-eclipselink ---
-[INFO] Compiling 2 source files to /Users/dblevins/examples/jpa-eclipselink/target/classes
-[INFO] 
-[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ jpa-eclipselink ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Users/dblevins/examples/jpa-eclipselink/src/test/resources
-[INFO] 
-[INFO] --- maven-compiler-plugin:2.3.2:testCompile (default-testCompile) @ jpa-eclipselink ---
-[INFO] Compiling 1 source file to /Users/dblevins/examples/jpa-eclipselink/target/test-classes
-[INFO] 
-[INFO] --- maven-surefire-plugin:2.7.2:test (default-test) @ jpa-eclipselink ---
-[INFO] Surefire report directory: /Users/dblevins/examples/jpa-eclipselink/target/surefire-reports
+Title: JPA Eclipselink
 
--------------------------------------------------------
- T E S T S
--------------------------------------------------------
-Running org.superbiz.eclipselink.MoviesTest
-Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-http://openejb.apache.org/
-INFO - openejb.home = /Users/dblevins/examples/jpa-eclipselink
-INFO - openejb.base = /Users/dblevins/examples/jpa-eclipselink
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
-INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
-INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
-INFO - Configuring Service(id=movieDatabase, type=Resource, provider-id=Default JDBC Database)
-INFO - Found EjbModule in classpath: /Users/dblevins/examples/jpa-eclipselink/target/classes
-INFO - Searched 6 classpath urls in 1053 milliseconds.  Average 175 milliseconds per url.
-INFO - Beginning load: /Users/dblevins/examples/jpa-eclipselink/target/classes
-INFO - Configuring enterprise application: /Users/dblevins/examples/jpa-eclipselink
-INFO - Configuring Service(id=Default Stateful Container, type=Container, provider-id=Default Stateful Container)
-INFO - Auto-creating a container for bean Movies: Container(type=STATEFUL, id=Default Stateful Container)
-INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
-INFO - Auto-creating a container for bean org.superbiz.eclipselink.MoviesTest: Container(type=MANAGED, id=Default Managed Container)
-INFO - Configuring PersistenceUnit(name=movie-unit, provider=org.eclipse.persistence.jpa.PersistenceProvider)
-INFO - Auto-creating a Resource with id 'movieDatabaseNonJta' of type 'DataSource for 'movie-unit'.
-INFO - Configuring Service(id=movieDatabaseNonJta, type=Resource, provider-id=movieDatabase)
-INFO - Adjusting PersistenceUnit movie-unit <non-jta-data-source> to Resource ID 'movieDatabaseNonJta' from 'movieDatabaseUnmanaged'
-INFO - Enterprise application "/Users/dblevins/examples/jpa-eclipselink" loaded.
-INFO - Assembling app: /Users/dblevins/examples/jpa-eclipselink
-INFO - PersistenceUnit(name=movie-unit, provider=org.eclipse.persistence.jpa.PersistenceProvider) - provider time 535ms
-INFO - Jndi(name="java:global/jpa-eclipselink/Movies!org.superbiz.eclipselink.Movies")
-INFO - Jndi(name="java:global/jpa-eclipselink/Movies")
-INFO - Jndi(name="java:global/EjbModule900256864/org.superbiz.eclipselink.MoviesTest!org.superbiz.eclipselink.MoviesTest")
-INFO - Jndi(name="java:global/EjbModule900256864/org.superbiz.eclipselink.MoviesTest")
-INFO - Created Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateful Container)
-INFO - Created Ejb(deployment-id=org.superbiz.eclipselink.MoviesTest, ejb-name=org.superbiz.eclipselink.MoviesTest, container=Default Managed Container)
-INFO - Started Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateful Container)
-INFO - Started Ejb(deployment-id=org.superbiz.eclipselink.MoviesTest, ejb-name=org.superbiz.eclipselink.MoviesTest, container=Default Managed Container)
-INFO - Deployed Application(path=/Users/dblevins/examples/jpa-eclipselink)
-[EL Info]: 2011-10-28 17:05:52.461--ServerSession(1920842039)--EclipseLink, version: Eclipse Persistence Services - 2.1.1.v20100817-r8050
-[EL Info]: 2011-10-28 17:05:52.624--ServerSession(1920842039)--file:/Users/dblevins/examples/jpa-eclipselink/target/classes/_movie-unit login successful
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.428 sec
+*Help us document this example! Source available in [svn](http://svn.apache.org/repos/asf/openejb/trunk/openejb/examples/jpa-eclipselink) or [git](https://github.com/apache/openejb/tree/trunk/openejb/examples/jpa-eclipselink). Open a [JIRA](https://issues.apache.org/jira/browse/TOMEE) with patch or pull request*
 
-Results :
+## Movie
 
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-
-[INFO] 
-[INFO] --- maven-jar-plugin:2.3.1:jar (default-jar) @ jpa-eclipselink ---
-[INFO] Building jar: /Users/dblevins/examples/jpa-eclipselink/target/jpa-eclipselink-1.0.jar
-[INFO] 
-[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ jpa-eclipselink ---
-[INFO] Installing /Users/dblevins/examples/jpa-eclipselink/target/jpa-eclipselink-1.0.jar to /Users/dblevins/.m2/repository/org/superbiz/jpa-eclipselink/1.0/jpa-eclipselink-1.0.jar
-[INFO] Installing /Users/dblevins/examples/jpa-eclipselink/pom.xml to /Users/dblevins/.m2/repository/org/superbiz/jpa-eclipselink/1.0/jpa-eclipselink-1.0.pom
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD SUCCESS
-[INFO] ------------------------------------------------------------------------
-[INFO] Total time: 6.548s
-[INFO] Finished at: Fri Oct 28 17:05:53 PDT 2011
-[INFO] Final Memory: 14M/81M
-[INFO] ------------------------------------------------------------------------
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
     package org.superbiz.eclipselink;
     
     import javax.persistence.Entity;
@@ -149,24 +55,10 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
             this.year = year;
         }
     
-    
     }
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## Movies
+
     package org.superbiz.eclipselink;
     
     import javax.ejb.Stateful;
@@ -194,24 +86,29 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
             Query query = entityManager.createQuery("SELECT m from Movie as m");
             return query.getResultList();
         }
-    
     }
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## persistence.xml
+
+    <persistence version="1.0"
+                 xmlns="http://java.sun.com/xml/ns/persistence"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
+      <persistence-unit name="movie-unit">
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+        <jta-data-source>movieDatabase</jta-data-source>
+        <non-jta-data-source>movieDatabaseUnmanaged</non-jta-data-source>
+        <properties>
+          <property name="eclipselink.target-database" value="org.eclipse.persistence.platform.database.HSQLPlatform"/>
+          <property name="eclipselink.ddl-generation" value="create-tables"/>
+          <property name="eclipselink.ddl-generation.output-mode" value="database"/>
+        </properties>
+      </persistence-unit>
+    </persistence>
+    
+
+## MoviesTest
+
     package org.superbiz.eclipselink;
     
     import junit.framework.TestCase;
@@ -250,3 +147,48 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
             assertEquals("Movies.getMovies()", 0, movies.getMovies().size());
         }
     }
+
+# Running
+
+    
+    -------------------------------------------------------
+     T E S T S
+    -------------------------------------------------------
+    Running org.superbiz.eclipselink.MoviesTest
+    Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
+    http://openejb.apache.org/
+    INFO - openejb.home = /Users/dblevins/examples/jpa-eclipselink
+    INFO - openejb.base = /Users/dblevins/examples/jpa-eclipselink
+    INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+    INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+    INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+    INFO - Configuring Service(id=movieDatabase, type=Resource, provider-id=Default JDBC Database)
+    INFO - Found EjbModule in classpath: /Users/dblevins/examples/jpa-eclipselink/target/classes
+    INFO - Beginning load: /Users/dblevins/examples/jpa-eclipselink/target/classes
+    INFO - Configuring enterprise application: /Users/dblevins/examples/jpa-eclipselink
+    INFO - Configuring Service(id=Default Stateful Container, type=Container, provider-id=Default Stateful Container)
+    INFO - Auto-creating a container for bean Movies: Container(type=STATEFUL, id=Default Stateful Container)
+    INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+    INFO - Auto-creating a container for bean org.superbiz.eclipselink.MoviesTest: Container(type=MANAGED, id=Default Managed Container)
+    INFO - Configuring PersistenceUnit(name=movie-unit, provider=org.eclipse.persistence.jpa.PersistenceProvider)
+    INFO - Auto-creating a Resource with id 'movieDatabaseNonJta' of type 'DataSource for 'movie-unit'.
+    INFO - Configuring Service(id=movieDatabaseNonJta, type=Resource, provider-id=movieDatabase)
+    INFO - Adjusting PersistenceUnit movie-unit <non-jta-data-source> to Resource ID 'movieDatabaseNonJta' from 'movieDatabaseUnmanaged'
+    INFO - Enterprise application "/Users/dblevins/examples/jpa-eclipselink" loaded.
+    INFO - Assembling app: /Users/dblevins/examples/jpa-eclipselink
+    INFO - PersistenceUnit(name=movie-unit, provider=org.eclipse.persistence.jpa.PersistenceProvider) - provider time 511ms
+    INFO - Jndi(name="java:global/jpa-eclipselink/Movies!org.superbiz.eclipselink.Movies")
+    INFO - Jndi(name="java:global/jpa-eclipselink/Movies")
+    INFO - Jndi(name="java:global/EjbModule225280863/org.superbiz.eclipselink.MoviesTest!org.superbiz.eclipselink.MoviesTest")
+    INFO - Jndi(name="java:global/EjbModule225280863/org.superbiz.eclipselink.MoviesTest")
+    INFO - Created Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateful Container)
+    INFO - Created Ejb(deployment-id=org.superbiz.eclipselink.MoviesTest, ejb-name=org.superbiz.eclipselink.MoviesTest, container=Default Managed Container)
+    INFO - Started Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateful Container)
+    INFO - Started Ejb(deployment-id=org.superbiz.eclipselink.MoviesTest, ejb-name=org.superbiz.eclipselink.MoviesTest, container=Default Managed Container)
+    INFO - Deployed Application(path=/Users/dblevins/examples/jpa-eclipselink)
+    Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.188 sec
+    
+    Results :
+    
+    Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+    

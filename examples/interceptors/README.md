@@ -1,110 +1,9 @@
-[INFO] Scanning for projects...
-[INFO]                                                                         
-[INFO] ------------------------------------------------------------------------
-[INFO] Building OpenEJB :: Examples :: Interceptors 1.0
-[INFO] ------------------------------------------------------------------------
-[INFO] 
-[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ interceptors ---
-[INFO] Deleting /Users/dblevins/examples/interceptors/target
-[INFO] 
-[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ interceptors ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] Copying 1 resource
-[INFO] 
-[INFO] --- maven-compiler-plugin:2.3.2:compile (default-compile) @ interceptors ---
-[INFO] Compiling 20 source files to /Users/dblevins/examples/interceptors/target/classes
-[INFO] 
-[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ interceptors ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Users/dblevins/examples/interceptors/src/test/resources
-[INFO] 
-[INFO] --- maven-compiler-plugin:2.3.2:testCompile (default-testCompile) @ interceptors ---
-[INFO] Compiling 4 source files to /Users/dblevins/examples/interceptors/target/test-classes
-[INFO] 
-[INFO] --- maven-surefire-plugin:2.7.2:test (default-test) @ interceptors ---
-[INFO] Surefire report directory: /Users/dblevins/examples/interceptors/target/surefire-reports
+Title: Interceptors
 
--------------------------------------------------------
- T E S T S
--------------------------------------------------------
-Running org.superbiz.interceptors.FullyInterceptedTest
-Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-http://openejb.apache.org/
-INFO - openejb.home = /Users/dblevins/examples/interceptors
-INFO - openejb.base = /Users/dblevins/examples/interceptors
-INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
-INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
-INFO - Using 'openejb.deployments.classpath.include=.*interceptors/target/classes.*'
-INFO - Found EjbModule in classpath: /Users/dblevins/examples/interceptors/target/classes
-INFO - Beginning load: /Users/dblevins/examples/interceptors/target/classes
-INFO - Configuring enterprise application: /Users/dblevins/examples/interceptors/classpath.ear
-INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
-INFO - Auto-creating a container for bean FullyInterceptedBean: Container(type=STATELESS, id=Default Stateless Container)
-INFO - Enterprise application "/Users/dblevins/examples/interceptors/classpath.ear" loaded.
-INFO - Assembling app: /Users/dblevins/examples/interceptors/classpath.ear
-INFO - Jndi(name=FullyInterceptedBeanLocal) --> Ejb(deployment-id=FullyInterceptedBean)
-INFO - Jndi(name=global/classpath.ear/interceptors/FullyInterceptedBean!org.superbiz.interceptors.FullyIntercepted) --> Ejb(deployment-id=FullyInterceptedBean)
-INFO - Jndi(name=global/classpath.ear/interceptors/FullyInterceptedBean) --> Ejb(deployment-id=FullyInterceptedBean)
-INFO - Jndi(name=ThirdSLSBeanLocal) --> Ejb(deployment-id=ThirdSLSBean)
-INFO - Jndi(name=global/classpath.ear/interceptors/ThirdSLSBean!org.superbiz.interceptors.ThirdSLSBeanLocal) --> Ejb(deployment-id=ThirdSLSBean)
-INFO - Jndi(name=global/classpath.ear/interceptors/ThirdSLSBean) --> Ejb(deployment-id=ThirdSLSBean)
-INFO - Jndi(name=SecondStatelessInterceptedBeanLocal) --> Ejb(deployment-id=SecondStatelessInterceptedBean)
-INFO - Jndi(name=global/classpath.ear/interceptors/SecondStatelessInterceptedBean!org.superbiz.interceptors.SecondStatelessInterceptedLocal) --> Ejb(deployment-id=SecondStatelessInterceptedBean)
-INFO - Jndi(name=global/classpath.ear/interceptors/SecondStatelessInterceptedBean) --> Ejb(deployment-id=SecondStatelessInterceptedBean)
-INFO - Jndi(name=MethodLevelInterceptorOnlySLSBeanLocal) --> Ejb(deployment-id=MethodLevelInterceptorOnlySLSBean)
-INFO - Jndi(name=global/classpath.ear/interceptors/MethodLevelInterceptorOnlySLSBean!org.superbiz.interceptors.MethodLevelInterceptorOnlyParent) --> Ejb(deployment-id=MethodLevelInterceptorOnlySLSBean)
-INFO - Jndi(name=global/classpath.ear/interceptors/MethodLevelInterceptorOnlySLSBean) --> Ejb(deployment-id=MethodLevelInterceptorOnlySLSBean)
-INFO - Created Ejb(deployment-id=ThirdSLSBean, ejb-name=ThirdSLSBean, container=Default Stateless Container)
-INFO - Created Ejb(deployment-id=SecondStatelessInterceptedBean, ejb-name=SecondStatelessInterceptedBean, container=Default Stateless Container)
-INFO - Created Ejb(deployment-id=FullyInterceptedBean, ejb-name=FullyInterceptedBean, container=Default Stateless Container)
-INFO - Created Ejb(deployment-id=MethodLevelInterceptorOnlySLSBean, ejb-name=MethodLevelInterceptorOnlySLSBean, container=Default Stateless Container)
-INFO - Started Ejb(deployment-id=ThirdSLSBean, ejb-name=ThirdSLSBean, container=Default Stateless Container)
-INFO - Started Ejb(deployment-id=SecondStatelessInterceptedBean, ejb-name=SecondStatelessInterceptedBean, container=Default Stateless Container)
-INFO - Started Ejb(deployment-id=FullyInterceptedBean, ejb-name=FullyInterceptedBean, container=Default Stateless Container)
-INFO - Started Ejb(deployment-id=MethodLevelInterceptorOnlySLSBean, ejb-name=MethodLevelInterceptorOnlySLSBean, container=Default Stateless Container)
-INFO - Deployed Application(path=/Users/dblevins/examples/interceptors/classpath.ear)
-Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.603 sec
-Running org.superbiz.interceptors.MethodLevelInterceptorOnlyTest
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.003 sec
-Running org.superbiz.interceptors.SecondStatelessInterceptedTest
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.003 sec
-Running org.superbiz.interceptors.ThirdSLSBeanTest
-Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.003 sec
+*Help us document this example! Source available in [svn](http://svn.apache.org/repos/asf/openejb/trunk/openejb/examples/interceptors) or [git](https://github.com/apache/openejb/tree/trunk/openejb/examples/interceptors). Open a [JIRA](https://issues.apache.org/jira/browse/TOMEE) with patch or pull request*
 
-Results :
+## ClassLevelInterceptorOne
 
-Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
-
-[INFO] 
-[INFO] --- maven-jar-plugin:2.3.1:jar (default-jar) @ interceptors ---
-[INFO] Building jar: /Users/dblevins/examples/interceptors/target/interceptors-1.0.jar
-[INFO] 
-[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ interceptors ---
-[INFO] Installing /Users/dblevins/examples/interceptors/target/interceptors-1.0.jar to /Users/dblevins/.m2/repository/org/superbiz/interceptors/1.0/interceptors-1.0.jar
-[INFO] Installing /Users/dblevins/examples/interceptors/pom.xml to /Users/dblevins/.m2/repository/org/superbiz/interceptors/1.0/interceptors-1.0.pom
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD SUCCESS
-[INFO] ------------------------------------------------------------------------
-[INFO] Total time: 4.931s
-[INFO] Finished at: Fri Oct 28 17:02:54 PDT 2011
-[INFO] Final Memory: 14M/81M
-[INFO] ------------------------------------------------------------------------
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
     package org.superbiz.interceptors;
     
     import javax.interceptor.AroundInvoke;
@@ -119,24 +18,10 @@ Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
         protected Object businessMethodInterceptor(InvocationContext ic) throws Exception {
             return Utils.addClassSimpleName(ic, this.getClass().getSimpleName());
         }
-    
     }
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## ClassLevelInterceptorSuperClassOne
+
     package org.superbiz.interceptors;
     
     import javax.interceptor.AroundInvoke;
@@ -151,24 +36,10 @@ Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
         protected Object businessMethodInterceptor(InvocationContext ic) throws Exception {
             return Utils.addClassSimpleName(ic, this.getClass().getSimpleName());
         }
-    
     }
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## ClassLevelInterceptorSuperClassTwo
+
     package org.superbiz.interceptors;
     
     import javax.interceptor.AroundInvoke;
@@ -183,24 +54,10 @@ Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
         protected Object businessMethodInterceptor(InvocationContext ic) throws Exception {
             return Utils.addClassSimpleName(ic, this.getClass().getSimpleName());
         }
-    
     }
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## ClassLevelInterceptorTwo
+
     package org.superbiz.interceptors;
     
     import javax.interceptor.AroundInvoke;
@@ -215,24 +72,10 @@ Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
         protected Object businessMethodInterceptor(InvocationContext ic) throws Exception {
             return Utils.addClassSimpleName(ic, this.getClass().getSimpleName());
         }
-    
     }
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## DefaultInterceptorOne
+
     package org.superbiz.interceptors;
     
     import javax.annotation.PostConstruct;
@@ -254,22 +97,9 @@ Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
             Utils.addClassSimpleName(ic, this.getClass().getSimpleName());
         }
     }
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## DefaultInterceptorTwo
+
     package org.superbiz.interceptors;
     
     import javax.interceptor.AroundInvoke;
@@ -284,24 +114,10 @@ Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
         protected Object businessMethodInterceptor(InvocationContext ic) throws Exception {
             return Utils.addClassSimpleName(ic, this.getClass().getSimpleName());
         }
-    
     }
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## FullyIntercepted
+
     package org.superbiz.interceptors;
     
     import java.util.List;
@@ -314,24 +130,10 @@ Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
         List<String> businessMethod();
     
         List<String> methodWithDefaultInterceptorsExcluded();
-    
     }
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## FullyInterceptedBean
+
     package org.superbiz.interceptors;
     
     import javax.ejb.Local;
@@ -369,22 +171,9 @@ Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
             return Utils.addClassSimpleName(ic, "beanClassBusinessMethodInterceptor");
         }
     }
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## FullyInterceptedSuperClass
+
     package org.superbiz.interceptors;
     
     import javax.interceptor.Interceptors;
@@ -394,24 +183,10 @@ Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
      */
     @Interceptors({ClassLevelInterceptorSuperClassOne.class, ClassLevelInterceptorSuperClassTwo.class})
     public class FullyInterceptedSuperClass {
-    
     }
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## MethodLevelInterceptorOne
+
     package org.superbiz.interceptors;
     
     import javax.interceptor.AroundInvoke;
@@ -427,22 +202,9 @@ Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
             return Utils.addClassSimpleName(ic, this.getClass().getSimpleName());
         }
     }
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## MethodLevelInterceptorOnlyIntf
+
     package org.superbiz.interceptors;
     
     import java.io.Serializable;
@@ -451,22 +213,9 @@ Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
     public interface MethodLevelInterceptorOnlyIntf<T extends Serializable> {
         public List<T> makePersistent(T entity);
     }
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## MethodLevelInterceptorOnlyParent
+
     package org.superbiz.interceptors;
     
     import java.util.List;
@@ -475,22 +224,9 @@ Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
     
         public List<String> makePersistent(String entity);
     }
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## MethodLevelInterceptorOnlySLSBean
+
     package org.superbiz.interceptors;
     
     import javax.ejb.Local;
@@ -510,22 +246,9 @@ Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
             return list;
         }
     }
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## MethodLevelInterceptorTwo
+
     package org.superbiz.interceptors;
     
     import javax.interceptor.AroundInvoke;
@@ -541,22 +264,9 @@ Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
             return Utils.addClassSimpleName(ic, this.getClass().getSimpleName());
         }
     }
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## SecondStatelessInterceptedBean
+
     package org.superbiz.interceptors;
     
     import javax.ejb.Stateless;
@@ -578,7 +288,6 @@ Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
             List<String> list = new ArrayList<String>();
             list.add("methodWithDefaultInterceptorsExcluded");
             return list;
-    
         }
     
         @AroundInvoke
@@ -586,22 +295,9 @@ Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
             return Utils.addClassSimpleName(ic, this.getClass().getSimpleName());
         }
     }
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## SecondStatelessInterceptedLocal
+
     package org.superbiz.interceptors;
     
     import java.util.List;
@@ -612,22 +308,9 @@ Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
     public interface SecondStatelessInterceptedLocal {
         List<String> methodWithDefaultInterceptorsExcluded();
     }
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## SuperClassOfClassLevelInterceptor
+
     package org.superbiz.interceptors;
     
     import javax.annotation.PostConstruct;
@@ -649,22 +332,9 @@ Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
             Utils.addClassSimpleName(ic, this.getClass().getSimpleName());
         }
     }
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## ThirdSLSBean
+
     package org.superbiz.interceptors;
     
     import javax.ejb.Stateless;
@@ -705,22 +375,9 @@ Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
             return Utils.addClassSimpleName(ic, this.getClass().getSimpleName());
         }
     }
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## ThirdSLSBeanLocal
+
     package org.superbiz.interceptors;
     
     import java.util.List;
@@ -733,22 +390,9 @@ Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
     
         List<String> anotherBusinessMethod();
     }
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## Utils
+
     package org.superbiz.interceptors;
     
     import javax.interceptor.InvocationContext;
@@ -769,24 +413,51 @@ Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
             }
             return list;
         }
-    
     }
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## ejb-jar.xml
+
+    <ejb-jar xmlns="http://java.sun.com/xml/ns/javaee"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_0.xsd"
+             version="3.0">
+      <interceptors>
+        <interceptor>
+          <interceptor-class>org.superbiz.interceptors.DefaultInterceptorOne</interceptor-class>
+        </interceptor>
+        <interceptor>
+          <interceptor-class>org.superbiz.interceptors.DefaultInterceptorTwo</interceptor-class>
+        </interceptor>
+      </interceptors>
+      <assembly-descriptor>
+        <interceptor-binding>
+          <ejb-name>*</ejb-name>
+          <interceptor-class>org.superbiz.interceptors.DefaultInterceptorOne</interceptor-class>
+        </interceptor-binding>
+        <interceptor-binding>
+          <ejb-name>*</ejb-name>
+          <interceptor-class>org.superbiz.interceptors.DefaultInterceptorTwo</interceptor-class>
+        </interceptor-binding>
+        <interceptor-binding>
+          <ejb-name>FullyInterceptedBean</ejb-name>
+          <exclude-default-interceptors>true</exclude-default-interceptors>
+          <method>
+            <method-name>methodWithDefaultInterceptorsExcluded</method-name>
+          </method>
+        </interceptor-binding>
+        <interceptor-binding>
+          <ejb-name>SecondStatelessInterceptedBean</ejb-name>
+          <exclude-default-interceptors>true</exclude-default-interceptors>
+        </interceptor-binding>
+        <interceptor-binding>
+          <ejb-name>MethodLevelInterceptorOnlySLSBean</ejb-name>
+          <exclude-default-interceptors>true</exclude-default-interceptors>
+        </interceptor-binding>
+      </assembly-descriptor>
+    </ejb-jar>
+
+## FullyInterceptedTest
+
     package org.superbiz.interceptors;
     
     import junit.framework.TestCase;
@@ -865,22 +536,9 @@ Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
             initCtx.close();
         }
     }
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## MethodLevelInterceptorOnlyTest
+
     package org.superbiz.interceptors;
     
     import junit.framework.TestCase;
@@ -921,22 +579,10 @@ Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
             List<String> actual = bean.makePersistent(null);
             assert expected.equals(actual) : "Expected " + expected + ", but got " + actual;
         }
-    }/**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+    }
+
+## SecondStatelessInterceptedTest
+
     package org.superbiz.interceptors;
     
     import junit.framework.TestCase;
@@ -984,22 +630,9 @@ Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
             assert expected.equals(actual) : "Expected " + expected + ", but got " + actual;
         }
     }
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## ThirdSLSBeanTest
+
     package org.superbiz.interceptors;
     
     import junit.framework.TestCase;
@@ -1061,3 +694,58 @@ Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
             assert expected.equals(actual) : "Expected " + expected + ", but got " + actual;
         }
     }
+
+# Running
+
+    
+    -------------------------------------------------------
+     T E S T S
+    -------------------------------------------------------
+    Running org.superbiz.interceptors.FullyInterceptedTest
+    Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
+    http://openejb.apache.org/
+    INFO - openejb.home = /Users/dblevins/examples/interceptors
+    INFO - openejb.base = /Users/dblevins/examples/interceptors
+    INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+    INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+    INFO - Using 'openejb.deployments.classpath.include=.*interceptors/target/classes.*'
+    INFO - Found EjbModule in classpath: /Users/dblevins/examples/interceptors/target/classes
+    INFO - Beginning load: /Users/dblevins/examples/interceptors/target/classes
+    INFO - Configuring enterprise application: /Users/dblevins/examples/interceptors/classpath.ear
+    INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
+    INFO - Auto-creating a container for bean FullyInterceptedBean: Container(type=STATELESS, id=Default Stateless Container)
+    INFO - Enterprise application "/Users/dblevins/examples/interceptors/classpath.ear" loaded.
+    INFO - Assembling app: /Users/dblevins/examples/interceptors/classpath.ear
+    INFO - Jndi(name=FullyInterceptedBeanLocal) --> Ejb(deployment-id=FullyInterceptedBean)
+    INFO - Jndi(name=global/classpath.ear/interceptors/FullyInterceptedBean!org.superbiz.interceptors.FullyIntercepted) --> Ejb(deployment-id=FullyInterceptedBean)
+    INFO - Jndi(name=global/classpath.ear/interceptors/FullyInterceptedBean) --> Ejb(deployment-id=FullyInterceptedBean)
+    INFO - Jndi(name=ThirdSLSBeanLocal) --> Ejb(deployment-id=ThirdSLSBean)
+    INFO - Jndi(name=global/classpath.ear/interceptors/ThirdSLSBean!org.superbiz.interceptors.ThirdSLSBeanLocal) --> Ejb(deployment-id=ThirdSLSBean)
+    INFO - Jndi(name=global/classpath.ear/interceptors/ThirdSLSBean) --> Ejb(deployment-id=ThirdSLSBean)
+    INFO - Jndi(name=SecondStatelessInterceptedBeanLocal) --> Ejb(deployment-id=SecondStatelessInterceptedBean)
+    INFO - Jndi(name=global/classpath.ear/interceptors/SecondStatelessInterceptedBean!org.superbiz.interceptors.SecondStatelessInterceptedLocal) --> Ejb(deployment-id=SecondStatelessInterceptedBean)
+    INFO - Jndi(name=global/classpath.ear/interceptors/SecondStatelessInterceptedBean) --> Ejb(deployment-id=SecondStatelessInterceptedBean)
+    INFO - Jndi(name=MethodLevelInterceptorOnlySLSBeanLocal) --> Ejb(deployment-id=MethodLevelInterceptorOnlySLSBean)
+    INFO - Jndi(name=global/classpath.ear/interceptors/MethodLevelInterceptorOnlySLSBean!org.superbiz.interceptors.MethodLevelInterceptorOnlyParent) --> Ejb(deployment-id=MethodLevelInterceptorOnlySLSBean)
+    INFO - Jndi(name=global/classpath.ear/interceptors/MethodLevelInterceptorOnlySLSBean) --> Ejb(deployment-id=MethodLevelInterceptorOnlySLSBean)
+    INFO - Created Ejb(deployment-id=ThirdSLSBean, ejb-name=ThirdSLSBean, container=Default Stateless Container)
+    INFO - Created Ejb(deployment-id=SecondStatelessInterceptedBean, ejb-name=SecondStatelessInterceptedBean, container=Default Stateless Container)
+    INFO - Created Ejb(deployment-id=FullyInterceptedBean, ejb-name=FullyInterceptedBean, container=Default Stateless Container)
+    INFO - Created Ejb(deployment-id=MethodLevelInterceptorOnlySLSBean, ejb-name=MethodLevelInterceptorOnlySLSBean, container=Default Stateless Container)
+    INFO - Started Ejb(deployment-id=ThirdSLSBean, ejb-name=ThirdSLSBean, container=Default Stateless Container)
+    INFO - Started Ejb(deployment-id=SecondStatelessInterceptedBean, ejb-name=SecondStatelessInterceptedBean, container=Default Stateless Container)
+    INFO - Started Ejb(deployment-id=FullyInterceptedBean, ejb-name=FullyInterceptedBean, container=Default Stateless Container)
+    INFO - Started Ejb(deployment-id=MethodLevelInterceptorOnlySLSBean, ejb-name=MethodLevelInterceptorOnlySLSBean, container=Default Stateless Container)
+    INFO - Deployed Application(path=/Users/dblevins/examples/interceptors/classpath.ear)
+    Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.564 sec
+    Running org.superbiz.interceptors.MethodLevelInterceptorOnlyTest
+    Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.004 sec
+    Running org.superbiz.interceptors.SecondStatelessInterceptedTest
+    Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.003 sec
+    Running org.superbiz.interceptors.ThirdSLSBeanTest
+    Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.004 sec
+    
+    Results :
+    
+    Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
+    
