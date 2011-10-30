@@ -748,7 +748,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     try {
                         Container container = deployment.getContainer();
                         container.deploy(deployment);
-                        logger.info("createApplication.createdEjb", deployment.getDeploymentID(), deployment.getEjbName(), container.getContainerID());
+                        if (!((String) deployment.getDeploymentID()).endsWith(".Comp")
+                                && !deployment.isHidden()) {
+                            logger.info("createApplication.createdEjb", deployment.getDeploymentID(), deployment.getEjbName(), container.getContainerID());
+                        }
                         if (logger.isDebugEnabled()) {
                             for (Map.Entry<Object, Object> entry : deployment.getProperties().entrySet()) {
                                 logger.info("createApplication.createdEjb.property", deployment.getEjbName(), entry.getKey(), entry.getValue());
@@ -764,7 +767,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     try {
                         Container container = deployment.getContainer();
                         container.start(deployment);
-                        logger.info("createApplication.startedEjb", deployment.getDeploymentID(), deployment.getEjbName(), container.getContainerID());
+                        if (!((String) deployment.getDeploymentID()).endsWith(".Comp")
+                                && !deployment.isHidden()) {
+                            logger.info("createApplication.startedEjb", deployment.getDeploymentID(), deployment.getEjbName(), container.getContainerID());
+                        }
                     } catch (Throwable t) {
                         throw new OpenEJBException("Error starting '"+deployment.getEjbName()+"'.  Exception: "+t.getClass()+": "+t.getMessage(), t);
                     }

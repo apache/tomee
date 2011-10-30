@@ -22,9 +22,15 @@ package org.apache.openejb.jee;
  * @version $Revision$ $Date$
  */
 public class ManagedBean extends SessionBean {
+    private boolean hidden;
 
     public ManagedBean(String ejbName, String ejbClass) {
         super(ejbName, ejbClass, SessionType.MANAGED);
+    }
+
+    public ManagedBean(String ejbName, String ejbClass, boolean hidden) {
+        super(ejbName, ejbClass, SessionType.MANAGED);
+        this.hidden = hidden;
     }
 
     public ManagedBean(Class<?> ejbClass) {
@@ -40,5 +46,9 @@ public class ManagedBean extends SessionBean {
     }
 
     public void setSessionType(SessionType value) {
+    }
+
+    public boolean isHidden() {
+        return hidden;
     }
 }

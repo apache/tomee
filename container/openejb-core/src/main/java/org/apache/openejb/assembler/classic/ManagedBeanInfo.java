@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class ManagedBeanInfo extends EnterpriseBeanInfo {
-
     public ManagedBeanInfo() {
         type = MANAGED;
     }
@@ -30,4 +29,5 @@ public class ManagedBeanInfo extends EnterpriseBeanInfo {
 
     public final List<RemoveMethodInfo> removeMethods = new ArrayList<RemoveMethodInfo>();
 
+    public boolean hidden = false;
 }

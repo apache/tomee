@@ -75,6 +75,7 @@ import org.apache.openejb.jee.InitMethod;
 import org.apache.openejb.jee.Interceptor;
 import org.apache.openejb.jee.InterceptorBinding;
 import org.apache.openejb.jee.JndiConsumer;
+import org.apache.openejb.jee.ManagedBean;
 import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.jee.Method;
 import org.apache.openejb.jee.MethodParams;
@@ -564,6 +565,7 @@ public class EjbJarInfoBuilder {
         } else if (s.getSessionType() == SessionType.MANAGED) {
             bean = new ManagedBeanInfo();
             ManagedBeanInfo managed = ((ManagedBeanInfo) bean);
+            managed.hidden = ((ManagedBean) s).isHidden();
 
             copyCallbacks(s.getPostActivate(), managed.postActivate);
             copyCallbacks(s.getPrePassivate(), managed.prePassivate);
