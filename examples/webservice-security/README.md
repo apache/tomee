@@ -1,103 +1,9 @@
-[INFO] Scanning for projects...
-[INFO]                                                                         
-[INFO] ------------------------------------------------------------------------
-[INFO] Building OpenEJB :: Web Examples :: EJB WebService with Security 1.0
-[INFO] ------------------------------------------------------------------------
-[INFO] 
-[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ webservice-security ---
-[INFO] Deleting /Users/dblevins/examples/webservice-security/target
-[INFO] 
-[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ webservice-security ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] Copying 3 resources
-[INFO] 
-[INFO] --- maven-compiler-plugin:2.3.2:compile (default-compile) @ webservice-security ---
-[INFO] Compiling 3 source files to /Users/dblevins/examples/webservice-security/target/classes
-[INFO] 
-[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ webservice-security ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] Copying 2 resources
-[INFO] 
-[INFO] --- maven-compiler-plugin:2.3.2:testCompile (default-testCompile) @ webservice-security ---
-[INFO] Compiling 1 source file to /Users/dblevins/examples/webservice-security/target/test-classes
-[INFO] 
-[INFO] --- maven-surefire-plugin:2.7.2:test (default-test) @ webservice-security ---
-[INFO] Surefire report directory: /Users/dblevins/examples/webservice-security/target/surefire-reports
+Title: Webservice Security
 
--------------------------------------------------------
- T E S T S
--------------------------------------------------------
-Running org.superbiz.calculator.CalculatorTest
-Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-http://openejb.apache.org/
-INFO - openejb.home = /Users/dblevins/examples/webservice-security
-INFO - openejb.base = /Users/dblevins/examples/webservice-security
-INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
-INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
-INFO - Found EjbModule in classpath: /Users/dblevins/examples/webservice-security/target/classes
-INFO - Beginning load: /Users/dblevins/examples/webservice-security/target/classes
-INFO - Configuring enterprise application: /Users/dblevins/examples/webservice-security/classpath.ear
-INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
-INFO - Auto-creating a container for bean CalculatorImpl: Container(type=STATELESS, id=Default Stateless Container)
-INFO - Enterprise application "/Users/dblevins/examples/webservice-security/classpath.ear" loaded.
-INFO - Assembling app: /Users/dblevins/examples/webservice-security/classpath.ear
-INFO - Jndi(name=CalculatorImplRemote) --> Ejb(deployment-id=CalculatorImpl)
-INFO - Jndi(name=global/classpath.ear/webservice-security/CalculatorImpl!org.superbiz.calculator.CalculatorRemote) --> Ejb(deployment-id=CalculatorImpl)
-INFO - Jndi(name=global/classpath.ear/webservice-security/CalculatorImpl) --> Ejb(deployment-id=CalculatorImpl)
-INFO - Created Ejb(deployment-id=CalculatorImpl, ejb-name=CalculatorImpl, container=Default Stateless Container)
-INFO - Started Ejb(deployment-id=CalculatorImpl, ejb-name=CalculatorImpl, container=Default Stateless Container)
-INFO - Deployed Application(path=/Users/dblevins/examples/webservice-security/classpath.ear)
-INFO - Initializing network services
-INFO - Creating ServerService(id=httpejbd)
-INFO - Creating ServerService(id=cxf)
-INFO - Creating ServerService(id=admin)
-INFO - Creating ServerService(id=ejbd)
-INFO - Creating ServerService(id=ejbds)
-INFO - Initializing network services
-  ** Starting Services **
-  NAME                 IP              PORT  
-  httpejbd             127.0.0.1       4204  
-  admin thread         127.0.0.1       4200  
-  ejbd                 127.0.0.1       4201  
-  ejbd                 127.0.0.1       4203  
--------
-Ready!
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.415 sec
+*Help us document this example! Source available in [svn](http://svn.apache.org/repos/asf/openejb/trunk/openejb/examples/webservice-security) or [git](https://github.com/apache/openejb/tree/trunk/openejb/examples/webservice-security). Open a [JIRA](https://issues.apache.org/jira/browse/TOMEE) with patch or pull request*
 
-Results :
+## CalculatorImpl
 
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-
-[INFO] 
-[INFO] --- maven-jar-plugin:2.3.1:jar (default-jar) @ webservice-security ---
-[INFO] Building jar: /Users/dblevins/examples/webservice-security/target/webservice-security-1.0.jar
-[INFO] 
-[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ webservice-security ---
-[INFO] Installing /Users/dblevins/examples/webservice-security/target/webservice-security-1.0.jar to /Users/dblevins/.m2/repository/org/superbiz/webservice-security/1.0/webservice-security-1.0.jar
-[INFO] Installing /Users/dblevins/examples/webservice-security/pom.xml to /Users/dblevins/.m2/repository/org/superbiz/webservice-security/1.0/webservice-security-1.0.pom
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD SUCCESS
-[INFO] ------------------------------------------------------------------------
-[INFO] Total time: 7.169s
-[INFO] Finished at: Fri Oct 28 17:08:39 PDT 2011
-[INFO] Final Memory: 17M/81M
-[INFO] ------------------------------------------------------------------------
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
     package org.superbiz.calculator;
     
     import javax.annotation.security.DeclareRoles;
@@ -130,24 +36,10 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
         public int multiply(int mul1, int mul2) {
             return mul1 * mul2;
         }
-    
     }
-    //END SNIPPET: code/**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+
+## CalculatorRemote
+
     package org.superbiz.calculator;
     
     import javax.ejb.Remote;
@@ -158,24 +50,10 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
         public int sum(int add1, int add2);
     
         public int multiply(int mul1, int mul2);
-    
     }
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+
+## CalculatorWs
+
     package org.superbiz.calculator;
     
     import javax.jws.WebService;
@@ -195,22 +73,28 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
     
         public int multiply(int mul1, int mul2);
     }
-    //END SNIPPET: code/**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+
+## ejb-jar.xml
+
+    <ejb-jar/>
+
+## openejb-jar.xml
+
+    <openejb-jar xmlns="http://openejb.apache.org/xml/ns/openejb-jar-2.2">
+      <enterprise-beans>
+        <session>
+          <ejb-name>CalculatorImpl</ejb-name>
+          <web-service-security>
+            <security-realm-name/>
+            <transport-guarantee>NONE</transport-guarantee>
+            <auth-method>BASIC</auth-method>
+          </web-service-security>
+        </session>
+      </enterprise-beans>
+    </openejb-jar>
+
+## CalculatorTest
+
     package org.superbiz.calculator;
     
     import junit.framework.TestCase;
@@ -256,5 +140,52 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
             assertEquals(12, calc.multiply(3, 4));
         }
         //END SNIPPET: webservice
-    
     }
+
+# Running
+
+    
+    -------------------------------------------------------
+     T E S T S
+    -------------------------------------------------------
+    Running org.superbiz.calculator.CalculatorTest
+    Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
+    http://openejb.apache.org/
+    INFO - openejb.home = /Users/dblevins/examples/webservice-security
+    INFO - openejb.base = /Users/dblevins/examples/webservice-security
+    INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+    INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+    INFO - Found EjbModule in classpath: /Users/dblevins/examples/webservice-security/target/classes
+    INFO - Beginning load: /Users/dblevins/examples/webservice-security/target/classes
+    INFO - Configuring enterprise application: /Users/dblevins/examples/webservice-security/classpath.ear
+    INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
+    INFO - Auto-creating a container for bean CalculatorImpl: Container(type=STATELESS, id=Default Stateless Container)
+    INFO - Enterprise application "/Users/dblevins/examples/webservice-security/classpath.ear" loaded.
+    INFO - Assembling app: /Users/dblevins/examples/webservice-security/classpath.ear
+    INFO - Jndi(name=CalculatorImplRemote) --> Ejb(deployment-id=CalculatorImpl)
+    INFO - Jndi(name=global/classpath.ear/webservice-security/CalculatorImpl!org.superbiz.calculator.CalculatorRemote) --> Ejb(deployment-id=CalculatorImpl)
+    INFO - Jndi(name=global/classpath.ear/webservice-security/CalculatorImpl) --> Ejb(deployment-id=CalculatorImpl)
+    INFO - Created Ejb(deployment-id=CalculatorImpl, ejb-name=CalculatorImpl, container=Default Stateless Container)
+    INFO - Started Ejb(deployment-id=CalculatorImpl, ejb-name=CalculatorImpl, container=Default Stateless Container)
+    INFO - Deployed Application(path=/Users/dblevins/examples/webservice-security/classpath.ear)
+    INFO - Initializing network services
+    INFO - Creating ServerService(id=httpejbd)
+    INFO - Creating ServerService(id=cxf)
+    INFO - Creating ServerService(id=admin)
+    INFO - Creating ServerService(id=ejbd)
+    INFO - Creating ServerService(id=ejbds)
+    INFO - Initializing network services
+      ** Starting Services **
+      NAME                 IP              PORT  
+      httpejbd             127.0.0.1       4204  
+      admin thread         127.0.0.1       4200  
+      ejbd                 127.0.0.1       4201  
+      ejbd                 127.0.0.1       4203  
+    -------
+    Ready!
+    Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.481 sec
+    
+    Results :
+    
+    Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+    

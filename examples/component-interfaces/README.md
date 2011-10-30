@@ -1,100 +1,9 @@
-[INFO] Scanning for projects...
-[INFO]                                                                         
-[INFO] ------------------------------------------------------------------------
-[INFO] Building OpenEJB :: Examples :: EJB 2.1 Component Interfaces 1.0
-[INFO] ------------------------------------------------------------------------
-[INFO] 
-[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ component-interfaces ---
-[INFO] Deleting /Users/dblevins/examples/component-interfaces/target
-[INFO] 
-[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ component-interfaces ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Users/dblevins/examples/component-interfaces/src/main/resources
-[INFO] 
-[INFO] --- maven-compiler-plugin:2.3.2:compile (default-compile) @ component-interfaces ---
-[INFO] Compiling 7 source files to /Users/dblevins/examples/component-interfaces/target/classes
-[INFO] 
-[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ component-interfaces ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Users/dblevins/examples/component-interfaces/src/test/resources
-[INFO] 
-[INFO] --- maven-compiler-plugin:2.3.2:testCompile (default-testCompile) @ component-interfaces ---
-[INFO] Compiling 1 source file to /Users/dblevins/examples/component-interfaces/target/test-classes
-[INFO] 
-[INFO] --- maven-surefire-plugin:2.6:test (default-test) @ component-interfaces ---
-[INFO] Surefire report directory: /Users/dblevins/examples/component-interfaces/target/surefire-reports
+Title: Component Interfaces
 
--------------------------------------------------------
- T E S T S
--------------------------------------------------------
-Running org.superbiz.FriendlyPersonTest
-Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-http://openejb.apache.org/
-INFO - openejb.home = /Users/dblevins/examples/component-interfaces
-INFO - openejb.base = /Users/dblevins/examples/component-interfaces
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
-INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
-INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
-INFO - Found EjbModule in classpath: /Users/dblevins/examples/component-interfaces/target/classes
-INFO - Beginning load: /Users/dblevins/examples/component-interfaces/target/classes
-INFO - Configuring enterprise application: /Users/dblevins/examples/component-interfaces
-INFO - Configuring Service(id=Default Stateful Container, type=Container, provider-id=Default Stateful Container)
-INFO - Auto-creating a container for bean FriendlyPerson: Container(type=STATEFUL, id=Default Stateful Container)
-INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
-INFO - Auto-creating a container for bean org.superbiz.FriendlyPersonTest: Container(type=MANAGED, id=Default Managed Container)
-INFO - Enterprise application "/Users/dblevins/examples/component-interfaces" loaded.
-INFO - Assembling app: /Users/dblevins/examples/component-interfaces
-INFO - Jndi(name="java:global/component-interfaces/FriendlyPerson!org.superbiz.FriendlyPersonLocal")
-INFO - Jndi(name="java:global/component-interfaces/FriendlyPerson!org.superbiz.FriendlyPersonRemote")
-INFO - Jndi(name="java:global/component-interfaces/FriendlyPerson!org.superbiz.FriendlyPersonEjbLocalHome")
-INFO - Jndi(name="java:global/component-interfaces/FriendlyPerson!org.superbiz.FriendlyPersonEjbHome")
-INFO - Jndi(name="java:global/component-interfaces/FriendlyPerson")
-INFO - Jndi(name="java:global/EjbModule1952576819/org.superbiz.FriendlyPersonTest!org.superbiz.FriendlyPersonTest")
-INFO - Jndi(name="java:global/EjbModule1952576819/org.superbiz.FriendlyPersonTest")
-INFO - Created Ejb(deployment-id=FriendlyPerson, ejb-name=FriendlyPerson, container=Default Stateful Container)
-INFO - Created Ejb(deployment-id=org.superbiz.FriendlyPersonTest, ejb-name=org.superbiz.FriendlyPersonTest, container=Default Managed Container)
-INFO - Started Ejb(deployment-id=FriendlyPerson, ejb-name=FriendlyPerson, container=Default Stateful Container)
-INFO - Started Ejb(deployment-id=org.superbiz.FriendlyPersonTest, ejb-name=org.superbiz.FriendlyPersonTest, container=Default Managed Container)
-INFO - Deployed Application(path=/Users/dblevins/examples/component-interfaces)
-INFO - EJBContainer already initialized.  Call ejbContainer.close() to allow reinitialization
-INFO - EJBContainer already initialized.  Call ejbContainer.close() to allow reinitialization
-INFO - EJBContainer already initialized.  Call ejbContainer.close() to allow reinitialization
-Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.324 sec
+*Help us document this example! Source available in [svn](http://svn.apache.org/repos/asf/openejb/trunk/openejb/examples/component-interfaces) or [git](https://github.com/apache/openejb/tree/trunk/openejb/examples/component-interfaces). Open a [JIRA](https://issues.apache.org/jira/browse/TOMEE) with patch or pull request*
 
-Results :
+## FriendlyPerson
 
-Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
-
-[INFO] 
-[INFO] --- maven-jar-plugin:2.3.1:jar (default-jar) @ component-interfaces ---
-[INFO] Building jar: /Users/dblevins/examples/component-interfaces/target/component-interfaces-1.0.jar
-[INFO] 
-[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ component-interfaces ---
-[INFO] Installing /Users/dblevins/examples/component-interfaces/target/component-interfaces-1.0.jar to /Users/dblevins/.m2/repository/org/superbiz/component-interfaces/1.0/component-interfaces-1.0.jar
-[INFO] Installing /Users/dblevins/examples/component-interfaces/pom.xml to /Users/dblevins/.m2/repository/org/superbiz/component-interfaces/1.0/component-interfaces-1.0.pom
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD SUCCESS
-[INFO] ------------------------------------------------------------------------
-[INFO] Total time: 4.240s
-[INFO] Finished at: Fri Oct 28 16:59:20 PDT 2011
-[INFO] Final Memory: 14M/81M
-[INFO] ------------------------------------------------------------------------
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
     package org.superbiz;
     
     import javax.ejb.Init;
@@ -206,23 +115,9 @@ Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
             this.defaultLanguage = defaultLanguage;
         }
     }
-    //END SNIPPET: code
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+
+## FriendlyPersonEjbHome
+
     package org.superbiz;
     
     //START SNIPPET: code
@@ -234,23 +129,9 @@ Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
     public interface FriendlyPersonEjbHome extends EJBHome {
         FriendlyPersonEjbObject create() throws CreateException, RemoteException;
     }
-    //END SNIPPET: code
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+
+## FriendlyPersonEjbLocalHome
+
     package org.superbiz;
     
     //START SNIPPET: code
@@ -262,23 +143,9 @@ Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
     public interface FriendlyPersonEjbLocalHome extends EJBLocalHome {
         FriendlyPersonEjbLocalObject create() throws CreateException, RemoteException;
     }
-    //END SNIPPET: code
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+
+## FriendlyPersonEjbLocalObject
+
     package org.superbiz;
     
     import javax.ejb.EJBLocalObject;
@@ -295,24 +162,10 @@ Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
         String getDefaultLanguage();
     
         void setDefaultLanguage(String defaultLanguage);
-    
     }
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+
+## FriendlyPersonEjbObject
+
     package org.superbiz;
     
     //START SNIPPET: code
@@ -332,25 +185,10 @@ Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
         String getDefaultLanguage() throws RemoteException;
     
         void setDefaultLanguage(String defaultLanguage) throws RemoteException;
-    
     }
-    //END SNIPPET: code
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+
+## FriendlyPersonLocal
+
     package org.superbiz;
     
     //START SNIPPET: code
@@ -370,25 +208,10 @@ Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
         String getDefaultLanguage();
     
         void setDefaultLanguage(String defaultLanguage);
-    
     }
-    //END SNIPPET: code
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+
+## FriendlyPersonRemote
+
     package org.superbiz;
     
     import javax.ejb.Remote;
@@ -407,25 +230,10 @@ Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
         String getDefaultLanguage();
     
         void setDefaultLanguage(String defaultLanguage);
-    
     }
-    //END SNIPPET: code
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+
+## FriendlyPersonTest
+
     package org.superbiz;
     
     import junit.framework.TestCase;
@@ -591,5 +399,49 @@ Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
             assertEquals("Ola David!", friendlyPerson.greet("pt", "David"));
         }
     
-    
     }
+
+# Running
+
+    
+    -------------------------------------------------------
+     T E S T S
+    -------------------------------------------------------
+    Running org.superbiz.FriendlyPersonTest
+    Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
+    http://openejb.apache.org/
+    INFO - openejb.home = /Users/dblevins/examples/component-interfaces
+    INFO - openejb.base = /Users/dblevins/examples/component-interfaces
+    INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+    INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+    INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+    INFO - Found EjbModule in classpath: /Users/dblevins/examples/component-interfaces/target/classes
+    INFO - Beginning load: /Users/dblevins/examples/component-interfaces/target/classes
+    INFO - Configuring enterprise application: /Users/dblevins/examples/component-interfaces
+    INFO - Configuring Service(id=Default Stateful Container, type=Container, provider-id=Default Stateful Container)
+    INFO - Auto-creating a container for bean FriendlyPerson: Container(type=STATEFUL, id=Default Stateful Container)
+    INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+    INFO - Auto-creating a container for bean org.superbiz.FriendlyPersonTest: Container(type=MANAGED, id=Default Managed Container)
+    INFO - Enterprise application "/Users/dblevins/examples/component-interfaces" loaded.
+    INFO - Assembling app: /Users/dblevins/examples/component-interfaces
+    INFO - Jndi(name="java:global/component-interfaces/FriendlyPerson!org.superbiz.FriendlyPersonLocal")
+    INFO - Jndi(name="java:global/component-interfaces/FriendlyPerson!org.superbiz.FriendlyPersonRemote")
+    INFO - Jndi(name="java:global/component-interfaces/FriendlyPerson!org.superbiz.FriendlyPersonEjbLocalHome")
+    INFO - Jndi(name="java:global/component-interfaces/FriendlyPerson!org.superbiz.FriendlyPersonEjbHome")
+    INFO - Jndi(name="java:global/component-interfaces/FriendlyPerson")
+    INFO - Jndi(name="java:global/EjbModule803660549/org.superbiz.FriendlyPersonTest!org.superbiz.FriendlyPersonTest")
+    INFO - Jndi(name="java:global/EjbModule803660549/org.superbiz.FriendlyPersonTest")
+    INFO - Created Ejb(deployment-id=FriendlyPerson, ejb-name=FriendlyPerson, container=Default Stateful Container)
+    INFO - Created Ejb(deployment-id=org.superbiz.FriendlyPersonTest, ejb-name=org.superbiz.FriendlyPersonTest, container=Default Managed Container)
+    INFO - Started Ejb(deployment-id=FriendlyPerson, ejb-name=FriendlyPerson, container=Default Stateful Container)
+    INFO - Started Ejb(deployment-id=org.superbiz.FriendlyPersonTest, ejb-name=org.superbiz.FriendlyPersonTest, container=Default Managed Container)
+    INFO - Deployed Application(path=/Users/dblevins/examples/component-interfaces)
+    INFO - EJBContainer already initialized.  Call ejbContainer.close() to allow reinitialization
+    INFO - EJBContainer already initialized.  Call ejbContainer.close() to allow reinitialization
+    INFO - EJBContainer already initialized.  Call ejbContainer.close() to allow reinitialization
+    Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.444 sec
+    
+    Results :
+    
+    Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
+    

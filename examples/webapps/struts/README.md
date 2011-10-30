@@ -1,76 +1,9 @@
-[INFO] Scanning for projects...
-[INFO]                                                                         
-[INFO] ------------------------------------------------------------------------
-[INFO] Building OpenEJB :: Web Examples :: Struts 1.0
-[INFO] ------------------------------------------------------------------------
-[INFO] 
-[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ struts ---
-[INFO] Deleting /Users/dblevins/examples/webapps/struts/target
-[INFO] 
-[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ struts ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] Copying 2 resources
-[INFO] 
-[INFO] --- maven-compiler-plugin:2.3.2:compile (default-compile) @ struts ---
-[INFO] Compiling 8 source files to /Users/dblevins/examples/webapps/struts/target/classes
-[INFO] 
-[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ struts ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Users/dblevins/examples/webapps/struts/src/test/resources
-[INFO] 
-[INFO] --- maven-compiler-plugin:2.3.2:testCompile (default-testCompile) @ struts ---
-[INFO] No sources to compile
-[INFO] 
-[INFO] --- maven-surefire-plugin:2.6:test (default-test) @ struts ---
-[INFO] No tests to run.
-[INFO] Surefire report directory: /Users/dblevins/examples/webapps/struts/target/surefire-reports
+Title: Struts
 
--------------------------------------------------------
- T E S T S
--------------------------------------------------------
-There are no tests to run.
+*Help us document this example! Source available in [svn](http://svn.apache.org/repos/asf/openejb/trunk/openejb/examples/struts) or [git](https://github.com/apache/openejb/tree/trunk/openejb/examples/struts). Open a [JIRA](https://issues.apache.org/jira/browse/TOMEE) with patch or pull request*
 
-Results :
+## AddUser
 
-Tests run: 0, Failures: 0, Errors: 0, Skipped: 0
-
-[INFO] 
-[INFO] --- maven-war-plugin:2.1.1:war (default-war) @ struts ---
-[INFO] Packaging webapp
-[INFO] Assembling webapp [struts] in [/Users/dblevins/examples/webapps/struts/target/struts]
-[INFO] Processing war project
-[INFO] Copying webapp resources [/Users/dblevins/examples/webapps/struts/src/main/webapp]
-[INFO] Webapp assembled in [129 msecs]
-[INFO] Building war: /Users/dblevins/examples/webapps/struts/target/struts.war
-[INFO] WEB-INF/web.xml already added, skipping
-[INFO] 
-[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ struts ---
-[INFO] Installing /Users/dblevins/examples/webapps/struts/target/struts.war to /Users/dblevins/.m2/repository/org/superbiz/struts/struts/1.0/struts-1.0.war
-[INFO] Installing /Users/dblevins/examples/webapps/struts/pom.xml to /Users/dblevins/.m2/repository/org/superbiz/struts/struts/1.0/struts-1.0.pom
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD SUCCESS
-[INFO] ------------------------------------------------------------------------
-[INFO] Total time: 2.987s
-[INFO] Finished at: Fri Oct 28 17:03:38 PDT 2011
-[INFO] Final Memory: 11M/81M
-[INFO] ------------------------------------------------------------------------
-    /*
-    
-        Licensed to the Apache Software Foundation (ASF) under one or more
-        contributor license agreements.  See the NOTICE file distributed with
-        this work for additional information regarding copyright ownership.
-        The ASF licenses this file to You under the Apache License, Version 2.0
-        (the "License"); you may not use this file except in compliance with
-        the License.  You may obtain a copy of the License at
-    
-           http://www.apache.org/licenses/LICENSE-2.0
-    
-        Unless required by applicable law or agreed to in writing, software
-        distributed under the License is distributed on an "AS IS" BASIS,
-        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-        See the License for the specific language governing permissions and
-        limitations under the License.
-    */
     package org.superbiz.struts;
     
     import javax.naming.Context;
@@ -136,48 +69,19 @@ Tests run: 0, Failures: 0, Errors: 0, Skipped: 0
             return "success";
         }
     }
-    /*
-    
-        Licensed to the Apache Software Foundation (ASF) under one or more
-        contributor license agreements.  See the NOTICE file distributed with
-        this work for additional information regarding copyright ownership.
-        The ASF licenses this file to You under the Apache License, Version 2.0
-        (the "License"); you may not use this file except in compliance with
-        the License.  You may obtain a copy of the License at
-    
-           http://www.apache.org/licenses/LICENSE-2.0
-    
-        Unless required by applicable law or agreed to in writing, software
-        distributed under the License is distributed on an "AS IS" BASIS,
-        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-        See the License for the specific language governing permissions and
-        limitations under the License.
-    */
+
+## AddUserForm
+
     package org.superbiz.struts;
     
     import com.opensymphony.xwork2.ActionSupport;
     
     
     public class AddUserForm extends ActionSupport {
-    
     }
-    /*
-    
-     Licensed to the Apache Software Foundation (ASF) under one or more
-     contributor license agreements.  See the NOTICE file distributed with
-     this work for additional information regarding copyright ownership.
-     The ASF licenses this file to You under the Apache License, Version 2.0
-     (the "License"); you may not use this file except in compliance with
-     the License.  You may obtain a copy of the License at
-    
-     http://www.apache.org/licenses/LICENSE-2.0
-    
-     Unless required by applicable law or agreed to in writing, software
-     distributed under the License is distributed on an "AS IS" BASIS,
-     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     See the License for the specific language governing permissions and
-     limitations under the License.
-     */
+
+## FindUser
+
     package org.superbiz.struts;
     
     import javax.naming.Context;
@@ -232,48 +136,19 @@ Tests run: 0, Failures: 0, Errors: 0, Skipped: 0
             return "success";
         }
     }
-    /*
-    
-        Licensed to the Apache Software Foundation (ASF) under one or more
-        contributor license agreements.  See the NOTICE file distributed with
-        this work for additional information regarding copyright ownership.
-        The ASF licenses this file to You under the Apache License, Version 2.0
-        (the "License"); you may not use this file except in compliance with
-        the License.  You may obtain a copy of the License at
-    
-           http://www.apache.org/licenses/LICENSE-2.0
-    
-        Unless required by applicable law or agreed to in writing, software
-        distributed under the License is distributed on an "AS IS" BASIS,
-        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-        See the License for the specific language governing permissions and
-        limitations under the License.
-    */
+
+## FindUserForm
+
     package org.superbiz.struts;
     
     import com.opensymphony.xwork2.ActionSupport;
     
     
     public class FindUserForm extends ActionSupport {
-    
     }
-    /*
-    
-     Licensed to the Apache Software Foundation (ASF) under one or more
-     contributor license agreements.  See the NOTICE file distributed with
-     this work for additional information regarding copyright ownership.
-     The ASF licenses this file to You under the Apache License, Version 2.0
-     (the "License"); you may not use this file except in compliance with
-     the License.  You may obtain a copy of the License at
-    
-     http://www.apache.org/licenses/LICENSE-2.0
-    
-     Unless required by applicable law or agreed to in writing, software
-     distributed under the License is distributed on an "AS IS" BASIS,
-     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     See the License for the specific language governing permissions and
-     limitations under the License.
-     */
+
+## ListAllUsers
+
     package org.superbiz.struts;
     
     import javax.naming.Context;
@@ -329,23 +204,9 @@ Tests run: 0, Failures: 0, Errors: 0, Skipped: 0
             return "success";
         }
     }
-    /*
-    
-        Licensed to the Apache Software Foundation (ASF) under one or more
-        contributor license agreements.  See the NOTICE file distributed with
-        this work for additional information regarding copyright ownership.
-        The ASF licenses this file to You under the Apache License, Version 2.0
-        (the "License"); you may not use this file except in compliance with
-        the License.  You may obtain a copy of the License at
-    
-           http://www.apache.org/licenses/LICENSE-2.0
-    
-        Unless required by applicable law or agreed to in writing, software
-        distributed under the License is distributed on an "AS IS" BASIS,
-        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-        See the License for the specific language governing permissions and
-        limitations under the License.
-    */
+
+## User
+
     package org.superbiz.struts;
     
     import javax.persistence.Entity;
@@ -394,25 +255,10 @@ Tests run: 0, Failures: 0, Errors: 0, Skipped: 0
         public void setLastName(String lastName) {
             this.lastName = lastName;
         }
-    
     }
-    /*
-    
-        Licensed to the Apache Software Foundation (ASF) under one or more
-        contributor license agreements.  See the NOTICE file distributed with
-        this work for additional information regarding copyright ownership.
-        The ASF licenses this file to You under the Apache License, Version 2.0
-        (the "License"); you may not use this file except in compliance with
-        the License.  You may obtain a copy of the License at
-    
-           http://www.apache.org/licenses/LICENSE-2.0
-    
-        Unless required by applicable law or agreed to in writing, software
-        distributed under the License is distributed on an "AS IS" BASIS,
-        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-        See the License for the specific language governing permissions and
-        limitations under the License.
-    */
+
+## UserService
+
     package org.superbiz.struts;
     
     import java.util.List;
@@ -424,23 +270,9 @@ Tests run: 0, Failures: 0, Errors: 0, Skipped: 0
     
         public List<User> findAll();
     }
-    /*
-    
-        Licensed to the Apache Software Foundation (ASF) under one or more
-        contributor license agreements.  See the NOTICE file distributed with
-        this work for additional information regarding copyright ownership.
-        The ASF licenses this file to You under the Apache License, Version 2.0
-        (the "License"); you may not use this file except in compliance with
-        the License.  You may obtain a copy of the License at
-    
-           http://www.apache.org/licenses/LICENSE-2.0
-    
-        Unless required by applicable law or agreed to in writing, software
-        distributed under the License is distributed on an "AS IS" BASIS,
-        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-        See the License for the specific language governing permissions and
-        limitations under the License.
-    */
+
+## UserServiceImpl
+
     package org.superbiz.struts;
     
     import javax.ejb.Stateless;
@@ -465,5 +297,92 @@ Tests run: 0, Failures: 0, Errors: 0, Skipped: 0
         public List<User> findAll() {
             return manager.createQuery("select u from User u").getResultList();
         }
-    
     }
+
+## persistence.xml
+
+    </persistence-unit>
+    
+      -->
+    </persistence>
+
+## struts.xml
+
+    <struts>
+      <constant name="struts.devMode" value="true"></constant>
+      <package name="default" namespace="/" extends="struts-default">
+        <action name="addUserForm" class="org.superbiz.struts.AddUserForm">
+          <result>/addUserForm.jsp</result>
+        </action>
+        <action name="addUser" class="org.superbiz.struts.AddUser">
+          <result name="success">/addedUser.jsp</result>
+          <result name='failure'>/addUserForm.jsp</result>
+        </action>
+        <action name="findUserForm" class="org.superbiz.struts.FindUserForm">
+          <result>/findUserForm.jsp</result>
+        </action>
+        <action name="findUser" class="org.superbiz.struts.FindUser">
+          <result name='success'>/displayUser.jsp</result>
+          <result name='failure'>/findUserForm.jsp</result>
+        </action>
+        <action name="listAllUsers" class="org.superbiz.struts.ListAllUsers">
+          <result>/displayUsers.jsp</result>
+        </action>
+    
+      </package>
+    </struts>
+
+## decorators.xml
+
+    <decorators defaultdir="/decorators">
+      <decorator name="main" page="layout.jsp">
+        <pattern>/*</pattern>
+      </decorator>
+    </decorators>
+
+## web.xml
+
+    <web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+             version="2.5">
+      <display-name>Learn EJB3 and Struts2</display-name>
+      <filter>
+        <filter-name>struts2</filter-name>
+        <filter-class>org.apache.struts2.dispatcher.FilterDispatcher</filter-class>
+        <init-param>
+          <param-name>actionPackages</param-name>
+          <param-value>com.lq</param-value>
+        </init-param>
+      </filter>
+      <filter>
+        <filter-name>struts-cleanup</filter-name>
+        <filter-class>org.apache.struts2.dispatcher.ActionContextCleanUp</filter-class>
+      </filter>
+      <filter>
+        <filter-name>sitemesh</filter-name>
+        <filter-class>com.opensymphony.module.sitemesh.filter.PageFilter</filter-class>
+      </filter>
+      <filter-mapping>
+        <filter-name>struts-cleanup</filter-name>
+        <url-pattern>/*</url-pattern>
+      </filter-mapping>
+      <filter-mapping>
+        <filter-name>sitemesh</filter-name>
+        <url-pattern>/*</url-pattern>
+      </filter-mapping>
+      <filter-mapping>
+        <filter-name>struts2</filter-name>
+        <url-pattern>/*</url-pattern>
+      </filter-mapping>
+      <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+      </welcome-file-list>
+      <jsp-config>
+        <jsp-property-group>
+          <description>JSP configuration of all the JSP's</description>
+          <url-pattern>*.jsp</url-pattern>
+          <include-prelude>/prelude.jspf</include-prelude>
+        </jsp-property-group>
+      </jsp-config>
+    </web-app>
+    

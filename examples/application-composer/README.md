@@ -54,7 +54,6 @@ Used in an actual testcase, that might look like so:
     import java.util.List;
     import java.util.Properties;
 
-    //START SNIPPET: code
     @RunWith(ApplicationComposer.class)
     public class MoviesTest extends TestCase {
 

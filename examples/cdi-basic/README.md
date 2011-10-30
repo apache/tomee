@@ -89,7 +89,7 @@ called and everyting injected.
         }
     }
 
-# TestCode
+# Test Case
 
     public class CourseTest extends TestCase {
 

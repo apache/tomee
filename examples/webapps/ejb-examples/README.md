@@ -1,76 +1,9 @@
-[INFO] Scanning for projects...
-[INFO]                                                                         
-[INFO] ------------------------------------------------------------------------
-[INFO] Building OpenEJB :: Web Examples :: EJB Examples War 1.0
-[INFO] ------------------------------------------------------------------------
-[INFO] 
-[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ ejb-examples ---
-[INFO] Deleting /Users/dblevins/examples/webapps/ejb-examples/target
-[INFO] 
-[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ ejb-examples ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] Copying 4 resources
-[INFO] 
-[INFO] --- maven-compiler-plugin:2.3.2:compile (default-compile) @ ejb-examples ---
-[INFO] Compiling 20 source files to /Users/dblevins/examples/webapps/ejb-examples/target/classes
-[INFO] 
-[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ ejb-examples ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Users/dblevins/examples/webapps/ejb-examples/src/test/resources
-[INFO] 
-[INFO] --- maven-compiler-plugin:2.3.2:testCompile (default-testCompile) @ ejb-examples ---
-[INFO] No sources to compile
-[INFO] 
-[INFO] --- maven-surefire-plugin:2.6:test (default-test) @ ejb-examples ---
-[INFO] No tests to run.
-[INFO] Surefire report directory: /Users/dblevins/examples/webapps/ejb-examples/target/surefire-reports
+Title: EJB Examples
 
--------------------------------------------------------
- T E S T S
--------------------------------------------------------
-There are no tests to run.
+*Help us document this example! Source available in [svn](http://svn.apache.org/repos/asf/openejb/trunk/openejb/examples/ejb-examples) or [git](https://github.com/apache/openejb/tree/trunk/openejb/examples/ejb-examples). Open a [JIRA](https://issues.apache.org/jira/browse/TOMEE) with patch or pull request*
 
-Results :
+## AnnotatedEJB
 
-Tests run: 0, Failures: 0, Errors: 0, Skipped: 0
-
-[INFO] 
-[INFO] --- maven-war-plugin:2.1.1:war (default-war) @ ejb-examples ---
-[INFO] Packaging webapp
-[INFO] Assembling webapp [ejb-examples] in [/Users/dblevins/examples/webapps/ejb-examples/target/ejb-examples-1.0]
-[INFO] Processing war project
-[INFO] Copying webapp resources [/Users/dblevins/examples/webapps/ejb-examples/src/main/webapp]
-[INFO] Webapp assembled in [40 msecs]
-[INFO] Building war: /Users/dblevins/examples/webapps/ejb-examples/target/ejb-examples-1.0.war
-[INFO] WEB-INF/web.xml already added, skipping
-[INFO] 
-[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ ejb-examples ---
-[INFO] Installing /Users/dblevins/examples/webapps/ejb-examples/target/ejb-examples-1.0.war to /Users/dblevins/.m2/repository/org/superbiz/ejb-examples/1.0/ejb-examples-1.0.war
-[INFO] Installing /Users/dblevins/examples/webapps/ejb-examples/pom.xml to /Users/dblevins/.m2/repository/org/superbiz/ejb-examples/1.0/ejb-examples-1.0.pom
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD SUCCESS
-[INFO] ------------------------------------------------------------------------
-[INFO] Total time: 2.324s
-[INFO] Finished at: Fri Oct 28 17:04:49 PDT 2011
-[INFO] Final Memory: 10M/81M
-[INFO] ------------------------------------------------------------------------
-    /**
-     *
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
     package org.superbiz.servlet;
     
     import javax.annotation.Resource;
@@ -106,23 +39,9 @@ Tests run: 0, Failures: 0, Errors: 0, Skipped: 0
             return "AnnotatedEJB[name=" + name + "]";
         }
     }
-    /**
-     *
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## AnnotatedEJBLocal
+
     package org.superbiz.servlet;
     
     import javax.ejb.Local;
@@ -138,23 +57,9 @@ Tests run: 0, Failures: 0, Errors: 0, Skipped: 0
     
         void setDs(DataSource ds);
     }
-    /**
-     *
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## AnnotatedEJBRemote
+
     package org.superbiz.servlet;
     
     import javax.ejb.Remote;
@@ -165,23 +70,9 @@ Tests run: 0, Failures: 0, Errors: 0, Skipped: 0
     
         void setName(String name);
     }
-    /**
-     *
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## AnnotatedServlet
+
     package org.superbiz.servlet;
     
     import javax.annotation.Resource;
@@ -254,23 +145,9 @@ Tests run: 0, Failures: 0, Errors: 0, Skipped: 0
             }
         }
     }
-    /**
-     *
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## ClientHandler
+
     package org.superbiz.servlet;
     
     import javax.xml.ws.handler.Handler;
@@ -290,23 +167,10 @@ Tests run: 0, Failures: 0, Errors: 0, Skipped: 0
             WebserviceServlet.write("    ClientHandler handleFault");
             return true;
         }
-    }/**
-     *
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+    }
+
+## HelloEjb
+
     package org.superbiz.servlet;
     
     import javax.jws.WebService;
@@ -315,23 +179,9 @@ Tests run: 0, Failures: 0, Errors: 0, Skipped: 0
     public interface HelloEjb {
         String hello(String name);
     }
-    /**
-     *
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## HelloEjbService
+
     package org.superbiz.servlet;
     
     import javax.ejb.Stateless;
@@ -353,23 +203,9 @@ Tests run: 0, Failures: 0, Errors: 0, Skipped: 0
             return "Hello " + name + " from EJB Webservice!";
         }
     }
-    /**
-     *
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## HelloPojo
+
     package org.superbiz.servlet;
     
     import javax.jws.WebService;
@@ -378,23 +214,9 @@ Tests run: 0, Failures: 0, Errors: 0, Skipped: 0
     public interface HelloPojo {
         String hello(String name);
     }
-    /**
-     *
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## HelloPojoService
+
     package org.superbiz.servlet;
     
     import javax.jws.HandlerChain;
@@ -414,23 +236,9 @@ Tests run: 0, Failures: 0, Errors: 0, Skipped: 0
             return "Hello " + name + " from Pojo Webservice!";
         }
     }
-    /**
-     *
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## JndiServlet
+
     package org.superbiz.servlet;
     
     import javax.naming.Context;
@@ -498,23 +306,9 @@ Tests run: 0, Failures: 0, Errors: 0, Skipped: 0
             }
         }
     }
-    /**
-     *
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## JpaBean
+
     package org.superbiz.servlet;
     
     import javax.persistence.Column;
@@ -549,23 +343,10 @@ Tests run: 0, Failures: 0, Errors: 0, Skipped: 0
         public String toString() {
             return "[JpaBean id=" + id + ", name=" + name + "]";
         }
-    }/**
-     *
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+    }
+
+## JpaServlet
+
     package org.superbiz.servlet;
     
     import javax.persistence.EntityManager;
@@ -622,23 +403,9 @@ Tests run: 0, Failures: 0, Errors: 0, Skipped: 0
             transaction.commit();
         }
     }
-    /**
-     *
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## ResourceBean
+
     package org.superbiz.servlet;
     
     public class ResourceBean {
@@ -656,23 +423,9 @@ Tests run: 0, Failures: 0, Errors: 0, Skipped: 0
             return "[ResourceBean " + value + "]";
         }
     }
-    /**
-     *
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## RunAsServlet
+
     package org.superbiz.servlet;
     
     import javax.ejb.EJB;
@@ -748,23 +501,9 @@ Tests run: 0, Failures: 0, Errors: 0, Skipped: 0
             out.println();
         }
     }
-    /**
-     *
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## SecureEJB
+
     package org.superbiz.servlet;
     
     import javax.annotation.Resource;
@@ -809,23 +548,9 @@ Tests run: 0, Failures: 0, Errors: 0, Skipped: 0
             return "SecureEJB[userName=" + getCallerPrincipal() + "]";
         }
     }
-    /**
-     *
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## SecureEJBLocal
+
     package org.superbiz.servlet;
     
     import javax.ejb.Local;
@@ -845,23 +570,9 @@ Tests run: 0, Failures: 0, Errors: 0, Skipped: 0
     
         void denyAllMethod();
     }
-    /**
-     *
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## SecureServlet
+
     package org.superbiz.servlet;
     
     import javax.ejb.EJB;
@@ -937,23 +648,9 @@ Tests run: 0, Failures: 0, Errors: 0, Skipped: 0
             out.println();
         }
     }
-    /**
-     *
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## ServerHandler
+
     package org.superbiz.servlet;
     
     import javax.xml.ws.handler.Handler;
@@ -974,23 +671,9 @@ Tests run: 0, Failures: 0, Errors: 0, Skipped: 0
             return true;
         }
     }
-    /**
-     *
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## WebserviceClient
+
     package org.superbiz.servlet;
     
     import javax.xml.ws.Service;
@@ -1053,23 +736,9 @@ Tests run: 0, Failures: 0, Errors: 0, Skipped: 0
             out.println();
         }
     }
-    /**
-     *
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## WebserviceServlet
+
     package org.superbiz.servlet;
     
     import javax.jws.HandlerChain;
@@ -1123,3 +792,271 @@ Tests run: 0, Failures: 0, Errors: 0, Skipped: 0
             }
         }
     }
+
+## log4j.xml
+
+    <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+      <appender name="console" class="org.apache.log4j.ConsoleAppender">
+        <param name="Target" value="System.out"/>
+        <layout class="org.apache.log4j.PatternLayout">
+          <param name="ConversionPattern" value="%-5p %c{1} - %m%n"/>
+        </layout>
+      </appender>
+    
+      <root>
+        <priority value="debug"/>
+        <appender-ref ref="console"/>
+      </root>
+    </log4j:configuration>
+    
+
+## persistence.xml
+
+    <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
+      <persistence-unit transaction-type="RESOURCE_LOCAL" name="jpa-example">
+        <jta-data-source>java:openejb/Connector/Default JDBC Database</jta-data-source>
+        <non-jta-data-source>java:openejb/Connector/Default Unmanaged JDBC Database</non-jta-data-source>
+        <class>org.superbiz.servlet.JpaBean</class>
+    
+        <properties>
+          <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
+        </properties>
+      </persistence-unit>
+    </persistence>
+
+## client-handlers.xml
+
+    <jws:handler-chains xmlns:jws="http://java.sun.com/xml/ns/javaee">
+      <jws:handler-chain>
+        <jws:handler>
+          <jws:handler-name>ClientHandler</jws:handler-name>
+          <jws:handler-class>org.superbiz.servlet.ClientHandler</jws:handler-class>
+        </jws:handler>
+      </jws:handler-chain>
+    </jws:handler-chains>
+    
+
+## server-handlers.xml
+
+    <jws:handler-chains xmlns:jws="http://java.sun.com/xml/ns/javaee">
+      <jws:handler-chain>
+        <jws:handler>
+          <jws:handler-name>ServerHandler</jws:handler-name>
+          <jws:handler-class>org.superbiz.servlet.ServerHandler</jws:handler-class>
+        </jws:handler>
+      </jws:handler-chain>
+    </jws:handler-chains>
+    
+
+## context.xml
+
+    <Context>
+      <!-- This only works if the context is installed under the correct name -->
+      <Realm className="org.apache.catalina.realm.MemoryRealm"
+             pathname="webapps/ejb-examples-1.0-SNAPSHOT/WEB-INF/tomcat-users.xml"/>
+    
+      <Environment
+          name="context.xml/environment"
+          value="ContextString"
+          type="java.lang.String"/>
+      <Resource
+          name="context.xml/resource"
+          auth="Container"
+          type="org.superbiz.servlet.ResourceBean"
+          factory="org.apache.naming.factory.BeanFactory"
+          value="ContextResource"/>
+      <ResourceLink
+          name="context.xml/resource-link"
+          global="server.xml/environment"
+          type="java.lang.String"/>
+    
+      <!-- web.xml resources -->
+      <Resource
+          name="web.xml/resource-env-ref"
+          auth="Container"
+          type="org.superbiz.servlet.ResourceBean"
+          factory="org.apache.naming.factory.BeanFactory"
+          value="ContextResourceEnvRef"/>
+      <Resource
+          name="web.xml/resource-ref"
+          auth="Container"
+          type="org.superbiz.servlet.ResourceBean"
+          factory="org.apache.naming.factory.BeanFactory"
+          value="ContextResourceRef"/>
+      <ResourceLink
+          name="web.xml/resource-link"
+          global="server.xml/environment"
+          type="java.lang.String"/>
+    </Context>
+    
+
+## jetty-web.xml
+
+    <Configure class="org.eclipse.jetty.webapp.WebAppContext">
+      <Get name="securityHandler">
+        <Set name="loginService">
+          <New class="org.eclipse.jetty.security.HashLoginService">
+            <Set name="name">Test Realm</Set>
+            <Set name="config"><SystemProperty name="jetty.home" default="."/>/etc/realm.properties
+            </Set>
+          </New>
+        </Set>
+      </Get>
+    </Configure>
+
+## tomcat-users.xml
+
+    <tomcat-users>
+      <user name="manager" password="manager" roles="manager,user"/>
+      <user name="user" password="user" roles="user"/>
+    </tomcat-users>
+    
+
+## web.xml
+
+    <web-app xmlns="http://java.sun.com/xml/ns/javaee"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+             metadata-complete="false"
+             version="2.5">
+    
+      <display-name>OpenEJB Servlet Examples</display-name>
+    
+      <servlet>
+        <servlet-name>AnnotatedServlet</servlet-name>
+        <servlet-class>org.superbiz.servlet.AnnotatedServlet</servlet-class>
+      </servlet>
+    
+      <servlet-mapping>
+        <servlet-name>AnnotatedServlet</servlet-name>
+        <url-pattern>/annotated/*</url-pattern>
+      </servlet-mapping>
+    
+      <servlet>
+        <servlet-name>JpaServlet</servlet-name>
+        <servlet-class>org.superbiz.servlet.JpaServlet</servlet-class>
+      </servlet>
+    
+      <servlet-mapping>
+        <servlet-name>JpaServlet</servlet-name>
+        <url-pattern>/jpa/*</url-pattern>
+      </servlet-mapping>
+    
+      <servlet>
+        <servlet-name>JndiServlet</servlet-name>
+        <servlet-class>org.superbiz.servlet.JndiServlet</servlet-class>
+      </servlet>
+    
+      <servlet-mapping>
+        <servlet-name>JndiServlet</servlet-name>
+        <url-pattern>/jndi/*</url-pattern>
+      </servlet-mapping>
+    
+      <servlet>
+        <servlet-name>RunAsServlet</servlet-name>
+        <servlet-class>org.superbiz.servlet.RunAsServlet</servlet-class>
+        <run-as>
+          <role-name>fake</role-name>
+        </run-as>
+      </servlet>
+    
+      <servlet-mapping>
+        <servlet-name>RunAsServlet</servlet-name>
+        <url-pattern>/runas/*</url-pattern>
+      </servlet-mapping>
+    
+      <servlet>
+        <servlet-name>SecureServlet</servlet-name>
+        <servlet-class>org.superbiz.servlet.SecureServlet</servlet-class>
+      </servlet>
+    
+      <servlet-mapping>
+        <servlet-name>SecureServlet</servlet-name>
+        <url-pattern>/secure/*</url-pattern>
+      </servlet-mapping>
+    
+      <security-constraint>
+        <web-resource-collection>
+          <web-resource-name>Secure Area</web-resource-name>
+          <url-pattern>/secure/*</url-pattern>
+          <url-pattern>/runas/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+          <role-name>user</role-name>
+        </auth-constraint>
+      </security-constraint>
+    
+      <servlet>
+        <servlet-name>WebserviceServlet</servlet-name>
+        <servlet-class>org.superbiz.servlet.WebserviceServlet</servlet-class>
+      </servlet>
+    
+      <servlet-mapping>
+        <servlet-name>WebserviceServlet</servlet-name>
+        <url-pattern>/webservice/*</url-pattern>
+      </servlet-mapping>
+    
+    
+      <servlet>
+        <servlet-name>HelloPojoService</servlet-name>
+        <servlet-class>org.superbiz.servlet.HelloPojoService</servlet-class>
+      </servlet>
+    
+      <servlet-mapping>
+        <servlet-name>HelloPojoService</servlet-name>
+        <url-pattern>/hello</url-pattern>
+      </servlet-mapping>
+    
+      <login-config>
+        <auth-method>BASIC</auth-method>
+      </login-config>
+    
+      <security-role>
+        <role-name>manager</role-name>
+      </security-role>
+    
+      <security-role>
+        <role-name>user</role-name>
+      </security-role>
+    
+      <env-entry>
+        <env-entry-name>web.xml/env-entry</env-entry-name>
+        <env-entry-type>java.lang.String</env-entry-type>
+        <env-entry-value>WebValue</env-entry-value>
+      </env-entry>
+    
+      <resource-ref>
+        <res-ref-name>web.xml/Data Source</res-ref-name>
+        <res-type>javax.sql.DataSource</res-type>
+        <res-auth>Container</res-auth>
+      </resource-ref>
+    
+      <resource-env-ref>
+        <resource-env-ref-name>web.xml/Queue</resource-env-ref-name>
+        <resource-env-ref-type>javax.jms.Queue</resource-env-ref-type>
+      </resource-env-ref>
+    
+      <ejb-ref>
+        <ejb-ref-name>web.xml/EjbRemote</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <remote>org.superbiz.servlet.AnnotatedEJBRemote</remote>
+      </ejb-ref>
+    
+      <ejb-local-ref>
+        <ejb-ref-name>web.xml/EjLocal</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.superbiz.servlet.AnnotatedEJBLocal</local>
+      </ejb-local-ref>
+    
+      <persistence-unit-ref>
+        <persistence-unit-ref-name>web.xml/PersistenceUnit</persistence-unit-ref-name>
+        <persistence-unit-name>jpa-example</persistence-unit-name>
+      </persistence-unit-ref>
+    
+      <persistence-context-ref>
+        <persistence-context-ref-name>web.xml/PersistenceContext</persistence-context-ref-name>
+        <persistence-unit-name>jpa-example</persistence-unit-name>
+        <persistence-context-type>Transactional</persistence-context-type>
+      </persistence-context-ref>
+    </web-app>
+    

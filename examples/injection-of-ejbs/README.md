@@ -1,100 +1,23 @@
-[INFO] Scanning for projects...
-[INFO]                                                                         
-[INFO] ------------------------------------------------------------------------
-[INFO] Building OpenEJB :: Examples :: @EJB Injection 1.0
-[INFO] ------------------------------------------------------------------------
-[INFO] 
-[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ injection-of-ejbs ---
-[INFO] Deleting /Users/dblevins/examples/injection-of-ejbs/target
-[INFO] 
-[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ injection-of-ejbs ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Users/dblevins/examples/injection-of-ejbs/src/main/resources
-[INFO] 
-[INFO] --- maven-compiler-plugin:2.3.2:compile (default-compile) @ injection-of-ejbs ---
-[INFO] Compiling 4 source files to /Users/dblevins/examples/injection-of-ejbs/target/classes
-[INFO] 
-[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ injection-of-ejbs ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Users/dblevins/examples/injection-of-ejbs/src/test/resources
-[INFO] 
-[INFO] --- maven-compiler-plugin:2.3.2:testCompile (default-testCompile) @ injection-of-ejbs ---
-[INFO] Compiling 1 source file to /Users/dblevins/examples/injection-of-ejbs/target/test-classes
-[INFO] 
-[INFO] --- maven-surefire-plugin:2.7.2:test (default-test) @ injection-of-ejbs ---
-[INFO] Surefire report directory: /Users/dblevins/examples/injection-of-ejbs/target/surefire-reports
+Title: Injection Of Ejbs
 
--------------------------------------------------------
- T E S T S
--------------------------------------------------------
-Running org.superbiz.injection.EjbDependencyTest
-Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-http://openejb.apache.org/
-INFO - openejb.home = /Users/dblevins/examples/injection-of-ejbs
-INFO - openejb.base = /Users/dblevins/examples/injection-of-ejbs
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
-INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
-INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
-INFO - Found EjbModule in classpath: /Users/dblevins/examples/injection-of-ejbs/target/classes
-INFO - Beginning load: /Users/dblevins/examples/injection-of-ejbs/target/classes
-INFO - Configuring enterprise application: /Users/dblevins/examples/injection-of-ejbs
-INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
-INFO - Auto-creating a container for bean DataReader: Container(type=STATELESS, id=Default Stateless Container)
-INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
-INFO - Auto-creating a container for bean org.superbiz.injection.EjbDependencyTest: Container(type=MANAGED, id=Default Managed Container)
-INFO - Enterprise application "/Users/dblevins/examples/injection-of-ejbs" loaded.
-INFO - Assembling app: /Users/dblevins/examples/injection-of-ejbs
-INFO - Jndi(name="java:global/injection-of-ejbs/DataReader!org.superbiz.injection.DataReader")
-INFO - Jndi(name="java:global/injection-of-ejbs/DataReader")
-INFO - Jndi(name="java:global/injection-of-ejbs/DataStore!org.superbiz.injection.DataStore")
-INFO - Jndi(name="java:global/injection-of-ejbs/DataStore!org.superbiz.injection.DataStoreLocal")
-INFO - Jndi(name="java:global/injection-of-ejbs/DataStore!org.superbiz.injection.DataStoreRemote")
-INFO - Jndi(name="java:global/injection-of-ejbs/DataStore")
-INFO - Jndi(name="java:global/EjbModule1110828771/org.superbiz.injection.EjbDependencyTest!org.superbiz.injection.EjbDependencyTest")
-INFO - Jndi(name="java:global/EjbModule1110828771/org.superbiz.injection.EjbDependencyTest")
-INFO - Created Ejb(deployment-id=DataReader, ejb-name=DataReader, container=Default Stateless Container)
-INFO - Created Ejb(deployment-id=DataStore, ejb-name=DataStore, container=Default Stateless Container)
-INFO - Created Ejb(deployment-id=org.superbiz.injection.EjbDependencyTest, ejb-name=org.superbiz.injection.EjbDependencyTest, container=Default Managed Container)
-INFO - Started Ejb(deployment-id=DataReader, ejb-name=DataReader, container=Default Stateless Container)
-INFO - Started Ejb(deployment-id=DataStore, ejb-name=DataStore, container=Default Stateless Container)
-INFO - Started Ejb(deployment-id=org.superbiz.injection.EjbDependencyTest, ejb-name=org.superbiz.injection.EjbDependencyTest, container=Default Managed Container)
-INFO - Deployed Application(path=/Users/dblevins/examples/injection-of-ejbs)
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.146 sec
+This example shows how to use the @EJB annotation on a bean class to refer to other beans.
 
-Results :
+This functionality is often referred as dependency injection (see
+http://www.martinfowler.com/articles/injection.html), and has been recently introduced in
+Java EE 5.
 
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+In this particular example, we will create two session stateless beans
 
-[INFO] 
-[INFO] --- maven-jar-plugin:2.3.1:jar (default-jar) @ injection-of-ejbs ---
-[INFO] Building jar: /Users/dblevins/examples/injection-of-ejbs/target/injection-of-ejbs-1.0.jar
-[INFO] 
-[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ injection-of-ejbs ---
-[INFO] Installing /Users/dblevins/examples/injection-of-ejbs/target/injection-of-ejbs-1.0.jar to /Users/dblevins/.m2/repository/org/superbiz/injection-of-ejbs/1.0/injection-of-ejbs-1.0.jar
-[INFO] Installing /Users/dblevins/examples/injection-of-ejbs/pom.xml to /Users/dblevins/.m2/repository/org/superbiz/injection-of-ejbs/1.0/injection-of-ejbs-1.0.pom
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD SUCCESS
-[INFO] ------------------------------------------------------------------------
-[INFO] Total time: 3.961s
-[INFO] Finished at: Fri Oct 28 17:01:42 PDT 2011
-[INFO] Final Memory: 14M/81M
-[INFO] ------------------------------------------------------------------------
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+  * a DataStore session bean
+  * a DataReader session bean
+
+The DataReader bean uses the DataStore to retrieve some informations, and
+we will see how we can, inside the DataReader bean, get a reference to the
+DataStore bean using the @EJB annotation, thus avoiding the use of the
+JNDI API.
+
+## DataReader
+
     package org.superbiz.injection;
     
     import javax.ejb.EJB;
@@ -138,22 +61,9 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
             return "REMOTE:" + dataStoreRemote.getData();
         }
     }
-    //END SNIPPET: code/**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+
+## DataStore
+
     package org.superbiz.injection;
     
     import javax.ejb.LocalBean;
@@ -174,25 +84,10 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
         public String getData() {
             return "42";
         }
-    
     }
-    //END SNIPPET: code
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+
+## DataStoreLocal
+
     package org.superbiz.injection;
     
     import javax.ejb.Local;
@@ -208,25 +103,10 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
     public interface DataStoreLocal {
     
         public String getData();
-    
     }
-    //END SNIPPET: code
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+
+## DataStoreRemote
+
     package org.superbiz.injection;
     
     import javax.ejb.Remote;
@@ -241,25 +121,10 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
     public interface DataStoreRemote {
     
         public String getData();
-    
     }
-    //END SNIPPET: code
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+
+## EjbDependencyTest
+
     package org.superbiz.injection;
     
     import junit.framework.TestCase;
@@ -285,4 +150,48 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
             assertEquals("LOCALBEAN:42", dataReader.readDataFromLocalBeanStore());
         }
     }
-    //END SNIPPET: code
+
+# Running
+
+    
+    -------------------------------------------------------
+     T E S T S
+    -------------------------------------------------------
+    Running org.superbiz.injection.EjbDependencyTest
+    Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
+    http://openejb.apache.org/
+    INFO - openejb.home = /Users/dblevins/examples/injection-of-ejbs
+    INFO - openejb.base = /Users/dblevins/examples/injection-of-ejbs
+    INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+    INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+    INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+    INFO - Found EjbModule in classpath: /Users/dblevins/examples/injection-of-ejbs/target/classes
+    INFO - Beginning load: /Users/dblevins/examples/injection-of-ejbs/target/classes
+    INFO - Configuring enterprise application: /Users/dblevins/examples/injection-of-ejbs
+    INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
+    INFO - Auto-creating a container for bean DataReader: Container(type=STATELESS, id=Default Stateless Container)
+    INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+    INFO - Auto-creating a container for bean org.superbiz.injection.EjbDependencyTest: Container(type=MANAGED, id=Default Managed Container)
+    INFO - Enterprise application "/Users/dblevins/examples/injection-of-ejbs" loaded.
+    INFO - Assembling app: /Users/dblevins/examples/injection-of-ejbs
+    INFO - Jndi(name="java:global/injection-of-ejbs/DataReader!org.superbiz.injection.DataReader")
+    INFO - Jndi(name="java:global/injection-of-ejbs/DataReader")
+    INFO - Jndi(name="java:global/injection-of-ejbs/DataStore!org.superbiz.injection.DataStore")
+    INFO - Jndi(name="java:global/injection-of-ejbs/DataStore!org.superbiz.injection.DataStoreLocal")
+    INFO - Jndi(name="java:global/injection-of-ejbs/DataStore!org.superbiz.injection.DataStoreRemote")
+    INFO - Jndi(name="java:global/injection-of-ejbs/DataStore")
+    INFO - Jndi(name="java:global/EjbModule355598874/org.superbiz.injection.EjbDependencyTest!org.superbiz.injection.EjbDependencyTest")
+    INFO - Jndi(name="java:global/EjbModule355598874/org.superbiz.injection.EjbDependencyTest")
+    INFO - Created Ejb(deployment-id=DataReader, ejb-name=DataReader, container=Default Stateless Container)
+    INFO - Created Ejb(deployment-id=DataStore, ejb-name=DataStore, container=Default Stateless Container)
+    INFO - Created Ejb(deployment-id=org.superbiz.injection.EjbDependencyTest, ejb-name=org.superbiz.injection.EjbDependencyTest, container=Default Managed Container)
+    INFO - Started Ejb(deployment-id=DataReader, ejb-name=DataReader, container=Default Stateless Container)
+    INFO - Started Ejb(deployment-id=DataStore, ejb-name=DataStore, container=Default Stateless Container)
+    INFO - Started Ejb(deployment-id=org.superbiz.injection.EjbDependencyTest, ejb-name=org.superbiz.injection.EjbDependencyTest, container=Default Managed Container)
+    INFO - Deployed Application(path=/Users/dblevins/examples/injection-of-ejbs)
+    Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.225 sec
+    
+    Results :
+    
+    Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+    

@@ -1,95 +1,9 @@
-[INFO] Scanning for projects...
-[INFO]                                                                         
-[INFO] ------------------------------------------------------------------------
-[INFO] Building OpenEJB :: Examples :: @Resource env-entry Injection 1.0
-[INFO] ------------------------------------------------------------------------
-[INFO] 
-[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ injection-of-env-entry ---
-[INFO] Deleting /Users/dblevins/examples/injection-of-env-entry/target
-[INFO] 
-[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ injection-of-env-entry ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] Copying 1 resource
-[INFO] 
-[INFO] --- maven-compiler-plugin:2.3.2:compile (default-compile) @ injection-of-env-entry ---
-[INFO] Compiling 3 source files to /Users/dblevins/examples/injection-of-env-entry/target/classes
-[INFO] 
-[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ injection-of-env-entry ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Users/dblevins/examples/injection-of-env-entry/src/test/resources
-[INFO] 
-[INFO] --- maven-compiler-plugin:2.3.2:testCompile (default-testCompile) @ injection-of-env-entry ---
-[INFO] Compiling 1 source file to /Users/dblevins/examples/injection-of-env-entry/target/test-classes
-[INFO] 
-[INFO] --- maven-surefire-plugin:2.7.2:test (default-test) @ injection-of-env-entry ---
-[INFO] Surefire report directory: /Users/dblevins/examples/injection-of-env-entry/target/surefire-reports
+Title: Injection Of Env Entry
 
--------------------------------------------------------
- T E S T S
--------------------------------------------------------
-Running org.superbiz.injection.enventry.ConfigurationTest
-Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-http://openejb.apache.org/
-INFO - openejb.home = /Users/dblevins/examples/injection-of-env-entry
-INFO - openejb.base = /Users/dblevins/examples/injection-of-env-entry
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
-INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
-INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
-INFO - Found EjbModule in classpath: /Users/dblevins/examples/injection-of-env-entry/target/classes
-INFO - Beginning load: /Users/dblevins/examples/injection-of-env-entry/target/classes
-INFO - Configuring enterprise application: /Users/dblevins/examples/injection-of-env-entry
-WARN - Method 'lookup' is not available for 'javax.annotation.Resource'. Probably using an older Runtime.
-INFO - Configuring Service(id=Default Singleton Container, type=Container, provider-id=Default Singleton Container)
-INFO - Auto-creating a container for bean Configuration: Container(type=SINGLETON, id=Default Singleton Container)
-INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
-INFO - Auto-creating a container for bean org.superbiz.injection.enventry.ConfigurationTest: Container(type=MANAGED, id=Default Managed Container)
-INFO - Enterprise application "/Users/dblevins/examples/injection-of-env-entry" loaded.
-INFO - Assembling app: /Users/dblevins/examples/injection-of-env-entry
-INFO - Jndi(name="java:global/injection-of-env-entry/Configuration!org.superbiz.injection.enventry.Configuration")
-INFO - Jndi(name="java:global/injection-of-env-entry/Configuration")
-INFO - Jndi(name="java:global/EjbModule1046388151/org.superbiz.injection.enventry.ConfigurationTest!org.superbiz.injection.enventry.ConfigurationTest")
-INFO - Jndi(name="java:global/EjbModule1046388151/org.superbiz.injection.enventry.ConfigurationTest")
-INFO - Created Ejb(deployment-id=org.superbiz.injection.enventry.ConfigurationTest, ejb-name=org.superbiz.injection.enventry.ConfigurationTest, container=Default Managed Container)
-INFO - Created Ejb(deployment-id=Configuration, ejb-name=Configuration, container=Default Singleton Container)
-INFO - Started Ejb(deployment-id=org.superbiz.injection.enventry.ConfigurationTest, ejb-name=org.superbiz.injection.enventry.ConfigurationTest, container=Default Managed Container)
-INFO - Started Ejb(deployment-id=Configuration, ejb-name=Configuration, container=Default Singleton Container)
-INFO - Deployed Application(path=/Users/dblevins/examples/injection-of-env-entry)
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.456 sec
+*Help us document this example! Source available in [svn](http://svn.apache.org/repos/asf/openejb/trunk/openejb/examples/injection-of-env-entry) or [git](https://github.com/apache/openejb/tree/trunk/openejb/examples/injection-of-env-entry). Open a [JIRA](https://issues.apache.org/jira/browse/TOMEE) with patch or pull request*
 
-Results :
+## Configuration
 
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-
-[INFO] 
-[INFO] --- maven-jar-plugin:2.3.1:jar (default-jar) @ injection-of-env-entry ---
-[INFO] Building jar: /Users/dblevins/examples/injection-of-env-entry/target/injection-of-env-entry-1.0.jar
-[INFO] 
-[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ injection-of-env-entry ---
-[INFO] Installing /Users/dblevins/examples/injection-of-env-entry/target/injection-of-env-entry-1.0.jar to /Users/dblevins/.m2/repository/org/superbiz/injection-of-env-entry/1.0/injection-of-env-entry-1.0.jar
-[INFO] Installing /Users/dblevins/examples/injection-of-env-entry/pom.xml to /Users/dblevins/.m2/repository/org/superbiz/injection-of-env-entry/1.0/injection-of-env-entry-1.0.pom
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD SUCCESS
-[INFO] ------------------------------------------------------------------------
-[INFO] Total time: 4.491s
-[INFO] Finished at: Fri Oct 28 17:02:29 PDT 2011
-[INFO] Final Memory: 14M/81M
-[INFO] ------------------------------------------------------------------------
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
     package org.superbiz.injection.enventry;
     
     import javax.annotation.Resource;
@@ -136,23 +50,9 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
             return new Date(date);
         }
     }
-    //END SNIPPET: code
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-        * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+
+## Shape
+
     package org.superbiz.injection.enventry;
     
     /**
@@ -163,24 +63,10 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
         CIRCLE,
         TRIANGLE,
         SQUARE
-    
     }
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
+
+## Widget
+
     package org.superbiz.injection.enventry;
     
     /**
@@ -191,22 +77,42 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
      */
     public class Widget {
     }
-    /**
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+
+## ejb-jar.xml
+
+    <ejb-jar xmlns="http://java.sun.com/xml/ns/javaee" version="3.0" metadata-complete="false">
+      <enterprise-beans>
+        <session>
+          <ejb-name>Configuration</ejb-name>
+          <env-entry>
+            <env-entry-name>org.superbiz.injection.enventry.Configuration/color</env-entry-name>
+            <env-entry-type>java.lang.String</env-entry-type>
+            <env-entry-value>orange</env-entry-value>
+          </env-entry>
+          <env-entry>
+            <env-entry-name>org.superbiz.injection.enventry.Configuration/shape</env-entry-name>
+            <env-entry-type>org.superbiz.injection.enventry.Shape</env-entry-type>
+            <env-entry-value>TRIANGLE</env-entry-value>
+          </env-entry>
+          <env-entry>
+            <env-entry-name>org.superbiz.injection.enventry.Configuration/strategy</env-entry-name>
+            <env-entry-type>java.lang.Class</env-entry-type>
+            <env-entry-value>org.superbiz.injection.enventry.Widget</env-entry-value>
+          </env-entry>
+          <env-entry>
+            <description>The name was explicitly set in the annotation so the classname prefix isn't required</description>
+            <env-entry-name>date</env-entry-name>
+            <env-entry-type>java.lang.Long</env-entry-type>
+            <env-entry-value>123456789</env-entry-value>
+          </env-entry>
+        </session>
+      </enterprise-beans>
+    </ejb-jar>
+        <!-- END SNIPPET: code -->
+    
+
+## ConfigurationTest
+
     package org.superbiz.injection.enventry;
     
     import junit.framework.TestCase;
@@ -233,7 +139,43 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
             assertEquals(new Date(123456789), configuration.getDate());
         }
     }
-    //END SNIPPET: code
-     
+
+# Running
+
     
+    -------------------------------------------------------
+     T E S T S
+    -------------------------------------------------------
+    Running org.superbiz.injection.enventry.ConfigurationTest
+    Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
+    http://openejb.apache.org/
+    INFO - openejb.home = /Users/dblevins/examples/injection-of-env-entry
+    INFO - openejb.base = /Users/dblevins/examples/injection-of-env-entry
+    INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+    INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+    INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+    INFO - Found EjbModule in classpath: /Users/dblevins/examples/injection-of-env-entry/target/classes
+    INFO - Beginning load: /Users/dblevins/examples/injection-of-env-entry/target/classes
+    INFO - Configuring enterprise application: /Users/dblevins/examples/injection-of-env-entry
+    WARN - Method 'lookup' is not available for 'javax.annotation.Resource'. Probably using an older Runtime.
+    INFO - Configuring Service(id=Default Singleton Container, type=Container, provider-id=Default Singleton Container)
+    INFO - Auto-creating a container for bean Configuration: Container(type=SINGLETON, id=Default Singleton Container)
+    INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+    INFO - Auto-creating a container for bean org.superbiz.injection.enventry.ConfigurationTest: Container(type=MANAGED, id=Default Managed Container)
+    INFO - Enterprise application "/Users/dblevins/examples/injection-of-env-entry" loaded.
+    INFO - Assembling app: /Users/dblevins/examples/injection-of-env-entry
+    INFO - Jndi(name="java:global/injection-of-env-entry/Configuration!org.superbiz.injection.enventry.Configuration")
+    INFO - Jndi(name="java:global/injection-of-env-entry/Configuration")
+    INFO - Jndi(name="java:global/EjbModule1355224018/org.superbiz.injection.enventry.ConfigurationTest!org.superbiz.injection.enventry.ConfigurationTest")
+    INFO - Jndi(name="java:global/EjbModule1355224018/org.superbiz.injection.enventry.ConfigurationTest")
+    INFO - Created Ejb(deployment-id=org.superbiz.injection.enventry.ConfigurationTest, ejb-name=org.superbiz.injection.enventry.ConfigurationTest, container=Default Managed Container)
+    INFO - Created Ejb(deployment-id=Configuration, ejb-name=Configuration, container=Default Singleton Container)
+    INFO - Started Ejb(deployment-id=org.superbiz.injection.enventry.ConfigurationTest, ejb-name=org.superbiz.injection.enventry.ConfigurationTest, container=Default Managed Container)
+    INFO - Started Ejb(deployment-id=Configuration, ejb-name=Configuration, container=Default Singleton Container)
+    INFO - Deployed Application(path=/Users/dblevins/examples/injection-of-env-entry)
+    Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.664 sec
+    
+    Results :
+    
+    Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
     

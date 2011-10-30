@@ -1,7 +1,5 @@
 Title: @ApplicationException annotation
 
-*TODO Improve this document*
-
 # Declaring an @ApplicationException
 
     import javax.ejb.ApplicationException;
