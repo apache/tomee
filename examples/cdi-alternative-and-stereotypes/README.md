@@ -55,6 +55,7 @@ So now we have our `@Mock` annotation which is a stereotype able to replace `@Al
 we simply add this annotation to our mocks.
 
 If you run it now you'll have this exception:
+
     javax.enterprise.inject.UnsatisfiedResolutionException: Api type [org.superbiz.cdi.stereotype.Vehicle] is not found with the qualifiers
     Qualifiers: [@javax.enterprise.inject.Default()]
     for injection into Field Injection Point, field name :  vehicle, Bean Owner : [Journey, Name:null, WebBeans Type:ENTERPRISE, API Types:[java.lang.Object,org.superbiz.cdi.stereotype.Journey], Qualifiers:[javax.enterprise.inject.Any,javax.enterprise.inject.Default]]
