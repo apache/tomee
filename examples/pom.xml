@@ -90,6 +90,7 @@
     <module>cdi-produces-disposes</module>
     <module>dynamic-implementation</module>
     <module>cdi-alternative-and-stereotypes</module>
+    <module>cdi-events</module>
   </modules>
   <profiles>
     <profile>
