@@ -41,7 +41,7 @@
     <dependency>
       <groupId>org.jboss.arquillian.junit</groupId>
       <artifactId>arquillian-junit-container</artifactId>
-      <version>1.0.0.CR1</version>
+      <version>${version.arquillian}</version>
       <scope>test</scope>
     </dependency>
 
