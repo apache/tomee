@@ -44,6 +44,7 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.runtime.log.Log4JLogChute;
+import org.apache.velocity.runtime.log.NullLogChute;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 
 import javax.naming.Context;
@@ -287,7 +288,7 @@ public class Container {
     }
 
     private void copyTemplateTo(File targetDir, String filename) throws Exception {
-        Velocity.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM, new Log4JLogChute());
+        Velocity.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM, new NullLogChute());
         Velocity.setProperty(Velocity.RESOURCE_LOADER, "class");
         Velocity.setProperty("class.resource.loader.description", "Velocity Classpath Resource Loader");
         Velocity.setProperty("class.resource.loader.class", ClasspathResourceLoader.class.getName());

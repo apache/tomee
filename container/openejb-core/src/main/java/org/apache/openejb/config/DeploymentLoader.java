@@ -976,7 +976,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                     }
                 }
             } else if (foundContextParam == null) {
-                logger.error("faces config file is null");
+                logger.info("faces config file is null");
             }
         }
 
