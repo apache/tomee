@@ -1,6 +1,7 @@
 package org.apache.tomee.catalina;
 
 import org.apache.catalina.LifecycleException;
+import org.apache.catalina.loader.WebappClassLoader;
 import org.apache.catalina.loader.WebappLoader;
 import org.apache.naming.resources.DirContextURLStreamHandler;
 import org.apache.openejb.util.ArrayEnumeration;
@@ -58,12 +59,15 @@ public class TomEEWebappLoader extends WebappLoader {
          * @throws IOException
          */
         @Override public Enumeration<URL> getResources(final String name) throws IOException {
-            Enumeration<URL> appClassLoaderResources = app.getResources(name);
-            Enumeration<URL> webappClassLoaderResources = webapp.getResources(name);
-
             Set<URL> urls = new HashSet<URL>();
+
             // /!\ order is important here
-            add(urls, webappClassLoaderResources);
+            if (webapp instanceof WebappClassLoader && ((WebappClassLoader) webapp).isStarted() || webapp.getParent() == null) { // we set a parent so if it is null webapp was detroyed
+                Enumeration<URL> webappClassLoaderResources = webapp.getResources(name);
+                add(urls, webappClassLoaderResources);
+            }
+
+            Enumeration<URL> appClassLoaderResources = app.getResources(name);
             add(urls, appClassLoaderResources);
 
             return new ArrayEnumeration(urls);

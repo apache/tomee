@@ -117,6 +117,11 @@
     	<artifactId>shrinkwrap-descriptors-impl</artifactId>
     	<version>${version.shrinkwrap.descriptor}</version>
     </dependency>
+    <dependency>
+    	<groupId>org.jboss.shrinkwrap.descriptors</groupId>
+    	<artifactId>shrinkwrap-descriptors-api</artifactId>
+    	<version>${version.shrinkwrap.descriptor}</version>
+    </dependency>
 
     <dependency>
       <groupId>org.eclipse.jdt.core.compiler</groupId>
