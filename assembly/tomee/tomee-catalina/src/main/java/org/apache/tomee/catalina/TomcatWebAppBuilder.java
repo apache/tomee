@@ -332,9 +332,14 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 // However since this classloader and the webappclassloader will have a lot
                 // of common classes/resources we have to avoid duplicated resources
                 // so we contribute a custom loader.
+                //
+                // Note: the line standardContext.getLoader().setDelegate(true);
+                // could be hardcoded in the custom loader
+                // but here we have all the classloading logic
                 standardContext.setParentClassLoader(classLoader);
                 standardContext.setDelegate(true);
                 standardContext.setLoader(new TomEEWebappLoader(classLoader));
+                standardContext.getLoader().setDelegate(true);
 
                 String host = webApp.host;
                 if (host == null) {
@@ -476,8 +481,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     public void init(StandardContext standardContext) {
         standardContext.setCrossContext(Boolean.parseBoolean(System.getProperty(OPENEJB_CROSSCONTEXT_PROPERTY, "false")));
         standardContext.setNamingResources(new OpenEJBNamingResource());
-        standardContext.setParentClassLoader(OpenEJB.class.getClassLoader());
-        standardContext.setDelegate(false);
 
         if (standardContext.getConfigFile() == null) {
             String s = File.pathSeparator;

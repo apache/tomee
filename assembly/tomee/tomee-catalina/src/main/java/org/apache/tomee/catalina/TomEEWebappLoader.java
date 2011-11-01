@@ -30,7 +30,8 @@ public class TomEEWebappLoader extends WebappLoader {
 
     @Override protected void startInternal() throws LifecycleException {
         super.startInternal();
-        tomEEClassLoader = new TomEEClassLoader(appClassLoader, super.getClassLoader());
+        final ClassLoader webappCl = super.getClassLoader();
+        tomEEClassLoader = new TomEEClassLoader(appClassLoader, webappCl);
         try {
              DirContextURLStreamHandler.bind(tomEEClassLoader, getContainer().getResources());
         } catch (Throwable t) {
@@ -44,10 +45,18 @@ public class TomEEWebappLoader extends WebappLoader {
         private ClassLoader webapp;
 
         public TomEEClassLoader(final ClassLoader appCl, final ClassLoader webappCl) {
+            super(webappCl); // in fact this classloader = webappclassloader since we add nothing to this
             app = appCl;
             webapp = webappCl;
         }
 
+        /**
+         * we totally override this method to be able to remove duplicated resources.
+         *
+         * @param name
+         * @return
+         * @throws IOException
+         */
         @Override public Enumeration<URL> getResources(final String name) throws IOException {
             Enumeration<URL> appClassLoaderResources = app.getResources(name);
             Enumeration<URL> webappClassLoaderResources = webapp.getResources(name);
