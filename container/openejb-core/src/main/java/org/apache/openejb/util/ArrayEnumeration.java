@@ -22,6 +22,7 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.Enumeration;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.Vector;
 
 public final class ArrayEnumeration implements Enumeration, Externalizable {
@@ -38,6 +39,11 @@ public final class ArrayEnumeration implements Enumeration, Externalizable {
     public ArrayEnumeration(java.util.List list) {
         this.elements = new Object[list.size()];
         list.toArray(this.elements);
+    }
+
+    public ArrayEnumeration(Set<?> set) {
+        this.elements = new Object[set.size()];
+        set.toArray(this.elements);
     }
 
     public ArrayEnumeration() {

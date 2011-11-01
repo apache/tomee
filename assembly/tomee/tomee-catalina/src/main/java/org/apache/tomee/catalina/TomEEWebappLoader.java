@@ -3,34 +3,67 @@ package org.apache.tomee.catalina;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.loader.WebappLoader;
 import org.apache.naming.resources.DirContextURLStreamHandler;
+import org.apache.openejb.util.ArrayEnumeration;
 import org.apache.tomcat.util.ExceptionUtils;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
- * simply override getClassLoader().
- *
- * Note: internally it still uses a webappclassloader.
- *
  * @author rmannibucau
  */
 public class TomEEWebappLoader extends WebappLoader {
     private ClassLoader appClassLoader;
+    private ClassLoader tomEEClassLoader;
 
-    public TomEEWebappLoader(ClassLoader classLoader) {
+    public TomEEWebappLoader(final ClassLoader classLoader) {
         appClassLoader = classLoader;
     }
 
     @Override public ClassLoader getClassLoader() {
-        return appClassLoader;
+        return tomEEClassLoader;
     }
 
     @Override protected void startInternal() throws LifecycleException {
         super.startInternal();
+        tomEEClassLoader = new TomEEClassLoader(appClassLoader, super.getClassLoader());
         try {
-            // override the webappclassloader by the app classloader
-            DirContextURLStreamHandler.bind(appClassLoader, getContainer().getResources());
+             DirContextURLStreamHandler.bind(tomEEClassLoader, getContainer().getResources());
         } catch (Throwable t) {
             ExceptionUtils.handleThrowable(t);
             throw new LifecycleException("start: ", t);
+        }
+    }
+
+    public static class TomEEClassLoader extends ClassLoader {
+        private ClassLoader app;
+        private ClassLoader webapp;
+
+        public TomEEClassLoader(final ClassLoader appCl, final ClassLoader webappCl) {
+            app = appCl;
+            webapp = webappCl;
+        }
+
+        @Override public Enumeration<URL> getResources(final String name) throws IOException {
+            Enumeration<URL> appClassLoaderResources = app.getResources(name);
+            Enumeration<URL> webappClassLoaderResources = webapp.getResources(name);
+
+            Set<URL> urls = new HashSet<URL>();
+            // /!\ order is important here
+            add(urls, webappClassLoaderResources);
+            add(urls, appClassLoaderResources);
+
+            return new ArrayEnumeration(urls);
+        }
+
+        private static void add(Collection<URL> urls, Enumeration<URL> enumUrls) {
+            while (enumUrls.hasMoreElements()) {
+                urls.add(enumUrls.nextElement());
+            }
         }
     }
 }

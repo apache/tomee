@@ -18,7 +18,7 @@ public class GetResourcesListener implements ServletContextListener {
         GetResourcesHolder.RESOURCE_NUMBER = 0;
         try {
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            Enumeration<URL> urls = classLoader.getResources("test.getresources");
+            Enumeration<URL> urls = classLoader.getResources("config/test.getresources2");
             while (urls.hasMoreElements()) {
                 urls.nextElement();
                 GetResourcesHolder.RESOURCE_NUMBER++;
