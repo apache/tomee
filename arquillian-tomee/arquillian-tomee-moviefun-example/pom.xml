@@ -62,26 +62,6 @@
 	         <configuration>
 	            <artifactItems>
 	               <artifactItem>
-	                  <groupId>commons-beanutils</groupId>
-	                  <artifactId>commons-beanutils</artifactId>
-	                  <version>1.8.3</version>
-	               </artifactItem>
-	               <artifactItem>
-	                  <groupId>commons-codec</groupId>
-	                  <artifactId>commons-codec</artifactId>
-	                  <version>1.3</version>
-	               </artifactItem>
-	               <artifactItem>
-	                  <groupId>commons-collections</groupId>
-	                  <artifactId>commons-collections</artifactId>
-	                  <version>3.2</version>
-	               </artifactItem>
-	               <artifactItem>
-	                  <groupId>commons-digester</groupId>
-	                  <artifactId>commons-digester</artifactId>
-	                  <version>1.8</version>
-	               </artifactItem>
-	               <artifactItem>
 	                  <groupId>commons-logging</groupId>
 	                  <artifactId>commons-logging</artifactId>
 	                  <version>1.1.1</version>
@@ -103,11 +83,6 @@
 	                  <version>2.0.3</version>
 	               </artifactItem>
 	               -->
-	               <artifactItem>
-	                  <groupId>org.apache.myfaces.core</groupId>
-	                  <artifactId>myfaces-impl</artifactId>
-	                  <version>2.1.2</version>
-	               </artifactItem>
 	               <artifactItem>
 	                  <groupId>taglibs</groupId>
 	                  <artifactId>standard</artifactId>
@@ -194,6 +169,11 @@
     	<version>1.0.0.CR2</version>
     	<type>jar</type>
     	<scope>test</scope>
+    </dependency>
+    <dependency>
+    	<groupId>org.jboss.shrinkwrap.descriptors</groupId>
+    	<artifactId>shrinkwrap-descriptors-impl</artifactId>
+    	<version>${version.shrinkwrap.descriptor}</version>
     </dependency>
     <dependency>
     	<groupId>org.apache.openejb</groupId>

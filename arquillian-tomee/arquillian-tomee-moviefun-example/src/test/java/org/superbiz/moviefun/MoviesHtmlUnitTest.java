@@ -68,7 +68,7 @@ public class MoviesHtmlUnitTest {
         }
 
         FileUtils.copyDirectory(new File("target/classes"), new File(file, "WEB-INF/classes"));
-	FileUtils.copyDirectory(new File("target/test-libs"), new File(file, "WEB-INF/lib"));
+	    FileUtils.copyDirectory(new File("target/test-libs"), new File(file, "WEB-INF/lib"));
         FileUtils.copyDirectory(new File("src/main/webapp"), file);
 
         return file;

@@ -31,6 +31,7 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.impl.base.asset.ClassLoaderAsset;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.superbiz.moviefun.setup.ExampleDataProducer;
@@ -43,10 +44,11 @@ import javax.inject.Inject;
 @RunWith(Arquillian.class)
 public class MoviesEJBTest {
 	@Deployment public static WebArchive createDeployment() {
-		return ShrinkWrap.create(WebArchive.class, "test.war").addClasses(Movie.class, MoviesImpl.class, Movies.class, MoviesRemote.class, MoviesEJBTest.class, Setup.class, Examples.class, ExampleDataProducer.class)
-				.addAsResource(new ClassLoaderAsset("META-INF/ejb-jar.xml") , "META-INF/ejb-jar.xml")
-        		.addAsResource(new ClassLoaderAsset("META-INF/persistence.xml") , "META-INF/persistence.xml")
-        		.addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+		return ShrinkWrap.create(WebArchive.class, "test.war")
+                .addClasses(Movie.class, MoviesImpl.class, Movies.class, MoviesRemote.class, MoviesEJBTest.class, Setup.class, Examples.class, ExampleDataProducer.class)
+                .addAsResource(new ClassLoaderAsset("META-INF/ejb-jar.xml"), "META-INF/ejb-jar.xml")
+                .addAsResource(new ClassLoaderAsset("META-INF/persistence.xml"), "META-INF/persistence.xml")
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
 	}
 
 	@EJB private Movies movies;
