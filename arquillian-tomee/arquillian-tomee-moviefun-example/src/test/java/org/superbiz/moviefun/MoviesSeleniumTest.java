@@ -29,6 +29,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.FileAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.impl.base.asset.ClassLoaderAsset;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.superbiz.moviefun.setup.ExampleDataProducer;
@@ -40,6 +41,7 @@ import org.superbiz.moviefun.util.PaginationHelper;
 import com.thoughtworks.selenium.DefaultSelenium;
 
 @RunWith(Arquillian.class)
+@Ignore
 public class MoviesSeleniumTest {
 	
 	@ArquillianResource
