@@ -24,7 +24,7 @@
 
 <div id="Content">
 	<p>Please select one of the following links:</p>
-	<a href="setup.jsp">Setup</a> - Sets up the application with some sample data<br />
+	<a href="setup">Setup</a> - Sets up the application with some sample data<br />
 	<a href="moviefun">JSP</a> - Use the JSP version of the application<br />
 	<a href="faces/index.xhtml">JSF</a> - Use the JSF 2 version of the application<br />
 
