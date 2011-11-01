@@ -322,6 +322,18 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 if (standardContext.getDocBase() != null && standardContext.getDocBase().endsWith(".war")) {
                     standardContext.setDocBase(standardContext.getDocBase().substring(0, standardContext.getDocBase().length() - 4));
                 }
+
+                // add classloader which is an URLClassLoader created by openejb
+                // {@see Assembler}
+                //
+                // we add it as parent classloader since we scanned classes with this classloader
+                // that's why we force delegate to true.
+                //
+                // However since this classloader and the webappclassloader will have a lot
+                // of common classes/resources we have to avoid duplicated resources
+                // so we contribute a custom loader.
+                standardContext.setParentClassLoader(classLoader);
+                standardContext.setDelegate(true);
                 standardContext.setLoader(new TomEEWebappLoader(classLoader));
 
                 String host = webApp.host;

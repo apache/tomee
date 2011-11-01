@@ -30,6 +30,7 @@ import static org.apache.openejb.arquillian.tests.Tests.assertOutput;
                 .addClass(GetResourcesListener.class)
                 .addClass(GetResourcesHolder.class)
                 .addAsWebResource(Thread.currentThread().getContextClassLoader().getResource("test.getresources"), "/config/test.getresources")
+                .addAsWebResource(Thread.currentThread().getContextClassLoader().getResource("test.getresources"), "/config/test.getresources2")
                 .addAsLibraries(new File("target/test-libs/junit.jar"))
                 .setWebXML(new StringAsset(
                       Descriptors.create(WebAppDescriptor.class)
