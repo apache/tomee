@@ -303,14 +303,12 @@
     <dependency>
       <groupId>org.jboss.shrinkwrap.resolver</groupId>
       <artifactId>shrinkwrap-resolver-api-maven</artifactId>
-      <version>1.0.0-beta-5</version>
-      <type>jar</type>
-      <scope>compile</scope>
+      <version>${version.shrinkwrap.resolver}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.shrinkwrap.resolver</groupId>
       <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
-      <version>1.0.0-beta-5</version>
+      <version>${version.shrinkwrap.resolver}</version>
       <type>jar</type>
       <scope>compile</scope>
     </dependency>
@@ -336,9 +334,7 @@
     <dependency>
     	<groupId>org.jboss.shrinkwrap.descriptors</groupId>
     	<artifactId>shrinkwrap-descriptors-impl</artifactId>
-    	<version>1.1.0-alpha-2</version>
-    	<type>jar</type>
-    	<scope>compile</scope>
+    	<version>${version.shrinkwrap.descriptor}</version>
     </dependency>
   </dependencies>
 </project>

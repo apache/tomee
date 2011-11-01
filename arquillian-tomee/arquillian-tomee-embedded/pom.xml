@@ -115,7 +115,7 @@
     <dependency>
     	<groupId>org.jboss.shrinkwrap.descriptors</groupId>
     	<artifactId>shrinkwrap-descriptors-impl</artifactId>
-    	<version>1.1.0-alpha-2</version>
+    	<version>${version.shrinkwrap.descriptor}</version>
     </dependency>
 
     <dependency>

@@ -25,8 +25,8 @@ import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
-import org.jboss.shrinkwrap.descriptor.spi.Node;
-import org.jboss.shrinkwrap.descriptor.spi.NodeProvider;
+import org.jboss.shrinkwrap.descriptor.spi.node.Node;
+import org.jboss.shrinkwrap.descriptor.spi.node.NodeDescriptor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -225,11 +225,10 @@ public class ServletListenerEjbLocalInjectionTest {
     }
 
     private static void addEnvEntry(WebAppDescriptor descriptor, String name, String type, String value) {
-        Node rootNode = ((NodeProvider) descriptor).getRootNode();
-        Node appNode = rootNode.get("/web-app").iterator().next();
+        Node appNode = ((NodeDescriptor) descriptor).getRootNode();
         appNode.createChild("/env-entry")
-                .createChild("env-entry-name").text(name)
-                .createChild("env-entry-type").text(type)
+                .createChild("env-entry-name").text(name).getParent()
+                .createChild("env-entry-type").text(type).getParent()
                 .createChild("env-entry-value").text(value)
 /*
                 .parent()
@@ -246,7 +245,7 @@ public class ServletListenerEjbLocalInjectionTest {
         final InputStream is = new URL("http://localhost:9080/" + TEST_NAME + "/" + TEST_NAME).openStream();
         final ByteArrayOutputStream os = new ByteArrayOutputStream();
 
-        int bytesRead = -1;
+        int bytesRead;
         byte[] buffer = new byte[8192];
         while ((bytesRead = is.read(buffer)) > -1) {
             os.write(buffer, 0, bytesRead);

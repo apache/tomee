@@ -301,16 +301,12 @@
     <dependency>
       <groupId>org.jboss.shrinkwrap.resolver</groupId>
       <artifactId>shrinkwrap-resolver-api-maven</artifactId>
-      <version>1.0.0-alpha-12</version>
-      <type>jar</type>
-      <scope>compile</scope>
+      <version>${version.shrinkwrap.resolver}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.shrinkwrap.resolver</groupId>
       <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
-      <version>1.0.0-alpha-12</version>
-      <type>jar</type>
-      <scope>compile</scope>
+      <version>${version.shrinkwrap.resolver}</version>
     </dependency>
   </dependencies>
 
