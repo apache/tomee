@@ -123,11 +123,9 @@ public class ServletEnvEntryInjectionTest {
 
         Node rootNode = ((NodeProvider) descriptor).getRootNode();
         Node appNode = rootNode.get("/web-app").iterator().next();
-        appNode.create("/env-entry")
-                .create("env-entry-name").text("name")
-                .parent()
-                .create("lookup-name").text("java:module/ModuleName")
-        ;
+        appNode.createChild("/env-entry")
+                .createChild("env-entry-name").text("name")
+                .createChild("lookup-name").text("java:module/ModuleName");
 
 
         WebArchive archive = ShrinkWrap.create(WebArchive.class, TEST_NAME + ".war")
@@ -143,12 +141,10 @@ public class ServletEnvEntryInjectionTest {
     private static void addEnvEntry(WebAppDescriptor descriptor, String name, String type, String value) {
         Node rootNode = ((NodeProvider) descriptor).getRootNode();
         Node appNode = rootNode.get("/web-app").iterator().next();
-        appNode.create("/env-entry")
-                .create("env-entry-name").text(name)
-                .parent()
-                .create("env-entry-type").text(type)
-                .parent()
-                .create("env-entry-value").text(value)
+        appNode.createChild("/env-entry")
+                .createChild("env-entry-name").text(name)
+                .createChild("env-entry-type").text(type)
+                .createChild("env-entry-value").text(value)
         ;
 
     }
