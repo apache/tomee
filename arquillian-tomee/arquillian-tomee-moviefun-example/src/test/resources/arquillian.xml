@@ -23,8 +23,10 @@
        <container qualifier="tomee" default="true">
            <configuration>
            	   <property name="dir">/tmp/arquillian-apache-tomee</property>
-               <property name="httpPort">8080</property>
+               <property name="httpPort">9080</property>
                <property name="stopPort">9005</property>
+               <property name="tomcatVersion"></property>
+               <property name="openejbVersion">1.0.0-beta-2-SNAPSHOT</property>
            </configuration>
        </container>
        

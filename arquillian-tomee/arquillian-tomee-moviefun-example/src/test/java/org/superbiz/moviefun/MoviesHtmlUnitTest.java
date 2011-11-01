@@ -1,3 +1,19 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.superbiz.moviefun;
 
 import static org.junit.Assert.assertTrue;
@@ -52,6 +68,7 @@ public class MoviesHtmlUnitTest {
         }
 
         FileUtils.copyDirectory(new File("target/classes"), new File(file, "WEB-INF/classes"));
+	FileUtils.copyDirectory(new File("target/test-libs"), new File(file, "WEB-INF/lib"));
         FileUtils.copyDirectory(new File("src/main/webapp"), file);
 
         return file;
@@ -60,7 +77,7 @@ public class MoviesHtmlUnitTest {
 	@Test
     public void testShouldMakeSureWebappIsWorking() throws Exception {
         WebClient webClient = new WebClient();
-        HtmlPage page = webClient.getPage("http://localhost:9999/moviefun/setup.jsp");
+        HtmlPage page = webClient.getPage("http://localhost:9999/moviefun/setup");
 
         assertMoviesPresent(page);
 

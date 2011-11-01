@@ -200,7 +200,7 @@
     	<artifactId>tomee-embedded</artifactId>
     	<version>1.0.0-beta-2-SNAPSHOT</version>
     	<type>jar</type>
-      <classifier>uber</classifier>
+      <!--<classifier>uber</classifier>-->
     	<scope>test</scope>
     </dependency>
     <dependency>
