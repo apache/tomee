@@ -74,8 +74,12 @@ public class TomEEWebappLoader extends WebappLoader {
         }
 
         private static void add(Collection<URL> urls, Enumeration<URL> enumUrls) {
-            while (enumUrls.hasMoreElements()) {
-                urls.add(enumUrls.nextElement());
+            try {
+                while (enumUrls.hasMoreElements()) {
+                    urls.add(enumUrls.nextElement());
+                }
+            } catch (IllegalStateException ese) {
+                // ignored: if jars are already closed...shutdown for instance
             }
         }
     }

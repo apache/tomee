@@ -34,7 +34,7 @@ public class SimpleMavenBuilderImpl extends MavenBuilderImpl {
 		List<Dependency> dependencies = MavenConverter.asDependencies(super.getDependencies());
 		for (Dependency dependency : dependencies) {
 			try {
-				Artifact artifact = new MavenCache().getArtifact(dependency, altUrl);
+				Artifact artifact = new MavenCache().getArtifact(dependency.getArtifact(), altUrl);
 				files.add(artifact.getFile());
 			} catch (Exception e) {
 				throw new ResolutionException("Unable to resolve an artifact", e);

@@ -64,11 +64,6 @@ public abstract class TomEEContainer implements DeployableContainer<TomEEConfigu
             out.write(SHUTDOWN_COMMAND.getBytes());
 
             waitForShutdown(10);
-
-            File dir = new File(configuration.getDir());
-            if (dir.exists()) {
-                FileUtils.deleteOnExit(dir); // if we can avoid to delete it between each test it is better
-            }
         } catch (Exception e) {
             throw new LifecycleException("Unable to stop TomEE", e);
         }
@@ -103,7 +98,7 @@ public abstract class TomEEContainer implements DeployableContainer<TomEEConfigu
             File file;
             int i = 0;
             do { // be sure we don't override something existing
-                file = new File(tmpDir + File.separator + i + File.separator + archive.getName());
+                file = new File(tmpDir + File.separator + i++ + File.separator + archive.getName());
             } while (file.exists());
             if (!file.getParentFile().mkdirs()) {
                 LOGGER.warning("can't create " + file.getParent());
