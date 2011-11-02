@@ -582,6 +582,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 } catch (Exception e) {
                     undeploy(standardContext, contextInfo);
                     logger.error("Unable to deploy collapsed ear in war " + standardContext.getPath() + ": Exception: " + e.getMessage(), e);
+                    return;
                 }
             }
         }

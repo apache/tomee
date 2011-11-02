@@ -16,12 +16,6 @@
  */
 package org.apache.openejb.arquillian.common;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
-
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainerException;
@@ -30,7 +24,6 @@ import org.jboss.shrinkwrap.resolver.impl.maven.MavenDependencyResolverSettings;
 import org.sonatype.aether.RepositorySystem;
 import org.sonatype.aether.RepositorySystemSession;
 import org.sonatype.aether.artifact.Artifact;
-import org.sonatype.aether.graph.Dependency;
 import org.sonatype.aether.installation.InstallRequest;
 import org.sonatype.aether.installation.InstallationException;
 import org.sonatype.aether.repository.LocalRepository;
@@ -38,6 +31,12 @@ import org.sonatype.aether.resolution.ArtifactRequest;
 import org.sonatype.aether.resolution.ArtifactResolutionException;
 import org.sonatype.aether.resolution.ArtifactResult;
 import org.sonatype.aether.util.artifact.DefaultArtifact;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
 
 /**
  * This class resolves artifacts in Maven. If an artifact (such as the Tomcat
@@ -78,14 +77,14 @@ public class MavenCache {
 	}
 
 	public Artifact getArtifact(String coords, String altUrl) {
-		return getArtifact(getDependency(coords), altUrl);
+		return getArtifact(getArtifact(coords), altUrl);
 	}
 
-	public Artifact getArtifact(Dependency dependency, String altUrl) {
+	public Artifact getArtifact(Artifact art, String altUrl) {
 		Artifact artifact = null;
 		
 		try {
-			artifact = resolve(dependency);
+			artifact = resolve(art);
 		} catch (Exception e) {
 			// so lets try and download and install it instead
 			try {
@@ -93,10 +92,10 @@ public class MavenCache {
 					File file = download(altUrl);
 					
 					InstallRequest request = new InstallRequest();
-					artifact = dependency.getArtifact().setFile(file);
+					artifact = art.setFile(file);
 					request.addArtifact(artifact);
 					system.install(session, request);
-					artifact = resolve(dependency);
+					artifact = resolve(art);
 				}
 			} catch (InstallationException e1) {
 				e1.printStackTrace();
@@ -110,15 +109,14 @@ public class MavenCache {
 		return artifact;
 	}
 
-	public Dependency getDependency(String coords) {
-		return new Dependency(new DefaultArtifact(coords), "");
+	public Artifact getArtifact(String coords) {
+		return new DefaultArtifact(coords);
 	}
 
-	public Artifact resolve(Dependency dependency) throws ArtifactResolutionException {
-		ArtifactRequest artifactRequest = new ArtifactRequest(dependency.getArtifact(), settings.getRemoteRepositories(), null);
+	public Artifact resolve(Artifact artifact) throws ArtifactResolutionException {
+        ArtifactRequest artifactRequest = new ArtifactRequest(artifact, settings.getRemoteRepositories(), null);
 		ArtifactResult artifactResult = system.resolveArtifact(session, artifactRequest);
-		Artifact artifact = artifactResult.getArtifact();
-		return artifact;
+		return artifactResult.getArtifact();
 	}
 	
 	public File download(String source) throws DownloadException {
@@ -163,7 +161,8 @@ public class MavenCache {
 	}
 
 	public static void main(String[] args) {
-		File file = new MavenCache().getArtifact("org.apache.openejb:tomcat:zip:6.0.33", "http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.21/bin/apache-tomcat-7.0.21.zip").getFile();
+		// File file = new MavenCache().getArtifact("org.apache.openejb:tomcat:zip:6.0.33", "http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.21/bin/apache-tomcat-7.0.21.zip").getFile();
+		File file = new MavenCache().getArtifact("org.apache.openejb:apache-tomee:zip:plus:1.0.0-beta-2-SNAPSHOT", "http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.21/bin/apache-tomcat-7.0.21.zip").getFile();
 		System.out.println(file.getAbsolutePath());
 	}
 }
