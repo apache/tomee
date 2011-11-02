@@ -1,5 +1,6 @@
 package org.apache.tomee.embedded;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.util.IOUtils;
 import org.junit.Test;
@@ -40,8 +41,10 @@ public class EmbeddedTomEEContainerTest {
             assertEquals("true", IOUtils.readProperties(url).getProperty("ok"));
             container.close();
         } finally {
-            if (!war.delete()) {
-                war.deleteOnExit();
+            try {
+                FileUtils.forceDelete(war);
+            } catch (IOException e) {
+                FileUtils.deleteQuietly(war);
             }
         }
     }
