@@ -180,6 +180,7 @@
                 <replace file="${openejb.home}/conf/server.xml" token="8443" value="${tomee.ssl.port}" />
                 <replace file="${openejb.home}/conf/server.xml" token="8005" value="${tomee.shutdown.port}" />
                 <replace file="${openejb.home}/conf/server.xml" token="8009" value="${tomee.ajp.port}" />
+                <copy file="src/main/conf/logging.properties" tofile="${openejb.home}/conf/logging.properties" overwrite="true" />
               </target>
             </configuration>
           </execution>
@@ -201,13 +202,13 @@
             <org.jboss.testharness.runIntegrationTests>true</org.jboss.testharness.runIntegrationTests>
             <org.jboss.testharness.container.forceRestart>true</org.jboss.testharness.container.forceRestart>
             <org.jboss.testharness.libraryDirectory>${project.build.directory}/dependency/lib</org.jboss.testharness.libraryDirectory>
-            <org.jboss.testharness.host>localhost:${tomee.http.port}</org.jboss.testharness.host>
+            <org.jboss.testharness.host>127.0.0.1:${tomee.http.port}</org.jboss.testharness.host>
             <!--<org.jboss.testharness.outputDirectory>target</org.jboss.testharness.outputDirectory>-->
             <deleteArtifacts>true</deleteArtifacts>
 
             <!--<maven.failsafe.debug>true</maven.failsafe.debug>-->
             <!--<openejb.server.debug>true</openejb.server.debug>-->
-            <java.naming.provider.url>http://localhost:${tomee.http.port}/openejb/ejb</java.naming.provider.url>
+            <java.naming.provider.url>http://127.0.0.1:${tomee.http.port}/openejb/ejb</java.naming.provider.url>
             <connect.tries>90</connect.tries>
             <server.http.port>${tomee.http.port}</server.http.port>
             <server.shutdown.port>${tomee.shutdown.port}</server.shutdown.port>
