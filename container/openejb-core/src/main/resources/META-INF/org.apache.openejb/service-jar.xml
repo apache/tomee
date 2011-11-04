@@ -93,6 +93,10 @@
     # Usable time units: nanoseconds, microsecons, milliseconds,
     # seconds, minutes, hours, days.  Or any combination such as
     # "1 hour and 27 minutes and 10 seconds"
+    #
+    # Any usage of the `javax.ejb.AccessTimeout` annotation will
+    # override this setting for the bean or method where the
+    # annotation is used.
 
     AccessTimeout = 30 seconds
 
@@ -107,20 +111,20 @@
     # Specifies the minimum number of bean instances that should be in
     # the pool for each bean.  Pools are prefilled to the minimum on
     # startup.  Note this will create start order dependencies between
-    # other beans that also eagerly start, such as other @Stateless
-    # beans with a minimum or @Singleton beans using @Startup.  The
+    # other beans that also eagerly start, such as other `@Stateless`
+    # beans with a minimum or `@Singleton` beans using `@Startup`.  The
     # @DependsOn annotation can be used to appropriately influence
     # start order.
     #
     # The minimum pool size is rigidly maintained.  Instances in the
-    # minimum side of the pool are not eligible for IdleTimeout or
-    # GarbageCollection, but are subject to MaxAge and flushing.
+    # minimum side of the pool are not eligible for `IdleTimeout` or
+    # `GarbageCollection`, but are subject to `MaxAge` and flushing.
     #
     # If the pool is flushed it is immediately refilled to the minimum
-    # size with MaxAgeOffset applied.  If an instance from the minimum
-    # side of the pool reaches its MaxAge, it is also immediately
+    # size with `MaxAgeOffset` applied.  If an instance from the minimum
+    # side of the pool reaches its `MaxAge`, it is also immediately
     # replaced.  Replacement is done in a background queue using the
-    # number of threads specified by CallbackThreads.
+    # number of threads specified by `CallbackThreads`.
     
     MinSize = 0
 
@@ -130,14 +134,14 @@
     #
     # With strict pooling, requests will have to wait for instances to
     # become available. The pool size will never grow beyond the the
-    # set MaxSize value.  The maximum amount of time a request should
-    # wait is specified via the AccessTimeout setting.
+    # set `MaxSize` value.  The maximum amount of time a request should
+    # wait is specified via the `AccessTimeout` setting.
     #
     # Without strict pooling, the container will create temporary
     # instances to meet demand. The instances will last for just one
     # method invocation and then are removed.
     #
-    # Setting StrictPooling to false and MaxSize to 0 will result in
+    # Setting `StrictPooling` to `false` and `MaxSize` to `0` will result in
     # no pooling. Instead instances will be created on demand and live
     # for exactly one method call before being removed.
 
@@ -151,27 +155,27 @@
     #
     # Usable time units: nanoseconds, microsecons, milliseconds,
     # seconds, minutes, hours, days.  Or any combination such as
-    # "1 hour and 27 minutes and 10 seconds"
+    # `1 hour and 27 minutes and 10 seconds`
 
     MaxAge = 0 hours
 
-    # When ReplaceAged is enabled, any instances in the pool that
-    # expire due to reaching their MaxAge will be replaced immediately
+    # When `ReplaceAged` is enabled, any instances in the pool that
+    # expire due to reaching their `MaxAge` will be replaced immediately
     # so that the pool will remain at its current size.  Replacement
     # is done in a background queue so that incoming threads will not
     # have to wait for instance creation.
     #
     # The aim of his option is to prevent user requests from paying
-    # the instance creation cost as MaxAge is enforced, potentially
+    # the instance creation cost as `MaxAge` is enforced, potentially
     # while under heavy load at peak hours.
     #
     # Instances from the minimum side of the pool are always replaced
-    # when they reach their MaxAge, this setting dictates the
+    # when they reach their `MaxAge`, this setting dictates the
     # treatment of non-minimum instances.
 
     ReplaceAged = true
 
-    # When ReplaceFlushed is enabled, any instances in the pool that
+    # When `ReplaceFlushed` is enabled, any instances in the pool that
     # are flushed will be replaced immediately so that the pool will
     # remain at its current size.  Replacement is done in a background
     # queue so that incoming threads will not have to wait for
@@ -185,27 +189,27 @@
     # when they are flushed, this setting dictates the treatment of
     # non-minimum instances.
     #
-    # A bean may flush its pool by casting the SessionContext to
-    # Flushable and calling flush().  See SweepInterval for details on
+    # A bean may flush its pool by casting the `SessionContext` to
+    # `Flushable` and calling `flush()`.  See `SweepInterval` for details on
     # how flush is performed.
     #
-    #   import javax.annotation.Resource;
-    #   import javax.ejb.SessionContext;
-    #   import javax.ejb.Stateless;
-    #   import java.io.Flushable;
-    #   import java.io.IOException;
+    #     import javax.annotation.Resource;
+    #     import javax.ejb.SessionContext;
+    #     import javax.ejb.Stateless;
+    #     import java.io.Flushable;
+    #     import java.io.IOException;
     #
-    #   @Stateless
-    #   public class MyBean {
+    #     @Stateless
+    #     public class MyBean {
     #
-    #       @Resource
-    #       private SessionContext sessionContext;
+    #         @Resource
+    #         private SessionContext sessionContext;
     #
-    #       public void flush() throws IOException {
+    #         public void flush() throws IOException {
     #
-    #           ((Flushable) sessionContext).flush();
-    #       }
-    #   }
+    #             ((Flushable) sessionContext).flush();
+    #         }
+    #     }
 
     ReplaceFlushed = false
 
@@ -215,22 +219,22 @@
     # When the container first starts and the pool is filled to the
     # minimum size, all those "minimum" instances will have the same
     # creation time and therefore all expire at the same time dictated
-    # by the MaxAge setting.  To protect against this sudden drop
+    # by the `MaxAge` setting.  To protect against this sudden drop
     # scenario and provide a more gradual expiration from the start
     # the container will spread out the age of the instances that fill
     # the pool to the minimum using an offset.
     #
-    # The MaxAgeOffset is not the final value of the offset, but
+    # The `MaxAgeOffset` is not the final value of the offset, but
     # rather it is used in creating the offset and allows the
     # spreading to push the initial ages into the future or into the
     # past.  The pool is filled at startup as follows:
     #
-    #  for (int i = 0; i &lt; poolMin; i++) {
-    #    long ageOffset = (maxAge / poolMin * i * maxAgeOffset) % maxAge;
-    #    pool.add(new Bean(), ageOffset));
-    #  }
+    #     for (int i = 0; i &lt; poolMin; i++) {
+    #         long ageOffset = (maxAge / poolMin * i * maxAgeOffset) % maxAge;
+    #         pool.add(new Bean(), ageOffset));
+    #     }
     #
-    # The default MaxAgeOffset is -1 which causes the initial
+    # The default `MaxAgeOffset` is -1 which causes the initial
     # instances in the pool to live a bit longer before expiring.  As
     # a concrete example, let's say the MinSize is 4 and the MaxAge is
     # 100 years.  The generated offsets for the four instances created
@@ -240,12 +244,12 @@
     # of 125 years.  The third would live 150 years.  The fourth 175
     # years.
     #
-    # A MaxAgeOffset of 1 would cause instances to be "born" older
-    # and therefore die sooner.  Using the same example MinSize of 4
-    # and MaxAge of 100 years, the life spans of these initial four
+    # A `MaxAgeOffset` of 1 would cause instances to be "born" older
+    # and therefore die sooner.  Using the same example `MinSize` of 4
+    # and `MaxAge` of `100 years`, the life spans of these initial four
     # instances would be 100, 75, 50, and 25 years respectively.
     #
-    # A MaxAgeOffset of 0 will cause no "spreading" of the age of the
+    # A `MaxAgeOffset` of 0 will cause no "spreading" of the age of the
     # first instances used to fill the pool to the minimum and these
     # instances will of course reach their MaxAge at the same time.
     # It is possible to set to decimal values such as -0.5, 0.5, -1.2,
@@ -266,58 +270,58 @@
     # Allows Garbage Collection to be used as a mechanism for shrinking
     # the pool.  When set to true all instances in the pool, excluding
     # the minimum, are eligible for garbage collection by the virtual
-    # machine as per the rules of java.lang.ref.SoftReference and can be
+    # machine as per the rules of `java.lang.ref.SoftReference` and can be
     # claimed by the JVM to free memory.  Instances garbage collected
-    # will have their @PreDestroy methods called during finalization.
+    # will have their `@PreDestroy` methods called during finalization.
     #
-    # In the OpenJDK VM the -XX:SoftRefLRUPolicyMSPerMB flag can adjust
+    # In the OpenJDK VM the `-XX:SoftRefLRUPolicyMSPerMB` flag can adjust
     # how aggressively SoftReferences are collected.  The default
     # OpenJDK setting is 1000, resulting in inactive pooled instances
     # living one second of lifetime per free megabyte in the heap, which
     # is very aggressive.  The setting should be increased to get the
-    # most out of the GarbageCollection feature of the pool.  Much
+    # most out of the `GarbageCollection` feature of the pool.  Much
     # higher settings are safe.  Even a setting as high as 3600000 (1
     # hour per free MB in the heap) does not affect the ability for the
     # VM to garbage collect SoftReferences in the event that memory is
-    # needed to avoid an OutOfMemoryException.
+    # needed to avoid an `OutOfMemoryException`.
 
     GarbageCollection = false
 
     # The frequency in which the container will sweep the pool and
-    # evict expired instances.  Eviction is how the IdleTimeout,
-    # MaxAge, and pool "flush" functionality is enforced.  Higher
+    # evict expired instances.  Eviction is how the `IdleTimeout`,
+    # `MaxAge`, and pool "flush" functionality is enforced.  Higher
     # intervals are better.
     #
     # Instances in use are excluded from sweeping.  Should an instance
     # expire while in use it will be evicted immediately upon return
-    # to the pool.  Effectively MaxAge and flushes will be enforced as
+    # to the pool.  Effectively `MaxAge` and flushes will be enforced as
     # a part of normal activity or sweeping, while IdleTimeout is only
     # enforcable via sweeping.  This makes aggressive sweeping less
     # important for a pool under moderate load.
     #
     # Usable time units: nanoseconds, microsecons, milliseconds,
     # seconds, minutes, hours, days.  Or any combination such as
-    # "1 hour and 27 minutes and 10 seconds"
+    # `1 hour and 27 minutes and 10 seconds`
 
     SweepInterval = 5 minutes
 
     # When sweeping the pool for expired instances a thread pool is
-    # used to process calling @PreDestroy on expired instances as well
+    # used to process calling `@PreDestroy` on expired instances as well
     # as creating new instances as might be required to fill the pool
-    # to the minimum after a Flush or MaxAge expiration.  The
-    # CallbackThreads setting dictates the size of the thread pool and
+    # to the minimum after a Flush or `MaxAge` expiration.  The
+    # `CallbackThreads` setting dictates the size of the thread pool and
     # is shared by all beans deployed in the container.
 
     CallbackThreads = 5
 
     # PostConstruct methods are invoked on all instances in the pool
     # when the bean is undeployed and its pool is closed.  The
-    # CloseTimeout specifies the maximum time to wait for the pool to
-    # close and PostConstruct methods to be invoked.
+    # `CloseTimeout` specifies the maximum time to wait for the pool to
+    # close and `PostConstruct` methods to be invoked.
     #
     # Usable time units: nanoseconds, microsecons, milliseconds,
     # seconds, minutes, hours, days.  Or any combination such as
-    # "1 hour and 27 minutes and 10 seconds"
+    # `1 hour and 27 minutes and 10 seconds`
 
     CloseTimeout = 5 minutes
 
@@ -335,6 +339,20 @@
           types="SINGLETON"
           constructor="id, securityService"
           class-name="org.apache.openejb.core.singleton.SingletonContainer">
+
+    # Specifies the maximum time an invocation could wait for the
+    # `@Singleton` bean instance to become available before giving up.
+    #
+    # After the timeout is reached a `javax.ejb.ConcurrentAccessTimeoutException`
+    # will be thrown.
+    #
+    # Usable time units: nanoseconds, microsecons, milliseconds,
+    # seconds, minutes, hours, days.  Or any combination such as
+    # `1 hour and 27 minutes and 10 seconds`
+    #
+    # Any usage of the `javax.ejb.AccessTimeout` annotation will
+    # override this setting for the bean or method where the
+    # annotation is used.
 
     AccessTimeout = 30 seconds
     
@@ -354,14 +372,18 @@
           class-name="org.apache.openejb.core.stateful.StatefulContainerFactory">
 
     # Specifies the maximum time an invocation could wait for the
-    # stateful bean instance to become available before giving up.
+    # `@Stateful` bean instance to become available before giving up.
     #
-    # After the timeout is reached a javax.ejb.ConcurrentAccessTimeoutException
+    # After the timeout is reached a `javax.ejb.ConcurrentAccessTimeoutException`
     # will be thrown.
     #
     # Usable time units: nanoseconds, microsecons, milliseconds,
     # seconds, minutes, hours, days.  Or any combination such as
     # "1 hour and 27 minutes and 10 seconds"
+    #
+    # Any usage of the `javax.ejb.AccessTimeout` annotation will
+    # override this setting for the bean or method where the
+    # annotation is used.
 
     AccessTimeout = 30 seconds
 
@@ -376,22 +398,27 @@
     # The passivator is responsible for writing beans to disk
     # at passivation time. Different passivators can be used
     # by setting this property to the fully qualified class name
-    # of the PassivationStrategy implementation. The passivator
+    # of the `PassivationStrategy` implementation. The passivator
     # is not responsible for invoking any callbacks or other
     # processing, its only responsibly is to write the bean state
     # to disk.
     #
     # Known implementations:
-    # org.apache.openejb.core.stateful.RAFPassivater
-    # org.apache.openejb.core.stateful.SimplePassivater
+    #
+    # - org.apache.openejb.core.stateful.RAFPassivater
+    # - org.apache.openejb.core.stateful.SimplePassivater
 
     Passivator org.apache.openejb.core.stateful.SimplePassivater
 
-    # Specifies the time a bean can be idle before it is removed by the container. 
+    # Specifies the time a bean can be idle before it is removed by the container.
+    #
     # This value is measured in minutes. A value of 5 would
     # result in a time-out of 5 minutes between invocations.
     # A value of -1 would mean no timeout.
     # A value of 0 would mean a bean can be immediately removed by the container.
+    #
+    # Any usage of the `javax.ejb.StatefulTimeout` annotation will
+    # override this setting for the bean where the annotation is used.
 
     TimeOut 20
     
@@ -535,11 +562,12 @@
     # or user managed.  If set to 'true' it will automatically be enrolled
     # in any ongoing transactions.  Calling begin/commit/rollback or setAutoCommit
     # on the datasource or connection will not be allowed.  If you need to perform
-    # these functions yourself, set JtaManaged to 'false'
+    # these functions yourself, set `JtaManaged` to `false`
     #
     # In terms of JPA persistence.xml:
-    # "JtaManaged=true" can be used as a 'jta-data-source'
-    # "JtaManaged=false" can be used as a 'non-jta-data-source'
+    #
+    # - `JtaManaged=true` can be used as a 'jta-data-source'
+    # - `JtaManaged=false` can be used as a 'non-jta-data-source'
 
     JtaManaged = true
 
@@ -584,13 +612,14 @@
 
 
     # The default TransactionIsolation state of new connections
-    # If not set then the setTransactionIsolation method will not
+    # If not set then the `setTransactionIsolation` method will not
     # be called. The allowed values for this property are:
-    #     NONE
-    #     READ_COMMITTED
-    #     READ_UNCOMMITTED
-    #     REPEATABLE_READ
-    #     SERIALIZABLE
+    #
+    # - `NONE`
+    # - `READ_COMMITTED`
+    # - `READ_UNCOMMITTED`
+    # - `REPEATABLE_READ`
+    # - `SERIALIZABLE`
     #
     # Note: Most JDBC drivers do not support all isolation levels
 
@@ -683,10 +712,9 @@
     # If true, a statement pool is created for each Connection and
     # PreparedStatements created by one of the following methods are
     # pooled:
-    #    public PreparedStatement prepareStatement(String sql);
-    #    public PreparedStatement prepareStatement(String sql,
-    #            int resultSetType,
-    #            int resultSetConcurrency)
+    #
+    #     public PreparedStatement prepareStatement(String sql);
+    #     public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency)
 
     PoolPreparedStatements false
 
@@ -702,6 +730,7 @@
 
     # If true the raw physical connection to the database can be
     # accessed using the following construct:
+    #
     #     Connection conn = ds.getConnection();
     #     Connection rawConn = ((DelegatingConnection) conn).getInnermostDelegate();
     #     ...
@@ -710,9 +739,9 @@
     # Default is false, because misbehaving programs can do harmfull
     # things to the raw connection shuch as closing the raw
     # connection or continuing to use the raw connection after it
-    # has been assigned to another logical connection.  Be carefull
+    # has been assigned to another logical connection.  Be careful
     # and only use when you need direct access to driver specific
-    # extentions.
+    # extensions.
     #
     # NOTE: Do NOT close the underlying connection, only the
     # original logical connection wrapper.
