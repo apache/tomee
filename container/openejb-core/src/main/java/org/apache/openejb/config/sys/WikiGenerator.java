@@ -16,13 +16,16 @@
  */
 package org.apache.openejb.config.sys;
 
-import java.io.File;
-import java.io.PrintWriter;
-import java.util.Map;
-import java.util.ArrayList;
-
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.util.SuperProperties;
+
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class WikiGenerator {
 
@@ -32,8 +35,9 @@ public class WikiGenerator {
         System.out.println();
         System.out.println();
         System.out.println();
-        
-        new WikiGenerator("org.apache.openejb", new PrintWriter(new File("/Users/dblevins/work/all/website/content/containers-and-resources.mdtext"))).generate();
+
+        new WikiGenerator("org.apache.openejb", new PrintWriter(System.out)).generate();
+//        new WikiGenerator("org.apache.openejb", new PrintWriter(new File("/Users/dblevins/work/all/website/content/containers-and-resources.mdtext"))).generate();
 
         System.out.println();
         System.out.println();
@@ -54,22 +58,38 @@ public class WikiGenerator {
     public void generate() throws Exception {
 
         // generate containers
-        out.println("# Containers");
-        for (ServiceProvider provider : servicesJar.getServiceProvider()) {
+        List<ServiceProvider> serviceProvider = servicesJar.getServiceProvider();
+        Collections.sort(serviceProvider, new Comparator<ServiceProvider>() {
+            @Override
+            public int compare(ServiceProvider o1, ServiceProvider o2) {
+                return grade(o2) - grade(o1);
+            }
+
+            private int grade(ServiceProvider i) {
+                String name = i.getClassName();
+                if (name.contains("stateless")) return 10;
+                if (name.contains("stateful")) return 9;
+                if (name.contains("singleton")) return 8;
+                if (name.contains("mdb")) return 7;
+                if (name.contains("managed")) return 6;
+                return 0;
+            }
+        });
+
+        for (ServiceProvider provider : serviceProvider) {
             if ("Container".equals(provider.getService())) {
-                generateService(provider, "container");
+                generateService(provider, "Container");
             }
         }
         out.println();
 
-        out.println("# Resources");
         ArrayList<String> seen = new ArrayList<String>();
         for (ServiceProvider provider : servicesJar.getServiceProvider()) {
             if ("Resource".equals(provider.getService())) {
 
                 if (seen.containsAll(provider.getTypes())) continue;
 
-                generateService(provider, "resource");
+                generateService(provider, "Resource");
 
                 seen.addAll(provider.getTypes());
             }
@@ -100,7 +120,7 @@ public class WikiGenerator {
 
     private void generateService(ServiceProvider provider, String serviceType) {
         String type = provider.getTypes().get(0);
-        out.println("## " + type);
+        out.println("# " + type + " <small>" + serviceType + " </small>");
         out.println();
         out.println("Declarable in openejb.xml via");
         out.println();
@@ -112,34 +132,48 @@ public class WikiGenerator {
         out.println("    Foo = new://" + provider.getService() + "?type=" + type + "");
         out.println();
         SuperProperties properties = (SuperProperties) provider.getProperties();
-        if (properties.size() > 0) {
-            out.println("Supports the following properties");
-            out.println();
-            out.println("<table>");
-            header("Property Name", "Description");
 
+        Map<String, String> defaults = new LinkedHashMap<String, String>();
+
+        if (properties.size() > 0) {
+            out.println("## Properties");
+            out.println();
             for (Object key : properties.keySet()) {
                 if (key instanceof String) {
-                    String name = (String) key;
+                    final String name = (String) key;
 
-                    Map<String, String> attributes = properties.getAttributes(name);
-                    if (!attributes.containsKey("hidden")) {
-                        String value = properties.getProperty(name);
-                        String comment = properties.getComment(name);
+                    final Map<String, String> attributes = properties.getAttributes(name);
 
-                        comment = scrubText(comment);
+                    if (attributes.containsKey("hidden")) continue;
 
-                        if (value != null && value.length() > 0) {
-                            comment += "\n\nDefault value is <code>" + scrubText(value) + "</code>";
-                        }
+                    out.println("### " + key);
+                    out.println();
 
-                        if (comment.length() == 0) comment = "No description.";
+                    final String value = properties.getProperty(name);
 
-                        row(name, comment);
-                    }
+                    String comment = properties.getComment(name);
+
+                    comment = scrubText(comment);
+
+                    defaults.put(name, value + "");
+
+                    if (comment.length() == 0) comment = "No description.";
+
+                    out.println(comment);
+                    out.println();
                 }
             }
-            out.println("</table>");
+
+            out.println("## Default declaration");
+
+            out.println("    <" + provider.getService() + " id=\"" + provider.getId() + "\" type=\"" + type + "\">");
+            for (Map.Entry<String, String> entry : defaults.entrySet()) {
+                out.print("        ");
+                out.print(entry.getKey());
+                out.print(" = ");
+                out.println(entry.getValue());
+            }
+            out.println("    </" + provider.getService() + ">");
         } else {
             out.println("No properties.");
         }
