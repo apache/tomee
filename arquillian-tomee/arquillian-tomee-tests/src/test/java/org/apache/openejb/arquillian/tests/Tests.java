@@ -45,7 +45,7 @@ public class Tests {
 
         String output = new String(os.toByteArray(), "UTF-8");
         assertNotNull("Response shouldn't be null", output);
-        assertTrue("Output should contain: " + expectedOutput, output.contains(expectedOutput));
+        assertTrue("Output should contain: " + expectedOutput + " and it is not in '" + output + "'", output.contains(expectedOutput));
     }
 
 }
