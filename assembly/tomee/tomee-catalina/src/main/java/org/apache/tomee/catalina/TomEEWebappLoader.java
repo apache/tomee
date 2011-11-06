@@ -47,7 +47,7 @@ public class TomEEWebappLoader extends WebappLoader {
 
         public TomEEClassLoader(final ClassLoader appCl, final ClassLoader webappCl) {
             super(webappCl); // in fact this classloader = webappclassloader since we add nothing to this
-            app = appCl;
+            app = appCl; // only used to manage resources since webapp.getParent() should be app
             webapp = webappCl;
         }
 
@@ -61,14 +61,13 @@ public class TomEEWebappLoader extends WebappLoader {
         @Override public Enumeration<URL> getResources(final String name) throws IOException {
             Set<URL> urls = new HashSet<URL>();
 
-            // /!\ order is important here
             if (webapp instanceof WebappClassLoader && ((WebappClassLoader) webapp).isStarted() || webapp.getParent() == null) { // we set a parent so if it is null webapp was detroyed
                 Enumeration<URL> webappClassLoaderResources = webapp.getResources(name);
                 add(urls, webappClassLoaderResources);
+            } else { // app is the parent of webapp so if webapp is ok no need to do it
+                Enumeration<URL> appClassLoaderResources = app.getResources(name);
+                add(urls, appClassLoaderResources);
             }
-
-            Enumeration<URL> appClassLoaderResources = app.getResources(name);
-            add(urls, appClassLoaderResources);
 
             return new ArrayEnumeration(urls);
         }

@@ -16,19 +16,18 @@
  */
 package org.apache.openejb.core;
 
+import org.apache.openejb.loader.Options;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.xbean.asm.ClassReader;
+import org.apache.xbean.asm.Opcodes;
+import org.apache.xbean.asm.commons.EmptyVisitor;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Set;
-
-import org.apache.xbean.asm.ClassReader;
-import org.apache.xbean.asm.Opcodes;
-import org.apache.xbean.asm.commons.EmptyVisitor;
-import org.apache.openejb.util.OptionsLog;
-import org.apache.openejb.loader.Options;
-import org.apache.openejb.loader.SystemInstance;
 
 /**
  * ClassLoader implementation that allows classes to be temporarily
@@ -45,6 +44,7 @@ import org.apache.openejb.loader.SystemInstance;
  */
 // Note: this class is a fork from OpenJPA
 public class TempClassLoader extends URLClassLoader {
+
     private Set<Skip> skip;
 
     public TempClassLoader(ClassLoader parent) {
@@ -138,12 +138,22 @@ public class TempClassLoader extends URLClassLoader {
         } catch (SecurityException e) {
             // possible prohibited package: defer to the parent
             return super.loadClass(name, resolve);
+        } catch (LinkageError le) {
+            // fallback
+            return super.loadClass(name, resolve);
         }
     }
 
+    // TODO: for jsf it can be useful to include commons-logging and openwebbeans...
     private boolean skip(String name) {
+        if (skip.equals(Skip.ALL)) {
+            return true;
+        }
+
         if (name.startsWith("javax.faces.")) return false;
         if (name.startsWith("javax.servlet.jsp.jstl")) return false;
+        if (name.equals("org.apache.commons.logging.impl.LogFactoryImpl")) return false;
+        if (name.startsWith("org.apache.webbeans.jsf")) return false;
 
         if (name.startsWith("java.")) return true;
         if (name.startsWith("javax.")) return true;
@@ -158,12 +168,13 @@ public class TempClassLoader extends URLClassLoader {
         if (name.startsWith("javassist")) return true;
         if (name.startsWith("org.codehaus.swizzle")) return true;
         if (name.startsWith("org.w3c.dom")) return true;
-        if (name.startsWith("org.apache.webbeans.")) return true;
         if (name.startsWith("org.apache.geronimo.")) return true;
         if (name.startsWith("com.sun.org.apache.")) return true;
         if (name.startsWith("org.apache.coyote")) return true;
         if (name.startsWith("org.quartz")) return true;
         if (name.startsWith("serp.bytecode")) return true;
+        if (name.startsWith("org.apache.webbeans.")) return true;
+
 
 //        if (name.startsWith("org.apache.myfaces.")) return true;
 //        if (name.startsWith("org.apache.taglibs.")) return true;
@@ -180,7 +191,7 @@ public class TempClassLoader extends URLClassLoader {
     }
 
     public static enum Skip {
-        NONE, ANNOTATIONS, ENUMS
+        NONE, ANNOTATIONS, ENUMS, ALL
     }
 
     /**
