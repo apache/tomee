@@ -294,7 +294,7 @@ class AppInfoBuilder {
             clientInfo.localClients.addAll(clientModule.getLocalClients());
             clientInfo.remoteClients.addAll(clientModule.getRemoteClients());
             clientInfo.callbackHandler = applicationClient.getCallbackHandler();
-            clientInfo.moduleId = clientModule.getModuleId();
+            clientInfo.moduleId = getClientModuleId(clientModule);
             clientInfo.watchedResources.addAll(clientModule.getWatchedResources());
             clientInfo.validationInfo = ValidatorBuilder.getInfo(clientModule.getValidationConfig());
             clientInfo.uniqueId = clientModule.getUniqueId();
@@ -546,7 +546,7 @@ class AppInfoBuilder {
                 info.jarFiles.addAll(persistenceUnit.getJarFile());
                 info.classes.addAll(persistenceUnit.getClazz());
                 info.mappingFiles.addAll(persistenceUnit.getMappingFile());
-
+                
                 info.persistenceXMLSchemaVersion = persistence.getVersion();
                 info.sharedCacheMode = persistenceUnit.getSharedCacheMode().toString();
                 info.validationMode = persistenceUnit.getValidationMode().toString();
@@ -725,6 +725,17 @@ class AppInfoBuilder {
             }
         }
     }
+
+    private static String getClientModuleId(ClientModule clientModule) {
+        String jarLocation = clientModule.getJarLocation();
+        File file = new File(jarLocation);
+        String name = file.getName();
+        if (name.endsWith(".jar") || name.endsWith(".zip")) {
+            name = name.replaceFirst("....$", "");
+        }
+        return name;
+    }
+
 
     private List<PortInfo> configureWebservices(Webservices webservices) {
         List<PortInfo> portMap = new ArrayList<PortInfo>();
