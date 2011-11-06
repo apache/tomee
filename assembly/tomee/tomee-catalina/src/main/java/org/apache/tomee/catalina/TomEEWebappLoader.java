@@ -9,10 +9,10 @@ import org.apache.tomcat.util.ExceptionUtils;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 /**
  * @author rmannibucau
@@ -59,23 +59,23 @@ public class TomEEWebappLoader extends WebappLoader {
          * @throws IOException
          */
         @Override public Enumeration<URL> getResources(final String name) throws IOException {
-            Set<URL> urls = new HashSet<URL>();
+            List<URL> urls = new ArrayList<URL>();
 
             if (webapp instanceof WebappClassLoader && ((WebappClassLoader) webapp).isStarted() || webapp.getParent() == null) { // we set a parent so if it is null webapp was detroyed
-                Enumeration<URL> webappClassLoaderResources = webapp.getResources(name);
-                add(urls, webappClassLoaderResources);
-            } else { // app is the parent of webapp so if webapp is ok no need to do it
-                Enumeration<URL> appClassLoaderResources = app.getResources(name);
-                add(urls, appClassLoaderResources);
+                addIfNotExist(urls, app.getResources(name), true);
+                addIfNotExist(urls, webapp.getResources(name), false);
+                return new ArrayEnumeration(urls);
             }
-
-            return new ArrayEnumeration(urls);
+            return app.getResources(name);
         }
 
-        private static void add(Collection<URL> urls, Enumeration<URL> enumUrls) {
+        private static void addIfNotExist(Collection<URL> urls, Enumeration<URL> enumUrls, boolean force) {
             try {
                 while (enumUrls.hasMoreElements()) {
-                    urls.add(enumUrls.nextElement());
+                    URL url = enumUrls.nextElement();
+                    if (force || !urls.contains(url)) {
+                        urls.add(url);
+                    }
                 }
             } catch (IllegalStateException ese) {
                 // ignored: if jars are already closed...shutdown for instance
