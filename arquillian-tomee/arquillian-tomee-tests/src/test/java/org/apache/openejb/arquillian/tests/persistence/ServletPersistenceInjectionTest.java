@@ -74,7 +74,7 @@ public class ServletPersistenceInjectionTest {
                 .addAsManifestResource("persistence.xml", ArchivePaths.create("persistence.xml"))
                 .setWebXML(new StringAsset(descriptor.exportAsString()));
 
-        System.err.println(descriptor.exportAsString());
+
 
         return archive;
     }

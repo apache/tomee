@@ -69,7 +69,7 @@ public class StratocasterTest {
                 .addAsLibraries(new File("target/test-libs/junit.jar"))
                 .setWebXML(new StringAsset(descriptor.exportAsString()));
 
-        System.err.println(descriptor.exportAsString());
+
 
         return archive;
     }

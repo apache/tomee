@@ -57,7 +57,7 @@ public class ServletEjbRemoteTest {
                 .addClass(DefaultCompany.class)
                 .setWebXML(new StringAsset(descriptor.exportAsString()));
 
-        System.err.println(descriptor.exportAsString());
+
 
         return archive;
     }
