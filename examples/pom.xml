@@ -37,6 +37,7 @@
     <module>simple-stateless-with-descriptor</module>
     <module>simple-singleton</module>
     <module>simple-mdb</module>
+    <module>simple-mdb-and-cdi</module>
     <module>simple-mdb-with-descriptor</module>
     <module>simple-cmp2</module>
     <module>simple-webservice</module>
