@@ -219,7 +219,7 @@ public class ServletListenerEnvEntryInjectionTest {
                 .setWebXML(new StringAsset(descriptor.exportAsString()))
                 .addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
 
-        System.err.println(descriptor.exportAsString());
+
 
         return archive;
     }
