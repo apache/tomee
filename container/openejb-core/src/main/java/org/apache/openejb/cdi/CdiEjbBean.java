@@ -69,6 +69,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
         switch (beanType) {
         case SINGLETON:
             return SessionBeanType.SINGLETON;
+        case MESSAGE_DRIVEN: // OWB implementation test stateful or not so do we really care?
         case STATELESS:
             return SessionBeanType.STATELESS;
         case STATEFUL:

@@ -30,6 +30,10 @@ public enum BeanType {
         return this == STATEFUL || this == STATELESS || this == SINGLETON || this == MANAGED;
     }
 
+    public boolean isCdiCompatible(){
+        return isSession() || isMessageDriven();
+    }
+
     public boolean isMessageDriven() {
         return this == MESSAGE_DRIVEN;
     }
