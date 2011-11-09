@@ -886,7 +886,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
      * {@inheritDoc}
      */
     @Override
-    public void checkHost(StandardHost standardHost) {
+    public synchronized void checkHost(StandardHost standardHost) {
         if (standardHost.getAutoDeploy()) {
             // Undeploy any modified application
             for (Iterator<Map.Entry<String, DeployedApplication>> iterator = deployedApps.entrySet().iterator(); iterator.hasNext();) {
