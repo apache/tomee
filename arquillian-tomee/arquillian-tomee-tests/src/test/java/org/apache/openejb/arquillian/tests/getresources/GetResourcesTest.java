@@ -1,5 +1,6 @@
 package org.apache.openejb.arquillian.tests.getresources;
 
+import org.apache.ziplock.JarLocation;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -31,7 +32,7 @@ import static org.apache.openejb.arquillian.tests.Tests.assertOutput;
                 .addClass(GetResourcesHolder.class)
                 .addAsWebResource(Thread.currentThread().getContextClassLoader().getResource("test.getresources"), "/config/test.getresources")
                 .addAsWebResource(Thread.currentThread().getContextClassLoader().getResource("test.getresources"), "/config/test.getresources2")
-                .addAsLibraries(new File("target/test-libs/junit.jar"))
+                .addAsLibraries(JarLocation.jarLocation(Test.class))
                 .setWebXML(new StringAsset(
                       Descriptors.create(WebAppDescriptor.class)
                         .version("3.0").exportAsString()));
