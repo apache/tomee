@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.arquillian.tests;
 
+import org.apache.ziplock.JarLocation;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -24,6 +25,7 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
 import org.junit.Assert;
+import org.junit.Test;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -48,7 +50,7 @@ public abstract class TestSetup {
 
         WebArchive archive = ShrinkWrap.create(WebArchive.class, getTestContextName() + ".war")
                 .setWebXML(new StringAsset(descriptor.exportAsString()))
-                .addAsLibraries(new File("target/test-libs/junit.jar"))
+                .addAsLibraries(JarLocation.jarLocation(Test.class))
                 .addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
         
         if (archiveClasses != null) {

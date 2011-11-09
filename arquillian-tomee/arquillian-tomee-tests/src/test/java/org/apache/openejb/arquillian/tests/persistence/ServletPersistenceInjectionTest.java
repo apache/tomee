@@ -17,6 +17,7 @@
 package org.apache.openejb.arquillian.tests.persistence;
 
 import org.apache.openejb.arquillian.tests.Runner;
+import org.apache.ziplock.JarLocation;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ArchivePaths;
@@ -70,7 +71,7 @@ public class ServletPersistenceInjectionTest {
                 .addClass(PersistenceServlet.class)
                 .addClass(Address.class)
                 .addClass(Runner.class)
-                .addAsLibraries(new File("target/test-libs/junit.jar"))
+                .addAsLibraries(JarLocation.jarLocation(Test.class))
                 .addAsManifestResource("persistence.xml", ArchivePaths.create("persistence.xml"))
                 .setWebXML(new StringAsset(descriptor.exportAsString()));
 

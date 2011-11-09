@@ -19,6 +19,7 @@ package org.apache.openejb.arquillian.tests.ext.enventries;
 import org.apache.openejb.arquillian.tests.Tests;
 import org.apache.openejb.arquillian.tests.enventry.Code;
 import org.apache.openejb.arquillian.tests.enventry.PojoServlet;
+import org.apache.ziplock.JarLocation;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -66,7 +67,7 @@ public class StratocasterTest {
                 .addClass(Pickup.class)
                 .addClass(PickupEditor.class)
                 .addClass(Style.class)
-                .addAsLibraries(new File("target/test-libs/junit.jar"))
+                .addAsLibraries(JarLocation.jarLocation(Test.class))
                 .setWebXML(new StringAsset(descriptor.exportAsString()));
 
 
