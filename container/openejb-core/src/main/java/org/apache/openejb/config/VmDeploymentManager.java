@@ -103,6 +103,8 @@ public class VmDeploymentManager implements DeploymentManager {
     }
 
     private Deployer getDeployer() {
+    	String deployerJndi = System.getProperty("openejb.deployer.jndiname", "openejb/DeployerBusinessRemote");
+    	
         if (deployer == null) {
             try {
                 Properties p = new Properties();
@@ -110,7 +112,7 @@ public class VmDeploymentManager implements DeploymentManager {
                 p.put("java.naming.provider.url", openejbUri);
 
                 InitialContext ctx = new InitialContext(p);
-                deployer = (Deployer) ctx.lookup("openejb/DeployerBusinessRemote");
+                deployer = (Deployer) ctx.lookup(deployerJndi);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
