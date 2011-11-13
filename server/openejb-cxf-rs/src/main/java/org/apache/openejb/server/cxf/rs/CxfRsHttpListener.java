@@ -16,17 +16,6 @@
  */
 package org.apache.openejb.server.cxf.rs;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.naming.Context;
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.ws.rs.core.Application;
-import javax.xml.bind.Marshaller;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.lifecycle.ResourceProvider;
@@ -38,14 +27,41 @@ import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.Injection;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.httpd.HttpRequest;
 import org.apache.openejb.server.httpd.HttpResponse;
 import org.apache.openejb.server.rest.RsHttpListener;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+
+import javax.naming.Context;
+import javax.servlet.http.HttpServletRequestWrapper;
+import javax.ws.rs.core.Application;
+import javax.xml.bind.Marshaller;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
- * @author Romain Manni-Bucau
+ * System property:
+ * <ul>
+ *     <li>-Dopenejb.cxf.jax-rs.providers=&lt;qualified name&gt;:default</li>
+ * </ul>
+ * Note: default means jaxb and json
+ *
+ * @author rmannibucau
  */
 public class CxfRsHttpListener implements RsHttpListener {
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.CXF, CxfRsHttpListener.class);
+
+    public static final String OPENEJB_CXF_JAXRS_PROVIDERS_KEY = "openejb.cxf.jax-rs.providers";
+    public static final String DEFAULT_CXF_JAXRS_PROVIDERS_KEY = "default";
+
     private static final List<?> PROVIDERS = createProviderList();
 
     private HTTPTransportFactory transportFactory;
@@ -115,6 +131,8 @@ public class CxfRsHttpListener implements RsHttpListener {
     }
 
     private static List<?> createProviderList() {
+        String providersProperty = SystemInstance.get().getProperty(OPENEJB_CXF_JAXRS_PROVIDERS_KEY);
+
         JAXBElementProvider jaxb = new JAXBElementProvider();
         Map<String, Object> jaxbProperties = new HashMap<String, Object> ();
         jaxbProperties.put(Marshaller.JAXB_FRAGMENT, true);
@@ -122,6 +140,31 @@ public class CxfRsHttpListener implements RsHttpListener {
 
         JSONProvider json = new JSONProvider();
         json.setSerializeAsArray(true);
+
+        if (providersProperty != null && !providersProperty.trim().isEmpty()) {
+            String[] providers = providersProperty.split(",|;| ");
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            if (cl == null) {
+                cl = CxfRsHttpListener.class.getClassLoader();
+            }
+
+            List<Object> providerList = new ArrayList<Object>();
+            for (String provider : providers) {
+                if (DEFAULT_CXF_JAXRS_PROVIDERS_KEY.equals(provider)) {
+                    providerList.add(json);
+                    providerList.add(jaxb);
+                } else {
+                    try {
+                        Class<?> providerClass = cl.loadClass(provider);
+                        Object providerInstance = providerClass.newInstance();
+                        providerList.add(providerInstance);
+                    } catch (Exception e) {
+                        LOGGER.error("can't add jax-rs provider " + provider, e);
+                    }
+                }
+            }
+            return providerList;
+        }
 
         return Arrays.asList(jaxb, json);
     }
