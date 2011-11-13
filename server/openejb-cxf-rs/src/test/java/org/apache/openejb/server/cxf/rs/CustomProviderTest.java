@@ -35,6 +35,7 @@ public class CustomProviderTest {
         Properties properties = new Properties();
         properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
         properties.setProperty(CxfRsHttpListener.OPENEJB_CXF_JAXRS_PROVIDERS_KEY, ReverseProvider.class.getName());
+        properties.setProperty(CustomSpecificService.class.getName() + CxfRsHttpListener.OPENEJB_CXF_JAXRS_PROVIDERS_SUFFIX, ConstantProvider.class.getName());
         container = EJBContainer.createEJBContainer(properties);
     }
 
@@ -51,15 +52,29 @@ public class CustomProviderTest {
 
     @Test public void customProvider() {
         String response = WebClient.create("http://localhost:4204").accept("openejb/reverse")
-            .path("/custom/provider").get(String.class);
+            .path("/custom1/reverse").get(String.class);
         assertEquals("provider", response);
     }
 
+    @Test public void customSpecificProvider() {
+        String response = WebClient.create("http://localhost:4204").accept("openejb/constant")
+            .path("/custom2/constant").get(String.class);
+        assertEquals("it works!", response);
+    }
+
     @Singleton
-    @Path("/custom")
+    @Path("/custom1")
     public static class CustomService {
-        @GET @Path("/provider") @Produces("openejb/reverse") public String go() {
+        @GET @Path("/reverse") @Produces("openejb/reverse") public String go() {
             return "redivorp";
+        }
+    }
+
+    @Singleton
+    @Path("/custom2")
+    public static class CustomSpecificService {
+        @GET @Path("/constant") @Produces("openejb/constant") public String go() {
+            return "will be overriden";
         }
     }
 
@@ -91,6 +106,25 @@ public class CustomProviderTest {
         @Override
         public void writeTo(T t, Class<?> rawType, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException {
             entityStream.write(reverse((String) t).getBytes());
+        }
+    }
+
+    @Provider
+    @Produces("openejb/constant")
+    public static class ConstantProvider<T> implements MessageBodyWriter<T> {
+        @Override
+        public long getSize(T t, Class<?> rawType, Type genericType, Annotation[] annotations, MediaType mediaType) {
+            return -1;
+        }
+
+        @Override
+        public boolean isWriteable(Class<?> rawType, Type genericType, Annotation[] annotations, MediaType mediaType) {
+            return true;
+        }
+
+        @Override
+        public void writeTo(T t, Class<?> rawType, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException {
+            entityStream.write("it works!".getBytes());
         }
     }
 }

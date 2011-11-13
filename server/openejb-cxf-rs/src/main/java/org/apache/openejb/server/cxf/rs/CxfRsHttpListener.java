@@ -60,9 +60,10 @@ public class CxfRsHttpListener implements RsHttpListener {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.CXF, CxfRsHttpListener.class);
 
     public static final String OPENEJB_CXF_JAXRS_PROVIDERS_KEY = "openejb.cxf.jax-rs.providers";
+    public static final String OPENEJB_CXF_JAXRS_PROVIDERS_SUFFIX = ".providers";
     public static final String DEFAULT_CXF_JAXRS_PROVIDERS_KEY = "default";
 
-    private static final List<?> PROVIDERS = createProviderList();
+    private static final List<?> PROVIDERS = createProviderList("");
 
     private HTTPTransportFactory transportFactory;
     private AbstractHTTPDestination destination;
@@ -106,7 +107,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         factory.setDestinationFactory(transportFactory);
         factory.setBus(transportFactory.getBus());
         factory.setAddress(address);
-        factory.setProviders(PROVIDERS);
+        factory.setProviders(createProviderList(nameForProviders(clazz)));
         if (rp != null) {
             factory.setResourceProvider(rp);
         }
@@ -126,12 +127,29 @@ public class CxfRsHttpListener implements RsHttpListener {
         destination = (AbstractHTTPDestination) server.getDestination();
     }
 
+    private String nameForProviders(Class<?> clazz) {
+        if (clazz == null) {
+            return "default"; // whatever it is it will be overriden by default providers
+        }
+        return clazz.getName();
+    }
+
     public void undeploy() {
         server.stop();
     }
 
-    private static List<?> createProviderList() {
-        String providersProperty = SystemInstance.get().getProperty(OPENEJB_CXF_JAXRS_PROVIDERS_KEY);
+    private static List<?> createProviderList(String prefix) {
+        String key;
+        if (prefix == null || prefix.trim().isEmpty()) {
+            key = OPENEJB_CXF_JAXRS_PROVIDERS_KEY;
+        } else {
+            key = prefix + OPENEJB_CXF_JAXRS_PROVIDERS_SUFFIX;
+        }
+        String providersProperty = SystemInstance.get().getProperty(key);
+        // if no overriding
+        if (providersProperty == null || providersProperty.trim().isEmpty() && PROVIDERS != null) {
+            return PROVIDERS;
+        }
 
         JAXBElementProvider jaxb = new JAXBElementProvider();
         Map<String, Object> jaxbProperties = new HashMap<String, Object> ();
