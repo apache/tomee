@@ -29,5 +29,6 @@
 
   <modules>
     <module>webdeployer</module>
+    <module>openejb-logging</module>
   </modules>
 </project>
