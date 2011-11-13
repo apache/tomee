@@ -17,13 +17,13 @@
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
-    <artifactId>assembly</artifactId>
+    <artifactId>utils</artifactId>
     <groupId>org.apache.openejb</groupId>
     <version>4.0.0-beta-2-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-logging</artifactId>
-  <name>OpenEJB :: Assembly :: Logging</name>
+  <name>OpenEJB :: Utils :: Logging</name>
   <description>
     A simple jar to translate log format between libraries.
     It can be used for example to unify logs between tomcat (jul) and OpenEJB (log4j).

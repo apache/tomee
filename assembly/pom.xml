@@ -34,7 +34,6 @@
     <module>tomee</module>
     <module>openejb-standalone</module>
     <module>openejb-lite</module>
-    <module>openejb-logging</module>
     <!-- don't run this just yet, its in progress -->
     <!-- <module>itest-runner</module> -->
   </modules>
