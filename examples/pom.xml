@@ -92,6 +92,7 @@
     <module>dynamic-implementation</module>
     <module>cdi-alternative-and-stereotypes</module>
     <module>cdi-events</module>
+    <module>dynamic-proxy-to-access-mbea</module>
   </modules>
   <profiles>
     <profile>
