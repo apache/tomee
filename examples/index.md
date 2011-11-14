@@ -155,6 +155,7 @@
 
  - [dynamic-dao-implementation](dynamic-dao-implementation/README.html)
  - [dynamic-implementation](dynamic-implementation/README.html)
+ - [dynamic-proxy-to-access-mbean](dynamic-proxy-to-access-mbean/README.html)
 }
 
 
