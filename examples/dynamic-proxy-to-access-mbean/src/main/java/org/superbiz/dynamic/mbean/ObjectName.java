@@ -14,4 +14,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 public @interface ObjectName {
     String value();
+
+    // for remote usage only
+    String url() default "";
+    String user() default "";
+    String password() default "";
 }

@@ -22,7 +22,8 @@ public class DynamicMBeanClientTest {
     private static ObjectName objectName;
     private static EJBContainer container;
 
-    @EJB private DynamicMBeanClient client;
+    @EJB private DynamicMBeanClient localClient;
+    @EJB private DynamicRemoteMBeanClient remoteClient;
 
     @BeforeClass public static void start() {
         container = EJBContainer.createEJBContainer();
@@ -40,20 +41,36 @@ public class DynamicMBeanClientTest {
         }
     }
 
-    @Test public void get() throws Exception {
-        assertEquals(0, client.getCounter());
+    @Test public void localGet() throws Exception {
+        assertEquals(0, localClient.getCounter());
         ManagementFactory.getPlatformMBeanServer().setAttribute(objectName, new Attribute("Counter", 5));
-        assertEquals(5, client.getCounter());
+        assertEquals(5, localClient.getCounter());
     }
 
-    @Test public void set() throws Exception {
+    @Test public void localSet() throws Exception {
         assertEquals(0, ((Integer) ManagementFactory.getPlatformMBeanServer().getAttribute(objectName, "Counter")).intValue());
-        client.setCounter(8);
+        localClient.setCounter(8);
         assertEquals(8, ((Integer) ManagementFactory.getPlatformMBeanServer().getAttribute(objectName, "Counter")).intValue());
     }
 
-    @Test public void operation() {
-        assertEquals(7, client.length("openejb"));
+    @Test public void localOperation() {
+        assertEquals(7, localClient.length("openejb"));
+    }
+
+    @Test public void remoteGet() throws Exception {
+        assertEquals(0, remoteClient.getCounter());
+        ManagementFactory.getPlatformMBeanServer().setAttribute(objectName, new Attribute("Counter", 5));
+        assertEquals(5, remoteClient.getCounter());
+    }
+
+    @Test public void remoteSet() throws Exception {
+        assertEquals(0, ((Integer) ManagementFactory.getPlatformMBeanServer().getAttribute(objectName, "Counter")).intValue());
+        remoteClient.setCounter(8);
+        assertEquals(8, ((Integer) ManagementFactory.getPlatformMBeanServer().getAttribute(objectName, "Counter")).intValue());
+    }
+
+    @Test public void remoteOperation() {
+        assertEquals(7, remoteClient.length("openejb"));
     }
 
     @AfterClass public static void close() {
