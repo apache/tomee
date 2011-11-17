@@ -827,7 +827,13 @@ public class AnnotationDeployer implements DynamicDeployer {
 
 		private String getConfigPropertyType(javax.resource.spi.ConfigProperty annotation, Class<?> type) {
 			Class<?> t = (annotation == null) ? null : annotation.type();
-			if (t == null || t.equals(Object.class)) {
+            if (t == null && type != null) {
+                return type.getName();
+            } else if (t == null) {
+                return null;
+            }
+
+			if (t.equals(Object.class)) {
 				t = type;
 			}
             if (t == null) { // t == null && type == null
