@@ -19,10 +19,7 @@ package org.apache.tomee.catalina;
 import org.apache.catalina.Container;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
-import org.apache.catalina.Lifecycle;
-import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
-import org.apache.catalina.LifecycleState;
 import org.apache.catalina.Pipeline;
 import org.apache.catalina.Service;
 import org.apache.catalina.Valve;
@@ -38,19 +35,14 @@ import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.ContextTransaction;
 import org.apache.catalina.deploy.NamingResources;
-import org.apache.catalina.loader.WebappLoader;
-import org.apache.catalina.mbeans.MBeanUtils;
 import org.apache.catalina.startup.Constants;
 import org.apache.catalina.startup.ContextConfig;
 import org.apache.catalina.startup.HostConfig;
 import org.apache.catalina.startup.RealmRuleSet;
 import org.apache.naming.ContextAccessController;
 import org.apache.naming.ContextBindings;
-import org.apache.naming.resources.DirContextURLStreamHandler;
-import org.apache.naming.resources.DirContextURLStreamHandlerFactory;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.Injection;
-import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
@@ -74,9 +66,7 @@ import org.apache.openejb.util.LinkResolver;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.tomcat.InstanceManager;
-import org.apache.tomcat.util.ExceptionUtils;
 import org.apache.tomcat.util.digester.Digester;
-import org.apache.tomcat.util.modeler.Registry;
 import org.apache.tomee.common.LegacyAnnotationProcessor;
 import org.apache.tomee.common.TomcatVersion;
 import org.apache.tomee.common.UserTransactionFactory;
@@ -87,7 +77,6 @@ import org.omg.CORBA.ORB;
 
 import javax.ejb.spi.HandleDelegate;
 import javax.el.ELResolver;
-import javax.management.ObjectName;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
@@ -102,8 +91,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
-import java.net.URL;
-import java.net.URLStreamHandlerFactory;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -293,11 +280,15 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             }
 
             if (standardContext.getPath() != null) {
-                webApp.contextRoot = standardContext.getPath().replaceFirst("/", "");
+                webApp.contextRoot = standardContext.getPath().replaceFirst("/", "").replaceFirst(File.separator, "");
             }
             if (webApp.contextRoot.startsWith("/")) {
                 webApp.contextRoot.replaceFirst("/", "");
             }
+            if (webApp.contextRoot.startsWith(File.separator)) {
+                webApp.contextRoot.replaceFirst(File.separator, "");
+            }
+
             // /!\ take care, StandardContext default host = "_" and not null or localhost
             if (standardContext.getHostname() != null && !"_".equals(standardContext.getHostname())) {
                 webApp.host = standardContext.getHostname();
