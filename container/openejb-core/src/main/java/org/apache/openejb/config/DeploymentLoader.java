@@ -1193,7 +1193,21 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         // OPENEJB-1059: Anything in the appModule.getAltDDs() map has already been
         // processed by the altdd code, so anything in here should not cause OPENEJB-1059
-        List<URL> persistenceUrls = (List<URL>) appModule.getAltDDs().get("persistence.xml");
+        List<URL> persistenceUrls = null;
+        try {
+            persistenceUrls = (List<URL>) appModule.getAltDDs().get("persistence.xml");
+        } catch (ClassCastException e) {
+            //That happens when we are trying to deploy an ear file.
+            final Object value = appModule.getAltDDs().get("persistence.xml");
+            if(!URL.class.isInstance(value)) {
+                throw e;
+            }
+
+            persistenceUrls = new ArrayList<URL>();
+            persistenceUrls.add(URL.class.cast(value));
+
+            appModule.getAltDDs().put("persistence.xml", persistenceUrls);
+        }
         if (persistenceUrls == null) {
             persistenceUrls = new ArrayList<URL>();
             appModule.getAltDDs().put("persistence.xml", persistenceUrls);
