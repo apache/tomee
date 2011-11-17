@@ -1509,8 +1509,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 // it wasn't check before jdk 1.5 so we can get old module with
                 // bad format http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4986512
                 // replace all "/" by "."
-                if (className.indexOf("/") != -1) { // className can't be null here
-                    className = className.replaceAll("/", ".");
+                if (clientModule.getMainClass().indexOf("/") != -1) { // className can't be null here
                     clientModule.setMainClass(className);
 		}
 
