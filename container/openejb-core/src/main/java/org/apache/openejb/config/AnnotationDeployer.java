@@ -726,7 +726,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 			final List<String> allowedTypes = Arrays.asList(new String[] { Boolean.class.getName(), String.class.getName(), Integer.class.getName(), Double.class.getName(), Byte.class.getName(), Short.class.getName(), Long.class.getName(), Float.class.getName(), Character.class.getName()});
 
 			try {
-				Class<?> clazz = classLoader.loadClass(cls);
+				Class<?> clazz = classLoader.loadClass(realClassName(cls));
 				Object o = clazz.newInstance();
 
 				// add any introspected properties
@@ -1051,7 +1051,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                 if (beans != null) {
                     managedClasses = beans.getManagedClasses();
                     final List<String> classNames = getBeanClasses(finder);
-                    for (String className : classNames) {
+                    for (String rawClassName : classNames) {
+                        final String className = realClassName(rawClassName);
                         try {
                             final ClassLoader loader = ejbModule.getClassLoader();
                             final Class<?> clazz = loader.loadClass(className);
@@ -1496,7 +1497,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             Set<Class> remoteClients = new HashSet<Class>();
 
             if (clientModule.getMainClass() != null){
-                String className = clientModule.getMainClass();
+                String className = realClassName(clientModule.getMainClass());
 
                 // OPENEJB-1063: a Main-Class should use "." instead of "/"
                 // it wasn't check before jdk 1.5 so we can get old module with
@@ -1531,7 +1532,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
-            for (String className : clientModule.getRemoteClients()) {
+            for (String rawClassName : clientModule.getRemoteClients()) {
+                final String className = realClassName(rawClassName);
                 Class clazz;
                 try {
                     clazz = classLoader.loadClass(className);
@@ -1545,7 +1547,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                 buildAnnotatedRefs(client, annotationFinder, classLoader);
             }
 
-            for (String className : clientModule.getLocalClients()) {
+            for (String rawClassName : clientModule.getLocalClients()) {
+                final String className = realClassName(rawClassName);
                 Class clazz;
                 try {
                     clazz = classLoader.loadClass(className);
@@ -1569,7 +1572,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             for (EjbLocalRef ref : client.getEjbLocalRef()) {
                 for (InjectionTarget target : ref.getInjectionTarget()) {
                     try {
-                        Class<?> targetClass = classLoader.loadClass(target.getInjectionTargetClass());
+                        Class<?> targetClass = classLoader.loadClass(realClassName(target.getInjectionTargetClass()));
                         for (Class remoteClient : remoteClients) {
                             if (targetClass.isAssignableFrom(remoteClient)) {
                                 fail(remoteClient.getName(), "remoteClient.ejbLocalRef", target.getInjectionTargetClass(), target.getInjectionTargetName());
@@ -1583,7 +1586,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             for (PersistenceContextRef ref : client.getPersistenceContextRef()) {
                 for (InjectionTarget target : ref.getInjectionTarget()) {
                     try {
-                        Class<?> targetClass = classLoader.loadClass(target.getInjectionTargetClass());
+                        Class<?> targetClass = classLoader.loadClass(realClassName(target.getInjectionTargetClass()));
                         for (Class remoteClient : remoteClients) {
                             if (targetClass.isAssignableFrom(remoteClient)) {
                                 fail(remoteClient.getName(), "remoteClient.persistenceContextRef", target.getInjectionTargetClass(), target.getInjectionTargetName());
@@ -1656,7 +1659,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     if (className != null) {
                         Class<?> clazz;
                         try {
-                            clazz = classLoader.loadClass(className);
+                            clazz = classLoader.loadClass(realClassName(className));
                             classes.add(clazz);
                         } catch (ClassNotFoundException e) {
                             throw new OpenEJBException("Unable to load REST class: " + className, e);
@@ -1668,7 +1671,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     if (application != null) {
                         Class<?> clazz;
                         try {
-                            clazz = classLoader.loadClass(application);
+                            clazz = classLoader.loadClass(realClassName(application));
                             classes.add(clazz);
                         } catch (ClassNotFoundException e) {
                             throw new OpenEJBException("Unable to load Application class: " + application, e);
@@ -1694,7 +1697,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 if (servletClass != null) {
                     if (!"org.apache.openejb.server.rest.OpenEJBRestServlet".equals(servletClass)) {
                         try {
-                            Class clazz = classLoader.loadClass(servletClass);
+                            Class clazz = classLoader.loadClass(realClassName(servletClass));
                             classes.add(clazz);
                         } catch (ClassNotFoundException e) {
                             throw new OpenEJBException("Unable to load servlet class: " + servletClass, e);
@@ -1719,7 +1722,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 String filterClass = filter.getFilterClass();
                 if (filterClass != null) {
                     try {
-                        Class clazz = classLoader.loadClass(filterClass);
+                        Class clazz = classLoader.loadClass(realClassName(filterClass));
                         classes.add(clazz);
                     } catch (ClassNotFoundException e) {
                         throw new OpenEJBException("Unable to load servlet filter class: " + filterClass, e);
@@ -1734,7 +1737,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 String listenerClass = listener.getListenerClass();
                 if (listenerClass != null) {
                     try {
-                        Class clazz = classLoader.loadClass(listenerClass);
+                        Class clazz = classLoader.loadClass(realClassName(listenerClass));
                         classes.add(clazz);
                     } catch (ClassNotFoundException e) {
                         throw new OpenEJBException("Unable to load servlet listener class: " + listenerClass, e);
@@ -1750,7 +1753,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     String listenerClass = listener.getListenerClass();
                     if (listenerClass != null) {
                         try {
-                            Class clazz = classLoader.loadClass(listenerClass);
+                            Class clazz = classLoader.loadClass(realClassName(listenerClass));
                             classes.add(clazz);
                         } catch (ClassNotFoundException e) {
                             logger.error("Unable to load tag library servlet listener class: " + listenerClass);
@@ -1765,7 +1768,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     String tagClass = tag.getTagClass();
                     if (tagClass != null) {
                         try {
-                            Class clazz = classLoader.loadClass(tagClass);
+                            Class clazz = classLoader.loadClass(realClassName(tagClass));
                             classes.add(clazz);
                         } catch (ClassNotFoundException e) {
                             logger.error("Unable to load tag library tag class: " + tagClass);
@@ -1789,7 +1792,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                                 String handlerClass = handler.getHandlerClass();
                                 if (handlerClass != null) {
                                     try {
-                                        Class clazz = classLoader.loadClass(handlerClass);
+                                        Class clazz = classLoader.loadClass(realClassName(handlerClass));
                                         classes.add(clazz);
                                     } catch (ClassNotFoundException e) {
                                         throw new OpenEJBException("Unable to load webservice handler class: " + handlerClass, e);
@@ -1809,7 +1812,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     String managedBeanClass = bean.getManagedBeanClass().trim();
                     if (managedBeanClass != null) {
                         try {
-                            Class clazz = classLoader.loadClass(managedBeanClass);
+                            Class clazz = classLoader.loadClass(realClassName(managedBeanClass));
                             classes.add(clazz);
                         } catch (ClassNotFoundException e) {
                             logger.error("Unable to load JSF managed bean class: " + managedBeanClass);
@@ -1826,7 +1829,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 final List<String> classNames = finder.getAnnotatedClassNames();
                 for (String className : classNames) {
                     try {
-                        Class clazz = classLoader.loadClass(className);
+                        Class clazz = classLoader.loadClass(realClassName(className));
                         classes.add(clazz);
                     } catch (Throwable e) {
                         logger.debug(String.format("%s: Unable to load class for scanning: %s", e.getClass().getName(), className));
@@ -1870,7 +1873,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                 final Class<?> clazz;
                 try {
-                    clazz = classLoader.loadClass(ejbClassName);
+                    clazz = classLoader.loadClass(realClassName(ejbClassName));
                 } catch (ClassNotFoundException e) {
                     // Handled in CheckClasses.java along with other missing classes
                     continue;
@@ -2770,7 +2773,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             private void add(ClassLoader loader, Collection<String> names, Set<Class> classes) {
                 for (String className : names) {
                     try {
-                        classes.add(loader.loadClass(className));
+                        classes.add(loader.loadClass(realClassName(className)));
                     } catch (Throwable t) {
                         // handled in validation
                     }
@@ -4090,7 +4093,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
             Class<?> refType = null;
             try {
-                refType = classLoader.loadClass(serviceRef.getType());
+                refType = classLoader.loadClass(realClassName(serviceRef.getType()));
             } catch (ClassNotFoundException e) {
             }
 
@@ -4158,7 +4161,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                                 String handlerClass = handler.getHandlerClass();
                                 if (handlerClass != null) {
                                     try {
-                                        Class handlerClazz = ejbModule.getClassLoader().loadClass(handlerClass);
+                                        Class handlerClazz = ejbModule.getClassLoader().loadClass(realClassName(handlerClass));
                                         classes.add(handlerClazz);
                                     } catch (ClassNotFoundException e) {
                                         throw new OpenEJBException("Unable to load webservice handler class: " + handlerClass, e);
@@ -4195,7 +4198,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                         for (Handler handler : handlerChain.getHandler()) {
                             if (handler.getHandlerClass() != null) {
                                 try {
-                                    Class clazz = classLoader.loadClass(handler.getHandlerClass());
+                                    Class clazz = classLoader.loadClass(realClassName(handler.getHandlerClass()));
                                     handlerClasses.add(clazz);
                                 } catch (ClassNotFoundException e) {
                                     throw new OpenEJBException("Unable to load webservice handler class: " + handler.getHandlerClass(), e);
@@ -4863,4 +4866,12 @@ public class AnnotationDeployer implements DynamicDeployer {
             || clazz.isAnnotationPresent(Singleton.class)
             || clazz.isAnnotationPresent(Stateful.class); // what a weird idea!
     }
+
+    // TODO: OPENEJB-1708 - bug in xbean, this should be removed when XBean will be fixed
+    private static String realClassName(String rawClassName) {
+            if (rawClassName.contains("/")) {
+                return rawClassName.replace("/", ".");
+            }
+            return rawClassName;
+        }
 }
