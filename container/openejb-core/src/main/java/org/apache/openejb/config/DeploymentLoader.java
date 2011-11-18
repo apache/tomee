@@ -1198,10 +1198,8 @@ public class DeploymentLoader implements DeploymentFilterable {
             persistenceUrls = (List<URL>) appModule.getAltDDs().get("persistence.xml");
         } catch (ClassCastException e) {
             //That happens when we are trying to deploy an ear file.
+            //lets try to get a single object instead
             final Object value = appModule.getAltDDs().get("persistence.xml");
-            if(!URL.class.isInstance(value)) {
-                throw e;
-            }
 
             persistenceUrls = new ArrayList<URL>();
             persistenceUrls.add(URL.class.cast(value));
