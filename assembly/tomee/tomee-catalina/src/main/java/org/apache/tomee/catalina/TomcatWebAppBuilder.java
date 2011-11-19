@@ -280,10 +280,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             }
 
             if (standardContext.getPath() != null) {
-                webApp.contextRoot = standardContext.getPath().replaceFirst("/", "").replaceFirst(File.separator, "");
+                webApp.contextRoot = standardContext.getPath();
             }
-            if (webApp.contextRoot.startsWith("/")) {
-                webApp.contextRoot = webApp.contextRoot.replaceFirst("/", "");
+            if (webApp.contextRoot.startsWith("/") || webApp.contextRoot.startsWith(File.separator)) {
+                webApp.contextRoot = webApp.contextRoot.substring(1);
             }
             if (webApp.contextRoot.startsWith(File.separator)) {
                 webApp.contextRoot = webApp.contextRoot.replaceFirst(File.separator, "");
