@@ -135,24 +135,24 @@ public class StatelessPoolStatsTest extends TestCase {
         Map<String, Object> expectedAttributesValue = new HashMap<String, Object>();
         expectedAttributesValue.put("AccessTimeouts", (long) 0);
         expectedAttributesValue.put("Aged", (long) 0);
-        expectedAttributesValue.put("AvailablePermits", (int) 15);
+        expectedAttributesValue.put("AvailablePermits", 15);
         expectedAttributesValue.put("Flushed", (long) 0);
         expectedAttributesValue.put("Flushes", (long) 0);
         expectedAttributesValue.put("GarbageCollected", (long) 0);
         expectedAttributesValue.put("GarbageCollection", false);
         expectedAttributesValue.put("IdleTimeout", (long) 0);
         expectedAttributesValue.put("IdleTimeouts", (long) 0);
-        expectedAttributesValue.put("InstancesPooled", (int) 3);
-        expectedAttributesValue.put("InstancesActive", (int) 0);
-        expectedAttributesValue.put("InstancesIdle", (int) 3);
-        expectedAttributesValue.put("InstancesInitializing", (int) 0);
+        expectedAttributesValue.put("InstancesPooled", 3);
+        expectedAttributesValue.put("InstancesActive", 0);
+        expectedAttributesValue.put("InstancesIdle", 3);
+        expectedAttributesValue.put("InstancesInitializing", 0);
         expectedAttributesValue.put("MaxAge", (long) 0);
-        expectedAttributesValue.put("MaxAgeOffset", (double) (-1.0));
-        expectedAttributesValue.put("MaxSize", (int) 15);
-        expectedAttributesValue.put("MinSize", (int) 3);
-        expectedAttributesValue.put("MinimumInstances", (int) 3);
+        expectedAttributesValue.put("MaxAgeOffset", -1.0);
+        expectedAttributesValue.put("MaxSize", 15);
+        expectedAttributesValue.put("MinSize", 3);
+        expectedAttributesValue.put("MinimumInstances", 3);
         expectedAttributesValue.put("Overdrafts", (long) 0);
-        expectedAttributesValue.put("PoolVersion", (int) 0);
+        expectedAttributesValue.put("PoolVersion", 0);
         expectedAttributesValue.put("ReplaceAged", true);
         expectedAttributesValue.put("ReplaceFlushed", false);
         expectedAttributesValue.put("Replaced", (long) 0);
@@ -383,7 +383,7 @@ public class StatelessPoolStatsTest extends TestCase {
 
         CounterBean.constructed = new CountDownLatch(3);
 
-        Thread.sleep(101);
+        Thread.sleep(110);
 
         checkout.release();
 
