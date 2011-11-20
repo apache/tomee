@@ -58,6 +58,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -354,14 +356,17 @@ public class StatelessInstanceManager {
         }
 
         // Finally, fill the pool and start it
-        if (!options.get("BackgroundStartup", false)) for (int i = 0; i < min; i++) {
-            Instance obj = supplier.create();
-
-            if (obj == null) continue;
-
-            long offset = maxAge > 0 ? ((long) (maxAge / min * i * maxAgeOffset)) % maxAge : 0l;
-
-            data.getPool().add(obj, offset);
+        if (!options.get("BackgroundStartup", false) && min > 0)  {
+            ExecutorService es = Executors.newFixedThreadPool(min);
+            for (int i = 0; i < min; i++) {
+                es.submit(new InstanceCreatorRunnable(maxAge, i, min, maxAgeOffset, data, supplier));
+            }
+            es.shutdown();
+            try {
+                es.awaitTermination(5, TimeUnit.MINUTES);
+            } catch (InterruptedException e) {
+                logger.error("can't fill the stateless pool", e);
+            }
         }
 
         data.getPool().start();
@@ -442,4 +447,29 @@ public class StatelessInstanceManager {
         }
     }
 
+    private class InstanceCreatorRunnable implements Runnable {
+        private long maxAge;
+        private long iteration;
+        private double maxAgeOffset;
+        private long min;
+        private Data data;
+        private StatelessSupplier supplier;
+
+        private InstanceCreatorRunnable(long maxAge, long iteration, long min, double maxAgeOffset, Data data, StatelessSupplier supplier) {
+            this.maxAge = maxAge;
+            this.iteration = iteration;
+            this.min = min;
+            this.maxAgeOffset = maxAgeOffset;
+            this.data = data;
+            this.supplier = supplier;
+        }
+
+        @Override public void run() {
+            final Instance obj = supplier.create();
+            if (obj != null) {
+                long offset = maxAge > 0 ? (long) (maxAge / maxAgeOffset * min * iteration) % maxAge : 0l;
+                data.getPool().add(obj, offset);
+            }
+        }
+    }
 }
