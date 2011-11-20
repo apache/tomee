@@ -101,6 +101,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
     public static Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, AutoConfig.class);
 
     private static Set<String> ignoredReferenceTypes = new TreeSet<String>();
+    public static final String AUTOCREATE_JTA_DATASOURCE_FROM_NON_JTA_ONE_KEY = "openejb.autocreate.jta-datasource-from-non-jta-one";
 
     static{
         // Context objects are automatically handled
@@ -1446,7 +1447,9 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             //  and finally setting JtaManaged=false
             //
 
-            if (nonJtaDataSourceId != null && jtaDataSourceId == null){
+            if (nonJtaDataSourceId != null && jtaDataSourceId == null
+                    // hibernate uses the fact that this ds is missing to get a non jta em instead of a JTA one
+                    && Boolean.parseBoolean(SystemInstance.get().getProperty(AUTOCREATE_JTA_DATASOURCE_FROM_NON_JTA_ONE_KEY))) {
 
                 ResourceInfo nonJtaResourceInfo = configFactory.getResourceInfo(nonJtaDataSourceId);
 
