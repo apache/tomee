@@ -1447,9 +1447,10 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             //  and finally setting JtaManaged=false
             //
 
+            final String deduceJtaFromNonJta = SystemInstance.get().getProperty(AUTOCREATE_JTA_DATASOURCE_FROM_NON_JTA_ONE_KEY);
             if (nonJtaDataSourceId != null && jtaDataSourceId == null
                     // hibernate uses the fact that this ds is missing to get a non jta em instead of a JTA one
-                    && Boolean.parseBoolean(SystemInstance.get().getProperty(AUTOCREATE_JTA_DATASOURCE_FROM_NON_JTA_ONE_KEY))) {
+                    && (deduceJtaFromNonJta == null || (deduceJtaFromNonJta != null && Boolean.parseBoolean(deduceJtaFromNonJta)))) {
 
                 ResourceInfo nonJtaResourceInfo = configFactory.getResourceInfo(nonJtaDataSourceId);
 
