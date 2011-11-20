@@ -188,8 +188,13 @@ public class StatsInterceptor {
 
         Stats stats = map.get(method);
         if (stats == null) {
-            stats = new Stats(method, monitor);
-            map.put(method, stats);
+            synchronized (map) {
+                stats = map.get(method);
+                if (stats == null) {
+                    stats = new Stats(method, monitor);
+                    map.put(method, stats);
+                }
+            }
         }
         return stats;
     }

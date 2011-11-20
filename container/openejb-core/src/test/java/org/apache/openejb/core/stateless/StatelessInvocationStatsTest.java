@@ -186,24 +186,24 @@ public class StatelessInvocationStatsTest extends TestCase {
             } else {
                 expectedValues.put(s + ".Count", (long) 1);
             }
-            expectedValues.put(s + ".GeometricMean", (double) 0.0);
+            expectedValues.put(s + ".GeometricMean", 0.0);
             expectedValues.put(s + ".Kurtosis", Double.NaN);
-            expectedValues.put(s + ".Max", (double) 0.0);
-            expectedValues.put(s + ".Mean", (double) 0.0);
-            expectedValues.put(s + ".Min", (double) 0.0);
-            expectedValues.put(s + ".Percentile01", (double) 0.0);
-            expectedValues.put(s + ".Percentile10", (double) 0.0);
-            expectedValues.put(s + ".Percentile25", (double) 0.0);
-            expectedValues.put(s + ".Percentile50", (double) 0.0);
-            expectedValues.put(s + ".Percentile75", (double) 0.0);
-            expectedValues.put(s + ".Percentile90", (double) 0.0);
-            expectedValues.put(s + ".Percentile99", (double) 0.0);
-            expectedValues.put(s + ".SampleSize", (int) 2000);
+            expectedValues.put(s + ".Max", 0.0);
+            expectedValues.put(s + ".Mean", 0.0);
+            expectedValues.put(s + ".Min", 0.0);
+            expectedValues.put(s + ".Percentile01", 0.0);
+            expectedValues.put(s + ".Percentile10", 0.0);
+            expectedValues.put(s + ".Percentile25", 0.0);
+            expectedValues.put(s + ".Percentile50", 0.0);
+            expectedValues.put(s + ".Percentile75", 0.0);
+            expectedValues.put(s + ".Percentile90", 0.0);
+            expectedValues.put(s + ".Percentile99", 0.0);
+            expectedValues.put(s + ".SampleSize", 2000);
             expectedValues.put(s + ".Skewness", Double.NaN);
-            expectedValues.put(s + ".StandardDeviation", (double) 0.0);
-            expectedValues.put(s + ".Sum", (double) 0.0);
-            expectedValues.put(s + ".Sumsq", (double) 0.0);
-            expectedValues.put(s + ".Variance", (double) 0.0);
+            expectedValues.put(s + ".StandardDeviation", 0.0);
+            expectedValues.put(s + ".Sum", 0.0);
+            expectedValues.put(s + ".Sumsq", 0.0);
+            expectedValues.put(s + ".Variance", 0.0);
         }
 
         List<MBeanAttributeInfo> actualAttributes = new ArrayList<MBeanAttributeInfo>();
@@ -216,6 +216,11 @@ public class StatelessInvocationStatsTest extends TestCase {
 
         //Verify invocation attributes and values
         assertEquals(expectedAttributes, actualAttributes);
+        for (Map.Entry<String, Object> entry : actualValues.entrySet()) {
+            if (!expectedValues.get(entry.getKey()).equals(actualValues.get(entry.getKey()))) {
+                System.out.println("2. " + entry.getKey() + " => " + entry.getValue() + "/" + expectedValues.get(entry.getKey()));
+            }
+        }
         assertEquals(expectedValues, actualValues);
 
         // Grab invocation mbean operations
