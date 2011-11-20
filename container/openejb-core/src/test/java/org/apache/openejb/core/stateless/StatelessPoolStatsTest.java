@@ -419,7 +419,7 @@ public class StatelessPoolStatsTest extends TestCase {
 
         CounterBean.constructed = new CountDownLatch(5);
 
-        Thread.sleep(101);
+        Thread.sleep(110);
 
         checkout.release();
 
