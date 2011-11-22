@@ -25,7 +25,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>quartz-ra</artifactId>
   <packaging>jar</packaging>
-  <name>Quartz Resource Adapter</name>
+  <name>OpenEJB :: Examples :: Quartz :: Quartz Resource Adapter</name>
   <description>
     Maven doesn't allow rar files in the test classpath for some reason,
     so we have to pull this trick to get it in the classpath.

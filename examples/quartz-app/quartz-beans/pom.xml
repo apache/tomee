@@ -25,7 +25,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>quartz-beans</artifactId>
   <packaging>jar</packaging>
-  <name>Quartz Beans</name>
+  <name>OpenEJB :: Examples :: Quartz :: Quartz Beans</name>
   <dependencies>
     <dependency>
       <groupId>org.superbiz.quartz</groupId>
