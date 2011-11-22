@@ -21,13 +21,7 @@ import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.core.StandardServer;
-import org.apache.catalina.deploy.ContextEjb;
-import org.apache.catalina.deploy.ContextEnvironment;
-import org.apache.catalina.deploy.ContextLocalEjb;
-import org.apache.catalina.deploy.ContextResource;
-import org.apache.catalina.deploy.ContextResourceEnvRef;
-import org.apache.catalina.deploy.ContextResourceLink;
-import org.apache.catalina.deploy.NamingResources;
+import org.apache.catalina.deploy.*;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ResourceInfo;
@@ -240,30 +234,28 @@ public class OpenEJBNamingContextListener implements LifecycleListener, Property
     }
 
     public void addEnvironment(ContextEnvironment env) {
+        bindResource(env);
     }
 
     public void addLocalEjb(ContextLocalEjb localEjb) {
     }
 
     public void addResource(ContextResource resource) {
-        try {
-            Context globalNamingContext = standardServer.getGlobalNamingContext();
-            Object value = globalNamingContext.lookup(resource.getName());
-            String type = resource.getType();
-            bindResource(resource.getName(), value, type);
-        } catch (NamingException e) {
-            logger.error("Unable to lookup Global Tomcat resource " + resource.getName(), e);
-        }
+        bindResource(resource);
     }
 
     public void addResourceEnvRef(ContextResourceEnvRef resourceEnvRef) {
+        bindResource(resourceEnvRef);
+    }
+
+    private void bindResource(ResourceBase res) {
         try {
             Context globalNamingContext = standardServer.getGlobalNamingContext();
-            Object value = globalNamingContext.lookup(resourceEnvRef.getName());
-            String type = resourceEnvRef.getType();
-            bindResource(resourceEnvRef.getName(), value, type);
+            Object value = globalNamingContext.lookup(res.getName());
+            String type = res.getType();
+            bindResource(res.getName(), value, type);
         } catch (NamingException e) {
-            logger.error("Unable to lookup Global Tomcat resource " + resourceEnvRef.getName(), e);
+            logger.error("Unable to lookup Global Tomcat resource " + res.getName(), e);
         }
     }
 
