@@ -88,6 +88,7 @@ import static org.apache.openejb.util.URLs.toFile;
  */
 public class DeploymentLoader implements DeploymentFilterable {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, "org.apache.openejb.util.resources");
+    public static final String OPENEJB_READ_ALL_PERSISTENCE_XML = "openejb.read-all.persistence.xml";
     private static final String OPENEJB_ALTDD_PREFIX = "openejb.altdd.prefix";
     private static final String ddDir = "META-INF/";
     private boolean scanManagedBeans = true;
@@ -190,6 +191,14 @@ public class DeploymentLoader implements DeploymentFilterable {
                 AppModule appModule = new AppModule(OpenEJB.class.getClassLoader(), file.getAbsolutePath(), new Application(), true);
                 addWebModule(appModule, baseUrl, OpenEJB.class.getClassLoader(), getContextRoot(), getModuleName());
 
+                if (Boolean.getBoolean(OPENEJB_READ_ALL_PERSISTENCE_XML)) {
+                    WebModule webModule = appModule.getWebModules().iterator().next();
+                    final List<URL> urls = webModule.getUrls();
+                    final ResourceFinder finder = new ResourceFinder("", urls.toArray(new URL[urls.size()]));
+                    final Map<String, URL> dd = getDescriptors(finder, false);
+                    webModule.getAltDDs().putAll(dd);
+                }
+
                 URL persistenceUrl = null;
                 if (file.isDirectory()) {
                     File persistenceXml = new File(file, "WEB-INF/classes/META-INF/persistence.xml");
@@ -239,6 +248,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                         // no-op
                     }
                 }
+
                 addPersistenceUnits(appModule, baseUrl);
                 return appModule;
             }
