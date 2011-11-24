@@ -16,11 +16,6 @@
  */
 package org.apache.openejb.core.osgi.impl;
 
-import java.io.File;
-import java.net.URL;
-import java.util.Enumeration;
-import java.util.Properties;
-
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
@@ -33,6 +28,11 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleListener;
+
+import java.io.File;
+import java.net.URL;
+import java.util.Enumeration;
+import java.util.Properties;
 
 /**
  * @version $Rev$ $Date$
@@ -54,9 +54,9 @@ public class Deployer implements BundleListener {
         System.out.println(String.format("[Deployer] Bundle %s has been started", bundle.getSymbolicName()));
 
         System.out.println(String.format("[Deployer] Checking whether it's an EJB module"));
-        Enumeration<?> e = bundle.findEntries("META-INF", "ejb-jar.xml", false);
-        if (e.hasMoreElements()) {
-            URL ejbJarUrl = (URL) e.nextElement();
+        Enumeration<URL> e = bundle.findEntries("META-INF", "ejb-jar.xml", false);
+        if (e != null && e.hasMoreElements()) {
+            URL ejbJarUrl = e.nextElement();
 
             System.out.println("[Deployer] It's an EJB module: " + ejbJarUrl);
 
@@ -73,7 +73,7 @@ public class Deployer implements BundleListener {
                     ConfigurationFactory configurationFactory = new ConfigurationFactory();
                     AppInfo appInfo = configurationFactory.configureApplication(appModule);
 
-                    Assembler assembler = (Assembler) SystemInstance.get().getComponent(Assembler.class);
+                    Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
                     System.out.println(assembler);
                     System.out.println(appInfo);
                     assembler.createApplication(appInfo);
@@ -115,7 +115,7 @@ public class Deployer implements BundleListener {
         for (EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
             for (EnterpriseBeanInfo ejbInfo : ejbJarInfo.enterpriseBeans) {
                 try {
-                    context.registerService(ejbInfo.businessRemote.toArray(new String[0]), bundle.loadClass(
+                    context.registerService(ejbInfo.businessRemote.toArray(new String[ejbInfo.businessRemote.size()]), bundle.loadClass(
                             ejbInfo.ejbClass).newInstance(), new Properties());
                     System.out.println(String.format(
                             "[Deployer] Service object %s registered under the class names: %s", ejbInfo.ejbClass,
