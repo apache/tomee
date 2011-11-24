@@ -549,11 +549,9 @@ public class StatefulContainer implements RpcContainer {
                         List<InterceptorData> callbackInterceptors = beanContext.getCallbackInterceptors();
                         InterceptorStack interceptorStack = new InterceptorStack(instance.bean, null, Operation.PRE_DESTROY, callbackInterceptors, instance.interceptors);
                         interceptorStack.invoke();
-                    } catch (Throwable callbackException) {
-                        String logMessage = "An unexpected exception occured while invoking the preDestroy method on the removed Stateful SessionBean instance; " + callbackException.getClass().getName() + " " + callbackException.getMessage();
-
-                        /* [1] Log the exception or error */
-                        logger.error(logMessage);
+                    } catch (Throwable t) {
+                        final String logMessage = "An unexpected exception occured while invoking the preDestroy method on the Stateful SessionBean instance: " + instance.bean.getClass().getName();
+                        logger.error(logMessage, t);
 
                     } finally {
                         callContext.setCurrentOperation(Operation.REMOVE);
