@@ -16,20 +16,21 @@
  */
 package org.apache.openejb.resource.jdbc;
 
-import java.io.File;
-import java.sql.SQLException;
-import java.util.Properties;
-
-import javax.sql.DataSource;
-
 import org.apache.openejb.loader.SystemInstance;
 
+import javax.sql.DataSource;
+import java.io.File;
+import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
+import java.util.Properties;
+import java.util.logging.Logger;
+
 public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.BasicManagedDataSource {
-    
+
     /**
      * The password codec to be used to retrieve the plain text password from a
      * ciphered value.
-     * 
+     * <p/>
      * <em>The default is no codec.</em>. In other words, it means password is
      * not ciphered. The {@link PlainTextPasswordCipher} can also be used.
      */
@@ -38,7 +39,7 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
     /**
      * Returns the password codec class name to use to retrieve plain text
      * password.
-     * 
+     *
      * @return the password codec class
      */
     public synchronized String getPasswordCipher() {
@@ -49,14 +50,13 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
      * <p>
      * Sets the {@link #passwordCipher}.
      * </p>
-     * 
-     * @param passwordCipher
-     *            password codec value
+     *
+     * @param passwordCipher password codec value
      */
     public synchronized void setPasswordCipher(String passwordCipher) {
         this.passwordCipher = passwordCipher;
     }
-    
+
     public synchronized String getUserName() {
         return super.getUsername();
     }
@@ -87,11 +87,15 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
         super.setDefaultTransactionIsolation(level);
     }
 
+    public synchronized void setMaxWait(final int maxWait) {
+        super.setMaxWait((long)maxWait);
+    }
+
     protected synchronized DataSource createDataSource() throws SQLException {
         if (dataSource != null) {
             return dataSource;
         }
-        
+
         // check password codec if available
         if (null != passwordCipher) {
             PasswordCipher cipher = BasicDataSourceUtil.getPasswordCipher(passwordCipher);
@@ -132,7 +136,16 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
     protected void wrapTransactionManager() {
     }
 
-	public synchronized void close() throws SQLException {
-	}
-    
+    public synchronized void close() throws SQLException {
+        //TODO - Prevent unuathorized call
+        super.close();
+    }
+
+    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        try {
+            return (Logger) DataSource.class.getDeclaredMethod("getParentLogger").invoke(dataSource);
+        } catch (Throwable e) {
+            throw new SQLFeatureNotSupportedException();
+        }
+    }
 }

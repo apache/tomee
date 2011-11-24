@@ -24,6 +24,7 @@ import org.apache.commons.dbcp.managed.TransactionRegistry;
 import org.apache.commons.dbcp.managed.XAConnectionFactory;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.resource.XAResourceWrapper;
+import org.apache.openejb.util.LogCategory;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
@@ -32,24 +33,21 @@ import javax.sql.XADataSource;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Logger;
 
 /**
  * @version $Rev$ $Date$
  */
 public class DataSourceFactory {
 
-    public static DataSource create(boolean managed, Class impl, String definition) throws IllegalAccessException, InstantiationException, IOException {
+    public static DataSource create(final boolean managed, final Class impl, final String definition) throws IllegalAccessException, InstantiationException, IOException {
 
+        final org.apache.commons.dbcp.BasicDataSource ds;
 
-        org.apache.commons.dbcp.BasicDataSource ds;
-        if (DataSource.class.isAssignableFrom(impl)) {
+        if (DataSource.class.isAssignableFrom(impl) && !Boolean.parseBoolean(System.getProperty("org.apache.openejb.resource.jdbc.hot.deploy", "false"))) {
 
             final ObjectRecipe recipe = new ObjectRecipe(impl);
             recipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
@@ -115,23 +113,16 @@ public class DataSourceFactory {
         }
 
         @Override
-        public void setJdbcUrl(String string) {
+        public void setJdbcUrl(String url) {
             // TODO This is a big whole and we will need to rework this
             try {
+                // only works if hsql is available and datasource is an HSQL jdbcDataSource
                 final Class<?> hsql = this.getClass().getClassLoader().loadClass("org.hsqldb.jdbc.JDBCDataSource");
                 final Method setDatabase = hsql.getMethod("setDatabase", String.class);
                 setDatabase.setAccessible(true);
-                setDatabase.invoke(dataSource, string);
-            } catch (Exception e) {
-                // only works if hsql is available and datasource is an HSQL jdbcDataSource
-            }
-        }
-
-        public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-            try {
-                return (Logger) DataSource.class.getDeclaredMethod("getParentLogger").invoke(dataSource);
-            } catch (Exception e) {
-                return null;
+                setDatabase.invoke(dataSource, url);
+            } catch (Throwable e) {
+                super.setUrl(url);
             }
         }
     }
@@ -145,10 +136,16 @@ public class DataSourceFactory {
         }
 
         @Override
-        public void setJdbcUrl(String string) {
+        public void setJdbcUrl(String url) {
             // TODO This is a big whole and we will need to rework this
-            if (dataSource instanceof org.hsqldb.jdbc.JDBCDataSource) {
-                ((org.hsqldb.jdbc.JDBCDataSource)dataSource).setDatabase(string);
+            try {
+                // only works if hsql is available and datasource is an HSQL jdbcDataSource
+                final Class<?> hsql = this.getClass().getClassLoader().loadClass("org.hsqldb.jdbc.JDBCDataSource");
+                final Method setDatabase = hsql.getMethod("setDatabase", String.class);
+                setDatabase.setAccessible(true);
+                setDatabase.invoke(dataSource, url);
+            } catch (Throwable e) {
+                super.setUrl(url);
             }
         }
 
@@ -173,20 +170,12 @@ public class DataSourceFactory {
             }
         }
 
-        public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-            try {
-                return (Logger) DataSource.class.getDeclaredMethod("getParentLogger").invoke(dataSource);
-            } catch (Exception e) {
-                return null;
-            }
-        }
-
         public void setTransactionRegistry(TransactionRegistry registry) {
             try {
                 final Field field = org.apache.commons.dbcp.managed.BasicManagedDataSource.class.getDeclaredField("transactionRegistry");
                 field.setAccessible(true);
                 field.set(this, registry);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 throw new IllegalStateException(e);
             }
         }
