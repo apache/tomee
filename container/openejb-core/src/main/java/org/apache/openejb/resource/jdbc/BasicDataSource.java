@@ -18,7 +18,9 @@ package org.apache.openejb.resource.jdbc;
 
 import java.io.File;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import javax.sql.DataSource;
 
@@ -88,6 +90,10 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
         super.setDefaultTransactionIsolation(level);
     }
 
+    public synchronized void setMaxWait(final int maxWait) {
+        super.setMaxWait((long)maxWait);
+    }
+
     protected synchronized DataSource createDataSource() throws SQLException {
         if (dataSource != null) {
             return dataSource;
@@ -126,6 +132,14 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
                     systemProperties.setProperty("user.dir", userDir);
                 }
             }
+        }
+    }
+
+    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        try {
+            return (Logger) DataSource.class.getDeclaredMethod("getParentLogger").invoke(dataSource);
+        } catch (Throwable e) {
+            throw new SQLFeatureNotSupportedException();
         }
     }
 
