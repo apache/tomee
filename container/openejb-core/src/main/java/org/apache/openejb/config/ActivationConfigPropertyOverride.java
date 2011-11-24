@@ -41,16 +41,18 @@ public class ActivationConfigPropertyOverride implements DynamicDeployer {
     @Override
     public AppModule deploy(AppModule appModule) throws OpenEJBException {
 
-        final Properties system = new Properties(System.getProperties());
+        final Properties system = new Properties();
         system.putAll(SystemInstance.get().getProperties());
         system.putAll(appModule.getProperties());
+        system.putAll(System.getProperties());
 
         for (EjbModule ejbModule : appModule.getEjbModules()) {
             EjbJar ejbJar = ejbModule.getEjbJar();
             OpenejbJar openejbJar = ejbModule.getOpenejbJar();
 
-            final Properties module = new Properties(system);
+            final Properties module = new Properties();
             module.putAll(openejbJar.getProperties());
+            module.putAll(system);
 
             Map<String, EjbDeployment> deployments = openejbJar.getDeploymentsByEjbName();
 
@@ -61,7 +63,8 @@ public class ActivationConfigPropertyOverride implements DynamicDeployer {
 
                 if (!(bean instanceof MessageDrivenBean)) continue;
 
-                final Properties properties = new Properties(module);
+                final Properties properties = new Properties();
+                properties.putAll(module);
                 properties.putAll(ejbDeployment.getProperties());
 
                 final MessageDrivenBean mdb = (MessageDrivenBean) bean;
