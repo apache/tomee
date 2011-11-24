@@ -249,16 +249,17 @@ public class StatelessInstanceManager {
      * @param callContext
      * @param bean
      */
-    public void discardInstance(ThreadContext callContext, Object bean) throws SystemException {
+    public void discardInstance(final ThreadContext callContext, final Object bean) throws SystemException {
         if (bean == null) throw new SystemException("Invalid arguments");
-        Instance instance = Instance.class.cast(bean);
+        final Instance instance = Instance.class.cast(bean);
 
-        BeanContext beanContext = callContext.getBeanContext();
-        Data data = (Data) beanContext.getContainerData();
+        final BeanContext beanContext = callContext.getBeanContext();
+        final Data data = (Data) beanContext.getContainerData();
 
-        Pool<Instance> pool = data.getPool();
-
-        pool.discard(instance.getPoolEntry());
+        if (null != data) {
+            final Pool<Instance> pool = data.getPool();
+            pool.discard(instance.getPoolEntry());
+        }
     }
 
     private void freeInstance(ThreadContext callContext, Instance instance) {
