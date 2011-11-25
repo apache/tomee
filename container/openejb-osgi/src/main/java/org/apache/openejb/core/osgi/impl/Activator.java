@@ -23,17 +23,19 @@ import org.apache.openejb.loader.OpenEJBInstance;
 import org.apache.openejb.loader.SystemInstance;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version $Rev$ $Date$
  */
 public class Activator implements BundleActivator {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Activator.class);
 
     private OpenEJBInstance openejb;
 
     public void start(BundleContext context) throws Exception {
-
-        System.out.println("Starting OpenEJB...");
+        LOGGER.info("Starting OpenEJB");
 
         Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
 
@@ -54,12 +56,12 @@ public class Activator implements BundleActivator {
         // OpenEJB.init(env);
         openejb.init(env);
 
-        System.out.println("Registering OSGified OpenEJB Deployer...");
+        LOGGER.info("Registering OSGified OpenEJB Deployer");
         context.addBundleListener(new Deployer());
     }
 
     public void stop(BundleContext context) throws Exception {
-        System.out.println("Stopping OpenEJB; openejb.isInitialized(): " + openejb.isInitialized());
+        LOGGER.info("Stopping OpenEJB; openejb.isInitialized(): " + openejb.isInitialized());
         openejb = null;
         OpenEJB.destroy();
     }

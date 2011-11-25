@@ -28,6 +28,8 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
@@ -38,6 +40,7 @@ import java.util.Properties;
  * @version $Rev$ $Date$
  */
 public class Deployer implements BundleListener {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Deployer.class);
 
     public void bundleChanged(BundleEvent event) {
         switch (event.getType()) {
@@ -51,19 +54,19 @@ public class Deployer implements BundleListener {
     }
 
     private void deploy(Bundle bundle) {
-        System.out.println(String.format("[Deployer] Bundle %s has been started", bundle.getSymbolicName()));
+        LOGGER.info(String.format("[Deployer] Bundle %s has been started", bundle.getSymbolicName()));
 
-        System.out.println(String.format("[Deployer] Checking whether it's an EJB module"));
+        LOGGER.info(String.format("[Deployer] Checking whether it's an EJB module"));
         Enumeration<URL> e = bundle.findEntries("META-INF", "ejb-jar.xml", false);
         if (e != null && e.hasMoreElements()) {
             URL ejbJarUrl = e.nextElement();
 
-            System.out.println("[Deployer] It's an EJB module: " + ejbJarUrl);
+            LOGGER.info("[Deployer] It's an EJB module: " + ejbJarUrl);
 
-            System.out.println("[Deployer] Deploying onto OpenEJB");
+            LOGGER.info("[Deployer] Deploying onto OpenEJB");
 
             String location = bundle.getLocation();
-            System.out.println("[Deployer] bundle location: " + location);
+            LOGGER.info("[Deployer] bundle location: " + location);
             try {
                 File file = new File(new URL(location).getFile());
                 try {
@@ -74,11 +77,11 @@ public class Deployer implements BundleListener {
                     AppInfo appInfo = configurationFactory.configureApplication(appModule);
 
                     Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
-                    System.out.println(assembler);
-                    System.out.println(appInfo);
+                    LOGGER.debug("Assembler : " + assembler);
+                    LOGGER.debug("AppInfo id: " + appInfo.appId);
                     assembler.createApplication(appInfo);
 
-                    System.out.println("[Deployer] Application deployed: " + appInfo.path);
+                    LOGGER.info("[Deployer] Application deployed: " + appInfo.path);
 
                     registerService(bundle, appInfo);
 
@@ -93,7 +96,7 @@ public class Deployer implements BundleListener {
     }
 
     private void undeploy(Bundle bundle) {
-        System.out.println(String.format("[Deployer] Bundle %s has been stopped", bundle.getSymbolicName()));
+        LOGGER.info(String.format("[Deployer] Bundle %s has been stopped", bundle.getSymbolicName()));
 
         // Let's others finish what needs to be here
         // It should leave openejb in the state as if the ejb had not been deployed at all
@@ -110,16 +113,16 @@ public class Deployer implements BundleListener {
      * @param appInfo
      */
     private void registerService(Bundle bundle, AppInfo appInfo) {
-        System.out.println("[Deployer] Registering a service for the EJB");
+        LOGGER.info("[Deployer] Registering a service for the EJB");
         BundleContext context = bundle.getBundleContext();
         for (EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
             for (EnterpriseBeanInfo ejbInfo : ejbJarInfo.enterpriseBeans) {
                 try {
                     context.registerService(ejbInfo.businessRemote.toArray(new String[ejbInfo.businessRemote.size()]), bundle.loadClass(
                             ejbInfo.ejbClass).newInstance(), new Properties());
-                    System.out.println(String.format(
-                            "[Deployer] Service object %s registered under the class names: %s", ejbInfo.ejbClass,
-                            ejbInfo.businessRemote));
+                    LOGGER.info(String.format(
+                             "[Deployer] Service object %s registered under the class names: %s", ejbInfo.ejbClass,
+                             ejbInfo.businessRemote));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
