@@ -27,7 +27,7 @@
   <packaging>pom</packaging>
   <name>OpenEJB :: Dependencies</name>
 
-  <modules>
-    <module>mbean-annotation-api</module>
-  </modules>
+  <!--<modules>-->
+    <!--<module>mbean-annotation-api</module>-->
+  <!--</modules>-->
 </project>
