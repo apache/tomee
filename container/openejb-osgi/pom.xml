@@ -116,7 +116,7 @@
                 <repository>target/features-repo</repository> </configuration>
                 </execution> </executions> </plugin>
             -->
-    </plugins>
-  </build>
+        </plugins>
+    </build>
 
 </project>
