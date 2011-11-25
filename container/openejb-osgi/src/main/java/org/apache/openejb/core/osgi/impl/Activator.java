@@ -16,8 +16,6 @@
  */
 package org.apache.openejb.core.osgi.impl;
 
-import java.util.Properties;
-
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.loader.OpenEJBInstance;
 import org.apache.openejb.loader.SystemInstance;
@@ -25,6 +23,8 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Properties;
 
 /**
  * @version $Rev$ $Date$

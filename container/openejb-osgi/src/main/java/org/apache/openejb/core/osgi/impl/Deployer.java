@@ -44,12 +44,12 @@ public class Deployer implements BundleListener {
 
     public void bundleChanged(BundleEvent event) {
         switch (event.getType()) {
-        case BundleEvent.STARTED:
-            deploy(event.getBundle());
-            break;
-        case BundleEvent.STOPPED:
-            undeploy(event.getBundle());
-            break;
+            case BundleEvent.STARTED:
+                deploy(event.getBundle());
+                break;
+            case BundleEvent.STOPPED:
+                undeploy(event.getBundle());
+                break;
         }
     }
 
@@ -108,7 +108,7 @@ public class Deployer implements BundleListener {
 
     /**
      * Register OSGi Service for EJB so calling the service will actually call the EJB
-     * 
+     *
      * @param bundle
      * @param appInfo
      */
@@ -121,8 +121,8 @@ public class Deployer implements BundleListener {
                     context.registerService(ejbInfo.businessRemote.toArray(new String[ejbInfo.businessRemote.size()]), bundle.loadClass(
                             ejbInfo.ejbClass).newInstance(), new Properties());
                     LOGGER.info(String.format(
-                             "[Deployer] Service object %s registered under the class names: %s", ejbInfo.ejbClass,
-                             ejbInfo.businessRemote));
+                            "[Deployer] Service object %s registered under the class names: %s", ejbInfo.ejbClass,
+                            ejbInfo.businessRemote));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
