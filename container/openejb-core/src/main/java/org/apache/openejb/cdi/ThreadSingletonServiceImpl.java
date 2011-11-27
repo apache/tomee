@@ -30,6 +30,7 @@ import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.spi.ContainerLifecycle;
 import org.apache.webbeans.spi.ContextsService;
 import org.apache.webbeans.spi.ConversationService;
+import org.apache.webbeans.spi.LoaderService;
 import org.apache.webbeans.spi.ResourceInjectionService;
 import org.apache.webbeans.spi.ScannerService;
 import org.apache.webbeans.spi.SecurityService;
@@ -82,6 +83,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         services.put(ContextsService.class, new CdiAppContextsService(true));
         services.put(ResourceInjectionService.class, new CdiResourceInjectionService());
         services.put(ScannerService.class, new CdiScanner());
+        services.put(LoaderService.class, new OptimizedLoaderService());
 
         optional(services, ConversationService.class, "org.apache.webbeans.jsf.DefaultConversationService");
 
