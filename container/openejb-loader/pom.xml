@@ -31,6 +31,7 @@
   <name>OpenEJB :: Container :: Loader</name>
   <properties>
     <openejb.osgi.import>
+      !org.apache.geronimo,
       org.apache.catalina*;resolution:=optional,
       !sun.misc.*,
       org.apache.openejb.*,
