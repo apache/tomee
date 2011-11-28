@@ -58,9 +58,12 @@ public class ContainersImplTomEE implements Containers {
         } else {
             throw new RuntimeException("Please set the tomee port as a system property");
         }
+
+        final String deployerJndi = System.getProperty("openejb.deployer.jndiname", "openejb/DeployerBusinessRemote");
+
         try {
             InitialContext context = new InitialContext(props);
-            return (Deployer) context.lookup("openejb/DeployerBusinessRemote");
+            return (Deployer) context.lookup(deployerJndi);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
