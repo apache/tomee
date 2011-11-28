@@ -26,14 +26,22 @@
   <artifactId>cdi-tomee</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: TCK :: CDI TomEE</name>
+
   <properties>
     <!-- where we will unpack tomcat -->
     <openejb.home>${project.build.directory}${file.separator}apache-tomee-webprofile-1.0.0-beta-2-SNAPSHOT</openejb.home>
+    <openejb.deployer.jndiname>openejb/DeployerBusinessRemote</openejb.deployer.jndiname>
   </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>webdeployer</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -143,6 +151,12 @@
               <artifactItems>
                 <artifactItem>
                   <groupId>org.apache.openejb</groupId>
+                  <artifactId>webdeployer</artifactId>
+                  <version>${project.version}</version>
+                  <outputDirectory>${openejb.home}/webapps/openejb/lib</outputDirectory>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>org.apache.openejb</groupId>
                   <artifactId>tck-common</artifactId>
                   <version>${project.version}</version>
                   <outputDirectory>${project.build.directory}/dependency/lib</outputDirectory>
@@ -214,6 +228,7 @@
             <server.shutdown.port>${tomee.shutdown.port}</server.shutdown.port>
             <java.opts>-Xmx512m -Xms256m -XX:PermSize=64m -XX:MaxPermSize=512m -XX:ReservedCodeCacheSize=64m</java.opts>
             <openejb.home>${openejb.home}</openejb.home>
+            <openejb.deployer.jndiname>${openejb.deployer.jndiname}</openejb.deployer.jndiname>
           </systemPropertyVariables>
         </configuration>
         <executions>
@@ -235,4 +250,15 @@
       </plugin>
     </plugins>
   </build>
+
+
+  <profiles>
+    <profile>
+      <id>webapp-deployer</id>
+      <properties>
+        <openejb.deployer.jndiname>openejb/WebappDeployerRemote</openejb.deployer.jndiname>
+      </properties>
+    </profile>
+  </profiles>
+
 </project>
