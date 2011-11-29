@@ -34,34 +34,47 @@ import java.util.Set;
  */
 public class JtaQuery implements Query {
     private final EntityManager entityManager;
+    private final JtaEntityManager jtaEntityManager;
     private final Query query;
 
-    public JtaQuery(EntityManager entityManager, Query query) {
+    public JtaQuery(EntityManager entityManager, JtaEntityManager jtaEntityManager, Query query) {
         this.entityManager = entityManager;
+        this.jtaEntityManager = jtaEntityManager;
         this.query = query;
     }
 
+    private EntityManager getEntityManager() {
+        EntityManager em = entityManager;
+        if (!jtaEntityManager.isTransactionActive()) {
+            em = jtaEntityManager.getEntityManager();
+        }
+        return em;
+    }
+
     public List getResultList() {
+        final EntityManager em = getEntityManager();
         try {
             return query.getResultList();
         } finally {
-            entityManager.close();
+            jtaEntityManager.closeIfNoTx(em);
         }
     }
 
     public Object getSingleResult() {
+        final EntityManager em = getEntityManager();
         try {
             return query.getSingleResult();
         } finally {
-            entityManager.close();
+            jtaEntityManager.closeIfNoTx(em);
         }
     }
 
     public int executeUpdate() {
+        final EntityManager em = getEntityManager();
         try {
             return query.executeUpdate();
         } finally {
-            entityManager.close();
+            jtaEntityManager.closeIfNoTx(em);
         }
     }
 

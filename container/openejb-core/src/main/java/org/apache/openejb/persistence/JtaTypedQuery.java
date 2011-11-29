@@ -34,8 +34,8 @@ import java.util.List;
  */
 public class JtaTypedQuery<X> extends JtaQuery implements TypedQuery<X> {
 
-    public JtaTypedQuery(EntityManager entityManager, Query query) {
-        super(entityManager, query);
+    public JtaTypedQuery(EntityManager entityManager, JtaEntityManager jtaEm, Query query) {
+        super(entityManager, jtaEm, query);
     }
 
     @SuppressWarnings("unchecked")
