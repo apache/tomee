@@ -73,11 +73,11 @@ public class JtaEntityManager implements EntityManager {
         logger = (unitName == null) ? baseLogger : baseLogger.getChildLogger(unitName);
     }
 
-    private EntityManager getEntityManager() {
+    EntityManager getEntityManager() {
         return registry.getEntityManager(entityManagerFactory, properties, extended, unitName);
     }
 
-    private boolean isTransactionActive() {
+    boolean isTransactionActive() {
         return registry.isTransactionActive();
     }
 
@@ -98,7 +98,7 @@ public class JtaEntityManager implements EntityManager {
      * for the operation and then closed.
      * @param entityManager the entity manager to close if non-extended and a transaction is not active
      */
-    private void closeIfNoTx(EntityManager entityManager) {
+    void closeIfNoTx(EntityManager entityManager) {
         if (!extended && !isTransactionActive()) {
             entityManager.close();
             logger.debug("Closed EntityManager(unit=" + unitName + ", hashCode=" + entityManager.hashCode() + ")");
@@ -310,14 +310,14 @@ public class JtaEntityManager implements EntityManager {
 
     private Query proxyIfNoTx(EntityManager entityManager, Query query) {
         if (!extended && !isTransactionActive()) {
-            return new JtaQuery(entityManager, query);
+            return new JtaQuery(entityManager, this, query);
         }
         return query;
     }
     
     private <T> TypedQuery<T> proxyIfNoTx(EntityManager entityManager, TypedQuery<T> query) {
         if (!extended && !isTransactionActive()) {
-            return new JtaTypedQuery<T>(entityManager, query);
+            return new JtaTypedQuery<T>(entityManager, this, query);
         }
         return query;
     }
