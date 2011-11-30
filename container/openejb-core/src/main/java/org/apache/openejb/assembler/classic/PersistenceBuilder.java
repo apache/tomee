@@ -46,7 +46,7 @@ public class PersistenceBuilder {
         this.persistenceClassLoaderHandler = persistenceClassLoaderHandler;
     }
 
-    public EntityManagerFactory createEntityManagerFactory(PersistenceUnitInfo info, ClassLoader classLoader) throws Exception {
+    public ReloadableEntityManagerFactory createEntityManagerFactory(PersistenceUnitInfo info, ClassLoader classLoader) throws Exception {
         PersistenceUnitInfoImpl unitInfo = new PersistenceUnitInfoImpl(persistenceClassLoaderHandler);
 
         // Persistence Unit Id
@@ -91,18 +91,18 @@ public class PersistenceBuilder {
 
         // Handle Properties
         unitInfo.setProperties(info.properties);
-        
+
         // Schema version of the persistence.xml file
         unitInfo.setPersistenceXMLSchemaVersion(info.persistenceXMLSchemaVersion);
-        
+
         // Second-level cache mode for the persistence unit
         SharedCacheMode sharedCacheMode = Enum.valueOf(SharedCacheMode.class, info.sharedCacheMode);
         unitInfo.setSharedCacheMode(sharedCacheMode);
-        
+
         // The validation mode to be used for the persistence unit
         ValidationMode validationMode = Enum.valueOf(ValidationMode.class, info.validationMode);
         unitInfo.setValidationMode(validationMode);
-        
+
         // Persistence Unit Transaction Type
         PersistenceUnitTransactionType type = Enum.valueOf(PersistenceUnitTransactionType.class, info.transactionType);
         unitInfo.setTransactionType(type);
