@@ -32,10 +32,7 @@ import javax.persistence.ValidationMode;
 import javax.persistence.spi.PersistenceUnitTransactionType;
 import javax.sql.DataSource;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class PersistenceBuilder {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, PersistenceBuilder.class);
@@ -134,11 +131,8 @@ public class PersistenceBuilder {
 
         final long start = System.nanoTime();
         try {
-            final ExecutorService executor = Executors.newSingleThreadExecutor(new EntityManagerFactoryThreadFactory(classLoader));
-            final Future<EntityManagerFactory> future = executor.submit(
-                    new EntityManagerFactoryCallable(persistenceProviderClassName, unitInfo)
-            );
-            return future.get(10, TimeUnit.MINUTES);
+            final EntityManagerFactoryCallable callable = new EntityManagerFactoryCallable(persistenceProviderClassName, unitInfo);
+            return new ReloadableEntityManagerFactory(classLoader, createEmf(classLoader, callable), callable);
         } finally {
             final long time = TimeUnit.MILLISECONDS.convert(System.nanoTime() - start, TimeUnit.NANOSECONDS);
             logger.info("assembler.buildingPersistenceUnit", unitInfo.getPersistenceUnitName(), unitInfo.getPersistenceProviderClassName(), time+"");
@@ -152,5 +146,11 @@ public class PersistenceBuilder {
 
     public static String getOpenEJBJndiName(String unit) {
         return Assembler.PERSISTENCE_UNIT_NAMING_CONTEXT + unit;
+    }
+
+    public static EntityManagerFactory createEmf(ClassLoader classLoader, Callable<EntityManagerFactory> callable) throws ExecutionException, TimeoutException, InterruptedException {
+        final ExecutorService executor = Executors.newSingleThreadExecutor(new EntityManagerFactoryThreadFactory(classLoader));
+        final Future<EntityManagerFactory> future = executor.submit(callable);
+        return future.get(10, TimeUnit.MINUTES);
     }
 }

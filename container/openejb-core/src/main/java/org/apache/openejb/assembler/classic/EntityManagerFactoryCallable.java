@@ -18,10 +18,16 @@ package org.apache.openejb.assembler.classic;
 
 import org.apache.openejb.persistence.PersistenceUnitInfoImpl;
 
+import javax.persistence.Cache;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnitUtil;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.metamodel.Metamodel;
 import javax.persistence.spi.PersistenceProvider;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.Callable;
 
 public class EntityManagerFactoryCallable implements Callable<EntityManagerFactory> {
@@ -43,5 +49,9 @@ public class EntityManagerFactoryCallable implements Callable<EntityManagerFacto
         properties.put("javax.persistence.validator.ValidatorFactory", new ValidatorFactoryWrapper());
         EntityManagerFactory emf = persistenceProvider.createContainerEntityManagerFactory(unitInfo, properties);
         return emf;
+    }
+
+    public PersistenceUnitInfoImpl getUnitInfo() {
+        return unitInfo;
     }
 }
