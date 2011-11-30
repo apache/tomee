@@ -121,6 +121,11 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
     /** The validation mode to be used for the persistence unit */
     private ValidationMode validationMode;
 
+    /** just to be able to dump this PU at runtime */
+    private String jtaDataSourceName;
+    /** just to be able to dump this PU at runtime */
+    private String nonJtaDataSourceName;
+
     public PersistenceUnitInfoImpl() {
         this.persistenceClassLoaderHandler = null;
     }
@@ -346,4 +351,19 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
         this.validationMode = validationMode;
     }
 
+    public String getJtaDataSourceName() {
+        return jtaDataSourceName;
+    }
+
+    public void setJtaDataSourceName(String jtaDataSourceName) {
+        this.jtaDataSourceName = jtaDataSourceName;
+    }
+
+    public String getNonJtaDataSourceName() {
+        return nonJtaDataSourceName;
+    }
+
+    public void setNonJtaDataSourceName(String nonJtaDataSourceName) {
+        this.nonJtaDataSourceName = nonJtaDataSourceName;
+    }
 }

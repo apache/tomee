@@ -1,6 +1,10 @@
 package org.apache.openejb.assembler.classic;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.jee.JAXBContextFactory;
+import org.apache.openejb.jee.Persistence;
+import org.apache.openejb.jee.PersistenceUnitCaching;
+import org.apache.openejb.jee.PersistenceUnitValidationMode;
 import org.apache.openejb.monitoring.DynamicMBeanWrapper;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
@@ -32,7 +36,11 @@ import javax.persistence.ValidationMode;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.metamodel.Metamodel;
 import javax.persistence.spi.PersistenceUnitTransactionType;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -374,6 +382,51 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory {
                 reloadableEntityManagerFactory.setValidationMode(mode);
             } catch (Exception iae) {
                 // ignored
+            }
+        }
+
+        @ManagedOperation
+        @Description("dump the current configuration for this persistence unit in a file")
+        public void dump(String file) {
+            PersistenceUnitInfoImpl info = reloadableEntityManagerFactory.entityManagerFactoryCallable.getUnitInfo();
+
+            Persistence.PersistenceUnit pu = new Persistence.PersistenceUnit();
+            pu.setJtaDataSource(info.getJtaDataSourceName());
+            pu.setNonJtaDataSource(info.getNonJtaDataSourceName());
+            pu.getClazz().addAll(info.getManagedClassNames());
+            pu.getMappingFile().addAll(info.getMappingFileNames());
+            pu.setName(info.getPersistenceUnitName());
+            pu.setProvider(info.getPersistenceProviderClassName());
+            pu.setTransactionType(info.getTransactionType().name());
+            pu.setExcludeUnlistedClasses(info.excludeUnlistedClasses());
+            pu.setSharedCacheMode(PersistenceUnitCaching.fromValue(info.getSharedCacheMode().name()));
+            pu.setValidationMode(PersistenceUnitValidationMode.fromValue(info.getValidationMode().name()));
+            for (URL url : info.getJarFileUrls()) {
+                pu.getJarFile().add(url.toString());
+            }
+            for (String key : info.getProperties().stringPropertyNames()) {
+                Persistence.PersistenceUnit.Properties.Property prop = new Persistence.PersistenceUnit.Properties.Property();
+                prop.setName(key);
+                prop.setValue(info.getProperties().getProperty(key));
+                if (pu.getProperties() == null) {
+                    pu.setProperties(new Persistence.PersistenceUnit.Properties());
+                }
+                pu.getProperties().getProperty().add(prop);
+            }
+
+            Persistence persistence = new Persistence();
+            persistence.setVersion(info.getPersistenceXMLSchemaVersion());
+            persistence.getPersistenceUnit().add(pu);
+
+            try {
+                FileWriter writer = new FileWriter(file);
+                JAXBContext jc = JAXBContextFactory.newInstance(Persistence.class);
+                Marshaller marshaller = jc.createMarshaller();
+                marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+                marshaller.marshal(persistence, writer);
+                writer.close();
+            } catch (Exception e) {
+                LOGGER.error("can't dump pu " + reloadableEntityManagerFactory.getPUname() + " in file " + file, e);
             }
         }
 

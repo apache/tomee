@@ -68,6 +68,7 @@ public class PersistenceBuilder {
 
         // JTA Datasource
         String jtaDataSourceId = info.jtaDataSource;
+        unitInfo.setJtaDataSourceName(jtaDataSourceId);
         if (jtaDataSourceId != null) {
             if (!SystemInstance.get().hasProperty("openejb.geronimo")) {
 
@@ -109,6 +110,7 @@ public class PersistenceBuilder {
 
         // Non JTA Datasource
         String nonJtaDataSourceId = info.nonJtaDataSource;
+        unitInfo.setNonJtaDataSourceName(nonJtaDataSourceId);
         if (nonJtaDataSourceId != null) {
             if (!SystemInstance.get().hasProperty("openejb.geronimo")) {
                 try {
