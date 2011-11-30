@@ -31,6 +31,7 @@ import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.monitoring.LocalMBeanServer;
 
 import javax.naming.NamingException;
 import java.io.IOException;
@@ -51,6 +52,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
     private List<ResourceInfo> resources;
 
     protected void setUp() throws Exception {
+        System.setProperty(LocalMBeanServer.OPENEJB_JMX_ACTIVE, "false");
         config = new ConfigurationFactory();
         assembler = new Assembler();
 
@@ -60,6 +62,10 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
         OpenEjbConfiguration configuration = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
         resources = configuration.facilities.resources;
+    }
+
+    @Override public void tearDown() {
+        System.getProperties().remove(LocalMBeanServer.OPENEJB_JMX_ACTIVE);
     }
 
     /**

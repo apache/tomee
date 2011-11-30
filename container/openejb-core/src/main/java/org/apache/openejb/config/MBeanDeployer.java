@@ -34,6 +34,7 @@ import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.monitoring.DynamicMBeanWrapper;
+import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -44,7 +45,7 @@ import org.apache.xbean.finder.ClassFinder;
  */
 public class MBeanDeployer implements DynamicDeployer {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, MBeanDeployer.class);
-    private static final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+    private static final MBeanServer server = LocalMBeanServer.get();
 
     private static final String OPENEJB_MBEAN_CLASSES_PROPERTY = "openejb.user.mbeans.list";
     private static final String OPENEJB_MBEAN_CLASSES_SPLIT = ",";

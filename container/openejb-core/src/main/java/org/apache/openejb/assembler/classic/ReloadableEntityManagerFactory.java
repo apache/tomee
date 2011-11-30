@@ -2,6 +2,7 @@ package org.apache.openejb.assembler.classic;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.monitoring.DynamicMBeanWrapper;
+import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.persistence.PersistenceUnitInfoImpl;
 import org.apache.openejb.util.LogCategory;
@@ -84,7 +85,7 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory {
     }
 
     public void register() throws OpenEJBException {
-        final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+        final MBeanServer server = LocalMBeanServer.get();
         try {
             server.registerMBean(mBeanify(), generateObjectName());
         } catch (Exception e) {
@@ -111,7 +112,7 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory {
 
     public void unregister() throws OpenEJBException {
         if (objectName != null) {
-            final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+            final MBeanServer server = LocalMBeanServer.get();
             try {
                 server.unregisterMBean(objectName);
             } catch (Exception e) {
@@ -131,7 +132,7 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory {
         try {
             delegate = PersistenceBuilder.createEmf(classLoader, entityManagerFactoryCallable);
         } catch (Exception e) {
-            LOGGER.error("can't replace EntityManagerFactory " + delegate);
+            LOGGER.error("can't replace EntityManagerFactory " + delegate, e);
         }
     }
 

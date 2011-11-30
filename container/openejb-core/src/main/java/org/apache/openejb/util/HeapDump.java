@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.util;
 
+import org.apache.openejb.monitoring.LocalMBeanServer;
+
 import javax.management.MBeanServer;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.InvocationTargetException;
@@ -50,7 +52,7 @@ public class HeapDump {
         // use JMX to find hot spot mbean
         Object hotspotMBean = null;
         try {
-            MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+            MBeanServer server = LocalMBeanServer.get();
             hotspotMBean = ManagementFactory.newPlatformMXBeanProxy(server,
                     "com.sun.management:type=HotSpotDiagnostic",
                     clazz);

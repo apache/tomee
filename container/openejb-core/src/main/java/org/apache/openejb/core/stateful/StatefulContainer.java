@@ -42,6 +42,7 @@ import org.apache.openejb.core.transaction.JtaTransactionPolicy;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.core.transaction.TransactionPolicy.TransactionSynchronization;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ManagedMBean;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.monitoring.StatsInterceptor;
@@ -255,7 +256,7 @@ public class StatefulContainer implements RpcContainer {
     public synchronized void undeploy(final BeanContext beanContext) throws OpenEJBException {
         Data data = (Data) beanContext.getContainerData();
 
-        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+        MBeanServer server = LocalMBeanServer.get();
         for (ObjectName objectName : data.jmxNames) {
             try {
                 server.unregisterMBean(objectName);
@@ -287,7 +288,7 @@ public class StatefulContainer implements RpcContainer {
         StatsInterceptor stats = new StatsInterceptor(beanContext.getBeanClass());
         beanContext.addSystemInterceptor(stats);
 
-        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+        MBeanServer server = LocalMBeanServer.get();
 
         ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
         jmxName.set("J2EEServer", "openejb");

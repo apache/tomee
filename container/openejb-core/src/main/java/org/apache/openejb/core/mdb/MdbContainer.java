@@ -23,6 +23,7 @@ import org.apache.openejb.ApplicationException;
 import org.apache.openejb.ContainerType;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.InterfaceType;
+import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.StatsInterceptor;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.monitoring.ManagedMBean;
@@ -154,7 +155,7 @@ public class MdbContainer implements RpcContainer {
         StatsInterceptor stats = new StatsInterceptor(beanContext.getBeanClass());
         beanContext.addSystemInterceptor(stats);
 
-        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+        MBeanServer server = LocalMBeanServer.get();
 
         ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
         jmxName.set("J2EEServer", "openejb");
