@@ -27,6 +27,7 @@ import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.core.timer.TimerServiceWrapper;
 import org.apache.openejb.loader.Options;
+import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ManagedMBean;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.monitoring.StatsInterceptor;
@@ -328,7 +329,7 @@ public class StatelessInstanceManager {
         StatsInterceptor stats = new StatsInterceptor(beanContext.getBeanClass());
         beanContext.addSystemInterceptor(stats);
 
-        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+        MBeanServer server = LocalMBeanServer.get();
 
         ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
         jmxName.set("J2EEServer", "openejb");
@@ -388,7 +389,7 @@ public class StatelessInstanceManager {
         Data data = (Data) beanContext.getContainerData();
         if (data == null) return;
 
-        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+        MBeanServer server = LocalMBeanServer.get();
         for (ObjectName objectName : data.jmxNames) {
             try {
                 server.unregisterMBean(objectName);

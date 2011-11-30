@@ -16,7 +16,37 @@
  */
 package org.apache.openejb.core.singleton;
 
-import java.lang.management.ManagementFactory;
+import org.apache.openejb.ApplicationException;
+import org.apache.openejb.BeanContext;
+import org.apache.openejb.BeanType;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.core.InstanceContext;
+import org.apache.openejb.core.Operation;
+import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.interceptor.InterceptorData;
+import org.apache.openejb.core.interceptor.InterceptorStack;
+import org.apache.openejb.core.timer.TimerServiceWrapper;
+import org.apache.openejb.core.transaction.EjbTransactionUtil;
+import org.apache.openejb.core.transaction.TransactionPolicy;
+import org.apache.openejb.core.transaction.TransactionType;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.monitoring.LocalMBeanServer;
+import org.apache.openejb.monitoring.ManagedMBean;
+import org.apache.openejb.monitoring.ObjectNameBuilder;
+import org.apache.openejb.monitoring.StatsInterceptor;
+import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+
+import javax.ejb.EJBContext;
+import javax.ejb.NoSuchEJBException;
+import javax.ejb.SessionBean;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.xml.ws.WebServiceContext;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,37 +62,6 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
-import javax.ejb.EJBContext;
-import javax.ejb.NoSuchEJBException;
-import javax.ejb.SessionBean;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-import javax.naming.Context;
-import javax.naming.NamingException;
-import javax.xml.ws.WebServiceContext;
-
-import org.apache.openejb.ApplicationException;
-import org.apache.openejb.BeanContext;
-import org.apache.openejb.BeanType;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.core.InstanceContext;
-import org.apache.openejb.core.Operation;
-import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.core.interceptor.InterceptorData;
-import org.apache.openejb.core.interceptor.InterceptorStack;
-import org.apache.openejb.core.timer.TimerServiceWrapper;
-import org.apache.openejb.core.transaction.EjbTransactionUtil;
-import org.apache.openejb.core.transaction.TransactionPolicy;
-import org.apache.openejb.core.transaction.TransactionType;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.monitoring.ManagedMBean;
-import org.apache.openejb.monitoring.ObjectNameBuilder;
-import org.apache.openejb.monitoring.StatsInterceptor;
-import org.apache.openejb.spi.ContainerSystem;
-import org.apache.openejb.spi.SecurityService;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
 
 public class SingletonInstanceManager {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
@@ -294,7 +293,7 @@ public class SingletonInstanceManager {
         StatsInterceptor stats = new StatsInterceptor(beanContext.getBeanClass());
         beanContext.addSystemInterceptor(stats);
 
-        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+        MBeanServer server = LocalMBeanServer.get();
 
         ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
         jmxName.set("J2EEServer", "openejb");
@@ -327,7 +326,7 @@ public class SingletonInstanceManager {
         Data data = (Data) beanContext.getContainerData();
         if (data == null) return;
 
-        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+        MBeanServer server = LocalMBeanServer.get();
         for (ObjectName objectName : data.jmxNames) {
             try {
                 server.unregisterMBean(objectName);
