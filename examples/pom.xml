@@ -93,6 +93,7 @@
     <module>cdi-alternative-and-stereotypes</module>
     <module>cdi-events</module>
     <module>dynamic-proxy-to-access-mbean</module>
+    <module>reload-persistence-unit-properties</module>
   </modules>
   <profiles>
     <profile>
