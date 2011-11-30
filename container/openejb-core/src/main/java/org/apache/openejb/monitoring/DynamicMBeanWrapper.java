@@ -55,22 +55,15 @@ public class DynamicMBeanWrapper implements DynamicMBean {
     private final Map<String, Method> operations = new HashMap<String, Method>();
     private final Object instance;
 
-    public DynamicMBeanWrapper(Class<?> annotatedMBean) {
+    public DynamicMBeanWrapper(Object givenInstance) {
+        final Class<?> annotatedMBean = givenInstance.getClass();
+
         String description;
         List<MBeanAttributeInfo> attributeInfos = new ArrayList<MBeanAttributeInfo>();
         List<MBeanOperationInfo> operationInfos = new ArrayList<MBeanOperationInfo>();
         List<MBeanNotificationInfo> notificationInfos = new ArrayList<MBeanNotificationInfo>();
 
-        // instantiation
-        try {
-            instance = annotatedMBean.newInstance();
-        } catch (InstantiationException ie) {
-            logger.error("can't instantiate " + annotatedMBean.getName(), ie);
-            throw new IllegalArgumentException(annotatedMBean.getName());
-        } catch (IllegalAccessException iae) {
-            logger.error("can't instantiate " + annotatedMBean.getName(), iae);
-            throw new IllegalArgumentException(annotatedMBean.getName());
-        }
+        instance = givenInstance;
 
         // class
         Description classDescription = annotatedMBean.getAnnotation(Description.class);
@@ -95,8 +88,8 @@ public class DynamicMBeanWrapper implements DynamicMBean {
         for (Method m : annotatedMBean.getMethods()) {
             int modifiers = m.getModifiers();
             if (m.getDeclaringClass().equals(Object.class)
-                || !Modifier.isPublic(modifiers)
-                || Modifier.isAbstract(modifiers)) {
+                    || !Modifier.isPublic(modifiers)
+                    || Modifier.isAbstract(modifiers)) {
                 continue;
             }
 
@@ -104,8 +97,8 @@ public class DynamicMBeanWrapper implements DynamicMBean {
                 String methodName = m.getName();
                 String attrName = methodName;
                 if (((attrName.startsWith("get") && m.getParameterTypes().length == 0)
-                    || (attrName.startsWith("set") && m.getParameterTypes().length == 1))
-                    && attrName.length() > 3) {
+                        || (attrName.startsWith("set") && m.getParameterTypes().length == 1))
+                        && attrName.length() > 3) {
                     attrName = attrName.substring(3);
                     if (attrName.length() > 1) {
                         attrName = Character.toLowerCase(attrName.charAt(0)) + attrName.substring(1);
@@ -152,11 +145,27 @@ public class DynamicMBeanWrapper implements DynamicMBean {
         }
 
         info = new MBeanInfo(annotatedMBean.getName(),
-            description,
-            attributeInfos.toArray(new MBeanAttributeInfo[attributeInfos.size()]),
-            null, // default constructor is mandatory
-            operationInfos.toArray(new MBeanOperationInfo[operationInfos.size()]),
-            notificationInfos.toArray(new MBeanNotificationInfo[notificationInfos.size()]));
+                description,
+                attributeInfos.toArray(new MBeanAttributeInfo[attributeInfos.size()]),
+                null, // default constructor is mandatory
+                operationInfos.toArray(new MBeanOperationInfo[operationInfos.size()]),
+                notificationInfos.toArray(new MBeanNotificationInfo[notificationInfos.size()]));
+    }
+
+    public DynamicMBeanWrapper(Class<?> annotatedMBean) {
+        this(instantiate(annotatedMBean));
+    }
+
+    private static Object instantiate(Class<?> annotatedMBean) {
+        try {
+            return annotatedMBean.newInstance();
+        } catch (InstantiationException ie) {
+            logger.error("can't instantiate " + annotatedMBean.getName(), ie);
+            throw new IllegalArgumentException(annotatedMBean.getName());
+        } catch (IllegalAccessException iae) {
+            logger.error("can't instantiate " + annotatedMBean.getName(), iae);
+            throw new IllegalArgumentException(annotatedMBean.getName());
+        }
     }
 
     private MBeanNotificationInfo getNotificationInfo(NotificationInfo n) {

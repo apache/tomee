@@ -22,34 +22,9 @@ import org.apache.geronimo.connector.work.HintsContextHandler;
 import org.apache.geronimo.connector.work.TransactionContextHandler;
 import org.apache.geronimo.connector.work.WorkContextHandler;
 import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
-import org.apache.openejb.AppContext;
-import org.apache.openejb.BeanContext;
-import org.apache.openejb.BeanType;
-import org.apache.openejb.ClassLoaderUtil;
-import org.apache.openejb.Container;
-import org.apache.openejb.DuplicateDeploymentIdException;
-import org.apache.openejb.Injection;
-import org.apache.openejb.JndiConstants;
-import org.apache.openejb.MethodContext;
-import org.apache.openejb.NoSuchApplicationException;
-import org.apache.openejb.OpenEJB;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.UndeployException;
-import org.apache.openejb.cdi.CdiAppContextsService;
-import org.apache.openejb.cdi.CdiBuilder;
-import org.apache.openejb.cdi.CdiResourceInjectionService;
-import org.apache.openejb.cdi.CdiScanner;
-import org.apache.openejb.cdi.CustomELAdapter;
-import org.apache.openejb.cdi.ManagedSecurityService;
-import org.apache.openejb.cdi.OpenEJBTransactionService;
-import org.apache.openejb.cdi.OptimizedLoaderService;
-import org.apache.openejb.core.ConnectorReference;
-import org.apache.openejb.core.CoreContainerSystem;
-import org.apache.openejb.core.CoreUserTransaction;
-import org.apache.openejb.core.JndiFactory;
-import org.apache.openejb.core.SimpleTransactionSynchronizationRegistry;
-import org.apache.openejb.core.TransactionSynchronizationRegistryWrapper;
-import org.apache.openejb.core.WebContext;
+import org.apache.openejb.*;
+import org.apache.openejb.cdi.*;
+import org.apache.openejb.core.*;
 import org.apache.openejb.core.ivm.naming.IvmContext;
 import org.apache.openejb.core.ivm.naming.IvmJndiFactory;
 import org.apache.openejb.core.security.SecurityContextHandler;
@@ -57,11 +32,7 @@ import org.apache.openejb.core.timer.EjbTimerServiceImpl;
 import org.apache.openejb.core.timer.NullEjbTimerServiceImpl;
 import org.apache.openejb.core.timer.ScheduleData;
 import org.apache.openejb.core.timer.TimerStore;
-import org.apache.openejb.core.transaction.JtaTransactionPolicyFactory;
-import org.apache.openejb.core.transaction.SimpleBootstrapContext;
-import org.apache.openejb.core.transaction.SimpleWorkManager;
-import org.apache.openejb.core.transaction.TransactionPolicyFactory;
-import org.apache.openejb.core.transaction.TransactionType;
+import org.apache.openejb.core.transaction.*;
 import org.apache.openejb.javaagent.Agent;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
@@ -71,46 +42,21 @@ import org.apache.openejb.resource.GeronimoConnectionManagerFactory;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
-import org.apache.openejb.util.AsmParameterNameLoader;
-import org.apache.openejb.util.ContextUtil;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.Messages;
-import org.apache.openejb.util.OpenEJBErrorHandler;
-import org.apache.openejb.util.References;
-import org.apache.openejb.util.SafeToolkit;
+import org.apache.openejb.util.*;
 import org.apache.openejb.util.proxy.ProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
 import org.apache.webbeans.config.WebBeansContext;
-import org.apache.webbeans.spi.ContextsService;
-import org.apache.webbeans.spi.LoaderService;
-import org.apache.webbeans.spi.ResourceInjectionService;
-import org.apache.webbeans.spi.ScannerService;
-import org.apache.webbeans.spi.TransactionService;
+import org.apache.webbeans.spi.*;
 import org.apache.webbeans.spi.adaptor.ELAdaptor;
 import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 import org.apache.xbean.recipe.UnsetPropertiesRecipe;
 
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanRegistrationException;
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
-import javax.naming.Binding;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NameAlreadyBoundException;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
+import javax.management.*;
+import javax.naming.*;
 import javax.persistence.EntityManagerFactory;
-import javax.resource.spi.BootstrapContext;
-import javax.resource.spi.ConnectionManager;
-import javax.resource.spi.ManagedConnectionFactory;
-import javax.resource.spi.ResourceAdapter;
-import javax.resource.spi.ResourceAdapterInternalException;
-import javax.resource.spi.XATerminator;
+import javax.resource.spi.*;
 import javax.resource.spi.work.WorkManager;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
@@ -124,23 +70,13 @@ import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.Set;
-import java.util.TreeMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.lang.IllegalStateException;
 
 public class Assembler extends AssemblerTool implements org.apache.openejb.spi.Assembler, JndiConstants {
 
@@ -603,8 +539,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             Map<String, String> units = new HashMap<String, String>();
             PersistenceBuilder persistenceBuilder = new PersistenceBuilder(persistenceClassLoaderHandler);
             for (PersistenceUnitInfo info : appInfo.persistenceUnits) {
+                ReloadableEntityManagerFactory factory;
                 try {
-                    EntityManagerFactory factory = persistenceBuilder.createEntityManagerFactory(info, classLoader);
+                    factory = persistenceBuilder.createEntityManagerFactory(info, classLoader);
                     containerSystem.getJNDIContext().bind(PERSISTENCE_UNIT_NAMING_CONTEXT + info.id, factory);
                     units.put(info.name, PERSISTENCE_UNIT_NAMING_CONTEXT + info.id);
                 } catch (NameAlreadyBoundException e) {
@@ -612,6 +549,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 } catch (Exception e) {
                     throw new OpenEJBException(e);
                 }
+
+                factory.register();
             }
 
             // Connectors
@@ -1179,12 +1118,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         for (PersistenceUnitInfo unitInfo : appInfo.persistenceUnits) {
             try {
-                Object object = globalContext.lookup("openejb/PersistenceUnit/" + unitInfo.id);
-                globalContext.unbind("openejb/PersistenceUnit/"+unitInfo.id);
+                Object object = globalContext.lookup(PERSISTENCE_UNIT_NAMING_CONTEXT + unitInfo.id);
+                globalContext.unbind(PERSISTENCE_UNIT_NAMING_CONTEXT + unitInfo.id);
 
                 // close EMF so all resources are released
-                ((EntityManagerFactory) object).close();
+                ReloadableEntityManagerFactory remf = ((ReloadableEntityManagerFactory) object);
+                remf.close();
                 persistenceClassLoaderHandler.destroy(unitInfo.id);
+                remf.unregister();
             } catch (Throwable t) {
                 undeployException.getCauses().add(new Exception("persistence-unit: " + unitInfo.id + ": " + t.getMessage(), t));
             }
