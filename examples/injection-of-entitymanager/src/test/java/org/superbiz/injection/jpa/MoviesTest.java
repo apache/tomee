@@ -33,7 +33,8 @@ public class MoviesTest extends TestCase {
         p.put("movieDatabase.JdbcDriver", "org.hsqldb.jdbcDriver");
         p.put("movieDatabase.JdbcUrl", "jdbc:hsqldb:mem:moviedb");
 
-        final Context context = EJBContainer.createEJBContainer(p).getContext();
+        EJBContainer container = EJBContainer.createEJBContainer(p);
+        final Context context = container.getContext();
 
         Movies movies = (Movies) context.lookup("java:global/injection-of-entitymanager/Movies");
 
@@ -49,6 +50,8 @@ public class MoviesTest extends TestCase {
         }
 
         assertEquals("Movies.getMovies()", 0, movies.getMovies().size());
+
+        container.close();
     }
 }
 //END SNIPPET: code
