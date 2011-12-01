@@ -32,6 +32,7 @@
   <name>OpenEJB :: Container :: Core</name>
   <properties>
     <openejb.osgi.import.pkg>
+      !org.apache.geronimo.specs,
       org.apache.activemq.ra;resolution:=optional,
       org.apache.commons.dbcp.managed;resolution:=optional,
       oracle.toplink.*;resolution:=optional,
@@ -52,6 +53,8 @@
       org.apache.xerces*;resolution:=optional,
       org.apache.xml.resolver*;resolution:=optional,
       org.junit*;resolution:=optional,
+      org.apache.log4j.*;resolution:=optional,
+      org.slf4j.*;resolution:=optional,
       javax.annotation;version="[1.1.0,2.0.0)",
       javax.annotation.security;version="[1.1.0,2.0.0)",
       javax.annotation.sql;version="[1.1.0,2.0.0)",
@@ -61,12 +64,23 @@
       javax.ejb.embeddable;version=3.1,
       javax.ejb.spi;version=3.1,
       javax.xml.ws,
+      org.apache.openejb.api,
+      org.apache.openejb.loader,
+      org.apache.openejb.jee,
+      org.apache.openejb.jee.jpa,
+      org.apache.openejb.jee.bval,
+      org.apache.openejb.jee.oejb2,
+      org.apache.openejb.jee.oejb3,
+      org.apache.openejb.jee.sun;resolution:=optional,
+      org.apache.openejb.jee.wls,
+      !org.apache.openejb.jee.was,
       *
     </openejb.osgi.import.pkg>
     <openejb.osgi.export>
-      !org.apache.openejb.client,
+      !org.apache.openejb.javaee.api.activator,
       org.apache.openejb.cdi.*;version=${openejb.osgi.export.version},
       org.apache.openejb*;version=${openejb.osgi.export.version}
+      org.apache.openejb;version=${openejb.osgi.export.version}
     </openejb.osgi.export>
   </properties>
   <build>
