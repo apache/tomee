@@ -32,10 +32,12 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.api.internal.Internal;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.monitoring.DynamicMBeanWrapper;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
+import org.apache.openejb.util.AnnotationUtil;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.xbean.finder.ClassFinder;
@@ -143,7 +145,9 @@ public class MBeanDeployer implements DynamicDeployer {
             }
 
             for (Class<?> clazz : list) {
-                mbeans.put(clazz, getObjectName(clazz, id));
+                if (AnnotationUtil.getAnnotation(Internal.class, clazz) == null) {
+                    mbeans.put(clazz, getObjectName(clazz, id));
+                }
             }
         } else if (listProp != null) {
             for (String name : listProp.replace(" ", "").split(OPENEJB_MBEAN_CLASSES_SPLIT)) {
