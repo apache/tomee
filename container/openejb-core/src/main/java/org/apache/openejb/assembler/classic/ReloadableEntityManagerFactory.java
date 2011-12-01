@@ -38,7 +38,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.metamodel.Metamodel;
 import javax.persistence.spi.PersistenceUnitTransactionType;
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.File;
 import java.io.FileWriter;
@@ -54,6 +53,9 @@ import java.util.Properties;
  */
 public class ReloadableEntityManagerFactory implements EntityManagerFactory {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, ReloadableEntityManagerFactory.class);
+    public static final String JAVAX_PERSISTENCE_SHARED_CACHE_MODE = "javax.persistence.sharedCache.mode";
+    public static final String JAVAX_PERSISTENCE_VALIDATION_MODE = "javax.persistence.validation.mode";
+    public static final String JAVAX_PERSISTENCE_TRANSACTION_TYPE = "javax.persistence.transactionType";
 
     private ClassLoader classLoader;
     private EntityManagerFactory delegate;
@@ -177,11 +179,23 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory {
     }
 
     public synchronized void setSharedCacheMode(SharedCacheMode mode) {
-        entityManagerFactoryCallable.getUnitInfo().setSharedCacheMode(mode);
+        PersistenceUnitInfoImpl info = entityManagerFactoryCallable.getUnitInfo();
+        info.setSharedCacheMode(mode);
+
+        Properties properties = entityManagerFactoryCallable.getUnitInfo().getProperties();
+        if (properties.containsKey(JAVAX_PERSISTENCE_SHARED_CACHE_MODE)) {
+            properties.setProperty(JAVAX_PERSISTENCE_SHARED_CACHE_MODE, mode.name());
+        }
     }
 
     public synchronized void setValidationMode(ValidationMode mode) {
-        entityManagerFactoryCallable.getUnitInfo().setValidationMode(mode);
+        PersistenceUnitInfoImpl info = entityManagerFactoryCallable.getUnitInfo();
+        info.setValidationMode(mode);
+
+        Properties properties = entityManagerFactoryCallable.getUnitInfo().getProperties();
+        if (properties.containsKey(JAVAX_PERSISTENCE_VALIDATION_MODE)) {
+            properties.setProperty(JAVAX_PERSISTENCE_VALIDATION_MODE, mode.name());
+        }
     }
 
     public synchronized void setProvider(String providerRaw) {
@@ -206,7 +220,13 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory {
     }
 
     public synchronized void setTransactionType(PersistenceUnitTransactionType type) {
-        entityManagerFactoryCallable.getUnitInfo().setTransactionType(type);
+        PersistenceUnitInfoImpl info = entityManagerFactoryCallable.getUnitInfo();
+        info.setTransactionType(type);
+
+        Properties properties = entityManagerFactoryCallable.getUnitInfo().getProperties();
+        if (properties.containsKey(JAVAX_PERSISTENCE_TRANSACTION_TYPE)) {
+            properties.setProperty(JAVAX_PERSISTENCE_TRANSACTION_TYPE, type.name());
+        }
     }
 
     public synchronized void setProperty(String key, String value) {
@@ -479,7 +499,7 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory {
             String[] names = properties.keySet().toArray(new String[properties.size()]);
             Object[] values = new Object[names.length];
             for (int i = 0; i < values.length; i++) {
-                values[i] = properties.get(names[i]);
+                values[i] = properties.get(names[i]).toString(); // hibernate put objects in properties for instance
             }
             return tabularData(typeName, typeDescription, names, values);
         }
