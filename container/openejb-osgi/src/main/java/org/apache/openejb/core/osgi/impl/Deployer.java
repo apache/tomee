@@ -16,10 +16,11 @@
  */
 package org.apache.openejb.core.osgi.impl;
 
+import org.apache.openejb.AppContext;
+import org.apache.openejb.BeanContext;
+import org.apache.openejb.RpcContainer;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.EjbJarInfo;
-import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentLoader;
@@ -33,8 +34,13 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -84,11 +90,11 @@ public class Deployer implements BundleListener {
                         Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
                         LOGGER.debug("Assembler : " + assembler);
                         LOGGER.debug("AppInfo id: " + appInfo.appId);
-                        assembler.createApplication(appInfo);
+                        AppContext appContext = assembler.createApplication(appInfo);
 
                         LOGGER.info("[Deployer] Application deployed: " + appInfo.path);
 
-                        registerService(bundle, appInfo);
+                        registerService(bundle, appContext);
 
                     } catch (Exception ex) {
                         LOGGER.error("can't deploy " + ejbJarUrl.toExternalForm(), ex);
@@ -117,27 +123,66 @@ public class Deployer implements BundleListener {
      * Register OSGi Service for EJB so calling the service will actually call the EJB
      *
      * @param bundle
-     * @param appInfo
+     * @param appContext
      */
-    private void registerService(Bundle bundle, AppInfo appInfo) {
+    private void registerService(Bundle bundle, AppContext appContext) {
         LOGGER.info("[Deployer] Registering a service for the EJB");
         BundleContext context = bundle.getBundleContext();
-        for (EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
-            for (EnterpriseBeanInfo ejbInfo : ejbJarInfo.enterpriseBeans) {
-                try {
-                    context.registerService(ejbInfo.businessRemote.toArray(new String[ejbInfo.businessRemote.size()]), bundle.loadClass(
-                        ejbInfo.ejbClass).newInstance(), new Properties());
-                    LOGGER.info(String.format(
-                        "[Deployer] Service object %s registered under the class names: %s", ejbInfo.ejbClass,
-                        ejbInfo.businessRemote));
-                } catch (Exception e) {
-                    e.printStackTrace();
+        for (BeanContext beanContext : appContext.getBeanContexts()) {
+            try {
+                if (beanContext.getBusinessLocalInterface() != null) {
+                    registerService(beanContext, context, beanContext.getBusinessLocalInterfaces());
                 }
+                if (beanContext.getBusinessRemoteInterface() != null) {
+                    registerService(beanContext, context, beanContext.getBusinessRemoteInterfaces());
+                }
+                if (beanContext.isLocalbean()) {
+                    registerService(beanContext, context, Arrays.asList(beanContext.getBusinessLocalBeanInterface()));
+                }
+            } catch (Exception e) {
+                LOGGER.error(String.format("[Deployer] can't register: %s", beanContext.getEjbName()));
             }
         }
     }
 
-    private class OSGIClassLoader extends ClassLoader {
+    private void registerService(BeanContext beanContext, BundleContext context, List<Class> interfaces) {
+        if (!interfaces.isEmpty()) {
+            Class<?>[] itfs = interfaces.toArray(new Class<?>[interfaces.size()]);
+            try {
+                Object service = Proxy.newProxyInstance(itfs[0].getClassLoader(), itfs, new Handler(beanContext));
+                context.registerService(str(itfs), service, new Properties());
+                LOGGER.info(String.format("[Deployer] EJB registered: %s for interfaces %s", beanContext.getEjbName(), interfaces));
+            } catch (IllegalArgumentException iae) {
+                LOGGER.error(String.format("[Deployer] can't register: %s for interfaces %s", beanContext.getEjbName(), interfaces));
+            }
+        }
+    }
+
+    private String[] str(Class<?>[] itfs) {
+        String[] itfsStr = new String[itfs.length];
+        for (int i = 0; i < itfs.length; i++) {
+            itfsStr[i] = itfs[i].getName();
+        }
+        return itfsStr;
+    }
+
+    private static class Handler implements InvocationHandler {
+        private BeanContext beanContext;
+
+        public Handler(BeanContext bc) {
+            beanContext = bc;
+        }
+
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            final RpcContainer container = RpcContainer.class.cast(beanContext.getContainer());
+            return container.invoke(beanContext.getDeploymentID(),
+                    beanContext.getInterfaceType(method.getDeclaringClass()),
+                    method.getDeclaringClass(), method, args, null);
+        }
+    }
+
+    private static class OSGIClassLoader extends ClassLoader {
         private final Bundle backingBundle;
 
         public OSGIClassLoader(Bundle bundle) {
