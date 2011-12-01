@@ -54,7 +54,12 @@ public class Activator implements BundleActivator {
         // OptionsLog.install();
 
         // OpenEJB.init(env);
-        openejb.init(env);
+        try {
+            openejb.init(env);
+        } catch (Exception e) {
+            LOGGER.error("can't start the bundle", e);
+            throw e;
+        }
 
         LOGGER.info("Registering OSGified OpenEJB Deployer");
         context.addBundleListener(new Deployer());

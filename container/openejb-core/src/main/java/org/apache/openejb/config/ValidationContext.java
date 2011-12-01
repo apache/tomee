@@ -16,10 +16,8 @@
  */
 package org.apache.openejb.config;
 
-import org.apache.openejb.jee.was.v6.common.QName;
-
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @version $Rev$ $Date$

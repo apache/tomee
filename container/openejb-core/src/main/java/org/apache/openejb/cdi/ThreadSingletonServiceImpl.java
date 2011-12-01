@@ -25,6 +25,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.classloader.MultipleClassLoader;
 import org.apache.webbeans.config.OpenWebBeansConfiguration;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.spi.ContainerLifecycle;
@@ -87,10 +88,14 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
 
         optional(services, ConversationService.class, "org.apache.webbeans.jsf.DefaultConversationService");
 
-        WebBeansContext webBeansContext = new WebBeansContext(services, properties);
-        appContext.set(WebBeansContext.class, webBeansContext);
-        Object old = contextEntered(webBeansContext);
+        ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(new MultipleClassLoader(oldClassLoader, ThreadSingletonServiceImpl.class.getClassLoader()));
+        WebBeansContext webBeansContext;
+        Object old = null;
         try {
+            webBeansContext = new WebBeansContext(services, properties);
+            appContext.set(WebBeansContext.class, webBeansContext);
+            old = contextEntered(webBeansContext);
             setConfiguration(webBeansContext.getOpenWebBeansConfiguration());
             try {
                 webBeansContext.getService(ContainerLifecycle.class).startApplication(startupObject);
@@ -99,6 +104,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
             }
         } finally {
             contextExited(old);
+            Thread.currentThread().setContextClassLoader(oldClassLoader);
         }
     }
 

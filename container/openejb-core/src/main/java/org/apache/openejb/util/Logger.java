@@ -57,13 +57,37 @@ public class Logger {
             }
         }
 
+        // slf4j
         if (factory == null) {
             try {
+                // ensure Log4j is in the CP
+                Logger.class.getClassLoader().loadClass("org.slf4j.LoggerFactory");
+
+                factory = new Slf4jLogStreamFactory();
+            } catch (NoClassDefFoundError e) {
+                // slf4j not in classpath
+            } catch (ClassNotFoundException cnfe) {
+                // idem
+            }
+        }
+
+        // Log4j is possible
+        if (factory == null) {
+            try {
+                // ensure Log4j is in the CP
+                Logger.class.getClassLoader().loadClass("org.apache.log4j.Layout");
+
                 factory = new Log4jLogStreamFactory();
             } catch (NoClassDefFoundError e) {
                 //log4j not in classpath
-                factory = new JuliLogStreamFactory();
+            } catch (ClassNotFoundException cnfe) {
+                // idem
             }
+        }
+
+        // else JUL
+        if (factory == null) {
+            factory = new JuliLogStreamFactory();
         }
 
         logStreamFactory = factory;
