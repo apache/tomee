@@ -1,6 +1,7 @@
 package org.apache.openejb.assembler.classic;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.api.internal.Internal;
 import org.apache.openejb.jee.JAXBContextFactory;
 import org.apache.openejb.jee.Persistence;
 import org.apache.openejb.jee.PersistenceUnitCaching;
@@ -284,6 +285,7 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory {
     }
 
     @MBean
+    @Internal
     @Description("represents a persistence unit managed by OpenEJB")
     public static class JMXReloadableEntityManagerFactory {
         private ReloadableEntityManagerFactory reloadableEntityManagerFactory;
