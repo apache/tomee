@@ -88,6 +88,10 @@ public class Logger {
         // else JUL
         if (factory == null) {
             factory = new JuliLogStreamFactory();
+        } else { // we suppose we use log4j with slf4j since it is not a drama if it is not the case
+            if (!System.getProperties().containsKey("org.apache.cxf.Logger")) {
+                System.setProperty("org.apache.cxf.Logger", "org.apache.cxf.common.logging.Log4jLogger");
+            }
         }
 
         logStreamFactory = factory;
