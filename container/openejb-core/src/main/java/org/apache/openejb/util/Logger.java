@@ -62,7 +62,9 @@ public class Logger {
             try {
                 // ensure Log4j is in the CP
                 Logger.class.getClassLoader().loadClass("org.slf4j.LoggerFactory");
-
+                if (!System.getProperties().containsKey("org.apache.cxf.Logger")) {
+                    System.setProperty("org.apache.cxf.Logger", "org.apache.cxf.common.logging.Slf4jLogger");
+                }
                 factory = new Slf4jLogStreamFactory();
             } catch (NoClassDefFoundError e) {
                 // slf4j not in classpath
@@ -76,7 +78,9 @@ public class Logger {
             try {
                 // ensure Log4j is in the CP
                 Logger.class.getClassLoader().loadClass("org.apache.log4j.Layout");
-
+                if (!System.getProperties().containsKey("org.apache.cxf.Logger")) {
+                    System.setProperty("org.apache.cxf.Logger", "org.apache.cxf.common.logging.Log4jLogger");
+                }
                 factory = new Log4jLogStreamFactory();
             } catch (NoClassDefFoundError e) {
                 //log4j not in classpath
@@ -88,10 +92,6 @@ public class Logger {
         // else JUL
         if (factory == null) {
             factory = new JuliLogStreamFactory();
-        } else { // we suppose we use log4j with slf4j since it is not a drama if it is not the case
-            if (!System.getProperties().containsKey("org.apache.cxf.Logger")) {
-                System.setProperty("org.apache.cxf.Logger", "org.apache.cxf.common.logging.Log4jLogger");
-            }
         }
 
         logStreamFactory = factory;
