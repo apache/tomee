@@ -67,7 +67,8 @@ public class CdiBuilder {
             logger.info("succeeded in installing singleton service");
         } catch (Exception e) {
             //ignore
-            logger.info("Could not install our singleton service", e);
+            // not logging the exception since it is nto an error
+            logger.info("Could not install our singleton service");
         }
         //TODO there must be a better place to initialize this
         ThreadContext.addThreadContextListener(new OWBContextThreadListener());
