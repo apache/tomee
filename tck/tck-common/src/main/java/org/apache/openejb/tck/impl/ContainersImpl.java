@@ -16,9 +16,6 @@
  */
 package org.apache.openejb.tck.impl;
 
-import javax.ejb.EJBException;
-import javax.ejb.embeddable.EJBContainer;
-import javax.validation.ValidationException;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.cdi.ThreadSingletonServiceImpl;
@@ -26,7 +23,6 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.tck.OpenEJBTckDeploymentRuntimeException;
 import org.apache.openejb.tck.util.ZipUtil;
 import org.apache.openejb.util.SetAccessible;
-import org.apache.webbeans.config.WebBeansContext;
 import org.jboss.testharness.api.DeploymentException;
 import org.jboss.testharness.impl.packaging.Resource;
 import org.jboss.testharness.impl.packaging.Resources;
@@ -35,6 +31,9 @@ import org.jboss.testharness.impl.packaging.ear.PersistenceXml;
 import org.jboss.testharness.impl.packaging.jsr303.ValidationXml;
 import org.jboss.testharness.spi.Containers;
 
+import javax.ejb.EJBException;
+import javax.ejb.embeddable.EJBContainer;
+import javax.validation.ValidationException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;

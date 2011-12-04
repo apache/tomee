@@ -126,6 +126,7 @@ public class ContainersImplTomEE implements Containers {
     private File getFile(String name) {
         final File dir = new File(tmpDir, Math.random()+"");
         dir.mkdir();
+        dir.deleteOnExit();
 
         return new File(dir, name);
     }
@@ -157,12 +158,24 @@ public class ContainersImplTomEE implements Containers {
             throw new RuntimeException(e);
         }
 
-        if (currentFile != null && currentFile.exists()) {
-            if (!currentFile.delete()) {
-                currentFile.deleteOnExit();
-            }
+        File toDelete;
+        if (currentFile != null && (toDelete = currentFile.getParentFile()).exists()) {
+            System.out.println("deleting " + toDelete.getAbsolutePath());
+            delete(toDelete);
         }
     }
+
+    private static void delete(File file) {
+        if (file.isDirectory()) {
+            for (File f : file.listFiles()) {
+                delete(f);
+            }
+        }
+        if (!file.delete()) {
+            file.deleteOnExit();
+        }
+    }
+
     @Override
     public void setup() throws IOException {
         System.out.println("Setup called");

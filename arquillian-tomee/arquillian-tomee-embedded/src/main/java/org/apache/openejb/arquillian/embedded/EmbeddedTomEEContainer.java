@@ -39,6 +39,8 @@ import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.naming.Context;
 import java.io.File;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class EmbeddedTomEEContainer extends TomEEContainer {
 
@@ -47,6 +49,8 @@ public class EmbeddedTomEEContainer extends TomEEContainer {
 
     @Inject @ContainerScoped private InstanceProducer<Context> contextInstance;
     @Inject @DeploymentScoped private InstanceProducer<BeanManager> beanManagerInstance;
+
+    private static final Map<Archive<?>, File> ARCHIVES = new ConcurrentHashMap<Archive<?>, File>();
 
     private Container container;
 
@@ -113,6 +117,7 @@ public class EmbeddedTomEEContainer extends TomEEContainer {
             final File tempDir = FileUtils.createTempDir();
             final String name = archive.getName();
             final File file = new File(tempDir, name);
+            ARCHIVES.put(archive, file);
         	archive.as(ZipExporter.class).exportTo(file, true);
 
 
@@ -136,5 +141,11 @@ public class EmbeddedTomEEContainer extends TomEEContainer {
             e.printStackTrace();
             throw new DeploymentException("Unable to undeploy", e);
         }
+        File file = ARCHIVES.remove(archive);
+        File folder = new File(file.getParentFile(), file.getName().substring(0, file.getName().length() - 5));
+        if (folder.exists()) {
+            FileUtils.delete(folder);
+        }
+        FileUtils.delete(file);
     }
 }
