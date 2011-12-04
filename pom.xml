@@ -278,7 +278,8 @@
     <module>examples</module>
     <module>assembly</module>
     <module>arquillian-tomee</module>
-    <module>tck</module>
+    <!-- don't activate it back since it creates artifacts in /tmp when TCK fails and/or succeeds -->
+    <!--module>tck</module-->
     <module>utils</module>
   </modules>
 
