@@ -57,7 +57,6 @@ If a parameter is not validated an exception is thrown, it is an EJBException wr
      */
     @Stateless
     public class OlympicGamesManager {
-        @NotNull
         public String addSportMan(@Pattern(regexp = "^[A-Za-z]+$") String name, @Size(min = 2, max = 4) String country) {
             if (country.equals("USA")) {
                 return null;
