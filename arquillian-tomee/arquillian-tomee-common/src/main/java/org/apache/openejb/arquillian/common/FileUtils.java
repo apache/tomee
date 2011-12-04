@@ -38,7 +38,7 @@ public class FileUtils {
         // no-op
     }
 
-    // Shutdown hook for recurssive delete on tmp directories
+    // Shutdown hook for recursive delete on tmp directories
     static final List<String> delete = new ArrayList<String>();
 
     static {
@@ -61,12 +61,14 @@ public class FileUtils {
     }
 
     public static void delete(File file) {
-        if (file.isDirectory()) {
-            for (File f : file.listFiles()) {
-                delete(f);
+        if (file.exists()) {
+            if (file.isDirectory()) {
+                for (File f : file.listFiles()) {
+                    delete(f);
+                }
             }
-        }
 
-        file.delete();
+            file.delete();
+        }
     }
 }

@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.tck.cdi.tomee.embedded;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.openejb.config.ValidationException;
 import org.apache.tomee.embedded.Container;
 import org.jboss.testharness.api.DeploymentException;
@@ -27,6 +28,8 @@ import java.io.FileOutputStream;
 import java.io.Flushable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @version $Rev$ $Date$
@@ -37,6 +40,8 @@ public class ContainersImpl implements Containers {
     private static final String tmpDir = System.getProperty("java.io.tmpdir");
     private Exception exception;
     private final Container container;
+
+    private static final Map<String, File> FILES = new ConcurrentHashMap<String, File>();
 
     public ContainersImpl() {
         System.out.println("Initialized ContainersImpl " + (++count));
@@ -52,6 +57,7 @@ public class ContainersImpl implements Containers {
 
         File application = getFile(name);
         System.out.println(application);
+        FILES.put(name, application.getParentFile());
         writeToFile(application, archive);
 
         try {
@@ -94,7 +100,8 @@ public class ContainersImpl implements Containers {
 
     private File getFile(String name) {
         final File dir = new File(tmpDir, Math.random() + "");
-        dir.mkdir();
+        dir.mkdirs();
+        dir.deleteOnExit();
 
         return new File(dir, name);
     }
@@ -118,6 +125,10 @@ public class ContainersImpl implements Containers {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
+
+        File file = FILES.remove(name);
+        System.out.println("deleting " + file.getAbsolutePath());
+        FileUtils.deleteDirectory(file);
     }
 
     @Override
@@ -136,6 +147,11 @@ public class ContainersImpl implements Containers {
         } catch (Exception e) {
             throw new IOException(e);
         }
+
+        for (File f : FILES.values()) {
+            FileUtils.deleteDirectory(f);
+        }
+        FILES.clear();
     }
 
     private static final class Util {
