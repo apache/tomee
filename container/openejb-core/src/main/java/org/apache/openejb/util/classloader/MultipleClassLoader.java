@@ -27,6 +27,11 @@ public class MultipleClassLoader extends ClassLoader {
                 return loadClassSecond(name);
             }
             throw ncdfe;
+        } catch (LinkageError le) {
+            if (second != getParent()) {
+                return loadClassSecond(name);
+            }
+            throw le;
         }
     }
 
