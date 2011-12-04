@@ -161,7 +161,13 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
         } finally {
             if (logger.isDebugEnabled()) {
                 if (exc == null) {
-                    logger.debug("finished invoking method " + m.getName() + ". Return value:" + retValue);
+                    String ret;
+                    try { // if it is a CDI (javassit proxy) it doesn't always work....
+                        ret = retValue.toString();
+                    } catch (Exception e) {
+                        ret = "can't get toString() value (" + e.getMessage() + ")";
+                    }
+                    logger.debug("finished invoking method " + m.getName() + ". Return value:" + ret);
                 } else {
                     logger.debug("finished invoking method " + m.getName() + " with exception " + exc);
                 }
