@@ -138,7 +138,7 @@
                   <configuration>
                       <forkMode>pertest</forkMode>
                       <testNGArtifactName>none:none</testNGArtifactName>
-                      <argLine>-Xmx256m -Djava.endorsed.dirs=${openejb.build.endorsed}
+                      <argLine>-Xmx256m -Djava.endorsed.dirs=${openejb.build.endorsed} -Dopenejb.descriptors.output.folder=./dump/
                           "-javaagent:${basedir}/target/openejb-javaagent-${project.version}.jar" -enableassertions
                       </argLine>
                       <workingDirectory>${basedir}/target</workingDirectory>

@@ -16,35 +16,35 @@
  */
 package org.apache.openejb.config;
 
+import org.apache.commons.lang.math.RandomUtils;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.loader.Options;
 import org.apache.openejb.jee.Connector;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.JAXBContextFactory;
 import org.apache.openejb.jee.JaxbJavaee;
+import org.apache.openejb.jee.jpa.EntityMappings;
+import org.apache.openejb.jee.jpa.JpaJaxbUtil;
 import org.apache.openejb.jee.oejb2.GeronimoEjbJarType;
 import org.apache.openejb.jee.oejb2.JaxbOpenejbJar2;
-import org.apache.openejb.jee.jpa.JpaJaxbUtil;
-import org.apache.openejb.jee.jpa.EntityMappings;
 import org.apache.openejb.jee.oejb3.JaxbOpenejbJar3;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.loader.Options;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
 
 public class OutputGeneratedDescriptors implements DynamicDeployer {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, "org.apache.openejb.util.resources");
     public static final String OUTPUT_DESCRIPTORS = "openejb.descriptors.output";
+    public static final String OUTPUT_DESCRIPTORS_FOLDER = "openejb.descriptors.output.folder";
 
     public AppModule deploy(AppModule appModule) throws OpenEJBException {
         boolean output = SystemInstance.get().getOptions().get(OUTPUT_DESCRIPTORS, false);
@@ -64,7 +64,7 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
 
             output = options.get(OUTPUT_DESCRIPTORS, invalid);
 
-            if (output){
+            if (output) {
                 if (ejbModule.getEjbJar() != null) {
                     writeEjbJar(ejbModule);
                 }
@@ -88,7 +88,7 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
     	try {
 	    	Connector connector = connectorModule.getConnector();
 	
-	        File tempFile = File.createTempFile("ra-", connectorModule.getModuleId() + ".xml");
+	        File tempFile = tempFile("ra-", connectorModule.getModuleId() + ".xml");
 	        FileOutputStream fout = new FileOutputStream(tempFile);
 	        BufferedOutputStream out = new BufferedOutputStream(fout);
 	
@@ -104,9 +104,23 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
     	}
 	}
 
+    private File tempFile(String start, String end) throws IOException {
+        if (System.getProperty(OUTPUT_DESCRIPTORS_FOLDER) != null) {
+            File tmp = new File(System.getProperty(OUTPUT_DESCRIPTORS_FOLDER));
+            if (!tmp.exists()) {
+                if (!tmp.mkdirs()) {
+                    throw new IOException("can't create " + tmp.getAbsolutePath());
+                }
+            }
+            return new File(tmp, start + Long.toString(RandomUtils.nextInt()) + end);
+        } else {
+            return tempFile(start, end);
+        }
+    }
+
 	private void writeGenratedCmpMappings(AppModule appModule) {
         try {
-            File tempFile = File.createTempFile("openejb-cmp-generated-orm-", ".xml");
+            File tempFile = tempFile("openejb-cmp-generated-orm-", ".xml");
             FileOutputStream fout = new FileOutputStream(tempFile);
             BufferedOutputStream out = new BufferedOutputStream(fout);
 
@@ -123,7 +137,7 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
     private void writeOpenejbJar(EjbModule ejbModule) {
         try {
             OpenejbJar openejbJar = ejbModule.getOpenejbJar();
-            File tempFile = File.createTempFile("openejb-jar-", ejbModule.getModuleId() + ".xml");
+            File tempFile = tempFile("openejb-jar-", ejbModule.getModuleId() + ".xml");
             FileOutputStream fout = new FileOutputStream(tempFile);
             BufferedOutputStream out = new BufferedOutputStream(fout);
             try {
@@ -143,7 +157,7 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
 
             if (geronimoEjbJarType == null) return;
 
-            File tempFile = File.createTempFile("geronimo-openejb-", ejbModule.getModuleId() + ".xml");
+            File tempFile = tempFile("geronimo-openejb-", ejbModule.getModuleId() + ".xml");
             FileOutputStream fout = new FileOutputStream(tempFile);
             BufferedOutputStream out = new BufferedOutputStream(fout);
             try {
@@ -160,7 +174,7 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
     private void writeEjbJar(EjbModule ejbModule) {
         try {
             EjbJar ejbJar = ejbModule.getEjbJar();
-            File tempFile = File.createTempFile("ejb-jar-", ejbModule.getModuleId() + ".xml");
+            File tempFile = tempFile("ejb-jar-", ejbModule.getModuleId() + ".xml");
             FileOutputStream fout = new FileOutputStream(tempFile);
             BufferedOutputStream out = new BufferedOutputStream(fout);
             try {
