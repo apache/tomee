@@ -89,7 +89,13 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         optional(services, ConversationService.class, "org.apache.webbeans.jsf.DefaultConversationService");
 
         ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader(new MultipleClassLoader(oldClassLoader, ThreadSingletonServiceImpl.class.getClassLoader()));
+        ClassLoader cl;
+        if (oldClassLoader != ThreadSingletonServiceImpl.class.getClassLoader()) {
+            cl = new MultipleClassLoader(oldClassLoader, ThreadSingletonServiceImpl.class.getClassLoader());
+        } else {
+            cl = oldClassLoader;
+        }
+        Thread.currentThread().setContextClassLoader(cl);
         WebBeansContext webBeansContext;
         Object old = null;
         try {
