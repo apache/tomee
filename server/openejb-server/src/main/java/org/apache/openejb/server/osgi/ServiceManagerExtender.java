@@ -73,6 +73,10 @@ public class ServiceManagerExtender extends ServiceManager {
     }
     
     public synchronized void start(boolean block) {
+        start();
+    }
+
+    public synchronized void start() {
         if (started == null) {
             throw new IllegalStateException("ServiceManager not initialized");
         }
