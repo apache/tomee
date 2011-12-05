@@ -16,6 +16,7 @@
  */
 package org.superbiz.quartz;
 
+import org.apache.openejb.config.OutputGeneratedDescriptors;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -31,7 +32,7 @@ public class QuartzMdbTest {
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-
+        System.setProperty(OutputGeneratedDescriptors.OUTPUT_DESCRIPTORS, "false"); // just to avoid to dump files in /tmp
         if (null == initialContext) {
             Properties properties = new Properties();
             properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
