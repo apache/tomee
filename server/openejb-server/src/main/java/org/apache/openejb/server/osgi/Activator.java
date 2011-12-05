@@ -30,8 +30,10 @@ public class Activator implements BundleActivator {
     private ServiceRegistration registration;
     
     public void start(BundleContext bundleContext) throws Exception {
-        manager = new ServiceManagerExtender(bundleContext);        
-        registration = bundleContext.registerService(ServiceManager.class.getName(), manager, null);     
+        if (bundleContext.getServiceReference(ServiceManager.class.getName()) == null) { // can be registered from openejb-server too
+            manager = new ServiceManagerExtender(bundleContext);
+            registration = bundleContext.registerService(ServiceManager.class.getName(), manager, null);
+        }
     }
 
     public void stop(BundleContext bundleContext) throws Exception {

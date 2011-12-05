@@ -69,6 +69,14 @@ public class Activator implements BundleActivator {
         // should be registered through openejb-server
         try {
             ServiceReference serviceManager = context.getServiceReference(SERVICE_MANAGER_NAME);
+            if (serviceManager == null) { // register a new instance
+                Object sm = context.getBundle().loadClass(SERVICE_MANAGER_NAME)
+                                .getConstructor(BundleContext.class)
+                                .newInstance(context);
+                context.registerService(SERVICE_MANAGER_NAME, sm, null);
+                serviceManager = context.getServiceReference(SERVICE_MANAGER_NAME);
+            }
+
             invoke(serviceManager, "init");
             invoke(serviceManager, "start");
         } catch (Exception e) {
