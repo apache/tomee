@@ -30,39 +30,13 @@
   <packaging>jar</packaging>
   <name>OpenEJB :: Container :: Loader</name>
   <properties>
-    <openejb.osgi.import>
-      org.apache.geronimo.*;resolution:=optional,
-      org.apache.catalina*;resolution:=optional,
-      !sun.misc.*,
-      org.apache.openejb,
-      javax.transaction*;version=1.1,
-      *
-    </openejb.osgi.import>
+      <openejb.osgi.import.pkg />
   </properties>
   <dependencies>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>javaee-api</artifactId>
-    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <configuration>
-          <instructions>
-            <Require-Bundle>org.apache.openejb.core</Require-Bundle>
-            <Import-Package>org.apache.openejb,javax.transaction;version="1.1",*</Import-Package>
-          </instructions>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 </project>
-
