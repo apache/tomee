@@ -20,6 +20,7 @@ import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.loader.OpenEJBInstance;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.ServiceManagerProxy;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -35,6 +36,7 @@ import java.util.Properties;
  */
 public class Activator implements BundleActivator {
     private static final Logger LOGGER = LoggerFactory.getLogger(Activator.class);
+    private static final String SERVICE_MANAGER_NAME = "org.apache.openejb.server.ServiceManager";
 
     private OpenEJBInstance openejb;
 
@@ -66,7 +68,7 @@ public class Activator implements BundleActivator {
 
         // should be registered through openejb-server
         try {
-            ServiceReference serviceManager = context.getServiceReference("org.apache.openejb.server.ServiceManager");
+            ServiceReference serviceManager = context.getServiceReference(SERVICE_MANAGER_NAME);
             invoke(serviceManager, "init");
             invoke(serviceManager, "start");
         } catch (Exception e) {
@@ -78,6 +80,10 @@ public class Activator implements BundleActivator {
     }
 
     private static void invoke(ServiceReference serviceManager, String name) throws OpenEJBException, InvocationTargetException, IllegalAccessException {
+        if (serviceManager == null) {
+            LOGGER.warn("can't invoke method {} since the service manager is null", name);
+        }
+
         Class<?> current = serviceManager.getClass();
         Method mtd = null;
         while (mtd == null || !current.equals(Object.class)) {
@@ -99,7 +105,7 @@ public class Activator implements BundleActivator {
 
         // should be registered through openejb-server
         try {
-            ServiceReference serviceManager = context.getServiceReference("org.apache.openejb.server.ServiceManager");
+            ServiceReference serviceManager = context.getServiceReference(SERVICE_MANAGER_NAME);
             invoke(serviceManager, "stop");
         } catch (Exception e) {
             LOGGER.error("can't stop OpenEJB services", e);
