@@ -19,6 +19,7 @@ package org.apache.openejb.core.osgi.impl;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.RpcContainer;
+import org.apache.openejb.UndeployException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.config.AppModule;
@@ -29,6 +30,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleListener;
+import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,16 +40,21 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @version $Rev$ $Date$
  */
 public class Deployer implements BundleListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(Deployer.class);
+    private Map<Bundle, List<ServiceRegistration>> registrations = new ConcurrentHashMap<Bundle, List<ServiceRegistration>>();
+    private Map<Bundle, AppContext> appContexts = new ConcurrentHashMap<Bundle, AppContext>();
 
     public void bundleChanged(BundleEvent event) {
         switch (event.getType()) {
@@ -91,9 +98,11 @@ public class Deployer implements BundleListener {
                         LOGGER.debug("Assembler : " + assembler);
                         LOGGER.debug("AppInfo id: " + appInfo.appId);
                         AppContext appContext = assembler.createApplication(appInfo);
+                        appContexts.put(bundle, appContext);
 
                         LOGGER.info("[Deployer] Application deployed: " + appInfo.path);
 
+                        registrations.put(bundle, new ArrayList<ServiceRegistration>());
                         registerService(bundle, appContext);
 
                     } catch (Exception ex) {
@@ -109,14 +118,21 @@ public class Deployer implements BundleListener {
     }
 
     private void undeploy(Bundle bundle) {
+        if (registrations.containsKey(bundle)) {
+            for (ServiceRegistration registration : registrations.get(bundle)) {
+                registration.unregister();
+            }
+            registrations.remove(bundle);
+        }
+
+        if (appContexts.containsKey(bundle)) {
+            try {
+                SystemInstance.get().getComponent(Assembler.class).destroyApplication(appContexts.remove(bundle));
+            } catch (UndeployException e) {
+                LOGGER.error("can't undeployer the bundle", e);
+            }
+        }
         LOGGER.info(String.format("[Deployer] Bundle %s has been stopped", bundle.getSymbolicName()));
-
-        // Let's others finish what needs to be here
-        // It should leave openejb in the state as if the ejb had not been deployed at all
-
-        // Step 1. Check whether it's an ejb (cf. deploy method above)
-
-        // Step 2. Unregister a service (cf. deploy method above)
     }
 
     /**
@@ -150,7 +166,7 @@ public class Deployer implements BundleListener {
             Class<?>[] itfs = interfaces.toArray(new Class<?>[interfaces.size()]);
             try {
                 Object service = Proxy.newProxyInstance(itfs[0].getClassLoader(), itfs, new Handler(beanContext));
-                context.registerService(str(itfs), service, new Properties());
+                registrations.get(context.getBundle()).add(context.registerService(str(itfs), service, new Properties()));
                 LOGGER.info(String.format("[Deployer] EJB registered: %s for interfaces %s", beanContext.getEjbName(), interfaces));
             } catch (IllegalArgumentException iae) {
                 LOGGER.error(String.format("[Deployer] can't register: %s for interfaces %s", beanContext.getEjbName(), interfaces));
