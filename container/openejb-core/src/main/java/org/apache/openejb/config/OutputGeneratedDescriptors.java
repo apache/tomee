@@ -114,7 +114,7 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
             }
             return new File(tmp, start + Long.toString(RandomUtils.nextInt()) + end);
         } else {
-            return tempFile(start, end);
+            return File.createTempFile(start, end);
         }
     }
 
