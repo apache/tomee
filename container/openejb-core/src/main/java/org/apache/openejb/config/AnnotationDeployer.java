@@ -217,6 +217,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -2367,9 +2368,10 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         private void removeExtendedPersistenceContext(JndiConsumer consumer) {
             Map<String,PersistenceContextRef> map = consumer.getPersistenceContextRefMap();
-            for (Map.Entry<String, PersistenceContextRef> pc : map.entrySet()) {
-                if (PersistenceContextType.EXTENDED.equals(pc.getValue().getPersistenceContextType())) {
-                    map.remove(pc.getKey());
+            Set<String> keys = new HashSet<String>(map.keySet());
+            for (String key : keys) {
+                if (PersistenceContextType.EXTENDED.equals(map.get(key).getPersistenceContextType())) {
+                    map.remove(key);
                 }
             }
         }
