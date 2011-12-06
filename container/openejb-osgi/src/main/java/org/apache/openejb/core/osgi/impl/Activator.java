@@ -20,7 +20,6 @@ import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.loader.OpenEJBInstance;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.util.ServiceManagerProxy;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -37,6 +36,7 @@ import java.util.Properties;
 public class Activator implements BundleActivator {
     private static final Logger LOGGER = LoggerFactory.getLogger(Activator.class);
     private static final String SERVICE_MANAGER_NAME = "org.apache.openejb.server.ServiceManager";
+    private static final String OSGI_SERVICE_MANAGER_NAME = "org.apache.openejb.server.osgi.ServiceManagerExtender";
 
     private OpenEJBInstance openejb;
 
@@ -70,7 +70,7 @@ public class Activator implements BundleActivator {
         try {
             ServiceReference serviceManager = context.getServiceReference(SERVICE_MANAGER_NAME);
             if (serviceManager == null) { // register a new instance
-                Object sm = context.getBundle().loadClass(SERVICE_MANAGER_NAME)
+                Object sm = context.getBundle().loadClass(OSGI_SERVICE_MANAGER_NAME)
                                 .getConstructor(BundleContext.class)
                                 .newInstance(context);
                 context.registerService(SERVICE_MANAGER_NAME, sm, null);
