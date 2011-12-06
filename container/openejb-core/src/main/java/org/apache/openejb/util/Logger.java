@@ -30,71 +30,84 @@ public class Logger {
     }
 
     public static void configure() {
-        String factoryName = System.getProperty("openejb.log.factory");
-        Class<?> factoryClass = null;
+
+        //See if user factory has been specified
+        final String factoryName = System.getProperty("openejb.log.factory");
+
         if (factoryName != null) {
-            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+
+            Class<?> factoryClass = null;
+
+            final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+
             if (classLoader != null) {
                 try {
                     factoryClass = classLoader.loadClass(factoryName);
-                } catch (ClassNotFoundException e) {
+                } catch (Throwable e) {
+                    //Ignore
                 }
             }
 
             if (factoryClass == null) {
                 try {
                     factoryClass = Class.forName(factoryName);
-                } catch (ClassNotFoundException e) {
+                } catch (Throwable e) {
+                    //Ignore
+                }
+            }
+
+            if (factoryClass != null) {
+                try {
+                    //Try and use the user specified factory
+                    logStreamFactory = (LogStreamFactory) factoryClass.newInstance();
+                    return;
+                } catch (Throwable e) {
+                    //Ignore
                 }
             }
         }
 
-        LogStreamFactory factory = null;
-        if (factoryClass != null) {
-            try {
-                factory = (LogStreamFactory) factoryClass.newInstance();
-            } catch (Exception e) {
+        // See if log4j is available
+        Log4jLogStreamFactory log4jLogStreamFactory = null;
+
+        try {
+            Logger.class.getClassLoader().loadClass("org.apache.log4j.Layout");
+
+            if (!System.getProperties().containsKey("org.apache.cxf.Logger")) {
+                System.setProperty("org.apache.cxf.Logger", "org.apache.cxf.common.logging.Log4jLogger");
             }
+
+            //This will configure log4j, but we may be using slf4j later
+            log4jLogStreamFactory = new Log4jLogStreamFactory();
+
+        } catch (Throwable e) {
+            //Ignore
         }
 
-        // slf4j
-        if (factory == null) {
-            try {
-                // ensure Log4j is in the CP
-                Logger.class.getClassLoader().loadClass("org.slf4j.LoggerFactory");
-                if (!System.getProperties().containsKey("org.apache.cxf.Logger")) {
-                    System.setProperty("org.apache.cxf.Logger", "org.apache.cxf.common.logging.Slf4jLogger");
-                }
-                factory = new Slf4jLogStreamFactory();
-            } catch (NoClassDefFoundError e) {
-                // slf4j not in classpath
-            } catch (ClassNotFoundException cnfe) {
-                // idem
+        // Fall back to JUL if log4j is not available
+        JuliLogStreamFactory juliLogStreamFactory = null;
+        if (null == log4jLogStreamFactory) {
+            //This will configure JUL, but we may be using slf4j later
+            juliLogStreamFactory = new JuliLogStreamFactory();
+        }
+
+        // See if slf4j is available
+        try {
+            Logger.class.getClassLoader().loadClass("org.slf4j.LoggerFactory");
+
+            if (!System.getProperties().containsKey("org.apache.cxf.Logger")) {
+                System.setProperty("org.apache.cxf.Logger", "org.apache.cxf.common.logging.Slf4jLogger");
             }
+
+            //This will delegate to either log4j or JUL
+            logStreamFactory = new Slf4jLogStreamFactory();
+            return;
+        } catch (Throwable e) {
+            //Ignore
         }
 
-        // Log4j is possible
-        if (factory == null) {
-            try {
-                // ensure Log4j is in the CP
-                Logger.class.getClassLoader().loadClass("org.apache.log4j.Layout");
-                if (!System.getProperties().containsKey("org.apache.cxf.Logger")) {
-                    System.setProperty("org.apache.cxf.Logger", "org.apache.cxf.common.logging.Log4jLogger");
-                }
-                factory = new Log4jLogStreamFactory();
-            } catch (NoClassDefFoundError e) {
-                //log4j not in classpath
-            } catch (ClassNotFoundException cnfe) {
-                // idem
-            }
-        }
-
-        // else JUL
-        if (factory == null) {
-            factory = new JuliLogStreamFactory();
-        }
-
-        logStreamFactory = factory;
+        //Fall back to either log4j or JUL
+        logStreamFactory = (null != log4jLogStreamFactory ? log4jLogStreamFactory : juliLogStreamFactory);
     }
 
     /**
@@ -102,6 +115,7 @@ public class Logger {
      * a.b.c, it returns the value a.b
      */
     private static final Computable<String, String> heirarchyResolver = new Computable<String, String>() {
+        @Override
         public String compute(String key) throws InterruptedException {
             int index = key.lastIndexOf(".");
             String parent = key.substring(0, index);
@@ -115,6 +129,7 @@ public class Logger {
      * Simply returns the ResourceBundle for a given baseName
      */
     private static final Computable<String, ResourceBundle> bundleResolver = new Computable<String, ResourceBundle>() {
+        @Override
         public ResourceBundle compute(String baseName) throws InterruptedException {
             try {
                 return ResourceBundle.getBundle(baseName + SUFFIX);
@@ -128,12 +143,12 @@ public class Logger {
      * Builds a Logger object and returns it
      */
     private static final Computable<Object[], Logger> loggerResolver = new Computable<Object[], Logger>() {
+        @Override
         public Logger compute(Object[] args) throws InterruptedException {
             LogCategory category = (LogCategory) args[0];
             LogStream logStream = logStreamFactory.createLogStream(category);
             String baseName = (String) args[1];
-            Logger logger = new Logger(category, logStream, baseName);
-            return logger;
+            return new Logger(category, logStream, baseName);
         }
     };
 
@@ -141,6 +156,7 @@ public class Logger {
      * Creates a MessageFormat object for a message and returns it
      */
     private static final Computable<String, MessageFormat> messageFormatResolver = new Computable<String, MessageFormat>() {
+        @Override
         public MessageFormat compute(String message) throws InterruptedException {
             return new MessageFormat(message);
         }
@@ -175,15 +191,13 @@ public class Logger {
      */
     public static Logger getInstance(LogCategory category, String baseName) {
         try {
-            Logger logger = loggerCache.compute(new Object[]{category, baseName});
-            return logger;
+            return loggerCache.compute(new Object[]{category, baseName});
         } catch (InterruptedException e) {
             // Don't return null here. Just create a new Logger and set it up.
             // It will not be stored in the cache, but a later lookup for the
             // same Logger would probably end up in the cache
             LogStream logStream = logStreamFactory.createLogStream(category);
-            Logger logger = new Logger(category, logStream, baseName);
-            return logger;
+            return new Logger(category, logStream, baseName);
         }
     }
 
@@ -213,17 +227,16 @@ public class Logger {
     /**
      * Formats a given message
      *
-     * @param message
-     * @param args
+     * @param message String
+     * @param args    Object...
      * @return the formatted message
      */
     private String formatMessage(String message, Object... args) {
         if (args.length == 0) return message;
 
         try {
-            MessageFormat mf = messageFormatCache.compute(message);
-            String msg = mf.format(args);
-            return msg;
+            final MessageFormat mf = messageFormatCache.compute(message);
+            return mf.format(args);
         } catch (Exception e) {
             return "Error in formatting message " + message;
         }
@@ -460,16 +473,18 @@ public class Logger {
      * recursively looks up its parent to find the message for a key. If no
      * message is found for a key, the key is returned as is and is logged by
      * the logger.
+     *
+     * @param key      String
+     * @param baseName String
+     * @return String
      */
     private String getMessage(String key, String baseName) {
         try {
 
             ResourceBundle bundle = bundleCache.compute(baseName);
             if (bundle != null) {
-                String message = null;
                 try {
-                    message = bundle.getString(key);
-                    return message;
+                    return bundle.getString(key);
                 } catch (MissingResourceException e) {
                     String parentName = heirarchyCache.compute(baseName);
                     if (parentName == null)
