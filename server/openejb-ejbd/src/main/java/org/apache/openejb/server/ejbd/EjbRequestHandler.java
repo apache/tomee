@@ -16,6 +16,16 @@
  */
 package org.apache.openejb.server.ejbd;
 
+import org.apache.openejb.BeanContext;
+import org.apache.openejb.ProxyInfo;
+import org.apache.openejb.RpcContainer;
+import org.apache.openejb.client.*;
+import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.rmi.RemoteException;
@@ -25,22 +35,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.apache.openejb.BeanContext;
-import org.apache.openejb.ProxyInfo;
-import org.apache.openejb.RpcContainer;
-import org.apache.openejb.client.EJBHomeProxyHandle;
-import org.apache.openejb.client.EJBObjectProxyHandle;
-import org.apache.openejb.client.EJBRequest;
-import org.apache.openejb.client.EJBResponse;
-import org.apache.openejb.client.RequestMethodConstants;
-import org.apache.openejb.client.ResponseCodes;
-import org.apache.openejb.client.ThrowableArtifact;
-import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.spi.SecurityService;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
 
 class EjbRequestHandler {
     public static final ServerSideResolver SERVER_SIDE_RESOLVER = new ServerSideResolver();
@@ -74,7 +68,16 @@ class EjbRequestHandler {
         try {
             req.readExternal(in);
         } catch (Throwable t) {
-            replyWithFatalError(out, t, "Error caught during request processing");
+            replyWithFatalError(out, t, "Bad request");
+            return;
+        }
+
+        SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
+        try {
+            Object clientIdentity = req.getClientIdentity();
+            if (clientIdentity != null) securityService.associate(clientIdentity);
+        } catch (Throwable t) {
+            replyWithFatalError(out, t, "Client identity is not valid");
             return;
         }
 
@@ -84,8 +87,7 @@ class EjbRequestHandler {
         try {
             di = this.daemon.getDeployment(req);
         } catch (RemoteException e) {
-            replyWithFatalError
-                    (out, e, "No such deployment");
+            replyWithFatalError(out, e, "No such deployment");
             return;
             /*
                 logger.warn( req + "No such deployment: "+e.getMessage());
@@ -94,8 +96,7 @@ class EjbRequestHandler {
                 return;
             */
         } catch (Throwable t) {
-            replyWithFatalError
-                    (out, t, "Unkown error occured while retrieving deployment");
+            replyWithFatalError(out, t, "Unkown error occured while retrieving deployment");
             return;
         }
 
@@ -119,18 +120,10 @@ class EjbRequestHandler {
             return;
         }
 
-        SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
-        try {
-            Object clientIdentity = req.getClientIdentity();
-            if (clientIdentity != null) securityService.associate(clientIdentity);
-        } catch (Throwable t) {
-            replyWithFatalError(out, t, "Security system failed to associate thread with the thread");
-            return;
-        }
-
+        boolean respond = true;
         try {
             switch (req.getRequestMethod()) {
-            // Remote interface methods
+                // Remote interface methods
                 case RequestMethodConstants.EJB_OBJECT_BUSINESS_METHOD:
                     doEjbObject_BUSINESS_METHOD(req, res);
                     updateServer(req, res);
@@ -208,29 +201,40 @@ class EjbRequestHandler {
             res.setResponse(ResponseCodes.EJB_APP_EXCEPTION, new ThrowableArtifact(e.getRootCause()));
         } catch (org.apache.openejb.SystemException e) {
             res.setResponse(ResponseCodes.EJB_ERROR, new ThrowableArtifact(e.getRootCause()));
+            logger.error(req + ": OpenEJB encountered an unknown system error in container: ", e);
+        } catch (Throwable t) {
 
-            logger.fatal(req + ": OpenEJB encountered an unknown system error in container: ", e);
-        } catch (java.lang.Throwable t) {
-            // todo this causes the response to be written twice but the code below
-            replyWithFatalError
-                    (out, t, "Unknown error in container");
-            return;
+            replyWithFatalError(out, t, "Unknown error in container");
+            respond = false;
+
         } finally {
-            if (logger.isDebugEnabled()){
+
+            if (logger.isDebugEnabled()) {
+                //The req and res toString overrides are volatile
                 try {
-                    logger.debug("EJB REQUEST: "+req+" -- RESPONSE: " + res);
-                } catch (Exception justInCase) {}
+                    logger.debug("EJB REQUEST: " + req + " -- RESPONSE: " + res);
+                } catch (Throwable t) {
+                    //Ignore
+                }
             }
+
+            if (respond) {
+                try {
+                    res.writeExternal(out);
+                } catch (Throwable t) {
+                    logger.error("Failed to write EjbResponse", t);
+                }
+            }
+
             try {
-                res.writeExternal(out);
-            } catch (java.io.IOException ie) {
-                logger.fatal("Couldn't write EjbResponse to output stream", ie);
+                securityService.disassociate();
+            } catch (Throwable t) {
+                logger.warning("Failed to disassociate security", t);
             }
-            securityService.disassociate();
+
             call.reset();
             EJBHomeProxyHandle.resolver.set(null);
             EJBObjectProxyHandle.resolver.set(null);
-
         }
     }
 
@@ -249,11 +253,11 @@ class EjbRequestHandler {
             res.setResponse(ResponseCodes.EJB_OK, null);
         }
     }
- 
+
     protected void doEjbObject_BUSINESS_METHOD(EJBRequest req, EJBResponse res) throws Exception {
 
         CallContext call = CallContext.getCallContext();
-        BeanContext beanContext = (BeanContext)call.getBeanContext();
+        BeanContext beanContext = (BeanContext) call.getBeanContext();
         boolean asynchronous = beanContext.isAsynchronous(req.getMethodInstance());
         try {
             if (asynchronous) {
@@ -262,18 +266,18 @@ class EjbRequestHandler {
                 asynchronousInvocationCancelMap.put(req.getBody().getRequestId(), invocationCancelTag);
             }
             RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
-            
+
             Object result = c.invoke(req.getDeploymentId(),
-                                     req.getInterfaceClass(), req.getMethodInstance(),
-                                     req.getMethodParameters(),
-                                     req.getPrimaryKey()
-                                     );
- 
+                    req.getInterfaceClass(), req.getMethodInstance(),
+                    req.getMethodParameters(),
+                    req.getPrimaryKey()
+            );
+
             //Pass the internal value to the remote client, as AsyncResult is not serializable
-            if(result != null && asynchronous) {
-                result = ((Future)result).get();
+            if (result != null && asynchronous) {
+                result = ((Future) result).get();
             }
- 
+
             res.setResponse(ResponseCodes.EJB_OK, result);
         } finally {
             if (asynchronous) {
@@ -333,7 +337,7 @@ class EjbRequestHandler {
         /* Multiple instances found */
         if (result instanceof Collection) {
 
-            Object [] primaryKeys = ((Collection) result).toArray();
+            Object[] primaryKeys = ((Collection) result).toArray();
 
             for (int i = 0; i < primaryKeys.length; i++) {
                 ProxyInfo proxyInfo = ((ProxyInfo) primaryKeys[i]);
@@ -450,15 +454,26 @@ class EjbRequestHandler {
     }
 
     private void replyWithFatalError(ObjectOutputStream out, Throwable error, String message) {
-        logger.fatal(message, error);
-        RemoteException re = new RemoteException
-                ("The server has encountered a fatal error: " + message + " " + error, error);
-        EJBResponse res = new EJBResponse();
+
+        //This is fatal for the client, but not the server.
+        if (logger.isWarningEnabled()) {
+            logger.warning(message + " - Debug for stacktrace");
+        } else if (logger.isDebugEnabled()) {
+            logger.debug(message, error);
+        }
+
+        final RemoteException re = new RemoteException(message, error);
+        final EJBResponse res = new EJBResponse();
         res.setResponse(ResponseCodes.EJB_ERROR, new ThrowableArtifact(re));
+
         try {
             res.writeExternal(out);
-        } catch (java.io.IOException ie) {
-            logger.error("Failed to write to EJBResponse", ie);
+        } catch (Throwable t) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Failed to write EjbResponse", t);
+            } else if (logger.isWarningEnabled()) {
+                logger.warning("Failed to write EjbResponse - Debug for stacktrace");
+            }
         }
     }
 }
