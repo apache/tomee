@@ -41,6 +41,7 @@ public class Activator implements BundleActivator {
     private static final long TRACKER_TIMEOUT = 60000;
 
     private OpenEJBInstance openejb;
+    private Object serviceManager;
 
     public void start(BundleContext context) throws Exception {
         LOGGER.info("Starting OpenEJB");
@@ -72,7 +73,7 @@ public class Activator implements BundleActivator {
         ServiceTracker serviceManagerTracker = null;
         try {
             serviceManagerTracker = getServiceManger(context);
-            Object serviceManager = serviceManagerTracker.getService();
+            serviceManager = serviceManagerTracker.getService();
             if (serviceManager == null) {
                 LOGGER.warn("can't find service manager");
             }
@@ -103,18 +104,10 @@ public class Activator implements BundleActivator {
     public void stop(BundleContext context) throws Exception {
         LOGGER.info("Stopping OpenEJB; openejb.isInitialized(): " + openejb.isInitialized());
 
-        ServiceTracker serviceManager = null;
         try {
-            serviceManager = getServiceManger(context);
-            invoke(serviceManager.getService(), "stop");
-        } catch (InterruptedException ie) {
-            LOGGER.warn("can't find service manager");
+            invoke(serviceManager, "stop");
         } catch (Exception e) {
-            LOGGER.error("can't start OpenEJB services", e);
-        } finally {
-            if (serviceManager != null) {
-                serviceManager.close();
-            }
+            LOGGER.error("can't stop OpenEJB services", e);
         }
 
         openejb = null;
@@ -134,6 +127,7 @@ public class Activator implements BundleActivator {
             } catch (NoSuchMethodException e) {
                 // ignored
             }
+            current = current.getSuperclass();
         }
 
         if (mtd == null) {
