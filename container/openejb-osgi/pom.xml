@@ -109,6 +109,7 @@
                 org.hsqldb.jdbc;resolution:=optional,
                 org.junit;resolution:=optional,
                 org.osgi.framework;version="[1.4,1.6)",
+                org.osgi.util.tracker;version="[1.4,1.6)",
                 org.slf4j;version="[1.6,2)"
             </Import-Package>
             <Include-Resource>${pom.basedir}/src/main/resources</Include-Resource>
