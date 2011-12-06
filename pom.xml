@@ -99,6 +99,8 @@
     <openejb.osgi.import>${openejb.osgi.import.pkg}</openejb.osgi.import>
     <openejb.osgi.export.pkg>org.apache.openejb</openejb.osgi.export.pkg>
     <openejb.osgi.export>${openejb.osgi.export.pkg}*;version=${openejb.osgi.export.version}</openejb.osgi.export>
+    <openejb.osgi.fragment/>
+    <openejb.osgi.require/>
     <openejb.osgi.private.pkg>!*</openejb.osgi.private.pkg>
     <openejb.osgi.dynamic.import.pkg/>
     <openejb.osgi.export.version>${project.version}</openejb.osgi.export.version>
@@ -223,6 +225,8 @@
             <Bundle-Activator>${openejb.bundle.activator}</Bundle-Activator>
             <Export-Package>${openejb.osgi.export}</Export-Package>
             <Import-Package>${openejb.osgi.import}</Import-Package>
+            <Fragment-Host>${openejb.osgi.fragment}</Fragment-Host>
+            <Require-Bundle>${openejb.osgi.require}</Require-Bundle>
             <DynamicImport-Package>${openejb.osgi.dynamic.import}</DynamicImport-Package>
             <Private-Package>${openejb.osgi.private.pkg}</Private-Package>
             <Implementation-Title>Apache OpenEJB</Implementation-Title>

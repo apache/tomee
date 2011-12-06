@@ -34,7 +34,11 @@ import java.util.Properties;
  * @version $Rev$ $Date$
  */
 public class Activator implements BundleActivator {
+    public static final String OPENEJB_OSGI_START_SERVICES_PROP = "openejb.osgi.start-services";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(Activator.class);
+    private static final String SERVICE_MANAGER_NAME = "org.apache.openejb.server.ServiceManager";
+    private static final long TRACKER_TIMEOUT = 60000;
 
     private OpenEJBInstance openejb;
 
@@ -64,14 +68,77 @@ public class Activator implements BundleActivator {
             throw e;
         }
 
+        // should be registered through openejb-server
+        ServiceTracker serviceManagerTracker = null;
+        try {
+            serviceManagerTracker = getServiceManger(context);
+            Object serviceManager = serviceManagerTracker.getService();
+            if (serviceManager == null) {
+                LOGGER.warn("can't find service manager");
+            }
+
+            invoke(serviceManager, "init");
+            invoke(serviceManager, "start");
+        } catch (InterruptedException ie) {
+            LOGGER.warn("can't find service manager");
+        } catch (Exception e) {
+            LOGGER.error("can't start OpenEJB services", e);
+        } finally {
+            if (serviceManagerTracker != null) {
+                serviceManagerTracker.close();
+            }
+        }
+
         LOGGER.info("Registering OSGified OpenEJB Deployer");
         context.addBundleListener(new Deployer());
+    }
+
+    private static ServiceTracker getServiceManger(BundleContext context) throws InterruptedException {
+        ServiceTracker serviceManagerTracker = new ServiceTracker(context, SERVICE_MANAGER_NAME, null);
+        serviceManagerTracker.open();
+        serviceManagerTracker.waitForService(TRACKER_TIMEOUT);
+        return serviceManagerTracker;
     }
 
     public void stop(BundleContext context) throws Exception {
         LOGGER.info("Stopping OpenEJB; openejb.isInitialized(): " + openejb.isInitialized());
 
+        ServiceTracker serviceManager = null;
+        try {
+            serviceManager = getServiceManger(context);
+            invoke(serviceManager.getService(), "stop");
+        } catch (InterruptedException ie) {
+            LOGGER.warn("can't find service manager");
+        } catch (Exception e) {
+            LOGGER.error("can't start OpenEJB services", e);
+        } finally {
+            if (serviceManager != null) {
+                serviceManager.close();
+            }
+        }
+
         openejb = null;
         OpenEJB.destroy(); // todo: should it be static?
+    }
+
+    private static void invoke(Object serviceManager, String name) throws OpenEJBException, InvocationTargetException, IllegalAccessException {
+        if (serviceManager == null) {
+            LOGGER.warn("can't invoke method {} since the service manager is null", name);
+        }
+
+        Class<?> current = serviceManager.getClass();
+        Method mtd = null;
+        while (mtd == null || !current.equals(Object.class)) {
+            try {
+                mtd = current.getDeclaredMethod(name);
+            } catch (NoSuchMethodException e) {
+                // ignored
+            }
+        }
+
+        if (mtd == null) {
+            throw new OpenEJBException("can't find method " + name + " on service " + serviceManager);
+        }
+        mtd.invoke(serviceManager);
     }
 }
