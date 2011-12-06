@@ -16,18 +16,6 @@
  */
 package org.apache.openejb.server.osgi;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.DiscoveryRegistry;
 import org.apache.openejb.server.ServerService;
@@ -40,6 +28,18 @@ import org.osgi.framework.BundleEvent;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.util.tracker.BundleTracker;
 import org.osgi.util.tracker.BundleTrackerCustomizer;
+
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * @version $Rev$ $Date$
@@ -60,7 +60,7 @@ public class ServiceManagerExtender extends ServiceManager {
     }
         
     public void init() throws Exception {
-        if (started != null) {
+        if (started != null && started.equals(Boolean.TRUE)) {
             throw new IllegalStateException("ServiceManager is already initialized");
         }
         DiscoveryRegistry registry = new DiscoveryRegistry();

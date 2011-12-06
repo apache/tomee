@@ -91,6 +91,7 @@
               org.apache.openejb.cdi;version="[3.1,4.2)",
               org.apache.openejb.config;version="[3.1,4.2)",
               org.apache.openejb.core;resolution:=optional;version="[3.1,4.2)",
+              org.apache.openejb.core.ivm;version="[3.1,4.2)",
               org.apache.openejb.core.managed;resolution:=optional;version="[3.1,4.2)",
               org.apache.openejb.core.mdb;resolution:=optional;version="[3.1,4.2)",
               org.apache.openejb.core.security;version="[3.1,4.2)",

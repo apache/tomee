@@ -133,6 +133,7 @@
     <myfaces.version>2.1.2</myfaces.version>
     <slf4j.version>1.6.1</slf4j.version>
     <log4j.version>1.2.16</log4j.version>
+    <osgi.framework.version>4.2.0</osgi.framework.version>
   </properties>
 
   <build>
@@ -1174,12 +1175,12 @@
       <dependency>
         <groupId>org.osgi</groupId>
         <artifactId>org.osgi.core</artifactId>
-        <version>4.2.0</version>
+        <version>${osgi.framework.version}</version>
       </dependency>
       <dependency>
         <groupId>org.osgi</groupId>
         <artifactId>org.osgi.compendium</artifactId>
-        <version>4.2.0</version>
+        <version>${osgi.framework.version}</version>
       </dependency>
       <dependency>
         <groupId>javassist</groupId>
