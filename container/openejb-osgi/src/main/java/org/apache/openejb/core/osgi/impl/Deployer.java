@@ -18,7 +18,6 @@ package org.apache.openejb.core.osgi.impl;
 
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
-import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.UndeployException;
 import org.apache.openejb.assembler.classic.AppInfo;
@@ -32,14 +31,12 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleListener;
 import org.osgi.framework.ServiceRegistration;
-import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.URL;
@@ -56,12 +53,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Deployer implements BundleListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(Deployer.class);
-    private static final String SERVICE_MANAGER_NAME = "org.apache.openejb.server.ServiceManager";
-    public static final String OPENEJB_OSGI_START_SERVICES_PROP = "openejb.osgi.start-services";
 
     private Map<Bundle, List<ServiceRegistration>> registrations = new ConcurrentHashMap<Bundle, List<ServiceRegistration>>();
     private Map<Bundle, AppContext> appContexts = new ConcurrentHashMap<Bundle, AppContext>();
-    private ServiceTracker serviceManagerTracker;
 
     public void bundleChanged(BundleEvent event) {
         switch (event.getType()) {
@@ -118,23 +112,6 @@ public class Deployer implements BundleListener {
                 } catch (Exception ex1) {
                     LOGGER.error("can't deploy " + ejbJarUrl.toExternalForm(), ex1);
                 }
-
-                if (System.getProperty(OPENEJB_OSGI_START_SERVICES_PROP) != null) {
-                    // should be registered through openejb-server
-                    try {
-                        serviceManagerTracker = new ServiceTracker(bundle.getBundleContext(), SERVICE_MANAGER_NAME, null);
-                        serviceManagerTracker.open();
-                        Object serviceManager = serviceManagerTracker.getService();
-                        if (serviceManager == null) {
-                            LOGGER.error("can't find service manager");
-                        }
-
-                        invoke(serviceManager, "init");
-                        invoke(serviceManager, "start");
-                    } catch (Exception sme) {
-                        LOGGER.error("can't start OpenEJB services", sme);
-                    }
-                }
             }
         } finally {
             Thread.currentThread().setContextClassLoader(oldCl);
@@ -154,17 +131,6 @@ public class Deployer implements BundleListener {
                 SystemInstance.get().getComponent(Assembler.class).destroyApplication(appContexts.remove(bundle));
             } catch (UndeployException e) {
                 LOGGER.error("can't undeployer the bundle", e);
-            }
-
-            if (System.getProperty(OPENEJB_OSGI_START_SERVICES_PROP) != null) {
-                // should be registered through openejb-server
-                try {
-                    Object serviceManager = serviceManagerTracker.getService();
-                    invoke(serviceManager, "stop");
-                    serviceManagerTracker.close();
-                } catch (Exception e) {
-                    LOGGER.error("can't stop OpenEJB services", e);
-                }
             }
         }
         LOGGER.info(String.format("[Deployer] Bundle %s has been stopped", bundle.getSymbolicName()));
@@ -276,26 +242,5 @@ public class Deployer implements BundleListener {
         public String toString() {
             return "OSGIClassLoader for [" + backingBundle + "]";
         }
-    }
-
-    private static void invoke(Object serviceManager, String name) throws OpenEJBException, InvocationTargetException, IllegalAccessException {
-        if (serviceManager == null) {
-            LOGGER.warn("can't invoke method {} since the service manager is null", name);
-        }
-
-        Class<?> current = serviceManager.getClass();
-        Method mtd = null;
-        while (mtd == null || !current.equals(Object.class)) {
-            try {
-                mtd = current.getDeclaredMethod(name);
-            } catch (NoSuchMethodException e) {
-                // ignored
-            }
-        }
-
-        if (mtd == null) {
-            throw new OpenEJBException("can't find method " + name + " on service " + serviceManager);
-        }
-        mtd.invoke(serviceManager);
     }
 }
