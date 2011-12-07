@@ -74,7 +74,7 @@ import java.util.Properties;
  * <li/>
  * </ul>
  * <p/>
- * See {@link org.apache.openejb.config.ServiceUtils#defaultProviderURL}
+ * See {@link org.apache.openejb.config.ServiceUtils#DEFAULT_PROVIDER_URL}
  *
  * @version $Revision: 617255 $ $Date: 2008-01-31 13:58:36 -0800 (Thu, 31 Jan 2008) $
  */
@@ -185,6 +185,7 @@ public class TomcatLoader implements Loader {
             tomcatWebAppBuilder.start();
             SystemInstance.get().setComponent(WebAppBuilder.class, tomcatWebAppBuilder);
         }
+        SystemInstance.get().setComponent(DeploymentExceptionManager.class, new DeploymentExceptionManager());
 
         // Web Services will be installed into the WebDeploymentListeners list
         SystemInstance.get().setComponent(WebDeploymentListeners.class, new WebDeploymentListeners());

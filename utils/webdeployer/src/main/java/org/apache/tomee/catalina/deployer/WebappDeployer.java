@@ -45,6 +45,7 @@ import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.tomcat.util.modeler.Registry;
+import org.apache.tomee.catalina.DeploymentExceptionManager;
 import org.apache.tomee.catalina.TomcatWebAppBuilder;
 import org.apache.tomee.loader.TomcatHelper;
 
@@ -111,7 +112,20 @@ public class WebappDeployer implements Deployer {
 				check();
 			}
 
-			return findAppInfo(new String[] { destination.getAbsolutePath(), destinationWithoutExtension });
+			final AppInfo info = findAppInfo(new String[] { destination.getAbsolutePath(), destinationWithoutExtension });
+            if (info == null) {
+                throw new NullPointerException("appinfo not found");
+            }
+
+            final DeploymentExceptionManager dem = SystemInstance.get().getComponent(DeploymentExceptionManager.class);
+            if (dem.hasDelpoyementFailed(info)) {
+                Exception tre = dem.getDelpoyementException(info);
+                // we don't need this exceptino anymore
+                dem.clearDelpoyementException(info);
+                throw tre;
+            }
+
+            return info;
 		} catch (Exception e) {
 			throw new OpenEJBException(e);
 		}
@@ -122,7 +136,7 @@ public class WebappDeployer implements Deployer {
 
 		Iterator<AppInfo> iterator = deployedApps.iterator();
 		while (iterator.hasNext()) {
-			AppInfo appInfo = (AppInfo) iterator.next();
+			AppInfo appInfo = iterator.next();
 			for (String path : paths) {
 				if (appInfo.path.equals(path)) {
 					return appInfo;
@@ -144,7 +158,7 @@ public class WebappDeployer implements Deployer {
 						webappBuilder.checkHost(host);
 					}
 				}
-			}
+            }
 		}
 	}
 

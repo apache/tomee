@@ -123,6 +123,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
 
     private static final Digester CONTEXT_DIGESTER = createDigester();
     public static final String OPENEJB_WEBAPP_MODULE_ID = "openejb.webapp.moduleId";
+    public static final String TOMEE_EAT_EXCEPTION_PROP = "tomee.eat-exception";
 
     /**
      * Context information for web applications
@@ -573,6 +574,13 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 } catch (Exception e) {
                     undeploy(standardContext, contextInfo);
                     logger.error("Unable to deploy collapsed ear in war " + standardContext.getPath() + ": Exception: " + e.getMessage(), e);
+                    // just to force tomee to start without EE part
+                    if (System.getProperty(TOMEE_EAT_EXCEPTION_PROP) == null) {
+                        final TomEERuntimeException tre = new TomEERuntimeException(e);
+                        DeploymentExceptionManager dem = SystemInstance.get().getComponent(DeploymentExceptionManager.class);
+                        dem.saveDelpoyementException(contextInfo.appInfo, tre);
+                        throw tre;
+                    }
                     return;
                 }
             }
