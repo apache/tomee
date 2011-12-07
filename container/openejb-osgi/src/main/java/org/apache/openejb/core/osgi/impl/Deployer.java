@@ -25,6 +25,7 @@ import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentLoader;
+import org.apache.openejb.config.UnknownModuleTypeException;
 import org.apache.openejb.loader.SystemInstance;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -34,14 +35,12 @@ import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -70,48 +69,34 @@ public class Deployer implements BundleListener {
 
     private void deploy(Bundle bundle) {
         final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader(new OSGIClassLoader(bundle));
+        final ClassLoader osgiCl = new OSGIClassLoader(bundle);
+        Thread.currentThread().setContextClassLoader(osgiCl);
 
-        LOGGER.info(String.format("[Deployer] Bundle %s has been started", bundle.getSymbolicName()));
-
-        LOGGER.info(String.format("[Deployer] Checking whether it's an EJB module"));
         try {
-            Enumeration<URL> e = bundle.findEntries("META-INF", "ejb-jar.xml", false);
-            if (e != null && e.hasMoreElements()) {
-                URL ejbJarUrl = e.nextElement();
-
-                LOGGER.info("[Deployer] It's an EJB module: " + ejbJarUrl);
-
-                LOGGER.info("[Deployer] Deploying onto OpenEJB");
-
-                String location = bundle.getLocation();
-                LOGGER.info("[Deployer] bundle location: " + location);
+            try {
                 try {
-                    File file = new File(new URL(location).getFile());
-                    try {
-                        DeploymentLoader deploymentLoader = new DeploymentLoader();
-                        AppModule appModule = deploymentLoader.load(file);
+                    DeploymentLoader deploymentLoader = new DeploymentLoader();
+                    AppModule appModule = deploymentLoader.load(osgiCl); // here file doesn't mean anything
+                    LOGGER.info("deploying bundle #" + bundle.getBundleId() + " as an EJBModule");
 
-                        ConfigurationFactory configurationFactory = new ConfigurationFactory();
-                        AppInfo appInfo = configurationFactory.configureApplication(appModule);
+                    ConfigurationFactory configurationFactory = new ConfigurationFactory();
+                    AppInfo appInfo = configurationFactory.configureApplication(appModule);
 
-                        Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
-                        LOGGER.debug("Assembler : " + assembler);
-                        LOGGER.debug("AppInfo id: " + appInfo.appId);
-                        AppContext appContext = assembler.createApplication(appInfo);
-                        appContexts.put(bundle, appContext);
+                    Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
+                    AppContext appContext = assembler.createApplication(appInfo);
+                    appContexts.put(bundle, appContext);
+                    LOGGER.info("Application deployed: " + appInfo.path);
 
-                        LOGGER.info("[Deployer] Application deployed: " + appInfo.path);
+                    registrations.put(bundle, new ArrayList<ServiceRegistration>());
+                    registerService(bundle, appContext);
 
-                        registrations.put(bundle, new ArrayList<ServiceRegistration>());
-                        registerService(bundle, appContext);
-
-                    } catch (Exception ex) {
-                        LOGGER.error("can't deploy " + ejbJarUrl.toExternalForm(), ex);
-                    }
-                } catch (Exception ex1) {
-                    LOGGER.error("can't deploy " + ejbJarUrl.toExternalForm(), ex1);
+                } catch (UnknownModuleTypeException unknowException) {
+                    LOGGER.info("bundle #" + bundle.getBundleId() + " is not an EJBModule");
+                } catch(Exception ex) {
+                    LOGGER.error("can't deploy bundle #" + bundle.getBundleId(), ex);
                 }
+            } catch (Exception ex1) {
+                LOGGER.error("can't deploy bundle #" + bundle.getBundleId(), ex1);
             }
         } finally {
             Thread.currentThread().setContextClassLoader(oldCl);
@@ -139,22 +124,25 @@ public class Deployer implements BundleListener {
     /**
      * Register OSGi Service for EJB so calling the service will actually call the EJB
      *
-     * @param bundle
-     * @param appContext
+     * @param bundle the deployed bundle
+     * @param appContext the appcontext to search EJBs
      */
     private void registerService(Bundle bundle, AppContext appContext) {
-        LOGGER.info("[Deployer] Registering a service for the EJB");
+        LOGGER.info("Registering remote EJBs as OSGi services");
         BundleContext context = bundle.getBundleContext();
         for (BeanContext beanContext : appContext.getBeanContexts()) {
             try {
-                if (beanContext.getBusinessLocalInterface() != null) {
-                    registerService(beanContext, context, beanContext.getBusinessLocalInterfaces());
-                }
                 if (beanContext.getBusinessRemoteInterface() != null) {
+                    LOGGER.error(String.format("registering: %s", beanContext.getEjbName()));
                     registerService(beanContext, context, beanContext.getBusinessRemoteInterfaces());
                 }
+                if (beanContext.getBusinessLocalInterface() != null) {
+                    // don't register it since it should only be used in the bundle itself
+                    // registerService(beanContext, context, beanContext.getBusinessLocalInterfaces());
+                }
                 if (beanContext.isLocalbean()) {
-                    registerService(beanContext, context, Arrays.asList(beanContext.getBusinessLocalBeanInterface()));
+                    // don't register it since it should only be used in the bundle itself
+                    // registerService(beanContext, context, Arrays.asList(beanContext.getBusinessLocalBeanInterface()));
                 }
             } catch (Exception e) {
                 LOGGER.error(String.format("[Deployer] can't register: %s", beanContext.getEjbName()));
@@ -168,9 +156,9 @@ public class Deployer implements BundleListener {
             try {
                 Object service = Proxy.newProxyInstance(itfs[0].getClassLoader(), itfs, new Handler(beanContext));
                 registrations.get(context.getBundle()).add(context.registerService(str(itfs), service, new Properties()));
-                LOGGER.info(String.format("[Deployer] EJB registered: %s for interfaces %s", beanContext.getEjbName(), interfaces));
+                LOGGER.info(String.format("EJB registered: %s for interfaces %s", beanContext.getEjbName(), interfaces));
             } catch (IllegalArgumentException iae) {
-                LOGGER.error(String.format("[Deployer] can't register: %s for interfaces %s", beanContext.getEjbName(), interfaces));
+                LOGGER.error(String.format("can't register: %s for interfaces %s", beanContext.getEjbName(), interfaces));
             }
         }
     }

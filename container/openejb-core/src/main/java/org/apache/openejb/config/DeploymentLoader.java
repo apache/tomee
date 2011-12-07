@@ -50,7 +50,6 @@ import org.apache.xbean.finder.IAnnotationFinder;
 import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.finder.UrlSet;
 import org.apache.xbean.finder.archive.Archive;
-import org.apache.xbean.finder.archive.CompositeArchive;
 import org.apache.xbean.finder.archive.JarArchive;
 import org.xml.sax.SAXException;
 
@@ -92,6 +91,35 @@ public class DeploymentLoader implements DeploymentFilterable {
     private static final String OPENEJB_ALTDD_PREFIX = "openejb.altdd.prefix";
     private static final String ddDir = "META-INF/";
     private boolean scanManagedBeans = true;
+
+    public AppModule load(ClassLoader classLoader) throws OpenEJBException {
+        final Class<? extends DeploymentModule> moduleClass;
+        ClassLoader tempClassLoader = null;
+        try {
+            try {
+                moduleClass = discoverModuleType(null, ClassLoaderUtil.createTempClassLoader(classLoader), true);
+            } catch (IOException e) {
+                throw new UnknownModuleTypeException("Unable to determine module type for bundle loaded from a built classloader", e);
+            }
+
+            if (EjbModule.class.equals(moduleClass)) {
+                tempClassLoader = ClassLoaderUtil.createTempClassLoader(classLoader);
+                Class<? extends DeploymentModule> o = EjbModule.class;
+                EjbModule ejbModule = createEjbModule(null, null, tempClassLoader, null);
+                AppModule appModule = new AppModule(ejbModule);
+                addPersistenceUnits(appModule);
+                return appModule;
+            }
+        } finally {
+            if (null != tempClassLoader) {
+                ClassLoaderUtil.destroyClassLoader(tempClassLoader);
+                tempClassLoader = null;
+                System.gc();
+            }
+        }
+
+        throw new UnsupportedModuleTypeException("Unsupported module type (deployement from classloader): " + moduleClass.getSimpleName());
+    }
 
     public AppModule load(File jarFile) throws OpenEJBException {
         // verify we have a valid file
@@ -583,7 +611,9 @@ public class DeploymentLoader implements DeploymentFilterable {
         ClientModule clientModule = new ClientModule(applicationClient, appClassLoader, absolutePath, mainClass, moduleName);
 
         clientModule.getAltDDs().putAll(descriptors);
-        clientModule.getWatchedResources().add(absolutePath);
+        if (absolutePath != null) {
+            clientModule.getWatchedResources().add(absolutePath);
+        }
         if (clientXmlUrl != null && "file".equals(clientXmlUrl.getProtocol())) {
             clientModule.getWatchedResources().add(URLs.toFilePath(clientXmlUrl));
         }
@@ -592,7 +622,16 @@ public class DeploymentLoader implements DeploymentFilterable {
 
     protected EjbModule createEjbModule(URL baseUrl, String jarPath, ClassLoader classLoader, String moduleId) throws OpenEJBException {
         // read the ejb-jar.xml file
-        Map<String, URL> descriptors = getDescriptors(baseUrl);
+        Map<String, URL> descriptors;
+        if (baseUrl != null) {
+            descriptors = getDescriptors(baseUrl);
+        } else {
+            try {
+                descriptors = getDescriptors(classLoader, null);
+            } catch (IOException e) {
+                descriptors = new HashMap<String, URL>();
+            }
+        }
 
         EjbJar ejbJar = null;
         URL ejbJarXmlUrl = descriptors.get("ejb-jar.xml");
@@ -603,7 +642,9 @@ public class DeploymentLoader implements DeploymentFilterable {
         // create the EJB Module
         EjbModule ejbModule = new EjbModule(classLoader, moduleId, jarPath, ejbJar, null);
         ejbModule.getAltDDs().putAll(descriptors);
-        ejbModule.getWatchedResources().add(jarPath);
+        if (jarPath != null) {
+            ejbModule.getWatchedResources().add(jarPath);
+        }
         if (ejbJarXmlUrl != null && "file".equals(ejbJarXmlUrl.getProtocol())) {
             ejbModule.getWatchedResources().add(URLs.toFilePath(ejbJarXmlUrl));
         }
@@ -1431,20 +1472,27 @@ public class DeploymentLoader implements DeploymentFilterable {
         final boolean scanPotentialClientModules = !requireDescriptor.contains(RequireDescriptors.CLIENT);
 
 
-        URL pathToScanDescriptors=baseUrl;
-        String baseURLString=baseUrl.toString();
-
-        if (baseUrl.getProtocol().equals("file") && baseURLString.endsWith("WEB-INF/classes/")) {
-            //EJB found in WAR/WEB-INF/classes, scan WAR for ejb-jar.xml
-
-            pathToScanDescriptors=new URL(baseURLString.substring(0,baseURLString.lastIndexOf("WEB-INF/classes/")));
-
+        URL pathToScanDescriptors = baseUrl;
+        if (baseUrl != null) {
+            final String baseURLString=baseUrl.toString();
+            if (baseUrl.getProtocol().equals("file") && baseURLString.endsWith("WEB-INF/classes/")) {
+                //EJB found in WAR/WEB-INF/classes, scan WAR for ejb-jar.xml
+                pathToScanDescriptors = new URL(baseURLString.substring(0,baseURLString.lastIndexOf("WEB-INF/classes/")));
+            }
         }
 
         Map<String, URL> descriptors = getDescriptors(classLoader, pathToScanDescriptors);
 
-        String path = baseUrl.getPath();
-        if (path.endsWith("/")) path = path.substring(0, path.length() - 1);
+        String path;
+        if (baseUrl != null) {
+            path = baseUrl.getPath();
+        } else {
+            path = "";
+        }
+
+        if (path.endsWith("/")) {
+            path = path.substring(0, path.length() - 1);
+        }
 
         if (descriptors.containsKey("application.xml") || path.endsWith(".ear")) {
             return AppModule.class;
@@ -1458,10 +1506,12 @@ public class DeploymentLoader implements DeploymentFilterable {
             return ConnectorModule.class;
         }
 
-        Map<String, URL> webDescriptors = getWebDescriptors(getFile(baseUrl));
-        if (webDescriptors.containsKey("web.xml") || webDescriptors.containsKey("web-fragment.xml") // descriptor
-            || path.endsWith(".war") || new File(path, "WEB-INF").exists()) { // webapp specific files
-            return WebModule.class;
+        if (baseUrl != null) {
+            Map<String, URL> webDescriptors = getWebDescriptors(getFile(baseUrl));
+            if (webDescriptors.containsKey("web.xml") || webDescriptors.containsKey("web-fragment.xml") // descriptor
+                || path.endsWith(".war") || new File(path, "WEB-INF").exists()) { // webapp specific files
+                return WebModule.class;
+            }
         }
 
         if (descriptors.containsKey("ejb-jar.xml") || descriptors.containsKey("beans.xml")) {
@@ -1486,7 +1536,7 @@ public class DeploymentLoader implements DeploymentFilterable {
             return PersistenceModule.class;
         }
 
-        throw new UnknownModuleTypeException("Unknown module type: url=" + baseUrl.toExternalForm());
+        throw new UnknownModuleTypeException("Unknown module type: url=" + path); // baseUrl can be null
     }
 
     private Map<String, URL> getDescriptors(ClassLoader classLoader, URL pathToScanDescriptors)

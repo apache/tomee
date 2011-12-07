@@ -44,9 +44,9 @@ public class Activator implements BundleActivator {
     private Object serviceManager;
 
     public void start(BundleContext context) throws Exception {
-        LOGGER.info("Starting OpenEJB");
+        LOGGER.info("Starting OpenEJB for bundle #{}", context.getBundle().getBundleId());
 
-        Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
+        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
         openejb = new OpenEJBInstance();
 
@@ -54,14 +54,11 @@ public class Activator implements BundleActivator {
         // env.setProperty("openejb.embedded", "true");
         // default, but to remember that the setting exists
         env.setProperty("openejb.loader", "context");
-        // NPE
         env.setProperty("openejb.deployments.classpath", "false");
-        env.setProperty("openejb.log.factory", "org.apache.openejb.util.JuliLogStreamFactory");
 
         SystemInstance.init(env);
         // OptionsLog.install();
 
-        // OpenEJB.init(env);
         try {
             openejb.init(env);
         } catch (Exception e) {
