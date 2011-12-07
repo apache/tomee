@@ -64,6 +64,7 @@ import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -195,6 +196,7 @@ public class OpenEjbContainer extends EJBContainer {
     }
 
     public static class Provider implements EJBContainerProvider {
+        public static final String OPENEJB_ADDITIONNAL_CALLERS_KEY = "openejb.additionnal.callers";
 
         @Override
         public EJBContainer createEJBContainer(Map<?, ?> map) {
@@ -230,7 +232,14 @@ public class OpenEjbContainer extends EJBContainer {
 
                 final AppModule appModule = load(map, configurationFactory);
 
-                final Set<String> callers = NewLoaderLogic.callers();
+                final Set<String> callers;
+                if (map.containsKey(OPENEJB_ADDITIONNAL_CALLERS_KEY)) {
+                    callers = new LinkedHashSet<String>();
+                    callers.add((String) map.get(OPENEJB_ADDITIONNAL_CALLERS_KEY));
+                } else {
+                    callers = NewLoaderLogic.callers();
+                }
+
                 final EjbJar ejbJar = new EjbJar();
                 final OpenejbJar openejbJar = new OpenejbJar();
 
