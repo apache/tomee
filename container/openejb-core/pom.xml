@@ -209,7 +209,7 @@
     </openejb.osgi.import.pkg>
     <openejb.osgi.export>
       org.apache.openejb.cdi.*;version=${openejb.osgi.export.version},
-      org.apache.openejb*;version=${openejb.osgi.export.version}
+      org.apache.openejb*;version=${openejb.osgi.export.version},
       org.apache.openejb;version=${openejb.osgi.export.version}
     </openejb.osgi.export>
     <openejb.osgi.require>
