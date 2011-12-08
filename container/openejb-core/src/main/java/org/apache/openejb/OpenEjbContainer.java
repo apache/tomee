@@ -235,7 +235,7 @@ public class OpenEjbContainer extends EJBContainer {
                 final Set<String> callers;
                 if (map.containsKey(OPENEJB_ADDITIONNAL_CALLERS_KEY)) {
                     callers = new LinkedHashSet<String>();
-                    callers.add((String) map.get(OPENEJB_ADDITIONNAL_CALLERS_KEY));
+                    callers.addAll(Arrays.asList(((String) map.get(OPENEJB_ADDITIONNAL_CALLERS_KEY)).split(",")));
                 } else {
                     callers = NewLoaderLogic.callers();
                 }
