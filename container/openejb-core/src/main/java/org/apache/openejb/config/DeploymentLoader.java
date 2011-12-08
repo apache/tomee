@@ -219,12 +219,14 @@ public class DeploymentLoader implements DeploymentFilterable {
                 AppModule appModule = new AppModule(OpenEJB.class.getClassLoader(), file.getAbsolutePath(), new Application(), true);
                 addWebModule(appModule, baseUrl, OpenEJB.class.getClassLoader(), getContextRoot(), getModuleName());
 
+                final Map<String, URL> otherDD;
                 if (Boolean.getBoolean(OPENEJB_READ_ALL_PERSISTENCE_XML)) {
                     WebModule webModule = appModule.getWebModules().iterator().next();
                     final List<URL> urls = webModule.getUrls();
                     final ResourceFinder finder = new ResourceFinder("", urls.toArray(new URL[urls.size()]));
-                    final Map<String, URL> dd = getDescriptors(finder, false);
-                    webModule.getAltDDs().putAll(dd);
+                    otherDD = getDescriptors(finder, false);
+                } else {
+                    otherDD = new HashMap<String, URL>();
                 }
 
                 URL persistenceUrl = null;
@@ -264,16 +266,22 @@ public class DeploymentLoader implements DeploymentFilterable {
                     }
                 }
 
-                if (persistenceUrl != null) {
+                if (persistenceUrl != null || otherDD.containsKey("persistence.xml")) {
                     List<URL> persistenceUrls = (List<URL>) appModule.getAltDDs().get("persistence.xml");
                     if (persistenceUrls == null) {
                         persistenceUrls = new ArrayList<URL>();
                         appModule.getAltDDs().put("persistence.xml", persistenceUrls);
                     }
-                    try {
-                        persistenceUrls.add(persistenceUrl);
-                    } catch (Exception e) {
-                        // no-op
+
+                    if (persistenceUrl != null) {
+                        try {
+                            persistenceUrls.add(persistenceUrl);
+                        } catch (Exception e) {
+                            // no-op
+                        }
+                    }
+                    if (otherDD.containsKey("persistence.xml")) {
+                        persistenceUrls.add(otherDD.get("persistence.xml"));
                     }
                 }
 
