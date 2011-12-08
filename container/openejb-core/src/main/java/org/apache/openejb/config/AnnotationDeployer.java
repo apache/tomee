@@ -217,7 +217,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -233,7 +232,8 @@ import static org.apache.openejb.util.Join.join;
 /**
  * @version $Rev$ $Date$
  */
-public class AnnotationDeployer implements DynamicDeployer {
+public class
+        AnnotationDeployer implements DynamicDeployer {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, AnnotationDeployer.class.getPackage().getName());
     public static final Logger startupLogger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, "org.apache.openejb.util.resources");
     private static final ThreadLocal<DeploymentModule> currentModule = new ThreadLocal<DeploymentModule>();
@@ -507,7 +507,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 	    		}
 
 	    		if (connector.getResourceAdapter().getResourceAdapterClass() == null || connector.getResourceAdapter().getResourceAdapterClass().length() == 0) {
-	    			connector.getResourceAdapter().setResourceAdapterClass(connectorClass.getName().toString());
+	    			connector.getResourceAdapter().setResourceAdapterClass(connectorClass.getName());
 	    		}
 
 	    		Connector connectorAnnotation = connectorClass.getAnnotation(Connector.class);
@@ -1368,28 +1368,23 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         private String getEjbName(MessageDriven mdb, Class<?> beanClass) {
-            String ejbName = mdb.name().length() == 0 ? beanClass.getSimpleName() : mdb.name();
-            return ejbName;
+            return (mdb.name().isEmpty() ? beanClass.getSimpleName() : mdb.name());
         }
 
         private String getEjbName(Stateful stateful, Class<?> beanClass) {
-            String ejbName = stateful.name().length() == 0 ? beanClass.getSimpleName() : stateful.name();
-            return ejbName;
+            return (stateful.name().isEmpty() ? beanClass.getSimpleName() : stateful.name());
         }
 
         private String getEjbName(Stateless stateless, Class<?> beanClass) {
-            String ejbName = stateless.name().length() == 0 ? beanClass.getSimpleName() : stateless.name();
-            return ejbName;
+            return (stateless.name().isEmpty() ? beanClass.getSimpleName() : stateless.name());
         }
 
         private String getEjbName(Singleton singleton, Class<?> beanClass) {
-            String ejbName = singleton.name().length() == 0 ? beanClass.getSimpleName() : singleton.name();
-            return ejbName;
+            return (singleton.name().isEmpty() ? beanClass.getSimpleName() : singleton.name());
         }
 
         private String getEjbName(ManagedBean managed, Class<?> beanClass) {
-            String ejbName = managed.value().length() == 0 ? beanClass.getSimpleName() : managed.value();
-            return ejbName;
+            return (managed.value().isEmpty() ? beanClass.getSimpleName() : managed.value());
         }
 
         private boolean isValidEjbAnnotationUsage(Class annotationClass, Annotated<Class<?>> beanClass, String ejbName, EjbModule ejbModule) {
@@ -1511,7 +1506,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 // it wasn't check before jdk 1.5 so we can get old module with
                 // bad format http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4986512
                 // replace all "/" by "."
-                if (clientModule.getMainClass().indexOf("/") != -1) { // className can't be null here
+                if (clientModule.getMainClass().contains("/")) { // className can't be null here
                     clientModule.setMainClass(className);
 		}
 
@@ -2367,10 +2362,11 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         private void removeExtendedPersistenceContext(JndiConsumer consumer) {
-            Map<String,PersistenceContextRef> map = consumer.getPersistenceContextRefMap();
-            Set<String> keys = new HashSet<String>(map.keySet());
+            final Map<String,PersistenceContextRef> map = consumer.getPersistenceContextRefMap();
+            final Set<String> keys = new HashSet<String>(map.keySet());
             for (String key : keys) {
-                if (PersistenceContextType.EXTENDED.equals(map.get(key).getPersistenceContextType())) {
+                final PersistenceContextRef ref = map.get(key);
+                if (null != ref && PersistenceContextType.EXTENDED.equals(ref.getPersistenceContextType())) {
                     map.remove(key);
                 }
             }
@@ -2931,8 +2927,11 @@ public class AnnotationDeployer implements DynamicDeployer {
          * @param seen
          */
         private void checkConflictingSecurityAnnotations(Annotated<Method> method, String ejbName, EjbModule ejbModule, List<Method> seen) {
-            if (seen.contains(method)) return;
-            seen.add(method.get());
+            if (seen.contains(method.get())) {
+                return;
+            } else {
+                seen.add(method.get());
+            }
 
             List<String> annotations = new ArrayList<String>();
             for (Class<? extends Annotation> annotation : asList(RolesAllowed.class, PermitAll.class, DenyAll.class)) {
@@ -3942,7 +3941,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 if (persistenceContextRef.getPersistenceUnitName() == null || ("").equals(persistenceContextRef.getPersistenceUnitName())) {
                     persistenceContextRef.setPersistenceUnitName(persistenceContext.unitName());
                 }
-                if (persistenceContextRef.getPersistenceContextType() == null || ("").equals(persistenceContextRef.getPersistenceContextType())) {
+                if (persistenceContextRef.getPersistenceContextType() == null) {
                     if ("EXTENDED".equalsIgnoreCase(persistenceContext.type())) {
                         persistenceContextRef.setPersistenceContextType(PersistenceContextType.EXTENDED);
                     } else {
@@ -4127,7 +4126,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             if (serviceRef.getWsdlFile() == null && refType != null) {
                 serviceRef.setWsdlFile(JaxWsUtils.getServiceWsdlLocation(refType, classLoader));
             }
-            if (serviceRef.getWsdlFile() == null && serviceInterface != null) {
+            if (serviceRef.getWsdlFile() == null) {
                 serviceRef.setWsdlFile(JaxWsUtils.getServiceWsdlLocation(serviceInterface, classLoader));
             }
 
@@ -4135,7 +4134,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             if (serviceRef.getServiceQname() == null && refType != null) {
                 serviceRef.setServiceQname(JaxWsUtils.getServiceQName(refType));
             }
-            if (serviceRef.getServiceQname() == null && serviceInterface != null) {
+            if (serviceRef.getServiceQname() == null) {
                 serviceRef.setServiceQname(JaxWsUtils.getServiceQName(serviceInterface));
             }
 
