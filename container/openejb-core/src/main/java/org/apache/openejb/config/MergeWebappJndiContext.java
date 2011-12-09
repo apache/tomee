@@ -20,9 +20,10 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.EnvEntry;
-import org.apache.openejb.jee.InjectionTarget;
 import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.jee.JndiReference;
+import org.apache.openejb.jee.PersistenceContextRef;
+import org.apache.openejb.jee.PersistenceContextType;
 import org.apache.openejb.jee.ResourceEnvRef;
 import org.apache.openejb.jee.ResourceRef;
 import org.apache.openejb.jee.TransactionType;
@@ -32,9 +33,6 @@ import javax.ejb.EntityContext;
 import javax.ejb.MessageDrivenContext;
 import javax.ejb.SessionContext;
 import javax.transaction.UserTransaction;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -129,7 +127,9 @@ public class MergeWebappJndiContext implements DynamicDeployer {
 
             // New entry
             if (b == null) {
-                to.put(a.getKey(), a);
+                if (!isExtendedPersistenceContext(a)) {
+                    to.put(a.getKey(), a);
+                }
                 continue;
             }
 
@@ -152,6 +152,11 @@ public class MergeWebappJndiContext implements DynamicDeployer {
                 }
             }
         }
+    }
+
+    private static <R extends JndiReference> boolean isExtendedPersistenceContext(R b) {
+        return b instanceof PersistenceContextRef
+                && PersistenceContextType.EXTENDED.equals(((PersistenceContextRef) b).getPersistenceContextType());
     }
 
     private <R extends JndiReference> boolean isPrivateReference(R a) {

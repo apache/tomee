@@ -56,6 +56,11 @@ public class IvmJndiFactory implements JndiFactory {
             String name = entry.getKey();
             Object value = entry.getValue();
             if (value == null) continue;
+
+            if (containsParent(bindings, name)) {
+                continue; // TODO: find a good solution since this one is ugly and not fully working
+            }
+
             try {
                 context.bind(name, value);
             } catch (javax.naming.NamingException e) {
@@ -64,6 +69,18 @@ public class IvmJndiFactory implements JndiFactory {
         }
 
         return context;
+    }
+
+    private static boolean containsParent(Map<String, Object> bindings, String name) {
+        String workStr = name;
+        if (workStr.startsWith("/")) {
+            workStr = workStr.substring(1);
+        }
+        int index = workStr.lastIndexOf("/");
+        if (index > 0) {
+            workStr = workStr.substring(0, index);
+        }
+        return bindings.containsKey(workStr);
     }
 
     public Context createRootContext() {

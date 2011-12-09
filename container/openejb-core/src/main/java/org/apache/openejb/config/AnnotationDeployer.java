@@ -22,6 +22,7 @@ import org.apache.openejb.api.LocalClient;
 import org.apache.openejb.api.Proxy;
 import org.apache.openejb.api.RemoteClient;
 import org.apache.openejb.cdi.CdiBeanInfo;
+import org.apache.openejb.core.CompManagedBean;
 import org.apache.openejb.core.webservices.JaxWsUtils;
 import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.ActivationSpec;
@@ -1093,7 +1094,7 @@ public class
                         id += "_test";
                     }
                     final String name = BeanContext.Comp.openejbCompName(id);
-                    final org.apache.openejb.jee.ManagedBean managedBean = new org.apache.openejb.jee.ManagedBean(name, BeanContext.Comp.class);
+                    final org.apache.openejb.jee.ManagedBean managedBean = new CompManagedBean(name, BeanContext.Comp.class);
                     managedBean.setTransactionType(TransactionType.BEAN);
                     ejbModule.getEjbJar().addEnterpriseBean(managedBean);
                 } else {
@@ -2294,7 +2295,6 @@ public class
                 try {
                     if (BeanContext.Comp.class.getName().equals(bean.getEjbClass())) {
                         buildAnnotatedRefs(bean, ejbModule.getFinder(), classLoader);
-                        removeExtendedPersistenceContext(bean);
                     }
                 } catch (OpenEJBException e) {
                     logger.error("Processing of @Resource, @EJB, and other references failed for CDI managed beans", e);
@@ -2359,17 +2359,6 @@ public class
             }
 
             return ejbModule;
-        }
-
-        private void removeExtendedPersistenceContext(JndiConsumer consumer) {
-            final Map<String,PersistenceContextRef> map = consumer.getPersistenceContextRefMap();
-            final Set<String> keys = new HashSet<String>(map.keySet());
-            for (String key : keys) {
-                final PersistenceContextRef ref = map.get(key);
-                if (null != ref && PersistenceContextType.EXTENDED.equals(ref.getPersistenceContextType())) {
-                    map.remove(key);
-                }
-            }
         }
 
         private void processAsynchronous(EnterpriseBean bean, AnnotationFinder annotationFinder) {
