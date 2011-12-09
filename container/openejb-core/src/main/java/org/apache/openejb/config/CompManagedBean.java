@@ -1,4 +1,4 @@
-package org.apache.openejb.core;
+package org.apache.openejb.config;
 
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.jee.KeyedCollection;
