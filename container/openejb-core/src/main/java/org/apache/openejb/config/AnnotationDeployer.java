@@ -22,7 +22,6 @@ import org.apache.openejb.api.LocalClient;
 import org.apache.openejb.api.Proxy;
 import org.apache.openejb.api.RemoteClient;
 import org.apache.openejb.cdi.CdiBeanInfo;
-import org.apache.openejb.core.CompManagedBean;
 import org.apache.openejb.core.webservices.JaxWsUtils;
 import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.ActivationSpec;
