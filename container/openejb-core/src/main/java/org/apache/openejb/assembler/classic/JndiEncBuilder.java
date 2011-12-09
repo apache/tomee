@@ -78,6 +78,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * TODO: This class is essentially an over glorified sym-linker.  The names we were linking to are no longer guaranteed to be what we assume them to be.  We need to come up with a
@@ -172,7 +173,7 @@ public class JndiEncBuilder {
     }
 
     public Map<String, Object> buildMap() throws OpenEJBException {
-        Map<String, Object> bindings = new HashMap<String, Object>();
+        Map<String, Object> bindings = new TreeMap<String, Object>(); // let it be sorted for real binding
 
         // get JtaEntityManagerRegistry
         JtaEntityManagerRegistry jtaEntityManagerRegistry = SystemInstance.get().getComponent(JtaEntityManagerRegistry.class);

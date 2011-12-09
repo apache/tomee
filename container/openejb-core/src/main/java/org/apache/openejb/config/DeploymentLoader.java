@@ -281,7 +281,10 @@ public class DeploymentLoader implements DeploymentFilterable {
                         }
                     }
                     if (otherDD.containsKey("persistence.xml")) {
-                        persistenceUrls.add(otherDD.get("persistence.xml"));
+                        final URL otherUrl = otherDD.get("persistence.xml");
+                        if (!persistenceUrls.contains(otherUrl)) {
+                            persistenceUrls.add(otherDD.get("persistence.xml"));
+                        }
                     }
                 }
 
