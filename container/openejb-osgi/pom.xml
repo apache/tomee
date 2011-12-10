@@ -69,7 +69,7 @@
             <Bundle-Activator>org.apache.openejb.core.osgi.impl.Activator</Bundle-Activator>
             <Export-Package>org.apache.openejb.core.osgi.*</Export-Package>
             <Import-Package>
-              javax.annotation;version=1.1,
+              javax.annotation;version=1.1;resolution:=optional,
               javax.ejb;version=3.1,
               javax.enterprise.deploy;resolution:=optional,
               javax.jms;resolution:=optional,
@@ -81,7 +81,7 @@
               javax.xml.rpc;resolution:=optional,
               javax.xml.ws,
               org.apache.activemq;resolution:=optional;version="[5.4,6)",
-              org.apache.activemq.ra;version="[5.4,6)",
+              org.apache.activemq.ra;version="[5.4,6)";resolution:=optional,
               org.apache.commons.dbcp;resolution:=optional;version="[1.4,2)",
               org.apache.commons.dbcp.managed;resolution:=optional;version="[1.4,2)",
               org.apache.commons.logging,
@@ -106,7 +106,7 @@
               org.apache.openejb.resource.jdbc;resolution:=optional;version="[4.0,5.0)",
               org.apache.openejb.resource.quartz;resolution:=optional;version="[4.0,5.0)",
               org.apache.openejb.server;resolution:=optional;version="[4.0,5.0)",
-              org.apache.openejb.util;version="[4.0,5.0)"
+              org.apache.openejb.util;version="[4.0,5.0)";resolution:=optional,
               org.apache.xerces;resolution:=optional,
               org.apache.xml.resolver;resolution:=optional,
               org.hsqldb.jdbc;resolution:=optional,
