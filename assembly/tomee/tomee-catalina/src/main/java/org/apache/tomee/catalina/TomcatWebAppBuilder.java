@@ -65,6 +65,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LinkResolver;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.reflection.ReflectionUtil;
 import org.apache.tomcat.InstanceManager;
 import org.apache.tomcat.util.digester.Digester;
 import org.apache.tomee.common.LegacyAnnotationProcessor;
@@ -82,6 +83,7 @@ import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.servlet.ServletContext;
 import javax.servlet.SessionTrackingMode;
+import javax.servlet.descriptor.JspPropertyGroupDescriptor;
 import javax.servlet.jsp.JspApplicationContext;
 import javax.servlet.jsp.JspFactory;
 import javax.transaction.TransactionManager;
@@ -94,6 +96,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -471,6 +474,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
      */
     @Override
     public void init(StandardContext standardContext) {
+        replaceHashSetForJspPropertyGroupsByLinkedHashSet(standardContext);
         standardContext.setCrossContext(Boolean.parseBoolean(System.getProperty(OPENEJB_CROSSCONTEXT_PROPERTY, "false")));
         standardContext.setNamingResources(new OpenEJBNamingResource());
 
@@ -497,6 +501,21 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         standardContext.setNamingContextListener(ncl);
         standardContext.addLifecycleListener(ncl);
         standardContext.addLifecycleListener(new TomcatJavaJndiBinder());
+    }
+
+    /**
+     * a small hack to preserve order of jsppropertygroups.
+     *
+     * to remove if tomcat fixes it.
+     *
+     * @param standardContext
+     */
+    private static void replaceHashSetForJspPropertyGroupsByLinkedHashSet(StandardContext standardContext) {
+        try {
+            ReflectionUtil.set(standardContext.getJspConfigDescriptor(), "jspPropertyGroups", new LinkedHashSet<JspPropertyGroupDescriptor>());
+        } catch (OpenEJBException e) {
+            // ignored, applications often work even with this error...which shouldn't happen often
+        }
     }
 
     /**
