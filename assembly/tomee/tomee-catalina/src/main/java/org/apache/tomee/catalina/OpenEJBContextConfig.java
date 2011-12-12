@@ -19,6 +19,11 @@ package org.apache.tomee.catalina;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.deploy.WebXml;
 import org.apache.catalina.startup.ContextConfig;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.util.reflection.ReflectionUtil;
+
+import javax.servlet.descriptor.JspPropertyGroupDescriptor;
+import java.util.LinkedHashSet;
 
 /**
  * @author rmannibucau
@@ -36,12 +41,21 @@ public class OpenEJBContextConfig extends ContextConfig {
         return new OpenEJBWebXml(prefix);
     }
 
-    private class OpenEJBWebXml extends WebXml {
+    public class OpenEJBWebXml extends WebXml {
         public static final String OPENEJB_WEB_XML_MAJOR_VERSION_PROPERTY = "openejb.web.xml.major";
+
         private String prefix;
 
         public OpenEJBWebXml(String prefix) {
             this.prefix = prefix;
+
+            // some hack since tomcat doesn't preserve order of jsppropertygroup because of the hashset
+            // to remove if tomcat fixes it.
+            try {
+                ReflectionUtil.set(this, "jspPropertyGroups", new LinkedHashSet<JspPropertyGroupDescriptor>());
+            } catch (OpenEJBException e) {
+                // ignored, applications often work even with this error...which shouldn't happen often
+            }
         }
 
         @Override public int getMajorVersion() {
