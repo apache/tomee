@@ -567,18 +567,31 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 // Bean Validation
                 // ValidatorFactory needs to be put in the map sent to the entity manager factory
                 // so it has to be constructed before
-                Map<String, ValidatorFactory> validatorFactories = new HashMap<String, ValidatorFactory>();
+                final List<CommonInfoObject> vfs = new ArrayList<CommonInfoObject>();
                 for (ClientInfo clientInfo : appInfo.clients) {
-                    validatorFactories.put(clientInfo.uniqueId, ValidatorBuilder.buildFactory(classLoader, clientInfo.validationInfo));
+                    vfs.add(clientInfo);
                 }
                 for (ConnectorInfo connectorInfo : appInfo.connectors) {
-                    validatorFactories.put(connectorInfo.uniqueId, ValidatorBuilder.buildFactory(classLoader, connectorInfo.validationInfo));
+                    vfs.add(connectorInfo);
                 }
                 for (EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
-                    validatorFactories.put(ejbJarInfo.uniqueId, ValidatorBuilder.buildFactory(classLoader, ejbJarInfo.validationInfo));
+                    vfs.add(ejbJarInfo);
                 }
                 for (WebAppInfo webAppInfo : appInfo.webApps) {
-                    validatorFactories.put(webAppInfo.uniqueId, ValidatorBuilder.buildFactory(classLoader, webAppInfo.validationInfo));
+                    vfs.add(webAppInfo);
+                }
+
+                final Map<String, ValidatorFactory> validatorFactories = new HashMap<String, ValidatorFactory>();
+                for (CommonInfoObject info : vfs) {
+                    ValidatorFactory factory = null;
+                    try {
+                        factory = ValidatorBuilder.buildFactory(classLoader, info.validationInfo);
+                    } catch (ValidationException ve) {
+                        logger.warning("can't build the validation factory for module " + info.uniqueId, ve);
+                    }
+                    if (factory != null) {
+                        validatorFactories.put(info.uniqueId, factory);
+                    }
                 }
                 moduleIds.addAll(validatorFactories.keySet());
 
