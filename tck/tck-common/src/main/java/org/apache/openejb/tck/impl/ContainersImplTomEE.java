@@ -16,17 +16,6 @@
  */
 package org.apache.openejb.tck.impl;
 
-import java.io.Closeable;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.Flushable;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
-
 import org.apache.openejb.assembler.Deployer;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.client.RemoteInitialContextFactory;
@@ -36,14 +25,20 @@ import org.apache.openejb.loader.Options;
 import org.jboss.testharness.api.DeploymentException;
 import org.jboss.testharness.spi.Containers;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 /**
  * @version $Rev$ $Date$
  */
-public class ContainersImplTomEE implements Containers {
+public class ContainersImplTomEE extends AbstractContainers implements Containers {
     private static int count = 0;
     private final RemoteServer server;
     private Deployer deployer = null;
-    private static final String tmpDir = System.getProperty("java.io.tmpdir");
     private Exception exception;
     private AppInfo appInfo;
     private File currentFile = null;
@@ -109,28 +104,6 @@ public class ContainersImplTomEE implements Containers {
         return true;
     }
 
-    private void writeToFile(File file, InputStream archive) {
-        try {
-            FileOutputStream fos = new FileOutputStream(file);
-            byte[] buffer = new byte[4096];
-            int bytesRead = -1;
-            while ((bytesRead = archive.read(buffer)) > -1) {
-                fos.write(buffer, 0, bytesRead);
-            }
-            Util.close(fos);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private File getFile(String name) {
-        final File dir = new File(tmpDir, Math.random()+"");
-        dir.mkdir();
-        dir.deleteOnExit();
-
-        return new File(dir, name);
-    }
-
     @Override
     public DeploymentException getDeploymentException() {
         try {
@@ -165,15 +138,11 @@ public class ContainersImplTomEE implements Containers {
         }
     }
 
-    private static void delete(File file) {
-        if (file.isDirectory()) {
-            for (File f : file.listFiles()) {
-                delete(f);
-            }
-        }
-        if (!file.delete()) {
-            file.deleteOnExit();
-        }
+    protected File getFile(String name) {
+        final File dir = new File(tmpDir, Math.random()+"");
+        dir.mkdir();
+        dir.deleteOnExit();
+        return new File(dir, name);
     }
 
     @Override
@@ -185,23 +154,5 @@ public class ContainersImplTomEE implements Containers {
     public void cleanup() throws IOException {
         System.out.println("Cleanup called");
         server.stop();
-    }
-    private static final class Util {
-        static void close(Closeable closeable) throws IOException {
-            if (closeable == null)
-                return;
-            try {
-                if (closeable instanceof Flushable) {
-                    ((Flushable) closeable).flush();
-                }
-            } catch (IOException e) {
-                // no-op
-            }
-            try {
-                closeable.close();
-            } catch (IOException e) {
-                // no-op
-            }
-        }
     }
 }

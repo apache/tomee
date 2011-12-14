@@ -36,4 +36,11 @@ public class DeploymentExceptionManager {
     public synchronized void clearDelpoyementException(AppInfo info) {
         deploymentException.remove(info);
     }
+
+    public Exception getFirstException() {
+        if (deploymentException.isEmpty()) {
+            return null;
+        }
+        return deploymentException.values().iterator().next();
+    }
 }
