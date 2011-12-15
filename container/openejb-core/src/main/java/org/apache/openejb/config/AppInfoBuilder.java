@@ -224,7 +224,7 @@ class AppInfoBuilder {
                 }
             });
         } catch (CircularReferencesException e) {
-            List<List> circuits = e.getCircuits();
+            // List<List> circuits = e.getCircuits();
             // TODO Seems we lost circular reference detection, or we do it elsewhere and don't need it here
         }
 
@@ -254,9 +254,7 @@ class AppInfoBuilder {
 
         if (appModule.getCmpMappings() != null) {
             try {
-                String cmpMappingsXml = JpaJaxbUtil.marshal(EntityMappings.class, appModule.getCmpMappings());
-//                System.out.println(cmpMappingsXml);
-                appInfo.cmpMappingsXml = cmpMappingsXml;
+                appInfo.cmpMappingsXml = JpaJaxbUtil.marshal(EntityMappings.class, appModule.getCmpMappings());
             } catch (JAXBException e) {
                 throw new OpenEJBException("Unable to marshal cmp entity mappings", e);
             }
@@ -326,7 +324,7 @@ class AppInfoBuilder {
             jndiEncInfoBuilder.build(webApp, webModule.getJarLocation(), webAppInfo.moduleId, webModule.getModuleUri(), webAppInfo.jndiEnc, webAppInfo.jndiEnc);
 
             webAppInfo.portInfos.addAll(configureWebservices(webModule.getWebservices()));
-            configureWebserviceSecurity(webAppInfo, webModule);
+            // configureWebserviceSecurity(webAppInfo, webModule);: was empty
 
             for (Servlet servlet : webModule.getWebApp().getServlet()) {
                 ServletInfo servletInfo = new ServletInfo();
@@ -574,6 +572,9 @@ class AppInfoBuilder {
         public static final String NON_JTADATASOURCE_PROP = "javax.persistence.nonJtaDataSource";
         private static final String DEFAULT_PERSISTENCE_PROVIDER = "org.apache.openjpa.persistence.PersistenceProviderImpl";
 
+        public static final String HIBERNATE_TRANSACTION_MANAGER_LOOKUP_CLASS = "hibernate.transaction.manager_lookup_class";
+        public static final String HIBERNATE_JTA_PLATFORM = "hibernate.transaction.jta.platform";
+
         private static String providerEnv;
         private static String transactionTypeEnv;
         private static String jtaDataSourceEnv;
@@ -604,16 +605,25 @@ class AppInfoBuilder {
                 // Apply the overrides that apply to all persistence units of this provider
                 override(info, "hibernate");
 
-                String lookupProperty = "hibernate.transaction.manager_lookup_class";
-                String openejbLookupClass = MakeTxLookup.HIBERNATE_FACTORY;
-
-                String className = info.properties.getProperty(lookupProperty);
-
+                String className = info.properties.getProperty(HIBERNATE_JTA_PLATFORM);
+                if (className == null) {
+                    className = info.properties.getProperty(HIBERNATE_TRANSACTION_MANAGER_LOOKUP_CLASS);
+                }
                 // info.persistenceUnitRootUrl = null; // to avoid HHH015010
 
-                if (className == null || className.startsWith("org.hibernate.transaction")){
-                    info.properties.setProperty(lookupProperty, openejbLookupClass);
-                    logger.debug("Adjusting PersistenceUnit(name="+info.name+") property to "+lookupProperty+"="+openejbLookupClass);
+                if (className == null || className.startsWith("org.hibernate.transaction") || className.startsWith("org.hibernate.service.jta.platform")){
+                    String key = HIBERNATE_JTA_PLATFORM;
+                    String value = MakeTxLookup.HIBERNATE_NEW_FACTORY;
+                    try {
+                        // hibernate 4
+                        AppInfoBuilder.class.getClassLoader().loadClass("org.hibernate.service.jta.platform.spi.JtaPlatform");
+                    } catch (Exception e) {
+                        // hibernate 3. In the worse case it is set with a hibernate 4 and hibernate will convert it.
+                        key = HIBERNATE_TRANSACTION_MANAGER_LOOKUP_CLASS;
+                        value = MakeTxLookup.HIBERNATE_FACTORY;
+                    }
+                    info.properties.setProperty(key, value);
+                    logger.debug("Adjusting PersistenceUnit(name=" + info.name + ") property to " + key + "=" + value);
                 }
             } else if ("oracle.toplink.essentials.PersistenceProvider".equals(info.provider) ||
                     "oracle.toplink.essentials.ejb.cmp3.EntityManagerFactoryProvider".equals(info.provider) ){
@@ -779,11 +789,6 @@ class AppInfoBuilder {
         return portMap;
     }
 
-    void configureWebserviceSecurity(WebAppInfo info, WebModule module) {
-        // no security to configure for WebModule
-        // --> this method should be removed
-    }
-    
     /*
      * left package-local for a unit test
      */
