@@ -94,6 +94,7 @@
     <module>cdi-events</module>
     <module>dynamic-proxy-to-access-mbean</module>
     <module>reload-persistence-unit-properties</module>
+    <module>simple-cdi-interceptor</module>
   </modules>
   <profiles>
     <profile>
