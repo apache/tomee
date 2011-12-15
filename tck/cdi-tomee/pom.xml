@@ -39,6 +39,11 @@
       <artifactId>openejb-core</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency> <!-- for TomEERuntimeException -->
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>tomee-catalina</artifactId>
+      <version>${project.version}</version>
+    </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>webdeployer</artifactId>
