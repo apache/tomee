@@ -274,6 +274,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         configLocation = ConfigUtils.searchForConfiguration(configLocation, props);
         if (configLocation != null) {
+            logger.info("openejb configuration file is '" + configLocation + "'");
             props.setProperty(CONFIGURATION_PROPERTY, configLocation);
         }
 
