@@ -43,7 +43,7 @@ public class FullRestartContainer extends AbstractContainers implements Containe
         System.out.println(currentFile);
         writeToFile(currentFile, archive);
 
-        server = new RemoteServer(20, true);
+        server = new RemoteServer(100, true);
         try {
             server.start();
         } catch (RuntimeException e) {
