@@ -56,6 +56,10 @@ public class FullRestartContainer extends AbstractContainers implements Containe
     @Override
     public void undeploy(String name) throws IOException {
         server.destroy();
+        File folder = new File(currentFile.getParentFile(), currentFile.getName().substring(0, currentFile.getName().length() - 4));
+        if (folder.exists()) {
+            delete(folder);
+        }
         delete(currentFile);
     }
 
