@@ -20,9 +20,6 @@ import javax.annotation.PostConstruct;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
-/**
- * @author Romain Manni-Bucau
- */
 @Path("/hooked")
 public class HookedRest {
     private boolean post = false;

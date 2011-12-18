@@ -32,9 +32,6 @@ import javax.ejb.EJBAccessException;
 import java.util.List;
 import java.util.ArrayList;
 
-/**
- * @author quintin
- */
 public class JUnit4Runner extends BlockJUnit4ClassRunner {
     private OpenEjbRunner runner;
 

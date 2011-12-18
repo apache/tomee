@@ -16,9 +16,6 @@
  */
 package org.superbiz.resource;
 
-/**
- * @author rmannibucau
- */
 public class ManagerResource {
     public String resourceType() {
         return "team";

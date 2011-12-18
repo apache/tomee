@@ -24,9 +24,6 @@ import java.util.logging.LogRecord;
 
 import static org.apache.openejb.logging.Converter.toLoggingEvent;
 
-/**
- * @author Romain Manni-Bucau
- */
 public class SimpleLog4jLikeFormatter extends Formatter {
     private static final SimpleLayout layout = new SimpleLayout();
 

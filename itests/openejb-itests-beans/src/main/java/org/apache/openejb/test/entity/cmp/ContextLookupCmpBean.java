@@ -45,10 +45,6 @@ import javax.jms.JMSException;
 import java.rmi.RemoteException;
 import java.util.StringTokenizer;
 
-/**
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
- */
 public class ContextLookupCmpBean implements javax.ejb.EntityBean {
     private static int nextId;
     public int primaryKey;

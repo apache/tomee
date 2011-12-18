@@ -14,9 +14,6 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
 
-/**
- * @author rmannibucau
- */
 public class TomEEWebappLoader extends WebappLoader {
     private ClassLoader appClassLoader;
     private ClassLoader tomEEClassLoader;

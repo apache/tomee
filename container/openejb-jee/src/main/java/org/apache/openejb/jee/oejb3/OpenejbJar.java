@@ -35,8 +35,6 @@ import java.util.LinkedHashMap;
 import java.util.Properties;
 
 
-/**
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = {"moduleName", "properties","ejbDeployment"})
 @XmlRootElement(name = "openejb-jar")

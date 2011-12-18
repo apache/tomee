@@ -20,10 +20,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.openejb.test.FilteredTestSuite;
 
-/**
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
- */
 public class StatefulTestSuite extends junit.framework.TestCase {
 
     public StatefulTestSuite(String name) {

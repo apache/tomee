@@ -29,9 +29,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
-/**
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- */
 public class PostgreSqlTestDatabase implements TestDatabase {
 
     protected Database database;

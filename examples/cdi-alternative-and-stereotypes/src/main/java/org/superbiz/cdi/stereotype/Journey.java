@@ -3,9 +3,6 @@ package org.superbiz.cdi.stereotype;
 import javax.ejb.Singleton;
 import javax.inject.Inject;
 
-/**
- * @author rmannibucau
- */
 @Singleton
 public class Journey {
     @Inject private Vehicle vehicle;

@@ -23,7 +23,6 @@ import java.security.PrivilegedAction;
 import java.security.AccessController;
 
 /**
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * 
  * @version $Rev$ $Date$
  */

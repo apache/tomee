@@ -19,10 +19,6 @@ package org.apache.openejb.test.mdb;
 
 import org.apache.openejb.test.TestFailureException;
 
-/**
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
- */
 public interface EncMdbObject {
 
     public void lookupEntityBean() throws TestFailureException;

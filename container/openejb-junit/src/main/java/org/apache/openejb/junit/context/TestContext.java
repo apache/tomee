@@ -17,9 +17,6 @@
 
 package org.apache.openejb.junit.context;
 
-/**
- * @author quintin
- */
 public interface TestContext {
     /**
      * Configures a test instance for this context

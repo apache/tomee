@@ -26,7 +26,6 @@ import java.util.List;
  * Simply maps the entitymanager.
  * It simplifies refactoring (unitName change) and wraps some logic (limited queries).
  *
- * @author Romain Manni-Bucau
  */
 @Stateless
 public class DAO {

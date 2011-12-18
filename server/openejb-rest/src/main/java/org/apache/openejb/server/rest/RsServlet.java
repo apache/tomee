@@ -29,9 +29,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-/**
- * @author Romain Manni-Bucau
- */
 public class RsServlet extends HttpServlet {
     private HttpListener listener;
     private ServletConfig servletConfig;

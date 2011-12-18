@@ -29,9 +29,6 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
 
-/**
- * @author Romain Manni-Bucau
- */
 public class OpenEJBLoginValidator extends UsernameTokenValidator {
     @Override protected void verifyDigestPassword(UsernameToken usernameToken,
                                            RequestData data) throws WSSecurityException {

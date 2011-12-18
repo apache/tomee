@@ -43,7 +43,6 @@ import java.net.URL;
  * zip) isn't available in Maven, this class can obtain it from an alternative
  * URL and store it in the local repository.
  * 
- * @author jon
  * 
  */
 public class MavenCache {

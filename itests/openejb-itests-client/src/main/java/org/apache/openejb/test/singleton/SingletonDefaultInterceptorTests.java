@@ -21,11 +21,6 @@ import java.util.Map;
 
 // import javax.ejb.EJB;
 
-/**
- * 
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:goyathlay.geronimo@gmail.com">Prasad Kashyap</a>
- */
 // public class SingletonInterceptorTests extends AnnotatedFieldInjectionSingletonLocalTestClient {
 public class SingletonDefaultInterceptorTests extends BasicSingletonLocalTestClient {
 

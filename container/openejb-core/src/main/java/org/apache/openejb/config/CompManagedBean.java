@@ -12,9 +12,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * @author rmannibucau
- */
 public class CompManagedBean extends ManagedBean {
     public CompManagedBean(String name, Class<BeanContext.Comp> compClass) {
         super(name, compClass);

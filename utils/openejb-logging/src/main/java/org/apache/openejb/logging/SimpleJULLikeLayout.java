@@ -24,9 +24,6 @@ import java.util.logging.SimpleFormatter;
 
 import static org.apache.openejb.logging.Converter.toLogRecord;
 
-/**
- * @author Romain Manni-Bucau
- */
 public class SimpleJULLikeLayout extends SimpleLayout {
     private static final SimpleFormatter formatter = new SimpleFormatter();
 

@@ -26,8 +26,6 @@ import java.util.Set;
 /**
  * [2] Should be run as the second test suite of the ComplexCmpTestClients
  *
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
 public class ComplexHomeIntfcTests extends ComplexCmpTestClient {
 

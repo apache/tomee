@@ -62,8 +62,6 @@ import org.apache.openejb.test.object.OperationsPolicy;
  * ______________________|__________________________________________________
  * </PRE>
  * 
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
 public class BMTStatefulAllowedOperationsTests extends BasicStatefulTestClient{
 

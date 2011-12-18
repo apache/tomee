@@ -20,9 +20,6 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.extension.ExtensionManagerBus;
 
-/**
- * @author Romain Manni-Bucau
- */
 public final class CxfUtil {
     private CxfUtil() {
         // no-op

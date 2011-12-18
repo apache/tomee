@@ -55,9 +55,6 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 
-/**
- * @author rmannibucau
- */
 @RunWith(ApplicationComposer.class)
 public class DynamicEJBImplTest {
     private static boolean initDone = false;

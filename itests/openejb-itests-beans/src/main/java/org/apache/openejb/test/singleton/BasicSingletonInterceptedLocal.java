@@ -20,8 +20,6 @@ import java.util.Map;
 import java.util.List;
 
 /**
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:goyathlay.geronimo@gmail.com">Prasad Kashyap</a>
  *
  * @version $Rev: 607077 $ $Date: 2007-12-27 06:55:23 -0800 (Thu, 27 Dec 2007) $
  */

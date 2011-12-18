@@ -4,9 +4,6 @@ import org.apache.openejb.api.Proxy;
 
 import javax.ejb.Singleton;
 
-/**
- * @author rmannibucau
- */
 @Singleton
 @Proxy(DynamicMBeanHandler.class)
 @ObjectName(DynamicMBeanClient.OBJECT_NAME)

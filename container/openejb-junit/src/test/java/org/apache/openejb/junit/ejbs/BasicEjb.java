@@ -19,9 +19,6 @@ package org.apache.openejb.junit.ejbs;
 
 import javax.ejb.Stateless;
 
-/**
- * @author quintin
- */
 @Stateless
 public class BasicEjb implements BasicEjbLocal {
     public String concat(String s1, String s2) {

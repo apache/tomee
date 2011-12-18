@@ -24,9 +24,6 @@ import javax.persistence.MappedSuperclass;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
-/**
- * @author Romain Manni-Bucau
- */
 @MappedSuperclass
 @Access(AccessType.FIELD)
 @XmlAccessorType(XmlAccessType.FIELD)

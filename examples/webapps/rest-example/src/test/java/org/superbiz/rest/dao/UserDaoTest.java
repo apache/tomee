@@ -26,9 +26,6 @@ import javax.naming.NamingException;
 
 import static junit.framework.Assert.assertNotNull;
 
-/**
- * @author rmannibucau
- */
 public class UserDaoTest {
     private static EJBContainer container;
 

@@ -22,9 +22,6 @@ import org.apache.openejb.junit.OpenEjbRunner;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-/**
- * @author quintin
- */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ContextConfig {
     /**

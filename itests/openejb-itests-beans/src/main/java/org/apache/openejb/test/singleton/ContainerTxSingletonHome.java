@@ -18,10 +18,6 @@ package org.apache.openejb.test.singleton;
 
 
 
-/**
- * 
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- */
 public interface ContainerTxSingletonHome extends javax.ejb.EJBHome {
 
     public ContainerTxSingletonObject create()

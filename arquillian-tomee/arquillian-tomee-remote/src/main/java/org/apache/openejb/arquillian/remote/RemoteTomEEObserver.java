@@ -12,9 +12,6 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-/**
- * @author rmannibucau
- */
 public class RemoteTomEEObserver {
     @Inject @SuiteScoped private InstanceProducer<BeanManager> beanManager;
     @Inject @SuiteScoped private InstanceProducer<Context> context;

@@ -43,7 +43,6 @@ import java.util.jar.JarFile;
  * Note: This class is a copy of the xbean-finder ResourceFinder class.  Any changes should
  * be make to the xbean-finder source first and then copied to this class.  Also, this class
  * should be kept in sync with the xbean-finder code.
- * @author David Blevins
  */
 public class ResourceFinder {
 

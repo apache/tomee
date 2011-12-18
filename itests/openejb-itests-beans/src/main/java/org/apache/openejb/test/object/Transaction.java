@@ -21,11 +21,6 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 import javax.transaction.UserTransaction;
-/**
- * 
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
- */
 public class Transaction implements java.io.Externalizable{
     
     private String instance;

@@ -19,9 +19,6 @@ package org.apache.openejb.junit.ejbs;
 
 import javax.ejb.Local;
 
-/**
- * @author quintin
- */
 @Local
 public interface BasicEjbLocal {
     String concat(String s1, String s2);

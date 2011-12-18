@@ -3,9 +3,6 @@ package org.apache.openejb.util;
 import javax.naming.Context;
 import javax.naming.NamingException;
 
-/**
- * @author rmannibucau
- */
 public class ContextUtil {
     private ContextUtil() {
         // no-op

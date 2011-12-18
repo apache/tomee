@@ -22,9 +22,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-/**
- * @author Romain Manni-Bucau
- */
 public class ServletIntputStreamAdapter extends ServletInputStream {
     private InputStream intputStream;
 

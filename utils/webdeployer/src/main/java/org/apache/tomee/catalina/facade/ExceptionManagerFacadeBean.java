@@ -7,9 +7,6 @@ import javax.ejb.Singleton;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 
-/**
- * @author rmannibucau
- */
 @Singleton(name = "openejb/ExceptionManagerFacade")
 @TransactionManagement(TransactionManagementType.BEAN)
 public class ExceptionManagerFacadeBean implements ExceptionManagerFacade {

@@ -16,9 +16,6 @@
  */
 package org.apache.openejb.assembler.classic;
 
-/**
- * @author Romain Manni-Bucau
- */
 public class CommonInfoObject extends InfoObject {
     public ValidationInfo validationInfo;
     public String uniqueId;

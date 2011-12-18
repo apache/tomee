@@ -27,9 +27,6 @@ import org.junit.runner.RunWith;
 
 import javax.ejb.EJB;
 
-/**
- * @author quintin
- */
 @RunWith(OpenEjbRunner.class)
 @LocalClient
 public class TestEjbBasic {

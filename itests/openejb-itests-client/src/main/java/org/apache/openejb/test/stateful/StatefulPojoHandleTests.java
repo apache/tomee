@@ -20,11 +20,6 @@ import java.rmi.NoSuchObjectException;
 
 import javax.ejb.EJBObject;
 
-/**
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
- * @author <a href="mailto:manu.t.george@gmail.com">Manu George</a>
- */
 public class StatefulPojoHandleTests extends BasicStatefulTestClient {
 
 	public StatefulPojoHandleTests() {

@@ -37,9 +37,6 @@ import java.util.Properties;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
-/**
- * @author rmannibucau
- */
 public class UserServiceTest {
 
     private static EJBContainer container;

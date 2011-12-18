@@ -20,9 +20,6 @@ import org.apache.openejb.loader.SystemInstance;
 
 import java.util.Properties;
 
-/**
- * @author rmannibucau
- */
 public final class JPAPropertyConverter {
     private JPAPropertyConverter() {
         // no-op

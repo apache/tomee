@@ -1,8 +1,5 @@
 package org.superbiz.mdb;
 
-/**
- * @author rmannibucau
- */
 public class ChatRespondCreator {
     public String respond(String question) {
         if ("Hello World!".equals(question)) {

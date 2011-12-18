@@ -22,8 +22,6 @@ import javax.ejb.ObjectNotFoundException;
 /**
  * [4] Should be run as the fourth test suite of the BasicBmpTestClients
  *
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
 public class BmpEjbObjectTests extends BasicBmpTestClient{
 

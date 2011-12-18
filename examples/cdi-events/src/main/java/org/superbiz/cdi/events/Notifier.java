@@ -22,9 +22,6 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import java.util.Date;
 
-/**
- * @author rmannibucau
- */
 @Singleton
 public class Notifier {
     @Inject private Event<Date> dateEvent;

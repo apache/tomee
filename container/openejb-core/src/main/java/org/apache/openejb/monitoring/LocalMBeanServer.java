@@ -6,9 +6,6 @@ import java.io.ObjectInputStream;
 import java.lang.management.ManagementFactory;
 import java.util.Set;
 
-/**
- * @author rmannibucau
- */
 public class LocalMBeanServer implements MBeanServer {
     public static final String OPENEJB_JMX_ACTIVE = "openejb.jmx.active";
 

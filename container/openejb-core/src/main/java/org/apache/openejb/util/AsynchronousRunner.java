@@ -52,8 +52,7 @@ public class AsynchronousRunner {
      * A {@link Callable} implementation which just delegates the execution using
      * {@link Method#invoke(Object, Object[])}
      *
-     * @author luis
-     */
+         */
     private class MethodInvoker implements Callable<Object> {
         private Object object;
         private Method method;

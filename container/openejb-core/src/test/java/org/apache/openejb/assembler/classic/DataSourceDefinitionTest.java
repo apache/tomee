@@ -44,7 +44,6 @@ import static junit.framework.Assert.assertNotNull;
  * Note: to make this test work under JavaSE 6 you should add geronimo-annotation_1.1_spec in your endorsed dir.
  * It is automatically done with maven.
  *
- * @author rmannibucau
  */
 @RunWith(ApplicationComposer.class)
 public class DataSourceDefinitionTest {

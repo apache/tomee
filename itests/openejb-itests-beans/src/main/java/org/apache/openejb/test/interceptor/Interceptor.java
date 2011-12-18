@@ -25,7 +25,6 @@ import javax.interceptor.InvocationContext;
 import org.apache.openejb.test.SuperInterceptedBean;
 
 /**
- * @author <a href="mailto:goyathlay.geronimo@gmail.com">Prasad Kashyap</a>
  *
  * @version $Rev$ $Date$
  */

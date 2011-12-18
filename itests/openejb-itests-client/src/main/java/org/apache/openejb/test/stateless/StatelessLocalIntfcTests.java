@@ -17,11 +17,6 @@
 package org.apache.openejb.test.stateless;
 
 import javax.ejb.EJBException;
-/**
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
- * @author <a href="mailto:manu.t.george@gmail.com">Manu George</a>
- */
 public class StatelessLocalIntfcTests extends BasicStatelessLocalTestClient {
 
 	public StatelessLocalIntfcTests() {

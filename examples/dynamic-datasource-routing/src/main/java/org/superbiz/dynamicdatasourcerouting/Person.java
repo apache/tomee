@@ -19,9 +19,6 @@ package org.superbiz.dynamicdatasourcerouting;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-/**
- * @author Romain Manni-Bucau
- */
 @Entity
 public class Person {
     @Id

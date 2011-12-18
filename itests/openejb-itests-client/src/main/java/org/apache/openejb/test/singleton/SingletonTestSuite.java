@@ -20,8 +20,6 @@ import junit.framework.TestSuite;
 import org.apache.openejb.test.FilteredTestSuite;
 
 /**
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  * @version $Rev: 606348 $ $Date: 2007-12-21 15:57:58 -0800 (Fri, 21 Dec 2007) $
  */
 public class SingletonTestSuite extends junit.framework.TestCase {

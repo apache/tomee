@@ -18,9 +18,6 @@ package org.superbiz.designbycontract;
 
 import javax.ejb.Stateless;
 
-/**
- * @author Romain Manni-Bucau
- */
 @Stateless
 public class PoleVaultingManagerBean implements PoleVaultingManager {
     @Override

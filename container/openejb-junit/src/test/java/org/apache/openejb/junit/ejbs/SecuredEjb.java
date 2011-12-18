@@ -20,9 +20,6 @@ package org.apache.openejb.junit.ejbs;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 
-/**
- * @author quintin
- */
 @Stateless
 @RolesAllowed({"RoleA", "RoleB"})
 public class SecuredEjb implements SecuredEjbLocal {

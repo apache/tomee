@@ -22,10 +22,6 @@ import org.apache.openejb.test.TestManager;
 import javax.naming.InitialContext;
 import java.util.Properties;
 
-/**
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
- */
 public abstract class StatelessTestClient extends TestClient {
 
     public StatelessTestClient(String name) {

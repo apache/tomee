@@ -20,9 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-/**
- * @author Romain Manni-Bucau
- */
 public final class ZipUtil {
     private ZipUtil() {
         // no-op

@@ -30,8 +30,6 @@ import javax.naming.Context;
  * <code>test.home</code>
  * <code>server.classpath</code>
  * 
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
 public class RiTestServer implements TestServer {
 

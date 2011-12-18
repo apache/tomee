@@ -25,9 +25,6 @@ import javax.naming.InitialContext;
 
 import org.apache.openejb.test.TestManager;
 
-/**
- * 
- */
 public abstract class Cmp2TestClient extends org.apache.openejb.test.NamedTestCase {
 
     protected InitialContext initialContext;

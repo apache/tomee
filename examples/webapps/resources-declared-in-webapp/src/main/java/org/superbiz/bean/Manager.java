@@ -21,9 +21,6 @@ import org.superbiz.resource.ManagerResource;
 import javax.annotation.Resource;
 import javax.ejb.Singleton;
 
-/**
- * @author rmannibucau
- */
 @Singleton
 public class Manager {
     @Resource(name = "My Manager Team", type = ManagerResource.class)

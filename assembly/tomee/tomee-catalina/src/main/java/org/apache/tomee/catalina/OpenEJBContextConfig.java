@@ -25,9 +25,6 @@ import org.apache.openejb.util.reflection.ReflectionUtil;
 import javax.servlet.descriptor.JspPropertyGroupDescriptor;
 import java.util.LinkedHashSet;
 
-/**
- * @author rmannibucau
- */
 public class OpenEJBContextConfig extends ContextConfig {
     @Override protected WebXml createWebXml() {
         String prefix = "";

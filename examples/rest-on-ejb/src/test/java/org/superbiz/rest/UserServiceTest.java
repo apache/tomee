@@ -37,9 +37,6 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.fail;
 
-/**
- * @author Romain Manni-Bucau
- */
 public class UserServiceTest {
     private static Context context;
     private static UserService service;

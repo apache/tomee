@@ -38,9 +38,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
 
-/**
- * @author Romain Manni-Bucau
- */
 public class OpenEJBEJBInvoker extends JAXRSInvoker {
     private BeanContext context;
 

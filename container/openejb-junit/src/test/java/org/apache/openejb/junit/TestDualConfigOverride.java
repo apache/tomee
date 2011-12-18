@@ -34,7 +34,6 @@ import java.util.Hashtable;
  * properties in all tests (even when not in it's config), to ensure overrides work
  * properly, and also that context sharing doesn't happen.
  *
- * @author quintin
  */
 @RunWith(OpenEjbRunner.class)
 @ContextConfig(

@@ -17,10 +17,6 @@
 package org.apache.openejb.test.singleton;
 
 
-/**
- * 
- * @author <a href="mailto:nour.mohammad@gmail.com">Mohammad Nour El-Din</a>
- */
 public interface BasicSingletonLocalHome extends javax.ejb.EJBLocalHome {
 
     public BasicSingletonLocalObject create() throws javax.ejb.CreateException;

@@ -17,12 +17,6 @@
 package org.apache.openejb.test.stateful;
 
 
-/**
- * 
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
- * @author <a href="mailto:manu.t.george@gmail.com">Manu Theruvilpallil George</a>
- */
 public class StatefulPojoLocalIntfcTests extends BasicStatefulLocalTestClient {
 
     public StatefulPojoLocalIntfcTests(){

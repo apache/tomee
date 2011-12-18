@@ -29,9 +29,6 @@ import org.junit.runner.RunWith;
 
 import java.util.Hashtable;
 
-/**
- * @author quintin
- */
 @RunWith(OpenEjbRunner.class)
 public class TestMethodConfigProperties {
     @TestResource(TestResourceTypes.CONTEXT_CONFIG)

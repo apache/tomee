@@ -28,9 +28,6 @@ import java.util.Properties;
 
 import static junit.framework.Assert.assertEquals;
 
-/**
- * @author Romain Manni-Bucau
- */
 public class GuessHowManyMBeanTest {
     private static final String OBJECT_NAME = "openejb.user.mbeans:group=org.superbiz.mbean,application=mbean-auto-registration,name=GuessHowManyMBean";
 

@@ -31,10 +31,6 @@ import java.util.StringTokenizer;
 import java.util.Map;
 import java.util.HashMap;
 
-/**
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
- */
 public class UnknownCmpBean implements EntityBean {
     public String firstName;
     public String lastName;

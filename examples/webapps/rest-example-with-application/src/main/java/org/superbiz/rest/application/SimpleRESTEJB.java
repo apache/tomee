@@ -23,9 +23,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import java.util.Date;
 
-/**
- * @author rmannibucau
- */
 @Singleton
 @Lock(LockType.READ)
 @Path("/ejb")

@@ -42,9 +42,6 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.xbean.finder.ClassFinder;
 
-/**
- * @author Romain Manni-Bucau
- */
 public class MBeanDeployer implements DynamicDeployer {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, MBeanDeployer.class);
     private static final MBeanServer server = LocalMBeanServer.get();

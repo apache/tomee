@@ -22,10 +22,6 @@ import org.apache.openejb.test.entity.cmp2.EjbqlLocalTest;
 import javax.naming.InitialContext;
 import java.util.Properties;
 
-/**
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
- */
 public class CmpLocalTestSuite extends org.apache.openejb.test.FilteredTestSuite {
 
     public CmpLocalTestSuite() {

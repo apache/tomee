@@ -25,8 +25,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
-/**
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = {"methodName", "methodParams"})
 @XmlRootElement(name = "query-method")

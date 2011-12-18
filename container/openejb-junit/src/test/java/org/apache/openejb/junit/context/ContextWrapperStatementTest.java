@@ -23,9 +23,6 @@ import static org.junit.Assert.fail;
 import org.junit.Test;
 import org.junit.runners.model.Statement;
 
-/**
- * @author quintin
- */
 public class ContextWrapperStatementTest {
     private static boolean configuredInvoked = false;
 

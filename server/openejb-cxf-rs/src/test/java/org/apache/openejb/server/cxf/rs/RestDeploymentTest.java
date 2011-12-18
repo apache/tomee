@@ -72,9 +72,6 @@ import java.util.Properties;
 
 import static junit.framework.Assert.assertEquals;
 
-/**
- * @author Romain Manni-Bucau
- */
 public class RestDeploymentTest {
     private static CxfRSService service;
     private static HttpServer server;

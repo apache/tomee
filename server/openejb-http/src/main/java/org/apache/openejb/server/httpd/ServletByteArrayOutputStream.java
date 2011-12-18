@@ -21,9 +21,6 @@ import javax.servlet.ServletOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-/**
- * @author Romain Manni-Bucau
- */
 public class ServletByteArrayOutputStream extends ServletOutputStream {
     private ByteArrayOutputStream outputStream;
 

@@ -24,7 +24,6 @@ import java.rmi.RemoteException;
 import java.util.Properties;
 
 /**
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  *
  * @version $Rev$ $Date$ 
  */

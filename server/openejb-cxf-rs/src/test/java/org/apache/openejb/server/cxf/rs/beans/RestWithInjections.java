@@ -22,9 +22,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
-/**
- * @author Romain Manni-Bucau
- */
 @Path("/inject")
 public class RestWithInjections {
     @EJB private SimpleEJB simple;

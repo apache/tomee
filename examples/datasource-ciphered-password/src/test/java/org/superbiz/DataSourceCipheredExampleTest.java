@@ -32,9 +32,6 @@ import java.util.Properties;
 
 import static junit.framework.Assert.assertNotNull;
 
-/**
- * @author Romain Manni-Bucau
- */
 public class DataSourceCipheredExampleTest {
     private static final String USER = DataSourceCipheredExampleTest.class.getSimpleName().toUpperCase();
     private static final String PASSWORD = "YouLLN3v3rFindM3";

@@ -25,9 +25,6 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Properties;
 
-/**
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- */
 public class RemoteTestServer implements org.apache.openejb.test.TestServer {
 
     static {

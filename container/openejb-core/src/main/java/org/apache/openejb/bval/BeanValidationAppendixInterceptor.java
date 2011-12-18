@@ -36,7 +36,6 @@ import java.util.Set;
  * A simple interceptor to validate parameters and returned value using
  * bean validation spec. It doesn't use group for now.
  *
- * @author Romain Manni-Bucau
  */
 public class BeanValidationAppendixInterceptor {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, BeanValidationAppendixInterceptor.class);

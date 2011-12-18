@@ -21,7 +21,6 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Need a @PreDestroy method to disconnect the remote host when used in remote mode.
  *
- * @author rmannibucau
  */
 public class DynamicMBeanHandler implements InvocationHandler {
     private final Map<Method, ConnectionInfo> infos = new ConcurrentHashMap<Method, ConnectionInfo>();

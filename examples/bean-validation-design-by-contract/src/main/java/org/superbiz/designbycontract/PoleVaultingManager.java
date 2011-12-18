@@ -19,9 +19,6 @@ package org.superbiz.designbycontract;
 import javax.ejb.Local;
 import javax.validation.constraints.Min;
 
-/**
- * @author Romain Manni-Bucau
- */
 @Local
 public interface PoleVaultingManager {
     int points(@Min(120) int centimeters);

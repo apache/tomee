@@ -25,9 +25,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-/**
- * @author rmannibucau
- */
 @Singleton
 public class Observer {
     private static final Logger LOGGER = LoggerFactory.getLogger(Observer.class);

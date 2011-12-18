@@ -45,9 +45,6 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
-/**
- * @author rmannibucau
- */
 public class OpenEJBXmlByModuleTest {
     private Context context = null;
 

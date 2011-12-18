@@ -42,11 +42,6 @@ import org.apache.openejb.test.entity.bmp.BasicBmpHome;
 import org.apache.openejb.test.entity.bmp.BasicBmpObject;
 import org.apache.openejb.test.stateful.*;
 
-/**
- *
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
- */
 public class EncSingletonBean implements javax.ejb.SessionBean{
 
     private String name;

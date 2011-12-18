@@ -29,9 +29,6 @@ import org.apache.openejb.test.entity.cmp.EncCmpObject;
 
 import java.rmi.RemoteException;
 
-/**
- *
- */
 public class Cmp2RmiIiopTests extends Cmp2TestClient {
 
     protected RmiIiopCmpHome ejbHome;

@@ -16,9 +16,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author rmannibucau
- */
 public class EmbeddedTomEEContainer extends EJBContainer {
     public static final String TOMEE_EJBCONTAINER_HTTP_PORT = "tomee.ejbcontainer.http.port";
     private static EmbeddedTomEEContainer tomEEContainer;

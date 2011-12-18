@@ -22,10 +22,6 @@ import javax.transaction.RollbackException;
 
 import org.apache.openejb.test.object.Account;
 
-/**
- * 
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- */
 public interface ContainerTxStatelessObject extends javax.ejb.EJBObject{
     
     public String txMandatoryMethod(String message) throws RemoteException;

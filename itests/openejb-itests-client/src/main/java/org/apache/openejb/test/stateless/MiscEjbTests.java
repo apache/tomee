@@ -23,10 +23,6 @@ import org.apache.openejb.test.entity.cmp.EncCmpObject;
 import org.apache.openejb.test.stateful.EncStatefulHome;
 import org.apache.openejb.test.stateful.EncStatefulObject;
 
-/**
- *
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- */
 public class MiscEjbTests extends BasicStatelessTestClient{
 
     public MiscEjbTests(){

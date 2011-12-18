@@ -15,9 +15,6 @@ import java.util.Properties;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
-/**
- * @author rmannibucau
- */
 public class EmbeddedTomEEContainerTest {
     @Test(expected = OpenEjbContainer.NoModulesFoundException.class) public void noModule() {
         Properties p = new Properties();

@@ -51,9 +51,6 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 
-/**
- * @author Romain Manni-Bucau
- */
 @RunWith(ApplicationComposer.class)
 public class BeanValidationTest {
     @EJB private PersistManager persistManager;

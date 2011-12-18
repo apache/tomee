@@ -22,9 +22,6 @@ import javax.ejb.EJB;
 /**
  * [2] Should be run as the second test suite of the BasicSingletonTestClients
  * 
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
- * @author <a href="mailto:nour.mohammad@gmail.com">Mohammad Nour El-Din</a>
  * 
  * @version $Rev: 607077 $ $Date: 2007-12-27 06:55:23 -0800 (Thu, 27 Dec 2007) $
  */

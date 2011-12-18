@@ -23,8 +23,6 @@ import javax.ejb.EJBHome;
 /**
  * [8] Should be run as the eigth test suite of the UnknownCmpTestClients
  *
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
 public class UnknownEjbMetaDataTests extends UnknownCmpTestClient {
 

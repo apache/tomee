@@ -25,9 +25,6 @@ import java.util.Properties;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 
-/**
- * @author rmannibucau
- */
 @RunWith(Arquillian.class)
 public class SessionScopeTest {
     public static final String TEST_SESSION_URL = "http://127.0.0.1:9080/test/session";

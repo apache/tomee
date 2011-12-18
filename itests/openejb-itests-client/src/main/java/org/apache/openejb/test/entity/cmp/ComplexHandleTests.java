@@ -23,8 +23,6 @@ import javax.rmi.PortableRemoteObject;
 /**
  * [7] Should be run as the seventh test suite of the ComplexCmpTestClients
  *
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
 public class ComplexHandleTests extends ComplexCmpTestClient {
 

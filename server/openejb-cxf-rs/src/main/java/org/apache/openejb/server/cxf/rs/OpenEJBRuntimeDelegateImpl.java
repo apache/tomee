@@ -16,7 +16,6 @@ import java.util.Map;
  *
  * That's why openejb-cxf-bundle was created.
  *
- * @author rmannibucau
  */
 public class OpenEJBRuntimeDelegateImpl extends RuntimeDelegateImpl {
     @Override public UriBuilder createUriBuilder() {

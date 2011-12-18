@@ -22,9 +22,6 @@ import org.apache.openejb.spi.ContainerSystem;
 import javax.naming.Context;
 import javax.naming.NamingException;
 
-/**
- * @author Romain Manni-Bucau
- */
 public abstract class AbstractRouter implements Router {
     private static final String OPENEJB_RESOURCE = "openejb:Resource/";
     private Context ctx;

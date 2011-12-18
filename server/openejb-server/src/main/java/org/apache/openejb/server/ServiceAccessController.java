@@ -34,8 +34,6 @@ import java.util.LinkedList;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
-/**
- */
 public class ServiceAccessController implements ServerService {
 
     private final ServerService next;

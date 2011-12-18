@@ -22,9 +22,6 @@ import javax.servlet.AsyncEvent;
 import javax.servlet.AsyncListener;
 import java.io.IOException;
 
-/**
- * @author rmannibucau
- */
 public class OpenEJBSecurityListener implements AsyncListener {
     private TomcatSecurityService securityService;
     private Object oldState = null;

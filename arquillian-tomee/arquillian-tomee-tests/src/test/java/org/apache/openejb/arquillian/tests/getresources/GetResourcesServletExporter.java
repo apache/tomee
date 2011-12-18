@@ -11,9 +11,6 @@ import java.io.PrintWriter;
 
 import static junit.framework.Assert.assertTrue;
 
-/**
- * @author rmannibucau
- */
 @WebServlet(name = "get-resources", urlPatterns = "/get-resources")
 public class GetResourcesServletExporter extends HttpServlet {
     @Override protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
