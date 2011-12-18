@@ -19,7 +19,7 @@ Let's create an  annotation that would "mark" a method for interception.
 @Retention(RUNTIME)
 public @interface Log {
 }
-</pre></code>
+</code></pre>
 
 Sure, you haven't missed the @InterceptorBinding annotation above ! Now that our custom annotation is created, lets attach it (or to use a better term for it, "bind it" )
 to an interceptor. 
@@ -36,7 +36,7 @@ public class LoggingInterceptor {
         return ctx.proceed();
     }
 }
-</pre></code>
+</code></pre>
 
 Now the @Log annotation we created is bound to this interceptor.
 
@@ -76,18 +76,6 @@ Those lines in beans.xml not only "enable" the interceptors, but also define the
 But we'll see that in another example on multiple-cdi-interceptors.
 
 Fire up the test, and we should see a 'Entering method: getMoviesList' printed in the console.
-
-
-
-#Code
-
-#### Java files
-
-${javas}
-
-##### Resource files
-
-${resources} 
 
 #Download
 
