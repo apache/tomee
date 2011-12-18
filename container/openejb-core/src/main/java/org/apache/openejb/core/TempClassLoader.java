@@ -40,7 +40,6 @@ import java.util.Set;
  * java.*, javax.* and sun.* packages and annotations all of which
  * are loaded by with
  * <code>Class.forName(name, resolve, getClass().getClassLoader())</code>
- * @author Marc Prud'hommeaux
  */
 // Note: this class is a fork from OpenJPA
 public class TempClassLoader extends URLClassLoader {

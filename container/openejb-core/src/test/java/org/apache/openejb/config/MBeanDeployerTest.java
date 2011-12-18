@@ -40,7 +40,6 @@ import static junit.framework.Assert.assertTrue;
 /**
  * Note: each MBeans are at least deployed twice (using old and spec module name).
  *
- * @author Romain Manni-Bucau
  *         openejb.user.mbeans.list=org.apache.openejb.mbeans.Empty,
  *         org.apache.openejb.mbeans.Inheritance,
  *         org.apache.openejb.mbeans.MBeanDescription,

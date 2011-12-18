@@ -20,9 +20,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import java.util.Date;
 
-/**
- * @author rmannibucau
- */
 @Path("/pojo")
 public class SimpleRESTPojo {
     @GET

@@ -25,11 +25,6 @@ import javax.ejb.Handle;
 
 import org.apache.openejb.test.object.ObjectGraph;
 
-/**
- * 
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
- */
 public interface RmiIiopCmpObject extends javax.ejb.EJBObject{
     
     public String returnStringObject(String data) throws RemoteException; 

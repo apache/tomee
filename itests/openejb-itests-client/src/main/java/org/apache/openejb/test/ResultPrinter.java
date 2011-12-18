@@ -22,10 +22,6 @@ import java.util.Enumeration;
 import junit.framework.TestFailure;
 import junit.framework.TestResult;
 
-/**
- *
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- */
 public class ResultPrinter extends junit.textui.ResultPrinter {
 
     public ResultPrinter(PrintStream writer) {

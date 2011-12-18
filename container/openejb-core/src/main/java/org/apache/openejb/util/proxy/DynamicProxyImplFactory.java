@@ -25,9 +25,6 @@ import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import java.lang.reflect.Method;
 
-/**
- * @author rmannibucau
- */
 public class DynamicProxyImplFactory {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, BeanContext.class);
 

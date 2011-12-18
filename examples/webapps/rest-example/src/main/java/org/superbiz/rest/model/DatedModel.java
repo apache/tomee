@@ -20,9 +20,6 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.PrePersist;
 import java.util.Date;
 
-/**
- * @author Romain Manni-Bucau
- */
 @MappedSuperclass
 public abstract class DatedModel extends Model {
     private Date created;

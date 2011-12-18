@@ -18,10 +18,6 @@ package org.apache.openejb.test;
 
 import java.util.Properties;
 
-/**
- * 
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- */
 public interface TestDatabase {
 
     public void createEntityTable() throws java.sql.SQLException;

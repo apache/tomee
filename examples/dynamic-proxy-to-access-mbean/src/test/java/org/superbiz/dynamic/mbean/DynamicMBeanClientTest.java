@@ -15,9 +15,6 @@ import java.lang.management.ManagementFactory;
 
 import static junit.framework.Assert.assertEquals;
 
-/**
- * @author rmannibucau
- */
 public class DynamicMBeanClientTest {
     private static ObjectName objectName;
     private static EJBContainer container;

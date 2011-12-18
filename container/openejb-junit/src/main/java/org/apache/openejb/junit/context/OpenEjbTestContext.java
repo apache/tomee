@@ -40,7 +40,6 @@ import java.util.Properties;
  * which would configure the test when instructed. You can then use whatever method
  * of configuration you choose.
  *
- * @author quintin
  */
 public class OpenEjbTestContext implements TestContext {
     protected static final String REALM_PROPERTY_KEY = "openejb.authentication.realmName";

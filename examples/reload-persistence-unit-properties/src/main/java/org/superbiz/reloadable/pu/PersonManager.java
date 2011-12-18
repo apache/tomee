@@ -6,9 +6,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-/**
- * @author rmannibucau
- */
 @Singleton
 public class PersonManager {
     private static int ID = 0;

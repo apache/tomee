@@ -22,9 +22,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * @author rmannibucau
- */
 @ApplicationPath("/rest-prefix")
 public class ApplicationConfig extends Application {
     public Set<Class<?>> getClasses() {

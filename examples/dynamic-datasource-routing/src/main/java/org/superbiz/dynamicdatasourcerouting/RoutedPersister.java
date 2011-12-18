@@ -21,9 +21,6 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-/**
- * @author Romain Manni-Bucau
- */
 @Stateless
 public class RoutedPersister {
     @PersistenceContext(unitName = "router")

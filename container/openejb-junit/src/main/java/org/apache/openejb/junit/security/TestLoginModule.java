@@ -38,7 +38,6 @@ import java.util.Set;
  * The TestContext should set the {@link Context#SECURITY_PRINCIPAL } {@link InitialContext} property
  * to the rolename it wants to "RunAs", and this login module will do the result.
  *
- * @author quintin
  */
 public class TestLoginModule implements LoginModule {
     private Subject subject;

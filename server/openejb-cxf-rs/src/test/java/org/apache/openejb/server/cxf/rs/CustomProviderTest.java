@@ -23,9 +23,6 @@ import java.util.Properties;
 
 import static junit.framework.Assert.assertEquals;
 
-/**
- * @author rmannibucau
- */
 public class CustomProviderTest {
     private static EJBContainer container;
     private static String providers;

@@ -21,9 +21,6 @@ import org.apache.openejb.api.Proxy;
 import javax.ejb.Singleton;
 import javax.interceptor.Interceptors;
 
-/**
- * @author rmannibucau
- */
 @Singleton
 @Proxy(SocialHandler.class)
 @Interceptors(SocialInterceptor.class)

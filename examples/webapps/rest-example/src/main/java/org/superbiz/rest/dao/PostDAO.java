@@ -23,9 +23,6 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import java.util.List;
 
-/**
- * @author Romain Manni-Bucau
- */
 @Stateless
 public class PostDAO {
     @EJB

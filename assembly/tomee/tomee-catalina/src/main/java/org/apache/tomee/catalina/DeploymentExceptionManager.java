@@ -10,7 +10,6 @@ import java.util.Map;
  * To be able to get it back (from our Deployers for instance)
  * we need a way to store it.
  *
- * @author rmannibucau
  */
 public class DeploymentExceptionManager {
     private static final int MAX_SIZE = Integer.getInteger("tomee.deployement-exception-max-size", 10);

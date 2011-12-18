@@ -24,10 +24,6 @@ import org.apache.openejb.test.object.OperationsPolicy;
 
 import javax.ejb.EJBObject;
 
-/**
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
- */
 public interface BasicCmpObject extends EJBObject{
     /**
      * Reverses the string passed in then returns it

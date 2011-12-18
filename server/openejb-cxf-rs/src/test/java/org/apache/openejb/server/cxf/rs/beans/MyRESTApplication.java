@@ -22,9 +22,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * @author Romain Manni-Bucau
- */
 @ApplicationPath("/my-app")
 public class MyRESTApplication extends Application {
     public Set<Class<?>> getClasses() {

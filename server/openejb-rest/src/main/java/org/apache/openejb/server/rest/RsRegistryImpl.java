@@ -24,9 +24,6 @@ import org.apache.openejb.server.httpd.util.HttpUtil;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author Romain Manni-Bucau
- */
 public class RsRegistryImpl extends OpenEJBHttpRegistry implements RsRegistry {
     private Map<String, String> addresses = new HashMap<String, String>();
 

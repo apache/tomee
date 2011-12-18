@@ -18,9 +18,6 @@ package org.apache.openejb.server.httpd.util;
 
 import java.util.List;
 
-/**
- * @author Romain Manni-Bucau
- */
 public final class HttpUtil {
     private HttpUtil() {
         // no-op

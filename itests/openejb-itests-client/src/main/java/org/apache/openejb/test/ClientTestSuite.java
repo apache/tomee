@@ -27,11 +27,6 @@ import org.apache.openejb.test.mdb.MdbTestSuite;
 import org.apache.openejb.test.servlet.ServletTestSuite;
 import org.apache.openejb.test.singleton.SingletonTestSuite;
 
-/**
- * 
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
- */
 public class ClientTestSuite extends junit.framework.TestCase {
 
     public ClientTestSuite(String name){

@@ -29,8 +29,6 @@ import org.apache.openejb.test.object.OperationsPolicy;
 /**
  * A Stateful SessionBean with bean-managed transaction demarcation
  * 
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
 public class BMTStatefulBean implements javax.ejb.SessionBean {
     

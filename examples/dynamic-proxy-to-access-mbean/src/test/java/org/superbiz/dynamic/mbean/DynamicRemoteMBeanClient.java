@@ -5,9 +5,6 @@ import org.apache.openejb.api.Proxy;
 import javax.annotation.PreDestroy;
 import javax.ejb.Singleton;
 
-/**
- * @author rmannibucau
- */
 @Singleton
 @Proxy(DynamicMBeanHandler.class)
 @ObjectName(value = DynamicRemoteMBeanClient.OBJECT_NAME, url = "service:jmx:rmi:///jndi/rmi://localhost:8243/jmxrmi")

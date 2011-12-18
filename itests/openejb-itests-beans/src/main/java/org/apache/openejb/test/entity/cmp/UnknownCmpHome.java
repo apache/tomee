@@ -23,10 +23,6 @@ import javax.ejb.FinderException;
 import java.rmi.RemoteException;
 import java.util.Collection;
 
-/**
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
- */
 public interface UnknownCmpHome extends EJBHome {
     UnknownCmpObject createObject(String name) throws CreateException, RemoteException;
 

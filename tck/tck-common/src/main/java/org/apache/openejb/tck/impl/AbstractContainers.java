@@ -7,9 +7,6 @@ import java.io.Flushable;
 import java.io.IOException;
 import java.io.InputStream;
 
-/**
- * @author rmannibucau
- */
 public class AbstractContainers {
     protected static final String tmpDir = System.getProperty("java.io.tmpdir");
 

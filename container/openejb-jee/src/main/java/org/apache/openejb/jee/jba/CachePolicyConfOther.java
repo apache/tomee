@@ -28,9 +28,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.w3c.dom.Element;
 
 
-/**
- * 
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "content"

@@ -4,9 +4,6 @@ import org.apache.openejb.OpenEJBException;
 
 import java.lang.reflect.Field;
 
-/**
- * @author rmannibucau
- */
 public final class ReflectionUtil {
     private ReflectionUtil() {
         // no-op

@@ -45,10 +45,6 @@ import javax.annotation.Resource;
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
 
-/**
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
- */
 public class ContextLookupStatefulPojoBean {
 
     private SessionContext ejbContext;

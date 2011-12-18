@@ -25,8 +25,6 @@ import javax.jms.Destination;
 /**
  * [4] Should be run as the fourth test suite of the EncStatelessTestClients
  *
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
 public class MdbContextLookupTests extends MdbTestClient {
     protected EncMdbObject ejbObject;

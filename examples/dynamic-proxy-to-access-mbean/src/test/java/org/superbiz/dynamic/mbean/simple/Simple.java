@@ -1,8 +1,5 @@
 package org.superbiz.dynamic.mbean.simple;
 
-/**
- * @author rmannibucau
- */
 public class Simple implements SimpleMBean {
     private int counter = 0;
 

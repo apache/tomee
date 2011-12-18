@@ -30,10 +30,6 @@ import javax.transaction.RollbackException;
 
 import org.apache.openejb.test.object.Account;
 
-/**
- * 
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- */
 public class ContainerTxSingletonBean implements javax.ejb.SessionBean{
 
     

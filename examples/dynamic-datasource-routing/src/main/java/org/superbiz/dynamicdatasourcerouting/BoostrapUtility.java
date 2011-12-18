@@ -28,7 +28,6 @@ import javax.persistence.PersistenceContext;
  * OpenJPA create the table at the first query.
  * To avoid to have to create the table manunally this singleton will do it for us.
  *
- * @author Romain Manni-Bucau
  */
 @Startup
 @Singleton

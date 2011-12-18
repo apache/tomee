@@ -3,9 +3,6 @@ package org.superbiz.reloadable.pu;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-/**
- * @author rmannibucau
- */
 @Entity
 public class Person {
     @Id private long id;

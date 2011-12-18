@@ -25,9 +25,6 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 
-/**
- * @author quintin
- */
 public class Util {
     private Util() {
     }

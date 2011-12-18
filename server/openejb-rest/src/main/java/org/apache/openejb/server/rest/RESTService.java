@@ -58,9 +58,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-/**
- * @author Romain Manni-Bucau
- */
 public abstract class RESTService implements ServerService, SelfManaging, DeploymentListener {
     public static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_RS, RESTService.class);
 

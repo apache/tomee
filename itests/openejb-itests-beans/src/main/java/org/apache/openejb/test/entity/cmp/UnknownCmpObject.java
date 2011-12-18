@@ -24,10 +24,6 @@ import javax.ejb.EJBObject;
 import java.rmi.RemoteException;
 import java.util.Properties;
 
-/**
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
- */
 public interface UnknownCmpObject extends EJBObject {
     /**
      * Reverses the string passed in then returns it

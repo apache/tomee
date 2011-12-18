@@ -23,9 +23,6 @@ import javax.sql.DataSource;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * @author Romain Manni-Bucau
- */
 public class DeterminedRouter extends AbstractRouter {
     private String dataSourceNames;
     private String defaultDataSourceName;

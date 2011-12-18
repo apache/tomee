@@ -22,9 +22,6 @@ import javax.naming.LinkRef;
 import javax.naming.NamingException;
 import org.apache.openejb.core.ThreadContext;
 
-/**
- * @author rmannibucau
- */
 public class ContextValue extends LinkRef {
     public static final String MODULES_PREFIX = "openejb/modules/";
 

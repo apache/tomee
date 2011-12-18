@@ -21,9 +21,6 @@ import org.apache.openejb.server.httpd.HttpListener;
 
 import java.util.List;
 
-/**
- * @author Romain Manni-Bucau
- */
 public interface RsRegistry {
     String createRsHttpListener(HttpListener listener, ClassLoader classLoader, String path, String virtualHost);
     HttpListener removeListener(String context);

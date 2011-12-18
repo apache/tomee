@@ -43,9 +43,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * @author rmannibucau
- */
 public class QueryProxy implements InvocationHandler {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, QueryProxy.class);
 

@@ -32,7 +32,6 @@ import java.util.Properties;
  * This is an EJB 3 style pojo stateful session bean
  * it does not need to implement javax.ejb.SessionBean
  *
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  */
 //START SNIPPET: code
 

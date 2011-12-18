@@ -46,10 +46,6 @@ import org.apache.openejb.test.stateless.BasicStatelessBusinessLocal;
 import org.apache.openejb.test.stateless.BasicStatelessBusinessRemote;
 import org.apache.openejb.test.stateless.BasicStatelessHome;
 
-/**
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
- */
 public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, MessageListener {
     private MessageDrivenContext ejbContextField;
     private BasicBmpHome bmpHomeField;

@@ -22,9 +22,6 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
-/**
- * @author rmannibucau
- */
 @Entity
 @NamedQueries({
         @NamedQuery(name = "dynamic-ejb-impl-test.query", query = "SELECT u FROM User AS u WHERE u.name LIKE :name"),

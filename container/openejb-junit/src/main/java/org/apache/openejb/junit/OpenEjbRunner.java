@@ -30,10 +30,6 @@ import org.junit.runners.model.InitializationError;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-/**
- *
- * @author quintin
- */
 public class OpenEjbRunner extends Runner {
     private Runner delegate;
 

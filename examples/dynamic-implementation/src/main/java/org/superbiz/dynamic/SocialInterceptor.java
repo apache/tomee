@@ -3,9 +3,6 @@ package org.superbiz.dynamic;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
 
-/**
- * @author rmannibucau
- */
 public class SocialInterceptor {
     @AroundInvoke
     public Object around(InvocationContext context) throws Exception {

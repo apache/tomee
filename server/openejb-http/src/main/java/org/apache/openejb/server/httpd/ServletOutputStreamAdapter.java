@@ -21,9 +21,6 @@ import javax.servlet.ServletOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-/**
- * @author Romain Manni-Bucau
- */
 public class ServletOutputStreamAdapter extends ServletOutputStream {
     private OutputStream outputStream;
 

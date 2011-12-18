@@ -37,10 +37,6 @@ import static junit.framework.Assert.fail;
 
 // TODO This needs to be in a non-default package
 
-/**
- *
- * @author Romain Manni-Bucau
- */
 public class OlympicGamesTest {
     private static Context context;
 

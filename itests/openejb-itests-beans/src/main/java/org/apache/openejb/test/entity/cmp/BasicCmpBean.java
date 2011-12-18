@@ -29,10 +29,6 @@ import javax.ejb.RemoveException;
 import org.apache.openejb.test.ApplicationException;
 import org.apache.openejb.test.object.OperationsPolicy;
 
-/**
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
- */
 public class BasicCmpBean implements javax.ejb.EntityBean{
     private static int nextId;
     public Integer primaryKey;

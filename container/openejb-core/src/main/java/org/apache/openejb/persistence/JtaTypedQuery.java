@@ -28,7 +28,6 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * @author Thibaut Robert
  * 
  * This class is the same as {@link JtaQuery} but wraps TypedQuery instead of Query
  */

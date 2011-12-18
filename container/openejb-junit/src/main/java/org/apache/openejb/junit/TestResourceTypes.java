@@ -17,9 +17,6 @@
 
 package org.apache.openejb.junit;
 
-/**
- * @author quintin
- */
 public interface TestResourceTypes {
     public static final String CONTEXT_CONFIG = "org.apache.openejb.junit.context-config";
 

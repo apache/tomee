@@ -24,11 +24,6 @@ import junit.framework.Assert;
 import junit.framework.Protectable;
 import junit.framework.Test;
 import junit.framework.TestResult;
-/**
- * 
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
- */
 public class NumberedTestCase extends Assert implements Test{
     
     Method[] testMethods = new Method[]{};

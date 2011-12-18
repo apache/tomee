@@ -19,7 +19,6 @@ import static org.apache.openejb.arquillian.tests.Tests.assertOutput;
 /**
  * jira: TOMEE-42.
  *
- * @author rmannibucau
  */
 @RunWith(Arquillian.class)
     public class GetResourcesTest {

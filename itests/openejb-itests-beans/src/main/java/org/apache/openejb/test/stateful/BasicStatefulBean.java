@@ -27,11 +27,6 @@ import javax.ejb.SessionSynchronization;
 import org.apache.openejb.test.ApplicationException;
 import org.apache.openejb.test.object.OperationsPolicy;
 
-/**
- * 
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
- */
 public class BasicStatefulBean implements javax.ejb.SessionBean, SessionSynchronization {
 
     

@@ -24,9 +24,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.xml.bind.annotation.XmlRootElement;
 
-/**
- * @author Romain Manni-Bucau
- */
 @Entity
 @NamedQueries({
         @NamedQuery(name = "user.list", query = "select u from User u")

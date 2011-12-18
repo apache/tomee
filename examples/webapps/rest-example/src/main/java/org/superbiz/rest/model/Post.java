@@ -30,9 +30,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Romain Manni-Bucau
- */
 @Entity
 @NamedQueries({
         @NamedQuery(name = "post.list", query = "select p from Post p")

@@ -26,9 +26,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-/**
- * @author rmannibucau
- */
 @WebServlet(name = "manager servlet", urlPatterns = "/")
 public class ManagerServlet extends HttpServlet {
     @EJB

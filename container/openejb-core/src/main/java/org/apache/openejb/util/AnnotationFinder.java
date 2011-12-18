@@ -52,7 +52,6 @@ import java.util.jar.JarInputStream;
  * method to get a list of classes which matched the find requirements (i.e.
  * contained the annotation), but were unable to be loaded.
  *
- * @author David Blevins
  * @version $Rev$ $Date$
  */
 public class AnnotationFinder {

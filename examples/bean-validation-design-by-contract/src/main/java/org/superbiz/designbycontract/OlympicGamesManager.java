@@ -20,9 +20,6 @@ import javax.ejb.Stateless;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-/**
- * @author Romain Manni-Bucau
- */
 @Stateless
 public class OlympicGamesManager {
     public String addSportMan(@Pattern(regexp = "^[A-Za-z]+$") String name, @Size(min = 2, max = 4) String country) {

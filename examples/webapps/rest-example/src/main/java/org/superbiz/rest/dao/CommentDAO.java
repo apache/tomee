@@ -24,9 +24,6 @@ import javax.ejb.Stateless;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author Romain Manni-Bucau
- */
 @Stateless
 public class CommentDAO extends DAO {
     @EJB

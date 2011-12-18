@@ -37,9 +37,6 @@ import org.junit.Test;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
-/**
- * @author Romain Manni-Bucau
- */
 public class EjbDeploymentTest {
     private static EJBContainer container;
     private static RESTIsCool service;

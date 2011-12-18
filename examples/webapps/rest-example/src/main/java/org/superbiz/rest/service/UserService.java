@@ -31,9 +31,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import java.util.List;
 
-/**
- * @author Romain Manni-Bucau
- */
 @Path("/api/user")
 @Produces({"text/xml", "application/json"})
 public class UserService {

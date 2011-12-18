@@ -1,7 +1,6 @@
 package org.superbiz.cdi.stereotype;
 
 /**
- * @author rmannibucau
  *
  * without @Mock annotation which specifies this class as an alternative
  * you'll have this exception:

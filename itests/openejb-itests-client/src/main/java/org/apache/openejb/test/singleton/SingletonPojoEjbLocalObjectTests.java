@@ -18,11 +18,6 @@ package org.apache.openejb.test.singleton;
 
 import javax.ejb.EJBLocalHome;
 
-/**
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
- * @author <a href="mailto:manu.t.george@gmail.com">Manu George</a>
- */
 public class SingletonPojoEjbLocalObjectTests extends BasicSingletonLocalTestClient {
 
     public SingletonPojoEjbLocalObjectTests() {

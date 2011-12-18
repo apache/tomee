@@ -28,9 +28,6 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Properties;
 
-/**
- * @author Romain Manni-Bucau
- */
 public class CxfRSService extends RESTService {
     private static final String NAME = "cxf-rs";
     private HttpTransportFactory httpTransportFactory;

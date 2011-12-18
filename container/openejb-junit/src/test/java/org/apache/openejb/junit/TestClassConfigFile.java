@@ -27,9 +27,6 @@ import org.junit.runner.RunWith;
 
 import java.util.Hashtable;
 
-/**
- * @author quintin
- */
 @RunWith(OpenEjbRunner.class)
 @ContextConfig(
         configFile = "/META-INF/test-config.properties"

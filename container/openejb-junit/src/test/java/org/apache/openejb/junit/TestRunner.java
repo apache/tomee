@@ -29,9 +29,6 @@ import org.junit.runner.RunWith;
 import javax.naming.InitialContext;
 import java.util.Hashtable;
 
-/**
- * @author quintin
- */
 @RunWith(OpenEjbRunner.class)
 public class TestRunner {
     @TestResource(TestResourceTypes.INITIALCONTEXT)

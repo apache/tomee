@@ -18,9 +18,6 @@ import java.util.Properties;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotSame;
 
-/**
- * @author rmannibucau
- */
 @RunWith(ApplicationComposer.class)
 public class ReloadableEntityManagerFactoryTest {
     @javax.persistence.PersistenceUnit

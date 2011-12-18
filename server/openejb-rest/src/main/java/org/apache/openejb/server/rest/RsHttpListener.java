@@ -24,9 +24,6 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.Injection;
 import org.apache.openejb.server.httpd.HttpListener;
 
-/**
- * @author Romain Manni-Bucau
- */
 public interface RsHttpListener extends HttpListener {
     void deploySingleton(String fullContext, Object o, Application appInstance);
 

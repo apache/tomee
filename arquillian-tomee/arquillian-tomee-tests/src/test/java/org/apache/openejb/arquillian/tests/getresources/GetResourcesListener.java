@@ -10,7 +10,6 @@ import java.util.Enumeration;
 /**
  * jira: TOMEE-42.
  *
- * @author rmannibucau
  */
 @WebListener
 public class GetResourcesListener implements ServletContextListener {

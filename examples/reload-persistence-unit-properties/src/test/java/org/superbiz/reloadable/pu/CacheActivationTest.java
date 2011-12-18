@@ -25,9 +25,6 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 
-/**
- * @author rmannibucau
- */
 public class CacheActivationTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(CacheActivationTest.class);
 

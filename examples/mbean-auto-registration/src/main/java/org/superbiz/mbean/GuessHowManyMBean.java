@@ -21,9 +21,6 @@ import javax.management.MBean;
 import javax.management.ManagedAttribute;
 import javax.management.ManagedOperation;
 
-/**
- * @author Romain Manni-Bucau
- */
 @MBean
 @Description("play with me to guess a number")
 public class GuessHowManyMBean {

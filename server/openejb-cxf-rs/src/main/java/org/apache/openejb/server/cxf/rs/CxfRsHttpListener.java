@@ -54,7 +54,6 @@ import java.util.Map;
  * </ul>
  * Note: default means jaxb and json
  *
- * @author rmannibucau
  */
 public class CxfRsHttpListener implements RsHttpListener {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.CXF, CxfRsHttpListener.class);

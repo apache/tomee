@@ -22,8 +22,6 @@ import org.apache.openejb.test.TestManager;
 /**
  * [4] Should be run as the fourth test suite of the EncStatelessTestClients
  * 
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  *
  * @version $Rev$ $Date$
  */

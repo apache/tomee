@@ -40,9 +40,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-/**
- * @author Romain Manni-Bucau
- */
 @RunWith(ApplicationComposer.class)
 public class BeanValidationAppendixInterceptorTest {
     @Local public static interface Manager {

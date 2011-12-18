@@ -24,9 +24,6 @@ import org.apache.log4j.spi.LoggingEvent;
 
 import java.util.logging.LogRecord;
 
-/**
- * @author Romain Manni-Bucau
- */
 public final class Converter {
     private Converter() {
         // no-op

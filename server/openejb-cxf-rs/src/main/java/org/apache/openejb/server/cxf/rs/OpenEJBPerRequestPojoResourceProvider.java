@@ -30,9 +30,6 @@ import org.apache.cxf.message.Message;
 import org.apache.openejb.Injection;
 import org.apache.openejb.InjectionProcessor;
 
-/**
- * @author Romain Manni-Bucau
- */
 public class OpenEJBPerRequestPojoResourceProvider extends PerRequestResourceProvider {
     protected Collection<Injection> injections;
     protected Context context;

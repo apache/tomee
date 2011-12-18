@@ -22,8 +22,6 @@ import org.apache.openejb.test.TestManager;
 /**
  * [4] Should be run as the fourth test suite of the EncSingletonTestClients
  * 
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  *
  * @version $Rev: 532866 $ $Date: 2007-04-26 14:14:11 -0700 (Thu, 26 Apr 2007) $
  */

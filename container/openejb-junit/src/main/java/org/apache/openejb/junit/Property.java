@@ -17,9 +17,6 @@
 
 package org.apache.openejb.junit;
 
-/**
- * @author quintin
- */
 public @interface Property {
     /**
      * Property in the form "name=value". The cannot not be null

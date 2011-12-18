@@ -36,9 +36,6 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
-/**
- * @author rmannibucau
- */
 public class DynamicUserDaoTest {
     private static UserDao dao;
     private static Util util;

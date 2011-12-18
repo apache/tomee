@@ -27,9 +27,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Romain Manni-Bucau
- */
 public class OpenEJBHttpRegistry {
     public static final Logger log = Logger.getInstance(LogCategory.HTTPSERVER, OpenEJBHttpRegistry.class);
 

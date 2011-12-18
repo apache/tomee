@@ -16,9 +16,6 @@
  */
 package org.superbiz.dynamic;
 
-/**
- * @author rmannibucau
- */
 
 import javax.ejb.Stateless;
 import javax.persistence.PersistenceContext;

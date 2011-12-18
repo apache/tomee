@@ -38,7 +38,6 @@ import java.util.List;
 /**
  * Outputs are copied because of the enhancement of OpenJPA.
  *
- * @author Romain Manni-Bucau
  */
 @Singleton
 @Lock(LockType.WRITE)

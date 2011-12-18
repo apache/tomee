@@ -20,9 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-/**
- * @author Romain Manni-Bucau
- */
 public class ValidationInfo extends InfoObject {
     public String providerClassName;
     public String messageInterpolatorClass;

@@ -21,8 +21,6 @@ import javax.ejb.EJBHome;
 /**
  * [6] Should be run as the sixth test suite of the BasicCmpTestClients
  * 
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
 public class CmpHomeHandleTests extends BasicCmpTestClient{
 

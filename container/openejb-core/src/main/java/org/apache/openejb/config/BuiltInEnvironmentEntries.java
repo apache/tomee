@@ -27,8 +27,6 @@ import org.apache.openejb.jee.ResourceEnvRef;
 import javax.enterprise.inject.spi.BeanManager;
 import java.util.Map;
 
-/**
- */
 public class BuiltInEnvironmentEntries implements DynamicDeployer {
 
     public AppModule deploy(AppModule appModule) throws OpenEJBException {

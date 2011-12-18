@@ -10,7 +10,6 @@ import java.lang.annotation.Target;
  *
  * Used for instance for internal @Mbeans.
  *
- * @author rmannibucau
  */
 @Target({ ElementType.TYPE, ElementType.METHOD, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)

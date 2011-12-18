@@ -8,9 +8,6 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-/**
- * @author rmannibucau
- */
 // defining a stereotype for class level
 @Stereotype
 @Retention(RUNTIME)

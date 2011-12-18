@@ -65,7 +65,6 @@ import static org.junit.Assert.assertEquals;
     Password
     JtaManaged = true
   </Resource>
- * @author Romain Manni-Bucau
  */
 public class DynamicDataSourceTest {
     @Test

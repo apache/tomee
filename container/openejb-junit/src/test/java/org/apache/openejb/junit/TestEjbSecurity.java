@@ -29,9 +29,6 @@ import org.junit.runner.RunWith;
 import javax.ejb.EJB;
 import javax.ejb.EJBAccessException;
 
-/**
- * @author quintin
- */
 @RunWith(OpenEjbRunner.class)
 @TestSecurity(
         authorized = {"RoleA"}

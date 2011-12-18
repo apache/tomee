@@ -18,9 +18,6 @@ import java.net.URL;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
-/**
- * @author rmannibucau
- */
 @RunWith(Arquillian.class)
 // @RunAsClient
 public class EmbeddedTomEEContainerTest {

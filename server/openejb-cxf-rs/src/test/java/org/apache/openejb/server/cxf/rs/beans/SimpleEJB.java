@@ -18,9 +18,6 @@ package org.apache.openejb.server.cxf.rs.beans;
 
 import javax.ejb.Stateless;
 
-/**
- * @author Romain Manni-Bucau
- */
 @Stateless
 public class SimpleEJB {
     public String ok() {

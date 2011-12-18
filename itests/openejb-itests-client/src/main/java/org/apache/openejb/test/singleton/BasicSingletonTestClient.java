@@ -18,11 +18,6 @@ package org.apache.openejb.test.singleton;
 
 import javax.ejb.EJB;
 
-/**
- * 
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
- */
 public abstract class BasicSingletonTestClient extends SingletonTestClient{
     
 	@EJB(name="client/tests/singleton/BasicSingletonPojoHome",

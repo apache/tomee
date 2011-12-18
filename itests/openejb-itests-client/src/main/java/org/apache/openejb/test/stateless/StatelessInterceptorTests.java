@@ -21,8 +21,6 @@ import java.util.Map;
 import java.util.Arrays;
 
 /**
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:goyathlay.geronimo@gmail.com">Prasad Kashyap</a>
  *
  * @version $Rev$ $Date$
  */

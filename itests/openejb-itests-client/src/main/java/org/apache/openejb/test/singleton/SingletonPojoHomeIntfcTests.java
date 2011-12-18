@@ -20,9 +20,6 @@ package org.apache.openejb.test.singleton;
 /**
  * [2] Should be run as the second test suite of the BasicSingletonTestClients
  * 
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
- * @author <a href="mailto:nour.mohammad@gmail.com">Mohammad Nour El-Din</a>
  * 
  * @version $Rev: 525022 $ $Date: 2007-04-02 21:19:21 -0700 (Mon, 02 Apr 2007) $
  */

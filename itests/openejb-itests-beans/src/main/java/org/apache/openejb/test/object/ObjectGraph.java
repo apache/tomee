@@ -18,11 +18,6 @@ package org.apache.openejb.test.object;
 
 import java.io.Serializable;
 
-/**
- * 
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
- */
 public class ObjectGraph implements Serializable{
     
     private Serializable object;

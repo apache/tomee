@@ -21,11 +21,6 @@ import java.util.Properties;
 
 import org.apache.openejb.test.object.OperationsPolicy;
 
-/**
- * 
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
- */
 public interface BasicBmp2DataSourcesObject extends javax.ejb.EJBObject{
     
     /**

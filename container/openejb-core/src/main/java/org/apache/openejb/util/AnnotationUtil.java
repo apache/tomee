@@ -19,9 +19,6 @@ package org.apache.openejb.util;
 
 import java.lang.annotation.Annotation;
 
-/**
- * @author rmannibucau
- */
 public final class AnnotationUtil {
     private AnnotationUtil() {
         // no-op

@@ -27,7 +27,6 @@ import javax.interceptor.InvocationContext;
 
 
 /**
- * @author <a href="mailto:goyathlay.geronimo@gmail.com">Prasad Kashyap</a>
  *
  * @version $Rev$ $Date$
  */

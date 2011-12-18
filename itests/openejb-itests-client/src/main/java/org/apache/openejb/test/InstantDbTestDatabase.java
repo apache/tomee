@@ -24,10 +24,6 @@ import javax.naming.InitialContext;
 import org.apache.openejb.test.beans.Database;
 import org.apache.openejb.test.beans.DatabaseHome;
 
-/**
- * 
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- */
 public class InstantDbTestDatabase implements TestDatabase{
     
     protected Database database;

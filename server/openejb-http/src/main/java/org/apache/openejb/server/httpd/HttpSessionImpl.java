@@ -22,9 +22,6 @@ import org.apache.openejb.client.ArrayEnumeration;
 
 import java.util.*;
 
-/**
- * @author Romain Manni-Bucau
- */
 public class HttpSessionImpl implements HttpSession {
     private String sessionId = UUID.randomUUID().toString();
     private Map<String, Object> attributes = new HashMap<String, Object>();

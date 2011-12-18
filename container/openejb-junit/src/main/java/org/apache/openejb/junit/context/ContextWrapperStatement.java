@@ -19,9 +19,6 @@ package org.apache.openejb.junit.context;
 
 import org.junit.runners.model.Statement;
 
-/**
- * @author quintin
- */
 public class ContextWrapperStatement extends Statement {
     private TestContext testContext;
 

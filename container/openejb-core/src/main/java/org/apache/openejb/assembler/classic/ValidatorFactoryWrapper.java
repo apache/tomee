@@ -30,9 +30,6 @@ import javax.validation.ValidatorFactory;
 import java.io.Serializable;
 import java.util.Map;
 
-/**
- * @author Romain Manni-Bucau
- */
 public class ValidatorFactoryWrapper implements ValidatorFactory, Serializable {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, ValidatorFactoryWrapper.class);
 
