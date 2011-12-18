@@ -16,6 +16,10 @@
  */
 package org.apache.openejb.config;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.ActivationConfigProperty;
@@ -27,9 +31,6 @@ import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-
-import java.util.Map;
-import java.util.Properties;
 
 /**
  * @version $Rev$ $Date$
@@ -61,7 +62,8 @@ public class ActivationConfigPropertyOverride implements DynamicDeployer {
                 final String ejbName = bean.getEjbName();
                 final EjbDeployment ejbDeployment = deployments.get(ejbName);
 
-                if (!(bean instanceof MessageDrivenBean)) continue;
+                if (!(bean instanceof MessageDrivenBean))
+                    continue;
 
                 final Properties properties = new Properties();
                 properties.putAll(module);
@@ -75,22 +77,35 @@ public class ActivationConfigPropertyOverride implements DynamicDeployer {
                 overrides.putAll(ConfigurationFactory.getOverrides(properties, ejbDeployment.getDeploymentId() + ".activation", "EnterpriseBean"));
 
                 // If we don't have any overrides, skip to the next
-                if (overrides.size() == 0) continue;
+                if (overrides.size() == 0) {
+                    continue;
+                }
 
-                final Properties activation = asProperties(mdb.getActivationConfig());
+                if (mdb.getActivationConfig() == null) {
+                    mdb.setActivationConfig(new ActivationConfig());
+                }
+                List<ActivationConfigProperty> activationConfigList = mdb.getActivationConfig().getActivationConfigProperty();
 
                 for (Map.Entry<Object, Object> entry : overrides.entrySet()) {
 
                     final Object property = entry.getKey() + "";
                     final Object value = entry.getValue() + "";
 
-                    if (activation.contains(property)) {
-                        logger.info(String.format("Overriding %s bean activation-config property %s=%s", ejbName, property, value));
+                    ActivationConfigProperty activationConfigProperty = this.findActivationProperty(activationConfigList, property.toString());
+
+                    if (activationConfigProperty != null) {
+                        logger.info(String.format("Found %s bean with activation-config property %s=%s to override", ejbName, activationConfigProperty.getActivationConfigPropertyName(), activationConfigProperty.getActivationConfigPropertyValue()));
+                        logger.info(String.format("Overriding %s bean activation-config property.%s=%s", ejbName, property, value));
+                        activationConfigProperty.setActivationConfigPropertyValue(entry.getValue().toString());
+
                     } else {
                         logger.info(String.format("Adding %s bean activation-config property %s=%s", ejbName, property, value));
+                        activationConfigProperty = new ActivationConfigProperty();
+                        activationConfigProperty.setActivationConfigPropertyName(property.toString());
+                        activationConfigProperty.setActivationConfigPropertyValue(value.toString());
+                        activationConfigList.add(activationConfigProperty);
                     }
 
-                    activation.put(property, value);
                 }
             }
         }
@@ -98,14 +113,14 @@ public class ActivationConfigPropertyOverride implements DynamicDeployer {
         return appModule;
     }
 
-    private Properties asProperties(ActivationConfig activationConfig) {
-        final Properties properties = new Properties();
-
-        for (ActivationConfigProperty property : activationConfig.getActivationConfigProperty()) {
-            properties.put(property.getActivationConfigPropertyName(), property.getActivationConfigPropertyValue());
+    private ActivationConfigProperty findActivationProperty(List<ActivationConfigProperty> activationConfigList, String nameOfProperty) {
+        for (ActivationConfigProperty activationProp : activationConfigList) {
+            if (activationProp.getActivationConfigPropertyName().equals(nameOfProperty)) {
+                return activationProp;
+            }
         }
 
-        return properties;
+        return null;
     }
 
 }
