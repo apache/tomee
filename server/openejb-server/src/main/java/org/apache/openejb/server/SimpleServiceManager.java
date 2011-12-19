@@ -224,7 +224,7 @@ public class SimpleServiceManager extends ServiceManager {
             logger.warning("Failed to de-register the 'openejb' mbean", e);
         }
 
-        startNetworkServices();
+        setServiceManager(null);
         notifyAll();
     }
 
