@@ -69,7 +69,7 @@
             <Bundle-Activator>org.apache.openejb.core.osgi.impl.Activator</Bundle-Activator>
             <Export-Package>org.apache.openejb.core.osgi.*</Export-Package>
             <Import-Package>
-              META-INF.org\.apache\.openejb,
+              '=META-INF.org^.apache^.openejb',
               javax.annotation;version=1.1;resolution:=optional,
               javax.ejb;version=3.1,
               javax.enterprise.deploy;resolution:=optional,
