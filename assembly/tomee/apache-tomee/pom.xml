@@ -80,13 +80,6 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>openejb-tomee-utils</artifactId>
-      <version>${openejb.version}</version>
-      <type>jar</type>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
       <artifactId>apache-tomcat</artifactId>
       <version>${tomcat.version}</version>
       <type>zip</type>
