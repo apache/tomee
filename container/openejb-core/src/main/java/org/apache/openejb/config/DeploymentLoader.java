@@ -104,7 +104,6 @@ public class DeploymentLoader implements DeploymentFilterable {
 
             if (EjbModule.class.equals(moduleClass)) {
                 tempClassLoader = ClassLoaderUtil.createTempClassLoader(classLoader);
-                Class<? extends DeploymentModule> o = EjbModule.class;
                 EjbModule ejbModule = createEjbModule(null, null, tempClassLoader, null);
                 AppModule appModule = new AppModule(ejbModule);
                 addPersistenceUnits(appModule);

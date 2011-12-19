@@ -113,6 +113,10 @@ public class AnnotationFinder {
         this.urls = urls;
         classNames = new ArrayList<String>();
         for (URL location : urls) {
+            if (location == null) {
+                continue;
+            }
+
             try {
                 if (location.getProtocol().equals("jar")) {
                     classNames.addAll(jar(location));
