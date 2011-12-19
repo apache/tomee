@@ -213,10 +213,12 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
                 }
 
                 URL moduleBaseUrl = null;
-                try {
-                    moduleBaseUrl = new File(ejbJar.path).toURI().toURL();
-                } catch (MalformedURLException e) {
-                    logger.error("Invalid ejb jar location " + ejbJar.path, e);
+                if (ejbJar.path != null) {
+                    try {
+                        moduleBaseUrl = new File(ejbJar.path).toURI().toURL();
+                    } catch (MalformedURLException e) {
+                        logger.error("Invalid ejb jar location " + ejbJar.path, e);
+                    }
                 }
 
                 StringTemplate deploymentIdTemplate = this.wsAddressTemplate;
