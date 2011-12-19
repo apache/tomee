@@ -16,79 +16,86 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<!--
-    TODO: Start with hard coded versions. Next step will be to use maven
-    filters
--->
-<features>
-    <repository>mvn:org.apache.openejb/openejb-core-osgi/${version}/xml/features</repository>
-    <feature name="javaee-api-embedded" version="5.0-2">
-        <!--
-        <bundle>mvn:org.apache.axis2/axis2-jaxws-api/1.3</bundle>
-        <bundle>mvn:org.apache.axis2/axis2-saaj-api/1.3</bundle>
-        -->
-        <bundle>mvn:org.apache.geronimo.specs/geronimo-activation_1.1_spec/1.0.2</bundle>
-        <bundle>mvn:org.apache.geronimo.specs/geronimo-annotation_1.0_spec/1.1.1</bundle>
-        <bundle>mvn:org.apache.geronimo.specs/geronimo-ejb_3.0_spec/1.0.1</bundle>
-        <bundle>mvn:org.apache.geronimo.specs/geronimo-interceptor_3.0_spec/1.0.1</bundle>
-        <bundle>mvn:org.apache.geronimo.specs/geronimo-j2ee-connector_1.5_spec/2.0.0</bundle>
-        <bundle>mvn:org.apache.geronimo.specs/geronimo-j2ee-deployment_1.1_spec/1.1</bundle>
-        <bundle>mvn:org.apache.geronimo.specs/geronimo-j2ee-management_1.1_spec/1.0.1</bundle>
-        <bundle>mvn:org.apache.geronimo.specs/geronimo-jacc_1.1_spec/1.0.2</bundle>
-        <bundle>mvn:org.apache.geronimo.specs/geronimo-jaxr_1.0_spec/2.0.0</bundle>
-        <bundle>mvn:org.apache.geronimo.specs/geronimo-jaxrpc_1.1_spec/2.0.0</bundle>
-        <bundle>mvn:org.apache.geronimo.specs/geronimo-jms_1.1_spec/1.1.1</bundle>
-        <bundle>mvn:org.apache.geronimo.specs/geronimo-jpa_3.0_spec/1.1.1</bundle>
-        <bundle>mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/1.1.1</bundle>
-        <bundle>mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/1.2</bundle>
-        <bundle>mvn:org.apache.geronimo.specs/geronimo-stax-api_1.0_spec/1.0.1</bundle>
-        <bundle>mvn:org.apache.geronimo.specs/geronimo-ws-metadata_2.0_spec/1.1.2</bundle>
-        <bundle>mvn:javax.xml.bind/jaxb-api/2.0</bundle>
-    </feature>
-    <!--
-    <feature name="openejb-loader" version="${version}">
-        <feature version="5.0-2">javaee-api-embedded</feature>
-        <bundle>mvn:org.apache.openejb/openejb-loader/${version}</bundle>
-    </feature>
-    -->
-    <feature name="openejb-api" version="${version}">
-        <bundle>mvn:org.apache.openejb/openejb-api/${version}</bundle>
-    </feature>
-    <feature name="openejb-javaagent" version="${version}">
-        <bundle>mvn:org.apache.openejb/openejb-javaagent/${version}</bundle>
-    </feature>
-    <feature name="openejb-jee" version="${version}">
-        <feature version="5.0-2">javaee-api-embedded</feature>
-        <bundle>mvn:org.apache.openejb/openejb-jee/${version}</bundle>
-    </feature>
-    <feature name="ejb31-api-experimental" version="${version}">
-        <feature version="5.0-2">javaee-api-embedded</feature>
-        <bundle>mvn:org.apache.openejb/ejb31-api-experimental/${version}</bundle>
-    </feature>
-    <feature name="openejb-core" version="${version}">
-        <feature version="5.0-2">javaee-api-embedded</feature>
-        <feature version="${version}">ejb31-api-experimental</feature>
-        <feature version="${version}">openejb-api</feature>
-        <feature version="${version}">openejb-javaagent</feature>
-        <feature version="${version}">openejb-jee</feature>
-        <bundle>mvn:org.apache.openejb/openejb-loader/${version}</bundle>
-<!--        <feature version="${version}">openejb-loader</feature>-->
-        <bundle>wrap:mvn:commons-cli/commons-cli/1.1</bundle>
-        <bundle>wrap:mvn:org.apache.activemq/activemq-ra/5.3.0</bundle>
-        <bundle>wrap:mvn:org.apache.activemq/activemq-core/5.3.0</bundle>
-        <bundle>mvn:org.apache.geronimo.components/geronimo-connector/2.1.3</bundle>
-        <bundle>mvn:org.apache.geronimo.components/geronimo-transaction/2.1.3</bundle>
-        <bundle>mvn:org.apache.geronimo.specs/geronimo-javamail_1.4_spec/1.6</bundle>
-        <bundle>wrap:mvn:wsdl4j/wsdl4j/1.6.1</bundle>
-        <bundle>wrap:mvn:org.apache.xbean/xbean-asm-shaded/3.6</bundle>
-        <bundle>wrap:mvn:org.apache.xbean/xbean-finder-shaded/3.6</bundle>
-        <bundle>mvn:org.apache.xbean/xbean-naming/3.7-SNAPSHOT</bundle>
-        <bundle>mvn:org.apache.xbean/xbean-reflect/3.7-SNAPSHOT</bundle>
 
-        <bundle>mvn:org.apache.openejb/openejb-core/${version}</bundle>
-    </feature>
-    <feature name="openejb-core-osgi" version="${version}">
-        <feature version="${version}">openejb-core</feature>
-        <bundle>mvn:org.apache.openejb/openejb-core-osgi/${version}</bundle>
-    </feature>
+<features>
+  <repository>mvn:org.apache.openejb/javaee-api/${javaee-api.version}/xml/features</repository>
+  <repository>mvn:org.apache.openejb/openejb-core-osgi/${project.version}/xml/features</repository>
+
+  <feature name="org.apache.commons">
+    <bundle>mvn:commons-cli/commons-cli/${commons-cli.version}</bundle>
+    <bundle>wrap:mvn:commons-logging/commons-logging/${commons-logging.version}</bundle>
+    <bundle>wrap:mvn:commons-logging/commons-logging-api/${commons-logging-api.version}</bundle>
+    <bundle>mvn:commons-pool/commons-pool/${commons-pool.version}</bundle>
+    <bundle>mvn:commons-dbcp/commons-dbcp/${commons-dbcp.version}</bundle>
+    <bundle>mvn:commons-collections/commons-collections/${commons-collections.version}</bundle>
+    <bundle>mvn:commons-codec/commons-codec/${commons-codec.version}</bundle>
+    <bundle>wrap:mvn:commons-fileupload/commons-fileupload/${commons-fileupload.version}</bundle>
+    <bundle>wrap:mvn:commons-discovery/commons-discovery/${commons-discovery.version}</bundle>
+    <bundle>mvn:commons-lang/commons-lang/${commons-lang.version}</bundle>
+    <bundle>mvn:commons-io/commons-io/${commons-io.version}</bundle>
+  </feature>
+
+  <feature name="xbean" version="${xbeanVersion}">
+    <bundle>mvn:org.apache.xbean/xbean-asm-shaded/${xbeanVersion}</bundle>
+    <bundle>mvn:org.apache.xbean/xbean-finder-shaded/${xbeanVersion}</bundle>
+    <bundle>mvn:org.apache.xbean/xbean-naming/${xbeanVersion}</bundle>
+    <bundle>mvn:org.apache.xbean/xbean-reflect/${xbeanVersion}</bundle>
+  </feature>
+
+  <feature name="org.apache.openwebbeans" version="${org.apache.openwebbeans.version}">
+    <bundle>wrap:mvn:net.sf.scannotation/scannotation/${scannotation.version}</bundle>
+    <bundle>mvn:org.apache.openwebbeans/openwebbeans-spi/${org.apache.openwebbeans.version}</bundle>
+    <bundle>mvn:org.apache.openwebbeans/openwebbeans-impl/${org.apache.openwebbeans.version}</bundle>
+    <bundle>mvn:org.apache.openwebbeans/openwebbeans-ee/${org.apache.openwebbeans.version}</bundle>
+    <bundle>mvn:org.apache.openwebbeans/openwebbeans-ejb-common</bundle>
+    <bundle>mvn:org.apache.openwebbeans/openwebbeans-ejb/${org.apache.openwebbeans.version}</bundle>
+    <bundle>mvn:org.apache.openwebbeans/openwebbeans-web/${org.apache.openwebbeans.version}</bundle>
+  </feature>
+
+  <feature name="geronimo-osgi" version="${geronimo-osgi.version}">
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-osgi-registry/${geronimo-osgi.version}</bundle>
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-osgi-locator/${geronimo-osgi.version}</bundle>
+  </feature>
+
+  <feature name="org.apache.activemq" version="${org.apache.activemq.version}">
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jasypt/1.6_1</bundle>
+    <bundle>mvn:org.apache.activemq/activemq-core/${org.apache.activemq.version}</bundle>
+    <bundle>mvn:org.apache.activemq/kahadb/${org.apache.activemq.version}</bundle>
+    <bundle>mvn:org.apache.activemq/activemq-ra/${org.apache.activemq.version}</bundle>
+  </feature>
+
+  <feature name="openejb-core" version="${project.version}">
+    <feature version="${javaee-api.version}">javaee-api</feature>
+
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.javassist/3.9.0.GA_2</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.wsdl4j/1.6.2_5</bundle>
+
+    <bundle>mvn:org.apache.geronimo.components/geronimo-connector/${geronimo.connector.version}</bundle>
+    <bundle>mvn:org.apache.geronimo.components/geronimo-transaction/${geronimo.connector.version}</bundle>
+
+    <feature>org.apache.commons</feature>
+    <feature version="${xbeanVersion}">xbean</feature>
+    <feature version="${geronimo-osgi.version}">geronimo-osgi</feature>
+    <feature version="${org.apache.openwebbeans.version}">org.apache.openwebbeans</feature>
+    <feature version="${org.apache.activemq.version}">org.apache.activemq</feature>
+
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-beanutils/1.8.2_2</bundle>
+    <bundle>mvn:org.apache.commons/commons-lang3/3.1</bundle>
+    <bundle>mvn:org.apache.bval/org.apache.bval.bundle/${bval.version}</bundle>
+
+    <bundle>mvn:org.apache.openejb/openejb-api/${project.version}</bundle>
+    <bundle>mvn:org.apache.openejb/openejb-core/${project.version}</bundle>
+    <bundle>mvn:org.apache.openejb/openejb-javaagent/${project.version}</bundle>
+    <bundle>mvn:org.apache.openejb/openejb-jee/${project.version}</bundle>
+    <bundle>mvn:org.apache.openejb/openejb-loader/${project.version}</bundle>
+    <bundle>mvn:org.apache.openejb/openejb-core-osgi/${project.version}</bundle>
+
+  </feature>
+
+  <feature name="openejb-server" version="${project.version}">
+    <feature version="${project.version}">openejb-core</feature>
+    <bundle>mvn:org.apache.openejb/openejb-ejbd/${project.version}</bundle>
+    <bundle>mvn:org.apache.openejb/openejb-server/${project.version}</bundle>
+    <bundle>mvn:org.apache.openejb/openejb-client/${project.version}</bundle>
+  </feature>
 </features>

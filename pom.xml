@@ -128,8 +128,10 @@
     <org.springframework.version>3.0.5.RELEASE</org.springframework.version>
     <junit.version>4.8.1</junit.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
+    <scannotation.version>1.0.2</scannotation.version>
     <org.apache.openwebbeans.version>1.1.1</org.apache.openwebbeans.version>
     <geronimo.connector.version>3.1.1</geronimo.connector.version>
+    <geronimo-osgi.version>1.1</geronimo-osgi.version>
     <myfaces.version>2.1.2</myfaces.version>
     <slf4j.version>1.6.1</slf4j.version>
     <log4j.version>1.2.16</log4j.version>
