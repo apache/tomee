@@ -134,7 +134,9 @@ public class TomcatLoader implements Loader {
             Paths paths = new Paths(new File(openejbWarDir));
             if (paths.verify()) {
                 Installer installer = new Installer(paths);
-                installer.installConfigFiles();
+                if (installer.getStatus() != Installer.Status.INSTALLED) {
+                    installer.installConfigFiles();
+                }
             }
         }
 
