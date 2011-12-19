@@ -209,7 +209,7 @@
       org.xml.sax.helpers
     </openejb.osgi.import.pkg>
     <openejb.osgi.export>
-      META-INF.org\.apache\.openejb,
+      '=META-INF.org^.apache^.openejb',
       org.apache.openejb.cdi.*;version=${openejb.osgi.export.version},
       org.apache.openejb*;version=${openejb.osgi.export.version},
       org.apache.openejb;version=${openejb.osgi.export.version}
