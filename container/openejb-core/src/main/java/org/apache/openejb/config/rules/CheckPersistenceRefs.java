@@ -31,6 +31,12 @@ public class CheckPersistenceRefs extends ValidationBase {
     public void validate(EjbModule ejbModule) {
 
         for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
+            if (bean instanceof SessionBean) {
+                SessionBean sessionBean = (SessionBean) bean;
+                if (sessionBean.getSessionType() == null) {
+                    continue; // skipping since we don't know here what is the type
+                }
+            }
 
             String beanType = getType(bean);
             if (beanType.equals("Stateful")) {
