@@ -92,34 +92,6 @@ public class DeploymentLoader implements DeploymentFilterable {
     private static final String ddDir = "META-INF/";
     private boolean scanManagedBeans = true;
 
-    public AppModule load(ClassLoader classLoader) throws OpenEJBException {
-        final Class<? extends DeploymentModule> moduleClass;
-        ClassLoader tempClassLoader = null;
-        try {
-            try {
-                moduleClass = discoverModuleType(null, ClassLoaderUtil.createTempClassLoader(classLoader), true);
-            } catch (IOException e) {
-                throw new UnknownModuleTypeException("Unable to determine module type for bundle loaded from a built classloader", e);
-            }
-
-            if (EjbModule.class.equals(moduleClass)) {
-                tempClassLoader = ClassLoaderUtil.createTempClassLoader(classLoader);
-                EjbModule ejbModule = createEjbModule(null, null, tempClassLoader, null);
-                AppModule appModule = new AppModule(ejbModule);
-                addPersistenceUnits(appModule);
-                return appModule;
-            }
-        } finally {
-            if (null != tempClassLoader) {
-                ClassLoaderUtil.destroyClassLoader(tempClassLoader);
-                tempClassLoader = null;
-                System.gc();
-            }
-        }
-
-        throw new UnsupportedModuleTypeException("Unsupported module type (deployement from classloader): " + moduleClass.getSimpleName());
-    }
-
     public AppModule load(File jarFile) throws OpenEJBException {
         // verify we have a valid file
         String jarPath;

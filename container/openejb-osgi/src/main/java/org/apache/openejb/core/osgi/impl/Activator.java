@@ -34,8 +34,6 @@ import java.util.Properties;
  * @version $Rev$ $Date$
  */
 public class Activator implements BundleActivator {
-    public static final String OPENEJB_OSGI_START_SERVICES_PROP = "openejb.osgi.start-services";
-
     private static final Logger LOGGER = LoggerFactory.getLogger(Activator.class);
     private static final String SERVICE_MANAGER_NAME = "org.apache.openejb.server.ServiceManager";
     private static final long TRACKER_TIMEOUT = 60000;

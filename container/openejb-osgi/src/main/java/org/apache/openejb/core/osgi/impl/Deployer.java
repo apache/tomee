@@ -35,6 +35,7 @@ import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -55,6 +56,7 @@ public class Deployer implements BundleListener {
 
     private Map<Bundle, List<ServiceRegistration>> registrations = new ConcurrentHashMap<Bundle, List<ServiceRegistration>>();
     private Map<Bundle, AppContext> appContexts = new ConcurrentHashMap<Bundle, AppContext>();
+    private Map<Bundle, File> dumps = new ConcurrentHashMap<Bundle, File>();
 
     public void bundleChanged(BundleEvent event) {
         switch (event.getType()) {
@@ -75,21 +77,30 @@ public class Deployer implements BundleListener {
         try {
             try {
                 try {
-                    DeploymentLoader deploymentLoader = new DeploymentLoader();
-                    AppModule appModule = deploymentLoader.load(osgiCl); // here file doesn't mean anything
+                    // equinox? found in aries
+                    File bundleDump = bundle.getBundleContext().getDataFile(bundle.getSymbolicName() + "/" + bundle.getVersion() + "/");
+                    // TODO: what should happen if there is multiple versions?
+                    if (!bundleDump.exists()) { // felix. TODO: maybe find something better
+                        bundleDump = new File(bundle.getBundleContext().getDataFile("").getParentFile(), "version0.0/bundle.jar");
+                        if (!bundleDump.exists()) {
+
+                        }
+                    }
+                    dumps.put(bundle, bundleDump);
+                    LOGGER.info("looking bundle {} in {}", bundle.getBundleId(), bundleDump);
+                    final AppModule appModule = new DeploymentLoader().load(bundleDump);
                     LOGGER.info("deploying bundle #" + bundle.getBundleId() + " as an EJBModule");
 
-                    ConfigurationFactory configurationFactory = new ConfigurationFactory();
-                    AppInfo appInfo = configurationFactory.configureApplication(appModule);
+                    final ConfigurationFactory configurationFactory = new ConfigurationFactory();
+                    final AppInfo appInfo = configurationFactory.configureApplication(appModule);
 
-                    Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
-                    AppContext appContext = assembler.createApplication(appInfo);
+                    final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
+                    final AppContext appContext = assembler.createApplication(appInfo);
                     appContexts.put(bundle, appContext);
                     LOGGER.info("Application deployed: " + appInfo.path);
 
                     registrations.put(bundle, new ArrayList<ServiceRegistration>());
                     registerService(bundle, appContext);
-
                 } catch (UnknownModuleTypeException unknowException) {
                     LOGGER.info("bundle #" + bundle.getBundleId() + " is not an EJBModule");
                 } catch(Exception ex) {
@@ -100,6 +111,28 @@ public class Deployer implements BundleListener {
             }
         } finally {
             Thread.currentThread().setContextClassLoader(oldCl);
+        }
+    }
+
+    private static boolean delete(File dir) {
+        if (dir == null) return true;
+
+        if (dir.isDirectory()) {
+            String fileNames[] = dir.list();
+            if (fileNames == null) {
+                fileNames = new String[0];
+            }
+            for (String fileName : fileNames) {
+                File file = new File(dir, fileName);
+                if (file.isDirectory()) {
+                    delete(file);
+                } else {
+                    file.delete();
+                }
+            }
+            return dir.delete();
+        } else {
+            return dir.delete();
         }
     }
 
@@ -118,7 +151,11 @@ public class Deployer implements BundleListener {
                 LOGGER.error("can't undeployer the bundle", e);
             }
         }
-        LOGGER.info(String.format("[Deployer] Bundle %s has been stopped", bundle.getSymbolicName()));
+
+        if (dumps.containsKey(bundle)) {
+            delete(dumps.get(bundle));
+        }
+        LOGGER.info("[Deployer] Bundle {} has been stopped", bundle.getSymbolicName());
     }
 
     /**
@@ -133,7 +170,7 @@ public class Deployer implements BundleListener {
         for (BeanContext beanContext : appContext.getBeanContexts()) {
             try {
                 if (beanContext.getBusinessRemoteInterface() != null) {
-                    LOGGER.error(String.format("registering: %s", beanContext.getEjbName()));
+                    LOGGER.error("registering: {}", beanContext.getEjbName());
                     registerService(beanContext, context, beanContext.getBusinessRemoteInterfaces());
                 }
                 if (beanContext.getBusinessLocalInterface() != null) {
@@ -145,7 +182,7 @@ public class Deployer implements BundleListener {
                     // registerService(beanContext, context, Arrays.asList(beanContext.getBusinessLocalBeanInterface()));
                 }
             } catch (Exception e) {
-                LOGGER.error(String.format("[Deployer] can't register: %s", beanContext.getEjbName()));
+                LOGGER.error("[Deployer] can't register: {}", beanContext.getEjbName());
             }
         }
     }
@@ -156,9 +193,9 @@ public class Deployer implements BundleListener {
             try {
                 Object service = Proxy.newProxyInstance(itfs[0].getClassLoader(), itfs, new Handler(beanContext));
                 registrations.get(context.getBundle()).add(context.registerService(str(itfs), service, new Properties()));
-                LOGGER.info(String.format("EJB registered: %s for interfaces %s", beanContext.getEjbName(), interfaces));
+                LOGGER.info("EJB registered: {} for interfaces {}", beanContext.getEjbName(), interfaces);
             } catch (IllegalArgumentException iae) {
-                LOGGER.error(String.format("can't register: %s for interfaces %s", beanContext.getEjbName(), interfaces));
+                LOGGER.error("can't register: {} for interfaces {}", beanContext.getEjbName(), interfaces);
             }
         }
     }
