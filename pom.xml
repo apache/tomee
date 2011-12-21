@@ -91,7 +91,7 @@
 
   <properties>
     <!-- This is used by a manifest classpath entry -->
-    <xbeanVersion>3.9-SNAPSHOT</xbeanVersion>
+    <xbeanVersion>3.9</xbeanVersion>
 
     <!-- OSGi bundles properties -->
     <openejb.bundle.activator/>
