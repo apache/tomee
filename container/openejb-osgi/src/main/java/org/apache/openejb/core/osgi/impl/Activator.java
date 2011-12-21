@@ -103,7 +103,7 @@ public class Activator implements BundleActivator {
         try {
             invoke(serviceManager, "stop");
         } catch (Exception e) {
-            LOGGER.error("can't stop OpenEJB services", e);
+            LOGGER.error("can't stop OpenEJB services");
         }
 
         openejb = null;
