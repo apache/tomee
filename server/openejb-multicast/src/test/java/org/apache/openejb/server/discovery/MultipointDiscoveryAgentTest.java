@@ -20,8 +20,6 @@ import junit.framework.TestCase;
 import org.apache.openejb.server.DiscoveryListener;
 import org.apache.openejb.server.DiscoveryRegistry;
 import org.apache.openejb.util.Join;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -65,13 +63,13 @@ public class MultipointDiscoveryAgentTest extends TestCase {
         };
 
         final List<Node> nodes = new ArrayList<Node>();
-        final Node root = new Node("0", listener);
+        final Node root = new Node(0, listener);
 
 
         nodes.add(root);
 
         for (int i = 0; i < PEERS; i++) {
-            final Node node = new Node("0", listener, root.getAgent().getPort());
+            final Node node = new Node(0, listener, root.getAgent().getPort());
             nodes.add(node);
         }
 
@@ -100,14 +98,50 @@ public class MultipointDiscoveryAgentTest extends TestCase {
         }
     }
 
+    public void _debug() throws Exception {
+        System.setProperty("log4j.category.OpenEJB.server.discovery", "debug");
+
+        System.setProperty("log4j.appender.C.layout", "org.apache.log4j.PatternLayout");
+        System.setProperty("log4j.appender.C.layout.ConversionPattern", "%d - %m%n");
+
+        final URI greenService = new URI("green://localhost:5555");
+        final Node green = new Node(5555, new Listener("green"), true, "green", 5000);
+
+        green.getRegistry().registerService(greenService);
+
+//        launch(green, "blue", 4444);
+//        launch(green, "red", 6666);
+//        launch(green, "yellow", 8888);
+        final Node orange = launch(green, "orange", 7777);
+
+        Thread.sleep(500000);
+
+        orange.getAgent().stop();
+
+        Thread.sleep(5000);
+
+    }
+
+    private Node launch(Node green, String color, int port) throws Exception {
+        final URI orangeService = new URI(color + "://localhost:"+ port);
+        final Node orange = new Node(port, new Listener(color), green.getPort());
+        orange.getRegistry().registerService(orangeService);
+        Thread.sleep(100);
+        return orange;
+    }
+
     public static class Node {
         private final MultipointDiscoveryAgent agent;
         private final DiscoveryRegistry registry;
 
-        public Node(String p, DiscoveryListener listener, int... peers) throws Exception {
-            this.agent = new MultipointDiscoveryAgent();
+        public Node(int p, DiscoveryListener listener, int... peers) throws Exception {
+            this(p, listener, false, null, 5000, peers);
+        }
+
+        public Node(int p, DiscoveryListener listener, boolean debug, String name, int heartRate, int... peers) throws Exception {
+            this.agent = new MultipointDiscoveryAgent(debug, name);
             final Properties props = new Properties();
-            props.put("port", p);
+            props.put("port", p+"");
 
             List<String> uris = new ArrayList<String>(peers.length);
             for (int port : peers) {
@@ -115,8 +149,8 @@ public class MultipointDiscoveryAgentTest extends TestCase {
             }
 
             props.put("initialServers", Join.join(",", uris));
-            props.put("max_missed_heartbeats", "2");
-            props.put("heart_rate", "200");
+            props.put("max_missed_heartbeats", "1");
+            props.put("heart_rate", ""+ heartRate);
             agent.init(props);
 
             this.registry = new DiscoveryRegistry(agent);
@@ -130,6 +164,26 @@ public class MultipointDiscoveryAgentTest extends TestCase {
 
         public DiscoveryRegistry getRegistry() {
             return registry;
+        }
+
+        public int getPort() {
+            return agent.getPort();
+        }
+    }
+
+    private static class Listener implements DiscoveryListener {
+        private final String name;
+
+        private Listener(String name) {
+            this.name = name;
+        }
+
+        public void serviceAdded(URI service) {
+//            System.out.printf("[%s] added = %s\n", name, service);
+        }
+
+        public void serviceRemoved(URI service) {
+//            System.out.printf("[%s] removed = %s\n", name, service);
         }
     }
 }

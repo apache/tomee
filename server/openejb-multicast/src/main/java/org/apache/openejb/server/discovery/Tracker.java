@@ -48,8 +48,9 @@ public class Tracker {
     private final int maxReconnectAttempts;
     private final long exponentialBackoff;
     private final boolean useExponentialBackOff;
+    private final boolean debug;
 
-    public Tracker(String group, long heartRate, int maxMissedHeartbeats, long reconnectDelay, long maxReconnectDelay, int maxReconnectAttempts, long exponentialBackoff, final Logger log) {
+    public Tracker(String group, long heartRate, int maxMissedHeartbeats, long reconnectDelay, long maxReconnectDelay, int maxReconnectAttempts, long exponentialBackoff, final Logger log, boolean debug) {
         this.group = group;
         this.groupPrefix = group + ":";
 
@@ -61,7 +62,7 @@ public class Tracker {
         this.exponentialBackoff = exponentialBackoff;
         this.useExponentialBackOff = exponentialBackoff > 1;
         this.log = log;
-
+        this.debug = debug;
         this.log.info("Created " + this);
     }
 
@@ -72,6 +73,10 @@ public class Tracker {
 
     public long getHeartRate() {
         return heartRate;
+    }
+
+    public int getMaxMissedHeartbeats() {
+        return maxMissedHeartbeats;
     }
 
     public void setDiscoveryListener(DiscoveryListener discoveryListener) {
@@ -147,7 +152,7 @@ public class Tracker {
         for (ServiceVitals serviceVitals : discoveredServices.values()) {
             if (serviceVitals.getLastHeartbeat() < expireTime && !isSelf(serviceVitals.service)) {
 
-                if (log.isDebugEnabled()) {
+                if (debug()) {
                     log.debug("Expired " + serviceVitals.service + String.format(" Timeout{lastSeen=%s, threshold=%s}", serviceVitals.getLastHeartbeat() - now, threshold ));
                 }
 
@@ -159,6 +164,10 @@ public class Tracker {
         }
     }
 
+    private boolean debug() {
+        return debug && log.isDebugEnabled();
+    }
+
     private final Executor executor = new ThreadPoolExecutor(1, 1, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), new ThreadFactory() {
         public Thread newThread(Runnable runable) {
             Thread t = new Thread(runable, "Discovery Agent Notifier");
@@ -168,7 +177,7 @@ public class Tracker {
     });
 
     private void fireServiceRemovedEvent(final URI uri) {
-        if (log.isDebugEnabled()) {
+        if (debug()) {
             log.debug(String.format("Removed Service{uri=%s}", uri));
         }
 
@@ -189,7 +198,7 @@ public class Tracker {
     }
 
     private void fireServiceAddedEvent(final URI uri) {
-        if (log.isDebugEnabled()) {
+        if (debug()) {
             log.debug(String.format("Added Service{uri=%s}", uri));
         }
 
@@ -262,7 +271,7 @@ public class Tracker {
             // Consider that the service recovery has succeeded if it has not
             // failed in 60 seconds.
             if (!dead && failureCount > 0 && (lastHeartBeat - recoveryTime) > 1000 * 60) {
-                if (log.isDebugEnabled()) {
+                if (debug()) {
                     log.debug("I now think that the " + service + " service has recovered.");
                 }
                 failureCount = 0;
@@ -289,7 +298,7 @@ public class Tracker {
                     delay = reconnectDelay;
                 }
 
-                if (log.isDebugEnabled()) {
+                if (debug()) {
                     log.debug("Remote failure of " + service + " while still receiving multicast advertisements.  " +
                             "Advertising events will be suppressed for " + delay
                             + " ms, the current failure count is: " + failureCount);
@@ -312,7 +321,7 @@ public class Tracker {
 
             // Are we done trying to recover this guy?
             if (maxReconnectAttempts > 0 && failureCount > maxReconnectAttempts) {
-                if (log.isDebugEnabled()) {
+                if (debug()) {
                     log.debug("Max reconnect attempts of the " + service + " service has been reached.");
                 }
                 return false;
@@ -323,7 +332,7 @@ public class Tracker {
                 return false;
             }
 
-            if (log.isDebugEnabled()) {
+            if (debug()) {
                 log.debug("Resuming event advertisement of the " + service + " service.");
             }
             dead = false;
@@ -357,6 +366,7 @@ public class Tracker {
         private long exponentialBackoff = 0;
         private int maxReconnectAttempts = 10; // todo: check this out
         private Logger logger;
+        private boolean debug;
         // ---------------------------------
 
 
@@ -424,9 +434,17 @@ public class Tracker {
             this.logger = logger;
         }
 
+        public boolean isDebug() {
+            return debug;
+        }
+
+        public void setDebug(boolean debug) {
+            this.debug = debug;
+        }
+
         public Tracker build() {
             logger = Logger.getInstance(LogCategory.OPENEJB_SERVER.createChild("discovery"), Tracker.class);
-            return new Tracker(group, heartRate, maxMissedHeartbeats, reconnectDelay, maxReconnectDelay, maxReconnectAttempts, exponentialBackoff, logger);
+            return new Tracker(group, heartRate, maxMissedHeartbeats, reconnectDelay, maxReconnectDelay, maxReconnectAttempts, exponentialBackoff, logger, debug);
         }
     }
 
