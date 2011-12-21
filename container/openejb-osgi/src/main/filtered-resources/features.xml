@@ -58,8 +58,19 @@
     <bundle>mvn:org.apache.geronimo.specs/geronimo-osgi-locator/${geronimo-osgi.version}</bundle>
   </feature>
 
+  <feature name="org.apache.activemq" version="${org.apache.activemq.version}">
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jasypt/1.6_1</bundle>
+    <bundle>mvn:org.apache.activemq/activemq-core/${org.apache.activemq.version}</bundle>
+    <bundle>mvn:org.apache.activemq/kahadb/${org.apache.activemq.version}</bundle>
+    <bundle>mvn:org.apache.activemq/activemq-ra/${org.apache.activemq.version}</bundle>
+  </feature>
+
   <feature name="openejb-core" version="${project.version}">
     <feature version="${javaee-api.version}">javaee-api</feature>
+
+    <!-- that shoudn't be necessary as we already have a stax bundle in javaee-api,
+        but unfortunately, it does not export javax.xml.namespace -->
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-stax-api_1.0_spec/1.0.1</bundle>
 
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-beanutils/1.8.2_2</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.quartz/1.8.3_2</bundle>
@@ -77,7 +88,10 @@
     <feature version="${xbeanVersion}">xbean</feature>
     <feature version="${geronimo-osgi.version}">geronimo-osgi</feature>
     <feature version="${org.apache.openwebbeans.version}">org.apache.openwebbeans</feature>
-    <feature version="${org.apache.activemq.version}">activemq</feature>
+
+    <!-- the activemq feature from activemq-karaf seems broken. Let's use our in the mid time -->
+    <!--<feature version="${org.apache.activemq.version}">activemq</feature>-->
+    <feature version="${org.apache.activemq.version}">org.apache.activemq</feature>
 
     <bundle>mvn:org.apache.commons/commons-lang3/3.1</bundle>
     <bundle>mvn:org.apache.bval/org.apache.bval.bundle/${bval.version}</bundle>
