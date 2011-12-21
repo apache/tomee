@@ -57,6 +57,12 @@ public class Deployer implements BundleListener {
     private Map<Bundle, List<ServiceRegistration>> registrations = new ConcurrentHashMap<Bundle, List<ServiceRegistration>>();
     private Map<Bundle, AppContext> appContexts = new ConcurrentHashMap<Bundle, AppContext>();
 
+    private final Bundle openejbBundle;
+
+    public Deployer(Bundle classLoader) {
+        openejbBundle = classLoader;
+    }
+
     public void bundleChanged(BundleEvent event) {
         switch (event.getType()) {
             case BundleEvent.STARTED:
@@ -77,7 +83,7 @@ public class Deployer implements BundleListener {
 
     private void deploy(Bundle bundle) {
         final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
-        final ClassLoader osgiCl = new OSGIClassLoader(bundle);
+        final ClassLoader osgiCl = new OSGIClassLoader(bundle, openejbBundle);
         Thread.currentThread().setContextClassLoader(osgiCl);
 
         try {
@@ -235,13 +241,21 @@ public class Deployer implements BundleListener {
 
     private static class OSGIClassLoader extends ClassLoader {
         private final Bundle backingBundle;
+        private final Bundle fallbackBundle;
 
-        public OSGIClassLoader(Bundle bundle) {
+        public OSGIClassLoader(Bundle bundle, Bundle openejbClassloader) {
             super(null);
             backingBundle = bundle;
+            fallbackBundle = openejbClassloader;
         }
 
         protected Class findClass(String name) throws ClassNotFoundException {
+            try {
+                return fallbackBundle.loadClass(name);
+            } catch (Exception ignored) {
+                // no-op
+            }
+
             try {
                 return this.backingBundle.loadClass(name);
             } catch (ClassNotFoundException cnfe) {
@@ -254,10 +268,22 @@ public class Deployer implements BundleListener {
         }
 
         protected URL findResource(String name) {
+            URL url = fallbackBundle.getResource(name);
+            if (url != null) {
+                return url;
+            }
             return backingBundle.getResource(name);
         }
 
         protected Enumeration findResources(String name) throws IOException {
+            try {
+                Enumeration<URL> urls = fallbackBundle.getResources(name);
+                if (urls != null && urls.hasMoreElements()) {
+                    return urls;
+                }
+            } catch (IOException ignored) {
+                // no-op
+            }
             return backingBundle.getResources(name);
         }
 

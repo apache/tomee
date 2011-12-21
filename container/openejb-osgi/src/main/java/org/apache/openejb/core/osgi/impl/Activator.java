@@ -36,7 +36,7 @@ import java.util.Properties;
 public class Activator implements BundleActivator {
     private static final Logger LOGGER = LoggerFactory.getLogger(Activator.class);
     private static final String SERVICE_MANAGER_NAME = "org.apache.openejb.server.ServiceManager";
-    private static final long TRACKER_TIMEOUT = 60000;
+    private static final long TRACKER_TIMEOUT = Integer.getInteger("openejb.osgi.tracker.timeout", 60000);
 
     private OpenEJBInstance openejb;
     private Object serviceManager;
@@ -79,7 +79,7 @@ public class Activator implements BundleActivator {
         } catch (InterruptedException ie) {
             LOGGER.warn("can't find service manager");
         } catch (Exception e) {
-            LOGGER.error("can't start OpenEJB services", e);
+            LOGGER.error("can't start OpenEJB services");
         } finally {
             if (serviceManagerTracker != null) {
                 serviceManagerTracker.close();
@@ -87,7 +87,7 @@ public class Activator implements BundleActivator {
         }
 
         LOGGER.info("Registering OSGified OpenEJB Deployer");
-        context.addBundleListener(new Deployer());
+        context.addBundleListener(new Deployer(context.getBundle()));
     }
 
     private static ServiceTracker getServiceManger(BundleContext context) throws InterruptedException {
