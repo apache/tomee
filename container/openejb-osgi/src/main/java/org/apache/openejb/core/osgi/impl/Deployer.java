@@ -56,7 +56,6 @@ public class Deployer implements BundleListener {
 
     private Map<Bundle, List<ServiceRegistration>> registrations = new ConcurrentHashMap<Bundle, List<ServiceRegistration>>();
     private Map<Bundle, AppContext> appContexts = new ConcurrentHashMap<Bundle, AppContext>();
-    private Map<Bundle, File> dumps = new ConcurrentHashMap<Bundle, File>();
 
     public void bundleChanged(BundleEvent event) {
         switch (event.getType()) {
@@ -83,10 +82,9 @@ public class Deployer implements BundleListener {
                     if (!bundleDump.exists()) { // felix. TODO: maybe find something better
                         bundleDump = new File(bundle.getBundleContext().getDataFile("").getParentFile(), "version0.0/bundle.jar");
                         if (!bundleDump.exists()) {
-
+                            LOGGER.warn("can't find bundle {}", bundle.getBundleId());
                         }
                     }
-                    dumps.put(bundle, bundleDump);
                     LOGGER.info("looking bundle {} in {}", bundle.getBundleId(), bundleDump);
                     final AppModule appModule = new DeploymentLoader().load(bundleDump);
                     LOGGER.info("deploying bundle #" + bundle.getBundleId() + " as an EJBModule");
@@ -152,9 +150,6 @@ public class Deployer implements BundleListener {
             }
         }
 
-        if (dumps.containsKey(bundle)) {
-            delete(dumps.get(bundle));
-        }
         LOGGER.info("[Deployer] Bundle {} has been stopped", bundle.getSymbolicName());
     }
 
@@ -200,7 +195,7 @@ public class Deployer implements BundleListener {
         }
     }
 
-    private String[] str(Class<?>[] itfs) {
+    private static String[] str(Class<?>[] itfs) {
         String[] itfsStr = new String[itfs.length];
         for (int i = 0; i < itfs.length; i++) {
             itfsStr[i] = itfs[i].getName();
