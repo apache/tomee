@@ -51,8 +51,8 @@
     <bundle>mvn:org.apache.openwebbeans/openwebbeans-ee/${org.apache.openwebbeans.version}</bundle>
     <bundle>mvn:org.apache.openwebbeans/openwebbeans-ejb-common</bundle>
     <bundle>mvn:org.apache.openwebbeans/openwebbeans-ejb/${org.apache.openwebbeans.version}</bundle>
-    <bundle>mvn:org.apache.openwebbeans/openwebbeans-web/${org.apache.openwebbeans.version}</bundle>
     <bundle>mvn:org.apache.openwebbeans/openwebbeans-osgi/${org.apache.openwebbeans.version}</bundle>
+    <bundle>mvn:org.apache.openwebbeans/openwebbeans-web/${org.apache.openwebbeans.version}</bundle>
   </feature>
 
   <feature name="geronimo-osgi" version="${geronimo-osgi.version}">

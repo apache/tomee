@@ -57,13 +57,16 @@ public class Deployer implements BundleListener {
     private Map<Bundle, List<ServiceRegistration>> registrations = new ConcurrentHashMap<Bundle, List<ServiceRegistration>>();
     private Map<Bundle, AppContext> appContexts = new ConcurrentHashMap<Bundle, AppContext>();
 
-    private final Bundle openejbBundle;
+    private final BundleContext openejbBundleContext;
+    private final Activator openejbActivator;
 
-    public Deployer(Bundle classLoader) {
-        openejbBundle = classLoader;
+    public Deployer(Activator activator, BundleContext context) {
+        openejbActivator = activator;
+        openejbBundleContext = context;
     }
 
     public void bundleChanged(BundleEvent event) {
+        openejbActivator.checkServiceManager(openejbBundleContext);
         switch (event.getType()) {
             case BundleEvent.STARTED:
                 deploy(event.getBundle());
@@ -83,7 +86,7 @@ public class Deployer implements BundleListener {
 
     private void deploy(Bundle bundle) {
         final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
-        final ClassLoader osgiCl = new OSGIClassLoader(bundle, openejbBundle);
+        final ClassLoader osgiCl = new OSGIClassLoader(bundle, openejbBundleContext.getBundle());
         Thread.currentThread().setContextClassLoader(osgiCl);
 
         try {

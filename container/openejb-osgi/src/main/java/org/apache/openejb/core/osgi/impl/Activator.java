@@ -66,6 +66,17 @@ public class Activator implements BundleActivator {
         }
 
         // should be registered through openejb-server
+        checkServiceManager(context);
+
+        LOGGER.info("Registering OSGified OpenEJB Deployer");
+        context.addBundleListener(new Deployer(this, context));
+    }
+
+    public synchronized void checkServiceManager(BundleContext context) {
+        if (serviceManager != null) { // already started
+            return;
+        }
+
         ServiceTracker serviceManagerTracker = null;
         try {
             serviceManagerTracker = getServiceManger(context);
@@ -85,10 +96,8 @@ public class Activator implements BundleActivator {
                 serviceManagerTracker.close();
             }
         }
-
-        LOGGER.info("Registering OSGified OpenEJB Deployer");
-        context.addBundleListener(new Deployer(context.getBundle()));
     }
+
 
     private static ServiceTracker getServiceManger(BundleContext context) throws InterruptedException {
         ServiceTracker serviceManagerTracker = new ServiceTracker(context, SERVICE_MANAGER_NAME, null);
