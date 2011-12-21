@@ -45,7 +45,7 @@ public class EjbObjectInputStream extends ObjectInputStream {
             if (n.equals("float")) return float.class;
             if (n.equals("double")) return double.class;
 
-            throw e;
+            return getClass().getClassLoader().loadClass(classDesc.getName()); // if CCL is not correct
         }
     }
 
