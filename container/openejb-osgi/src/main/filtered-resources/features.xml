@@ -67,11 +67,15 @@
   <feature name="openejb-core" version="${project.version}">
     <feature version="${javaee-api.version}">javaee-api</feature>
 
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-beanutils/1.8.2_2</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.quartz/1.8.3_2</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.javassist/3.9.0.GA_2</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.wsdl4j/1.6.2_5</bundle>
 
     <bundle>mvn:org.apache.geronimo.components/geronimo-connector/${geronimo.connector.version}</bundle>
     <bundle>mvn:org.apache.geronimo.components/geronimo-transaction/${geronimo.connector.version}</bundle>
+
+    <bundle>mvn:org.apache.geronimo.bundles/jaxb-impl/2.2.3-1_1</bundle>
 
     <feature>org.apache.commons</feature>
     <feature version="${xbeanVersion}">xbean</feature>
@@ -79,7 +83,6 @@
     <feature version="${org.apache.openwebbeans.version}">org.apache.openwebbeans</feature>
     <feature version="${org.apache.activemq.version}">org.apache.activemq</feature>
 
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-beanutils/1.8.2_2</bundle>
     <bundle>mvn:org.apache.commons/commons-lang3/3.1</bundle>
     <bundle>mvn:org.apache.bval/org.apache.bval.bundle/${bval.version}</bundle>
 
