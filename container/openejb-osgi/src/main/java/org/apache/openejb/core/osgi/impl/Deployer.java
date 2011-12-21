@@ -147,7 +147,11 @@ public class Deployer implements BundleListener {
     private void undeploy(Bundle bundle) {
         if (registrations.containsKey(bundle)) {
             for (ServiceRegistration registration : registrations.get(bundle)) {
-                registration.unregister();
+                try {
+                    registration.unregister();
+                } catch (IllegalStateException ise) {
+                    // ignored: already unregistered
+                }
             }
             registrations.remove(bundle);
         }
