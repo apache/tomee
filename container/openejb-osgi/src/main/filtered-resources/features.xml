@@ -41,6 +41,7 @@
     <bundle>mvn:org.apache.xbean/xbean-finder-shaded/${xbeanVersion}</bundle>
     <bundle>mvn:org.apache.xbean/xbean-naming/${xbeanVersion}</bundle>
     <bundle>mvn:org.apache.xbean/xbean-reflect/${xbeanVersion}</bundle>
+    <bundle>mvn:org.apache.xbean/xbean-bundleutils/${xbeanVersion}</bundle>
   </feature>
 
   <feature name="org.apache.openwebbeans" version="${org.apache.openwebbeans.version}">
@@ -51,6 +52,7 @@
     <bundle>mvn:org.apache.openwebbeans/openwebbeans-ejb-common</bundle>
     <bundle>mvn:org.apache.openwebbeans/openwebbeans-ejb/${org.apache.openwebbeans.version}</bundle>
     <bundle>mvn:org.apache.openwebbeans/openwebbeans-web/${org.apache.openwebbeans.version}</bundle>
+    <bundle>mvn:org.apache.openwebbeans/openwebbeans-osgi/${org.apache.openwebbeans.version}</bundle>
   </feature>
 
   <feature name="geronimo-osgi" version="${geronimo-osgi.version}">
