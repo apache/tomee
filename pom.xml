@@ -132,6 +132,7 @@
     <org.apache.openwebbeans.version>1.1.1</org.apache.openwebbeans.version>
     <geronimo.connector.version>3.1.1</geronimo.connector.version>
     <geronimo-osgi.version>1.1</geronimo-osgi.version>
+    <geronimo-javamail_1.4_spec.version>1.7.1</geronimo-javamail_1.4_spec.version>
     <myfaces.version>2.1.2</myfaces.version>
     <slf4j.version>1.6.1</slf4j.version>
     <log4j.version>1.2.16</log4j.version>
