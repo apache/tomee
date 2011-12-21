@@ -20,6 +20,7 @@
 <features>
   <repository>mvn:org.apache.openejb/javaee-api/${javaee-api.version}/xml/features</repository>
   <repository>mvn:org.apache.openejb/openejb-core-osgi/${project.version}/xml/features</repository>
+  <repository>mvn:org.apache.activemq/activemq-karaf/${org.apache.activemq.version}/xml/features</repository>
 
   <feature name="org.apache.commons">
     <bundle>mvn:commons-cli/commons-cli/${commons-cli.version}</bundle>
@@ -57,13 +58,6 @@
     <bundle>mvn:org.apache.geronimo.specs/geronimo-osgi-locator/${geronimo-osgi.version}</bundle>
   </feature>
 
-  <feature name="org.apache.activemq" version="${org.apache.activemq.version}">
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jasypt/1.6_1</bundle>
-    <bundle>mvn:org.apache.activemq/activemq-core/${org.apache.activemq.version}</bundle>
-    <bundle>mvn:org.apache.activemq/kahadb/${org.apache.activemq.version}</bundle>
-    <bundle>mvn:org.apache.activemq/activemq-ra/${org.apache.activemq.version}</bundle>
-  </feature>
-
   <feature name="openejb-core" version="${project.version}">
     <feature version="${javaee-api.version}">javaee-api</feature>
 
@@ -75,13 +69,15 @@
     <bundle>mvn:org.apache.geronimo.components/geronimo-connector/${geronimo.connector.version}</bundle>
     <bundle>mvn:org.apache.geronimo.components/geronimo-transaction/${geronimo.connector.version}</bundle>
 
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-javamail_1.4_spec/${geronimo-javamail_1.4_spec.version}</bundle>
+
     <bundle>mvn:org.apache.geronimo.bundles/jaxb-impl/2.2.3-1_1</bundle>
 
     <feature>org.apache.commons</feature>
     <feature version="${xbeanVersion}">xbean</feature>
     <feature version="${geronimo-osgi.version}">geronimo-osgi</feature>
     <feature version="${org.apache.openwebbeans.version}">org.apache.openwebbeans</feature>
-    <feature version="${org.apache.activemq.version}">org.apache.activemq</feature>
+    <feature version="${org.apache.activemq.version}">activemq</feature>
 
     <bundle>mvn:org.apache.commons/commons-lang3/3.1</bundle>
     <bundle>mvn:org.apache.bval/org.apache.bval.bundle/${bval.version}</bundle>
