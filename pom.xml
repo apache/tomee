@@ -145,8 +145,8 @@
     <commons-pool.version>1.5.6</commons-pool.version>
     <commons-collections.version>3.2.1</commons-collections.version>
     <commons-codec.version>1.4</commons-codec.version>
-    <commons-fileupload.version>1.2</commons-fileupload.version>
-    <commons-discovery.version>0.4</commons-discovery.version>
+    <commons-fileupload.version>1.2.2</commons-fileupload.version>
+    <commons-discovery.version>0.5</commons-discovery.version>
     <commons-lang.version>2.6</commons-lang.version>
     <commons-io.version>1.4</commons-io.version>
   </properties>
