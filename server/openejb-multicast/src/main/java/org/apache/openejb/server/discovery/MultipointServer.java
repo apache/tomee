@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.server.discovery;
 
+import org.apache.openejb.util.Join;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -42,7 +43,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -52,30 +55,46 @@ public class MultipointServer {
     private static final Logger log = Logger.getInstance(LogCategory.OPENEJB_SERVER.createChild("discovery"), MultipointServer.class);
 
     private static final URI END_LIST = URI.create("end:list");
-    
+
     private final String host;
     private final int port;
     private final Selector selector;
     private final URI me;
 
+    /**
+     * Only used for toString to make debugging easier
+     */
+    private final String name;
+
+
     private final Tracker tracker;
 
     private final LinkedList<URI> connect = new LinkedList<URI>();
     private final Map<URI, Session> connections = new HashMap<URI, Session>();
+    private boolean debug = false;
 
     public MultipointServer(int port, Tracker tracker) throws IOException {
         this("localhost", port, tracker);
     }
 
     public MultipointServer(String host, int port, Tracker tracker) throws IOException {
+        this(host, port, tracker, randomColor());
+    }
+
+    public MultipointServer(String host, int port, Tracker tracker, String name) throws IOException {
+        this(host, port, tracker, name, false);
+    }
+
+    public MultipointServer(String host, int port, Tracker tracker, String name, boolean debug) throws IOException {
         if (tracker == null) throw new NullPointerException("tracker cannot be null");
         this.host = host;
         this.tracker = tracker;
-
+        this.name = name;
+        this.debug = debug;
         ServerSocketChannel serverChannel = ServerSocketChannel.open();
 
         ServerSocket serverSocket = serverChannel.socket();
-        InetSocketAddress address = new InetSocketAddress(host,port);
+        InetSocketAddress address = new InetSocketAddress(host, port);
         serverSocket.bind(address);
         serverChannel.configureBlocking(false);
 
@@ -100,7 +119,7 @@ public class MultipointServer {
                     _run();
                 }
             });
-            thread.setName("Server." + port);
+            thread.setName(Join.join(".", "MultipointServer", name, port));
             thread.start();
         }
         return this;
@@ -150,7 +169,7 @@ public class MultipointServer {
         private void trace(String str) {
 //            println(message(str));
 
-            if (log.isDebugEnabled()) {
+            if (debug && log.isDebugEnabled()) {
                 log.debug(message(str));
             }
         }
@@ -164,7 +183,9 @@ public class MultipointServer {
         }
 
         private String message(String str) {
-            StringBuilder sb = new StringBuilder();
+            final StringBuilder sb = new StringBuilder();
+            sb.append(name);
+            sb.append(":");
             sb.append(port);
             sb.append(" ");
             if (key.isValid()) {
@@ -189,11 +210,11 @@ public class MultipointServer {
         }
 
         public void write(Collection<?> uris) throws IOException {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
             for (Object uri : uris) {
-                String s = uri.toString();
-                byte[] b = s.getBytes("UTF-8");
+                final String s = uri.toString();
+                final byte[] b = s.getBytes("UTF-8");
                 baos.write(b);
                 baos.write(EOF);
             }
@@ -210,16 +231,16 @@ public class MultipointServer {
 
             if (channel.read(read) == -1) throw new EOFException();
 
-            byte[] buf = read.array();
+            final byte[] buf = read.array();
 
-            int end = endOfText(buf, 0, read.position());
+            final int end = endOfText(buf, 0, read.position());
 
             if (end < 0) return null;
 
             // Copy the string without the terminator char
-            String text = new String(buf, 0, end, "UTF-8");
+            final String text = new String(buf, 0, end, "UTF-8");
 
-            int newPos = read.position() - end;
+            final int newPos = read.position() - end;
             System.arraycopy(buf, end + 1, buf, 0, newPos - 1);
             read.position(newPos - 1);
 
@@ -248,10 +269,10 @@ public class MultipointServer {
         public void tick() throws IOException {
             if (state != State.HEARTBEAT) return;
 
-            long now = System.currentTimeMillis();
-            long delay = now - last;
+            final long now = System.currentTimeMillis();
+            final long delay = now - last;
 
-            if (delay > tracker.getHeartRate()) {
+            if (delay >= tracker.getHeartRate()) {
                 last = now;
                 heartbeat();
             }
@@ -266,8 +287,6 @@ public class MultipointServer {
             }
             write(strings);
             state(SelectionKey.OP_READ | SelectionKey.OP_WRITE, State.HEARTBEAT);
-
-            tracker.checkServices();
         }
     }
 
@@ -278,289 +297,70 @@ public class MultipointServer {
     private final AtomicBoolean running = new AtomicBoolean();
 
     private void _run() {
+
+        // The selectorTimeout ensures that even when there are no IO events,
+        // this loop will "wake up" and execute at least as frequently as the
+        // expected heartrate.
+        //
+        // We initiate WRITE events (the heartbeats we send) in this loop, so that
+        // detail is critical.
+        long selectorTimeout = tracker.getHeartRate();
+
+        // For reliability purposes we will actually adjust the selectorTimeout
+        // on each iteration of the loop, shrinking it down just a little to a
+        // account for the execution time of the loop itself.
+
         while (running.get()) {
+
+            final long start = System.nanoTime();
+
             try {
-                selector.select(1000);
+                selector.select(selectorTimeout);
             } catch (IOException ex) {
                 ex.printStackTrace();
                 break;
             }
 
-            Set keys = selector.selectedKeys();
-
-            Iterator iterator = keys.iterator();
+            final Set keys = selector.selectedKeys();
+            final Iterator iterator = keys.iterator();
             while (iterator.hasNext()) {
-                SelectionKey key = (SelectionKey) iterator.next();
+                final SelectionKey key = (SelectionKey) iterator.next();
                 iterator.remove();
 
                 try {
-                    if (key.isAcceptable()) {
+                    if (key.isAcceptable()) doAccept(key);
 
-                        // we are a server
+                    if (key.isConnectable()) doConnect(key);
 
-                        // when you are a server, we must first listen for the
-                        // address of the client before sending data.
+                    if (key.isReadable()) doRead(key);
 
-                        // once they send us their address, we will send our
-                        // full list of known addresses, followed by the "end"
-                        // address to signal that we are done.
-
-                        // Afterward we will only pulls our heartbeat
-
-                        ServerSocketChannel server = (ServerSocketChannel) key.channel();
-                        SocketChannel client = server.accept();
-                        InetSocketAddress address = (InetSocketAddress) client.socket().getRemoteSocketAddress();
-
-                        client.configureBlocking(false);
-
-                        Session session = new Session(client, address, null);
-                        session.trace("accept");
-                        session.state(java.nio.channels.SelectionKey.OP_READ, State.GREETING);
-                    }
-
-                    if (key.isConnectable()) {
-
-                        // we are a client
-
-                        Session session = (Session) key.attachment();
-                        session.channel.finishConnect();
-                        session.trace("connected");
-
-                        // when you are a client, first say high to everyone
-                        // before accepting data
-
-                        // once a server reads our address, it will send it's
-                        // full list of known addresses, followed by the "end"
-                        // address to signal that it is done.
-
-                        // we will then send our full list of known addresses,
-                        // followed by the "end" address to signal we are done.
-
-                        // Afterward the server will only pulls its heartbeat
-
-                        // separately, we will initiate connections to everyone
-                        // in the list who we have not yet seen.
-
-                        // WRITE our GREETING
-                        session.write(me);
-
-                        session.state(java.nio.channels.SelectionKey.OP_WRITE, State.GREETING);
-                    }
-
-                    if (key.isReadable()) {
-
-
-                        Session session = (Session) key.attachment();
-
-                        switch (session.state) {
-                            case GREETING: { // read
-
-                                // This state is only reachable as a SERVER
-                                // The client connected and said hello by sending
-                                // its URI to let us know who they are
-
-                                // Once this is read, the client will expect us
-                                // to send our full list of URIs followed by the
-                                // "end" address.
-
-                                // So we switch to WRITE LISTING and they switch
-                                // to READ LISTING
-
-                                // Then we will switch to READ LISTING and they
-                                // will switch to WRITE LISTING
-                                
-                                String message = session.read();
-
-                                if (message == null) break; // need to read more
-
-                                session.setURI(URI.create(message));
-
-                                connected(session);
-
-                                session.trace("welcome");
-
-                                ArrayList<URI> list = connections();
-
-                                // When they read themselves on the list
-                                // they'll know it's time to list their URIs
-
-                                list.remove(me); // yank
-                                list.add(END_LIST); // add to the end
-
-                                session.write(list);
-
-                                session.state(java.nio.channels.SelectionKey.OP_WRITE, State.LISTING);
-
-                                session.trace("STARTING");
-
-
-                            }
-                            break;
-
-                            case LISTING: { // read
-
-                                String message = null;
-
-                                while ((message = session.read()) != null) {
-
-                                    session.trace(message);
-
-                                    URI uri = URI.create(message);
-
-                                    if (END_LIST.equals(uri)) {
-
-                                        if (session.client) {
-
-                                            ArrayList<URI> list = connections();
-
-                                            for (URI reported : session.listed) {
-                                                list.remove(reported);
-                                            }
-
-                                            // When they read us on the list
-                                            // they'll know it's time to switch to heartbeat
-
-                                            list.remove(session.uri);
-                                            list.add(END_LIST);
-                                            
-                                            session.write(list);
-
-                                            session.state(java.nio.channels.SelectionKey.OP_WRITE, State.LISTING);
-
-                                        } else {
-
-                                            // We are a SERVER in this relationship, so we will have already
-                                            // listed our known peers by this point.  From here we switch to
-                                            // heartbeating
-                                            
-                                            // heartbeat time
-                                            if (session.hangup) {
-                                                session.state(0, State.CLOSED);
-                                                session.trace("hangup");
-                                                hangup(key);
-
-                                            } else {
-
-                                                session.trace("DONE READING");
-
-                                                session.state(java.nio.channels.SelectionKey.OP_READ, State.HEARTBEAT);
-
-                                            }
-
-                                        }
-
-                                        break;
-
-                                    } else {
-
-                                        session.listed.add(uri);
-
-                                        try {
-                                            connect(uri);
-                                        } catch (Exception e) {
-                                            println("connect failed " + uri + " - " + e.getMessage());
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                }
-
-                            }
-                            break;
-
-                            case HEARTBEAT: { // read
-
-                                String message = null;
-                                while ((message = session.read()) != null) {
-                                    tracker.processData(message);
-                                }
-                            }
-                            break;
-                        }
-
-                    }
-
-                    if (key.isWritable()) {
-
-                        Session session = (Session) key.attachment();
-
-                        switch (session.state) {
-                            case GREETING: { // write
-
-                                // Only CLIENTs write a GREETING message
-                                // As we are a client, the first thing we do
-                                // is READ the server's LIST
-                                
-                                if (session.drain()) {
-                                    session.state(java.nio.channels.SelectionKey.OP_READ, State.LISTING);
-                                }
-
-                            }
-                            break;
-
-                            case LISTING: { // write
-
-                                if (session.drain()) {
-
-                                    if (session.client) {
-                                        // CLIENTs list last, so at this point we've read
-                                        // the server's list and have written ours
-                                       
-                                        session.trace("DONE WRITING");
-
-                                        session.state(SelectionKey.OP_READ, State.HEARTBEAT);
-                                        
-                                    } else {
-                                        // SERVERs always write their list first, so at this
-                                        // point we switch to LIST READ mode
-
-                                        session.state(SelectionKey.OP_READ, State.LISTING);
-
-                                    }
-                                }
-                            }
-                            break;
-
-                            case HEARTBEAT: { // write
-
-                                if (session.drain()) {
-
-                                    session.last = System.currentTimeMillis();
-
-                                    session.trace("ping");
-
-                                    session.state(java.nio.channels.SelectionKey.OP_READ, State.HEARTBEAT);
-
-                                }
-
-                            }
-                            break;
-                        }
-                    }
+                    if (key.isWritable()) doWrite(key);
 
                 } catch (CancelledKeyException ex) {
                     synchronized (connect) {
-                        Session session = (Session) key.attachment();
+                        final Session session = (Session) key.attachment();
                         if (session.state != State.CLOSED) {
                             close(key);
                         }
                     }
                 } catch (ClosedChannelException ex) {
                     synchronized (connect) {
-                        Session session = (Session) key.attachment();
+                        final Session session = (Session) key.attachment();
                         if (session.state != State.CLOSED) {
-                            close(key);        
+                            close(key);
                         }
                     }
                 } catch (IOException ex) {
-                    Session session = (Session) key.attachment();
+                    final Session session = (Session) key.attachment();
                     session.trace(ex.getClass().getSimpleName() + ": " + ex.getMessage());
                     close(key);
                 }
 
             }
 
+            // This loop can generate WRITE keys (the heartbeats we send)
             for (SelectionKey key : selector.keys()) {
-                Session session = (Session) key.attachment();
+                final Session session = (Session) key.attachment();
 
                 try {
                     if (session != null && session.state == State.HEARTBEAT) session.tick();
@@ -569,51 +369,307 @@ public class MultipointServer {
                 }
             }
 
-            synchronized (connect) {
-                while (connect.size() > 0) {
+            // Here is where we actually will expire missing services
+            tracker.checkServices();
 
-                    URI uri = connect.removeFirst();
+            initiateConnections();
 
-                    if (connections.containsKey(uri)) continue;
+            selectorTimeout = adjustedSelectorTimeout(start);
+        }
+    }
 
-                    int port = uri.getPort();
-                    String host = uri.getHost();
+    private long adjustedSelectorTimeout(long start) {
+        final long end = System.nanoTime();
+        final long elapsed = TimeUnit.NANOSECONDS.toMillis(end - start);
+        final long heartRate = tracker.getHeartRate();
 
-                    try {
-                        println("open " + uri);
+        return Math.max(1, heartRate - elapsed);
+    }
 
-                        SocketChannel socketChannel = SocketChannel.open();
-                        socketChannel.configureBlocking(false);
+    private void initiateConnections() {
+        synchronized (connect) {
+            while (connect.size() > 0) {
 
-                        InetSocketAddress address = new InetSocketAddress(host, port);
+                final URI uri = connect.removeFirst();
 
-                        socketChannel.connect(address);
+                if (connections.containsKey(uri)) continue;
 
-                        Session session = new Session(socketChannel, address, uri);
-                        session.ops(java.nio.channels.SelectionKey.OP_CONNECT);
-                        session.trace("client");
-                        connections.put(session.uri, session);
-                        
-                        // seen - needs to get maintained as "connected"
-                        // TODO remove from seen
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+                final int port = uri.getPort();
+                final String host = uri.getHost();
+
+                try {
+                    println("open " + uri);
+
+                    // Create a non-blocking NIO channel
+                    final SocketChannel socketChannel = SocketChannel.open();
+                    socketChannel.configureBlocking(false);
+
+                    final InetSocketAddress address = new InetSocketAddress(host, port);
+
+                    socketChannel.connect(address);
+
+                    final Session session = new Session(socketChannel, address, uri);
+                    session.ops(SelectionKey.OP_CONNECT);
+                    session.trace("client");
+                    connections.put(session.uri, session);
+
+                    // seen - needs to get maintained as "connected"
+                    // TODO remove from seen
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
             }
         }
     }
 
+    private void doWrite(SelectionKey key) throws IOException {
+        final Session session = (Session) key.attachment();
+
+        switch (session.state) {
+            case GREETING: { // write
+
+                // Only CLIENTs write a GREETING message
+                // As we are a client, the first thing we do
+                // is READ the server's LIST
+
+                if (session.drain()) {
+                    session.state(SelectionKey.OP_READ, State.LISTING);
+                }
+
+            }
+            break;
+
+            case LISTING: { // write
+
+                if (session.drain()) {
+
+                    if (session.client) {
+                        // CLIENTs list last, so at this point we've read
+                        // the server's list and have written ours
+
+                        session.trace("DONE WRITING");
+
+                        session.state(SelectionKey.OP_READ, State.HEARTBEAT);
+
+                    } else {
+                        // SERVERs always write their list first, so at this
+                        // point we switch to LIST READ mode
+
+                        session.state(SelectionKey.OP_READ, State.LISTING);
+
+                    }
+                }
+            }
+            break;
+
+            case HEARTBEAT: { // write
+
+                if (session.drain()) {
+
+                    session.last = System.currentTimeMillis();
+
+                    session.trace("send");
+
+                    session.state(SelectionKey.OP_READ, State.HEARTBEAT);
+
+                }
+
+            }
+            break;
+        }
+    }
+
+    private void doRead(SelectionKey key) throws IOException {
+        final Session session = (Session) key.attachment();
+
+        switch (session.state) {
+            case GREETING: { // read
+
+                // This state is only reachable as a SERVER
+                // The client connected and said hello by sending
+                // its URI to let us know who they are
+
+                // Once this is read, the client will expect us
+                // to send our full list of URIs followed by the
+                // "end" address.
+
+                // So we switch to WRITE LISTING and they switch
+                // to READ LISTING
+
+                // Then we will switch to READ LISTING and they
+                // will switch to WRITE LISTING
+
+                final String message = session.read();
+
+                if (message == null) break; // need to read more
+
+                session.setURI(URI.create(message));
+
+                connected(session);
+
+                session.trace("welcome");
+
+                final ArrayList<URI> list = connections();
+
+                // When they read themselves on the list
+                // they'll know it's time to list their URIs
+
+                list.remove(me); // yank
+                list.add(END_LIST); // add to the end
+
+                session.write(list);
+
+                session.state(SelectionKey.OP_WRITE, State.LISTING);
+
+                session.trace("STARTING");
+
+
+            }
+            break;
+
+            case LISTING: { // read
+
+                String message = null;
+
+                while ((message = session.read()) != null) {
+
+                    session.trace(message);
+
+                    final URI uri = URI.create(message);
+
+                    if (END_LIST.equals(uri)) {
+
+                        if (session.client) {
+
+                            final ArrayList<URI> list = connections();
+
+                            for (URI reported : session.listed) {
+                                list.remove(reported);
+                            }
+
+                            // When they read us on the list
+                            // they'll know it's time to switch to heartbeat
+
+                            list.remove(session.uri);
+                            list.add(END_LIST);
+
+                            session.write(list);
+
+                            session.state(SelectionKey.OP_WRITE, State.LISTING);
+
+                        } else {
+
+                            // We are a SERVER in this relationship, so we will have already
+                            // listed our known peers by this point.  From here we switch to
+                            // heartbeating
+
+                            // heartbeat time
+                            if (session.hangup) {
+                                session.state(0, State.CLOSED);
+                                session.trace("hangup");
+                                hangup(key);
+
+                            } else {
+
+                                session.trace("DONE READING");
+
+                                session.state(SelectionKey.OP_READ, State.HEARTBEAT);
+
+                            }
+
+                        }
+
+                        break;
+
+                    } else {
+
+                        session.listed.add(uri);
+
+                        try {
+                            connect(uri);
+                        } catch (Exception e) {
+                            println("connect failed " + uri + " - " + e.getMessage());
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+            }
+            break;
+
+            case HEARTBEAT: { // read
+
+                String message = null;
+                while ((message = session.read()) != null) {
+                    session.trace(message);
+                    tracker.processData(message);
+                }
+            }
+            break;
+        }
+    }
+
+    private void doConnect(SelectionKey key) throws IOException {
+        // we are a client
+
+        final Session session = (Session) key.attachment();
+        session.channel.finishConnect();
+        session.trace("connected");
+
+        // when you are a client, first say high to everyone
+        // before accepting data
+
+        // once a server reads our address, it will send it's
+        // full list of known addresses, followed by the "end"
+        // address to signal that it is done.
+
+        // we will then send our full list of known addresses,
+        // followed by the "end" address to signal we are done.
+
+        // Afterward the server will only pulls its heartbeat
+
+        // separately, we will initiate connections to everyone
+        // in the list who we have not yet seen.
+
+        // WRITE our GREETING
+        session.write(me);
+
+        session.state(SelectionKey.OP_WRITE, State.GREETING);
+    }
+
+    private void doAccept(SelectionKey key) throws IOException {
+        // we are a server
+
+        // when you are a server, we must first listen for the
+        // address of the client before sending data.
+
+        // once they send us their address, we will send our
+        // full list of known addresses, followed by the "end"
+        // address to signal that we are done.
+
+        // Afterward we will only pulls our heartbeat
+
+        final ServerSocketChannel server = (ServerSocketChannel) key.channel();
+        final SocketChannel client = server.accept();
+        final InetSocketAddress address = (InetSocketAddress) client.socket().getRemoteSocketAddress();
+
+        client.configureBlocking(false);
+
+        final Session session = new Session(client, address, null);
+        session.trace("accept");
+        session.state(SelectionKey.OP_READ, State.GREETING);
+    }
+
     private ArrayList<URI> connections() {
         synchronized (connect) {
-            ArrayList<URI> list = new ArrayList<URI>(connections.keySet());
+            final ArrayList<URI> list = new ArrayList<URI>(connections.keySet());
             list.addAll(connect);
             return list;
         }
     }
 
     private void close(SelectionKey key) {
-        Session session = (Session) key.attachment();
+        final Session session = (Session) key.attachment();
 
         session.state(0, State.CLOSED);
 
@@ -675,7 +731,7 @@ public class MultipointServer {
                 // by us.  We will both have detected this situation
                 // and know it needs fixing.  Only one of us can hangup
 
-                Session[] sessions = {session, duplicate};
+                final Session[] sessions = {session, duplicate};
                 Arrays.sort(sessions, new Comparator<Session>() {
                     // Goal: Keep the connection with the lowest port number
                     ///
@@ -700,13 +756,13 @@ public class MultipointServer {
                     }
 
                     private int server(Session a) {
-                        Socket socket = a.channel.socket();
-                        return a.client? socket.getPort(): socket.getLocalPort();
+                        final Socket socket = a.channel.socket();
+                        return a.client ? socket.getPort() : socket.getLocalPort();
                     }
 
                     private int client(Session a) {
-                        Socket socket = a.channel.socket();
-                        return !a.client? socket.getPort(): socket.getLocalPort();
+                        final Socket socket = a.channel.socket();
+                        return !a.client ? socket.getPort() : socket.getLocalPort();
                     }
                 });
 
@@ -724,8 +780,139 @@ public class MultipointServer {
     }
 
     private void println(String s) {
-//        if (s.matches(".*(Listening|DONE|KEEP|KILL)")) {
+//        if (debug && s.matches(".*(Listening|DONE|KEEP|KILL)")) {
 //            System.out.format("%1$tH:%1$tM:%1$tS.%1$tL - %2$s\n", System.currentTimeMillis(), s);
 //        }
+    }
+
+    @Override
+    public String toString() {
+        return "MultipointServer{" +
+                "name='" + name + '\'' +
+                ", me=" + me +
+                '}';
+    }
+
+    private static String randomColor() {
+        String[] colors = {
+                "almond",
+                "amber",
+                "amethyst",
+                "apple",
+                "apricot",
+                "aqua",
+                "aquamarine",
+                "ash",
+                "azure",
+                "banana",
+                "beige",
+                "black",
+                "blue",
+                "brick",
+                "bronze",
+                "brown",
+                "burgundy",
+                "carrot",
+                "charcoal",
+                "cherry",
+                "chestnut",
+                "chocolate",
+                "chrome",
+                "cinnamon",
+                "citrine",
+                "cobalt",
+                "copper",
+                "coral",
+                "cornflower",
+                "cotton",
+                "cream",
+                "crimson",
+                "cyan",
+                "ebony",
+                "emerald",
+                "forest",
+                "fuchsia",
+                "ginger",
+                "gold",
+                "goldenrod",
+                "gray",
+                "green",
+                "grey",
+                "indigo",
+                "ivory",
+                "jade",
+                "jasmine",
+                "khaki",
+                "lava",
+                "lavender",
+                "lemon",
+                "lilac",
+                "lime",
+                "macaroni",
+                "magenta",
+                "magnolia",
+                "mahogany",
+                "malachite",
+                "mango",
+                "maroon",
+                "mauve",
+                "mint",
+                "moonstone",
+                "navy",
+                "ocean",
+                "olive",
+                "onyx",
+                "orange",
+                "orchid",
+                "papaya",
+                "peach",
+                "pear",
+                "pearl",
+                "periwinkle",
+                "pine",
+                "pink",
+                "pistachio",
+                "platinum",
+                "plum",
+                "prune",
+                "pumpkin",
+                "purple",
+                "quartz",
+                "raspberry",
+                "red",
+                "rose",
+                "rosewood",
+                "ruby",
+                "salmon",
+                "sapphire",
+                "scarlet",
+                "sienna",
+                "silver",
+                "slate",
+                "strawberry",
+                "tan",
+                "tangerine",
+                "taupe",
+                "teal",
+                "titanium",
+                "topaz",
+                "turquoise",
+                "umber",
+                "vanilla",
+                "violet",
+                "watermelon",
+                "white",
+                "yellow"
+        };
+
+        final Random random = new Random();
+        long l = random.nextLong();
+
+        if (l < 0) l *= -1;
+
+        final long index = l % colors.length;
+        final String s = colors[(int) index];
+
+        return s;
     }
 }

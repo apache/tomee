@@ -53,6 +53,16 @@ public class MultipointDiscoveryAgent implements DiscoveryAgent, ServerService, 
 
     private Tracker tracker;
     private MultipointServer multipointServer;
+    private boolean debug;
+    private String name;
+
+    public MultipointDiscoveryAgent() {
+    }
+
+    public MultipointDiscoveryAgent(boolean debug, String name) {
+        this.debug = debug;
+        this.name = name;
+    }
 
     public void init(Properties props) {
 
@@ -73,6 +83,7 @@ public class MultipointDiscoveryAgent implements DiscoveryAgent, ServerService, 
         builder.setReconnectDelay(options.get("reconnect_delay", builder.getReconnectDelay()));
         builder.setExponentialBackoff(options.get("exponential_backoff", builder.getExponentialBackoff()));
         builder.setMaxReconnectAttempts(options.get("max_reconnect_attempts", builder.getMaxReconnectAttempts()));
+        builder.setDebug(debug);
 
         tracker = builder.build();
     }
@@ -121,7 +132,7 @@ public class MultipointDiscoveryAgent implements DiscoveryAgent, ServerService, 
         try {
             if (running.compareAndSet(false, true)) {
 
-                multipointServer = new MultipointServer(host, port, tracker).start();
+                multipointServer = new MultipointServer(host, port, tracker, name, debug).start();
 
                 this.port = multipointServer.getPort();
                 
