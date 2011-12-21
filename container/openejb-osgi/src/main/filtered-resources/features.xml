@@ -29,8 +29,8 @@
     <bundle>mvn:commons-dbcp/commons-dbcp/${commons-dbcp.version}</bundle>
     <bundle>mvn:commons-collections/commons-collections/${commons-collections.version}</bundle>
     <bundle>mvn:commons-codec/commons-codec/${commons-codec.version}</bundle>
-    <bundle>wrap:mvn:commons-fileupload/commons-fileupload/${commons-fileupload.version}</bundle>
-    <bundle>wrap:mvn:commons-discovery/commons-discovery/${commons-discovery.version}</bundle>
+    <bundle>mvn:commons-fileupload/commons-fileupload/${commons-fileupload.version}</bundle>
+    <bundle>mvn:commons-discovery/commons-discovery/${commons-discovery.version}</bundle>
     <bundle>mvn:commons-lang/commons-lang/${commons-lang.version}</bundle>
     <bundle>mvn:commons-io/commons-io/${commons-io.version}</bundle>
   </feature>
