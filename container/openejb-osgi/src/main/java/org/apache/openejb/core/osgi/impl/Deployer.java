@@ -65,6 +65,13 @@ public class Deployer implements BundleListener {
             case BundleEvent.STOPPED:
                 undeploy(event.getBundle());
                 break;
+            case BundleEvent.UNINSTALLED:
+                undeploy(event.getBundle());
+                break;
+            case BundleEvent.UPDATED:
+                undeploy(event.getBundle());
+                deploy(event.getBundle());
+                break;
         }
     }
 
