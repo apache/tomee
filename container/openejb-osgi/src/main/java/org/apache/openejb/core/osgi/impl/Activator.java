@@ -53,6 +53,7 @@ public class Activator implements BundleActivator {
         // default, but to remember that the setting exists
         env.setProperty("openejb.loader", "context");
         env.setProperty("openejb.deployments.classpath", "false");
+        env.setProperty("openejb.nobanner", "false"); // is this property really inverted?
 
         SystemInstance.init(env);
         // OptionsLog.install();
