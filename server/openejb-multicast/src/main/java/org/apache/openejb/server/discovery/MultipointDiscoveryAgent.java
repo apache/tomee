@@ -53,7 +53,7 @@ public class MultipointDiscoveryAgent implements DiscoveryAgent, ServerService, 
 
     private Tracker tracker;
     private MultipointServer multipointServer;
-    private boolean debug;
+    private boolean debug = true;
     private String name;
 
     public MultipointDiscoveryAgent() {

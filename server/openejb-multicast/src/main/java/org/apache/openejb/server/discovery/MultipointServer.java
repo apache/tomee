@@ -71,7 +71,7 @@ public class MultipointServer {
 
     private final LinkedList<URI> connect = new LinkedList<URI>();
     private final Map<URI, Session> connections = new HashMap<URI, Session>();
-    private boolean debug = false;
+    private boolean debug = true;
 
     public MultipointServer(int port, Tracker tracker) throws IOException {
         this("localhost", port, tracker);
@@ -82,7 +82,7 @@ public class MultipointServer {
     }
 
     public MultipointServer(String host, int port, Tracker tracker, String name) throws IOException {
-        this(host, port, tracker, name, false);
+        this(host, port, tracker, name, true);
     }
 
     public MultipointServer(String host, int port, Tracker tracker, String name, boolean debug) throws IOException {
