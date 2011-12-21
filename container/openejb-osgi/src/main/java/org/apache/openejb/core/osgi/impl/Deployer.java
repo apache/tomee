@@ -79,12 +79,15 @@ public class Deployer implements BundleListener {
                     // equinox? found in aries
                     File bundleDump = bundle.getBundleContext().getDataFile(bundle.getSymbolicName() + "/" + bundle.getVersion() + "/");
                     // TODO: what should happen if there is multiple versions?
-                    if (!bundleDump.exists()) { // felix. TODO: maybe find something better
+                    if (!bundleDump.exists() && bundle.getBundleContext().getDataFile("") != null) { // felix. TODO: maybe find something better
                         bundleDump = new File(bundle.getBundleContext().getDataFile("").getParentFile(), "version0.0/bundle.jar");
-                        if (!bundleDump.exists()) {
-                            LOGGER.warn("can't find bundle {}", bundle.getBundleId());
-                        }
                     }
+
+                    if (!bundleDump.exists()) {
+                        LOGGER.warn("can't find bundle {}", bundle.getBundleId());
+                        return;
+                    }
+
                     LOGGER.info("looking bundle {} in {}", bundle.getBundleId(), bundleDump);
                     final AppModule appModule = new DeploymentLoader().load(bundleDump);
                     LOGGER.info("deploying bundle #" + bundle.getBundleId() + " as an EJBModule");
