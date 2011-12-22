@@ -13,7 +13,6 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Default;
 import javax.enterprise.inject.spi.AfterBeanDiscovery;
 import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.util.AnnotationLiteral;
@@ -26,7 +25,7 @@ import java.util.Set;
 public class RegisterOSGIServicesExtension implements Extension {
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisterOSGIServicesExtension.class);
 
-    public void afterBeanDiscovery(@Observes final AfterBeanDiscovery abd, final BeanManager bm) {
+    public void afterBeanDiscovery(@Observes final AfterBeanDiscovery abd) {
         final Bundle[] bundles = OpenEJBBundleContextHolder.get().getBundles();
         for (Bundle bundle : bundles) {
             final ServiceReference[] services = bundle.getRegisteredServices();
