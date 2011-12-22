@@ -126,13 +126,13 @@ public class DeploymentLoader implements DeploymentFilterable {
                         JarExtractor.copy(URLs.toFile(baseUrl), tmpFile);
                         tempURL = tmpFile.toURI().toURL();
 
-                        doNotUseClassLoader = ClassLoaderUtil.createClassLoader(tmpFile.getCanonicalPath(), new URL[]{baseUrl}, OpenEJB.class.getClassLoader());
+                        doNotUseClassLoader = ClassLoaderUtil.createClassLoader(tmpFile.getCanonicalPath(), new URL[]{baseUrl}, getOpenEJBClassLoader(baseUrl));
 
                     } catch (Exception e) {
                         throw new OpenEJBException(e);
                     }
                 } else {
-                    doNotUseClassLoader = ClassLoaderUtil.createClassLoader(jarPath, new URL[]{baseUrl}, OpenEJB.class.getClassLoader());
+                    doNotUseClassLoader = ClassLoaderUtil.createClassLoader(jarPath, new URL[]{baseUrl}, getOpenEJBClassLoader(baseUrl));
                 }
 
                 moduleClass = discoverModuleType(tempURL, ClassLoaderUtil.createTempClassLoader(doNotUseClassLoader), true);
@@ -152,7 +152,7 @@ public class DeploymentLoader implements DeploymentFilterable {
             }
 
             if (EjbModule.class.equals(moduleClass)) {
-                ClassLoader classLoader = ClassLoaderUtil.createTempClassLoader(jarPath, new URL[]{baseUrl}, OpenEJB.class.getClassLoader());
+                ClassLoader classLoader = ClassLoaderUtil.createTempClassLoader(jarPath, new URL[]{baseUrl}, getOpenEJBClassLoader(baseUrl));
 
                 AppModule appModule;
                 Class<? extends DeploymentModule> o = EjbModule.class;
@@ -168,7 +168,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
             if (ClientModule.class.equals(moduleClass)) {
                 String jarLocation = URLs.toFilePath(baseUrl);
-                ClientModule clientModule = createClientModule(baseUrl, jarLocation, OpenEJB.class.getClassLoader(), getModuleId(jarFile));
+                ClientModule clientModule = createClientModule(baseUrl, jarLocation, getOpenEJBClassLoader(baseUrl), getModuleId(jarFile));
 
                 // Wrap the resource module with an Application Module
                 return new AppModule(clientModule);
@@ -176,7 +176,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
             if (ConnectorModule.class.equals(moduleClass)) {
                 String jarLocation = URLs.toFilePath(baseUrl);
-                ConnectorModule connectorModule = createConnectorModule(jarLocation, jarLocation, OpenEJB.class.getClassLoader(), getModuleId(jarFile));
+                ConnectorModule connectorModule = createConnectorModule(jarLocation, jarLocation, getOpenEJBClassLoader(baseUrl), getModuleId(jarFile));
 
                 // Wrap the resource module with an Application Module
                 return new AppModule(connectorModule);
@@ -187,8 +187,8 @@ public class DeploymentLoader implements DeploymentFilterable {
 
                 // Standalone Web Module
 
-                AppModule appModule = new AppModule(OpenEJB.class.getClassLoader(), file.getAbsolutePath(), new Application(), true);
-                addWebModule(appModule, baseUrl, OpenEJB.class.getClassLoader(), getContextRoot(), getModuleName());
+                AppModule appModule = new AppModule(getOpenEJBClassLoader(baseUrl), file.getAbsolutePath(), new Application(), true);
+                addWebModule(appModule, baseUrl, getOpenEJBClassLoader(baseUrl), getContextRoot(), getModuleName());
 
                 final Map<String, URL> otherDD;
                 if (Boolean.getBoolean(OPENEJB_READ_ALL_PERSISTENCE_XML)) {
@@ -265,7 +265,7 @@ public class DeploymentLoader implements DeploymentFilterable {
             
             if (PersistenceModule.class.equals(moduleClass)) {
                 String jarLocation = URLs.toFilePath(baseUrl);
-                ClassLoader classLoader = ClassLoaderUtil.createTempClassLoader(jarPath, new URL[]{baseUrl}, OpenEJB.class.getClassLoader());
+                ClassLoader classLoader = ClassLoaderUtil.createTempClassLoader(jarPath, new URL[]{baseUrl}, getOpenEJBClassLoader(baseUrl));
 
                 // wrap the EJB Module with an Application Module
                 AppModule appModule = new AppModule(classLoader, jarLocation);
@@ -296,6 +296,10 @@ public class DeploymentLoader implements DeploymentFilterable {
         }
     }
 
+    protected ClassLoader getOpenEJBClassLoader(final URL url) {
+        return OpenEJB.class.getClassLoader();
+    }
+
     private String getModuleId(File file) {
     	String filename = file.getName();
     	return System.getProperty(filename + ".moduleId");
@@ -312,7 +316,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         URL appUrl = getFileUrl(appDir);
 
         String appId = appDir.getAbsolutePath();
-        ClassLoader tmpClassLoader = ClassLoaderUtil.createTempClassLoader(appId, new URL[]{appUrl}, OpenEJB.class.getClassLoader());
+        ClassLoader tmpClassLoader = ClassLoaderUtil.createTempClassLoader(appId, new URL[]{appUrl}, getOpenEJBClassLoader(appUrl));
 
         ResourceFinder finder = new ResourceFinder("", tmpClassLoader, appUrl);
         Map<String, URL> appDescriptors = getDescriptors(finder);
@@ -450,7 +454,7 @@ public class DeploymentLoader implements DeploymentFilterable {
             classPath.addAll(rarLibs.values());
             classPath.addAll(extraLibs);
             URL[] urls = classPath.toArray(new URL[classPath.size()]);
-            ClassLoader appClassLoader = ClassLoaderUtil.createTempClassLoader(appId, urls, OpenEJB.class.getClassLoader());
+            ClassLoader appClassLoader = ClassLoaderUtil.createTempClassLoader(appId, urls, getOpenEJBClassLoader(appUrl));
 
             //
             // Create the AppModule and all nested module objects

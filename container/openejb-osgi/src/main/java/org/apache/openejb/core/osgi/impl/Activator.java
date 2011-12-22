@@ -107,7 +107,7 @@ public class Activator implements BundleActivator {
     }
 
     public void stop(BundleContext context) throws Exception {
-        LOGGER.info("Stopping OpenEJB; openejb.isInitialized(): " + openejb.isInitialized());
+        LOGGER.info("Stopping OpenEJB");
 
         try {
             invoke(serviceManager, "stop");
@@ -116,7 +116,8 @@ public class Activator implements BundleActivator {
         }
 
         openejb = null;
-        OpenEJB.destroy(); // todo: should it be static?
+        SystemInstance.reset();
+        OpenEJB.destroy();
     }
 
     private static void invoke(Object serviceManager, String name) throws OpenEJBException, InvocationTargetException, IllegalAccessException {
