@@ -68,7 +68,13 @@ public class EjbServer implements org.apache.openejb.server.ServerService, org.a
 
     public void service(InputStream inputStream, OutputStream outputStream) throws ServiceException, IOException {
         ServerFederation.setApplicationServer(server);
-        server.service(inputStream, outputStream);
+        final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+        try {
+            server.service(inputStream, outputStream);
+        } finally {
+            Thread.currentThread().setContextClassLoader(oldCl);
+        }
     }
 
     public String getIP() {
