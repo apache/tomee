@@ -112,7 +112,7 @@ public class Deployer implements BundleListener {
                     }
 
                     LOGGER.info("looking bundle {} in {}", bundle.getBundleId(), bundleDump);
-                    final AppModule appModule = new DeploymentLoader().load(bundleDump);
+                    final AppModule appModule = new OSGiDeploymentLoader(bundle).load(bundleDump);
                     LOGGER.info("deploying bundle #" + bundle.getBundleId() + " as an EJBModule");
 
                     final ConfigurationFactory configurationFactory = new ConfigurationFactory();
@@ -286,6 +286,12 @@ public class Deployer implements BundleListener {
             try {
                 return this.backingBundle.loadClass(name);
             } catch (ClassNotFoundException cnfe) {
+                if (isJdbcDriver(name) || isJPAProvider(name)) {
+                    final Class<?> forced = forceLoadClass(name);
+                    if (forced != null) {
+                        return forced;
+                    }
+                }
                 throw new ClassNotFoundException(name + " not found from bundle [" + backingBundle.getSymbolicName() + "]", cnfe);
             } catch (NoClassDefFoundError ncdfe) {
                 NoClassDefFoundError e = new NoClassDefFoundError(name + " not found from bundle [" + backingBundle + "]");
@@ -329,5 +335,55 @@ public class Deployer implements BundleListener {
         public String toString() {
             return "OSGIClassLoader for [" + backingBundle + "]";
         }
+    }
+
+    public class OSGiDeploymentLoader extends DeploymentLoader {
+        private final Bundle bundle;
+
+        public OSGiDeploymentLoader(Bundle bdl) {
+            bundle = bdl;
+        }
+
+        @Override protected ClassLoader getOpenEJBClassLoader(URL url) {
+            return new OSGIClassLoader(bundle, OpenEJBBundleContextHolder.get().getBundle());
+        }
+    }
+
+    private static Class<?> forceLoadClass(String name) {
+        final Bundle[] bundles = OpenEJBBundleContextHolder.get().getBundles();
+        for (Bundle bundle : bundles) {
+            try {
+                return bundle.loadClass(name);
+            } catch (ClassNotFoundException e) {
+                // ignored
+            }
+        }
+        return null;
+    }
+
+    private static URL forceLoadResource(String name) {
+        final Bundle[] bundles = OpenEJBBundleContextHolder.get().getBundles();
+        for (Bundle bundle : bundles) {
+            URL url = bundle.getResource(name);
+            if (url != null) {
+                return url;
+            }
+        }
+        return null;
+    }
+
+    private static String className(final String name) {
+        return name.replace('/', '.');
+    }
+
+    private static boolean isJdbcDriver(final String rawName) {
+        final String name = className(rawName);
+        return name.startsWith("org.hsqldb") || name.startsWith("com.mysql") || name.startsWith("com.h2") || name.startsWith("oracle.jdbc");
+    }
+
+    private static boolean isJPAProvider(String rawName) {
+        final String name = className(rawName);
+        return name.startsWith("org.apache.openjpa") || name.startsWith("serp.") // openjpa && its dep
+                || name.startsWith("org.hibernate") || name.startsWith("oracle.toplink") || name.startsWith("org.eclipse.persistence.jpa");
     }
 }
