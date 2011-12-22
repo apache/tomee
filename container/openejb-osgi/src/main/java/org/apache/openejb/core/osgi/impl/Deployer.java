@@ -42,6 +42,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -120,7 +121,7 @@ public class Deployer implements BundleListener {
                     registerService(bundle, appContext);
                 } catch (UnknownModuleTypeException unknowException) {
                     LOGGER.info("bundle #" + bundle.getBundleId() + " is not an EJBModule");
-                } catch(Exception ex) {
+                } catch (Exception ex) {
                     LOGGER.error("can't deploy bundle #" + bundle.getBundleId(), ex);
                 }
             } catch (Exception ex1) {
@@ -168,8 +169,11 @@ public class Deployer implements BundleListener {
         if (appContexts.containsKey(bundle)) {
             try {
                 SystemInstance.get().getComponent(Assembler.class).destroyApplication(appContexts.remove(bundle));
+
+            } catch (IllegalStateException ise) {
+                LOGGER.error("Can't undeploy bundle #{}", bundle.getBundleId());
             } catch (UndeployException e) {
-                LOGGER.error("can't undeployer the bundle", e);
+                LOGGER.error("Can't undeploy bundle #{}", bundle.getBundleId(), e);
             }
         }
 
@@ -179,7 +183,7 @@ public class Deployer implements BundleListener {
     /**
      * Register OSGi Service for EJB so calling the service will actually call the EJB
      *
-     * @param bundle the deployed bundle
+     * @param bundle     the deployed bundle
      * @param appContext the appcontext to search EJBs
      */
     private void registerService(Bundle bundle, AppContext appContext) {
@@ -188,16 +192,16 @@ public class Deployer implements BundleListener {
         for (BeanContext beanContext : appContext.getBeanContexts()) {
             try {
                 if (beanContext.getBusinessRemoteInterface() != null) {
-                    LOGGER.error("registering: {}", beanContext.getEjbName());
+                    LOGGER.info("registering remote bean: {}", beanContext.getEjbName());
                     registerService(beanContext, context, beanContext.getBusinessRemoteInterfaces());
                 }
                 if (beanContext.getBusinessLocalInterface() != null) {
-                    // don't register it since it should only be used in the bundle itself
-                    // registerService(beanContext, context, beanContext.getBusinessLocalInterfaces());
+                    LOGGER.info("registering local bean: {}", beanContext.getEjbName());
+                    registerService(beanContext, context, beanContext.getBusinessLocalInterfaces());
                 }
                 if (beanContext.isLocalbean()) {
-                    // don't register it since it should only be used in the bundle itself
-                    // registerService(beanContext, context, Arrays.asList(beanContext.getBusinessLocalBeanInterface()));
+                    LOGGER.info("registering local view bean: {}", beanContext.getEjbName());
+                    registerService(beanContext, context, Arrays.asList(beanContext.getBusinessLocalBeanInterface()));
                 }
             } catch (Exception e) {
                 LOGGER.error("[Deployer] can't register: {}", beanContext.getEjbName());
