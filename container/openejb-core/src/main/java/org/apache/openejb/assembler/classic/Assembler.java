@@ -979,7 +979,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         return deployments;
     }
 
-    public void destroy() {
+    public synchronized void destroy() {
 
         try {
             EjbTimerServiceImpl.shutdown();
@@ -1041,7 +1041,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         SystemInstance.reset();
     }
 
-    public void destroyApplication(String filePath) throws UndeployException, NoSuchApplicationException {
+    public synchronized void destroyApplication(String filePath) throws UndeployException, NoSuchApplicationException {
         AppInfo appInfo = deployedApplications.remove(filePath);
         if (appInfo == null) {
             throw new NoSuchApplicationException(filePath);
@@ -1049,7 +1049,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         destroyApplication(appInfo);
     }
 
-    public void destroyApplication(AppContext appContext) throws UndeployException {
+    public synchronized void destroyApplication(AppContext appContext) throws UndeployException {
         AppInfo appInfo = deployedApplications.remove(appContext.getId());
         if (appInfo == null) {
             throw new IllegalStateException(String.format("Cannot find AppInfo for app: %s", appContext.getId()));
@@ -1057,7 +1057,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         destroyApplication(appInfo);
     }
 
-    public void destroyApplication(AppInfo appInfo) throws UndeployException {
+    public synchronized void destroyApplication(AppInfo appInfo) throws UndeployException {
         deployedApplications.remove(appInfo.path);
         logger.info("destroyApplication.start", appInfo.path);
 
