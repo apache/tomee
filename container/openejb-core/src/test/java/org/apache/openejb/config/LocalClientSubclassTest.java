@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.config;
 
-import org.apache.openejb.client.LocalInitialContextFactory;
+import org.apache.openejb.localclient.LocalInitialContextFactory;
 
 import javax.naming.InitialContext;
 import java.util.Properties;

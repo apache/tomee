@@ -29,7 +29,7 @@ public class HelloTest extends TestCase {
 
     public void test() throws Exception {
         Properties properties = new Properties();
-        properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
+        properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.localclient.LocalInitialContextFactory");
         InitialContext initialContext = new InitialContext(properties);
 
         HelloEjbLocalHome localHome = (HelloEjbLocalHome) initialContext.lookup("MyHello");

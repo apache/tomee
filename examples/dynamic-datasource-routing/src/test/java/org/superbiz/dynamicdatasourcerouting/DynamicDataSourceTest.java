@@ -16,7 +16,7 @@
  */
 package org.superbiz.dynamicdatasourcerouting;
 
-import org.apache.openejb.client.LocalInitialContextFactory;
+import org.apache.openejb.localclient.LocalInitialContextFactory;
 import org.apache.openejb.resource.jdbc.Router;
 import org.junit.Test;
 

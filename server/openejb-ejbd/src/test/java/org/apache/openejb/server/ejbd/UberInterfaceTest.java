@@ -99,7 +99,7 @@ public class UberInterfaceTest extends TestCase {
 
         { // local invoke
             Properties props = new Properties();
-            props.put("java.naming.factory.initial", "org.apache.openejb.client.LocalInitialContextFactory");
+            props.put("java.naming.factory.initial", "org.apache.openejb.localclient.LocalInitialContextFactory");
             Context context = new InitialContext(props);
 
             Everything local = (Everything) context.lookup("SuperBeanLocal");

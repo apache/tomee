@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.client;
+package org.apache.openejb.localclient;
 
 import org.apache.openejb.loader.OpenEJBInstance;
 import org.apache.openejb.loader.SystemInstance;
@@ -79,7 +79,7 @@ public class LocalInitialContextFactory implements javax.naming.spi.InitialConte
         try {
             ClassLoader cl = SystemInstance.get().getClassLoader();
 
-            Class localInitialContext = Class.forName("org.apache.openejb.client.LocalInitialContext", true, cl);
+            Class localInitialContext = Class.forName("org.apache.openejb.localclient.LocalInitialContext", true, cl);
 
             Constructor constructor = localInitialContext.getConstructor(Hashtable.class, LocalInitialContextFactory.class);
             context = (Context) constructor.newInstance(env, this);

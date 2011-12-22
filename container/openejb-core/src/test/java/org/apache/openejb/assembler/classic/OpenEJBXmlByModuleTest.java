@@ -19,7 +19,7 @@ package org.apache.openejb.assembler.classic;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.api.LocalClient;
-import org.apache.openejb.client.LocalInitialContextFactory;
+import org.apache.openejb.localclient.LocalInitialContextFactory;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.EjbModule;

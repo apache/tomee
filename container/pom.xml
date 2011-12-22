@@ -38,5 +38,6 @@
     <module>openejb-junit</module>
     <module>openejb-core-hibernate</module>
     <module>openejb-jsf</module>
+    <module>openejb-core-client</module>
   </modules>
 </project>

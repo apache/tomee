@@ -30,7 +30,7 @@ public class MoviesTest extends TestCase {
 
     public void test() throws Exception {
         Properties p = new Properties();
-        p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
+        p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.localclient.LocalInitialContextFactory");
 
         p.put("openejb.deployments.classpath.ear", "true");
 

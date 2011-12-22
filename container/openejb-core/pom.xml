@@ -146,6 +146,7 @@
       org.apache.openejb.jee.sun;resolution:=optional;version="[4.0,5)",
       org.apache.openejb.jee.wls;version="[4.0,5)",
       org.apache.openejb.loader;version="[4.0,5)",
+      org.apache.openejb.client;bundle-version="[4.0,5.0)";resolution:=optional,
       org.apache.openjpa.event;resolution:=optional;version="[2.1,3)",
       org.apache.openjpa.persistence;resolution:=optional;version="[2.1,3)",
       org.apache.webbeans.annotation;version="[1.1,2)",
@@ -214,9 +215,6 @@
       org.apache.openejb*;version=${openejb.osgi.export.version},
       org.apache.openejb;version=${openejb.osgi.export.version}
     </openejb.osgi.export>
-    <openejb.osgi.require>
-      org.apache.openejb.client;bundle-version="[4.0,5.0)";resolution:=optional
-    </openejb.osgi.require>
   </properties>
   <build>
     <resources>

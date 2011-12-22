@@ -45,7 +45,7 @@ import org.apache.openejb.assembler.classic.ResourceInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
-import org.apache.openejb.client.LocalInitialContextFactory;
+import org.apache.openejb.localclient.LocalInitialContextFactory;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.EjbModule;

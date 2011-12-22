@@ -27,7 +27,7 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
-import org.apache.openejb.client.LocalInitialContextFactory;
+import org.apache.openejb.localclient.LocalInitialContextFactory;
 
 import javax.ejb.Local;
 import javax.ejb.Remote;
