@@ -12,12 +12,10 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Default;
 import javax.enterprise.inject.spi.AfterBeanDiscovery;
-import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.InjectionPoint;
-import javax.enterprise.inject.spi.InjectionTarget;
 import javax.enterprise.util.AnnotationLiteral;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
@@ -35,9 +33,7 @@ public class RegisterOSGIServicesExtension implements Extension {
             if (services != null) {
                 for (ServiceReference service  : services) {
                     final Class<?> clazz = serviceClass(service);
-                    final AnnotatedType<?> at = bm.createAnnotatedType(clazz);
-                    final InjectionTarget<?> it = bm.createInjectionTarget(at);
-                    abd.addBean(new OSGiServiceBean<Object>((InjectionTarget<Object>) it, service));
+                    abd.addBean(new OSGiServiceBean<Object>(service));
                     LOGGER.debug("added service {} as a CDI Application scoped bean", clazz.getName());
                 }
             }
@@ -50,25 +46,19 @@ public class RegisterOSGIServicesExtension implements Extension {
 
     public static class OSGiServiceBean<T> implements Bean<T> {
         private final ServiceReference service;
-        private final InjectionTarget<T> injectiontarget;
 
-        public OSGiServiceBean(final InjectionTarget<T> it, final ServiceReference srv) {
-            injectiontarget = it;
+        public OSGiServiceBean(final ServiceReference srv) {
             service = srv;
         }
 
         @Override
         public T create(CreationalContext<T> ctx) {
-            final T instance = (T) service.getBundle().getBundleContext().getService(service);
-            injectiontarget.inject(instance, ctx);
-            injectiontarget.postConstruct(instance);
-            return instance;
+            return (T) service.getBundle().getBundleContext().getService(service);
         }
 
         @Override
         public void destroy(T instance, CreationalContext<T> ctx) {
-            injectiontarget.preDestroy(instance);
-            ctx.release();
+            // no-op
         }
 
         @Override
@@ -109,7 +99,7 @@ public class RegisterOSGIServicesExtension implements Extension {
 
         @Override
         public Set<InjectionPoint> getInjectionPoints() {
-            return injectiontarget.getInjectionPoints();
+            return Collections.emptySet();
         }
 
         @Override
