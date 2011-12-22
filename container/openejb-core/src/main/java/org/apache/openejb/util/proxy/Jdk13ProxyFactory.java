@@ -16,12 +16,12 @@
  */
 package org.apache.openejb.util.proxy;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Proxy;
-import java.util.Properties;
-
 import org.apache.openejb.OpenEJBException;
+
+import java.lang.reflect.Proxy;
+import java.util.LinkedHashSet;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * @org.apache.xbean.XBean 
@@ -85,9 +85,51 @@ public class Jdk13ProxyFactory implements ProxyFactory {
                     return Proxy.newProxyInstance(tccl, interfaces, handler);
                 }
             } catch (ClassNotFoundException e1) {
-                throw e;
+                // maybe all interfaces are not in the same classloader (OSGi)
+                // trying to reconciliate it here
+                ClassLoader reconciliatedCl = reconciliate(interfaces);
+                Class homeClass;
+                try {
+                    homeClass = reconciliatedCl.loadClass(interfaces[0].getName());
+                    if (homeClass == interfaces[0]) {
+                        return Proxy.newProxyInstance(reconciliatedCl, interfaces, handler);
+                    }
+                } catch (ClassNotFoundException e2) {
+                    throw e;
+                }
             }
             throw e;
+        }
+    }
+
+    private static ClassLoader reconciliate(Class[] interfaces) {
+        Set<ClassLoader> classloaders = new LinkedHashSet<ClassLoader>();
+        for (Class<?> clazz : interfaces) {
+            classloaders.add(clazz.getClassLoader());
+        }
+        return new MultipleClassLoadersClassLoader(classloaders.toArray(new ClassLoader[classloaders.size()]));
+    }
+
+    private static class MultipleClassLoadersClassLoader extends ClassLoader {
+        private ClassLoader[] delegatingClassloaders;
+
+        public MultipleClassLoadersClassLoader(final ClassLoader[] classLoaders) {
+            super(classLoaders[0]);
+            delegatingClassloaders = classLoaders;
+        }
+
+        @Override public Class<?> loadClass(String name) throws ClassNotFoundException {
+            ClassNotFoundException ex = null;
+            for (ClassLoader cl : delegatingClassloaders) {
+                try {
+                    return cl.loadClass(name);
+                } catch (ClassNotFoundException cnfe) {
+                    if (ex == null) {
+                        ex = cnfe;
+                    }
+                }
+            }
+            throw ex;
         }
     }
 }
