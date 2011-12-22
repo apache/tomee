@@ -18,6 +18,7 @@ package org.apache.openejb.core.osgi.impl;
 
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.UndeployException;
 import org.apache.openejb.assembler.classic.AppInfo;
@@ -55,8 +56,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Deployer implements BundleListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(Deployer.class);
 
-    private Map<Bundle, List<ServiceRegistration>> registrations = new ConcurrentHashMap<Bundle, List<ServiceRegistration>>();
-    private Map<Bundle, AppContext> appContexts = new ConcurrentHashMap<Bundle, AppContext>();
+    private final Map<Bundle, List<ServiceRegistration>> registrations = new ConcurrentHashMap<Bundle, List<ServiceRegistration>>();
+    private final Map<Bundle, String> paths = new ConcurrentHashMap<Bundle, String>();
 
     private final BundleContext openejbBundleContext;
     private final Activator openejbActivator;
@@ -111,10 +112,10 @@ public class Deployer implements BundleListener {
 
                     final ConfigurationFactory configurationFactory = new ConfigurationFactory();
                     final AppInfo appInfo = configurationFactory.configureApplication(appModule);
+                    paths.put(bundle, appInfo.path);
 
                     final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
                     final AppContext appContext = assembler.createApplication(appInfo);
-                    appContexts.put(bundle, appContext);
                     LOGGER.info("Application deployed: " + appInfo.path);
 
                     registrations.put(bundle, new ArrayList<ServiceRegistration>());
@@ -166,14 +167,15 @@ public class Deployer implements BundleListener {
             registrations.remove(bundle);
         }
 
-        if (appContexts.containsKey(bundle)) {
+        if (paths.containsKey(bundle)) {
             try {
-                SystemInstance.get().getComponent(Assembler.class).destroyApplication(appContexts.remove(bundle));
-
+                SystemInstance.get().getComponent(Assembler.class).destroyApplication(paths.remove(bundle));
             } catch (IllegalStateException ise) {
                 LOGGER.error("Can't undeploy bundle #{}", bundle.getBundleId());
             } catch (UndeployException e) {
                 LOGGER.error("Can't undeploy bundle #{}", bundle.getBundleId(), e);
+            } catch (NoSuchApplicationException e) {
+                LOGGER.error("Can't undeploy non existing bundle #{}", bundle.getBundleId(), e);
             }
         }
 
