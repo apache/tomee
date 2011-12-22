@@ -40,7 +40,7 @@
           <instructions>
             <Import-Package>
               javax.ejb,
-              org.superbiz.osgi,
+              org.superbiz.osgi.calculator,
               org.apache.openejb.client;version="[4.0,5.0)"
             </Import-Package>
             <Include-Resource>${pom.basedir}/src/main/resources</Include-Resource>
