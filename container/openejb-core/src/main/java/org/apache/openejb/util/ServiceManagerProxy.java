@@ -26,7 +26,7 @@ import java.lang.reflect.Method;
  */
 public class ServiceManagerProxy {
 
-    static Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, LocalInitialContext.class);
+    static Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, ServiceManagerProxy.class);
 
     private final Object serviceManager;
     private final Class serviceManagerClass;
