@@ -41,4 +41,8 @@ public class CalculatorBean implements CalculatorLocal, CalculatorRemote {
         return a % b;
     }
 
+    public String sayHello() {
+        return "Hello World!";
+    }
+
 }
