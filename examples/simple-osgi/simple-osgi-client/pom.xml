@@ -38,6 +38,11 @@
         <artifactId>maven-bundle-plugin</artifactId>
         <configuration>
           <instructions>
+            <Import-Package>
+              javax.ejb,
+              org.superbiz.osgi,
+              org.apache.openejb.client;version="[4.0,5.0)"
+            </Import-Package>
             <Include-Resource>${pom.basedir}/src/main/resources</Include-Resource>
           </instructions>
         </configuration>
