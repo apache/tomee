@@ -79,7 +79,7 @@ public class Activator implements BundleActivator {
 
         ServiceTracker serviceManagerTracker = null;
         try {
-            serviceManagerTracker = getServiceManger(context);
+            serviceManagerTracker = getServiceManager(context);
             serviceManager = serviceManagerTracker.getService();
             if (serviceManager == null) {
                 LOGGER.warn("can't find service manager");
@@ -99,7 +99,7 @@ public class Activator implements BundleActivator {
     }
 
 
-    private static ServiceTracker getServiceManger(BundleContext context) throws InterruptedException {
+    private static ServiceTracker getServiceManager(BundleContext context) throws InterruptedException {
         ServiceTracker serviceManagerTracker = new ServiceTracker(context, SERVICE_MANAGER_NAME, null);
         serviceManagerTracker.open();
         serviceManagerTracker.waitForService(TRACKER_TIMEOUT);
