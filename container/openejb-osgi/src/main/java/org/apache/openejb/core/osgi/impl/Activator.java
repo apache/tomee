@@ -47,6 +47,7 @@ public class Activator implements BundleActivator {
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
         openejb = new OpenEJBInstance();
+        OpenEJBBundleContextHolder.set(context);
 
         Properties env = new Properties();
         // env.setProperty("openejb.embedded", "true");
@@ -68,8 +69,7 @@ public class Activator implements BundleActivator {
         // should be registered through openejb-server
         checkServiceManager(context);
 
-        LOGGER.info("Registering OSGified OpenEJB Deployer");
-        context.addBundleListener(new Deployer(this, context));
+        context.addBundleListener(new Deployer(this));
     }
 
     public synchronized void checkServiceManager(BundleContext context) {
