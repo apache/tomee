@@ -28,7 +28,9 @@
   <modules>
     <module>simple-osgi-api</module>
     <module>simple-osgi-core</module>
-    <module>simple-osgi-client</module>
+    <module>simple-osgi-camel-client</module>
+    <module>simple-osgi-remote-client</module>
+    <module>simple-osgi-local-lookup-client</module>
   </modules>
   <name>OpenEJB :: Examples :: Simple OSGi Stateless Pojo</name>
   <properties>
