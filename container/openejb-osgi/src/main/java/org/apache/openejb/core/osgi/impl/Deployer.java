@@ -28,6 +28,7 @@ import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentLoader;
 import org.apache.openejb.config.UnknownModuleTypeException;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
@@ -59,16 +60,14 @@ public class Deployer implements BundleListener {
     private final Map<Bundle, List<ServiceRegistration>> registrations = new ConcurrentHashMap<Bundle, List<ServiceRegistration>>();
     private final Map<Bundle, String> paths = new ConcurrentHashMap<Bundle, String>();
 
-    private final BundleContext openejbBundleContext;
     private final Activator openejbActivator;
 
-    public Deployer(Activator activator, BundleContext context) {
+    public Deployer(Activator activator) {
         openejbActivator = activator;
-        openejbBundleContext = context;
     }
 
     public void bundleChanged(BundleEvent event) {
-        openejbActivator.checkServiceManager(openejbBundleContext);
+        openejbActivator.checkServiceManager(OpenEJBBundleContextHolder.get());
         switch (event.getType()) {
             case BundleEvent.STARTED:
                 deploy(event.getBundle());
@@ -88,7 +87,7 @@ public class Deployer implements BundleListener {
 
     private void deploy(Bundle bundle) {
         final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
-        final ClassLoader osgiCl = new OSGIClassLoader(bundle, openejbBundleContext.getBundle());
+        final ClassLoader osgiCl = new OSGIClassLoader(bundle, OpenEJBBundleContextHolder.get().getBundle());
         Thread.currentThread().setContextClassLoader(osgiCl);
 
         try {
@@ -190,8 +189,12 @@ public class Deployer implements BundleListener {
      */
     private void registerService(Bundle bundle, AppContext appContext) {
         LOGGER.info("Registering remote EJBs as OSGi services");
-        BundleContext context = bundle.getBundleContext();
+        final BundleContext context = bundle.getBundleContext();
         for (BeanContext beanContext : appContext.getBeanContexts()) {
+            if (beanContext.getBeanClass().equals(BeanContext.Comp.class)) {
+                continue;
+            }
+
             try {
                 if (beanContext.getBusinessRemoteInterface() != null) {
                     LOGGER.info("registering remote bean: {}", beanContext.getEjbName());
@@ -215,7 +218,13 @@ public class Deployer implements BundleListener {
         if (!interfaces.isEmpty()) {
             Class<?>[] itfs = interfaces.toArray(new Class<?>[interfaces.size()]);
             try {
-                Object service = Proxy.newProxyInstance(itfs[0].getClassLoader(), itfs, new Handler(beanContext));
+                Object service;
+                if (!beanContext.isLocalbean()) {
+                    service = Proxy.newProxyInstance(itfs[0].getClassLoader(), itfs, new Handler(beanContext));
+                } else {
+                    service = LocalBeanProxyFactory.newProxyInstance(itfs[0].getClassLoader(), itfs[0], new Handler(beanContext));
+                }
+
                 registrations.get(context.getBundle()).add(context.registerService(str(itfs), service, new Properties()));
                 LOGGER.info("EJB registered: {} for interfaces {}", beanContext.getEjbName(), interfaces);
             } catch (IllegalArgumentException iae) {
