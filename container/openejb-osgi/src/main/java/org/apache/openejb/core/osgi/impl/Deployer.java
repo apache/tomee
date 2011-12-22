@@ -114,7 +114,7 @@ public class Deployer implements BundleListener {
                     paths.put(bundle, appInfo.path);
 
                     final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
-                    final AppContext appContext = assembler.createApplication(appInfo);
+                    final AppContext appContext = assembler.createApplication(appInfo, osgiCl);
                     LOGGER.info("Application deployed: " + appInfo.path);
 
                     registrations.put(bundle, new ArrayList<ServiceRegistration>());
