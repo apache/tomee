@@ -59,6 +59,9 @@
         org.osgi.framework,
         org.w3c.dom
       </openejb.osgi.import.pkg>
+      <openejb.osgi.export.pkg>
+        org.apache.openejb*,org.openejb*
+      </openejb.osgi.export.pkg>
   </properties>
   <build>
     <plugins>
