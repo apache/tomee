@@ -79,7 +79,13 @@ public class Deployer implements BundleListener {
                 undeploy(event.getBundle());
                 break;
             case BundleEvent.UPDATED:
-                undeploy(event.getBundle());
+                try {
+                    undeploy(event.getBundle());
+                } catch (NullPointerException npe) {
+                    // can happen when shutting down an OSGi server
+                    // because of all stop events
+                    LOGGER.warn("can't undeploy bundle #{}", event.getBundle().getBundleId());
+                }
                 deploy(event.getBundle());
                 break;
         }
@@ -168,7 +174,10 @@ public class Deployer implements BundleListener {
 
         if (paths.containsKey(bundle)) {
             try {
-                SystemInstance.get().getComponent(Assembler.class).destroyApplication(paths.remove(bundle));
+                Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
+                if (assembler != null) { // openejb stopped before bundles when shuttind down the OSGi container
+                    assembler.destroyApplication(paths.remove(bundle));
+                }
             } catch (IllegalStateException ise) {
                 LOGGER.error("Can't undeploy bundle #{}", bundle.getBundleId());
             } catch (UndeployException e) {
