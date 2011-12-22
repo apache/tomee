@@ -154,7 +154,7 @@ Here we see the outbound resource adapter used in a stateless session bean to sc
 
             if (null == initialContext) {
                 Properties properties = new Properties();
-                properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
+                properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.localclient.LocalInitialContextFactory");
 
                 initialContext = new InitialContext(properties);
             }

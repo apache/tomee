@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.util;
 
-import org.apache.openejb.client.LocalInitialContext;
+import org.apache.openejb.localclient.LocalInitialContext;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

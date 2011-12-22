@@ -89,7 +89,7 @@ Title: Simple Stateless with Descriptor
     
         protected void setUp() throws Exception {
             Properties properties = new Properties();
-            properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
+            properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.localclient.LocalInitialContextFactory");
     
             initialContext = new InitialContext(properties);
         }

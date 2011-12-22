@@ -18,7 +18,7 @@ package org.openejb.client;
 
 /**
  * @version $Revision$ $Date$
- * @deprecated use org.apache.openejb.client.LocalInitialContextFactory
+ * @deprecated use org.apache.openejb.localclient.LocalInitialContextFactory
  */
-public class LocalInitialContextFactory extends org.apache.openejb.client.LocalInitialContextFactory {
+public class LocalInitialContextFactory extends org.apache.openejb.localclient.LocalInitialContextFactory {
 }

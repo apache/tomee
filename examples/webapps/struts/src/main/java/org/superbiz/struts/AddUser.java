@@ -68,7 +68,7 @@ public class AddUser {
             UserService service = null;
             Properties props = new Properties();
             props.put(Context.INITIAL_CONTEXT_FACTORY,
-                    "org.apache.openejb.client.LocalInitialContextFactory");
+                    "org.apache.openejb.localclient.LocalInitialContextFactory");
             Context ctx = new InitialContext(props);
             service = (UserService) ctx.lookup("UserServiceImplLocal");
             service.add(new User(id, firstName, lastName));

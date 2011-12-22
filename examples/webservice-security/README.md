@@ -114,7 +114,7 @@ Title: Webservice Security
     
         protected void setUp() throws Exception {
             Properties properties = new Properties();
-            properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
+            properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.localclient.LocalInitialContextFactory");
             properties.setProperty("openejb.embedded.remotable", "true");
     
             initialContext = new InitialContext(properties);

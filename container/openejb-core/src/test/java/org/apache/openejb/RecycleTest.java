@@ -22,7 +22,7 @@ import javax.naming.InitialContext;
 import javax.naming.Context;
 import java.util.Properties;
 
-import org.apache.openejb.client.LocalInitialContextFactory;
+import org.apache.openejb.localclient.LocalInitialContextFactory;
 
 /**
  * @version $Rev$ $Date$

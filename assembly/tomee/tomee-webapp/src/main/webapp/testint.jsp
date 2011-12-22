@@ -129,7 +129,7 @@ java.util.Properties
         try {
             Properties p = new Properties();
 
-            p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
+            p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.localclient.LocalInitialContextFactory");
             p.put("openejb.loader", "embed");
 
             ctx = new InitialContext(p);
