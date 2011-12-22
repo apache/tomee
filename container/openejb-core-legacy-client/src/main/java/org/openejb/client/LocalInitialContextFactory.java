@@ -17,7 +17,7 @@
 package org.openejb.client;
 
 /**
- * @version $Revision$ $Date$
+ * @version $Revision: 1222119 $ $Date: 2011-12-22 10:23:14 +0100 (jeu. 22 déc. 2011) $
  * @deprecated use org.apache.openejb.localclient.LocalInitialContextFactory
  */
 public class LocalInitialContextFactory extends org.apache.openejb.localclient.LocalInitialContextFactory {
