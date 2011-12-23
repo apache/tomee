@@ -19,7 +19,9 @@ package org.apache.openejb.client.proxy;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Proxy;
+import java.util.LinkedHashSet;
 import java.util.Properties;
+import java.util.Set;
 
 public class Jdk13ProxyFactory implements ProxyFactory {
 
@@ -114,7 +116,47 @@ public class Jdk13ProxyFactory implements ProxyFactory {
         }
 
         Jdk13InvocationHandler handler = new Jdk13InvocationHandler(h);
+        try {
+            return Proxy.newProxyInstance(interfaces[0].getClassLoader(), interfaces, handler);
+        } catch (IllegalArgumentException iae) {
+            final ClassLoader reconciliatedCl = reconciliate(interfaces);
+            try {
+                reconciliatedCl.loadClass(interfaces[0].getName());
+                return Proxy.newProxyInstance(reconciliatedCl, interfaces, handler);
+            } catch (ClassNotFoundException e2) {
+                throw iae;
+            }
+        }
+    }
 
-        return Proxy.newProxyInstance(interfaces[0].getClassLoader(), interfaces, handler);
+    private static ClassLoader reconciliate(Class<?>... interfaces) {
+        final Set<ClassLoader> classloaders = new LinkedHashSet<ClassLoader>();
+        for (Class<?> clazz : interfaces) {
+            classloaders.add(clazz.getClassLoader());
+        }
+        return new MultipleClassLoadersClassLoader(classloaders.toArray(new ClassLoader[classloaders.size()]));
+    }
+
+    private static class MultipleClassLoadersClassLoader extends ClassLoader {
+        private ClassLoader[] delegatingClassloaders;
+
+        public MultipleClassLoadersClassLoader(final ClassLoader[] classLoaders) {
+            super(classLoaders[0]);
+            delegatingClassloaders = classLoaders;
+        }
+
+        @Override public Class<?> loadClass(String name) throws ClassNotFoundException {
+            ClassNotFoundException ex = null;
+            for (ClassLoader cl : delegatingClassloaders) {
+                try {
+                    return cl.loadClass(name);
+                } catch (ClassNotFoundException cnfe) {
+                    if (ex == null) {
+                        ex = cnfe;
+                    }
+                }
+            }
+            throw ex;
+        }
     }
 }
