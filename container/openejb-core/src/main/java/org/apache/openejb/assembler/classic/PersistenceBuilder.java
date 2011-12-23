@@ -25,6 +25,7 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.SharedCacheMode;
@@ -79,6 +80,11 @@ public class PersistenceBuilder {
                     DataSource jtaDataSource = (DataSource) context.lookup(jtaDataSourceId);
                     unitInfo.setJtaDataSource(jtaDataSource);
                 } catch (NamingException e) {
+                    try {
+                        unitInfo.setJtaDataSource((DataSource) new InitialContext().lookup(jtaDataSourceId));
+                    } catch (NamingException ne) {
+                        // ignored: rethrow the previous one
+                    }
                     throw new OpenEJBException("Could not lookup <jta-data-source> '" + jtaDataSourceId + "' for unit '" + unitInfo.getPersistenceUnitName() + "'", e);
                 }
             }
@@ -119,6 +125,11 @@ public class PersistenceBuilder {
                     DataSource nonJtaDataSource = (DataSource) context.lookup(nonJtaDataSourceId);
                     unitInfo.setNonJtaDataSource(nonJtaDataSource);
                 } catch (NamingException e) {
+                    try {
+                        unitInfo.setNonJtaDataSource((DataSource) new InitialContext().lookup(nonJtaDataSourceId));
+                    } catch (NamingException ne) {
+                        // ignored: rethrow the previous one
+                    }
                     throw new OpenEJBException("Could not lookup <non-jta-data-source> '" + nonJtaDataSourceId + "' for unit '" + unitInfo.getPersistenceUnitName() + "'", e);
                 }
             }
