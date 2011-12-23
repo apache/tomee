@@ -73,15 +73,18 @@ public class PersistenceBuilder {
         if (jtaDataSourceId != null) {
             if (!SystemInstance.get().hasProperty("openejb.geronimo")) {
 
+                String initialJndiName = jtaDataSourceId;
                 try {
                     if (!jtaDataSourceId.startsWith("java:openejb/Resource/")
-                            && !jtaDataSourceId.startsWith("openejb/Resource/")) jtaDataSourceId = "openejb/Resource/"+jtaDataSourceId;
+                            && !jtaDataSourceId.startsWith("openejb/Resource/")) {
+                        jtaDataSourceId = "openejb/Resource/"+jtaDataSourceId;
+                    }
 
                     DataSource jtaDataSource = (DataSource) context.lookup(jtaDataSourceId);
                     unitInfo.setJtaDataSource(jtaDataSource);
                 } catch (NamingException e) {
                     try {
-                        unitInfo.setJtaDataSource((DataSource) new InitialContext().lookup(jtaDataSourceId));
+                        unitInfo.setJtaDataSource((DataSource) new InitialContext().lookup(initialJndiName));
                     } catch (NamingException ne) {
                         // ignored: rethrow the previous one
                     }
@@ -119,6 +122,7 @@ public class PersistenceBuilder {
         unitInfo.setNonJtaDataSourceName(nonJtaDataSourceId);
         if (nonJtaDataSourceId != null) {
             if (!SystemInstance.get().hasProperty("openejb.geronimo")) {
+                String initialJndiName = nonJtaDataSourceId;
                 try {
                     if (!nonJtaDataSourceId.startsWith("java:openejb/Resource/")) nonJtaDataSourceId = "java:openejb/Resource/"+nonJtaDataSourceId;
 
@@ -126,7 +130,7 @@ public class PersistenceBuilder {
                     unitInfo.setNonJtaDataSource(nonJtaDataSource);
                 } catch (NamingException e) {
                     try {
-                        unitInfo.setNonJtaDataSource((DataSource) new InitialContext().lookup(nonJtaDataSourceId));
+                        unitInfo.setNonJtaDataSource((DataSource) new InitialContext().lookup(initialJndiName));
                     } catch (NamingException ne) {
                         // ignored: rethrow the previous one
                     }
