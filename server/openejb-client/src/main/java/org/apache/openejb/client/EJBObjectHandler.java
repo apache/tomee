@@ -131,8 +131,15 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
                 interfaces.addAll(ejb.businessClasses);
             }
             interfaces.add(EJBObjectProxy.class);
-            ejbObject = (EJBObjectProxy) ProxyManager.newProxyInstance(interfaces.toArray(new Class[]{}), this);
 
+            ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
+            if (oldCl != getClass().getClassLoader()) {
+                Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+            }
+            ejbObject = (EJBObjectProxy) ProxyManager.newProxyInstance(interfaces.toArray(new Class[interfaces.size()]), this);
+            if (oldCl != getClass().getClassLoader()) {
+                Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+            }
         } catch (IllegalAccessException e) {
 
             e.printStackTrace();

@@ -63,7 +63,17 @@ public class Jdk13ProxyFactory implements ProxyFactory {
      * the specified invocation handler.
      */
     public Object newProxyInstance(Class interfce, org.apache.openejb.util.proxy.InvocationHandler h) throws IllegalArgumentException {
-        return Proxy.newProxyInstance(interfce.getClassLoader(), new Class[]{interfce}, h);
+        try {
+            return Proxy.newProxyInstance(interfce.getClassLoader(), new Class[]{ interfce }, h);
+        } catch (IllegalArgumentException iae) {
+            final ClassLoader reconciliatedCl = reconciliate(interfce);
+            try {
+                reconciliatedCl.loadClass(interfce.getName());
+                return Proxy.newProxyInstance(reconciliatedCl, new Class[]{ interfce }, h);
+            } catch (ClassNotFoundException e2) {
+                throw iae;
+            }
+        }
     }
 
     /*
@@ -102,7 +112,7 @@ public class Jdk13ProxyFactory implements ProxyFactory {
         }
     }
 
-    private static ClassLoader reconciliate(Class[] interfaces) {
+    private static ClassLoader reconciliate(Class<?>... interfaces) {
         Set<ClassLoader> classloaders = new LinkedHashSet<ClassLoader>();
         for (Class<?> clazz : interfaces) {
             classloaders.add(clazz.getClassLoader());

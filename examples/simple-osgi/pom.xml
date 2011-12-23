@@ -32,6 +32,7 @@
     <module>simple-osgi-remote-client</module>
     <module>simple-osgi-local-lookup-client</module>
     <module>simple-osgi-service-injection</module>
+    <module>standard-ejbd-server</module>
   </modules>
   <name>OpenEJB :: Examples :: Simple OSGi Stateless Pojo</name>
   <properties>
@@ -93,6 +94,12 @@
         <artifactId>openejb-core</artifactId>
         <version>4.0.0-beta-2-SNAPSHOT</version>
         <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>org.osgi.core</artifactId>
+        <version>1.0.0</version>
+        <scope>provided</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
