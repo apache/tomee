@@ -30,8 +30,6 @@
   <name>OpenEJB :: Assembly</name>
 
   <modules>
-    <module>openejb-webapp-common</module>
-    <module>tomee</module>
     <module>openejb-standalone</module>
     <module>openejb-lite</module>
     <!-- don't run this just yet, its in progress -->
