@@ -31,6 +31,7 @@
     <module>simple-osgi-camel-client</module>
     <module>simple-osgi-remote-client</module>
     <module>simple-osgi-local-lookup-client</module>
+    <module>simple-osgi-service-injection</module>
   </modules>
   <name>OpenEJB :: Examples :: Simple OSGi Stateless Pojo</name>
   <properties>
