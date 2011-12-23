@@ -49,6 +49,7 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -57,6 +58,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Deployer implements BundleListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(Deployer.class);
+    public static final String META_INF_NAME = "META-INF.";
+    public static final String SERVICES_NAME = "services.";
 
     private final Map<Bundle, List<ServiceRegistration>> registrations = new ConcurrentHashMap<Bundle, List<ServiceRegistration>>();
     private final Map<Bundle, String> paths = new ConcurrentHashMap<Bundle, String>();
@@ -288,7 +291,7 @@ public class Deployer implements BundleListener {
             try {
                 return this.backingBundle.loadClass(name);
             } catch (ClassNotFoundException cnfe) {
-                if (isJdbcDriver(name) || isJPAProvider(name)) {
+                if (isInterestingClass(name)) {
                     final Class<?> forced = forceLoadClass(name);
                     if (forced != null) {
                         return forced;
@@ -307,19 +310,41 @@ public class Deployer implements BundleListener {
             if (url != null) {
                 return url;
             }
-            return backingBundle.getResource(name);
+            url = backingBundle.getResource(name);
+            if (url != null) {
+                return url;
+            }
+            if (isInterestingClass(name)) {
+                return forceLoadResource(name);
+            }
+            return null;
+        }
+
+        public Enumeration<URL> getResources(String name) throws IOException {
+            return findResources(name);
         }
 
         protected Enumeration findResources(String name) throws IOException {
+            Enumeration<URL> urls;
             try {
-                Enumeration<URL> urls = fallbackBundle.getResources(name);
+                urls = fallbackBundle.getResources(name);
                 if (urls != null && urls.hasMoreElements()) {
                     return urls;
                 }
             } catch (IOException ignored) {
                 // no-op
             }
-            return backingBundle.getResources(name);
+            urls = backingBundle.getResources(name);
+            if (urls != null && urls.hasMoreElements()) {
+                return urls;
+            }
+            if (isInterestingClass(name)) {
+                urls = forceLoadResources(name);
+            }
+            if (urls != null && urls.hasMoreElements()) {
+                return urls;
+            }
+            return new EmptyEnumeration<URL>();
         }
 
         public URL getResource(String name) {
@@ -336,6 +361,18 @@ public class Deployer implements BundleListener {
 
         public String toString() {
             return "OSGIClassLoader for [" + backingBundle + "]";
+        }
+    }
+
+    private static class EmptyEnumeration<T> implements Enumeration<T> {
+        @Override
+        public boolean hasMoreElements() {
+            return false;
+        }
+
+        @Override
+        public T nextElement() {
+            throw new NoSuchElementException();
         }
     }
 
@@ -374,18 +411,38 @@ public class Deployer implements BundleListener {
         return null;
     }
 
+    private static Enumeration<URL> forceLoadResources(String name) {
+        final Bundle[] bundles = OpenEJBBundleContextHolder.get().getBundles();
+        for (Bundle bundle : bundles) {
+            Enumeration<URL> url = null;
+            try {
+                url = bundle.getResources(name);
+            } catch (IOException e) {
+                // ignored
+            }
+            if (url != null && url.hasMoreElements()) {
+                return url;
+            }
+        }
+        return null;
+    }
+
     private static String className(final String name) {
         return name.replace('/', '.');
     }
 
-    private static boolean isJdbcDriver(final String rawName) {
+    private static boolean isInterestingClass(final String rawName) {
         final String name = className(rawName);
+        return isJdbcDriver(name) || isJPAProvider(name)
+                || name.contains("org.apache.openejb"); // fallback mainly for META-INF resources
+    }
+
+    private static boolean isJdbcDriver(final String name) {
         return name.startsWith("org.hsqldb") || name.startsWith("com.mysql") || name.startsWith("com.h2") || name.startsWith("oracle.jdbc");
     }
 
-    private static boolean isJPAProvider(String rawName) {
-        final String name = className(rawName);
-        return name.startsWith("org.apache.openjpa") || name.startsWith("serp.") // openjpa && its dep
+    private static boolean isJPAProvider(String name) {
+        return name.contains("openjpa") || name.startsWith("serp.") // openjpa && its dep
                 || name.startsWith("org.hibernate") || name.startsWith("oracle.toplink") || name.startsWith("org.eclipse.persistence.jpa");
     }
 }

@@ -17,10 +17,13 @@
 package org.superbiz.osgi.moviefun;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 @Entity
 public class Movie {
-
+    @Id @GeneratedValue
+    private long id;
     private String director;
     private String title;
     private int year;
@@ -32,6 +35,10 @@ public class Movie {
         this.director = director;
         this.title = title;
         this.year = year;
+    }
+
+    public long getId() {
+        return id;
     }
 
     public String getDirector() {

@@ -22,7 +22,6 @@
     <jta-data-source>movieDatabase</jta-data-source>
     <non-jta-data-source>movieDatabaseUnmanaged</non-jta-data-source>
     <class>org.superbiz.osgi.moviefun.Movie</class>
-
     <properties>
       <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
     </properties>
