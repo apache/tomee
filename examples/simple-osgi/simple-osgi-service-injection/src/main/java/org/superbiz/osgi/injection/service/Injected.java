@@ -1,4 +1,4 @@
-package org.superbiz.osgi.injection.service.Injected;
+package org.superbiz.osgi.injection.service;
 
 import org.osgi.service.startlevel.StartLevel;
 
@@ -9,7 +9,7 @@ import javax.inject.Inject;
 
 @Singleton
 @Startup
-public class PackageAdminLogger {
+public class Injected {
     @Inject
     private StartLevel sl;
 
