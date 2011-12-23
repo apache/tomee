@@ -16,23 +16,30 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
+
+<!-- $Rev: 600338 $ $Date: 2007-12-02 09:08:04 -0800 (Sun, 02 Dec 2007) $ -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
-    <artifactId>openejb</artifactId>
+    <artifactId>tomee</artifactId>
     <groupId>org.apache.openejb</groupId>
     <version>4.0.0-beta-2-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>container</artifactId>
-  <packaging>pom</packaging>
-  <name>OpenEJB :: Container</name>
-  <modules>
-    <module>openejb-api</module>
-    <module>openejb-core</module>
-    <module>openejb-loader</module>
-    <module>openejb-javaagent</module>
-    <module>openejb-jee</module>
-    <module>openejb-junit</module>
-    <module>openejb-jsf</module>
-  </modules>
+  <artifactId>tomee-loader</artifactId>
+  <packaging>jar</packaging>
+  <name>OpenEJB :: TomEE :: Loader</name>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-loader</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat-catalina</artifactId>
+      <version>${tomcat.version}</version>
+    </dependency>
+  </dependencies>
 </project>
+
