@@ -17,8 +17,8 @@
 package org.superbiz.osgi.moviefun;
 
 import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateful;
+import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
@@ -29,21 +29,17 @@ import javax.persistence.Query;
 import java.util.List;
 
 //START SNIPPET: code
-@Stateful
+@Stateless
 public class Movies {
 
-    @PersistenceContext(unitName = "movie-unit", type = PersistenceContextType.TRANSACTION)
+    @PersistenceContext(unitName = "movie-unit")
     private EntityManager entityManager;
 
-    @RolesAllowed({"Employee", "Manager"})
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     @Interceptors(AddInterceptor.class)
     public void addMovie(Movie movie) throws Exception {
         entityManager.persist(movie);
     }
 
-    @RolesAllowed({"Manager"})
-    @TransactionAttribute(TransactionAttributeType.MANDATORY)
     @Interceptors(DeleteInterceptor.class)
     public void deleteMovie(Movie movie) throws Exception {
         entityManager.remove(movie);

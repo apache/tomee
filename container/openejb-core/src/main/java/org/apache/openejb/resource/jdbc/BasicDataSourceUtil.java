@@ -19,9 +19,12 @@ package org.apache.openejb.resource.jdbc;
 import org.apache.commons.dbcp.SQLNestedException;
 import org.apache.xbean.finder.ResourceFinder;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.sql.SQLException;
 import java.util.Map;
-import java.io.IOException;
 
 public final class BasicDataSourceUtil {
     private BasicDataSourceUtil() {
@@ -110,6 +113,18 @@ public final class BasicDataSourceUtil {
         }
         pwdCipher = impls.get(passwordCipherClass);
 
+        //
+        final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+        final URL url = tccl.getResource("META-INF/org.apache.openejb.resource.jdbc.PasswordCipher/" + passwordCipherClass);
+        if (url != null) {
+            try {
+                final String clazz = new BufferedReader(new InputStreamReader(url.openStream())).readLine().trim();
+                pwdCipher = tccl.loadClass(clazz).asSubclass(PasswordCipher.class);
+            } catch (Exception e) {
+                // ignored
+            }
+        }
+
         // if not found in META-INF/org.apache.openejb.resource.jdbc.PasswordCipher
         // we can try to load the class.
         if (null == pwdCipher) {
@@ -118,7 +133,7 @@ public final class BasicDataSourceUtil {
                     pwdCipher = Class.forName(passwordCipherClass).asSubclass(PasswordCipher.class);
                     
                 } catch (ClassNotFoundException cnfe) {
-                    pwdCipher = Thread.currentThread().getContextClassLoader().loadClass(passwordCipherClass).asSubclass(PasswordCipher.class);
+                    pwdCipher = tccl.loadClass(passwordCipherClass).asSubclass(PasswordCipher.class);
                 }
             } catch (Throwable t) {
                 String message = "Cannot load password cipher class '" + passwordCipherClass + "'";
