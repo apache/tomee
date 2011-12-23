@@ -434,7 +434,8 @@ public class Deployer implements BundleListener {
     private static boolean isInterestingClass(final String rawName) {
         final String name = className(rawName);
         return isJdbcDriver(name) || isJPAProvider(name)
-                || name.contains("org.apache.openejb"); // fallback mainly for META-INF resources
+                || name.contains("org.apache.openejb") // fallback mainly for META-INF resources
+                || name.startsWith("javax.management."); // dynamic mbean feature uses this package also used by the jre itself
     }
 
     private static boolean isJdbcDriver(final String name) {
