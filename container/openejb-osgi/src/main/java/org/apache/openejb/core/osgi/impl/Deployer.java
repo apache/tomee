@@ -18,6 +18,7 @@ package org.apache.openejb.core.osgi.impl;
 
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.BeanType;
 import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.UndeployException;
@@ -201,7 +202,7 @@ public class Deployer implements BundleListener {
         LOGGER.info("Registering remote EJBs as OSGi services");
         final BundleContext context = bundle.getBundleContext();
         for (BeanContext beanContext : appContext.getBeanContexts()) {
-            if (beanContext.getBeanClass().equals(BeanContext.Comp.class)) {
+            if (beanContext.getBeanClass().equals(BeanContext.Comp.class) || BeanType.STATEFUL.equals(beanContext.getComponentType())) {
                 continue;
             }
 
