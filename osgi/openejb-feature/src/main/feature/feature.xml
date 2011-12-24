@@ -48,7 +48,7 @@
     <bundle>mvn:org.apache.openwebbeans/openwebbeans-spi/${org.apache.openwebbeans.version}</bundle>
     <bundle>mvn:org.apache.openwebbeans/openwebbeans-impl/${org.apache.openwebbeans.version}</bundle>
     <bundle>mvn:org.apache.openwebbeans/openwebbeans-ee/${org.apache.openwebbeans.version}</bundle>
-    <bundle>mvn:org.apache.openwebbeans/openwebbeans-ejb-common</bundle>
+    <bundle>mvn:org.apache.openwebbeans/openwebbeans-ee-common/${org.apache.openwebbeans.version}</bundle>
     <bundle>mvn:org.apache.openwebbeans/openwebbeans-ejb/${org.apache.openwebbeans.version}</bundle>
     <bundle>mvn:org.apache.openwebbeans/openwebbeans-osgi/${org.apache.openwebbeans.version}</bundle>
     <bundle>mvn:org.apache.openwebbeans/openwebbeans-web/${org.apache.openwebbeans.version}</bundle>
