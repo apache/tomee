@@ -19,7 +19,6 @@ package org.apache.openejb.assembler;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.net.URL;
 import java.security.SecureRandom;
 import java.util.Collection;
 import java.util.Map;
@@ -40,14 +39,14 @@ import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentLoader;
 import org.apache.openejb.config.DeploymentModule;
-import org.apache.openejb.config.ValidationException;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.xbean.finder.ResourceFinder;
 
 @Stateless(name = "openejb/Deployer")
 @Remote(Deployer.class)
 @TransactionManagement(BEAN)
 public class DeployerEjb implements Deployer {
+    public static final String OPENEJB_DEPLOYER_FORCED_APP_ID_PROP = "openejb.deployer.forced.appId";
+
     private final static File uniqueFile;
 
     static {
@@ -147,6 +146,9 @@ public class DeployerEjb implements Deployer {
             }
 
             AppInfo appInfo = configurationFactory.configureApplication(appModule);
+            if (properties != null && properties.containsKey(OPENEJB_DEPLOYER_FORCED_APP_ID_PROP)) {
+                appInfo.appId = properties.getProperty(OPENEJB_DEPLOYER_FORCED_APP_ID_PROP);
+            }
             assembler.createApplication(appInfo);
 
             return appInfo;

@@ -126,6 +126,7 @@ public class Deployer implements BundleListener {
 
                     final ConfigurationFactory configurationFactory = new ConfigurationFactory();
                     final AppInfo appInfo = configurationFactory.configureApplication(appModule);
+                    appInfo.appId = "bundle_" + bundle.getBundleId();
 
                     final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
                     final AppContext appContext = assembler.createApplication(appInfo, osgiCl);

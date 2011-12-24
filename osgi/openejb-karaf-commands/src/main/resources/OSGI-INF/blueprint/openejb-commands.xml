@@ -2,10 +2,16 @@
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" default-activation="lazy">
   <command-bundle xmlns="http://karaf.apache.org/xmlns/shell/v1.0.0">
     <command name="openejb/list">
-      <action class="org.apache.openejb.karaf.ListEJBs"/>
+      <action class="org.apache.openejb.karaf.command.ListEJBs"/>
     </command>
     <command name="openejb/bundles">
-      <action class="org.apache.openejb.karaf.DeployedBundles"/>
+      <action class="org.apache.openejb.karaf.command.DeployedBundles"/>
+    </command>
+    <command name="openejb/deploy">
+      <action class="org.apache.openejb.karaf.command.Deploy"/>
+    </command>
+    <command name="openejb/undeploy">
+      <action class="org.apache.openejb.karaf.command.Undeploy"/>
     </command>
   </command-bundle>
 </blueprint>
