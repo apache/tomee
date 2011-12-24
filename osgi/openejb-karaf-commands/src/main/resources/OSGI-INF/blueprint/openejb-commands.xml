@@ -13,5 +13,8 @@
     <command name="openejb/undeploy">
       <action class="org.apache.openejb.karaf.command.Undeploy"/>
     </command>
+    <command name="openejb/properties">
+      <action class="org.apache.openejb.karaf.command.Properties"/>
+    </command>
   </command-bundle>
 </blueprint>
