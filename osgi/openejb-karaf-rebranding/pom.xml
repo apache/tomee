@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>osgi</artifactId>
+    <groupId>org.apache.openejb</groupId>
+    <version>4.0.0-beta-2-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>openejb-karaf-rebranding</artifactId>
+  <name>OpenEJB :: OSGi :: Karaf Rebranding</name>
+  <packaging>bundle</packaging>
+
+  <properties>
+    <openejb.osgi.private.pkg>!*</openejb.osgi.private.pkg>
+    <openejb.osgi.export>org.apache.karaf.branding</openejb.osgi.export>
+    <openejb.osgi.import>*</openejb.osgi.import>
+  </properties>
+
+  <build>
+    <resources>
+      <resource>
+        <directory>${pom.basedir}/src/main/resources</directory>
+        <filtering>true</filtering>
+        <includes>
+          <include>**/*</include>
+        </includes>
+      </resource>
+    </resources>
+  </build>
+</project>

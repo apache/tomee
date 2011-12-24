@@ -14,8 +14,6 @@
   <packaging>bundle</packaging>
 
   <properties>
-    <karaf.version>2.2.4</karaf.version>
-
     <openejb.osgi.private.pkg>!*</openejb.osgi.private.pkg>
     <openejb.osgi.export>org.apache.openejb.karaf*;version=${openejb.osgi.export.version}</openejb.osgi.export>
     <openejb.osgi.import>
