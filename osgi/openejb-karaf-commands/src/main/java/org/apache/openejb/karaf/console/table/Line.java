@@ -1,4 +1,4 @@
-package org.apache.openejb.karaf.table;
+package org.apache.openejb.karaf.console.table;
 
 import java.io.PrintStream;
 
