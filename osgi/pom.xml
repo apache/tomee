@@ -15,5 +15,6 @@
 
   <modules>
     <module>openejb-core-osgi</module>
+    <module>openejb-feature</module>
   </modules>
 </project>
