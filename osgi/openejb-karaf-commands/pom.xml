@@ -27,6 +27,8 @@
       org.apache.openejb.loader;version="[4.0,5.0)",
       org.apache.openejb.spi;version="[4.0,5.0)",
       org.apache.openejb.core.osgi.impl;version="[4.0,5.0)",
+      org.apache.openejb.assembler.classic;version="[4.0,5.0)",
+      org.apache.openejb.assembler.classic.cmd;version="[4.0,5.0)",
       *
     </openejb.osgi.import>
   </properties>
