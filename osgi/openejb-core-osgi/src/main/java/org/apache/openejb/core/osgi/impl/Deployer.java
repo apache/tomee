@@ -107,7 +107,7 @@ public class Deployer implements BundleListener {
                     File bundleDump = bundle.getBundleContext().getDataFile(bundle.getSymbolicName() + "/" + bundle.getVersion() + "/");
                     // TODO: what should happen if there is multiple versions?
                     if (!bundleDump.exists() && bundle.getBundleContext().getDataFile("") != null) { // felix. TODO: maybe find something better
-                        bundleDump = new File(bundle.getBundleContext().getDataFile("").getParentFile(), "version0.0/bundle.jar");
+                        bundleDump = findFelixJar(bundle.getBundleContext());
                     }
 
                     if (!bundleDump.exists()) {
@@ -143,26 +143,23 @@ public class Deployer implements BundleListener {
         }
     }
 
-    private static boolean delete(File dir) {
-        if (dir == null) return true;
-
-        if (dir.isDirectory()) {
-            String fileNames[] = dir.list();
-            if (fileNames == null) {
-                fileNames = new String[0];
-            }
-            for (String fileName : fileNames) {
-                File file = new File(dir, fileName);
-                if (file.isDirectory()) {
-                    delete(file);
-                } else {
-                    file.delete();
-                }
-            }
-            return dir.delete();
-        } else {
-            return dir.delete();
-        }
+    private static File findFelixJar(BundleContext bundleContext) {
+        final File root = bundleContext.getDataFile("").getParentFile();
+        int min = 0;
+        int max = 0;
+        File out;
+        File f = null;
+        do {
+            do {
+                out = f;
+                f = new File(root, "version" + max + "." + min + "/bundle.jar");
+                min++;
+            } while (f.exists());
+            min = 0;
+            max++;
+            f = new File(root, "version" + max + "." + min + "/bundle.jar");
+        } while (f.exists());
+        return out;
     }
 
     private void undeploy(Bundle bundle) {
