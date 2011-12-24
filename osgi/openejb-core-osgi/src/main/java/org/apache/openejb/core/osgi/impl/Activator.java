@@ -83,6 +83,7 @@ public class Activator implements BundleActivator {
             serviceManager = serviceManagerTracker.getService();
             if (serviceManager == null) {
                 LOGGER.warn("can't find service manager");
+                return;
             }
 
             invoke(serviceManager, "init");
