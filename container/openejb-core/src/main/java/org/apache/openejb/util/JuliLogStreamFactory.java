@@ -78,9 +78,11 @@ public class JuliLogStreamFactory implements LogStreamFactory {
                         }
                     }
                 }
-            } else {
+            } else if (System.getProperty("karaf.home") == null) {
                 // install our logging.properties file into the conf dir
                 installLoggingPropertiesFile(loggingPropertiesFile);
+            } else {
+                configureEmbedded();
             }
         } else {
             // no conf directory, so we assume we are embedded
