@@ -111,6 +111,7 @@
     <bundle>mvn:org.apache.openejb/openejb-jee/${project.version}</bundle>
     <bundle>mvn:org.apache.openejb/openejb-loader/${project.version}</bundle>
     <bundle>mvn:org.apache.openejb/openejb-core-osgi/${project.version}</bundle>
+    <bundle>mvn:org.apache.openejb/openejb-karaf-commands/${project.version}</bundle>
   </feature>
 
   <feature name="openejb-core" version="${project.version}">

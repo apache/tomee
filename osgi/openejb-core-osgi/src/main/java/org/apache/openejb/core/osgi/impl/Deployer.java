@@ -51,6 +51,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -58,8 +59,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Deployer implements BundleListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(Deployer.class);
-    public static final String META_INF_NAME = "META-INF.";
-    public static final String SERVICES_NAME = "services.";
+    private static Deployer INSTANCE = null;
 
     private final Map<Bundle, List<ServiceRegistration>> registrations = new ConcurrentHashMap<Bundle, List<ServiceRegistration>>();
     private final Map<Bundle, String> paths = new ConcurrentHashMap<Bundle, String>();
@@ -68,6 +68,11 @@ public class Deployer implements BundleListener {
 
     public Deployer(Activator activator) {
         openejbActivator = activator;
+        INSTANCE = this;
+    }
+
+    public static Deployer instance() {
+        return INSTANCE;
     }
 
     public void bundleChanged(BundleEvent event) {
@@ -242,6 +247,10 @@ public class Deployer implements BundleListener {
                 LOGGER.error("can't register: {} for interfaces {}", beanContext.getEjbName(), interfaces);
             }
         }
+    }
+
+    public Set<Bundle> deployedBundles() {
+        return paths.keySet();
     }
 
     private static String[] str(Class<?>[] itfs) {

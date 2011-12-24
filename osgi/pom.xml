@@ -16,5 +16,6 @@
   <modules>
     <module>openejb-core-osgi</module>
     <module>openejb-feature</module>
+    <module>openejb-karaf-commands</module>
   </modules>
 </project>

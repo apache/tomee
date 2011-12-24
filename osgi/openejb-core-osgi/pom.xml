@@ -55,7 +55,7 @@
         <configuration>
           <instructions>
             <Bundle-Activator>org.apache.openejb.core.osgi.impl.Activator</Bundle-Activator>
-            <Export-Package>org.apache.openejb.core.osgi.*</Export-Package>
+            <Export-Package>org.apache.openejb.core.osgi.*;version=${openejb.osgi.export.version}</Export-Package>
             <Import-Package>
               '=META-INF.org^.apache^.openejb',
               javax.annotation;version="[1.1.0,2.0.0)";resolution:=optional,

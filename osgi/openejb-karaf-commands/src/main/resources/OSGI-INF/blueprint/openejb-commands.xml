@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" default-activation="lazy">
+  <command-bundle xmlns="http://karaf.apache.org/xmlns/shell/v1.0.0">
+    <command name="openejb/list">
+      <action class="org.apache.openejb.karaf.ListEJBs"/>
+    </command>
+    <command name="openejb/bundles">
+      <action class="org.apache.openejb.karaf.DeployedBundles"/>
+    </command>
+  </command-bundle>
+</blueprint>

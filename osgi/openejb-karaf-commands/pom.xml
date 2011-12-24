@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>osgi</artifactId>
+    <groupId>org.apache.openejb</groupId>
+    <version>4.0.0-beta-2-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>openejb-karaf-commands</artifactId>
+  <name>OpenEJB :: OSGi :: Karaf Commands</name>
+  <packaging>bundle</packaging>
+
+  <properties>
+    <karaf.version>2.2.4</karaf.version>
+
+    <openejb.osgi.private.pkg>!*</openejb.osgi.private.pkg>
+    <openejb.osgi.export>org.apache.openejb.karaf*;version=${openejb.osgi.export.version}</openejb.osgi.export>
+    <openejb.osgi.import>
+      javax.management,
+      javax.management.loading,
+      org.apache.felix.gogo.commands;version="[0.10,1)",
+      org.apache.felix.gogo.commands.basic;version="[0.10,1)",
+      org.osgi.service.blueprint;version="[1.0.0,2.0.0)",
+      org.apache.karaf.shell.console;version="[2.2,3)",
+      org.apache.karaf.shell.console.completer;version="[2.2,3)",
+      org.apache.openejb.loader;version="[4.0,5.0)",
+      org.apache.openejb.spi;version="[4.0,5.0)",
+      org.apache.openejb.core.osgi.impl;version="[4.0,5.0)",
+      *
+    </openejb.osgi.import>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-core-osgi</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.karaf.shell</groupId>
+      <artifactId>org.apache.karaf.shell.console</artifactId>
+      <version>${karaf.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <version>${osgi.framework.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.compendium</artifactId>
+      <version>${osgi.framework.version}</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+</project>
