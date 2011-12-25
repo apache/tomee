@@ -19,6 +19,7 @@
     <module>openejb-karaf-commands</module>
     <module>openejb-karaf-rebranding</module>
     <module>apache-karafee</module>
+    <module>openejb-osgi-tests</module>
   </modules>
 
   <properties>
