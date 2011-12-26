@@ -113,7 +113,7 @@ In the example we see `ComponentRegistryBean` using a `java.util.HashMap` which 
  1. We use `@Lock(WRITE)` on the methods that mutate the map such as the `put()` and `remove()` methods.
  1. We use `@Lock(READ)` on the `get()` and `values()` methods as they do not change the map state and are guaranteed not to be called at the same as any of the `@Lock(WRITE)` methods, so we know the state of the HashMap is no being mutated and therefore safe for reading.
 
-The end result is that the threading model for this bean will switch from multi-threaded access to single-threaded access dynamically as needed depending on the which methods are being invoked. This gives Singletons a bit of an advantage over Servlets for processing multi-threaded requests.
+The end result is that the threading model for this bean will switch from multi-threaded access to single-threaded access dynamically as needed, depending on the method being invoked. This gives Singletons a bit of an advantage over Servlets for processing multi-threaded requests.
 
 See the [Singleton Beans](../../singleton-beans.html) page for  more advanced details on Container-Managed Concurrency.
 

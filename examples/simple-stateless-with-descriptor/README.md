@@ -1,6 +1,7 @@
 Title: Simple Stateless with Descriptor
 
-*Help us document this example! Source available in [svn](http://svn.apache.org/repos/asf/openejb/trunk/openejb/examples/simple-stateless-with-descriptor) or [git](https://github.com/apache/openejb/tree/trunk/openejb/examples/simple-stateless-with-descriptor). Open a [JIRA](https://issues.apache.org/jira/browse/TOMEE) with patch or pull request*
+This test is similar to simple-stateless, with two major differences. In this case all the classes are regular POJOs without annotations.
+The EJB-specific metadata is provided via an XML descriptor. The second difference is the explicite use of Local and Remote interfaces. 
 
 ## CalculatorImpl
 
@@ -56,6 +57,8 @@ Title: Simple Stateless with Descriptor
 
 ## ejb-jar.xml
 
+The XML descriptor defines the EJB class and both local and remote interfaces.
+
     <ejb-jar xmlns="http://java.sun.com/xml/ns/javaee"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_0.xsd"
@@ -71,9 +74,13 @@ Title: Simple Stateless with Descriptor
         </session>
       </enterprise-beans>
     </ejb-jar>
+
     
 
 ## CalculatorTest
+
+Two tests obtain a Local and Remote interface to the bean instance. This time an `InitialContext` object is directly created, 
+as opposed to getting the context from `EJBContainer`, as we did in the previous example. 
 
     package org.superbiz.calculator;
     
