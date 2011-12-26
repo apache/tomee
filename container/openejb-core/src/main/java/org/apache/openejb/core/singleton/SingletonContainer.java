@@ -16,26 +16,6 @@
  */
 package org.apache.openejb.core.singleton;
 
-import static org.apache.openejb.core.transaction.EjbTransactionUtil.afterInvoke;
-import static org.apache.openejb.core.transaction.EjbTransactionUtil.createTransactionPolicy;
-import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleApplicationException;
-import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleSystemException;
-
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.locks.Lock;
-
-import javax.ejb.ConcurrentAccessTimeoutException;
-import javax.ejb.EJBAccessException;
-import javax.ejb.EJBHome;
-import javax.ejb.EJBLocalHome;
-import javax.ejb.EJBLocalObject;
-import javax.ejb.EJBObject;
-import javax.interceptor.AroundInvoke;
-
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.ContainerType;
 import org.apache.openejb.InterfaceType;
@@ -54,6 +34,25 @@ import org.apache.openejb.core.webservices.NoAddressingSupport;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Duration;
 import org.apache.xbean.finder.ClassFinder;
+
+import javax.ejb.ConcurrentAccessTimeoutException;
+import javax.ejb.EJBAccessException;
+import javax.ejb.EJBHome;
+import javax.ejb.EJBLocalHome;
+import javax.ejb.EJBLocalObject;
+import javax.ejb.EJBObject;
+import javax.interceptor.AroundInvoke;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.locks.Lock;
+
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.afterInvoke;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.createTransactionPolicy;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleApplicationException;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleSystemException;
 
 /**
  * @org.apache.xbean.XBean element="statelessContainer"
@@ -322,12 +321,13 @@ public class SingletonContainer implements RpcContainer {
         }
 
         //  Create an InterceptorData for the webservice interceptor to the list of interceptorDatas for this method
-        List<InterceptorData> interceptorDatas = new ArrayList<InterceptorData>(beanContext.getMethodInterceptors(runMethod));
+        List<InterceptorData> interceptorDatas = new ArrayList<InterceptorData>();
         {
             InterceptorData providerData = new InterceptorData(interceptor.getClass());
             ClassFinder finder = new ClassFinder(interceptor.getClass());
             providerData.getAroundInvoke().addAll(finder.findAnnotatedMethods(AroundInvoke.class));
             interceptorDatas.add(providerData);
+            interceptorDatas.addAll(beanContext.getMethodInterceptors(runMethod));
         }
 
         InterceptorStack interceptorStack = new InterceptorStack(instance.bean, runMethod, Operation.BUSINESS_WS, interceptorDatas, interceptors);
