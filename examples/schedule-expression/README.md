@@ -1,8 +1,20 @@
 Title: Schedule Expression
 
-*Help us document this example! Source available in [svn](http://svn.apache.org/repos/asf/openejb/trunk/openejb/examples/schedule-expression) or [git](https://github.com/apache/openejb/tree/trunk/openejb/examples/schedule-expression). Open a [JIRA](https://issues.apache.org/jira/browse/TOMEE) with patch or pull request*
+In this example we exercise the `TimerService`.
+
+>"The TimerService interface provides enterprise bean components with access to the container-provided Timer Service. 
+The EJB Timer Service allows entity beans, stateless session beans, and message-driven beans to be registered for timer 
+callback events at a specified time, after a specified elapsed time, or after a specified interval."
+
+For a complete description of the TimerService, please refer to the JEE tutorial dedicated to the 
+[Timer Service](http://docs.oracle.com/javaee/6/tutorial/doc/bnboy.html).
 
 ## FarmerBrown
+
+At `PostConstruct` we create 5 programmatic timers. First four will most likely not be triggered during the test
+execution, however the last one will timeout a couple of times.
+
+Each timer contains an info attribute, which can be inspected at timeout.   
 
     package org.superbiz.corn;
     
@@ -77,6 +89,8 @@ Title: Schedule Expression
     }
 
 ## FarmerBrownTest
+
+The test class acquires an instance from the context and waits for 5 seconds to give the timers a chance to timeout.
 
     package org.superbiz.corn;
     

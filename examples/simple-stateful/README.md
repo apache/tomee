@@ -1,6 +1,17 @@
 Title: Simple Stateful
 
-*Help us document this example! Source available in [svn](http://svn.apache.org/repos/asf/openejb/trunk/openejb/examples/simple-stateful) or [git](https://github.com/apache/openejb/tree/trunk/openejb/examples/simple-stateful). Open a [JIRA](https://issues.apache.org/jira/browse/TOMEE) with patch or pull request*
+This example demonstrates a simple deployment of a Stateful session bean.
+
+>"As its name suggests, a stateful session bean is similar to an interactive session. A stateful session bean is not shared; 
+it can have only one client, in the same way that an interactive session can have only one user. 
+When the client terminates, its stateful session bean appears to terminate and is no longer associated with the client."
+
+The `Counter` class is a Stateful session bean that maintains a state in a form of a `count` integer field.
+It exposes three methods: `count()`, `increment()` and `reset()` to manipulate and view its state.
+
+Typically, Stateful and Stateless beans implement Local and/or Remote interfaces to determine which methods should
+be exposed. In this case, the bean is using a no-interface view, which means that all public methods are exposed
+as a local view. 
 
 ## Counter
 
@@ -42,6 +53,10 @@ Title: Simple Stateful
     }
 
 ## CounterTest
+
+The `Counter` class is tested by obtaining a `Context` object and performing a JNDI lookup on it, to retrieve
+an instance of the `Counter` bean. After some state manipulation, a new instance is fetched from the container
+and we can see that it's a new instance.
 
     package org.superbiz.counter;
     
