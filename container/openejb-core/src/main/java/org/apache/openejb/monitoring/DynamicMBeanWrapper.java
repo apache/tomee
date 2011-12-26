@@ -252,7 +252,7 @@ public class DynamicMBeanWrapper implements DynamicMBean {
     public AttributeList setAttributes(AttributeList attributes) {
         AttributeList list = new AttributeList();
         Iterator<Object> it = attributes.iterator();
-        ;
+
         while (it.hasNext()) {
             Attribute attr = (Attribute) it.next();
             try {

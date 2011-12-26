@@ -281,13 +281,14 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
         }
 
         //  Create an InterceptorData for the webservice interceptor to the list of interceptorDatas for this method
-        List<InterceptorData> interceptorDatas = new ArrayList<InterceptorData>(beanContext.getMethodInterceptors(runMethod));
+        List<InterceptorData> interceptorDatas = new ArrayList<InterceptorData>();
         {
             InterceptorData providerData = new InterceptorData(interceptor.getClass());
             ClassFinder finder = new ClassFinder(interceptor.getClass());
             providerData.getAroundInvoke().addAll(finder.findAnnotatedMethods(AroundInvoke.class));
 //            interceptorDatas.add(providerData);
             interceptorDatas.add(0, providerData);
+            interceptorDatas.addAll(beanContext.getMethodInterceptors(runMethod));
         }
 
         InterceptorStack interceptorStack = new InterceptorStack(instance.bean, runMethod, Operation.BUSINESS_WS, interceptorDatas, interceptors);
