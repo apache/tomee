@@ -249,7 +249,7 @@ The testcase above uses properties for configuration.  The identical way to do i
         DatasourceNames = database1 database2 database3
         DefaultDataSourceName = database1
     </Resource>
-    <Resource id="Routed Datasource" type="org.apache.openejb.resource.jdbc.Router" provider="org.router:RoutedDataSource">
+    <Resource id="Routed Datasource" type="org.apache.openejb.resource.jdbc.Router" provider="RoutedDataSource">
         Router = My Router
     </Resource>
 
