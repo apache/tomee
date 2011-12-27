@@ -123,7 +123,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <bval.version>0.4-incubating-SNAPSHOT</bval.version>
-    <org.apache.activemq.version>5.4.2</org.apache.activemq.version>
+    <org.apache.activemq.version>5.5.1</org.apache.activemq.version>
     <quartz.version>1.8.5</quartz.version>
     <org.springframework.version>3.0.5.RELEASE</org.springframework.version>
     <junit.version>4.8.1</junit.version>
