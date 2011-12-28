@@ -18,7 +18,6 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.config.sys.JaxbOpenejb;
-import org.apache.openejb.config.sys.Openejb;
 import org.apache.openejb.config.sys.Resources;
 import org.apache.openejb.core.webservices.WsdlResolver;
 import org.apache.openejb.jee.ApplicationClient;
@@ -35,8 +34,11 @@ import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.Webservices;
 import org.apache.openejb.jee.bval.ValidationConfigType;
 import org.apache.openejb.jee.jpa.EntityMappings;
+import org.apache.openejb.jee.jpa.fragment.PersistenceFragment;
+import org.apache.openejb.jee.jpa.fragment.PersistenceUnitFragment;
 import org.apache.openejb.jee.jpa.unit.JaxbPersistenceFactory;
 import org.apache.openejb.jee.jpa.unit.Persistence;
+import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.oejb2.GeronimoEjbJarType;
 import org.apache.openejb.jee.oejb2.JaxbOpenejbJar2;
 import org.apache.openejb.jee.oejb2.OpenejbJarType;
@@ -131,7 +133,7 @@ public class ReadDescriptors implements DynamicDeployer {
                 }
 
                 try {
-                    Persistence persistence = JaxbPersistenceFactory.getPersistence(persistenceUrl);
+                    Persistence persistence = JaxbPersistenceFactory.getPersistence(Persistence.class, persistenceUrl);
                     PersistenceModule persistenceModule = new PersistenceModule(rootUrl, persistence);
                     persistenceModule.getWatchedResources().add(moduleName);
                     if ("file".equals(persistenceUrl.getProtocol())) {
@@ -140,6 +142,54 @@ public class ReadDescriptors implements DynamicDeployer {
                     appModule.getPersistenceModules().add(persistenceModule);
                 } catch (Exception e1) {
                     DeploymentLoader.logger.error("Unable to load Persistence Unit from EAR: " + appModule.getJarLocation() + ", module: " + moduleName + ". Exception: " + e1.getMessage(), e1);
+                }
+            }
+        }
+
+        final List<URL> persistenceFragmentUrls = (List<URL>) appModule.getAltDDs().get("persistence-fragment.xml");
+        if (persistenceFragmentUrls != null) {
+            for (URL persistenceFragmentUrl : persistenceFragmentUrls) {
+                try {
+                    final PersistenceFragment persistenceFragment = JaxbPersistenceFactory.getPersistence(PersistenceFragment.class, persistenceFragmentUrl);
+                    // merging
+                    for (PersistenceUnitFragment fragmentUnit : persistenceFragment.getPersistenceUnitFragment()) {
+                        for (PersistenceModule persistenceModule : appModule.getPersistenceModules()) {
+                            final Persistence persistence = persistenceModule.getPersistence();
+                            for (PersistenceUnit unit : persistence.getPersistenceUnit()) {
+                                if (!fragmentUnit.getName().equals(unit.getName())) {
+                                    continue;
+                                }
+
+                                if (!persistenceFragment.getVersion().equals(persistence.getVersion())) {
+                                    logger.error("persistence unit version and fragment version are different, fragment will be ignored");
+                                    continue;
+                                }
+
+                                if ("file".equals(persistenceFragmentUrl.getProtocol())) {
+                                    persistenceModule.getWatchedResources().add(URLs.toFile(persistenceFragmentUrl).getAbsolutePath());
+                                }
+
+                                for (String clazz : fragmentUnit.getClazz()) {
+                                    if (!unit.getClazz().contains(clazz)) {
+                                        logger.info("Adding class " + clazz + " to persistence unit " + fragmentUnit.getName());
+                                        unit.getClazz().add(clazz);
+                                    }
+                                }
+                                for (String mappingFile : fragmentUnit.getMappingFile()) {
+                                    if (!unit.getMappingFile().contains(mappingFile)) {
+                                        logger.info("Adding mapping file " + mappingFile + " to persistence unit " + fragmentUnit.getName());
+                                        unit.getMappingFile().add(mappingFile);
+                                    }
+                                }
+                                if (fragmentUnit.isExcludeUnlistedClasses()) {
+                                    unit.setExcludeUnlistedClasses(true);
+                                    logger.info("Excluding unlisted classes for persistence unit " + fragmentUnit.getName());
+                                } // else let the main persistence unit decide
+                            }
+                        }
+                    }
+                } catch (Exception e1) {
+                    DeploymentLoader.logger.error("Unable to load Persistence Unit Fragment from EAR: " + appModule.getJarLocation() + ", fragment: " + persistenceFragmentUrl.toString() + ". Exception: " + e1.getMessage(), e1);
                 }
             }
         }

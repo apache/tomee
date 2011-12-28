@@ -200,65 +200,8 @@ public class DeploymentLoader implements DeploymentFilterable {
                     otherDD = new HashMap<String, URL>();
                 }
 
-                URL persistenceUrl = null;
-                if (file.isDirectory()) {
-                    File persistenceXml = new File(file, "WEB-INF/classes/META-INF/persistence.xml");
-                    if (persistenceXml.exists() && persistenceXml.isFile()) {
-                        try {
-                            persistenceUrl = persistenceXml.toURI().toURL();
-                        } catch (MalformedURLException e) {
-                            // no-op
-                        }
-                    }
-                } else { // .war
-                    JarFile jf = null;
-                    try {
-                        jf = new JarFile(file);
-                    } catch (IOException e) {
-                        return appModule;
-                    }
-                    ZipEntry entry = jf.getEntry("WEB-INF/classes/META-INF/persistence.xml");
-                    if (entry != null) {
-                        String base = baseUrl.toString();
-                        if (!base.startsWith("jar:")) {
-                            base = "jar:" + base;
-                            try {
-                                baseUrl = new URL(base + "!/WEB-INF/classes");
-                            } catch (MalformedURLException e) {
-                                // ignored
-                            }
-                        }
-
-                        try {
-                            persistenceUrl = new URL(base + "!/WEB-INF/classes/META-INF/persistence.xml");
-                        } catch (MalformedURLException e) {
-                            // no-op
-                        }
-                    }
-                }
-
-                if (persistenceUrl != null || otherDD.containsKey("persistence.xml")) {
-                    List<URL> persistenceUrls = (List<URL>) appModule.getAltDDs().get("persistence.xml");
-                    if (persistenceUrls == null) {
-                        persistenceUrls = new ArrayList<URL>();
-                        appModule.getAltDDs().put("persistence.xml", persistenceUrls);
-                    }
-
-                    if (persistenceUrl != null) {
-                        try {
-                            persistenceUrls.add(persistenceUrl);
-                        } catch (Exception e) {
-                            // no-op
-                        }
-                    }
-                    if (otherDD.containsKey("persistence.xml")) {
-                        final URL otherUrl = otherDD.get("persistence.xml");
-                        if (!persistenceUrls.contains(otherUrl)) {
-                            persistenceUrls.add(otherDD.get("persistence.xml"));
-                        }
-                    }
-                }
-
+                addWebPersistenceDD("persistence.xml", file, baseUrl, otherDD, appModule);
+                addWebPersistenceDD("persistence-fragment.xml", file, baseUrl, otherDD, appModule);
                 addPersistenceUnits(appModule, baseUrl);
                 return appModule;
             }
@@ -292,6 +235,67 @@ public class DeploymentLoader implements DeploymentFilterable {
             //Try delete here, but will not work if used in doNotUseClassLoader
             if (tmpFile != null && !tmpFile.delete()) {
                 tmpFile.deleteOnExit();
+            }
+        }
+    }
+
+    private void addWebPersistenceDD(final String name, final File file, URL baseUrl, final Map<String, URL> otherDD, final AppModule appModule) {
+        URL persistenceUrl = null;
+        if (file.isDirectory()) {
+            File persistenceXml = new File(file, "WEB-INF/classes/META-INF/" + name);
+            if (persistenceXml.exists() && persistenceXml.isFile()) {
+                try {
+                    persistenceUrl = persistenceXml.toURI().toURL();
+                } catch (MalformedURLException e) {
+                    // no-op
+                }
+            }
+        } else { // .war
+            JarFile jf;
+            try {
+                jf = new JarFile(file);
+                ZipEntry entry = jf.getEntry("WEB-INF/classes/META-INF/" + name);
+                if (entry != null) {
+                    String base = baseUrl.toString();
+                    if (!base.startsWith("jar:")) {
+                        base = "jar:" + base;
+                        try {
+                            baseUrl = new URL(base + "!/WEB-INF/classes");
+                        } catch (MalformedURLException e) {
+                            // ignored
+                        }
+                    }
+
+                    try {
+                        persistenceUrl = new URL(base + "!/WEB-INF/classes/META-INF/" + name);
+                    } catch (MalformedURLException e) {
+                        // no-op
+                    }
+                }
+            } catch (IOException e) {
+                // ignored
+            }
+        }
+
+        if (persistenceUrl != null || otherDD.containsKey(name)) {
+            List<URL> persistenceUrls = (List<URL>) appModule.getAltDDs().get(name);
+            if (persistenceUrls == null) {
+                persistenceUrls = new ArrayList<URL>();
+                appModule.getAltDDs().put(name, persistenceUrls);
+            }
+
+            if (persistenceUrl != null) {
+                try {
+                    persistenceUrls.add(persistenceUrl);
+                } catch (Exception e) {
+                    // no-op
+                }
+            }
+            if (otherDD.containsKey(name)) {
+                final URL otherUrl = otherDD.get(name);
+                if (!persistenceUrls.contains(otherUrl)) {
+                    persistenceUrls.add(otherDD.get(name));
+                }
             }
         }
     }
@@ -1248,6 +1252,12 @@ public class DeploymentLoader implements DeploymentFilterable {
             appModule.getAltDDs().put("persistence.xml", persistenceUrls);
         }
 
+        List<URL> persistenceFragmentsUrls = (List<URL>) appModule.getAltDDs().get("persistence-fragment.xml");
+        if (persistenceFragmentsUrls == null) {
+            persistenceFragmentsUrls = new ArrayList<URL>();
+            appModule.getAltDDs().put("persistence-fragment.xml", persistenceFragmentsUrls);
+        }
+
 
         for (URL url : urls) {
             // OPENEJB-1059: looking for an altdd persistence.xml file in all urls
@@ -1269,6 +1279,31 @@ public class DeploymentLoader implements DeploymentFilterable {
                 }
 
                 persistenceUrls.add(descriptor);
+            }
+        }
+
+        // look for persistence-fragment.xml
+        for (URL url : urls) {
+            // OPENEJB-1059: looking for an altdd persistence.xml file in all urls
+            // delegates to xbean finder for going throughout the list
+            ResourceFinder finder = new ResourceFinder("", appModule.getClassLoader(), url);
+            Map<String, URL> descriptors = getDescriptors(finder, false);
+
+            // if a persistence.xml has been found, just pull it to the list
+            if (descriptors.containsKey("persistence-fragment.xml")) {
+                URL descriptor = descriptors.get("persistence-fragment.xml");
+
+                if (persistenceFragmentsUrls.contains(descriptor)) {
+                    continue;
+                }
+
+                // log if it is an altdd
+                String urlString = descriptor.toExternalForm();
+                if (!urlString.contains("META-INF/persistence-fragment.xml")) {
+                    logger.info("AltDD persistence-fragment.xml -> " + urlString);
+                }
+
+                persistenceFragmentsUrls.add(descriptor);
             }
         }
     }
@@ -1300,7 +1335,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         if (map.size() == 0) {
 
-            String[] known = {"web.xml", "ejb-jar.xml", "openejb-jar.xml", "env-entries.properties", "beans.xml", "ra.xml", "application.xml", "application-client.xml", "persistence.xml", "validation.xml"};
+            String[] known = {"web.xml", "ejb-jar.xml", "openejb-jar.xml", "env-entries.properties", "beans.xml", "ra.xml", "application.xml", "application-client.xml", "persistence-fragment.xml", "persistence.xml", "validation.xml"};
             for (String descriptor : known) {
 
                 final URL url = finder.getResource(ddDir + descriptor);
@@ -1518,7 +1553,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         Class<? extends DeploymentModule> cls = checkAnnotations(baseUrl, classLoader, scanPotentialEjbModules, scanPotentialClientModules);
         if (cls != null) return cls;
 
-        if (descriptors.containsKey("persistence.xml")) {
+        if (descriptors.containsKey("persistence.xml") || descriptors.containsKey("persistence-fragment.xml")) {
             return PersistenceModule.class;
         }
 

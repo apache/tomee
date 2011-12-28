@@ -39,14 +39,15 @@ import java.net.URL;
  */
 public class JaxbPersistenceFactory {
     public static final String PERSISTENCE_SCHEMA = "http://java.sun.com/xml/ns/persistence";
-    public static Persistence getPersistence(URL url) throws Exception {
+
+    public static <T> T getPersistence(Class<T> clazz, URL url) throws Exception {
         InputStream persistenceDescriptor = null;
 
         try {
 
             persistenceDescriptor = url.openStream();
 
-            JAXBContext jc = JAXBContextFactory.newInstance(Persistence.class);
+            JAXBContext jc = JAXBContextFactory.newInstance(clazz);
             Unmarshaller u = jc.createUnmarshaller();
             UnmarshallerHandler uh = u.getUnmarshallerHandler();
 
@@ -66,7 +67,7 @@ public class JaxbPersistenceFactory {
             xmlFilter.setContentHandler(uh);
             SAXSource source = new SAXSource(xmlFilter, new InputSource(persistenceDescriptor));
 
-            return (Persistence) u.unmarshal(source);
+            return (T) u.unmarshal(source);
 
         } finally {
             if (persistenceDescriptor != null) persistenceDescriptor.close();
