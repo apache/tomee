@@ -53,7 +53,7 @@ public class TomEEContainerTest {
 
     @Test
     public void testShouldBeAbleToAccessServletAndEjb() throws Exception {
-        InputStream is = new URL("http://localhost:" + System.getProperty("tomee.http.port") + "/test/Test").openStream();
+        InputStream is = new URL("http://localhost:" + System.getProperty("tomee.http.port", "10080") + "/test/Test").openStream();
         ByteArrayOutputStream os = new ByteArrayOutputStream();
 
         int bytesRead = -1;

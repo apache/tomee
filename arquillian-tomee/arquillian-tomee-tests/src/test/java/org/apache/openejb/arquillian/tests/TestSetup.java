@@ -80,7 +80,7 @@ public abstract class TestSetup {
     }
 
     protected void validateTest(String servlet, String expectedOutput) throws IOException {
-        final InputStream is = new URL("http://localhost:9080/" + getTestContextName() + "/" + servlet).openStream();
+        final InputStream is = new URL("http://localhost:" + System.getProperty("tomee.http.port", "11080") + "/" + getTestContextName() + "/" + servlet).openStream();
         final ByteArrayOutputStream os = new ByteArrayOutputStream();
 
         int bytesRead = -1;

@@ -71,7 +71,7 @@ public class ServletCdiProducerTest {
     }
 
     private void validateTest(String expectedOutput) throws IOException {
-        Tests.assertOutput("http://localhost:9080/" + TEST_NAME + "/" + TEST_NAME, expectedOutput);
+        Tests.assertOutput("http://localhost:" + System.getProperty("tomee.http.port", "11080") + "/" + TEST_NAME + "/" + TEST_NAME, expectedOutput);
     }
 
 }

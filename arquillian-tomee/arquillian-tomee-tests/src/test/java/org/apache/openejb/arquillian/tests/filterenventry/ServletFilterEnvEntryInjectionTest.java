@@ -165,7 +165,7 @@ public class ServletFilterEnvEntryInjectionTest {
     }
 
     private void validateTest(String expectedOutput) throws IOException {
-        final InputStream is = new URL("http://localhost:9080/" + TEST_NAME + "/" + TEST_NAME).openStream();
+        final InputStream is = new URL("http://localhost:" + System.getProperty("tomee.http.port", "11080") + "/" + TEST_NAME + "/" + TEST_NAME).openStream();
         final ByteArrayOutputStream os = new ByteArrayOutputStream();
 
         int bytesRead;
