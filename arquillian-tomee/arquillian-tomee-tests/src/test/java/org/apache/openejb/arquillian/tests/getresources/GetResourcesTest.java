@@ -38,7 +38,7 @@ import static org.apache.openejb.arquillian.tests.Tests.assertOutput;
     }
 
     @Test public void check() throws IOException {
-        assertOutput("http://localhost:9080/" + TEST_NAME + "/get-resources", "foundFromListener=1");
-        assertOutput("http://localhost:9080/" + TEST_NAME + "/get-resources", "servletContextGetResource=ok");
+        assertOutput("http://localhost:" + System.getProperty("tomee.http.port", "11080") + "/" + TEST_NAME + "/get-resources", "foundFromListener=1");
+        assertOutput("http://localhost:" + System.getProperty("tomee.http.port", "11080") + "/" + TEST_NAME + "/get-resources", "servletContextGetResource=ok");
     }
 }

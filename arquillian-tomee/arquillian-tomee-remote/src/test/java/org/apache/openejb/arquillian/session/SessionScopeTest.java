@@ -27,7 +27,7 @@ import static org.junit.Assert.assertNotSame;
 
 @RunWith(Arquillian.class)
 public class SessionScopeTest {
-    public static final String TEST_SESSION_URL = "http://127.0.0.1:" + System.getProperty("tomee.http.port") + "/test/session";
+    public static final String TEST_SESSION_URL = "http://127.0.0.1:" + System.getProperty("tomee.http.port", "10080") + "/test/session";
 
     @Deployment
     public static WebArchive createDeployment() {
