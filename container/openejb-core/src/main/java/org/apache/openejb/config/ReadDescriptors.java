@@ -181,6 +181,12 @@ public class ReadDescriptors implements DynamicDeployer {
                                         unit.getMappingFile().add(mappingFile);
                                     }
                                 }
+                                for (String jarFile : fragmentUnit.getJarFile()) {
+                                    if (!unit.getJarFile().contains(jarFile)) {
+                                        logger.info("Adding jar file " + jarFile + " to persistence unit " + fragmentUnit.getName());
+                                        unit.getJarFile().add(jarFile);
+                                    }
+                                }
                                 if (fragmentUnit.isExcludeUnlistedClasses()) {
                                     unit.setExcludeUnlistedClasses(true);
                                     logger.info("Excluding unlisted classes for persistence unit " + fragmentUnit.getName());
