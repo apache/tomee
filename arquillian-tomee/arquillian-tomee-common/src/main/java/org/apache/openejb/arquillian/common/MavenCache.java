@@ -30,6 +30,7 @@ import org.sonatype.aether.repository.LocalRepository;
 import org.sonatype.aether.resolution.ArtifactRequest;
 import org.sonatype.aether.resolution.ArtifactResolutionException;
 import org.sonatype.aether.resolution.ArtifactResult;
+import org.sonatype.aether.util.artifact.ArtifactProperties;
 import org.sonatype.aether.util.artifact.DefaultArtifact;
 
 import java.io.File;
@@ -37,6 +38,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.HashMap;
 
 /**
  * This class resolves artifacts in Maven. If an artifact (such as the Tomcat
@@ -108,8 +110,11 @@ public class MavenCache {
 		return artifact;
 	}
 
-	public Artifact getArtifact(String coords) {
-		return new DefaultArtifact(coords);
+	public Artifact getArtifact(final String coords) {
+        final Artifact artifact = new DefaultArtifact(coords); // just for the parsing
+		return new DefaultArtifact(coords, new HashMap<String, String>() {{ // try to get faster
+            put(ArtifactProperties.LOCAL_PATH, new File(session.getLocalRepository().getBasedir(), session.getLocalRepositoryManager().getPathForLocalArtifact(artifact)).getAbsolutePath());
+        }});
 	}
 
 	public Artifact resolve(Artifact artifact) throws ArtifactResolutionException {

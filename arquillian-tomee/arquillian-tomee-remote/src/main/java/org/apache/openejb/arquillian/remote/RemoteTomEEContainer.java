@@ -51,6 +51,13 @@ public class RemoteTomEEContainer extends TomEEContainer {
     private boolean needsStart = false;
 
     public void start() throws LifecycleException {
+        if (System.getProperty("tomee.http.port") != null) {
+            configuration.setHttpPort(Integer.parseInt(System.getProperty("tomee.http.port")));
+        }
+        if (System.getProperty("tomee.shutdown.port") != null) {
+            configuration.setStopPort(Integer.parseInt(System.getProperty("tomee.shutdown.port")));
+        }
+
         // see if TomEE is already running by checking the http port
         try {
             connect(configuration.getHttpPort());
@@ -105,11 +112,11 @@ public class RemoteTomEEContainer extends TomEEContainer {
 
             System.setProperty("tomee.http.port", String.valueOf(configuration.getHttpPort()));
             System.setProperty("tomee.shutdown.port", String.valueOf(configuration.getStopPort()));
-            System.setProperty("java.naming.provider.url", "http://localhost:" + configuration.getHttpPort() + "/openejb/ejb");
+            System.setProperty("java.naming.provider.url", "http://localhost:" +  configuration.getHttpPort() + "/openejb/ejb");
             System.setProperty("connect.tries", "90");
             System.setProperty("server.http.port", String.valueOf(configuration.getHttpPort()));
             System.setProperty("server.shutdown.port", String.valueOf(configuration.getStopPort()));
-            System.setProperty("java.opts", "-Xmx512m -Xms256m -XX:PermSize=64m -XX:MaxPermSize=256m -XX:ReservedCodeCacheSize=64m");
+            System.setProperty("java.opts", "-Xmx512m -Xms256m -XX:PermSize=64m -XX:MaxPermSize=256m -XX:ReservedCodeCacheSize=64m -Dtomee.http.port=" + configuration.getHttpPort());
             System.setProperty("openejb.home", openejbHome.getAbsolutePath());
 
             container = new RemoteServer();
