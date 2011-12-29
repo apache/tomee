@@ -36,12 +36,12 @@ import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.ServiceManager;
 import org.apache.openejb.server.ejbd.EjbServer;
 import org.apache.openejb.spi.Service;
-import org.apache.tomee.installer.Installer;
-import org.apache.tomee.installer.Paths;
-import org.apache.tomee.loader.TomcatHelper;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.OptionsLog;
+import org.apache.tomee.installer.Installer;
+import org.apache.tomee.installer.Paths;
+import org.apache.tomee.loader.TomcatHelper;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -257,7 +257,7 @@ public class TomcatLoader implements Loader {
 
     private void optionalService(Properties properties, String className) {
         try {
-            Service service = (Service) Class.forName(className).newInstance();
+            Service service = (Service) getClass().getClassLoader().loadClass(className).newInstance();
             service.init(properties);
         } catch (ClassNotFoundException e) {
             logger.info("Optional service not installed: " + className);

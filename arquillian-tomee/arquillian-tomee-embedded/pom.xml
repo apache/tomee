@@ -177,6 +177,12 @@
       <type>jar</type>
       <scope>compile</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>tomee-webservices</artifactId>
+      <version>${version.openejb}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
 </project>
