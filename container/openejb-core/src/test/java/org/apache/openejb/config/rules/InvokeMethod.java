@@ -35,9 +35,11 @@ import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.config.OutputGeneratedDescriptors;
 import org.apache.openejb.config.ValidationFailedException;
 import org.apache.openejb.config.ValidationFailure;
 import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Join;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
@@ -69,7 +71,11 @@ public class InvokeMethod extends Statement {
         Map<Integer, List<String>> expectedKeys = validateKeys();
         setUp();
         Object obj = testMethod.invokeExplosively(target);
+
+        final String outputDescriptors = SystemInstance.get().getProperty(OutputGeneratedDescriptors.OUTPUT_DESCRIPTORS, "false");
         try {
+            SystemInstance.get().setProperty(OutputGeneratedDescriptors.OUTPUT_DESCRIPTORS, "false");
+
             if (obj instanceof EjbJar) {
                 EjbJar ejbJar = (EjbJar) obj;
                 assembler.createApplication(config.configureApplication(ejbJar));
@@ -100,7 +106,10 @@ public class InvokeMethod extends Statement {
                 }
                 fail("There should be no validation failures");
             }
+        } finally {
+            SystemInstance.get().setProperty(OutputGeneratedDescriptors.OUTPUT_DESCRIPTORS, outputDescriptors);
         }
+
         tearDown();
     }
 
