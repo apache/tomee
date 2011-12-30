@@ -303,8 +303,7 @@
     <module>utils</module>
     <module>tomee</module>
     <module>osgi</module>
-    <!-- don't activate it back since it creates artifacts in /tmp when TCK fails and/or succeeds -->
-    <!--module>tck</module-->
+    <module>tck</module>
   </modules>
 
   <profiles>
