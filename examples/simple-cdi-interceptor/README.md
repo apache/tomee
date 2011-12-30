@@ -59,7 +59,12 @@ Before we say "all done" there's one last thing we are left with ! To enable the
 
 Lets quickly put up a [beans.xml file]
 
-    &lt;beans&gt;<br/>  &lt;interceptors&gt;<br/>    &lt;class&gt;org.superbiz.cdi.bookshow.interceptors.LoggingInterceptor<br/>    &lt;/class&gt;<br/>  &lt;/interceptors&gt;<br/>&lt;/beans&gt;
+    <beans>
+      <interceptors>
+        <class>org.superbiz.cdi.bookshow.interceptors.LoggingInterceptor
+        </class>
+      </interceptors>
+    </beans>
 
  in META-INF
 
