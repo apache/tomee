@@ -82,8 +82,8 @@ public class MavenCache {
 	}
 
 	public Artifact getArtifact(Artifact art, String altUrl) {
-		Artifact artifact = null;
-		
+        Artifact artifact;
+
 		try {
 			artifact = resolve(art);
 		} catch (Exception e) {
@@ -98,13 +98,11 @@ public class MavenCache {
 					system.install(session, request);
 					artifact = resolve(art);
 				}
-			} catch (InstallationException e1) {
-				e1.printStackTrace();
-			} catch (DownloadException e1) {
-				e1.printStackTrace();
-			} catch (ArtifactResolutionException e1) {
-				e1.printStackTrace();
+			} catch (Exception e1) {
+                throw new IllegalStateException(e1);
 			}
+
+            throw new IllegalStateException(e);
 		}
 		
 		return artifact;
