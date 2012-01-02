@@ -175,6 +175,7 @@ public class RemoteTomEEContainer extends TomEEContainer {
 
     protected File downloadFile(String artifactName, String altUrl) {
         Artifact artifact = new MavenCache().getArtifact(artifactName, altUrl);
+        if (artifact == null) throw new NullPointerException(String.format("No such artifact: %s", artifactName));
         return artifact.getFile();
     }
 
