@@ -47,6 +47,13 @@
           <exclude name="testInjectionIntoWebServiceEndpoint"/>
         </methods>
       </class>
+      <!-- see CDI-140 -->
+      <class
+        name="org.jboss.jsr299.tck.tests.context.passivating.broken.passivatingProducerMethodWithNonPassivatingParameter.PassivatingProducerMethodWithNonPassivatingParameterTest">
+        <methods>
+          <exclude name="testSimpleDependentWebBeanWithNonSerializableImplementationInjectedIntoProducerMethodParameterWithPassivatingScopeFails"></exclude>
+        </methods>
+      </class>
     </classes>
   </test>
 </suite>
