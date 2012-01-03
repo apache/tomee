@@ -45,6 +45,10 @@ public class FullRestartContainer extends AbstractContainers implements Containe
     private Exception exception;
     private File currentFile;
 
+    public FullRestartContainer() {
+        System.out.println("ContainersImpl=" + FullRestartContainer.class.getName());
+    }
+
     @Override
     public DeploymentException getDeploymentException() {
         if (exception instanceof DeploymentException) {
