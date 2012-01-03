@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+
+<suite name="CDI TCK" verbose="0">
+  <test name="CDI TCK">
+    <!--<packages>-->
+        <!--<package name="org.jboss.jsr299.tck.tests.*"/>-->
+        <!--<package name="org.jboss.jsr299.tck.interceptors.tests.*"/>-->
+    <!--</packages>-->
+    <classes>
+      <class name="org.jboss.jsr299.tck.tests.context.application.ejb.ApplicationContextSharedTest"/>
+      <class name="org.jboss.jsr299.tck.tests.context.dependent.ejb.DependentContextEjbTest"/>
+      <class name="org.jboss.jsr299.tck.tests.context.passivating.PassivatingContextTest"/>
+      <class name="org.jboss.jsr299.tck.tests.context.passivating.broken.enterpriseBeanWithNonPassivatingBeanConstructorParameterInInterceptor.EnterpriseBeanWithNonPassivatingBeanConstructorParameterInInterceptorTest"/>
+      <class name="org.jboss.jsr299.tck.tests.context.passivating.broken.enterpriseBeanWithNonPassivatingConstructorFieldInDecorator.EnterpriseBeanWithNonPassivatingFieldInDecoratorTest"/>
+      <class name="org.jboss.jsr299.tck.tests.context.passivating.broken.enterpriseBeanWithNonPassivatingInitializerInDecorator.EnterpriseBeanWithNonPassivatingInitializerInDecoratorTest"/>
+      <class name="org.jboss.jsr299.tck.tests.context.passivating.broken.enterpriseBeanWithNonPassivatingInitializerParameterInInterceptor.EnterpriseBeanWithNonPassivatingInitializerParameterInInterceptorTest"/>
+      <class name="org.jboss.jsr299.tck.tests.context.passivating.broken.enterpriseBeanWithNonPassivatingInjectedFieldInDecorator.EnterpriseBeanWithNonPassivatingInjectedFieldInDecoratorTest"/>
+      <class name="org.jboss.jsr299.tck.tests.context.passivating.broken.enterpriseBeanWithNonPassivatingInjectedFieldInInterceptor.EnterpriseBeanWithNonPassivatingInjectedFieldInInterceptorTest"/>
+      <class name="org.jboss.jsr299.tck.tests.context.passivating.broken.enterpriseBeanWithNonSerializableIntializerMethod.EnterpriseBeanWithNonSerializableIntializerMethodTest"/>
+      <class name="org.jboss.jsr299.tck.tests.context.passivating.broken.finalProducerFieldNotPassivationCapable.NonPassivationCapableProducerFieldTest"/>
+      <class name="org.jboss.jsr299.tck.tests.context.passivating.broken.managedBeanWithNonPassivatingDecorator.ManagedBeanWithNonPassivatingDecoratorTest"/>
+      <class name="org.jboss.jsr299.tck.tests.context.passivating.broken.nonPassivationCapableProducerField.NonPassivationCapableProducerFieldTest"/>
+      <class name="org.jboss.jsr299.tck.tests.context.passivating.broken.nonPassivationCapableProducerMethod.NonPassivationCapableProducerMethodTest"/>
+      <class name="org.jboss.jsr299.tck.tests.context.passivating.broken.unserializableSimpleInjectedIntoPassivatingEnterpriseBean.UnserializableSimpleInjectedIntoPassivatingEnterpriseBeanTest"/>
+      <class name="org.jboss.jsr299.tck.tests.context.request.ejb.EJBRequestContextTest"/>
+      <class name="org.jboss.jsr299.tck.tests.context.session.SessionContextTest"/>
+      <class name="org.jboss.jsr299.tck.tests.decorators.invocation.EJBDecoratorInvocationTest"/>
+      <class name="org.jboss.jsr299.tck.tests.definition.qualifier.enterprise.EnterpriseQualifierDefinitionTest"/>
+      <class name="org.jboss.jsr299.tck.tests.definition.scope.enterprise.EnterpriseScopeDefinitionTest"/>
+      <class name="org.jboss.jsr299.tck.tests.definition.stereotype.enterprise.EnterpriseStereotypeDefinitionTest"/>
+      <class name="org.jboss.jsr299.tck.tests.deployment.lifecycle.broken.failsDuringBeanDiscovery.DeploymentFailureTest"/>
+      <class name="org.jboss.jsr299.tck.tests.deployment.packaging.bundledLibrary.LibraryInEarTest"/>
+      <class name="org.jboss.jsr299.tck.tests.event.broken.observer.notBusinessMethod.EJBObserverMethodNotBusinessMethodTest"/>
+      <class name="org.jboss.jsr299.tck.tests.event.observer.enterprise.EnterpriseEventInheritenceTest"/>
+      <class name="org.jboss.jsr299.tck.tests.extensions.container.event.ContainerEventTest"/>
+      <class name="org.jboss.jsr299.tck.tests.extensions.processBean.ProcessSessionBeanTest"/>
+      <class name="org.jboss.jsr299.tck.tests.implementation.builtin.BuiltInBeansTest"/>
+      <class name="org.jboss.jsr299.tck.tests.implementation.disposal.method.definition.broken.methodOnSessionBean.DisposalMethodOnSessionBean"/>
+      <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.broken.singletonWithConversationScope.SingletonWithConversationScopeTest"/>
+      <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.broken.singletonWithRequestScope.SingletonWithRequestScopeTest"/>
+      <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.broken.singletonWithSessionScope.SingletonWithSessionScopeTest"/>
+      <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.broken.statelessWithApplicationScope.StatelessWithApplicationScopeTest"/>
+      <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.broken.statelessWithConversationScope.StatelessWithConversationScopeTest"/>
+      <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.broken.statelessWithRequestScope.StatelessWithRequestScopeTest"/>
+      <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.broken.statelessWithSessionScope.StatelessWithSessionScopeTest"/>
+      <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.definition.EnterpriseBeanDefinitionTest"/>
+      <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.definition.EnterpriseBeanViaXmlTest"/>
+      <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.lifecycle.EnterpriseBeanLifecycleTest"/>
+      <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.newBean.NewEnterpriseBeanICTest"/>
+      <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.newBean.NewEnterpriseBeanTest"/>
+      <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.remove.EnterpriseBeanRemoveMethodTest"/>
+      <class name="org.jboss.jsr299.tck.tests.implementation.initializer.EjbInitializerMethodTest"/>
+      <class name="org.jboss.jsr299.tck.tests.implementation.initializer.InitializerMethodTest"/>
+      <class name="org.jboss.jsr299.tck.tests.implementation.producer.field.definition.enterprise.EnterpriseProducerFieldDefinitionTest"/>
+      <class name="org.jboss.jsr299.tck.tests.implementation.producer.method.broken.enterprise.nonbusiness.ProducerMethodNotBusinessMethodTest"/>
+      <class name="org.jboss.jsr299.tck.tests.implementation.producer.method.definition.enterprise.EnterpriseProducerMethodDefinitionTest"/>
+      <class name="org.jboss.jsr299.tck.tests.implementation.simple.resource.ejb.EjbInjectionTest"/>
+      <class name="org.jboss.jsr299.tck.tests.inheritance.specialization.enterprise.EnterpriseBeanSpecializationIntegrationTest"/>
+      <class name="org.jboss.jsr299.tck.tests.inheritance.specialization.enterprise.EnterpriseBeanSpecializationTest"/>
+      <class name="org.jboss.jsr299.tck.tests.inheritance.specialization.enterprise.broken.directlyExtendsNothing.DirectlyExtendsNothingTest"/>
+      <class name="org.jboss.jsr299.tck.tests.inheritance.specialization.enterprise.broken.directlyExtendsSimpleBean.DirectlyExtendsSimpleBeanTest"/>
+      <class name="org.jboss.jsr299.tck.tests.inheritance.specialization.enterprise.broken.implementInterfaceAndExtendsNothing.ImplementsInterfaceAndExtendsNothingTest"/>
+      <class name="org.jboss.jsr299.tck.tests.inheritance.specialization.enterprise.broken.sameName.SameNameTest"/>
+      <class name="org.jboss.jsr299.tck.tests.inheritance.specialization.simple.broken.extendejb.SpecializingBeanExtendsEnterpriseBeanTest"/>
+      <class name="org.jboss.jsr299.tck.tests.interceptors.definition.enterprise.interceptorOrder.SessionBeanInterceptorOrderTest"/>
+      <class name="org.jboss.jsr299.tck.tests.interceptors.definition.enterprise.nonContextualReference.SessionBeanInterceptorOnNonContextualEjbReferenceTest"/>
+      <class name="org.jboss.jsr299.tck.tests.interceptors.definition.enterprise.simpleInterception.SessionBeanInterceptorDefinitionTest"/>
+      <class name="org.jboss.jsr299.tck.tests.lookup.injection.enterprise.SessionBeanInjectionOrderingTest"/>
+      <class name="org.jboss.jsr299.tck.tests.lookup.injection.enterprise.SessionBeanInjectionTest"/>
+      <class name="org.jboss.jsr299.tck.tests.lookup.typesafe.resolution.EnterpriseResolutionByTypeTest"/>
+    </classes>
+  </test>
+</suite>
