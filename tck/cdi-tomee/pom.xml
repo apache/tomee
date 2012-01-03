@@ -30,6 +30,7 @@
     <openejb.home>${project.build.directory}${file.separator}apache-tomee-webprofile-1.0.0-beta-2-SNAPSHOT</openejb.home>
     <openejb.deployer.jndiname>openejb/DeployerBusinessRemote</openejb.deployer.jndiname>
     <org.jboss.testharness.spi.Containers>org.apache.openejb.tck.impl.ContainersImplTomEE</org.jboss.testharness.spi.Containers>
+    <suiteXmlFile>src/test/resources/passing.xml</suiteXmlFile>
   </properties>
 
   <dependencies>
@@ -210,8 +211,7 @@
         <version>2.9</version>
         <configuration>
           <suiteXmlFiles>
-            <!-- <suiteXmlFile>src/test/resources/web-profile.xml</suiteXmlFile> -->
-            <suiteXmlFile>src/test/resources/passing.xml</suiteXmlFile>
+            <suiteXmlFile>${suiteXmlFile}</suiteXmlFile>
             <!--<suiteXmlFile>src/test/resources/failing.xml</suiteXmlFile>-->
           </suiteXmlFiles>
           <!--<forkMode>once</forkMode>-->
@@ -262,6 +262,7 @@
       <id>webapp-deployer</id>
       <properties>
         <org.jboss.testharness.spi.Containers>org.apache.openejb.tck.impl.FullRestartContainer</org.jboss.testharness.spi.Containers>
+        <suiteXmlFile>src/test/resources/webapps-passing.xml</suiteXmlFile>
       </properties>
     </profile>
   </profiles>
