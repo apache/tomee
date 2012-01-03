@@ -27,9 +27,9 @@
   <name>OpenEJB :: TCK :: CDI TomEE</name>
 
   <properties>
-    <!-- where we will unpack tomcat -->
     <openejb.home>${project.build.directory}${file.separator}apache-tomee-webprofile-1.0.0-beta-2-SNAPSHOT</openejb.home>
     <openejb.deployer.jndiname>openejb/DeployerBusinessRemote</openejb.deployer.jndiname>
+    <org.jboss.testharness.spi.Containers>org.apache.openejb.tck.impl.ContainersImplTomEE</org.jboss.testharness.spi.Containers>
   </properties>
 
   <dependencies>
@@ -233,6 +233,7 @@
             <java.opts>-Xmx512m -Xms256m -XX:PermSize=64m -XX:MaxPermSize=512m -XX:ReservedCodeCacheSize=64m</java.opts>
             <openejb.home>${openejb.home}</openejb.home>
             <openejb.deployer.jndiname>${openejb.deployer.jndiname}</openejb.deployer.jndiname>
+            <org.jboss.testharness.spi.Containers>${org.jboss.testharness.spi.Containers}</org.jboss.testharness.spi.Containers>
           </systemPropertyVariables>
         </configuration>
         <executions>
@@ -260,7 +261,7 @@
     <profile>
       <id>webapp-deployer</id>
       <properties>
-        <openejb.deployer.jndiname>openejb/WebappDeployerRemote</openejb.deployer.jndiname>
+        <org.jboss.testharness.spi.Containers>org.apache.openejb.tck.impl.FullRestartContainer</org.jboss.testharness.spi.Containers>
       </properties>
     </profile>
   </profiles>

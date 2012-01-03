@@ -64,6 +64,7 @@ public class ContainersImplTomEE extends AbstractContainers implements Container
         }
     }
     public ContainersImplTomEE() {
+        System.out.println("ContainersImpl=" + ContainersImplTomEE.class.getName());
         System.out.println("Initialized ContainersImplTomEE " + (++count));
         server = new RemoteServer();
     }
