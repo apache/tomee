@@ -163,7 +163,7 @@ public class TomcatWsRegistry implements WsRegistry {
                 root = '/' + root;
             }
             Context webAppContext = (Context) host.findChild(root);
-            addServlet(host, webAppContext, "/webservices/*", httpListener, path, addresses);
+            addServlet(host, webAppContext, "/webservices" + path +  "*", httpListener, path, addresses);
         }
         return addresses;
     }
@@ -247,13 +247,13 @@ public class TomcatWsRegistry implements WsRegistry {
     private void addServlet(Container host, Context context, String mapping, HttpListener httpListener, String path, List<String> addresses) {
         // build the servlet
         Wrapper wrapper = context.createWrapper();
-        wrapper.setName("webservice");
+        wrapper.setName("webservice" + path.substring(1));
         wrapper.setServletClass(WsServlet.class.getName());
 
         // add servlet to context
         context.addChild(wrapper);
         wrapper.addMapping(mapping);
-        context.addServletMapping(mapping, "webservice");
+        context.addServletMapping(mapping, wrapper.getName());
 
         String webServicecontainerID = wrapper.getName() + WsServlet.WEBSERVICE_CONTAINER + httpListener.hashCode();
         wrapper.addInitParameter(WsServlet.WEBSERVICE_CONTAINER, webServicecontainerID);
