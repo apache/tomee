@@ -1,7 +1,7 @@
 package org.apache.tomee.catalina.facade;
 
+import org.apache.openejb.assembler.classic.DeploymentExceptionManager;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.tomee.catalina.DeploymentExceptionManager;
 
 import javax.ejb.Singleton;
 import javax.ejb.TransactionManagement;

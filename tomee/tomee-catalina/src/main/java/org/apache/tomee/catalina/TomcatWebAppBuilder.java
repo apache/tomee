@@ -47,6 +47,7 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ConnectorInfo;
+import org.apache.openejb.assembler.classic.DeploymentExceptionManager;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.InjectionBuilder;
 import org.apache.openejb.assembler.classic.JndiEncBuilder;
@@ -597,7 +598,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                     if (System.getProperty(TOMEE_EAT_EXCEPTION_PROP) == null) {
                         final TomEERuntimeException tre = new TomEERuntimeException(e);
                         DeploymentExceptionManager dem = SystemInstance.get().getComponent(DeploymentExceptionManager.class);
-                        dem.saveDelpoyementException(contextInfo.appInfo, tre);
+                        dem.saveDelpoymentException(contextInfo.appInfo, tre);
                         throw tre;
                     }
                     return;

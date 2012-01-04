@@ -20,6 +20,8 @@ import java.util.Date;
 import java.util.Properties;
 
 import javax.transaction.TransactionManager;
+
+import org.apache.openejb.assembler.classic.DeploymentExceptionManager;
 import org.apache.openejb.cdi.CdiBuilder;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ApplicationServer;
@@ -82,6 +84,8 @@ public final class OpenEJB {
                 throw new OpenEJBException(e);
             }
             SystemInstance system = SystemInstance.get();
+
+            system.setComponent(DeploymentExceptionManager.class, new DeploymentExceptionManager());
 
             system.setComponent(ApplicationServer.class, appServer);
             //OWB support.  The classloader has to be able to load all OWB components including the ones supplied by OpenEjb.

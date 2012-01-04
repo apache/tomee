@@ -148,7 +148,9 @@ class TomcatHook {
         if( properties.getProperty("openejb.libs") == null){
             throw new NullPointerException("openejb.libs property is not set");
         }
-        
+
+        final Embedder embedder = new Embedder("org.apache.tomee.catalina.TomcatLoader");
+        SystemInstance.get().setComponent(Embedder.class, embedder);
         try {
             // create the loader
 
@@ -159,7 +161,6 @@ class TomcatHook {
 
             // This guy does the magic of squishing the openejb libraries into the parent classloader
             // and kicking off the reall integration.
-            Embedder embedder = new Embedder("org.apache.tomee.catalina.TomcatLoader");
             embedder.init(properties);
         } catch (Exception e) {
             e.printStackTrace();

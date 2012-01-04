@@ -187,7 +187,6 @@ public class TomcatLoader implements Loader {
             tomcatWebAppBuilder.start();
             SystemInstance.get().setComponent(WebAppBuilder.class, tomcatWebAppBuilder);
         }
-        SystemInstance.get().setComponent(DeploymentExceptionManager.class, new DeploymentExceptionManager());
 
         // Web Services will be installed into the WebDeploymentListeners list
         SystemInstance.get().setComponent(WebDeploymentListeners.class, new WebDeploymentListeners());

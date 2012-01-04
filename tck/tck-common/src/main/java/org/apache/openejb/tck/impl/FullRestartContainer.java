@@ -40,6 +40,7 @@ import java.util.Properties;
  */
 public class FullRestartContainer extends AbstractContainers implements Containers {
     private static final File WEBAPP_DIR = new File(System.getProperty("openejb.home"), "webapps/");
+    private static final File APPS_DIR = new File(System.getProperty("openejb.home"), "apps/");
 
     private RemoteServer server;
     private Exception exception;
@@ -60,7 +61,12 @@ public class FullRestartContainer extends AbstractContainers implements Containe
 
     @Override
     public boolean deploy(InputStream archive, String name) throws IOException {
-        currentFile = new File(WEBAPP_DIR, name);
+        if (name.endsWith("war")) {
+            currentFile = new File(WEBAPP_DIR, name);
+        } else {
+            currentFile = new File(APPS_DIR, name);
+        }
+
         System.out.println(currentFile);
         writeToFile(currentFile, archive);
 
@@ -71,6 +77,7 @@ public class FullRestartContainer extends AbstractContainers implements Containe
             e.printStackTrace();
             throw e;
         }
+
         return (exception = lookup().exception()) == null;
     }
 
