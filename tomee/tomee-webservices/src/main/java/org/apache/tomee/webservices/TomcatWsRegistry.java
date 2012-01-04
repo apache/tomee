@@ -54,6 +54,9 @@ import static org.apache.tomee.catalina.BackportUtil.getServlet;
 import static org.apache.tomee.catalina.TomcatWebAppBuilder.IGNORE_CONTEXT;
 
 public class TomcatWsRegistry implements WsRegistry {
+    private static final String WEBSERVICE_SUB_CONTEXT = System.getProperty("tomee.jaxws.subcontext", "/webservices");
+    private static final boolean WEBSERVICE_OLDCONTEXT_ACTIVE = Boolean.getBoolean("tomee.jaxws.oldsubcontext");
+
     private final Map<String, Context> webserviceContexts = new TreeMap<String, Context>();
     private Engine engine;
     private List<Connector> connectors;
@@ -152,18 +155,20 @@ public class TomcatWsRegistry implements WsRegistry {
 
         // build contexts
         // - old way (/*)
-        Context context = createNewContext(path, classLoader, authMethod, transportGuarantee, realmName);
-        host.addChild(context);
-        addServlet(host, context, "/*", httpListener, path, addresses);
+        if (WEBSERVICE_OLDCONTEXT_ACTIVE) {
+            Context context = createNewContext(path, classLoader, authMethod, transportGuarantee, realmName);
+            host.addChild(context);
+            addServlet(host, context, "/*", httpListener, path, addresses);
+        }
 
-        // - new way (/<webappcontext>/webservices/*) if webcontext is specified
+        // - new way (/<webappcontext>/webservices/<name>) if webcontext is specified
         if (webContext != null) {
             String root = webContext;
             if (!root.startsWith("/")) {
                 root = '/' + root;
             }
             Context webAppContext = (Context) host.findChild(root);
-            addServlet(host, webAppContext, "/webservices" + path +  "*", httpListener, path, addresses);
+            addServlet(host, webAppContext, WEBSERVICE_SUB_CONTEXT + path, httpListener, path, addresses);
         }
         return addresses;
     }
@@ -252,7 +257,6 @@ public class TomcatWsRegistry implements WsRegistry {
 
         // add servlet to context
         context.addChild(wrapper);
-        wrapper.addMapping(mapping);
         context.addServletMapping(mapping, wrapper.getName());
 
         String webServicecontainerID = wrapper.getName() + WsServlet.WEBSERVICE_CONTAINER + httpListener.hashCode();
@@ -265,8 +269,22 @@ public class TomcatWsRegistry implements WsRegistry {
 
         // register wsdl locations for service-ref resolution
         for (Connector connector : connectors) {
+            final StringBuilder fullContextpath;
+            if (!WEBSERVICE_OLDCONTEXT_ACTIVE) {
+                String contextPath = context.getName();
+                if (contextPath != null && !contextPath.startsWith("/")) {
+                    contextPath = "/" + contextPath;
+                } else if (contextPath == null) {
+                    contextPath = "/";
+                }
+                fullContextpath = new StringBuilder(contextPath)
+                        .append(WEBSERVICE_SUB_CONTEXT).append(path);
+            } else {
+                fullContextpath = new StringBuilder(path);
+            }
+
             try {
-                URI address = new URI(connector.getScheme(), null, host.getName(), connector.getPort(), path, null, null);
+                URI address = new URI(connector.getScheme(), null, host.getName(), connector.getPort(), fullContextpath.toString(), null, null);
                 addresses.add(address.toString());
             } catch (URISyntaxException ignored) {
                 // no-op
@@ -285,14 +303,16 @@ public class TomcatWsRegistry implements WsRegistry {
         }
 
         Context context = webserviceContexts.remove(path);
-        try {
-            context.stop();
-            context.destroy();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        Host host = (Host) context.getParent();
-        host.removeChild(context);
+        if (WEBSERVICE_OLDCONTEXT_ACTIVE) {
+            try {
+                context.destroy();
+                context.stop();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            Host host = (Host) context.getParent();
+            host.removeChild(context);
+        } // else let tomcat manages its context
     }
 
     private void setWsContainer(Context context, Wrapper wrapper, HttpListener wsContainer) {

@@ -265,7 +265,7 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
 
                                 List<String> addresses = wsRegistry.addWsContainer(webContextByEjb.get(bean.ejbClass), location, container, virtualHost, realm, transport, auth, classLoader);
 
-                                // one of the registered addresses to be the cannonical address
+                                // one of the registered addresses to be the canonical address
                                 String address = HttpUtil.selectSingleAddress(addresses);
 
                                 if (address != null) {

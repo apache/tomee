@@ -20,6 +20,12 @@ package org.apache.openejb.arquillian.common;
 import org.jboss.arquillian.container.spi.ConfigurationException;
 import org.jboss.arquillian.container.spi.client.container.ContainerConfiguration;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringReader;
+import java.util.Properties;
+
 public class TomEEConfiguration implements ContainerConfiguration {
 
     private int httpPort = 8080;
@@ -28,6 +34,11 @@ public class TomEEConfiguration implements ContainerConfiguration {
     private boolean plusContainer = true;
     private String tomcatVersion = null;
     private String openejbVersion = "1.0.0-beta-1";
+    private String systemProperties = "openejb.log.factory = org.apache.openejb.util.Log4jLogStreamFactory\n" +
+            "openejb.logger.external = true\n" +
+            "log4j.rootLogger = info, stdout\n" +
+            "log4j.appender.stdout = org.apache.log4j.ConsoleAppender\n" +
+            "log4j.appender.stdout.layout = org.apache.log4j.SimpleLayout";
 
     public int getHttpPort() {
         return httpPort;
@@ -77,6 +88,30 @@ public class TomEEConfiguration implements ContainerConfiguration {
 		this.openejbVersion = openejbVersion;
 	}
 
-	public void validate() throws ConfigurationException {
+    public String getSystemProperties() {
+        return systemProperties;
+    }
+
+    public void setSystemProperties(String systemProperties) {
+        this.systemProperties = systemProperties;
+    }
+
+    public Properties systemProperties() {
+        final Properties p = new Properties();
+        final Reader reader = new StringReader(systemProperties);
+        try {
+            p.load(new InputStream() {
+                @Override
+                public int read() throws IOException {
+                    return reader.read();
+                }
+            });
+        } catch (IOException e) {
+            throw new RuntimeException("can't read " + systemProperties);
+        }
+        return p;
+    }
+
+    public void validate() throws ConfigurationException {
     }
 }
