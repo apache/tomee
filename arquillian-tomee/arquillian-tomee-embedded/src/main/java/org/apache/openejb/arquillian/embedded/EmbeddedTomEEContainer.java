@@ -40,6 +40,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.naming.Context;
 import java.io.File;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class EmbeddedTomEEContainer extends TomEEContainer {
@@ -53,18 +54,17 @@ public class EmbeddedTomEEContainer extends TomEEContainer {
     private static final Map<Archive<?>, File> ARCHIVES = new ConcurrentHashMap<Archive<?>, File>();
 
     private Container container;
-
-    public EmbeddedTomEEContainer() {
-        container = new Container();
-    }
+    private Properties savedProperties;
 
     public Class<TomEEConfiguration> getConfigurationClass() {
         return TomEEConfiguration.class;
     }
 
     public void setup(TomEEConfiguration configuration) {
-        container.setup(convertConfiguration(configuration));
         this.configuration = configuration;
+        setSystemProperties();
+        container = new Container();
+        container.setup(convertConfiguration(configuration));
     }
 
     /*
@@ -99,12 +99,37 @@ public class EmbeddedTomEEContainer extends TomEEContainer {
         }
     }
 
+    private void setSystemProperties() {
+        savedProperties = new Properties();
+        final Properties props = System.getProperties();
+        for (Map.Entry<Object, Object> entry : configuration.systemProperties().entrySet()) {
+            final String key = (String) entry.getKey();
+            if (props.contains(key)) {
+                savedProperties.put(key, System.getProperty(key));
+            }
+            props.setProperty(key, (String) entry.getValue());
+        }
+    }
+
+    private void clearSystemProperties() {
+        final Properties props = System.getProperties();
+        for (Map.Entry<Object, Object> entry : configuration.systemProperties().entrySet()) {
+            final String key = (String) entry.getKey();
+            if (savedProperties.contains(key)) {
+                System.setProperty(key, savedProperties.getProperty(key));
+            } else {
+                props.remove(key);
+            }
+        }
+    }
+
     public void stop() throws LifecycleException {
         try {
             container.stop();
         } catch (Exception e) {
             throw new LifecycleException("Unable to stop server", e);
         }
+        clearSystemProperties();
     }
 
     public ProtocolDescription getDefaultProtocol() {
