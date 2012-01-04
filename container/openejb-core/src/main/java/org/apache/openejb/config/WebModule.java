@@ -56,6 +56,7 @@ public class WebModule extends Module implements WsModule, RESTModule {
     
     // keep the list of filtered URL we got after applying include/exclude pattern (@See DeploymentsResolver.loadFromClasspath)
     private List<URL> urls;
+    private List<URL> scannableUrls;
 
     public WebModule(WebApp webApp, String contextRoot, ClassLoader classLoader, String jarLocation, String moduleId) {
         this.webApp = webApp;
@@ -185,5 +186,13 @@ public class WebModule extends Module implements WsModule, RESTModule {
 
     public Set<String> getEjbRestServices() {
         return ejbRestServices;
+    }
+
+    public List<URL> getScannableUrls() {
+        return scannableUrls;
+    }
+
+    public void setScannableUrls(List<URL> scannableUrls) {
+        this.scannableUrls = scannableUrls;
     }
 }
