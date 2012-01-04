@@ -1692,6 +1692,11 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         for (String id : resourceIds) {
             if (id.equalsIgnoreCase(shortName)) return id;
         }
+
+        if (resourceId.startsWith("osgi:")) {
+            return resourceId;
+        }
+
         return null;
     }
 

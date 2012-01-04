@@ -86,9 +86,8 @@ public class PersistenceBuilder {
                     try {
                         unitInfo.setJtaDataSource((DataSource) new InitialContext().lookup(initialJndiName));
                     } catch (NamingException ne) {
-                        // ignored: rethrow the previous one
+                        throw new OpenEJBException("Could not lookup <jta-data-source> '" + jtaDataSourceId + "' for unit '" + unitInfo.getPersistenceUnitName() + "'", e);
                     }
-                    throw new OpenEJBException("Could not lookup <jta-data-source> '" + jtaDataSourceId + "' for unit '" + unitInfo.getPersistenceUnitName() + "'", e);
                 }
             }
         }
@@ -132,9 +131,8 @@ public class PersistenceBuilder {
                     try {
                         unitInfo.setNonJtaDataSource((DataSource) new InitialContext().lookup(initialJndiName));
                     } catch (NamingException ne) {
-                        // ignored: rethrow the previous one
+                        throw new OpenEJBException("Could not lookup <non-jta-data-source> '" + nonJtaDataSourceId + "' for unit '" + unitInfo.getPersistenceUnitName() + "'", e);
                     }
-                    throw new OpenEJBException("Could not lookup <non-jta-data-source> '" + nonJtaDataSourceId + "' for unit '" + unitInfo.getPersistenceUnitName() + "'", e);
                 }
             }
         }
