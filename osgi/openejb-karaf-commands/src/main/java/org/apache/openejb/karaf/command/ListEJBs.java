@@ -3,6 +3,7 @@ package org.apache.openejb.karaf.command;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.shell.console.OsgiCommandSupport;
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.BeanType;
 import org.apache.openejb.karaf.console.table.Line;
 import org.apache.openejb.karaf.console.table.Lines;
 import org.apache.openejb.loader.SystemInstance;
@@ -16,18 +17,25 @@ public class ListEJBs extends OsgiCommandSupport {
     protected Object doExecute() throws Exception {
         final ContainerSystem cs = SystemInstance.get().getComponent(ContainerSystem.class);
         Lines lines = new Lines();
-        lines.add(new Line("Name", "Class", "Type"));
+        lines.add(new Line("Name", "Class", "Interface Type", "Bean Type"));
         for (BeanContext bc : cs.deployments()) {
             if (BeanContext.Comp.class.equals(bc.getBeanClass())) {
                 continue;
             }
 
-            lines.add(new Line(bc.getEjbName(), bc.getBeanClass().getName(), getType(bc)));
+            lines.add(new Line(bc.getEjbName(), bc.getBeanClass().getName(), getType(bc), componentType(bc.getComponentType())));
         }
 
         lines.print(System.out);
 
         return null;
+    }
+
+    private static String componentType(final BeanType componentType) {
+        if (componentType == null) {
+            return "unknown";
+        }
+        return componentType.name();
     }
 
     private static String getType(final BeanContext bc) {
