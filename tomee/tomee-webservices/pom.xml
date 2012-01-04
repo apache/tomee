@@ -68,6 +68,12 @@
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-cxf</artifactId>
       <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.xml.stream</groupId>
+          <artifactId>stax-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>

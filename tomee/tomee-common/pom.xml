@@ -50,6 +50,7 @@
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-catalina</artifactId>
       <version>${tomcat.version}</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 </project>
