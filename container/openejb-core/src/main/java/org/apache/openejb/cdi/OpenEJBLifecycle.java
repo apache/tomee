@@ -268,7 +268,8 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
                 beanContext.set(CurrentCreationalContext.class, new CurrentCreationalContext());
                 beanContext.addSystemInterceptor(new CdiInterceptor(bean, beanManager, cdiPlugin.getContexsServices()));
 
-                EjbUtility.fireEvents((Class<Object>) implClass, bean, (ProcessAnnotatedTypeImpl<Object>) processAnnotatedEvent);
+                // should be EjbUtility static method (from OWB 1.1.4)
+                fireEvents((Class<Object>) implClass, bean, (ProcessAnnotatedTypeImpl<Object>) processAnnotatedEvent);
 
                 webBeansContext.getWebBeansUtil().setInjectionTargetBeanEnableFlag(bean);
 
@@ -341,6 +342,134 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         afterStartApplication(startupObject);
 
         logger.info(OWBLogConst.INFO_0001, Long.toString(System.currentTimeMillis() - begin));
+    }
+
+    public static <T> void fireEvents(Class<T> clazz, BaseEjbBean<T> ejbBean,ProcessAnnotatedType<T> event)
+    {
+        WebBeansContext webBeansContext = ejbBean.getWebBeansContext();
+        BeanManagerImpl manager = webBeansContext.getBeanManagerImpl();
+        AnnotatedElementFactory annotatedElementFactory = webBeansContext.getAnnotatedElementFactory();
+
+        AnnotatedType<T> annotatedType = annotatedElementFactory.newAnnotatedType(clazz);
+
+        //Fires ProcessAnnotatedType
+        ProcessAnnotatedTypeImpl<T> processAnnotatedEvent = (ProcessAnnotatedTypeImpl<T>)event;
+        EjbBeanCreatorImpl<T> ejbBeanCreator = new EjbBeanCreatorImpl<T>(ejbBean);
+        ejbBeanCreator.checkCreateConditions();
+
+        if(processAnnotatedEvent.isVeto())
+        {
+            return;
+        }
+
+        if(processAnnotatedEvent.isModifiedAnnotatedType())
+        {
+            ejbBeanCreator.setMetaDataProvider(BeanCreator.MetaDataProvider.THIRDPARTY);
+            ejbBeanCreator.setAnnotatedType(annotatedType);
+        }
+
+        //Define meta-data
+        ejbBeanCreator.defineSerializable();
+        ejbBeanCreator.defineStereoTypes();
+        ejbBeanCreator.defineApiType();
+        ejbBeanCreator.defineScopeType("Session Bean implementation class : " + clazz.getName() + " stereotypes must declare same @ScopeType annotations", false);
+        ejbBeanCreator.defineQualifier();
+        ejbBeanCreator.defineName(WebBeansUtil.getManagedBeanDefaultName(clazz.getSimpleName()));
+        Set<ProducerMethodBean<?>> producerMethodBeans = ejbBeanCreator.defineProducerMethods();
+        for(ProducerMethodBean<?> producerMethodBean : producerMethodBeans)
+        {
+            Method producerMethod = producerMethodBean.getCreatorMethod();
+            if(!Modifier.isStatic(producerMethod.getModifiers()))
+            {
+                if(!EjbUtility.isBusinessMethod(producerMethod, ejbBean))
+                {
+                    throw new WebBeansConfigurationException("Producer Method Bean must be business method of session bean : " + ejbBean);
+                }
+            }
+        }
+        Set<ProducerFieldBean<?>> producerFieldBeans = ejbBeanCreator.defineProducerFields();
+        ejbBeanCreator.defineInjectedFields();
+        ejbBeanCreator.defineInjectedMethods();
+        Set<ObserverMethod<?>> observerMethods = ejbBeanCreator.defineObserverMethods();
+
+        //Fires ProcessInjectionTarget
+        ProcessInjectionTargetImpl<T> processInjectionTargetEvent =
+                webBeansContext.getWebBeansUtil().fireProcessInjectionTargetEvent(ejbBean);
+        webBeansContext.getWebBeansUtil().inspectErrorStack(
+                "There are errors that are added by ProcessInjectionTarget event observers. Look at logs for further details");
+        //Put final InjectionTarget instance
+        manager.putInjectionTargetWrapper(ejbBean, new InjectionTargetWrapper(processInjectionTargetEvent.getInjectionTarget()));
+
+        Map<ProducerMethodBean<?>,AnnotatedMethod<?>> annotatedMethods = new HashMap<ProducerMethodBean<?>, AnnotatedMethod<?>>();
+        for(ProducerMethodBean<?> producerMethod : producerMethodBeans)
+        {
+            AnnotatedMethod<?> method = annotatedElementFactory.newAnnotatedMethod(producerMethod.getCreatorMethod(), annotatedType);
+            ProcessProducerImpl<?, ?> producerEvent =
+                    webBeansContext.getWebBeansUtil().fireProcessProducerEventForMethod(producerMethod,
+                            method);
+            webBeansContext.getWebBeansUtil().inspectErrorStack(
+                    "There are errors that are added by ProcessProducer event observers for ProducerMethods. Look at logs for further details");
+
+            annotatedMethods.put(producerMethod, method);
+            manager.putInjectionTargetWrapper(producerMethod, new InjectionTargetWrapper(producerEvent.getProducer()));
+
+            producerEvent.setProducerSet(false);
+        }
+
+        Map<ProducerFieldBean<?>,AnnotatedField<?>> annotatedFields = new HashMap<ProducerFieldBean<?>, AnnotatedField<?>>();
+        for(ProducerFieldBean<?> producerField : producerFieldBeans)
+        {
+            AnnotatedField<?> field = annotatedElementFactory.newAnnotatedField(producerField.getCreatorField(), annotatedType);
+            ProcessProducerImpl<?, ?> producerEvent =
+                    webBeansContext.getWebBeansUtil().fireProcessProducerEventForField(producerField, field);
+            webBeansContext.getWebBeansUtil().inspectErrorStack(
+                    "There are errors that are added by ProcessProducer event observers for ProducerFields. Look at logs for further details");
+
+            annotatedFields.put(producerField, field);
+            manager.putInjectionTargetWrapper(producerField, new InjectionTargetWrapper(producerEvent.getProducer()));
+
+
+            producerEvent.setProducerSet(false);
+        }
+
+        Map<ObserverMethod<?>,AnnotatedMethod<?>> observerMethodsMap = new HashMap<ObserverMethod<?>, AnnotatedMethod<?>>();
+        for(ObserverMethod<?> observerMethod : observerMethods)
+        {
+            ObserverMethodImpl<?> impl = (ObserverMethodImpl<?>)observerMethod;
+            AnnotatedMethod<?> method = annotatedElementFactory.newAnnotatedMethod(impl.getObserverMethod(), annotatedType);
+
+            observerMethodsMap.put(observerMethod, method);
+        }
+
+        //Fires ProcessManagedBean
+        ProcessSessionBeanImpl<T> processBeanEvent = new GProcessSessionBean((Bean<Object>)ejbBean,annotatedType,ejbBean.getEjbName(),ejbBean.getEjbType());
+        webBeansContext.getBeanManagerImpl().fireEvent(processBeanEvent, new Annotation[0]);
+        webBeansContext.getWebBeansUtil().inspectErrorStack(
+                "There are errors that are added by ProcessSessionBean event observers for managed beans. Look at logs for further details");
+
+        //Fires ProcessProducerMethod
+        webBeansContext.getWebBeansUtil().fireProcessProducerMethodBeanEvent(annotatedMethods,
+                annotatedType);
+        webBeansContext.getWebBeansUtil().inspectErrorStack(
+                "There are errors that are added by ProcessProducerMethod event observers for producer method beans. Look at logs for further details");
+
+        //Fires ProcessProducerField
+        webBeansContext.getWebBeansUtil().fireProcessProducerFieldBeanEvent(annotatedFields);
+        webBeansContext.getWebBeansUtil().inspectErrorStack(
+                "There are errors that are added by ProcessProducerField event observers for producer field beans. Look at logs for further details");
+
+        //Fire ObservableMethods
+        webBeansContext.getWebBeansUtil().fireProcessObservableMethodBeanEvent(observerMethodsMap);
+        webBeansContext.getWebBeansUtil().inspectErrorStack(
+                "There are errors that are added by ProcessObserverMethod event observers for observer methods. Look at logs for further details");
+
+        manager.addBean(ejbBean);
+
+        // Let the plugin handle adding the new bean instance as it knows more about its EJB Bean
+
+        manager.getBeans().addAll(producerMethodBeans);
+        ejbBeanCreator.defineDisposalMethods();
+        manager.getBeans().addAll(producerFieldBeans);
     }
 
     public static class NewEjbBean<T> extends CdiEjbBean<T> implements NewBean<T> {
