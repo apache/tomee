@@ -440,7 +440,7 @@ public class Deployer implements BundleListener {
 
     private static boolean isInterestingClass(final String rawName) {
         final String name = className(rawName);
-        return isJdbcDriver(name) || isJPAProvider(name)
+        return isJdbcDriver(name) || isJPAProvider(name) || isBValProvider(name)
                 || name.contains("org.apache.openejb") // fallback mainly for META-INF resources
                 || name.startsWith("javax.management."); // dynamic mbean feature uses this package also used by the jre itself
     }
@@ -452,5 +452,9 @@ public class Deployer implements BundleListener {
     private static boolean isJPAProvider(String name) {
         return name.contains("openjpa") || name.startsWith("serp.") // openjpa && its dep
                 || name.startsWith("org.hibernate") || name.startsWith("oracle.toplink") || name.startsWith("org.eclipse.persistence.jpa");
+    }
+
+    private static boolean isBValProvider(String name) {
+        return name.contains("org.apache.bval") || name.startsWith("org.hibernate.validator");
     }
 }
