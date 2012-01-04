@@ -15,15 +15,9 @@
 
   <modules>
     <module>openejb-core-osgi</module>
-    <module>openejb-feature</module>
-    <module>openejb-karaf-commands</module>
-    <module>openejb-karaf-rebranding</module>
-    <module>apache-karafee</module>
-    <module>openejb-osgi-tests</module>
   </modules>
 
   <properties>
     <karaf.version>2.2.4</karaf.version>
-    <karafee.version>1.0.0-beta-2-SNAPSHOT</karafee.version>
   </properties>
 </project>

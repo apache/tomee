@@ -77,7 +77,6 @@
     <module>simple-mdb-and-cdi</module>
     <module>simple-mdb</module>
     <module>simple-mdb-with-descriptor</module>
-    <module>simple-osgi</module>
     <module>simple-singleton</module>
     <module>simple-stateful</module>
     <module>simple-stateless</module>
