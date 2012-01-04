@@ -115,7 +115,7 @@ public class Deployer implements BundleListener {
                         bundleDump = findFelixJar(bundle.getBundleContext());
                     }
 
-                    if (!bundleDump.exists()) {
+                    if (bundleDump == null || !bundleDump.exists()) {
                         LOGGER.warn("can't find bundle {}", bundle.getBundleId());
                         return;
                     }
