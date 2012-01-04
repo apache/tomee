@@ -80,6 +80,7 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 
+import static org.apache.openejb.config.NewLoaderLogic.applyBuiltinExcludes;
 import static org.apache.openejb.util.URLs.toFile;
 
 /**
@@ -193,7 +194,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 final Map<String, URL> otherDD;
                 if (Boolean.getBoolean(OPENEJB_READ_ALL_PERSISTENCE_XML)) {
                     WebModule webModule = appModule.getWebModules().iterator().next();
-                    final List<URL> urls = webModule.getUrls();
+                    final List<URL> urls = webModule.getScannableUrls();
                     final ResourceFinder finder = new ResourceFinder("", urls.toArray(new URL[urls.size()]));
                     otherDD = getDescriptors(finder, false);
                 } else {
@@ -720,7 +721,7 @@ public class DeploymentLoader implements DeploymentFilterable {
             throw new OpenEJBException("Unable to collect descriptors in web module: " + contextRoot, e);
         }
 
-        WebApp webApp = null;
+        WebApp webApp;
         URL webXmlUrl = descriptors.get("web.xml");
         if (webXmlUrl != null) {
             webApp = ReadDescriptors.readWebApp(webXmlUrl);
@@ -736,6 +737,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         // create web module
         WebModule webModule = new WebModule(webApp, contextRoot, warClassLoader, warFile.getAbsolutePath(), moduleName);
         webModule.setUrls(Arrays.asList(webUrls));
+        webModule.setScannableUrls(filterWebappUrls(webUrls));
         webModule.getAltDDs().putAll(descriptors);
         webModule.getWatchedResources().add(warPath);
         webModule.getWatchedResources().add(warFile.getAbsolutePath());
@@ -757,8 +759,18 @@ public class DeploymentLoader implements DeploymentFilterable {
         return webModule;
     }
 
+    private static List<URL> filterWebappUrls(URL[] webUrls) {
+        UrlSet urls = new UrlSet(webUrls);
+        try {
+            urls = applyBuiltinExcludes(urls);
+        } catch (MalformedURLException e) {
+            return Arrays.asList(webUrls);
+        }
+        return urls.getUrls();
+    }
+
     private void addBeansXmls(WebModule webModule) {
-        final List<URL> urls = webModule.getUrls();
+        final List<URL> urls = webModule.getScannableUrls();
         final URLClassLoader loader = new URLClassLoader(urls.toArray(new URL[urls.size()]));
 
         final ArrayList<URL> xmls;

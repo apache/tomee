@@ -46,7 +46,7 @@ public class FinderFactory {
         if (module instanceof WebModule) {
             WebModule webModule = (WebModule) module;
             final ClassLoader webClassLoader = webModule.getClassLoader();
-            return new AnnotationFinder(new AggregatedArchive(webClassLoader, webModule.getUrls())).link();
+            return new AnnotationFinder(new AggregatedArchive(webClassLoader, webModule.getScannableUrls())).link();
         }
         
         if (module instanceof ConnectorModule) {
