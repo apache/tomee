@@ -409,6 +409,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 // already logged.
             } catch (Throwable e) {
                 logger.error("appNotDeployed", e, appInfo.path);
+
+                final DeploymentExceptionManager exceptionManager = SystemInstance.get().getComponent(DeploymentExceptionManager.class);
+                if (exceptionManager != null && e instanceof Exception) {
+                    exceptionManager.saveDelpoymentException(appInfo, (Exception) e);
+                }
             }
         }
     }

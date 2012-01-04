@@ -56,10 +56,12 @@ public class OpenEJBListener implements LifecycleListener {
         try {
 	        Properties properties = new Properties();
 	        File webappDir = findOpenEjbWar();
-	        properties.setProperty("openejb.war", webappDir.getAbsolutePath());
-	        properties.setProperty("openejb.embedder.source", getClass().getSimpleName());
-	        TomcatEmbedder.embed(properties, StandardServer.class.getClassLoader());
-	        listenerInstalled = true;
+            if (webappDir != null) {
+                properties.setProperty("openejb.war", webappDir.getAbsolutePath());
+                properties.setProperty("openejb.embedder.source", getClass().getSimpleName());
+                TomcatEmbedder.embed(properties, StandardServer.class.getClassLoader());
+                listenerInstalled = true;
+            } // webapp can be found lazily in some conditions
         } catch (Exception e) {
             System.out.println("ERROR: OpenEJB webapp was not found");
             // e.printStackTrace(System.err);

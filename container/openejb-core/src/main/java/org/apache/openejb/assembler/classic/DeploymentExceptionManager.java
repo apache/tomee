@@ -1,4 +1,4 @@
-package org.apache.tomee.catalina;
+package org.apache.openejb.assembler.classic;
 
 import org.apache.openejb.assembler.classic.AppInfo;
 
@@ -20,19 +20,19 @@ public class DeploymentExceptionManager {
         }
     };
 
-    public synchronized boolean hasDelpoyementFailed(AppInfo appInfo) {
+    public synchronized boolean hasDelpoymentFailed(AppInfo appInfo) {
         return deploymentException.containsKey(appInfo);
     }
 
-    public synchronized Exception getDelpoyementException(AppInfo appInfo) {
+    public synchronized Exception getDelpoymentException(AppInfo appInfo) {
         return deploymentException.get(appInfo);
     }
 
-    public synchronized Exception saveDelpoyementException(AppInfo appInfo, Exception exception) {
+    public synchronized Exception saveDelpoymentException(AppInfo appInfo, Exception exception) {
         return deploymentException.put(appInfo, exception);
     }
 
-    public synchronized void clearDelpoyementException(AppInfo info) {
+    public synchronized void clearDelpoymentException(AppInfo info) {
         deploymentException.remove(info);
     }
 

@@ -41,11 +41,11 @@ import org.apache.openejb.UndeployException;
 import org.apache.openejb.assembler.Deployer;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.DeploymentExceptionManager;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.tomcat.util.modeler.Registry;
-import org.apache.tomee.catalina.DeploymentExceptionManager;
 import org.apache.tomee.catalina.TomcatWebAppBuilder;
 import org.apache.tomee.loader.TomcatHelper;
 
@@ -118,10 +118,10 @@ public class WebappDeployer implements Deployer {
             }
 
             final DeploymentExceptionManager dem = SystemInstance.get().getComponent(DeploymentExceptionManager.class);
-            if (dem.hasDelpoyementFailed(info)) {
-                Exception tre = dem.getDelpoyementException(info);
+            if (dem.hasDelpoymentFailed(info)) {
+                Exception tre = dem.getDelpoymentException(info);
                 // we don't need this exceptino anymore
-                dem.clearDelpoyementException(info);
+                dem.clearDelpoymentException(info);
                 throw tre;
             }
 

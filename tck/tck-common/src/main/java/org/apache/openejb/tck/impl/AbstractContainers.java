@@ -28,6 +28,10 @@ public class AbstractContainers {
     protected static final String tmpDir = System.getProperty("java.io.tmpdir");
 
     protected void writeToFile(File file, InputStream archive) {
+        if (!file.getParentFile().exists()) {
+            file.getParentFile().mkdirs();
+        }
+
         try {
             FileOutputStream fos = new FileOutputStream(file);
             byte[] buffer = new byte[4096];
