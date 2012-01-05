@@ -69,8 +69,15 @@
       <url>http://repository.apache.org/snapshots</url>
     </repository>
   </repositories>
-  <dependencyManagement>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>apache-m2-snapshot</id>
+      <name>Apache Snapshot Repository</name>
+      <url>http://repository.apache.org/snapshots</url>
+    </pluginRepository>
+  </pluginRepositories>
 
+  <dependencyManagement>
     <dependencies>
       <dependency>
         <groupId>org.apache.openejb</groupId>
