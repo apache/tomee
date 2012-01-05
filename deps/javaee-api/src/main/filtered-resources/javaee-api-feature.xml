@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+
+<features>
+  <feature name="javaee-api" version="${project.version}">
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/${geronimo-jta_1.1_spec.version}</bundle>
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-activation_1.1_spec/${geronimo-activation_1.1_spec.version}</bundle>
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-annotation_1.1_spec/${geronimo-annotation_1.1_spec.version}</bundle>
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-atinject_1.0_spec/${geronimo-atinject_1.0_spec.version}</bundle>
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-servlet_3.0_spec/${geronimo-servlet_3.0_spec.version}</bundle>
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-jsp_2.2_spec/${geronimo-jsp_2.2_spec.version}</bundle>
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-ejb_3.1_spec/${geronimo-ejb_3.1_spec.version}</bundle>
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-el_2.2_spec/${geronimo-el_2.2_spec.version}</bundle>
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-interceptor_1.1_spec/${geronimo-interceptor_1.1_spec.version}</bundle>
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-j2ee-connector_1.6_spec/${geronimo-j2ee-connector_1.6_spec.version}</bundle>
+    <bundle>wrap:mvn:org.apache.geronimo.specs/geronimo-j2ee-deployment_1.1_spec/${geronimo-j2ee-deployment_1.1_spec.version}</bundle>
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-j2ee-management_1.1_spec/${geronimo-j2ee-management_1.1_spec.version}</bundle>
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-jacc_1.4_spec/${geronimo-jacc_1.4_spec.version}</bundle>
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-jaspic_1.0_spec/${geronimo-jaspic_1.0_spec.version}</bundle>
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-jaxb_2.2_spec/${geronimo-jaxb_2.2_spec.version}</bundle>
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-jaxr_1.0_spec/${geronimo-jaxr_1.0_spec.version}</bundle>
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-jaxrpc_1.1_spec/${geronimo-jaxrpc_1.1_spec.version}</bundle>
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-jaxrs_1.1_spec/${geronimo-jaxrs_1.1_spec.version}</bundle>
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-jaxws_2.2_spec/${geronimo-jaxws_2.2_spec.version}</bundle>
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-jcdi_1.0_spec/${geronimo-jcdi_1.0_spec.version}</bundle>
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-jms_1.1_spec/${geronimo-jms_1.1_spec.version}</bundle>
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-jpa_2.0_spec/${geronimo-jpa_2.0_spec.version}</bundle>
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-saaj_1.3_spec/${geronimo-saaj_1.3_spec.version}</bundle>
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-stax-api_1.2_spec/${geronimo-stax-api_1.2_spec.version}</bundle>
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-validation_1.0_spec/${geronimo-validation_1.0_spec.version}</bundle>
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-ws-metadata_2.0_spec/${geronimo-ws-metadata_2.0_spec.version}</bundle>
+  </feature>
+</features>
