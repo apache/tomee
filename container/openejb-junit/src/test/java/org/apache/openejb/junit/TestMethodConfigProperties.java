@@ -46,7 +46,7 @@ public class TestMethodConfigProperties {
     @Test
     @ContextConfig(
             properties = {
-                    @Property("java.naming.factory.initial=org.apache.openejb.localclient.LocalInitialContextFactory"),
+                    @Property("java.naming.factory.initial=org.apache.openejb.core.LocalInitialContextFactory"),
                     @Property(CHECK_PROPERTY + "=Test String from Properties")
             }
     )

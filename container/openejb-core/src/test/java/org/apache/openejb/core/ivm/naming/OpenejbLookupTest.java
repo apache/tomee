@@ -20,13 +20,12 @@ import junit.framework.TestCase;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
-import org.apache.openejb.localclient.LocalInitialContextFactory;
+import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
 
 import javax.naming.*;
-import javax.naming.NamingException;
 import javax.transaction.TransactionManager;
 import java.util.Properties;
 

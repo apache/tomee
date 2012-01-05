@@ -62,7 +62,7 @@ public class JndiNameFormatTest extends TestCase {
         deploy("{ejbName}/{interfaceType.annotationName.lc}");
     	
     	Properties p = new Properties();
-        p.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.localclient.LocalInitialContextFactory");
+        p.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
 
         InitialContext context = new InitialContext(p);
         Echo echo = (Echo) context.lookup("EchoImpl/remote");
@@ -75,7 +75,7 @@ public class JndiNameFormatTest extends TestCase {
         deploy("{ejbName}/{interfaceType.annotationName.uc}");
     	
     	Properties p = new Properties();
-        p.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.localclient.LocalInitialContextFactory");
+        p.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
 
         InitialContext context = new InitialContext(p);
         Echo echo = (Echo) context.lookup("EchoImpl/REMOTE");
@@ -88,7 +88,7 @@ public class JndiNameFormatTest extends TestCase {
         deploy("{ejbName}/{interfaceType.annotationName.cc}");
     	
     	Properties p = new Properties();
-        p.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.localclient.LocalInitialContextFactory");
+        p.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
 
         InitialContext context = new InitialContext(p);
         Echo echo = (Echo) context.lookup("EchoImpl/Remote");
@@ -101,7 +101,7 @@ public class JndiNameFormatTest extends TestCase {
         deploy("{ejbName.lc}/{interfaceType.annotationName.uc}");
     	
     	Properties p = new Properties();
-        p.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.localclient.LocalInitialContextFactory");
+        p.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
 
         InitialContext context = new InitialContext(p);
         Echo echo = (Echo) context.lookup("echoimpl/REMOTE");

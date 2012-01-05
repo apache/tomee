@@ -35,7 +35,7 @@ public class QuartzMdbTest {
         System.setProperty(OutputGeneratedDescriptors.OUTPUT_DESCRIPTORS, "false"); // just to avoid to dump files in /tmp
         if (null == initialContext) {
             Properties properties = new Properties();
-            properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.localclient.LocalInitialContextFactory");
+            properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
 
             initialContext = new InitialContext(properties);
         }
