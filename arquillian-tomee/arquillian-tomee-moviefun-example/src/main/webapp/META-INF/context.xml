@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
     Licensed to the Apache Software Foundation (ASF) under one or more
@@ -15,7 +16,6 @@
     limitations under the License.
 -->
 
-<?xml version="1.0" encoding="UTF-8"?>
 <Context antiJARLocking="true" path="/moviefun">
   <Manager className="org.apache.catalina.session.PersistentManager"
            debug="0"
