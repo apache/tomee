@@ -446,7 +446,7 @@ public class Deployer implements BundleListener {
     }
 
     private static boolean isJdbcDriver(final String name) {
-        return name.startsWith("org.hsqldb") || name.startsWith("com.mysql") || name.startsWith("com.h2") || name.startsWith("oracle.jdbc");
+        return name.startsWith("org.hsqldb") || name.startsWith("com.mysql") || name.startsWith("org.h2") || name.startsWith("oracle.jdbc");
     }
 
     private static boolean isJPAProvider(String name) {
