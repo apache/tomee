@@ -63,6 +63,7 @@ public class Deployer implements BundleListener {
 
     private final Map<Bundle, List<ServiceRegistration>> registrations = new ConcurrentHashMap<Bundle, List<ServiceRegistration>>();
     private final Map<Bundle, String> paths = new ConcurrentHashMap<Bundle, String>();
+    private final Map<Bundle, BundleContext> contexts = new ConcurrentHashMap<Bundle, BundleContext>();
 
     private final Activator openejbActivator;
 
@@ -79,12 +80,17 @@ public class Deployer implements BundleListener {
         openejbActivator.checkServiceManager(OpenEJBBundleContextHolder.get());
         switch (event.getType()) {
             case BundleEvent.STARTED:
-                deploy(event.getBundle());
+                final BundleContext context = event.getBundle().getBundleContext();
+                if (context != null) {
+                    contexts.put(event.getBundle(), context);
+                    deploy(event.getBundle());
+                }
                 break;
             case BundleEvent.STOPPED:
-                undeploy(event.getBundle());
-                break;
             case BundleEvent.UNINSTALLED:
+                if (contexts.containsKey(event.getBundle())) {
+                    contexts.remove(event.getBundle());
+                }
                 undeploy(event.getBundle());
                 break;
             case BundleEvent.UPDATED:
@@ -108,6 +114,14 @@ public class Deployer implements BundleListener {
         try {
             try {
                 try {
+                    BundleContext context = bundle.getBundleContext();
+                    if (context == null && contexts.containsKey(bundle)) {
+                        context = contexts.get(bundle);
+                    } else if (context == null) {
+                        LOGGER.warn("can't get bundle context of bundle {}", bundle.getBundleId());
+                        return;
+                    }
+
                     // equinox? found in aries
                     File bundleDump = bundle.getBundleContext().getDataFile(bundle.getSymbolicName() + "/" + bundle.getVersion() + "/");
                     // TODO: what should happen if there is multiple versions?
