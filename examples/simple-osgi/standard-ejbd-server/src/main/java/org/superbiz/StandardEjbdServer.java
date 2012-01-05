@@ -1,7 +1,7 @@
 package org.superbiz;
 
 import org.apache.openejb.OpenEjbContainer;
-import org.apache.openejb.localclient.LocalInitialContextFactory;
+import org.apache.openejb.core.LocalInitialContextFactory;
 
 import javax.ejb.embeddable.EJBContainer;
 import javax.naming.Context;

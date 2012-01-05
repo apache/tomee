@@ -27,7 +27,7 @@ public class SingletonCalculatorClient {
 
     private void tryLookup() {
         Properties p = new Properties();
-        p.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.localclient.LocalInitialContextFactory");
+        p.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
         try {
             Context ctx = new InitialContext(p);
             CalculatorLocal local = (CalculatorLocal) ctx.lookup("CalculatorBeanLocal");
