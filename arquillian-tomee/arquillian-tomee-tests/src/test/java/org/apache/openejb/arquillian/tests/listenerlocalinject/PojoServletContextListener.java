@@ -58,12 +58,12 @@ public class PojoServletContextListener implements ServletContextListener {
     @Resource(name = "optionDefault")
     private Character optionDefault;
 
-    / * TODO: Enable this resource after functionality is fixed
+    /* TODO: Enable this resource after functionality is fixed
     @Resource
     */
     private Code defaultCode;
 
-    / * TODO: Enable this resource after functionality is fixed
+    /* TODO: Enable this resource after functionality is fixed
             @Resource
             @SuppressWarnings("unchecked")
     */
