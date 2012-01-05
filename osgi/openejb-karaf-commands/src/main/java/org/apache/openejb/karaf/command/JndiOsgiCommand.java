@@ -1,7 +1,7 @@
 package org.apache.openejb.karaf.command;
 
 import org.apache.karaf.shell.console.OsgiCommandSupport;
-import org.apache.openejb.localclient.LocalInitialContextFactory;
+import org.apache.openejb.core.LocalInitialContextFactory;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
