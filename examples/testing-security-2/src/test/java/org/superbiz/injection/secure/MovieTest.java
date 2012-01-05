@@ -47,7 +47,7 @@ public class MovieTest extends TestCase {
 
     public void testAsManager() throws Exception {
         Properties p = new Properties();
-        p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.localclient.LocalInitialContextFactory");
+        p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
         p.put(Context.SECURITY_PRINCIPAL, "jane");
         p.put(Context.SECURITY_CREDENTIALS, "waterfall");
 
@@ -73,7 +73,7 @@ public class MovieTest extends TestCase {
 
     public void testAsEmployee() throws Exception {
         Properties p = new Properties();
-        p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.localclient.LocalInitialContextFactory");
+        p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
         p.put(Context.SECURITY_PRINCIPAL, "joe");
         p.put(Context.SECURITY_CREDENTIALS, "cool");
 

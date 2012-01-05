@@ -34,7 +34,7 @@ public class IvmTestServer implements TestServer {
         properties = props;
         
         try{
-            props.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.localclient.LocalInitialContextFactory");
+            props.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
             Properties p = new Properties();
             p.putAll(props);
             p.put("openejb.loader", "embed");

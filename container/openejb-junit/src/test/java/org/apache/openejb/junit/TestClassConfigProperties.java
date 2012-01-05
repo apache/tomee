@@ -31,7 +31,7 @@ import java.util.Hashtable;
 @RunWith(OpenEjbRunner.class)
 @ContextConfig(
         properties = {
-                @Property("java.naming.factory.initial=org.apache.openejb.localclient.LocalInitialContextFactory"),
+                @Property("java.naming.factory.initial=org.apache.openejb.core.LocalInitialContextFactory"),
                 @Property("junit.test-property=Test String from Properties"),
                 @Property("junit.test-empty-property="),
                 @Property("junit.test-null-property"),

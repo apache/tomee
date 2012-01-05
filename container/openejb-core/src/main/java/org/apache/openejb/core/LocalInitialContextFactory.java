@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.localclient;
+package org.apache.openejb.core;
 
 import org.apache.openejb.loader.OpenEJBInstance;
 import org.apache.openejb.loader.SystemInstance;
@@ -23,7 +23,6 @@ import org.apache.openejb.util.OptionsLog;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.lang.reflect.Constructor;
 import java.util.Hashtable;
 import java.util.Properties;
@@ -79,7 +78,7 @@ public class LocalInitialContextFactory implements javax.naming.spi.InitialConte
         try {
             ClassLoader cl = SystemInstance.get().getClassLoader();
 
-            Class localInitialContext = Class.forName("org.apache.openejb.localclient.LocalInitialContext", true, cl);
+            Class localInitialContext = Class.forName("org.apache.openejb.core.LocalInitialContext", true, cl);
 
             Constructor constructor = localInitialContext.getConstructor(Hashtable.class, LocalInitialContextFactory.class);
             context = (Context) constructor.newInstance(env, this);
