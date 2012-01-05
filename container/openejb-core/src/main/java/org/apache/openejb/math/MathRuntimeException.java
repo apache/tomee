@@ -30,7 +30,7 @@ import java.util.ResourceBundle;
 
 /**
 * Base class for commons-math unchecked exceptions.
-*
+ *
 * @version $Revision: 822850 $ $Date: 2009-10-07 11:56:42 -0700 (Wed, 07 Oct 2009) $
 * @since 2.0
 */
