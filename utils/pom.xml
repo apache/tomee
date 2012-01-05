@@ -32,6 +32,5 @@
     <module>openejb-logging</module>
     <module>openejb-spring</module>
     <module>openejb-core-hibernate</module>
-    <module>openejb-core-legacy-client</module>
   </modules>
 </project>

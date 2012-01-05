@@ -17,12 +17,11 @@
 package org.apache.openejb.config;
 
 import junit.framework.TestCase;
-import junit.framework.Assert;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
-import org.apache.openejb.localclient.LocalInitialContextFactory;
+import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.jee.jpa.unit.Persistence;
@@ -35,14 +34,10 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
-import javax.jms.ConnectionFactory;
-import javax.jms.QueueConnectionFactory;
-import javax.jms.TopicConnectionFactory;
 import javax.jms.JMSException;
 import javax.jms.Session;
 import javax.jms.Topic;
 import javax.jms.MessageProducer;
-import javax.jms.Queue;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;

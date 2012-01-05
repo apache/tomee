@@ -20,12 +20,12 @@ import java.util.Hashtable;
 
 import javax.naming.Context;
 
-import org.apache.openejb.localclient.LocalInitialContext;
+import org.apache.openejb.core.LocalInitialContext;
 
 /**
  * @version $Rev$ $Date$
  */
-public class LocalInitialContextFactory extends org.apache.openejb.localclient.LocalInitialContextFactory {
+public class LocalInitialContextFactory extends org.apache.openejb.core.LocalInitialContextFactory {
 
     public Context getInitialContext(Hashtable env) throws javax.naming.NamingException {
         init(env);

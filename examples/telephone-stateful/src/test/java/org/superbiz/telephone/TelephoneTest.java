@@ -31,7 +31,7 @@ public class TelephoneTest extends TestCase {
 
     protected void setUp() throws Exception {
         Properties properties = new Properties();
-        properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.localclient.LocalInitialContextFactory");
+        properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
         properties.setProperty("openejb.embedded.remotable", "true");
         // Uncomment these properties to change the defaults
         //properties.setProperty("ejbd.port", "4202");
@@ -53,7 +53,7 @@ public class TelephoneTest extends TestCase {
     public void testTalkOverLocalNetwork() throws Exception {
 
         Properties properties = new Properties();
-        properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.localclient.LocalInitialContextFactory");
+        properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
         InitialContext localContext = new InitialContext(properties);
 
         Telephone telephone = (Telephone) localContext.lookup("TelephoneBeanRemote");

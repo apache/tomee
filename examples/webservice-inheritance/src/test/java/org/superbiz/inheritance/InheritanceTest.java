@@ -35,7 +35,7 @@ public class InheritanceTest extends TestCase {
     protected void setUp() throws Exception {
 
         Properties p = new Properties();
-        p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.localclient.LocalInitialContextFactory");
+        p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
         p.put("wakeBoardDatabase", "new://Resource?type=DataSource");
         p.put("wakeBoardDatabase.JdbcDriver", "org.hsqldb.jdbcDriver");
         p.put("wakeBoardDatabase.JdbcUrl", "jdbc:hsqldb:mem:wakeBoarddb");

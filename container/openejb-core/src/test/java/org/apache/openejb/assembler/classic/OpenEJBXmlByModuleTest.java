@@ -18,8 +18,7 @@ package org.apache.openejb.assembler.classic;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.api.LocalClient;
-import org.apache.openejb.localclient.LocalInitialContextFactory;
+import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.EjbModule;
@@ -30,15 +29,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.annotation.Resource;
-import javax.ejb.EJB;
 import javax.ejb.Singleton;
-import javax.inject.Inject;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.net.URL;
 import java.util.Properties;
 
 import static junit.framework.Assert.assertEquals;
