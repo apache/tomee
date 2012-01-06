@@ -46,19 +46,27 @@
         <patternset id="exclusions"> 
           <exclude name="**/target/**"/>
           <exclude name="**/*.iml"/>
+          <exclude name="**/*.ipr"/>
+          <exclude name="**/*.iws"/>
           <exclude name="**/*.log"/>
           <exclude name="**/*.rej"/>
           <exclude name="**/*.orig"/>
           <exclude name="**/README.md"/>
           <exclude name="**/README.mdtext"/>
+          <exclude name="**/META-INF/services/**"/>
 
-          <exclude name="container/openejb-core/src/main/resources/META-INF/services/javax.ejb.spi.EJBContainerProvider"/>
           <exclude name="assembly/openejb-standalone/src/main/resources/service.readme.txt"/>
           <exclude name="container/openejb-junit/src/main/resources/META-INF/openejb-test-login.config"/>
           <exclude name="examples/datasource-ciphered-password/src/test/resources/META-INF/beans.xml"/>
           <exclude name="examples/decorators/src/main/resources/META-INF/beans.xml"/>
           <exclude name="examples/webapps/rest-example/TODO"/>
           <exclude name="container/openejb-jee/src/main/xsdlist/xsdlist.txt"/>
+          <exclude name="arquillian-tomee/arquillian-tomee-moviefun-example/src/main/resources/META-INF/ejb-jar.xml"/>
+          <exclude name="arquillian-tomee/arquillian-tomee-moviefun-example/src/main/webapp/META-INF/context.xml"/>
+          <exclude name="arquillian-tomee/arquillian-tomee-moviefun-example/src/main/webapp/WEB-INF/beans.xml"/>
+          <exclude name="arquillian-tomee/arquillian-tomee-moviefun-example/src/main/webapp/setup.jsp"/>
+          <exclude name="arquillian-tomee/arquillian-tomee-tests/src/test/resources/persistence.xml"/>
+          <exclude name="arquillian-tomee/arquillian-tomee-tests/src/test/resources/test.getresources"/>
 
           <!-- user-owned config files.  see httpds default.httpd.conf for precident --> 
           <exclude name="**/default.openejb.conf"/> 
