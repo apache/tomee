@@ -71,7 +71,7 @@
     <dependency>
       <groupId>org.apache.openejb.patch</groupId>
       <artifactId>openejb-jstl</artifactId>
-      <version>1.3-SNAPSHOT</version>
+      <version>1.2</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
