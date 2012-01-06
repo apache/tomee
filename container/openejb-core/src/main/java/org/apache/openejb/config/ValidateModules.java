@@ -17,6 +17,7 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.config.rules.CheckClassLoading;
 
 /**
  * @version $Rev$ $Date$
@@ -25,7 +26,12 @@ import org.apache.openejb.OpenEJBException;
 public class ValidateModules implements DynamicDeployer {
 
     public AppModule deploy(AppModule appModule) throws OpenEJBException {
-        AppValidator validator = new AppValidator();
+        final AppValidator validator;
+        if (!Boolean.getBoolean("openejb.check.classloader")) {
+            validator = new AppValidator();
+        } else {
+            validator = new AppValidator(new CheckClassLoading());
+        }
         return validator.validate(appModule);
     }
 
