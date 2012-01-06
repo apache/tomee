@@ -37,6 +37,7 @@ import org.apache.openejb.config.rules.CheckInjectionTargets;
 import org.apache.openejb.config.rules.CheckMethods;
 import org.apache.openejb.config.rules.CheckPersistenceRefs;
 import org.apache.openejb.config.rules.CheckUserTransactionRefs;
+import org.apache.openejb.config.rules.ValidationBase;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.OpenEjbVersion;
 
@@ -57,6 +58,7 @@ public class AppValidator {
     boolean PRINT_COUNT = false;
 
     private List<ValidationResults> sets = new ArrayList<ValidationResults>();
+    private ValidationBase[] additionalValidators;
 
     /*------------------------------------------------------*/
     /*    Constructors                                      */
@@ -69,6 +71,10 @@ public class AppValidator {
         this.PRINT_XML = PRINT_XML;
         this.PRINT_WARNINGS = PRINT_WARNINGS;
         this.PRINT_COUNT = PRINT_COUNT;
+    }
+
+    public AppValidator(final ValidationBase... additionalValidator) {
+        additionalValidators = additionalValidator;
     }
 
     public void addValidationResults(ValidationResults set) {
@@ -100,7 +106,8 @@ public class AppValidator {
     // END SNIPPET : code2
 // START SNIPPET : code1
     protected ValidationRule[] getValidationRules() {
-        ValidationRule[] rules = new ValidationRule[]{
+        // we don't want CheckClassLoading in standalone mode since it doesn't mean anything
+        final ValidationRule[] defaultRules = new ValidationRule[]{
                 new CheckClasses(),
                 new CheckMethods(),
                 new CheckCallbacks(),
@@ -113,6 +120,17 @@ public class AppValidator {
                 new CheckAsynchronous(),
                 new CheckDescriptorLocation()
         };
+        if (additionalValidators == null || additionalValidators.length == 0) {
+            return defaultRules;
+        }
+
+        final ValidationRule[] rules = new ValidationRule[additionalValidators.length + 11];
+        for (int i = 0; i < additionalValidators.length; i++) {
+            rules[i] = additionalValidators[i];
+        }
+        for (int i = 0; i < defaultRules.length; i++) {
+            rules[i + additionalValidators.length] = defaultRules[i];
+        }
         return rules;
     }
 
