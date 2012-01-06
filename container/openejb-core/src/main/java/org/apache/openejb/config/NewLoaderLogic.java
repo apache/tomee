@@ -148,6 +148,7 @@ public class NewLoaderLogic {
     public static UrlSet applyBuiltinExcludes(UrlSet urlSet) throws MalformedURLException {
 
         Filter filter = Filters.prefixes(
+                "ApacheJMeter",
                 "XmlSchema-",
                 "activeio-",
                 "activemq-",
