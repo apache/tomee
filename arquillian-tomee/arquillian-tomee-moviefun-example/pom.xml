@@ -12,18 +12,17 @@
 
 <!-- $Rev: 684173 $ $Date: 2008-08-08 20:13:24 -0700 (Fri, 08 Aug 2008) $ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.apache.openejb</groupId>
     <artifactId>arquillian-tomee</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
   </parent>
   <groupId>org.apache.openejb</groupId>
   <artifactId>arquillian-tomee-moviefun-example</artifactId>
   <packaging>war</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   <name>OpenEJB :: TomEE Arquillian Adaptor :: Sample :: Moviefun</name>
 
   <properties>
@@ -106,7 +105,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>6.0-3-SNAPSHOT</version>
+      <version>6.0-3</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -184,7 +183,7 @@
     <dependency>
     	<groupId>org.apache.openejb</groupId>
     	<artifactId>tomee-embedded</artifactId>
-    	<version>1.0.0-beta-2-SNAPSHOT</version>
+    	<version>1.0.0-beta-2</version>
     	<type>jar</type>
       <!--<classifier>uber</classifier>-->
     	<scope>test</scope>

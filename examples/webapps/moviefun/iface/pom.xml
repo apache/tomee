@@ -17,18 +17,18 @@
   <parent>
     <groupId>org.superbiz</groupId>
     <artifactId>moviefun</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.1</version>
   </parent>
   <groupId>org.superbiz</groupId>
   <artifactId>moviefun-iface</artifactId>
-  <version>1.1-SNAPSHOT</version>
+  <version>1.1</version>
   <packaging>jar</packaging>
   <name>OpenEJB :: Web Examples :: Moviefun :: Interfaces</name>
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>6.0-3-SNAPSHOT</version>
+      <version>6.0-3</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

@@ -20,12 +20,11 @@
 
 <!-- $Rev$ $Date$ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>container</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.0.0-beta-2-SNAPSHOT</version>
+    <version>4.0.0-beta-2</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-core</artifactId>
@@ -323,17 +322,15 @@
             <configuration>
               <target>
                 <tstamp>
-                  <format property="TSTAMP" pattern="hh:mm"/>
+                  <format property="TSTAMP" pattern="hh:mm" />
                 </tstamp>
-                <replace file="target/classes/openejb-version.properties"
-                         token="@DATE-REPLACED-BY-MAVEN@" value="${DSTAMP}"/>
-                <replace file="target/classes/openejb-version.properties"
-                         token="@TIME-REPLACED-BY-MAVEN@" value="${TSTAMP}"/>
-                <property name="compile_classpath" refid="maven.compile.classpath"/>
+                <replace file="target/classes/openejb-version.properties" token="@DATE-REPLACED-BY-MAVEN@" value="${DSTAMP}" />
+                <replace file="target/classes/openejb-version.properties" token="@TIME-REPLACED-BY-MAVEN@" value="${TSTAMP}" />
+                <property name="compile_classpath" refid="maven.compile.classpath" />
                 <java classname="org.apache.openejb.util.MakeTxLookup">
-                  <arg value="${project.build.directory}"/>
+                  <arg value="${project.build.directory}" />
                   <classpath>
-                    <pathelement path="${compile_classpath}"/>
+                    <pathelement path="${compile_classpath}" />
                   </classpath>
                 </java>
               </target>
@@ -380,7 +377,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>mbean-annotation-api</artifactId>
-      <version>4.0.0-beta-2-SNAPSHOT</version>
+      <version>4.0.0-beta-2</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>

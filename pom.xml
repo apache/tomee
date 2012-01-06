@@ -18,8 +18,7 @@
 
 <!-- $Rev$ $Date$ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -33,7 +32,7 @@
   <artifactId>openejb</artifactId>
   <packaging>pom</packaging>
 
-  <version>4.0.0-beta-2-SNAPSHOT</version>
+  <version>4.0.0-beta-2</version>
 
   <name>Apache OpenEJB</name>
   <description>Apache OpenEJB is an open source, modular, configurable and extendable EJB Container System and EJB
@@ -83,9 +82,9 @@
   </ciManagement>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/openejb/trunk/openejb3</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/openejb/trunk/openejb3</developerConnection>
-    <url>https://svn.apache.org/repos/asf/openejb/trunk/openejb3</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/openejb/tags/openejb-4.0.0-beta-2</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/openejb/tags/openejb-4.0.0-beta-2</developerConnection>
+    <url>https://svn.apache.org/repos/asf/openejb/tags/openejb-4.0.0-beta-2</url>
   </scm>
 
   <properties>
@@ -93,15 +92,15 @@
     <xbeanVersion>3.9</xbeanVersion>
 
     <!-- OSGi bundles properties -->
-    <openejb.bundle.activator/>
+    <openejb.bundle.activator />
     <openejb.osgi.import.pkg>*</openejb.osgi.import.pkg>
     <openejb.osgi.import>${openejb.osgi.import.pkg}</openejb.osgi.import>
     <openejb.osgi.export.pkg>org.apache.openejb</openejb.osgi.export.pkg>
     <openejb.osgi.export>${openejb.osgi.export.pkg}*;version=${openejb.osgi.export.version}</openejb.osgi.export>
-    <openejb.osgi.fragment/>
-    <openejb.osgi.require/>
+    <openejb.osgi.fragment />
+    <openejb.osgi.require />
     <openejb.osgi.private.pkg>!*</openejb.osgi.private.pkg>
-    <openejb.osgi.dynamic.import.pkg/>
+    <openejb.osgi.dynamic.import.pkg />
     <openejb.osgi.export.version>${project.version}</openejb.osgi.export.version>
     <openejb.osgi.dynamic.import>${openejb.osgi.dynamic.import.pkg}</openejb.osgi.dynamic.import>
     <openejb.osgi.symbolic.name>${project.groupId}.${project.artifactId}</openejb.osgi.symbolic.name>
@@ -477,7 +476,7 @@
       <dependency>
         <groupId>org.apache.openejb</groupId>
         <artifactId>javaee-api</artifactId>
-        <version>${javaee-api.version}</version>
+        <version>6.0-3</version>
         <classifier>tomcat</classifier>
         <exclusions>
           <exclusion>
@@ -593,7 +592,7 @@
       <dependency>
         <groupId>org.apache.openejb</groupId>
         <artifactId>javaee-api</artifactId>
-        <version>${javaee-api.version}</version>
+        <version>6.0-3</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -708,7 +707,7 @@
       <dependency>
         <groupId>org.apache.openejb.patch</groupId>
         <artifactId>openejb-cxf-bundle</artifactId>
-        <version>${openejb-cxf.version}</version>
+        <version>2.5.1</version>
       </dependency>
       <dependency>
         <groupId>xml-resolver</groupId>
