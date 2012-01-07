@@ -82,9 +82,9 @@
   </ciManagement>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/openejb/trunk/openejb</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/openejb/trunk/openejb</developerConnection>
-    <url>https://svn.apache.org/repos/asf/openejb/trunk/openejb</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/openejb/tags/openejb-4.0.0-beta-2</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/openejb/tags/openejb-4.0.0-beta-2</developerConnection>
+    <url>https://svn.apache.org/repos/asf/openejb/tags/openejb-4.0.0-beta-2</url>
   </scm>
 
   <properties>
