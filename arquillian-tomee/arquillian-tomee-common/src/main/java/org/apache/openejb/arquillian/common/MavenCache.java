@@ -164,7 +164,7 @@ public class MavenCache {
 
 	public static void main(String[] args) {
 		// File file = new MavenCache().getArtifact("org.apache.openejb:tomcat:zip:6.0.33", "http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.21/bin/apache-tomcat-7.0.21.zip").getFile();
-		File file = new MavenCache().getArtifact("org.apache.openejb:apache-tomee:zip:plus:1.0.0-beta-2-SNAPSHOT", "http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.21/bin/apache-tomcat-7.0.21.zip").getFile();
+		File file = new MavenCache().getArtifact("org.apache.openejb:apache-tomee:zip:plus:1.0.0-beta-2", "http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.21/bin/apache-tomcat-7.0.21.zip").getFile();
 		System.out.println(file.getAbsolutePath());
 	}
 }

@@ -32,7 +32,7 @@
   <artifactId>openejb</artifactId>
   <packaging>pom</packaging>
 
-  <version>4.0.0-beta-3-SNAPSHOT</version>
+  <version>4.0.0-beta-2</version>
 
   <name>Apache OpenEJB</name>
   <description>Apache OpenEJB is an open source, modular, configurable and extendable EJB Container System and EJB
@@ -106,13 +106,13 @@
     <openejb.osgi.symbolic.name>${project.groupId}.${project.artifactId}</openejb.osgi.symbolic.name>
 
     <!-- to change easily the javaee api version -->
-    <javaee-api.version>6.0-3-SNAPSHOT</javaee-api.version>
+    <javaee-api.version>6.0-3</javaee-api.version>
 
     <!-- Used mainly in assembly/openejb-tomcat* projects  -->
     <tomcat.version>7.0.21</tomcat.version>
 
     <!-- used mainly by jetty modules -->
-    <openejb-cxf.version>2.5.1-SNAPSHOT</openejb-cxf.version>
+    <openejb-cxf.version>2.5.1</openejb-cxf.version>
     <jetty.version>7.5.3.v20111011</jetty.version>
 
     <!--
@@ -476,7 +476,7 @@
       <dependency>
         <groupId>org.apache.openejb</groupId>
         <artifactId>javaee-api</artifactId>
-        <version>6.0-4-SNAPSHOT</version>
+        <version>6.0-3</version>
         <classifier>tomcat</classifier>
         <exclusions>
           <exclusion>
@@ -592,7 +592,7 @@
       <dependency>
         <groupId>org.apache.openejb</groupId>
         <artifactId>javaee-api</artifactId>
-        <version>6.0-4-SNAPSHOT</version>
+        <version>6.0-3</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -707,7 +707,7 @@
       <dependency>
         <groupId>org.apache.openejb.patch</groupId>
         <artifactId>openejb-cxf-bundle</artifactId>
-        <version>2.5.2-SNAPSHOT</version>
+        <version>2.5.1</version>
       </dependency>
       <dependency>
         <groupId>xml-resolver</groupId>

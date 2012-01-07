@@ -26,7 +26,7 @@
                <property name="httpPort">11080</property>
                <property name="stopPort">11005</property>
                <property name="tomcatVersion"></property>
-               <property name="openejbVersion">1.0.0-beta-2-SNAPSHOT</property>
+               <property name="openejbVersion">1.0.0-beta-2</property>
                <property name="systemProperties">
                  openejb.log.factory = org.apache.openejb.util.Log4jLogStreamFactory
                  openejb.logger.external = true

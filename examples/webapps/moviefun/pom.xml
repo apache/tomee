@@ -17,7 +17,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>moviefun</artifactId>
   <packaging>pom</packaging>
-  <version>1.2-SNAPSHOT</version>
+  <version>1.0</version>
   <name>OpenEJB :: Web Examples :: Moviefun</name>
 
   <modules>

@@ -23,7 +23,7 @@
   <artifactId>jsf</artifactId>
   <packaging>war</packaging>
   <name>OpenEJB :: Web Examples :: JSF with MyFaces</name>
-  <version>1.2-SNAPSHOT</version>
+  <version>1.0</version>
   <url>http://openejb.apache.org</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -110,7 +110,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>6.0-4-SNAPSHOT</version>
+      <version>6.0-3</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

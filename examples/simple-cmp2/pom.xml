@@ -24,11 +24,11 @@
   <groupId>org.superbiz</groupId>
   <artifactId>simple-cmp2</artifactId>
   <packaging>jar</packaging>
-  <version>1.2-SNAPSHOT</version>
+  <version>1.0</version>
   <name>OpenEJB :: Examples :: Simple CMP2 Entity</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <openejb.version>4.0.0-beta-2-SNAPSHOT</openejb.version>
+    <openejb.version>4.0.0-beta-2</openejb.version>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
@@ -92,7 +92,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>6.0-4-SNAPSHOT</version>
+      <version>6.0-3</version>
       <scope>provided</scope>
     </dependency>
 
@@ -107,7 +107,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>4.0.0-beta-3-SNAPSHOT</version>
+      <version>4.0.0-beta-2</version>
       <scope>test</scope>
     </dependency>
 
