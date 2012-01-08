@@ -18,16 +18,17 @@
 package org.apache.openejb.config.rules;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ClientModule;
 import org.apache.openejb.config.EjbModule;
-import org.apache.openejb.config.ValidationWarning;
 import org.apache.openejb.config.WebModule;
+import org.apache.openejb.util.URLs;
+import org.apache.xbean.finder.UrlSet;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -46,10 +47,8 @@ public class CheckClassLoading extends ValidationBase {
     @Override public void validate(AppModule appModule) {
         this.appModule = appModule;
         module = appModule;
-        // validate appmodule first
-        check(appModule.getClassLoader(), appModule.getClassLoader().getParent());
+        check(appModule.getClassLoader());
 
-        // nothing more for now till i'm not sure nested validation can be useful
         for (WebModule webModule : appModule.getWebModules()) {
             module = webModule;
             validate(webModule);
@@ -57,51 +56,45 @@ public class CheckClassLoading extends ValidationBase {
         super.validate(appModule);
     }
 
-    private void check(final ClassLoader classLoader, final ClassLoader parent) {
-        final URLClassLoader parentUrlClassLoader;
-        if (parent instanceof URLClassLoader) {
-            parentUrlClassLoader = (URLClassLoader) parent;
-        } else {
-            parentUrlClassLoader = null;
+    private void check(final ClassLoader classLoader) {
+        UrlSet set = null;
+        UrlSet openejbSet = null;
+        try {
+            openejbSet = new UrlSet(OpenEJB.class.getClassLoader());
+            set = new UrlSet(classLoader);
+            set = set.exclude(openejbSet);
+        } catch (IOException e) {
+            warn(module.getModuleId() + " application", e.getMessage());
+        }
+        if (set == null || openejbSet == null) {
+            warn(module.getModuleId() + " application", "was not able to compare application classloader and its parent");
+            return;
         }
 
-        final URLClassLoader currentUrlClassLoader;
-        if (classLoader instanceof URLClassLoader) {
-            currentUrlClassLoader = (URLClassLoader) classLoader;
-        } else {
-            currentUrlClassLoader = null;
-        }
+        final List<URL> parentUrls = openejbSet.getUrls();
+        final List<URL> currentUrls = set.getUrls();
 
-        if (parentUrlClassLoader == null || currentUrlClassLoader == null) {
-            module.getValidation().addWarning(new ValidationWarning("was not able to compare application classloader and its parent"));
-            return; // we don't know (at least for now), xbean scanning from classloader can be wrong for this purpose
-        }
-
-        final URL[] parentUrls = parentUrlClassLoader.getURLs();
-        final URL[] currentUrls = currentUrlClassLoader.getURLs();
-
-        final Classes fcl = new Classes(currentUrls);
-        final Classes scl = new Classes(parentUrls);
-        final Collection<DiffItem> diffs = Classes.intersection(fcl, scl);
+        final Classes fcl = new Classes(currentUrls.toArray(new URL[currentUrls.size()]));
+        final Classes scl = new Classes(parentUrls.toArray(new URL[parentUrls.size()]));
+        final Collection<DiffItem> diffs = intersection(fcl, scl);
         for (DiffItem diff : diffs) {
             warn(module.getModuleId() + " application", diff.toString());
         }
     }
 
     private void validate(WebModule webModule) {
-        // no-op: appmodule should be enough
+        check(webModule.getClassLoader());
     }
 
-    @Override public void validate(ClientModule appModule) {
-        // no-op: appmodule should be enough
+    @Override public void validate(ClientModule clientModule) {
+        check(clientModule.getClassLoader());
     }
 
-    @Override public void validate(EjbModule appModule) {
-        // no-op: appmodule should be enough
+    @Override public void validate(EjbModule ejbModule) {
+        check(ejbModule.getClassLoader());
     }
 
     public static class Classes {
-        private static final String[] EXTENSIONS = new String[] { "jar", "zip" };
         private static final String[] CLASS_EXTENSION = new String[] { ".class" };
 
         private final Map<String, Collection<String>> fileByArchive = new TreeMap<String, Collection<String>>();
@@ -117,7 +110,7 @@ public class CheckClassLoading extends ValidationBase {
             // all is sorted by the natural String order
             for (URL archive : urls) {
                 try {
-                    final File file = new File(archive.toURI());
+                    final File file = URLs.toFile(archive);
                     List<String> files = JarUtil.listFiles(file, CLASS_EXTENSION);
                     Collections.sort(files);
                     fileByArchive.put(file.getName(), files);
@@ -126,38 +119,34 @@ public class CheckClassLoading extends ValidationBase {
                 }
             }
         }
+    }
 
-        public Map<String, Collection<String>> getFileByArchive() {
-            return fileByArchive;
-        }
+    public static Collection<DiffItem> intersection(Classes cl1, Classes cl2) {
+        final List<DiffItem> diff = new ArrayList<DiffItem>();
+        for (Map.Entry<String, Collection<String>> entry1 : cl1.fileByArchive.entrySet()) {
+            for (Map.Entry<String, Collection<String>> entry2 : cl2.fileByArchive.entrySet()) {
+                Collection<String> v1 = entry1.getValue();
+                Collection<String> v2 = entry2.getValue();
+                Collection<String> inter = CollectionUtils.intersection(v1, v2);
 
-        public static Collection<DiffItem> intersection(Classes cl1, Classes cl2) {
-            final List<DiffItem> diff = new ArrayList<DiffItem>();
-            for (Map.Entry<String, Collection<String>> entry1 : cl1.fileByArchive.entrySet()) {
-                for (Map.Entry<String, Collection<String>> entry2 : cl2.fileByArchive.entrySet()) {
-                    Collection<String> v1 = entry1.getValue();
-                    Collection<String> v2 = entry2.getValue();
-                    Collection<String> inter = CollectionUtils.intersection(v1, v2);
+                if (inter.size() == 0) {
+                    continue;
+                }
 
-                    if (inter.size() == 0) {
-                        continue;
-                    }
-
-                    if (inter.size() == v1.size() && v1.size() == v2.size()) {
-                        diff.add(new SameItem(inter, entry1.getKey(), entry2.getKey()));
-                    } else if (inter.size() == v1.size()) {
-                        diff.add(new IncludedItem(inter, entry1.getKey(), entry2.getKey()));
-                    } else if (inter.size() == v2.size()) {
-                        diff.add(new ContainingItem(inter, entry1.getKey(), entry2.getKey()));
-                    } else {
-                        diff.add(new DiffItem(inter, entry1.getKey(), entry2.getKey()));
-                    }
+                if (inter.size() == v1.size() && v1.size() == v2.size()) {
+                    diff.add(new SameItem(inter, entry1.getKey(), entry2.getKey()));
+                } else if (inter.size() == v1.size()) {
+                    diff.add(new IncludedItem(inter, entry1.getKey(), entry2.getKey()));
+                } else if (inter.size() == v2.size()) {
+                    diff.add(new ContainingItem(inter, entry1.getKey(), entry2.getKey()));
+                } else {
+                    diff.add(new DiffItem(inter, entry1.getKey(), entry2.getKey()));
                 }
             }
-
-            Collections.sort(diff, DiffItemComparator.getInstance());
-            return diff;
         }
+
+        Collections.sort(diff, DiffItemComparator.getInstance());
+        return diff;
     }
 
     public final static class JarUtil {
