@@ -141,7 +141,7 @@ Title: Testing Security 2
     
         public void testAsManager() throws Exception {
             Properties p = new Properties();
-            p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.localclient.LocalInitialContextFactory");
+            p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
             p.put(Context.SECURITY_PRINCIPAL, "jane");
             p.put(Context.SECURITY_CREDENTIALS, "waterfall");
     
@@ -167,7 +167,7 @@ Title: Testing Security 2
     
         public void testAsEmployee() throws Exception {
             Properties p = new Properties();
-            p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.localclient.LocalInitialContextFactory");
+            p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
             p.put(Context.SECURITY_PRINCIPAL, "joe");
             p.put(Context.SECURITY_CREDENTIALS, "cool");
     

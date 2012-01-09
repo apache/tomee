@@ -196,7 +196,7 @@ javax.naming.InitialContext
         if(contextID == null){
         Properties p = new Properties();
 
-        p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.localclient.LocalInitialContextFactory");
+        p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
         p.put("openejb.loader", "embed");
 
         ctx = new InitialContext(p);

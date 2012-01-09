@@ -89,7 +89,7 @@ java.util.Properties
 
         if (ctxID == null) {
             Properties p = new Properties();
-            p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.localclient.LocalInitialContextFactory");
+            p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
             p.put("openejb.loader", "embed");
             try {
                 ctx = new InitialContext( p );
