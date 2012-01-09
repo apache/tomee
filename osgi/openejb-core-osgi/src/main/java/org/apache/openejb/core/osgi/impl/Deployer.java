@@ -292,6 +292,10 @@ public class Deployer implements BundleListener {
         }
     }
 
+    /**
+     * using dynamic imports can be too tricky when this class is often enough.
+     * Note: user can stil refine the version he needs...but manually.
+     */
     private static class OSGIClassLoader extends ClassLoader {
         private final Bundle backingBundle;
         private final Bundle fallbackBundle;

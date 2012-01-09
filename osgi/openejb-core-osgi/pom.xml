@@ -139,6 +139,7 @@
       javax.enterprise.event,
       javax.enterprise.inject,
       javax.enterprise.inject.spi,
+      javax.enterprise.util,
       javax.inject,
       javax.interceptor,
       javax.jms;resolution:=optional,
