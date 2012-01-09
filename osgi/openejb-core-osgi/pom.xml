@@ -369,5 +369,6 @@
       org.apache.openejb.core.osgi.*;version=${openejb.osgi.export.version}
     </openejb.osgi.export>
     <openejb.bundle.activator>org.apache.openejb.core.osgi.impl.Activator</openejb.bundle.activator>
+    <openejb.osgi.dynamic.import.pkg>*</openejb.osgi.dynamic.import.pkg>
   </properties>
 </project>

@@ -316,12 +316,6 @@ public class Deployer implements BundleListener {
             try {
                 return this.backingBundle.loadClass(name);
             } catch (ClassNotFoundException cnfe) {
-                if (isInterestingClass(name)) {
-                    final Class<?> forced = forceLoadClass(name);
-                    if (forced != null) {
-                        return forced;
-                    }
-                }
                 throw new ClassNotFoundException(name + " not found from bundle [" + backingBundle.getSymbolicName() + "]", cnfe);
             } catch (NoClassDefFoundError ncdfe) {
                 NoClassDefFoundError e = new NoClassDefFoundError(name + " not found from bundle [" + backingBundle + "]");
@@ -338,9 +332,6 @@ public class Deployer implements BundleListener {
             url = backingBundle.getResource(name);
             if (url != null) {
                 return url;
-            }
-            if (isInterestingClass(name)) {
-                return forceLoadResource(name);
             }
             return null;
         }
@@ -362,9 +353,6 @@ public class Deployer implements BundleListener {
             urls = backingBundle.getResources(name);
             if (urls != null && urls.hasMoreElements()) {
                 return urls;
-            }
-            if (isInterestingClass(name)) {
-                urls = forceLoadResources(name);
             }
             if (urls != null && urls.hasMoreElements()) {
                 return urls;
@@ -454,25 +442,5 @@ public class Deployer implements BundleListener {
 
     private static String className(final String name) {
         return name.replace('/', '.');
-    }
-
-    private static boolean isInterestingClass(final String rawName) {
-        final String name = className(rawName);
-        return isJdbcDriver(name) || isJPAProvider(name) || isBValProvider(name)
-                || name.contains("org.apache.openejb") // fallback mainly for META-INF resources
-                || name.startsWith("javax.management."); // dynamic mbean feature uses this package also used by the jre itself
-    }
-
-    private static boolean isJdbcDriver(final String name) {
-        return name.startsWith("org.hsqldb") || name.startsWith("com.mysql") || name.startsWith("org.h2") || name.startsWith("oracle.jdbc");
-    }
-
-    private static boolean isJPAProvider(String name) {
-        return name.contains("openjpa") || name.startsWith("serp.") // openjpa && its dep
-                || name.startsWith("org.hibernate") || name.startsWith("oracle.toplink") || name.startsWith("org.eclipse.persistence.jpa");
-    }
-
-    private static boolean isBValProvider(String name) {
-        return name.contains("org.apache.bval") || name.startsWith("org.hibernate.validator");
     }
 }
