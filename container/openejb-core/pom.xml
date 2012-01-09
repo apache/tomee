@@ -614,17 +614,6 @@
     <dependency>
       <groupId>org.apache.bval</groupId>
       <artifactId>bval-core</artifactId>
-      <exclusions>
-        <exclusion> <!-- to force the none core version used by myfaces for instance in tomee. the core is included in this one -->
-          <groupId>commons-beanutils</groupId>
-          <artifactId>commons-beanutils-core</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>commons-beanutils</groupId>
-      <artifactId>commons-beanutils</artifactId>
-      <version>${commons-beanutils.version}</version>
     </dependency>
 
     <dependency>
