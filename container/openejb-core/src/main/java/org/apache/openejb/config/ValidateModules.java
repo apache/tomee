@@ -24,10 +24,11 @@ import org.apache.openejb.config.rules.CheckClassLoading;
  */
 // START SNIPPET : code
 public class ValidateModules implements DynamicDeployer {
+    public static final String OPENEJB_CHECK_CLASSLOADER = "openejb.check.classloader";
 
     public AppModule deploy(AppModule appModule) throws OpenEJBException {
         final AppValidator validator;
-        if (!Boolean.getBoolean("openejb.check.classloader")) {
+        if (!Boolean.getBoolean(OPENEJB_CHECK_CLASSLOADER)) {
             validator = new AppValidator();
         } else {
             validator = new AppValidator(new CheckClassLoading());

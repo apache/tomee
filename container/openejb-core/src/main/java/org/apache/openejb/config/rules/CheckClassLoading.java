@@ -42,6 +42,8 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 public class CheckClassLoading extends ValidationBase {
+    public static final String OPENEJB_CHECK_CLASSLOADER_VERBOSE = "openejb.check.classloader.verbose";
+
     protected AppModule appModule;
 
     @Override public void validate(AppModule appModule) {
@@ -57,17 +59,14 @@ public class CheckClassLoading extends ValidationBase {
     }
 
     private void check(final ClassLoader classLoader) {
-        UrlSet set = null;
-        UrlSet openejbSet = null;
+        UrlSet set;
+        UrlSet openejbSet;
         try {
             openejbSet = new UrlSet(OpenEJB.class.getClassLoader());
             set = new UrlSet(classLoader);
             set = set.exclude(openejbSet);
         } catch (IOException e) {
             warn(module.getModuleId() + " application", e.getMessage());
-        }
-        if (set == null || openejbSet == null) {
-            warn(module.getModuleId() + " application", "was not able to compare application classloader and its parent");
             return;
         }
 
@@ -78,7 +77,7 @@ public class CheckClassLoading extends ValidationBase {
         final Classes scl = new Classes(parentUrls.toArray(new URL[parentUrls.size()]));
         final Collection<DiffItem> diffs = intersection(fcl, scl);
         for (DiffItem diff : diffs) {
-            warn(module.getModuleId() + " application", diff.toString());
+            warn(module.getModuleId() + " application", diff.toScreen());
         }
     }
 
@@ -111,7 +110,7 @@ public class CheckClassLoading extends ValidationBase {
             for (URL archive : urls) {
                 try {
                     final File file = URLs.toFile(archive);
-                    List<String> files = JarUtil.listFiles(file, CLASS_EXTENSION);
+                    final List<String> files = JarUtil.listFiles(file, CLASS_EXTENSION);
                     Collections.sort(files);
                     fileByArchive.put(file.getName(), files);
                 } catch (Exception e) {
@@ -185,16 +184,6 @@ public class CheckClassLoading extends ValidationBase {
         }
     }
 
-    public static class ContainingItem extends DiffItem {
-        public ContainingItem(Collection<String> inter, String dir1, String dir2) {
-            super(inter, dir1, dir2);
-        }
-
-        @Override public String toString() {
-            return "ContainingItem{" + getFile1() + " contains " + getFile2() + "}";
-        }
-    }
-
     public static class DiffItem {
         private Collection<String> files = new ArrayList<String>();
         private String file1;
@@ -206,10 +195,6 @@ public class CheckClassLoading extends ValidationBase {
             this.file2 = file2;
         }
 
-        public Collection<String> getFiles() {
-            return files;
-        }
-
         public String getFile1() {
             return file1;
         }
@@ -218,12 +203,43 @@ public class CheckClassLoading extends ValidationBase {
             return file2;
         }
 
-        @Override public String toString() {
-            return "DiffItem{"
-                    + "both files " + file1 + '\''
-                    + " and " + file2 + '\''
-                    + "contains files=" + files
-                    + '}';
+        public String toScreen() {
+            final String str = "both files " + file1 + '\''
+                    + " and " + file2 + '\'';
+            if (Boolean.getBoolean(OPENEJB_CHECK_CLASSLOADER_VERBOSE)) {
+                    return str + "contains files=" + files;
+            }
+            return str;
+        }
+    }
+
+    public static class ContainingItem extends DiffItem {
+        public ContainingItem(Collection<String> inter, String dir1, String dir2) {
+            super(inter, dir1, dir2);
+        }
+
+        @Override public String toScreen() {
+            return getFile1() + " contains " + getFile2();
+        }
+    }
+
+    public static class IncludedItem extends DiffItem {
+        public IncludedItem(Collection<String> files, String file1, String file2) {
+            super(files, file1, file2);
+        }
+
+        @Override public String toScreen() {
+            return getFile1() + " is included inside " + getFile2();
+        }
+    }
+
+    public static class SameItem extends DiffItem {
+        public SameItem(Collection<String> files, String file1, String file2) {
+            super(files, file1, file2);
+        }
+
+        @Override public String toScreen() {
+            return getFile1() + " is the same than " + getFile2();
         }
     }
 
@@ -249,26 +265,6 @@ public class CheckClassLoading extends ValidationBase {
                 return o1.getFile1().compareTo(o1.getFile1());
             }
             return index1 - index2;
-        }
-    }
-
-    public static class IncludedItem extends DiffItem {
-        public IncludedItem(Collection<String> files, String file1, String file2) {
-            super(files, file1, file2);
-        }
-
-        @Override public String toString() {
-            return "IncludedItem{" + getFile1() + " is included inside " + getFile2() + "}";
-        }
-    }
-
-    public static class SameItem extends DiffItem {
-        public SameItem(Collection<String> files, String file1, String file2) {
-            super(files, file1, file2);
-        }
-
-        @Override public String toString() {
-            return "SameItem{" + getFile1() + ", " + getFile2() + "}";
         }
     }
 }
