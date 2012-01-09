@@ -250,6 +250,7 @@
             <Private-Package>${openejb.osgi.private.pkg}</Private-Package>
             <Implementation-Title>Apache OpenEJB</Implementation-Title>
             <Implementation-Version>${project.version}</Implementation-Version>
+            <Include-Resource>${pom.basedir}/src/main/resources</Include-Resource>
           </instructions>
         </configuration>
         <executions>

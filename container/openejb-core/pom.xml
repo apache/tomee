@@ -571,7 +571,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.codehaus.swizzle</groupId>
+      <groupId>org.codehaus.              swizzle</groupId>
       <artifactId>swizzle-confluence</artifactId>
       <version>1.1</version>
       <type>jar</type>

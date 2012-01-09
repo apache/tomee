@@ -71,7 +71,7 @@
     <bundle>mvn:org.apache.openjpa/openjpa/${openjpa.version}</bundle>
   </feature>
 
-  <feature name="openejb-core" version="${project.version}">
+  <feature name="openejb-core-dep" version="${project.version}">
     <feature version="${javaee-api.version}">javaee-api</feature>
 
     <!-- that shoudn't be necessary as we already have a stax bundle in javaee-api,
