@@ -42,6 +42,7 @@ import static org.junit.Assert.assertTrue;
 import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.CoreOptions.vmOption;
 import static org.osgi.framework.Constants.DYNAMICIMPORT_PACKAGE;
 
 @RunWith(JUnit4TestRunner.class)
@@ -63,7 +64,8 @@ public class OSGiKarafStartupTest {
                         .karafVersion("2.2.4"),
                 felix()
 
-                 , vmOption("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005")
+                // to debug activate next line and create a remote debug configuration in your IDE
+                // , vmOption("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005")
         );
     }
 
