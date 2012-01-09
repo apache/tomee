@@ -63,7 +63,7 @@ public class OSGiKarafStartupTest {
                         .karafVersion("2.2.4"),
                 felix()
 
-                // , vmOption("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005")
+                 , vmOption("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005")
         );
     }
 
