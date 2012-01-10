@@ -319,7 +319,7 @@ Title: Spring Integration
     
       <!--
       Loads the EJBs from the classpath just as when embedding OpenEJB via
-      the org.apache.openejb.localclient.LocalInitialContextFactory.  All the discovered
+      the org.apache.openejb.core.LocalInitialContextFactory.  All the discovered
       EJBs are imported into this context and available for injection here.
       -->
       <bean name="classPathApplication" class="org.apache.openejb.spring.ClassPathApplication"/>

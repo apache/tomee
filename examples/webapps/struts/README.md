@@ -57,7 +57,7 @@ Title: Struts
                 UserService service = null;
                 Properties props = new Properties();
                 props.put(Context.INITIAL_CONTEXT_FACTORY,
-                        "org.apache.openejb.localclient.LocalInitialContextFactory");
+                        "org.apache.openejb.core.LocalInitialContextFactory");
                 Context ctx = new InitialContext(props);
                 service = (UserService) ctx.lookup("UserServiceImplLocal");
                 service.add(new User(id, firstName, lastName));
@@ -124,7 +124,7 @@ Title: Struts
                 UserService service = null;
                 Properties props = new Properties();
                 props.put(Context.INITIAL_CONTEXT_FACTORY,
-                        "org.apache.openejb.localclient.LocalInitialContextFactory");
+                        "org.apache.openejb.core.LocalInitialContextFactory");
                 Context ctx = new InitialContext(props);
                 service = (UserService) ctx.lookup("UserServiceImplLocal");
                 this.user = service.find(id);
@@ -192,7 +192,7 @@ Title: Struts
                 UserService service = null;
                 Properties props = new Properties();
                 props.put(Context.INITIAL_CONTEXT_FACTORY,
-                        "org.apache.openejb.localclient.LocalInitialContextFactory");
+                        "org.apache.openejb.core.LocalInitialContextFactory");
                 Context ctx = new InitialContext(props);
                 service = (UserService) ctx.lookup("UserServiceImplLocal");
                 this.users = service.findAll();
