@@ -25,6 +25,8 @@ import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardServer;
+import org.apache.catalina.startup.Bootstrap;
+import org.apache.catalina.startup.Catalina;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.core.ServerFederation;
@@ -48,6 +50,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -81,6 +84,7 @@ import java.util.Properties;
 public class TomcatLoader implements Loader {
 
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, TomcatLoader.class);
+    public static final String TOMEE_NOSHUTDOWNHOOK_PROP = "tomee.noshutdownhook";
 
     /**
      * OpenEJB Server Daemon
@@ -252,6 +256,27 @@ public class TomcatLoader implements Loader {
                 }
             }
         });
+
+        if (System.getProperty(TOMEE_NOSHUTDOWNHOOK_PROP) != null) {
+            final Field daemonField = Bootstrap.class.getDeclaredField("daemon");
+            final boolean acc = daemonField.isAccessible();
+            try {
+                daemonField.setAccessible(true);
+                final Bootstrap daemon = (Bootstrap) daemonField.get(null);
+                if (daemon != null) {
+                    final Field catalinaField = Bootstrap.class.getDeclaredField("catalinaDaemon");
+                    final boolean catalinaAcc = catalinaField.isAccessible();
+                    catalinaField.setAccessible(true);
+                    try {
+                        Catalina.class.getMethod("setUseShutdownHook", boolean.class).invoke(catalinaField.get(daemon), false);
+                    } finally {
+                        catalinaField.setAccessible(catalinaAcc);
+                    }
+                }
+            } finally {
+                daemonField.setAccessible(acc);
+            }
+        }
     }
 
     private void optionalService(Properties properties, String className) {
