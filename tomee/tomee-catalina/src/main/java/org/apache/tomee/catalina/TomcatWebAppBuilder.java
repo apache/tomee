@@ -334,7 +334,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 // but here we have all the classloading logic
                 standardContext.setParentClassLoader(classLoader);
                 standardContext.setDelegate(true);
-                standardContext.setLoader(new TomEEWebappLoader(classLoader));
+                standardContext.setLoader(new TomEEWebappLoader(appInfo.path, classLoader));
                 standardContext.getLoader().setDelegate(true);
 
                 String host = webApp.host;
