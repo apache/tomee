@@ -100,7 +100,7 @@ public abstract class TomEEContainer implements DeployableContainer<TomEEConfigu
             do { // be sure we don't override something existing
                 file = new File(tmpDir + File.separator + i++ + File.separator + archive.getName());
             } while (file.exists());
-            if (!file.getParentFile().mkdirs()) {
+            if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
                 LOGGER.warning("can't create " + file.getParent());
             }
 

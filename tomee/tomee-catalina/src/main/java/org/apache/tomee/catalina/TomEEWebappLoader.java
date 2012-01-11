@@ -21,10 +21,13 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.loader.WebappClassLoader;
 import org.apache.catalina.loader.WebappLoader;
 import org.apache.naming.resources.DirContextURLStreamHandler;
+import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.util.ArrayEnumeration;
 import org.apache.tomcat.util.ExceptionUtils;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,8 +37,10 @@ import java.util.List;
 public class TomEEWebappLoader extends WebappLoader {
     private ClassLoader appClassLoader;
     private ClassLoader tomEEClassLoader;
+    private String appPath;
 
-    public TomEEWebappLoader(final ClassLoader classLoader) {
+    public TomEEWebappLoader(final String appId, final ClassLoader classLoader) {
+    	this.appPath = appId;
         appClassLoader = classLoader;
     }
 
@@ -46,7 +51,7 @@ public class TomEEWebappLoader extends WebappLoader {
     @Override protected void startInternal() throws LifecycleException {
         super.startInternal();
         final ClassLoader webappCl = super.getClassLoader();
-        tomEEClassLoader = new TomEEClassLoader(appClassLoader, webappCl);
+        tomEEClassLoader = new TomEEClassLoader(appPath, appClassLoader, webappCl);
         try {
              DirContextURLStreamHandler.bind(tomEEClassLoader, getContainer().getResources());
         } catch (Throwable t) {
@@ -58,11 +63,13 @@ public class TomEEWebappLoader extends WebappLoader {
     public static class TomEEClassLoader extends ClassLoader {
         private ClassLoader app;
         private ClassLoader webapp;
+        private String appPath;
 
-        public TomEEClassLoader(final ClassLoader appCl, final ClassLoader webappCl) {
+        public TomEEClassLoader(final String appId, final ClassLoader appCl, final ClassLoader webappCl) {
             super(webappCl); // in fact this classloader = webappclassloader since we add nothing to this
-            app = appCl; // only used to manage resources since webapp.getParent() should be app
-            webapp = webappCl;
+            this.appPath = appId;
+            this.app = appCl; // only used to manage resources since webapp.getParent() should be app
+            this.webapp = webappCl;
         }
 
         /**
@@ -73,27 +80,72 @@ public class TomEEWebappLoader extends WebappLoader {
          * @throws IOException
          */
         @Override public Enumeration<URL> getResources(final String name) throws IOException {
-            List<URL> urls = new ArrayList<URL>();
+            final List<URL> urls = new ArrayList<URL>();
 
             if (webapp instanceof WebappClassLoader && ((WebappClassLoader) webapp).isStarted() || webapp.getParent() == null) { // we set a parent so if it is null webapp was detroyed
-                addIfNotExist(urls, app.getResources(name), true);
-                addIfNotExist(urls, webapp.getResources(name), false);
-                return new ArrayEnumeration(urls);
+                add(urls, app.getResources(name));
+                add(urls, webapp.getResources(name));
+                return new ArrayEnumeration(clear(urls));
             }
             return app.getResources(name);
         }
 
-        private static void addIfNotExist(Collection<URL> urls, Enumeration<URL> enumUrls, boolean force) {
+        private List<URL> clear(List<URL> urls) { // take care of antiJarLocking
+        	final List<URL> clean = new ArrayList<URL>();
+        	for (URL url : urls) {
+	            final String urlStr = url.toExternalForm();
+	            URL jarUrl = null;
+	            if (urlStr.contains("!")) {
+	            	try {
+						jarUrl = new URL(urlStr.substring(0, urlStr.lastIndexOf('!'))  + "!/");
+					} catch (MalformedURLException e) {
+						// ignored
+					}
+	            }
+	
+	            if (jarUrl != null) {
+	            	final URL cachedFile = ClassLoaderUtil.getUrlKeyCached(appPath, file(jarUrl));
+	            	if (cachedFile != null) {
+	                	URL resource = null;
+						try {
+							resource = new URL("jar:file:" + cachedFile.getFile() + urlStr.substring(urlStr.lastIndexOf('!')));
+						} catch (MalformedURLException e) {
+							// ignored
+						}
+	                	if (resource != null && !clean.contains(resource)) {
+							clean.add(resource);
+	                	}
+	            	}
+	            } else if (clean.contains(url)) {
+	                clean.add(url);
+	            }
+        	}
+			return clean;
+		}
+
+		private void add(Collection<URL> urls, Enumeration<URL> enumUrls) {
             try {
                 while (enumUrls.hasMoreElements()) {
-                    URL url = enumUrls.nextElement();
-                    if (force || !urls.contains(url)) {
-                        urls.add(url);
-                    }
+                    final URL url = enumUrls.nextElement();
+                    urls.add(url);
                 }
             } catch (IllegalStateException ese) {
                 // ignored: if jars are already closed...shutdown for instance
             }
         }
+
+		private static File file(URL jarUrl) {
+			String urlAsString = jarUrl.getFile();
+			if (urlAsString.startsWith("jar:")) {
+				urlAsString = urlAsString.substring(4);
+			}
+			if (urlAsString.startsWith("file:/")) {
+				urlAsString = urlAsString.substring(6);
+			}
+			if (urlAsString.endsWith("!/")) {
+				urlAsString = urlAsString.substring(0, urlAsString.length() - 2);
+			}
+			return new File(urlAsString);
+		}
     }
 }
