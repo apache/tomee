@@ -78,7 +78,6 @@ import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
-import java.util.zip.ZipEntry;
 
 import static org.apache.openejb.config.NewLoaderLogic.applyBuiltinExcludes;
 import static org.apache.openejb.util.URLs.toFile;
@@ -196,8 +195,8 @@ public class DeploymentLoader implements DeploymentFilterable {
                 final ResourceFinder finder = new ResourceFinder("", urls.toArray(new URL[urls.size()]));
                 otherDD = getDescriptors(finder, false);
 
-                addWebPersistenceDD("persistence.xml", file, baseUrl, otherDD, appModule);
-                addWebPersistenceDD("persistence-fragment.xml", file, baseUrl, otherDD, appModule);
+                addWebPersistenceDD("persistence.xml", otherDD, appModule);
+                addWebPersistenceDD("persistence-fragment.xml", otherDD, appModule);
                 addPersistenceUnits(appModule, baseUrl);
                 return appModule;
             }
@@ -235,45 +234,8 @@ public class DeploymentLoader implements DeploymentFilterable {
         }
     }
 
-    private void addWebPersistenceDD(final String name, final File file, URL baseUrl, final Map<String, URL> otherDD, final AppModule appModule) {
-        URL persistenceUrl = null;
-        if (file.isDirectory()) {
-            File persistenceXml = new File(file, "WEB-INF/classes/META-INF/" + name);
-            if (persistenceXml.exists() && persistenceXml.isFile()) {
-                try {
-                    persistenceUrl = persistenceXml.toURI().toURL();
-                } catch (MalformedURLException e) {
-                    // no-op
-                }
-            }
-        } else { // .war
-            JarFile jf;
-            try {
-                jf = new JarFile(file);
-                ZipEntry entry = jf.getEntry("WEB-INF/classes/META-INF/" + name);
-                if (entry != null) {
-                    String base = baseUrl.toString();
-                    if (!base.startsWith("jar:")) {
-                        base = "jar:" + base;
-                        try {
-                            baseUrl = new URL(base + "!/WEB-INF/classes");
-                        } catch (MalformedURLException e) {
-                            // ignored
-                        }
-                    }
-
-                    try {
-                        persistenceUrl = new URL(base + "!/WEB-INF/classes/META-INF/" + name);
-                    } catch (MalformedURLException e) {
-                        // no-op
-                    }
-                }
-            } catch (IOException e) {
-                // ignored
-            }
-        }
-
-        if (persistenceUrl != null || otherDD.containsKey(name)) {
+    private void addWebPersistenceDD(final String name, final Map<String, URL> otherDD, final AppModule appModule) {
+        if (otherDD.containsKey(name)) {
             List<URL> persistenceUrls = (List<URL>) appModule.getAltDDs().get(name);
             if (persistenceUrls == null) {
                 persistenceUrls = new ArrayList<URL>();
@@ -283,31 +245,10 @@ public class DeploymentLoader implements DeploymentFilterable {
             if (otherDD.containsKey(name)) {
                 final URL otherUrl = otherDD.get(name);
                 if (!persistenceUrls.contains(otherUrl)) {
-                    persistenceUrls.add(otherDD.get(name));
-                }
-            }
-
-            if (persistenceUrl != null && !containsUnpackVersion(persistenceUrls, persistenceUrl)) {
-                try {
-                    persistenceUrls.add(persistenceUrl);
-                } catch (Exception e) {
-                    // no-op
+                    persistenceUrls.add(otherUrl);
                 }
             }
         }
-    }
-
-    private boolean containsUnpackVersion(final List<URL> list, final URL url) {
-        String urlStr = url.toExternalForm();
-        if (urlStr.contains("!")) { // a packed version so check it is not already included in list
-            urlStr = urlStr.substring(urlStr.lastIndexOf('!') + 1);
-            for (URL i : list) {
-                if (i.toExternalForm().endsWith(urlStr)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     protected ClassLoader getOpenEJBClassLoader(final URL url) {
