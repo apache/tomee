@@ -280,20 +280,34 @@ public class DeploymentLoader implements DeploymentFilterable {
                 appModule.getAltDDs().put(name, persistenceUrls);
             }
 
-            if (persistenceUrl != null) {
-                try {
-                    persistenceUrls.add(persistenceUrl);
-                } catch (Exception e) {
-                    // no-op
-                }
-            }
             if (otherDD.containsKey(name)) {
                 final URL otherUrl = otherDD.get(name);
                 if (!persistenceUrls.contains(otherUrl)) {
                     persistenceUrls.add(otherDD.get(name));
                 }
             }
+
+            if (persistenceUrl != null && !containsUnpackVersion(persistenceUrls, persistenceUrl)) {
+                try {
+                    persistenceUrls.add(persistenceUrl);
+                } catch (Exception e) {
+                    // no-op
+                }
+            }
         }
+    }
+
+    private boolean containsUnpackVersion(final List<URL> list, final URL url) {
+        String urlStr = url.toExternalForm();
+        if (urlStr.contains("!")) { // a packed version so check it is not already included in list
+            urlStr = urlStr.substring(urlStr.lastIndexOf('!') + 1);
+            for (URL i : list) {
+                if (i.toExternalForm().endsWith(urlStr)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     protected ClassLoader getOpenEJBClassLoader(final URL url) {
