@@ -88,7 +88,6 @@ import static org.apache.openejb.util.URLs.toFile;
  */
 public class DeploymentLoader implements DeploymentFilterable {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, "org.apache.openejb.util.resources");
-    public static final String OPENEJB_READ_ALL_PERSISTENCE_XML = "openejb.read-all.persistence.xml";
     private static final String OPENEJB_ALTDD_PREFIX = "openejb.altdd.prefix";
     private static final String ddDir = "META-INF/";
     private boolean scanManagedBeans = true;
@@ -192,14 +191,10 @@ public class DeploymentLoader implements DeploymentFilterable {
                 addWebModule(appModule, baseUrl, getOpenEJBClassLoader(baseUrl), getContextRoot(), getModuleName());
 
                 final Map<String, URL> otherDD;
-                if (Boolean.getBoolean(OPENEJB_READ_ALL_PERSISTENCE_XML)) {
-                    WebModule webModule = appModule.getWebModules().iterator().next();
-                    final List<URL> urls = webModule.getScannableUrls();
-                    final ResourceFinder finder = new ResourceFinder("", urls.toArray(new URL[urls.size()]));
-                    otherDD = getDescriptors(finder, false);
-                } else {
-                    otherDD = new HashMap<String, URL>();
-                }
+                WebModule webModule = appModule.getWebModules().iterator().next();
+                final List<URL> urls = webModule.getScannableUrls();
+                final ResourceFinder finder = new ResourceFinder("", urls.toArray(new URL[urls.size()]));
+                otherDD = getDescriptors(finder, false);
 
                 addWebPersistenceDD("persistence.xml", file, baseUrl, otherDD, appModule);
                 addWebPersistenceDD("persistence-fragment.xml", file, baseUrl, otherDD, appModule);
