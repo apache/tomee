@@ -290,14 +290,20 @@ public class RemoteServer {
             } catch (Exception e) {
                 throw (RuntimeException)new RuntimeException("Cannot start the server.  Exception: "+e.getClass().getName()+": "+e.getMessage()).initCause(e);
             }
-            if (debug) {
-                if (!connect(Integer.MAX_VALUE)) throw new RuntimeException("Could not connect to server");
-            } else {
-                if (!connect(tries)) throw new RuntimeException("Could not connect to server");
+            if (checkPortAvailable) {
+                if (debug) {
+                    if (!connect(Integer.MAX_VALUE)) throw new RuntimeException("Could not connect to server");
+                } else {
+                    if (!connect(tries)) throw new RuntimeException("Could not connect to server");
+                }
             }
         } else {
             if (verbose) System.out.println("[] FOUND STARTED SERVER");
         }
+    }
+
+    public Process getServer() {
+        return server;
     }
 
     private void addIfSet(List<String> argsList, String key) {
