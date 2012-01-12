@@ -24,7 +24,10 @@ import java.io.File;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -92,12 +95,20 @@ public class RemoteServer {
     }
 
     public void start() {
-        if (!connect()) {
+        start(Collections.EMPTY_LIST, "start", true);
+    }
+
+    public void start(final List<String> additionalArgs, final String cmd, boolean checkPortAvailable) {
+        boolean ok = true;
+        if (checkPortAvailable) {
+            ok = !connect();
+        }
+        if (ok) {
             try {
-                System.out.println("[] START SERVER");
+                System.out.println("[] " + cmd.toUpperCase() + " SERVER");
 
                 File home = getHome();
-                System.out.println("OPENEJB_HOME = "+home.getAbsolutePath());
+                System.out.println("OPENEJB_HOME = "+ home.getAbsolutePath());
                 String systemInfo = "Java " + System.getProperty("java.version") + "; " + System.getProperty("os.name") + "/" + System.getProperty("os.version");
                 System.out.println("SYSTEM_INFO  = "+systemInfo);
 
@@ -193,22 +204,60 @@ public class RemoteServer {
                         }
                     }
 
+                    final Map<String, String> addedArgs = new HashMap<String, String>();
+                    if (additionalArgs != null) {
+                        for (String arg : additionalArgs) {
+                            argsList.add("-Dorg.apache.tomcat.util.http.ServerCookie.ALLOW_HTTP_SEPARATORS_IN_V0=true");
+                            String[] values = arg.split("=");
+                            if (values.length == 1) {
+                                addedArgs.put(values[0], "null");
+                            } else {
+                                addedArgs.put(values[0], values[1]);
+                            }
+                        }
+                    }
+
                     argsList.add("-javaagent:" + javaagentJar.getAbsolutePath());
-                    argsList.add("-Dcom.sun.management.jmxremote");
-                    argsList.add("-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager");
-                    argsList.add("-Djava.util.logging.config.file=" + loggingProperties.getAbsolutePath());
-                    argsList.add("-Djava.io.tmpdir=" + temp.getAbsolutePath());
-                    argsList.add("-Djava.endorsed.dirs=" + endorsed.getAbsolutePath());
-                    argsList.add("-Dcatalina.base=" + home.getAbsolutePath());
-                    argsList.add("-Dcatalina.home=" + home.getAbsolutePath());
-                    argsList.add("-Dcatalina.ext.dirs=" + tlib.getAbsolutePath());
-                    argsList.add("-Dopenejb.servicemanager.enabled=" + Boolean.getBoolean("openejb.servicemanager.enabled"));
-                    argsList.add("-Dorg.apache.catalina.STRICT_SERVLET_COMPLIANCE=true");
-                    argsList.add("-Dorg.apache.tomcat.util.http.ServerCookie.ALLOW_HTTP_SEPARATORS_IN_V0=true");
-                    addIfSet(argsList, "javax.net.ssl.keyStore");
-                    addIfSet(argsList, "javax.net.ssl.keyStorePassword");
-                    addIfSet(argsList, "javax.net.ssl.trustStore");
-                    addIfSet(argsList, "java.protocol.handler.pkgs");
+                    if (!addedArgs.containsKey("-Dcom.sun.management.jmxremote")) {
+                        argsList.add("-Dcom.sun.management.jmxremote");
+                    }
+                    if (!addedArgs.containsKey("-Djava.util.logging.manager")) {
+                        argsList.add("-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager");
+                    }
+                    if (!addedArgs.containsKey("-Djava.util.logging.config.file")) {
+                        argsList.add("-Djava.util.logging.config.file=" + loggingProperties.getAbsolutePath());
+                    }
+                    if (!addedArgs.containsKey("-Djava.io.tmpdir")) {
+                        argsList.add("-Djava.io.tmpdir=" + temp.getAbsolutePath());
+                    }
+                    if (!addedArgs.containsKey("-Djava.endorsed.dirs")) {
+                        argsList.add("-Djava.endorsed.dirs=" + endorsed.getAbsolutePath());
+                    }
+                    if (!addedArgs.containsKey("-Dcatalina.base")) {
+                        argsList.add("-Dcatalina.base=" + home.getAbsolutePath());
+                    }
+                    if (!addedArgs.containsKey("-Dcatalina.home")) {
+                        argsList.add("-Dcatalina.home=" + home.getAbsolutePath());
+                    }
+                    if (!addedArgs.containsKey("-Dcatalina.ext.dirs")) {
+                        argsList.add("-Dcatalina.ext.dirs=" + tlib.getAbsolutePath());
+                    }
+                    if (!addedArgs.containsKey("-Dopenejb.servicemanager.enabled")) {
+                        argsList.add("-Dopenejb.servicemanager.enabled=" + Boolean.getBoolean("openejb.servicemanager.enabled"));
+                    }
+                    if (!addedArgs.containsKey("-Dorg.apache.catalina.STRICT_SERVLET_COMPLIANCE")) {
+                        argsList.add("-Dorg.apache.catalina.STRICT_SERVLET_COMPLIANCE=true");
+                    }
+                    if (!addedArgs.containsKey("-Dorg.apache.tomcat.util.http.ServerCookie.ALLOW_HTTP_SEPARATORS_IN_V0")) {
+                        argsList.add("-Dorg.apache.tomcat.util.http.ServerCookie.ALLOW_HTTP_SEPARATORS_IN_V0=true");
+                    }
+
+                    if (addedArgs.isEmpty()) { // default case
+                        addIfSet(argsList, "javax.net.ssl.keyStore");
+                        addIfSet(argsList, "javax.net.ssl.keyStorePassword");
+                        addIfSet(argsList, "javax.net.ssl.trustStore");
+                        addIfSet(argsList, "java.protocol.handler.pkgs");
+                    }
 
                     argsList.add("-ea");
                     argsList.add("-classpath");
@@ -221,8 +270,12 @@ public class RemoteServer {
                     }
 
                     argsList.add("org.apache.catalina.startup.Bootstrap");
-                    argsList.add("start");
-
+                    if (cmd == null) {
+                        argsList.add("start");
+                    } else {
+                        argsList.add(cmd);
+                    }
+                    
                     args = argsList.toArray(new String[argsList.size()]);
                 }
 
@@ -230,7 +283,7 @@ public class RemoteServer {
                 if (verbose) {
                     System.out.println(Join.join("\n", args));
                 }
-                server = Runtime.getRuntime().exec(args);
+                server = Runtime.getRuntime().exec(args, new String[0], home);
 
                 Pipe.pipe(server);
 
