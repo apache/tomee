@@ -27,11 +27,11 @@ import java.util.Map;
 public class RsRegistryImpl extends OpenEJBHttpRegistry implements RsRegistry {
     private Map<String, String> addresses = new HashMap<String, String>();
 
-    @Override public String createRsHttpListener(HttpListener listener, ClassLoader classLoader, String path, String virtualHost) {
+    @Override public AddressInfo createRsHttpListener(String root, HttpListener listener, ClassLoader classLoader, String path, String virtualHost) {
         String address = HttpUtil.selectSingleAddress(getResolvedAddresses(path));
         addWrappedHttpListener(listener, classLoader, path);
         addresses.put(address, path);
-        return address;
+        return new AddressInfo(address, address);
     }
 
     @Override public HttpListener removeListener(String context) {

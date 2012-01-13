@@ -22,6 +22,16 @@ import org.apache.openejb.server.httpd.HttpListener;
 import java.util.List;
 
 public interface RsRegistry {
-    String createRsHttpListener(HttpListener listener, ClassLoader classLoader, String path, String virtualHost);
+    AddressInfo createRsHttpListener(String root, HttpListener listener, ClassLoader classLoader, String path, String virtualHost);
     HttpListener removeListener(String context);
+
+    public static class AddressInfo {
+        public String base;
+        public String complete;
+
+        public AddressInfo(String base, String complete) {
+            this.base = base;
+            this.complete = complete;
+        }
+    }
 }

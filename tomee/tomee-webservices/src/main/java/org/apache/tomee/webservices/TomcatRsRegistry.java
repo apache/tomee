@@ -31,13 +31,14 @@ import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.httpd.util.HttpUtil;
 import org.apache.openejb.server.rest.RsRegistry;
 import org.apache.openejb.server.rest.RsServlet;
-import org.apache.tomee.loader.TomcatHelper;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.tomee.loader.TomcatHelper;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -64,7 +65,7 @@ public class TomcatRsRegistry implements RsRegistry {
     }
 
     @Override
-    public String createRsHttpListener(HttpListener listener, ClassLoader classLoader, String completePath, String virtualHost) {
+    public AddressInfo createRsHttpListener(String root, HttpListener listener, ClassLoader classLoader, String completePath, String virtualHost) {
         String path = completePath;
         if (path == null) {
             throw new NullPointerException("contextRoot is null");
@@ -73,12 +74,16 @@ public class TomcatRsRegistry implements RsRegistry {
             throw new NullPointerException("listener is null");
         }
 
-        // assure context root with a leading slash
+        String realRoot = root;
+        if (!root.startsWith("/")) {
+            realRoot = "/" + root;
+        }
         if (!path.startsWith("/")) {
             path = "/" + path;
         }
-        String webContext = path.substring(0, path.substring(1).indexOf("/") + 1);
-        path = path.substring(webContext.length(), path.length());
+        if (!"/".equals(realRoot)) {
+            path = path.substring(realRoot.length(), path.length());
+        }
 
         // find the existing host (we do not auto-create hosts)
         if (virtualHost == null) virtualHost = engine.getDefaultHost();
@@ -88,7 +93,10 @@ public class TomcatRsRegistry implements RsRegistry {
         }
 
         // get the webapp context
-        Context context = (Context) host.findChild(webContext);
+        Context context = (Context) host.findChild(realRoot);
+        if (context == null && "/".equals(realRoot)) { // ROOT
+            context = (Context) host.findChild("");
+        }
         context.addLifecycleListener(new LifecycleListener() {
             public void lifecycleEvent(LifecycleEvent event) {
                 Context context = (Context) event.getLifecycle();
@@ -116,24 +124,27 @@ public class TomcatRsRegistry implements RsRegistry {
         wrapper.addInitParameter(HttpListener.class.getName(), listenerId);
         context.getServletContext().setAttribute(listenerId, listener);
 
-        // register wsdl locations for service-ref resolution
+        path = address(connectors, host.getName(), realRoot);
+        final String key = address(connectors, host.getName(), completePath);
+        contexts.put(key, context);
+        listeners.put(key, listener);
+
+        return new AddressInfo(path, key);
+    }
+
+    private static String address(final Collection<Connector> connectors, final String host, final String path) {
         List<String> addresses = new ArrayList<String>();
         for (Connector connector : connectors) {
             URI address;
             try {
-                address = new URI(connector.getScheme(), null, host.getName(), connector.getPort(), completePath, null, null);
+                address = new URI(connector.getScheme(), null, host, connector.getPort(), path, null, null);
             } catch (Exception e) { // just an URI problem normally...shouldn't occur
                 LOGGER.error("can't add container for path " + path, e);
                 continue;
             }
             addresses.add(address.toString());
         }
-
-        path = HttpUtil.selectSingleAddress(addresses);
-        contexts.put(path, context);
-        listeners.put(path, listener);
-
-        return path;
+        return HttpUtil.selectSingleAddress(addresses);
     }
 
     @Override
