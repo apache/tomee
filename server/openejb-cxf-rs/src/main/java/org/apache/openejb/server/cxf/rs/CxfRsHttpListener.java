@@ -82,7 +82,7 @@ public class CxfRsHttpListener implements RsHttpListener {
                 try {
                     return new URI(httpRequest.getRequestURI()).getRawPath();
                 } catch (URISyntaxException e) {
-                    return "/";
+                    return httpRequest.getRequestURI();
                 }
             }
         }, httpResponse);
