@@ -44,6 +44,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.naming.NamingException;
 
@@ -134,6 +135,13 @@ public class RemoteTomEEContainer extends TomEEContainer {
             System.setProperty("server.shutdown.port", String.valueOf(configuration.getStopPort()));
             System.setProperty("java.opts", "-Xmx512m -Xms256m -XX:PermSize=64m -XX:MaxPermSize=256m -XX:ReservedCodeCacheSize=64m -Dtomee.http.port=" + configuration.getHttpPort());
             System.setProperty("openejb.home", openejbHome.getAbsolutePath());
+
+            if (false) {
+                Map<Object, Object> map = new TreeMap(System.getProperties());
+                for (Map.Entry<Object, Object> entry : map.entrySet()) {
+                    System.out.printf("%s = %s\n", entry.getKey(), entry.getValue());
+                }
+            }
 
             container = new RemoteServer();
             container.start();
