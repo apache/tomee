@@ -412,7 +412,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
                 final DeploymentExceptionManager exceptionManager = SystemInstance.get().getComponent(DeploymentExceptionManager.class);
                 if (exceptionManager != null && e instanceof Exception) {
-                    exceptionManager.saveDelpoymentException(appInfo, (Exception) e);
+                    exceptionManager.saveDeploymentException(appInfo, (Exception) e);
                 }
             }
         }

@@ -178,6 +178,7 @@ public class RemoteServer {
                     File conf = new File(home, "conf");
                     File loggingProperties = new File(conf, "logging.properties");
 
+
                     File endorsed = new File(home, "endorsed");
                     File temp = new File(home, "temp");
 

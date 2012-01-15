@@ -598,7 +598,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                     if (System.getProperty(TOMEE_EAT_EXCEPTION_PROP) == null) {
                         final TomEERuntimeException tre = new TomEERuntimeException(e);
                         DeploymentExceptionManager dem = SystemInstance.get().getComponent(DeploymentExceptionManager.class);
-                        dem.saveDelpoymentException(contextInfo.appInfo, tre);
+                        dem.saveDeploymentException(contextInfo.appInfo, tre);
                         throw tre;
                     }
                     return;

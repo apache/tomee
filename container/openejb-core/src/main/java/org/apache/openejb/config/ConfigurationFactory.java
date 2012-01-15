@@ -27,6 +27,7 @@ import org.apache.openejb.assembler.classic.ConnectionManagerInfo;
 import org.apache.openejb.assembler.classic.ConnectorInfo;
 import org.apache.openejb.assembler.classic.ContainerInfo;
 import org.apache.openejb.assembler.classic.ContainerSystemInfo;
+import org.apache.openejb.assembler.classic.DeploymentExceptionManager;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.FacilitiesInfo;
 import org.apache.openejb.assembler.classic.HandlerChainInfo;
@@ -360,6 +361,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         List<String> declaredApps = getDeclaredApps();
 
         for (String pathname : declaredApps) {
+            AppInfo appInfo = null;
             try {
                 try {
                     final File jarFile;
@@ -369,13 +371,19 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                         jarFile = new File(pathname);
                     }
 
-                    AppInfo appInfo = configureApplication(jarFile);
+                    appInfo = configureApplication(jarFile);
 
                     sys.containerSystem.applications.add(appInfo);
                 } catch (URISyntaxException e) {
                     logger.error("Invalid declaredApp URI '" + pathname + "'", e);
                 }
             } catch (OpenEJBException alreadyHandled) {
+                final DeploymentExceptionManager exceptionManager = SystemInstance.get().getComponent(DeploymentExceptionManager.class);
+                if (appInfo != null) {
+                    exceptionManager.saveDeploymentException(appInfo, alreadyHandled);
+                } else {
+                    exceptionManager.pushDelpoymentException(alreadyHandled);
+                }
             }
         }
 

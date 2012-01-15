@@ -17,8 +17,6 @@
 
 package org.apache.openejb.assembler.classic;
 
-import org.apache.openejb.assembler.classic.AppInfo;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -36,27 +34,33 @@ public class DeploymentExceptionManager {
             return size() > MAX_SIZE;
         }
     };
+    private Exception lastException = null;
 
-    public synchronized boolean hasDelpoymentFailed(AppInfo appInfo) {
-        return deploymentException.containsKey(appInfo);
+    public synchronized boolean hasDeploymentFailed() {
+        return lastException != null;
     }
 
-    public synchronized Exception getDelpoymentException(AppInfo appInfo) {
+    public synchronized Exception getDeploymentException(final AppInfo appInfo) {
         return deploymentException.get(appInfo);
     }
 
-    public synchronized Exception saveDelpoymentException(AppInfo appInfo, Exception exception) {
+    public synchronized Exception saveDeploymentException(final AppInfo appInfo, final Exception exception) {
+        lastException = exception;
         return deploymentException.put(appInfo, exception);
     }
 
-    public synchronized void clearDelpoymentException(AppInfo info) {
-        deploymentException.remove(info);
+    public synchronized void clearLastException(final AppInfo info) {
+        if (info != null && deploymentException.get(info) == lastException) {
+            deploymentException.remove(info);
+        }
+        lastException = null;
     }
 
-    public Exception getFirstException() {
-        if (deploymentException.isEmpty()) {
-            return null;
-        }
-        return deploymentException.values().iterator().next();
+    public Exception getLastException() {
+        return lastException;
+    }
+
+    public void pushDelpoymentException(final Exception exception) {
+        lastException = exception;
     }
 }

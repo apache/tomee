@@ -28,6 +28,6 @@ import javax.ejb.TransactionManagementType;
 @TransactionManagement(TransactionManagementType.BEAN)
 public class ExceptionManagerFacadeBean implements ExceptionManagerFacade {
     public Exception exception() {
-        return SystemInstance.get().getComponent(DeploymentExceptionManager.class).getFirstException();
+        return SystemInstance.get().getComponent(DeploymentExceptionManager.class).getLastException();
     }
 }
