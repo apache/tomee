@@ -356,8 +356,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
 
     private Context getSessionContext() {
         SessionContext context = sessionContext.get();
-        if (context == null) {
-
+        if (context == null || !context.isActive()) {
             lazyStartSessionContext();
             context = sessionContext.get();
         }
