@@ -142,13 +142,15 @@ public class RemoteServer {
 
                 //File openejbJar = new File(lib, "openejb-core-" + version + ".jar");
 
+                String java = new File(System.getProperty("java.home"), "bin/java").getAbsolutePath();
+
                 //DMB: If you don't use an array, you get problems with jar paths containing spaces
                 // the command won't parse correctly
                 String[] args;
                 final int debugPort = options.get("server.debug.port", 5005);
                 if (!tomcat) {
                     if (debug) {
-                        args = new String[]{"java",
+                        args = new String[] { java,
                                 "-XX:+HeapDumpOnOutOfMemoryError",
                                 "-Xdebug",
                                 "-Xnoagent",
@@ -160,7 +162,7 @@ public class RemoteServer {
                                 "-jar", openejbJar.getAbsolutePath(), "start"
                         };
                     } else {
-                        args = new String[]{"java",
+                        args = new String[] { java,
                                 "-XX:+HeapDumpOnOutOfMemoryError",
                                 "-javaagent:" + javaagentJar.getAbsolutePath(),
                                 "-jar", openejbJar.getAbsolutePath(), "start"
@@ -180,7 +182,7 @@ public class RemoteServer {
                     File temp = new File(home, "temp");
 
                     List<String> argsList = new ArrayList<String>() {};
-                    argsList.add("java");
+                    argsList.add(java);
                     argsList.add("-XX:+HeapDumpOnOutOfMemoryError");
 
                     if (debug) {
@@ -283,7 +285,7 @@ public class RemoteServer {
                 if (verbose) {
                     System.out.println(Join.join("\n", args));
                 }
-                server = Runtime.getRuntime().exec(args, new String[0], home);
+                server = Runtime.getRuntime().exec(args);
 
                 Pipe.pipe(server);
 
