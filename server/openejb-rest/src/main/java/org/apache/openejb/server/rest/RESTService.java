@@ -219,12 +219,20 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
     private void deploySingleton(String contextRoot, Object o, Application appInstance, ClassLoader classLoader) {
         final String nopath = getAddress(contextRoot, o.getClass()) + "/.*";
         final RsHttpListener listener = createHttpListener();
-        final String address = rsRegistry.createRsHttpListener(listener, classLoader, nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost);
+        final RsRegistry.AddressInfo address = rsRegistry.createRsHttpListener(contextRoot, listener, classLoader, nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost);
 
-        services.add(address);
-        listener.deploySingleton(getFullContext(address, contextRoot), o, appInstance);
+        services.add(address.complete);
+        listener.deploySingleton(getFullContext(address.base, contextRoot), o, appInstance);
 
         LOGGER.info("deployed REST singleton: " + o);
+    }
+
+    private static String baseAddress(final String address, final String contextRoot) {
+        if (contextRoot == null || contextRoot.isEmpty()) {
+            return address;
+        }
+        int idx = address.indexOf(contextRoot);
+        return address.substring(0, idx) + contextRoot;
     }
 
     private void deployPojo(String contextRoot, Class<?> loadedClazz, Application app, ClassLoader classLoader, Collection<Injection> injections, Context context) {
@@ -234,10 +242,10 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
 
         final String nopath = getAddress(contextRoot, loadedClazz) + "/.*";
         final RsHttpListener listener = createHttpListener();
-        final String address = rsRegistry.createRsHttpListener(listener, classLoader, nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost);
+        final RsRegistry.AddressInfo address = rsRegistry.createRsHttpListener(contextRoot, listener, classLoader, nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost);
 
-        services.add(address);
-        listener.deployPojo(getFullContext(address, contextRoot), loadedClazz, app, injections, context);
+        services.add(address.complete);
+        listener.deployPojo(getFullContext(address.base, contextRoot), loadedClazz, app, injections, context);
 
         LOGGER.info("deployed POJO class: " + loadedClazz.getName());
     }
@@ -245,10 +253,10 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
     private void deployEJB(String context, BeanContext beanContext) {
         final String nopath = getAddress(context, beanContext.getBeanClass()) + "/.*";
         final RsHttpListener listener = createHttpListener();
-        final String address = rsRegistry.createRsHttpListener(listener, beanContext.getClassLoader(), nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost);
+        final RsRegistry.AddressInfo address = rsRegistry.createRsHttpListener(context, listener, beanContext.getClassLoader(), nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost);
 
-        services.add(address);
-        listener.deployEJB(getFullContext(address, context), beanContext);
+        services.add(address.complete);
+        listener.deployEJB(getFullContext(address.base, context), beanContext);
 
         LOGGER.info("REST EJB deployed: " + beanContext.getBeanClass().getName());
     }
@@ -263,6 +271,9 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
     private static String getFullContext(String address, String context) {
         if (context == null) {
             return address;
+        }
+        if (context.isEmpty() && address.contains("/")) {
+            return address.substring(0, address.lastIndexOf("/"));
         }
 
         int idx = address.indexOf(context);
