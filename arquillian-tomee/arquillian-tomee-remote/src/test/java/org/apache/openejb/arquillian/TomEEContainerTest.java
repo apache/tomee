@@ -40,7 +40,7 @@ public class TomEEContainerTest {
     @Deployment
     public static WebArchive createDeployment() {
         return ShrinkWrap.create(WebArchive.class, "test.war").addClass(TestServlet.class).addClass(TestEjb.class).addClass(TomEEContainerTest.class)
-                .setWebXML(new StringAsset(Descriptors.create(WebAppDescriptor.class).version("3.0").servlet(TestServlet.class, "/Test").exportAsString()));
+                .setWebXML(new StringAsset(Descriptors.create(WebAppDescriptor.class).version("3.0").servlet(TestServlet.class, "/ejb").exportAsString()));
     }
 
     @EJB
@@ -53,7 +53,7 @@ public class TomEEContainerTest {
 
     @Test
     public void testShouldBeAbleToAccessServletAndEjb() throws Exception {
-        InputStream is = new URL("http://localhost:" + System.getProperty("tomee.http.port", "10080") + "/test/Test").openStream();
+        InputStream is = new URL("http://127.0.0.1:" + System.getProperty("tomee.http.port", "10080") + "/test/ejb").openStream();
         ByteArrayOutputStream os = new ByteArrayOutputStream();
 
         int bytesRead = -1;

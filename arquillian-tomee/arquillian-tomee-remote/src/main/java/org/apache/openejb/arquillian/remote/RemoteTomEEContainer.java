@@ -19,10 +19,14 @@ package org.apache.openejb.arquillian.remote;
 import org.apache.openejb.arquillian.common.FileUtils;
 import org.apache.openejb.arquillian.common.MavenCache;
 import org.apache.openejb.arquillian.common.TomEEContainer;
+import org.apache.openejb.assembler.Deployer;
 import org.apache.openejb.config.RemoteServer;
 import org.apache.tomee.installer.Installer;
 import org.apache.tomee.installer.Paths;
+import org.jboss.arquillian.container.spi.client.container.DeploymentException;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
+import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
+import org.jboss.shrinkwrap.api.Archive;
 import org.sonatype.aether.artifact.Artifact;
 
 import java.io.BufferedReader;
@@ -41,6 +45,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.naming.NamingException;
+
 /*
  * TODO: delete old embedded adapter, move the tests and set those up
  */
@@ -49,6 +55,16 @@ public class RemoteTomEEContainer extends TomEEContainer {
 
     private RemoteServer container;
     private boolean needsStart = false;
+
+    public ProtocolMetaData deploy(Archive<?> archive) throws DeploymentException {
+    	ProtocolMetaData pmd = super.deploy(archive);
+    	try { // TODO: maybe querying tomee to know if a webapp is completely deployed (for tomcat)
+			Thread.sleep(100); // maybe tomcat is still not started
+		} catch (InterruptedException e) {
+			// no-op
+		}
+    	return pmd;
+    }
 
     public void start() throws LifecycleException {
         if (System.getProperty("tomee.http.port") != null) {
