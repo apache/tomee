@@ -129,7 +129,7 @@ public class TomEEWebappLoader extends WebappLoader {
                         clean.add(url);
                     }
 
-	            } else if (clean.contains(url)) {
+	            } else if (!clean.contains(url)) {
 	                clean.add(url);
 	            }
         	}
