@@ -45,7 +45,6 @@
   <modules>
     <module>arquillian-tomee-common</module>
     <module>arquillian-tomee-embedded</module>
-    <module>arquillian-tomee-remote</module>
     <module>arquillian-tomee-tests</module>
     <module>arquillian-tomee-moviefun-example</module>
     <module>ziplock</module>
