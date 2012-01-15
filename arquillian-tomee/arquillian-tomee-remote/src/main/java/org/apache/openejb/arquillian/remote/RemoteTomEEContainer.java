@@ -57,16 +57,6 @@ public class RemoteTomEEContainer extends TomEEContainer {
     private RemoteServer container;
     private boolean needsStart = false;
 
-    public ProtocolMetaData deploy(Archive<?> archive) throws DeploymentException {
-    	ProtocolMetaData pmd = super.deploy(archive);
-    	try { // TODO: maybe querying tomee to know if a webapp is completely deployed (for tomcat)
-			Thread.sleep(100); // maybe tomcat is still not started
-		} catch (InterruptedException e) {
-			// no-op
-		}
-    	return pmd;
-    }
-
     public void start() throws LifecycleException {
         if (System.getProperty("tomee.http.port") != null) {
             configuration.setHttpPort(Integer.parseInt(System.getProperty("tomee.http.port")));
@@ -206,9 +196,9 @@ public class RemoteTomEEContainer extends TomEEContainer {
     protected void downloadOpenEJBWebapp(File targetDirectory) throws LifecycleException {
         String artifactName;
         if (configuration.isPlusContainer()) {
-            artifactName = "org.apache.openejb:openejb-tomcat-plus-webapp:war:" + configuration.getOpenejbVersion();
+            artifactName = "org.apache.openejb:tomee-plus-webapp:war:" + configuration.getOpenejbVersion();
         } else {
-            artifactName = "org.apache.openejb:openejb-tomcat-webapp:war:" + configuration.getOpenejbVersion();
+            artifactName = "org.apache.openejb:tomee-webapp:war:" + configuration.getOpenejbVersion();
         }
 
         File zipFile = downloadFile(artifactName, null);
