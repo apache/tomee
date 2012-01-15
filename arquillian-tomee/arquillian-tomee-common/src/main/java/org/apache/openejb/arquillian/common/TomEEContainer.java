@@ -17,6 +17,8 @@
 package org.apache.openejb.arquillian.common;
 
 import org.apache.openejb.assembler.Deployer;
+import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.assembler.classic.Info;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.container.DeploymentException;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
@@ -108,7 +110,11 @@ public abstract class TomEEContainer implements DeployableContainer<TomEEConfigu
 
             archive.as(ZipExporter.class).exportTo(file, true);
 
-            deployer().deploy(file.getAbsolutePath());
+            final AppInfo appInfo = deployer().deploy(file.getAbsolutePath());
+
+            if (false) {
+                Info.marshal(appInfo);
+            }
 
             moduleIds.put(archive.getName(), file);
 
