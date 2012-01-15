@@ -63,6 +63,10 @@ public class ClassLoaderUtil {
         return localUrlCache.isUrlCached(appId, url);
     }
 
+    public static URL getUrlKeyCached(String appId, File file) {
+    	return localUrlCache.getUrlKeyCached(appId, file);
+    }
+
     public static URLClassLoader createClassLoader(String appId, URL[] urls, ClassLoader parent) {
         urls = localUrlCache.cacheUrls(appId, urls);
         URLClassLoader classLoader = new URLClassLoader(urls, parent);
