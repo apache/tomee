@@ -19,6 +19,8 @@ package org.apache.openejb.arquillian.common;
 import org.apache.openejb.assembler.Deployer;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Info;
+import org.apache.openejb.loader.Options;
+import org.apache.openejb.util.OptionsLog;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.container.DeploymentException;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
@@ -50,6 +52,11 @@ public abstract class TomEEContainer implements DeployableContainer<TomEEConfigu
     protected static final String SHUTDOWN_COMMAND = "SHUTDOWN" + Character.toString((char) -1);
     protected TomEEConfiguration configuration;
     protected Map<String, File> moduleIds = new HashMap<String, File>();
+    private final Options options;
+
+    protected TomEEContainer() {
+        this.options = new Options(System.getProperties());
+    }
 
     public Class<TomEEConfiguration> getConfigurationClass() {
         return TomEEConfiguration.class;
@@ -112,7 +119,7 @@ public abstract class TomEEContainer implements DeployableContainer<TomEEConfigu
 
             final AppInfo appInfo = deployer().deploy(file.getAbsolutePath());
 
-            if (false) {
+            if (options.get("tomee.appinfo.output", false)) {
                 Info.marshal(appInfo);
             }
 

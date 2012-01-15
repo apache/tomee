@@ -130,10 +130,6 @@
           <groupId>org.apache.openejb</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>openejb-loader</artifactId>
-          <groupId>org.apache.openejb</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>openejb-javaagent</artifactId>
           <groupId>org.apache.openejb</groupId>
         </exclusion>
