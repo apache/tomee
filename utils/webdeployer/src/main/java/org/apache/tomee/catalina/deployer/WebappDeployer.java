@@ -118,10 +118,10 @@ public class WebappDeployer implements Deployer {
             }
 
             final DeploymentExceptionManager dem = SystemInstance.get().getComponent(DeploymentExceptionManager.class);
-            if (dem.hasDelpoymentFailed(info)) {
-                Exception tre = dem.getDelpoymentException(info);
-                // we don't need this exceptino anymore
-                dem.clearDelpoymentException(info);
+            if (dem.hasDeploymentFailed()) {
+                final Exception tre = dem.getLastException();
+                // we don't need this exception anymore
+                dem.clearLastException(info);
                 throw tre;
             }
 

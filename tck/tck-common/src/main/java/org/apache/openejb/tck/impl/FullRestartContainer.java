@@ -27,8 +27,10 @@ import org.jboss.testharness.spi.Containers;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Properties;
 
 /**
@@ -70,6 +72,8 @@ public class FullRestartContainer extends AbstractContainers implements Containe
         System.out.println(currentFile);
         writeToFile(currentFile, archive);
 
+        addLogFiles();
+
         server = new RemoteServer(100, true);
         try {
             server.start();
@@ -79,6 +83,34 @@ public class FullRestartContainer extends AbstractContainers implements Containe
         }
 
         return (exception = lookup().exception()) == null;
+    }
+
+    private static void addLogFiles() throws IOException {
+        final File tomee = new File(System.getProperty("openejb.home"));
+        if (tomee.exists()) {
+            final File log4j = new File(tomee, "lib/log4j.xml");
+            final FileWriter log4jWriter = new FileWriter(log4j);
+            log4jWriter.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                    "<!DOCTYPE log4j:configuration SYSTEM \"log4j.dtd\">\n" +
+                    "<log4j:configuration xmlns:log4j=\"http://jakarta.apache.org/log4j/\" debug=\"false\">\n" +
+                    "  <appender name=\"stdout\" class=\"org.apache.log4j.ConsoleAppender\">\n" +
+                    "    <param name=\"Target\" value=\"System.out\" />\n" +
+                    "    <layout class=\"org.apache.log4j.SimpleLayout\" />\n" +
+                    "  </appender>\n" +
+                    "  <root>\n" +
+                    "    <priority value=\"INFO\"/>\n" +
+                    "    <appender-ref ref=\"stdout\"/>\n" +
+                    "  </root>\n" +
+                    "</log4j:configuration>\n");
+            log4jWriter.close();
+
+            final File systemProperties = new File(tomee, "conf/system.properties");
+            final FileWriter systemPropertiesWriter = new FileWriter(systemProperties);
+            systemPropertiesWriter.write("openejb.logger.external=true");
+            systemPropertiesWriter.close();
+        } else {
+            System.out.println("tomee folder doesn't exist");
+        }
     }
 
     @Override
