@@ -38,7 +38,7 @@ import static org.apache.openejb.arquillian.tests.Tests.assertOutput;
  *
  */
 @RunWith(Arquillian.class)
-    public class GetResourcesTest {
+public class GetResourcesTest {
     public static final String TEST_NAME = GetResourcesTest.class.getSimpleName();
 
     @Deployment(testable = false) public static WebArchive createDeployment() {

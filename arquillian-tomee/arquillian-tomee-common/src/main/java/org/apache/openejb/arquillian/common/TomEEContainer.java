@@ -31,6 +31,8 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
 import java.io.File;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -100,19 +102,13 @@ public abstract class TomEEContainer implements DeployableContainer<TomEEConfigu
             do { // be sure we don't override something existing
                 file = new File(tmpDir + File.separator + i++ + File.separator + archive.getName());
             } while (file.exists());
-            if (!file.getParentFile().mkdirs()) {
+            if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
                 LOGGER.warning("can't create " + file.getParent());
             }
 
             archive.as(ZipExporter.class).exportTo(file, true);
 
-            Properties properties = new Properties();
-            properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
-            properties.setProperty(Context.PROVIDER_URL, "http://" + LOCALHOST + ":" + configuration.getHttpPort() + "/openejb/ejb");
-            InitialContext context = new InitialContext(properties);
-
-            Deployer deployer = (Deployer) context.lookup("openejb/DeployerBusinessRemote");
-            deployer.deploy(file.getAbsolutePath());
+            deployer().deploy(file.getAbsolutePath());
 
             moduleIds.put(archive.getName(), file);
 
@@ -139,7 +135,18 @@ public abstract class TomEEContainer implements DeployableContainer<TomEEConfigu
         }
     }
 
-    protected String getArchiveNameWithoutExtension(final Archive<?> archive) {
+    protected Deployer deployer() throws NamingException {
+        Properties properties = new Properties();
+        properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
+        properties.setProperty(Context.PROVIDER_URL, "http://" + LOCALHOST + ":" + configuration.getHttpPort() + "/openejb/ejb");
+        InitialContext context = new InitialContext(properties);
+
+        Deployer deployer = (Deployer) context.lookup("openejb/DeployerBusinessRemote");
+
+		return deployer;
+	}
+
+	protected String getArchiveNameWithoutExtension(final Archive<?> archive) {
         final String archiveName = archive.getName();
         final int extensionOffset = archiveName.lastIndexOf('.');
         if (extensionOffset >= 0) {

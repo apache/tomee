@@ -96,7 +96,7 @@ as opposed to getting the context from `EJBContainer`, as we did in the previous
     
         protected void setUp() throws Exception {
             Properties properties = new Properties();
-            properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.localclient.LocalInitialContextFactory");
+            properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
     
             initialContext = new InitialContext(properties);
         }

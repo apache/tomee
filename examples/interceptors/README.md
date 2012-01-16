@@ -481,7 +481,7 @@ Title: Interceptors
         @Before
         public void setUp() throws Exception {
             Properties properties = new Properties();
-            properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.localclient.LocalInitialContextFactory");
+            properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
             properties.setProperty("openejb.deployments.classpath.include", ".*interceptors/target/classes.*");
     
             initCtx = new InitialContext(properties);
@@ -560,7 +560,7 @@ Title: Interceptors
         @Before
         public void setUp() throws Exception {
             Properties properties = new Properties();
-            properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.localclient.LocalInitialContextFactory");
+            properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
             properties.setProperty("openejb.deployments.classpath.include", ".*interceptors/target/classes.*");
     
             initCtx = new InitialContext(properties);
@@ -605,7 +605,7 @@ Title: Interceptors
         @Before
         public void setUp() throws Exception {
             Properties properties = new Properties();
-            properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.localclient.LocalInitialContextFactory");
+            properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
             properties.setProperty("openejb.deployments.classpath.include", ".*interceptors/target/classes.*");
     
             initCtx = new InitialContext(properties);
@@ -654,7 +654,7 @@ Title: Interceptors
         @Before
         public void setUp() throws Exception {
             Properties properties = new Properties();
-            properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.localclient.LocalInitialContextFactory");
+            properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
             properties.setProperty("openejb.deployments.classpath.include", ".*interceptors/target/classes.*");
     
             initCtx = new InitialContext(properties);

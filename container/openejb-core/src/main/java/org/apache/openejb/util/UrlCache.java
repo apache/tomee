@@ -150,6 +150,29 @@ public class UrlCache {
         return appCache.containsKey(url);
     }
 
+    public URL getUrlKeyCached(String appId, File file) {
+    	if (file == null) {
+    		return null;
+    	}
+        final Map<URL, File> appCache = getAppCache(appId);
+        for (Map.Entry<URL, File> entry : appCache.entrySet()) {
+        	if (entry.getValue().equals(file)) {
+        		return entry.getKey();
+        	}
+        }
+
+        final URL keyUrl;
+		try {
+			keyUrl = file.toURI().toURL();
+		} catch (MalformedURLException e) {
+			return null;
+		}
+        if (appCache.containsKey(keyUrl)) {
+        	return keyUrl;
+        }
+        return null;
+    }
+
     private synchronized File cacheUrl(String appId, URL url) {
         File sourceFile;
         if (!"file".equals(url.getProtocol())) {

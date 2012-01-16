@@ -872,7 +872,7 @@ Title: Moviefun
     
         public void setUp() throws Exception {
             Properties p = new Properties();
-            p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.localclient.LocalInitialContextFactory");
+            p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
             p.put("movieDatabase", "new://Resource?type=DataSource");
             p.put("movieDatabase.JdbcDriver", "org.hsqldb.jdbcDriver");
             p.put("movieDatabase.JdbcUrl", "jdbc:hsqldb:mem:moviedb");
