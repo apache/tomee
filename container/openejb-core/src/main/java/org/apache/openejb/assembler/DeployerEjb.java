@@ -16,6 +16,21 @@
  */
 package org.apache.openejb.assembler;
 
+import org.apache.openejb.ClassLoaderUtil;
+import org.apache.openejb.NoSuchApplicationException;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.UndeployException;
+import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.config.AppModule;
+import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.config.DeploymentLoader;
+import org.apache.openejb.config.DeploymentModule;
+import org.apache.openejb.loader.SystemInstance;
+
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionManagement;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -24,22 +39,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
-import javax.ejb.Stateless;
-import javax.ejb.Remote;
-import javax.ejb.TransactionManagement;
-import static javax.ejb.TransactionManagementType.BEAN;
 
-import org.apache.openejb.NoSuchApplicationException;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.UndeployException;
-import org.apache.openejb.ClassLoaderUtil;
-import org.apache.openejb.assembler.classic.AppInfo;
-import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.config.AppModule;
-import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.config.DeploymentLoader;
-import org.apache.openejb.config.DeploymentModule;
-import org.apache.openejb.loader.SystemInstance;
+import static javax.ejb.TransactionManagementType.BEAN;
 
 @Stateless(name = "openejb/Deployer")
 @Remote(Deployer.class)
@@ -87,12 +88,13 @@ public class DeployerEjb implements Deployer {
         return deploy(null, properties);
     }
 
-    public AppInfo deploy(String location, Properties properties) throws OpenEJBException {
-        if (location == null && properties == null) {
+    public AppInfo deploy(String inLocation, Properties properties) throws OpenEJBException {
+        String rawLocation = inLocation;
+        if (rawLocation == null && properties == null) {
             throw new NullPointerException("location and properties are null");
         }
-        if (location == null) {
-            location = properties.getProperty(FILENAME);
+        if (rawLocation == null) {
+            rawLocation = properties.getProperty(FILENAME);
         }
         if (properties == null) {
             properties = new Properties();
@@ -100,7 +102,7 @@ public class DeployerEjb implements Deployer {
 
         AppModule appModule = null;
         try {
-            File file = new File(location);
+            File file = new File(realLocation(rawLocation));
             appModule = deploymentLoader.load(file);
 
             // Add any alternate deployment descriptors to the modules
@@ -171,6 +173,16 @@ public class DeployerEjb implements Deployer {
                 throw (OpenEJBException) e;
             }
             throw new OpenEJBException(e);
+        }
+    }
+
+    private String realLocation(String rawLocation) throws Exception {
+        final Class<?> clazz;
+        try {
+            clazz = DeployerEjb.class.getClassLoader().loadClass("org.apache.openejb.resolver.Resolver");
+            return (String) clazz.getDeclaredMethod("resolve", String.class).invoke(null, rawLocation);
+        } catch (ClassNotFoundException e) {
+            return rawLocation;
         }
     }
 
