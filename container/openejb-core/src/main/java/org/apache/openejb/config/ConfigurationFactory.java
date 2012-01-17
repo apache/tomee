@@ -47,6 +47,7 @@ import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.config.sys.AbstractService;
+import org.apache.openejb.config.sys.AdditionalDeployments;
 import org.apache.openejb.config.sys.ConnectionManager;
 import org.apache.openejb.config.sys.Container;
 import org.apache.openejb.config.sys.Deployments;
@@ -76,6 +77,8 @@ import org.apache.openejb.util.URLs;
 
 import javax.ejb.embeddable.EJBContainer;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -95,7 +98,7 @@ import static org.apache.openejb.config.DeploymentsResolver.DEPLOYMENTS_CLASSPAT
 import static org.apache.openejb.config.ServiceUtils.implies;
 
 public class ConfigurationFactory implements OpenEjbConfigurationFactory {
-
+    public static final String ADDITIONAL_DEPLOYMENTS = "conf/deployments.xml";
     static final String CONFIGURATION_PROPERTY = "openejb.configuration";
     static final String CONF_FILE_PROPERTY = "openejb.conf.file";
     private static final String DEBUGGABLE_VM_HACKERY_PROPERTY = "openejb.debuggable-vm-hackery";
@@ -308,7 +311,6 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
      * @throws OpenEJBException
      */
     public OpenEjbConfiguration getOpenEjbConfiguration() throws OpenEJBException {
-
         if (sys != null) {
             return sys;
         }
@@ -432,6 +434,20 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         List<Deployments> deployments = new ArrayList<Deployments>();
         if (openejb != null) {
             deployments.addAll(openejb.getDeployments());
+        }
+        File additionalDeploymentFile;
+        try {
+            additionalDeploymentFile = SystemInstance.get().getBase().getFile(ADDITIONAL_DEPLOYMENTS, false);
+        } catch (IOException e) {
+            additionalDeploymentFile = null;
+        }
+        if (additionalDeploymentFile.exists()) {
+            try {
+                AdditionalDeployments additionalDeployments = JaxbOpenejb.unmarshal(AdditionalDeployments.class, new FileInputStream(additionalDeploymentFile));
+                deployments.addAll(additionalDeployments.getDeployments());
+            } catch (Exception e) {
+                logger.error("can't read " + ADDITIONAL_DEPLOYMENTS, e);
+            }
         }
 
         // resolve jar locations //////////////////////////////////////  BEGIN  ///////
