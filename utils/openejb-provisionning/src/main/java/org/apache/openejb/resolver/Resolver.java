@@ -1,5 +1,6 @@
 package org.apache.openejb.resolver;
 
+import org.apache.openejb.assembler.LocationResolver;
 import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.resolver.maven.Handler;
@@ -9,15 +10,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URL;
 
-public class Resolver {
+public class Resolver implements LocationResolver {
     public static final String MVN_PREFIX = "mvn:";
     public static final String APP_CACHE = System.getProperty("openejb.deployer.cache.folder", "temp");
 
-    private Resolver() {
-        // no-op
-    }
-
-    public static String resolve(final String rawLocation) throws Exception {
+    public String resolve(final String rawLocation) throws Exception {
         if (rawLocation.startsWith(MVN_PREFIX) && rawLocation.length() > MVN_PREFIX.length()) {
             final String info = rawLocation.substring(MVN_PREFIX.length());
             final Parser parser = new Parser(info);

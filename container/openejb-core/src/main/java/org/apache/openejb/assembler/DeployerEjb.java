@@ -180,7 +180,8 @@ public class DeployerEjb implements Deployer {
         final Class<?> clazz;
         try {
             clazz = DeployerEjb.class.getClassLoader().loadClass("org.apache.openejb.resolver.Resolver");
-            return (String) clazz.getDeclaredMethod("resolve", String.class).invoke(null, rawLocation);
+            final LocationResolver instance = (LocationResolver) clazz.newInstance();
+            return instance.resolve(rawLocation);
         } catch (ClassNotFoundException e) {
             return rawLocation;
         }
