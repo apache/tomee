@@ -21,6 +21,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Hashtable;
 
 public class FileUtils {
@@ -142,24 +144,21 @@ public class FileUtils {
         copyFile(destination, source, false);
     }
 
-    public static void copyFile(File destination, File source, boolean deleteSourceFile) throws java.io.IOException {
-        FileInputStream in = null;
-        FileOutputStream out = null;
+    public static void copy(OutputStream out, InputStream source) throws java.io.IOException {
         try {
-            in = new FileInputStream(source);
-            out = new FileOutputStream(destination);
-
             int len;
             byte[] buffer = new byte[4096];
-            while ((len = in.read(buffer)) != -1) {
+            while ((len = source.read(buffer)) != -1) {
                 out.write(buffer, 0, len);
             }
-        } catch (java.io.IOException e) {
-            throw e;
         } finally {
-            in.close();
+            source.close();
             out.close();
         }
+    }
+
+    public static void copyFile(File destination, File source, boolean deleteSourceFile) throws java.io.IOException {
+        copy(new FileOutputStream(destination), new FileInputStream(source));
 
         if (deleteSourceFile) {
             source.delete();

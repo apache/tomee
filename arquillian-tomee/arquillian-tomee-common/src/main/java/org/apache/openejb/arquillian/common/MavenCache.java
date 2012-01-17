@@ -25,7 +25,6 @@ import org.sonatype.aether.RepositorySystem;
 import org.sonatype.aether.RepositorySystemSession;
 import org.sonatype.aether.artifact.Artifact;
 import org.sonatype.aether.installation.InstallRequest;
-import org.sonatype.aether.installation.InstallationException;
 import org.sonatype.aether.repository.LocalRepository;
 import org.sonatype.aether.resolution.ArtifactRequest;
 import org.sonatype.aether.resolution.ArtifactResolutionException;
@@ -131,15 +130,12 @@ public class MavenCache {
 			file.deleteOnExit();
 			os = new FileOutputStream(file);
 			
-			int bytesRead = -1;
+			int bytesRead;
 			byte[] buffer = new byte[8192];
 			
 			while ((bytesRead = is.read(buffer)) > -1) {
 				os.write(buffer, 0, bytesRead);
 			}
-			
-			is.close();
-			os.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new DownloadException("Unable to download " + source + " to " + file.getAbsolutePath());
