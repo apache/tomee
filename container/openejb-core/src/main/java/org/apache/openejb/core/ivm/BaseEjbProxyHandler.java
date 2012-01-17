@@ -319,7 +319,12 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
                 throw new NoSuchEJBException("reference is invalid");
             }
         }
-        getBeanContext(); // will throw an exception if app has been undeployed.
+        if (!(Object.class.equals(method.getDeclaringClass())
+                && method.getName().equals("finalize")
+                && method.getExceptionTypes().length == 1
+                && Throwable.class.equals(method.getExceptionTypes()[0]))) {
+            getBeanContext(); // will throw an exception if app has been undeployed.
+        }
     }
 
     /**
