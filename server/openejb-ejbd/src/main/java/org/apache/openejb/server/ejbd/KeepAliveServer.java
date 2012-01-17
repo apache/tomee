@@ -32,7 +32,8 @@ import java.io.InterruptedIOException;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -53,7 +54,8 @@ public class KeepAliveServer implements ServerService {
     private final long timeout = (1000 * 3);
 
     private final AtomicBoolean running = new AtomicBoolean(false);
-    private final KeepAliveTimer keepAliveTimer;
+    private final ConcurrentHashMap<Thread, Session> sessions = new ConcurrentHashMap<Thread, Session>();
+    private BlockingQueue<Runnable> threadQueue;
     private Timer timer;
 
     public KeepAliveServer() {
@@ -62,105 +64,113 @@ public class KeepAliveServer implements ServerService {
 
     public KeepAliveServer(final ServerService service) {
         this.service = service;
-        this.keepAliveTimer = new KeepAliveTimer();
+    }
+
+    private void closeInactiveSessions() {
+
+        if (!this.running.get()) return;
+
+        final BlockingQueue<Runnable> queue = getQueue();
+        if (queue == null) return;
+
+        int backlog = queue.size();
+        if (backlog <= 0) return;
+
+        final long now = System.currentTimeMillis();
+
+        final List<Session> current = new ArrayList<Session>();
+        current.addAll(this.sessions.values());
+
+        for (final Session session : current) {
+
+            if (session.usage.tryLock()) {
+                try {
+                    if (now - session.lastRequest > timeout) {
+                        try {
+                            backlog--;
+                            session.socket.close();
+                        } catch (IOException e) {
+                            if (logger.isWarningEnabled()) {
+                                logger.warning("closeInactiveSessions: Error closing socket. Debug for StackTrace");
+                            } else if (logger.isDebugEnabled()) {
+                                logger.debug("closeInactiveSessions: Error closing socket.", e);
+                            }
+                        } finally {
+                            removeSession(session);
+                        }
+                    }
+                } finally {
+                    session.usage.unlock();
+                }
+            }
+
+            if (backlog <= 0) return;
+        }
+    }
+
+    public void closeSessions() {
+
+        // Close the ones we can
+        final List<Session> current = new ArrayList<Session>();
+        current.addAll(this.sessions.values());
+
+        for (final Session session : current) {
+            if (session.usage.tryLock()) {
+                try {
+                    session.socket.close();
+                } catch (IOException e) {
+                    if (logger.isWarningEnabled()) {
+                        logger.warning("closeSessions: Error closing socket. Debug for StackTrace");
+                    } else if (logger.isDebugEnabled()) {
+                        logger.debug("closeSessions: Error closing socket.", e);
+                    }
+                } finally {
+                    removeSession(session);
+                    session.usage.unlock();
+                }
+            } else if (logger.isDebugEnabled()) {
+                logger.debug("Allowing graceful shutdown of " + session.socket.getInetAddress());
+            }
+        }
+    }
+
+    private BlockingQueue<Runnable> getQueue() {
+        if (this.threadQueue == null) {
+            // this can be null if timer fires before service is fully initialized
+            final ServicePool incoming = SystemInstance.get().getComponent(ServicePool.class);
+            if (incoming == null) return null;
+            final ThreadPoolExecutor threadPool = incoming.getThreadPool();
+            this.threadQueue = threadPool.getQueue();
+        }
+        return this.threadQueue;
+    }
+
+    public Session addSession(final Session session) {
+        return this.sessions.put(session.thread, session);
+    }
+
+    public Session removeSession(final Session session) {
+        return this.sessions.remove(session.thread);
     }
 
     public class KeepAliveTimer extends TimerTask {
 
-        // Doesn't need to be a map.  Could be a set if Session.equals/hashCode only referenced the Thread.
-        private final Map<Thread, Session> sessions = new ConcurrentHashMap<Thread, Session>();
+        private final KeepAliveServer kas;
 
-        private BlockingQueue<Runnable> queue;
+        public KeepAliveTimer(final org.apache.openejb.server.ejbd.KeepAliveServer kas) {
+            this.kas = kas;
+        }
 
         @Override
         public void run() {
-            if (running.get()) {
-                closeInactiveSessions();
-            }
-        }
-
-        private void closeInactiveSessions() {
-            final BlockingQueue<Runnable> queue = getQueue();
-            if (queue == null) return;
-
-            int backlog = queue.size();
-            if (backlog <= 0) return;
-
-            final long now = System.currentTimeMillis();
-
-            for (final Session session : sessions.values()) {
-
-                if (session.usage.tryLock()) {
-                    try {
-                        if (now - session.lastRequest > timeout) {
-                            try {
-                                backlog--;
-                                session.socket.close();
-                            } catch (IOException e) {
-                                if (logger.isWarningEnabled()) {
-                                    logger.warning("closeInactiveSessions: Error closing socket. Debug for StackTrace");
-                                } else if (logger.isDebugEnabled()) {
-                                    logger.debug("closeInactiveSessions: Error closing socket.", e);
-                                }
-                            } finally {
-                                removeSession(session);
-                            }
-                        }
-                    } finally {
-                        session.usage.unlock();
-                    }
-                }
-
-                if (backlog <= 0) return;
-            }
-        }
-
-        public void closeSessions() {
-
-            // Close the ones we can
-            for (final Session session : sessions.values()) {
-                if (session.usage.tryLock()) {
-                    try {
-                        session.socket.close();
-                    } catch (IOException e) {
-                        if (logger.isWarningEnabled()) {
-                            logger.warning("closeSessions: Error closing socket. Debug for StackTrace");
-                        } else if (logger.isDebugEnabled()) {
-                            logger.debug("closeSessions: Error closing socket.", e);
-                        }
-                    } finally {
-                        removeSession(session);
-                        session.usage.unlock();
-                    }
-                } else if (logger.isDebugEnabled()) {
-                    logger.debug("Allowing graceful shutdown of " + session.socket.getInetAddress());
-                }
-            }
-        }
-
-        private BlockingQueue<Runnable> getQueue() {
-            if (queue == null) {
-                // this can be null if timer fires before service is fully initialized
-                final ServicePool incoming = SystemInstance.get().getComponent(ServicePool.class);
-                if (incoming == null) return null;
-                final ThreadPoolExecutor threadPool = incoming.getThreadPool();
-                queue = threadPool.getQueue();
-            }
-            return queue;
-        }
-
-        public Session addSession(final Session session) {
-            return sessions.put(session.thread, session);
-        }
-
-        public Session removeSession(final Session session) {
-            return sessions.remove(session.thread);
+            this.kas.closeInactiveSessions();
         }
     }
 
     private class Session {
 
         private final Thread thread;
+        private final KeepAliveServer kas;
         private final Lock usage = new ReentrantLock();
 
         // only used inside the Lock
@@ -169,14 +179,15 @@ public class KeepAliveServer implements ServerService {
         // only used inside the Lock
         private final Socket socket;
 
-        public Session(final Socket socket) {
+        public Session(final KeepAliveServer kas, final Socket socket) {
+            this.kas = kas;
             this.socket = socket;
             this.lastRequest = System.currentTimeMillis();
             this.thread = Thread.currentThread();
         }
 
         public void service(final Socket socket) throws ServiceException, IOException {
-            keepAliveTimer.addSession(this);
+            this.kas.addSession(this);
 
             int i = -1;
 
@@ -225,7 +236,7 @@ public class KeepAliveServer implements ServerService {
             } catch (InterruptedIOException e) {
                 Thread.interrupted();
             } finally {
-                keepAliveTimer.removeSession(this);
+                this.kas.removeSession(this);
             }
         }
     }
@@ -233,7 +244,7 @@ public class KeepAliveServer implements ServerService {
 
     @Override
     public void service(final Socket socket) throws ServiceException, IOException {
-        final Session session = new Session(socket);
+        final Session session = new Session(this, socket);
         session.service(socket);
     }
 
@@ -260,7 +271,7 @@ public class KeepAliveServer implements ServerService {
     public void start() throws ServiceException {
         if (!this.running.getAndSet(true)) {
             this.timer = new Timer("KeepAliveTimer", true);
-            this.timer.scheduleAtFixedRate(this.keepAliveTimer, this.timeout, (this.timeout / 2));
+            this.timer.scheduleAtFixedRate(new KeepAliveTimer(this), this.timeout, (this.timeout / 2));
         }
     }
 
@@ -268,7 +279,7 @@ public class KeepAliveServer implements ServerService {
     public void stop() throws ServiceException {
         if (this.running.getAndSet(false)) {
             try {
-                this.keepAliveTimer.closeSessions();
+                this.closeSessions();
             } catch (Throwable e) {
                 //Ignore
             }
