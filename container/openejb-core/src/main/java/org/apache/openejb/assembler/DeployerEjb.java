@@ -26,27 +26,37 @@ import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentLoader;
 import org.apache.openejb.config.DeploymentModule;
+import org.apache.openejb.config.sys.AdditionalDeployments;
+import org.apache.openejb.config.sys.Deployments;
+import org.apache.openejb.config.sys.JaxbOpenejb;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
 
 import static javax.ejb.TransactionManagementType.BEAN;
+import static org.apache.openejb.config.ConfigurationFactory.ADDITIONAL_DEPLOYMENTS;
 
 @Stateless(name = "openejb/Deployer")
 @Remote(Deployer.class)
 @TransactionManagement(BEAN)
 public class DeployerEjb implements Deployer {
     public static final String OPENEJB_DEPLOYER_FORCED_APP_ID_PROP = "openejb.deployer.forced.appId";
+    public static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, DeployerEjb.class);
 
     private final static File uniqueFile;
 
@@ -153,6 +163,8 @@ public class DeployerEjb implements Deployer {
             }
             assembler.createApplication(appInfo);
 
+            saveDeployment(file, true);
+
             return appInfo;
         } catch (Throwable e) {
             // destroy the class loader for the failed application
@@ -176,6 +188,51 @@ public class DeployerEjb implements Deployer {
         }
     }
 
+    private synchronized void saveDeployment(final File file, boolean add) {
+        final Deployments deps = new Deployments();
+        if (file.isDirectory()) {
+            deps.setDir(file.getAbsolutePath());
+        } else {
+            deps.setJar(file.getAbsolutePath());
+        }
+
+        File config;
+        try {
+            config = SystemInstance.get().getBase().getFile(ADDITIONAL_DEPLOYMENTS, false);
+        } catch (IOException e) {
+            config = null;
+        }
+
+        // dump it
+        try {
+            final AdditionalDeployments additionalDeployments;
+            if (config.exists()) {
+                additionalDeployments = JaxbOpenejb.unmarshal(AdditionalDeployments.class, new FileInputStream(config));
+            } else {
+                additionalDeployments = new AdditionalDeployments();
+            }
+
+            if (add) {
+                additionalDeployments.getDeployments().add(deps);
+            } else {
+                Iterator<Deployments> it = additionalDeployments.getDeployments().iterator();
+                while (it.hasNext()) {
+                    final Deployments current = it.next();
+                    if (deps.getDir() != null && deps.getDir().equals(current.getDir())) {
+                        it.remove();
+                        break;
+                    } else if (deps.getJar() != null && deps.getJar().equals(current.getJar())) {
+                        it.remove();
+                        break;
+                    }
+                }
+            }
+            JaxbOpenejb.marshal(AdditionalDeployments.class, additionalDeployments, new FileOutputStream(config));
+        } catch (Exception e) {
+            LOGGER.error("can't save the added app, will not be present next time you'll start", e);
+        }
+    }
+
     private String realLocation(String rawLocation) throws Exception {
         final Class<?> clazz;
         try {
@@ -189,5 +246,6 @@ public class DeployerEjb implements Deployer {
 
     public void undeploy(String moduleId) throws UndeployException, NoSuchApplicationException {
         assembler.destroyApplication(moduleId);
+        saveDeployment(new File(moduleId), false);
     }
 }
