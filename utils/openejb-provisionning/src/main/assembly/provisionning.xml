@@ -35,9 +35,6 @@
     <dependencySet>
       <outputDirectory>/</outputDirectory>
       <scope>runtime</scope>
-      <excludes>
-        <exclude>org.apache.openejb:*</exclude>
-      </excludes>
     </dependencySet>
   </dependencySets>
 </assembly>
