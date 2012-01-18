@@ -46,7 +46,11 @@ public class SSHServerTest {
     }
 
     @Test
-    public void call() {
+    public void call() {while (Thread.currentThread().isAlive()) try {
+        Thread.sleep(100);
+    } catch (InterruptedException e) {
+        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+    }
         System.out.println("ok");
     }
 }
