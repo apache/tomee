@@ -13,13 +13,13 @@ public class PropertiesCommand extends AbstractCommand {
     }
 
     @Override
-    public Runnable executable(String cmd) {
-        return new Runnable() {
-            @Override
-            public void run() {
-                final OpenEjbConfiguration config = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
-                Info2Properties.printConfig(config, new PrintStream(streamManager.getOut()), streamManager.getLineSep());
-            }
-        };
+    public String description() {
+        return "show openejb container properties";
+    }
+
+    @Override
+    public void execute(final String cmd) {
+        final OpenEjbConfiguration config = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
+        Info2Properties.printConfig(config, new PrintStream(streamManager.getOut()), streamManager.getLineSep());
     }
 }

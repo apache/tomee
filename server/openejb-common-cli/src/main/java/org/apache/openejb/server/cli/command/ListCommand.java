@@ -11,16 +11,16 @@ public class ListCommand extends AbstractCommand {
     }
 
     @Override
-    public Runnable executable(String cmd) {
-        return new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    CommandHelper.listEJBs(streamManager.getLineSep()).print(new PrintStream(streamManager.getOut()));
-                } catch (Exception e) {
-                    streamManager.writeErr(e);
-                }
-            }
-        };
+    public String description() {
+        return "list available ejbs";
+    }
+
+    @Override
+    public void execute(final String cmd) {
+        try {
+            CommandHelper.listEJBs(streamManager.getLineSep()).print(new PrintStream(streamManager.getOut()));
+        } catch (Exception e) {
+            streamManager.writeErr(e);
+        }
     }
 }
