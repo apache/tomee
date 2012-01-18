@@ -22,19 +22,15 @@ import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
 import org.apache.sshd.SshServer;
 import org.apache.sshd.common.util.SecurityUtils;
-import org.apache.sshd.server.PublickeyAuthenticator;
-import org.apache.sshd.server.command.ScpCommandFactory;
 import org.apache.sshd.server.jaas.JaasPasswordAuthenticator;
 import org.apache.sshd.server.keyprovider.PEMGeneratorHostKeyProvider;
 import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
-import org.apache.sshd.server.session.ServerSession;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.security.PublicKey;
 import java.util.Properties;
 
 public class SSHServer implements ServerService, SelfManaging {
@@ -62,7 +58,7 @@ public class SSHServer implements ServerService, SelfManaging {
             sshServer.setKeyPairProvider(new SimpleGeneratorHostKeyProvider(new File(basePath, KEY_NAME + ".ser").getPath()));
         }
 
-        sshServer.setShellFactory(new GroovyShellFactory());
+        sshServer.setShellFactory(new OpenEJBShellFactory(bind, port));
 
         try {
             sshServer.start();
@@ -82,12 +78,12 @@ public class SSHServer implements ServerService, SelfManaging {
 
     @Override
     public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
-
+        // no-op
     }
 
     @Override
     public void service(Socket socket) throws ServiceException, IOException {
-
+        // no-op
     }
 
     @Override

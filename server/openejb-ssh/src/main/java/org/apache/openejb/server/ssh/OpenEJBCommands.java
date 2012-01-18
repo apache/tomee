@@ -8,24 +8,32 @@ import org.apache.sshd.server.Command;
 import org.apache.sshd.server.Environment;
 import org.apache.sshd.server.ExitCallback;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Collection;
 
-public class GroovyCommand implements Command, Runnable {
+public class OpenEJBCommands implements Command, Runnable {
     public static final String EXIT_COMMAND = "exit";
-    public static final String LINE_SEP = System.getProperty("line.separator");
+    private static final String GROOVY_PREFIX = "G ";
+    private static final String WELCOME = "Welcome on your $bind:$port $name server";
+    public static final String LINE_SEP = "\r\n"; // don't use line.separator (sshd use this one)
+    public static final String OS_LINE_SEP = System.getProperty("line.separator");
     public static final String PROMPT = "openejb> ";
 
     private OpenEJBGroovyShell shell;
     private OutputStreamWriter serr;
     private OutputStreamWriter sout;
-    private InputStream sin;
     private ExitCallback cbk;
+    private InputStream sin;
+    private String bind;
+    private int port;
+
+    public OpenEJBCommands(String bind, int port) {
+        this.bind = bind;
+        this.port = port;
+    }
 
     @Override
     public void setInputStream(InputStream in) {
@@ -61,21 +69,40 @@ public class GroovyCommand implements Command, Runnable {
     @Override
     public void run() {
         try {
-            final ConsoleReader reader = new ConsoleReader(sin, sout);
-            reader.setBellEnabled(false);
+            System.setProperty("line.separator", LINE_SEP);
+            final ConsoleReader reader;
+            synchronized (OpenEJBCommands.class) {
+                reader = new ConsoleReader(sin, sout);
+            }
+            System.setProperty("line.separator", OS_LINE_SEP);
             // TODO : add completers with method names...?
 
-            // TODO: why is it adding spaces?
+            String name = "OpenEJB";
+            try {
+                getClass().getClassLoader().loadClass("org.apache.tomee.loader.TomcatHook");
+                name = "TomEE";
+            } catch (ClassNotFoundException cnfe) {
+                // ignored, we are using a simple OpenEJB server
+            }
+
             String line;
+            write(sout, WELCOME // simple replace for now, if it is mandatory we could bring velocity to do it
+                    .replace("$bind", bind)
+                    .replace("$port", Integer.toString(port))
+                    .replace("$name", name));
             while ((line = reader.readLine(PROMPT)) != null) {
                 if (EXIT_COMMAND.equals(line)) {
                     break;
                 }
 
-                try {
-                    write(sout, result(line));
-                } catch (SshRuntimeException sshEx) {
-                    write((Exception) sshEx.getCause());
+                if (line.startsWith(GROOVY_PREFIX)) {
+                    try {
+                        write(sout, result(line));
+                    } catch (SshRuntimeException sshEx) {
+                        write((Exception) sshEx.getCause());
+                    }
+                } else {
+                    write(sout, "sorry i don't understand '" + line + "'");
                 }
             }
         } catch (IOException e) {
@@ -103,7 +130,7 @@ public class GroovyCommand implements Command, Runnable {
         } else {
             final StringBuilder error = new StringBuilder();
             for (StackTraceElement elt : e.getStackTrace()) {
-                error.append(elt.toString() + LINE_SEP);
+                error.append(elt.toString()).append(LINE_SEP);
             }
             write(serr, error.toString());
         }
@@ -123,13 +150,11 @@ public class GroovyCommand implements Command, Runnable {
         if (out instanceof Collection) {
             final StringBuilder builder = new StringBuilder();
             for (Object o : (Collection) out) {
-                builder.append(string(o) + LINE_SEP);
+                builder.append(string(o)).append(LINE_SEP);
             }
+            return builder.toString();
         }
-        if (out != null) {
-            return string(out);
-        }
-        return null;
+        return string(out);
     }
 
     private static String string(Object out) {
