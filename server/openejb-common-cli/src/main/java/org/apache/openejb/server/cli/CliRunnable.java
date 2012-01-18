@@ -9,6 +9,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.groovy.OpenEJBGroovyShell;
 import org.apache.openejb.util.helper.CommandHelper;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -18,7 +19,8 @@ import java.util.Collection;
 
 public class CliRunnable implements Runnable {
     public static final String EXIT_COMMAND = "exit";
-    private static final String GROOVY_PREFIX = "G ";
+    private static final String GROOVY_PREFIX = "groovy ";
+    private static final String GROOVY_FILE_PREFIX = "groovy_file ";
     private static final String LIST_CMD = "list";
     private static final String PROPERTIES_CMD = "properties";
     private static final String WELCOME = "Welcome on your $bind:$port $name server";
@@ -113,9 +115,15 @@ public class CliRunnable implements Runnable {
 
                 if (line.startsWith(GROOVY_PREFIX)) {
                     try {
-                        write(sout, result(line.substring(GROOVY_PREFIX.length())));
-                    } catch (CliRuntimeException sshEx) {
-                        write((Exception) sshEx.getCause());
+                        write(sout, asString(shell.evaluate(line.substring(GROOVY_PREFIX.length()))));
+                    } catch (Exception e) {
+                        write(e);
+                    }
+                } else if (GROOVY_FILE_PREFIX.equals(line)) {
+                    try {
+                        write(sout, asString(shell.evaluate(new File(line.substring(GROOVY_PREFIX.length())))));
+                    } catch (Exception e) {
+                        write(e);
                     }
                 } else if (LIST_CMD.equals(line)) {
                     list();
@@ -167,14 +175,7 @@ public class CliRunnable implements Runnable {
         }
     }
 
-    private String result(final String value) {
-        Object out;
-        try {
-            out = shell.evaluate(value);
-        } catch (Exception e) {
-            throw new CliRuntimeException(e);
-        }
-
+    private String asString(Object out) {
         if (out == null) {
             return "null";
         }
