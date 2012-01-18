@@ -1,32 +1,38 @@
 package org.apache.openejb.server.cli;
 
 import jline.ConsoleReader;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import jline.FileNameCompletor;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.cmd.Info2Properties;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.server.cli.command.AbstractCommand;
+import org.apache.openejb.server.cli.command.GroovyCommand;
+import org.apache.openejb.server.cli.command.GroovyFileCommand;
+import org.apache.openejb.server.cli.command.ListCommand;
+import org.apache.openejb.server.cli.command.PropertiesCommand;
 import org.apache.openejb.server.groovy.OpenEJBGroovyShell;
 import org.apache.openejb.util.helper.CommandHelper;
+import org.apache.xbean.recipe.ObjectRecipe;
+import org.apache.xbean.recipe.Option;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.PrintStream;
-import java.util.Collection;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CliRunnable implements Runnable {
-    public static final String EXIT_COMMAND = "exit";
-    private static final String GROOVY_PREFIX = "groovy ";
-    private static final String GROOVY_FILE_PREFIX = "groovy_file ";
-    private static final String LIST_CMD = "list";
-    private static final String PROPERTIES_CMD = "properties";
+    private static final String EXIT_COMMAND = "exit";
     private static final String WELCOME = "Welcome on your $bind:$port $name server";
-    public static final String OS_LINE_SEP = System.getProperty("line.separator");
+    private static final String OS_LINE_SEP = System.getProperty("line.separator");
     private static final String NAME;
-    public static final String PROMPT = "openejb> ";
+    private static final String PROMPT = "openejb> ";
+    private static final List<Class<? extends AbstractCommand>> COMMAND_CLASSES
+            = Arrays.asList(GroovyCommand.class, GroovyFileCommand.class,
+            ListCommand.class, PropertiesCommand.class);
 
     static {
         String name = "OpenEJB";
@@ -42,12 +48,12 @@ public class CliRunnable implements Runnable {
     public String lineSep;
 
     private OpenEJBGroovyShell shell;
-    private OutputStreamWriter serr;
-    private OutputStreamWriter sout;
+    private OutputStream err;
     private OutputStream out;
     private InputStream sin;
     private String bind;
     private int port;
+    private Map<String, Class<?>> commands;
 
 
     public CliRunnable(String bind, int port) {
@@ -82,29 +88,45 @@ public class CliRunnable implements Runnable {
 
     public void setOutputStream(OutputStream out) {
         this.out = out;
-        sout = new OutputStreamWriter(out);
     }
 
     public void setErrorStream(OutputStream err) {
-        serr = new OutputStreamWriter(err);
+        this.err = err;
     }
 
     public void start() throws IOException {
         shell = new OpenEJBGroovyShell();
+        initializeCommands();
         new Thread(this, "OpenEJB Cli").start();
+    }
+
+    private void initializeCommands() {
+        commands = new HashMap<String, Class<?>>();
+
+        for (Class<? extends AbstractCommand> cmd : COMMAND_CLASSES) {
+            try {
+                commands.put(cmd.newInstance().name(), cmd);
+            } catch (Exception e) {
+                // command ignored
+            }
+        }
     }
 
     public void destroy() {
         shell.resetLoadedClasses();
+        commands.clear();
     }
 
     public void run() {
         try {
-            final ConsoleReader reader = new ConsoleReader(sin, sout);
+            final StreamManager streamManager = new StreamManager(out, err, lineSep);
+
+            final ConsoleReader reader = new ConsoleReader(sin, streamManager.getSout());
+            reader.addCompletor(new FileNameCompletor());
             // TODO : add completers with method names...?
 
             String line;
-            write(sout, WELCOME // simple replace for now, if it is mandatory we could bring velocity to do it
+            streamManager.writeOut(WELCOME // simple replace for now, if it is mandatory we could bring velocity to do it
                     .replace("$bind", bind)
                     .replace("$port", Integer.toString(port))
                     .replace("$name", NAME));
@@ -113,24 +135,32 @@ public class CliRunnable implements Runnable {
                     break;
                 }
 
-                if (line.startsWith(GROOVY_PREFIX)) {
-                    try {
-                        write(sout, asString(shell.evaluate(line.substring(GROOVY_PREFIX.length()))));
-                    } catch (Exception e) {
-                        write(e);
+                Class<?> cmdClass = null;
+                for (Map.Entry<String, Class<?>> cmd : commands.entrySet()) {
+                    if (line.startsWith(cmd.getKey())) {
+                        cmdClass = cmd.getValue();
+                        break;
                     }
-                } else if (GROOVY_FILE_PREFIX.equals(line)) {
+                }
+
+                if (cmdClass != null) {
+                    ObjectRecipe recipe = new ObjectRecipe(cmdClass);
+                    recipe.setProperty("streamManager", streamManager);
+                    recipe.setProperty("command", line);
+                    recipe.setProperty("shell", shell);
+
+                    recipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
+                    recipe.allow(Option.IGNORE_MISSING_PROPERTIES);
+                    recipe.allow(Option.NAMED_PARAMETERS);
+
                     try {
-                        write(sout, asString(shell.evaluate(new File(line.substring(GROOVY_PREFIX.length())))));
+                        final AbstractCommand cmdInstance = (AbstractCommand) recipe.create();
+                        cmdInstance.execute(line);
                     } catch (Exception e) {
-                        write(e);
+                        streamManager.writeErr(e);
                     }
-                } else if (LIST_CMD.equals(line)) {
-                    list();
-                } else if (PROPERTIES_CMD.equals(line)) {
-                    properties();
                 } else {
-                    write(sout, "sorry i don't understand '" + line + "'");
+                    streamManager.writeOut("sorry i don't understand '" + line + "'");
                 }
             }
         } catch (IOException e) {
@@ -143,73 +173,12 @@ public class CliRunnable implements Runnable {
         Info2Properties.printConfig(config, new PrintStream(out), lineSep);
     }
 
-    private void list() {
+    private void list(final StreamManager streamManager) {
         try {
             CommandHelper.listEJBs(lineSep).print(new PrintStream(out));
         } catch (Exception e) {
-            write(e);
+            streamManager.writeErr(e);
         }
-    }
-
-    private void write(final OutputStreamWriter writer, final String s) {
-        for (String l : s.split(lineSep)) {
-            try {
-                writer.write(l);
-                writer.write(lineSep);
-                writer.flush();
-            } catch (IOException e) {
-                // ignored
-            }
-        }
-    }
-
-    private void write(Exception e) {
-        if (e.getStackTrace() == null) {
-            write(serr, e.getMessage());
-        } else {
-            final StringBuilder error = new StringBuilder();
-            for (StackTraceElement elt : e.getStackTrace()) {
-                error.append(elt.toString()).append(lineSep);
-            }
-            write(serr, error.toString());
-        }
-    }
-
-    private String asString(Object out) {
-        if (out == null) {
-            return "null";
-        }
-        if (out instanceof Collection) {
-            final StringBuilder builder = new StringBuilder();
-            for (Object o : (Collection) out) {
-                builder.append(string(o)).append(lineSep);
-            }
-            return builder.toString();
-        }
-        return string(out);
-    }
-
-    private static String string(Object out) {
-        if (!out.getClass().getName().startsWith("java")) {
-            return ToStringBuilder.reflectionToString(out, ToStringStyle.SHORT_PREFIX_STYLE);
-        }
-        return out.toString();
-    }
-
-    public OutputStream getOut() {
-        return out;
-    }
-
-    public OutputStreamWriter getSerr() {
-        return serr;
-    }
-
-    public OutputStreamWriter getSout() {
-        return sout;
-    }
-
-    public InputStream getSin() {
-        return sin;
     }
 
     public String getBind() {
