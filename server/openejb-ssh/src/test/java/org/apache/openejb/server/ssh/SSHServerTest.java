@@ -17,21 +17,30 @@
 package org.apache.openejb.server.ssh;
 
 import org.apache.openejb.OpenEjbContainer;
+import org.apache.sshd.ClientChannel;
+import org.apache.sshd.ClientSession;
+import org.apache.sshd.SshClient;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ejb.embeddable.EJBContainer;
-import java.io.File;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.util.HashMap;
-import java.util.concurrent.CountDownLatch;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class SSHServerTest {
     private static EJBContainer container;
 
     @BeforeClass
     public static void start() {
-        System.setProperty("openejb.server.ssh.key", "target/ssh-key");
+        System.setProperty("openejb.server.ssh.key", "src/test/key/ssh-key");
         System.setProperty("openejb.logger.external", "true");
         container = EJBContainer.createEJBContainer(new HashMap<Object, Object>() {{
             put(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
@@ -45,12 +54,59 @@ public class SSHServerTest {
         System.getProperties().remove("openejb.server.ssh.key");
     }
 
-    @Test
-    public void call() {while (Thread.currentThread().isAlive()) try {
-        Thread.sleep(100);
-    } catch (InterruptedException e) {
-        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+    @Test(timeout = 10000L)
+    public void call() throws Exception {
+        final SshClient client = SshClient.setUpDefaultClient();
+        client.start();
+        try {
+            final ClientSession session = client.connect("localhost", 4222).await().getSession();
+            session.authPassword("jonathan", "secret");
+
+            final ClientChannel channel = session.createChannel("shell");
+            ByteArrayOutputStream sent = new ByteArrayOutputStream();
+            PipedOutputStream pipedIn = new TeePipedOutputStream(sent);
+            channel.setIn(new PipedInputStream(pipedIn));
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            ByteArrayOutputStream err = new ByteArrayOutputStream();
+            channel.setOut(out);
+            channel.setErr(err);
+            channel.open();
+
+            pipedIn.write("properties\r\n".getBytes());
+            pipedIn.flush();
+
+            pipedIn.write("exit\r\n".getBytes());
+            pipedIn.flush();
+
+            channel.waitFor(ClientChannel.CLOSED, 0);
+            channel.close(false);
+            client.stop();
+
+            assertTrue(new String(sent.toByteArray()).contains("properties\r\nexit\r\n"));
+            assertTrue(new String(out.toByteArray()).contains("ServerService(id=ssh)"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
     }
-        System.out.println("ok");
+
+    public static class TeePipedOutputStream extends PipedOutputStream {
+        private OutputStream tee;
+
+        public TeePipedOutputStream(OutputStream tee) {
+            this.tee = tee;
+        }
+
+        @Override
+        public void write(int b) throws IOException {
+            super.write(b);
+            tee.write(b);
+        }
+
+        @Override
+        public void write(byte[] b, int off, int len) throws IOException {
+            super.write(b, off, len);
+            tee.write(b, off, len);
+        }
     }
 }
