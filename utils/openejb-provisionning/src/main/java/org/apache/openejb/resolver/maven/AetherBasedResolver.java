@@ -1,3 +1,19 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.openejb.resolver.maven;
 
 import org.apache.maven.repository.internal.DefaultArtifactDescriptorReader;
@@ -27,6 +43,7 @@ import org.sonatype.aether.impl.internal.DefaultMetadataResolver;
 import org.sonatype.aether.impl.internal.DefaultServiceLocator;
 import org.sonatype.aether.impl.internal.DefaultSyncContextFactory;
 import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManagerFactory;
+import org.sonatype.aether.installation.InstallRequest;
 import org.sonatype.aether.repository.Authentication;
 import org.sonatype.aether.repository.LocalRepository;
 import org.sonatype.aether.repository.MirrorSelector;
@@ -189,7 +206,13 @@ public class AetherBasedResolver {
             throws IOException {
         try {
             artifact = resolveLatestVersionRange(session, artifact);
-            return m_repoSystem.resolveArtifact(session, new ArtifactRequest(artifact, m_remoteRepos, null)).getArtifact().getFile();
+            artifact = m_repoSystem.resolveArtifact(session, new ArtifactRequest(artifact, m_remoteRepos, null)).getArtifact();
+            if (artifact != null) {
+                final InstallRequest request = new InstallRequest();
+                request.addArtifact(artifact);
+                m_repoSystem.install(session, request);
+            }
+            return artifact.getFile();
         } catch (RepositoryException e) {
             throw new IOException("Aether Error.", e);
         }
