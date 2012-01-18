@@ -20,8 +20,8 @@ package org.apache.openejb.karaf.command;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.shell.console.OsgiCommandSupport;
 import org.apache.openejb.core.osgi.impl.Deployer;
-import org.apache.openejb.karaf.console.table.Line;
-import org.apache.openejb.karaf.console.table.Lines;
+import org.apache.openejb.table.Line;
+import org.apache.openejb.table.Lines;
 import org.osgi.framework.Bundle;
 
 @Command(scope = "openejb", name = "bundles", description = "Lists all deployed bundles")
