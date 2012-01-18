@@ -352,6 +352,8 @@
       org.apache.openejb.monitoring;version=${openejb.osgi.export.version},
       org.apache.openejb.osgi;version=${openejb.osgi.export.version},
       org.apache.openejb.osgi.client;version=${openejb.osgi.export.version},
+      org.apache.openejb.table;version=${openejb.osgi.export.version},
+      org.apache.openejb.util.helper;version=${openejb.osgi.export.version},
       org.apache.openejb.persistence;version=${openejb.osgi.export.version},
       org.apache.openejb.resource;version=${openejb.osgi.export.version},
       org.apache.openejb.resource.activemq;version=${openejb.osgi.export.version},
