@@ -17,12 +17,12 @@
 package org.apache.openejb.resource.activemq;
 
 import org.apache.activemq.broker.BrokerService;
-import org.apache.kahadb.util.Scheduler;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.URISupport;
 
 import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.ResourceAdapterInternalException;
+import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
@@ -33,17 +33,38 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
 
     private String dataSource;
     private String useDatabaseLock;
+    private String startupTimeout = "60000";
+
+    public ActiveMQResourceAdapter() {
+        if (org.apache.log4j.LogManager.getRootLogger().getAllAppenders() instanceof org.apache.log4j.helpers.NullEnumeration) {
+            org.apache.log4j.BasicConfigurator.configure();
+        }
+    }
 
     public String getDataSource() {
         return dataSource;
     }
 
-    public void setDataSource(String dataSource) {
+    public void setDataSource(final String dataSource) {
         this.dataSource = dataSource;
     }
 
-    public void setUseDatabaseLock(String useDatabaseLock) {
+    public void setUseDatabaseLock(final String useDatabaseLock) {
         this.useDatabaseLock = useDatabaseLock;
+    }
+
+    public int getStartupTimeout() {
+        return Integer.parseInt(this.startupTimeout);
+    }
+
+    public void setStartupTimeout(int startupTimeout) {
+        startupTimeout = (startupTimeout < 5000 ? 5000 : startupTimeout);
+        this.startupTimeout = "" + startupTimeout;
+    }
+
+    @Override
+    public void setServerUrl(final String url) {
+        super.setServerUrl(url);
     }
 
     //   DMB:  Work in progress.  These all should go into the service-jar.xml
@@ -118,13 +139,16 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
     public void start(final BootstrapContext bootstrapContext) throws ResourceAdapterInternalException {
         final Properties properties = new Properties();
 
-        //Add data source property
         if (null != this.dataSource) {
             properties.put("DataSource", this.dataSource);
         }
 
         if (null != this.useDatabaseLock) {
             properties.put("UseDatabaseLock", this.useDatabaseLock);
+        }
+
+        if (null != this.startupTimeout) {
+            properties.put("StartupTimeout", this.startupTimeout);
         }
 
         // prefix server uri with 'broker:' so our broker factory is used
@@ -139,6 +163,7 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
 
                     if (!compositeData.getParameters().containsKey("persistent")) {
                         //Override default - Which is 'true'
+                        //noinspection unchecked
                         compositeData.getParameters().put("persistent", "false");
                     }
 
@@ -169,18 +194,16 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
     @Override
     public void stop() {
 
-        org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").info("Stopping ActiveMQ");
-
-        final ActiveMQResourceAdapter ra = this;
+        org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, "org.apache.openejb.util.resources").info("Stopping ActiveMQ");
 
         final Thread stopThread = new Thread("ActiveMQResourceAdapter stop") {
 
             @Override
             public void run() {
                 try {
-                    ra.stopImpl();
+                    stopImpl();
                 } catch (Throwable t) {
-                    org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").error("ActiveMQ shutdown failed", t);
+                    org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, "org.apache.openejb.util.resources").error("ActiveMQ shutdown failed", t);
                 }
             }
         };
@@ -188,18 +211,30 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
         stopThread.setDaemon(true);
         stopThread.start();
 
+        int timeout = 60000;
+
         try {
-            //Block for a maximum of 10 seconds waiting for this thread to die.
-            stopThread.join(10000);
+            timeout = Integer.parseInt(this.startupTimeout);
+        } catch (Throwable e) {
+            //Ignore
+        }
+
+        try {
+            //Block for a maximum of timeout milliseconds waiting for this thread to die.
+            stopThread.join(timeout);
         } catch (InterruptedException ex) {
-            org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").warning("Gave up on ActiveMQ shutdown", ex);
-            return;
+            org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, "org.apache.openejb.util.resources").warning("Gave up on ActiveMQ shutdown after " + timeout + "ms", ex);
         }
     }
 
     private void stopImpl() throws Exception {
-
         super.stop();
+
+        final ActiveMQResourceAdapter ra = this;
+        stopImpl(ra);
+    }
+
+    private static void stopImpl(final org.apache.activemq.ra.ActiveMQResourceAdapter instance) throws Exception {
 
         final Collection<BrokerService> brokers = ActiveMQFactory.getBrokers();
 
@@ -215,8 +250,18 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
             it.remove();
         }
 
-        Scheduler.shutdown();
+        stopScheduler();
 
-        org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").info("Stopped ActiveMQ");
+        org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, "org.apache.openejb.util.resources").info("Stopped ActiveMQ broker");
+    }
+
+    private static void stopScheduler() {
+        try {
+            final Class<?> clazz = Class.forName("org.apache.kahadb.util.Scheduler");
+            final Method method = clazz.getMethod("shutdown");
+            method.invoke(null);
+        } catch (Throwable e) {
+            //Ignore
+        }
     }
 }

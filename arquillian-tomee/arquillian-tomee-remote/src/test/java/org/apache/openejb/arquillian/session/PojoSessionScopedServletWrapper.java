@@ -25,12 +25,17 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class PojoSessionScopedServletWrapper extends HttpServlet {
-   @Inject private PojoSessionScoped pojo;
 
-   @Override protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-      resp.setContentType("text/plain");
-      resp.getWriter().println("ms=" + pojo.getMs());
-      resp.getWriter().println("id=" + pojo.getId());
-   }
+    private static final long serialVersionUID = -6092551791278955966L;
+
+    @Inject
+    private PojoSessionScoped pojo;
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("text/plain");
+        resp.getWriter().println("ms=" + pojo.getMs());
+        resp.getWriter().println("id=" + pojo.getId());
+    }
 
 }

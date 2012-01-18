@@ -35,9 +35,9 @@ public class CustomApplicationFactory extends ApplicationFactory {
 
     private volatile Application wrappedApplication;
 
-    public CustomApplicationFactory(ApplicationFactory applicationFactory) {
+    public CustomApplicationFactory(final ApplicationFactory applicationFactory) {
         this.factory = applicationFactory;
-        webBeansContext = WebBeansContext.getInstance();
+        webBeansContext = WebBeansContext.currentInstance();
     }
 
     @Override
@@ -85,7 +85,7 @@ public class CustomApplicationFactory extends ApplicationFactory {
     }
 
     @Override
-    public void setApplication(Application application) {
+    public void setApplication(final Application application) {
         wrappedApplication = application;
         this.factory.setApplication(application);
     }
