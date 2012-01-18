@@ -24,7 +24,11 @@ import java.util.List;
 
 public class Lines {
     private List<Line> lines = new ArrayList<Line>();
-    private String cr = System.getProperty("line.separator");
+    private String cr;
+
+    public Lines() {
+        this(System.getProperty("line.separator"));
+    }
 
     public Lines(String cr) {
         this.cr = cr;
