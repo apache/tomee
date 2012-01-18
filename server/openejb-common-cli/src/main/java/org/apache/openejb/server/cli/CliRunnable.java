@@ -22,24 +22,11 @@ public class CliRunnable implements Runnable {
     private static final String LIST_CMD = "list";
     private static final String PROPERTIES_CMD = "properties";
     private static final String WELCOME = "Welcome on your $bind:$port $name server";
-    public static final String LINE_SEP = "\r\n"; // don't use line.separator (sshd use this one)
     public static final String OS_LINE_SEP = System.getProperty("line.separator");
     private static final String NAME;
     public static final String PROMPT = "openejb> ";
 
     static {
-        System.setProperty("line.separator", LINE_SEP);
-        try {
-            // just to force the loading of this class with the set line.separator
-            // because ConsoleReader.CR is a constant and we need sometimes another value
-            // not a big issue but keeping this as a workaround
-            new ConsoleReader();
-        } catch (IOException ignored) {
-            // no-op
-        } finally {
-            System.setProperty("line.separator", OS_LINE_SEP);
-        }
-
         String name = "OpenEJB";
         try {
             CliRunnable.class.getClassLoader().loadClass("org.apache.tomee.loader.TomcatHook");
@@ -49,6 +36,8 @@ public class CliRunnable implements Runnable {
         }
         NAME = name;
     }
+
+    public String lineSep;
 
     private OpenEJBGroovyShell shell;
     private OutputStreamWriter serr;
@@ -60,8 +49,29 @@ public class CliRunnable implements Runnable {
 
 
     public CliRunnable(String bind, int port) {
+        this(bind, port, null);
+    }
+
+    public CliRunnable(String bind, int port, String sep) {
         this.bind = bind;
         this.port = port;
+
+        if (sep != null) { // workaround to force ConsoleReader to use another line.separator
+            lineSep = sep;
+            System.setProperty("line.separator", sep);
+            try {
+                // just to force the loading of this class with the set line.separator
+                // because ConsoleReader.CR is a constant and we need sometimes another value
+                // not a big issue but keeping this as a workaround
+                new ConsoleReader();
+            } catch (IOException ignored) {
+                // no-op
+            } finally {
+                System.setProperty("line.separator", OS_LINE_SEP);
+            }
+        } else {
+            lineSep = OS_LINE_SEP;
+        }
     }
 
     public void setInputStream(InputStream in) {
@@ -122,22 +132,22 @@ public class CliRunnable implements Runnable {
 
     private void properties() {
         final OpenEjbConfiguration config = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
-        Info2Properties.printConfig(config, new PrintStream(out), LINE_SEP);
+        Info2Properties.printConfig(config, new PrintStream(out), lineSep);
     }
 
     private void list() {
         try {
-            CommandHelper.listEJBs(LINE_SEP).print(new PrintStream(out));
+            CommandHelper.listEJBs(lineSep).print(new PrintStream(out));
         } catch (Exception e) {
             write(e);
         }
     }
 
-    private static void write(final OutputStreamWriter writer, final String s) {
-        for (String l : s.split(LINE_SEP)) {
+    private void write(final OutputStreamWriter writer, final String s) {
+        for (String l : s.split(lineSep)) {
             try {
                 writer.write(l);
-                writer.write(LINE_SEP);
+                writer.write(lineSep);
                 writer.flush();
             } catch (IOException e) {
                 // ignored
@@ -151,7 +161,7 @@ public class CliRunnable implements Runnable {
         } else {
             final StringBuilder error = new StringBuilder();
             for (StackTraceElement elt : e.getStackTrace()) {
-                error.append(elt.toString()).append(LINE_SEP);
+                error.append(elt.toString()).append(lineSep);
             }
             write(serr, error.toString());
         }
@@ -171,7 +181,7 @@ public class CliRunnable implements Runnable {
         if (out instanceof Collection) {
             final StringBuilder builder = new StringBuilder();
             for (Object o : (Collection) out) {
-                builder.append(string(o)).append(LINE_SEP);
+                builder.append(string(o)).append(lineSep);
             }
             return builder.toString();
         }
