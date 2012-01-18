@@ -4,6 +4,7 @@ import jline.ConsoleReader;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.openejb.server.groovy.OpenEJBGroovyShell;
+import org.apache.openejb.util.helper.CommandHelper;
 import org.apache.sshd.server.Command;
 import org.apache.sshd.server.Environment;
 import org.apache.sshd.server.ExitCallback;
@@ -12,14 +13,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintStream;
 import java.util.Collection;
 
 public class OpenEJBCommands implements Command, Runnable {
     public static final String EXIT_COMMAND = "exit";
     private static final String GROOVY_PREFIX = "G ";
+    private static final String LIST_CMD = "list";
     private static final String WELCOME = "Welcome on your $bind:$port $name server";
     public static final String LINE_SEP = "\r\n"; // don't use line.separator (sshd use this one)
     public static final String OS_LINE_SEP = System.getProperty("line.separator");
+    private static final String NAME;
     public static final String PROMPT = "openejb> ";
 
     static {
@@ -28,20 +32,31 @@ public class OpenEJBCommands implements Command, Runnable {
             // just to force the loading of this class with the set line.separator
             // because ConsoleReader.CR is a constant and we need sometimes another value
             // not a big issue but keeping this as a workaround
-            final ConsoleReader reader = new ConsoleReader();
+            new ConsoleReader();
         } catch (IOException ignored) {
             // no-op
         }
         System.setProperty("line.separator", OS_LINE_SEP);
+
+        String name = "OpenEJB";
+        try {
+            OpenEJBCommands.class.getClassLoader().loadClass("org.apache.tomee.loader.TomcatHook");
+            name = "TomEE";
+        } catch (ClassNotFoundException cnfe) {
+            // ignored, we are using a simple OpenEJB server
+        }
+        NAME = name;
     }
 
     private OpenEJBGroovyShell shell;
     private OutputStreamWriter serr;
     private OutputStreamWriter sout;
+    private OutputStream out;
     private ExitCallback cbk;
     private InputStream sin;
     private String bind;
     private int port;
+
 
     public OpenEJBCommands(String bind, int port) {
         this.bind = bind;
@@ -55,6 +70,7 @@ public class OpenEJBCommands implements Command, Runnable {
 
     @Override
     public void setOutputStream(OutputStream out) {
+        this.out = out;
         sout = new OutputStreamWriter(out);
     }
 
@@ -86,19 +102,11 @@ public class OpenEJBCommands implements Command, Runnable {
             final ConsoleReader reader = new ConsoleReader(sin, sout);
             // TODO : add completers with method names...?
 
-            String name = "OpenEJB";
-            try {
-                getClass().getClassLoader().loadClass("org.apache.tomee.loader.TomcatHook");
-                name = "TomEE";
-            } catch (ClassNotFoundException cnfe) {
-                // ignored, we are using a simple OpenEJB server
-            }
-
             String line;
             write(sout, WELCOME // simple replace for now, if it is mandatory we could bring velocity to do it
                     .replace("$bind", bind)
                     .replace("$port", Integer.toString(port))
-                    .replace("$name", name));
+                    .replace("$name", NAME));
             while ((line = reader.readLine(PROMPT)) != null) {
                 if (EXIT_COMMAND.equals(line)) {
                     break;
@@ -106,10 +114,12 @@ public class OpenEJBCommands implements Command, Runnable {
 
                 if (line.startsWith(GROOVY_PREFIX)) {
                     try {
-                        write(sout, result(line));
+                        write(sout, result(line.substring(GROOVY_PREFIX.length())));
                     } catch (SshRuntimeException sshEx) {
                         write((Exception) sshEx.getCause());
                     }
+                } else if (LIST_CMD.equals(line)) {
+                    list();
                 } else {
                     write(sout, "sorry i don't understand '" + line + "'");
                 }
@@ -118,6 +128,14 @@ public class OpenEJBCommands implements Command, Runnable {
             throw new SshRuntimeException(e);
         } finally {
             cbk.onExit(0);
+        }
+    }
+
+    private void list() {
+        try {
+            CommandHelper.listEJBs(LINE_SEP).print(new PrintStream(out));
+        } catch (Exception e) {
+            write(e);
         }
     }
 

@@ -24,6 +24,7 @@ import org.junit.Test;
 import javax.ejb.embeddable.EJBContainer;
 import java.io.File;
 import java.util.HashMap;
+import java.util.concurrent.CountDownLatch;
 
 public class SSHServerTest {
     private static EJBContainer container;

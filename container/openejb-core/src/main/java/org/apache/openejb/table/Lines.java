@@ -24,11 +24,17 @@ import java.util.List;
 
 public class Lines {
     private List<Line> lines = new ArrayList<Line>();
+    private String cr = System.getProperty("line.separator");
+
+    public Lines(String cr) {
+        this.cr = cr;
+    }
 
     public void add(Line line) {
         if (!lines.isEmpty() && lines.iterator().next().getColumns().length != line.getColumns().length) {
             throw new IllegalArgumentException("columns should have all the same size");
         }
+        line.setCr(cr);
         lines.add(line);
     }
 
@@ -62,5 +68,9 @@ public class Lines {
             }
         }
         return max;
+    }
+
+    public List<Line> getLines() {
+        return lines;
     }
 }
