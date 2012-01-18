@@ -257,24 +257,11 @@
     </dependency>
 
     <dependency>
-      <groupId>org.sonatype.aether</groupId>
-      <artifactId>aether-api</artifactId>
-      <version>1.8</version>
-      <type>jar</type>
-      <scope>compile</scope>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>openejb-provisionning</artifactId>
+      <version>${version.openejb}</version>
     </dependency>
 
-    <dependency>
-      <groupId>org.jboss.shrinkwrap.resolver</groupId>
-      <artifactId>shrinkwrap-resolver-api-maven</artifactId>
-      <version>${version.shrinkwrap.resolver}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jboss.shrinkwrap.resolver</groupId>
-      <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
-      <version>${version.shrinkwrap.resolver}</version>
-    </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>

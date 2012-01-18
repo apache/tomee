@@ -19,15 +19,11 @@ package org.apache.openejb.arquillian.remote;
 import org.apache.openejb.arquillian.common.FileUtils;
 import org.apache.openejb.arquillian.common.MavenCache;
 import org.apache.openejb.arquillian.common.TomEEContainer;
-import org.apache.openejb.assembler.Deployer;
 import org.apache.openejb.config.RemoteServer;
+import org.apache.openejb.resolver.Resolver;
 import org.apache.tomee.installer.Installer;
 import org.apache.tomee.installer.Paths;
-import org.jboss.arquillian.container.spi.client.container.DeploymentException;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
-import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
-import org.jboss.shrinkwrap.api.Archive;
-import org.sonatype.aether.artifact.Artifact;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -45,8 +41,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
-
-import javax.naming.NamingException;
 
 /*
  * TODO: delete old embedded adapter, move the tests and set those up
@@ -178,9 +172,9 @@ public class RemoteTomEEContainer extends TomEEContainer {
     protected void downloadTomEE(File catalinaDirectory) throws LifecycleException {
         String artifactName;
         if (configuration.isPlusContainer()) {
-            artifactName = "org.apache.openejb:apache-tomee:zip:plus:" + configuration.getOpenejbVersion();
+            artifactName = "org.apache.openejb:apache-tomee:" + configuration.getOpenejbVersion() + ":zip:plus";
         } else {
-            artifactName = "org.apache.openejb:apache-tomee:zip:webprofile:" + configuration.getOpenejbVersion();
+            artifactName = "org.apache.openejb:apache-tomee:" + configuration.getOpenejbVersion() + ":zip:webprofile";
         }
 
         File zipFile = downloadFile(artifactName, null);
@@ -188,17 +182,27 @@ public class RemoteTomEEContainer extends TomEEContainer {
     }
 
     protected File downloadFile(String artifactName, String altUrl) {
-        Artifact artifact = new MavenCache().getArtifact(artifactName, altUrl);
-        if (artifact == null) throw new NullPointerException(String.format("No such artifact: %s", artifactName));
-        return artifact.getFile();
+        final String cache = System.getProperty(Resolver.OPENEJB_DEPLOYER_CACHE_FOLDER);
+        System.setProperty(Resolver.OPENEJB_DEPLOYER_CACHE_FOLDER, "target");
+        try {
+            final File artifact = new MavenCache().getArtifact(artifactName, altUrl);
+            if (artifact == null) throw new NullPointerException(String.format("No such artifact: %s", artifactName));
+            return artifact;
+        } finally {
+            if (cache == null) {
+                System.getProperties().remove(Resolver.OPENEJB_DEPLOYER_CACHE_FOLDER);
+            } else {
+                System.setProperty(Resolver.OPENEJB_DEPLOYER_CACHE_FOLDER, cache);
+            }
+        }
     }
 
     protected void downloadOpenEJBWebapp(File targetDirectory) throws LifecycleException {
         String artifactName;
         if (configuration.isPlusContainer()) {
-            artifactName = "org.apache.openejb:tomee-plus-webapp:war:" + configuration.getOpenejbVersion();
+            artifactName = "org.apache.openejb:tomee-plus-webapp:" + configuration.getOpenejbVersion() + ":war";
         } else {
-            artifactName = "org.apache.openejb:tomee-webapp:war:" + configuration.getOpenejbVersion();
+            artifactName = "org.apache.openejb:tomee-webapp:" + configuration.getOpenejbVersion() + ":war";
         }
 
         File zipFile = downloadFile(artifactName, null);
@@ -224,7 +228,7 @@ public class RemoteTomEEContainer extends TomEEContainer {
             throw new LifecycleException("Unable to find URL for Tomcat " + tomcatVersion);
         }
 
-        File zipFile = downloadFile("org.apache.openejb:tomcat:zip:" + tomcatVersion, source);
+        File zipFile = downloadFile("org.apache.openejb:tomcat:" + tomcatVersion + ":zip", source);
         ZipExtractor.unzip(zipFile, catalinaDirectory);
     }
 

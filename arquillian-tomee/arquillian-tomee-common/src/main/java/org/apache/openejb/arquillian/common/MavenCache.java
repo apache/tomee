@@ -16,110 +16,34 @@
  */
 package org.apache.openejb.arquillian.common;
 
-import org.apache.maven.repository.internal.MavenRepositorySystemSession;
-import org.codehaus.plexus.DefaultPlexusContainer;
-import org.codehaus.plexus.PlexusContainerException;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.jboss.shrinkwrap.resolver.impl.maven.MavenDependencyResolverSettings;
-import org.sonatype.aether.RepositorySystem;
-import org.sonatype.aether.RepositorySystemSession;
-import org.sonatype.aether.artifact.Artifact;
-import org.sonatype.aether.installation.InstallRequest;
-import org.sonatype.aether.repository.LocalRepository;
-import org.sonatype.aether.resolution.ArtifactRequest;
-import org.sonatype.aether.resolution.ArtifactResolutionException;
-import org.sonatype.aether.resolution.ArtifactResult;
-import org.sonatype.aether.util.artifact.ArtifactProperties;
-import org.sonatype.aether.util.artifact.DefaultArtifact;
+import org.apache.openejb.resolver.Resolver;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
-import java.util.HashMap;
 
-/**
- * This class resolves artifacts in Maven. If an artifact (such as the Tomcat
- * zip) isn't available in Maven, this class can obtain it from an alternative
- * URL and store it in the local repository.
- * 
- * 
- */
 public class MavenCache {
+	public File getArtifact(String artifactInfo, String altUrl) {
+        try {
+            return new File(new Resolver().resolve(artifactInfo.startsWith("mvn")? "" : "mvn:" + artifactInfo));
+        } catch (Exception e) {
+            // ignored
+        }
+        try {
+            if (altUrl != null) {
+                return download(altUrl);
+                // don't cache the fallback
+                // only main artifact should be cached
+            }
+        } catch (Exception e1) {
+            throw new IllegalStateException(e1);
+        }
 
-	private final MavenDependencyResolverSettings settings;
-	private final RepositorySystem system;
-	private final RepositorySystemSession session;
-
-	public MavenCache() {
-		this.settings = new MavenDependencyResolverSettings();
-		this.system = getRepositorySystem();
-		this.session = getSession();
+		return null;
 	}
 
-	public RepositorySystemSession getSession() {
-		MavenRepositorySystemSession session = new MavenRepositorySystemSession();
-		LocalRepository localRepository = new LocalRepository(settings.getSettings().getLocalRepository());
-		session.setLocalRepositoryManager(system.newLocalRepositoryManager(localRepository));
-
-		return session;
-	}
-
-	private RepositorySystem getRepositorySystem() {
-		try {
-			return new DefaultPlexusContainer().lookup(RepositorySystem.class);
-		} catch (ComponentLookupException e) {
-			throw new RuntimeException("Unable to lookup component RepositorySystem, cannot establish Aether dependency resolver.",	e);
-		} catch (PlexusContainerException e) {
-			throw new RuntimeException("Unable to load RepositorySystem component by Plexus, cannot establish Aether dependency resolver.",	e);
-		}
-	}
-
-	public Artifact getArtifact(String coords, String altUrl) {
-		return getArtifact(getArtifact(coords), altUrl);
-	}
-
-	public Artifact getArtifact(Artifact art, String altUrl) {
-        Artifact artifact;
-
-		try {
-			artifact = resolve(art);
-		} catch (Exception e) {
-			// so lets try and download and install it instead
-			try {
-				if (altUrl != null) {
-					File file = download(altUrl);
-					
-					InstallRequest request = new InstallRequest();
-					artifact = art.setFile(file);
-					request.addArtifact(artifact);
-					system.install(session, request);
-					artifact = resolve(art);
-				}
-			} catch (Exception e1) {
-                throw new IllegalStateException(e1);
-			}
-
-            throw new IllegalStateException(e);
-		}
-		
-		return artifact;
-	}
-
-	public Artifact getArtifact(final String coords) {
-        final Artifact artifact = new DefaultArtifact(coords); // just for the parsing
-		return new DefaultArtifact(coords, new HashMap<String, String>() {{ // try to get faster
-            put(ArtifactProperties.LOCAL_PATH, new File(session.getLocalRepository().getBasedir(), session.getLocalRepositoryManager().getPathForLocalArtifact(artifact)).getAbsolutePath());
-        }});
-	}
-
-	public Artifact resolve(Artifact artifact) throws ArtifactResolutionException {
-        ArtifactRequest artifactRequest = new ArtifactRequest(artifact, settings.getRemoteRepositories(), null);
-		ArtifactResult artifactResult = system.resolveArtifact(session, artifactRequest);
-		return artifactResult.getArtifact();
-	}
-	
 	public File download(String source) throws DownloadException {
 		File file = null;
 		InputStream is = null;
@@ -137,13 +61,13 @@ public class MavenCache {
 				os.write(buffer, 0, bytesRead);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
-			throw new DownloadException("Unable to download " + source + " to " + file.getAbsolutePath());
+			throw new DownloadException("Unable to download " + source + " to " + file.getAbsolutePath(), e);
 		} finally {
 			if (is != null) {
 				try {
 					is.close();
 				} catch (Exception e) {
+                    // no-op
 				}
 			}
 
@@ -151,6 +75,7 @@ public class MavenCache {
 				try {
 					os.close();
 				} catch (Exception e) {
+                    // no-op
 				}
 			}
 		}
@@ -160,7 +85,7 @@ public class MavenCache {
 
 	public static void main(String[] args) {
 		// File file = new MavenCache().getArtifact("org.apache.openejb:tomcat:zip:6.0.33", "http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.21/bin/apache-tomcat-7.0.21.zip").getFile();
-		File file = new MavenCache().getArtifact("org.apache.openejb:apache-tomee:zip:plus:1.0.0-beta-2-SNAPSHOT", "http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.21/bin/apache-tomcat-7.0.21.zip").getFile();
+		File file = new MavenCache().getArtifact("org.apache.openejb:apache-tomee:1.0.0-beta-2-SNAPSHOT:zip:plus", "http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.21/bin/apache-tomcat-7.0.21.zip");
 		System.out.println(file.getAbsolutePath());
 	}
 }
