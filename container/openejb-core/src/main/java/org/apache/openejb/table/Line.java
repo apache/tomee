@@ -26,6 +26,7 @@ public class Line {
     public static final char EMPTY_CHAR = ' ';
 
     private String[] columns;
+    private String cr = System.getProperty("line.separator");
 
     public Line(String... columns) {
         this.columns = columns;
@@ -75,7 +76,11 @@ public class Line {
         printLine(out, sep.toString());
     }
 
-    private static void printLine(final PrintStream out, final String s) {
-        out.println(s);
+    private void printLine(final PrintStream out, final String s) {
+        out.print(s + cr);
+    }
+
+    public void setCr(final String cr) {
+        this.cr = cr;
     }
 }

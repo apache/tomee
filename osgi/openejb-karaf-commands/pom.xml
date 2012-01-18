@@ -42,6 +42,7 @@
       org.apache.karaf.shell.console.completer;version="[2.2,3)",
       org.apache.openejb.loader;version="[4.0,5.0)",
       org.apache.openejb.table;version="[4.0,5.0)",
+      org.apache.openejb.util.helper;version="[4.0,5.0)",
       org.apache.openejb.spi;version="[4.0,5.0)",
       org.apache.openejb.core.osgi.impl;version="[4.0,5.0)",
       org.apache.openejb.assembler.classic;version="[4.0,5.0)",
