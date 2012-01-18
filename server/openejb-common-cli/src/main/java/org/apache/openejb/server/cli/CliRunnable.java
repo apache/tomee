@@ -6,8 +6,10 @@ import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.cmd.Info2Properties;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.cli.command.AbstractCommand;
+import org.apache.openejb.server.cli.command.ExitCommand;
 import org.apache.openejb.server.cli.command.GroovyCommand;
 import org.apache.openejb.server.cli.command.GroovyFileCommand;
+import org.apache.openejb.server.cli.command.HelpCommand;
 import org.apache.openejb.server.cli.command.ListCommand;
 import org.apache.openejb.server.cli.command.PropertiesCommand;
 import org.apache.openejb.server.groovy.OpenEJBGroovyShell;
@@ -25,14 +27,15 @@ import java.util.List;
 import java.util.Map;
 
 public class CliRunnable implements Runnable {
-    private static final String EXIT_COMMAND = "exit";
+    public static final String EXIT_COMMAND = "exit";
     private static final String WELCOME = "Welcome on your $bind:$port $name server";
     private static final String OS_LINE_SEP = System.getProperty("line.separator");
     private static final String NAME;
     private static final String PROMPT = "openejb> ";
     private static final List<Class<? extends AbstractCommand>> COMMAND_CLASSES
             = Arrays.asList(GroovyCommand.class, GroovyFileCommand.class,
-            ListCommand.class, PropertiesCommand.class);
+                ListCommand.class, PropertiesCommand.class,
+                HelpCommand.class, ExitCommand.class);
 
     static {
         String name = "OpenEJB";
@@ -131,6 +134,8 @@ public class CliRunnable implements Runnable {
                     .replace("$port", Integer.toString(port))
                     .replace("$name", NAME));
             while ((line = reader.readLine(PROMPT)) != null) {
+                // exit simply let us go out of the loop
+                // do we need a command for it?
                 if (EXIT_COMMAND.equals(line)) {
                     break;
                 }
@@ -148,6 +153,7 @@ public class CliRunnable implements Runnable {
                     recipe.setProperty("streamManager", streamManager);
                     recipe.setProperty("command", line);
                     recipe.setProperty("shell", shell);
+                    recipe.setProperty("commands", commands);
 
                     recipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
                     recipe.allow(Option.IGNORE_MISSING_PROPERTIES);
@@ -160,7 +166,7 @@ public class CliRunnable implements Runnable {
                         streamManager.writeErr(e);
                     }
                 } else {
-                    streamManager.writeOut("sorry i don't understand '" + line + "'");
+                    streamManager.writeErr("sorry i don't understand '" + line + "'");
                 }
             }
         } catch (IOException e) {

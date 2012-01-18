@@ -7,7 +7,12 @@ public abstract class AbstractCommand {
     protected  String command;
 
     public abstract String name();
-    public abstract Runnable executable(final String cmd);
+    public abstract void execute(final String cmd);
+    public abstract String description();
+
+    public String usage() {
+        return name();
+    }
 
     public void setStreamManager(StreamManager streamManager) {
         this.streamManager = streamManager;
@@ -15,9 +20,5 @@ public abstract class AbstractCommand {
 
     public void setCommand(String command) {
         this.command = command;
-    }
-
-    public void execute(String line) {
-        executable(line).run();
     }
 }

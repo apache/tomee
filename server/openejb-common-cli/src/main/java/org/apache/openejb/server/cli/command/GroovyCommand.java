@@ -11,17 +11,22 @@ public class GroovyCommand extends AbstractCommand {
     }
 
     @Override
-    public Runnable executable(final String cmd) {
-        return new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    streamManager.writeOut(streamManager.asString(shell.evaluate(cmd.substring(name().length() + 1))));
-                } catch (Exception e) {
-                    streamManager.writeErr(e);
-                }
-            }
-        };
+    public String usage() {
+        return name() + " <groovy code>";
+    }
+
+    @Override
+    public String description() {
+        return "execute groovy code. ejb can be accessed through their ejb name in the script.";
+    }
+
+    @Override
+    public void execute(final String cmd) {
+        try {
+            streamManager.writeOut(streamManager.asString(shell.evaluate(cmd.substring(name().length() + 1))));
+        } catch (Exception e) {
+            streamManager.writeErr(e);
+        }
     }
 
     public void setShell(OpenEJBGroovyShell shell) {

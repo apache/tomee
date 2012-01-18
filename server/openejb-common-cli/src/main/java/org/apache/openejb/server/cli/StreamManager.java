@@ -39,7 +39,7 @@ public class StreamManager {
         write(sout, s);
     }
 
-    public void writeErr(Exception e) {
+    public void writeErr(final Exception e) {
         if (e.getStackTrace() == null) {
             write(serr, e.getMessage());
         } else {
@@ -51,7 +51,7 @@ public class StreamManager {
         }
     }
 
-    public String asString(Object out) {
+    public String asString(final Object out) {
         if (out == null) {
             return "null";
         }
@@ -65,7 +65,7 @@ public class StreamManager {
         return string(out);
     }
 
-    private static String string(Object out) {
+    private static String string(final Object out) {
         if (!out.getClass().getName().startsWith("java")) {
             return ToStringBuilder.reflectionToString(out, ToStringStyle.SHORT_PREFIX_STYLE);
         }
@@ -90,5 +90,9 @@ public class StreamManager {
 
     public String getLineSep() {
         return lineSep;
+    }
+
+    public void writeErr(final String s) {
+        write(serr, s);
     }
 }
