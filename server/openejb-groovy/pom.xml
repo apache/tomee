@@ -15,35 +15,31 @@
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
+
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
-    <artifactId>openejb</artifactId>
+    <artifactId>server</artifactId>
     <groupId>org.apache.openejb</groupId>
     <version>4.0.0-beta-2-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>server</artifactId>
-  <packaging>pom</packaging>
-  <name>OpenEJB :: Server</name>
-  <modules>
-    <module>openejb-ejbd</module>
-    <module>openejb-server</module>
-    <module>openejb-client</module>
-    <module>openejb-http</module>
-    <module>openejb-activemq</module>
-    <module>openejb-derbynet</module>
-    <module>openejb-hsql</module>
-    <module>openejb-webservices</module>
-    <module>openejb-axis</module>
-    <module>openejb-cxf</module>
-    <module>openejb-multicast</module>
-    <module>openejb-daemon</module>
-    <module>openejb-cxf-rs</module>
-    <module>openejb-cxf-transport</module>
-    <module>openejb-rest</module>
-    <module>openejb-ssh</module>
-    <module>openejb-groovy</module>
-  </modules>
-</project>
 
+  <artifactId>openejb-groovy</artifactId>
+  <name>OpenEJB :: Server :: Groovy</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>openejb-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-all</artifactId>
+      <version>2.0.0-beta-1</version>
+    </dependency>
+  </dependencies>
+</project>
