@@ -44,6 +44,7 @@
     <module>openejb-rest</module>
     <module>openejb-ssh</module>
     <module>openejb-groovy</module>
+    <module>openejb-common-cli</module>
   </modules>
 </project>
 
