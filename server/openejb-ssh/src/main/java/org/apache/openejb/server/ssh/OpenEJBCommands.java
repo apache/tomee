@@ -13,7 +13,7 @@ public class OpenEJBCommands extends CliRunnable implements Command, Runnable {
     private ExitCallback cbk;
 
     public OpenEJBCommands(String bind, int port) {
-        super(bind, port);
+        super(bind, port, "\r\n"); // don't use os line.separator
     }
 
     @Override
