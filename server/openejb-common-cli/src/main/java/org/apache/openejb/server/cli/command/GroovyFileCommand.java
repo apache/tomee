@@ -25,7 +25,7 @@ public class GroovyFileCommand extends AbstractCommand {
     @Override
     public void execute(final String cmd) {
         try {
-            streamManager.writeOut(streamManager.asString(shell.evaluate(new File(cmd.substring(name().length() + 1)))));
+            streamManager.writeOut(streamManager.asString(shell.evaluate(new File(cmd.substring(name().length() + 1).trim()))));
         } catch (Exception e) {
             streamManager.writeErr(e);
         }
