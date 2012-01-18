@@ -276,9 +276,13 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
             return address.substring(0, address.lastIndexOf("/"));
         }
 
-        int idx = address.indexOf(context);
+        String webCtx = context; // context can get the app path too
+        if (webCtx.contains("/")) {
+            webCtx = webCtx.substring(0, webCtx.indexOf("/"));
+        }
+        int idx = address.indexOf(webCtx);
         String base = address.substring(0, idx);
-        if (!base.endsWith("/") && !context.startsWith("/")) {
+        if (!base.endsWith("/") && !webCtx.startsWith("/")) {
             base = base + '/';
         }
         return base + context;

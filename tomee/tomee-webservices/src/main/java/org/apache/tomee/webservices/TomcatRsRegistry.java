@@ -74,15 +74,25 @@ public class TomcatRsRegistry implements RsRegistry {
             throw new NullPointerException("listener is null");
         }
 
+        // parsing could be optimized a bit...
         String realRoot = root;
         if (!root.startsWith("/")) {
             realRoot = "/" + root;
+        }
+        if (realRoot.length() > 1) {
+            int idx = realRoot.substring(1).indexOf('/');
+            if (idx > 0) {
+                realRoot = realRoot.substring(0, idx + 1);
+            }
         }
         if (!path.startsWith("/")) {
             path = "/" + path;
         }
         if (!"/".equals(realRoot)) {
             path = path.substring(realRoot.length(), path.length());
+        }
+        if (!path.startsWith("/")) {
+            path = "/" + path;
         }
 
         // find the existing host (we do not auto-create hosts)
