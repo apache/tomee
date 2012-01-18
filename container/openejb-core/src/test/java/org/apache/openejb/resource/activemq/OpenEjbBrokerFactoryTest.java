@@ -102,6 +102,7 @@ public class OpenEjbBrokerFactoryTest extends TestCase {
 
         properties.put("DataSource", dataSource);
         properties.put("UseDatabaseLock", "false");
+        properties.put("StartupTimeout", "10000");
 
         ActiveMQFactory.setThreadProperties(properties);
         BrokerService broker = null;
@@ -143,6 +144,7 @@ public class OpenEjbBrokerFactoryTest extends TestCase {
 
         properties.put("DataSource", "TestDs");
         properties.put("UseDatabaseLock", "false");
+        properties.put("StartupTimeout", "10000");
 
         ActiveMQFactory.setThreadProperties(properties);
         BrokerService broker = null;

@@ -56,7 +56,8 @@
         <property name="properties">
             <props>
                 <prop key="BrokerXmlConfig">broker:(tcp://localhost:61616)?useJmx=false</prop>
-                <prop key="ServerUrl">vm://localhost?async=true</prop>
+                <prop key="ServerUrl">vm://localhost?waitForStart=20000&amp;async=true</prop>
+                <prop key="StartupTimeout">10000</prop>
             </props>
         </property>
     </bean>

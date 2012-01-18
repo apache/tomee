@@ -201,16 +201,18 @@
 <Resource id="My JMS Resource Adapter" type="ActiveMQResourceAdapter">
   # Broker configuration URI as defined by ActiveMQ
   # see http://activemq.apache.org/broker-configuration-uri.html
-
+  # BrokerXmlConfig xbean:file:conf/activemq.xml - Requires xbean-spring.jar and dependencies
   BrokerXmlConfig broker:(tcp://localhost:61616)?useJmx=false
 
   # Broker address
-
-  ServerUrl vm://localhost?async=true
+  ServerUrl vm://localhost?waitForStart=20000&amp;async=true
 
   # DataSource for persistence messages
-
   DataSource My Unmanaged DataSource
+
+  # How long to wait for broker startup in milliseconds
+  StartupTimeout 10000
+
 </Resource>
 
 

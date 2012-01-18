@@ -52,54 +52,54 @@
         </configuration>
       </plugin>
       <plugin>
-	   <groupId>org.apache.maven.plugins</groupId>
-	   <artifactId>maven-dependency-plugin</artifactId>
-	   <version>2.1</version>
-	   <executions>
-	      <execution>
-	         <id>copy-test-libs</id>
-	         <phase>process-test-resources</phase>
-	         <configuration>
-	            <artifactItems>
-	               <artifactItem>
-	                  <groupId>commons-logging</groupId>
-	                  <artifactId>commons-logging</artifactId>
-	                  <version>${commons-logging.version}</version>
-	               </artifactItem>
-	               <artifactItem>
-	                  <groupId>javax.servlet</groupId>
-	                  <artifactId>jstl</artifactId>
-	                  <version>1.1.2</version>
-	               </artifactItem>
-	               <artifactItem>
-	                  <groupId>log4j</groupId>
-	                  <artifactId>log4j</artifactId>
-	                  <version>1.2.16</version>
-	               </artifactItem>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.1</version>
+        <executions>
+          <execution>
+            <id>copy-test-libs</id>
+            <phase>process-test-resources</phase>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>commons-logging</groupId>
+                  <artifactId>commons-logging</artifactId>
+                  <version>${commons-logging.version}</version>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>javax.servlet</groupId>
+                  <artifactId>jstl</artifactId>
+                  <version>1.1.2</version>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>log4j</groupId>
+                  <artifactId>log4j</artifactId>
+                  <version>1.2.16</version>
+                </artifactItem>
                 <!-- in javaee-api for now
-	               <!artifactItem>
-	                  <groupId>org.apache.myfaces.core</groupId>
-	                  <artifactId>myfaces-api</artifactId>
-	                  <version>2.0.3</version>
-	               </artifactItem>
-	               -->
-	               <artifactItem>
-	                  <groupId>taglibs</groupId>
-	                  <artifactId>standard</artifactId>
-	                  <version>1.1.2</version>
-	               </artifactItem>
-	            </artifactItems>
-	            <outputDirectory>
-	               ${project.build.directory}/test-libs
-	            </outputDirectory>
-	            <stripVersion>true</stripVersion>
-	         </configuration>
-	         <goals>
-	            <goal>copy</goal>
-	         </goals>
-	      </execution>
-	   </executions>
-	</plugin>
+                <!artifactItem>
+                   <groupId>org.apache.myfaces.core</groupId>
+                   <artifactId>myfaces-api</artifactId>
+                   <version>2.0.3</version>
+                </artifactItem>
+                -->
+                <artifactItem>
+                  <groupId>taglibs</groupId>
+                  <artifactId>standard</artifactId>
+                  <version>1.1.2</version>
+                </artifactItem>
+              </artifactItems>
+              <outputDirectory>
+                ${project.build.directory}/test-libs
+              </outputDirectory>
+              <stripVersion>true</stripVersion>
+            </configuration>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
   <dependencies>
@@ -108,6 +108,12 @@
       <artifactId>javaee-api</artifactId>
       <version>6.0-3-SNAPSHOT</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.myfaces.core</groupId>
+      <artifactId>myfaces-api</artifactId>
+      <version>${myfaces.version}</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
@@ -150,50 +156,50 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-    	<groupId>org.seleniumhq.selenium</groupId>
-    	<artifactId>selenium-api</artifactId>
-    	<version>${version.selenium}</version>
-    	<type>jar</type>
-    	<scope>test</scope>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-api</artifactId>
+      <version>${version.selenium}</version>
+      <type>jar</type>
+      <scope>test</scope>
     </dependency>
     <dependency>
-    	<groupId>org.jboss.arquillian.extension</groupId>
-    	<artifactId>arquillian-drone-impl</artifactId>
-    	<version>1.0.0.CR2</version>
-    	<type>jar</type>
-    	<scope>test</scope>
+      <groupId>org.jboss.arquillian.extension</groupId>
+      <artifactId>arquillian-drone-impl</artifactId>
+      <version>1.0.0.CR2</version>
+      <type>jar</type>
+      <scope>test</scope>
     </dependency>
     <dependency>
-    	<groupId>org.jboss.arquillian.extension</groupId>
-    	<artifactId>arquillian-drone-selenium-server</artifactId>
-    	<version>1.0.0.CR2</version>
-    	<type>jar</type>
-    	<scope>test</scope>
+      <groupId>org.jboss.arquillian.extension</groupId>
+      <artifactId>arquillian-drone-selenium-server</artifactId>
+      <version>1.0.0.CR2</version>
+      <type>jar</type>
+      <scope>test</scope>
     </dependency>
     <dependency>
-    	<groupId>org.jboss.shrinkwrap.descriptors</groupId>
-    	<artifactId>shrinkwrap-descriptors-impl</artifactId>
-    	<version>${version.shrinkwrap.descriptor}</version>
+      <groupId>org.jboss.shrinkwrap.descriptors</groupId>
+      <artifactId>shrinkwrap-descriptors-impl</artifactId>
+      <version>${version.shrinkwrap.descriptor}</version>
     </dependency>
     <dependency>
-    	<groupId>org.apache.openejb</groupId>
-    	<artifactId>tomee-embedded</artifactId>
-    	<version>1.0.0-beta-2-SNAPSHOT</version>
-    	<type>jar</type>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>tomee-embedded</artifactId>
+      <version>1.0.0-beta-2-SNAPSHOT</version>
+      <type>jar</type>
       <!--<classifier>uber</classifier>-->
-    	<scope>test</scope>
+      <scope>test</scope>
     </dependency>
     <dependency>
-    	<groupId>net.sourceforge.htmlunit</groupId>
-    	<artifactId>htmlunit</artifactId>
-    	<version>2.9</version>
-    	<type>jar</type>
-    	<scope>test</scope>
+      <groupId>net.sourceforge.htmlunit</groupId>
+      <artifactId>htmlunit</artifactId>
+      <version>2.9</version>
+      <type>jar</type>
+      <scope>test</scope>
     </dependency>
   </dependencies>
-  <!-- This section allows you to configure where to publish libraries for 
-    sharing. It is not required and may be deleted. For more information see: 
-    http://maven.apache.org/plugins/maven-deploy-plugin/ -->
+  <!-- This section allows you to configure where to publish libraries for
+ sharing. It is not required and may be deleted. For more information see:
+ http://maven.apache.org/plugins/maven-deploy-plugin/ -->
   <distributionManagement>
     <repository>
       <id>localhost</id>

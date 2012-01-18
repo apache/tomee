@@ -17,26 +17,6 @@
  */
 package org.apache.openejb.core.mdb;
 
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageListener;
-import javax.jms.MessageProducer;
-import javax.jms.ObjectMessage;
-import javax.jms.Session;
-import javax.resource.spi.BootstrapContext;
-import javax.resource.spi.ResourceAdapterInternalException;
-import javax.resource.spi.work.WorkManager;
-
 import junit.framework.TestCase;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.geronimo.connector.GeronimoBootstrapContext;
@@ -48,6 +28,16 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.resource.activemq.ActiveMQResourceAdapter;
 import org.apache.openejb.util.NetworkUtil;
 
+import javax.jms.*;
+import javax.resource.spi.BootstrapContext;
+import javax.resource.spi.ResourceAdapterInternalException;
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
 public class JmsTest extends TestCase {
     protected static final String REQUEST_QUEUE_NAME = "request";
     protected ConnectionFactory connectionFactory;
@@ -55,11 +45,12 @@ public class JmsTest extends TestCase {
     protected String brokerAddress = NetworkUtil.getLocalAddress("tcp://", "");
     protected String brokerXmlConfig = "broker:(" + brokerAddress + ")?useJmx=false";
 
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
 
         // create a transaction manager
-        GeronimoTransactionManager transactionManager = new GeronimoTransactionManager();
+        final GeronimoTransactionManager transactionManager = new GeronimoTransactionManager();
 
         // create the ActiveMQ resource adapter instance
         ra = new ActiveMQResourceAdapter();
@@ -67,17 +58,17 @@ public class JmsTest extends TestCase {
         // initialize properties
         ra.setServerUrl(brokerAddress);
         ra.setBrokerXmlConfig(brokerXmlConfig);
-
+        ra.setStartupTimeout(10000);
 
         // create a thead pool for ActiveMQ
-        Executor threadPool = Executors.newFixedThreadPool(30);
+        final Executor threadPool = Executors.newFixedThreadPool(30);
 
         // create a work manager which ActiveMQ uses to dispatch message delivery jobs
-        TransactionContextHandler txWorkContextHandler = new TransactionContextHandler(transactionManager);
-        GeronimoWorkManager workManager = new GeronimoWorkManager(threadPool, threadPool, threadPool, Collections.<WorkContextHandler>singletonList(txWorkContextHandler));
+        final TransactionContextHandler txWorkContextHandler = new TransactionContextHandler(transactionManager);
+        final GeronimoWorkManager workManager = new GeronimoWorkManager(threadPool, threadPool, threadPool, Collections.<WorkContextHandler>singletonList(txWorkContextHandler));
 
         // wrap the work mananger and transaction manager in a bootstrap context (connector spec thing)
-        BootstrapContext bootstrapContext = new GeronimoBootstrapContext(workManager, transactionManager, transactionManager);
+        final BootstrapContext bootstrapContext = new GeronimoBootstrapContext(workManager, transactionManager, transactionManager);
 
         // start the resource adapter
         try {
@@ -89,6 +80,7 @@ public class JmsTest extends TestCase {
         connectionFactory = new ActiveMQConnectionFactory(brokerAddress);
     }
 
+    @Override
     protected void tearDown() throws Exception {
         connectionFactory = null;
         if (ra != null) {
@@ -100,11 +92,11 @@ public class JmsTest extends TestCase {
 
     public void testProxy() throws Exception {
         // Create a Session
-        Connection connection = connectionFactory.createConnection();
+        final Connection connection = connectionFactory.createConnection();
         try {
             connection.start();
 
-            Destination requestQueue = createListener(connection);
+            final Destination requestQueue = createListener(connection);
 
             createSender(connection, requestQueue);
         } finally {
@@ -113,21 +105,21 @@ public class JmsTest extends TestCase {
     }
 
     @SuppressWarnings("unchecked")
-    private void createSender(Connection connection, Destination requestQueue) throws JMSException {
+    private void createSender(final Connection connection, final Destination requestQueue) throws JMSException {
         Session session = null;
         MessageProducer producer = null;
         MessageConsumer consumer = null;
         try {
             // create request
-            Map<String, Object> request = new TreeMap<String, Object>();
+            final Map<String, Object> request = new TreeMap<String, Object>();
             request.put("args", new Object[]{"cheese"});
 
             // create a new temp response queue
             session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            Destination responseQueue = session.createTemporaryQueue();
+            final Destination responseQueue = session.createTemporaryQueue();
 
             // Create a request messages
-            ObjectMessage requestMessage = session.createObjectMessage();
+            final ObjectMessage requestMessage = session.createObjectMessage();
             requestMessage.setJMSReplyTo(responseQueue);
             requestMessage.setObject((Serializable) request);
 
@@ -137,19 +129,19 @@ public class JmsTest extends TestCase {
 
             // wait for the response message
             consumer = session.createConsumer(responseQueue);
-            Message message = consumer.receive(1000);
+            final Message message = consumer.receive(1000);
 
             // verify message
             assertNotNull("Did not get a response message", message);
             assertTrue("Response message is not an ObjectMessage", message instanceof ObjectMessage);
-            ObjectMessage responseMessage = (ObjectMessage) message;
-            Serializable object = responseMessage.getObject();
+            final ObjectMessage responseMessage = (ObjectMessage) message;
+            final Serializable object = responseMessage.getObject();
             assertNotNull("Response ObjectMessage contains a null object");
             assertTrue("Response ObjectMessage does not contain an instance of Map", object instanceof Map);
-            Map<String, String> response = (Map<String, String>) object;
+            final Map<String, String> response = (Map<String, String>) object;
 
             // process results
-            String returnValue = (String) response.get("return");
+            final String returnValue = response.get("return");
             assertEquals("test-cheese", returnValue);
         } finally {
             MdbUtil.close(consumer);
@@ -159,32 +151,33 @@ public class JmsTest extends TestCase {
     }
 
 
-    private Destination createListener(Connection connection) throws JMSException {
+    private Destination createListener(final Connection connection) throws JMSException {
         final Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
         // Create the request Queue
-        Destination requestQueue = session.createQueue(REQUEST_QUEUE_NAME);
-        MessageConsumer consumer = session.createConsumer(requestQueue);
+        final Destination requestQueue = session.createQueue(REQUEST_QUEUE_NAME);
+        final MessageConsumer consumer = session.createConsumer(requestQueue);
         consumer.setMessageListener(new MessageListener() {
+            @Override
             @SuppressWarnings("unchecked")
-            public void onMessage(Message message) {
+            public void onMessage(final Message message) {
                 // if we got a dummy (non ObjectMessage) return
                 if (!(message instanceof ObjectMessage)) return;
 
                 MessageProducer producer = null;
                 try {
                     // process request
-                    ObjectMessage requestMessage = (ObjectMessage) message;
-                    Map<String, Object[]> request = (Map<String, Object[]>) requestMessage.getObject();
-                    Object[] args = (Object[]) request.get("args");
-                    String returnValue = "test-" + args[0];
+                    final ObjectMessage requestMessage = (ObjectMessage) message;
+                    final Map<String, Object[]> request = (Map<String, Object[]>) requestMessage.getObject();
+                    final Object[] args = request.get("args");
+                    final String returnValue = "test-" + args[0];
 
                     // create response map
-                    Map<String, Object> response = new TreeMap<String, Object>();
+                    final Map<String, Object> response = new TreeMap<String, Object>();
                     response.put("return", returnValue);
 
                     // create response message
-                    ObjectMessage responseMessage = session.createObjectMessage();
+                    final ObjectMessage responseMessage = session.createObjectMessage();
                     responseMessage.setJMSCorrelationID(requestMessage.getJMSCorrelationID());
                     responseMessage.setObject((Serializable) response);
 

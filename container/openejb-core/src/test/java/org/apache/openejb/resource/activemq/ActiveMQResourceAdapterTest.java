@@ -23,10 +23,11 @@ import org.apache.openejb.util.NetworkUtil;
 public class ActiveMQResourceAdapterTest extends TestCase {
     public void test() throws Exception {
         ActiveMQResourceAdapter resourceAdapter = new ActiveMQResourceAdapter();
-        resourceAdapter.setServerUrl("vm://localhost?async=true");
+        resourceAdapter.setServerUrl("vm://localhost?waitForStart=20000&async=true");
 
         String brokerAddress = NetworkUtil.getLocalAddress("broker:(tcp://", ")?useJmx=false");
         resourceAdapter.setBrokerXmlConfig(brokerAddress);
+        resourceAdapter.setStartupTimeout(10000);
 
         //    DataSource Default Unmanaged JDBC Database
         //

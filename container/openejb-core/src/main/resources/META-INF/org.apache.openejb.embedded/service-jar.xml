@@ -913,15 +913,20 @@
           types="ActiveMQResourceAdapter"
           class-name="org.apache.openejb.resource.activemq.ActiveMQResourceAdapter">
 
-    # Broker configuration
+    # Broker configuration URI as defined by ActiveMQ
+    # see http://activemq.apache.org/broker-configuration-uri.html
+    # BrokerXmlConfig xbean:file:conf/activemq.xml - Requires xbean-spring.jar and dependencies
     BrokerXmlConfig broker:()/localhost?persistent=false
 
     # Broker address (vm transport may not work with TxRecovery on)
-    ServerUrl vm://localhost?async=true
+    ServerUrl vm://localhost?waitForStart=20000&amp;async=true
     # ServerUrl tcp://localhost:61616
 
     # DataSource for persistence messages
-    DataSource 
+    DataSource
+
+    # How long to wait for broker startup in milliseconds
+    StartupTimeout 10000
 
   </ServiceProvider>
 

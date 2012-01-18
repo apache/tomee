@@ -32,7 +32,6 @@ public class ActiveMQFactory {
     private static Method createBroker;
     private static Method getBrokers;
     private static Object instance;
-    private static Class clazz;
     private static String brokerPrefix;
 
     private static void init() {
@@ -41,7 +40,7 @@ public class ActiveMQFactory {
 
             if (!initialized.getAndSet(true)) {
 
-                Class tmp = null;
+                Class tmp;
 
                 try {
                     tmp = Class.forName("org.apache.openejb.resource.activemq.ActiveMQ5Factory");
@@ -55,7 +54,7 @@ public class ActiveMQFactory {
                     }
                 }
 
-                clazz = tmp;
+                final Class clazz = tmp;
 
                 try {
                     instance = clazz.newInstance();
@@ -90,6 +89,7 @@ public class ActiveMQFactory {
      * Returns the prefix metafile name of the poperties file that ActiveMQ should be
      * provided with. This file is located at META-INF/services/org/apache/activemq/broker/
      * and defines the BrokerFactoryHandler to load.
+     *
      * @return String name - will be either 'amq5factory:' or 'amq4factory:' - note the trailing ':'
      */
     public static String getBrokerMetaFile() {
@@ -130,13 +130,16 @@ public class ActiveMQFactory {
     /**
      * Returns a map of configured brokers.
      * This intended for access upon RA shutdown in order to wait for the brokers to finish.
-     * @return Map<URI, BrokerService>
+     *
+     * @return Map(URI, BrokerService)
+     * @throws Exception On error
      */
     public static Collection<BrokerService> getBrokers() throws Exception {
 
         ActiveMQFactory.init();
 
         try {
+            //noinspection unchecked
             return (Collection<BrokerService>) getBrokers.invoke(instance, (Object[]) null);
         } catch (IllegalAccessException e) {
             throw new Exception("ActiveMQFactory.createBroker.IllegalAccessException", e);
