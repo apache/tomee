@@ -140,6 +140,8 @@ public class AetherBasedResolver {
         for (MavenRepositoryURL s : configuration.getRepositories()) {
             r.add(s);
         }
+        r.add(new MavenRepositoryURL("https://repository.apache.org/content/repositories/snapshots/@snapshots@id=apache-snapshot"));
+        r.add(new MavenRepositoryURL("https://repository.apache.org/content/repositories/releases/@id=apache-release"));
         return r;
     }
 
@@ -213,7 +215,7 @@ public class AetherBasedResolver {
                 m_repoSystem.install(session, request);
             }
             return artifact.getFile();
-        } catch (RepositoryException e) {
+            } catch (RepositoryException e) {
             throw new IOException("Aether Error.", e);
         }
     }
