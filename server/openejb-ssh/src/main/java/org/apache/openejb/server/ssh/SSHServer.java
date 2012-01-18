@@ -43,13 +43,9 @@ public class SSHServer implements ServerService, SelfManaging {
 
     @Override
     public void start() throws ServiceException {
-        final JaasPasswordAuthenticator authenticator = new JaasPasswordAuthenticator();
-        authenticator.setDomain(domain);
-
         sshServer = SshServer.setUpDefaultServer();
         sshServer.setPort(port);
         sshServer.setHost(bind);
-        sshServer.setPasswordAuthenticator(authenticator);
 
         final String basePath = SystemInstance.get().getBase().getDirectory().getAbsolutePath();
         if (SecurityUtils.isBouncyCastleRegistered()) {
@@ -58,7 +54,12 @@ public class SSHServer implements ServerService, SelfManaging {
             sshServer.setKeyPairProvider(new SimpleGeneratorHostKeyProvider(new File(basePath, KEY_NAME + ".ser").getPath()));
         }
 
-        sshServer.setShellFactory(new OpenEJBShellFactory(bind, port));
+        final OpenEJBShellFactory sf = new OpenEJBShellFactory(bind, port);
+        sshServer.setShellFactory(sf);
+
+        final JaasPasswordAuthenticator authenticator = new OpenEJBJaasPasswordAuthenticator(sf);
+        authenticator.setDomain(domain);
+        sshServer.setPasswordAuthenticator(authenticator);
 
         try {
             sshServer.start();
