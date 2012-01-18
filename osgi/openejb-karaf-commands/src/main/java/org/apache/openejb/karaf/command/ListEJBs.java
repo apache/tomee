@@ -21,8 +21,8 @@ import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.shell.console.OsgiCommandSupport;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.BeanType;
-import org.apache.openejb.karaf.console.table.Line;
-import org.apache.openejb.karaf.console.table.Lines;
+import org.apache.openejb.table.Line;
+import org.apache.openejb.table.Lines;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 

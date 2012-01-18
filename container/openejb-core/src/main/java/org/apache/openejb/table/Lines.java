@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-package org.apache.openejb.karaf.console.table;
+package org.apache.openejb.table;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
