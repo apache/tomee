@@ -33,7 +33,8 @@ public class CliRunnable implements Runnable {
     private static final String WELCOME = "Welcome on your $bind:$port $name server";
     private static final String OS_LINE_SEP = System.getProperty("line.separator");
     private static final String NAME;
-    private static final String PROMPT = "openejb> ";
+    private static final String PROMPT;
+    private static final String PROMPT_SUFFIX = "> ";
     private static final List<Class<? extends AbstractCommand>> COMMAND_CLASSES
             = Arrays.asList(GroovyCommand.class, GroovyFileCommand.class,
                 ListCommand.class, PropertiesCommand.class,
@@ -49,6 +50,7 @@ public class CliRunnable implements Runnable {
             // ignored, we are using a simple OpenEJB server
         }
         NAME = name;
+        PROMPT = NAME.toLowerCase() + PROMPT_SUFFIX;
     }
 
     public String lineSep;
@@ -57,18 +59,20 @@ public class CliRunnable implements Runnable {
     private OutputStream err;
     private OutputStream out;
     private InputStream sin;
+    private String username;
     private String bind;
     private int port;
     private Map<String, Class<?>> commands;
 
 
     public CliRunnable(String bind, int port) {
-        this(bind, port, null);
+        this(bind, port, PROMPT, null);
     }
 
-    public CliRunnable(String bind, int port, String sep) {
+    public CliRunnable(String bind, int port, String username, String sep) {
         this.bind = bind;
         this.port = port;
+        this.username = username;
 
         if (sep != null) { // workaround to force ConsoleReader to use another line.separator
             lineSep = sep;
@@ -136,7 +140,8 @@ public class CliRunnable implements Runnable {
                     .replace("$bind", bind)
                     .replace("$port", Integer.toString(port))
                     .replace("$name", NAME));
-            while ((line = reader.readLine(PROMPT)) != null) {
+
+            while ((line = reader.readLine(prompt())) != null) {
                 // exit simply let us go out of the loop
                 // do we need a command for it?
                 if (EXIT_COMMAND.equals(line)) {
@@ -175,6 +180,19 @@ public class CliRunnable implements Runnable {
         } catch (IOException e) {
             throw new CliRuntimeException(e);
         }
+    }
+
+    private String prompt() {
+        final StringBuilder prompt = new StringBuilder("");
+        if (username != null) {
+            prompt.append(username);
+        } else {
+            prompt.append(PROMPT);
+        }
+        prompt.append(" @ ")
+            .append(bind).append(":").append(port)
+            .append(PROMPT_SUFFIX);
+        return prompt.toString();
     }
 
     private void properties() {
