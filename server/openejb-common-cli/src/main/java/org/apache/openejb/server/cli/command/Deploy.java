@@ -17,10 +17,7 @@
 
 package org.apache.openejb.server.cli.command;
 
-import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.Deployer;
-
-import javax.naming.NamingException;
 
 public class Deploy extends AbstractCommand {
     @Override
