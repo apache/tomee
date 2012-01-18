@@ -3,6 +3,9 @@ package org.apache.openejb.server.ssh;
 import jline.ConsoleReader;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
+import org.apache.openejb.assembler.classic.cmd.Info2Properties;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.groovy.OpenEJBGroovyShell;
 import org.apache.openejb.util.helper.CommandHelper;
 import org.apache.sshd.server.Command;
@@ -20,6 +23,7 @@ public class OpenEJBCommands implements Command, Runnable {
     public static final String EXIT_COMMAND = "exit";
     private static final String GROOVY_PREFIX = "G ";
     private static final String LIST_CMD = "list";
+    private static final String PROPERTIES_CMD = "properties";
     private static final String WELCOME = "Welcome on your $bind:$port $name server";
     public static final String LINE_SEP = "\r\n"; // don't use line.separator (sshd use this one)
     public static final String OS_LINE_SEP = System.getProperty("line.separator");
@@ -35,8 +39,9 @@ public class OpenEJBCommands implements Command, Runnable {
             new ConsoleReader();
         } catch (IOException ignored) {
             // no-op
+        } finally {
+            System.setProperty("line.separator", OS_LINE_SEP);
         }
-        System.setProperty("line.separator", OS_LINE_SEP);
 
         String name = "OpenEJB";
         try {
@@ -120,6 +125,8 @@ public class OpenEJBCommands implements Command, Runnable {
                     }
                 } else if (LIST_CMD.equals(line)) {
                     list();
+                } else if (PROPERTIES_CMD.equals(line)) {
+                    properties();
                 } else {
                     write(sout, "sorry i don't understand '" + line + "'");
                 }
@@ -129,6 +136,11 @@ public class OpenEJBCommands implements Command, Runnable {
         } finally {
             cbk.onExit(0);
         }
+    }
+
+    private void properties() {
+        final OpenEjbConfiguration config = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
+        Info2Properties.printConfig(config, new PrintStream(out), LINE_SEP);
     }
 
     private void list() {
