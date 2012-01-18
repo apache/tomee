@@ -30,6 +30,7 @@ import org.apache.openejb.config.DeploymentLoader;
 import org.apache.openejb.config.UnknownModuleTypeException;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
+import org.apache.openejb.util.proxy.ProxyEJB;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
@@ -247,15 +248,9 @@ public class Deployer implements BundleListener {
 
     private void registerService(BeanContext beanContext, BundleContext context, List<Class> interfaces) {
         if (!interfaces.isEmpty()) {
-            Class<?>[] itfs = interfaces.toArray(new Class<?>[interfaces.size()]);
+            final Class<?>[] itfs = interfaces.toArray(new Class<?>[interfaces.size()]);
             try {
-                Object service;
-                if (!beanContext.isLocalbean()) {
-                    service = Proxy.newProxyInstance(itfs[0].getClassLoader(), itfs, new Handler(beanContext));
-                } else {
-                    service = LocalBeanProxyFactory.newProxyInstance(itfs[0].getClassLoader(), itfs[0], new Handler(beanContext));
-                }
-
+                final Object service = ProxyEJB.proxy(beanContext, itfs);
                 registrations.get(context.getBundle()).add(context.registerService(str(itfs), service, new Properties()));
                 LOGGER.info("EJB registered: {} for interfaces {}", beanContext.getEjbName(), interfaces);
             } catch (IllegalArgumentException iae) {
@@ -274,22 +269,6 @@ public class Deployer implements BundleListener {
             itfsStr[i] = itfs[i].getName();
         }
         return itfsStr;
-    }
-
-    private static class Handler implements InvocationHandler {
-        private BeanContext beanContext;
-
-        public Handler(BeanContext bc) {
-            beanContext = bc;
-        }
-
-        @Override
-        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            final RpcContainer container = RpcContainer.class.cast(beanContext.getContainer());
-            return container.invoke(beanContext.getDeploymentID(),
-                    beanContext.getInterfaceType(method.getDeclaringClass()),
-                    method.getDeclaringClass(), method, args, null);
-        }
     }
 
     /**
