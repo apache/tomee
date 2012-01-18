@@ -22,6 +22,19 @@ public class OpenEJBCommands implements Command, Runnable {
     public static final String OS_LINE_SEP = System.getProperty("line.separator");
     public static final String PROMPT = "openejb> ";
 
+    static {
+        System.setProperty("line.separator", LINE_SEP);
+        try {
+            // just to force the loading of this class with the set line.separator
+            // because ConsoleReader.CR is a constant and we need sometimes another value
+            // not a big issue but keeping this as a workaround
+            final ConsoleReader reader = new ConsoleReader();
+        } catch (IOException ignored) {
+            // no-op
+        }
+        System.setProperty("line.separator", OS_LINE_SEP);
+    }
+
     private OpenEJBGroovyShell shell;
     private OutputStreamWriter serr;
     private OutputStreamWriter sout;
@@ -69,12 +82,8 @@ public class OpenEJBCommands implements Command, Runnable {
     @Override
     public void run() {
         try {
-            System.setProperty("line.separator", LINE_SEP);
-            final ConsoleReader reader;
-            synchronized (OpenEJBCommands.class) {
-                reader = new ConsoleReader(sin, sout);
-            }
-            System.setProperty("line.separator", OS_LINE_SEP);
+            
+            final ConsoleReader reader = new ConsoleReader(sin, sout);
             // TODO : add completers with method names...?
 
             String name = "OpenEJB";
