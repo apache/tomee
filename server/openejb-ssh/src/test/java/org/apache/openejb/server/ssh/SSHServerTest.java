@@ -55,8 +55,8 @@ public class SSHServerTest {
         System.getProperties().remove("openejb.server.ssh.key");
     }
 
-    @Test(timeout = 1000000L)
-    public void call() throws Exception {new CountDownLatch(1).await();
+    @Test(timeout = 10000L)
+    public void call() throws Exception {
         final SshClient client = SshClient.setUpDefaultClient();
         client.start();
         try {
