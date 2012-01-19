@@ -18,6 +18,7 @@ package org.apache.openejb.server.cli;
 
 import jline.ConsoleReader;
 import jline.FileNameCompletor;
+import jline.SimpleCompletor;
 import org.apache.openejb.server.cli.command.AbstractCommand;
 import org.apache.openejb.server.cli.command.Deploy;
 import org.apache.openejb.server.cli.command.ExitCommand;
@@ -27,6 +28,8 @@ import org.apache.openejb.server.cli.command.PropertiesCommand;
 import org.apache.openejb.server.cli.command.ScriptCommand;
 import org.apache.openejb.server.cli.command.ScriptFileCommand;
 import org.apache.openejb.server.cli.command.Undeploy;
+import org.apache.openejb.util.OpenEjbVersion;
+import org.apache.openejb.util.SuperProperties;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
@@ -37,10 +40,20 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 public class CliRunnable implements Runnable {
+    private static final String BRANDING_FILE = "branding.properties";
+    private static final String WELCOME_KEY_PREFIX = "welcome_";
+    private static final String WELCOME_COMMON_KEY = WELCOME_KEY_PREFIX + "common";
+    private static final String WELCOME_OPENEJB_KEY = WELCOME_KEY_PREFIX + "openejb";
+    private static final String WELCOME_TOMEE_KEY = WELCOME_KEY_PREFIX + "tomee";
+
+    public static final String TOMEE_NAME = "TomEE";
+    public static final String OPENEJB_NAME = "OpenEJB";
+
     public static final String EXIT_COMMAND = "exit";
-    private static final String WELCOME = "Welcome on your $bind:$port $name server";
+    private static final String DEFAULT_WELCOME = "Welcome on your $bind:$port $name server";
     private static final String OS_LINE_SEP = System.getProperty("line.separator");
     private static final String NAME;
     private static final String PROMPT;
@@ -51,16 +64,26 @@ public class CliRunnable implements Runnable {
                 Deploy.class, Undeploy.class,
                 HelpCommand.class, ExitCommand.class);
 
+    private static final Properties PROPERTIES = new Properties();
+    private static final boolean tomee;
+
     static {
-        String name = "OpenEJB";
+        String name = OPENEJB_NAME;
         try {
             CliRunnable.class.getClassLoader().loadClass("org.apache.tomee.loader.TomcatHook");
-            name = "TomEE";
+            name = TOMEE_NAME;
         } catch (ClassNotFoundException cnfe) {
             // ignored, we are using a simple OpenEJB server
         }
+        tomee = TOMEE_NAME.equals(name);
         NAME = name;
         PROMPT = NAME.toLowerCase() + PROMPT_SUFFIX;
+
+        try {
+            PROPERTIES.load(CliRunnable.class.getClassLoader().getResourceAsStream(BRANDING_FILE));
+        } catch (IOException e) {
+            // no-op
+        }
     }
 
     public String lineSep;
@@ -150,13 +173,30 @@ public class CliRunnable implements Runnable {
 
             final ConsoleReader reader = new ConsoleReader(sin, streamManager.getSout());
             reader.addCompletor(new FileNameCompletor());
-            // TODO : add completers with method names...?
+            reader.addCompletor(new SimpleCompletor(commands.keySet().toArray(new String[commands.size()])));
+            // TODO : add completers
 
             String line;
-            streamManager.writeOut(WELCOME // simple replace for now, if it is mandatory we could bring velocity to do it
+            StringBuilder builtWelcome = new StringBuilder("Apache OpenEJB ")
+                    .append(OpenEjbVersion.get().getVersion())
+                    .append("    build: ")
+                    .append(OpenEjbVersion.get().getDate())
+                    .append("-")
+                    .append(OpenEjbVersion.get().getTime())
+                    .append(lineSep);
+            if (tomee) {
+                builtWelcome.append(OS_LINE_SEP).append(PROPERTIES.getProperty(WELCOME_TOMEE_KEY));
+            } else {
+                builtWelcome.append(OS_LINE_SEP).append(PROPERTIES.getProperty(WELCOME_OPENEJB_KEY));
+            }
+            builtWelcome.append(lineSep).append(PROPERTIES.getProperty(WELCOME_COMMON_KEY));
+
+            streamManager.writeOut(OpenEjbVersion.get().getUrl());
+            streamManager.writeOut(builtWelcome.toString()
                     .replace("$bind", bind)
                     .replace("$port", Integer.toString(port))
-                    .replace("$name", NAME));
+                    .replace("$name", NAME)
+                    .replace(OS_LINE_SEP, lineSep));
 
             while ((line = reader.readLine(prompt())) != null) {
                 // exit simply let us go out of the loop
