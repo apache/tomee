@@ -17,6 +17,7 @@
 
 package org.apache.openejb.arquillian.tests.jaxws;
 
+import org.apache.ziplock.WebModule;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ArchivePaths;
@@ -37,19 +38,16 @@ import static org.junit.Assert.assertEquals;
 
 @RunWith(Arquillian.class)
 public class JAXWSTest {
+
     @Deployment(testable = false)
     public static WebArchive createDeployment() {
-        return ShrinkWrap.create(WebArchive.class, "jaxws-test.war")
-                .addClass(Hello.class).addClass(HelloWS.class)
-                .addClass(Hello2.class).addClass(HelloWS2.class) // just to check conflict names in WS deployement (old bug)
-                .setWebXML(new StringAsset(Descriptors.create(WebAppDescriptor.class)
-                        .version("3.0").exportAsString()))
-                .addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("ejb-jar.xml"));
+        return new WebModule(JAXWSTest.class).getArchive();
     }
 
     @Test
     public void invoke() throws Exception {
-        final Service service = Service.create(new URL("http://localhost:" + System.getProperty("tomee.http.port", "11080") + "/jaxws-test/webservices/HelloWS?wsdl"), new QName("http://jaxws.tests.arquillian.openejb.apache.org/", "HelloWSService"));
+        final String s = JAXWSTest.class.getSimpleName();
+        final Service service = Service.create(new URL("http://localhost:" + System.getProperty("tomee.http.port", "11080") + "/" + s + "/webservices/HelloWS?wsdl"), new QName("http://jaxws.tests.arquillian.openejb.apache.org/", "HelloWSService"));
         final Hello hello = service.getPort(Hello.class);
         assertEquals("hi foo!", hello.hi("foo"));
     }
