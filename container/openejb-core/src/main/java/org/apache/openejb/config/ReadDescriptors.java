@@ -204,7 +204,7 @@ public class ReadDescriptors implements DynamicDeployer {
 
     }
 
-    private URL getUrl(Module module, String name) {
+    private static URL getUrl(Module module, String name) {
         URL url = (URL) module.getAltDDs().get(name);
         if (url == null && module.getClassLoader() != null) {
             url = module.getClassLoader().getResource("META-INF/" + name);
@@ -215,7 +215,7 @@ public class ReadDescriptors implements DynamicDeployer {
         return url;
     }
 
-    private void readResourcesXml(Module module) {
+    public static void readResourcesXml(Module module) {
         URL url = getUrl(module, "resources.xml");
         if (url != null) {
             try {
