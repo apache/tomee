@@ -14,10 +14,10 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.arquillian.tests.jaxrss.listed;
+package org.apache.openejb.arquillian.tests.jaxrs.listed;
 
 import junit.framework.Assert;
-import org.apache.openejb.arquillian.tests.jaxrss.JaxrsTest;
+import org.apache.openejb.arquillian.tests.jaxrs.JaxrsTest;
 import org.apache.ziplock.WebModule;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;

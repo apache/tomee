@@ -14,23 +14,22 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.arquillian.tests.jaxrss.scanning;
+package org.apache.openejb.arquillian.tests.jaxrs.basicapp;
 
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
-import java.util.Collections;
-import java.util.Set;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 
 /**
- * Section 2.3.2
- *
- * Since no resources are listed, they should be scanned and found
- *
  * @version $Rev$ $Date$
  */
-@ApplicationPath("/rest")
-public class ScannedApplication extends Application {
-    public Set<Class<?>> getClasses() {
-        return Collections.EMPTY_SET;
+@Path("echo")
+public class Echo {
+
+    @GET
+    @Path("/reverse/{message}")
+    public String reverse(@PathParam("message") String message) {
+
+        return new StringBuilder(message).reverse().toString();
     }
 }

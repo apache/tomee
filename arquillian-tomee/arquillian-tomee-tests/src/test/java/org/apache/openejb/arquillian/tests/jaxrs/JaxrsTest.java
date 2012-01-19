@@ -14,27 +14,22 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.arquillian.tests.jaxrss.apppath;
+package org.apache.openejb.arquillian.tests.jaxrs;
 
-import org.apache.openejb.arquillian.tests.jaxrss.noapp.Echo;
+import org.apache.ziplock.IO;
 
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.io.IOException;
+import java.net.URL;
 
 /**
- * Section 2.3.2
- * If an Application subclass is present that is not being handled by an existing servlet then the
- * servlet added by the ContainerInitializerMUST be named with the fully qualified name of the
- * Application subclass.
- *
-* @version $Rev$ $Date$
-*/
-@ApplicationPath("/rest")
-public class AnnotatedApplication extends Application {
-    public Set<Class<?>> getClasses() {
-        return new HashSet<Class<?>>(Arrays.asList(Echo.class));
+ * @version $Rev$ $Date$
+ */
+public class JaxrsTest {
+    protected String get(String path) throws IOException {
+        if (path.startsWith("/")) path = path.substring(1);
+        final String port = System.getProperty("tomee.http.port", "11080");
+        final String url = String.format("http://localhost:%s/%s/%s", port, this.getClass().getSimpleName(), path);
+
+        return IO.slurp(new URL(url));
     }
 }

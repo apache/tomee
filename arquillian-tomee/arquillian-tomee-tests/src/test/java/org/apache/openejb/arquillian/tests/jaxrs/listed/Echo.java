@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.arquillian.tests.jaxrss.listed;
+package org.apache.openejb.arquillian.tests.jaxrs.listed;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -23,8 +23,8 @@ import javax.ws.rs.PathParam;
 /**
  * @version $Rev$ $Date$
  */
-@Path("unlisted")
-public class Unlisted {
+@Path("echo")
+public class Echo {
 
     @GET
     @Path("/reverse/{message}")
