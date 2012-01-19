@@ -144,6 +144,16 @@ public class DeploymentLoader implements DeploymentFilterable {
                 }
             }
 
+            if (ResourcesModule.class.equals(moduleClass)) {
+                final AppModule appModule = new AppModule(null, jarPath);
+                final ResourcesModule module = new ResourcesModule();
+                module.getAltDDs().put("resources.xml", baseUrl);
+                ReadDescriptors.readResourcesXml(module);
+                module.initAppModule(appModule);
+                // here module is no more useful since everything is in the appmodule
+                return appModule;
+            }
+
             //We always load AppModule, as it somewhat likes a wrapper module
             if (AppModule.class.equals(moduleClass)) {
 
@@ -1475,6 +1485,10 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         if (path.endsWith("/")) {
             path = path.substring(0, path.length() - 1);
+        }
+
+        if (path.endsWith(".xml")) { // let say it is a resource module
+            return ResourcesModule.class;
         }
 
         if (descriptors.containsKey("application.xml") || path.endsWith(".ear")) {
