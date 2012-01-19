@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.server.groovy;
 
-import org.apache.openejb.server.script.OpenEJBScripter;
+import org.apache.openejb.server.cli.OpenEJBScripter;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
