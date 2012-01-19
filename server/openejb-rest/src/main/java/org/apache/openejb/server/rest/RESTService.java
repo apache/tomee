@@ -101,66 +101,71 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
         //
         //  Like this providing an Application subclass user can totally control deployed services.
 
-        if (webApp.restApplications.isEmpty()) {
+        boolean useApp = false;
+        String appPrefix = webApp.contextRoot;
+        for (String app : webApp.restApplications) { // normally a unique one but we support more
+            appPrefix = webApp.contextRoot; // if multiple application classes reinit it
+            if (!appPrefix.endsWith("/")) {
+                appPrefix += "/";
+            }
+
+            Application appInstance;
+            Class<?> appClazz;
+            try {
+                appClazz = classLoader.loadClass(app);
+                appInstance = Application.class.cast(appClazz.newInstance());
+            } catch (Exception e) {
+                throw new OpenEJBRestRuntimeException("can't create class " + app, e);
+            }
+
+            ApplicationPath path = appClazz.getAnnotation(ApplicationPath.class);
+            if (path != null) {
+                String appPath = path.value();
+                if (appPath.startsWith("/")) {
+                    appPrefix += appPath.substring(1);
+                } else {
+                    appPrefix += appPath;
+                }
+            }
+
+            Set<Object> singletons = appInstance.getSingletons();
+            for (Object o : singletons) {
+                if (o == null) {
+                    continue;
+                }
+
+                if (restEjbs.containsKey(o.getClass().getName())) {
+                    // no more a singleton if the ejb i not a singleton...but it is a weird case
+                    deployEJB(appPrefix, restEjbs.get(o.getClass().getName()).context);
+                } else {
+                    deploySingleton(appPrefix, o, appInstance, classLoader);
+                }
+            }
+            Set<Class<?>> classes = appInstance.getClasses();
+            for (Class<?> clazz : classes) {
+                if (restEjbs.containsKey(clazz.getName())) {
+                    deployEJB(appPrefix, restEjbs.get(clazz.getName()).context);
+                } else {
+                    deployPojo(appPrefix, clazz, appInstance, classLoader, injections, context);
+                }
+            }
+
+            useApp = useApp || classes.size() + singletons.size() > 0;
+            LOGGER.info("REST application deployed: " + app);
+        }
+
+        if (!useApp) {
             for (String clazz : webApp.restClass) {
                 if (restEjbs.containsKey(clazz)) {
-                    deployEJB(webApp.contextRoot, restEjbs.get(clazz).context);
+                    deployEJB(appPrefix, restEjbs.get(clazz).context);
                 } else {
                     try {
                         Class<?> loadedClazz = classLoader.loadClass(clazz);
-                        deployPojo(webApp.contextRoot, loadedClazz, null, classLoader, injections, context);
+                        deployPojo(appPrefix, loadedClazz, null, classLoader, injections, context);
                     } catch (ClassNotFoundException e) {
                         throw new OpenEJBRestRuntimeException("can't find class " + clazz, e);
                     }
                 }
-            }
-        } else {
-            for (String app : webApp.restApplications) { // normally a unique one but we support more
-                String appPrefix = webApp.contextRoot;
-                if (!appPrefix.endsWith("/")) {
-                    appPrefix += "/";
-                }
-
-                Application appInstance;
-                Class<?> appClazz;
-                try {
-                    appClazz = classLoader.loadClass(app);
-                    appInstance = Application.class.cast(appClazz.newInstance());
-                } catch (Exception e) {
-                    throw new OpenEJBRestRuntimeException("can't create class " + app, e);
-                }
-
-                ApplicationPath path = appClazz.getAnnotation(ApplicationPath.class);
-                if (path != null) {
-                    String appPath = path.value();
-                    if (appPath.startsWith("/")) {
-                        appPrefix += appPath.substring(1);
-                    } else {
-                        appPrefix += appPath;
-                    }
-                }
-
-                for (Object o : appInstance.getSingletons()) {
-                    if (o == null) {
-                        continue;
-                    }
-
-                    if (restEjbs.containsKey(o.getClass().getName())) {
-                        // no more a singleton if the ejb i not a singleton...but it is a weird case
-                        deployEJB(appPrefix, restEjbs.get(o.getClass().getName()).context);
-                    } else {
-                        deploySingleton(appPrefix, o, appInstance, classLoader);
-                    }
-                }
-                for (Class<?> clazz : appInstance.getClasses()) {
-                    if (restEjbs.containsKey(clazz.getName())) {
-                        deployEJB(appPrefix, restEjbs.get(clazz.getName()).context);
-                    } else {
-                        deployPojo(appPrefix, clazz, appInstance, classLoader, injections, context);
-                    }
-                }
-
-                LOGGER.info("REST application deployed: " + app);
             }
         }
 

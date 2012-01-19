@@ -376,9 +376,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
      */
     public void buildContainerSystem(OpenEjbConfiguration configInfo) throws Exception {
 
-
         ContainerSystemInfo containerSystemInfo = configInfo.containerSystem;
-
 
         if (configInfo.facilities.intraVmServer != null) {
             createProxyFactory(configInfo.facilities.intraVmServer);

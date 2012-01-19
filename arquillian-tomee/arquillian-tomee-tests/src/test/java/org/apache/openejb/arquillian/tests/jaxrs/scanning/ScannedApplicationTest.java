@@ -38,7 +38,7 @@ public class ScannedApplicationTest extends JaxrsTest {
 
     @Test
     public void invoke() throws Exception {
-
+        // http://localhost:11080/ScannedApplicationTest/echo/.
         Assert.assertEquals("olleh", get("/rest/echo/reverse/hello"));
 
     }
