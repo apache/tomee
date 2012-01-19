@@ -21,44 +21,46 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class GroovyFileCommand extends GroovyCommand {
+public class ScriptFileCommand extends ScriptCommand {
     @Override
     public String name() {
-        return "groovy file";
+        return "script file";
     }
 
     @Override
     public String usage() {
-        return name() + " <groovy file path>";
+        return name() + "<script file path>";
     }
 
     @Override
     public String description() {
-        return "execute groovy code contained in a file. ejb can be accessed through their ejb name in the script.";
+        return "execute script code contained in a file in the specifid language. ejb can be accessed through their ejb name in the script. The extension is used to detect the file format.";
     }
 
     @Override
     public void execute(final String cmd) {
-        if (initEvaluateMethod() == null) {
-            streamManager.writeErr("groovy is not available, add groovy-all jar in openejb libs");
+        try {
+            parse(cmd);
+        } catch (IllegalArgumentException iae) {
+            streamManager.writeErr("script cmd " + cmd + " can't be parsed");
             return;
         }
 
-        final File file = new File(cmd.substring(name().length() + 1).trim());
+        final File file = new File(script.trim());
         if (!file.exists()) {
-            streamManager.writeErr("groovy file " + file.getPath() + " doesn't exist");
+            streamManager.writeErr("script file " + file.getPath() + " doesn't exist");
             return;
         }
 
         final StringBuilder builder = new StringBuilder(1024);
-        builder.append(super.name()).append(" "); // we will run the parent command
+        builder.append(super.name()).append(" ").append(language).append(" "); // we will run the parent command
 
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new FileReader(file));
             char[] buf = new char[1024];
             int numRead;
-            while((numRead = reader.read(buf)) != -1){
+            while ((numRead = reader.read(buf)) != -1) {
                 String readData = String.valueOf(buf, 0, numRead);
                 builder.append(readData);
                 buf = new char[1024];
@@ -77,5 +79,16 @@ public class GroovyFileCommand extends GroovyCommand {
         }
 
         super.execute(builder.toString());
+    }
+
+    @Override
+    protected void parse(final String cmd) {
+        final String parseableCmd = cmd.substring(name().length() + 1);
+        final int dotIdx = parseableCmd.lastIndexOf(".");
+        if (dotIdx < 0) {
+            throw new IllegalArgumentException("bad syntax, see help");
+        }
+        script = parseableCmd.substring(0, dotIdx);
+        language = parseableCmd.substring(dotIdx, parseableCmd.length());
     }
 }
