@@ -18,9 +18,6 @@ package org.apache.openejb.server.cli;
 
 import jline.ConsoleReader;
 import jline.FileNameCompletor;
-import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
-import org.apache.openejb.assembler.classic.cmd.Info2Properties;
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.cli.command.AbstractCommand;
 import org.apache.openejb.server.cli.command.Deploy;
 import org.apache.openejb.server.cli.command.ExitCommand;
@@ -30,15 +27,12 @@ import org.apache.openejb.server.cli.command.HelpCommand;
 import org.apache.openejb.server.cli.command.ListCommand;
 import org.apache.openejb.server.cli.command.PropertiesCommand;
 import org.apache.openejb.server.cli.command.Undeploy;
-import org.apache.openejb.server.groovy.OpenEJBGroovyShell;
-import org.apache.openejb.util.helper.CommandHelper;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -71,7 +65,7 @@ public class CliRunnable implements Runnable {
 
     public String lineSep;
 
-    private OpenEJBGroovyShell shell;
+    private Object shell; // groovy jar = 6M so using reflection to be able to don't bring it
     private OutputStream err;
     private OutputStream out;
     private InputStream sin;
@@ -121,7 +115,14 @@ public class CliRunnable implements Runnable {
     }
 
     public void start() throws IOException {
-        shell = new OpenEJBGroovyShell();
+        try {
+            shell = getClass().getClassLoader()
+                        .loadClass("org.apache.openejb.server.groovy.OpenEJBGroovyShell")
+                        .newInstance();
+        } catch (Exception e) {
+            shell = null;
+        }
+
         initializeCommands();
         new Thread(this, "OpenEJB Cli").start();
     }
@@ -139,7 +140,14 @@ public class CliRunnable implements Runnable {
     }
 
     public void destroy() {
-        shell.resetLoadedClasses();
+        if (shell != null) {
+            try {
+                shell.getClass().getDeclaredMethod("resetLoadedClasses")
+                        .invoke(shell);
+            } catch (Exception e) {
+                // ignored
+            }
+        }
         commands.clear();
     }
 
@@ -209,26 +217,5 @@ public class CliRunnable implements Runnable {
             .append(bind).append(":").append(port)
             .append(PROMPT_SUFFIX);
         return prompt.toString();
-    }
-
-    private void properties() {
-        final OpenEjbConfiguration config = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
-        Info2Properties.printConfig(config, new PrintStream(out), lineSep);
-    }
-
-    private void list(final StreamManager streamManager) {
-        try {
-            CommandHelper.listEJBs(lineSep).print(new PrintStream(out));
-        } catch (Exception e) {
-            streamManager.writeErr(e);
-        }
-    }
-
-    public String getBind() {
-        return bind;
-    }
-
-    public int getPort() {
-        return port;
     }
 }
