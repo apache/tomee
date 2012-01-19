@@ -69,10 +69,37 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>org.jboss.shrinkwrap.descriptors</groupId>
+      <artifactId>shrinkwrap-descriptors-impl</artifactId>
+      <version>${version.shrinkwrap.descriptor}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.shrinkwrap.descriptors</groupId>
+      <artifactId>shrinkwrap-descriptors-api</artifactId>
+      <version>${version.shrinkwrap.descriptor}</version>
+    </dependency>
+
   </dependencies>
 
   <build>
     <plugins>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.11</version>
+        <configuration>
+          <excludes>
+            <exclude>**/AnnotatedApplicationtest.java</exclude>
+            <exclude>**/BasicApplicationTest.java</exclude>
+            <exclude>**/ScannedApplicationTes.java</exclude>
+            <exclude>**/ListedApplicationTest.java</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
@@ -148,6 +175,49 @@
       </dependencies>
     </profile>
 
+    <profile>
+      <!--
+      Added to make it easy to quickly verify if something "should" work
+      -->
+      <id>glassfish-embedded</id>
+      <properties>
+        <version.glassfish>3.1.2-b16</version.glassfish>
+        <version.arquillian.glassfish.embedded>1.0.0.CR2</version.arquillian.glassfish.embedded>
+        <version.mockito>1.9.0</version.mockito>
+        <version.maven.embedded.glassfish.plugin>3.1.1</version.maven.embedded.glassfish.plugin>
+        <version.maven.war.plugin>2.1.1</version.maven.war.plugin>
+        <version.maven.compiler.plugin>2.3.2</version.maven.compiler.plugin>
+        <version.maven.failsafe.plugin>2.11</version.maven.failsafe.plugin>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+      </properties>
+      <dependencies>
+        <dependency>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+          <version>${version.junit}</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.jboss.arquillian.junit</groupId>
+          <artifactId>arquillian-junit-container</artifactId>
+          <version>${version.arquillian}</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.glassfish.main.extras</groupId>
+          <artifactId>glassfish-embedded-all</artifactId>
+          <version>${version.glassfish}</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.jboss.arquillian.container</groupId>
+          <artifactId>arquillian-glassfish-embedded-3.1</artifactId>
+          <version>${version.arquillian.glassfish.embedded}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
   </profiles>
 
 </project>
