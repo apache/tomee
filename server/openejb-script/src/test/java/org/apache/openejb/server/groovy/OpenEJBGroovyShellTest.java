@@ -16,11 +16,13 @@
  */
 package org.apache.openejb.server.groovy;
 
+import org.apache.openejb.server.script.OpenEJBScripter;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ejb.embeddable.EJBContainer;
+import javax.script.ScriptException;
 
 import static org.junit.Assert.assertEquals;
 
@@ -38,9 +40,9 @@ public class OpenEJBGroovyShellTest {
     }
 
     @Test
-    public void call() {
-        final OpenEJBGroovyShell shell = new OpenEJBGroovyShell();
-        final Object out = shell.evaluate("Foo.foo()");
+    public void call() throws ScriptException {
+        final OpenEJBScripter shell = new OpenEJBScripter();
+        final Object out = shell.evaluate("groovy", "Foo.foo()");
         assertEquals("foo", out);
     }
 }

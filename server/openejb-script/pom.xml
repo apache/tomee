@@ -27,8 +27,8 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>openejb-groovy</artifactId>
-  <name>OpenEJB :: Server :: Groovy</name>
+  <artifactId>openejb-script</artifactId>
+  <name>OpenEJB :: Server :: Script</name>
 
   <dependencies>
     <dependency>
@@ -40,6 +40,7 @@
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-all</artifactId>
       <version>2.0.0-beta-1</version>
+      <scope>test</scope> <!-- don't deliver it -->
     </dependency>
   </dependencies>
 </project>

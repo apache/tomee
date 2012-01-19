@@ -16,57 +16,52 @@
  */
 package org.apache.openejb.server.cli.command;
 
-import java.lang.reflect.Method;
+import org.apache.openejb.server.script.OpenEJBScripter;
 
-public class GroovyCommand extends AbstractCommand {
-    public static final String GROOVY_NAME = "groovy"; // use it instead of name() because of inheritance
+public class ScriptCommand extends AbstractCommand {
+    public static final String SCRIPT_CMD = "script"; // use it instead of name() because of inheritance
 
-    protected Object shell;
-    private Method evaluateMethod = null;
+    protected OpenEJBScripter scripter;
+    protected String language;
+    protected String script;
 
     @Override
     public String name() {
-        return GROOVY_NAME;
+        return SCRIPT_CMD;
     }
 
     @Override
     public String usage() {
-        return name() + " <groovy code>";
+        return name() + " <script code>";
     }
 
     @Override
     public String description() {
-        return "execute groovy code. ejb can be accessed through their ejb name in the script.";
+        return "execute script code in the specified language. ejb can be accessed through their ejb name in the script.";
     }
 
     @Override
     public void execute(final String cmd) {
-        if (initEvaluateMethod() == null) {
-            streamManager.writeErr("groovy is not available, add groovy-all jar in openejb libs");
-            return;
-        }
-
-        final String toExec = cmd.substring(GROOVY_NAME.length() + 1).trim();
         try {
-            final Object result = evaluateMethod.invoke(shell, toExec);
+            parse(cmd);
+            final Object result = scripter.evaluate(language, script);
             streamManager.writeOut(streamManager.asString(result));
         } catch (Exception e) {
             streamManager.writeErr(e);
         }
     }
 
-    public void setShell(Object shell) {
-        this.shell = shell;
+    protected void parse(final String cmd) {
+        final String parseableCmd = cmd.substring(name().length() + 1);
+        final int spaceIdx = parseableCmd.indexOf(" ");
+        if (spaceIdx < 0) {
+            throw new IllegalArgumentException("bad syntax, see help");
+        }
+        language = parseableCmd.substring(0, spaceIdx);
+        script = parseableCmd.substring(spaceIdx + 1, parseableCmd.length());
     }
 
-    public Method initEvaluateMethod() {
-        if (shell != null) {
-            try {
-                evaluateMethod = shell.getClass().getMethod("evaluate", String.class);
-            } catch (Exception e) {
-                // ignored
-            }
-        }
-        return evaluateMethod;
+    public void setScripter(OpenEJBScripter scripter) {
+        this.scripter = scripter;
     }
 }

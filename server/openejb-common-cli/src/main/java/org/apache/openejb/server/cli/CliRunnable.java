@@ -21,12 +21,13 @@ import jline.FileNameCompletor;
 import org.apache.openejb.server.cli.command.AbstractCommand;
 import org.apache.openejb.server.cli.command.Deploy;
 import org.apache.openejb.server.cli.command.ExitCommand;
-import org.apache.openejb.server.cli.command.GroovyCommand;
-import org.apache.openejb.server.cli.command.GroovyFileCommand;
 import org.apache.openejb.server.cli.command.HelpCommand;
 import org.apache.openejb.server.cli.command.ListCommand;
 import org.apache.openejb.server.cli.command.PropertiesCommand;
+import org.apache.openejb.server.cli.command.ScriptCommand;
+import org.apache.openejb.server.cli.command.ScriptFileCommand;
 import org.apache.openejb.server.cli.command.Undeploy;
+import org.apache.openejb.server.script.OpenEJBScripter;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
@@ -46,7 +47,7 @@ public class CliRunnable implements Runnable {
     private static final String PROMPT;
     private static final String PROMPT_SUFFIX = "> ";
     private static final List<Class<? extends AbstractCommand>> COMMAND_CLASSES
-            = Arrays.asList(GroovyCommand.class, GroovyFileCommand.class,
+            = Arrays.asList(ScriptFileCommand.class, ScriptCommand.class,
                 ListCommand.class, PropertiesCommand.class,
                 Deploy.class, Undeploy.class,
                 HelpCommand.class, ExitCommand.class);
@@ -65,7 +66,7 @@ public class CliRunnable implements Runnable {
 
     public String lineSep;
 
-    private Object shell; // groovy jar = 6M so using reflection to be able to don't bring it
+    private OpenEJBScripter scripter;
     private OutputStream err;
     private OutputStream out;
     private InputStream sin;
@@ -115,14 +116,7 @@ public class CliRunnable implements Runnable {
     }
 
     public void start() throws IOException {
-        try {
-            shell = getClass().getClassLoader()
-                        .loadClass("org.apache.openejb.server.groovy.OpenEJBGroovyShell")
-                        .newInstance();
-        } catch (Exception e) {
-            shell = null;
-        }
-
+        scripter = new OpenEJBScripter();
         initializeCommands();
         new Thread(this, "OpenEJB Cli").start();
     }
@@ -140,10 +134,10 @@ public class CliRunnable implements Runnable {
     }
 
     public void destroy() {
-        if (shell != null) {
+        if (scripter != null) {
             try {
-                shell.getClass().getDeclaredMethod("resetLoadedClasses")
-                        .invoke(shell);
+                scripter.getClass().getDeclaredMethod("resetLoadedClasses")
+                        .invoke(scripter);
             } catch (Exception e) {
                 // ignored
             }
@@ -184,7 +178,7 @@ public class CliRunnable implements Runnable {
                     ObjectRecipe recipe = new ObjectRecipe(cmdClass);
                     recipe.setProperty("streamManager", streamManager);
                     recipe.setProperty("command", line);
-                    recipe.setProperty("shell", shell);
+                    recipe.setProperty("scripter", scripter);
                     recipe.setProperty("commands", commands);
 
                     recipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
