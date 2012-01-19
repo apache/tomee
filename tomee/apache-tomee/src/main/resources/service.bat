@@ -39,7 +39,8 @@ rem
 rem $Id: service.bat 1000718 2010-09-24 06:00:00Z mturk $
 rem ---------------------------------------------------------------------------
 
-set JAVA_HOME="C:/JDK"
+REM set JAVA_HOME="C:/JDK"
+
 SET proc=undefined
 
 IF /i %PROCESSOR_ARCHITECTURE% EQU X86 SET proc="%~dp0TomEE.%PROCESSOR_ARCHITECTURE%.exe"
