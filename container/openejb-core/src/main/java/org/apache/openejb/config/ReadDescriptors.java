@@ -90,25 +90,25 @@ public class ReadDescriptors implements DynamicDeployer {
 
             readValidationConfigType(ejbModule);
             readCmpOrm(ejbModule);
-            readOpenEJBXml(ejbModule);
+            readResourcesXml(ejbModule);
         }
 
         for (ClientModule clientModule : appModule.getClientModules()) {
             readAppClient(clientModule, appModule);
             readValidationConfigType(clientModule);
-            readOpenEJBXml(clientModule);
+            readResourcesXml(clientModule);
         }
 
         for (ConnectorModule connectorModule : appModule.getConnectorModules()) {
             readConnector(connectorModule, appModule);
             readValidationConfigType(connectorModule);
-            readOpenEJBXml(connectorModule);
+            readResourcesXml(connectorModule);
         }
 
         for (WebModule webModule : appModule.getWebModules()) {
             readWebApp(webModule, appModule);
             readValidationConfigType(webModule);
-            readOpenEJBXml(webModule);
+            readResourcesXml(webModule);
         }
 
         List<URL> persistenceUrls = (List<URL>) appModule.getAltDDs().get("persistence.xml");
@@ -215,7 +215,7 @@ public class ReadDescriptors implements DynamicDeployer {
         return url;
     }
 
-    private void readOpenEJBXml(Module module) {
+    private void readResourcesXml(Module module) {
         URL url = getUrl(module, "resources.xml");
         if (url != null) {
             try {
