@@ -104,9 +104,15 @@ public class TomcatRsRegistry implements RsRegistry {
 
         // get the webapp context
         Context context = (Context) host.findChild(realRoot);
+
         if (context == null && "/".equals(realRoot)) { // ROOT
             context = (Context) host.findChild("");
         }
+
+        if (context == null) {
+            throw new IllegalStateException("Invalid context '" + realRoot + "'.  Cannot find context in host " + host.getName());
+        }
+
         context.addLifecycleListener(new LifecycleListener() {
             public void lifecycleEvent(LifecycleEvent event) {
                 Context context = (Context) event.getLifecycle();
