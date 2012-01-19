@@ -31,6 +31,7 @@ import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.util.HashMap;
+import java.util.concurrent.CountDownLatch;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -54,8 +55,8 @@ public class SSHServerTest {
         System.getProperties().remove("openejb.server.ssh.key");
     }
 
-    @Test(timeout = 10000L)
-    public void call() throws Exception {
+    @Test(timeout = 1000000L)
+    public void call() throws Exception {new CountDownLatch(1).await();
         final SshClient client = SshClient.setUpDefaultClient();
         client.start();
         try {
