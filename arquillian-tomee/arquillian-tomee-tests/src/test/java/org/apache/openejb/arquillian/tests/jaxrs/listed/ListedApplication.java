@@ -14,33 +14,22 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.arquillian.tests.jaxrss.apppath;
+package org.apache.openejb.arquillian.tests.jaxrs.listed;
 
-import junit.framework.Assert;
-import org.apache.openejb.arquillian.tests.jaxrss.JaxrsTest;
-import org.apache.ziplock.WebModule;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.core.Application;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
+ * Section 2.3.2
+
  * @version $Rev$ $Date$
  */
-@RunWith(Arquillian.class)
-public class AnnotatedAppilcationTest extends JaxrsTest {
-
-    @Deployment(testable = false)
-    public static WebArchive archive() {
-        return new WebModule(AnnotatedAppilcationTest.class).getArchive();
+@ApplicationPath("/rest")
+public class ListedApplication extends Application {
+    public Set<Class<?>> getClasses() {
+        return new HashSet<Class<?>>(Arrays.asList(Echo.class));
     }
-
-    @Test
-    public void invoke() throws Exception {
-
-        Assert.assertEquals("olleh", get("/rest/echo/reverse/hello"));
-
-    }
-
 }

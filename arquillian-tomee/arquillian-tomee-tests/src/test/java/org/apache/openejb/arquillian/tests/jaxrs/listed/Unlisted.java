@@ -14,22 +14,22 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.arquillian.tests.jaxrss;
+package org.apache.openejb.arquillian.tests.jaxrs.listed;
 
-import org.apache.ziplock.IO;
-
-import java.io.IOException;
-import java.net.URL;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 
 /**
  * @version $Rev$ $Date$
  */
-public class JaxrsTest {
-    protected String get(String path) throws IOException {
-        if (path.startsWith("/")) path = path.substring(1);
-        final String port = System.getProperty("tomee.http.port", "11080");
-        final String url = String.format("http://localhost:%s/%s/%s", port, this.getClass().getSimpleName(), path);
+@Path("unlisted")
+public class Unlisted {
 
-        return IO.slurp(new URL(url));
+    @GET
+    @Path("/reverse/{message}")
+    public String reverse(@PathParam("message") String message) {
+
+        return new StringBuilder(message).reverse().toString();
     }
 }

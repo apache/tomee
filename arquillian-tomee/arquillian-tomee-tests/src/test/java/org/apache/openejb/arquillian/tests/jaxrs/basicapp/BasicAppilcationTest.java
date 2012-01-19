@@ -14,10 +14,10 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.arquillian.tests.jaxrss.noapp;
+package org.apache.openejb.arquillian.tests.jaxrs.basicapp;
 
 import junit.framework.Assert;
-import org.apache.openejb.arquillian.tests.jaxrss.JaxrsTest;
+import org.apache.openejb.arquillian.tests.jaxrs.JaxrsTest;
 import org.apache.ziplock.WebModule;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -29,11 +29,11 @@ import org.junit.runner.RunWith;
  * @version $Rev$ $Date$
  */
 @RunWith(Arquillian.class)
-public class NoAppTest extends JaxrsTest {
+public class BasicAppilcationTest extends JaxrsTest {
 
     @Deployment(testable = false)
     public static WebArchive archive() {
-        return new WebModule(NoAppTest.class).getArchive();
+        return new WebModule(BasicAppilcationTest.class).getArchive();
     }
 
     @Test

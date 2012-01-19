@@ -14,22 +14,33 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.arquillian.tests.jaxrss.listed;
+package org.apache.openejb.arquillian.tests.jaxrs.apppath;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import junit.framework.Assert;
+import org.apache.openejb.arquillian.tests.jaxrs.JaxrsTest;
+import org.apache.ziplock.WebModule;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
  * @version $Rev$ $Date$
  */
-@Path("echo")
-public class Echo {
+@RunWith(Arquillian.class)
+public class AnnotatedAppilcationTest extends JaxrsTest {
 
-    @GET
-    @Path("/reverse/{message}")
-    public String reverse(@PathParam("message") String message) {
-
-        return new StringBuilder(message).reverse().toString();
+    @Deployment(testable = false)
+    public static WebArchive archive() {
+        return new WebModule(AnnotatedAppilcationTest.class).getArchive();
     }
+
+    @Test
+    public void invoke() throws Exception {
+
+        Assert.assertEquals("olleh", get("/rest/echo/reverse/hello"));
+
+    }
+
 }

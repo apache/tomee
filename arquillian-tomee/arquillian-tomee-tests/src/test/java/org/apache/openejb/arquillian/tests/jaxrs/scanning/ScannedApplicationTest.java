@@ -14,25 +14,33 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.arquillian.tests.jaxrss.basicapp;
+package org.apache.openejb.arquillian.tests.jaxrs.scanning;
 
-import org.apache.openejb.arquillian.tests.jaxrss.noapp.Echo;
-
-import javax.ws.rs.core.Application;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import junit.framework.Assert;
+import org.apache.openejb.arquillian.tests.jaxrs.JaxrsTest;
+import org.apache.ziplock.WebModule;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
- * Section 2.3.2
- * If an Application subclass is present that is not being handled by an existing servlet then the
- * servlet added by the ContainerInitializerMUST be named with the fully qualified name of the
- * Application subclass.
- *
-* @version $Rev$ $Date$
-*/
-public class BasicApplication extends Application {
-    public Set<Class<?>> getClasses() {
-        return new HashSet<Class<?>>(Arrays.asList(Echo.class));
+ * @version $Rev$ $Date$
+ */
+@RunWith(Arquillian.class)
+public class ScannedApplicationTest extends JaxrsTest {
+
+    @Deployment(testable = false)
+    public static WebArchive archive() {
+        return new WebModule(ScannedApplicationTest.class).getArchive();
     }
+
+    @Test
+    public void invoke() throws Exception {
+
+        Assert.assertEquals("olleh", get("/rest/echo/reverse/hello"));
+
+    }
+
 }
