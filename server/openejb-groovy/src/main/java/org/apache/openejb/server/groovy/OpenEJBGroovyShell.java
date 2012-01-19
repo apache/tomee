@@ -48,7 +48,8 @@ public class OpenEJBGroovyShell extends GroovyShell {
             }
 
             if (service != null) {
-                setVariable(beanContext.getEjbName(), service);
+                // replace all non alphanumeric characters in the ejb name by an underscore (to be a groovy variable)
+                setVariable(beanContext.getEjbName().replaceAll("[^a-zA-Z0-9]", "_"), service);
             }
         }
     }
