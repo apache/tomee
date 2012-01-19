@@ -247,7 +247,7 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
         services.add(address.complete);
         listener.deployPojo(getFullContext(address.base, contextRoot), loadedClazz, app, injections, context);
 
-        LOGGER.info("deployed POJO class: " + loadedClazz.getName());
+        LOGGER.info("REST Service: " + address.complete + "  -> Pojo " + loadedClazz.getName());
     }
 
     private void deployEJB(String context, BeanContext beanContext) {
@@ -258,7 +258,7 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
         services.add(address.complete);
         listener.deployEJB(getFullContext(address.base, context), beanContext);
 
-        LOGGER.info("REST EJB deployed: " + beanContext.getBeanClass().getName());
+        LOGGER.info("REST Service: " + address.complete + "  -> EJB " + beanContext.getEjbName());
     }
 
     /**
