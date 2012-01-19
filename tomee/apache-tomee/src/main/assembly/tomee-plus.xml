@@ -62,6 +62,14 @@
         <include>*</include>
       </includes>
     </fileSet>
+	<fileSet>
+      <directory>${basedir}/src/main/resources/</directory>
+      <outputDirectory>/apache-tomee-plus-${project.version}/bin</outputDirectory>
+      <includes>
+        <include>service.*</include>
+        <include>TomEE.*</include>
+      </includes>
+    </fileSet>
   </fileSets>
 </assembly>
 
