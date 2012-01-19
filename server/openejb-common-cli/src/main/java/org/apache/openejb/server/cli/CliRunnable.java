@@ -29,7 +29,6 @@ import org.apache.openejb.server.cli.command.ScriptCommand;
 import org.apache.openejb.server.cli.command.ScriptFileCommand;
 import org.apache.openejb.server.cli.command.Undeploy;
 import org.apache.openejb.util.OpenEjbVersion;
-import org.apache.openejb.util.SuperProperties;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
@@ -53,7 +52,6 @@ public class CliRunnable implements Runnable {
     public static final String OPENEJB_NAME = "OpenEJB";
 
     public static final String EXIT_COMMAND = "exit";
-    private static final String DEFAULT_WELCOME = "Welcome on your $bind:$port $name server";
     private static final String OS_LINE_SEP = System.getProperty("line.separator");
     private static final String NAME;
     private static final String PROMPT;
