@@ -1,4 +1,4 @@
-package org.apache.openejb.server.script;
+package org.apache.openejb.server.cli;
 
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.loader.SystemInstance;
