@@ -16,14 +16,17 @@
  */
 package org.apache.openejb.server.cli.command;
 
-import org.apache.openejb.server.groovy.OpenEJBGroovyShell;
+import java.lang.reflect.Method;
 
 public class GroovyCommand extends AbstractCommand {
-    private OpenEJBGroovyShell shell;
+    public static final String GROOVY_NAME = "groovy"; // use it instead of name() because of inheritance
+
+    protected Object shell;
+    private Method evaluateMethod = null;
 
     @Override
     public String name() {
-        return "groovy";
+        return GROOVY_NAME;
     }
 
     @Override
@@ -38,14 +41,32 @@ public class GroovyCommand extends AbstractCommand {
 
     @Override
     public void execute(final String cmd) {
+        if (initEvaluateMethod() == null) {
+            streamManager.writeErr("groovy is not available, add groovy-all jar in openejb libs");
+            return;
+        }
+
+        final String toExec = cmd.substring(GROOVY_NAME.length() + 1).trim();
         try {
-            streamManager.writeOut(streamManager.asString(shell.evaluate(cmd.substring(name().length() + 1).trim())));
+            final Object result = evaluateMethod.invoke(shell, toExec);
+            streamManager.writeOut(streamManager.asString(result));
         } catch (Exception e) {
             streamManager.writeErr(e);
         }
     }
 
-    public void setShell(OpenEJBGroovyShell shell) {
+    public void setShell(Object shell) {
         this.shell = shell;
+    }
+
+    public Method initEvaluateMethod() {
+        if (shell != null) {
+            try {
+                evaluateMethod = shell.getClass().getMethod("evaluate", String.class);
+            } catch (Exception e) {
+                // ignored
+            }
+        }
+        return evaluateMethod;
     }
 }

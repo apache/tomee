@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.server.cli;
 
+import com.google.gson.GsonBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -25,6 +26,8 @@ import java.io.OutputStreamWriter;
 import java.util.Collection;
 
 public class StreamManager {
+    private static final String OS_LINE_SEP = System.getProperty("line.separator");
+
     private String lineSep;
     private OutputStreamWriter serr;
     private OutputStreamWriter sout;
@@ -60,8 +63,9 @@ public class StreamManager {
             write(serr, e.getMessage());
         } else {
             final StringBuilder error = new StringBuilder();
+            error.append(e.getMessage()).append(lineSep);
             for (StackTraceElement elt : e.getStackTrace()) {
-                error.append(elt.toString()).append(lineSep);
+                error.append("    ").append(elt.toString()).append(lineSep);
             }
             write(serr, error.toString());
         }
@@ -74,16 +78,22 @@ public class StreamManager {
         if (out instanceof Collection) {
             final StringBuilder builder = new StringBuilder();
             for (Object o : (Collection) out) {
-                builder.append(string(o)).append(lineSep);
+                builder.append(string(o, lineSep)).append(lineSep);
             }
             return builder.toString();
         }
-        return string(out);
+        return string(out, lineSep);
     }
 
-    private static String string(final Object out) {
+    private static String string(final Object out, final String lineSep) {
         if (!out.getClass().getName().startsWith("java")) {
-            return ToStringBuilder.reflectionToString(out, ToStringStyle.SHORT_PREFIX_STYLE);
+            try {
+                return new GsonBuilder().setPrettyPrinting().create().toJson(out)
+                            .replace(OS_LINE_SEP, lineSep);
+            } catch (RuntimeException re) {
+                return ToStringBuilder.reflectionToString(out, ToStringStyle.SHORT_PREFIX_STYLE)
+                            .replace(OS_LINE_SEP, lineSep);
+            }
         }
         return out.toString();
     }
