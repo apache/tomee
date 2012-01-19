@@ -27,7 +27,6 @@ import org.apache.openejb.server.cli.command.PropertiesCommand;
 import org.apache.openejb.server.cli.command.ScriptCommand;
 import org.apache.openejb.server.cli.command.ScriptFileCommand;
 import org.apache.openejb.server.cli.command.Undeploy;
-import org.apache.openejb.server.script.OpenEJBScripter;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 

@@ -43,7 +43,6 @@
     <module>openejb-cxf-transport</module>
     <module>openejb-rest</module>
     <module>openejb-ssh</module>
-    <module>openejb-script</module>
     <module>openejb-common-cli</module>
   </modules>
 </project>

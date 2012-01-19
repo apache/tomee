@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.server.cli.command;
 
-import org.apache.openejb.server.script.OpenEJBScripter;
+import org.apache.openejb.server.cli.OpenEJBScripter;
 
 public class ScriptCommand extends AbstractCommand {
     public static final String SCRIPT_CMD = "script"; // use it instead of name() because of inheritance
