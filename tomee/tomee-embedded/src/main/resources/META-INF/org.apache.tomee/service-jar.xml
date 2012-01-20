@@ -1000,7 +1000,7 @@
 
   <!--
   # ================================================
-  # Default ORB
+  # Default JavaMail
   # ================================================
   -->
   <ServiceProvider
@@ -1011,6 +1011,30 @@
           class-name="org.apache.openejb.core.MailSessionFactory">
 
   </ServiceProvider>
+
+  <!--
+  # ================================================
+  # Default JndiProvider
+  # ================================================
+  -->
+  <ServiceProvider
+          id="Default Remote Jndi Provider"
+          service="JndiProvider"
+          types="javax.naming.InitialContext"
+          class-name="org.apache.openejb.core.NoProvider">
+    # This provider allows the configuration of InitialContext
+    # objects for the lookup of resources outside this server
+    #
+    # The properties specified here go directly to the properties
+    # object passed into the constructor of the InitialContext
+    #
+    # Example properties might look like the following:
+    #
+    #     java.naming.factory.initial = org.apache.openejb.client.RemoteInitialContextFactory
+    #     java.naming.provider.url = ejbd://localhost:4201
+    #
+  </ServiceProvider>
+
 
 
 </ServiceJar>

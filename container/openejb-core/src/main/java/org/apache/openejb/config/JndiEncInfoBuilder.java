@@ -319,7 +319,17 @@ public class JndiEncInfoBuilder {
         String mappedName = reference.getMappedName();
         if (mappedName != null && mappedName.startsWith("jndi:")) {
             ReferenceLocationInfo location = new ReferenceLocationInfo();
-            location.jndiName = mappedName.substring(5);
+
+            String name = mappedName.substring(5);
+
+            if(name.startsWith("ext://")) {
+                final URI uri = URI.create(name);
+                location.jndiProviderId = uri.getHost();
+                location.jndiName = uri.getPath();
+            } else {
+                location.jndiName = name;
+            }
+
             return location;
         }
         return null;
