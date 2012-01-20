@@ -245,7 +245,15 @@ public class DeployerEjb implements Deployer {
     }
 
     public void undeploy(String moduleId) throws UndeployException, NoSuchApplicationException {
-        assembler.destroyApplication(moduleId);
+        try {
+            assembler.destroyApplication(moduleId);
+        } catch (NoSuchApplicationException nsae) {
+            try {
+                assembler.destroyApplication(realLocation(moduleId));
+            } catch (Exception e) {
+                throw nsae;
+            }
+        }
         saveDeployment(new File(moduleId), false);
     }
 }
