@@ -1295,18 +1295,15 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     public void createExternalContext(JndiContextInfo contextInfo) throws OpenEJBException {
         logger.getChildLogger("service").info("createService", contextInfo.service, contextInfo.id, contextInfo.className);
 
-        InitialContext result;
+        final InitialContext initialContext;
         try {
-            InitialContext ic = new InitialContext(contextInfo.properties);
-            result = ic;
+            initialContext = new InitialContext(contextInfo.properties);
         } catch (NamingException ne) {
-
-            throw new OpenEJBException("The remote JNDI EJB references for remote-jndi-contexts = " + contextInfo.id + "+ could not be resolved.", ne);
+            throw new OpenEJBException(String.format("JndiProvider(id=\"%s\") could not be created.  Failed to create the InitialContext using the supplied properties", contextInfo.id), ne);
         }
-        InitialContext cntx = result;
 
         try {
-            containerSystem.getJNDIContext().bind("openejb/remote_jndi_contexts/" + contextInfo.id, cntx);
+            containerSystem.getJNDIContext().bind("openejb/remote_jndi_contexts/" + contextInfo.id, initialContext);
         } catch (NamingException e) {
             throw new OpenEJBException("Cannot bind " + contextInfo.service + " with id " + contextInfo.id, e);
         }
