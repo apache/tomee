@@ -19,9 +19,11 @@ package org.apache.openejb.osgi.test;
 
 import org.apache.felix.service.command.CommandProcessor;
 import org.apache.felix.service.command.CommandSession;
+import org.apache.karaf.tooling.exam.options.KarafDistributionConfigurationFilePutOption;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.util.NetworkUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -32,9 +34,7 @@ import org.ops4j.pax.exam.junit.ProbeBuilder;
 
 import javax.inject.Inject;
 import java.io.ByteArrayOutputStream;
-import java.io.FileReader;
 import java.io.PrintStream;
-import java.util.Properties;
 
 import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.karafDistributionConfiguration;
 import static org.junit.Assert.assertNotNull;
@@ -42,7 +42,6 @@ import static org.junit.Assert.assertTrue;
 import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.CoreOptions.options;
-import static org.ops4j.pax.exam.CoreOptions.vmOption;
 import static org.osgi.framework.Constants.DYNAMICIMPORT_PACKAGE;
 
 @RunWith(JUnit4TestRunner.class)
@@ -52,16 +51,14 @@ public class OSGiKarafStartupTest {
 
     @Configuration
     public Option[] configure() throws Exception {
-        final Properties jreProperties = new Properties();
-        jreProperties.load(new FileReader("../apache-karafee/src/main/filtered-resources/etc/jre.properties"));
-        final String[] packages = trim(jreProperties.getProperty("jre-1.6").split(","));
-
         return options(
                 karafDistributionConfiguration()
                         .frameworkUrl(
                                 maven().groupId("org.apache.openejb").artifactId("apache-karafee").versionAsInProject().type("tar.gz"))
                         .name("Apache Karafee")
-                        .karafVersion("2.2.4"),
+                        .karafVersion(System.getProperty("karaf.version")),
+                new KarafDistributionConfigurationFilePutOption("etc/org.apache.karaf.management.cfg", "rmiRegistryPort", Integer.toString(NetworkUtil.getNextAvailablePort())),
+                new KarafDistributionConfigurationFilePutOption("etc/org.apache.karaf.management.cfg", "rmiServerPort", Integer.toString(NetworkUtil.getNextAvailablePort())),
                 felix()
 
                 // to debug activate next line and create a remote debug configuration in your IDE
@@ -72,14 +69,6 @@ public class OSGiKarafStartupTest {
     @ProbeBuilder
     public TestProbeBuilder probeConfiguration(final TestProbeBuilder probe) {
         return probe.setHeader(DYNAMICIMPORT_PACKAGE, " *,org.apache.felix.service.*;status=provisional");
-    }
-
-    private static String[] trim(String[] split) {
-        final String[] trimmed = new String[split.length];
-        for (int i = 0; i < split.length; i++) {
-            trimmed[i] = split[i].trim();
-        }
-        return trimmed;
     }
 
     @Test
