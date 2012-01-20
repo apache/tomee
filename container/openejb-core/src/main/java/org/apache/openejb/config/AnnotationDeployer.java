@@ -728,7 +728,7 @@ public class
 			final List<String> allowedTypes = Arrays.asList(new String[] { Boolean.class.getName(), String.class.getName(), Integer.class.getName(), Double.class.getName(), Byte.class.getName(), Short.class.getName(), Long.class.getName(), Float.class.getName(), Character.class.getName()});
 
 			try {
-				Class<?> clazz = classLoader.loadClass(cls);
+				Class<?> clazz = classLoader.loadClass(realClassName(cls));
 				Object o = clazz.newInstance();
 
 				// add any introspected properties
@@ -1061,7 +1061,8 @@ public class
                 if (beans != null) {
                     managedClasses = beans.getManagedClasses();
                     final List<String> classNames = getBeanClasses(finder);
-                    for (String className : classNames) {
+                    for (String rawClassName : classNames) {
+                        final String className = realClassName(rawClassName);
                         try {
                             final ClassLoader loader = ejbModule.getClassLoader();
                             final Class<?> clazz = loader.loadClass(className);
@@ -1501,7 +1502,7 @@ public class
             Set<Class> remoteClients = new HashSet<Class>();
 
             if (clientModule.getMainClass() != null){
-                String className = clientModule.getMainClass();
+                String className = realClassName(clientModule.getMainClass());
 
                 // OPENEJB-1063: a Main-Class should use "." instead of "/"
                 // it wasn't check before jdk 1.5 so we can get old module with
@@ -1535,7 +1536,8 @@ public class
                 }
             }
 
-            for (String className : clientModule.getRemoteClients()) {
+            for (String rawClassName : clientModule.getRemoteClients()) {
+                final String className = realClassName(rawClassName);
                 Class clazz;
                 try {
                     clazz = classLoader.loadClass(className);
@@ -1549,7 +1551,8 @@ public class
                 buildAnnotatedRefs(client, annotationFinder, classLoader);
             }
 
-            for (String className : clientModule.getLocalClients()) {
+            for (String rawClassName : clientModule.getLocalClients()) {
+                final String className = realClassName(rawClassName);
                 Class clazz;
                 try {
                     clazz = classLoader.loadClass(className);
@@ -1573,7 +1576,7 @@ public class
             for (EjbLocalRef ref : client.getEjbLocalRef()) {
                 for (InjectionTarget target : ref.getInjectionTarget()) {
                     try {
-                        Class<?> targetClass = classLoader.loadClass(target.getInjectionTargetClass());
+                        Class<?> targetClass = classLoader.loadClass(realClassName(target.getInjectionTargetClass()));
                         for (Class remoteClient : remoteClients) {
                             if (targetClass.isAssignableFrom(remoteClient)) {
                                 fail(remoteClient.getName(), "remoteClient.ejbLocalRef", target.getInjectionTargetClass(), target.getInjectionTargetName());
@@ -1587,7 +1590,7 @@ public class
             for (PersistenceContextRef ref : client.getPersistenceContextRef()) {
                 for (InjectionTarget target : ref.getInjectionTarget()) {
                     try {
-                        Class<?> targetClass = classLoader.loadClass(target.getInjectionTargetClass());
+                        Class<?> targetClass = classLoader.loadClass(realClassName(target.getInjectionTargetClass()));
                         for (Class remoteClient : remoteClients) {
                             if (targetClass.isAssignableFrom(remoteClient)) {
                                 fail(remoteClient.getName(), "remoteClient.persistenceContextRef", target.getInjectionTargetClass(), target.getInjectionTargetName());
@@ -1656,7 +1659,8 @@ public class
 
             Collection<String> restApp = webModule.getRestApplications();
             if (restApp.isEmpty()) {
-                for (String className : webModule.getRestClasses()) {
+                for (String rawClassName : webModule.getRestClasses()) {
+                    final String className = realClassName(rawClassName);
                     if (className != null) {
                         Class<?> clazz;
                         try {
@@ -1668,7 +1672,8 @@ public class
                     }
                 }
             } else {
-                for (String application : restApp) {
+                for (String rawClassName : restApp) {
+                    final String application = realClassName(rawClassName);
                     if (application != null) {
                         Class<?> clazz;
                         try {
@@ -1694,9 +1699,9 @@ public class
              * Servlet classes are scanned
              */
             for (Servlet servlet : webApp.getServlet()) {
-                String servletClass = servlet.getServletClass();
+                String servletClass = realClassName(servlet.getServletClass());
                 if (servletClass == null) { // try with servlet name, @see org.apache.openejb.arquillian.tests.jaxrs.basicapp.BasicApplication
-                    servletClass = servlet.getServletName();
+                    servletClass = realClassName(servlet.getServletName());
                 }
 
                 if (servletClass != null) {
@@ -1731,7 +1736,7 @@ public class
              * Filter classes are scanned
              */
             for (Filter filter : webApp.getFilter()) {
-                String filterClass = filter.getFilterClass();
+                String filterClass = realClassName(filter.getFilterClass());
                 if (filterClass != null) {
                     try {
                         Class clazz = classLoader.loadClass(filterClass);
@@ -1746,7 +1751,7 @@ public class
              * Listener classes are scanned
              */
             for (Listener listener : webApp.getListener()) {
-                String listenerClass = listener.getListenerClass();
+                String listenerClass = realClassName(listener.getListenerClass());
                 if (listenerClass != null) {
                     try {
                         Class clazz = classLoader.loadClass(listenerClass);
@@ -1762,7 +1767,7 @@ public class
                  * TagLib Listener classes are scanned
                  */
                 for (Listener listener : taglib.getListener()) {
-                    String listenerClass = listener.getListenerClass();
+                    String listenerClass = realClassName(listener.getListenerClass());
                     if (listenerClass != null) {
                         try {
                             Class clazz = classLoader.loadClass(listenerClass);
@@ -1777,7 +1782,7 @@ public class
                  * TagLib Tag classes are scanned
                  */
                 for (Tag tag : taglib.getTag()) {
-                    String tagClass = tag.getTagClass();
+                    String tagClass = realClassName(tag.getTagClass());
                     if (tagClass != null) {
                         try {
                             Class clazz = classLoader.loadClass(tagClass);
@@ -1801,7 +1806,7 @@ public class
                         if (port.getHandlerChains() == null) continue;
                         for (org.apache.openejb.jee.HandlerChain handlerChain : port.getHandlerChains().getHandlerChain()) {
                             for (Handler handler : handlerChain.getHandler()) {
-                                String handlerClass = handler.getHandlerClass();
+                                String handlerClass = realClassName(handler.getHandlerClass());
                                 if (handlerClass != null) {
                                     try {
                                         Class clazz = classLoader.loadClass(handlerClass);
@@ -1821,7 +1826,7 @@ public class
              */
             for (FacesConfig facesConfig : webModule.getFacesConfigs()) {
                 for (FacesManagedBean bean : facesConfig.getManagedBean()) {
-                    String managedBeanClass = bean.getManagedBeanClass().trim();
+                    String managedBeanClass = realClassName(bean.getManagedBeanClass().trim());
                     if (managedBeanClass != null) {
                         try {
                             Class clazz = classLoader.loadClass(managedBeanClass);
@@ -1839,7 +1844,8 @@ public class
                 // Add all the classes of the previous finder
                 // TODO this part can be optimized
                 final List<String> classNames = finder.getAnnotatedClassNames();
-                for (String className : classNames) {
+                for (String rawClassName : classNames) {
+                    final String className = realClassName(rawClassName);
                     try {
                         Class clazz = classLoader.loadClass(className);
                         classes.add(clazz);
@@ -1873,7 +1879,7 @@ public class
             EnterpriseBean[] enterpriseBeans = ejbModule.getEjbJar().getEnterpriseBeans();
             for (EnterpriseBean bean : enterpriseBeans) {
                 final String ejbName = bean.getEjbName();
-                final String ejbClassName = bean.getEjbClass();
+                final String ejbClassName = realClassName(bean.getEjbClass());
 
                 if (ejbClassName == null) {
                     List<String> others = new ArrayList<String>();
@@ -2313,7 +2319,7 @@ public class
             for (Interceptor interceptor : ejbModule.getEjbJar().getInterceptors()) {
                 final Class<?> clazz;
                 try {
-                    clazz = classLoader.loadClass(interceptor.getInterceptorClass());
+                    clazz = classLoader.loadClass(realClassName(interceptor.getInterceptorClass()));
                 } catch (ClassNotFoundException e) {
                     throw new OpenEJBException("Unable to load interceptor class: " + interceptor.getInterceptorClass(), e);
                 }
@@ -2775,7 +2781,7 @@ public class
             private void add(ClassLoader loader, Collection<String> names, Set<Class> classes) {
                 for (String className : names) {
                     try {
-                        classes.add(loader.loadClass(className));
+                        classes.add(loader.loadClass(realClassName(className)));
                     } catch (Throwable t) {
                         // handled in validation
                     }
@@ -4098,7 +4104,7 @@ public class
             }
             Class<?> refType = null;
             try {
-                refType = classLoader.loadClass(serviceRef.getType());
+                refType = classLoader.loadClass(realClassName(serviceRef.getType()));
             } catch (ClassNotFoundException e) {
             }
 
@@ -4163,7 +4169,7 @@ public class
                         if (port.getHandlerChains() == null) continue;
                         for (org.apache.openejb.jee.HandlerChain handlerChain : port.getHandlerChains().getHandlerChain()) {
                             for (Handler handler : handlerChain.getHandler()) {
-                                String handlerClass = handler.getHandlerClass();
+                                String handlerClass = realClassName(handler.getHandlerClass());
                                 if (handlerClass != null) {
                                     try {
                                         Class handlerClazz = ejbModule.getClassLoader().loadClass(handlerClass);
@@ -4203,7 +4209,7 @@ public class
                         for (Handler handler : handlerChain.getHandler()) {
                             if (handler.getHandlerClass() != null) {
                                 try {
-                                    Class clazz = classLoader.loadClass(handler.getHandlerClass());
+                                    Class clazz = classLoader.loadClass(realClassName(handler.getHandlerClass()));
                                     handlerClasses.add(clazz);
                                 } catch (ClassNotFoundException e) {
                                     throw new OpenEJBException("Unable to load webservice handler class: " + handler.getHandlerClass(), e);
@@ -4870,5 +4876,12 @@ public class
         return clazz.isAnnotationPresent(Stateless.class)
             || clazz.isAnnotationPresent(Singleton.class)
             || clazz.isAnnotationPresent(Stateful.class); // what a weird idea!
+    }
+
+    private static String realClassName(String rawClassName) {
+        if (rawClassName.contains("/")) {
+            return rawClassName.replace("/", ".");
+        }
+        return rawClassName;
     }
 }
