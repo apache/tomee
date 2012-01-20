@@ -14,6 +14,9 @@ rem WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 rem See the License for the specific language governing permissions and
 rem limitations under the License.
 
+rem The following line can be used to define a specific jre or jdk path
+rem set "JAVA_HOME=C:/JDK"
+
 @IF NOT "%ECHO%" == ""  ECHO %ECHO%
 @IF "%OS%" == "Windows_NT" setlocal
 
@@ -38,8 +41,6 @@ rem                        to be new service name
 rem
 rem $Id: service.bat 1000718 2010-09-24 06:00:00Z mturk $
 rem ---------------------------------------------------------------------------
-
-REM set JAVA_HOME="C:/JDK"
 
 SET proc=undefined
 
@@ -172,7 +173,9 @@ echo %EXECUTABLE% //IS//%SERVICE_NAME%
 	--StartClass org.apache.catalina.startup.Bootstrap ^
 	--StopClass org.apache.catalina.startup.Bootstrap ^
 	--StartParams start ^
-	--StopParams stop
+	--StopParams stop ^
+	--LogLevel Info ^
+	--LogPrefix TomEE
 
 	if not errorlevel 1 goto installed
 echo Failed installing '%SERVICE_NAME%' service
@@ -205,12 +208,13 @@ set PR_STDERROR=auto
 	++JvmOptions=-Djava.io.tmpdir="%CATALINA_BASE%\temp" ^
 	++JvmOptions=-Djava.util.logging.manager="org.apache.juli.ClassLoaderLogManager" ^
 	++JvmOptions=-Djava.util.logging.config.file="%CATALINA_BASE%\conf\logging.properties" ^
+	++JvmOptions=-Xmx768M ^
 	++JvmOptions=-Djava.awt.headless=true ^
 	++JvmOptions=-XX:+UseParallelGC ^
 	++JvmOptions=-XX:+AggressiveHeap ^
 	++JvmOptions=-XX:MaxPermSize=256M ^
 	++JvmOptions=-Xss2048k
-	
+
 echo The service '%SERVICE_NAME%' has been installed.
 
 :end
