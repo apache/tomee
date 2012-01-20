@@ -4879,6 +4879,9 @@ public class
     }
 
     private static String realClassName(String rawClassName) {
+        if (rawClassName == null) {
+            return null;
+        }
         if (rawClassName.contains("/")) {
             return rawClassName.replace("/", ".");
         }
