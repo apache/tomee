@@ -24,12 +24,14 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.Flushable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.util.LinkedList;
+import java.util.Properties;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -446,6 +448,68 @@ public class Installer {
                     alerts.addInfo("Append OpenEJB config to logging.properties");
                 }
             }
+        }
+
+        final File openejbSystemProperties = new File(confDir, "system.properties");
+        if (!openejbSystemProperties.exists()) {
+            FileWriter systemPropertiesWriter = null;
+            try {
+                systemPropertiesWriter = new FileWriter(openejbSystemProperties);
+
+                systemPropertiesWriter.write("# all this properties are added at JVM system properties at startup\n");
+                systemPropertiesWriter.write("# here some default Apache TomEE system properties\n");
+                systemPropertiesWriter.write("# for more information please see http://openejb.apache.org/properties-listing.html\n");
+
+                systemPropertiesWriter.write("\n");
+                systemPropertiesWriter.write("# openejb.check.classloader = false\n");
+                systemPropertiesWriter.write("# openejb.check.classloader.verbose = false\n");
+
+                systemPropertiesWriter.write("\n");
+                systemPropertiesWriter.write("# tomee.jaxws.subcontext = webservices\n");
+                systemPropertiesWriter.write("# tomee.jaxws.oldsubcontext = false\n");
+
+                systemPropertiesWriter.write("\n");
+                systemPropertiesWriter.write("# openejb.servicemanager.enabled = false\n");
+                systemPropertiesWriter.write("# openejb.descriptors.output = false\n");
+                systemPropertiesWriter.write("# openejb.strict.interface.declaration = false\n");
+                systemPropertiesWriter.write("# openejb.conf.file = conf/openejb.xml\n");
+                systemPropertiesWriter.write("# openejb.debuggable-vm-hackery = false\n");
+                systemPropertiesWriter.write("# openejb.validation.skip = false\n");
+                systemPropertiesWriter.write("# openejb.webservices.enabled = true\n");
+                systemPropertiesWriter.write("# openejb.validation.output.level = MEDIUM\n");
+                systemPropertiesWriter.write("# openejb.user.mbeans.list = *\n");
+                systemPropertiesWriter.write("# openejb.deploymentId.format = {appId}/{ejbJarId}/{ejbName}\n");
+                systemPropertiesWriter.write("# openejb.jndiname.format = {deploymentId}{interfaceType.annotationName}\n");
+                systemPropertiesWriter.write("# openejb.deployments.package.include = .*\n");
+                systemPropertiesWriter.write("# openejb.deployments.package.exclude = \n");
+                systemPropertiesWriter.write("# openejb.autocreate.jta-datasource-from-non-jta-one = true\n");
+                systemPropertiesWriter.write("# openejb.altdd.prefix = \n");
+                systemPropertiesWriter.write("# org.apache.openejb.default.system.interceptors = \n");
+                systemPropertiesWriter.write("# openejb.jndiname.failoncollision = true\n");
+                systemPropertiesWriter.write("# openejb.wsAddress.format = /{ejbDeploymentId}\n");
+                systemPropertiesWriter.write("# org.apache.openejb.server.webservices.saaj.provider = \n");
+                systemPropertiesWriter.write("# openejb.jmx.active = true\n");
+                systemPropertiesWriter.write("# openejb.nobanner = true\n");
+                systemPropertiesWriter.write("# openejb.crosscontext = false\n");
+                systemPropertiesWriter.write("# openejb.jsessionid-support = \n");
+                systemPropertiesWriter.write("# openejb.myfaces.disable-default-values = true\n");
+                systemPropertiesWriter.write("# openejb.web.xml.major = \n");
+                systemPropertiesWriter.write("# javax.persistence.provider = org.apache.openjpa.persistence.PersistenceProviderImpl\n");
+                systemPropertiesWriter.write("# javax.persistence.transactionType = \n");
+                systemPropertiesWriter.write("# javax.persistence.jtaDataSource = \n");
+                systemPropertiesWriter.write("# javax.persistence.nonJtaDataSource = \n");
+            } catch (IOException e) {
+                // ignored, this file is far to be mandatory
+            } finally {
+                if (systemPropertiesWriter != null) {
+                    try {
+                        systemPropertiesWriter.close();
+                    } catch (IOException e) {
+                        // no-op
+                    }
+                }
+            }
+
         }
 
         //
