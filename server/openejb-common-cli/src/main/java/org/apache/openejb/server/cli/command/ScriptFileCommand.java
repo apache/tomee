@@ -21,22 +21,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+@Command(name = "script file", usage = "script file <path>", description = "execute script code contained in a file in the specifid language. ejb can be accessed through their ejb name in the script. The extension is used to detect the file format.")
 public class ScriptFileCommand extends ScriptCommand {
-    @Override
-    public String name() {
-        return "script file";
-    }
-
-    @Override
-    public String usage() {
-        return name() + "<script file path>";
-    }
-
-    @Override
-    public String description() {
-        return "execute script code contained in a file in the specifid language. ejb can be accessed through their ejb name in the script. The extension is used to detect the file format.";
-    }
-
     @Override
     public void execute(final String cmd) {
         try {
@@ -53,7 +39,7 @@ public class ScriptFileCommand extends ScriptCommand {
         }
 
         final StringBuilder builder = new StringBuilder(1024);
-        builder.append(super.name()).append(" ").append(language).append(" "); // we will run the parent command
+        builder.append("script ").append(language).append(" "); // we will run the parent command
 
         BufferedReader reader = null;
         try {
@@ -83,7 +69,7 @@ public class ScriptFileCommand extends ScriptCommand {
 
     @Override
     protected void parse(final String cmd) {
-        final String parseableCmd = cmd.substring(name().length() + 1);
+        final String parseableCmd = cmd.substring(7);
         final int dotIdx = parseableCmd.lastIndexOf(".");
         if (dotIdx < 0) {
             throw new IllegalArgumentException("bad syntax, see help");

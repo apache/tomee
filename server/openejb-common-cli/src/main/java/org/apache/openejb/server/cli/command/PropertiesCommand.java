@@ -22,17 +22,8 @@ import org.apache.openejb.loader.SystemInstance;
 
 import java.io.PrintStream;
 
+@Command(name = "properties", usage = "properties", description = "show OpenEJB container properties")
 public class PropertiesCommand extends AbstractCommand {
-    @Override
-    public String name() {
-        return "properties";
-    }
-
-    @Override
-    public String description() {
-        return "show openejb container properties";
-    }
-
     @Override
     public void execute(final String cmd) {
         final OpenEjbConfiguration config = SystemInstance.get().getComponent(OpenEjbConfiguration.class);

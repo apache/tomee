@@ -18,26 +18,18 @@ package org.apache.openejb.server.cli.command;
 
 import java.util.Map;
 
+@Command(name = "help", usage = "help", description = "print this help")
 public class HelpCommand extends AbstractCommand {
     private Map<String, Class<?>> commands;
-
-    @Override
-    public String name() {
-        return "help";
-    }
-
-    @Override
-    public String description() {
-        return "print this help";
-    }
 
     @Override
     public void execute(final String cmd) {
         for (Map.Entry<String, Class<?>> command : commands.entrySet()) {
             try {
-                final AbstractCommand instance = (AbstractCommand) command.getValue().newInstance();
-                streamManager.writeOut(instance.name() + ": " + instance.description());
-                streamManager.writeOut("\tUsage: " + instance.usage());
+                final Class<?> clazz = command.getValue();
+                final Command annotation = clazz.getAnnotation(Command.class);
+                streamManager.writeOut(annotation.name() + ": " + annotation.description());
+                streamManager.writeOut("\tUsage: " + annotation.usage());
             } catch (Exception e) {
                 // ignored = command not available
             }
