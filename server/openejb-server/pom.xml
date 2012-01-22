@@ -91,10 +91,6 @@
       <artifactId>commons-cli</artifactId>
     </dependency>
     <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-    </dependency>
-    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
@@ -221,7 +217,7 @@
       org.apache.geronimo.transaction.log;version="[3.0,4)",
       org.apache.geronimo.transaction.manager;version="[3.0,4)",
       org.apache.kahadb.util;version="[5.4,6)";resolution:=optional,
-      org.apache.log4j,
+      org.apache.log4j;resolution:=optional,
       org.apache.openejb;version="[4.0,5)",
       org.apache.openejb.client;version="[4.0,5)",
       org.apache.openejb.spi;version="[4.0,5)",

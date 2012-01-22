@@ -34,11 +34,7 @@ public class TomEEConfiguration implements ContainerConfiguration {
     private boolean plusContainer = true;
     private String tomcatVersion = null;
     private String openejbVersion = "1.0.0-beta-1";
-    private String systemProperties = "openejb.log.factory = org.apache.openejb.util.Log4jLogStreamFactory\n" +
-            "openejb.logger.external = true\n" +
-            "log4j.rootLogger = info, stdout\n" +
-            "log4j.appender.stdout = org.apache.log4j.ConsoleAppender\n" +
-            "log4j.appender.stdout.layout = org.apache.log4j.SimpleLayout";
+    private String systemProperties = "";
 
     public int getHttpPort() {
         return httpPort;

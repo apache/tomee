@@ -55,7 +55,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-cxf-rs</artifactId>
-      <version>${project.version}</version>
+      <version>${openejb.version}</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
@@ -67,7 +67,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-cxf-transport</artifactId>
-      <version>${project.version}</version>
+      <version>${openejb.version}</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
@@ -79,7 +79,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-cxf</artifactId>
-      <version>${project.version}</version>
+      <version>${openejb.version}</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
@@ -91,7 +91,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-rest</artifactId>
-      <version>${project.version}</version>
+      <version>${openejb.version}</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
@@ -103,7 +103,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-webservices</artifactId>
-      <version>${project.version}</version>
+      <version>${openejb.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.openejb</groupId>

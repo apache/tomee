@@ -22,10 +22,17 @@ package org.apache.openejb.util;
  */
 
 public class Slf4jLogStreamFactory implements LogStreamFactory {
-
 	@Override
 	public LogStream createLogStream(LogCategory logCategory) {
 		return new Slf4jLogStream(logCategory);
 	}
 
+    public Slf4jLogStreamFactory() {
+        System.setProperty("openjpa.Log", "slf4j");
+        System.setProperty("org.apache.cxf.Logger", "org.apache.cxf.common.logging.Slf4jLogger");
+        // no need to configure internals:
+        // by default we are using JUL
+        // if the user set log4j he wants to configure it himself
+        // so let him doing
+    }
 }

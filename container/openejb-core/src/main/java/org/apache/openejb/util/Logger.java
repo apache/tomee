@@ -32,19 +32,31 @@ public class Logger {
     public static void configure() {
 
         //See if user factory has been specified
-        final String factoryName = System.getProperty("openejb.log.factory");
+        String factoryName = System.getProperty("openejb.log.factory", JuliLogStreamFactory.class.getName());
+        if ("jul".equalsIgnoreCase(factoryName) || "juli".equalsIgnoreCase(factoryName)) {
+            factoryName = JuliLogStreamFactory.class.getName();
+        } else if ("slf4j".equalsIgnoreCase(factoryName)) {
+            factoryName = Slf4jLogStreamFactory.class.getName();
+        } else if ("log4j".equalsIgnoreCase(factoryName)) {
+            // don't use .class to avoid to force loading since log4j is not mandatory
+            factoryName = "org.apache.openejb.util.Log4jLogStreamFactory";
+        }
 
         if (factoryName != null) {
 
             Class<?> factoryClass = null;
 
-            final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            final ClassLoader classLoader = Logger.class.getClassLoader();
 
             if (classLoader != null) {
                 try {
                     factoryClass = classLoader.loadClass(factoryName);
                 } catch (Throwable e) {
-                    //Ignore
+                    try {
+                        factoryClass = Thread.currentThread().getContextClassLoader().loadClass(factoryName);
+                    } catch (ClassNotFoundException e1) {
+                        // ignored
+                    }
                 }
             }
 
@@ -66,48 +78,8 @@ public class Logger {
                 }
             }
         }
-
-        // See if log4j is available
-        Log4jLogStreamFactory log4jLogStreamFactory = null;
-
-        try {
-            Logger.class.getClassLoader().loadClass("org.apache.log4j.Layout");
-
-            if (!System.getProperties().containsKey("org.apache.cxf.Logger")) {
-                System.setProperty("org.apache.cxf.Logger", "org.apache.cxf.common.logging.Log4jLogger");
-            }
-
-            //This will configure log4j, but we may be using slf4j later
-            log4jLogStreamFactory = new Log4jLogStreamFactory();
-
-        } catch (Throwable e) {
-            //Ignore
-        }
-
-        // Fall back to JUL if log4j is not available
-        JuliLogStreamFactory juliLogStreamFactory = null;
-        if (null == log4jLogStreamFactory) {
-            //This will configure JUL, but we may be using slf4j later
-            juliLogStreamFactory = new JuliLogStreamFactory();
-        }
-
-        // See if slf4j is available
-        try {
-            Logger.class.getClassLoader().loadClass("org.slf4j.LoggerFactory");
-
-            if (!System.getProperties().containsKey("org.apache.cxf.Logger")) {
-                System.setProperty("org.apache.cxf.Logger", "org.apache.cxf.common.logging.Slf4jLogger");
-            }
-
-            //This will delegate to either log4j or JUL
-            logStreamFactory = new Slf4jLogStreamFactory();
-            return;
-        } catch (Throwable e) {
-            //Ignore
-        }
-
-        //Fall back to either log4j or JUL
-        logStreamFactory = (null != log4jLogStreamFactory ? log4jLogStreamFactory : juliLogStreamFactory);
+        //Fall back -> JUL
+        logStreamFactory = new JuliLogStreamFactory();
     }
 
     /**

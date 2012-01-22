@@ -16,11 +16,17 @@
  */
 package org.apache.openejb.server;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.Messages;
 
-import org.apache.openejb.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.reflect.Method;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.util.Properties;
 
 /**
  * @version $Rev$ $Date$
@@ -60,15 +66,31 @@ public class ServiceLogger implements ServerService {
         throw new UnsupportedOperationException("service(in,out)");
     }
 
+    private static Method MDBput = null;
+    static {
+        try {
+            final Class<?> MDC = ServiceLogger.class.getClassLoader().loadClass("org.apache.log4j.MDC");
+            MDBput = MDC.getMethod("put", String.class, String.class);
+        } catch (Exception e) {
+            Logger.getInstance(LogCategory.OPENEJB, ServiceLogger.class.getName())
+                    .info("can't find log4j MDC class");
+        }
+    }
+    public static void MDCput(final String key, final String value) {
+        if (MDBput != null) {
+            try {
+                MDBput.invoke(null, key, value);
+            } catch (Exception e) {
+                // ignored
+            }
+        }
+    }
     
     public void service(Socket socket) throws ServiceException, IOException {
         InetAddress client = socket.getInetAddress();
 
-        try {
-            org.apache.log4j.MDC.put("HOST", client.getHostAddress());
-            org.apache.log4j.MDC.put("SERVER", getName());
-        } catch (Throwable e) {
-        }
+        MDCput("HOST", client.getHostAddress());
+        MDCput("SERVER", getName());
 
         try {
 

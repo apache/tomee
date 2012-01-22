@@ -52,22 +52,22 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-webservices</artifactId>
-      <version>${project.version}</version>
+      <version>${openejb.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-rest</artifactId>
-      <version>${project.version}</version>
+      <version>${openejb.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-cxf-rs</artifactId>
-      <version>${project.version}</version>
+      <version>${openejb.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-cxf</artifactId>
-      <version>${project.version}</version>
+      <version>${openejb.version}</version>
       <exclusions>
         <exclusion>
           <groupId>javax.xml.stream</groupId>
@@ -93,17 +93,17 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-server</artifactId>
-      <version>${project.version}</version>
+      <version>${openejb.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-ejbd</artifactId>
-      <version>${project.version}</version>
+      <version>${openejb.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-http</artifactId>
-      <version>${project.version}</version>
+      <version>${openejb.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>

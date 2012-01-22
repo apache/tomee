@@ -17,13 +17,12 @@
 package org.apache.openejb.server.derbynet;
 
 import org.apache.derby.drda.NetworkServerControl;
-import org.apache.log4j.Priority;
+import org.apache.openejb.loader.Options;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.SelfManaging;
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
-import org.apache.openejb.util.Log4jPrintWriter;
-import org.apache.openejb.loader.Options;
-import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.LoggingPrintWriter;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -78,7 +77,7 @@ public class DerbyNetworkService implements ServerService, SelfManaging {
             serverControl = new NetworkServerControl(host, port);
             //serverControl.setMaxThreads(threads);
 
-            serverControl.start(new Log4jPrintWriter("Derby", Priority.INFO));
+            serverControl.start(new LoggingPrintWriter("Derby"));
         } catch (Exception e) {
             throw new ServiceException(e);
         }

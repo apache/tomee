@@ -45,7 +45,6 @@ public class iTest extends org.apache.openejb.test.TestSuite {
         } catch (Exception e) {
             // do nothing - exception ignored
         }
-//        org.apache.log4j.BasicConfigurator.configure();
         System.setProperty("openejb.test.server", org.apache.openejb.test.IvmTestServer.class.getName());
 //        System.setProperty("openejb.test.database", org.apache.openejb.test.DerbyTestDatabase.class.getName());
         System.setProperty("openejb.test.database", org.apache.openejb.test.HsqldbTestDatabase.class.getName());

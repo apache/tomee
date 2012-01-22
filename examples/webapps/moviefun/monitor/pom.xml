@@ -128,10 +128,6 @@
           <artifactId>apacheds-core</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>nlog4j</artifactId>
-        </exclusion>
-        <exclusion>
           <groupId>org.springframework</groupId>
           <artifactId>spring</artifactId>
         </exclusion>

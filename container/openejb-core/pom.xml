@@ -284,8 +284,6 @@
           <workingDirectory>${basedir}/target</workingDirectory>
           <systemPropertyVariables>
             <openejb.home>${basedir}/target/test-classes</openejb.home>
-            <log4j.configuration>file:///${basedir}/target/classes/embedded.logging.properties
-            </log4j.configuration>
           </systemPropertyVariables>
           <excludes>
             <exclude>**/TestHandler.java</exclude>
@@ -396,6 +394,7 @@
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>commons-lang</groupId>
@@ -554,7 +553,7 @@
     <!-- Dependency of Quartz -->
     <dependency>
       <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
+      <artifactId>slf4j-jdk14</artifactId>
     </dependency>
     <!-- Dependency of Quartz -->
     <dependency>
@@ -639,8 +638,6 @@
               <workingDirectory>${basedir}/target</workingDirectory>
               <systemPropertyVariables>
                 <openejb.home>${basedir}/target/test-classes</openejb.home>
-                <log4j.configuration>file:///${basedir}/target/classes/embedded.logging.properties
-                </log4j.configuration>
               </systemPropertyVariables>
             </configuration>
           </plugin>

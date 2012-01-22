@@ -415,6 +415,8 @@ public class Installer {
 
         //
         // conf/logging.properties
+        // now we are using tomcat one of jdk one by default
+        // this test should always fail
         //
         String openejbLoggingProps = Installers.readEntry(coreJar, "logging.properties", alerts);
         if (openejbLoggingProps != null) {

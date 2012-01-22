@@ -91,7 +91,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-client</artifactId>
-      <version>${project.version}</version>
+      <version>${openejb.version}</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
@@ -103,7 +103,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-ejbd</artifactId>
-      <version>${project.version}</version>
+      <version>${openejb.version}</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
@@ -115,7 +115,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-hsql</artifactId>
-      <version>${project.version}</version>
+      <version>${openejb.version}</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
@@ -127,7 +127,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-http</artifactId>
-      <version>${project.version}</version>
+      <version>${openejb.version}</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
@@ -139,7 +139,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-jsf</artifactId>
-      <version>${project.version}</version>
+      <version>${openejb.version}</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
@@ -151,7 +151,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-server</artifactId>
-      <version>${project.version}</version>
+      <version>${openejb.version}</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
@@ -163,7 +163,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-catalina</artifactId>
-      <version>${project.version}</version>
+      <version>${openejb.version}</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
@@ -179,7 +179,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-common</artifactId>
-      <version>${project.version}</version>
+      <version>${openejb.version}</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
@@ -195,7 +195,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-loader</artifactId>
-      <version>${project.version}</version>
+      <version>${openejb.version}</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>

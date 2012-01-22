@@ -36,8 +36,6 @@ files will be created:
   conf/
     openejb.xml                (main config file)
 
-    logging.properties         (log levels and files)
-
     login.config               (jaas config file)
     users.properties           (users that can log in)
     groups.properties          (groups in which users belong)

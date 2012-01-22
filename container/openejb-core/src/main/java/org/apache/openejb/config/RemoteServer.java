@@ -227,7 +227,7 @@ public class RemoteServer {
                     if (!addedArgs.containsKey("-Djava.util.logging.manager")) {
                         argsList.add("-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager");
                     }
-                    if (!addedArgs.containsKey("-Djava.util.logging.config.file")) {
+                    if (!addedArgs.containsKey("-Djava.util.logging.config.file") && loggingProperties.exists()) {
                         argsList.add("-Djava.util.logging.config.file=" + loggingProperties.getAbsolutePath());
                     }
                     if (!addedArgs.containsKey("-Djava.io.tmpdir")) {

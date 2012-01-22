@@ -76,7 +76,6 @@
           <workingDirectory>${basedir}/target</workingDirectory>
           <systemPropertyVariables>
             <openejb.home>${basedir}/target/test-classes</openejb.home>
-            <log4j.configuration>file:///${basedir}/target/classes/embedded.logging.properties</log4j.configuration>
           </systemPropertyVariables>
           <excludes>
             <exclude>**/TestHandler.java</exclude>
@@ -129,10 +128,6 @@
       <artifactId>slf4j-api</artifactId>
       <groupId>org.slf4j</groupId>
     </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-    </dependency>
 
   </dependencies>
   <profiles>
@@ -152,10 +147,6 @@
                 <property>
                   <name>openejb.home</name>
                   <value>${basedir}/target/test-classes</value>
-                </property>
-                <property>
-                  <name>log4j.configuration</name>
-                  <value>file:///${basedir}/target/classes/embedded.logging.properties</value>
                 </property>
               </systemProperties>
             </configuration>
