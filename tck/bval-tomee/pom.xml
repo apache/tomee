@@ -197,6 +197,7 @@
             <deleteArtifacts>true</deleteArtifacts>
 
             <force.deployment>true</force.deployment>
+            <validation.provider>org.apache.bval.jsr303.ApacheValidationProvider</validation.provider>
 
             <!--<maven.failsafe.debug>true</maven.failsafe.debug>-->
             <!--<openejb.server.debug>true</openejb.server.debug>-->
