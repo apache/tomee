@@ -102,7 +102,7 @@
         <dependency> <!-- to avoid to force exclusions everywhere -->
           <groupId>${project.groupId}</groupId>
           <artifactId>openejb-core</artifactId>
-          <version>${project.parent.version}</version>
+          <version>${openejb.version}</version>
           <exclusions>
             <exclusion>
               <groupId>org.apache.openjpa</groupId>
@@ -142,7 +142,7 @@
           <groupId>${project.groupId}</groupId>
           <artifactId>openejb-core-hibernate</artifactId>
           <type>pom</type>
-          <version>${project.parent.version}</version>
+          <version>${openejb.version}</version>
           <exclusions>
             <exclusion>
               <groupId>org.apache.openejb</groupId>
@@ -169,5 +169,9 @@
       </dependencies>
     </profile>
   </profiles>
+
+  <properties>
+    <openejb.version>4.0.0-beta-2-SNAPSHOT</openejb.version>
+  </properties>
 </project>
 

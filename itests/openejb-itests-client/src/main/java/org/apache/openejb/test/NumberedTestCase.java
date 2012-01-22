@@ -36,7 +36,7 @@ public class NumberedTestCase extends Assert implements Test{
                 Method m2 = (Method)o2;
                 return m1.getName().compareTo(m2.getName());
         }
-        public boolean eqauls(Object other){
+        public boolean equals(Object other){
             if(other instanceof MethodComparator)
                 return true;
             else

@@ -119,7 +119,10 @@ public class Container {
 
         // Need to use JULI so log messages from the tests are visible
         System.setProperty("java.util.logging.manager", "org.apache.juli.ClassLoaderLogManager");
-        System.setProperty("java.util.logging.config.file", new File(conf, "logging.properties").toString());
+        final File logging = new File(conf, "logging.properties");
+        if (logging.exists()) {
+            System.setProperty("java.util.logging.config.file", logging.getAbsolutePath());
+        }
         System.setProperty("catalina.base", base.getAbsolutePath());
 
         // Trigger loading of catalina.properties
@@ -137,7 +140,6 @@ public class Container {
         System.out.println("Starting TomEE from: " + base.getAbsolutePath());
 
         String catalinaBase = base.getAbsolutePath();
-        System.setProperty("openejb.logging.embedded", "true");
         System.setProperty("openejb.deployments.classpath", "false");
         System.setProperty("catalina.home", catalinaBase);
         System.setProperty("catalina.base", catalinaBase);
@@ -304,9 +306,9 @@ public class Container {
 
     private void copyFileTo(File targetDir, String filename) throws IOException {
         InputStream is = getClass().getResourceAsStream("/org/apache/tomee/configs/" + filename);
-        FileOutputStream os = new FileOutputStream(new File(targetDir, filename));
-
-        copyStream(is, os);
+        if (is != null) { // should be null since we are using default conf
+            copyStream(is, new FileOutputStream(new File(targetDir, filename)));
+        }
     }
 
     private void copyStream(InputStream is, FileOutputStream os) throws IOException {

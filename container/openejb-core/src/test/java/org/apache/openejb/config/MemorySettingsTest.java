@@ -17,8 +17,8 @@
 package org.apache.openejb.config;
 
 import junit.framework.TestCase;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Logger;
+
+import java.util.logging.Logger;
 
 public class MemorySettingsTest extends TestCase {
 
@@ -31,13 +31,12 @@ public class MemorySettingsTest extends TestCase {
 
         System.out.println("totalMemory = " + runtime.totalMemory());
 
-        BasicConfigurator.configure();
-        Logger logger = Logger.getLogger(MemorySettingsTest.class);
+        Logger logger = Logger.getLogger(MemorySettingsTest.class.getName());
 
-        logger.error("maxMemory = " + runtime.maxMemory());
+        logger.severe("maxMemory = " + runtime.maxMemory());
 
-        logger.error("freeMemory = " + runtime.freeMemory());
+        logger.severe("freeMemory = " + runtime.freeMemory());
 
-        logger.error("totalMemory = " + runtime.totalMemory());
+        logger.severe("totalMemory = " + runtime.totalMemory());
     }
 }

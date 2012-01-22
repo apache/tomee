@@ -34,12 +34,20 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-loader</artifactId>
-      <version>${project.version}</version>
+      <version>${openejb.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.swizzle</groupId>
+      <artifactId>swizzle-stream</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.xbean</groupId>
+      <artifactId>xbean-naming</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-client</artifactId>
-      <version>${project.version}</version>
+      <version>${openejb.version}</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

@@ -25,13 +25,15 @@ import org.apache.openejb.core.builder.AppModuleBuilder;
 import org.apache.openejb.core.builder.MdbBuilder;
 import org.apache.openejb.jee.ActivationConfigProperty;
 import org.apache.openejb.jee.MessageDrivenBean;
+import org.apache.openejb.loader.SystemInstance;
+
 /*
- 1  -D<deploymentId>.activation.<property>=<value>
- 2. -D<ejbName>.activation.<property>=<value>
- 3. -D<message-listener-interface>.activation.<property>=<value>
- 4. -Dmdb.activation.<property>=<value>
- Order: 4 is overriden by 3 (and so on)
- */
+1  -D<deploymentId>.activation.<property>=<value>
+2. -D<ejbName>.activation.<property>=<value>
+3. -D<message-listener-interface>.activation.<property>=<value>
+4. -Dmdb.activation.<property>=<value>
+Order: 4 is overriden by 3 (and so on)
+*/
 public class ActivationConfigPropertyOverrideTest extends TestCase {
 
     /**
@@ -96,7 +98,9 @@ public class ActivationConfigPropertyOverrideTest extends TestCase {
     }
 
     public void testNoOverrideSetShouldNotOverride() throws OpenEJBException {
-
+        if (SystemInstance.get().getProperties().containsKey("ENTERPRISEBEAN.mdb.activation.destinationType")) {
+            SystemInstance.get().getProperties().remove("ENTERPRISEBEAN.mdb.activation.destinationType");
+        }
         System.clearProperty("ENTERPRISEBEAN.mdb.activation.destinationType");
 
         MessageDrivenBean mdb = new MdbBuilder().anMdb().withActivationProperty("destinationType", "shouldNotBeOverriddenString").build();

@@ -793,22 +793,6 @@ Title: EJB Examples
         }
     }
 
-## log4j.xml
-
-    <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
-      <appender name="console" class="org.apache.log4j.ConsoleAppender">
-        <param name="Target" value="System.out"/>
-        <layout class="org.apache.log4j.PatternLayout">
-          <param name="ConversionPattern" value="%-5p %c{1} - %m%n"/>
-        </layout>
-      </appender>
-    
-      <root>
-        <priority value="debug"/>
-        <appender-ref ref="console"/>
-      </root>
-    </log4j:configuration>
-    
 
 ## persistence.xml
 

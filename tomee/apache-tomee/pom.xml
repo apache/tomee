@@ -46,27 +46,8 @@
       <artifactId>commons-lang</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-    </dependency>
-    <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>${openejb.version}</version>
-      <type>jar</type>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>tomee-common</artifactId>
       <version>${openejb.version}</version>
       <type>jar</type>
       <scope>compile</scope>
@@ -82,6 +63,13 @@
       <groupId>org.apache.ant</groupId>
       <artifactId>ant-nodeps</artifactId>
       <version>1.7.1</version>
+      <type>jar</type>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>tomee-common</artifactId>
+      <version>${openejb.version}</version>
       <type>jar</type>
       <scope>compile</scope>
     </dependency>
@@ -312,7 +300,6 @@
 
   <properties>
     <localRepository>${settings.localRepository}</localRepository>
-    <openejb.version>4.0.0-beta-2-SNAPSHOT</openejb.version>
     <http.proxy.host>${settings.activeProxy.host}</http.proxy.host>
     <http.proxy.port>${settings.activeProxy.port}</http.proxy.port>
     <http.proxy.username>${settings.activeProxy.username}</http.proxy.username>

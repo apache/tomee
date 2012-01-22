@@ -17,9 +17,6 @@
 
 package org.superbiz.reloadable.pu;
 
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.SimpleLayout;
-import org.apache.log4j.varia.NullAppender;
 import org.apache.openjpa.persistence.StoreCacheImpl;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -36,7 +33,6 @@ import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 import java.lang.management.ManagementFactory;
-import java.util.Properties;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -55,25 +51,7 @@ public class CacheActivationTest {
 
     @BeforeClass
     public static void start() {
-        // customizing logs to print mainly sql queries
-        Properties p = new Properties();
-        p.put("openejb.nobanner", "false");
-        p.put("log4j.rootLogger", "error, N");
-        p.put("log4j.category.OpenEJB.options", "error");
-        p.put("log4j.category.OpenEJB.options", "error");
-        p.put("log4j.category.OpenEJB.server", "error");
-        p.put("log4j.category.OpenEJB.startup", "error");
-        p.put("log4j.category.OpenEJB.startup.service", "error");
-        p.put("log4j.category.OpenEJB.startup.config", "error");
-        p.put("log4j.category.openjpa.jdbc.SQL", "debug, C"); // we want sql queries
-        p.put("log4j.category.openjpa.Enhance", "error");
-        p.put("log4j.category.org.superbiz", "info, C"); // we want our own logs
-        p.put("log4j.appender.N", NullAppender.class.getName());
-        p.put("log4j.appender.C", ConsoleAppender.class.getName());
-        p.put("log4j.appender.C.layout", SimpleLayout.class.getName());
-
-        // finally starting the container
-        container = EJBContainer.createEJBContainer(p);
+        container = EJBContainer.createEJBContainer();
     }
 
     @Before

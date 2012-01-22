@@ -738,6 +738,9 @@ public class
 				for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
 					String name = propertyDescriptor.getName();
 					Class<?> type = propertyDescriptor.getPropertyType();
+                    if (type == null) {
+                        continue;
+                    }
 					if (type.isPrimitive()) {
 						type = getWrapper(type.getName());
 					}

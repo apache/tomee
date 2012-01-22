@@ -151,10 +151,6 @@ Title: Troubleshooting
             // overriding has been applied.
             p.put("log4j.category.OpenEJB.startup.service", "debug");
     
-            // Want timestamps in the log output?
-            p.put("log4j.appender.C.layout", "org.apache.log4j.PatternLayout");
-            p.put("log4j.appender.C.layout.ConversionPattern", "%d - %-5p - %m%n");
-    
             // Will output a generated ejb-jar.xml file that represents
             // 100% of the annotations used in the code.  This is a great
             // way to figure out how to do something in xml for overriding

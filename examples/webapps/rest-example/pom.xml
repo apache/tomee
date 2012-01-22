@@ -74,13 +74,6 @@
           <tomcatHttpPort>1234</tomcatHttpPort>
           <tomcatShutdownPort>13245</tomcatShutdownPort>
           <tomcatVersion>7.0.21</tomcatVersion>
-          <libs>
-            <jarArtifact>
-              <groupId>org.apache.openejb</groupId>
-              <artifactId>openejb-logging</artifactId>
-              <version>${openejb.version}</version>
-            </jarArtifact>
-          </libs>
           <webapps>
             <webappArtifact>
               <groupId>org.apache.openejb</groupId>

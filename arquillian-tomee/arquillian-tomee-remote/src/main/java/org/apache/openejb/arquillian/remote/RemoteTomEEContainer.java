@@ -109,7 +109,10 @@ public class RemoteTomEEContainer extends TomEEContainer {
             replacements.put("8005", String.valueOf(configuration.getStopPort()));
             replace(replacements, new File(openejbHome, "conf/server.xml"));
 
-            write(Thread.currentThread().getContextClassLoader().getResource("default.remote.logging.properties"), new File(openejbHome, "conf/logging.properties"));
+            final URL logging = Thread.currentThread().getContextClassLoader().getResource("default.remote.logging.properties");
+            if (logging != null) {
+                write(logging, new File(openejbHome, "conf/logging.properties"));
+            }
 
             System.setProperty("tomee.http.port", String.valueOf(configuration.getHttpPort()));
             System.setProperty("tomee.shutdown.port", String.valueOf(configuration.getStopPort()));

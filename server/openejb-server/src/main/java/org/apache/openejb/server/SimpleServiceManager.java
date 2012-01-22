@@ -117,9 +117,9 @@ public class SimpleServiceManager extends ServiceManager {
     @Override
     public void init() throws Exception {
         try {
-            org.apache.log4j.MDC.put("SERVER", "main");
+            ServiceLogger.MDCput("SERVER", "main");
             InetAddress localhost = InetAddress.getLocalHost();
-            org.apache.log4j.MDC.put("HOST", localhost.getHostName());
+            ServiceLogger.MDCput("HOST", localhost.getHostName());
         } catch (Throwable e) {
             //Ignore
         }

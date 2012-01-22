@@ -35,12 +35,6 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
     private String useDatabaseLock;
     private String startupTimeout = "60000";
 
-    public ActiveMQResourceAdapter() {
-        if (org.apache.log4j.LogManager.getRootLogger().getAllAppenders() instanceof org.apache.log4j.helpers.NullEnumeration) {
-            org.apache.log4j.BasicConfigurator.configure();
-        }
-    }
-
     public String getDataSource() {
         return dataSource;
     }
