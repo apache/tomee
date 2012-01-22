@@ -20,24 +20,17 @@ import jline.ConsoleReader;
 import jline.FileNameCompletor;
 import jline.SimpleCompletor;
 import org.apache.openejb.server.cli.command.AbstractCommand;
-import org.apache.openejb.server.cli.command.Deploy;
-import org.apache.openejb.server.cli.command.ExitCommand;
-import org.apache.openejb.server.cli.command.HelpCommand;
-import org.apache.openejb.server.cli.command.ListCommand;
-import org.apache.openejb.server.cli.command.PropertiesCommand;
-import org.apache.openejb.server.cli.command.ScriptCommand;
-import org.apache.openejb.server.cli.command.ScriptFileCommand;
-import org.apache.openejb.server.cli.command.Undeploy;
+import org.apache.openejb.server.cli.command.Command;
 import org.apache.openejb.util.OpenEjbVersion;
+import org.apache.xbean.finder.Annotated;
+import org.apache.xbean.finder.ClassFinder;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -56,14 +49,11 @@ public class CliRunnable implements Runnable {
     private static final String NAME;
     private static final String PROMPT;
     private static final String PROMPT_SUFFIX = "> ";
-    private static final List<Class<? extends AbstractCommand>> COMMAND_CLASSES
-            = Arrays.asList(ScriptFileCommand.class, ScriptCommand.class,
-                ListCommand.class, PropertiesCommand.class,
-                Deploy.class, Undeploy.class,
-                HelpCommand.class, ExitCommand.class);
 
     private static final Properties PROPERTIES = new Properties();
     private static final boolean tomee;
+    private static Map<String, Class<?>> COMMANDS = new HashMap<String, Class<?>>();
+    private static final OpenEJBScripter scripter = new OpenEJBScripter();
 
     static {
         String name = OPENEJB_NAME;
@@ -82,19 +72,30 @@ public class CliRunnable implements Runnable {
         } catch (IOException e) {
             // no-op
         }
+
+        try {
+            final ClassFinder finder = new ClassFinder(CliRunnable.class.getClassLoader());
+            for (Annotated<Class<?>> cmd : finder.findMetaAnnotatedClasses(Command.class)) {
+                try {
+                    final Command annotation = cmd.getAnnotation(Command.class);
+                    COMMANDS.put(annotation.name(), cmd.get());
+                } catch (Exception e) {
+                    // command ignored
+                }
+            }
+        } catch (Exception e) {
+            // ignored
+        }
     }
 
     public String lineSep;
 
-    private OpenEJBScripter scripter;
     private OutputStream err;
     private OutputStream out;
     private InputStream sin;
     private String username;
     private String bind;
     private int port;
-    private Map<String, Class<?>> commands;
-
 
     public CliRunnable(String bind, int port) {
         this(bind, port, PROMPT, null);
@@ -136,33 +137,11 @@ public class CliRunnable implements Runnable {
     }
 
     public void start() throws IOException {
-        scripter = new OpenEJBScripter();
-        initializeCommands();
         new Thread(this, "OpenEJB Cli").start();
     }
 
-    private void initializeCommands() {
-        commands = new HashMap<String, Class<?>>();
-
-        for (Class<? extends AbstractCommand> cmd : COMMAND_CLASSES) {
-            try {
-                commands.put(cmd.newInstance().name(), cmd);
-            } catch (Exception e) {
-                // command ignored
-            }
-        }
-    }
-
     public void destroy() {
-        if (scripter != null) {
-            try {
-                scripter.getClass().getDeclaredMethod("resetLoadedClasses")
-                        .invoke(scripter);
-            } catch (Exception e) {
-                // ignored
-            }
-        }
-        commands.clear();
+        // no-op
     }
 
     public void run() {
@@ -171,7 +150,7 @@ public class CliRunnable implements Runnable {
 
             final ConsoleReader reader = new ConsoleReader(sin, streamManager.getSout());
             reader.addCompletor(new FileNameCompletor());
-            reader.addCompletor(new SimpleCompletor(commands.keySet().toArray(new String[commands.size()])));
+            reader.addCompletor(new SimpleCompletor(COMMANDS.keySet().toArray(new String[COMMANDS.size()])));
             // TODO : add completers
 
             String line;
@@ -204,7 +183,7 @@ public class CliRunnable implements Runnable {
                 }
 
                 Class<?> cmdClass = null;
-                for (Map.Entry<String, Class<?>> cmd : commands.entrySet()) {
+                for (Map.Entry<String, Class<?>> cmd : COMMANDS.entrySet()) {
                     if (line.startsWith(cmd.getKey())) {
                         cmdClass = cmd.getValue();
                         break;
@@ -216,7 +195,7 @@ public class CliRunnable implements Runnable {
                     recipe.setProperty("streamManager", streamManager);
                     recipe.setProperty("command", line);
                     recipe.setProperty("scripter", scripter);
-                    recipe.setProperty("commands", commands);
+                    recipe.setProperty("commands", COMMANDS);
 
                     recipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
                     recipe.allow(Option.IGNORE_MISSING_PROPERTIES);

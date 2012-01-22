@@ -18,27 +18,11 @@ package org.apache.openejb.server.cli.command;
 
 import org.apache.openejb.server.cli.OpenEJBScripter;
 
+@Command(name = "script", usage = "script <code>", description = "execute script code in the specified language. ejb can be accessed through their ejb name in the script.")
 public class ScriptCommand extends AbstractCommand {
-    public static final String SCRIPT_CMD = "script"; // use it instead of name() because of inheritance
-
     protected OpenEJBScripter scripter;
     protected String language;
     protected String script;
-
-    @Override
-    public String name() {
-        return SCRIPT_CMD;
-    }
-
-    @Override
-    public String usage() {
-        return name() + " <script code>";
-    }
-
-    @Override
-    public String description() {
-        return "execute script code in the specified language. ejb can be accessed through their ejb name in the script.";
-    }
 
     @Override
     public void execute(final String cmd) {
@@ -52,7 +36,7 @@ public class ScriptCommand extends AbstractCommand {
     }
 
     protected void parse(final String cmd) {
-        final String parseableCmd = cmd.substring(name().length() + 1);
+        final String parseableCmd = cmd.substring(7);
         final int spaceIdx = parseableCmd.indexOf(" ");
         if (spaceIdx < 0) {
             throw new IllegalArgumentException("bad syntax, see help");

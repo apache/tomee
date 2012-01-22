@@ -19,28 +19,14 @@ package org.apache.openejb.server.cli.command;
 
 import org.apache.openejb.assembler.Deployer;
 
+@Command(name = "undeploy", usage = "undeploy <location>", description = "undeploy an application. Note the location should be the same than for deploy")
 public class Undeploy extends AbstractCommand {
-    @Override
-    public String name() {
-        return "undeploy";
-    }
-
-    @Override
-    public String usage() {
-        return name() + "<location>";
-    }
-
     @Override
     public void execute(String cmd) {
         try {
-            lookup(Deployer.class, "openejb/DeployerBusinessRemote").undeploy(cmd.substring(name().length()).trim());
+            lookup(Deployer.class, "openejb/DeployerBusinessRemote").undeploy(cmd.substring(8).trim());
         } catch (Exception e) {
             streamManager.writeErr(e);
         }
-    }
-
-    @Override
-    public String description() {
-        return "undeploy an application. Note the location should be the same than for deploy";
     }
 }
