@@ -199,7 +199,6 @@
                 <replace file="${openejb.home}/conf/server.xml" token="8443" value="${tomee.ssl.port}" />
                 <replace file="${openejb.home}/conf/server.xml" token="8005" value="${tomee.shutdown.port}" />
                 <replace file="${openejb.home}/conf/server.xml" token="8009" value="${tomee.ajp.port}" />
-                <copy file="src/main/conf/logging.properties" tofile="${openejb.home}/conf/logging.properties" overwrite="true" />
               </target>
             </configuration>
           </execution>
