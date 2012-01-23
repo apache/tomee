@@ -255,7 +255,11 @@ public class DeployerEjb implements Deployer {
             try {
                 assembler.destroyApplication(realLocation(moduleId));
             } catch (Exception e) {
-                throw nsae;
+                try {
+                    assembler.destroyApplication(new File(moduleId).getAbsolutePath());
+                } catch (Exception e2) {
+                    throw nsae;
+                }
             }
         }
         saveDeployment(new File(moduleId), false);
