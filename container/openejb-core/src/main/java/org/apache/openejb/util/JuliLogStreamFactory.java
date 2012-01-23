@@ -18,7 +18,10 @@ package org.apache.openejb.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
+import java.util.TreeMap;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.LogManager;
@@ -35,6 +38,12 @@ public class JuliLogStreamFactory implements LogStreamFactory {
 
     static {
         final Class<LogCategory> clazz = LogCategory.class;
+        final List<String> loggerNames = new ArrayList<String>();
+        final Enumeration<String> names = LogManager.getLogManager().getLoggerNames();
+        while (names.hasMoreElements()) {
+            loggerNames.add(names.nextElement());
+        }
+
         for (Field constant : clazz.getFields()) {
             int modifiers = constant.getModifiers();
             if (Modifier.isPublic(modifiers) && Modifier.isStatic(modifiers)) {
@@ -44,16 +53,10 @@ public class JuliLogStreamFactory implements LogStreamFactory {
                 } catch (IllegalAccessException e) {
                     continue;
                 }
-
-                final Enumeration<String> names = LogManager.getLogManager().getLoggerNames();
-                boolean init = true;
-                while (names.hasMoreElements()) {
-                    if (names.nextElement().startsWith(name)) {
-                        init = false;
-                        break;
-                    }
+                if (name.contains(".")) { // only parents
+                    continue;
                 }
-                if (init) { // no conf
+                if (!loggerNames.contains(name)) { // no conf
                     final Logger logger = java.util.logging.Logger.getLogger(name);
                     logger.setUseParentHandlers(false);
                     LogManager.getLogManager().addLogger(logger);
