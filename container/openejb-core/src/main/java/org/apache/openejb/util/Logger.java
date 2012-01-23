@@ -40,6 +40,8 @@ public class Logger {
         } else if ("log4j".equalsIgnoreCase(factoryName)) {
             // don't use .class to avoid to force loading since log4j is not mandatory
             factoryName = "org.apache.openejb.util.Log4jLogStreamFactory";
+        } else if ("pax".equalsIgnoreCase(factoryName)) {
+            factoryName = "org.apache.openejb.util.PaxLogStreamFactory";
         }
 
         if (factoryName != null) {
