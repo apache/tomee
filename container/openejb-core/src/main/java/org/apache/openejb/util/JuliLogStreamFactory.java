@@ -16,9 +16,6 @@
  */
 package org.apache.openejb.util;
 
-import org.apache.openejb.assembler.classic.WebAppBuilder;
-import org.apache.openejb.loader.SystemInstance;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -39,10 +36,11 @@ public class JuliLogStreamFactory implements LogStreamFactory {
     }
 
     static {
+        final boolean tomee = is("org.apache.tomee.catalina.TomcatLoader");
+        final boolean embedded = is("org.apache.tomee.embedded.Container");
+
         // if embedded case enhance a bit logging if not set
-        if (SystemInstance.get().getComponent(WebAppBuilder.class) == null
-                || System.getProperty("tomee.ejbcontainer.http.port") != null
-                || System.getProperty("tomee.arquillian.http") != null) {
+        if (!tomee || embedded) {
             final Class<LogCategory> clazz = LogCategory.class;
             final List<String> loggerNames = new ArrayList<String>();
             final Enumeration<String> names = LogManager.getLogManager().getLoggerNames();
@@ -75,6 +73,15 @@ public class JuliLogStreamFactory implements LogStreamFactory {
                     }
                 }
             }
+        }
+    }
+
+    private static boolean is(String classname) {
+        try {
+            JuliLogStreamFactory.class.getClassLoader().loadClass(classname);
+            return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 }
