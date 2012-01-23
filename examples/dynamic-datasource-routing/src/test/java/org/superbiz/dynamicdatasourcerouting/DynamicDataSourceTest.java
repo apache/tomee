@@ -17,11 +17,11 @@
 package org.superbiz.dynamicdatasourcerouting;
 
 import org.apache.openejb.core.LocalInitialContextFactory;
-import org.apache.openejb.resource.jdbc.Router;
 import org.junit.Test;
 
 import javax.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -93,7 +93,7 @@ public class DynamicDataSourceTest {
         properties.setProperty("My Router.DefaultDataSourceName", "database1");
 
         // routed datasource
-        properties.setProperty("Routed Datasource", "new://Resource?provider=RoutedDataSource&type=" + Router.class.getName());
+        properties.setProperty("Routed Datasource", "new://Resource?provider=RoutedDataSource&type=" + DataSource.class.getName());
         properties.setProperty("Routed Datasource.Router", "My Router");
 
         Context ctx = EJBContainer.createEJBContainer(properties).getContext();
