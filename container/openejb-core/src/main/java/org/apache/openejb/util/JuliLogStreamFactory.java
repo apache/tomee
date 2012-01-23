@@ -16,6 +16,9 @@
  */
 package org.apache.openejb.util;
 
+import org.apache.openejb.assembler.classic.WebAppBuilder;
+import org.apache.openejb.loader.SystemInstance;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -37,34 +40,39 @@ public class JuliLogStreamFactory implements LogStreamFactory {
     }
 
     static {
-        final Class<LogCategory> clazz = LogCategory.class;
-        final List<String> loggerNames = new ArrayList<String>();
-        final Enumeration<String> names = LogManager.getLogManager().getLoggerNames();
-        while (names.hasMoreElements()) {
-            loggerNames.add(names.nextElement());
-        }
+        // if embedded case enhance a bit logging if not set
+        if (SystemInstance.get().getComponent(WebAppBuilder.class) == null
+                || System.getProperty("tomee.ejbcontainer.http.port") != null
+                || System.getProperty("tomee.arquillian.http") != null) {
+            final Class<LogCategory> clazz = LogCategory.class;
+            final List<String> loggerNames = new ArrayList<String>();
+            final Enumeration<String> names = LogManager.getLogManager().getLoggerNames();
+            while (names.hasMoreElements()) {
+                loggerNames.add(names.nextElement());
+            }
 
-        for (Field constant : clazz.getFields()) {
-            int modifiers = constant.getModifiers();
-            if (Modifier.isPublic(modifiers) && Modifier.isStatic(modifiers)) {
-                final String name;
-                try {
-                    name = ((LogCategory) constant.get(null)).getName();
-                } catch (IllegalAccessException e) {
-                    continue;
-                }
-                if (name.contains(".")) { // only parents
-                    continue;
-                }
-                if (!loggerNames.contains(name)) { // no conf
-                    final Logger logger = java.util.logging.Logger.getLogger(name);
-                    logger.setUseParentHandlers(false);
-                    LogManager.getLogManager().addLogger(logger);
-                    if (logger.getHandlers().length == 0) {
-                        logger.addHandler(new ConsoleHandler());
+            for (Field constant : clazz.getFields()) {
+                int modifiers = constant.getModifiers();
+                if (Modifier.isPublic(modifiers) && Modifier.isStatic(modifiers)) {
+                    final String name;
+                    try {
+                        name = ((LogCategory) constant.get(null)).getName();
+                    } catch (IllegalAccessException e) {
+                        continue;
                     }
-                    for (Handler h : logger.getHandlers()) {
-                        h.setFormatter(new SingleLineFormatter());
+                    if (name.contains(".")) { // only parents
+                        continue;
+                    }
+                    if (!loggerNames.contains(name)) { // no conf
+                        final Logger logger = java.util.logging.Logger.getLogger(name);
+                        logger.setUseParentHandlers(false);
+                        LogManager.getLogManager().addLogger(logger);
+                        if (logger.getHandlers().length == 0) {
+                            logger.addHandler(new ConsoleHandler());
+                        }
+                        for (Handler h : logger.getHandlers()) {
+                            h.setFormatter(new SingleLineFormatter());
+                        }
                     }
                 }
             }
