@@ -98,10 +98,10 @@ public class EmbeddedTomEEContainer extends EJBContainer {
                 }
                 if (port <= 0) {
                     port = NetworkUtil.getNextAvailablePort();
-                    System.setProperty(TOMEE_EJBCONTAINER_HTTP_PORT, Integer.toString(port));
                 }
                 configuration.setHttpPort(port);
             }
+            System.setProperty(TOMEE_EJBCONTAINER_HTTP_PORT, Integer.toString(configuration.getHttpPort()));
             tomEEContainer.container.setup(configuration);
             try {
                 tomEEContainer.container.start();
