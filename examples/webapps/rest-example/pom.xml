@@ -67,6 +67,14 @@
         </configuration>
       </plugin>
       <plugin>
+        <groupId>org.apache.openejb</groupId>
+        <artifactId>tomee-maven-plugin</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <configuration>
+          <tomeeVersion>1.0.0-beta-2-SNAPSHOT</tomeeVersion>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>com.googlecode.t7mp</groupId>
         <artifactId>maven-t7-plugin</artifactId>
         <version>0.9.7</version>
