@@ -1,4 +1,4 @@
-package org.apache.openejb.logging;
+package org.apache.openejb.util;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
