@@ -16,31 +16,26 @@
  */
 package org.apache.openejb.resolver;
 
-import org.apache.openejb.assembler.LocationResolver;
 import org.apache.openejb.loader.FileUtils;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.resolver.http.Helper;
+import org.apache.openejb.loader.LocationResolver;
 import org.apache.openejb.resolver.maven.Handler;
 import org.apache.openejb.resolver.maven.Parser;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.net.URI;
 import java.net.URL;
+
+import static org.apache.openejb.loader.ProvisioningUtil.cacheFile;
 
 public class Resolver implements LocationResolver {
     public static final String MVN_PREFIX = "mvn:";
-    public static final String OPENEJB_DEPLOYER_CACHE_FOLDER = "openejb.deployer.cache.folder";
-    public static final String HTTP_PREFIX = "http";
 
     public String resolve(final String rawLocation) throws Exception {
-        final String cache = System.getProperty(OPENEJB_DEPLOYER_CACHE_FOLDER, "temp");
         if (rawLocation.startsWith(MVN_PREFIX) && rawLocation.length() > MVN_PREFIX.length()) {
 
             final String info = rawLocation.substring(MVN_PREFIX.length());
             final Parser parser = new Parser(info);
-            final File file = new File(SystemInstance.get().getBase().getDirectory(),
-                    cache + File.separator + parser.getArtifactPath());
+            final File file = cacheFile(parser.getArtifactPath());
             if (!file.exists()) {
                 try {
                     final URL url = new URL(MVN_PREFIX.substring(MVN_PREFIX.length() - 1), "localhost", -1, info, new Handler());
@@ -56,28 +51,7 @@ public class Resolver implements LocationResolver {
                 }
             }
             return file.getPath();
-        } else if (rawLocation.startsWith(HTTP_PREFIX)) {
-            final File file = new File(SystemInstance.get().getBase().getDirectory(),
-                    cache + File.separator + lastPart(rawLocation));
-            final URI uri = new URI(rawLocation);
-            Helper.copyTryingProxies(uri, file);
-            return file.getAbsolutePath();
         }
         return rawLocation;
-    }
-
-    /**
-     * location looks like xxxx/X/x/X/Y.
-     * we suppose location doesn't end with a /
-     *
-     * @param location input
-     * @return Y
-     */
-    private String lastPart(final String location) {
-        final int idx = location.lastIndexOf('/');
-        if (idx <= 0) {
-            return location;
-        }
-        return location.substring(idx + 1, location.length());
     }
 }
