@@ -50,6 +50,8 @@ import java.util.Set;
 * @version $Rev$ $Date$
 */
 public class NewLoaderLogic {
+    public static final String ADDITIONAL_EXCLUDES = System.getProperty("openejb.additional.exclude");
+    public static final String ADDITIONAL_INCLUDE = System.getProperty("openejb.additional.include");
 
     private static final Logger logger = DeploymentLoader.logger;
     
@@ -146,8 +148,7 @@ public class NewLoaderLogic {
     }
 
     public static UrlSet applyBuiltinExcludes(UrlSet urlSet) throws MalformedURLException {
-
-        Filter filter = Filters.prefixes(
+        final List<String> excludes = Arrays.asList(
                 "ApacheJMeter",
                 "XmlSchema-",
                 "aether-",
@@ -222,7 +223,8 @@ public class NewLoaderLogic {
                 "logkit-",
                 "maven-",
                 "mbean-annotation-api-",
-                "myfaces-",
+                "myfaces-api",
+                "myfaces-core",
                 "neethi-",
                 "nekohtml-",
                 "openejb-api",
@@ -268,8 +270,26 @@ public class NewLoaderLogic {
                 "xml-resolver-",
                 "xmlrpc-",
                 "xmlsec-",
-                "xmlunit-"
-        );
+                "xmlunit-");
+        if (ADDITIONAL_EXCLUDES != null) {
+            for (String exclude : ADDITIONAL_EXCLUDES.split(",")) {
+                excludes.add(exclude.trim());
+            }
+        }
+        if (ADDITIONAL_INCLUDE != null) { // include = not excluded
+            for (String rawInclude : ADDITIONAL_INCLUDE.split(",")) {
+                final String include = rawInclude.trim();
+                final Iterator<String> excluded = excludes.iterator();
+                while (excluded.hasNext()) {
+                    if (excluded.next().startsWith(include)) {
+                        excluded.remove();
+                    }
+                }
+            }
+        }
+
+        final Filter filter = Filters.prefixes(excludes.toArray(new String[excludes.size()]));
+        
 
 //        filter = Filters.optimize(filter, new PatternFilter(".*/openejb-.*"));
         List<URL> urls = urlSet.getUrls();
