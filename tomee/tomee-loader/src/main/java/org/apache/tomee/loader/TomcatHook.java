@@ -17,11 +17,22 @@
  */
 package org.apache.tomee.loader;
 
+import org.apache.openejb.assembler.LocationResolver;
 import org.apache.openejb.loader.Embedder;
 import org.apache.openejb.loader.SystemInstance;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * This class should only be loadded and used via reflection from TomcatEmbedder.
@@ -55,6 +66,9 @@ import java.util.Properties;
  * See org.apache.tomee.catalina.TomcatLoader for the next part of the story
  */
 class TomcatHook {
+    static final String ADDITIONAL_LIB_CONFIG = "provisioning.properties";
+    static final String ZIP_KEY = "zip";
+    static final String JAR_KEY = "jar";
     
     /**
      * Using openejb.war path, it sets several required
@@ -143,12 +157,21 @@ class TomcatHook {
                 System.setProperty("tomcat.built", serverBuilt);
             }
         } catch (Throwable e) {
+            // no-op
         }
 
         if( properties.getProperty("openejb.libs") == null){
             throw new NullPointerException("openejb.libs property is not set");
         }
 
+        // manage additional libraries
+        try {
+            addAdditionalLibraries(SystemInstance.get().getBase().getDirectory("conf"), libDir);
+        } catch (IOException e) {
+            // ignored
+        }
+
+        // set the embedder
         final Embedder embedder = new Embedder("org.apache.tomee.catalina.TomcatLoader");
         SystemInstance.get().setComponent(Embedder.class, embedder);
         try {
@@ -164,6 +187,157 @@ class TomcatHook {
             embedder.init(properties);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private static void addAdditionalLibraries(final File confDir, final File libDir) throws IOException {
+        final File conf = new File(confDir, ADDITIONAL_LIB_CONFIG);
+        if (!conf.exists()) {
+            return;
+        }
+
+        final Properties additionalLibProperties = new Properties();
+        additionalLibProperties.load(new FileInputStream(conf));
+
+        final List<String> libToCopy = new ArrayList<String>();
+        final String toCopy = additionalLibProperties.getProperty(JAR_KEY);
+        if (toCopy != null) {
+            for (String lib : toCopy.split(",")) {
+                libToCopy.add(realLocation(lib.trim()));
+            }
+        }
+        final String toExtract = additionalLibProperties.getProperty(ZIP_KEY);
+        if (toExtract != null) {
+            for (String zip : toExtract.split(",")) {
+                libToCopy.addAll(extract(zip));
+            }
+        }
+
+        for (String lib : libToCopy) {
+            copy(new File(lib), libDir);
+        }
+    }
+
+    private static void copy(final File file, final File lib) throws IOException {
+        final File dest = new File(lib, file.getName());
+        if (dest.exists()) {
+            return;
+        }
+
+        FileInputStream fis = null;
+        FileOutputStream fos = null;
+        try {
+            fis = new FileInputStream(file);
+            fos = new FileOutputStream(dest);
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = fis.read(buffer)) != -1) {
+                fos.write(buffer, 0, length);
+            }
+            fos.flush();
+        } finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException e) {
+                    // ignored
+                }
+            }
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    // ignored
+                }
+            }
+        }
+
+    }
+
+    private static Collection<String> extract(final String zip) throws IOException {
+        final File tmp = new File(SystemInstance.get().getBase().getDirectory(), "temp");
+        if (!tmp.exists()) {
+            tmp.mkdirs();
+        }
+
+        final File zipFile = new File(realLocation(zip));
+        final File extracted = new File(tmp, zipFile.getName().replace(".zip", ""));
+        if (extracted.exists()) {
+            return Collections.emptyList();
+        }
+
+        unzip(zipFile, extracted);
+        return list(extracted);
+    }
+
+    private static Collection<String> list(File dir) {
+        final Collection<String> libs = new ArrayList<String>();
+        for (File file : dir.listFiles()) {
+            if (file.isDirectory()) {
+                libs.addAll(list(file));
+            } else {
+                libs.add(file.getAbsolutePath());
+            }
+        }
+        return libs;
+    }
+
+    private static String realLocation(String rawLocation) {
+        final Class<?> clazz;
+        try {
+            clazz = TomcatHook.class.getClassLoader().loadClass("org.apache.openejb.resolver.Resolver");
+            final LocationResolver instance = (LocationResolver) clazz.newInstance();
+            return instance.resolve(rawLocation);
+        } catch (Exception e) {
+            return rawLocation;
+        }
+    }
+
+    public static void unzip(final File source, final File targetDirectory) throws IOException {
+        OutputStream os = null;
+        ZipInputStream is = null;
+        try {
+            is = new ZipInputStream(new FileInputStream(source));
+            ZipEntry entry;
+
+            while ((entry = is.getNextEntry()) != null) {
+                final String name = entry.getName();
+                final File file = new File(targetDirectory, name);
+
+                if (name.endsWith("/")) {
+                    file.mkdirs();
+                } else {
+                    file.createNewFile();
+
+                    int bytesRead;
+                    byte data[] = new byte[8192];
+
+                    os = new FileOutputStream(file);
+                    while ((bytesRead = is.read(data)) != -1) {
+                        os.write(data, 0, bytesRead);
+                    }
+
+                    is.closeEntry();
+                }
+
+            }
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (Exception e) {
+                    // no-op
+                }
+            }
+
+            if (os != null) {
+                try {
+                    os.close();
+                } catch (Exception e) {
+                    // no-op
+                }
+            }
+
         }
     }
 }
