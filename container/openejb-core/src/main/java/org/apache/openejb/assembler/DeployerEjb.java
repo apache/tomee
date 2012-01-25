@@ -50,6 +50,7 @@ import java.util.TreeMap;
 
 import static javax.ejb.TransactionManagementType.BEAN;
 import static org.apache.openejb.config.ConfigurationFactory.ADDITIONAL_DEPLOYMENTS;
+import static org.apache.openejb.loader.ProvisioningUtil.realLocation;
 
 @Stateless(name = "openejb/Deployer")
 @Remote(Deployer.class)
@@ -234,17 +235,6 @@ public class DeployerEjb implements Deployer {
             JaxbOpenejb.marshal(AdditionalDeployments.class, additionalDeployments, new FileOutputStream(config));
         } catch (Exception e) {
             LOGGER.error("can't save the added app, will not be present next time you'll start", e);
-        }
-    }
-
-    private String realLocation(String rawLocation) throws Exception {
-        final Class<?> clazz;
-        try {
-            clazz = DeployerEjb.class.getClassLoader().loadClass("org.apache.openejb.resolver.Resolver");
-            final LocationResolver instance = (LocationResolver) clazz.newInstance();
-            return instance.resolve(rawLocation);
-        } catch (ClassNotFoundException e) {
-            return rawLocation;
         }
     }
 

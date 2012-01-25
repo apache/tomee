@@ -17,22 +17,14 @@
  */
 package org.apache.tomee.loader;
 
-import org.apache.openejb.assembler.LocationResolver;
 import org.apache.openejb.loader.Embedder;
-import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.SystemInstance;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.Proxy;
-import java.net.ProxySelector;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -40,6 +32,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import static org.apache.openejb.loader.ProvisioningUtil.realLocation;
 
 /**
  * This class should only be loadded and used via reflection from TomcatEmbedder.
@@ -288,64 +282,6 @@ class TomcatHook {
             }
         }
         return libs;
-    }
-
-    // this part is mainly copied from other files because here it is difficult to factorize code
-    // since we don't know how openejb is installed and which classes are available
-
-    private static String realLocation(String rawLocation) {
-        final Class<?> clazz;
-        try {
-            clazz = TomcatHook.class.getClassLoader().loadClass("org.apache.openejb.resolver.Resolver");
-            final LocationResolver instance = (LocationResolver) clazz.newInstance();
-            return instance.resolve(rawLocation);
-        } catch (Exception e) {
-            if (rawLocation.startsWith("http")) { // copied from resolver
-                final File file = new File(SystemInstance.get().getBase().getDirectory(),
-                        TEMP_DIR + File.separator + lastPart(rawLocation));
-
-                String path = null;
-                try {
-                    path = copyTryingProxies(new URI(rawLocation), file);
-                } catch (Exception e1) {
-                    // ignored
-                }
-
-                if (path == null) {
-                    return rawLocation;
-                }
-                return path;
-            }
-            return rawLocation;
-        }
-    }
-
-    private static String lastPart(final String location) {
-        final int idx = location.lastIndexOf('/');
-        if (idx <= 0) {
-            return location;
-        }
-        return location.substring(idx + 1, location.length());
-    }
-
-    public static String copyTryingProxies(final URI source, final File destination) throws Exception {
-        final URL url = source.toURL();
-        for (Proxy proxy : ProxySelector.getDefault().select(source)) {
-            InputStream is;
-
-            // try to connect
-            try {
-                URLConnection urlConnection = url.openConnection(proxy);
-                urlConnection.setConnectTimeout(10000);
-                is = urlConnection.getInputStream();
-            } catch (IOException e) {
-                continue;
-            }
-
-            FileUtils.copy(new FileOutputStream(destination), is);
-            return destination.getAbsolutePath();
-        }
-        return null;
     }
 
     public static void unzip(final File source, final File targetDirectory) throws IOException {
