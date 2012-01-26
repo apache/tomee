@@ -71,45 +71,85 @@ public class Logger {
 
         if (factoryName != null) {
 
-            Class<?> factoryClass = null;
-
-            final ClassLoader classLoader = Logger.class.getClassLoader();
-
-            if (classLoader != null) {
-                try {
-                    factoryClass = classLoader.loadClass(factoryName);
-                } catch (Throwable e) {
-                    try {
-                        factoryClass = Thread.currentThread().getContextClassLoader().loadClass(factoryName);
-                    } catch (ClassNotFoundException e1) {
-                        // ignored
-                    }
-                }
-            }
-
-            if (factoryClass == null) {
-                try {
-                    factoryClass = Class.forName(factoryName);
-                } catch (Throwable e) {
-                    //Ignore
-                }
-            }
-
-            if (factoryClass != null) {
-                try {
-                    //Try and use the user specified factory
-                    logStreamFactory = (LogStreamFactory) factoryClass.newInstance();
-                    return;
-                } catch (Throwable e) {
-                    //Ignore
-                }
-            }
+            logStreamFactory = createFactory(factoryName);
         }
 
-        if (isLog4jImplied())
+        if (isLog4jImplied()) {
+            logStreamFactory = createFactory("org.apache.openejb.util.Log4jLogStreamFactory");
+        }
 
         //Fall back -> JUL
-        logStreamFactory = new JuliLogStreamFactory();
+        if (logStreamFactory == null) {
+            logStreamFactory = new JuliLogStreamFactory();
+        }
+
+        checkForIgnoredLog4jConfig();
+    }
+
+    private static void checkForIgnoredLog4jConfig() {
+        if (logStreamFactory.getClass().getName().equals("org.apache.openejb.util.Log4jLogStreamFactory")) return;
+
+        try {
+            final Properties configFile = log4j(loadLoggingProperties());
+
+            final Properties systemProperties = log4j(SystemInstance.get().getProperties());
+
+            if (configFile.size() == 0 && systemProperties.size() == 0) return;
+
+            final LogStream stream = logStreamFactory.createLogStream(LogCategory.OPENEJB);
+
+            stream.warn("Log4j not installed. The following properties will be ignored.");
+
+            final String format = "Ignored %s property '%s'";
+
+            for (Object key : configFile.keySet()) {
+                stream.warn(String.format(format, "conf/logging.properties", key));
+            }
+
+            for (Object key : systemProperties.keySet()) {
+                stream.warn(String.format(format, "Property overrides", key));
+            }
+        } catch (Throwable e) {
+            // added strong catch block just in case
+            // This check is only a convenience
+        }
+    }
+
+    private static LogStreamFactory createFactory(String factoryName) {
+
+        final Class<?> factoryClass = load(factoryName);
+
+        if (factoryClass == null) return null;
+
+        try {
+            //Try and use the user specified factory
+            return (LogStreamFactory) factoryClass.newInstance();
+        } catch (Throwable e) {
+            //Ignore
+        }
+
+        return null;
+    }
+
+    private static Class<?> load(String factoryName) {
+        try {
+            final ClassLoader classLoader = Logger.class.getClassLoader();
+            return classLoader.loadClass(factoryName);
+        } catch (Throwable e) {
+        }
+
+        try {
+            final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+            return contextClassLoader.loadClass(factoryName);
+        } catch (Throwable e1) {
+        }
+
+        try {
+            return Class.forName(factoryName);
+        } catch (Throwable  e2) {
+        }
+
+        return null;
     }
 
     /**
@@ -224,14 +264,17 @@ public class Logger {
 
     public static boolean isLog4jImplied() {
 
-        final Properties configFile = log4j(loadLoggingProperties());
-
-        final Properties systemProperties = log4j(SystemInstance.get().getProperties());
-
         final List<String> locations = new ArrayList<String>();
 
-        if (configFile.size() > 0) locations.add("conf/logging.properties");
-        if (systemProperties.size() > 0) locations.add("Properties overrides");
+        {
+            final Properties configFile = log4j(loadLoggingProperties());
+
+            final Properties systemProperties = log4j(SystemInstance.get().getProperties());
+
+            if (configFile.size() > 0) locations.add("conf/logging.properties");
+            if (systemProperties.size() > 0) locations.add("Properties overrides");
+        }
+
 
         if (locations.size() > 0) {
             if (exists("org.apache.log4j.Logger")) {
@@ -241,10 +284,6 @@ public class Logger {
                 return true;
 
             } else {
-                System.out.println(String.format("Log4j settings specified in %s will be ignored as Log4j has not been added to the classpath.", Join.join(" and ", locations)));
-
-                printIgnored(configFile, "conf/logging.properties");
-                printIgnored(systemProperties, "Property overrides");
 
                 return false;
             }
@@ -253,21 +292,8 @@ public class Logger {
         return false;
     }
 
-    private static void printIgnored(Properties systemProperties, String location) {
-        for (Object key : systemProperties.keySet()) {
-            final String s = String.format("Ignored %s property '%s'", location, key);
-            System.out.println(s);
-        }
-    }
-
     private static boolean exists(String s) {
-        try {
-            final ClassLoader loader = Thread.currentThread().getContextClassLoader();
-            loader.loadClass(s);
-            return true;
-        } catch (Throwable e) {
-            return false;
-        }
+        return load(s) != null;
     }
 
     private static Properties log4j(Properties system) {
