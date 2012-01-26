@@ -224,7 +224,7 @@ public class NewLoaderLogic {
                 "maven-",
                 "mbean-annotation-api-",
                 "myfaces-api",
-                "myfaces-core",
+                "myfaces-impl",
                 "neethi-",
                 "nekohtml-",
                 "openejb-api",
