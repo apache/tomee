@@ -16,8 +16,17 @@
  */
 package org.apache.openejb.util;
 
+import org.apache.openejb.loader.SystemInstance;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.MissingResourceException;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
 public class Logger {
@@ -33,14 +42,30 @@ public class Logger {
 
         //See if user factory has been specified
         String factoryName = System.getProperty("openejb.log.factory", JuliLogStreamFactory.class.getName());
+
         if ("jul".equalsIgnoreCase(factoryName) || "juli".equalsIgnoreCase(factoryName)) {
+
             factoryName = JuliLogStreamFactory.class.getName();
+
         } else if ("slf4j".equalsIgnoreCase(factoryName)) {
+
             factoryName = Slf4jLogStreamFactory.class.getName();
+
         } else if ("log4j".equalsIgnoreCase(factoryName)) {
-            // don't use .class to avoid to force loading since log4j is not mandatory
-            factoryName = "org.apache.openejb.util.Log4jLogStreamFactory";
+
+            if (exists("org.apache.log4j.Logger")) {
+
+                // don't use .class to avoid to force loading since log4j is not mandatory
+                factoryName = "org.apache.openejb.util.Log4jLogStreamFactory";
+
+            } else {
+
+                System.out.println("Cannot respect 'openejb.log.factory=log4j' setting as Log4j is not in the classpath.");
+
+            }
+
         } else if ("pax".equalsIgnoreCase(factoryName)) {
+
             factoryName = "org.apache.openejb.util.PaxLogStreamFactory";
         }
 
@@ -80,6 +105,9 @@ public class Logger {
                 }
             }
         }
+
+        if (isLog4jImplied())
+
         //Fall back -> JUL
         logStreamFactory = new JuliLogStreamFactory();
     }
@@ -192,6 +220,86 @@ public class Logger {
     private static String packageName(Class clazz) {
         String name = clazz.getName();
         return name.substring(0, name.lastIndexOf("."));
+    }
+
+    public static boolean isLog4jImplied() {
+
+        final Properties configFile = log4j(loadLoggingProperties());
+
+        final Properties systemProperties = log4j(SystemInstance.get().getProperties());
+
+        final List<String> locations = new ArrayList<String>();
+
+        if (configFile.size() > 0) locations.add("conf/logging.properties");
+        if (systemProperties.size() > 0) locations.add("Properties overrides");
+
+        if (locations.size() > 0) {
+            if (exists("org.apache.log4j.Logger")) {
+
+                System.out.println(String.format("Defaulting 'openejb.log.factory' to 'log4j' because it is referenced in %s.", Join.join(" and ", locations)));
+
+                return true;
+
+            } else {
+                System.out.println(String.format("Log4j settings specified in %s will be ignored as Log4j has not been added to the classpath.", Join.join(" and ", locations)));
+
+                printIgnored(configFile, "conf/logging.properties");
+                printIgnored(systemProperties, "Property overrides");
+
+                return false;
+            }
+        }
+
+        return false;
+    }
+
+    private static void printIgnored(Properties systemProperties, String location) {
+        for (Object key : systemProperties.keySet()) {
+            final String s = String.format("Ignored %s property '%s'", location, key);
+            System.out.println(s);
+        }
+    }
+
+    private static boolean exists(String s) {
+        try {
+            final ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            loader.loadClass(s);
+            return true;
+        } catch (Throwable e) {
+            return false;
+        }
+    }
+
+    private static Properties log4j(Properties system) {
+        final Properties properties = new Properties();
+        for (Map.Entry<Object, Object> entry : system.entrySet()) {
+            String key = entry.getKey().toString();
+            if (key.startsWith("log4j.") && !key.equals("log4j.configuration")) {
+                properties.put(key, entry.getValue());
+            }
+        }
+        return properties;
+    }
+
+    private static Properties loadLoggingProperties() {
+        try {
+            final File conf = SystemInstance.get().getBase().getDirectory("conf");
+
+            final File file = new File(conf, "logging.properties");
+
+            final Properties properties = new Properties();
+
+            final InputStream read = IO.read(file);
+
+            try {
+                properties.load(read);
+            } finally {
+                read.close();
+            }
+            return properties;
+        } catch (IOException e) {
+            return new Properties();
+        }
     }
 
     public Logger getChildLogger(String child) {
