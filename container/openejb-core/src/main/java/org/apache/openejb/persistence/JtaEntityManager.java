@@ -18,6 +18,7 @@ package org.apache.openejb.persistence;
 
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.ivm.IntraVmArtifact;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -32,6 +33,8 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.metamodel.Metamodel;
+import java.io.ObjectStreamException;
+import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -47,7 +50,7 @@ import java.util.concurrent.TimeUnit;
  * component is entered and removes them when exited.  If this registration is not preformed, an IllegalStateException will
  * be thrown when entity manger is accessed.
  */
-public class JtaEntityManager implements EntityManager {
+public class JtaEntityManager implements EntityManager, Serializable {
 
     private static final Logger baseLogger = Logger.getInstance(LogCategory.OPENEJB.createChild("persistence"), JtaEntityManager.class);
 
@@ -609,5 +612,10 @@ public class JtaEntityManager implements EntityManager {
         public Timer start(JtaEntityManager em) {
             return new Timer(this, em);
         }
+    }
+
+
+    protected Object writeReplace() throws ObjectStreamException {
+        return new IntraVmArtifact(this, true);
     }
 }
