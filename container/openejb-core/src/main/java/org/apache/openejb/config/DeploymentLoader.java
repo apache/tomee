@@ -21,6 +21,7 @@ import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.api.LocalClient;
 import org.apache.openejb.api.RemoteClient;
+import org.apache.openejb.core.EmptyResourcesClassLoader;
 import org.apache.openejb.jee.Application;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.Beans;
@@ -31,7 +32,6 @@ import org.apache.openejb.jee.JavaWsdlMapping;
 import org.apache.openejb.jee.JaxbJavaee;
 import org.apache.openejb.jee.JspConfig;
 import org.apache.openejb.jee.Module;
-import org.apache.openejb.jee.ParamValue;
 import org.apache.openejb.jee.Taglib;
 import org.apache.openejb.jee.TldTaglib;
 import org.apache.openejb.jee.WebApp;
@@ -661,14 +661,6 @@ public class DeploymentLoader implements DeploymentFilterable {
         addWebservices(webEjbModule);
     }
 
-    private Properties getContextParams(List<ParamValue> contextParam) {
-        Properties properties = new Properties();
-        for (ParamValue paramValue : contextParam) {
-            properties.put(paramValue.getParamName(), paramValue.getParamValue());
-        }
-        return properties;
-    }
-
     protected WebModule createWebModule(String appId, String warPath, ClassLoader parentClassLoader, String contextRoot, String moduleName) throws OpenEJBException {
         File warFile = new File(warPath);
         warFile = unpack(warFile);
@@ -686,7 +678,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         if (webXmlUrl != null) {
             webApp = ReadDescriptors.readWebApp(webXmlUrl);
         } else {
-            // no-web.xml webapp - possible since Servlet 3.0
+            // no web.xml webapp - possible since Servlet 3.0
             webApp = new WebApp();
         }
 
@@ -731,7 +723,8 @@ public class DeploymentLoader implements DeploymentFilterable {
 
     private void addBeansXmls(WebModule webModule) {
         final List<URL> urls = webModule.getScannableUrls();
-        final URLClassLoader loader = new URLClassLoader(urls.toArray(new URL[urls.size()]));
+        // parent returns nothing when calling getresources because we don't want here to be fooled by maven classloader
+        final URLClassLoader loader = new URLClassLoader(urls.toArray(new URL[urls.size()]), new EmptyResourcesClassLoader());
 
         final ArrayList<URL> xmls;
         try {
@@ -793,7 +786,6 @@ public class DeploymentLoader implements DeploymentFilterable {
                     complete.getDecorators().addAll(beans.getDecorators());
                     complete.getInterceptors().addAll(beans.getInterceptors());
                 }
-                File file = URLs.toFile(url);
                 jars.add(new JarArchive(appModule.getClassLoader(), url));
 //            } catch (MalformedURLException e) {
 //                logger.error("Unable to resolve jar path of beans.xml:"+ url.toExternalForm(), e);
