@@ -172,8 +172,20 @@ public class SimpleCache<K, V> implements Cache<K, V> {
         return timeOut;
     }
 
-    public synchronized void setTimeOut(long timeOut) {
-        this.timeOut = timeOut * 60 * 1000;
+    private static long ms(final String durationValue, final TimeUnit defaultTU) {
+        final Duration duration = new Duration(durationValue.trim());
+        // default was minutes
+        // let say the user uses as before "1" as value
+        // time unit will be null so simply set the unit
+        // to the "old" default
+        if (duration.getUnit() == null) {
+            duration.setUnit(defaultTU);
+        }
+        return duration.getUnit().toMillis(duration.getTime());
+    }
+
+    public synchronized void setTimeOut(final String timeOut) {
+        this.timeOut = ms(timeOut, TimeUnit.MINUTES);
     }
 
     public void setScheduledExecutorService(ScheduledExecutorService executor) {
@@ -184,8 +196,8 @@ public class SimpleCache<K, V> implements Cache<K, V> {
         return executor;
     }
     
-    public void setFrequency(long frequency) {
-        this.frequency = frequency * 1000;
+    public void setFrequency(final String frequency) {
+        this.frequency = ms(frequency, TimeUnit.SECONDS);
     }
     
     public long getFrequency() {
