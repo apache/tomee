@@ -269,11 +269,13 @@ public class StatefulContainer implements RpcContainer {
         beanContext.setContainer(null);
         beanContext.setContainerData(null);
 
-        cache.removeAll(new CacheFilter<Instance>() {
-            public boolean matches(Instance instance) {
-                return beanContext == instance.beanContext;
-            }
-        });        
+        if (!containsExtendedPersistenceContext(beanContext)) {
+            cache.removeAll(new CacheFilter<Instance>() {
+                public boolean matches(Instance instance) {
+                    return beanContext == instance.beanContext;
+                }
+            });
+        }
     }
 
     public synchronized void deploy(BeanContext beanContext) throws OpenEJBException {
@@ -350,6 +352,11 @@ public class StatefulContainer implements RpcContainer {
         }
     }
 
+    private static boolean containsExtendedPersistenceContext(final BeanContext beanContext) {
+        final Index<EntityManagerFactory, Map> factories = beanContext.getExtendedEntityManagerFactories();
+        return factories != null && factories.size() > 0;
+    }
+
     protected ProxyInfo createEJBObject(BeanContext beanContext, Method callMethod, Object[] args, InterfaceType interfaceType) throws OpenEJBException {
         // generate a new primary key
         Object primaryKey = newPrimaryKey();
@@ -396,7 +403,9 @@ public class StatefulContainer implements RpcContainer {
                 }
 
                 // add to cache
-                cache.add(primaryKey, instance);
+                if (!containsExtendedPersistenceContext(beanContext)) { // no need to cache it it will never expires
+                    cache.add(primaryKey, instance);
+                }
 
                 // instance starts checked-out
                 checkedOutInstances.put(primaryKey, instance);
@@ -661,7 +670,7 @@ public class StatefulContainer implements RpcContainer {
         Instance instance;
         synchronized (primaryKey) {
             instance = checkedOutInstances.get(primaryKey);
-            if (instance == null) {
+            if (instance == null) { // no need to check for extended persistence contexts it shouldn't happen
                 try {
                     instance = cache.checkOut(primaryKey);
                 } catch (OpenEJBException e) {
@@ -755,7 +764,7 @@ public class StatefulContainer implements RpcContainer {
         // no longer in use
         instance.setInUse(false);
 
-        if (instance.getTransaction() == null) {
+        if (instance.getTransaction() == null && !containsExtendedPersistenceContext(instance.beanContext)) {
             synchronized (instance.primaryKey) {
                 // return to cache
                 cache.checkIn(instance.primaryKey);
@@ -773,7 +782,9 @@ public class StatefulContainer implements RpcContainer {
         }
 
         Instance instance = checkedOutInstances.remove(primaryKey);
-        cache.remove(primaryKey);
+        if (!containsExtendedPersistenceContext(instance.beanContext)) {
+            cache.remove(primaryKey);
+        }
 
         if (null != instance && null != instance.creationalContext) {
             instance.creationalContext.release();
