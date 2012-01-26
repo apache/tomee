@@ -1,7 +1,6 @@
 package org.apache.openejb.core.stateful;
 
-import org.apache.openejb.core.InstanceContext;
-import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
@@ -15,12 +14,12 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.naming.NamingException;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceContextType;
 import java.util.Properties;
 
 @RunWith(ApplicationComposer.class)
@@ -29,7 +28,19 @@ public class PassivationWithEmTest {
     public void passivationTest() throws Exception {
         final PassivationWithEm ejb = (PassivationWithEm) SystemInstance.get()
                 .getComponent(ContainerSystem.class).getJNDIContext()
-                .lookup("global/PassivationWithEmTest/bean/PassivationWithEm");
+                .lookup("global/PassivationWithEmTest/PassivationWithEmTest/PassivationWithEm");
+        for (int i = 0; i < 5; i++) {
+            Thread.sleep(400); // wait for passivation
+            ejb.nothing();
+        }
+    }
+
+    @Test
+    @Ignore("not working - extended should be ignred")
+    public void passivationExtendedTest() throws Exception {
+        final PassivationWithEmExtended ejb = (PassivationWithEmExtended) SystemInstance.get()
+                .getComponent(ContainerSystem.class).getJNDIContext()
+                .lookup("global/PassivationWithEmTest/PassivationWithEmTest/PassivationWithEmExtended");
         for (int i = 0; i < 5; i++) {
             Thread.sleep(400); // wait for passivation
             ejb.nothing();
@@ -37,8 +48,11 @@ public class PassivationWithEmTest {
     }
 
     @Module
-    public EnterpriseBean bean() {
-        return new StatefulBean("PassivationWithEm", PassivationWithEm.class);
+    public EjbJar bean() {
+        final EjbJar ejbJar = new EjbJar(getClass().getSimpleName());
+        ejbJar.addEnterpriseBean(new StatefulBean("PassivationWithEm", PassivationWithEm.class));
+        ejbJar.addEnterpriseBean(new StatefulBean("PassivationWithEmExtended", PassivationWithEmExtended.class));
+        return ejbJar;
     }
 
     @Module
@@ -86,6 +100,15 @@ public class PassivationWithEmTest {
 
     public static class PassivationWithEm {
         @PersistenceContext
+        private EntityManager em;
+
+        public void nothing() {
+            // no-op
+        }
+    }
+
+    public static class PassivationWithEmExtended {
+        @PersistenceContext(type = PersistenceContextType.EXTENDED)
         private EntityManager em;
 
         public void nothing() {
