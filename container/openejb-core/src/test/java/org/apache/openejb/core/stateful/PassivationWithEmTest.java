@@ -26,7 +26,6 @@ import java.util.Properties;
 @RunWith(ApplicationComposer.class)
 public class PassivationWithEmTest {
     @Test
-    @Ignore("failing test")
     public void passivationTest() throws Exception {
         final PassivationWithEm ejb = (PassivationWithEm) SystemInstance.get()
                 .getComponent(ContainerSystem.class).getJNDIContext()
