@@ -36,7 +36,6 @@ public class PassivationWithEmTest {
     }
 
     @Test
-    @Ignore("not working - extended should be ignred")
     public void passivationExtendedTest() throws Exception {
         final PassivationWithEmExtended ejb = (PassivationWithEmExtended) SystemInstance.get()
                 .getComponent(ContainerSystem.class).getJNDIContext()
@@ -59,7 +58,7 @@ public class PassivationWithEmTest {
     public Persistence persistence() throws Exception {
         PersistenceUnit unit = new PersistenceUnit("passivation-unit");
         unit.addClass(MyEntity.class);
-        unit.setTransactionType(TransactionType.RESOURCE_LOCAL);
+        unit.setTransactionType(TransactionType.JTA);
         unit.setProperty("openjpa.jdbc.SynchronizeMappings", "buildSchema(ForeignKeys=true)");
         unit.getProperties().setProperty("openjpa.RuntimeUnenhancedClasses", "supported");
         unit.setExcludeUnlistedClasses(true);
