@@ -31,6 +31,12 @@
     </dependency>
 
     <dependency>
+      <groupId>org.apache.myfaces.extensions.cdi.bundles</groupId>
+      <artifactId>myfaces-extcdi-bundle-jsf20</artifactId>
+      <version>1.0.3</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>ziplock</artifactId>
       <version>${project.version}</version>
