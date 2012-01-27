@@ -70,7 +70,7 @@ public class Log4jLogStreamFactory implements LogStreamFactory {
         //Use the old file name first
         File loggingPropertiesFile = new File(confDir, LOGGING_PROPERTIES_FILE);
 
-        if (!embedded && confDir.exists()) {
+        if ((!embedded && confDir.exists()) || (embedded && loggingPropertiesFile.exists())) {
 
             if (!loggingPropertiesFile.exists()) {
                 //Use the new file name
@@ -95,8 +95,7 @@ public class Log4jLogStreamFactory implements LogStreamFactory {
                 installLoggingPropertiesFile(loggingPropertiesFile);
             }
         } else {
-            // no conf directory, so we assume we are embedded
-            // configure log4j directly
+            // Embedded and no logging.properties so configure log4j directly
             configureEmbedded();
         }
     }
@@ -186,7 +185,6 @@ public class Log4jLogStreamFactory implements LogStreamFactory {
         InputStream in = null;
         try {
             in = resource.openStream();
-            in = new BufferedInputStream(in);
             properties.load(in);
         } catch (Throwable e) {
             //Ignore
