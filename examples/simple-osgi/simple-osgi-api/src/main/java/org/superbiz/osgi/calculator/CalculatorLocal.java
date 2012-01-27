@@ -29,6 +29,6 @@ public interface CalculatorLocal {
     int divide(int a, int b);
 
     int remainder(int a, int b);
-    
+
     String sayHello();
 }

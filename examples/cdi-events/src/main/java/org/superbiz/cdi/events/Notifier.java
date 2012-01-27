@@ -24,7 +24,9 @@ import java.util.Date;
 
 @Singleton
 public class Notifier {
-    @Inject private Event<Date> dateEvent;
+
+    @Inject
+    private Event<Date> dateEvent;
 
     @Schedule(second = "*", minute = "*", hour = "*")
     public void sendHour() {

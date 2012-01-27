@@ -22,7 +22,8 @@ import javax.persistence.Id;
 
 @Entity
 public class Person {
-    @Id private long id;
+    @Id
+    private long id;
     private String name;
 
     public Person() {

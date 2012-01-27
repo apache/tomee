@@ -22,8 +22,10 @@ import javax.inject.Inject;
 
 @Singleton
 public class Journey {
-    @Inject private Vehicle vehicle;
-    @Inject private Society society;
+    @Inject
+    private Vehicle vehicle;
+    @Inject
+    private Society society;
 
     public String vehicle() {
         return vehicle.name();

@@ -89,9 +89,9 @@ public class CacheActivationTest {
     private void activateCache() throws Exception {
         ObjectName on = new ObjectName("openejb.management:ObjectType=persistence-unit,PersistenceUnit=reloadable");
         MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-        server.invoke(on, "setProperty", new Object[] { "openjpa.DataCache", "true" }, null);
-        server.invoke(on, "setProperty", new Object[] { "openjpa.RemoteCommitProvider", "sjvm" }, null);
-        server.invoke(on, "setSharedCacheMode", new Object[] { "ALL" }, null);
+        server.invoke(on, "setProperty", new Object[]{"openjpa.DataCache", "true"}, null);
+        server.invoke(on, "setProperty", new Object[]{"openjpa.RemoteCommitProvider", "sjvm"}, null);
+        server.invoke(on, "setSharedCacheMode", new Object[]{"ALL"}, null);
         server.invoke(on, "reload", new Object[0], null);
     }
 
@@ -99,7 +99,7 @@ public class CacheActivationTest {
         for (int i = 0; i < 3; i++) { // some multiple time to get if cache works or not
             Person found = mgr.search(personId);
             assertNotNull(found);
-            assertEquals(personId,  found.getId());
+            assertEquals(personId, found.getId());
         }
     }
 }
