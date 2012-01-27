@@ -42,7 +42,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DynamicMBeanHandler implements InvocationHandler {
     private final Map<Method, ConnectionInfo> infos = new ConcurrentHashMap<Method, ConnectionInfo>();
 
-    @Override public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         final String methodName = method.getName();
         if (method.getDeclaringClass().equals(Object.class) && "toString".equals(methodName)) {
             return getClass().getSimpleName() + " Proxy";
@@ -54,7 +55,7 @@ public class DynamicMBeanHandler implements InvocationHandler {
         final ConnectionInfo info = getConnectionInfo(method);
         final MBeanInfo infos = info.getMBeanInfo();
         if (methodName.startsWith("set") && methodName.length() > 3 && args != null && args.length == 1
-            && (Void.TYPE.equals(method.getReturnType()) || Void.class.equals(method.getReturnType()))) {
+                && (Void.TYPE.equals(method.getReturnType()) || Void.class.equals(method.getReturnType()))) {
             final String attributeName = attributeName(infos, methodName, method.getParameterTypes()[0]);
             info.setAttribute(new Attribute(attributeName, args[0]));
             return null;
@@ -96,7 +97,7 @@ public class DynamicMBeanHandler implements InvocationHandler {
                     found = name;
                 }
             } else if (found == null && ((lowerName.equals(name) && !attributeName.equals(name))
-                || lowerName.equalsIgnoreCase(name))) {
+                    || lowerName.equalsIgnoreCase(name))) {
                 foundBackUp = name;
                 if (attribute.getType().equals(type.getName())) {
                     found = name;
@@ -137,7 +138,7 @@ public class DynamicMBeanHandler implements InvocationHandler {
                         info = new RemoteConnectionInfo();
                         final Map<String, String[]> environment = new HashMap<String, String[]>();
                         if (!on.user().isEmpty()) {
-                            environment.put(JMXConnector.CREDENTIALS, new String[]{ on.user(), on.password() });
+                            environment.put(JMXConnector.CREDENTIALS, new String[]{on.user(), on.password()});
                         }
                         // ((RemoteConnectionInfo) info).connector = JMXConnectorFactory.newJMXConnector(new JMXServiceURL(on.url()), environment);
                         ((RemoteConnectionInfo) info).connector = JMXConnectorFactory.connect(new JMXServiceURL(on.url()), environment);
@@ -156,20 +157,26 @@ public class DynamicMBeanHandler implements InvocationHandler {
         protected ObjectName objectName;
 
         public abstract void setAttribute(Attribute attribute) throws Exception;
+
         public abstract Object getAttribute(String attribute) throws Exception;
+
         public abstract Object invoke(String operationName, Object params[], String signature[]) throws Exception;
+
         public abstract MBeanInfo getMBeanInfo() throws Exception;
+
         public abstract void clean();
     }
 
     private static class LocalConnectionInfo extends ConnectionInfo {
         private MBeanServer server;
 
-        @Override public void setAttribute(Attribute attribute) throws Exception {
+        @Override
+        public void setAttribute(Attribute attribute) throws Exception {
             server.setAttribute(objectName, attribute);
         }
 
-        @Override public Object getAttribute(String attribute) throws Exception {
+        @Override
+        public Object getAttribute(String attribute) throws Exception {
             return server.getAttribute(objectName, attribute);
         }
 
@@ -178,11 +185,13 @@ public class DynamicMBeanHandler implements InvocationHandler {
             return server.invoke(objectName, operationName, params, signature);
         }
 
-        @Override public MBeanInfo getMBeanInfo() throws Exception {
+        @Override
+        public MBeanInfo getMBeanInfo() throws Exception {
             return server.getMBeanInfo(objectName);
         }
 
-        @Override public void clean() {
+        @Override
+        public void clean() {
             // no-op
         }
     }
@@ -199,13 +208,15 @@ public class DynamicMBeanHandler implements InvocationHandler {
             // no-op
         }
 
-        @Override public void setAttribute(Attribute attribute) throws Exception {
+        @Override
+        public void setAttribute(Attribute attribute) throws Exception {
             before();
             connection.setAttribute(objectName, attribute);
             after();
         }
 
-        @Override public Object getAttribute(String attribute) throws Exception {
+        @Override
+        public Object getAttribute(String attribute) throws Exception {
             before();
             try {
                 return connection.getAttribute(objectName, attribute);
@@ -224,7 +235,8 @@ public class DynamicMBeanHandler implements InvocationHandler {
             }
         }
 
-        @Override public MBeanInfo getMBeanInfo() throws Exception {
+        @Override
+        public MBeanInfo getMBeanInfo() throws Exception {
             before();
             try {
                 return connection.getMBeanInfo(objectName);
@@ -233,7 +245,8 @@ public class DynamicMBeanHandler implements InvocationHandler {
             }
         }
 
-        @Override public void clean() {
+        @Override
+        public void clean() {
             try {
                 connector.close();
             } catch (IOException e) {

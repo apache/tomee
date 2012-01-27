@@ -32,19 +32,20 @@
  */
 package org.superbiz.cdi.bookshow.interceptors;
 
+import org.superbiz.cdi.bookshow.interceptorbinding.Log;
+
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 
-import org.superbiz.cdi.bookshow.interceptorbinding.Log;
-
 @Interceptor
 @Log
 public class LoggingInterceptor {
-	private static final long serialVersionUID = 8139854519874743530L;
-	@AroundInvoke
-	public Object logMethodEntry(InvocationContext ctx) throws Exception {
-		System.out.println("Entering method: " + ctx.getMethod().getName());
-		return ctx.proceed();
-	}
+    private static final long serialVersionUID = 8139854519874743530L;
+
+    @AroundInvoke
+    public Object logMethodEntry(InvocationContext ctx) throws Exception {
+        System.out.println("Entering method: " + ctx.getMethod().getName());
+        return ctx.proceed();
+    }
 }

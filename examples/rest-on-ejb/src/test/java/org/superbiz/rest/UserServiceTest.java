@@ -108,18 +108,18 @@ public class UserServiceTest {
         assertEquals(
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
                         "<users>" +
-                            "<user>" +
-                                "<email>foo@foo.com</email>" +
-                                "<fullname>foo</fullname>" +
-                                "<id>1</id>" +
-                                "<password>foopwd</password>" +
-                            "</user>" +
-                            "<user>" +
-                                "<email>bar@bar.com</email>" +
-                                "<fullname>bar</fullname>" +
-                                "<id>2</id>" +
-                                "<password>barpwd</password>" +
-                            "</user>" +
+                        "  <user>" +
+                        "    <email>foo@foo.com</email>" +
+                        "    <fullname>foo</fullname>" +
+                        "    <id>1</id>" +
+                        "    <password>foopwd</password>" +
+                        "  </user>" +
+                        "  <user>" +
+                        "    <email>bar@bar.com</email>" +
+                        "    <fullname>bar</fullname>" +
+                        "    <id>2</id>" +
+                        "    <password>barpwd</password>" +
+                        "  </user>" +
                         "</users>", users);
     }
 

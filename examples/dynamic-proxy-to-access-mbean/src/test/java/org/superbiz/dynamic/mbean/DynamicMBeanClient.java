@@ -28,6 +28,8 @@ public interface DynamicMBeanClient {
     static final String OBJECT_NAME = "test:group=DynamicMBeanClientTest";
 
     int getCounter();
+
     void setCounter(int i);
+
     int length(String aString);
 }

@@ -16,34 +16,35 @@
  */
 package org.superbiz.cdi.bookshow.interceptors;
 
+import junit.framework.TestCase;
+import org.superbiz.cdi.bookshow.beans.BookShow;
+
 import javax.ejb.EJB;
 import javax.ejb.embeddable.EJBContainer;
 
-import junit.framework.TestCase;
-
-import org.superbiz.cdi.bookshow.beans.BookShow;
-
 public class BookShowTest extends TestCase {
-	@EJB
-	private BookShow bookForAShowBean;
-	EJBContainer ejbContainer;
-	/**
-	 * Bootstrap the Embedded EJB Container
-	 * 
-	 * @throws Exception
-	 */
-	@Override
-	protected void setUp() throws Exception {
-		ejbContainer = EJBContainer.createEJBContainer();
-		ejbContainer.getContext().bind("inject", this);
-	}
-	/**
-	 * Test basic interception
-	 */
-	public void testMethodShouldBeIntercepted() {
+    @EJB
+    private BookShow bookForAShowBean;
+    EJBContainer ejbContainer;
 
-		bookForAShowBean.getMoviesList();
+    /**
+     * Bootstrap the Embedded EJB Container
+     *
+     * @throws Exception
+     */
+    @Override
+    protected void setUp() throws Exception {
+        ejbContainer = EJBContainer.createEJBContainer();
+        ejbContainer.getContext().bind("inject", this);
+    }
 
-	}
+    /**
+     * Test basic interception
+     */
+    public void testMethodShouldBeIntercepted() {
+
+        bookForAShowBean.getMoviesList();
+
+    }
 
 }

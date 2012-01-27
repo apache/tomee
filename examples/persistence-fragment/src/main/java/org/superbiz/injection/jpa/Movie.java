@@ -22,7 +22,9 @@ import javax.persistence.Id;
 
 @Entity
 public class Movie {
-    @Id @GeneratedValue private long id;
+    @Id
+    @GeneratedValue
+    private long id;
     private String director;
     private String title;
     private int year;
