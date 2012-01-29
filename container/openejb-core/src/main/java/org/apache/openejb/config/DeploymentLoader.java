@@ -646,7 +646,12 @@ public class DeploymentLoader implements DeploymentFilterable {
         //
         // EjbModule webEjbModule = new EjbModule(webModule.getClassLoader(), webModule.getModuleId(), webModule.getJarLocation(), null, null);
         EjbModule webEjbModule = null;
-        StringBuilder webInfClassesPath = new StringBuilder(warPath);
+        StringBuilder webInfClassesPath;
+        if (!warPath.toLowerCase().endsWith(".war")) {
+            webInfClassesPath = new StringBuilder(warPath);
+        } else {
+            webInfClassesPath = new StringBuilder(warPath.substring(0, warPath.length() - 4));
+        }
         if (!warPath.endsWith("/")) {
             webInfClassesPath.append("/");
         }
