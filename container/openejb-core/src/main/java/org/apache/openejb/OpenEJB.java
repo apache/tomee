@@ -97,8 +97,17 @@ public final class OpenEJB {
             }
 
             Logger logger2 = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
-            logger2.info("startup.banner", versionInfo.getUrl(), new Date(), versionInfo.getCopyright(),
-                    versionInfo.getVersion(), versionInfo.getDate(), versionInfo.getTime());
+            final String[] bannerValues = new String[] {
+                    null, versionInfo.getUrl(), new Date().toString(), versionInfo.getCopyright(),
+                    versionInfo.getVersion(), versionInfo.getDate(), versionInfo.getTime(), null
+            };
+            for (int i = 0; i < bannerValues.length; i++) {
+                if (bannerValues[i] == null) {
+                    logger2.info("startup.banner." + i);
+                } else {
+                    logger2.info("startup.banner." + i, bannerValues[i]);
+                }
+            }
 
             logger.info("openejb.home = " + SystemInstance.get().getHome().getDirectory().getAbsolutePath());
             logger.info("openejb.base = " + SystemInstance.get().getBase().getDirectory().getAbsolutePath());
