@@ -44,7 +44,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-client</artifactId>
-      <version>4.0.0-beta-2-SNAPSHOT</version>
+      <version>4.0.0-beta-3-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -112,14 +112,14 @@
                 <artifactItem>
                   <groupId>org.apache.openejb</groupId>
                   <artifactId>openejb-client</artifactId>
-                  <version>4.0.0-beta-2-SNAPSHOT</version>
+                  <version>4.0.0-beta-3-SNAPSHOT</version>
                   <outputDirectory>${project.build.directory}/${project.build.finalName}</outputDirectory>
                   <destFileName>openejb-client.jar</destFileName>
                 </artifactItem>
                 <artifactItem>
                   <groupId>org.apache.openejb</groupId>
                   <artifactId>javaee-api</artifactId>
-                  <version>6.0-3-SNAPSHOT</version>
+                  <version>6.0-3</version>
                   <outputDirectory>${project.build.directory}/${project.build.finalName}</outputDirectory>
                   <destFileName>javaee-api.jar</destFileName>
                 </artifactItem>
