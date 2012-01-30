@@ -16,15 +16,9 @@
  */
 package org.apache.openejb.util;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
 import java.util.logging.ConsoleHandler;
-import java.util.logging.Handler;
+import java.util.logging.Level;
 import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
 /**
  * default conf = jre conf
@@ -40,39 +34,41 @@ public class JuliLogStreamFactory implements LogStreamFactory {
         final boolean embedded = is("org.apache.tomee.embedded.Container");
 
         // if embedded case enhance a bit logging if not set
-        if (!tomee || embedded) {
-            final Class<LogCategory> clazz = LogCategory.class;
-            final List<String> loggerNames = new ArrayList<String>();
-            final Enumeration<String> names = LogManager.getLogManager().getLoggerNames();
-            while (names.hasMoreElements()) {
-                loggerNames.add(names.nextElement());
-            }
+        if ((!tomee || embedded) && System.getProperty("java.util.logging.manager") == null) {
+            System.setProperty("java.util.logging.manager", OpenEJBLogManager.class.getName());
+        }
+    }
 
-            for (Field constant : clazz.getFields()) {
-                int modifiers = constant.getModifiers();
-                if (Modifier.isPublic(modifiers) && Modifier.isStatic(modifiers)) {
-                    final String name;
-                    try {
-                        name = ((LogCategory) constant.get(null)).getName();
-                    } catch (IllegalAccessException e) {
-                        continue;
-                    }
-                    if (name.contains(".")) { // only parents
-                        continue;
-                    }
-                    if (!loggerNames.contains(name)) { // no conf
-                        final Logger logger = java.util.logging.Logger.getLogger(name);
-                        logger.setUseParentHandlers(false);
-                        LogManager.getLogManager().addLogger(logger);
-                        if (logger.getHandlers().length == 0) {
-                            logger.addHandler(new ConsoleHandler());
-                        }
-                        for (Handler h : logger.getHandlers()) {
-                            h.setFormatter(new SingleLineFormatter());
-                        }
-                    }
+    public static class OpenEJBLogManager extends LogManager {
+        @Override
+        public String getProperty(final String name) {
+            final String parentValue = super.getProperty(name);
+            // if it is one of ours loggers and no value is defined let set our nice logging style
+            if (OpenEJBLogManager.class.getName().equals(System.getProperty("java.util.logging.manager")) // custom loggin
+                    && isOverridableLogger(name) // managed loggers
+                    && parentValue == null) { // not already defined
+                if (name.endsWith(".handlers")) {
+                    return OpenEJBSimpleLayoutHandler.class.getName();
+                } else if (name.endsWith(".useParentHandlers")) {
+                    return "false";
                 }
             }
+            return super.getProperty(name);
+        }
+
+        private static boolean isOverridableLogger(String name) {
+            return name.toLowerCase().contains("openejb")
+                    || name.toLowerCase().contains("transaction")
+                    || name.toLowerCase().contains("cxf")
+                    || name.toLowerCase().contains("timer")
+                    || name.startsWith("org.apache.");
+        }
+    }
+
+    public static class OpenEJBSimpleLayoutHandler extends ConsoleHandler {
+        public OpenEJBSimpleLayoutHandler() {
+            setFormatter(new SingleLineFormatter());
+            setLevel(Level.INFO);
         }
     }
 
