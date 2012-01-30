@@ -210,17 +210,18 @@ public class RemoteServer {
                     final Map<String, String> addedArgs = new HashMap<String, String>();
                     if (additionalArgs != null) {
                         for (String arg : additionalArgs) {
-                            argsList.add("-Dorg.apache.tomcat.util.http.ServerCookie.ALLOW_HTTP_SEPARATORS_IN_V0=true");
                             String[] values = arg.split("=");
                             if (values.length == 1) {
                                 addedArgs.put(values[0], "null");
                             } else {
                                 addedArgs.put(values[0], values[1]);
                             }
+                            argsList.add(arg);
                         }
                     }
 
                     argsList.add("-javaagent:" + javaagentJar.getAbsolutePath());
+                    argsList.add("-Dorg.apache.tomcat.util.http.ServerCookie.ALLOW_HTTP_SEPARATORS_IN_V0=true");
                     if (!addedArgs.containsKey("-Dcom.sun.management.jmxremote")) {
                         argsList.add("-Dcom.sun.management.jmxremote");
                     }
