@@ -18,6 +18,10 @@
  */
 package org.apache.openejb.arquillian.tests.jaxrs.httpheaders;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.openejb.arquillian.tests.jaxrs.JaxrsTest;
 import org.apache.ziplock.WebModule;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -75,10 +79,10 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
      *
      * @throws IOException
      */
+    @Test
     public void testAcceptableLanguagesManyGiven() throws IOException {
         final Map<String, String> headers = headers("Accept-Language", "de, en, zh");
         final String responseBody = get(headers, "/context/httpheaders/acceptablelanguages");
-        assertEquals("acceptablelanguages:de:", responseBody);
         assertTrue(responseBody, responseBody.startsWith("acceptablelanguages:"));
         assertTrue(responseBody, responseBody.contains(":de:"));
         assertTrue(responseBody, responseBody.contains(":en:"));
@@ -92,22 +96,13 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
      *
      * @throws IOException
      */
+    @Test
     public void testAcceptableLanguagesManyGivenQSort() throws IOException {
         final Map<String, String> headers = headers("Accept-Language", "de;q=0.6, en;q=0.8, zh;q=0.7");
         final String responseBody = get(headers, "/context/httpheaders/acceptablelanguages");
-        assertEquals("acceptablelanguages:de:", responseBody);
+        assertEquals("acceptablelanguages:en:zh:de:", responseBody);
     }
 
-    /**
-     * Tests {@link javax.ws.rs.core.HttpHeaders#getAcceptableMediaTypes()} that if given no
-     * Accept header, wildcard/wildcard is returned.
-     *
-     * @throws IOException
-     */
-    public void testAcceptableMediaTypesNoneGiven() throws IOException {
-        final String responseBody = get("/context/httpheaders/acceptablemediatypes");
-        assertEquals("acceptablemediatypes:*/*:", responseBody);
-    }
 
     /**
      * Tests {@link javax.ws.rs.core.HttpHeaders#getAcceptableMediaTypes()} that if given a
@@ -115,6 +110,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
      *
      * @throws IOException
      */
+    @Test
     public void testAcceptableMediaTypesOneGiven() throws IOException {
         final Map<String, String> headers = headers("Accept", "text/plain");
         final String responseBody = get(headers, "/context/httpheaders/acceptablemediatypes");
@@ -129,6 +125,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
      *
      * @throws IOException
      */
+    @Test
     public void testAcceptableMediaTypesManyGiven() throws IOException {
         final Map<String, String> headers = headers("Accept", "text/plain;q=1.0,*/*;q=0.6, application/json;q=0.7,text/xml;q=0.8");
         final String responseBody = get(headers, "/context/httpheaders/acceptablemediatypes");
@@ -137,4 +134,300 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
         //TODO assertEquals("text/plain;q=1.0", getMethod.getResponseHeader("Content-Type").getValue());
     }
 
+
+    /**
+     * Tests {@link javax.ws.rs.core.HttpHeaders#getMediaType()} that if given a text/plain, the
+     * method will return text/plain.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testMediaTypesRequestTextPlain() throws IOException {
+        HttpPost post = new HttpPost(uri("/context/httpheaders/requestmediatype"));
+        post.setHeader("Content-Type", "text/plain");
+        post.setEntity(new StringEntity("Hello world!", "UTF-8"));
+
+        final HttpResponse response = client.execute(post);
+        assertEquals(response.getStatusLine().getStatusCode(), 200);
+        String responseBody = asString(response);
+        assertEquals("mediatype:text/plain:", responseBody);
+
+    }
+
+    /**
+     * Tests {@link javax.ws.rs.core.HttpHeaders#getMediaType()} when a non-standard content type
+     * is sent in.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testMediaTypesRequestCustomContentType() throws IOException {
+        HttpPost post = new HttpPost(uri("/context/httpheaders/requestmediatype"));
+        post.setHeader("Content-Type", "defg/abcd");
+        post.setEntity(new StringEntity("Hello world!", "UTF-8"));
+
+        final HttpResponse response = client.execute(post);
+        assertEquals(response.getStatusLine().getStatusCode(), 200);
+        String responseBody = asString(response);
+        assertEquals("mediatype:defg/abcd:", responseBody);
+
+    }
+
+    /**
+     * Tests {@link javax.ws.rs.core.HttpHeaders#getMediaType()} when no request entity is given.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testMediaTypesRequestNoRequestEntity() throws IOException {
+        HttpPost post = new HttpPost(uri("/context/httpheaders/requestmediatype"));
+
+        final HttpResponse response = client.execute(post);
+        assertEquals(response.getStatusLine().getStatusCode(), 200);
+        String responseBody = asString(response);
+        assertEquals("mediatype:null:", responseBody);
+
+    }
+
+    /**
+     * Tests {@link javax.ws.rs.core.HttpHeaders#getLanguage()} when no language is given in the
+     * request.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testLanguageNoneGiven() throws IOException {
+        HttpPost post = new HttpPost(uri("/context/httpheaders/language"));
+        post.setHeader("Content-Type", "text/plain");
+        post.setEntity(new StringEntity("Hello world!", "UTF-8"));
+
+        final HttpResponse response = client.execute(post);
+        assertEquals(response.getStatusLine().getStatusCode(), 200);
+        String responseBody = asString(response);
+        assertEquals("language:null:", responseBody);
+
+    }
+
+    /**
+     * Tests {@link javax.ws.rs.core.HttpHeaders#getLanguage()} when English language is given in
+     * the request.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testLanguageEnglishGiven() throws IOException {
+        HttpPost post = new HttpPost(uri("/context/httpheaders/language"));
+        post.setHeader("Content-Type", "text/plain");
+        post.setEntity(new StringEntity("Hello world!", "UTF-8"));
+        post.addHeader("Content-Language", "en");
+
+        final HttpResponse response = client.execute(post);
+        assertEquals(response.getStatusLine().getStatusCode(), 200);
+        String responseBody = asString(response);
+        assertEquals("language:en:", responseBody);
+
+    }
+
+    /**
+     * Tests {@link javax.ws.rs.core.HttpHeaders#getLanguage()} when Chinese language is given in
+     * the request.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testLanguageChineseGiven() throws IOException {
+        HttpPost post = new HttpPost(uri("/context/httpheaders/language"));
+        post.setHeader("Content-Type", "text/plain");
+        post.setEntity(new StringEntity("Hello world!", "UTF-8"));
+        post.addHeader("Content-Language", "zh");
+
+        final HttpResponse response = client.execute(post);
+        assertEquals(response.getStatusLine().getStatusCode(), 200);
+        String responseBody = asString(response);
+        assertEquals("language:zh:", responseBody);
+
+    }
+
+    /**
+     * Tests {@link javax.ws.rs.core.HttpHeaders#getCookies()} when no cookies are given.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testCookiesNone() throws IOException {
+        HttpPost HttpPost = new HttpPost(uri("/context/httpheaders/cookies"));
+
+        final HttpResponse response = client.execute(HttpPost);
+        assertEquals(response.getStatusLine().getStatusCode(), 200);
+        String responseBody = asString(response);
+        assertEquals("cookies:", responseBody);
+
+    }
+
+    /**
+     * Tests {@link javax.ws.rs.core.HttpHeaders#getCookies()} when given a single cookie.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testCookiesOneGiven() throws IOException {
+        final HttpPost HttpPost = new HttpPost(uri("/context/httpheaders/cookies"));
+        HttpPost.addHeader("Cookie", "foo=bar");
+        final HttpResponse response = client.execute(HttpPost);
+        assertEquals(response.getStatusLine().getStatusCode(), 200);
+        String responseBody = asString(response);
+        assertEquals("cookies:foo=bar:", responseBody);
+    }
+
+    /**
+     * Tests {@link javax.ws.rs.core.HttpHeaders#getCookies()} when given multiple cookies.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testCookiesManyGiven() throws IOException {
+        final HttpPost post = new HttpPost(uri("/context/httpheaders/cookies"));
+        post.addHeader("Cookie", "foo=bar");
+        post.addHeader("Cookie", "foo2=bar2");
+
+        final HttpResponse response = client.execute(post);
+        assertEquals(response.getStatusLine().getStatusCode(), 200);
+        String responseBody = asString(response);
+        assertEquals("cookies:foo=bar:foo2=bar2:", responseBody);
+    }
+
+    /**
+     * Tests {@link javax.ws.rs.core.HttpHeaders#getRequestHeader(String)} when given a null
+     * value.
+     *
+     * @throws IOException
+     */
+    public void testRequestHeaderNoneGivenIllegalArgument() throws IOException {
+        HttpGet get = new HttpGet(uri("/context/httpheaders/"));
+        final HttpResponse response = client.execute(get);
+        assertStatusCode(200, response);
+        String responseBody = asString(response);
+        assertEquals("requestheader:null:", responseBody);
+    }
+
+    /**
+     * Tests {@link javax.ws.rs.core.HttpHeaders#getRequestHeader(String)} when requesting header
+     * values for a non-existent header name.
+     *
+     * @throws IOException
+     */
+    public void testRequestHeaderNonexistentHeader() throws IOException {
+        HttpGet get = new HttpGet(uri("/context/httpheaders/?name=foo"));
+        final HttpResponse response = client.execute(get);
+        assertStatusCode(200, response);
+        String responseBody = asString(response);
+        assertEquals("requestheader:null:", responseBody);
+    }
+
+    /**
+     * Tests {@link javax.ws.rs.core.HttpHeaders#getRequestHeader(String)} when requesting header
+     * value for a single header name.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testRequestHeaderSingleValue() throws IOException {
+        HttpGet getMethod = new HttpGet(uri("/context/httpheaders/?name=foo"));
+        getMethod.addHeader("foo", "bar");
+        final HttpResponse response = client.execute(getMethod);
+        assertStatusCode(200, response);
+        String responseBody = asString(response);
+        assertEquals("requestheader:[bar]", responseBody);
+    }
+
+    /**
+     * Tests {@link javax.ws.rs.core.HttpHeaders#getRequestHeader(String)} when requesting
+     * multiple header value for a single header name.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testRequestHeaderMultipleValue() throws IOException {
+        HttpGet getMethod = new HttpGet(uri("/context/httpheaders/?name=foo"));
+        getMethod.addHeader("foo", "bar");
+        getMethod.addHeader("foo", "bar2");
+        final HttpResponse response = client.execute(getMethod);
+        assertStatusCode(200, response);
+        String responseBody = asString(response);
+        assertEquals("requestheader:[bar, bar2]", responseBody);
+    }
+
+    /**
+     * Tests {@link javax.ws.rs.core.HttpHeaders#getRequestHeader(String)} when requesting
+     * multiple header value for a single header name when using
+     * case-insensitive names.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testRequestHeaderCaseInsensitive() throws IOException {
+        HttpGet getMethod = new HttpGet(uri("/context/httpheaders/?name=foo"));
+        getMethod.addHeader("FOO", "bar");
+        getMethod.addHeader("FoO", "bar2");
+        final HttpResponse response = client.execute(getMethod);
+        assertStatusCode(200, response);
+        String responseBody = asString(response);
+        assertEquals("requestheader:[bar, bar2]", responseBody);
+    }
+
+    /**
+     * Tests {@link javax.ws.rs.core.HttpHeaders#getRequestHeaders()} when making a basic
+     * HttpClient request.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testRequestHeadersBasicHeader() throws IOException {
+        HttpGet getMethod = new HttpGet(uri("/context/httpheaders/requestheaders"));
+        final HttpResponse response = client.execute(getMethod);
+        assertStatusCode(200, response);
+        String responseBody = asString(response);
+        assertTrue(responseBody, responseBody.contains("requestheaders:"));
+        assertTrue(responseBody, responseBody.contains(":host=") || responseBody
+                .contains(":Host="));
+        assertTrue(responseBody, responseBody.contains(":user-agent=") || responseBody
+                .contains(":User-Agent="));
+    }
+
+    /**
+     * Tests {@link javax.ws.rs.core.HttpHeaders#getRequestHeaders()} when having a custom
+     * header.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testRequestHeadersSingleValue() throws IOException {
+        HttpGet getMethod = new HttpGet(uri("/context/httpheaders/requestheaders"));
+        getMethod.addHeader("fOo", "bAr");
+        final HttpResponse response = client.execute(getMethod);
+        assertStatusCode(200, response);
+        String responseBody = asString(response);
+        assertTrue(responseBody, responseBody.contains("requestheaders:"));
+        assertTrue(responseBody, responseBody.contains(":fOo=[bAr]") || responseBody.contains(":foo=[bAr]"));
+    }
+
+    /**
+     * Tests {@link javax.ws.rs.core.HttpHeaders#getRequestHeaders()} when having multiple values
+     * and multiple custom headers.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testRequestHeadersMultipleValues() throws IOException {
+        HttpGet getMethod = new HttpGet(uri("/context/httpheaders/requestheaders"));
+        getMethod.addHeader("fOo", "bAr");
+        getMethod.addHeader("abc", "xyz");
+        getMethod.addHeader("fOo", "2bAr");
+        final HttpResponse response = client.execute(getMethod);
+        assertStatusCode(200, response);
+        String responseBody = asString(response);
+        assertTrue(responseBody, responseBody.contains("requestheaders:"));
+        assertTrue(responseBody, responseBody.contains(":fOo=[2bAr, bAr]") || responseBody.contains(":foo=[2bAr, bAr]"));
+        assertTrue(responseBody, responseBody.contains(":abc=[xyz]"));
+    }
 }
