@@ -88,9 +88,7 @@ public final class OpenEJB {
             system.setComponent(DeploymentExceptionManager.class, new DeploymentExceptionManager());
 
             system.setComponent(ApplicationServer.class, appServer);
-            //OWB support.  The classloader has to be able to load all OWB components including the ones supplied by OpenEjb.
-            CdiBuilder.initializeOWB(getClass().getClassLoader());
-            
+
             OpenEjbVersion versionInfo = OpenEjbVersion.get();
             if (!system.getOptions().get("openejb.nobanner", true)) {
                 versionInfo.print(System.out);
@@ -111,6 +109,9 @@ public final class OpenEJB {
 
             logger.info("openejb.home = " + SystemInstance.get().getHome().getDirectory().getAbsolutePath());
             logger.info("openejb.base = " + SystemInstance.get().getBase().getDirectory().getAbsolutePath());
+
+            //OWB support.  The classloader has to be able to load all OWB components including the ones supplied by OpenEjb.
+            CdiBuilder.initializeOWB(getClass().getClassLoader());
 
             String className = system.getOptions().get("openejb.assembler", "org.apache.openejb.assembler.classic.Assembler");
 
