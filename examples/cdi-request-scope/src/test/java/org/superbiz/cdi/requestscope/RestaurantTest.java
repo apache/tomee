@@ -16,39 +16,40 @@
  */
 package org.superbiz.cdi.requestscope;
 
-import javax.ejb.EJB;
-import javax.ejb.embeddable.EJBContainer;
-import static org.junit.Assert.assertEquals;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.ejb.EJB;
+import javax.ejb.embeddable.EJBContainer;
+
+import static org.junit.Assert.assertEquals;
+
 public class RestaurantTest {
-	
-	private static final String TOMATO_SOUP = "Tomato Soup";
-	private static final String POTATO_SOUP = "Potato Soup";
-	private EJBContainer container;
-	
-	@EJB
-	private Waiter joe;
-	
-	@Before
+
+    private static final String TOMATO_SOUP = "Tomato Soup";
+    private static final String POTATO_SOUP = "Potato Soup";
+    private EJBContainer container;
+
+    @EJB
+    private Waiter joe;
+
+    @Before
     public void startContainer() throws Exception {
         container = EJBContainer.createEJBContainer();
         container.getContext().bind("inject", this);
     }
-	
-	@Test
-	public void orderSoup(){
-		String soup = joe.orderSoup(TOMATO_SOUP);
-		assertEquals(TOMATO_SOUP, soup);
-		soup = joe.orderSoup(POTATO_SOUP);
-		assertEquals(POTATO_SOUP, soup);
-	}
-	
-	@After
-	public void closeContainer() throws Exception {
-		container.close();
-	}
+
+    @Test
+    public void orderSoup() {
+        String soup = joe.orderSoup(TOMATO_SOUP);
+        assertEquals(TOMATO_SOUP, soup);
+        soup = joe.orderSoup(POTATO_SOUP);
+        assertEquals(POTATO_SOUP, soup);
+    }
+
+    @After
+    public void closeContainer() throws Exception {
+        container.close();
+    }
 }

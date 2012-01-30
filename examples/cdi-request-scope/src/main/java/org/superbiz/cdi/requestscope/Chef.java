@@ -21,11 +21,11 @@ import javax.inject.Inject;
 
 @Stateless
 public class Chef {
-	
-	@Inject
-	private Soup soup;
-	
-	public Soup prepareSoup() {
-		return soup;
-	}
+
+    @Inject
+    private Soup soup;
+
+    public Soup prepareSoup() {
+        return soup;
+    }
 }
