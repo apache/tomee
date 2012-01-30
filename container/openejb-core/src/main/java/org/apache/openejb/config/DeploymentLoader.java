@@ -643,33 +643,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         // conditions are met.  These conditions are different
         // than an ear file, so the ear-style code we were previously
         // using doesn't exactly work anymore.
-        //
-        // EjbModule webEjbModule = new EjbModule(webModule.getClassLoader(), webModule.getModuleId(), webModule.getJarLocation(), null, null);
-        EjbModule webEjbModule = null;
-        StringBuilder webInfClassesPath;
-        if (!warPath.toLowerCase().endsWith(".war")) {
-            webInfClassesPath = new StringBuilder(warPath);
-        } else {
-            webInfClassesPath = new StringBuilder(warPath.substring(0, warPath.length() - 4));
-        }
-        if (!warPath.endsWith("/")) {
-            webInfClassesPath.append("/");
-        }
-        webInfClassesPath.append("WEB-INF/classes");
-        final String webInfClasses = webInfClassesPath.toString();
-        final File webInfClassesFile = new File(webInfClasses);
-        if (webInfClassesFile.exists()) {
-            try {
-                webEjbModule = createEjbModule(webInfClassesFile.toURI().toURL(), webModule.getJarLocation(), webModule.getClassLoader(), webModule.getModuleId());
-            } catch (MalformedURLException e) {
-                logger.error("can't create an ejbmodule with WEB-INF/classes");
-                // don't throw it we use the next test to initialize the ejbmodule
-            }
-        }
-        if (webEjbModule == null) {
-            webEjbModule = new EjbModule(webModule.getClassLoader(), webModule.getModuleId(), webModule.getJarLocation(), null, null);
-        }
-
+        EjbModule webEjbModule = new EjbModule(webModule.getClassLoader(), webModule.getModuleId(), webModule.getJarLocation(), null, null);
         webEjbModule.getAltDDs().putAll(webModule.getAltDDs());
         appModule.getEjbModules().add(webEjbModule);
 
