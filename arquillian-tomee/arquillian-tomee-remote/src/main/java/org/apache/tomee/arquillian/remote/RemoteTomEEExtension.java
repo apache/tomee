@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-package org.apache.openejb.arquillian.remote;
+package org.apache.tomee.arquillian.remote;
 
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender;
