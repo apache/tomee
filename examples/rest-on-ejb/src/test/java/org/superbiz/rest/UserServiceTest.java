@@ -106,7 +106,7 @@ public class UserServiceTest {
                 .path("/user/list")
                 .get(String.class);
         assertEquals(
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+                inline("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
                         "<users>" +
                         "  <user>" +
                         "    <email>foo@foo.com</email>" +
@@ -120,7 +120,12 @@ public class UserServiceTest {
                         "    <id>2</id>" +
                         "    <password>barpwd</password>" +
                         "  </user>" +
-                        "</users>", users);
+                        "</users>"), inline(users));
+    }
+
+    private static String inline(String s) {
+        return s.replace(System.getProperty("line.separator"), "").replace("\n", "")
+                .replace(" ", "").replace("\t", "");
     }
 
     @Test
