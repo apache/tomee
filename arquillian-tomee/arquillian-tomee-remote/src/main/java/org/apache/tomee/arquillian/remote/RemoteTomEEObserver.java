@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-package org.apache.openejb.arquillian.remote;
+package org.apache.tomee.arquillian.remote;
 
 import org.apache.openejb.cdi.ThreadSingletonServiceImpl;
 import org.jboss.arquillian.core.api.InstanceProducer;
