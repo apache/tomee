@@ -92,7 +92,7 @@ public final class OpenEJB {
             CdiBuilder.initializeOWB(getClass().getClassLoader());
             
             OpenEjbVersion versionInfo = OpenEjbVersion.get();
-            if (system.getOptions().get("openejb.nobanner", true)) {
+            if (!system.getOptions().get("openejb.nobanner", true)) {
                 versionInfo.print(System.out);
             }
 
