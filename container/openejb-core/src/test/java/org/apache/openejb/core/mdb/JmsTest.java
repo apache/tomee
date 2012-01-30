@@ -105,7 +105,7 @@ public class JmsTest extends TestCase {
     }
 
     @SuppressWarnings("unchecked")
-    private void createSender(final Connection connection, final Destination requestQueue) throws JMSException {
+    private synchronized void createSender(final Connection connection, final Destination requestQueue) throws JMSException {
         Session session = null;
         MessageProducer producer = null;
         MessageConsumer consumer = null;
