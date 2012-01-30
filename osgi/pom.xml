@@ -22,7 +22,7 @@
   <parent>
     <artifactId>openejb</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.0.0-beta-2-SNAPSHOT</version>
+    <version>4.0.0-beta-3-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -41,6 +41,6 @@
 
   <properties>
     <karaf.version>2.2.5</karaf.version>
-    <karafee.version>1.0.0-beta-2-SNAPSHOT</karafee.version>
+    <karafee.version>1.0.0-beta-3-SNAPSHOT</karafee.version>
   </properties>
 </project>

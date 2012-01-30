@@ -19,13 +19,13 @@
   <parent>
     <artifactId>tck</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.0.0-beta-2-SNAPSHOT</version>
+    <version>4.0.0-beta-3-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>cdi-embedded</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: TCK :: CDI Embedded</name>
-  <version>1.0.0-beta-2-SNAPSHOT</version>
+  <version>1.0.0-beta-3-SNAPSHOT</version>
 
   <dependencies>
     <dependency>
@@ -37,12 +37,12 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tck-common</artifactId>
-      <version>4.0.0-beta-2-SNAPSHOT</version>
+      <version>4.0.0-beta-3-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>4.0.0-beta-2-SNAPSHOT</version>
+      <version>4.0.0-beta-3-SNAPSHOT</version>
     </dependency>
 
     <dependency>
