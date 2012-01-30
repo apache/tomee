@@ -27,7 +27,7 @@ import java.util.Set;
 
 public class TomEEJarScanner extends StandardJarScanner {
 
-    public void scan(ServletContext context, ClassLoader classLoader, JarScannerCallback callback, Set<String> jarsToIgnore) {
+    public void sNcan(ServletContext context, ClassLoader classLoader, JarScannerCallback callback, Set<String> jarsToIgnore) {
         if ("FragmentJarScannerCallback".equals(callback.getClass().getSimpleName())) {
             EmbeddedJarScanner embeddedJarScanner = new EmbeddedJarScanner();
             embeddedJarScanner.scan(context, classLoader, callback, jarsToIgnore);
