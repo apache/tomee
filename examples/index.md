@@ -38,6 +38,8 @@ Notice:    Licensed to the Apache Software Foundation (ASF) under one
 ### CDI
 
  - [cdi-basic](cdi-basic/README.html)
+ - [cdi-request-scoped](cdi-request-scoped/README.html)
+ - [cdi-application-scoped](cdi-application-scoped/README.html)
  - [cdi-interceptors](cdi-interceptors/README.html)
  - [cdi-produces-disposes](cdi-produces-disposes/README.html)
  - [decorators](decorators/README.html)
