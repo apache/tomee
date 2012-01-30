@@ -32,8 +32,12 @@ import org.apache.xbean.finder.filter.Filters;
 import org.apache.xbean.finder.filter.IncludeExcludeFilter;
 import org.apache.xbean.finder.filter.PatternFilter;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -50,11 +54,10 @@ import java.util.Set;
 * @version $Rev$ $Date$
 */
 public class NewLoaderLogic {
-    public static final String ADDITIONAL_EXCLUDES = System.getProperty("openejb.additional.exclude");
-    public static final String ADDITIONAL_INCLUDE = System.getProperty("openejb.additional.include");
-
     private static final Logger logger = DeploymentLoader.logger;
-    
+    private static final String EXCLUSION_FILE = "exclusions.list";
+    private static String[] exclusions = null;
+
     public static UrlSet filterArchives(Filter filter, ClassLoader classLoader, UrlSet urlSet) {
 
         for (URL url : urlSet.getUrls()) {
@@ -148,148 +151,7 @@ public class NewLoaderLogic {
     }
 
     public static UrlSet applyBuiltinExcludes(UrlSet urlSet) throws MalformedURLException {
-        final List<String> excludes = Arrays.asList(
-                "ApacheJMeter",
-                "XmlSchema-",
-                "aether-",
-                "activeio-",
-                "activemq-",
-                "antlr-",
-                "aopalliance-",
-                "avalon-framework-",
-                "axis-",
-                "axis2-",
-                "bcprov-",
-                "bval-core",
-                "bval-jsr",
-                "catalina-",
-                "cglib-",
-                "commons-beanutils",
-                "commons-cli-",
-                "commons-codec-",
-                "commons-collections-",
-                "commons-digester-",
-                "commons-dbcp",
-                "commons-dbcp-all-1.3-",
-                "commons-discovery-",
-                "commons-httpclient-",
-                "commons-io-",
-                "commons-lang-",
-                "commons-lang3-",
-                "commons-logging-",
-                "commons-logging-api-",
-                "commons-net-",
-                "commons-pool-",
-                "cssparser-",
-                "cxf-",
-                "deploy.jar",
-                "derby-",
-                "dom4j-",
-                "geronimo-",
-                "gragent.jar",
-                "guice-",
-                "hibernate-",
-                "howl-",
-                "hsqldb-",
-                "htmlunit-",
-                "icu4j-",
-                "idb-",
-                "idea_rt.jar",
-                "jasypt-",
-                "javaee-",
-                "javaee-api",
-                "javassist-",
-                "javaws.jar",
-                "javax.",
-                "jaxb-",
-                "jaxp-",
-                "jboss-",
-                "jbossall-",
-                "jbosscx-",
-                "jbossjts-",
-                "jbosssx-",
-                "jcommander-",
-                "jetty-",
-                "jettison-",
-                "joda-time-",
-                "jmdns-",
-                "jsp-api-",
-                "jsr299-",
-                "jsr311-",
-                "juli-",
-                "junit-",
-                "kahadb-",
-                "log4j-",
-                "logkit-",
-                "maven-",
-                "mbean-annotation-api-",
-                "myfaces-api",
-                "myfaces-impl",
-                "neethi-",
-                "nekohtml-",
-                "openejb-api",
-                "openejb-cxf-bundle",
-                "openejb-javaagent",
-                "openejb-jee",
-                "openejb-loader",
-                "openjpa-",
-                "opensaml-",
-                "openwebbeans-",
-                "openws-",
-                "ops4j-",
-                "org.eclipse.",
-                "org.junit.",
-                "org.osgi.core-",
-                "pax-",
-                "plexus-",
-                "quartz-",
-                "rmock-",
-                "saaj-",
-                "sac-",
-                "scannotation-",
-                "serializer-",
-                "serp-",
-                "servlet-api-",
-                "slf4j-",
-                "spring-",
-                "stax-api-",
-                "swizzle-",
-                "testng-",
-                "wagon-",
-                "webbeans-ee",
-                "webbeans-ejb",
-                "webbeans-impl",
-                "webbeans-spi",
-                "wsdl4j-",
-                "wss4j-",
-                "wstx-asl-",
-                "xalan-",
-                "xbean-",
-                "xercesImpl-",
-                "xml-apis-",
-                "xml-resolver-",
-                "xmlrpc-",
-                "xmlsec-",
-                "xmlunit-");
-        if (ADDITIONAL_EXCLUDES != null) {
-            for (String exclude : ADDITIONAL_EXCLUDES.split(",")) {
-                excludes.add(exclude.trim());
-            }
-        }
-        if (ADDITIONAL_INCLUDE != null) { // include = not excluded
-            for (String rawInclude : ADDITIONAL_INCLUDE.split(",")) {
-                final String include = rawInclude.trim();
-                final Iterator<String> excluded = excludes.iterator();
-                while (excluded.hasNext()) {
-                    if (excluded.next().startsWith(include)) {
-                        excluded.remove();
-                    }
-                }
-            }
-        }
-
-        final Filter filter = Filters.prefixes(excludes.toArray(new String[excludes.size()]));
-        
+        final Filter filter = Filters.prefixes(getExclusions());
 
 //        filter = Filters.optimize(filter, new PatternFilter(".*/openejb-.*"));
         List<URL> urls = urlSet.getUrls();
@@ -306,6 +168,49 @@ public class NewLoaderLogic {
 
 
         return new UrlSet(urls);
+    }
+
+    public static void setExclusions(final String[] exclusionArray) {
+        exclusions = exclusionArray;
+    }
+
+    public static String[] getExclusions() {
+        if (exclusions != null) {
+            return exclusions;
+        }
+
+        try {
+            final File conf = SystemInstance.get().getBase().getDirectory("conf");
+            final File exclusionsFile = new File(conf, EXCLUSION_FILE);
+            if (exclusionsFile.exists()) {
+                exclusions = readInputStreamList(new FileInputStream(exclusionsFile));
+            }
+        } catch (IOException e) {
+            // ignored
+        }
+
+        if (exclusions == null) {
+            exclusions = readInputStreamList(NewLoaderLogic.class.getResourceAsStream("/default.exclusions"));
+        }
+
+        return exclusions;
+    }
+
+    private static String[] readInputStreamList(InputStream is) {
+        final List<String> list = new ArrayList<String>();
+        final BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        String line;
+        try {
+            while ((line = reader.readLine()) != null) {
+                final String value = line.trim();
+                if (!value.isEmpty()) {
+                    list.add(value);
+                }
+            }
+        } catch (IOException e) {
+            // ignored
+        }
+        return list.toArray(new String[list.size()]);
     }
 
     private static File filter(File location) {

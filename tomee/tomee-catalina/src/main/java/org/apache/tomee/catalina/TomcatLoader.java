@@ -29,6 +29,7 @@ import org.apache.catalina.startup.Bootstrap;
 import org.apache.catalina.startup.Catalina;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
+import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.Loader;
@@ -52,8 +53,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * <h1>Prerequisites</h1>
@@ -151,9 +155,10 @@ public class TomcatLoader implements Loader {
         }
 
         FileInputStream fin = null;
+        File conf = null;
         // Read in and apply the conf/system.properties
         try {
-            File conf = SystemInstance.get().getBase().getDirectory("conf");
+            conf = SystemInstance.get().getBase().getDirectory("conf");
 
             //Look for custom system properties
             File file = new File(conf, "system.properties");
@@ -183,6 +188,21 @@ public class TomcatLoader implements Loader {
         // Install tomcat thread context listener
         ThreadContext.addThreadContextListener(new TomcatThreadContextListener());
 
+        // set ignorable libraries from a tomee property instead of using the standard openejb one
+        // don't ignore standard openejb exclusions file
+        final Set<String> exclusions = new HashSet<String>(Arrays.asList(NewLoaderLogic.getExclusions()));
+        final File catalinaProperties = new File(conf, "catalina.properties");
+        if (catalinaProperties.exists()) {
+            final Properties catalinaProps = new Properties();
+            catalinaProps.load(new FileInputStream(catalinaProperties));
+            final String jarToSkipProp = catalinaProps.getProperty("tomcat.util.scan.DefaultJarScanner.jarsToSkip");
+            if (jarToSkipProp != null) {
+                for (String s : jarToSkipProp.split(",")) {
+                    exclusions.add(s.trim());
+                }
+            }
+        }
+        NewLoaderLogic.setExclusions(exclusions.toArray(new String[exclusions.size()]));
 
         // Install tomcat war builder
         TomcatWebAppBuilder tomcatWebAppBuilder = (TomcatWebAppBuilder) SystemInstance.get().getComponent(WebAppBuilder.class);
