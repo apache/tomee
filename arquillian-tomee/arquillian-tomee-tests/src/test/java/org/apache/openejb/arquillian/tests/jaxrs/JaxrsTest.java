@@ -16,11 +16,16 @@
  */
 package org.apache.openejb.arquillian.tests.jaxrs;
 
+import junit.framework.Assert;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.ziplock.IO;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.io.InputStream;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,10 +34,12 @@ import java.util.Map;
  */
 public class JaxrsTest {
 
+    protected HttpClient client = new DefaultHttpClient();
+
     protected Map<String, String> headers(String... h) throws IOException {
         Map<String, String> map = new HashMap<String, String>();
 
-        for (int i = 0; i < h.length - 1;) {
+        for (int i = 0; i < h.length - 1; ) {
             String key = h[i++];
             String value = h[i++];
             map.put(key, value);
@@ -41,26 +48,45 @@ public class JaxrsTest {
         return map;
     }
 
+    protected String get(String path) throws IOException {
+        return get(headers(), path);
+    }
+
     protected String get(Map<String, String> headers, String path) throws IOException {
 
-        if (path.startsWith("/")) path = path.substring(1);
-        final String port = System.getProperty("tomee.http.port", "11080");
-        final String url = String.format("http://localhost:%s/%s/%s", port, this.getClass().getSimpleName(), path);
+        final URI uri = uri(path);
 
-        final URL url1 = new URL(url);
-        HttpURLConnection connection = (HttpURLConnection) url1.openConnection();
+        final HttpGet get = new HttpGet(uri);
+
         for (Map.Entry<String, String> header : headers.entrySet()) {
-            connection.setRequestProperty(header.getKey(), header.getValue());
+            get.setHeader(header.getKey(), header.getValue());
         }
 
-        return IO.slurp(connection.getInputStream());
+        final HttpResponse execute = client.execute(get);
+        if (execute.getStatusLine().getStatusCode() != 200) {
+            throw new IOException(execute.getStatusLine().toString());
+        }
+
+        return asString(execute);
     }
 
-    protected String get(String path) throws IOException {
+    protected URI uri(String path) {
         if (path.startsWith("/")) path = path.substring(1);
         final String port = System.getProperty("tomee.http.port", "11080");
-        final String url = String.format("http://localhost:%s/%s/%s", port, this.getClass().getSimpleName(), path);
-
-        return IO.slurp(new URL(url));
+        return URI.create(String.format("http://localhost:%s/%s/%s", port, this.getClass().getSimpleName(), path));
     }
+
+    public static void assertStatusCode(int actual, HttpResponse response) {
+        Assert.assertEquals(response.getStatusLine().getStatusCode(), actual);
+    }
+
+    public static String asString(HttpResponse execute) throws IOException {
+        final InputStream in = execute.getEntity().getContent();
+        try {
+            return IO.slurp(in);
+        } finally {
+            in.close();
+        }
+    }
+
 }
