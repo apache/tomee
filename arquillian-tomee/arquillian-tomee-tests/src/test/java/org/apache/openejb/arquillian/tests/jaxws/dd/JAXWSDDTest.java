@@ -48,7 +48,7 @@ public class JAXWSDDTest {
                 .setWebXML(new StringAsset(descriptor.exportAsString()))
                 .addAsLibraries(JarLocation.jarLocation(Test.class))
                 .addClass(Hello.class).addClass(HelloWS.class)
-                .addAsResource(new ClassLoaderAsset("org/apache/openejb/arquillian/tests/jaxws/dd/ejb-jar.xml"), "META-INF/ejb-jar.xml");
+                .addAsWebInfResource(new ClassLoaderAsset("org/apache/openejb/arquillian/tests/jaxws/dd/ejb-jar.xml"), "ejb-jar.xml");
 
         return archive;
     }
