@@ -121,7 +121,7 @@ public class RemoteServer {
                 if (!tomcat) {
                     lib = new File(home, "lib");
                 } else {
-                    lib = new File(new File(new File(home, "webapps"), "openejb"), "lib");
+                    lib = new File(new File(new File(home, "webapps"), "tomee"), "lib");
                 }
                 
                 for (File file : lib.listFiles()) {
