@@ -56,7 +56,7 @@ public class TomEEContainerTest {
         InputStream is = new URL("http://127.0.0.1:" + System.getProperty("tomee.http.port", "10080") + "/test/ejb").openStream();
         ByteArrayOutputStream os = new ByteArrayOutputStream();
 
-        int bytesRead = -1;
+        int bytesRead;
         byte[] buffer = new byte[8192];
         while ((bytesRead = is.read(buffer)) > -1) {
             os.write(buffer, 0, bytesRead);

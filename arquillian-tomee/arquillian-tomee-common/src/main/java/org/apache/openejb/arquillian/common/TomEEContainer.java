@@ -38,8 +38,10 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -134,12 +136,14 @@ public abstract class TomEEContainer implements DeployableContainer<TomEEConfigu
             }
 
             HTTPContext httpContext = new HTTPContext(LOCALHOST, configuration.getHttpPort());
+            String arquillianServlet;
             if (archive instanceof WebArchive) {
-            	httpContext.add(new Servlet("ArquillianServletRunner", "/" + getArchiveNameWithoutExtension(archive)));
+                arquillianServlet = "/" + getArchiveNameWithoutExtension(archive);
             } else {
-            	httpContext.add(new Servlet("ArquillianServletRunner", "/arquillian-protocol"));
+                arquillianServlet = "/arquillian-protocol";
             }
-            
+            httpContext.add(new Servlet("ArquillianServletRunner", arquillianServlet));
+
             // we should probably get all servlets and add them to the context
             return new ProtocolMetaData().addContext(httpContext);
         } catch (Exception e) {
@@ -149,14 +153,10 @@ public abstract class TomEEContainer implements DeployableContainer<TomEEConfigu
     }
 
     protected Deployer deployer() throws NamingException {
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
         properties.setProperty(Context.PROVIDER_URL, "http://" + LOCALHOST + ":" + configuration.getHttpPort() + "/tomee/ejb");
-        InitialContext context = new InitialContext(properties);
-
-        Deployer deployer = (Deployer) context.lookup("openejb/DeployerBusinessRemote");
-
-		return deployer;
+        return (Deployer) new InitialContext(properties).lookup("openejb/DeployerBusinessRemote");
 	}
 
 	protected String getArchiveNameWithoutExtension(final Archive<?> archive) {
@@ -170,14 +170,8 @@ public abstract class TomEEContainer implements DeployableContainer<TomEEConfigu
 
     public void undeploy(Archive<?> archive) throws DeploymentException {
         try {
-            Properties properties = new Properties();
-            properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
-            properties.setProperty(Context.PROVIDER_URL, "http://" + LOCALHOST + ":" + configuration.getHttpPort() + "/tomee/ejb");
-            InitialContext context = new InitialContext(properties);
-            File file = moduleIds.get(archive.getName());
-            Deployer deployer = (Deployer) context.lookup("openejb/DeployerBusinessRemote");
-            deployer.undeploy(file.getAbsolutePath());
-
+            final File file = moduleIds.get(archive.getName());
+            deployer().undeploy(file.getAbsolutePath());
             FileUtils.delete(file.getParentFile()); // "i" folder
         } catch (Exception e) {
             e.printStackTrace();
