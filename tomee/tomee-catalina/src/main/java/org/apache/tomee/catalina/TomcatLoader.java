@@ -66,7 +66,7 @@ import java.util.Set;
  * <ul>
  * <li/>openejb.home -> catalina.home
  * <li/>openejb.base -> catalina.base
- * <li/>openejb.war -> $openejb.war
+ * <li/>tomee.war -> $tomee.war
  * <li/>tomcat.version if not set
  * <li/>tomcat.built if not set
  * </ul>
@@ -136,7 +136,7 @@ public class TomcatLoader implements Loader {
         OptionsLog.install();
 
         // install conf/openejb.xml and conf/logging.properties files
-        String openejbWarDir = properties.getProperty("openejb.war");
+        String openejbWarDir = properties.getProperty("tomee.war");
         if (openejbWarDir != null) {
 
             Paths paths = new Paths(new File(openejbWarDir));

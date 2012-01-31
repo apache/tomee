@@ -17,8 +17,8 @@ Installation
 
  Assuming you have a normal working Tomcat 5.5 or 6.x installation:
 
- 1. Copy openejb.war to ${catalina.base}/webapps/openejb.war
-        (Note: the file must be named openejb.war)
+ 1. Copy tomee.war to ${catalina.base}/webapps/tomee.war
+        (Note: the file must be named tomee.war)
  2. Start Tomcat if it is not already running
  3. (optional) Visit http://localhost:8080/openejb/installer and click the 'install' button
 

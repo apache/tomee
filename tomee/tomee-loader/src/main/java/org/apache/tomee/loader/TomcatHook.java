@@ -39,21 +39,21 @@ import static org.apache.openejb.loader.ProvisioningUtil.realLocation;
  * This class should only be loadded and used via reflection from TomcatEmbedder.
  *
  * Everything that happens up to the point of calling this particular method
- * (except setting openejb.war) ultimately means nothing and does not matter
+ * (except setting tomee.war) ultimately means nothing and does not matter
  * to the integration.
  *
- * Requires openejb.war to be set, the sets the following properties:
+ * Requires tomee.war to be set, the sets the following properties:
  *
  * System properties:
  * set openejb.home -> catalina.home
  * set openejb.base -> catalina.base
- * set openejb.war -> $openejb.war
+ * set tomee.war -> $tomee.war
  * set tomcat.version if not set
  * set tomcat.built if not set
  *
  * Local properties: 
  * set openejb.loader -> tomcat-system
- * set openejb.libs -> $openejb.war/lib
+ * set openejb.libs -> $tomee.war/lib
  *
  * With these properties setup, this class with construct an {@link Embedder}
  * using the "org.apache.tomee.catalina.TomcatLoader" as the loader.
@@ -73,7 +73,7 @@ class TomcatHook {
     public static final String TEMP_DIR = "temp";
 
     /**
-     * Using openejb.war path, it sets several required
+     * Using tomee.war path, it sets several required
      * system properties and init {@link SystemInstance#init(Properties)}
      * 
      * <p>
@@ -85,20 +85,20 @@ class TomcatHook {
      */
     static void hook(Properties properties) {
         
-        // verify properties and make sure it contains the openejb.war property
+        // verify properties and make sure it contains the tomee.war property
         if (properties == null) throw new NullPointerException("properties is null");
         
-        //Check openejb.war property
+        //Check tomee.war property
         //This property is set by the LoaderServlet or OpenEJBListener
-        //When you deploy openejb.war into webapps/ directory of the tomcat
+        //When you deploy tomee.war into webapps/ directory of the tomcat
         //Loader servlet automatically starts and initialize this property
-        if (!properties.containsKey("openejb.war")) throw new IllegalArgumentException("properties must contain the openejb.war property");
+        if (!properties.containsKey("tomee.war")) throw new IllegalArgumentException("properties must contain the tomee.war property");
 
         
-        //Get the openejb directory (under webapps) using the openejb.war property
-        File openejbWar = new File(properties.getProperty("openejb.war"));
+        //Get the openejb directory (under webapps) using the tomee.war property
+        File openejbWar = new File(properties.getProperty("tomee.war"));
         if (!openejbWar.isDirectory()) {
-            throw new IllegalArgumentException("openejb.war is not a directory: " + openejbWar);
+            throw new IllegalArgumentException("tomee.war is not a directory: " + openejbWar);
         }
 
         // if SystemInstance is already initialized, then return
@@ -123,14 +123,14 @@ class TomcatHook {
         //Sets system property for openejb.base
         System.setProperty("openejb.base", catalinaBase);
 
-        // Set the openejb.war property as a *System* property
-        System.setProperty("openejb.war", openejbWar.getAbsolutePath());
+        // Set the tomee.war property as a *System* property
+        System.setProperty("tomee.war", openejbWar.getAbsolutePath());
         
         // set the property openejb.libs to contain the absolute path of the lib directory of openejb webapp
         File libDir = new File(openejbWar, "lib");
         String libPath = libDir.getAbsolutePath();
         
-        //Sets openejb.libs to openejb.war/lib folder
+        //Sets openejb.libs to tomee.war/lib folder
         properties.setProperty("openejb.libs", libPath);
 
         // System.setProperty("tomcat.version", "x.y.z.w");

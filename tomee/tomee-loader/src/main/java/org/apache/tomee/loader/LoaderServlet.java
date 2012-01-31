@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServlet;
  * The sole purpose of this class is to call the {@link TomcatEmbedder#embed} method
  *
  * This class gets the location of this webapp and assumes that it is
- * the openejb.war file then calls the embedder.
+ * the tomee.war file then calls the embedder.
  *
  * This method of bootstrapping is mutually exclussive to the {@link OpenEJBListener} approach
  */
@@ -54,8 +54,8 @@ public class LoaderServlet extends HttpServlet {
         //Web application directory
         File webappDir = new File(getWebappPath(config));
         
-        //Sets openejb.war property
-        properties.setProperty("openejb.war", webappDir.getAbsolutePath());
+        //Sets tomee.war property
+        properties.setProperty("tomee.war", webappDir.getAbsolutePath());
         
         //Sets source of the embedder
         properties.setProperty("openejb.embedder.source", getClass().getSimpleName());

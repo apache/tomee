@@ -27,9 +27,9 @@ import java.util.Properties;
 /**
  * Ultimately this class does nothing lasting and just calls {@link TomcatHook#hook}
  * 
- * This class needs to know the path to the openejb.war file.
+ * This class needs to know the path to the tomee.war file.
  *
- * With that information this class finds the openejb-loader jar in the openejb.war
+ * With that information this class finds the openejb-loader jar in the tomee.war
  * essentially creates a "mini-webapp" which is to say it creates a new WebappClassloader
  * that contains the openejb-loader jar and then uses that classloader to reflectively
  * call the {@link TomcatHook#hook} method which does all the work to load OpenEJB into Tomcat
@@ -45,7 +45,7 @@ public class TomcatEmbedder {
     private static final String OPENEJB_LOADER_PREFIX = "openejb-loader";
     
     /**OpenEJB War name*/
-    private static final String OPENEJB_WAR_NAME = "openejb.war";
+    private static final String TOMEE_WAR_NAME = "tomee.war";
     
     /**
 	 * Starts to embed process. 
@@ -56,13 +56,13 @@ public class TomcatEmbedder {
         if (catalinaCl == null) throw new NullPointerException("catalinaCl is null");
         if (properties == null) throw new NullPointerException("properties is null");
 
-        if (!properties.containsKey(OPENEJB_WAR_NAME)) {
-            throw new IllegalArgumentException("properties must contain the openejb.war property");
+        if (!properties.containsKey(TOMEE_WAR_NAME)) {
+            throw new IllegalArgumentException("properties must contain the tomee.war property");
         }
         // openejbWar represents the absolute path of the openejb webapp i.e. the openejb directory
-        File openejbWar = new File(properties.getProperty(OPENEJB_WAR_NAME));
+        File openejbWar = new File(properties.getProperty(TOMEE_WAR_NAME));
         if (!openejbWar.isDirectory()) {
-            throw new IllegalArgumentException("openejb.war is not a directory: " + openejbWar);
+            throw new IllegalArgumentException("tomee.war is not a directory: " + openejbWar);
         }
         // retrieve the current ClassLoader
         ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
@@ -108,7 +108,7 @@ public class TomcatEmbedder {
     /**
      * Return path to jar file that contains this class.
      * <p>
-     * Normally, openejb.war/lib/tomee-loader.jar
+     * Normally, tomee.war/lib/tomee-loader.jar
      * </p>
      * @return path to jar file that contains this class
      */
@@ -158,13 +158,13 @@ public class TomcatEmbedder {
     
     /**
      * Gets path to jar file that has namePrefix
-     * and in the openejb.war/lib location.
-     * @param openejbWar path to openejb.war
+     * and in the tomee.war/lib location.
+     * @param tomeeWar path to tomee.war
      * @param namePrefix prefix of the jar file
      * @return path to file
      */
-    private static File findOpenEJBJar(File openejbWar, String namePrefix) {
-        File openEJBLibDir = new File(openejbWar, "lib");
+    private static File findOpenEJBJar(File tomeeWar, String namePrefix) {
+        File openEJBLibDir = new File(tomeeWar, "lib");
         if (openEJBLibDir == null) return null;
 
         File openejbLoaderJar = null;
