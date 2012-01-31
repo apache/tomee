@@ -160,6 +160,11 @@ public class TomcatLoader implements Loader {
         try {
             conf = SystemInstance.get().getBase().getDirectory("conf");
 
+            final File tomeeXml = new File(conf, "tomee.xml");
+            if (tomeeXml.exists()) { // use tomee.xml instead of openejb.xml
+                SystemInstance.get().setProperty("openejb.configuration", tomeeXml.getAbsolutePath());
+            }
+
             //Look for custom system properties
             File file = new File(conf, "system.properties");
             if (file.exists()) {
