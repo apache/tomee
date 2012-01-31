@@ -116,7 +116,7 @@ public class RemoteTomEEContainer extends TomEEContainer {
 
             System.setProperty("tomee.http.port", String.valueOf(configuration.getHttpPort()));
             System.setProperty("tomee.shutdown.port", String.valueOf(configuration.getStopPort()));
-            System.setProperty("java.naming.provider.url", "http://localhost:" +  configuration.getHttpPort() + "/openejb/ejb");
+            System.setProperty("java.naming.provider.url", "http://localhost:" +  configuration.getHttpPort() + "/tomee/ejb");
             System.setProperty("connect.tries", "90");
             System.setProperty("server.http.port", String.valueOf(configuration.getHttpPort()));
             System.setProperty("server.shutdown.port", String.valueOf(configuration.getStopPort()));

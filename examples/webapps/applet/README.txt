@@ -69,7 +69,7 @@ actually maps the /ejb/* to a servlet named ServerServlet. This is another thing
 too keep in mind in your web-app. Yes, the provider url actually points to a servlet named
 ServerServlet. This servlet is provided by openejb and is automatically added to you webapps
 classpath.
-[Note:- All other clients (except applets) will use a provider url of http://127.0.0.1:8080/openejb/ejb,
+[Note:- All other clients (except applets) will use a provider url of http://127.0.0.1:8080/tomee/ejb,
 since an applet cannot connect to another web-app, hence the above little trick to work around this
 limitation. If you do not make the change, you will get a HTTP 403 error i.e. server denied 
 access to the ServerServlet . A unit test named JNDILookupTest has been added to the example to 

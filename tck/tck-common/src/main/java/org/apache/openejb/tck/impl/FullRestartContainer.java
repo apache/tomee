@@ -109,8 +109,8 @@ public class FullRestartContainer extends AbstractContainers implements Containe
         props.put(Context.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName());
         String port = System.getProperty("server.http.port");
         if (port != null) {
-            System.out.println("provider url = " + "http://localhost:" + port + "/openejb/ejb");
-            props.put(Context.PROVIDER_URL, options.get(Context.PROVIDER_URL,"http://localhost:" + port + "/openejb/ejb"));
+            System.out.println("provider url = " + "http://localhost:" + port + "/tomee/ejb");
+            props.put(Context.PROVIDER_URL, options.get(Context.PROVIDER_URL,"http://localhost:" + port + "/tomee/ejb"));
         } else {
             throw new RuntimeException("Please set the tomee port as a system property");
         }
