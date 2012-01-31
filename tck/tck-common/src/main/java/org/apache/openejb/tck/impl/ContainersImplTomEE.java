@@ -49,7 +49,7 @@ public class ContainersImplTomEE extends AbstractContainers implements Container
         props.put(Context.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName());
         String port = System.getProperty("server.http.port");
         if (port != null) {
-            props.put(Context.PROVIDER_URL, options.get(Context.PROVIDER_URL,"http://localhost:" + port + "/openejb/ejb"));
+            props.put(Context.PROVIDER_URL, options.get(Context.PROVIDER_URL,"http://localhost:" + port + "/tomee/ejb"));
         } else {
             throw new RuntimeException("Please set the tomee port as a system property");
         }

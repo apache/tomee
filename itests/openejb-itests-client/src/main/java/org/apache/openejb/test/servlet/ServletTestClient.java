@@ -39,7 +39,7 @@ public abstract class ServletTestClient extends TestClient {
     public ServletTestClient(String servletName) {
         super("Servlet." + servletName + ".");
         this.servletName = servletName;
-        String serverUri = System.getProperty("openejb.server.uri", "http://127.0.0.1:8080/openejb/ejb");
+        String serverUri = System.getProperty("openejb.server.uri", "http://127.0.0.1:8080/tomee/ejb");
         try {
             serverUrl = new URL(serverUri);
         } catch (MalformedURLException e) {

@@ -31,7 +31,7 @@ public class EJBClient {
 		try {
 			Properties p = new Properties();
 			p.setProperty(Context.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName());
-			p.setProperty(Context.PROVIDER_URL, "http://localhost:8080/openejb/ejb");
+			p.setProperty(Context.PROVIDER_URL, "http://localhost:8080/tomee/ejb");
 			
 			InitialContext context = new InitialContext(p);
 			MoviesRemote movies = (MoviesRemote) context.lookup("MoviesRemote");

@@ -33,7 +33,7 @@ public class JNDILookupTest {
     public void test() {
         Properties props = new Properties();
         props.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
-        props.put(Context.PROVIDER_URL, "http://127.0.0.1:8080/openejb/ejb");
+        props.put(Context.PROVIDER_URL, "http://127.0.0.1:8080/tomee/ejb");
         try {
             Context ctx = new InitialContext(props);
             System.out.println("Found context " + ctx);

@@ -31,7 +31,7 @@ public class TomcatRemoteTestServer implements TestServer {
 
     public void init(Properties props) {
         properties = props;
-        serverUri = System.getProperty("openejb.server.uri", "http://127.0.0.1:8080/openejb/ejb");
+        serverUri = System.getProperty("openejb.server.uri", "http://127.0.0.1:8080/tomee/ejb");
         if (!serverUri.startsWith("http:")) {
             throw new IllegalStateException("TomcatRemoteTestServer requires that openejb.server.uri property starts with http:");
         }

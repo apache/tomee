@@ -201,7 +201,7 @@
 
             <!--<maven.failsafe.debug>true</maven.failsafe.debug>-->
             <!--<openejb.server.debug>true</openejb.server.debug>-->
-            <java.naming.provider.url>http://localhost:${tomee.http.port}/openejb/ejb</java.naming.provider.url>
+            <java.naming.provider.url>http://localhost:${tomee.http.port}/tomee/ejb</java.naming.provider.url>
             <connect.tries>90</connect.tries>
             <server.http.port>${tomee.http.port}</server.http.port>
             <server.shutdown.port>${tomee.shutdown.port}</server.shutdown.port>
