@@ -371,8 +371,8 @@ public class Installer {
         }
     }
     /**
-     * Installs conf/openejb.xml and conf/logging.properties files.
-     * This method retrieves the openejb.xml and logging.properties files
+     * Installs conf/tomee.xml and conf/logging.properties files.
+     * This method retrieves the tomee.xml and logging.properties files
      * from openejb core jar file and installs them under the conf directory
      * of tomcat. if there is already a conf/logging.properties file available
      * then this method appends the contents of openejb logging.properties file
@@ -400,16 +400,16 @@ public class Installer {
         }
 
         //
-        // conf/openejb.xml
+        // conf/tomee.xml
         //
 
-        File openEjbXmlFile = new File(confDir, "openejb.xml");
+        File openEjbXmlFile = new File(confDir, "tomee.xml");
         if (!openEjbXmlFile.exists()) {
             // read in the openejb.xml file from the openejb core jar
             String openEjbXml = Installers.readEntry(coreJar, "default.openejb.conf", alerts);
             if (openEjbXml != null) {
                 if (Installers.writeAll(openEjbXmlFile, openEjbXml, alerts)) {
-                    alerts.addInfo("Copy openejb.xml to conf");
+                    alerts.addInfo("Copy tomee.xml to conf");
                 }
             }
         }
@@ -472,7 +472,7 @@ public class Installer {
                 systemPropertiesWriter.write("# openejb.servicemanager.enabled = false\n");
                 systemPropertiesWriter.write("# openejb.descriptors.output = false\n");
                 systemPropertiesWriter.write("# openejb.strict.interface.declaration = false\n");
-                systemPropertiesWriter.write("# openejb.conf.file = conf/openejb.xml\n");
+                systemPropertiesWriter.write("# openejb.conf.file = conf/tomee.xml\n");
                 systemPropertiesWriter.write("# openejb.debuggable-vm-hackery = false\n");
                 systemPropertiesWriter.write("# openejb.validation.skip = false\n");
                 systemPropertiesWriter.write("# openejb.webservices.enabled = true\n");
