@@ -36,7 +36,7 @@ import org.apache.catalina.core.StandardServer;
  * This approach is mutually exclussive to the {@link LoaderServlet}
  *
  * This class does nothing more than scrape around in
- * Tomcat and look for the openejb.war so it can call the embedder
+ * Tomcat and look for the tomee.war so it can call the embedder
  *
  * This class can be installed in the Tomcat server.xml as an alternate
  * way to bootstrap OpenEJB into Tomcat.  The benefit of this is that
@@ -57,7 +57,7 @@ public class OpenEJBListener implements LifecycleListener {
 	        Properties properties = new Properties();
 	        File webappDir = findOpenEjbWar();
             if (webappDir != null) {
-                properties.setProperty("openejb.war", webappDir.getAbsolutePath());
+                properties.setProperty("tomee.war", webappDir.getAbsolutePath());
                 properties.setProperty("openejb.embedder.source", getClass().getSimpleName());
                 TomcatEmbedder.embed(properties, StandardServer.class.getClassLoader());
                 listenerInstalled = true;

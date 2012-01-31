@@ -110,15 +110,15 @@ class SetupCommand {
         log.info("extracting ${catalinaHome}")
 		ant.unzip(src: dest, dest: "${workDir}")
 
-		log.info("Deploying the openejb war")
+		log.info("Deploying the tomee war")
 		ant.unzip(src: "${localRepo}/org/apache/openejb/${webapp}/${openejbVersion}/${webapp}-${openejbVersion}.war",
-				dest: "${workDir}/apache-tomcat-${tomcatVersion}/webapps/openejb")
+				dest: "${workDir}/apache-tomcat-${tomcatVersion}/webapps/tomee")
 
 		log.info("Installing to: ${catalinaHome}")
 
 		System.setProperty("catalina.home", "${catalinaHome}")
 		System.setProperty("catalina.base", "${catalinaHome}")
-		Paths paths = new Paths(new File("${catalinaHome}/webapps/openejb"))
+		Paths paths = new Paths(new File("${catalinaHome}/webapps/tomee"))
 		Installer installer = new Installer(paths, true)
 		installer.installAll()
 
@@ -126,8 +126,8 @@ class SetupCommand {
 		ant.chmod(dir: "${workDir}/apache-tomcat-${tomcatVersion}/bin", perm: "u+x", includes: "**/*.sh")
 
         ant.delete(dir: "${workDir}/apache-tomcat-${tomcatVersion}/webapps/examples")
-        ant.delete(file: "${workDir}/apache-tomcat-${tomcatVersion}/webapps/openejb/META-INF/LICENSE")
-        ant.delete(file: "${workDir}/apache-tomcat-${tomcatVersion}/webapps/openejb/META-INF/NOTICE")
+        ant.delete(file: "${workDir}/apache-tomcat-${tomcatVersion}/webapps/tomee/META-INF/LICENSE")
+        ant.delete(file: "${workDir}/apache-tomcat-${tomcatVersion}/webapps/tomee/META-INF/NOTICE")
 	}
 }
 

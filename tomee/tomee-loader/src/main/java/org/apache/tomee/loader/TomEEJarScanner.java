@@ -35,7 +35,7 @@ public class TomEEJarScanner extends StandardJarScanner {
             super.scan(context, classLoader, callback, jarsToIgnore);
         }
 
-//        String openejbWar = System.getProperty("openejb.war");
+//        String openejbWar = System.getProperty("tomee.war");
 //
 //        if (openejbWar == null) {
 //            EmbeddedJarScanner embeddedJarScanner = new EmbeddedJarScanner();

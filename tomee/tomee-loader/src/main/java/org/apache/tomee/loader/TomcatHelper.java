@@ -159,7 +159,7 @@ public class TomcatHelper {
 	}
 
 	/**
-	 * Get a comma separated list of all jars under $CATALINA_BASE/webapps/openejb/lib
+	 * Get a comma separated list of all jars under $CATALINA_BASE/webapps/tomee/lib
 	 * The idea is that all of these jars should be excluded from Tomcat's scanning for web fragments
 	 * because these jar don't have any fragments in, and the scanning process is expensive in terms
 	 * of PermGen space.
@@ -167,7 +167,7 @@ public class TomcatHelper {
 	 * @return list of jars as string, comma separated
 	 */
 	private static String getJarsToSkip() {
-		File openejbApp = new File(System.getProperty("openejb.war"));
+		File openejbApp = new File(System.getProperty("tomee.war"));
 		File libFolder = new File(openejbApp, "lib");
 		StringBuilder builder = new StringBuilder();
 		
