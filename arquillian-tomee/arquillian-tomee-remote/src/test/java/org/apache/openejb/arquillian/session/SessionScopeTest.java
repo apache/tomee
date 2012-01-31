@@ -44,11 +44,11 @@ import static org.junit.Assert.assertNotSame;
 
 @RunWith(Arquillian.class)
 public class SessionScopeTest {
-    public static final String TEST_SESSION_URL = "http://127.0.0.1:" + System.getProperty("tomee.http.port", "10080") + "/test/session";
+    public static final String TEST_SESSION_URL = "http://127.0.0.1:" + System.getProperty("tomee.http.port", "10080") + "/SessionScopeTest/session";
 
     @Deployment
     public static WebArchive createDeployment() {
-        return ShrinkWrap.create(WebArchive.class, "test.war")
+        return ShrinkWrap.create(WebArchive.class, "SessionScopeTest.war")
             .addClass(PojoSessionScoped.class).addClass(PojoSessionScopedServletWrapper.class)
             .addAsLibraries(new File("target/test-libs/commons-httpclient.jar"))
             .addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
