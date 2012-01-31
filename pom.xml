@@ -83,12 +83,17 @@
   </ciManagement>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/openejb/trunk/openejb3</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/openejb/trunk/openejb3</developerConnection>
-    <url>https://svn.apache.org/repos/asf/openejb/trunk/openejb3</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/openejb/trunk/openejb</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/openejb/trunk/openejb</developerConnection>
+    <url>https://svn.apache.org/repos/asf/openejb/trunk/openejb</url>
   </scm>
 
   <properties>
+
+    <!-- Maven module versions -->
+    <maven-bundle-plugin.version>2.3.6</maven-bundle-plugin.version>
+    <!-- don't use 2.3.5 since there is an issue with private packages imports -->
+
     <!-- This is used by a manifest classpath entry -->
     <xbeanVersion>3.9</xbeanVersion>
 
@@ -131,7 +136,7 @@
     <org.apache.activemq.version>5.5.1</org.apache.activemq.version>
     <quartz.version>1.8.5</quartz.version>
     <org.springframework.version>3.0.5.RELEASE</org.springframework.version>
-    <junit.version>4.8.1</junit.version>
+    <junit.version>4.9</junit.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
     <scannotation.version>1.0.2</scannotation.version>
     <org.apache.openwebbeans.version>1.1.4-SNAPSHOT</org.apache.openwebbeans.version>
@@ -139,7 +144,7 @@
     <geronimo-osgi.version>1.1</geronimo-osgi.version>
     <geronimo-javamail_1.4_spec.version>1.7.1</geronimo-javamail_1.4_spec.version>
     <myfaces.version>2.1.2</myfaces.version>
-    <slf4j.version>1.6.1</slf4j.version>
+    <slf4j.version>1.6.4</slf4j.version>
     <log4j.version>1.2.16</log4j.version>
     <osgi.framework.version>4.2.0</osgi.framework.version>
     <hsqldb.version>2.2.4</hsqldb.version>
@@ -168,7 +173,7 @@
         <plugin>
           <groupId>org.apache.felix</groupId>
           <artifactId>maven-bundle-plugin</artifactId>
-          <version>2.0.1</version> <!-- don't use 2.3.5 since there is an issue with private packages imports -->
+          <version>${maven-bundle-plugin.version}</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -242,7 +247,6 @@
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
-        <version>2.0.1</version>
         <extensions>true</extensions>
         <configuration>
           <instructions>
@@ -400,6 +404,18 @@
     <!--<enabled>true</enabled>-->
     <!--</snapshots>-->
     <!--</repository>-->
+    <!-- Apache snapshots -->
+    <repository>
+      <id>apache-snapshots</id>
+      <name>Apache Snapshots Repository</name>
+      <url>http://repository.apache.org/content/groups/snapshots-group</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
     <repository>
       <id>JBoss Repository</id>
       <url>https://repository.jboss.org/nexus/content/groups/public-jboss/</url>
@@ -1171,7 +1187,7 @@
       <dependency>
         <groupId>org.apache.ws.security</groupId>
         <artifactId>wss4j</artifactId>
-        <version>1.6.3</version>
+        <version>1.6.4</version>
       </dependency>
       <dependency>
         <groupId>wsdl4j</groupId>
@@ -1224,7 +1240,7 @@
       <dependency>
         <groupId>org.apache.neethi</groupId>
         <artifactId>neethi</artifactId>
-        <version>3.0.0</version>
+        <version>3.0.1</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.ws.commons.axiom</groupId>
@@ -1244,12 +1260,12 @@
       <dependency>
         <groupId>org.apache.ws.commons.axiom</groupId>
         <artifactId>axiom-api</artifactId>
-        <version>1.2.11</version>
+        <version>1.2.12</version>
       </dependency>
       <dependency>
         <groupId>org.apache.ws.commons.axiom</groupId>
         <artifactId>axiom-impl</artifactId>
-        <version>1.2.11</version>
+        <version>1.2.12</version>
       </dependency>
       <dependency>
         <groupId>xerces</groupId>
@@ -1310,7 +1326,7 @@
       <dependency>
         <groupId>commons-discovery</groupId>
         <artifactId>commons-discovery</artifactId>
-        <version>0.4</version>
+        <version>${commons-discovery.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
@@ -1418,7 +1434,7 @@
       <dependency>
         <groupId>org.testng</groupId>
         <artifactId>testng</artifactId>
-        <version>5.14.10</version>
+        <version>6.3.1</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -1449,7 +1465,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.4</version>
+        <version>2.8</version>
         <configuration>
           <aggregate>true</aggregate>
           <additionalJOption>-J-Xmx1024m</additionalJOption>

@@ -174,6 +174,7 @@ echo %EXECUTABLE% //IS//%SERVICE_NAME%
 	--StopClass org.apache.catalina.startup.Bootstrap ^
 	--StartParams start ^
 	--StopParams stop ^
+	--Startup auto ^
 	--LogLevel Info ^
 	--LogPrefix TomEE
 
