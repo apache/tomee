@@ -41,34 +41,42 @@
       </excludes>
     </fileSet>
     <fileSet>
-      <directory>${plus.work-dir}/apache-tomcat-${tomcat.version}</directory>
-      <outputDirectory>/apache-tomee-plus-${project.version}</outputDirectory>
-      <includes>
-        <include>**/bin/**/*</include>
-      </includes>
-      <fileMode>0755</fileMode>
-    </fileSet>
-    <fileSet>
-      <directory>${basedir}/target/maven-shared-archive-resources/META-INF/</directory>
+      <directory>${project.basedir}/target/maven-shared-archive-resources/META-INF/</directory>
       <outputDirectory>/apache-tomee-plus-${project.version}</outputDirectory>
       <includes>
         <include>LICENSE</include>
       </includes>
     </fileSet>
     <fileSet>
-      <directory>${basedir}/src/main/resources/META-INF/plus/</directory>
+      <directory>${project.basedir}/src/main/resources/META-INF/plus/</directory>
       <outputDirectory>/apache-tomee-plus-${project.version}</outputDirectory>
       <includes>
         <include>*</include>
       </includes>
     </fileSet>
-	<fileSet>
-      <directory>${basedir}/src/main/resources/</directory>
+    <fileSet>
+      <directory>${project.basedir}/target/classes</directory>
       <outputDirectory>/apache-tomee-plus-${project.version}/bin</outputDirectory>
       <includes>
         <include>service.*</include>
         <include>TomEE.*</include>
       </includes>
+    </fileSet>
+    <fileSet>
+      <directory>${project.basedir}/target/classes</directory>
+      <outputDirectory>/apache-tomee-plus-${project.version}/bin</outputDirectory>
+      <includes>
+        <include>*.sh</include>
+      </includes>
+      <fileMode>0755</fileMode>
+    </fileSet>
+    <fileSet>
+      <directory>${plus.work-dir}/apache-tomcat-${tomcat.version}</directory>
+      <outputDirectory>/apache-tomee-plus-${project.version}</outputDirectory>
+      <includes>
+        <include>**/bin/**/*</include>
+      </includes>
+      <fileMode>0755</fileMode>
     </fileSet>
   </fileSets>
 </assembly>
