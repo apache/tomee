@@ -105,6 +105,10 @@ public class ObjectFactory {
         return new Openejb();
     }
 
+    public Tomee createTomee() {
+        return new Tomee();
+    }
+
     /**
      * Create an instance of {@link org.apache.openejb.config.sys.TransactionManager }
      */

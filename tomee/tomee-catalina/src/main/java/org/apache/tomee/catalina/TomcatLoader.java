@@ -30,6 +30,7 @@ import org.apache.catalina.startup.Catalina;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.config.NewLoaderLogic;
+import org.apache.openejb.config.sys.Tomee;
 import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.Loader;
@@ -163,6 +164,7 @@ public class TomcatLoader implements Loader {
             final File tomeeXml = new File(conf, "tomee.xml");
             if (tomeeXml.exists()) { // use tomee.xml instead of openejb.xml
                 SystemInstance.get().setProperty("openejb.configuration", tomeeXml.getAbsolutePath());
+                SystemInstance.get().setProperty("openejb.configuration.class", Tomee.class.getName());
             }
 
             //Look for custom system properties

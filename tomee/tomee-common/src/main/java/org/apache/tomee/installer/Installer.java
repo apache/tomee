@@ -408,7 +408,7 @@ public class Installer {
             // read in the openejb.xml file from the openejb core jar
             String openEjbXml = Installers.readEntry(coreJar, "default.openejb.conf", alerts);
             if (openEjbXml != null) {
-                if (Installers.writeAll(openEjbXmlFile, openEjbXml, alerts)) {
+                if (Installers.writeAll(openEjbXmlFile, openEjbXml.replace("<openejb>", "<tomee>").replace("</openejb>", "</tomee>"), alerts)) {
                     alerts.addInfo("Copy tomee.xml to conf");
                 }
             }

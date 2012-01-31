@@ -19,6 +19,7 @@ package org.apache.openejb.config.sys;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.jee.JAXBContextFactory;
 import org.apache.openejb.config.ConfigUtils;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.xbean.finder.ResourceFinder;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -83,6 +84,8 @@ public abstract class JaxbOpenejb {
             return (T) createServicesJar();
         } else if (type == TransactionManager.class) {
             return (T) createTransactionManager();
+        } else if (type == Tomee.class) {
+            return (T) createTomee();
         }
         throw new IllegalArgumentException("Unknown type " + type.getName());
     }
@@ -102,6 +105,8 @@ public abstract class JaxbOpenejb {
             return (T) createJndiProvider();
         } else if (type.equals("Openejb")) {
             return (T) createOpenejb();
+        } else if (type.equals("Tomee")) {
+            return (T) createTomee();
         } else if (type.equals("ProxyFactory")) {
             return (T) createProxyFactory();
         } else if (type.equals("Resource")) {
@@ -217,7 +222,7 @@ public abstract class JaxbOpenejb {
             } else {
                 in = new FileInputStream(configFile);
             }
-            Openejb openejb = unmarshal(Openejb.class, in);
+            Openejb openejb = (Openejb) unmarshal(SystemInstance.get().getOptions().get("openejb.configuration.class", Openejb.class), in);
             return openejb;
         } catch (MalformedURLException e) {
             throw new OpenEJBException("Unable to resolve location " + configFile, e);
@@ -383,6 +388,10 @@ public abstract class JaxbOpenejb {
 
     public static Openejb createOpenejb() {
         return new Openejb();
+    }
+
+    private static Tomee createTomee() {
+        return new Tomee();
     }
 
     public static ProxyFactory createProxyFactory() {
