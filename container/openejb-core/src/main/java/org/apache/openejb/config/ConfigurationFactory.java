@@ -317,7 +317,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
 
         Thread updateCheckerThreader = null;
-        if (!offline) {
+        if (!offline && !UpdateChecker.isSkipped()) {
             updateCheckerThreader = new Thread(new UpdateChecker());
             updateCheckerThreader.start();
         }
@@ -420,7 +420,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             }
         }
 
-        if (!offline) {
+        if (!offline && !UpdateChecker.isSkipped()) {
             try {
                 updateCheckerThreader.join(10000); // 10s is already a lot
             } catch (InterruptedException ignored) {

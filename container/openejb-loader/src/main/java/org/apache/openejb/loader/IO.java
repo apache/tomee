@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.util;
+package org.apache.openejb.loader;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -38,6 +38,7 @@ import java.net.ProxySelector;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Properties;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
@@ -72,6 +73,38 @@ public class IO {
         }
 
         return builder.toString();
+    }
+
+    public static Properties readProperties(URL resource) throws IOException {
+        Properties properties = new Properties();
+        InputStream in = null;
+        try {
+            in = resource.openStream();
+            in = new BufferedInputStream(in);
+            properties.load(in);
+        } finally{
+            try {
+                if (in != null) in.close();
+            } catch (IOException e) {
+            }
+        }
+        return properties;
+    }
+
+    public static Properties readProperties(final File resource) throws IOException {
+        Properties properties = new Properties();
+        InputStream in = null;
+        try {
+            in = new BufferedInputStream(new FileInputStream(resource));
+            properties.load(in);
+        } finally{
+            try {
+                if (in != null) in.close();
+            } catch (IOException ignored) {
+                // no-op
+            }
+        }
+        return properties;
     }
 
     public static String readString(URL url) throws IOException {

@@ -16,9 +16,10 @@
  */
 package org.apache.openejb.loader;
 
-import java.util.Properties;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
-import java.lang.annotation.Annotation;
+import java.util.Properties;
 
 /**
  * This class aims to be the one and only static in the entire system
@@ -180,7 +181,41 @@ public class SystemInstance {
     public static void init(Properties properties) throws Exception {
         if (initialized) return;
         system = new SystemInstance(properties);
+        readUserSystemProperties();
+        readSystemProperties();
         initialized = true;
+    }
+
+    private static void readUserSystemProperties() {
+        final File file = new File(System.getProperty("user.home"), ".openejb/system.properties");
+        addSystemProperties(file);
+    }
+
+    private static void readSystemProperties() {
+        // Read in and apply the conf/system.properties
+        try {
+            final File conf = system.getBase().getDirectory("conf");
+            final File file = new File(conf, "system.properties");
+            addSystemProperties(file);
+        } catch (IOException e) {
+            // no-op
+        }
+    }
+
+    private static void addSystemProperties(final File file) {
+        if (!file.exists()){
+            return;
+        }
+
+        final Properties systemProperties;
+        try {
+            systemProperties = IO.readProperties(file);
+        } catch (IOException e) {
+            return;
+        }
+
+        System.getProperties().putAll(systemProperties);
+        system.getProperties().putAll(systemProperties);
     }
 
     public static SystemInstance get() {

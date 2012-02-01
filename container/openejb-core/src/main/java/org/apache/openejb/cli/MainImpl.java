@@ -16,32 +16,28 @@
  */
 package org.apache.openejb.cli;
 
-import org.apache.xbean.finder.ResourceFinder;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.PosixParser;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.OpenEjbVersion;
 import org.apache.openejb.util.OptionsLog;
-import org.apache.commons.cli.PosixParser;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.ParseException;
+import org.apache.xbean.finder.ResourceFinder;
 
-import java.util.ArrayList;
-import java.util.Locale;
-import java.util.Properties;
-import java.util.Enumeration;
-import java.util.Map;
-import java.util.List;
 import java.io.IOException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.BufferedInputStream;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * Entry point for ALL things OpenEJB.  This will use the new service
@@ -186,22 +182,6 @@ public class MainImpl implements Main {
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(2);
-        }
-
-        // Read in and apply the conf/system.properties
-        try {
-            File conf = systemInstance.getBase().getDirectory("conf");
-            File file = new File(conf, "system.properties");
-            if (file.exists()){
-                Properties systemProperties = new Properties();
-                FileInputStream fin = new FileInputStream(file);
-                InputStream in = new BufferedInputStream(fin);
-                systemProperties.load(in);
-                System.getProperties().putAll(systemProperties);
-                systemInstance.getProperties().putAll(systemProperties);
-            }
-        } catch (IOException e) {
-            System.out.println("Processing conf/system.properties failed: "+e.getMessage());
         }
 
         // Now read in and apply the properties specified on the command line
