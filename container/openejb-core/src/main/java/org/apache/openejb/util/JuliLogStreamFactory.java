@@ -35,6 +35,12 @@ public class JuliLogStreamFactory implements LogStreamFactory {
 
         // if embedded case enhance a bit logging if not set
         if ((!tomee || embedded) && System.getProperty("java.util.logging.manager") == null) {
+            try {
+                JuliLogStreamFactory.class.getClassLoader().loadClass("org.apache.openjpa.lib.log.LogFactoryAdapter");
+                System.setProperty("openjpa.Log", "org.apache.openejb.openjpa.JULOpenJPALogFactory");
+            } catch (Exception ignored) {
+                // no-op: openjpa is not at the classpath so don't trigger it loading with our logger
+            }
             System.setProperty("java.util.logging.manager", OpenEJBLogManager.class.getName());
         }
     }
@@ -44,7 +50,7 @@ public class JuliLogStreamFactory implements LogStreamFactory {
         public String getProperty(final String name) {
             final String parentValue = super.getProperty(name);
             // if it is one of ours loggers and no value is defined let set our nice logging style
-            if (OpenEJBLogManager.class.getName().equals(System.getProperty("java.util.logging.manager")) // custom loggin
+            if (OpenEJBLogManager.class.getName().equals(System.getProperty("java.util.logging.manager")) // custom logging
                     && isOverridableLogger(name) // managed loggers
                     && parentValue == null) { // not already defined
                 if (name.endsWith(".handlers")) {
