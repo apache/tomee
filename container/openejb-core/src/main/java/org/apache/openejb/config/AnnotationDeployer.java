@@ -62,6 +62,7 @@ import org.apache.openejb.jee.Interceptor;
 import org.apache.openejb.jee.InterceptorBinding;
 import org.apache.openejb.jee.Invokable;
 import org.apache.openejb.jee.IsolationLevel;
+import org.apache.openejb.jee.JaxbJavaee;
 import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.jee.JndiReference;
 import org.apache.openejb.jee.License;
@@ -111,6 +112,7 @@ import org.apache.openejb.jee.TransactionType;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.WebserviceDescription;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.AnnotationUtil;
 import org.apache.openejb.util.Join;
@@ -202,6 +204,7 @@ import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -237,6 +240,25 @@ public class AnnotationDeployer implements DynamicDeployer {
     public static final Logger startupLogger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, "org.apache.openejb.util.resources");
     private static final ThreadLocal<DeploymentModule> currentModule = new ThreadLocal<DeploymentModule>();
     private static final Set<String> lookupMissing = new HashSet<String>(2);
+    public static final String OPENEJB_USE_DESCRIPTOR_GENERATED = "openejb.use.descriptor.generated";
+    public static final String OPENEJB_DUMPED_DD_PATH = "openejb.dumped.dd.path";
+    private static final String DUMPED_DD_BASE;
+
+    static {
+        String dumpedBase = System.getProperty(OPENEJB_DUMPED_DD_PATH, "temp");
+        File file = new File(SystemInstance.get().getBase().getDirectory(), dumpedBase);
+        if (!file.exists()) {
+            file = new File(dumpedBase);
+            if (!file.exists()) { // ignore this
+                System.setProperty(OPENEJB_USE_DESCRIPTOR_GENERATED, "false");
+            } else {
+                dumpedBase = file.getAbsolutePath();
+            }
+        } else {
+            dumpedBase = file.getAbsolutePath();
+        }
+        DUMPED_DD_BASE = dumpedBase;
+    }
 
     public static final Set<String> knownResourceEnvTypes = new TreeSet<String>(asList(
             "javax.ejb.EJBContext",
@@ -306,6 +328,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
     public WebModule deploy(WebModule webModule) throws OpenEJBException {
         setModule(webModule);
+
         try {
             webModule = discoverAnnotatedBeans.deploy(webModule);
             webModule = envEntriesPropertiesDeployer.deploy(webModule);
@@ -963,7 +986,26 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         public WebModule deploy(WebModule webModule) throws OpenEJBException {
             WebApp webApp = webModule.getWebApp();
-            if (webApp != null && (webApp.isMetadataComplete())) return webModule;
+            if (webApp != null && (webApp.isMetadataComplete())) {
+                return webModule;
+            }
+
+            if (readDumpedDD()) {
+                final File dumpedWeb = getDumpWeb(webModule.getModuleId());
+                if (!dumpedWeb.exists()) {
+                    FileOutputStream fos = null;
+                    try {
+                        webModule.setWebApp(ReadDescriptors.readWebApp(dumpedWeb.toURI().toURL()));
+                        webModule.getWebApp().setMetadataComplete(true);
+                        logger.info("read web.xml for module " + webModule.getModuleId() + " at " + dumpedWeb.getAbsolutePath());
+                        return webModule;
+                    } catch (Exception ignored) {
+                        logger.warning("can't read web.xml");
+                    } finally {
+                        IO.close(fos);
+                    }
+                }
+            }
 
             try {
                 if (webModule.getFinder() == null) {
@@ -1038,7 +1080,22 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
-            if (ejbModule.getEjbJar() != null && ejbModule.getEjbJar().isMetadataComplete()) return ejbModule;
+            if (ejbModule.getEjbJar() != null && ejbModule.getEjbJar().isMetadataComplete()) {
+                return ejbModule;
+            }
+            if (readDumpedDD()) {
+                final File dumpedEjbJar = getDumpEjbJar(ejbModule.getModuleId());
+                if (dumpedEjbJar.exists()) {
+                    try {
+                        ejbModule.setEjbJar(ReadDescriptors.readEjbJar(dumpedEjbJar.toURI().toURL()));
+                        ejbModule.getEjbJar().setMetadataComplete(true);
+                        logger.info("using ejb-jar " + dumpedEjbJar.getAbsolutePath() + " for module " + ejbModule.getModuleId());
+                        return ejbModule;
+                    } catch (MalformedURLException ignored) {
+                        logger.warning("can't read dumped ejb-jar");
+                    }
+                }
+            }
 
 
             try {
@@ -1870,6 +1927,22 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             processWebServiceClientHandlers(webApp, classLoader);
 
+            if (readDumpedDD()) {
+                final File dumpedWeb = getDumpWeb(webModule.getModuleId());
+                if (!dumpedWeb.exists()) {
+                    FileOutputStream fos = null;
+                    try {
+                        fos = new FileOutputStream(dumpedWeb);
+                        JaxbJavaee.marshal(WebApp.class, webModule.getWebApp(), fos);
+                        logger.info("dumped web.xml for module " + webModule.getModuleId() + " at " + dumpedWeb.getAbsolutePath());
+                    } catch (Exception e) {
+                        logger.warning("can't dump web.xml", e);
+                    } finally {
+                        IO.close(fos);
+                    }
+                }
+            }
+
             return webModule;
         }
 
@@ -2372,6 +2445,22 @@ public class AnnotationDeployer implements DynamicDeployer {
                     mergeJndiReferences(interceptor.getPersistenceUnitRefMap(), bean.getPersistenceUnitRefMap());
                     mergeJndiReferences(interceptor.getMessageDestinationRefMap(), bean.getMessageDestinationRefMap());
                     mergeJndiReferences(interceptor.getServiceRefMap(), bean.getServiceRefMap());
+                }
+            }
+
+            if (readDumpedDD()) {
+                final File dumpedEjbJar = getDumpEjbJar(ejbModule.getModuleId());
+                if (!dumpedEjbJar.exists()) {
+                    FileOutputStream fos = null;
+                    try {
+                        fos = new FileOutputStream(dumpedEjbJar);
+                        JaxbJavaee.marshal(EjbJar.class, ejbModule.getEjbJar(), fos);
+                        logger.info("dumped ejb-jar for module " + ejbModule.getModuleId() + " at " + dumpedEjbJar.getAbsolutePath());
+                    } catch (Exception e) {
+                        logger.warning("can't dump ejb-jar", e);
+                    } finally {
+                        IO.close(fos);
+                    }
                 }
             }
 
@@ -4888,5 +4977,17 @@ public class AnnotationDeployer implements DynamicDeployer {
             return rawClassName.replace("/", ".");
         }
         return rawClassName;
+    }
+
+    private static boolean readDumpedDD() {
+        return Boolean.getBoolean(OPENEJB_USE_DESCRIPTOR_GENERATED);
+    }
+
+    private static File getDumpEjbJar(final String moduleId) {
+        return new File(DUMPED_DD_BASE, "ejb-jar-" + Math.abs(moduleId.hashCode()) + ".xml");
+    }
+
+    private static File getDumpWeb(final String moduleId) {
+        return new File(DUMPED_DD_BASE, "web-" + Math.abs(moduleId.hashCode()) + ".xml");
     }
 }
