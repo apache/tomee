@@ -32,17 +32,20 @@ public class SystemClassPath extends BasicURLClassPath {
 
     private URLClassLoader sysLoader;
 
-    public void addJarsToPath(File dir) throws Exception {
+    @Override
+    public void addJarsToPath(final File dir) throws Exception {
         this.addJarsToPath(dir, getSystemLoader());
         this.rebuildJavaClassPathVariable();
     }
 
-    public void addJarToPath(URL jar) throws Exception {
+    @Override
+    public void addJarToPath(final URL jar) throws Exception {
 
         this.addJarToPath(jar, getSystemLoader());
         this.rebuildJavaClassPathVariable();
     }
 
+    @Override
     public ClassLoader getClassLoader() {
         try {
             return getSystemLoader();
@@ -59,15 +62,15 @@ public class SystemClassPath extends BasicURLClassPath {
     }
 
     private void rebuildJavaClassPathVariable() throws Exception {
-        URLClassLoader loader = getSystemLoader();
-        Object cp = getURLClassPath(loader);
-        Method getURLsMethod = getGetURLsMethod();
-        URL[] urls = (URL[]) getURLsMethod.invoke(cp);
+        final URLClassLoader loader = getSystemLoader();
+        final Object cp = getURLClassPath(loader);
+        final Method getURLsMethod = getGetURLsMethod();
+        final URL[] urls = (URL[]) getURLsMethod.invoke(cp);
 
         if (urls.length < 1)
             return;
 
-        StringBuilder path = new StringBuilder(urls.length * 32);
+        final StringBuilder path = new StringBuilder(urls.length * 32);
 
         File s = new File(URLDecoder.decode(urls[0].getFile(), "UTF-8"));
         path.append(s.getPath());
@@ -88,11 +91,12 @@ public class SystemClassPath extends BasicURLClassPath {
 
     private Method getGetURLsMethod() {
         return AccessController.doPrivileged(new PrivilegedAction<Method>() {
+            @Override
             public Method run() {
                 try {
-                    URLClassLoader loader = getSystemLoader();
-                    Object cp = getURLClassPath(loader);
-                    Class<?> clazz = cp.getClass();
+                    final URLClassLoader loader = getSystemLoader();
+                    final Object cp = getURLClassPath(loader);
+                    final Class<?> clazz = cp.getClass();
 
                      try {
                          return clazz.getDeclaredMethod("getURLs", URL.class);

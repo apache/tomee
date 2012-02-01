@@ -21,7 +21,6 @@ import org.apache.openejb.loader.SystemClassPath;
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
-import java.net.URLDecoder;
 
 /**
  * @version $Rev$ $Date$
@@ -33,37 +32,37 @@ public class Bootstrap {
     private final static String OPENEJB_BASE_PROPERTY_NAME = "openejb.base";
     private final static String OPENEJB_CLI_MAIN_CLASS_NAME = "org.apache.openejb.cli.MainImpl";
 
-    private static void setupHome(String[] args) {
-        for (String arg : args) {
-            if (arg.startsWith("-D" + OPENEJB_HOME_PROPERTY_NAME)){
+    private static void setupHome(final String[] args) {
+        for (final String arg : args) {
+            if (arg.startsWith("-D" + OPENEJB_HOME_PROPERTY_NAME)) {
                 addProperty(arg);
-            } else if (arg.startsWith("-D" + OPENEJB_BASE_PROPERTY_NAME)){
+            } else if (arg.startsWith("-D" + OPENEJB_BASE_PROPERTY_NAME)) {
                 addProperty(arg);
             }
         }
 
-        String homeProperty = System.getProperty(OPENEJB_HOME_PROPERTY_NAME);
-        if (homeProperty != null){
-            if (new File(homeProperty).exists()){
+        final String homeProperty = System.getProperty(OPENEJB_HOME_PROPERTY_NAME);
+        if (homeProperty != null) {
+            if (new File(homeProperty).exists()) {
                 return;
             }
         }
 
         try {
-            URL classURL = Thread.currentThread().getContextClassLoader().getResource(OPENEJB_VERSION_PROPERTIES_FILE_NAME);
+            final URL classURL = Thread.currentThread().getContextClassLoader().getResource(OPENEJB_VERSION_PROPERTIES_FILE_NAME);
 
             if (classURL != null) {
                 String propsString = classURL.getFile();
 
                 propsString = propsString.substring(0, propsString.indexOf("!"));
 
-                URI uri = new URI(propsString);
+                final URI uri = new URI(propsString);
 
-                File jarFile = new File(uri.getSchemeSpecificPart());
+                final File jarFile = new File(uri.getSchemeSpecificPart());
 
-                if (jarFile.getName().indexOf("openejb-core") > -1) {
-                    File lib = jarFile.getParentFile();
-                    File home = lib.getParentFile().getCanonicalFile();
+                if (jarFile.getName().contains("openejb-core")) {
+                    final File lib = jarFile.getParentFile();
+                    final File home = lib.getParentFile().getCanonicalFile();
 
                     System.setProperty(OPENEJB_HOME_PROPERTY_NAME, home.getAbsolutePath());
                 }
@@ -73,17 +72,17 @@ public class Bootstrap {
         }
     }
 
-    private static void addProperty(String arg) {
-        String prop = arg.substring(arg.indexOf("-D") + 2, arg.indexOf("="));
-        String val = arg.substring(arg.indexOf("=") + 1);
+    private static void addProperty(final String arg) {
+        final String prop = arg.substring(arg.indexOf("-D") + 2, arg.indexOf("="));
+        final String val = arg.substring(arg.indexOf("=") + 1);
 
         System.setProperty(prop, val);
     }
 
     private static void setupClasspath() {
         try {
-            File lib = new File(System.getProperty(OPENEJB_HOME_PROPERTY_NAME) + File.separator + "lib");
-            SystemClassPath systemCP = new SystemClassPath();
+            final File lib = new File(System.getProperty(OPENEJB_HOME_PROPERTY_NAME) + File.separator + "lib");
+            final SystemClassPath systemCP = new SystemClassPath();
             systemCP.addJarsToPath(lib);
         } catch (Exception e) {
             System.err.println("Error setting up the classpath: " + e.getClass() + ": " + e.getMessage());
@@ -94,12 +93,12 @@ public class Bootstrap {
     /**
      * Read commands from BASE_PATH (using XBean's ResourceFinder) and execute the one specified on the command line
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
         setupHome(args);
         setupClasspath();
 
-        Class<?> clazz = Bootstrap.class.getClassLoader().loadClass(OPENEJB_CLI_MAIN_CLASS_NAME);
-        Main main = (Main) clazz.newInstance();
+        final Class<?> clazz = Bootstrap.class.getClassLoader().loadClass(OPENEJB_CLI_MAIN_CLASS_NAME);
+        final Main main = (Main) clazz.newInstance();
         try {
             main.main(args);
         } catch (SystemExitException e) {
