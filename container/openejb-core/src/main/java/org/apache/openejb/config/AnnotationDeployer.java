@@ -232,8 +232,7 @@ import static org.apache.openejb.util.Join.join;
 /**
  * @version $Rev$ $Date$
  */
-public class
-        AnnotationDeployer implements DynamicDeployer {
+public class AnnotationDeployer implements DynamicDeployer {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, AnnotationDeployer.class.getPackage().getName());
     public static final Logger startupLogger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, "org.apache.openejb.util.resources");
     private static final ThreadLocal<DeploymentModule> currentModule = new ThreadLocal<DeploymentModule>();
