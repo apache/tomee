@@ -17,6 +17,7 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.loader.FileUtils;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Join;
@@ -192,13 +193,7 @@ public class NewLoaderLogic {
         } catch (Throwable e) {
             // ignored
         } finally {
-            if (null != fis) {
-                try {
-                    fis.close();
-                } catch (Throwable e) {
-                    //Ignore
-                }
-            }
+            IO.close(fis);
         }
 
         if (exclusions == null) {
@@ -213,13 +208,7 @@ public class NewLoaderLogic {
             } catch (Throwable e) {
                 // ignored
             } finally {
-                if (null != is) {
-                    try {
-                        is.close();
-                    } catch (Throwable e) {
-                        //Ignore
-                    }
-                }
+                IO.close(is);
             }
         }
 

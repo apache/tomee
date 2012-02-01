@@ -33,6 +33,8 @@ cssparser-
 cxf-
 deploy.jar
 derby-
+derbyclient-
+derbynet-
 dom4j-
 geronimo-
 gragent.jar
@@ -78,6 +80,7 @@ neethi-
 nekohtml-
 openejb-api
 openejb-cxf-bundle
+openejb-hsql
 openejb-javaagent
 openejb-jee
 openejb-loader
