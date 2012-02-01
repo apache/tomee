@@ -33,6 +33,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.Proxy;
+import java.net.ProxySelector;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.zip.ZipInputStream;
@@ -44,20 +47,30 @@ import java.util.zip.ZipOutputStream;
 public class IO {
     private static final int MAX_TIMEOUT = Integer.getInteger("openejb.io.util.timeout", 5000);
 
-    public static String readFileAsString(final URL url) throws IOException {
-        final URLConnection connection = url.openConnection();
-        connection.setConnectTimeout(MAX_TIMEOUT);
-        final InputStream in = connection.getInputStream();
+    public static String readFileAsString(final URI uri) throws IOException {
         final StringBuilder builder = new StringBuilder("");
-        String line;
-        try {
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-            while ((line = reader.readLine()) != null) {
-                builder.append(line);
+        for (Proxy proxy : ProxySelector.getDefault().select(uri)) {
+            InputStream is;
+
+            try {
+                URLConnection urlConnection = uri.toURL().openConnection(proxy);
+                urlConnection.setConnectTimeout(MAX_TIMEOUT);
+                is = urlConnection.getInputStream();
+            } catch (IOException e) {
+                continue;
             }
-        } finally {
-            close(in);
+
+            String line;
+            try {
+                final BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+                while ((line = reader.readLine()) != null) {
+                    builder.append(line);
+                }
+            } finally {
+                close(is);
+            }
         }
+
         return builder.toString();
     }
 

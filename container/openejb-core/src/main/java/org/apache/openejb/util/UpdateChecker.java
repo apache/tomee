@@ -24,7 +24,7 @@ public class UpdateChecker implements Runnable {
 
         try {
             final URL url = new URL(URL);
-            final String metaData = IO.readFileAsString(url);
+            final String metaData = IO.readFileAsString(url.toURI());
             final String latest = extractLatest(metaData);
             RESULT.set(message(latest, OpenEjbVersion.get().getVersion()));
         } catch (Exception e) {
@@ -42,8 +42,8 @@ public class UpdateChecker implements Runnable {
             return "running on the latest version";
         }
         return new StringBuilder("current version => ").append(version)
-                .append(", latest stable version ").append(latest).append(" is available ")
-                .append(" on ").append(REPO_URL).toString();
+                .append(", latest stable version ").append(latest)
+                .append(" is available on ").append(REPO_URL).toString();
     }
 
     private static String extractLatest(final String metaData) {
