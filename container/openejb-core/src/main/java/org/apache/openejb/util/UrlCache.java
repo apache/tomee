@@ -58,13 +58,7 @@ public class UrlCache {
         if (value != null) {
             antiJarLocking = Boolean.valueOf(value);
         } else {
-            boolean embedded = false;
-            try {
-                FileUtils openejbBase = SystemInstance.get().getBase();
-                embedded = !openejbBase.getDirectory("conf").exists();
-            } catch (IOException e) {
-            }
-
+            final boolean embedded = Boolean.parseBoolean( SystemInstance.get().getProperty("openejb.embedded", "false"));
             // antiJarLocking is on by default when we are not embedded and running on windows
             antiJarLocking = !embedded && System.getProperty("os.name", "unknown").toLowerCase().startsWith("windows");
         }

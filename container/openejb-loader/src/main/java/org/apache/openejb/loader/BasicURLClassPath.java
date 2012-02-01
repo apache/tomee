@@ -17,6 +17,7 @@
 package org.apache.openejb.loader;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -27,6 +28,7 @@ import java.security.PrivilegedAction;
 public abstract class BasicURLClassPath implements ClassPath {
     public static ClassLoader getContextClassLoader() {
         return java.security.AccessController.doPrivileged(new java.security.PrivilegedAction<ClassLoader>() {
+            @Override
             public ClassLoader run() {
                 return Thread.currentThread().getContextClassLoader();
             }
@@ -36,18 +38,19 @@ public abstract class BasicURLClassPath implements ClassPath {
     private java.lang.reflect.Field ucpField;
 
     protected void addJarToPath(final URL jar, final URLClassLoader loader) throws Exception {
-        Object cp = getURLClassPath(loader);
-        Method addURLMethod = getAddURLMethod(loader);
-        addURLMethod.invoke(cp, new URL[] { jar });
+        final Object cp = getURLClassPath(loader);
+        final Method addURLMethod = getAddURLMethod(loader);
+        addURLMethod.invoke(cp, new URL[]{jar});
     }
 
     private Method getAddURLMethod(final URLClassLoader loader) {
         return AccessController.doPrivileged(new PrivilegedAction<Method>() {
+            @Override
             public Method run() {
-                Object cp;
+                final Object cp;
                 try {
                     cp = getURLClassPath(loader);
-                    Class<?> clazz = cp.getClass();
+                    final Class<?> clazz = cp.getClass();
                     return clazz.getDeclaredMethod("addURL", URL.class);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -62,32 +65,41 @@ public abstract class BasicURLClassPath implements ClassPath {
     protected void addJarsToPath(final File dir, final URLClassLoader loader) throws Exception {
         if (dir == null || !dir.exists()) return;
 
-        String[] jarNames = dir.list(new java.io.FilenameFilter() {
-            public boolean accept(File dir, String name) {
-
-                return (name.endsWith(".jar") || name.endsWith(".zip"));
+        final String[] jarNames = dir.list(new java.io.FilenameFilter() {
+            @Override
+            public boolean accept(final File dir, String name) {
+                name = name.toLowerCase();
+                return name.endsWith(".jar") || name.endsWith(".zip");
             }
         });
 
         final URL[] jars = new URL[jarNames.length];
+        final boolean isWindows = System.getProperty("os.name", "unknown").toLowerCase().startsWith("windows");
+
         for (int j = 0; j < jarNames.length; j++) {
-            jars[j] = new File(dir, jarNames[j]).toURI().toURL();
+            final String name = isWindows ? jarNames[j].toLowerCase() : jarNames[j];
+            try {
+                jars[j] = new URL(new File(dir, name).getCanonicalFile().getAbsoluteFile().toURI().toURL().toExternalForm());
+            } catch (IOException e) {
+                jars[j] = new URL(new File(dir, name).getAbsoluteFile().toURI().toURL().toExternalForm());
+            }
         }
 
-        Object cp = getURLClassPath(loader);
-        Method addURLMethod = getAddURLMethod(loader);
-        for (URL jar : jars) {
-            addURLMethod.invoke(cp, new URL[] { jar });
+        final Object cp = getURLClassPath(loader);
+        final Method addURLMethod = getAddURLMethod(loader);
+        for (final URL jar : jars) {
+            addURLMethod.invoke(cp, new URL[]{jar});
         }
     }
 
-    protected Object getURLClassPath(URLClassLoader loader) throws Exception {
+    protected Object getURLClassPath(final URLClassLoader loader) throws Exception {
         return getUcpField().get(loader);
     }
 
     private java.lang.reflect.Field getUcpField() throws Exception {
         if (ucpField == null) {
             ucpField = AccessController.doPrivileged(new PrivilegedAction<Field>() {
+                @Override
                 public Field run() {
                     java.lang.reflect.Field ucp = null;
                     try {
