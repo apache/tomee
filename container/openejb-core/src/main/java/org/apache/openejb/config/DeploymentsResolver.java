@@ -46,7 +46,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
 
     private static final Logger logger = DeploymentLoader.logger;
 
-    public static void loadFrom(Deployments dep, FileUtils path, List<URL> jarList) {
+    public static void loadFrom(final Deployments dep, final FileUtils path, final List<URL> jarList) {
 
         ////////////////////////////////
         //
@@ -55,9 +55,10 @@ public class DeploymentsResolver implements DeploymentFilterable {
         ////////////////////////////////
         if (dep.getDir() == null && dep.getJar() != null) {
             try {
-                File jar = path.getFile(dep.getJar(), false);
-                if (!jarList.contains(jar.getAbsolutePath())) {
-                    jarList.add(jar.toURI().toURL());
+                final File jar = path.getFile(dep.getJar(), false);
+                final URL url = jar.toURI().toURL();
+                if (!jarList.contains(url)) {
+                    jarList.add(url);
                 }
             } catch (Exception ignored) {
             }
@@ -77,33 +78,36 @@ public class DeploymentsResolver implements DeploymentFilterable {
         //  Unpacked "Jar" directory with descriptor
         //
         ////////////////////////////////
-        File ejbJarXml = new File(dir, "META-INF" + File.separator + "ejb-jar.xml");
+        final File ejbJarXml = new File(dir, "META-INF" + File.separator + "ejb-jar.xml");
         if (ejbJarXml.exists()) {
             try {
-                if (!jarList.contains(dir.getAbsolutePath())) {
-                    jarList.add(dir.toURI().toURL());
+                final URL url = dir.toURI().toURL();
+                if (!jarList.contains(url)) {
+                    jarList.add(url);
                 }
             } catch (MalformedURLException ignore) {
             }
             return;
         }
 
-        File appXml = new File(dir, "META-INF" + File.separator + "application.xml");
+        final File appXml = new File(dir, "META-INF" + File.separator + "application.xml");
         if (appXml.exists()) {
             try {
-                if (!jarList.contains(dir.getAbsolutePath())) {
-                    jarList.add(dir.toURI().toURL());
+                final URL url = dir.toURI().toURL();
+                if (!jarList.contains(url)) {
+                    jarList.add(url);
                 }
             } catch (MalformedURLException ignore) {
             }
             return;
         }
 
-        File raXml = new File(dir, "META-INF" + File.separator + "ra.xml");
+        final File raXml = new File(dir, "META-INF" + File.separator + "ra.xml");
         if (raXml.exists()) {
             try {
-                if (!jarList.contains(dir.getAbsolutePath())) {
-                    jarList.add(dir.toURI().toURL());
+                final URL url = dir.toURI().toURL();
+                if (!jarList.contains(url)) {
+                    jarList.add(url);
                 }
             } catch (MalformedURLException ignore) {
             }
@@ -116,20 +120,24 @@ public class DeploymentsResolver implements DeploymentFilterable {
         //
         ////////////////////////////////
         boolean hasNestedArchives = false;
-        for (File file : dir.listFiles()) {
+        for (final File file : dir.listFiles()) {
             try {
-                if (file.getName().endsWith(".jar") || file.getName().endsWith(".war")|| file.getName().endsWith(".rar")|| file.getName().endsWith(".ear")) {
-                    if (jarList.contains(file.getAbsolutePath())) continue;
-                    jarList.add(file.toURI().toURL());
+
+                final URL url = file.toURI().toURL();
+                if (jarList.contains(url)) continue;
+
+                if (file.getName().endsWith(".jar") || file.getName().endsWith(".war") || file.getName().endsWith(".rar") || file.getName().endsWith(".ear")) {
+                    jarList.add(url);
                     hasNestedArchives = true;
-                } else if (new File(file, "META-INF").exists()){ // Unpacked ear or jar
-                    jarList.add(file.toURI().toURL());
+                } else if (new File(file, "META-INF").exists()) { // Unpacked ear or jar
+                    jarList.add(url);
                     hasNestedArchives = true;
-                } else if (new File(file, "WEB-INF").exists()){  // Unpacked webapp
-                    jarList.add(file.toURI().toURL());
+                } else if (new File(file, "WEB-INF").exists()) {  // Unpacked webapp
+                    jarList.add(url);
                     hasNestedArchives = true;
                 }
-            } catch (Exception ignore) {
+            } catch (Exception e) {
+                logger.debug("loadFrom", e);
             }
         }
 
@@ -139,13 +147,14 @@ public class DeploymentsResolver implements DeploymentFilterable {
         //
         ////////////////////////////////
         if (!hasNestedArchives) {
-            HashMap<String, URL> files = new HashMap<String, URL>();
+            final HashMap<String, URL> files = new HashMap<String, URL>();
             DeploymentLoader.scanDir(dir, files, "");
-            for (String fileName : files.keySet()) {
+            for (final String fileName : files.keySet()) {
                 if (fileName.endsWith(".class")) {
                     try {
-                        if (!jarList.contains(dir.getAbsolutePath())) {
-                            jarList.add(dir.toURI().toURL());
+                        final URL url = dir.toURI().toURL();
+                        if (!jarList.contains(url)) {
+                            jarList.add(url);
                         }
                     } catch (MalformedURLException ignore) {
                     }
@@ -171,17 +180,19 @@ public class DeploymentsResolver implements DeploymentFilterable {
      * 2- Loading the resource is the default behaviour in case of not defining a value for any class-path pattern
      * This appears in step 3 of the above algorithm.
      */
-    public static void loadFromClasspath(FileUtils base, List<URL> jarList, ClassLoader classLoader) {
-        Options options = SystemInstance.get().getOptions();
-        String include = options.get(CLASSPATH_INCLUDE, ".*");
-        String exclude = options.get(CLASSPATH_EXCLUDE, "");
-        Set<RequireDescriptors> requireDescriptors = options.getAll(CLASSPATH_REQUIRE_DESCRIPTOR, RequireDescriptors.CLIENT);
-        boolean filterDescriptors = options.get(CLASSPATH_FILTER_DESCRIPTORS, false);
-        boolean filterSystemApps = options.get(CLASSPATH_FILTER_SYSTEMAPPS, true);
+    public static void loadFromClasspath(final FileUtils base, final List<URL> jarList, final ClassLoader classLoader) {
+        final Options options = SystemInstance.get().getOptions();
+        final String include = options.get(CLASSPATH_INCLUDE, ".*");
+        final String exclude = options.get(CLASSPATH_EXCLUDE, "");
+        final Set<RequireDescriptors> requireDescriptors = options.getAll(CLASSPATH_REQUIRE_DESCRIPTOR, RequireDescriptors.CLIENT);
+        final boolean filterDescriptors = options.get(CLASSPATH_FILTER_DESCRIPTORS, false);
+        final boolean filterSystemApps = options.get(CLASSPATH_FILTER_SYSTEMAPPS, true);
 
         try {
             UrlSet urlSet = new UrlSet(classLoader);
-            UrlSet includes = urlSet.matching(include);
+
+            //final UrlSet includes = urlSet.matching(include);
+
             urlSet = urlSet.exclude(ClassLoader.getSystemClassLoader().getParent());
             urlSet = urlSet.excludeJavaExtDirs();
             urlSet = urlSet.excludeJavaEndorsedDirs();
@@ -191,7 +202,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
 
             // save the prefiltered list of jars before excluding system apps
             // so that we can choose not to filter modules with descriptors on the full list
-            UrlSet prefiltered = urlSet;
+            final UrlSet prefiltered = urlSet;
 
             // we should exclude system apps before and apply user properties after
 
@@ -202,14 +213,23 @@ public class DeploymentsResolver implements DeploymentFilterable {
             if (prefiltered.size() == urlSet.size()) {
                 urlSet = NewLoaderLogic.applyBuiltinExcludes(urlSet);
 
-                if (filterSystemApps){
+                if (filterSystemApps) {
                     urlSet = urlSet.exclude(".*/openejb-[^/]+(.(jar|ear|war)(!/)?|/target/(test-)?classes/?)");
                 }
             }
 
+            final List<URL> urls = new ArrayList<URL>();
+            final boolean isWindows = System.getProperty("os.name", "unknown").toLowerCase().startsWith("windows");
 
-            List<URL> urls = urlSet.getUrls();
-            int size = urls.size();
+            for (final URL url : urlSet.getUrls()) {
+                final String ef = (isWindows ? url.toExternalForm().toLowerCase() : url.toExternalForm());
+                final URL u = new URL(ef);
+                if (!urls.contains(u)) {
+                    urls.add(u);
+                }
+            }
+
+            final int size = urls.size();
             if (size == 0 && include.length() > 0) {
                 logger.warning("No classpath URLs matched.  Current settings: " + CLASSPATH_EXCLUDE + "='" + exclude + "', " + CLASSPATH_INCLUDE + "='" + include + "'");
                 return;
@@ -219,7 +239,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
                 logger.debug("Inspecting classpath for applications: " + urls.size() + " urls.");
             } else {
                 // Has the user allowed some module types to be discoverable via scraping?
-                boolean willScrape = requireDescriptors.size() < RequireDescriptors.values().length;
+                final boolean willScrape = requireDescriptors.size() < RequireDescriptors.values().length;
 
                 if (size < 50 && willScrape) {
                     logger.info("Inspecting classpath for applications: " + urls.size() + " urls. Consider adjusting your exclude/include.  Current settings: " + CLASSPATH_EXCLUDE + "='" + exclude + "', " + CLASSPATH_INCLUDE + "='" + include + "'");
@@ -229,27 +249,27 @@ public class DeploymentsResolver implements DeploymentFilterable {
                 }
             }
 
-            long begin = System.currentTimeMillis();
+            final long begin = System.currentTimeMillis();
             processUrls(urls, classLoader, requireDescriptors, base, jarList);
-            long end = System.currentTimeMillis();
-            long time = end - begin;
+            final long end = System.currentTimeMillis();
+            final long time = end - begin;
 
             UrlSet unchecked = new UrlSet();
-            if (!filterDescriptors){
+            if (!filterDescriptors) {
                 unchecked = prefiltered.exclude(urlSet);
-                if (filterSystemApps){
+                if (filterSystemApps) {
                     unchecked = unchecked.exclude(".*/openejb-[^/]+(.(jar|ear|war)(./)?|/target/classes/?)");
                 }
                 processUrls(unchecked.getUrls(), classLoader, EnumSet.allOf(RequireDescriptors.class), base, jarList);
             }
 
             if (logger.isDebugEnabled()) {
-                int urlCount = urlSet.getUrls().size() + unchecked.getUrls().size();
-                logger.debug("URLs after filtering: "+ urlCount);
-                for (URL url : urlSet.getUrls()) {
+                final int urlCount = urlSet.getUrls().size() + unchecked.getUrls().size();
+                logger.debug("URLs after filtering: " + urlCount);
+                for (final URL url : urlSet.getUrls()) {
                     logger.debug("Annotations path: " + url);
                 }
-                for (URL url : unchecked.getUrls()) {
+                for (final URL url : unchecked.getUrls()) {
                     logger.debug("Descriptors path: " + url);
                 }
             }
@@ -266,12 +286,12 @@ public class DeploymentsResolver implements DeploymentFilterable {
             } else {
                 logger.fatal("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + (time / urls.size()) + " milliseconds per url.  TOO LONG!");
                 logger.fatal("ADJUST THE EXCLUDE/INCLUDE!!!.  Current settings: " + CLASSPATH_EXCLUDE + "='" + exclude + "', " + CLASSPATH_INCLUDE + "='" + include + "'");
-                List<String> list = new ArrayList<String>();
-                for (URL url : urls) {
+                final List<String> list = new ArrayList<String>();
+                for (final URL url : urls) {
                     list.add(url.toExternalForm());
                 }
                 Collections.sort(list);
-                for (String url : list) {
+                for (final String url : list) {
                     logger.info("Matched: " + url);
                 }
             }
@@ -292,9 +312,9 @@ public class DeploymentsResolver implements DeploymentFilterable {
      * @param requireDescriptors
      * @return
      */
-    private static boolean shouldFilter(String include, String exclude, Set<RequireDescriptors> requireDescriptors) {
-        boolean includeNothing = include.equals("");
-        boolean excludeEverything = exclude.equals(".*");
+    private static boolean shouldFilter(final String include, final String exclude, final Set<RequireDescriptors> requireDescriptors) {
+        final boolean includeNothing = include.equals("");
+        final boolean excludeEverything = exclude.equals(".*");
 
         //  If we are going to eliminate the entire classpath from
         //  scanning anyway, no sense in taking the time to do it
@@ -304,13 +324,11 @@ public class DeploymentsResolver implements DeploymentFilterable {
         //  If we are forcably requiring descriptors for all possible file types
         //  then there is also no scanning and no point in filtering the
         //  classpath down bit by bit.  Return false
-        if (requireDescriptors.size() == RequireDescriptors.values().length) return false;
-
-        return true;
+        return requireDescriptors.size() != RequireDescriptors.values().length;
     }
 
     private static UrlSet applyBuiltinExcludes(UrlSet urlSet) throws MalformedURLException {
-        
+
         urlSet = urlSet.exclude(".*/activation(-[\\d.]+)?.jar(!/)?");
         urlSet = urlSet.exclude(".*/activeio-core(-[\\d.]+)?(-incubator)?.jar(!/)?");
         urlSet = urlSet.exclude(".*/activemq-(core|ra)(-[\\d.]+)?.jar(!/)?");
@@ -376,42 +394,46 @@ public class DeploymentsResolver implements DeploymentFilterable {
         return urlSet;
     }
 
-    public static void processUrls(List<URL> urls, ClassLoader classLoader, Set<RequireDescriptors> requireDescriptors, FileUtils base, List<URL> jarList) {
+    public static void processUrls(final List<URL> urls, final ClassLoader classLoader, final Set<RequireDescriptors> requireDescriptors, final FileUtils base, final List<URL> jarList) {
         for (URL url : urls) {
 
-            String urlProtocol = url.getProtocol();
+            final String urlProtocol = url.getProtocol();
             //Currently, we only support jar and file protocol
-            boolean isValidURL = urlProtocol.equals("jar") || urlProtocol.equals("file");
+            final boolean isValidURL = urlProtocol.equals("jar") || urlProtocol.equals("file");
             if (!isValidURL) {
                 logger.warning("Unknown protocol " + urlProtocol);
                 continue;
             }
 
-            Deployments deployment;
+            final Deployments deployment;
             String path = "";
             try {
-                
-                DeploymentLoader deploymentLoader = new DeploymentLoader();
-                
-                Class<? extends DeploymentModule> moduleType = deploymentLoader.discoverModuleType(url, classLoader, requireDescriptors);
+
+                final DeploymentLoader deploymentLoader = new DeploymentLoader();
+
+                final Class<? extends DeploymentModule> moduleType = deploymentLoader.discoverModuleType(url, classLoader, requireDescriptors);
                 if (AppModule.class.isAssignableFrom(moduleType) || EjbModule.class.isAssignableFrom(moduleType) || PersistenceModule.class.isAssignableFrom(moduleType) || ConnectorModule.class.isAssignableFrom(moduleType) || ClientModule.class.isAssignableFrom(moduleType)) {
-                    deployment = JaxbOpenejb.createDeployments();
-                    if (urlProtocol.equals("jar")) {
-                        url = new URL(url.getFile().replaceFirst("!.*$", ""));
-                        File file = toFile(url);
-                        path = file.getAbsolutePath();
-                        deployment.setJar(path);
-                    } else if (urlProtocol.equals("file")) {
-                        File file = toFile(url);
-                        path = file.getAbsolutePath();
-                        deployment.setDir(path);
-                    }
-                    logger.info("Found " + moduleType.getSimpleName() + " in classpath: " + path);
 
                     if (AppModule.class.isAssignableFrom(moduleType) || ConnectorModule.class.isAssignableFrom(moduleType)) {
+
+                        deployment = JaxbOpenejb.createDeployments();
+
+                        if (urlProtocol.equals("jar")) {
+                            url = new URL(url.getFile().replaceFirst("!.*$", ""));
+                            final File file = toFile(url);
+                            path = file.getAbsolutePath();
+                            deployment.setJar(path);
+                        } else if (urlProtocol.equals("file")) {
+                            final File file = toFile(url);
+                            path = file.getAbsolutePath();
+                            deployment.setDir(path);
+                        }
+
+                        logger.info("Found " + moduleType.getSimpleName() + " in classpath: " + path);
+
                         loadFrom(deployment, base, jarList);
                     } else {
-                        if (!jarList.contains(path)){
+                        if (!jarList.contains(url)) {
                             jarList.add(url);
                         }
                     }
