@@ -31,7 +31,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.util.LinkedList;
-import java.util.Properties;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -491,6 +490,9 @@ public class Installer {
                 systemPropertiesWriter.write("# openejb.jmx.active = true\n");
                 systemPropertiesWriter.write("# openejb.nobanner = true\n");
                 systemPropertiesWriter.write("# openejb.crosscontext = false\n");
+                systemPropertiesWriter.write("# openejb.version.check.skip = false\n");
+                systemPropertiesWriter.write("# openejb.version.check.repo.url = http://repo1.maven.org/maven2/org/apache/openejb/\n");
+                systemPropertiesWriter.write("# openejb.version.check.url = http://repo1.maven.org/maven2/org/apache/openejb/openejb/maven-metadata.xml\n");
                 systemPropertiesWriter.write("# openejb.jsessionid-support = \n");
                 systemPropertiesWriter.write("# openejb.myfaces.disable-default-values = true\n");
                 systemPropertiesWriter.write("# openejb.web.xml.major = \n");
