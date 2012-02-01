@@ -18,8 +18,47 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.Vendor;
-import org.apache.openejb.assembler.classic.*;
-import org.apache.openejb.config.sys.*;
+import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.BmpEntityContainerInfo;
+import org.apache.openejb.assembler.classic.ClientInfo;
+import org.apache.openejb.assembler.classic.CmpEntityContainerInfo;
+import org.apache.openejb.assembler.classic.ConnectionManagerInfo;
+import org.apache.openejb.assembler.classic.ConnectorInfo;
+import org.apache.openejb.assembler.classic.ContainerInfo;
+import org.apache.openejb.assembler.classic.ContainerSystemInfo;
+import org.apache.openejb.assembler.classic.DeploymentExceptionManager;
+import org.apache.openejb.assembler.classic.EjbJarInfo;
+import org.apache.openejb.assembler.classic.FacilitiesInfo;
+import org.apache.openejb.assembler.classic.HandlerChainInfo;
+import org.apache.openejb.assembler.classic.HandlerInfo;
+import org.apache.openejb.assembler.classic.JndiContextInfo;
+import org.apache.openejb.assembler.classic.ManagedContainerInfo;
+import org.apache.openejb.assembler.classic.MdbContainerInfo;
+import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
+import org.apache.openejb.assembler.classic.OpenEjbConfigurationFactory;
+import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
+import org.apache.openejb.assembler.classic.ResourceInfo;
+import org.apache.openejb.assembler.classic.SecurityServiceInfo;
+import org.apache.openejb.assembler.classic.ServiceInfo;
+import org.apache.openejb.assembler.classic.SingletonSessionContainerInfo;
+import org.apache.openejb.assembler.classic.StatefulSessionContainerInfo;
+import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
+import org.apache.openejb.assembler.classic.TransactionServiceInfo;
+import org.apache.openejb.assembler.classic.WebAppInfo;
+import org.apache.openejb.config.sys.AbstractService;
+import org.apache.openejb.config.sys.AdditionalDeployments;
+import org.apache.openejb.config.sys.ConnectionManager;
+import org.apache.openejb.config.sys.Container;
+import org.apache.openejb.config.sys.Deployments;
+import org.apache.openejb.config.sys.JaxbOpenejb;
+import org.apache.openejb.config.sys.JndiProvider;
+import org.apache.openejb.config.sys.Openejb;
+import org.apache.openejb.config.sys.ProxyFactory;
+import org.apache.openejb.config.sys.Resource;
+import org.apache.openejb.config.sys.SecurityService;
+import org.apache.openejb.config.sys.ServiceProvider;
+import org.apache.openejb.config.sys.TransactionManager;
 import org.apache.openejb.jee.Application;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.Handler;
@@ -35,6 +74,7 @@ import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.SuperProperties;
 import org.apache.openejb.util.URISupport;
 import org.apache.openejb.util.URLs;
+import org.apache.openejb.util.UpdateChecker;
 
 import javax.ejb.embeddable.EJBContainer;
 import java.io.File;
@@ -44,7 +84,16 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 import static org.apache.openejb.config.DeploymentsResolver.DEPLOYMENTS_CLASSPATH_PROPERTY;
 import static org.apache.openejb.config.ServiceUtils.implies;
@@ -64,6 +113,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     private DynamicDeployer deployer;
     private final DeploymentLoader deploymentLoader;
     private final boolean offline;
+    private Thread updateCheckerThreader = null;
     private static final String CLASSPATH_AS_EAR = "openejb.deployments.classpath.ear";
     static final String WEBSERVICES_ENABLED = "openejb.webservices.enabled";
 
@@ -267,6 +317,11 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             return sys;
         }
 
+        if (!offline && updateCheckerThreader == null) {
+            updateCheckerThreader = new Thread(new UpdateChecker());
+            updateCheckerThreader.start();
+        }
+
         if (configLocation != null) {
             openejb = JaxbOpenejb.readConfig(configLocation);
         } else {
@@ -362,6 +417,17 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
             } catch (OpenEJBException alreadyHandled) {
                 logger.debug("config.alreadyHandled");
+            }
+        }
+
+        if (!offline) {
+            try {
+                updateCheckerThreader.join(10000); // 10s is already a lot
+            } catch (InterruptedException ignored) {
+                // no-op
+            }
+            if (!UpdateChecker.usesLatest()) {
+                logger.warning(UpdateChecker.message());
             }
         }
 
