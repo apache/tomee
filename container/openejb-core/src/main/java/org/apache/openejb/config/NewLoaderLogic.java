@@ -51,19 +51,21 @@ import java.util.List;
 import java.util.Set;
 
 /**
-* @version $Rev$ $Date$
-*/
+ * @version $Rev$ $Date$
+ */
 public class NewLoaderLogic {
     private static final Logger logger = DeploymentLoader.logger;
+    public static final String ADDITIONAL_EXCLUDES = System.getProperty("openejb.additional.exclude");
+    public static final String ADDITIONAL_INCLUDE = System.getProperty("openejb.additional.include");
     private static final String EXCLUSION_FILE = "exclusions.list";
     private static String[] exclusions = null;
 
-    public static UrlSet filterArchives(Filter filter, ClassLoader classLoader, UrlSet urlSet) {
+    public static UrlSet filterArchives(final Filter filter, final ClassLoader classLoader, UrlSet urlSet) {
 
-        for (URL url : urlSet.getUrls()) {
-            for (Archive archive : ClasspathArchive.archives(classLoader, url)) {
+        for (final URL url : urlSet.getUrls()) {
+            for (final Archive archive : ClasspathArchive.archives(classLoader, url)) {
 
-                FilteredArchive filtered = new FilteredArchive(archive, filter);
+                final FilteredArchive filtered = new FilteredArchive(archive, filter);
 
                 if (!filtered.iterator().hasNext()) {
                     urlSet = urlSet.exclude(url);
@@ -85,11 +87,11 @@ public class NewLoaderLogic {
         // if we don't find one, so be it, this is only a convenience
         {
             // Entry points are the following:
-            Filter start = Filters.classes("javax.ejb.embeddable.EJBContainer", "javax.naming.InitialContext");
+            final Filter start = Filters.classes("javax.ejb.embeddable.EJBContainer", "javax.naming.InitialContext");
 
-            Iterator<StackTraceElement> iterator = elements.iterator();
+            final Iterator<StackTraceElement> iterator = elements.iterator();
             while (iterator.hasNext()) {
-                StackTraceElement element = iterator.next();
+                final StackTraceElement element = iterator.next();
                 iterator.remove();
 
                 // If we haven't yet reached an entry point, just keep going
@@ -97,7 +99,7 @@ public class NewLoaderLogic {
 
                 // We found an entry point.
                 // Fast-forward past this class
-                while(iterator.hasNext()&&element.getClassName().equals(iterator.next().getClassName())) iterator.remove();
+                while (iterator.hasNext() && element.getClassName().equals(iterator.next().getClassName())) iterator.remove();
 
                 // Ok, we have iterated up to the calling user class, so stop now
                 break;
@@ -108,7 +110,7 @@ public class NewLoaderLogic {
         // Now iterate till we find an END point
         // We don't want any of the classes after that
         {
-            Filter end = Filters.packages(
+            final Filter end = Filters.packages(
                     "junit.",
                     "org.junit.",
                     "org.testng.",
@@ -119,10 +121,7 @@ public class NewLoaderLogic {
 
             // Everything between here and the end is part
             // of the call chain in which we are interested
-            Iterator<StackTraceElement> iterator = elements.iterator();
-            while (iterator.hasNext()) {
-                StackTraceElement element = iterator.next();
-
+            for (final StackTraceElement element : elements) {
                 if (end.accept(element.getClassName())) break;
 
                 callers.add(element.getClassName());
@@ -134,13 +133,13 @@ public class NewLoaderLogic {
 
         // Finally filter out everything that we definitely don't want
         {
-            Filter unwanted = Filters.packages(
+            final Filter unwanted = Filters.packages(
                     "java.",
                     "javax.",
                     "sun.reflect."
             );
 
-            Iterator<String> classes = callers.iterator();
+            final Iterator<String> classes = callers.iterator();
             while (classes.hasNext()) {
                 if (unwanted.accept(classes.next())) classes.remove();
             }
@@ -150,22 +149,21 @@ public class NewLoaderLogic {
         return callers;
     }
 
-    public static UrlSet applyBuiltinExcludes(UrlSet urlSet) throws MalformedURLException {
+    public static UrlSet applyBuiltinExcludes(final UrlSet urlSet) throws MalformedURLException {
         final Filter filter = Filters.prefixes(getExclusions());
 
-//        filter = Filters.optimize(filter, new PatternFilter(".*/openejb-.*"));
-        List<URL> urls = urlSet.getUrls();
-        Iterator<URL> iterator = urls.iterator();
+        //filter = Filters.optimize(filter, new PatternFilter(".*/openejb-.*"));
+        final List<URL> urls = urlSet.getUrls();
+        final Iterator<URL> iterator = urls.iterator();
         while (iterator.hasNext()) {
-            URL url = iterator.next();
-            File file = URLs.toFile(url);
+            final URL url = iterator.next();
+            final File file = URLs.toFile(url);
 
-            String name = filter(file).getName();
-//            System.out.println("JAR "+name);
-            if (filter.accept(name)) iterator.remove();
+            final String name = filter(file).getName();
+            if (filter.accept(name)) {
+                iterator.remove();
+            }
         }
-
-
 
         return new UrlSet(urls);
     }
@@ -175,46 +173,111 @@ public class NewLoaderLogic {
     }
 
     public static String[] getExclusions() {
+
         if (exclusions != null) {
             return exclusions;
         }
+
+        FileInputStream fis = null;
 
         try {
             final File conf = SystemInstance.get().getBase().getDirectory("conf");
             final File exclusionsFile = new File(conf, EXCLUSION_FILE);
             if (exclusionsFile.exists()) {
-                exclusions = readInputStreamList(new FileInputStream(exclusionsFile));
+                fis = new FileInputStream(exclusionsFile);
+                exclusions = readInputStreamList(fis);
+
+                logger.info("Loaded classpath exclusions from: " + exclusionsFile.getAbsolutePath());
             }
-        } catch (IOException e) {
+        } catch (Throwable e) {
             // ignored
+        } finally {
+            if (null != fis) {
+                try {
+                    fis.close();
+                } catch (Throwable e) {
+                    //Ignore
+                }
+            }
         }
 
         if (exclusions == null) {
-            exclusions = readInputStreamList(NewLoaderLogic.class.getResourceAsStream("/default.exclusions"));
+
+            InputStream is = null;
+            try {
+                is = NewLoaderLogic.class.getResourceAsStream("/default.exclusions");
+                exclusions = readInputStreamList(is);
+
+                logger.debug("Loaded default.exclusions");
+
+            } catch (Throwable e) {
+                // ignored
+            } finally {
+                if (null != is) {
+                    try {
+                        is.close();
+                    } catch (Throwable e) {
+                        //Ignore
+                    }
+                }
+            }
         }
 
-        return exclusions;
+        final List<String> excludes = null != exclusions ? Arrays.asList(exclusions) : new ArrayList<String>();
+
+        if (ADDITIONAL_EXCLUDES != null) {
+            for (final String exclude : ADDITIONAL_EXCLUDES.split(",")) {
+                excludes.add(exclude.trim());
+            }
+        }
+        if (ADDITIONAL_INCLUDE != null) { // include = not excluded
+            for (final String rawInclude : ADDITIONAL_INCLUDE.split(",")) {
+                final String include = rawInclude.trim();
+                final Iterator<String> excluded = excludes.iterator();
+                while (excluded.hasNext()) {
+                    if (excluded.next().startsWith(include)) {
+                        excluded.remove();
+                    }
+                }
+            }
+        }
+
+        return excludes.toArray(new String[excludes.size()]);
     }
 
-    private static String[] readInputStreamList(InputStream is) {
+    private static String[] readInputStreamList(final InputStream is) {
+
         final List<String> list = new ArrayList<String>();
-        final BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        BufferedReader reader = null;
         String line;
+
         try {
+
+            reader = new BufferedReader(new InputStreamReader(is));
+
             while ((line = reader.readLine()) != null) {
                 final String value = line.trim();
                 if (!value.isEmpty()) {
                     list.add(value);
                 }
             }
-        } catch (IOException e) {
-            // ignored
+        } catch (Throwable e) {
+            logger.warning("readInputStreamList: Failed to read provided stream");
+        } finally {
+            if (null != reader) {
+                try {
+                    reader.close();
+                } catch (Throwable e) {
+                    //Ignore
+                }
+            }
         }
+
         return list.toArray(new String[list.size()]);
     }
 
     private static File filter(File location) {
-        List<String> invalid = new ArrayList<String>();
+        final List<String> invalid = new ArrayList<String>();
         invalid.add("classes");
         invalid.add("test-classes");
         invalid.add("target");
@@ -229,35 +292,35 @@ public class NewLoaderLogic {
     }
 
 
-    public static void _loadFromClasspath(FileUtils base, List<URL> jarList, ClassLoader classLoader) {
+    public static void _loadFromClasspath(final FileUtils base, final List<URL> jarList, final ClassLoader classLoader) {
 
-        PerformanceTimer timer = new PerformanceTimer();
+        final PerformanceTimer timer = new PerformanceTimer();
 
         timer.event("create filters");
-        Options options = SystemInstance.get().getOptions();
-        String include = "";
-        String exclude = "";
-        PatternFilter classpathInclude = new PatternFilter(options.get(DeploymentFilterable.CLASSPATH_INCLUDE, ".*"));
-        PatternFilter classpathExclude = new PatternFilter(options.get(DeploymentFilterable.CLASSPATH_EXCLUDE, ""));
-        IncludeExcludeFilter classpathFilter = new IncludeExcludeFilter(classpathInclude, classpathExclude);
+        final Options options = SystemInstance.get().getOptions();
+        final String include = "";
+        final String exclude = "";
+        final PatternFilter classpathInclude = new PatternFilter(options.get(DeploymentFilterable.CLASSPATH_INCLUDE, ".*"));
+        final PatternFilter classpathExclude = new PatternFilter(options.get(DeploymentFilterable.CLASSPATH_EXCLUDE, ""));
+        final IncludeExcludeFilter classpathFilter = new IncludeExcludeFilter(classpathInclude, classpathExclude);
 
 
-        PatternFilter packageInclude = new PatternFilter(options.get(DeploymentFilterable.PACKAGE_INCLUDE, ".*"));
-        PatternFilter packageExclude = new PatternFilter(options.get(DeploymentFilterable.PACKAGE_EXCLUDE, ""));
+        final PatternFilter packageInclude = new PatternFilter(options.get(DeploymentFilterable.PACKAGE_INCLUDE, ".*"));
+        final PatternFilter packageExclude = new PatternFilter(options.get(DeploymentFilterable.PACKAGE_EXCLUDE, ""));
 
-        IncludeExcludeFilter packageFilter;
+        final IncludeExcludeFilter packageFilter;
         if (classpathInclude.getPattern().pattern().equals(".*") && packageInclude.getPattern().pattern().equals(".*")) {
 
             timer.event("callers");
 
-            Set<String> callers = callers();
+            final Set<String> callers = callers();
 
             timer.event("parse packages");
 
             callers.size();
 
-            Set<String> packages = new HashSet<String>();
-            for (String caller : callers) {
+            final Set<String> packages = new HashSet<String>();
+            for (final String caller : callers) {
                 String[] parts = caller.split("\\.");
                 if (parts.length > 2) {
                     parts = new String[]{parts[0], parts[1]};
@@ -265,7 +328,7 @@ public class NewLoaderLogic {
                 packages.add(Join.join(".", parts));
             }
 
-            Filter includes = Filters.packages(packages.toArray(new String[0]));
+            final Filter includes = Filters.packages(packages.toArray(new String[packages.size()]));
 
             packageFilter = new IncludeExcludeFilter(includes, packageExclude);
 
@@ -277,9 +340,9 @@ public class NewLoaderLogic {
 
         timer.event("urlset");
 
-        Set<RequireDescriptors> requireDescriptors = options.getAll(DeploymentFilterable.CLASSPATH_REQUIRE_DESCRIPTOR, RequireDescriptors.CLIENT);
-        boolean filterDescriptors = options.get(DeploymentFilterable.CLASSPATH_FILTER_DESCRIPTORS, false);
-        boolean filterSystemApps = options.get(DeploymentFilterable.CLASSPATH_FILTER_SYSTEMAPPS, true);
+        final Set<RequireDescriptors> requireDescriptors = options.getAll(DeploymentFilterable.CLASSPATH_REQUIRE_DESCRIPTOR, RequireDescriptors.CLIENT);
+        final boolean filterDescriptors = options.get(DeploymentFilterable.CLASSPATH_FILTER_DESCRIPTORS, false);
+        final boolean filterSystemApps = options.get(DeploymentFilterable.CLASSPATH_FILTER_SYSTEMAPPS, true);
 
         try {
             UrlSet urlSet = new UrlSet(classLoader);
@@ -295,7 +358,7 @@ public class NewLoaderLogic {
 
             timer.event("classpath filter");
 
-            UrlSet beforeFiltering = urlSet;
+            final UrlSet beforeFiltering = urlSet;
 
             urlSet = urlSet.filter(classpathFilter);
 
@@ -306,7 +369,7 @@ public class NewLoaderLogic {
                 logger.error(message);
                 logger.info("Eligible Classpath before filtering:");
 
-                for (URL url : beforeFiltering) {
+                for (final URL url : beforeFiltering) {
                     logger.info(String.format("   %s", url.toExternalForm()));
                 }
 //                throw new IllegalStateException(message);
@@ -339,8 +402,8 @@ public class NewLoaderLogic {
 //                urlSet = urlSet.exclude(".*/openejb-[^/]+(.(jar|ear|war)(!/)?|/target/(test-)?classes/?)");
 //            }
 
-            List<URL> urls = urlSet.getUrls();
-            int size = urls.size();
+            final List<URL> urls = urlSet.getUrls();
+            final int size = urls.size();
 //            if (size == 0) {
 //                logger.warning("No classpath URLs matched.  Current settings: " + CLASSPATH_EXCLUDE + "='" + exclude + "', " + CLASSPATH_INCLUDE + "='" + include + "'");
 //                return;
@@ -360,29 +423,29 @@ public class NewLoaderLogic {
 //                }
 //            }
 
-            long begin = System.currentTimeMillis();
+            final long begin = System.currentTimeMillis();
             DeploymentsResolver.processUrls(urls, classLoader, requireDescriptors, base, jarList);
-            long end = System.currentTimeMillis();
-            long time = end - begin;
+            final long end = System.currentTimeMillis();
+            final long time = end - begin;
 
             timer.stop(System.out);
 
-            UrlSet unchecked = new UrlSet();
+            final UrlSet unchecked = new UrlSet();
 //            if (!filterDescriptors){
 //                unchecked = prefiltered.exclude(urlSet);
 //                if (filterSystemApps){
 //                    unchecked = unchecked.exclude(".*/openejb-[^/]+(.(jar|ear|war)(./)?|/target/classes/?)");
 //                }
-                DeploymentsResolver.processUrls(unchecked.getUrls(), classLoader, EnumSet.allOf(RequireDescriptors.class), base, jarList);
+            DeploymentsResolver.processUrls(unchecked.getUrls(), classLoader, EnumSet.allOf(RequireDescriptors.class), base, jarList);
 //            }
 
             if (logger.isDebugEnabled()) {
-                int urlCount = urlSet.getUrls().size() + unchecked.getUrls().size();
-                logger.debug("URLs after filtering: "+ urlCount);
-                for (URL url : urlSet.getUrls()) {
+                final int urlCount = urlSet.getUrls().size() + unchecked.getUrls().size();
+                logger.debug("URLs after filtering: " + urlCount);
+                for (final URL url : urlSet.getUrls()) {
                     logger.debug("Annotations path: " + url);
                 }
-                for (URL url : unchecked.getUrls()) {
+                for (final URL url : unchecked.getUrls()) {
                     logger.debug("Descriptors path: " + url);
                 }
             }
@@ -399,12 +462,12 @@ public class NewLoaderLogic {
             } else {
                 logger.fatal("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + (time / urls.size()) + " milliseconds per url.  TOO LONG!");
                 logger.fatal("ADJUST THE EXCLUDE/INCLUDE!!!.  Current settings: " + DeploymentFilterable.CLASSPATH_EXCLUDE + "='" + exclude + "', " + DeploymentFilterable.CLASSPATH_INCLUDE + "='" + include + "'");
-                List<String> list = new ArrayList<String>();
-                for (URL url : urls) {
+                final List<String> list = new ArrayList<String>();
+                for (final URL url : urls) {
                     list.add(url.toExternalForm());
                 }
                 Collections.sort(list);
-                for (String url : list) {
+                for (final String url : list) {
                     logger.info("Matched: " + url);
                 }
             }
