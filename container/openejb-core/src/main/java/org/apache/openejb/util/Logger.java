@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.util;
 
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 
 import java.io.File;

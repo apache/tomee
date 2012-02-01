@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.core.security.jaas;
 
-import static org.apache.openejb.util.IOUtils.readProperties;
 import org.apache.openejb.util.ConfUtils;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -33,10 +32,12 @@ import javax.security.auth.spi.LoginModule;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.LinkedHashSet;
+
+import static org.apache.openejb.loader.IO.readProperties;
 
 /**
  * @version $Rev$ $Date$

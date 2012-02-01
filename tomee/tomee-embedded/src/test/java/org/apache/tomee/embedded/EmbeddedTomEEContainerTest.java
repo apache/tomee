@@ -19,7 +19,7 @@ package org.apache.tomee.embedded;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.openejb.OpenEjbContainer;
-import org.apache.openejb.util.IOUtils;
+import org.apache.openejb.loader.IO;
 import org.junit.Test;
 
 import javax.ejb.embeddable.EJBContainer;
@@ -52,7 +52,7 @@ public class EmbeddedTomEEContainerTest {
             assertNotNull(container);
             assertNotNull(container.getContext());
             URL url = new URL("http://127.0.0.1:" + System.getProperty(EmbeddedTomEEContainer.TOMEE_EJBCONTAINER_HTTP_PORT) + "/" + war.getName() + "/index.html");
-            assertEquals("true", IOUtils.readProperties(url).getProperty("ok"));
+            assertEquals("true", IO.readProperties(url).getProperty("ok"));
             container.close();
         } finally {
             try {
