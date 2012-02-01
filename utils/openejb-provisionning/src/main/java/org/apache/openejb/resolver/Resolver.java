@@ -30,6 +30,7 @@ import static org.apache.openejb.loader.ProvisioningUtil.cacheFile;
 public class Resolver implements LocationResolver {
     public static final String MVN_PREFIX = "mvn:";
 
+    @Override
     public String resolve(final String rawLocation) throws Exception {
         if (rawLocation.startsWith(MVN_PREFIX) && rawLocation.length() > MVN_PREFIX.length()) {
 
@@ -39,13 +40,18 @@ public class Resolver implements LocationResolver {
             if (!file.exists()) {
                 try {
                     final URL url = new URL(MVN_PREFIX.substring(MVN_PREFIX.length() - 1), "localhost", -1, info, new Handler());
-                    if (!file.getParentFile().exists()) {
-                        file.getParentFile().mkdirs();
+                    final File parentFile = file.getParentFile();
+                    if (!parentFile.exists()) {
+                        if (!parentFile.mkdirs()) {
+                            throw new Exception("Failed to create: " + parentFile);
+                        }
                     }
                     FileUtils.copy(new FileOutputStream(file), url.openStream());
                 } catch (Exception e) {
                     if (file.exists()) {
-                        file.delete();
+                        if (!file.delete()) {
+                            file.deleteOnExit();
+                        }
                     }
                     throw e;
                 }
