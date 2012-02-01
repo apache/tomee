@@ -210,7 +210,7 @@ public class IO {
         return new ZipInputStream(read);
     }
 
-    public static void close(Closeable closeable) throws IOException {
+    public static void close(Closeable closeable) {
         if (closeable == null) return;
         try {
             if (closeable instanceof Flushable) {
