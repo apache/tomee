@@ -34,6 +34,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
@@ -41,6 +42,24 @@ import java.util.zip.ZipOutputStream;
  * @version $Revision$ $Date$
  */
 public class IO {
+    private static final int MAX_TIMEOUT = Integer.getInteger("openejb.io.util.timeout", 5000);
+
+    public static String readFileAsString(final URL url) throws IOException {
+        final URLConnection connection = url.openConnection();
+        connection.setConnectTimeout(MAX_TIMEOUT);
+        final InputStream in = connection.getInputStream();
+        final StringBuilder builder = new StringBuilder("");
+        String line;
+        try {
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            while ((line = reader.readLine()) != null) {
+                builder.append(line);
+            }
+        } finally {
+            close(in);
+        }
+        return builder.toString();
+    }
 
     public static String readString(URL url) throws IOException {
         final InputStream in = url.openStream();
