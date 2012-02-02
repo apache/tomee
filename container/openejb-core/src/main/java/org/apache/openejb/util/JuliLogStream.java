@@ -95,7 +95,7 @@ public class JuliLogStream implements LogStream {
         }
     }
 
-    private static class OpenEJBLogRecord extends LogRecord {
+    public static class OpenEJBLogRecord extends LogRecord {
         /**
          * The name of the class that issued the logging call.
          *
