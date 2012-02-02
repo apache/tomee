@@ -1461,10 +1461,6 @@ public class DeploymentLoader implements DeploymentFilterable {
             return AppModule.class;
         }
 
-        if (descriptors.containsKey("application-client.xml")) {
-            return ClientModule.class;
-        }
-
         if (descriptors.containsKey("ra.xml") || path.endsWith(".rar")) {
             return ConnectorModule.class;
         }
@@ -1479,6 +1475,10 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         if (descriptors.containsKey("ejb-jar.xml") || descriptors.containsKey("beans.xml")) {
             return EjbModule.class;
+        }
+
+        if (descriptors.containsKey("application-client.xml")) {
+            return ClientModule.class;
         }
 
         final URL manifestUrl = descriptors.get("MANIFEST.MF");
