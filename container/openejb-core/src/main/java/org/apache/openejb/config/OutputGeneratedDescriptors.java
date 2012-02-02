@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.config;
 
-import org.apache.commons.lang.math.RandomUtils;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.jee.Connector;
 import org.apache.openejb.jee.EjbJar;
@@ -40,6 +39,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Random;
 
 public class OutputGeneratedDescriptors implements DynamicDeployer {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, "org.apache.openejb.util.resources");
@@ -112,7 +112,7 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
                     throw new IOException("can't create " + tmp.getAbsolutePath());
                 }
             }
-            return new File(tmp, start + Long.toString(RandomUtils.nextInt()) + end);
+            return new File(tmp, start + Long.toString(new Random().nextInt()) + end);
         } else {
             return File.createTempFile(start, end);
         }

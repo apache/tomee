@@ -155,8 +155,8 @@
           <groupId>org.apache.openejb</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>commons-lang</artifactId>
-          <groupId>commons-lang</groupId>
+          <artifactId>commons-lang3</artifactId>
+          <groupId>org.apache.commons</groupId>
         </exclusion>
         <exclusion>
           <artifactId>javaee-api-embedded</artifactId>

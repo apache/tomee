@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.config;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EnterpriseBean;

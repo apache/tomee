@@ -62,7 +62,7 @@ public abstract class BasicURLClassPath implements ClassPath {
         });
     }
 
-    protected void addJarsToPath(final File dir, final URLClassLoader loader) throws Exception {
+    protected synchronized void addJarsToPath(final File dir, final URLClassLoader loader) throws Exception {
         if (dir == null || !dir.exists()) return;
 
         final String[] jarNames = dir.list(new java.io.FilenameFilter() {

@@ -18,7 +18,7 @@
 package org.apache.openejb.util.proxy;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 

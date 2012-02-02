@@ -17,7 +17,7 @@
 
 package org.apache.openejb.arquillian.tests.cdi.constructor;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
