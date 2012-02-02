@@ -17,18 +17,17 @@
  */
 package org.apache.tomee.loader;
 
-import java.io.File;
-import java.lang.management.ManagementFactory;
-import java.lang.reflect.Method;
-import java.security.Principal;
-
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-
 import org.apache.catalina.Realm;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardServer;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import java.io.File;
+import java.lang.management.ManagementFactory;
+import java.lang.reflect.Method;
+import java.security.Principal;
 
 public class TomcatHelper {
 
@@ -148,13 +147,9 @@ public class TomcatHelper {
 
 	public static void configureJarScanner(StandardContext standardContext) {
 		try {
-			Class<?> cls = Class.forName("org.apache.tomee.loader.TomEEJarScanner");
-			Class<?> jarScannerCls = Class.forName("org.apache.tomcat.JarScanner");
-			Object instance = cls.newInstance();
-			StandardContext.class.getMethod("setJarScanner", jarScannerCls).invoke(standardContext, instance);
+            standardContext.setJarScanner(new TomEEJarScanner());
 		} catch (Exception e) {
 			// ignore
-			e.printStackTrace();
 		}
 	}
 
