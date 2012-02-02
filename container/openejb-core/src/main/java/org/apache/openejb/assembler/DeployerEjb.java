@@ -29,6 +29,7 @@ import org.apache.openejb.config.DeploymentModule;
 import org.apache.openejb.config.sys.AdditionalDeployments;
 import org.apache.openejb.config.sys.Deployments;
 import org.apache.openejb.config.sys.JaxbOpenejb;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -212,7 +213,12 @@ public class DeployerEjb implements Deployer {
         try {
             final AdditionalDeployments additionalDeployments;
             if (config.exists()) {
-                additionalDeployments = JaxbOpenejb.unmarshal(AdditionalDeployments.class, new FileInputStream(config));
+                final FileInputStream fis = new FileInputStream(config);
+                try {
+                    additionalDeployments = JaxbOpenejb.unmarshal(AdditionalDeployments.class, fis);
+                } finally {
+                    IO.close(fis);
+                }
             } else {
                 additionalDeployments = new AdditionalDeployments();
             }

@@ -66,6 +66,7 @@ import org.apache.openejb.jee.HandlerChain;
 import org.apache.openejb.jee.HandlerChains;
 import org.apache.openejb.jee.ParamValue;
 import org.apache.openejb.loader.FileUtils;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
@@ -451,11 +452,15 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             additionalDeploymentFile = null;
         }
         if (additionalDeploymentFile.exists()) {
+            FileInputStream fis = null;
             try {
-                final AdditionalDeployments additionalDeployments = JaxbOpenejb.unmarshal(AdditionalDeployments.class, new FileInputStream(additionalDeploymentFile));
+                fis = new FileInputStream(additionalDeploymentFile);
+                final AdditionalDeployments additionalDeployments = JaxbOpenejb.unmarshal(AdditionalDeployments.class, fis);
                 deployments.addAll(additionalDeployments.getDeployments());
             } catch (Exception e) {
                 logger.error("can't read " + ADDITIONAL_DEPLOYMENTS, e);
+            } finally {
+                IO.close(fis);
             }
         }
 

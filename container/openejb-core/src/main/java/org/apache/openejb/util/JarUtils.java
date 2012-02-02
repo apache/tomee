@@ -16,6 +16,9 @@
  */
 package org.apache.openejb.util;
 
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.loader.IO;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -26,8 +29,6 @@ import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 
-import org.apache.openejb.OpenEJBException;
-
 /**
  * @version $Rev$ $Date$
  */
@@ -36,22 +37,22 @@ public class JarUtils {
     private static Messages messages = new Messages("org.apache.openejb.util.resources");
 
     public static void addFileToJar(String jarFile, String file) throws OpenEJBException {
+        JarInputStream jis = null;
+        JarOutputStream jos = null;
+        FileInputStream fis = null;
         try {
-            JarInputStream jis = new JarInputStream(new FileInputStream(jarFile));
+            jis = new JarInputStream(new FileInputStream(jarFile));
             File tempJar = File.createTempFile("temp", "jar");
-            JarOutputStream jos = new JarOutputStream(new FileOutputStream(tempJar));
-            JarEntry nextJarEntry = null;
+            jos = new JarOutputStream(new FileOutputStream(tempJar));
+            JarEntry nextJarEntry;
             while ((nextJarEntry = jis.getNextJarEntry()) != null) {
                 jos.putNextEntry(nextJarEntry);
             }
-            jis.close();
             jos.putNextEntry(new JarEntry(file));
-            FileInputStream fis = new FileInputStream(file);
+            fis = new FileInputStream(file);
             for (int c = fis.read(); c != -1; c = fis.read()) {
                 jos.write(c);
             }
-            fis.close();
-            jos.close();
 
             File oldJar = new File(jarFile);
             oldJar.delete();
@@ -60,6 +61,10 @@ public class JarUtils {
             throw new OpenEJBException(messages.format("file.0003", file, jarFile, e.getMessage()), e);
         } catch (IOException e) {
             throw new OpenEJBException(messages.format("file.0003", file, jarFile, e.getMessage()), e);
+        } finally {
+            IO.close(fis);
+            IO.close(jis);
+            IO.close(jos);
         }
 
     }

@@ -16,45 +16,46 @@
  */
 package org.apache.openejb.core.webservices;
 
-import org.apache.openejb.util.Logger;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.w3c.dom.Element;
 
-import javax.xml.ws.spi.Provider;
-import javax.xml.ws.spi.ServiceDelegate;
-import javax.xml.ws.Endpoint;
+import javax.jws.WebService;
+import javax.xml.bind.JAXBContext;
+import javax.xml.namespace.QName;
+import javax.xml.transform.Source;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
+import javax.xml.ws.Endpoint;
+import javax.xml.ws.EndpointReference;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
-import javax.xml.ws.EndpointReference;
 import javax.xml.ws.WebServiceFeature;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
-import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.ws.handler.HandlerResolver;
-import javax.xml.namespace.QName;
-import javax.xml.bind.JAXBContext;
-import javax.xml.transform.Source;
-import javax.jws.WebService;
-import java.net.URL;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.List;
-import java.util.Properties;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.ArrayList;
-import java.util.concurrent.Executor;
+import javax.xml.ws.soap.SOAPBinding;
+import javax.xml.ws.spi.Provider;
+import javax.xml.ws.spi.ServiceDelegate;
+import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.io.FileOutputStream;
-import java.lang.reflect.Method;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.Executor;
 
 public class ProviderWrapper extends Provider {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_WS, ProviderWrapper.class);
@@ -395,12 +396,7 @@ public class ProviderWrapper extends Provider {
                 }
             } catch(Exception ignored) {
             } finally {
-                if (in != null) {
-                    try {
-                        in.close();
-                    } catch (IOException e) {
-                    }
-                }
+                IO.close(in);
             }
         }
 

@@ -16,21 +16,6 @@
  */
 package org.apache.openejb.config;
 
-import static org.apache.openejb.util.JarExtractor.delete;
-
-import java.io.Closeable;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.List;
-import java.util.Properties;
-import java.util.jar.JarFile;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -39,9 +24,9 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
+import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.UndeployException;
-import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.assembler.Deployer;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.ClientInfo;
@@ -53,9 +38,24 @@ import org.apache.openejb.assembler.classic.PersistenceUnitInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.cli.SystemExitException;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.JarExtractor;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.OpenEjbVersion;
-import org.apache.openejb.util.JarExtractor;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.List;
+import java.util.Properties;
+import java.util.jar.JarFile;
+
+import static org.apache.openejb.loader.IO.close;
+import static org.apache.openejb.util.JarExtractor.delete;
 
 /**
  * Deploy EJB beans
@@ -377,16 +377,6 @@ public class Deploy {
 
         File destinationDir = new File(destDir, name);
         return destinationDir;
-    }
-
-
-    private static void close(Closeable in) {
-        if (in != null) {
-            try {
-                in.close();
-            } catch (IOException e) {
-            }
-        }
     }
 
     private static void help(Options options) {

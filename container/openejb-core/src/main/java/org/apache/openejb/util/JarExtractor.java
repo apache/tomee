@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.util;
 
+import org.apache.openejb.loader.IO;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -159,18 +161,8 @@ public class JarExtractor {
                     logger.error("Copy failed: src: " + fileSrc + ", dest: " + fileDest, e);
                     result = false;
                 } finally {
-                    if (ic != null) {
-                        try {
-                            ic.close();
-                        } catch (IOException e) {
-                        }
-                    }
-                    if (oc != null) {
-                        try {
-                            oc.close();
-                        } catch (IOException e) {
-                        }
-                    }
+                    IO.close(ic);
+                    IO.close(oc);
                 }
             }
         }

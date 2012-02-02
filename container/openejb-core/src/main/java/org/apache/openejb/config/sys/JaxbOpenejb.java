@@ -17,16 +17,17 @@
 package org.apache.openejb.config.sys;
 
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.jee.JAXBContextFactory;
 import org.apache.openejb.config.ConfigUtils;
+import org.apache.openejb.jee.JAXBContextFactory;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.xbean.finder.ResourceFinder;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLFilterImpl;
 import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.helpers.XMLFilterImpl;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -50,10 +51,10 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.List;
 
 public abstract class JaxbOpenejb {
     @SuppressWarnings({"unchecked"})
@@ -229,12 +230,7 @@ public abstract class JaxbOpenejb {
         } catch (Exception e) {
             throw new OpenEJBException("Unable to read OpenEJB configuration file at " + configFile, e);
         } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                }
-            }
+            IO.close(in);
         }
     }
 

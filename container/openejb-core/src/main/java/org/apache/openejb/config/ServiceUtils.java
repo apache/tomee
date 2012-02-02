@@ -17,6 +17,7 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.config.sys.ServiceProvider;
 import org.apache.openejb.config.sys.ServicesJar;
@@ -255,9 +256,10 @@ public class ServiceUtils {
     }
 
     public static Properties loadProperties(String propertiesFile, Properties defaults) throws OpenEJBException {
+        InputStream in = null;
         try {
             File pfile = new File(propertiesFile);
-            InputStream in = new FileInputStream(pfile);
+            in = new FileInputStream(pfile);
 
             try {
                 /*
@@ -278,6 +280,8 @@ public class ServiceUtils {
             throw new OpenEJBException(messages.format("conf.0007", propertiesFile, ex.getLocalizedMessage()), ex);
         } catch (SecurityException ex) {
             throw new OpenEJBException(messages.format("conf.0005", propertiesFile, ex.getLocalizedMessage()), ex);
+        } finally {
+            IO.close(in);
         }
     }
 
