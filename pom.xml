@@ -1442,6 +1442,11 @@
         <groupId>org.apache.commons</groupId>
         <version>${commons-lang3.version}</version>
       </dependency>
+	  <dependency>
+        <artifactId>commons-lang</artifactId>
+        <groupId>commons-lang</groupId>
+        <version>2.6</version>
+      </dependency>
       <dependency>
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
