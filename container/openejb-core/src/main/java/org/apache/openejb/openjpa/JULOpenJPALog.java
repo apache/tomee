@@ -1,5 +1,6 @@
 package org.apache.openejb.openjpa;
 
+import org.apache.openejb.util.JuliLogStream;
 import org.apache.openejb.util.JuliLogStreamFactory;
 import org.apache.openjpa.lib.log.Log;
 
@@ -100,7 +101,7 @@ public class JULOpenJPALog  implements Log {
     }
 
     private LogRecord record(final Object o,  final Level level) {
-        final LogRecord record = new LogRecord(level, o.toString());
+        final LogRecord record = new JuliLogStream.OpenEJBLogRecord(level, o.toString());
         record.setSourceMethodName(logger.getName());
         return record;
     }
