@@ -22,8 +22,21 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.api.LocalClient;
 import org.apache.openejb.api.RemoteClient;
 import org.apache.openejb.core.EmptyResourcesClassLoader;
-import org.apache.openejb.jee.*;
+import org.apache.openejb.jee.Application;
+import org.apache.openejb.jee.ApplicationClient;
+import org.apache.openejb.jee.Beans;
+import org.apache.openejb.jee.Connector;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.FacesConfig;
+import org.apache.openejb.jee.JavaWsdlMapping;
+import org.apache.openejb.jee.JaxbJavaee;
+import org.apache.openejb.jee.JspConfig;
 import org.apache.openejb.jee.Module;
+import org.apache.openejb.jee.Taglib;
+import org.apache.openejb.jee.TldTaglib;
+import org.apache.openejb.jee.WebApp;
+import org.apache.openejb.jee.WebserviceDescription;
+import org.apache.openejb.jee.Webservices;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.SystemInstance;
@@ -48,7 +61,19 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -301,13 +326,13 @@ public class DeploymentLoader implements DeploymentFilterable {
             } else {
                 application = new Application();
                 final HashMap<String, URL> files = new HashMap<String, URL>();
-                scanDir(appDir, files, "");
+                scanDir(appDir, files, "", false);
                 files.remove("META-INF/MANIFEST.MF");
 
                 // todo we should also filter URLs here using DeploymentsResolver.loadFromClasspath
 
                 for (final Map.Entry<String, URL> entry : files.entrySet()) {
-                    if (entry.getKey().startsWith("lib/")) continue;
+                    // if (entry.getKey().startsWith("lib/")) continue;// will not be scanned since we don't get folder anymore
                     if (!entry.getKey().matches(".*\\.(jar|war|rar|ear)")) continue;
 
                     try {
@@ -1404,9 +1429,15 @@ public class DeploymentLoader implements DeploymentFilterable {
     }
 
     public static void scanDir(final File dir, final Map<String, URL> files, final String path) {
+        scanDir(dir, files, path, true);
+    }
+
+    public static void scanDir(final File dir, final Map<String, URL> files, final String path, boolean recursive) {
         for (final File file : dir.listFiles()) {
             if (file.isDirectory()) {
-                scanDir(file, files, path + file.getName() + "/");
+                if (recursive) {
+                    scanDir(file, files, path + file.getName() + "/");
+                }
             } else {
                 final String name = file.getName();
                 try {
