@@ -40,9 +40,11 @@ import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.ServiceManager;
 import org.apache.openejb.server.ejbd.EjbServer;
 import org.apache.openejb.spi.Service;
+import org.apache.openejb.util.Join;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.OptionsLog;
+import org.apache.tomcat.util.scan.Constants;
 import org.apache.tomee.installer.Installer;
 import org.apache.tomee.installer.Paths;
 import org.apache.tomee.loader.TomcatHelper;
@@ -210,6 +212,7 @@ public class TomcatLoader implements Loader {
             }
         }
         NewLoaderLogic.setExclusions(exclusions.toArray(new String[exclusions.size()]));
+        System.setProperty(Constants.SKIP_JARS_PROPERTY, Join.join(",", exclusions));
 
         // Install tomcat war builder
         TomcatWebAppBuilder tomcatWebAppBuilder = (TomcatWebAppBuilder) SystemInstance.get().getComponent(WebAppBuilder.class);

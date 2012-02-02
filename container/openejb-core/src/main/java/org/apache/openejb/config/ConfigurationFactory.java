@@ -115,9 +115,10 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     private final boolean offline;
     private static final String CLASSPATH_AS_EAR = "openejb.deployments.classpath.ear";
     static final String WEBSERVICES_ENABLED = "openejb.webservices.enabled";
+    static final String OFFLINE_PROPERTY = "openejb.offline";
 
     public ConfigurationFactory() {
-        this(false);
+        this(Boolean.getBoolean(ConfigurationFactory.OFFLINE_PROPERTY));
     }
 
     public ConfigurationFactory(final boolean offline) {
