@@ -4,6 +4,7 @@ import org.apache.openejb.util.JuliLogStreamFactory;
 import org.apache.openjpa.lib.log.Log;
 
 import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 public class JULOpenJPALog  implements Log {
@@ -44,51 +45,63 @@ public class JULOpenJPALog  implements Log {
 
     @Override
     public void trace(Object o) {
-        logger.finest(o.toString());
+        logger.log(record(o, Level.FINEST));
     }
 
     @Override
     public void trace(Object o, Throwable t) {
-        logger.log(Level.FINEST, o.toString(), t);
+        logger.log(record(o, t, Level.FINEST));
     }
 
     @Override
     public void info(Object o) {
-        logger.info(o.toString());
+        logger.log(record(o, Level.INFO));
     }
 
     @Override
     public void info(Object o, Throwable t) {
-        logger.log(Level.INFO, o.toString(), t);
+        logger.log(record(o, t, Level.INFO));
     }
 
     @Override
     public void warn(Object o) {
-        logger.warning(o.toString());
+        logger.log(record(o, Level.WARNING));
     }
 
     @Override
     public void warn(Object o, Throwable t) {
-        logger.log(Level.WARNING, o.toString(), t);
+        logger.log(record(o, t, Level.WARNING));
     }
 
     @Override
     public void error(Object o) {
-        logger.severe(o.toString());
+        logger.log(record(o.toString(), Level.SEVERE));
     }
 
     @Override
     public void error(Object o, Throwable t) {
-        logger.log(Level.SEVERE, o.toString(), t);
+        logger.log(record(o, t, Level.SEVERE));
     }
 
     @Override
     public void fatal(Object o) {
-        logger.severe(o.toString());
+        logger.log(record(o, Level.SEVERE));
     }
 
     @Override
     public void fatal(Object o, Throwable t) {
-        logger.log(Level.SEVERE, o.toString(), t);
+        logger.log(record(o, t, Level.SEVERE));
+    }
+
+    private LogRecord record(final Object o, final Throwable t, final Level level) {
+        final LogRecord record = record(o, level);
+        record.setThrown(t);
+        return record;
+    }
+
+    private LogRecord record(final Object o,  final Level level) {
+        final LogRecord record = new LogRecord(level, o.toString());
+        record.setSourceMethodName(logger.getName());
+        return record;
     }
 }
