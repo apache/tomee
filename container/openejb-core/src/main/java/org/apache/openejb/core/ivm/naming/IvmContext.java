@@ -16,25 +16,14 @@
  */
 package org.apache.openejb.core.ivm.naming;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.NotSerializableException;
-import java.io.ObjectStreamException;
-import java.io.Serializable;
-import java.io.PrintStream;
-import java.net.URL;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.Vector;
+import org.apache.openejb.ClassLoaderUtil;
+import org.apache.openejb.core.ivm.IntraVmCopyMonitor;
+import org.apache.openejb.core.ivm.IntraVmProxy;
+import org.apache.openejb.core.ivm.naming.java.javaURLContextFactory;
+import org.apache.openejb.core.ivm.naming.openejb.openejbURLContextFactory;
+import org.apache.openejb.loader.IO;
+import org.apache.xbean.naming.context.ContextUtil;
+
 import javax.naming.Binding;
 import javax.naming.CompositeName;
 import javax.naming.Context;
@@ -46,18 +35,26 @@ import javax.naming.NameParser;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.OperationNotSupportedException;
-import javax.naming.InitialContext;
 import javax.naming.spi.ObjectFactory;
-
-import org.apache.openejb.ClassLoaderUtil;
-import org.apache.openejb.assembler.classic.JndiBuilder;
-import org.apache.openejb.core.ivm.IntraVmCopyMonitor;
-import org.apache.openejb.core.ivm.IntraVmProxy;
-import org.apache.openejb.core.ivm.naming.openejb.openejbURLContextFactory;
-import org.apache.openejb.core.ivm.naming.java.javaURLContextFactory;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
-import org.apache.xbean.naming.context.ContextUtil;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.NotSerializableException;
+import java.io.ObjectStreamException;
+import java.io.PrintStream;
+import java.io.Serializable;
+import java.net.URL;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 /*
 * This class wrappers a specific NameNode which is the data model for the JNDI
@@ -256,11 +253,14 @@ public class IvmContext implements Context, Serializable {
         if (urlPackagePrefixes == null) {
             String javahome = System.getProperty("java.home");
             if (javahome != null) {
+                InputStream in = null;
                 try {
                     File propertiesFile = new File(new File(javahome, "lib"), "jndi.properties");
-                    InputStream in = new FileInputStream(propertiesFile);
+                    in = new FileInputStream(propertiesFile);
                     urlPackagePrefixes = getUrlPackagePrefixes(in);
                 } catch (FileNotFoundException ignored) {
+                } finally {
+                    IO.close(in);
                 }
             }
 

@@ -16,28 +16,17 @@
  */
 package org.apache.openejb.config;
 
-import java.io.ByteArrayOutputStream;
-import java.io.Closeable;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.Serializable;
-import java.io.StringWriter;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Properties;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.Arrays;
+import org.apache.openejb.NoSuchApplicationException;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.UndeployException;
+import org.apache.openejb.assembler.Deployer;
+import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.assembler.classic.ClientInfo;
+import org.apache.openejb.assembler.classic.ConnectorInfo;
+import org.apache.openejb.assembler.classic.EjbJarInfo;
+import org.apache.openejb.assembler.classic.InfoObject;
+import org.apache.openejb.assembler.classic.WebAppInfo;
+
 import javax.enterprise.deploy.model.DeployableObject;
 import javax.enterprise.deploy.shared.ActionType;
 import javax.enterprise.deploy.shared.CommandType;
@@ -58,17 +47,29 @@ import javax.enterprise.deploy.spi.status.ProgressEvent;
 import javax.enterprise.deploy.spi.status.ProgressListener;
 import javax.enterprise.deploy.spi.status.ProgressObject;
 import javax.naming.InitialContext;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.io.StringWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 
-import org.apache.openejb.NoSuchApplicationException;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.UndeployException;
-import org.apache.openejb.assembler.classic.AppInfo;
-import org.apache.openejb.assembler.classic.ClientInfo;
-import org.apache.openejb.assembler.classic.EjbJarInfo;
-import org.apache.openejb.assembler.classic.InfoObject;
-import org.apache.openejb.assembler.classic.ConnectorInfo;
-import org.apache.openejb.assembler.classic.WebAppInfo;
-import org.apache.openejb.assembler.Deployer;
+import static org.apache.openejb.loader.IO.close;
 
 public class VmDeploymentManager implements DeploymentManager {
     private static final Target DEFAULT_TARGET = new TargetImpl("DefaultTarget", "OpenEJB Default Target");
@@ -711,15 +712,6 @@ public class VmDeploymentManager implements DeploymentManager {
             }
             buf.append(']');
             return buf.toString();
-        }
-    }
-
-    private static void close(Closeable thing) {
-        if (thing != null) {
-            try {
-                thing.close();
-            } catch (Exception ignored) {
-            }
         }
     }
 }

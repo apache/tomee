@@ -20,6 +20,7 @@ import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.SimpleLayout;
 import org.apache.openejb.loader.FileUtils;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 
 import java.io.BufferedInputStream;
@@ -85,11 +86,7 @@ public class Log4jLogStreamFactory implements LogStreamFactory {
                 applyOverrides(props);
                 preprocessProperties(props);
                 PropertyConfigurator.configure(props);
-                try {
-                    bis.close();
-                } catch (Throwable e) {
-                    //Ignore
-                }
+                IO.close(bis);
             } else {
                 // install our logging.properties file into the conf dir
                 installLoggingPropertiesFile(loggingPropertiesFile);
