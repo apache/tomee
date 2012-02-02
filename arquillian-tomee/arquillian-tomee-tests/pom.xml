@@ -58,9 +58,9 @@
     </dependency>
 
     <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-      <version>${commons-lang.version}</version>
+      <artifactId>commons-lang3</artifactId>
+      <groupId>org.apache.commons</groupId>
+      <version>${commons-lang3.version}</version>
       <type>jar</type>
       <scope>compile</scope>
     </dependency>

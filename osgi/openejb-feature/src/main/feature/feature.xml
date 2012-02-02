@@ -31,7 +31,7 @@
     <bundle>mvn:commons-codec/commons-codec/${commons-codec.version}</bundle>
     <bundle>mvn:commons-fileupload/commons-fileupload/${commons-fileupload.version}</bundle>
     <bundle>mvn:commons-discovery/commons-discovery/${commons-discovery.version}</bundle>
-    <bundle>mvn:commons-lang/commons-lang/${commons-lang.version}</bundle>
+    <bundle>mvn:org.apache.commons/commons-lang3/${commons-lang3.version}</bundle>
     <bundle>mvn:commons-io/commons-io/${commons-io.version}</bundle>
   </feature>
 
@@ -100,7 +100,7 @@
     <!--<feature version="${org.apache.activemq.version}">activemq</feature>-->
     <feature version="${org.apache.activemq.version}">org.apache.activemq</feature>
 
-    <bundle>mvn:org.apache.commons/commons-lang3/3.1</bundle>
+    <bundle>mvn:org.apache.commons/commons-lang3/${commons-lang3.version}</bundle>
     <bundle>mvn:org.apache.bval/org.apache.bval.bundle/${bval.version}</bundle>
     <bundle>mvn:org.hsqldb/hsqldb/${hsqldb.version}</bundle>
 

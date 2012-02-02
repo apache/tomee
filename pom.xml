@@ -91,7 +91,7 @@
   <properties>
 
     <!-- Maven module versions -->
-    <maven-bundle-plugin.version>2.3.6</maven-bundle-plugin.version>
+    <maven-bundle-plugin.version>2.4.0-SNAPSHOT</maven-bundle-plugin.version>
     <!-- don't use 2.3.5 since there is an issue with private packages imports -->
 
     <!-- This is used by a manifest classpath entry -->
@@ -135,7 +135,7 @@
     <bval.version>0.4-incubating-SNAPSHOT</bval.version>
     <org.apache.activemq.version>5.5.1</org.apache.activemq.version>
     <quartz.version>1.8.5</quartz.version>
-    <org.springframework.version>3.0.5.RELEASE</org.springframework.version>
+    <org.springframework.version>3.1.0.RELEASE</org.springframework.version>
     <junit.version>4.9</junit.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
     <scannotation.version>1.0.2</scannotation.version>
@@ -161,7 +161,7 @@
     <commons-codec.version>1.4</commons-codec.version>
     <commons-fileupload.version>1.2.2</commons-fileupload.version>
     <commons-discovery.version>0.5</commons-discovery.version>
-    <commons-lang.version>2.6</commons-lang.version>
+    <commons-lang3.version>3.1</commons-lang3.version>
     <commons-io.version>1.4</commons-io.version>
   </properties>
 
@@ -1438,9 +1438,9 @@
         <scope>test</scope>
       </dependency>
       <dependency>
-        <artifactId>commons-lang</artifactId>
-        <groupId>commons-lang</groupId>
-        <version>${commons-lang.version}</version>
+		<artifactId>commons-lang3</artifactId>
+        <groupId>org.apache.commons</groupId>
+        <version>${commons-lang3.version}</version>
       </dependency>
       <dependency>
         <groupId>commons-io</groupId>
