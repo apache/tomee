@@ -490,7 +490,7 @@ public class Installer {
                 systemPropertiesWriter.write("# openejb.jmx.active = true\n");
                 systemPropertiesWriter.write("# openejb.nobanner = true\n");
                 systemPropertiesWriter.write("# openejb.crosscontext = false\n");
-                systemPropertiesWriter.write("# openejb.version.check.skip = false\n");
+                systemPropertiesWriter.write("# openejb.version.check = false\n");
                 systemPropertiesWriter.write("# openejb.version.check.repo.url = http://repo1.maven.org/maven2/org/apache/openejb/\n");
                 systemPropertiesWriter.write("# openejb.version.check.url = http://repo1.maven.org/maven2/org/apache/openejb/openejb/maven-metadata.xml\n");
                 systemPropertiesWriter.write("# openejb.jsessionid-support = \n");

@@ -192,7 +192,6 @@ public class DeploymentsResolver implements DeploymentFilterable {
             UrlSet urlSet = new UrlSet(classLoader);
 
             //final UrlSet includes = urlSet.matching(include);
-
             urlSet = urlSet.exclude(ClassLoader.getSystemClassLoader().getParent());
             urlSet = urlSet.excludeJavaExtDirs();
             urlSet = urlSet.excludeJavaEndorsedDirs();
@@ -205,10 +204,11 @@ public class DeploymentsResolver implements DeploymentFilterable {
             final UrlSet prefiltered = urlSet;
 
             // we should exclude system apps before and apply user properties after
-
-            final IncludeExcludeFilter filter = new IncludeExcludeFilter(Filters.patterns(include), Filters.patterns(exclude));
-            // filter using user parameters
-            urlSet = urlSet.filter(filter);
+            if (!".*".equals(include) && !"".equals(exclude)) { // if we are using default this will not do anything
+                final IncludeExcludeFilter filter = new IncludeExcludeFilter(Filters.patterns(include), Filters.patterns(exclude));
+                // filter using user parameters
+                urlSet = urlSet.filter(filter);
+            }
 
             if (prefiltered.size() == urlSet.size()) {
                 urlSet = NewLoaderLogic.applyBuiltinExcludes(urlSet);
@@ -256,7 +256,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
 
             UrlSet unchecked = new UrlSet();
             if (!filterDescriptors) {
-                unchecked = prefiltered.exclude(urlSet);
+                unchecked = NewLoaderLogic.applyBuiltinExcludes(prefiltered.exclude(urlSet));
                 if (filterSystemApps) {
                     unchecked = unchecked.exclude(".*/openejb-[^/]+(.(jar|ear|war)(./)?|/target/classes/?)");
                 }
