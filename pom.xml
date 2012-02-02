@@ -162,6 +162,7 @@
     <commons-fileupload.version>1.2.2</commons-fileupload.version>
     <commons-discovery.version>0.5</commons-discovery.version>
     <commons-lang3.version>3.1</commons-lang3.version>
+    <commons-lang.version>2.6</commons-lang.version>
     <commons-io.version>1.4</commons-io.version>
   </properties>
 

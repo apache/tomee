@@ -17,7 +17,7 @@
     limitations under the License.
 -->
 
-<features>
+<features name="openejb-features">
   <repository>mvn:org.apache.openejb/javaee-api/${javaee-api.version}/xml/features</repository>
   <repository>mvn:org.apache.activemq/activemq-karaf/${org.apache.activemq.version}/xml/features</repository>
 
@@ -32,6 +32,7 @@
     <bundle>mvn:commons-fileupload/commons-fileupload/${commons-fileupload.version}</bundle>
     <bundle>mvn:commons-discovery/commons-discovery/${commons-discovery.version}</bundle>
     <bundle>mvn:org.apache.commons/commons-lang3/${commons-lang3.version}</bundle>
+    <bundle>mvn:commons-lang/commons-lang/${commons-lang.version}</bundle>
     <bundle>mvn:commons-io/commons-io/${commons-io.version}</bundle>
   </feature>
 
