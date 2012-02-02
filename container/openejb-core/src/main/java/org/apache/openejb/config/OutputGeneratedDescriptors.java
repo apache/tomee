@@ -173,28 +173,18 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
 
     private void writeEjbJar(EjbModule ejbModule) {
         try {
-            final File tempFile = tempFile("ejb-jar-", ejbModule.getModuleId() + ".xml");
-            writeEjbJar(tempFile, ejbModule);
-            logger.info("Dumping Generated ejb-jar.xml to: " + tempFile.getAbsolutePath());
-        } catch (IOException e) {
-            // no-op
-        }
-    }
-
-    public static void writeEjbJar(final File output, final EjbModule ejbModule) {
-        try {
             EjbJar ejbJar = ejbModule.getEjbJar();
-            FileOutputStream fout = new FileOutputStream(output);
+            File tempFile = tempFile("ejb-jar-", ejbModule.getModuleId() + ".xml");
+            FileOutputStream fout = new FileOutputStream(tempFile);
             BufferedOutputStream out = new BufferedOutputStream(fout);
             try {
                 JaxbJavaee.marshal(EjbJar.class, ejbJar, out);
-            } catch (JAXBException ignored) {
-                // no-op
+                logger.info("Dumping Generated ejb-jar.xml to: " + tempFile.getAbsolutePath());
+            } catch (JAXBException e) {
             } finally {
                 out.close();
             }
         } catch (Exception e) {
-            // no-op
         }
     }
 }
