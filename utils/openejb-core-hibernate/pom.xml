@@ -93,8 +93,6 @@
   </dependencies>
 
   <properties>
-    <asm.version>3.3.1</asm.version>
-    <cglib.version>2.2.2</cglib.version>
     <ehcache.version>2.4.7</ehcache.version>
     <hibernate.version>4.0.1.Final</hibernate.version>
     <hibernate-validator.version>4.2.0.Final</hibernate-validator.version>
