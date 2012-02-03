@@ -18,10 +18,10 @@ package org.apache.openejb.assembler.classic;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SingletonBean;
 import org.junit.After;
@@ -29,7 +29,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.annotation.Resource;
-import javax.ejb.Singleton;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -92,7 +91,6 @@ public class OpenEJBXmlByModuleTest {
         public String attr = "ok";
     }
 
-    @Singleton
     public static class UselessBean {
         @Resource(name = "DS") private DataSource ds;
         @Resource(name = "My Resource", type = MyResource.class) private MyResource rs;

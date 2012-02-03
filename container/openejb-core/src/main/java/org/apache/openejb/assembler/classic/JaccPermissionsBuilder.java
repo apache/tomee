@@ -20,24 +20,25 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
-import static org.apache.openejb.assembler.classic.MethodInfoUtil.resolveAttributes;
+import org.apache.openejb.util.Logger;
 
 import javax.security.jacc.EJBMethodPermission;
 import javax.security.jacc.EJBRoleRefPermission;
 import javax.security.jacc.PolicyConfiguration;
 import javax.security.jacc.PolicyConfigurationFactory;
 import javax.security.jacc.PolicyContextException;
+import java.lang.reflect.Method;
 import java.security.Permission;
 import java.security.PermissionCollection;
 import java.security.Permissions;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ArrayList;
-import java.lang.reflect.Method;
+
+import static org.apache.openejb.assembler.classic.MethodInfoUtil.resolveAttributes;
 
 /**
  * @version $Rev$ $Date$
@@ -50,7 +51,7 @@ public class JaccPermissionsBuilder {
 
     public void install(PolicyContext policyContext) throws OpenEJBException {
         if (SystemInstance.get().hasProperty("openejb.geronimo")) return;
-        
+
         try {
             PolicyConfigurationFactory factory = PolicyConfigurationFactory.getPolicyConfigurationFactory();
 
@@ -237,7 +238,7 @@ public class JaccPermissionsBuilder {
 
             String roleLink = securityRoleRef.roleLink;
 
-            PermissionCollection roleLinks = (PermissionCollection) rolePermissions.get(roleLink);
+            PermissionCollection roleLinks = rolePermissions.get(roleLink);
             if (roleLinks == null) {
                 roleLinks = new Permissions();
                 rolePermissions.put(roleLink, roleLinks);
@@ -259,7 +260,7 @@ public class JaccPermissionsBuilder {
         if (defaultRole == null) {
             permissions = uncheckedPermissions;
         } else {
-            permissions = (PermissionCollection) rolePermissions.get(defaultRole);
+            permissions = rolePermissions.get(defaultRole);
             if (permissions == null) {
                 permissions = new Permissions();
                 rolePermissions.put(defaultRole, permissions);
@@ -287,6 +288,7 @@ public class JaccPermissionsBuilder {
      * @param permissions     the permission set to be extended
      * @param ejbName         the name of the EJB
      * @param methodInterface the EJB method interface
+     *
      * @throws org.apache.openejb.OpenEJBException
      *          in case a class could not be found
      */

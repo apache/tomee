@@ -16,23 +16,18 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import javax.security.jacc.PolicyConfiguration;
-import javax.security.jacc.PolicyContextException;
-import java.io.Serializable;
 import java.security.PermissionCollection;
-import java.security.Permissions;
-import java.security.Permission;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @version $Rev$ $Date$
  */
 public class PolicyContext {
 
-    private final PermissionCollection excludedPermissions = new Permissions();
-    private final PermissionCollection uncheckedPermissions = new Permissions();
-    private final Map rolePermissions = new HashMap();
+    private final PermissionCollection excludedPermissions = new DelegatePermissionCollection();
+    private final PermissionCollection uncheckedPermissions = new DelegatePermissionCollection();
+    private final Map<String,PermissionCollection> rolePermissions = new HashMap<String,PermissionCollection>();
     private final String contextId;
 
     public PolicyContext(String contextId) {
@@ -54,5 +49,4 @@ public class PolicyContext {
     public String getContextID() {
         return contextId;
     }
-
 }
