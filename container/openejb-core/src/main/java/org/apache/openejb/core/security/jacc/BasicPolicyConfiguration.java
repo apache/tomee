@@ -16,14 +16,13 @@
  */
 package org.apache.openejb.core.security.jacc;
 
+import org.apache.openejb.assembler.classic.DelegatePermissionCollection;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.spi.SecurityService;
 
 import javax.security.jacc.PolicyConfiguration;
 import javax.security.jacc.PolicyContextException;
 import java.security.Permission;
 import java.security.PermissionCollection;
-import java.security.Permissions;
 import java.security.Principal;
 import java.security.ProtectionDomain;
 import java.util.Enumeration;
@@ -41,9 +40,9 @@ public class BasicPolicyConfiguration implements PolicyConfiguration {
 
     private final String contextID;
     private int state;
-    protected final Map<String, Permissions> rolePermissionsMap = new LinkedHashMap<String, Permissions>();
-    protected Permissions unchecked = null;
-    protected Permissions excluded = null;
+    protected final Map<String, PermissionCollection> rolePermissionsMap = new LinkedHashMap<String, PermissionCollection>();
+    protected PermissionCollection unchecked = null;
+    protected PermissionCollection excluded = null;
 
     protected BasicPolicyConfiguration(String contextID) {
         this.contextID = contextID;
@@ -67,7 +66,7 @@ public class BasicPolicyConfiguration implements PolicyConfiguration {
         Set<String> roles = roleResolver.getLogicalRoles(principals, rolePermissionsMap.keySet());
 
         for (String role : roles) {
-            Permissions permissions = rolePermissionsMap.get(role);
+            PermissionCollection permissions = rolePermissionsMap.get(role);
 
             if (permissions != null && permissions.implies(permission)) return true;
         }
@@ -87,9 +86,9 @@ public class BasicPolicyConfiguration implements PolicyConfiguration {
     public void addToRole(String roleName, Permission permission) throws PolicyContextException {
         if (state != OPEN) throw new UnsupportedOperationException("Not in an open state");
 
-        Permissions permissions = rolePermissionsMap.get(roleName);
+        PermissionCollection permissions = rolePermissionsMap.get(roleName);
         if (permissions == null) {
-            permissions = new Permissions();
+            permissions = new DelegatePermissionCollection();
             rolePermissionsMap.put(roleName, permissions);
         }
         permissions.add(permission);
@@ -105,9 +104,13 @@ public class BasicPolicyConfiguration implements PolicyConfiguration {
     }
 
     public void addToUncheckedPolicy(Permission permission) throws PolicyContextException {
-        if (state != OPEN) throw new UnsupportedOperationException("Not in an open state");
+        if (state != OPEN) {
+            throw new UnsupportedOperationException("Not in an open state");
+        }
 
-        if (unchecked == null) unchecked = new Permissions();
+        if (unchecked == null) {
+            unchecked = new DelegatePermissionCollection();
+        }
 
         unchecked.add(permission);
     }
@@ -122,9 +125,13 @@ public class BasicPolicyConfiguration implements PolicyConfiguration {
     }
 
     public void addToExcludedPolicy(Permission permission) throws PolicyContextException {
-        if (state != OPEN) throw new UnsupportedOperationException("Not in an open state");
+        if (state != OPEN) {
+            throw new UnsupportedOperationException("Not in an open state");
+        }
 
-        if (excluded == null) excluded = new Permissions();
+        if (excluded == null) {
+            excluded = new DelegatePermissionCollection();
+        }
 
         excluded.add(permission);
     }
