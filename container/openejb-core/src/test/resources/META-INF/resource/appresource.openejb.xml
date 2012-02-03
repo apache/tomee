@@ -15,7 +15,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<service>
+<resources>
   <Resource id="DS" type="javax.sql.DataSource">
     JdbcDriver  org.hsqldb.jdbcDriver
     JdbcUrl     not:used:url
@@ -24,4 +24,4 @@
   </Resource>
 
   <Resource id="My Resource" type="org.apache.openejb.assembler.classic.OpenEJBXmlByModuleTest$MyResource" provider="resource#MyResource" />
-</service>
+</resources>
