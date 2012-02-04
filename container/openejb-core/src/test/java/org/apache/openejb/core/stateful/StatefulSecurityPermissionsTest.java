@@ -17,10 +17,7 @@
 package org.apache.openejb.core.stateful;
 
 import java.rmi.RemoteException;
-import java.security.Permission;
-import java.security.Permissions;
-import java.security.Principal;
-import java.security.ProtectionDomain;
+import java.security.*;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -278,7 +275,7 @@ public class StatefulSecurityPermissionsTest extends TestCase {
                     Set<String> roles = roleResolver.getLogicalRoles(principals, rolePermissionsMap.keySet());
 
                     for (String role : roles) {
-                        Permissions permissions = rolePermissionsMap.get(role);
+                        PermissionCollection permissions = rolePermissionsMap.get(role);
 
                         if (permissions != null && permissions.implies(permission)) {
                             actual.set(role);
