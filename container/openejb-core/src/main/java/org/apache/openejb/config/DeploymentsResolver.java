@@ -190,8 +190,8 @@ public class DeploymentsResolver implements DeploymentFilterable {
 
         try {
             UrlSet urlSet = new UrlSet(classLoader);
+            final UrlSet includes = urlSet.matching(include);
 
-            //final UrlSet includes = urlSet.matching(include);
             urlSet = urlSet.exclude(ClassLoader.getSystemClassLoader().getParent());
             urlSet = urlSet.excludeJavaExtDirs();
             urlSet = urlSet.excludeJavaEndorsedDirs();
@@ -217,6 +217,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
                     urlSet = urlSet.exclude(".*/openejb-[^/]+(.(jar|ear|war)(!/)?|/target/(test-)?classes/?)");
                 }
             }
+            urlSet = urlSet.include(includes);
 
             final List<URL> urls = new ArrayList<URL>();
             final boolean isWindows = System.getProperty("os.name", "unknown").toLowerCase().startsWith("windows");
