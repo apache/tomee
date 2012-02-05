@@ -4,10 +4,11 @@ import org.apache.openejb.util.ArrayEnumeration;
 
 import java.security.Permission;
 import java.security.PermissionCollection;
-import java.security.Permissions;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class DelegatePermissionCollection extends PermissionCollection {
     private static final String PERMISSION_COLLECTION_CLASS = "openejb.permission-collection.class";
@@ -34,15 +35,17 @@ public class DelegatePermissionCollection extends PermissionCollection {
             return (PermissionCollection) DelegatePermissionCollection.class.getClassLoader()
                     .loadClass(
                             System.getProperty(PERMISSION_COLLECTION_CLASS,
-                                    Permissions.class.getName()))
+                                    FastPermissionCollection.class.getName()))
                     .newInstance();
         } catch (Exception cnfe) {
-            return new Permissions();
+            // return new Permissions(); // the jdk implementation, it seems slow at least for startup up
+            return new FastPermissionCollection();
         }
     }
 
     public static class FastPermissionCollection extends PermissionCollection {
         private final List<Permission> permissions = new ArrayList<Permission>();
+        private final Map<Permission, Boolean> alreadyEvaluatedPermissions = new ConcurrentHashMap<Permission, Boolean>();
 
         @Override
         public synchronized void add(Permission permission) {
@@ -51,11 +54,17 @@ public class DelegatePermissionCollection extends PermissionCollection {
 
         @Override
         public synchronized boolean implies(Permission permission) {
+            if (alreadyEvaluatedPermissions.containsKey(permission)) {
+                return alreadyEvaluatedPermissions.get(permission);
+            }
+
             for (Permission perm : permissions) {
-                if (perm.implies(perm)) {
+                if (perm.implies(permission)) {
+                    alreadyEvaluatedPermissions.put(permission, true);
                     return true;
                 }
             }
+            alreadyEvaluatedPermissions.put(permission, false);
             return false;
         }
 

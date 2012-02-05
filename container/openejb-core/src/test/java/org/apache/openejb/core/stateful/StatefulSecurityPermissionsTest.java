@@ -16,32 +16,6 @@
  */
 package org.apache.openejb.core.stateful;
 
-import java.rmi.RemoteException;
-import java.security.*;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-import javax.annotation.security.DenyAll;
-import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.CreateException;
-import javax.ejb.EJBAccessException;
-import javax.ejb.EJBHome;
-import javax.ejb.EJBLocalHome;
-import javax.ejb.EJBLocalObject;
-import javax.ejb.EJBObject;
-import javax.ejb.Init;
-import javax.ejb.Local;
-import javax.ejb.LocalHome;
-import javax.ejb.Remote;
-import javax.ejb.RemoteHome;
-import javax.ejb.Remove;
-import javax.naming.InitialContext;
-import javax.security.auth.Subject;
-import javax.security.auth.login.LoginException;
-
 import junit.framework.TestCase;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
@@ -60,6 +34,35 @@ import org.apache.openejb.jee.MethodPermission;
 import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
+
+import javax.annotation.security.DenyAll;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.CreateException;
+import javax.ejb.EJBAccessException;
+import javax.ejb.EJBHome;
+import javax.ejb.EJBLocalHome;
+import javax.ejb.EJBLocalObject;
+import javax.ejb.EJBObject;
+import javax.ejb.Init;
+import javax.ejb.Local;
+import javax.ejb.LocalHome;
+import javax.ejb.Remote;
+import javax.ejb.RemoteHome;
+import javax.ejb.Remove;
+import javax.naming.InitialContext;
+import javax.security.auth.Subject;
+import javax.security.auth.login.LoginException;
+import java.rmi.RemoteException;
+import java.security.Permission;
+import java.security.PermissionCollection;
+import java.security.Principal;
+import java.security.ProtectionDomain;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * @version $Rev$ $Date$
