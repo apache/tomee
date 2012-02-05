@@ -44,6 +44,7 @@ public class DelegatePermissionCollection extends PermissionCollection {
     }
 
     public static class FastPermissionCollection extends PermissionCollection {
+        private static final int MAX_CACHE_SIZE = Integer.getInteger("openejb.permission-collection.cache.size", 3000);
         private final List<Permission> permissions = new ArrayList<Permission>();
         private final Map<Permission, Boolean> alreadyEvaluatedPermissions = new ConcurrentHashMap<Permission, Boolean>();
 
@@ -56,6 +57,12 @@ public class DelegatePermissionCollection extends PermissionCollection {
         public synchronized boolean implies(Permission permission) {
             if (alreadyEvaluatedPermissions.containsKey(permission)) {
                 return alreadyEvaluatedPermissions.get(permission);
+            }
+
+            // clear the cache if it is too big
+            // TODO: look if we should use a FIFO strategy or sthg like that
+            if (alreadyEvaluatedPermissions.size() > MAX_CACHE_SIZE) {
+                alreadyEvaluatedPermissions.clear();
             }
 
             for (Permission perm : permissions) {
