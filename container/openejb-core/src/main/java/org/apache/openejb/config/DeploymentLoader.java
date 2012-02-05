@@ -664,7 +664,9 @@ public class DeploymentLoader implements DeploymentFilterable {
 
     public WebModule createWebModule(final String appId, final String warPath, final ClassLoader parentClassLoader, final String contextRoot, final String moduleName) throws OpenEJBException {
         File warFile = new File(warPath);
-        warFile = unpack(warFile);
+        if (!warFile.isDirectory()) {
+            warFile = unpack(warFile);
+        }
 
         // read web.xml file
         final Map<String, URL> descriptors;
