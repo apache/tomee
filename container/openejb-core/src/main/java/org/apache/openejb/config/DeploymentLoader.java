@@ -610,7 +610,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         return ejbModule;
     }
 
-    protected void addWebModule(final AppModule appModule, final URL warUrl, final ClassLoader parentClassLoader, final String contextRoot, final String moduleName) throws OpenEJBException {
+    public void addWebModule(final AppModule appModule, final URL warUrl, final ClassLoader parentClassLoader, final String contextRoot, final String moduleName) throws OpenEJBException {
         // create and add the WebModule
         final String warPath = URLs.toFilePath(warUrl);
         final WebModule webModule = createWebModule(appModule.getJarLocation(), warPath, parentClassLoader, contextRoot, moduleName);
