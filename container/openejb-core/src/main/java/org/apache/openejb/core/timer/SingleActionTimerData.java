@@ -17,14 +17,13 @@
 
 package org.apache.openejb.core.timer;
 
+import org.quartz.impl.triggers.AbstractTrigger;
+import org.quartz.impl.triggers.SimpleTriggerImpl;
+
+import javax.ejb.TimerConfig;
 import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.util.Date;
-
-import javax.ejb.TimerConfig;
-
-import org.quartz.SimpleTrigger;
-import org.quartz.Trigger;
 
 /**
  * @version $Rev$ $Date$
@@ -48,8 +47,8 @@ public class SingleActionTimerData extends TimerData {
     }
 
     @Override
-    public Trigger initializeTrigger() {
-    	final SimpleTrigger simpleTrigger = new SimpleTrigger();
+    public AbstractTrigger<?> initializeTrigger() {
+    	final SimpleTriggerImpl simpleTrigger = new SimpleTriggerImpl();
     	simpleTrigger.setStartTime(expiration);
         return simpleTrigger;
     }

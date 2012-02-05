@@ -16,23 +16,23 @@
  */
 package org.apache.openejb.resource.quartz;
 
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
+import org.apache.openejb.util.LogCategory;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
 
+import javax.resource.ResourceException;
+import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.ResourceAdapterInternalException;
-import javax.resource.spi.ActivationSpec;
-import javax.resource.spi.endpoint.MessageEndpointFactory;
 import javax.resource.spi.endpoint.MessageEndpoint;
-import javax.resource.ResourceException;
+import javax.resource.spi.endpoint.MessageEndpointFactory;
 import javax.transaction.xa.XAResource;
 import java.lang.reflect.Method;
-import org.apache.openejb.util.LogCategory;
 
 /**
  * @version $Rev$ $Date$
@@ -182,7 +182,6 @@ public class QuartzResourceAdapter implements javax.resource.spi.ResourceAdapter
             Job job = (Job) endpoint;
 
             JobDataMap jobDataMap = spec.getDetail().getJobDataMap();
-            jobDataMap.setAllowsTransientData(true);
             jobDataMap.put(Data.class.getName(), new Data(job));
 
             scheduler.scheduleJob(spec.getDetail(), spec.getTrigger());
@@ -201,7 +200,7 @@ public class QuartzResourceAdapter implements javax.resource.spi.ResourceAdapter
 
         try {
             spec = (JobSpec) activationSpec;
-            scheduler.deleteJob(spec.getJobName(), spec.getJobGroup());
+            scheduler.deleteJob(spec.jobKey());
 
         } catch (SchedulerException e) {
             throw new IllegalStateException("Failed to delete job", e);
