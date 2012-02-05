@@ -49,11 +49,9 @@ import org.apache.tomee.installer.Installer;
 import org.apache.tomee.installer.Paths;
 import org.apache.tomee.loader.TomcatHelper;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -167,20 +165,6 @@ public class TomcatLoader implements Loader {
             if (tomeeXml.exists()) { // use tomee.xml instead of openejb.xml
                 SystemInstance.get().setProperty("openejb.configuration", tomeeXml.getAbsolutePath());
                 SystemInstance.get().setProperty("openejb.configuration.class", Tomee.class.getName());
-            }
-
-            //Look for custom system properties
-            File file = new File(conf, "system.properties");
-            if (file.exists()) {
-                System.out.println("Processing conf/system.properties: " + file.toString());
-                Properties systemProperties = new Properties();
-                fin = new FileInputStream(file);
-                InputStream in = new BufferedInputStream(fin);
-                systemProperties.load(in);
-                System.getProperties().putAll(systemProperties);
-                // store the system properties inside SystemInstance otherwise we will lose these properties.
-                // i.e. any piece of code which is trying to look for properties inside SystemInstance will not be able to find it.
-                SystemInstance.get().getProperties().putAll(systemProperties);
             }
         } catch (IOException e) {
             System.out.println("Processing conf/system.properties failed: " + e.getMessage());
