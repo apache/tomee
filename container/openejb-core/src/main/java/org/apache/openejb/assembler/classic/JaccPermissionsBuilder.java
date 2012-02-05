@@ -31,7 +31,6 @@ import javax.security.jacc.PolicyContextException;
 import java.lang.reflect.Method;
 import java.security.Permission;
 import java.security.PermissionCollection;
-import java.security.Permissions;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -138,7 +137,7 @@ public class JaccPermissionsBuilder {
         for (EnterpriseBeanInfo enterpriseBean : ejbJar.enterpriseBeans) {
             BeanContext beanContext = deployments.get(enterpriseBean.ejbDeploymentId);
 
-            Permissions permissions = new Permissions();
+            PermissionCollection permissions = DelegatePermissionCollection.getPermissionCollection();
 
             String ejbName = enterpriseBean.ejbName;
 
@@ -158,7 +157,7 @@ public class JaccPermissionsBuilder {
         return policyContext;
     }
 
-    private void addDeclaredEjbPermissions(EjbJarInfo ejbJar, EnterpriseBeanInfo beanInfo, String defaultRole, Permissions notAssigned, PolicyContext policyContext) throws OpenEJBException {
+    private void addDeclaredEjbPermissions(EjbJarInfo ejbJar, EnterpriseBeanInfo beanInfo, String defaultRole, PermissionCollection notAssigned, PolicyContext policyContext) throws OpenEJBException {
 
         PermissionCollection uncheckedPermissions = policyContext.getUncheckedPermissions();
         PermissionCollection excludedPermissions = policyContext.getExcludedPermissions();
@@ -215,9 +214,9 @@ public class JaccPermissionsBuilder {
                     excludedPermissions.add(permission);
                 } else {
                     for (String roleName : roleNames) {
-                        Permissions permissions = (Permissions) rolePermissions.get(roleName);
+                        PermissionCollection permissions = rolePermissions.get(roleName);
                         if (permissions == null) {
-                            permissions = new Permissions();
+                            permissions = DelegatePermissionCollection.getPermissionCollection();
                             rolePermissions.put(roleName, permissions);
                         }
                         permissions.add(permission);
@@ -240,7 +239,7 @@ public class JaccPermissionsBuilder {
 
             PermissionCollection roleLinks = rolePermissions.get(roleLink);
             if (roleLinks == null) {
-                roleLinks = new Permissions();
+                roleLinks = DelegatePermissionCollection.getPermissionCollection();
                 rolePermissions.put(roleLink, roleLinks);
 
             }
@@ -262,7 +261,7 @@ public class JaccPermissionsBuilder {
         } else {
             permissions = rolePermissions.get(defaultRole);
             if (permissions == null) {
-                permissions = new Permissions();
+                permissions = DelegatePermissionCollection.getPermissionCollection();
                 rolePermissions.put(defaultRole, permissions);
             }
         }
@@ -288,11 +287,12 @@ public class JaccPermissionsBuilder {
      * @param permissions     the permission set to be extended
      * @param ejbName         the name of the EJB
      * @param methodInterface the EJB method interface
+     * @param clazz clazz
      *
      * @throws org.apache.openejb.OpenEJBException
      *          in case a class could not be found
      */
-    public void addPossibleEjbMethodPermissions(Permissions permissions, String ejbName, String methodInterface, Class clazz) throws OpenEJBException {
+    public void addPossibleEjbMethodPermissions(PermissionCollection permissions, String ejbName, String methodInterface, Class clazz) throws OpenEJBException {
         if (clazz == null) return;
         for (java.lang.reflect.Method method : clazz.getMethods()) {
             String methodIface = ("LocalBean".equals(methodInterface) || "LocalBeanHome".equals(methodInterface)) ? null : methodInterface;
@@ -308,8 +308,8 @@ public class JaccPermissionsBuilder {
      * @param permission  the permission that is to be used for culling
      * @return the culled set of permissions that are not implied by <code>permission</code>
      */
-    private Permissions cullPermissions(Permissions toBeChecked, Permission permission) {
-        Permissions result = new Permissions();
+    private PermissionCollection cullPermissions(PermissionCollection toBeChecked, Permission permission) {
+        PermissionCollection result = DelegatePermissionCollection.getPermissionCollection();
 
         for (Enumeration e = toBeChecked.elements(); e.hasMoreElements();) {
             Permission test = (Permission) e.nextElement();

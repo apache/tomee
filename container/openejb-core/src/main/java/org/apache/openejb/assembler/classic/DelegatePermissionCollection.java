@@ -34,7 +34,7 @@ public class DelegatePermissionCollection extends PermissionCollection {
             return (PermissionCollection) DelegatePermissionCollection.class.getClassLoader()
                     .loadClass(
                             System.getProperty(PERMISSION_COLLECTION_CLASS,
-                                    FastPermissionCollection.class.getName()))
+                                    Permissions.class.getName()))
                     .newInstance();
         } catch (Exception cnfe) {
             return new Permissions();
