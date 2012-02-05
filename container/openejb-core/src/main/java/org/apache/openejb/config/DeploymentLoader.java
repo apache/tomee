@@ -662,7 +662,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         addWebservices(webEjbModule);
     }
 
-    protected WebModule createWebModule(final String appId, final String warPath, final ClassLoader parentClassLoader, final String contextRoot, final String moduleName) throws OpenEJBException {
+    public WebModule createWebModule(final String appId, final String warPath, final ClassLoader parentClassLoader, final String contextRoot, final String moduleName) throws OpenEJBException {
         File warFile = new File(warPath);
         warFile = unpack(warFile);
 
