@@ -17,13 +17,12 @@
 
 package org.apache.openejb.core.timer;
 
-import java.lang.reflect.Method;
+import org.apache.openejb.core.timer.EJBCronTrigger.ParseException;
+import org.quartz.impl.triggers.AbstractTrigger;
 
 import javax.ejb.ScheduleExpression;
 import javax.ejb.TimerConfig;
-
-import org.apache.openejb.core.timer.EJBCronTrigger.ParseException;
-import org.quartz.Trigger;
+import java.lang.reflect.Method;
 
 /**
  * @version $Rev$ $Date$
@@ -47,7 +46,7 @@ public class CalendarTimerData extends TimerData {
     }
 
     @Override
-    public Trigger initializeTrigger() {
+    public AbstractTrigger<?> initializeTrigger() {
         try {
             return new EJBCronTrigger(scheduleExpression);
         } catch (ParseException e) {

@@ -16,6 +16,11 @@
  */
 package org.apache.openejb.core.timer;
 
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+import org.quartz.impl.triggers.CronTriggerImpl;
+
+import javax.ejb.ScheduleExpression;
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -27,23 +32,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TimeZone;
-import java.util.Map.Entry;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.ejb.ScheduleExpression;
-
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.quartz.Trigger;
-
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
-
-public class EJBCronTrigger extends Trigger {
+public class EJBCronTrigger extends CronTriggerImpl {
     
     private static final Logger log = Logger.getInstance(LogCategory.TIMER, EJBCronTrigger.class);
 
@@ -101,14 +97,6 @@ public class EJBCronTrigger extends Trigger {
 
 	private final FieldExpression[] expressions = new FieldExpression[7];
 
-	// Optional settings
-	private Date startTime;
-	private Date endTime;
-
-	// Internal variables
-	private Date nextFireTime;
-	private Date previousFireTime;
-
 	private TimeZone timezone;
 
 	public EJBCronTrigger(ScheduleExpression expr) throws ParseException {
@@ -123,8 +111,8 @@ public class EJBCronTrigger extends Trigger {
 		fieldValues.put(Calendar.SECOND, expr.getSecond());
 
 		timezone = expr.getTimezone() == null ? TimeZone.getDefault() : TimeZone.getTimeZone(expr.getTimezone());
-        startTime = expr.getStart() == null ? new Date() : expr.getStart();
-		endTime = expr.getEnd();
+        setStartTime(expr.getStart() == null ? new Date() : expr.getStart());
+		setEndTime(expr.getEnd());
 
 		// If parsing fails on a field, record the error and move to the next field
 		Map<Integer, ParseException> errors = new HashMap<Integer, ParseException>();
@@ -309,54 +297,6 @@ public class EJBCronTrigger extends Trigger {
         }
     
     }
-        
-
-	@Override
-	public Date computeFirstFireTime(org.quartz.Calendar calendar) {
-	    
-	    log.debug("computeFirstFireTime starts, , current nextFireTime :"+nextFireTime);
-	    
-		// Copied from org.quartz.CronTrigger
-        nextFireTime = getFireTimeAfter(new Date(getStartTime().getTime() - 1000l));
-
-        while (nextFireTime != null && calendar != null
-                && !calendar.isTimeIncluded(nextFireTime.getTime())) {
-            nextFireTime = getFireTimeAfter(nextFireTime);
-        }
-		
-		log.debug("computeFirstFireTime completed, current nextFireTime :"+nextFireTime);
-        return nextFireTime;
-	}
-
-	@Override
-	public int executionComplete(JobExecutionContext context,
-			JobExecutionException result) {
-	    log.debug("executionComplete");
-		// Copied from org.quartz.CronTrigger
-        if (result != null && result.refireImmediately()) {
-            return INSTRUCTION_RE_EXECUTE_JOB;
-        }
-
-        if (result != null && result.unscheduleFiringTrigger()) {
-            return INSTRUCTION_SET_TRIGGER_COMPLETE;
-        }
-
-        if (result != null && result.unscheduleAllTriggers()) {
-            return INSTRUCTION_SET_ALL_JOB_TRIGGERS_COMPLETE;
-        }
-
-        if (!mayFireAgain()) {
-            return INSTRUCTION_DELETE_TRIGGER;
-        }
-
-        return INSTRUCTION_NOOP;
-	}
-
-	@Override
-	public Date getEndTime() {
-		return endTime;
-	}
-
 	/**
 	 * Works similarly to getFireTimeAfter() but backwards.
 	 */
@@ -366,7 +306,7 @@ public class EJBCronTrigger extends Trigger {
         //calendar.setLenient(false);
 		calendar.setFirstDayOfWeek(Calendar.SUNDAY);
 
-		if (endTime == null) {
+		if (getEndTime() == null) {
 			// If the year field has been left default, there is no end time
             if (expressions[0] instanceof AsteriskExpression) {
                 return null;
@@ -374,13 +314,13 @@ public class EJBCronTrigger extends Trigger {
 			resetFields(calendar, 0, true);
 			calendar.set(Calendar.MILLISECOND, 0);
 		} else {
-			calendar.setTime(endTime);
+			calendar.setTime(getEndTime());
 		}
 
 		// Calculate time to give up scheduling
 		Calendar stopCalendar = new  GregorianCalendar(timezone);
-		if (startTime != null) {
-			stopCalendar.setTime(startTime);
+		if (getStartTime() != null) {
+			stopCalendar.setTime(getStartTime());
 		} else {
 			stopCalendar.setTimeInMillis(0);
 		}
@@ -430,8 +370,8 @@ public class EJBCronTrigger extends Trigger {
 		calendar.setFirstDayOfWeek(Calendar.SUNDAY);
 
 		// Calculate starting time
-		if (startTime != null && startTime.after(afterTime)) {
-			calendar.setTime(startTime);
+		if (getStartTime() != null && getStartTime().after(afterTime)) {
+			calendar.setTime(getStartTime());
 		} else {
 			calendar.setTime(afterTime);
 			calendar.add(Calendar.SECOND, 1);
@@ -439,8 +379,8 @@ public class EJBCronTrigger extends Trigger {
 
 		// Calculate time to give up scheduling
 		Calendar stopCalendar = new GregorianCalendar(timezone);
-		if (endTime != null) {
-			stopCalendar.setTime(endTime);
+		if (getEndTime() != null) {
+			stopCalendar.setTime(getEndTime());
 		} else {
 			int stopYear = calendar.get(Calendar.YEAR) + 100;
 			stopCalendar.set(Calendar.YEAR, stopYear);
@@ -558,26 +498,6 @@ public class EJBCronTrigger extends Trigger {
         return -1;
     }
 
-	@Override
-	public Date getNextFireTime() {
-		return nextFireTime;
-	}
-
-	@Override
-	public Date getPreviousFireTime() {
-		return previousFireTime;
-	}
-
-	@Override
-	public Date getStartTime() {
-		return startTime;
-	}
-
-	@Override
-	public boolean mayFireAgain() {
-		return getNextFireTime() != null;
-	}
-
     /**
      * reset those sub field values, we need to configure from the end to begin, as getActualMaximun consider other fields' values
      * @param calendar
@@ -595,72 +515,6 @@ public class EJBCronTrigger extends Trigger {
             }
         }
     }
-
-	@Override
-	public void setEndTime(Date endTime) {
-		this.endTime = endTime;
-	}
-
-	@Override
-	public void setStartTime(Date startTime) {
-		this.startTime = startTime;
-	}
-
-	@Override
-	public void triggered(org.quartz.Calendar calendar) {
-		// Copied from org.quartz.CronTrigger
-		previousFireTime = nextFireTime;
-		
-        nextFireTime = getFireTimeAfter(nextFireTime);
-        
-        
-        while (nextFireTime != null && calendar != null
-                && !calendar.isTimeIncluded(nextFireTime.getTime())) {
-            nextFireTime = getFireTimeAfter(nextFireTime);
-        }
-        log.debug("EJBCronTrigger is triggered by quartz scheduler");
-	}
-
-	@Override
-	public void updateAfterMisfire(org.quartz.Calendar cal) {
-    	// TODO verify misfire policy
-        if (isVolatile()) {
-            Date newFireTime = getFireTimeAfter(new Date());
-            while (newFireTime != null && cal != null
-                    && !cal.isTimeIncluded(newFireTime.getTime())) {
-                newFireTime = getFireTimeAfter(newFireTime);
-            }
-            nextFireTime = newFireTime;
-        } else {
-            nextFireTime = new Date();
-        }
-        
-	}
-
-	@Override
-	public void updateWithNewCalendar(org.quartz.Calendar cal, long misfireThreshold) {
-        if (cal == null) {
-        	return;
-        }
-
-        Date now = new Date();
-        nextFireTime = getFireTimeAfter(previousFireTime);
-        while (nextFireTime != null && !cal.isTimeIncluded(nextFireTime.getTime())) {
-            nextFireTime = getFireTimeAfter(nextFireTime);
-            if (nextFireTime != null && nextFireTime.before(now)) {
-                long diff = now.getTime() - nextFireTime.getTime();
-                if (diff >= misfireThreshold) {
-                    nextFireTime = getFireTimeAfter(nextFireTime);
-                }
-            }
-        }
-        
-	}
-
-	@Override
-	protected boolean validateMisfireInstruction(int misfireInstruction) {
-		return misfireInstruction == MISFIRE_INSTRUCTION_SMART_POLICY;
-	}
 
 	public static class ParseException extends Exception {
 

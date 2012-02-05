@@ -17,8 +17,13 @@
 
 package org.apache.openejb.core.timer;
 
-import java.lang.reflect.Method;
-import java.util.Date;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.Trigger;
+import org.quartz.TriggerKey;
+import org.quartz.impl.triggers.AbstractTrigger;
 
 import javax.ejb.EJBException;
 import javax.ejb.Timer;
@@ -26,12 +31,8 @@ import javax.ejb.TimerConfig;
 import javax.transaction.Status;
 import javax.transaction.Synchronization;
 import javax.transaction.Transaction;
-
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.Trigger;
+import java.lang.reflect.Method;
+import java.util.Date;
 
 public abstract class TimerData {
 
@@ -48,7 +49,7 @@ public abstract class TimerData {
     private final Object info;
     private boolean persistent;
 
-    protected Trigger trigger;
+    protected AbstractTrigger<?> trigger;
     
     protected Scheduler scheduler;
 
@@ -102,8 +103,8 @@ public abstract class TimerData {
             try {
                 final Scheduler s = timerService.getScheduler();
                 
-                if(!s.isShutdown()){                
-                    s.unscheduleJob(trigger.getName(), trigger.getGroup());
+                if(!s.isShutdown()) {
+                    s.unscheduleJob(trigger.getKey());
                 }
             } catch (SchedulerException e) {
                 throw new EJBException("fail to cancel the timer", e);
@@ -157,7 +158,7 @@ public abstract class TimerData {
                 final Scheduler s = timerService.getScheduler();
                 
                 if(!s.isShutdown()){
-                    s.unscheduleJob(trigger.getName(), trigger.getGroup());
+                    s.unscheduleJob(trigger.getKey());
                 }
             } catch (SchedulerException e) {
                 throw new EJBException("fail to cancel the timer", e);
@@ -232,8 +233,9 @@ public abstract class TimerData {
         
         if (scheduler != null) {
             try {
-                if (scheduler.getTrigger(trigger.getName(), trigger.getGroup()) != null) {
-                    return scheduler.getTrigger(trigger.getName(), trigger.getGroup());
+                final TriggerKey key = new TriggerKey(trigger.getName(), trigger.getGroup());
+                if (scheduler.checkExists(key)) {
+                    return scheduler.getTrigger(key);
                 }
             } catch (SchedulerException e) {
                 return null;
@@ -277,5 +279,5 @@ public abstract class TimerData {
 
     public abstract TimerType getType();
 
-    protected abstract Trigger initializeTrigger();
+    protected abstract AbstractTrigger<?> initializeTrigger();
 }

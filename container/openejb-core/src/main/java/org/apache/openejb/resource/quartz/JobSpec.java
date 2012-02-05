@@ -16,19 +16,25 @@
  */
 package org.apache.openejb.resource.quartz;
 
-import org.quartz.CronTrigger;
+import org.quartz.CronScheduleBuilder;
+import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
+import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
+import org.quartz.TriggerKey;
+import org.quartz.impl.triggers.CronTriggerImpl;
 
 import javax.resource.spi.ActivationSpec;
-import javax.resource.spi.ResourceAdapter;
 import javax.resource.spi.InvalidPropertyException;
+import javax.resource.spi.ResourceAdapter;
 import javax.resource.spi.endpoint.MessageEndpoint;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.TimeZone;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * @version $Rev$ $Date$
@@ -37,130 +43,110 @@ public final class JobSpec implements ActivationSpec {
 
     private MessageEndpoint endpoint;
     private ResourceAdapter resourceAdapter;
-    private final CronTrigger trigger;
-    private final JobDetail detail;
+    private Trigger trigger;
+    private JobDetail detail;
     private InvalidPropertyException invalidProperty;
+    private String triggerName;
+    private String triggerGroup;
+    private String jobName;
+    private String jobGroup;
+    private String description;
+    private boolean recoverable;
+    private boolean durable;
+    private String calendarName;
+    private String cronExpression;
+    private String timeZone;
+    private String startTime;
+    private String endTime;
 
-    public JobSpec() {
-        int i = hashCode();
-
-        detail = new JobDetail();
-        trigger = new CronTrigger();
-
-        detail.setJobClass(QuartzResourceAdapter.JobEndpoint.class);
-        detail.getJobDataMap().setAllowsTransientData(true);
-
-        setVolatile(true);
-
-        setJobGroup(Scheduler.DEFAULT_GROUP);
-        setJobName("Job" + i);
-
-        setTriggerGroup(Scheduler.DEFAULT_GROUP);
-        setTriggerName("Trigger" + i);
+    public TriggerKey triggerKey() {
+        return trigger.getKey();
     }
 
     public String getTriggerName() {
-        return trigger.getName();
+        return triggerName;
     }
 
     public void setTriggerName(String s) {
-        trigger.setName(s);
+        triggerName = s;
     }
 
     public String getTriggerGroup() {
-        return trigger.getGroup();
+        return triggerGroup;
     }
 
     public void setTriggerGroup(String s) {
-        trigger.setGroup(s);
+        triggerGroup = s;
     }
 
     // -- Job Name
 
     public String getJobName() {
-        return detail.getName();
+        return jobName;
     }
 
     public void setJobName(String s) {
-        detail.setName(s);
-        trigger.setJobName(s);
+        jobName = s;
     }
 
     // -- Job Group
 
     public void setJobGroup(String s) {
-        detail.setGroup(s);
-        trigger.setJobGroup(s);
+        jobGroup = s;
     }
 
     public String getJobGroup() {
-        return trigger.getJobGroup();
+        return jobGroup;
     }
 
     // -- Description
 
     public String getDescription() {
-        return trigger.getDescription();
+        return description;
     }
 
     public void setDescription(String s) {
-        detail.setDescription(s);
-        trigger.setDescription(s);
-    }
-
-    // -- Volatility
-
-    public void setVolatile(boolean b) {
-        detail.setVolatility(b);
-        trigger.setVolatility(b);
-    }
-
-    public boolean isVolatile() {
-        return trigger.isVolatile();
+        description = s;
     }
 
     // -- Recoverable
 
     public void setRequestsRecovery(boolean b) {
-        detail.setRequestsRecovery(b);
+        recoverable = b;
     }
 
     public boolean isRequestsRecovery() {
-        return detail.requestsRecovery();
+        return recoverable;
     }
 
     // -- Durability
 
     public boolean isDurable() {
-        return detail.isDurable();
+        return durable;
     }
 
     public void setDurable(boolean b) {
-        detail.setDurability(b);
+        durable = b;
     }
 
     // -- Calendar name
 
     public void setCalendarName(String s) {
-        trigger.setCalendarName(s);
+        calendarName = s;
     }
 
     public String getCalendarName() {
-        return trigger.getCalendarName();
+        return calendarName;
     }
 
     // -- Expression
 
     public void setCronExpression(String s) {
-        try {
-            trigger.setCronExpression(s);
-        } catch (ParseException e) {
-            invalidProperty = new InvalidPropertyException("Invalid cron expression " + s, e);
-        }
+        cronExpression = s;
     }
 
     public String getCronExpression() {
-        return trigger.getCronExpression();
+        return cronExpression;
     }
 
     /**
@@ -175,7 +161,7 @@ public final class JobSpec implements ActivationSpec {
     // --
 
     public void setTimeZone(String timeZone) {
-        trigger.setTimeZone(TimeZone.getTimeZone(timeZone));
+        this.timeZone = timeZone;
     }
 
     // --
@@ -183,14 +169,14 @@ public final class JobSpec implements ActivationSpec {
     public void setStartTime(String startTime) {
         Date date = parse(startTime);
         if (date != null) {
-            trigger.setStartTime(date);
+            this.startTime = startTime;
         }
     }
 
     public void setEndTime(String endTime) {
         Date date = parse(endTime);
         if (date != null) {
-            trigger.setEndTime(date);
+            this.endTime = endTime;
         }
     }
 
@@ -235,9 +221,36 @@ public final class JobSpec implements ActivationSpec {
     public void validate() throws InvalidPropertyException {
         if (invalidProperty != null) throw invalidProperty;
 
+        int i = hashCode();
+        detail = JobBuilder.newJob(QuartzResourceAdapter.JobEndpoint.class)
+                .withIdentity("Job" + i, Scheduler.DEFAULT_GROUP)
+                .withDescription(description)
+                .requestRecovery(recoverable)
+                .storeDurably(durable)
+                .build();
+        final TriggerBuilder tb = TriggerBuilder.newTrigger()
+                .forJob(detail)
+                .withIdentity("Trigger" + i, Scheduler.DEFAULT_GROUP)
+                .withDescription(description);
+        if (startTime != null) {
+                tb.startAt(parse(startTime));
+        }
+        if (endTime != null) {
+                tb.endAt(parse(endTime));
+        }
+        if (calendarName != null) {
+                tb.modifiedByCalendar(calendarName);
+        }
+        final CronScheduleBuilder csb = CronScheduleBuilder.cronSchedule(getCronExpression());
+        if (timeZone != null) {
+            csb.inTimeZone(TimeZone.getTimeZone(timeZone));
+        }
+        tb.withSchedule(CronScheduleBuilder.cronSchedule(getCronExpression()));
+        trigger = tb.build();
+        
+
         try {
-            detail.validate();
-            trigger.validate();
+            ((CronTriggerImpl) trigger).validate();
         } catch (SchedulerException e) {
             throw new InvalidPropertyException(e);
         }
@@ -259,11 +272,15 @@ public final class JobSpec implements ActivationSpec {
         this.endpoint = endpoint;
     }
 
-    CronTrigger getTrigger() {
+    Trigger getTrigger() {
         return trigger;
     }
 
     JobDetail getDetail() {
         return detail;
+    }
+
+    public JobKey jobKey() {
+        return detail.getKey();
     }
 }

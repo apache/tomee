@@ -16,21 +16,6 @@
  */
 package org.apache.openejb.core.timer;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Properties;
-
-import javax.ejb.EJBContext;
-import javax.ejb.EJBException;
-import javax.ejb.ScheduleExpression;
-import javax.ejb.Timer;
-import javax.ejb.TimerConfig;
-import javax.transaction.Status;
-import javax.transaction.SystemException;
-import javax.transaction.TransactionManager;
-
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.OpenEJBException;
@@ -41,12 +26,28 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.SetAccessible;
+import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.impl.StdSchedulerFactory;
+import org.quartz.impl.triggers.AbstractTrigger;
+
+import javax.ejb.EJBContext;
+import javax.ejb.EJBException;
+import javax.ejb.ScheduleExpression;
+import javax.ejb.Timer;
+import javax.ejb.TimerConfig;
+import javax.transaction.Status;
+import javax.transaction.SystemException;
+import javax.transaction.TransactionManager;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Properties;
 
 
 public class EjbTimerServiceImpl implements EjbTimerService {
@@ -95,7 +96,12 @@ public class EjbTimerServiceImpl implements EjbTimerService {
                 scheduler.start();
                 //durability is configured with true, which means that the job will be kept in the store even if no trigger is attached to it.
                 //Currently, all the EJB beans share with the same job instance
-                scheduler.addJob(new JobDetail(OPENEJB_TIMEOUT_JOB_NAME, OPENEJB_TIMEOUT_JOB_GROUP_NAME, EjbTimeoutJob.class, false, true, false), true);
+                JobDetail job = JobBuilder.newJob(EjbTimeoutJob.class)
+                        .withIdentity(OPENEJB_TIMEOUT_JOB_NAME, OPENEJB_TIMEOUT_JOB_GROUP_NAME)
+                        .storeDurably(true)
+                        .requestRecovery(false)
+                        .build();
+                scheduler.addJob(job, true);
             } catch (SchedulerException e) {
                 throw new RuntimeException("Fail to initialize the default scheduler", e);
             }
@@ -150,8 +156,13 @@ public class EjbTimerServiceImpl implements EjbTimerService {
         timerData.setScheduler(scheduler);
         
         Trigger trigger = timerData.getTrigger();
-        trigger.setJobName(OPENEJB_TIMEOUT_JOB_NAME);
-        trigger.setJobGroup(OPENEJB_TIMEOUT_JOB_GROUP_NAME);
+        if (trigger instanceof AbstractTrigger) { // is the case
+            AbstractTrigger<?> atrigger = (AbstractTrigger<?>) trigger;
+            atrigger.setJobName(OPENEJB_TIMEOUT_JOB_NAME);
+            atrigger.setJobGroup(OPENEJB_TIMEOUT_JOB_GROUP_NAME);
+        } else {
+            throw new RuntimeException("the trigger was not an AbstractTrigger - it shouldn't be possible");
+        }
         JobDataMap triggerDataMap = trigger.getJobDataMap();
         triggerDataMap.put(EjbTimeoutJob.EJB_TIMERS_SERVICE, this);
         triggerDataMap.put(EjbTimeoutJob.TIMER_DATA,timerData);

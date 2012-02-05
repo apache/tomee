@@ -18,11 +18,14 @@ package org.superbiz.quartz;
 
 import org.apache.openejb.resource.quartz.QuartzResourceAdapter;
 import org.quartz.Job;
+import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.Scheduler;
+import org.quartz.SimpleScheduleBuilder;
 import org.quartz.SimpleTrigger;
+import org.quartz.TriggerBuilder;
 
 import javax.ejb.Stateless;
 import javax.naming.InitialContext;
@@ -38,11 +41,17 @@ public class JobBean implements JobScheduler {
         final Scheduler s = ra.getScheduler();
 
         //Add a job type
-        final JobDetail jd = new JobDetail("job1", "group1", JobBean.MyTestJob.class);
+        final JobDetail jd = JobBuilder.newJob(MyTestJob.class).withIdentity("job1", "group1").build();
         jd.getJobDataMap().put("MyJobKey", "MyJobValue");
 
         //Schedule my 'test' job to run now
-        final SimpleTrigger trigger = new SimpleTrigger("trigger1", "group1", new Date());
+        final SimpleTrigger trigger = TriggerBuilder.newTrigger()
+                .withIdentity("trigger1", "group1")
+                .forJob(jd)
+                .withSchedule(SimpleScheduleBuilder.simpleSchedule()
+                        .withRepeatCount(0)
+                        .withIntervalInSeconds(0))
+                .build();
         return s.scheduleJob(jd, trigger);
     }
 
