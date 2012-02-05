@@ -19,15 +19,14 @@ package org.apache.openejb.core.security.jacc;
 import org.apache.openejb.core.security.JaccProvider;
 
 import javax.security.jacc.PolicyConfiguration;
-import javax.security.jacc.PolicyContextException;
 import javax.security.jacc.PolicyContext;
-import java.security.PermissionCollection;
+import javax.security.jacc.PolicyContextException;
 import java.security.CodeSource;
-import java.security.Policy;
-import java.security.ProtectionDomain;
 import java.security.Permission;
-import java.util.Map;
+import java.security.PermissionCollection;
+import java.security.ProtectionDomain;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @version $Rev$ $Date$
@@ -43,7 +42,7 @@ public class BasicJaccProvider extends JaccProvider {
     }
 
     public PolicyConfiguration getPolicyConfiguration(String contextID, boolean remove) throws PolicyContextException {
-        BasicPolicyConfiguration configuration = (BasicPolicyConfiguration) configurations.get(contextID);
+        BasicPolicyConfiguration configuration = configurations.get(contextID);
 
         if (configuration == null) {
             configuration = createPolicyConfiguration(contextID);
