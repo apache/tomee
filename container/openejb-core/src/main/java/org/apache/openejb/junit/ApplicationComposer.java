@@ -92,7 +92,7 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
 
         int appModules = 0;
         int modules = 0;
-        Class[] moduleTypes = {EjbJar.class, EnterpriseBean.class, Persistence.class, PersistenceUnit.class, Connector.class, Beans.class, Application.class, Class[].class};
+        Class[] moduleTypes = { EjbModule.class, EjbJar.class, EnterpriseBean.class, Persistence.class, PersistenceUnit.class, Connector.class, Beans.class, Application.class, Class[].class};
         for (FrameworkMethod method : testClass.getAnnotatedMethods(Module.class)) {
 
             modules++;
@@ -179,7 +179,9 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
 
                 final Object obj = method.invokeExplosively(testInstance);
 
-                if (obj instanceof EjbJar) {
+                if (obj instanceof EjbModule) {
+                    appModule.getEjbModules().add((EjbModule) obj);
+                } else if (obj instanceof EjbJar) {
 
                     final EjbJar ejbJar = (EjbJar) obj;
                     setId(ejbJar, method);
