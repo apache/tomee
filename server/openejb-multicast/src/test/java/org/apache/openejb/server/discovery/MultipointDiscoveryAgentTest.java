@@ -105,7 +105,7 @@ public class MultipointDiscoveryAgentTest extends TestCase {
         System.setProperty("log4j.appender.C.layout.ConversionPattern", "%d - %m%n");
 
         final URI greenService = new URI("green://localhost:5555");
-        final Node green = new Node(5555, new Listener("green"), true, "green", 5000);
+        final Node green = new Node(5555, new Listener("green"), true, "green", 100, 2);
 
         green.getRegistry().registerService(greenService);
 
@@ -135,10 +135,10 @@ public class MultipointDiscoveryAgentTest extends TestCase {
         private final DiscoveryRegistry registry;
 
         public Node(int p, DiscoveryListener listener, int... peers) throws Exception {
-            this(p, listener, false, null, 5000, peers);
+            this(p, listener, false, null, 100, 2, peers);
         }
 
-        public Node(int p, DiscoveryListener listener, boolean debug, String name, int heartRate, int... peers) throws Exception {
+        public Node(int p, DiscoveryListener listener, boolean debug, String name, int heartRate, int maxMissHeartBeats, int... peers) throws Exception {
             this.agent = new MultipointDiscoveryAgent(debug, name);
             final Properties props = new Properties();
             props.put("port", p+"");
@@ -150,7 +150,8 @@ public class MultipointDiscoveryAgentTest extends TestCase {
 
             props.put("initialServers", Join.join(",", uris));
             props.put("max_missed_heartbeats", "1");
-            props.put("heart_rate", ""+ heartRate);
+            props.put("heart_rate", "" + heartRate);
+            props.put("max_missed_heartbeats", "" + maxMissHeartBeats);
             agent.init(props);
 
             this.registry = new DiscoveryRegistry(agent);
