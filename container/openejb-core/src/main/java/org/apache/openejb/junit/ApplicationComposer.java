@@ -66,6 +66,7 @@ import static org.apache.openejb.config.DeploymentsResolver.DEPLOYMENTS_CLASSPAT
  */
 public class ApplicationComposer extends BlockJUnit4ClassRunner {
 
+    public static final String OPENEJB_APPLICATION_COMPOSER_CONTEXT = "openejb.application.composer.context";
     private final TestClass testClass;
 
     public ApplicationComposer(Class<?> klass) throws InitializationError {
@@ -314,6 +315,8 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                     }
 
                     System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
+
+                    System.getProperties().put(OPENEJB_APPLICATION_COMPOSER_CONTEXT, appContext.getGlobalJndiContext());
 
                     final ThreadContext previous = ThreadContext.enter(new ThreadContext(context, null, Operation.BUSINESS));
                     try {
