@@ -29,7 +29,7 @@ public class StatefulStatefulTimeoutTest {
     }
 
     @Stateful
-    @StatefulTimeout(value = 4, unit = TimeUnit.SECONDS)
+    @StatefulTimeout(value = 3, unit = TimeUnit.SECONDS)
     public static class TimedOutStateful {
         public void foo() {}
     }
