@@ -401,6 +401,11 @@
 
     BulkPassivate 100
 
+    # Specifies the frequency (in seconds) at which the bean cache is checked for
+    # idle beans.
+
+    Frequency 60
+
   </ServiceProvider>
   
   <!--
