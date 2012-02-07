@@ -19,11 +19,13 @@ package org.apache.openejb.server.cli;
 import jline.ConsoleReader;
 import jline.FileNameCompletor;
 import jline.SimpleCompletor;
+import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.openejb.server.cli.command.AbstractCommand;
 import org.apache.openejb.server.cli.command.Command;
 import org.apache.openejb.util.OpenEjbVersion;
 import org.apache.xbean.finder.Annotated;
 import org.apache.xbean.finder.ClassFinder;
+import org.apache.xbean.finder.UrlSet;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
@@ -74,7 +76,13 @@ public class CliRunnable implements Runnable {
         }
 
         try {
-            final ClassFinder finder = new ClassFinder(CliRunnable.class.getClassLoader());
+            final UrlSet forceCommonCli = new UrlSet(CliRunnable.class.getClassLoader()).matching(".*openejb-common-cli.*");
+            UrlSet urls = new UrlSet(CliRunnable.class.getClassLoader());
+            urls = NewLoaderLogic.applyBuiltinExcludes(urls);
+            urls = urls.exclude(".*openejb.*");
+            urls = urls.include(forceCommonCli);
+
+            final ClassFinder finder = new ClassFinder(CliRunnable.class.getClassLoader(), urls.getUrls());
             for (Annotated<Class<?>> cmd : finder.findMetaAnnotatedClasses(Command.class)) {
                 try {
                     final Command annotation = cmd.getAnnotation(Command.class);
