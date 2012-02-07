@@ -37,10 +37,13 @@ derbyclient-
 derbynet-
 dom4j-
 geronimo-
+google-*
 gragent.jar
 guice-
 hibernate-
 howl-
+httpclient-
+httpcore-
 hsqldb-
 htmlunit-
 icu4j-
@@ -62,11 +65,13 @@ jbosssx-
 jcommander-
 jetty-
 jettison-
-joda-time-
+jline
 jmdns-
+joda-time-
 jsp-api-
 jsr299-
 jsr311-
+jsoup-
 juli-
 junit-
 kahadb-
@@ -74,6 +79,7 @@ log4j-
 logkit-
 maven-
 mbean-annotation-api-
+mina-
 myfaces-api
 myfaces-impl
 neethi-
@@ -104,6 +110,7 @@ serp-
 servlet-api-
 slf4j-
 spring-
+sshd-
 stax-api-
 swizzle-
 testng-
