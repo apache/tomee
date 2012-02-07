@@ -43,6 +43,16 @@ import java.util.Set;
  */
 // Note: this class is a fork from OpenJPA
 public class TempClassLoader extends URLClassLoader {
+    private static boolean skipLog4j = false;
+
+    static {
+        try {
+            TempClassLoader.class.getClassLoader().loadClass("org.apache.log4j.Logger");
+            skipLog4j = true;
+        } catch (ClassNotFoundException e) {
+            skipLog4j = false;
+        }
+    }
 
     private Set<Skip> skip;
 
@@ -174,8 +184,9 @@ public class TempClassLoader extends URLClassLoader {
         if (name.startsWith("serp.bytecode")) return true;
         if (name.startsWith("org.apache.webbeans.")) return true;
 
-        if (name.startsWith("org.apache.log4j")) return true;
         if (name.startsWith("org.slf4j")) return true;
+
+        if (skipLog4j && name.startsWith("org.apache.log4j")) return true;
 
 //        if (name.startsWith("org.apache.myfaces.")) return true;
 //        if (name.startsWith("org.apache.taglibs.")) return true;
