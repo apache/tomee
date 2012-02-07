@@ -32,7 +32,7 @@ public class ScriptFileCommand extends ScriptCommand {
             return;
         }
 
-        final File file = new File(script.trim());
+        final File file = new File(script);
         if (!file.exists()) {
             streamManager.writeErr("script file " + file.getPath() + " doesn't exist");
             return;
@@ -67,14 +67,12 @@ public class ScriptFileCommand extends ScriptCommand {
         super.execute(builder.toString());
     }
 
-    @Override
-    protected void parse(final String cmd) {
-        final String parseableCmd = cmd.substring(7);
-        final int dotIdx = parseableCmd.lastIndexOf(".");
+    private void parse(final String cmd) {
+        script = cmd.substring(12);
+        final int dotIdx = script.lastIndexOf(".");
         if (dotIdx < 0) {
             throw new IllegalArgumentException("bad syntax, see help");
         }
-        script = parseableCmd.substring(0, dotIdx);
-        language = parseableCmd.substring(dotIdx, parseableCmd.length());
+        language = script.substring(dotIdx + 1, script.length());
     }
 }
