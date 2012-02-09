@@ -190,7 +190,6 @@ public class DeploymentsResolver implements DeploymentFilterable {
 
         try {
             UrlSet urlSet = new UrlSet(classLoader);
-            final UrlSet includes = urlSet.matching(include);
 
             urlSet = urlSet.exclude(ClassLoader.getSystemClassLoader().getParent());
             urlSet = urlSet.excludeJavaExtDirs();
