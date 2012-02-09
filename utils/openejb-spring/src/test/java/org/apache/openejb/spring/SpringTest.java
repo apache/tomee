@@ -17,11 +17,6 @@
  */
 package org.apache.openejb.spring;
 
-import java.util.Map;
-import javax.naming.Context;
-import javax.sql.DataSource;
-import javax.transaction.TransactionManager;
-
 import junit.framework.TestCase;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.openejb.Container;
@@ -32,9 +27,14 @@ import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Debug;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import javax.naming.Context;
+import javax.sql.DataSource;
+import javax.transaction.TransactionManager;
+import java.util.Map;
+
 public class SpringTest extends TestCase {
     public void test() throws Exception {
-        System.setProperty("openejb.deployments.classpath.include",".*/openejb-spring.*");
+        System.setProperty("openejb.deployments.classpath.include","openejb-spring");
 
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("org/apache/openejb/spring/spring.xml");
         
