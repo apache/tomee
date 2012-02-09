@@ -217,7 +217,6 @@ public class DeploymentsResolver implements DeploymentFilterable {
                     urlSet = urlSet.exclude(".*/openejb-[^/]+(.(jar|ear|war)(!/)?|/target/(test-)?classes/?)");
                 }
             }
-            urlSet = urlSet.include(includes);
 
             final List<URL> urls = new ArrayList<URL>();
             final boolean isWindows = System.getProperty("os.name", "unknown").toLowerCase().startsWith("windows");
