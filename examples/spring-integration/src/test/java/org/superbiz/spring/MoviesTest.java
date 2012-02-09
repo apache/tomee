@@ -29,7 +29,7 @@ public class MoviesTest extends TestCase {
         //Uncomment for debug logging
         //org.apache.log4j.BasicConfigurator.configure();
 
-        System.setProperty("openejb.deployments.classpath.include", ".*/spring-integration.*");
+        System.setProperty("openejb.deployments.classpath.include", "spring-integration");
 
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("movies.xml");
 
