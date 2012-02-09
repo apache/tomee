@@ -26,6 +26,8 @@ import java.util.Properties;
  * @version $Revision$ $Date$
  */
 public class Embedder {
+    public static final String ADDITIONAL_LIB_FOLDER = System.getProperty("openejb.additional.lib.folder", "additionallib");
+
 	/**
 	 * Represents the name of the class which implements org.apache.openejb.loader.Loader
 	 */
@@ -102,6 +104,16 @@ public class Embedder {
         } catch (Exception e2) {
             throw new Exception("Could not load OpenEJB libraries. Exception: " + e2.getClass().getName() + " " + e2.getMessage());
         }
+
+        try {
+            final File additionalLib = SystemInstance.get().getBase().getDirectory(ADDITIONAL_LIB_FOLDER);
+            if (additionalLib.exists()){
+                classPath.addJarsToPath(additionalLib);
+            }
+        } catch (Exception e2) {
+            throw new Exception("Could not load OpenEJB libraries. Exception: " + e2.getClass().getName() + " " + e2.getMessage());
+        }
+
         try {
             return classLoader.loadClass(className);
         } catch (Exception e2) {
