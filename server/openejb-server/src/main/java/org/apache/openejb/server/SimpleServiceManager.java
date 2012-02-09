@@ -19,6 +19,8 @@ package org.apache.openejb.server;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.monitoring.ManagedMBean;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.xbean.finder.ResourceFinder;
 
 import javax.management.MBeanServer;
@@ -36,6 +38,7 @@ import java.util.Properties;
  * @org.apache.xbean.XBean element="simpleServiceManager"
  */
 public class SimpleServiceManager extends ServiceManager {
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_SERVER, SimpleServiceManager.class);
 
     private static ObjectName objectName = null;
 
@@ -149,7 +152,7 @@ public class SimpleServiceManager extends ServiceManager {
         boolean display = System.getProperty("openejb.nobanner") == null;
 
         if (display) {
-            System.out.println("  ** Starting Services **");
+            LOGGER.info("  ** Starting Services **");
             printRow("NAME", "IP", "PORT");
         }
 
@@ -168,8 +171,8 @@ public class SimpleServiceManager extends ServiceManager {
             }
         }
         if (display) {
-            System.out.println("-------");
-            System.out.println("Ready!");
+            LOGGER.info("-------");
+            LOGGER.info("Ready!");
         }
         if (!block) {
             return;
@@ -239,11 +242,11 @@ public class SimpleServiceManager extends ServiceManager {
         col3 += "                    ";
         col3 = col3.substring(0, 6);
 
-        StringBuffer sb = new StringBuffer(50);
-        sb.append("  ").append(col1);
-        sb.append(" ").append(col2);
-        sb.append(" ").append(col3);
+        final StringBuilder sb = new StringBuilder(50)
+            .append("  ").append(col1)
+            .append(" ").append(col2)
+            .append(" ").append(col3);
 
-        System.out.println(sb.toString());
+        LOGGER.info(sb.toString());
     }
 }
