@@ -164,6 +164,15 @@ public class IO {
         }
     }
 
+    public static void copy(final File from, final File to) throws IOException {
+        final FileOutputStream fos = new FileOutputStream(to);
+        try {
+            copy(from, fos);
+        } finally {
+            close(fos);
+        }
+    }
+
     public static void copy(File from, OutputStream to) throws IOException {
         final InputStream read = read(from);
         try {
@@ -193,7 +202,7 @@ public class IO {
 
     public static void copy(InputStream from, OutputStream to) throws IOException {
         byte[] buffer = new byte[1024];
-        int length = 0;
+        int length;
         while ((length = from.read(buffer)) != -1) {
             to.write(buffer, 0, length);
         }

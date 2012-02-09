@@ -18,6 +18,7 @@
 package org.apache.tomee.loader;
 
 import org.apache.openejb.loader.Embedder;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 
 import java.io.File;
@@ -27,7 +28,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
@@ -69,6 +69,7 @@ import static org.apache.openejb.loader.ProvisioningUtil.realLocation;
 class TomcatHook {
     static final String ADDITIONAL_LIB_CONFIG = "provisioning.properties";
     static final String ZIP_KEY = "zip";
+    static final String DESTINATION_KEY = "destination";
     static final String JAR_KEY = "jar";
     public static final String TEMP_DIR = "temp";
 
@@ -168,7 +169,7 @@ class TomcatHook {
 
         // manage additional libraries
         try {
-            addAdditionalLibraries(SystemInstance.get().getBase().getDirectory("conf"), libDir);
+            addAdditionalLibraries(SystemInstance.get().getBase().getDirectory("conf"), new File(SystemInstance.get().getBase().getDirectory(), ADDITIONAL_LIB_CONFIG));
         } catch (IOException e) {
             // ignored
         }
@@ -215,8 +216,18 @@ class TomcatHook {
             }
         }
 
+        File destination;
+        if (additionalLibProperties.containsKey(DESTINATION_KEY)) {
+            destination = new File(additionalLibProperties.getProperty(DESTINATION_KEY));
+        } else {
+            destination = new File(SystemInstance.get().getBase().getDirectory(), Embedder.ADDITIONAL_LIB_FOLDER);
+        }
+        if (!destination.exists()) {
+            destination = libDir;
+        }
+
         for (String lib : libToCopy) {
-            copy(new File(lib), libDir);
+            copy(new File(lib), destination);
         }
     }
 
@@ -225,35 +236,7 @@ class TomcatHook {
         if (dest.exists()) {
             return;
         }
-
-        FileInputStream fis = null;
-        FileOutputStream fos = null;
-        try {
-            fis = new FileInputStream(file);
-            fos = new FileOutputStream(dest);
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = fis.read(buffer)) != -1) {
-                fos.write(buffer, 0, length);
-            }
-            fos.flush();
-        } finally {
-            if (fis != null) {
-                try {
-                    fis.close();
-                } catch (IOException e) {
-                    // ignored
-                }
-            }
-            if (fos != null) {
-                try {
-                    fos.close();
-                } catch (IOException e) {
-                    // ignored
-                }
-            }
-        }
-
+        IO.copy(file, dest);
     }
 
     private static Collection<String> extract(final String zip) throws IOException {
@@ -265,7 +248,7 @@ class TomcatHook {
         final File zipFile = new File(realLocation(zip));
         final File extracted = new File(tmp, zipFile.getName().replace(".zip", ""));
         if (extracted.exists()) {
-            return Collections.emptyList();
+            return list(extracted);
         }
 
         unzip(zipFile, extracted);
