@@ -151,6 +151,10 @@ public class NewLoaderLogic {
     }
 
     public static UrlSet applyBuiltinExcludes(final UrlSet urlSet) throws MalformedURLException {
+        return applyBuiltinExcludes(urlSet, null);
+    }
+
+    public static UrlSet applyBuiltinExcludes(final UrlSet urlSet, final Filter includeFilter) throws MalformedURLException {
         final Filter filter = Filters.prefixes(getExclusions());
 
         //filter = Filters.optimize(filter, new PatternFilter(".*/openejb-.*"));
@@ -161,7 +165,7 @@ public class NewLoaderLogic {
             final File file = URLs.toFile(url);
 
             final String name = filter(file).getName();
-            if (filter.accept(name)) {
+            if (filter.accept(name) && (includeFilter == null || !includeFilter.accept(name))) {
                 iterator.remove();
             }
         }

@@ -23,6 +23,7 @@ import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Logger;
 import org.apache.xbean.finder.UrlSet;
+import org.apache.xbean.finder.filter.Filter;
 import org.apache.xbean.finder.filter.Filters;
 import org.apache.xbean.finder.filter.IncludeExcludeFilter;
 
@@ -202,15 +203,17 @@ public class DeploymentsResolver implements DeploymentFilterable {
             // so that we can choose not to filter modules with descriptors on the full list
             final UrlSet prefiltered = urlSet;
 
+            final Filter includeFilter = Filters.patterns(include);
+
             // we should exclude system apps before and apply user properties after
             if (!".*".equals(include) && !"".equals(exclude)) { // if we are using default this will not do anything
-                final IncludeExcludeFilter filter = new IncludeExcludeFilter(Filters.patterns(include), Filters.patterns(exclude));
+                final IncludeExcludeFilter filter = new IncludeExcludeFilter(includeFilter, Filters.patterns(exclude));
                 // filter using user parameters
                 urlSet = urlSet.filter(filter);
             }
 
             if (prefiltered.size() == urlSet.size()) {
-                urlSet = NewLoaderLogic.applyBuiltinExcludes(urlSet);
+                urlSet = NewLoaderLogic.applyBuiltinExcludes(urlSet, includeFilter);
 
                 if (filterSystemApps) {
                     urlSet = urlSet.exclude(".*/openejb-[^/]+(.(jar|ear|war)(!/)?|/target/(test-)?classes/?)");
