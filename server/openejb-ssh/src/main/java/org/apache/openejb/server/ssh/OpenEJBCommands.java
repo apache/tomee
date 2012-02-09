@@ -21,15 +21,21 @@ import org.apache.sshd.server.Command;
 import org.apache.sshd.server.Environment;
 import org.apache.sshd.server.ExitCallback;
 
+import javax.security.auth.Subject;
+import javax.security.auth.login.LoginContext;
+import javax.security.auth.login.LoginException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.PrivilegedAction;
 
 public class OpenEJBCommands extends CliRunnable implements Command, Runnable {
     private ExitCallback cbk;
+    private final LoginContext loginContext;
 
-    public OpenEJBCommands(String bind, int port, String username) {
-        super(bind, port, username, "\r\n"); // don't use os line.separator
+    public OpenEJBCommands(String bind, int port, String username, LoginContext lc) {
+        super(bind, port, username, "\r\n");
+        loginContext = lc;
     }
 
     @Override
@@ -65,8 +71,19 @@ public class OpenEJBCommands extends CliRunnable implements Command, Runnable {
     @Override
     public void run() {
         try {
-            super.run();
+            Subject.doAs(loginContext.getSubject(), new PrivilegedAction<Object>() {
+                @Override
+                public Object run() {
+                    OpenEJBCommands.super.run();
+                    return null;
+                }
+            });
         } finally {
+            try {
+                loginContext.logout();
+            } catch (LoginException e) {
+                // ignored
+            }
             cbk.onExit(0);
         }
     }

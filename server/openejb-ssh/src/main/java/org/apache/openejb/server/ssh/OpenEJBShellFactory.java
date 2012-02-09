@@ -19,10 +19,13 @@ package org.apache.openejb.server.ssh;
 import org.apache.sshd.common.Factory;
 import org.apache.sshd.server.Command;
 
+import javax.security.auth.login.LoginContext;
+
 public class OpenEJBShellFactory implements Factory<Command> {
     private String bind;
     private int port;
     private ThreadLocal<String> username = new ThreadLocal<String>();
+    private ThreadLocal<LoginContext> loginContext = new ThreadLocal<LoginContext>();
 
     public OpenEJBShellFactory(String bind, int port) {
         this.bind = bind;
@@ -31,10 +34,14 @@ public class OpenEJBShellFactory implements Factory<Command> {
 
     @Override
     public Command create() {
-        return new OpenEJBCommands(bind, port, username.get());
+        return new OpenEJBCommands(bind, port, username.get(), loginContext.get());
     }
 
-    public void setUsername(String username) {
+    public void setUsername(final String username) {
         this.username.set(username);
+    }
+
+    public void setLoginContext(final LoginContext lc) {
+        loginContext.set(lc);
     }
 }

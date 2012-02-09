@@ -18,6 +18,15 @@ package org.apache.openejb.server.ssh;
 
 import org.apache.sshd.server.jaas.JaasPasswordAuthenticator;
 
+import javax.security.auth.Subject;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.PasswordCallback;
+import javax.security.auth.callback.UnsupportedCallbackException;
+import javax.security.auth.login.LoginContext;
+import java.io.IOException;
+
 public class OpenEJBJaasPasswordAuthenticator extends JaasPasswordAuthenticator {
     private OpenEJBShellFactory shellFactory;
 
@@ -27,10 +36,27 @@ public class OpenEJBJaasPasswordAuthenticator extends JaasPasswordAuthenticator 
 
     @Override
     public boolean authenticate(final String username, final String password) {
-        if (super.authenticate(username, password)) {
+        try {
+            final Subject subject = new Subject();
+            final LoginContext loginContext = new LoginContext(getDomain(), subject, new CallbackHandler() {
+                public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+                    for (int i = 0; i < callbacks.length; i++) {
+                        if (callbacks[i] instanceof NameCallback) {
+                            ((NameCallback) callbacks[i]).setName(username);
+                        } else if (callbacks[i] instanceof PasswordCallback) {
+                            ((PasswordCallback) callbacks[i]).setPassword(password.toCharArray());
+                        } else {
+                            throw new UnsupportedCallbackException(callbacks[i]);
+                        }
+                    }
+                }
+            });
+            loginContext.login();
             shellFactory.setUsername(username);
+            shellFactory.setLoginContext(loginContext);
             return true;
+        } catch (Exception e) {
+            return false;
         }
-        return false;
     }
 }
