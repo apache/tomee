@@ -28,6 +28,7 @@ import org.apache.xbean.finder.UrlSet;
 import org.apache.xbean.finder.archive.Archive;
 import org.apache.xbean.finder.archive.ClasspathArchive;
 import org.apache.xbean.finder.archive.FilteredArchive;
+import org.apache.xbean.finder.filter.ExcludeIncludeFilter;
 import org.apache.xbean.finder.filter.Filter;
 import org.apache.xbean.finder.filter.Filters;
 import org.apache.xbean.finder.filter.IncludeExcludeFilter;
@@ -295,7 +296,7 @@ public class NewLoaderLogic {
         final String exclude = "";
         final PatternFilter classpathInclude = new PatternFilter(options.get(DeploymentFilterable.CLASSPATH_INCLUDE, ".*"));
         final PatternFilter classpathExclude = new PatternFilter(options.get(DeploymentFilterable.CLASSPATH_EXCLUDE, ""));
-        final IncludeExcludeFilter classpathFilter = new IncludeExcludeFilter(classpathInclude, classpathExclude);
+        final Filter classpathFilter = new ExcludeIncludeFilter(classpathInclude, classpathExclude);
 
 
         final PatternFilter packageInclude = new PatternFilter(options.get(DeploymentFilterable.PACKAGE_INCLUDE, ".*"));

@@ -35,6 +35,7 @@ import java.util.Map;
 public class SpringTest extends TestCase {
     public void test() throws Exception {
         System.setProperty("openejb.deployments.classpath.include","openejb-spring");
+        System.setProperty("openejb.exclude-include.order", "exclude-include");
 
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("org/apache/openejb/spring/spring.xml");
         
