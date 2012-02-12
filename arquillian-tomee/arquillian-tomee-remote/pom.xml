@@ -22,11 +22,11 @@
   <parent>
     <artifactId>arquillian-tomee</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0-beta-3-SNAPSHOT</version>
   </parent>
   <groupId>org.apache.openejb</groupId>
   <artifactId>arquillian-tomee-remote</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0.0-beta-3-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>OpenEJB :: TomEE Arquillian Adaptor :: Remote</name>
@@ -299,7 +299,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>arquillian-tomee-common</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>1.0.0-beta-3-SNAPSHOT</version>
       <type>jar</type>
       <scope>compile</scope>
     </dependency>
