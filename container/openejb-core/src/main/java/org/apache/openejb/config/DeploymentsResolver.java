@@ -23,6 +23,7 @@ import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Logger;
 import org.apache.xbean.finder.UrlSet;
+import org.apache.xbean.finder.filter.ExcludeIncludeFilter;
 import org.apache.xbean.finder.filter.Filter;
 import org.apache.xbean.finder.filter.Filters;
 import org.apache.xbean.finder.filter.IncludeExcludeFilter;
@@ -44,6 +45,7 @@ import static org.apache.openejb.util.URLs.toFile;
  * @version $Rev$ $Date$
  */
 public class DeploymentsResolver implements DeploymentFilterable {
+    private static final String EXCLUDE_INCLUDE_ORDER = System.getProperty("openejb.exclude-include.order", "include-exclude");
 
     private static final Logger logger = DeploymentLoader.logger;
 
@@ -207,7 +209,15 @@ public class DeploymentsResolver implements DeploymentFilterable {
 
             // we should exclude system apps before and apply user properties after
             if (!".*".equals(include) || !"".equals(exclude)) { // if we are using default this will not do anything
-                final IncludeExcludeFilter filter = new IncludeExcludeFilter(includeFilter, Filters.patterns(exclude));
+                // the next line should probably replaced by:
+                // final Filter filter = new ExcludeIncludeFilter(includeFilter, Filters.patterns(exclude));
+                final Filter filter;
+                if (EXCLUDE_INCLUDE_ORDER.startsWith("include")) { // this test should be simply enough
+                    filter = new IncludeExcludeFilter(includeFilter, Filters.patterns(exclude));
+                } else {
+                    filter = new ExcludeIncludeFilter(includeFilter, Filters.patterns(exclude));
+                }
+
                 // filter using user parameters
                 urlSet = urlSet.filter(filter);
             } else {
