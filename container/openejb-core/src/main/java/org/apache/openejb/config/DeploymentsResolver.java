@@ -206,7 +206,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
             Filter includeFilter = Filters.patterns(include);
 
             // we should exclude system apps before and apply user properties after
-            if (!".*".equals(include) && !"".equals(exclude)) { // if we are using default this will not do anything
+            if (!".*".equals(include) || !"".equals(exclude)) { // if we are using default this will not do anything
                 final IncludeExcludeFilter filter = new IncludeExcludeFilter(includeFilter, Filters.patterns(exclude));
                 // filter using user parameters
                 urlSet = urlSet.filter(filter);
