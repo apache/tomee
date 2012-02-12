@@ -883,6 +883,11 @@ public class BeanContext extends DeploymentContext {
         return datas;
     }
 
+    public void addCdiMethodInterceptor(final Method method, final InterceptorData interceptor) {
+        getMethodContext(method).addCdiInterceptor(interceptor);
+        instanceScopedInterceptors.add(interceptor);
+    }
+
     public void setMethodInterceptors(Method method, List<InterceptorData> interceptors) {
         getMethodContext(method).setInterceptors(interceptors);
         this.instanceScopedInterceptors.addAll(interceptors);

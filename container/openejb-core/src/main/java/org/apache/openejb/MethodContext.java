@@ -24,7 +24,9 @@ import org.apache.openejb.util.Duration;
 import javax.ejb.LockType;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @version $Rev$ $Date$
@@ -34,6 +36,7 @@ public class MethodContext {
     private final Method beanMethod;
     private final List<ScheduleData> schedules = new ArrayList<ScheduleData>();
     private final List<InterceptorData> interceptors = new ArrayList<InterceptorData>();
+    private final Set<InterceptorData> cdiInterceptors = new LinkedHashSet<InterceptorData>();
     private LockType lockType;
     private TransactionType transactionType;
     private Duration accessTimeout;
@@ -60,6 +63,10 @@ public class MethodContext {
         return beanMethod;
     }
 
+    public void addCdiInterceptor(final InterceptorData data) {
+        cdiInterceptors.add(data);
+    }
+
     public void setInterceptors(List<InterceptorData> interceptors) {
         this.interceptors.clear();
         this.interceptors.addAll(interceptors);
@@ -69,6 +76,7 @@ public class MethodContext {
         List<InterceptorData> datas = beanContext.getInterceptorData();
         datas.addAll(interceptors);
         datas.addAll(beanContext.getCdiInterceptors());
+        datas.addAll(cdiInterceptors);
         return datas;
     }
 

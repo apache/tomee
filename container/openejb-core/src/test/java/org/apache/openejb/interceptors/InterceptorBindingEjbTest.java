@@ -3,11 +3,9 @@ package org.apache.openejb.interceptors;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.jee.Beans;
 import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.Interceptor;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.junit.Module;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -31,23 +29,28 @@ public class InterceptorBindingEjbTest {
     @EJB
     private EJB2 ejb2;
 
-    @Test @Ignore("doesn't pass today")
+    @Test
     public void test() {
         ejb2.foo();
         assertEquals(1, MarkedInterceptor.CLASSES.size());
         assertTrue(MarkedInterceptor.CLASSES.contains(EJB1.class.getSimpleName()));
     }
 
+    /**
+     * aims to test that method level cdi interceptors are well managed (and not all merged in class level interceptors).
+     *
+     * @return the needed module
+     */
     @Module
     public EjbModule ejbJar() {
         final EjbJar ejbJar = new EjbJar();
-        ejbJar.addInterceptor(new Interceptor(MarkedInterceptor.class));
         ejbJar.addEnterpriseBean(new StatelessBean("ejb1", EJB1.class));
         ejbJar.addEnterpriseBean(new StatelessBean("ejb2", EJB2.class));
 
-        final EjbModule module = new EjbModule(ejbJar);
         final Beans beans = new Beans();
         beans.addInterceptor(MarkedInterceptor.class);
+
+        final EjbModule module = new EjbModule(ejbJar);
         module.setBeans(beans);
         return module;
     }
