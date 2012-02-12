@@ -95,7 +95,7 @@
     <!-- don't use 2.3.5 since there is an issue with private packages imports -->
 
     <!-- This is used by a manifest classpath entry -->
-    <xbeanVersion>3.9</xbeanVersion>
+    <xbeanVersion>3.10-SNAPSHOT</xbeanVersion>
 
     <!-- OSGi bundles properties -->
     <openejb.bundle.activator/>
