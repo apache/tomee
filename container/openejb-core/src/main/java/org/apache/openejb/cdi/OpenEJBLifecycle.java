@@ -315,7 +315,13 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
                 final List<org.apache.openejb.core.interceptor.InterceptorData> converted = new ArrayList<org.apache.openejb.core.interceptor.InterceptorData>();
                 for (InterceptorData data : datas) {
                     // todo this needs to use the code in InterceptorBindingBuilder that respects override rules and private methods
-                    converted.add(org.apache.openejb.core.interceptor.InterceptorData.scan(data.getInterceptorClass()));
+                    final org.apache.openejb.core.interceptor.InterceptorData openejbData = org.apache.openejb.core.interceptor.InterceptorData.scan(data.getInterceptorClass());
+                    if (data.isDefinedInMethod()) {
+                        final Method method = data.getInterceptorBindingMethod();
+                        beanContext.addCdiMethodInterceptor(method, openejbData);
+                    } else {
+                        converted.add(openejbData);
+                    }
                 }
 
                 beanContext.setCdiInterceptors(converted);
