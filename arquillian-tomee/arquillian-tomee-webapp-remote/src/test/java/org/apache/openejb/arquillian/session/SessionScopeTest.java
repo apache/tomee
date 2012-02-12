@@ -20,7 +20,6 @@ package org.apache.openejb.arquillian.session;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.openejb.util.IOUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ArchivePaths;
@@ -34,10 +33,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.URL;
-import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
@@ -48,14 +43,7 @@ public class SessionScopeTest {
 
     @Deployment
     public static WebArchive createDeployment() {
-        return ShrinkWrap.create(WebArchive.class, "test.war")
-            .addClass(PojoSessionScoped.class).addClass(PojoSessionScopedServletWrapper.class)
-            .addAsLibraries(new File("target/test-libs/commons-httpclient.jar"))
-            .addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
-            .setWebXML(new StringAsset(Descriptors.create(WebAppDescriptor.class)
-                .version("3.0")
-                .servlet(PojoSessionScopedServletWrapper.class, "/session")
-                .exportAsString()));
+        return ShrinkWrap.create(WebArchive.class, "test.war").addClass(PojoSessionScoped.class).addClass(PojoSessionScopedServletWrapper.class).addAsLibraries(new File("target/test-libs/commons-httpclient.jar")).addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml")).setWebXML(new StringAsset(Descriptors.create(WebAppDescriptor.class).version("3.0").servlet(PojoSessionScopedServletWrapper.class, "/session").exportAsString()));
     }
 
     @Test

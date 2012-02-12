@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-package org.apache.openejb.arquillian.remote;
+package org.apache.tomee.arquillian.webapp;
 
 import java.io. *;
 import java.util.zip.ZipEntry;
