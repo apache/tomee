@@ -30,6 +30,7 @@ public class MoviesTest extends TestCase {
         //org.apache.log4j.BasicConfigurator.configure();
 
         System.setProperty("openejb.deployments.classpath.include", "spring-integration");
+        System.setProperty("openejb.exclude-include.order", "exclude-include");
 
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("movies.xml");
 
