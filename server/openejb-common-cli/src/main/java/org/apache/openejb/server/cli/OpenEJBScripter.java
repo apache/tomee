@@ -28,11 +28,18 @@ import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.script.SimpleBindings;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class OpenEJBScripter {
     private static final Map<String, ScriptEngineFactory> ENGINE_FACTORIES = new ConcurrentHashMap<String, ScriptEngineFactory>();
+    private static final ThreadLocal<Map<String, ScriptEngine>> ENGINES = new ThreadLocal<Map<String, ScriptEngine>>() {
+        @Override
+        protected Map<String, ScriptEngine> initialValue() {
+            return new HashMap<String, ScriptEngine>();
+        }
+    };
 
     static {
         final ScriptEngineManager mgr = new ScriptEngineManager();
@@ -50,10 +57,23 @@ public class OpenEJBScripter {
             throw new IllegalArgumentException("can't find factory for language " + language + ". You probably need to add the jar to openejb libs.");
         }
 
-        final ScriptEngineFactory factory = ENGINE_FACTORIES.get(language);
-        final ScriptEngine engine = factory.getScriptEngine();
-        engine.setBindings(binding(), ScriptContext.ENGINE_SCOPE);
+        final ScriptEngine engine = engine(language);
         return engine.eval(script);
+    }
+
+    private static ScriptEngine engine(String language) {
+        ScriptEngine engine = ENGINES.get().get(language);
+        if (engine == null) {
+            final ScriptEngineFactory factory = ENGINE_FACTORIES.get(language);
+            engine = factory.getScriptEngine();
+            engine.setBindings(binding(), ScriptContext.ENGINE_SCOPE);
+            ENGINES.get().put(language, engine);
+        }
+        return engine;
+    }
+
+    public static void clearEngines() {
+        ENGINES.get().clear();
     }
 
     private static Bindings binding() {
