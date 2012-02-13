@@ -19,7 +19,9 @@ package org.apache.openejb.assembler.classic;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
@@ -27,6 +29,16 @@ import java.io.OutputStream;
  */
 @XmlRootElement
 public class Info {
+    private static final JAXBContext JAXB_CONTEXT;
+
+    static {
+        try {
+            JAXB_CONTEXT = JAXBContext.newInstance(Info.class);
+        } catch (JAXBException e) {
+            // TODO: find a better exception?
+            throw new RuntimeException("can't create jaxbcontext for Info class");
+        }
+    }
 
     public AppInfo appInfo;
 
@@ -45,11 +57,17 @@ public class Info {
         marshaller().marshal(new Info(appInfo), out);
     }
 
+    public static AppInfo unmarshal(InputStream in) throws JAXBException {
+        return ((Info) unmarshaller().unmarshal(in)).appInfo;
+    }
+
     private static Marshaller marshaller() throws JAXBException {
-        final JAXBContext jaxbContext = JAXBContext.newInstance(Info.class);
-        final Marshaller marshaller = jaxbContext.createMarshaller();
+        final Marshaller marshaller = JAXB_CONTEXT.createMarshaller();
         marshaller.setProperty("jaxb.formatted.output", true);
         return marshaller;
     }
 
+    private static Unmarshaller unmarshaller() throws JAXBException {
+        return JAXB_CONTEXT.createUnmarshaller();
+    }
 }

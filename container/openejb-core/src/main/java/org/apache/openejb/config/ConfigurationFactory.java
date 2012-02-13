@@ -32,6 +32,7 @@ import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.FacilitiesInfo;
 import org.apache.openejb.assembler.classic.HandlerChainInfo;
 import org.apache.openejb.assembler.classic.HandlerInfo;
+import org.apache.openejb.assembler.classic.Info;
 import org.apache.openejb.assembler.classic.JndiContextInfo;
 import org.apache.openejb.assembler.classic.ManagedContainerInfo;
 import org.apache.openejb.assembler.classic.MdbContainerInfo;
@@ -78,16 +79,14 @@ import org.apache.openejb.util.URLs;
 import org.apache.openejb.util.UpdateChecker;
 
 import javax.ejb.embeddable.EJBContainer;
+import javax.xml.bind.JAXBException;
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -1296,18 +1295,20 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
     }
 
-    public void dump(final File output, final AppInfo info) throws IOException {
+    public void dump(final File output, final AppInfo info) throws OpenEJBException {
         final File parent = output.getParentFile();
         if (!parent.exists() && !parent.mkdirs()) {
-            throw new IOException("can't create directory " + output.getParent());
+            throw new OpenEJBException("can't create directory " + output.getParent());
         }
 
-        // TODO: something else is surely better than java serialization!
-        // loadDump method should be modified too
-        final OutputStream fos = new BufferedOutputStream(new FileOutputStream(output));
-        final ObjectOutputStream oos = new ObjectOutputStream(fos);
+        FileOutputStream fos = null;
         try {
-            oos.writeObject(info);
+            fos = new FileOutputStream(output);
+            Info.marshal(info, fos);
+        } catch (FileNotFoundException e) {
+            throw new OpenEJBException(e);
+        } catch (JAXBException e) {
+            throw new OpenEJBException(e);
         } finally {
             IO.close(fos);
         }
@@ -1320,18 +1321,9 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         // TODO: something else is surely better than java serialization!
         final InputStream fis = new BufferedInputStream(input);
-        final ObjectInputStream ois;
         try {
-            ois = new ObjectInputStream(fis);
-        } catch (IOException e) {
-            throw new OpenEJBException(e);
-        }
-
-        try {
-            return (AppInfo) ois.readObject();
-        } catch (ClassNotFoundException e) {
-            throw new OpenEJBException(e);
-        } catch (IOException e) {
+            return Info.unmarshal(fis);
+        } catch (JAXBException e) {
             throw new OpenEJBException(e);
         } finally {
             IO.close(fis);
