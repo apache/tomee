@@ -152,7 +152,13 @@ public class CliRunnable implements Runnable {
         // no-op
     }
 
+    public void clean() {
+        scripter.clearEngines();
+    }
+
     public void run() {
+        clean();
+
         try {
             final StreamManager streamManager = new StreamManager(out, err, lineSep);
 
@@ -219,7 +225,10 @@ public class CliRunnable implements Runnable {
                     streamManager.writeErr("sorry i don't understand '" + line + "'");
                 }
             }
+
+            clean();
         } catch (IOException e) {
+            clean();
             throw new CliRuntimeException(e);
         }
     }
