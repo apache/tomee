@@ -22,7 +22,9 @@ import javax.ws.rs.Path;
 
 @Path("/rest")
 public class ARestService {
-    @Path("/foo") @GET public String foo() {
+    @Path("/foo")
+    @GET
+    public String foo() {
         return "foo";
     }
 }
