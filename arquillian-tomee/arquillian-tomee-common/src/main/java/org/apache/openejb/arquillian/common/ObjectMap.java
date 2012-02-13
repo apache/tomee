@@ -55,7 +55,7 @@ public class ObjectMap extends AbstractMap<String, Object> {
 
         for (Method getter : clazz.getMethods()) {
             try {
-                if (getter.getName().startsWith("get")) continue;
+                if (!getter.getName().startsWith("get")) continue;
                 if (getter.getParameterTypes().length != 0) continue;
 
 

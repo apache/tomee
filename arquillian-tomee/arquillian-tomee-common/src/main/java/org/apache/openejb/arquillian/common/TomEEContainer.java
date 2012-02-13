@@ -61,19 +61,22 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         this.configuration = configuration;
 
         final Prefixes prefixes = configuration.getClass().getAnnotation(Prefixes.class);
+
         if (prefixes == null) return;
 
         final ObjectMap map = new ObjectMap(configuration);
-
         for (String key : map.keySet()) {
             for (String prefix : prefixes.value()) {
                 final String property = prefix + "." + key;
                 final String value = System.getProperty(property);
 
-                if (value == null) continue;
+                if (value == null) {
+                    LOGGER.log(Level.FINE, String.format("Unset '%s'", property));
+                    continue;
+                }
 
                 try {
-                    LOGGER.log(Level.FINE, String.format("Applying override '%s=%s'", property, value));
+                    LOGGER.log(Level.INFO, String.format("Applying override '%s=%s'", property, value));
                     map.put(key, value);
                 } catch (Exception e) {
                     LOGGER.log(Level.WARNING, String.format("Override failed '%s=%s'", property, value), e);

@@ -181,12 +181,6 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
         }
     }
 
-    public void connect(int port) throws Exception {
-        Socket socket = new Socket("localhost", port);
-        OutputStream out = socket.getOutputStream();
-        out.close();
-    }
-
     public Class<TomEEWebappConfiguration> getConfigurationClass() {
         return TomEEWebappConfiguration.class;
     }

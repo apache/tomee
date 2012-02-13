@@ -157,7 +157,7 @@
 
   <profiles>
     <profile>
-      <id>arquillian-tomee-embedded</id>
+      <id>tomee-embedded</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
@@ -171,12 +171,167 @@
     </profile>
 
     <profile>
-      <id>arquillian-tomee-remote</id>
+      <id>tomee-webprofile-remote</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <systemPropertyVariables>
+                <tomee.classifier>webprofile</tomee.classifier>
+                <tomee.version>${project.version}</tomee.version>
+              </systemPropertyVariables>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
       <dependencies>
         <dependency>
           <groupId>${project.groupId}</groupId>
           <artifactId>arquillian-tomee-remote</artifactId>
           <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.openejb</groupId>
+          <artifactId>apache-tomee</artifactId>
+          <version>${project.version}</version>
+          <classifier>webprofile</classifier>
+          <type>zip</type>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.myfaces.core</groupId>
+          <artifactId>myfaces-api</artifactId>
+          <version>${myfaces.version}</version>
+          <scope>compile</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+
+    <profile>
+      <id>tomee-plus-remote</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <systemPropertyVariables>
+                <tomee.classifier>plus</tomee.classifier>
+                <tomee.version>${project.version}</tomee.version>
+              </systemPropertyVariables>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+      <dependencies>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>arquillian-tomee-remote</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.openejb</groupId>
+          <artifactId>apache-tomee</artifactId>
+          <version>${project.version}</version>
+          <classifier>plus</classifier>
+          <type>zip</type>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.myfaces.core</groupId>
+          <artifactId>myfaces-api</artifactId>
+          <version>${myfaces.version}</version>
+          <scope>compile</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+
+    <profile>
+      <id>tomee-webprofile-webapp</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <systemPropertyVariables>
+                <tomee.artifactId>tomee-webapp</tomee.artifactId>
+                <tomee.version>4.0.0-beta-3-SNAPSHOT</tomee.version>
+                <tomee.tomcatVersion>7.0.21</tomee.tomcatVersion>
+              </systemPropertyVariables>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+      <dependencies>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>arquillian-tomee-webapp-remote</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.openejb</groupId>
+          <artifactId>tomee-webapp</artifactId>
+          <version>4.0.0-beta-3-SNAPSHOT</version>
+          <type>war</type>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>apache-tomcat</artifactId>
+          <version>7.0.21</version>
+          <type>zip</type>
+          <scope>compile</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.myfaces.core</groupId>
+          <artifactId>myfaces-api</artifactId>
+          <version>${myfaces.version}</version>
+          <scope>compile</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+
+    <profile>
+      <id>tomee-plus-webapp</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <systemPropertyVariables>
+                <tomee.artifactId>tomee-plus-webapp</tomee.artifactId>
+                <tomee.version>4.0.0-beta-3-SNAPSHOT</tomee.version>
+                <tomee.tomcatVersion>7.0.21</tomee.tomcatVersion>
+              </systemPropertyVariables>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+      <dependencies>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>arquillian-tomee-webapp-remote</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.openejb</groupId>
+          <artifactId>tomee-plus-webapp</artifactId>
+          <version>4.0.0-beta-3-SNAPSHOT</version>
+          <type>war</type>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>apache-tomcat</artifactId>
+          <version>7.0.21</version>
+          <type>zip</type>
+          <scope>compile</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.myfaces.core</groupId>
+          <artifactId>myfaces-api</artifactId>
+          <version>${myfaces.version}</version>
+          <scope>compile</scope>
         </dependency>
       </dependencies>
     </profile>
@@ -198,12 +353,6 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
       </properties>
       <dependencies>
-        <dependency>
-          <groupId>junit</groupId>
-          <artifactId>junit</artifactId>
-          <version>${version.junit}</version>
-          <scope>test</scope>
-        </dependency>
         <dependency>
           <groupId>org.jboss.arquillian.junit</groupId>
           <artifactId>arquillian-junit-container</artifactId>
