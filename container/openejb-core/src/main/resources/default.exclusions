@@ -1,5 +1,4 @@
 ApacheJMeter
-ApacheJMeter
 XmlSchema-
 activeio-
 activemq-
@@ -12,6 +11,7 @@ axis2-
 bcprov-
 bval-core
 bval-jsr
+c3p0-
 catalina-
 cglib-
 commons-beanutils
@@ -39,7 +39,7 @@ derbynet-
 dom4j-
 ecj-
 geronimo-
-google-*
+google-
 gragent.jar
 gson
 guice-
@@ -115,6 +115,7 @@ slf4j-
 spring-
 sshd-
 stax-api-
+surefire-
 swizzle-
 testng-
 tomcat-
