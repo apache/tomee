@@ -50,29 +50,6 @@
       <version>${version.arquillian}</version>
     </dependency>
 
-    <dependency>
-      <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-catalina</artifactId>
-      <version>${version.org.apache.tomcat}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-coyote</artifactId>
-      <version>${version.org.apache.tomcat}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-jasper</artifactId>
-      <version>${version.org.apache.tomcat}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.eclipse.jdt.core.compiler</groupId>
-          <artifactId>ecj</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
 
     <dependency>
       <groupId>org.jboss.arquillian.junit</groupId>
@@ -86,6 +63,7 @@
       <version>4.8.1</version>
       <scope>test</scope>
     </dependency>
+
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
@@ -124,52 +102,12 @@
     </dependency>
 
     <dependency>
-      <groupId>org.eclipse.jdt.core.compiler</groupId>
-      <artifactId>ecj</artifactId>
-      <version>3.5.1</version>
-      <type>jar</type>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
       <version>6.0-1</version>
       <type>jar</type>
     </dependency>
-    <dependency>
-      <groupId>org.apache.velocity</groupId>
-      <artifactId>velocity</artifactId>
-      <version>1.6.4</version>
-      <type>jar</type>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-j2ee-deployment_1.1_spec</artifactId>
-      <version>1.1</version>
-      <type>jar</type>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-client</artifactId>
-      <version>${version.openejb}</version>
-      <type>jar</type>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>tomee-catalina</artifactId>
-      <version>${version.openejb}</version>
-      <type>jar</type>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-core</artifactId>
-      <version>${version.openejb}</version>
-      <type>jar</type>
-      <scope>compile</scope>
-    </dependency>
+
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>arquillian-tomee-common</artifactId>
@@ -177,6 +115,7 @@
       <type>jar</type>
       <scope>compile</scope>
     </dependency>
+
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-webservices</artifactId>

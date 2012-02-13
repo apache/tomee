@@ -47,26 +47,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.jboss.arquillian.junit</groupId>
-      <artifactId>arquillian-junit-container</artifactId>
-      <version>${version.arquillian}</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>xbean-reflect</artifactId>
-          <groupId>org.apache.xbean</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>javax.enterprise</groupId>
-      <artifactId>cdi-api</artifactId>
-      <version>${version.cdi-api}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.8.1</version>
@@ -78,28 +58,6 @@
       <artifactId>javaee-api</artifactId>
       <version>6.0-1</version>
       <type>jar</type>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-j2ee-deployment_1.1_spec</artifactId>
-      <version>1.1</version>
-      <type>jar</type>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-client</artifactId>
-      <version>${version.openejb}</version>
-      <type>jar</type>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>javaee-api-embedded</artifactId>
-          <groupId>org.apache.openejb</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <dependency>

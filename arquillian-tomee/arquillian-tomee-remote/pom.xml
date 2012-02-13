@@ -64,30 +64,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-catalina</artifactId>
-      <version>${version.org.apache.tomcat}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-coyote</artifactId>
-      <version>${version.org.apache.tomcat}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-jasper</artifactId>
-      <version>${version.org.apache.tomcat}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.eclipse.jdt.core.compiler</groupId>
-          <artifactId>ecj</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
       <groupId>org.jboss.arquillian.junit</groupId>
       <artifactId>arquillian-junit-container</artifactId>
       <version>${version.arquillian}</version>
@@ -103,13 +79,6 @@
     </dependency>
 
     <dependency>
-      <groupId>javax.enterprise</groupId>
-      <artifactId>cdi-api</artifactId>
-      <version>${version.cdi-api}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.8.1</version>
@@ -117,185 +86,20 @@
     </dependency>
 
     <dependency>
-      <groupId>org.eclipse.jdt.core.compiler</groupId>
-      <artifactId>ecj</artifactId>
-      <version>3.5.1</version>
-      <type>jar</type>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.velocity</groupId>
-      <artifactId>velocity</artifactId>
-      <version>1.6.4</version>
-      <type>jar</type>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-j2ee-deployment_1.1_spec</artifactId>
       <version>1.1</version>
       <type>jar</type>
       <scope>compile</scope>
     </dependency>
+
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-client</artifactId>
       <version>${version.openejb}</version>
       <type>jar</type>
     </dependency>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-core</artifactId>
-      <version>${version.openejb}</version>
-      <type>jar</type>
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>mbean-annotation-api</artifactId>
-          <groupId>org.apache.openejb</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>commons-lang3</artifactId>
-          <groupId>org.apache.commons</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>javaee-api-embedded</artifactId>
-          <groupId>org.apache.openejb</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>openejb-api</artifactId>
-          <groupId>org.apache.openejb</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>openejb-javaagent</artifactId>
-          <groupId>org.apache.openejb</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>openejb-jee</artifactId>
-          <groupId>org.apache.openejb</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>commons-cli</artifactId>
-          <groupId>commons-cli</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>activemq-ra</artifactId>
-          <groupId>org.apache.activemq</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>activemq-core</artifactId>
-          <groupId>org.apache.activemq</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>geronimo-connector</artifactId>
-          <groupId>org.apache.geronimo.components</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>geronimo-transaction</artifactId>
-          <groupId>org.apache.geronimo.components</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>howl</artifactId>
-          <groupId>org.objectweb.howl</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>geronimo-javamail_1.4_mail</artifactId>
-          <groupId>org.apache.geronimo.javamail</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>xbean-asm-shaded</artifactId>
-          <groupId>org.apache.xbean</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>xbean-finder-shaded</artifactId>
-          <groupId>org.apache.xbean</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>xbean-reflect</artifactId>
-          <groupId>org.apache.xbean</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>xbean-naming</artifactId>
-          <groupId>org.apache.xbean</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>xbean-bundleutils</artifactId>
-          <groupId>org.apache.xbean</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>hsqldb</artifactId>
-          <groupId>hsqldb</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>bval-core</artifactId>
-          <groupId>org.apache.bval</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>bval-jsr303</artifactId>
-          <groupId>org.apache.bval</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>openjpa</artifactId>
-          <groupId>org.apache.openjpa</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>openwebbeans-web</artifactId>
-          <groupId>org.apache.openwebbeans</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>commons-dbcp</artifactId>
-          <groupId>commons-dbcp</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>commons-pool</artifactId>
-          <groupId>commons-pool</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>swizzle-stream</artifactId>
-          <groupId>org.codehaus.swizzle</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>wsdl4j</artifactId>
-          <groupId>wsdl4j</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>quartz</artifactId>
-          <groupId>org.quartz-scheduler</groupId>
-        </exclusion>
-        <!-- <exclusion>
-          <artifactId>openwebbeans-impl</artifactId>
-          <groupId>org.apache.openwebbeans</groupId>
-        </exclusion>-->
-        <exclusion>
-          <artifactId>openwebbeans-ee-common</artifactId>
-          <groupId>org.apache.openwebbeans</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>openwebbeans-spi</artifactId>
-          <groupId>org.apache.openwebbeans</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>openwebbeans-ejb</artifactId>
-          <groupId>org.apache.openwebbeans</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>openwebbeans-ee</artifactId>
-          <groupId>org.apache.openwebbeans</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>javaee-api</artifactId>
-          <groupId>org.apache.openejb</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>openejb-bval</artifactId>
-          <groupId>org.apache.openejb.patch</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>mbean-annotation-api</artifactId>
-          <groupId>org.apache.openejb</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
+
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>arquillian-tomee-common</artifactId>
@@ -303,6 +107,7 @@
       <type>jar</type>
       <scope>compile</scope>
     </dependency>
+
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-common</artifactId>
@@ -310,11 +115,7 @@
       <type>jar</type>
       <scope>compile</scope>
     </dependency>
-    <dependency>
-      <groupId>org.codehaus.swizzle</groupId>
-      <artifactId>swizzle-stream</artifactId>
-      <version>1.0.2</version>
-    </dependency>
+
     <dependency>
       <groupId>org.jboss.shrinkwrap.descriptors</groupId>
       <artifactId>shrinkwrap-descriptors-impl</artifactId>
