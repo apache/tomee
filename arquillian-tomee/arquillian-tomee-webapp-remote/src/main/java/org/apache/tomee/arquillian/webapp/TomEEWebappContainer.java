@@ -29,8 +29,6 @@ import org.jboss.arquillian.container.spi.client.container.LifecycleException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.Socket;
 import java.net.URL;
 import java.util.Map;
 import java.util.TreeMap;
@@ -170,7 +168,7 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
             throw new LifecycleException("Unable to find URL for Tomcat " + tomcatVersion);
         }
 
-        File zipFile = Setup.downloadFile("org.apache.openejb:tomcat:" + tomcatVersion + ":zip", source);
+        File zipFile = Setup.downloadFile("org.apache.openejb:apache-tomcat:" + tomcatVersion + ":zip", source);
         Zips.unzip(zipFile, catalinaDirectory);
     }
 
