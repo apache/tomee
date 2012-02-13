@@ -29,7 +29,7 @@
   <version>1.0.0-beta-3-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>OpenEJB :: TomEE Arquillian Adaptor :: Remote</name>
+  <name>OpenEJB :: TomEE Arquillian Adaptor :: Webapp Remote</name>
 
   <dependencies>
 
