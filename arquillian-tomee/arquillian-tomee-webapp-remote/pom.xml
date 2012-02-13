@@ -294,20 +294,6 @@
 
   <build>
     <plugins>
-      <plugin> <!-- avoid to set the proxy in the command line if it is set in the settings.xml -->
-        <groupId>org.apache.openejb</groupId>
-        <artifactId>properties-maven-plugin</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
-        <executions>
-          <execution>
-            <id>set-proxy-if-exists</id>
-            <phase>initialize</phase>
-            <goals>
-              <goal>copy-settings-proxy</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
