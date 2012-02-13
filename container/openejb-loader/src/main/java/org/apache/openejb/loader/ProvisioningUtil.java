@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.loader;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -45,22 +46,26 @@ public class ProvisioningUtil {
     }
 
     public static String copyTryingProxies(final URI source, final File destination) throws Exception {
+        final InputStream is = inputStreamTryingProxies(source);
+        if (is == null) {
+            return null;
+        }
+
+        FileUtils.copy(new FileOutputStream(destination), is);
+        return destination.getAbsolutePath();
+    }
+
+    public static InputStream inputStreamTryingProxies(final URI source) throws Exception {
         final URL url = source.toURL();
         for (Proxy proxy : ProxySelector.getDefault().select(source)) {
-            InputStream is;
-
             // try to connect
             try {
                 URLConnection urlConnection = url.openConnection(proxy);
                 urlConnection.setConnectTimeout(CONNECT_TIMEOUT);
-                is = urlConnection.getInputStream();
+                return new BufferedInputStream(urlConnection.getInputStream());
             } catch (IOException e) {
                 continue;
             }
-
-            // parse
-            FileUtils.copy(new FileOutputStream(destination), is);
-            return destination.getAbsolutePath();
         }
         return null;
     }

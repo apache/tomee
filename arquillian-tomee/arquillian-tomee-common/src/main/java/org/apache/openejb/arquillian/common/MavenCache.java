@@ -16,13 +16,14 @@
  */
 package org.apache.openejb.arquillian.common;
 
+import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.resolver.Resolver;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
+import java.net.URI;
 
 public class MavenCache {
 	public File getArtifact(String artifactInfo, String altUrl) {
@@ -49,7 +50,7 @@ public class MavenCache {
 		InputStream is = null;
 		OutputStream os = null;
 		try {
-			is = new URL(source).openStream();
+			is = ProvisioningUtil.inputStreamTryingProxies(new URI(source));
 			file = File.createTempFile("dload", ".fil");
 			file.deleteOnExit();
 			os = new FileOutputStream(file);
