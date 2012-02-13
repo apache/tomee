@@ -16,22 +16,22 @@
  */
 package org.apache.openejb.server;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.util.Properties;
-
 import org.apache.openejb.OpenEJB;
+import org.apache.openejb.config.DeploymentFilterable;
 import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.Service;
 import org.apache.openejb.util.PropertiesService;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Properties;
+
 /**
- * @org.apache.xbean.XBean element="server"
- *   description="OpenEJB Server"
- *
  * @version $Rev$ $Date$
+ * @org.apache.xbean.XBean element="server"
+ * description="OpenEJB Server"
  */
 public class Server implements Service {
     // FIXME: Remove it completely once we ensure PropertiesService (below) works well
@@ -57,9 +57,9 @@ public class Server implements Service {
 
         SystemInstance system = SystemInstance.get();
         File home = system.getHome().getDirectory();
-        system.setProperty("openejb.deployments.classpath.include", ".*/" + home.getName() + "/lib/.*");
-        system.setProperty("openejb.deployments.classpath.require.descriptor", "true");
-        system.setProperty("openejb.deployments.classpath.filter.systemapps", "false");
+        system.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, system.getProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*/" + home.getName() + "/lib/.*"));
+        system.setProperty(DeploymentFilterable.CLASSPATH_REQUIRE_DESCRIPTOR, system.getProperty(DeploymentFilterable.CLASSPATH_REQUIRE_DESCRIPTOR, "true"));
+        system.setProperty(DeploymentFilterable.CLASSPATH_FILTER_SYSTEMAPPS, system.getProperty(DeploymentFilterable.CLASSPATH_FILTER_SYSTEMAPPS, "false"));
 
         OpenEJB.init(props, new ServerFederation());
 
@@ -76,7 +76,7 @@ public class Server implements Service {
 
     /**
      * Copy of {@link #init(Properties)} to XBean-ize it
-     * 
+     *
      * @throws Exception
      */
     public void init() throws Exception {
@@ -87,7 +87,7 @@ public class Server implements Service {
             System.out.println("[init] OpenEJB Remote Server");
         }
 
-        manager.init();        
+        manager.init();
     }
 
     public void start() throws Exception {
