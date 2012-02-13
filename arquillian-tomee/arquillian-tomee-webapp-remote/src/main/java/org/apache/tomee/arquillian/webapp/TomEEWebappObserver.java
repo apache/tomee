@@ -29,9 +29,13 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-public class RemoteTomEEObserver {
-    @Inject @SuiteScoped private InstanceProducer<BeanManager> beanManager;
-    @Inject @SuiteScoped private InstanceProducer<Context> context;
+public class TomEEWebappObserver {
+    @Inject
+    @SuiteScoped
+    private InstanceProducer<BeanManager> beanManager;
+    @Inject
+    @SuiteScoped
+    private InstanceProducer<Context> context;
 
     public void beforeSuite(@Observes BeforeSuite event) {
         beanManager.set(ThreadSingletonServiceImpl.get().getBeanManagerImpl());

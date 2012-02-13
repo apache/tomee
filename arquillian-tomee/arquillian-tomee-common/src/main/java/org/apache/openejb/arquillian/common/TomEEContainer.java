@@ -20,7 +20,6 @@ import org.apache.openejb.assembler.Deployer;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Info;
 import org.apache.openejb.loader.Options;
-import org.apache.openejb.util.OptionsLog;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.container.DeploymentException;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
@@ -36,23 +35,21 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-
 import java.io.File;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public abstract class TomEEContainer implements DeployableContainer<TomEEConfiguration> {
+public abstract class TomEEContainer<Configuration extends TomEEConfiguration> implements DeployableContainer<Configuration> {
     protected static final Logger LOGGER = Logger.getLogger(TomEEContainer.class.getName());
 
     protected static final String LOCALHOST = "localhost";
     protected static final String SHUTDOWN_COMMAND = "SHUTDOWN" + Character.toString((char) -1);
-    protected TomEEConfiguration configuration;
+    protected Configuration configuration;
     protected Map<String, File> moduleIds = new HashMap<String, File>();
     private final Options options;
 
@@ -60,12 +57,29 @@ public abstract class TomEEContainer implements DeployableContainer<TomEEConfigu
         this.options = new Options(System.getProperties());
     }
 
-    public Class<TomEEConfiguration> getConfigurationClass() {
-        return TomEEConfiguration.class;
-    }
-
-    public void setup(TomEEConfiguration configuration) {
+    public void setup(Configuration configuration) {
         this.configuration = configuration;
+
+        final Prefixes prefixes = configuration.getClass().getAnnotation(Prefixes.class);
+        if (prefixes == null) return;
+
+        final ObjectMap map = new ObjectMap(configuration);
+
+        for (String key : map.keySet()) {
+            for (String prefix : prefixes.value()) {
+                final String property = prefix + "." + key;
+                final String value = System.getProperty(property);
+
+                if (value == null) continue;
+
+                try {
+                    LOGGER.log(Level.FINE, String.format("Applying override '%s=%s'", property, value));
+                    map.put(key, value);
+                } catch (Exception e) {
+                    LOGGER.log(Level.WARNING, String.format("Override failed '%s=%s'", property, value), e);
+                }
+            }
+        }
     }
 
     public abstract void start() throws LifecycleException;
@@ -90,11 +104,7 @@ public abstract class TomEEContainer implements DeployableContainer<TomEEConfigu
             out.close();
         } catch (Exception e) {
             if (tries > 2) {
-                try {
-                    Thread.sleep(2000);
-                } catch (Exception e2) {
-                    e.printStackTrace();
-                }
+                Threads.sleep(2000);
 
                 waitForShutdown(--tries);
             }
@@ -157,9 +167,9 @@ public abstract class TomEEContainer implements DeployableContainer<TomEEConfigu
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
         properties.setProperty(Context.PROVIDER_URL, "http://" + LOCALHOST + ":" + configuration.getHttpPort() + "/tomee/ejb");
         return (Deployer) new InitialContext(properties).lookup("openejb/DeployerBusinessRemote");
-	}
+    }
 
-	protected String getArchiveNameWithoutExtension(final Archive<?> archive) {
+    protected String getArchiveNameWithoutExtension(final Archive<?> archive) {
         final String archiveName = archive.getName();
         final int extensionOffset = archiveName.lastIndexOf('.');
         if (extensionOffset >= 0) {
@@ -172,7 +182,7 @@ public abstract class TomEEContainer implements DeployableContainer<TomEEConfigu
         try {
             final File file = moduleIds.get(archive.getName());
             deployer().undeploy(file.getAbsolutePath());
-            FileUtils.delete(file.getParentFile()); // "i" folder
+            Files.delete(file.getParentFile()); // "i" folder
         } catch (Exception e) {
             e.printStackTrace();
             throw new DeploymentException("Unable to undeploy", e);

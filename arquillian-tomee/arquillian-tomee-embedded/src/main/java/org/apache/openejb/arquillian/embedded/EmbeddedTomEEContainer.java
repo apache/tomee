@@ -17,8 +17,7 @@
 package org.apache.openejb.arquillian.embedded;
 
 import org.apache.openejb.AppContext;
-import org.apache.openejb.arquillian.common.FileUtils;
-import org.apache.openejb.arquillian.common.TomEEConfiguration;
+import org.apache.openejb.arquillian.common.Files;
 import org.apache.openejb.arquillian.common.TomEEContainer;
 import org.apache.openejb.util.NetworkUtil;
 import org.apache.tomee.embedded.Configuration;
@@ -43,7 +42,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class EmbeddedTomEEContainer extends TomEEContainer {
+public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfiguration> {
 
     public static final String TOMEE_ARQUILLIAN_HTTP_PORT = "tomee.arquillian.http";
     public static final String TOMEE_ARQUILLIAN_STOP_PORT = "tomee.arquillian.stop";
@@ -56,12 +55,12 @@ public class EmbeddedTomEEContainer extends TomEEContainer {
     private Container container;
     private Properties savedProperties;
 
-    public Class<TomEEConfiguration> getConfigurationClass() {
-        return TomEEConfiguration.class;
+    public Class<EmbeddedTomEEConfiguration> getConfigurationClass() {
+        return EmbeddedTomEEConfiguration.class;
     }
 
-    public void setup(TomEEConfiguration configuration) {
-        this.configuration = configuration;
+    public void setup(EmbeddedTomEEConfiguration configuration) {
+        super.setup(configuration);
         setSystemProperties();
         container = new Container();
         container.setup(convertConfiguration(configuration));
@@ -71,7 +70,7 @@ public class EmbeddedTomEEContainer extends TomEEContainer {
      * Not exactly as elegant as I'd like. Maybe we could have the EmbeddedServer configuration in openejb-core so all the adapters can use it.
      * Depending on tomee-embedded is fine in this adapter, but less desirable in the others, as we'd get loads of stuff in the classpath we don't need.
      */
-    private Configuration convertConfiguration(TomEEConfiguration tomeeConfiguration) {
+    private Configuration convertConfiguration(EmbeddedTomEEConfiguration tomeeConfiguration) {
     	Configuration configuration = new Configuration();
     	configuration.setDir(tomeeConfiguration.getDir());
     	configuration.setHttpPort(getPortAndShare(TOMEE_ARQUILLIAN_HTTP_PORT, tomeeConfiguration.getHttpPort()));
@@ -139,7 +138,7 @@ public class EmbeddedTomEEContainer extends TomEEContainer {
     public ProtocolMetaData deploy(Archive<?> archive) throws DeploymentException {
     	try {
 
-            final File tempDir = FileUtils.createTempDir();
+            final File tempDir = Files.createTempDir();
             final String name = archive.getName();
             final File file = new File(tempDir, name);
             ARCHIVES.put(archive, file);
@@ -169,8 +168,8 @@ public class EmbeddedTomEEContainer extends TomEEContainer {
         File file = ARCHIVES.remove(archive);
         File folder = new File(file.getParentFile(), file.getName().substring(0, file.getName().length() - 5));
         if (folder.exists()) {
-            FileUtils.delete(folder);
+            Files.delete(folder);
         }
-        FileUtils.delete(file);
+        Files.delete(file);
     }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,15 +14,15 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+package org.apache.openejb.arquillian.embedded;
 
-package org.apache.tomee.arquillian.remote;
+import org.apache.openejb.arquillian.common.Prefixes;
+import org.apache.openejb.arquillian.common.TomEEConfiguration;
 
-import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
+/**
+ * @version $Rev$ $Date$
+ */
+@Prefixes({"tomee", "tomee.embedded"})
+public class EmbeddedTomEEConfiguration extends TomEEConfiguration {
 
-public class RemoteTomEERemoteExtension implements RemoteLoadableExtension {
-
-    @Override
-    public void register(ExtensionBuilder builder) {
-        builder.observer(RemoteTomEEObserver.class);
-    }
 }

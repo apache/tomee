@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * @version $Rev: 1157006 $ $Date: 2011-08-12 01:23:04 -0700 (Fri, 12 Aug 2011) $
  */
-public class FileUtils {
+public class Files {
 
     public static File createTempDir() throws IOException {
         File tempDir = File.createTempFile("tomee", ".conf");
@@ -34,7 +34,7 @@ public class FileUtils {
         return tempDir;
     }
     
-    private FileUtils() {
+    private Files() {
         // no-op
     }
 
@@ -69,6 +69,37 @@ public class FileUtils {
             }
 
             file.delete();
+        }
+    }
+
+    public static void mkdir(File dir) {
+        if (dir.exists()) return;
+        if (!dir.mkdirs()) {
+            throw new IllegalStateException("cannot make directory: " + dir.getAbsolutePath());
+        }
+    }
+
+    public static void writable(File file) {
+        if (!file.canWrite()) {
+            throw new IllegalStateException("Not writable: " + file.getAbsolutePath());
+        }
+    }
+
+    public static void readable(File file) {
+        if (!file.canRead()) {
+            throw new IllegalStateException("Not readable: " + file.getAbsolutePath());
+        }
+    }
+
+    public static void assertDir(File file) {
+        if (!file.isDirectory()) {
+            throw new IllegalStateException("Not a directory: " + file.getAbsolutePath());
+        }
+    }
+
+    public static void assertFile(File file) {
+        if (!file.isFile()) {
+            throw new IllegalStateException("Not a file: " + file.getAbsolutePath());
         }
     }
 }

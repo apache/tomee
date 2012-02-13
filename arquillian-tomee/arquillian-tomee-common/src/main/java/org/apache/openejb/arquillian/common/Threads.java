@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,16 +14,24 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+package org.apache.openejb.arquillian.common;
 
-package org.apache.tomee.arquillian.webapp;
+import java.util.concurrent.TimeUnit;
 
-import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
-import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender;
-import org.jboss.arquillian.core.spi.LoadableExtension;
+/**
+* @version $Rev$ $Date$
+*/
+public class Threads {
 
-public class RemoteTomEEExtension implements LoadableExtension {
-    @Override public void register(ExtensionBuilder builder) {
-        builder.service(DeployableContainer.class, RemoteTomEEContainer.class)
-            .service(AuxiliaryArchiveAppender.class, RemoteTomEEEJBEnricherArchiveAppender.class);
+    public static void sleep(long duration, TimeUnit unit) {
+        sleep(unit.toMillis(duration));
+    }
+
+    public static void sleep(long milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e1) {
+            Thread.interrupted();
+        }
     }
 }
