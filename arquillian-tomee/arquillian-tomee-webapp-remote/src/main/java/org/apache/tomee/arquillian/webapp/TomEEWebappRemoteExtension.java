@@ -15,14 +15,14 @@
  *  limitations under the License.
  */
 
-package org.apache.tomee.arquillian.remote;
+package org.apache.tomee.arquillian.webapp;
 
 import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 
-public class RemoteTomEERemoteExtension implements RemoteLoadableExtension {
+public class TomEEWebappRemoteExtension implements RemoteLoadableExtension {
 
     @Override
     public void register(ExtensionBuilder builder) {
-        builder.observer(RemoteTomEEObserver.class);
+        builder.observer(TomEEWebappObserver.class);
     }
 }

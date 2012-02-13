@@ -22,11 +22,10 @@
 	
        <container qualifier="tomee" default="true">
            <configuration>
-           	   <property name="dir">/tmp/arquillian-apache-tomee</property>
                <property name="httpPort">10080</property>
                <property name="stopPort">10005</property>
-               <property name="tomcatVersion"></property>
-               <property name="openejbVersion">1.0.0-beta-3-SNAPSHOT</property>
+               <property name="tomcatVersion">7.0.21</property>
+               <property name="version">4.0.0-beta-3-SNAPSHOT</property>
            </configuration>
        </container>
 </arquillian>
