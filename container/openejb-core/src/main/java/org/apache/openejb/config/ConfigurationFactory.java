@@ -32,7 +32,6 @@ import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.FacilitiesInfo;
 import org.apache.openejb.assembler.classic.HandlerChainInfo;
 import org.apache.openejb.assembler.classic.HandlerInfo;
-import org.apache.openejb.assembler.classic.Info;
 import org.apache.openejb.assembler.classic.JndiContextInfo;
 import org.apache.openejb.assembler.classic.ManagedContainerInfo;
 import org.apache.openejb.assembler.classic.MdbContainerInfo;
@@ -79,16 +78,9 @@ import org.apache.openejb.util.URLs;
 import org.apache.openejb.util.UpdateChecker;
 
 import javax.ejb.embeddable.EJBContainer;
-import javax.xml.bind.JAXBException;
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.Writer;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -103,20 +95,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 import static org.apache.openejb.config.DeploymentsResolver.DEPLOYMENTS_CLASSPATH_PROPERTY;
 import static org.apache.openejb.config.ServiceUtils.implies;
 
 public class ConfigurationFactory implements OpenEjbConfigurationFactory {
-    public static final String APP_INFO_XML = "openejb/app-info.xml";
-    public static final String APP_INFO_XML_PATH = "$PATH";
 
     public static final String ADDITIONAL_DEPLOYMENTS = "conf/deployments.xml";
     static final String CONFIGURATION_PROPERTY = "openejb.configuration";
     static final String CONF_FILE_PROPERTY = "openejb.conf.file";
-    private static final boolean FORCE_SCANNING = Boolean.getBoolean("openejb.force.scanning");
     private static final String DEBUGGABLE_VM_HACKERY_PROPERTY = "openejb.debuggable-vm-hackery";
     protected static final String VALIDATION_SKIP_PROPERTY = "openejb.validation.skip";
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, ConfigurationFactory.class);
@@ -614,22 +601,28 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     public AppInfo configureApplication(final File jarFile) throws OpenEJBException {
         logger.debug("Beginning load: " + jarFile.getAbsolutePath());
 
-        AppInfo appInfo = loadDump(jarFile);
-        if (appInfo == null) {
-            try {
-                final AppModule appModule = deploymentLoader.load(jarFile);
-                appInfo = configureApplication(appModule);
-            } catch (ValidationFailedException e) {
-                logger.warning("configureApplication.loadFailed", jarFile.getAbsolutePath(), e.getMessage()); // DO not include the stacktrace in the message
-                throw e;
-            } catch (OpenEJBException e) {
-                // DO NOT REMOVE THE EXCEPTION FROM THIS LOG MESSAGE
-                // removing this message causes NO messages to be printed when embedded
-                logger.warning("configureApplication.loadFailed", e, jarFile.getAbsolutePath(), e.getMessage());
-                throw e;
+        try {
+            AppInfo appInfo = PreconfiguredFactory.configureApplication(jarFile);
+            if (appInfo != null) {
+                logger.info("app-info.xml found and loaded: " + jarFile.getAbsolutePath());
+                return appInfo;
             }
+        } catch (Exception e) {
+            logger.warning("configureApplication.preloadFailed", e, jarFile.getAbsolutePath(), e.getMessage());
         }
-        return appInfo;
+
+        try {
+            final AppModule appModule = deploymentLoader.load(jarFile);
+            return configureApplication(appModule);
+        } catch (ValidationFailedException e) {
+            logger.warning("configureApplication.loadFailed", jarFile.getAbsolutePath(), e.getMessage()); // DO not include the stacktrace in the message
+            throw e;
+        } catch (OpenEJBException e) {
+            // DO NOT REMOVE THE EXCEPTION FROM THIS LOG MESSAGE
+            // removing this message causes NO messages to be printed when embedded
+            logger.warning("configureApplication.loadFailed", e, jarFile.getAbsolutePath(), e.getMessage());
+            throw e;
+        }
     }
 
     /**
@@ -1304,79 +1297,4 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
     }
 
-    public static void dump(final Writer output, final AppInfo info) throws OpenEJBException {
-        FileOutputStream fos = null;
-        try {
-            Info.marshal(info, output);
-        } catch (JAXBException e) {
-            throw new OpenEJBException(e);
-        } finally {
-            IO.close(fos);
-        }
-    }
-
-    private static AppInfo loadDump(final String modulePath, final InputStream input) throws OpenEJBException {
-        if (input == null || modulePath == null) {
-            throw new OpenEJBException("input and modulePath can't be null");
-        }
-
-        String read;
-        try {
-            read = IO.slurp(input);
-        } catch (IOException e) {
-            throw new OpenEJBException(e);
-        }
-
-        // manage path
-        read = read.replace(APP_INFO_XML_PATH, modulePath);
-
-        // TODO: manage resources + containers
-
-        final InputStream fis = new BufferedInputStream(new ByteArrayInputStream(read.getBytes()));
-        try {
-            return Info.unmarshal(fis);
-        } catch (JAXBException e) {
-            throw new OpenEJBException(e);
-        } finally {
-            IO.close(fis);
-        }
-    }
-
-    public static AppInfo loadDump(final File file) {
-        if (!file.exists() || FORCE_SCANNING) {
-            return null;
-        }
-
-        InputStream is = null;
-        if (file.isDirectory()) {
-            final File xml = new File(file, APP_INFO_XML);
-            if (xml.exists()) {
-                try {
-                    is = new FileInputStream(xml);
-                } catch (FileNotFoundException e) {
-                    // ignored: if this method returns null simply deploy the app normally
-                }
-            }
-        } else { // an archive
-            try {
-                final JarFile jar = new JarFile(file);
-                final JarEntry entry = jar.getJarEntry(APP_INFO_XML);
-                if (entry != null) {
-                    is = jar.getInputStream(entry);
-                }
-            } catch (Exception e) {
-                // ignored too
-            }
-        }
-
-        try {
-            return loadDump(file.getAbsolutePath(), is);
-        } catch (OpenEJBException e) {
-            // ignored, it will return null and a standard deployment should be tried
-        } finally {
-            IO.close(is);
-        }
-
-        return null;
-    }
 }

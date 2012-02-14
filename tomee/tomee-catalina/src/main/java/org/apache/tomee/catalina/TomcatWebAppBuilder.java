@@ -56,6 +56,7 @@ import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentLoader;
+import org.apache.openejb.config.PreconfiguredFactory;
 import org.apache.openejb.config.WebModule;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.WebContext;
@@ -945,7 +946,13 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                     continue;
                 }
 
-                AppInfo appInfo = ConfigurationFactory.loadDump(file);
+                AppInfo appInfo = null;
+                try {
+                    appInfo = PreconfiguredFactory.configureApplication(file);
+                } catch (OpenEJBException e) {
+                    logger.warning("Failed to load META-INF/app-info.xml " + file.getAbsolutePath(), e);
+                }
+
                 try {
                     AppModule appModule = null;
                     if (appInfo == null) {
@@ -990,10 +997,11 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                     }
 
                     getAssembler().createApplication(appInfo);
+
+                    deployedApps.put(file.getAbsolutePath(), new DeployedApplication(file, appInfo));
                 } catch (Throwable e) {
                     logger.warning("Error deploying application " + file.getAbsolutePath(), e);
                 }
-                deployedApps.put(file.getAbsolutePath(), new DeployedApplication(file, appInfo));
             }
         }
     }

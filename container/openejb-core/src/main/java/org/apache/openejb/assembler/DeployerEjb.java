@@ -26,6 +26,7 @@ import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentLoader;
 import org.apache.openejb.config.DeploymentModule;
+import org.apache.openejb.config.PreconfiguredFactory;
 import org.apache.openejb.config.sys.AdditionalDeployments;
 import org.apache.openejb.config.sys.Deployments;
 import org.apache.openejb.config.sys.JaxbOpenejb;
@@ -112,11 +113,11 @@ public class DeployerEjb implements Deployer {
             properties = new Properties();
         }
 
-        AppInfo appInfo;
         AppModule appModule = null;
 
         final File file = new File(realLocation(rawLocation));
-        appInfo = ConfigurationFactory.loadDump(file);
+
+        AppInfo appInfo = PreconfiguredFactory.configureApplication(file);
 
         try {
             if (appInfo == null) { // using app-info.xml we ignore alt-dd
