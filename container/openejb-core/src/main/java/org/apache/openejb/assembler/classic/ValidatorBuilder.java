@@ -16,27 +16,25 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
+import org.apache.openejb.jee.bval.PropertyType;
+import org.apache.openejb.jee.bval.ValidationConfigType;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+
 import javax.validation.Configuration;
 import javax.validation.ConstraintValidatorFactory;
 import javax.validation.MessageInterpolator;
 import javax.validation.TraversableResolver;
 import javax.validation.Validation;
 import javax.validation.ValidationException;
-import javax.validation.ValidationProviderResolver;
 import javax.validation.ValidatorFactory;
-import javax.validation.bootstrap.GenericBootstrap;
-import javax.validation.spi.ValidationProvider;
 import javax.xml.bind.JAXBElement;
-import org.apache.openejb.jee.bval.PropertyType;
-import org.apache.openejb.jee.bval.ValidationConfigType;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
+import java.io.InputStream;
+import java.util.Map;
 
 public final class ValidatorBuilder {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, ValidatorBuilder.class);
+    public static final String VALIDATION_PROVIDER_KEY = "openejb.bean-validation.provider";
 
     private ValidatorBuilder() {
         // no-op
@@ -97,6 +95,10 @@ public final class ValidatorBuilder {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
         String providerClassName = info.providerClassName;
+        if (providerClassName == null) {
+            providerClassName = System.getProperty(VALIDATION_PROVIDER_KEY, "org.apache.bval.jsr303.ApacheValidationProvider");
+        }
+
         if (providerClassName != null) {
             try {
                 @SuppressWarnings({"unchecked","rawtypes"})
