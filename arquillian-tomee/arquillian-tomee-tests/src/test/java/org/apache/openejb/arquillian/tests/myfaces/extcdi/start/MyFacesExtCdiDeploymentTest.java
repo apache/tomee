@@ -17,29 +17,46 @@
 package org.apache.openejb.arquillian.tests.myfaces.extcdi.start;
 
 import org.apache.myfaces.extensions.cdi.core.api.projectstage.ProjectStage;
-import org.apache.openejb.arquillian.tests.myfaces.extcdi.TestSetup;
+import org.apache.myfaces.extensions.cdi.jsf.impl.projectstage.JsfProjectStageProducer;
+import org.apache.ziplock.JarLocation;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.ArchivePaths;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Assert;
+import org.jboss.shrinkwrap.descriptor.api.Descriptors;
+import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
 
+import static org.junit.Assert.assertEquals;
+
 @RunWith(Arquillian.class)
-public class MyFacesExtCdiDeploymentTest extends TestSetup {
+public class MyFacesExtCdiDeploymentTest {
 
     @Inject
     private ProjectStage projectStage;
 
-    @Deployment(testable = false)
+    @Deployment(testable = true)
     public static WebArchive getArchive() {
-        return new MyFacesExtCdiDeploymentTest().createDeployment();
+        final WebAppDescriptor descriptor = Descriptors.create(WebAppDescriptor.class)
+                .version("3.0");
+        // web.xml params is not supported by default
+        // descriptor.contextParam(ProjectStage.PROJECT_STAGE_PARAM_NAME, ProjectStage.SystemTest.name());
+
+        return ShrinkWrap.create(WebArchive.class, "MyFacesExtCdiDeploymentTest.war")
+                .addAsLibraries(JarLocation.jarLocation(Test.class)) // junit
+                .addAsLibraries(JarLocation.jarLocation(JsfProjectStageProducer.class)) // codi
+                .setWebXML(new StringAsset(descriptor.exportAsString()))
+                .addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
     }
 
     @Test
     public void testProjectStage() throws Exception {
-        Assert.assertEquals(ProjectStage.Production, this.projectStage);
+        assertEquals(ProjectStage.Production, projectStage);
     }
 }
