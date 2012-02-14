@@ -88,7 +88,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.io.Writer;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -1318,10 +1317,10 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
     private static AppInfo loadDump(final String modulePath, final InputStream input) throws OpenEJBException {
         if (input == null || modulePath == null) {
-            throw new NullPointerException("input can't be null");
+            throw new OpenEJBException("input and modulePath can't be null");
         }
 
-        String read = null;
+        String read;
         try {
             read = IO.slurp(input);
         } catch (IOException e) {
