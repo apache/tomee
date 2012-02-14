@@ -174,6 +174,10 @@
                 <tomee.classifier>webprofile</tomee.classifier>
                 <tomee.version>${project.version}</tomee.version>
               </systemPropertyVariables>
+              <excludes>
+                <exclude>**/jaxrs/**</exclude>
+                <exclude>**/jaxws/**</exclude>
+              </excludes>
             </configuration>
           </plugin>
         </plugins>
@@ -251,6 +255,10 @@
                 <tomee.version>4.0.0-beta-3-SNAPSHOT</tomee.version>
                 <tomee.tomcatVersion>7.0.21</tomee.tomcatVersion>
               </systemPropertyVariables>
+              <excludes>
+                <exclude>**/jaxrs/**</exclude>
+                <exclude>**/jaxws/**</exclude>
+              </excludes>
             </configuration>
           </plugin>
         </plugins>
