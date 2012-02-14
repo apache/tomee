@@ -39,6 +39,7 @@ import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.Logger;
 import org.apache.tomee.catalina.TomcatLoader;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -91,6 +92,8 @@ public class Container {
 
     public void start() throws Exception {
         final String dir = getBaseDir();
+
+        Logger.configure();
 
         base = new File(dir);
         if (base.exists()) {
