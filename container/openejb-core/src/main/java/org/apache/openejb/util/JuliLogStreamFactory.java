@@ -35,13 +35,16 @@ public class JuliLogStreamFactory implements LogStreamFactory {
 
         // if embedded case enhance a bit logging if not set
         if ((!tomee || embedded) && System.getProperty("java.util.logging.manager") == null) {
-            try {
+            System.setProperty("java.util.logging.manager", OpenEJBLogManager.class.getName());
+        }
+
+        try {
+            if (System.getProperty("openjpa.Log") == null) {
                 JuliLogStreamFactory.class.getClassLoader().loadClass("org.apache.openjpa.lib.log.LogFactoryAdapter");
                 System.setProperty("openjpa.Log", "org.apache.openejb.openjpa.JULOpenJPALogFactory");
-            } catch (Exception ignored) {
-                // no-op: openjpa is not at the classpath so don't trigger it loading with our logger
             }
-            System.setProperty("java.util.logging.manager", OpenEJBLogManager.class.getName());
+        } catch (Exception ignored) {
+            // no-op: openjpa is not at the classpath so don't trigger it loading with our logger
         }
     }
 
