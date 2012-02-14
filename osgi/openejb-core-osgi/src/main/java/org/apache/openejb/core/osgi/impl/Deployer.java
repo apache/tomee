@@ -20,7 +20,6 @@ import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.NoSuchApplicationException;
-import org.apache.openejb.RpcContainer;
 import org.apache.openejb.UndeployException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
@@ -29,7 +28,6 @@ import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentLoader;
 import org.apache.openejb.config.UnknownModuleTypeException;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 import org.apache.openejb.util.proxy.ProxyEJB;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -41,9 +39,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -129,6 +124,9 @@ public class Deployer implements BundleListener {
                     if (!bundleDump.exists() && bundle.getBundleContext().getDataFile("") != null) { // felix. TODO: maybe find something better
                         bundleDump = findFelixJar(bundle.getBundleContext());
                     }
+                    if (bundleDump == null || !bundleDump.exists()) {
+                        bundleDump = findEquinoxJar(bundle.getBundleContext());
+                    }
 
                     if (bundleDump == null || !bundleDump.exists()) {
                         LOGGER.warn("can't find bundle {}", bundle.getBundleId());
@@ -162,6 +160,19 @@ public class Deployer implements BundleListener {
         } finally {
             Thread.currentThread().setContextClassLoader(oldCl);
         }
+    }
+
+    private static File findEquinoxJar(BundleContext bundleContext) {
+        final File root = bundleContext.getDataFile("").getParentFile();
+        int idx = 0;
+        File out;
+        File f = null;
+        do {
+            out = f;
+            idx++;
+            f = new File(root, idx + "/bundlefile");
+        } while (f.exists());
+        return out;
     }
 
     private static File findFelixJar(BundleContext bundleContext) {
