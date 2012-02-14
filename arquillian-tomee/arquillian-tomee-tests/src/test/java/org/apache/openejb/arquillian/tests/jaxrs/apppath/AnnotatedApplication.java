@@ -16,8 +16,6 @@
  */
 package org.apache.openejb.arquillian.tests.jaxrs.apppath;
 
-import org.apache.openejb.arquillian.tests.jaxrs.noapp.Echo;
-
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 import java.util.Arrays;
@@ -27,7 +25,7 @@ import java.util.Set;
 /**
  * Section 2.3.2
  * If an Application subclass is present that is not being handled by an existing servlet then the
- * servlet added by the ContainerInitializerMUST be named with the fully qualified name of the
+ * servlet added by the ContainerInitializer MUST be named with the fully qualified name of the
  * Application subclass.
  *
 * @version $Rev$ $Date$
