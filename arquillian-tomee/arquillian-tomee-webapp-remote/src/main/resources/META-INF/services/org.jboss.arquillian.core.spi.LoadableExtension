@@ -1,1 +1,2 @@
 org.apache.tomee.arquillian.webapp.TomEEWebappExtension
+org.apache.tomee.arquillian.webapp.TomEEWebappRemoteExtension
