@@ -29,11 +29,11 @@ import org.junit.runner.RunWith;
  * @version $Rev$ $Date$
  */
 @RunWith(Arquillian.class)
-public class AnnotatedAppilcationTest extends JaxrsTest {
+public class AnnotatedApplicationTest extends JaxrsTest {
 
     @Deployment(testable = false)
     public static WebArchive archive() {
-        return new WebModule(AnnotatedAppilcationTest.class).getArchive();
+        return new WebModule(AnnotatedApplicationTest.class).getArchive();
     }
 
     @Test

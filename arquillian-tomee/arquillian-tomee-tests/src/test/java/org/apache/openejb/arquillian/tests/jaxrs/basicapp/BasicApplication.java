@@ -16,8 +16,6 @@
  */
 package org.apache.openejb.arquillian.tests.jaxrs.basicapp;
 
-import org.apache.openejb.arquillian.tests.jaxrs.noapp.Echo;
-
 import javax.ws.rs.core.Application;
 import java.util.Arrays;
 import java.util.HashSet;
