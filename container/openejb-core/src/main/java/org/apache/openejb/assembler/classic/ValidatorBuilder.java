@@ -96,7 +96,7 @@ public final class ValidatorBuilder {
 
         String providerClassName = info.providerClassName;
         if (providerClassName == null) {
-            providerClassName = System.getProperty(VALIDATION_PROVIDER_KEY, "org.apache.bval.jsr303.ApacheValidationProvider");
+            providerClassName = System.getProperty(VALIDATION_PROVIDER_KEY);
         }
 
         if (providerClassName != null) {
