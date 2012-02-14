@@ -945,17 +945,30 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                     continue;
                 }
 
-                AppInfo appInfo = null;
+                AppInfo appInfo = ConfigurationFactory.loadDump(file);
                 try {
-                    file = file.getCanonicalFile().getAbsoluteFile();
+                    AppModule appModule = null;
+                    if (appInfo == null) {
+                        file = file.getCanonicalFile().getAbsoluteFile();
+                        appModule = deploymentLoader.load(file);
 
-                    AppModule appModule = deploymentLoader.load(file);
+                        // Ignore any standalone web modules - this happens when the app is unpaked and doesn't have a WEB-INF dir
+                        if (appModule.getDeploymentModule().size() == 1 && appModule.getWebModules().size() == 1) {
+                            WebModule webModule = appModule.getWebModules().iterator().next();
+                            if (file.getAbsolutePath().equals(webModule.getJarLocation())) {
+                                continue;
+                            }
+                        }
 
-                    // Ignore any standalone web modules - this happens when the app is unpaked and doesn't have a WEB-INF dir
-                    if (appModule.getDeploymentModule().size() == 1 && appModule.getWebModules().size() == 1) {
-                        WebModule webModule = appModule.getWebModules().iterator().next();
-                        if (file.getAbsolutePath().equals(webModule.getJarLocation())) {
-                            continue;
+                        // tell web modules to deploy using this host
+                        for (WebModule webModule : appModule.getWebModules()) {
+                            webModule.setHost(standardHost.getName());
+                        }
+
+                        appInfo = configurationFactory.configureApplication(appModule);
+                    } else {
+                        for (WebAppInfo webAppInfo : appInfo.webApps) {
+                            webAppInfo.host = standardHost.getName();
                         }
                     }
 
@@ -976,12 +989,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                         }
                     }
 
-                    // tell web modules to deploy using this host
-                    for (WebModule webModule : appModule.getWebModules()) {
-                        webModule.setHost(standardHost.getName());
-                    }
-
-                    appInfo = configurationFactory.configureApplication(appModule);
                     getAssembler().createApplication(appInfo);
                 } catch (Throwable e) {
                     logger.warning("Error deploying application " + file.getAbsolutePath(), e);

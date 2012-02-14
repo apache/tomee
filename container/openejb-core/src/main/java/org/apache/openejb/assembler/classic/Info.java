@@ -23,6 +23,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Writer;
 
 /**
  * @version $Rev$ $Date$
@@ -54,6 +55,10 @@ public class Info {
     }
 
     public static void marshal(AppInfo appInfo, OutputStream out) throws JAXBException {
+        marshaller().marshal(new Info(appInfo), out);
+    }
+
+    public static void marshal(AppInfo appInfo, Writer out) throws JAXBException {
         marshaller().marshal(new Info(appInfo), out);
     }
 
