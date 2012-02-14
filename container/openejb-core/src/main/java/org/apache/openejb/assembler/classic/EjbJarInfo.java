@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElements;
 import java.net.URI;
 import java.util.List;
 import java.util.ArrayList;
@@ -29,7 +31,16 @@ public class EjbJarInfo extends CommonInfoObject {
     public String moduleName;
     public URI moduleUri;
     public String path;
-    public final List<EnterpriseBeanInfo> enterpriseBeans = new ArrayList<EnterpriseBeanInfo>();
+
+    @XmlElements({ // needed for unmarshalling
+            @XmlElement(name = "stateless", type = StatelessBeanInfo.class),
+            @XmlElement(name = "entity", type = EntityBeanInfo.class),
+            @XmlElement(name = "stateful", type = StatefulBeanInfo.class),
+            @XmlElement(name = "singleton", type = SingletonBeanInfo.class),
+            @XmlElement(name = "message-driven", type = MessageDrivenBeanInfo.class),
+            @XmlElement(name = "managed-bean", type = ManagedBeanInfo.class)
+    })
+    public final List<? extends EnterpriseBeanInfo> enterpriseBeans = new ArrayList<EnterpriseBeanInfo>();
 
     public final List<SecurityRoleInfo> securityRoles = new ArrayList<SecurityRoleInfo>();
     public final List<MethodPermissionInfo> methodPermissions= new ArrayList<MethodPermissionInfo>();
