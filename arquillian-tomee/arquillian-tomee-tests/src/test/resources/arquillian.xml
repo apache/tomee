@@ -19,12 +19,13 @@
 <arquillian 
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xsi:schemaLocation="http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
-	
        <container qualifier="tomee" default="true">
            <configuration>
            	   <property name="dir">/tmp/arquillian-apache-tomee</property>
+               <!-- please let them be random and use the system property to get them
                <property name="httpPort">11080</property>
                <property name="stopPort">11005</property>
+               -->
            </configuration>
        </container>
 </arquillian>
