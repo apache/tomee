@@ -31,6 +31,12 @@ TOMEE.ApplicationHomePanelBody = function (cfg) {
         },
         'ejb':function () {
             return TOMEE.ApplicationHomePanelEJB(cfg);
+        },
+        'class':function () {
+            return TOMEE.ApplicationHomePanelClass(cfg);
+        },
+        'obj':function () {
+            return TOMEE.ApplicationHomePanelInvoker(cfg);
         }
     };
 
