@@ -34,6 +34,16 @@ TOMEE.ApplicationI18N = (function () {
         'app.home.menu.setup.test.testname': 'Test',
         'app.home.menu.setup.test.testsatus': 'Status',
 
+        'app.home.menu.setup.test.testname.key.homeSet': 'openejb.home is set',
+        'app.home.menu.setup.test.testname.key.homeExists': 'openejb.home exists',
+        'app.home.menu.setup.test.testname.key.homeDirectory': 'openejb.home is a directory',
+        'app.home.menu.setup.test.testname.key.libDirectory': 'has lib directory',
+
+        'app.home.menu.setup.test.testname.key.openEjbInstalled': 'Were the OpenEJB classes installed',
+        'app.home.menu.setup.test.testname.key.ejbsInstalled': 'Were the EJB classes installed',
+        'app.home.menu.setup.test.testname.key.openEjbStarted': 'Was OpenEJB initialized (aka started)',
+        'app.home.menu.setup.test.testname.key.testLookup': 'Performing a test lookup',
+
         'app.home.menu.tools': 'Tools',
 
         'app.home.menu.tools.jndi': 'JNDI Browser',

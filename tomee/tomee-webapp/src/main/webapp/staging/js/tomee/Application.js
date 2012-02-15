@@ -41,3 +41,24 @@ TOMEE.log = {
         }
     }
 };
+
+TOMEE.utils = {
+    getArray: function (obj) {
+        if (!obj) {
+            return [];
+        }
+
+        if (obj instanceof Array) {
+            return obj;
+        }
+
+        return [obj];
+    },
+
+    getObject: function (obj) {
+        if (!obj) {
+            return {};
+        }
+        return obj;
+    }
+};

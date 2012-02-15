@@ -20,7 +20,7 @@ TOMEE.ApplicationHomePanelTest = function (cfg) {
     "use strict";
 
     var channel = cfg.channel;
-
+    var model = cfg.model;
 
     var elements = (function () {
         var tbodyUid = TOMEE.Sequence.next();
@@ -58,14 +58,14 @@ TOMEE.ApplicationHomePanelTest = function (cfg) {
         var row = [
             '        <tr>',
             '            <td>' + index + '</td>',
-            '            <td>' + TOMEE.ApplicationI18N.get('app.home.menu.setup.test.testname.' + bean['key']) + '</td>',
-            '            <td>' + bean['status'] + '</td>',
+            '            <td>' + TOMEE.ApplicationI18N.get('app.home.menu.setup.test.testname.key.' + bean['key']) + '</td>',
+            '            <td>' + bean['success'] + '</td>',
             '        </tr>'
         ].join('');
         elements.tbody.append($(row));
     };
 
-    var loadData = function (params) {
+    var loadData = function () {
         //remove the current rows if any
         elements.tbody.empty();
 
@@ -73,7 +73,7 @@ TOMEE.ApplicationHomePanelTest = function (cfg) {
 
         //The user should give a "getData" method that iterates over
         //the objects that will be used to populate the grid
-        params.getData(function (bean) {
+        model.iterateTestBeans(function (bean) {
             addRow(index, bean);
             index = index + 1;
         });
@@ -82,6 +82,7 @@ TOMEE.ApplicationHomePanelTest = function (cfg) {
     return {
         getEl: function () {
             return elements.all;
-        }
+        },
+        loadData: loadData
     };
 };
