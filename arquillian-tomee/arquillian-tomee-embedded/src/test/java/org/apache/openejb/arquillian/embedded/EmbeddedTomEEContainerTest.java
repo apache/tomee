@@ -52,13 +52,13 @@ public class EmbeddedTomEEContainerTest {
 
     @Test
     public void servletIsDeployed() throws Exception {
-        final String read = IOUtils.toString(new URL("http://localhost:8080/test/a-servlet").openStream());
+        final String read = IOUtils.toString(new URL("http://localhost:" + System.getProperty("tomee.http.port", "8080") + "/test/a-servlet").openStream());
         assertEquals("ok=true", read);
     }
 
     @Test
     public void restServiceIsDeployed() throws Exception {
-        final String read = IOUtils.toString(new URL("http://localhost:8080/test/rest/foo").openStream());
+        final String read = IOUtils.toString(new URL("http://localhost:" + System.getProperty("tomee.http.port", "8080") + "/test/rest/foo").openStream());
         assertEquals("foo", read);
     }
 }
