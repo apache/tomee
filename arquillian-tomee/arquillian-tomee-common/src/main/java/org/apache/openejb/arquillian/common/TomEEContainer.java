@@ -20,6 +20,7 @@ import org.apache.openejb.assembler.Deployer;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Info;
 import org.apache.openejb.loader.Options;
+import org.apache.openejb.util.NetworkUtil;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.container.DeploymentException;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
@@ -63,6 +64,17 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         final Prefixes prefixes = configuration.getClass().getAnnotation(Prefixes.class);
 
         if (prefixes == null) return;
+
+        if (configuration.getHttpPort() <= 0) {
+            configuration.setHttpPort(NetworkUtil.getNextAvailablePort());
+        }
+
+        if (configuration.getStopPort() <= 0) {
+            configuration.setStopPort(NetworkUtil.getNextAvailablePort());
+            if (configuration.getHttpPort() == configuration.getStopPort()) {
+                configuration.setStopPort(configuration.getHttpPort() + 1);
+            }
+        }
 
         final ObjectMap map = new ObjectMap(configuration);
         for (String key : map.keySet()) {

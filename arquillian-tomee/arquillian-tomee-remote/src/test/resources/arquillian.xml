@@ -22,10 +22,8 @@
 	
        <container qualifier="tomee" default="true">
            <configuration>
-              <!--
-               <property name="httpPort">10080</property>
-               <property name="stopPort">10005</property>
-              -->
+               <property name="httpPort">-1</property>
+               <property name="stopPort">-1</property>
                <property name="version">1.0.0-beta-3-SNAPSHOT</property>
            </configuration>
        </container>
