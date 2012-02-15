@@ -76,6 +76,14 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
             }
         }
 
+        // only for remote cases
+        if (configuration.getAjpPort() <= 0) {
+            configuration.setAjpPort(NetworkUtil.getNextAvailablePort());
+            if (configuration.getAjpPort() == configuration.getStopPort() || configuration.getAjpPort() == configuration.getHttpPort()) {
+                configuration.setAjpPort(Math.max(configuration.getHttpPort(), configuration.getStopPort()) + 1);
+            }
+        }
+
         final ObjectMap map = new ObjectMap(configuration);
         for (String key : map.keySet()) {
             for (String prefix : prefixes.value()) {

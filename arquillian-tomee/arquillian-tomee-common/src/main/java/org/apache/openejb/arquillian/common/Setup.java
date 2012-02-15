@@ -40,6 +40,7 @@ import java.util.Map;
 public class Setup {
     public static void exportProperties(File openejbHome, TomEEConfiguration c) {
         System.setProperty("tomee.http.port", String.valueOf(c.getHttpPort()));
+        System.setProperty("tomee.ajp.port", String.valueOf(c.getAjpPort()));
         System.setProperty("tomee.shutdown.port", String.valueOf(c.getStopPort()));
         System.setProperty("java.naming.provider.url", "http://localhost:" + c.getHttpPort() + "/tomee/ejb");
         System.setProperty("connect.tries", "90");
@@ -53,6 +54,7 @@ public class Setup {
         final Map<String, String> replacements = new HashMap<String, String>();
         replacements.put("8080", String.valueOf(c.getHttpPort()));
         replacements.put("8005", String.valueOf(c.getStopPort()));
+        replacements.put("8009", String.valueOf(c.getAjpPort()));
         final String s = File.separator;
         replace(replacements, new File(openejbHome, "conf" + s + "server.xml"));
     }
