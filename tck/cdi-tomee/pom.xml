@@ -158,7 +158,7 @@
                   <groupId>org.apache.openejb</groupId>
                   <artifactId>webdeployer</artifactId>
                   <version>${project.version}</version>
-                  <outputDirectory>${openejb.home}/webapps/openejb/lib</outputDirectory>
+                  <outputDirectory>${openejb.home}/webapps/tomee/lib</outputDirectory>
                 </artifactItem>
                 <artifactItem>
                   <groupId>org.apache.openejb</groupId>
