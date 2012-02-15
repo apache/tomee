@@ -17,6 +17,8 @@
  */
 
 TOMEE.DelayedTask = function (cfg) {
+    "use strict";
+
     if (!cfg.callback) {
         throw "You should give me a callback method to execute";
     }
@@ -32,6 +34,6 @@ TOMEE.DelayedTask = function (cfg) {
     };
 
     return {
-        delay:delay
+        delay: delay
     };
 };

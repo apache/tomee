@@ -21,19 +21,20 @@
  * DO NOT add any logic here. All business logic should be implemented in the ApplicationController object.
  * That is ok to add global utility methods here.
  */
+"use strict";
 var TOMEE = {};
 $(document).ready(function () {
     TOMEE.ApplicationController();
 });
 
 TOMEE.log = {
-    info:function (msg) {
+    info: function (msg) {
         //it is really needed to access console via window in ie8 or we get a "console is undefined" error
         if (window.console && window.console.info) {
             window.console.info(msg);
         }
     },
-    error:function (msg) {
+    error: function (msg) {
         //it is really needed to access console via window in ie8 or we get a "console is undefined" error
         if (window.console && window.console.error) {
             window.console.error(msg);

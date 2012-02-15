@@ -17,6 +17,8 @@
  */
 
 TOMEE.ApplicationHomePanelTest = function (cfg) {
+    "use strict";
+
     var channel = cfg.channel;
 
 
@@ -43,8 +45,8 @@ TOMEE.ApplicationHomePanelTest = function (cfg) {
         var all = $(tpl.join(''));
         var tbody = all.find("#" + tbodyUid);
         return {
-            all:all,
-            tbody:tbody
+            all: all,
+            tbody: tbody
         };
     })();
 
@@ -78,7 +80,7 @@ TOMEE.ApplicationHomePanelTest = function (cfg) {
     };
 
     return {
-        getEl:function () {
+        getEl: function () {
             return elements.all;
         }
     };

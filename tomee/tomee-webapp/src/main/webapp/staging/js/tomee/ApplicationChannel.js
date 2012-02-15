@@ -27,6 +27,8 @@
  *
  */
 TOMEE.ApplicationChannel = function (initParams) {
+    "use strict";
+
     var listeners = {};
 
     /**
@@ -95,8 +97,8 @@ TOMEE.ApplicationChannel = function (initParams) {
     };
 
     return {
-        bind:bind,
-        unbind:unbind,
-        send:send
+        bind: bind,
+        unbind: unbind,
+        send: send
     };
 };

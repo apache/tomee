@@ -17,6 +17,8 @@
  */
 
 TOMEE.ApplicationView = function (cfg) {
+    "use strict";
+
     var appToolbar = TOMEE.ApplicationToolbar(cfg);
     var home = TOMEE.ApplicationHomePanel(cfg);
 
@@ -32,8 +34,8 @@ TOMEE.ApplicationView = function (cfg) {
     };
 
     return {
-        render:render,
-        getHome:function () {
+        render: render,
+        getHome: function () {
             return home;
         }
     };

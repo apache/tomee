@@ -17,6 +17,8 @@
  */
 
 TOMEE.ApplicationToolbar = function (cfg) {
+    "use strict";
+
     var channel = cfg.channel;
 
     var elements = (function () {
@@ -43,25 +45,25 @@ TOMEE.ApplicationToolbar = function (cfg) {
         var all = $(tpl.join(''));
         var ul = all.find("#" + ulUid);
         return {
-            all:all,
-            list:ul
+            all: all,
+            list: ul
         };
     })();
 
     var buttons = [
         {
-            title:TOMEE.ApplicationI18N.get('app.toolbar.home'),
-            callback:function () {
+            title: TOMEE.ApplicationI18N.get('app.toolbar.home'),
+            callback: function () {
                 channel.send('toolbar_button_executed', {
-                    key:'home'
+                    key: 'home'
                 });
             }
         },
         {
-            title:TOMEE.ApplicationI18N.get('app.toolbar.log'),
-            callback:function () {
+            title: TOMEE.ApplicationI18N.get('app.toolbar.log'),
+            callback: function () {
                 channel.send('toolbar_button_executed', {
-                    key:'log'
+                    key: 'log'
                 });
             }
         }
@@ -86,7 +88,7 @@ TOMEE.ApplicationToolbar = function (cfg) {
     });
 
     return {
-        getEl:function () {
+        getEl: function () {
             return elements.all;
         }
     };

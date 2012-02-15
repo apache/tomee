@@ -22,6 +22,8 @@
  * @param cfg
  */
 TOMEE.ApplicationModel = function (cfg) {
+    "use strict";
+
     var channel = cfg.channel;
 
     //holder for all the request parameters.
@@ -63,7 +65,7 @@ TOMEE.ApplicationModel = function (cfg) {
      * Delayed task for the remote request.
      */
     var load = new TOMEE.DelayedTask({
-        callback:function () {
+        callback: function () {
             //if we already have a running request, cancel it.
             if (currentRequest) {
                 currentRequest.abort();
@@ -71,12 +73,12 @@ TOMEE.ApplicationModel = function (cfg) {
 
             //start a new request
             currentRequest = $.ajax({
-                type:'GET',
-                url:'some.servlet',
-                success:function (data) {
+                type: 'GET',
+                url: 'some.servlet',
+                success: function (data) {
 
                 },
-                error:function (data) {
+                error: function (data) {
 
                 }
             });
@@ -92,9 +94,9 @@ TOMEE.ApplicationModel = function (cfg) {
     };
 
     return {
-        setRequestParameter:setRequestParameter,
-        getRequestParameter:getRequestParameter,
-        load:function () {
+        setRequestParameter: setRequestParameter,
+        getRequestParameter: getRequestParameter,
+        load: function () {
             //wait 1 second before triggering this request
             //the user may be still selecting his parameters
             //the last calling thread will trigger the request

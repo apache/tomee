@@ -16,37 +16,39 @@
  *  limitations under the License.
  */
 
-TOMEE.ApplicationI18N = (function (cfg) {
+TOMEE.ApplicationI18N = (function () {
+    "use strict";
+
     var messages = {
-        'application.name':'Apache TomEE',
-        'application.footer':'Copyright © 2011 The Apache Software Foundation, Licensed under the Apache License, Version 2.0. Apache and the Apache feather logo are trademarks of The Apache Software Foundation.',
+        'application.name': 'Apache TomEE',
+        'application.footer': 'Copyright © 2011 The Apache Software Foundation, Licensed under the Apache License, Version 2.0. Apache and the Apache feather logo are trademarks of The Apache Software Foundation.',
 
-        'app.toolbar.home':'Home',
-        'app.toolbar.log':'Log',
+        'app.toolbar.home': 'Home',
+        'app.toolbar.log': 'Log',
 
-        'app.home.menu.unknown':'Unknown',
+        'app.home.menu.unknown': 'Unknown',
 
-        'app.home.menu.setup':'Setup',
-        'app.home.menu.setup.test':'Testing your setup',
-        'app.home.menu.setup.test.title':'Test Results',
+        'app.home.menu.setup': 'Setup',
+        'app.home.menu.setup.test': 'Testing your setup',
+        'app.home.menu.setup.test.title': 'Test Results',
         'app.home.menu.setup.test.testname': 'Test',
         'app.home.menu.setup.test.testsatus': 'Status',
 
-        'app.home.menu.tools':'Tools',
+        'app.home.menu.tools': 'Tools',
 
-        'app.home.menu.tools.jndi':'JNDI Browser',
-        'app.home.menu.tools.jndi.title':'OpenEJB JNDI Namespace Browser',
+        'app.home.menu.tools.jndi': 'JNDI Browser',
+        'app.home.menu.tools.jndi.title': 'OpenEJB JNDI Namespace Browser',
 
-        'app.home.menu.tools.class':'Class Viewer',
-        'app.home.menu.tools.class.title':'OpenEJB Class Viewer',
+        'app.home.menu.tools.class': 'Class Viewer',
+        'app.home.menu.tools.class.title': 'OpenEJB Class Viewer',
 
-        'app.home.menu.tools.ejb':'EJB Viewer',
-        'app.home.menu.tools.ejb.title':'OpenEJB Enterprise JavaBeans Viewer',
+        'app.home.menu.tools.ejb': 'EJB Viewer',
+        'app.home.menu.tools.ejb.title': 'OpenEJB Enterprise JavaBeans Viewer',
 
-        'app.home.menu.tools.obj':'Object Invoker',
-        'app.home.menu.tools.obj.title':'OpenEJB Object Invoker',
+        'app.home.menu.tools.obj': 'Object Invoker',
+        'app.home.menu.tools.obj.title': 'OpenEJB Object Invoker',
 
-        'dummy':'dummy'
+        'dummy': 'dummy'
     };
 
     var get = function (key) {
@@ -56,9 +58,9 @@ TOMEE.ApplicationI18N = (function (cfg) {
             TOMEE.log.error('Missing i18n message. key: "' + key + '"');
         }
         return result;
-    }
+    };
 
     return {
-        get:get
+        get: get
     };
 })();

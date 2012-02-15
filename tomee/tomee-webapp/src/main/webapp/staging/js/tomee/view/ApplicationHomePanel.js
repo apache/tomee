@@ -17,6 +17,8 @@
  */
 
 TOMEE.ApplicationHomePanel = function (cfg) {
+    "use strict";
+
     var channel = cfg.channel;
 
     var elements = (function () {
@@ -33,8 +35,8 @@ TOMEE.ApplicationHomePanel = function (cfg) {
         var all = $(tpl.join(''));
         var body = all.find("#" + divBodyUid);
         return {
-            all:all,
-            body:body
+            all: all,
+            body: body
         };
     })();
 
@@ -45,13 +47,13 @@ TOMEE.ApplicationHomePanel = function (cfg) {
     elements.body.append(body.getEl());
 
     return {
-        getEl:function () {
+        getEl: function () {
             return elements.all;
         },
-        getMenu:function () {
+        getMenu: function () {
             return menu;
         },
-        getBody:function () {
+        getBody: function () {
             return body;
         }
     };

@@ -17,25 +17,27 @@
  */
 
 TOMEE.ApplicationHomePanelBody = function (cfg) {
+    "use strict";
+
     var channel = cfg.channel;
 
     var myBody = $('<div class="span9"/>');
 
     var currentPanel = null;
     var constructors = {
-        'test':function () {
+        'test': function () {
             return TOMEE.ApplicationHomePanelTest(cfg);
         },
-        'jndi':function () {
+        'jndi': function () {
             return TOMEE.ApplicationHomePanelJndi(cfg);
         },
-        'ejb':function () {
+        'ejb': function () {
             return TOMEE.ApplicationHomePanelEJB(cfg);
         },
-        'class':function () {
+        'class': function () {
             return TOMEE.ApplicationHomePanelClass(cfg);
         },
-        'obj':function () {
+        'obj': function () {
             return TOMEE.ApplicationHomePanelInvoker(cfg);
         }
     };
@@ -43,7 +45,7 @@ TOMEE.ApplicationHomePanelBody = function (cfg) {
     var showPanel = function (key) {
         if (currentPanel) {
             channel.send('dying_panel', {
-                panel:currentPanel
+                panel: currentPanel
             });
             currentPanel = null;
         }
@@ -64,9 +66,9 @@ TOMEE.ApplicationHomePanelBody = function (cfg) {
     };
 
     return {
-        getEl:function () {
+        getEl: function () {
             return myBody;
         },
-        showPanel:showPanel
+        showPanel: showPanel
     };
 };

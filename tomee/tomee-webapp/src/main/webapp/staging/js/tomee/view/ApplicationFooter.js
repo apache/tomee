@@ -17,6 +17,7 @@
  */
 
 TOMEE.ApplicationToolbar = function (cfg) {
+    "use strict";
 
     return {
 

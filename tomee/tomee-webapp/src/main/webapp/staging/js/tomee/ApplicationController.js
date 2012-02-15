@@ -21,6 +21,7 @@
  * It contains all the views and model instances.
  */
 TOMEE.ApplicationController = function () {
+    "use strict";
 
     //the application communication channel
     //The views communicate with the controller (or other components) through this object
@@ -28,11 +29,11 @@ TOMEE.ApplicationController = function () {
 
     //this object handles all the data manipulation.
     var model = TOMEE.ApplicationModel({
-        channel:channel
+        channel: channel
     });
 
     var view = TOMEE.ApplicationView({
-        channel:channel
+        channel: channel
     });
 
     //The user clicked in one of the buttons in the application toolbar

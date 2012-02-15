@@ -17,6 +17,8 @@
  */
 
 TOMEE.Sequence = (function () {
+    "use strict";
+
     var sequenceMap = {};
 
     var next = function (prefix) {
@@ -36,6 +38,6 @@ TOMEE.Sequence = (function () {
     };
 
     return {
-        next:next
+        next: next
     };
 })();

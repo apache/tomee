@@ -17,6 +17,8 @@
  */
 
 TOMEE.ApplicationHomePanelInvoker = function (cfg) {
+    "use strict";
+
     var channel = cfg.channel;
 
     var elements = (function () {
@@ -29,12 +31,12 @@ TOMEE.ApplicationHomePanelInvoker = function (cfg) {
         //create the element
         var all = $(tpl.join(''));
         return {
-            all:all
+            all: all
         };
     })();
 
     return {
-        getEl:function () {
+        getEl: function () {
             return elements.all;
         }
     };

@@ -17,6 +17,8 @@
  */
 
 TOMEE.ApplicationHomePanelMenu = function (cfg) {
+    "use strict";
+
     var channel = cfg.channel;
 
     var elements = (function () {
@@ -34,8 +36,8 @@ TOMEE.ApplicationHomePanelMenu = function (cfg) {
         var all = $(tpl.join(''));
         var list = all.find("#" + ulUid);
         return {
-            all:all,
-            list:list
+            all: all,
+            list: list
         };
     })();
 
@@ -45,10 +47,10 @@ TOMEE.ApplicationHomePanelMenu = function (cfg) {
         var liId = TOMEE.Sequence.next();
         var anchorId = TOMEE.Sequence.next();
         var result = {
-            liId:liId,
-            anchorId:anchorId,
-            title:title,
-            callback:function () {
+            liId: liId,
+            anchorId: anchorId,
+            title: title,
+            callback: function () {
                 var allLinks = elements.list.find('li');
                 allLinks.removeClass('active');
 
@@ -56,7 +58,7 @@ TOMEE.ApplicationHomePanelMenu = function (cfg) {
                 li.addClass('active');
 
                 channel.send('home_menu_executed', {
-                    menu:key
+                    menu: key
                 });
             }
         };
@@ -69,15 +71,15 @@ TOMEE.ApplicationHomePanelMenu = function (cfg) {
 
     var btnGroups = [
         {
-            title:TOMEE.ApplicationI18N.get('app.home.menu.setup'),
-            btns:[
+            title: TOMEE.ApplicationI18N.get('app.home.menu.setup'),
+            btns: [
                 createButtonCfg('test', TOMEE.ApplicationI18N.get('app.home.menu.setup.test'))
             ]
         },
 
         {
-            title:TOMEE.ApplicationI18N.get('app.home.menu.tools'),
-            btns:[
+            title: TOMEE.ApplicationI18N.get('app.home.menu.tools'),
+            btns: [
                 createButtonCfg('jndi', TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi')),
                 createButtonCfg('class', TOMEE.ApplicationI18N.get('app.home.menu.tools.class')),
                 createButtonCfg('ejb', TOMEE.ApplicationI18N.get('app.home.menu.tools.ejb')),
@@ -109,12 +111,12 @@ TOMEE.ApplicationHomePanelMenu = function (cfg) {
     });
 
     return {
-        getEl:function () {
+        getEl: function () {
             return elements.all;
         },
-        selectMenu:function(key) {
+        selectMenu: function (key) {
             var menu = buttonMap[key];
-            if(!menu) {
+            if (!menu) {
                 return;
             }
 
