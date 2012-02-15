@@ -261,7 +261,7 @@
       <id>webapp-deployer</id>
       <properties>
         <org.jboss.testharness.spi.Containers>org.apache.openejb.tck.impl.FullRestartContainer</org.jboss.testharness.spi.Containers>
-        <suiteXmlFile>src/test/resources/webapps-passing.xml</suiteXmlFile>
+        <!--suiteXmlFile>src/test/resources/webapps-passing.xml</suiteXmlFile-->
       </properties>
     </profile>
   </profiles>
