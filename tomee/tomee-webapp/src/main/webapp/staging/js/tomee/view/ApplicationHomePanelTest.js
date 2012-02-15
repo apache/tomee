@@ -21,27 +21,65 @@ TOMEE.ApplicationHomePanelTest = function (cfg) {
 
 
     var elements = (function () {
+        var tbodyUid = TOMEE.Sequence.next();
         var tpl = [
             '<div class="row">',
             '<legend>' + TOMEE.ApplicationI18N.get('app.home.menu.setup.test.title') + '</legend>',
+
+            '<table class="table table-striped table-bordered table-condensed">',
+            '    <thead>',
+            '        <tr>',
+            '            <th>#</th>',
+            '            <th>' + TOMEE.ApplicationI18N.get('app.home.menu.setup.test.testname') + '</th>',
+            '            <th>' + TOMEE.ApplicationI18N.get('app.home.menu.setup.test.testsatus') + '</th>',
+            '        </tr>',
+            '    </thead>',
+            '    <tbody id="' + tbodyUid + '"/>',
+            '</table>',
             '</div>'
         ];
 
         //create the element
         var all = $(tpl.join(''));
+        var tbody = all.find("#" + tbodyUid);
         return {
-            all:all
+            all:all,
+            tbody:tbody
         };
     })();
 
-    var beforeEnd = function() {
-        //placeholder
+    /**
+     *
+     * @param bean
+     */
+    var addRow = function (index, bean) {
+        var row = [
+            '        <tr>',
+            '            <td>' + index + '</td>',
+            '            <td>' + TOMEE.ApplicationI18N.get('app.home.menu.setup.test.testname.' + bean['key']) + '</td>',
+            '            <td>' + bean['status'] + '</td>',
+            '        </tr>'
+        ].join('');
+        elements.tbody.append($(row));
+    };
+
+    var loadData = function (params) {
+        //remove the current rows if any
+        elements.tbody.empty();
+
+        var index = 0;
+
+        //The user should give a "getData" method that iterates over
+        //the objects that will be used to populate the grid
+        params.getData(function (bean) {
+            addRow(index, bean);
+            index = index + 1;
+        });
     };
 
     return {
         getEl:function () {
             return elements.all;
-        },
-        beforeEnd:beforeEnd
+        }
     };
 };

@@ -47,6 +47,13 @@ TOMEE.ApplicationController = function () {
         view.getHome().getBody().showPanel(menuKey);
     });
 
+    //a panel is about to be removed
+    //you have a chance to do some closure here
+    channel.bind('dying_panel', function (params) {
+        var panel = params.panel;
+        //placeholder
+    });
+
     view.render(function () {
         view.getHome().getMenu().selectMenu('test');
     });
