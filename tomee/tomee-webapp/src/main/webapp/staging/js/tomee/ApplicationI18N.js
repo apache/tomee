@@ -31,7 +31,10 @@ TOMEE.ApplicationI18N = (function (cfg) {
         'app.home.menu.setup.test.title':'Test Results',
 
         'app.home.menu.tools':'Tools',
+
         'app.home.menu.tools.jndi':'JNDI Browser',
+        'app.home.menu.tools.jndi.title':'OpenEJB JNDI Namespace Browser',
+
         'app.home.menu.tools.class':'Class Viewer',
         'app.home.menu.tools.ejb':'EJB Viewer',
         'app.home.menu.tools.obj':'Object Invoker',

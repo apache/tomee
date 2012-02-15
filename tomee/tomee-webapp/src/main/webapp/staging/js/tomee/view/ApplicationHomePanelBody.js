@@ -25,6 +25,9 @@ TOMEE.ApplicationHomePanelBody = function (cfg) {
     var constructors = {
         'test':function () {
             return TOMEE.ApplicationHomePanelTest(cfg);
+        },
+        'jndi':function () {
+            return TOMEE.ApplicationHomePanelJndi(cfg);
         }
     };
 
