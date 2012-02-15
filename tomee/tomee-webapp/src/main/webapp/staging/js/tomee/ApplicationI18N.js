@@ -36,7 +36,10 @@ TOMEE.ApplicationI18N = (function (cfg) {
         'app.home.menu.tools.jndi.title':'OpenEJB JNDI Namespace Browser',
 
         'app.home.menu.tools.class':'Class Viewer',
+
         'app.home.menu.tools.ejb':'EJB Viewer',
+        'app.home.menu.tools.ejb.title':'OpenEJB Enterprise JavaBeans Viewer',
+
         'app.home.menu.tools.obj':'Object Invoker',
 
         'dummy':'dummy'

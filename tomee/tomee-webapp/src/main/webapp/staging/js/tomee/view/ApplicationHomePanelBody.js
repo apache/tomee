@@ -28,6 +28,9 @@ TOMEE.ApplicationHomePanelBody = function (cfg) {
         },
         'jndi':function () {
             return TOMEE.ApplicationHomePanelJndi(cfg);
+        },
+        'ejb':function () {
+            return TOMEE.ApplicationHomePanelEJB(cfg);
         }
     };
 
