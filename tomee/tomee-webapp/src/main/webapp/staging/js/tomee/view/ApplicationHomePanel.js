@@ -39,13 +39,20 @@ TOMEE.ApplicationHomePanel = function (cfg) {
     })();
 
     var menu = TOMEE.ApplicationHomePanelMenu(cfg);
+    var body = TOMEE.ApplicationHomePanelBody(cfg);
 
     elements.body.append(menu.getEl());
+    elements.body.append(body.getEl());
 
     return {
-        getEl:function(){
+        getEl:function () {
             return elements.all;
+        },
+        getMenu:function () {
+            return menu;
+        },
+        getBody:function () {
+            return body;
         }
-
     };
 };

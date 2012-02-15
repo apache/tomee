@@ -18,14 +18,17 @@
 
 TOMEE.ApplicationI18N = (function (cfg) {
     var messages = {
-        'application.name':'Apache Tomee',
+        'application.name':'Apache TomEE',
         'application.footer':'Copyright © 2011 The Apache Software Foundation, Licensed under the Apache License, Version 2.0. Apache and the Apache feather logo are trademarks of The Apache Software Foundation.',
 
         'app.toolbar.home':'Home',
         'app.toolbar.log':'Log',
 
+        'app.home.menu.unknown':'Unknown',
+
         'app.home.menu.setup':'Setup',
         'app.home.menu.setup.test':'Testing your setup',
+        'app.home.menu.setup.test.title':'Test Results',
 
         'app.home.menu.tools':'Tools',
         'app.home.menu.tools.jndi':'JNDI Browser',

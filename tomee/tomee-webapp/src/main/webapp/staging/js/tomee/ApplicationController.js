@@ -31,14 +31,24 @@ TOMEE.ApplicationController = function () {
         channel:channel
     });
 
+    var view = TOMEE.ApplicationView({
+        channel:channel
+    });
+
     //The user clicked in one of the buttons in the application toolbar
     channel.bind('toolbar_button_executed', function (params) {
         var a = 0;
 
     });
 
-    TOMEE.ApplicationView({
-        channel:channel
+    //The user clicked in one of the items in the home panel
+    channel.bind('home_menu_executed', function (params) {
+        var menuKey = params.menu;
+        view.getHome().getBody().showPanel(menuKey);
+    });
+
+    view.render(function () {
+        view.getHome().getMenu().selectMenu('test');
     });
 
     return {

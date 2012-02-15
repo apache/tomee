@@ -39,52 +39,53 @@ TOMEE.ApplicationHomePanelMenu = function (cfg) {
         };
     })();
 
+    var buttonMap = {};
+
+    var createButtonCfg = function (key, title) {
+        var liId = TOMEE.Sequence.next();
+        var anchorId = TOMEE.Sequence.next();
+        var result = {
+            liId:liId,
+            anchorId:anchorId,
+            title:title,
+            callback:function () {
+                var allLinks = elements.list.find('li');
+                allLinks.removeClass('active');
+
+                var li = elements.list.find('#' + liId);
+                li.addClass('active');
+
+                channel.send('home_menu_executed', {
+                    menu:key
+                });
+            }
+        };
+
+        //map the new button
+        buttonMap[key] = result;
+
+        return result;
+    };
+
     var btnGroups = [
         {
             title:TOMEE.ApplicationI18N.get('app.home.menu.setup'),
             btns:[
-                {
-                    title:TOMEE.ApplicationI18N.get('app.home.menu.setup.test'),
-                    callback:function () {
-
-                    }
-                }
+                createButtonCfg('test', TOMEE.ApplicationI18N.get('app.home.menu.setup.test'))
             ]
         },
 
         {
             title:TOMEE.ApplicationI18N.get('app.home.menu.tools'),
             btns:[
-                {
-                    title:TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi'),
-                    callback:function () {
-
-                    }
-                },
-
-                {
-                    title:TOMEE.ApplicationI18N.get('app.home.menu.tools.class'),
-                    callback:function () {
-
-                    }
-                },
-
-                {
-                    title:TOMEE.ApplicationI18N.get('app.home.menu.tools.ejb'),
-                    callback:function () {
-
-                    }
-                },
-
-                {
-                    title:TOMEE.ApplicationI18N.get('app.home.menu.tools.obj'),
-                    callback:function () {
-
-                    }
-                }
+                createButtonCfg('jndi', TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi')),
+                createButtonCfg('class', TOMEE.ApplicationI18N.get('app.home.menu.tools.class')),
+                createButtonCfg('ejb', TOMEE.ApplicationI18N.get('app.home.menu.tools.ejb')),
+                createButtonCfg('obj', TOMEE.ApplicationI18N.get('app.home.menu.tools.obj'))
             ]
         }
     ];
+
 
     $.each(btnGroups, function (i, grp) {
 
@@ -98,40 +99,26 @@ TOMEE.ApplicationHomePanelMenu = function (cfg) {
 
         $.each(grp.btns, function (ii, btn) {
             var el = (function () {
-                var liUid = TOMEE.Sequence.next();
-                var anchorUid = TOMEE.Sequence.next();
-                elements.list.append($('<li id="' + liUid + '"><a id="' + anchorUid + '" href="#">' + btn.title + '</a></li>'));
-                return {
-                    li:elements.list.find('#' + liUid),
-                    anchor:elements.list.find('#' + anchorUid)
-                };
+                elements.list.append($('<li id="' + btn.liId + '"><a id="' + btn.anchorId + '" href="#">' + btn.title + '</a></li>'));
+                return elements.list.find('#' + btn.liId);
             })();
-            el.anchor.on('click', function () {
-                var allLinks = elements.list.find('li');
-                allLinks.removeClass('active');
-
-                el.li.addClass('active');
-
+            el.on('click', function () {
                 btn.callback();
             });
-        });
-
-        var anchor = elements.list.find('#' + anchorUid);
-
-        anchor.on("click", function () {
-            var allLinks = elements.list.find('li');
-            allLinks.removeClass('active');
-
-            li.addClass('active');
-
-            button.callback();
         });
     });
 
     return {
         getEl:function () {
             return elements.all;
-        }
+        },
+        selectMenu:function(key) {
+            var menu = buttonMap[key];
+            if(!menu) {
+                return;
+            }
 
+            menu.callback();
+        }
     };
 };
