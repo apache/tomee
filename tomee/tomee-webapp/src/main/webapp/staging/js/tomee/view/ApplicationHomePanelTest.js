@@ -16,25 +16,32 @@
  *  limitations under the License.
  */
 
-TOMEE.ApplicationView = function (cfg) {
-    var appToolbar = TOMEE.ApplicationToolbar(cfg);
-    var home = TOMEE.ApplicationHomePanel(cfg);
+TOMEE.ApplicationHomePanelTest = function (cfg) {
+    var channel = cfg.channel;
 
-    var render = function (callback) {
-        document.title = TOMEE.ApplicationI18N.get('application.name');
 
-        $('body').append(appToolbar.getEl());
-        $('body').append(home.getEl());
+    var elements = (function () {
+        var tpl = [
+            '<div class="row">',
+            '<legend>' + TOMEE.ApplicationI18N.get('app.home.menu.setup.test.title') + '</legend>',
+            '</div>'
+        ];
 
-        if (callback) {
-            callback();
-        }
+        //create the element
+        var all = $(tpl.join(''));
+        return {
+            all:all
+        };
+    })();
+
+    var beforeEnd = function() {
+        //placeholder
     };
 
     return {
-        render:render,
-        getHome:function () {
-            return home;
-        }
+        getEl:function () {
+            return elements.all;
+        },
+        beforeEnd:beforeEnd
     };
 };
