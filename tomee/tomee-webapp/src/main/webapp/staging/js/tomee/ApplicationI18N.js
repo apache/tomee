@@ -29,6 +29,8 @@ TOMEE.ApplicationI18N = (function (cfg) {
         'app.home.menu.setup':'Setup',
         'app.home.menu.setup.test':'Testing your setup',
         'app.home.menu.setup.test.title':'Test Results',
+        'app.home.menu.setup.test.testname': 'Test',
+        'app.home.menu.setup.test.testsatus': 'Status',
 
         'app.home.menu.tools':'Tools',
 

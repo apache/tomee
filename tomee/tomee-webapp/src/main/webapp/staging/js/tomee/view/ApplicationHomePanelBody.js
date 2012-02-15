@@ -41,8 +41,10 @@ TOMEE.ApplicationHomePanelBody = function (cfg) {
     };
 
     var showPanel = function (key) {
-        if (currentPanel && currentPanel.beforeEnd) {
-            currentPanel.beforeEnd();
+        if (currentPanel) {
+            channel.send('dying_panel', {
+                panel:currentPanel
+            });
             currentPanel = null;
         }
         myBody.empty();

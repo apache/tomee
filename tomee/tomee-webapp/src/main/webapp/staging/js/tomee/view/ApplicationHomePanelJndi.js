@@ -33,14 +33,9 @@ TOMEE.ApplicationHomePanelJndi = function (cfg) {
         };
     })();
 
-    var beforeEnd = function() {
-        //placeholder
-    };
-
     return {
         getEl:function () {
             return elements.all;
-        },
-        beforeEnd:beforeEnd
+        }
     };
 };
