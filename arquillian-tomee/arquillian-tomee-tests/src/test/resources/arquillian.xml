@@ -22,10 +22,8 @@
        <container qualifier="tomee" default="true">
            <configuration>
            	   <property name="dir">/tmp/arquillian-apache-tomee</property>
-               <!-- please let them be random and use the system property to get them
-               <property name="httpPort">11080</property>
-               <property name="stopPort">11005</property>
-               -->
+               <property name="httpPort">-1</property>
+               <property name="stopPort">-1</property>
            </configuration>
        </container>
 </arquillian>
