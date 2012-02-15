@@ -114,18 +114,21 @@ public class Container {
         copyFileTo(conf, "catalina.policy");
         copyTemplateTo(conf, "catalina.properties");
         copyFileTo(conf, "context.xml");
-        copyFileTo(conf, "logging.properties");
         copyFileTo(conf, "openejb.xml");
         copyFileTo(conf, "server.xml");
         copyFileTo(conf, "tomcat-users.xml");
         copyFileTo(conf, "web.xml");
 
         // Need to use JULI so log messages from the tests are visible
+        // using openejb logging conf in embedded mode
+        /* if we use our config (Logger.configure()) don't override it
+        copyFileTo(conf, "logging.properties");
         System.setProperty("java.util.logging.manager", "org.apache.juli.ClassLoaderLogManager");
         final File logging = new File(conf, "logging.properties");
         if (logging.exists()) {
             System.setProperty("java.util.logging.config.file", logging.getAbsolutePath());
         }
+        */
         System.setProperty("catalina.base", base.getAbsolutePath());
 
         // Trigger loading of catalina.properties
