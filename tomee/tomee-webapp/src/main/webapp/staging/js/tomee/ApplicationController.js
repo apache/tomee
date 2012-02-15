@@ -28,12 +28,13 @@ TOMEE.ApplicationController = function () {
     var channel = TOMEE.ApplicationChannel({});
 
     //this object handles all the data manipulation.
-    var model = TOMEE.ApplicationModel({
+    var testPanelModel = TOMEE.TestModel({
         channel: channel
     });
 
     var view = TOMEE.ApplicationView({
-        channel: channel
+        channel: channel,
+        testModel: testPanelModel
     });
 
     //The user clicked in one of the buttons in the application toolbar
@@ -48,15 +49,24 @@ TOMEE.ApplicationController = function () {
         view.getHome().getBody().showPanel(menuKey);
     });
 
-    //a panel is about to be removed
-    //you have a chance to do some closure here
-    channel.bind('dying_panel', function (params) {
+    //a panel is about to be removed from the view
+    //you have a chance to do some closure here (stop Ajax calls, for example)
+    channel.bind('hiding_panel', function (params) {
         var panel = params.panel;
         //placeholder
     });
 
     view.render(function () {
         view.getHome().getMenu().selectMenu('test');
+        testPanelModel.load();
+    });
+
+    //"test" -> data loaded event
+    channel.bind('test_connection_exception', function (params) {
+
+    });
+    channel.bind('test_connection_new_data', function (params) {
+        view.getHome().getBody().loadData('test');
     });
 
     return {

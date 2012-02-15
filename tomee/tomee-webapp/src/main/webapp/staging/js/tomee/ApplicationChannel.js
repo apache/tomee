@@ -26,7 +26,7 @@
  * In this application an example of that is the pagingToolChannel sending message to its parent.
  *
  */
-TOMEE.ApplicationChannel = function (initParams) {
+TOMEE.ApplicationChannel = function (cfg) {
     "use strict";
 
     var listeners = {};

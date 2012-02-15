@@ -26,6 +26,26 @@ TOMEE.ApplicationModel = function (cfg) {
 
     var channel = cfg.channel;
 
+    /**
+     * Prepare internal values.
+     *
+     * @param data request json value
+     */
+    var prepareDataMethod = cfg.prepareDataMethod;
+    if(!prepareDataMethod) {
+        throw "You need to give me the prepareDataMethod";
+    }
+
+    var methodType = cfg.methodType;
+    if(!methodType) {
+        throw "You need to give me the methodType (GET, POST, PUT etc)";
+    }
+
+    var url = cfg.url;
+    if(!url) {
+        throw "You need to give me the url";
+    }
+
     //holder for all the request parameters.
     var requestParameters = {};
 
@@ -33,33 +53,6 @@ TOMEE.ApplicationModel = function (cfg) {
     //so we can cancel it if necessary
     var currentRequest = null;
 
-    var getArray = function (obj) {
-        if (!obj) {
-            return [];
-        }
-
-        if (obj instanceof Array) {
-            return obj;
-        }
-
-        return [obj];
-    };
-
-    var getObject = function (obj) {
-        if (!obj) {
-            return {};
-        }
-        return obj;
-    };
-
-    /**
-     * Prepare internal values.
-     *
-     * @param data request json value
-     */
-    var prepareData = function (data) {
-
-    };
 
     /**
      * Delayed task for the remote request.
@@ -73,13 +66,16 @@ TOMEE.ApplicationModel = function (cfg) {
 
             //start a new request
             currentRequest = $.ajax({
-                type: 'GET',
-                url: 'some.servlet',
+                type: methodType,
+                dataType: 'json',
+                data: requestParameters,
+                url: url,
                 success: function (data) {
-
+                    prepareDataMethod(data);
+                    channel.send('connection_new_data', {});
                 },
                 error: function (data) {
-
+                    channel.send('connection_exception', {});
                 }
             });
         }

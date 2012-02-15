@@ -24,36 +24,41 @@ TOMEE.ApplicationHomePanelBody = function (cfg) {
     var myBody = $('<div class="span9"/>');
 
     var currentPanel = null;
-    var constructors = {
-        'test': function () {
-            return TOMEE.ApplicationHomePanelTest(cfg);
-        },
-        'jndi': function () {
+    var myPanels = {
+        'test': (function () {
+            return TOMEE.ApplicationHomePanelTest({
+                model: cfg.testModel
+            });
+        })(),
+
+        'jndi': (function () {
             return TOMEE.ApplicationHomePanelJndi(cfg);
-        },
-        'ejb': function () {
+        })(),
+
+        'ejb': (function () {
             return TOMEE.ApplicationHomePanelEJB(cfg);
-        },
-        'class': function () {
+        })(),
+
+        'class': (function () {
             return TOMEE.ApplicationHomePanelClass(cfg);
-        },
-        'obj': function () {
+        })(),
+
+        'obj': (function () {
             return TOMEE.ApplicationHomePanelInvoker(cfg);
-        }
+        })()
     };
 
     var showPanel = function (key) {
         if (currentPanel) {
-            channel.send('dying_panel', {
+            channel.send('hiding_panel', {
                 panel: currentPanel
             });
             currentPanel = null;
         }
         myBody.empty();
 
-        var innerConstructor = constructors[key];
-        if (innerConstructor) {
-            currentPanel = innerConstructor();
+        var currentPanel = myPanels[key];
+        if (currentPanel) {
             myBody.append(currentPanel.getEl());
         } else {
             var tpl = [
@@ -65,10 +70,19 @@ TOMEE.ApplicationHomePanelBody = function (cfg) {
         }
     };
 
+    var loadData = function (panelKey) {
+        var currentPanel = myPanels[panelKey];
+        if (!currentPanel || !currentPanel.loadData) {
+            return;
+        }
+        currentPanel.loadData();
+    };
+
     return {
         getEl: function () {
             return myBody;
         },
-        showPanel: showPanel
+        showPanel: showPanel,
+        loadData: loadData
     };
 };
