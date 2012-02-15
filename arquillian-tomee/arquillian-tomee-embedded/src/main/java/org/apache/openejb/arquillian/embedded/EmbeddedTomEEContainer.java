@@ -75,16 +75,19 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
     	configuration.setDir(tomeeConfiguration.getDir());
     	configuration.setHttpPort(getPortAndShare(TOMEE_ARQUILLIAN_HTTP_PORT, tomeeConfiguration.getHttpPort()));
     	configuration.setStopPort(getPortAndShare(TOMEE_ARQUILLIAN_STOP_PORT, tomeeConfiguration.getStopPort()));
-    	
 		return configuration;
 	}
 
-    private int getPortAndShare(String systemPropName, int value) {
+    private static int getPortAndShare(String systemPropName, int value) {
         int port = value;
         if (port <= 0) {
             port = NetworkUtil.getNextAvailablePort();
         }
         System.setProperty(systemPropName, Integer.toString(port));
+
+        // some hack to simply be able to use the same system property than other adapters
+        System.setProperty(systemPropName.replace(".arquillian", "") + ".port", Integer.toString(port));
+
         return port;
     }
 

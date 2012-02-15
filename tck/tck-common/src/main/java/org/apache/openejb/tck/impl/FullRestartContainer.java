@@ -27,10 +27,8 @@ import org.jboss.testharness.spi.Containers;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.Properties;
 
 /**
