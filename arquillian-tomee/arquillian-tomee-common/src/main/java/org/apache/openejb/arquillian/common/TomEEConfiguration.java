@@ -29,6 +29,7 @@ import java.util.Properties;
 public class TomEEConfiguration implements ContainerConfiguration {
 
     private int httpPort = 8080;
+    private int ajpPort = 8009;
     private int stopPort = 8005;
     private String dir = System.getProperty("java.io.tmpdir") + "/arquillian-apache-tomee";
     private String systemProperties = "";
@@ -47,6 +48,14 @@ public class TomEEConfiguration implements ContainerConfiguration {
 
     public void setStopPort(int stopPort) {
         this.stopPort = stopPort;
+    }
+
+    public int getAjpPort() {
+        return ajpPort;
+    }
+
+    public void setAjpPort(int ajpPort) {
+        this.ajpPort = ajpPort;
     }
 
     public String getDir() {

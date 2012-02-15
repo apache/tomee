@@ -46,6 +46,10 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
             configuration.setStopPort(Integer.parseInt(System.getProperty("tomee.shutdown.port")));
         }
 
+        if (System.getProperty("tomee.ajp.port") != null) {
+            configuration.setStopPort(Integer.parseInt(System.getProperty("tomee.ajp.port")));
+        }
+
         // see if TomEE is already running by checking the http port
         if (Setup.isRunning(configuration.getHttpPort())) {
 
