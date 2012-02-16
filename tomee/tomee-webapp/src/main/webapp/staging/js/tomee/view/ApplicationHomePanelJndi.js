@@ -44,8 +44,10 @@ TOMEE.ApplicationHomePanelJndi = function (cfg) {
 
         //create the element
         var all = $(tpl.join(''));
+        var tbody = all.find("#" + tbodyUid);
         return {
-            all: all
+            all: all,
+            tbody: tbody
         };
     })();
 
@@ -53,11 +55,11 @@ TOMEE.ApplicationHomePanelJndi = function (cfg) {
      *
      * @param bean
      */
-    var addRow = function (index, bean) {
+    var addRow = function (bean) {
         var row = [
             '        <tr>',
             '            <td>' + bean.module + '</td>',
-            '            <td>' + bean.key + '</td>',
+            '            <td>' + bean.name + '</td>',
             '            <td>' + bean.value + '</td>',
             '        </tr>'
         ].join('');
@@ -79,6 +81,7 @@ TOMEE.ApplicationHomePanelJndi = function (cfg) {
     return {
         getEl: function () {
             return elements.all;
-        }
+        },
+        loadData: loadData
     };
 };

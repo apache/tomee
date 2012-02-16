@@ -24,30 +24,33 @@
 TOMEE.JndiModel = function (cfg) {
     var channel = cfg.channel;
 
-    var myData = null;
+    var jndi = null;
 
     var myModel = (function () {
         var myChannel = TOMEE.ApplicationChannel({});
 
         myChannel.bind('connection_new_data', function (params) {
-            channel.send('test_connection_new_data', params);
+            channel.send('jndi_connection_new_data', params);
         });
         myChannel.bind('connection_exception', function (params) {
-            channel.send('test_connection_exception', params);
+            channel.send('jndi_connection_exception', params);
         });
 
         return TOMEE.ApplicationModel({
             methodType: 'GET',
-            url: 'ws/jndi/names',
+
+            //url: 'ws/jndi/names',
+            url: 'js/tomee/mock/jndi.json',
+
             channel: myChannel,
             prepareDataMethod: function (data) {
-                myData = data;
+                jndi = TOMEE.utils.getArray(data.jndi);
             }
         });
     })();
 
     var iterateJndiBeans = function (callback) {
-        $.each(myData.jndi, function (i, bean) {
+        $.each(jndi, function (i, bean) {
             callback(bean);
         });
     };

@@ -36,12 +36,10 @@ TOMEE.ApplicationController = function () {
         channel: channel
     });
 
-
-
     var view = TOMEE.ApplicationView({
         channel: channel,
         testModel: testPanelModel,
-        jndiModel:  jndiPanelModel
+        jndiModel: jndiPanelModel
     });
 
     //The user clicked in one of the buttons in the application toolbar
@@ -65,7 +63,6 @@ TOMEE.ApplicationController = function () {
 
     view.render(function () {
         view.getHome().getMenu().selectMenu('test');
-        testPanelModel.load();
     });
 
     //"test" -> data loaded event
@@ -75,6 +72,24 @@ TOMEE.ApplicationController = function () {
     channel.bind('test_connection_new_data', function (params) {
         view.getHome().getBody().loadData('test');
     });
+
+    //"jndi" -> data loaded event
+    channel.bind('jndi_connection_exception', function (params) {
+
+    });
+    channel.bind('jndi_connection_new_data', function (params) {
+        view.getHome().getBody().loadData('jndi');
+    });
+
+    channel.bind('panel_show', function (params) {
+        var panel = params.panel;
+        if (panel.loadData) {
+            panel.loadData();
+        }
+    });
+
+    testPanelModel.load();
+    jndiPanelModel.load();
 
     return {
 
