@@ -32,9 +32,16 @@ TOMEE.ApplicationController = function () {
         channel: channel
     });
 
+    var jndiPanelModel = TOMEE.JndiModel({
+        channel: channel
+    });
+
+
+
     var view = TOMEE.ApplicationView({
         channel: channel,
-        testModel: testPanelModel
+        testModel: testPanelModel,
+        jndiModel:  jndiPanelModel
     });
 
     //The user clicked in one of the buttons in the application toolbar
