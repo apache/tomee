@@ -168,7 +168,11 @@ public class TomcatWsRegistry implements WsRegistry {
                 root = '/' + root;
             }
             Context webAppContext = (Context) host.findChild(root);
-            addServlet(host, webAppContext, WEBSERVICE_SUB_CONTEXT + path, httpListener, path, addresses);
+            if (WEBSERVICE_SUB_CONTEXT.startsWith("/")) {
+                addServlet(host, webAppContext, WEBSERVICE_SUB_CONTEXT + path, httpListener, path, addresses);
+            } else {
+                addServlet(host, webAppContext, '/' + WEBSERVICE_SUB_CONTEXT + path, httpListener, path, addresses);
+            }
         }
         return addresses;
     }
