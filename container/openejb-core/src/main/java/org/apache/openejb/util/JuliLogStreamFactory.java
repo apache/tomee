@@ -41,7 +41,7 @@ public class JuliLogStreamFactory implements LogStreamFactory {
         }
 
         try {
-            if (SystemInstance.get().getProperty("openjpa.Log") == null) {
+            if (SystemInstance.get().getOptions().get("openjpa.Log", (String) null) == null) {
                 JuliLogStreamFactory.class.getClassLoader().loadClass("org.apache.openjpa.lib.log.LogFactoryAdapter");
                 System.setProperty("openjpa.Log", "org.apache.openejb.openjpa.JULOpenJPALogFactory");
             }

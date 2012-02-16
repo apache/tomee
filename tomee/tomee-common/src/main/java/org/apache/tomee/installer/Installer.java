@@ -50,7 +50,7 @@ public class Installer {
 
     static {
         // is the OpenEJB listener installed
-        listenerInstalled = "OpenEJBListener".equals(SystemInstance.get().getProperty("openejb.embedder.source"));
+        listenerInstalled = "OpenEJBListener".equals(SystemInstance.get().getOptions().get("openejb.embedder.source", ""));
 
         // is the OpenEJB javaagent installed
         agentInstalled = invokeStaticNoArgMethod("org.apache.openejb.javaagent.Agent", "getInstrumentation") != null;

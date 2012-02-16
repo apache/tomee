@@ -7,8 +7,8 @@ import java.net.URL;
 
 public class UpdateChecker implements Runnable {
     private static final String SKIP_CHECK = "openejb.version.check";
-    private static final String REPO_URL = SystemInstance.get().getProperty("openejb.version.check.repo.url", "http://repo1.maven.org/maven2/org/apache/openejb/");
-    private static final String URL = SystemInstance.get().getProperty("openejb.version.check.url", REPO_URL + "openejb/maven-metadata.xml");
+    private static final String REPO_URL = SystemInstance.get().getOptions().get("openejb.version.check.repo.url", "http://repo1.maven.org/maven2/org/apache/openejb/");
+    private static final String URL = SystemInstance.get().getOptions().get("openejb.version.check.url", REPO_URL + "openejb/maven-metadata.xml");
     private static final String TAG = "latest";
     private static final String UNDEFINED = "undefined";
     private static String LATEST = "undefined";

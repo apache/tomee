@@ -267,7 +267,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
     private String getModuleId(final File file) {
         final String filename = file.getName();
-        return SystemInstance.get().getProperty(filename + ".moduleId");
+        return SystemInstance.get().getOptions().get(filename + ".moduleId", (String) null);
     }
 
     protected AppModule createAppModule(final File jarFile, final String jarPath) throws OpenEJBException {
@@ -842,8 +842,8 @@ public class DeploymentLoader implements DeploymentFilterable {
     }
 
     private void addWebservices(final WsModule wsModule) throws OpenEJBException {
-        final String webservicesEnabled = SystemInstance.get().getProperty(ConfigurationFactory.WEBSERVICES_ENABLED, "true");
-        if (!Boolean.parseBoolean(webservicesEnabled)) {
+        final boolean webservicesEnabled = SystemInstance.get().getOptions().get(ConfigurationFactory.WEBSERVICES_ENABLED, true);
+        if (!webservicesEnabled) {
             wsModule.getAltDDs().remove("webservices.xml");
             wsModule.setWebservices(null); // should be null already, but just for good measure
             return;
@@ -1319,7 +1319,7 @@ public class DeploymentLoader implements DeploymentFilterable {
      * @return the same map instance updated with alt dds
      */
     public static Map<String, URL> altDDSources(final Map<String, URL> map, final boolean log) {
-        final String prefixes = SystemInstance.get().getProperty(OPENEJB_ALTDD_PREFIX);
+        final String prefixes = SystemInstance.get().getOptions().get(OPENEJB_ALTDD_PREFIX, (String) null);
 
         if (prefixes == null || prefixes.length() <= 0) return map;
 

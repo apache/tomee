@@ -57,8 +57,8 @@ import java.util.Set;
  */
 public class NewLoaderLogic {
     private static final Logger logger = DeploymentLoader.logger;
-    public static final String ADDITIONAL_EXCLUDES = SystemInstance.get().getProperty("openejb.additional.exclude");
-    public static final String ADDITIONAL_INCLUDE = SystemInstance.get().getProperty("openejb.additional.include");
+    public static final String ADDITIONAL_EXCLUDES = SystemInstance.get().getOptions().get("openejb.additional.exclude", (String) null);
+    public static final String ADDITIONAL_INCLUDE = SystemInstance.get().getOptions().get("openejb.additional.include", (String) null);
     private static final String EXCLUSION_FILE = "exclusions.list";
     private static String[] exclusions = null;
 

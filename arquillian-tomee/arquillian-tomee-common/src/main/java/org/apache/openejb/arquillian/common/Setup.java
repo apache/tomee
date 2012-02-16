@@ -91,7 +91,7 @@ public class Setup {
     }
 
     public static File downloadFile(String artifactName, String altUrl) {
-        final String cache = SystemInstance.get().getProperty(ProvisioningUtil.OPENEJB_DEPLOYER_CACHE_FOLDER);
+        final String cache = SystemInstance.get().getOptions().get(ProvisioningUtil.OPENEJB_DEPLOYER_CACHE_FOLDER, (String) null);
         System.setProperty(ProvisioningUtil.OPENEJB_DEPLOYER_CACHE_FOLDER, "target");
         try {
             final File artifact = new MavenCache().getArtifact(artifactName, altUrl);

@@ -97,7 +97,7 @@ public final class ValidatorBuilder {
 
         String providerClassName = info.providerClassName;
         if (providerClassName == null) {
-            providerClassName = SystemInstance.get().getProperty(VALIDATION_PROVIDER_KEY);
+            providerClassName = SystemInstance.get().getOptions().get(VALIDATION_PROVIDER_KEY, (String) null);
         }
 
         if (providerClassName != null) {

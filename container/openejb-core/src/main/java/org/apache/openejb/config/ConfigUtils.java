@@ -42,7 +42,7 @@ public class ConfigUtils {
     public static Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
 
     public static String searchForConfiguration() throws OpenEJBException {
-        return searchForConfiguration(SystemInstance.get().getProperty("openejb.configuration"));
+        return searchForConfiguration(SystemInstance.get().getOptions().get("openejb.configuration", (String) null));
     }
 
     public static String searchForConfiguration(String path) throws OpenEJBException {

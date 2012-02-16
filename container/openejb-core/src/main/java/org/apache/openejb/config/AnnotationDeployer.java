@@ -2792,7 +2792,7 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         private String getProperty(String key, String defaultValue) {
-            String value = SystemInstance.get().getProperty(key, defaultValue);
+            String value = SystemInstance.get().getOptions().get(key, defaultValue);
             final DeploymentModule module = getModule();
 
             if (module instanceof EjbModule) {

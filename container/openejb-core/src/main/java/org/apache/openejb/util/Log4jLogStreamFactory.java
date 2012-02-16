@@ -49,9 +49,7 @@ public class Log4jLogStreamFactory implements LogStreamFactory {
 
     public Log4jLogStreamFactory() {
         try {
-            final String prop = SystemInstance.get().getProperty("openejb.logger.external", "false");
-            final boolean externalLogging = Boolean.parseBoolean(prop);
-
+            final boolean externalLogging = SystemInstance.get().getOptions().get("openejb.logger.external", false);
             if (!externalLogging) configureInternal();
         } catch (Exception e) {
             // The fall back here is that if log4j.configuration system property is set, then that configuration file will be used.
@@ -64,7 +62,7 @@ public class Log4jLogStreamFactory implements LogStreamFactory {
         System.setProperty("openjpa.Log", "log4j");
         System.setProperty("org.apache.cxf.Logger", "org.apache.cxf.common.logging.Log4jLogger");
 
-        final boolean embedded = SystemInstance.get().getProperty("openejb.logging.embedded", "false").equalsIgnoreCase("true");
+        final boolean embedded = SystemInstance.get().getOptions().get("openejb.logging.embedded", false);
 
         final File confDir = SystemInstance.get().getBase().getDirectory("conf");
 

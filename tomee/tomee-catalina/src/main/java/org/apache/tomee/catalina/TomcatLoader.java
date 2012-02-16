@@ -271,7 +271,7 @@ public class TomcatLoader implements Loader {
             }
         });
 
-        if (SystemInstance.get().getProperty(TOMEE_NOSHUTDOWNHOOK_PROP) != null) {
+        if (SystemInstance.get().getOptions().get(TOMEE_NOSHUTDOWNHOOK_PROP, (String) null) != null) {
             final Field daemonField = Bootstrap.class.getDeclaredField("daemon");
             final boolean acc = daemonField.isAccessible();
             try {
