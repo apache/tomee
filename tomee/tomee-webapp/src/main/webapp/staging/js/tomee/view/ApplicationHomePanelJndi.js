@@ -20,11 +20,25 @@ TOMEE.ApplicationHomePanelJndi = function (cfg) {
     "use strict";
 
     var channel = cfg.channel;
+    var model = cfg.model;
 
     var elements = (function () {
+        var tbodyUid = TOMEE.Sequence.next();
         var tpl = [
             '<div class="row">',
             '<legend>' + TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.title') + '</legend>',
+
+            '<table class="table table-striped table-bordered table-condensed">',
+            '    <thead>',
+            '        <tr>',
+            '            <th>' + TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.module') + '</th>',
+            '            <th>' + TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.path') + '</th>',
+            '            <th>' + TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.resource') + '</th>',
+            '        </tr>',
+            '    </thead>',
+            '    <tbody id="' + tbodyUid + '"/>',
+            '</table>',
+
             '</div>'
         ];
 
@@ -34,6 +48,33 @@ TOMEE.ApplicationHomePanelJndi = function (cfg) {
             all: all
         };
     })();
+
+    /**
+     *
+     * @param bean
+     */
+    var addRow = function (index, bean) {
+        var row = [
+            '        <tr>',
+            '            <td>' + bean.module + '</td>',
+            '            <td>' + bean.key + '</td>',
+            '            <td>' + bean.value + '</td>',
+            '        </tr>'
+        ].join('');
+        elements.tbody.append($(row));
+    };
+
+    var loadData = function () {
+        //remove the current rows if any
+        elements.tbody.empty();
+
+        //The user should give a "getData" method that iterates over
+        //the objects that will be used to populate the grid
+        model.iterateJndiBeans(function (bean) {
+            addRow(bean);
+        });
+    };
+
 
     return {
         getEl: function () {

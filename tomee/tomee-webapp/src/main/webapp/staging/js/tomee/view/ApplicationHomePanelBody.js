@@ -32,7 +32,9 @@ TOMEE.ApplicationHomePanelBody = function (cfg) {
         })(),
 
         'jndi': (function () {
-            return TOMEE.ApplicationHomePanelJndi(cfg);
+            return TOMEE.ApplicationHomePanelJndi({
+                model: cfg.jndiModel
+            });
         })(),
 
         'ejb': (function () {

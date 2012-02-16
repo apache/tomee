@@ -48,6 +48,9 @@ TOMEE.ApplicationI18N = (function () {
 
         'app.home.menu.tools.jndi': 'JNDI Browser',
         'app.home.menu.tools.jndi.title': 'OpenEJB JNDI Namespace Browser',
+        'app.home.menu.tools.jndi.module': 'Module',
+        'app.home.menu.tools.jndi.path': 'Path',
+        'app.home.menu.tools.jndi.resource': 'Resource',
 
         'app.home.menu.tools.class': 'Class Viewer',
         'app.home.menu.tools.class.title': 'OpenEJB Class Viewer',

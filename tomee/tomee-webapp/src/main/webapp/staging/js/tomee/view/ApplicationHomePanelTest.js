@@ -38,6 +38,7 @@ TOMEE.ApplicationHomePanelTest = function (cfg) {
             '    </thead>',
             '    <tbody id="' + tbodyUid + '"/>',
             '</table>',
+
             '</div>'
         ];
 
