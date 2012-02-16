@@ -24,6 +24,7 @@ import org.apache.xbean.asm.FieldVisitor;
 import org.apache.xbean.asm.MethodVisitor;
 import org.apache.xbean.finder.UrlSet;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -220,6 +221,7 @@ public class AnnotationFinder {
             return jar(jarFile);
         } else {
             InputStream in = url.openStream();
+            in = new BufferedInputStream(in);
             try {
                 JarInputStream jarStream = new JarInputStream(in);
                 return jar(jarStream);
@@ -274,7 +276,7 @@ public class AnnotationFinder {
             URL resource = classLoader.getResource(className);
             if (resource != null) {
                 InputStream in = resource.openStream();
-//                in = new BufferedInputStream(in, 8192 / 4);
+                in = new BufferedInputStream(in);
                 try {
                     ClassReader classReader = new ClassReader(in);
                     classReader.accept(visitor, ASM_FLAGS);
