@@ -18,6 +18,7 @@ package org.apache.openejb.core.security;
 
 import org.apache.openejb.core.security.jaas.UsernamePasswordCallbackHandler;
 import org.apache.openejb.core.security.jacc.BasicJaccProvider;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.ConfUtils;
 
 import javax.security.auth.Subject;
@@ -56,7 +57,7 @@ public class SecurityServiceImpl extends AbstractSecurityService {
     }
 
     protected static void installJaas() {
-        String path = System.getProperty("java.security.auth.login.config");
+        String path = SystemInstance.get().getProperty("java.security.auth.login.config");
 
         if (path != null) {
             return;

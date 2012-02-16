@@ -581,10 +581,10 @@ class AppInfoBuilder {
         private static String nonJtaDataSourceEnv;
 
         static {
-            providerEnv = System.getProperty(PROVIDER_PROP);
-            transactionTypeEnv = System.getProperty(TRANSACTIONTYPE_PROP);
-            jtaDataSourceEnv = System.getProperty(JTADATASOURCE_PROP);
-            nonJtaDataSourceEnv = System.getProperty(NON_JTADATASOURCE_PROP);
+            providerEnv = SystemInstance.get().getProperty(PROVIDER_PROP);
+            transactionTypeEnv = SystemInstance.get().getProperty(TRANSACTIONTYPE_PROP);
+            jtaDataSourceEnv = SystemInstance.get().getProperty(JTADATASOURCE_PROP);
+            nonJtaDataSourceEnv = SystemInstance.get().getProperty(NON_JTADATASOURCE_PROP);
         }
 
         private static void apply(PersistenceUnitInfo info) {

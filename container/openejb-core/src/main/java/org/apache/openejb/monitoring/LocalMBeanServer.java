@@ -17,6 +17,8 @@
 
 package org.apache.openejb.monitoring;
 
+import org.apache.openejb.loader.SystemInstance;
+
 import javax.management. *;
 import javax.management.loading.ClassLoaderRepository;
 import java.io.ObjectInputStream;
@@ -37,7 +39,7 @@ public class LocalMBeanServer implements MBeanServer {
     }
 
     private static boolean isJMXActive() {
-        return "true".equalsIgnoreCase(System.getProperty(OPENEJB_JMX_ACTIVE, "true"));
+        return "true".equalsIgnoreCase(SystemInstance.get().getProperty(OPENEJB_JMX_ACTIVE, "true"));
     }
 
     private static MBeanServer s() {

@@ -1,5 +1,6 @@
 package org.apache.openejb.assembler.classic;
 
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.ArrayEnumeration;
 
 import java.security.Permission;
@@ -34,7 +35,7 @@ public class DelegatePermissionCollection extends PermissionCollection {
         try {
             return (PermissionCollection) DelegatePermissionCollection.class.getClassLoader()
                     .loadClass(
-                            System.getProperty(PERMISSION_COLLECTION_CLASS,
+                            SystemInstance.get().getProperty(PERMISSION_COLLECTION_CLASS,
                                     FastPermissionCollection.class.getName()))
                     .newInstance();
         } catch (Exception cnfe) {
@@ -44,7 +45,7 @@ public class DelegatePermissionCollection extends PermissionCollection {
     }
 
     public static class FastPermissionCollection extends PermissionCollection {
-        private static final int MAX_CACHE_SIZE = Integer.getInteger("openejb.permission-collection.cache.size", 3000);
+        private static final int MAX_CACHE_SIZE = Integer.parseInt(SystemInstance.get().getProperty("openejb.permission-collection.cache.size", "3000"));
         private final List<Permission> permissions = new ArrayList<Permission>();
         private final Map<Permission, Boolean> alreadyEvaluatedPermissions = new ConcurrentHashMap<Permission, Boolean>();
 

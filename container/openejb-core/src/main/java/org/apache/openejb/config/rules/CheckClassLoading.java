@@ -23,6 +23,7 @@ import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ClientModule;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.config.WebModule;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.URLs;
 import org.apache.xbean.finder.UrlSet;
 
@@ -206,7 +207,7 @@ public class CheckClassLoading extends ValidationBase {
         public String toScreen() {
             final String str = "both files " + file1 + '\''
                     + " and " + file2 + '\'';
-            if (Boolean.getBoolean(OPENEJB_CHECK_CLASSLOADER_VERBOSE)) {
+            if (Boolean.parseBoolean(SystemInstance.get().getProperty(OPENEJB_CHECK_CLASSLOADER_VERBOSE, "false"))) {
                     return str + " contains files=" + files;
             }
             return str;

@@ -36,6 +36,7 @@ import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.deploy.SecurityCollection;
 import org.apache.catalina.deploy.SecurityConstraint;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.webservices.WsRegistry;
 import org.apache.openejb.server.webservices.WsServlet;
@@ -54,8 +55,9 @@ import static org.apache.tomee.catalina.BackportUtil.getServlet;
 import static org.apache.tomee.catalina.TomcatWebAppBuilder.IGNORE_CONTEXT;
 
 public class TomcatWsRegistry implements WsRegistry {
-    private static final String WEBSERVICE_SUB_CONTEXT = System.getProperty("tomee.jaxws.subcontext", "/webservices");
-    private static final boolean WEBSERVICE_OLDCONTEXT_ACTIVE = Boolean.getBoolean("tomee.jaxws.oldsubcontext");
+    private static final String WEBSERVICE_SUB_CONTEXT = forceSlash(SystemInstance.get().getProperty("tomee.jaxws.subcontext", "/webservices"));
+
+    private static final boolean WEBSERVICE_OLDCONTEXT_ACTIVE = Boolean.parseBoolean(SystemInstance.get().getProperty("tomee.jaxws.oldsubcontext", "false"));
 
     private final Map<String, Context> webserviceContexts = new TreeMap<String, Context>();
     private Engine engine;
@@ -70,6 +72,16 @@ public class TomcatWsRegistry implements WsRegistry {
                 break;
             }
         }
+    }
+
+    private static String forceSlash(String property) {
+        if (property == null) {
+            return "/";
+        }
+        if (!property.startsWith("/")) {
+            return "/" + property;
+        }
+        return property;
     }
 
     public List<String> setWsContainer(String virtualHost, String contextRoot, String servletName, HttpListener wsContainer) throws Exception {
@@ -173,10 +185,8 @@ public class TomcatWsRegistry implements WsRegistry {
                 addServlet(host, webAppContext, path, httpListener, path, addresses);
             } else if (WEBSERVICE_SUB_CONTEXT.equals("/") && !path.startsWith("/")) {
                 addServlet(host, webAppContext, '/' + path, httpListener, path, addresses);
-            } else if (WEBSERVICE_SUB_CONTEXT.startsWith("/")) {
-                addServlet(host, webAppContext, WEBSERVICE_SUB_CONTEXT + path, httpListener, path, addresses);
             } else {
-                addServlet(host, webAppContext, '/' + WEBSERVICE_SUB_CONTEXT + path, httpListener, path, addresses);
+                addServlet(host, webAppContext, WEBSERVICE_SUB_CONTEXT + path, httpListener, path, addresses);
             }
         }
         return addresses;

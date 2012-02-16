@@ -392,7 +392,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
      * @param context the servlet context to init.
      */
     private static void addMyFacesDefaultParameters(ClassLoader classLoader, ServletContext context) {
-        if (!Boolean.getBoolean(OPENEJB_MYFACES_DISABLE_DEFAULT_VALUES)) {
+        if (!Boolean.parseBoolean(SystemInstance.get().getProperty(OPENEJB_MYFACES_DISABLE_DEFAULT_VALUES, "false"))) {
             if (classLoader != null) {
                 try { // if myfaces is not here we doesn't need any trick
                     classLoader.loadClass("org.apache.myfaces.shared.config.MyfacesConfig");
@@ -477,7 +477,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     @Override
     public void init(StandardContext standardContext) {
         replaceHashSetForJspPropertyGroupsByLinkedHashSet(standardContext);
-        standardContext.setCrossContext(Boolean.parseBoolean(System.getProperty(OPENEJB_CROSSCONTEXT_PROPERTY, "false")));
+        standardContext.setCrossContext(Boolean.parseBoolean(SystemInstance.get().getProperty(OPENEJB_CROSSCONTEXT_PROPERTY, "false")));
         standardContext.setNamingResources(new OpenEJBNamingResource());
 
         if (standardContext.getConfigFile() == null) {
@@ -526,7 +526,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     @Override
     public void beforeStart(StandardContext standardContext) {
         ServletContext sc = standardContext.getServletContext();
-        if (sc != null && !Boolean.parseBoolean(System.getProperty(OPENEJB_JSESSION_ID_SUPPORT, "true"))) {
+        if (sc != null && !Boolean.parseBoolean(SystemInstance.get().getProperty(OPENEJB_JSESSION_ID_SUPPORT, "true"))) {
             Set<SessionTrackingMode> defaultTrackingModes = sc.getEffectiveSessionTrackingModes();
             if (defaultTrackingModes.contains(SessionTrackingMode.URL)) {
                 Set<SessionTrackingMode> newModes = new HashSet<SessionTrackingMode>();

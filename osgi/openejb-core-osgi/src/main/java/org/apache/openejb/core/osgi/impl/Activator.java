@@ -36,7 +36,7 @@ import java.util.Properties;
 public class Activator implements BundleActivator {
     private static final Logger LOGGER = LoggerFactory.getLogger(Activator.class);
     private static final String SERVICE_MANAGER_NAME = "org.apache.openejb.server.ServiceManager";
-    private static final long TRACKER_TIMEOUT = Integer.getInteger("openejb.osgi.tracker.timeout", 30);
+    private static final long TRACKER_TIMEOUT = Integer.parseInt(SystemInstance.get().getProperty("openejb.osgi.tracker.timeout", "30"));
 
     private OpenEJBInstance openejb;
     private Object serviceManager;

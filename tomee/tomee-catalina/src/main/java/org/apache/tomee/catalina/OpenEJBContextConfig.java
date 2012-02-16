@@ -20,6 +20,7 @@ import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.deploy.WebXml;
 import org.apache.catalina.startup.ContextConfig;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.reflection.ReflectionUtil;
 
 import javax.servlet.descriptor.JspPropertyGroupDescriptor;
@@ -56,8 +57,8 @@ public class OpenEJBContextConfig extends ContextConfig {
         }
 
         @Override public int getMajorVersion() {
-            return Integer.getInteger(prefix + "." + OPENEJB_WEB_XML_MAJOR_VERSION_PROPERTY,
-                    Integer.getInteger(OPENEJB_WEB_XML_MAJOR_VERSION_PROPERTY, super.getMajorVersion()));
+            return Integer.parseInt(SystemInstance.get().getProperty(prefix + "." + OPENEJB_WEB_XML_MAJOR_VERSION_PROPERTY),
+                    Integer.parseInt(SystemInstance.get().getProperty(OPENEJB_WEB_XML_MAJOR_VERSION_PROPERTY, Integer.toString(super.getMajorVersion()))));
         }
     }
 }

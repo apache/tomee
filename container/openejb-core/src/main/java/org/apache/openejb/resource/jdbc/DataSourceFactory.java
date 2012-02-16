@@ -24,7 +24,6 @@ import org.apache.commons.dbcp.managed.TransactionRegistry;
 import org.apache.commons.dbcp.managed.XAConnectionFactory;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.resource.XAResourceWrapper;
-import org.apache.openejb.util.LogCategory;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
@@ -47,7 +46,7 @@ public class DataSourceFactory {
 
         final org.apache.commons.dbcp.BasicDataSource ds;
 
-        if (DataSource.class.isAssignableFrom(impl) && !Boolean.parseBoolean(System.getProperty("org.apache.openejb.resource.jdbc.hot.deploy", "false"))) {
+        if (DataSource.class.isAssignableFrom(impl) && !Boolean.parseBoolean(SystemInstance.get().getProperty("org.apache.openejb.resource.jdbc.hot.deploy", "false"))) {
 
             final ObjectRecipe recipe = new ObjectRecipe(impl);
             recipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
