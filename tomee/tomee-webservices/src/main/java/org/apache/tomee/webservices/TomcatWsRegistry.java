@@ -168,7 +168,12 @@ public class TomcatWsRegistry implements WsRegistry {
                 root = '/' + root;
             }
             Context webAppContext = (Context) host.findChild(root);
-            if (WEBSERVICE_SUB_CONTEXT.startsWith("/")) {
+            // sub context = '/' means the service address is provided by webservices
+            if (WEBSERVICE_SUB_CONTEXT.equals("/") && path.startsWith("/")) {
+                addServlet(host, webAppContext, path, httpListener, path, addresses);
+            } else if (WEBSERVICE_SUB_CONTEXT.equals("/") && !path.startsWith("/")) {
+                addServlet(host, webAppContext, '/' + path, httpListener, path, addresses);
+            } else if (WEBSERVICE_SUB_CONTEXT.startsWith("/")) {
                 addServlet(host, webAppContext, WEBSERVICE_SUB_CONTEXT + path, httpListener, path, addresses);
             } else {
                 addServlet(host, webAppContext, '/' + WEBSERVICE_SUB_CONTEXT + path, httpListener, path, addresses);
@@ -281,8 +286,12 @@ public class TomcatWsRegistry implements WsRegistry {
                 } else if (contextPath == null) {
                     contextPath = "/";
                 }
+
                 fullContextpath = new StringBuilder(contextPath)
-                        .append(WEBSERVICE_SUB_CONTEXT).append(path);
+                if (!WEBSERVICE_SUB_CONTEXT.equals("/")) {
+                    fullContextpath.append(WEBSERVICE_SUB_CONTEXT);
+                }
+                fullContextpath.append(path);
             } else {
                 fullContextpath = new StringBuilder(path);
             }
