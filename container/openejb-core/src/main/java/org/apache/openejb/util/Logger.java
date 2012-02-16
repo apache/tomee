@@ -42,7 +42,7 @@ public class Logger {
     public static void configure() {
 
         //See if user factory has been specified
-        String factoryName = System.getProperty("openejb.log.factory", JuliLogStreamFactory.class.getName());
+        String factoryName = SystemInstance.get().getProperty("openejb.log.factory", JuliLogStreamFactory.class.getName());
 
         if ("jul".equalsIgnoreCase(factoryName) || "juli".equalsIgnoreCase(factoryName)) {
 

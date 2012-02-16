@@ -46,7 +46,7 @@ import java.util.zip.ZipOutputStream;
  * @version $Revision$ $Date$
  */
 public class IO {
-    private static final int MAX_TIMEOUT = Integer.getInteger("openejb.io.util.timeout", 5000);
+    private static final int MAX_TIMEOUT = Integer.parseInt(SystemInstance.get().getProperty("openejb.io.util.timeout", "5000"));
 
     public static String readFileAsString(final URI uri) throws IOException {
         final StringBuilder builder = new StringBuilder("");

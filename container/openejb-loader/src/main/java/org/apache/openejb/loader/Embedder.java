@@ -26,7 +26,7 @@ import java.util.Properties;
  * @version $Revision$ $Date$
  */
 public class Embedder {
-    public static final String ADDITIONAL_LIB_FOLDER = System.getProperty("openejb.additional.lib.folder", "additionallib");
+    public static final String ADDITIONAL_LIB_FOLDER = SystemInstance.get().getProperty("openejb.additional.lib.folder", "additionallib");
 
 	/**
 	 * Represents the name of the class which implements org.apache.openejb.loader.Loader

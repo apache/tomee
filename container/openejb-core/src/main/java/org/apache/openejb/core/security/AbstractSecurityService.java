@@ -299,7 +299,7 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
         }
 
 
-        String policyProvider = System.getProperty("javax.security.jacc.policy.provider", JaccProvider.Policy.class.getName());
+        String policyProvider = SystemInstance.get().getProperty("javax.security.jacc.policy.provider", JaccProvider.Policy.class.getName());
         try {
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             Class policyClass = Class.forName(policyProvider, true, classLoader);

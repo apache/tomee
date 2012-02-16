@@ -18,6 +18,7 @@ package org.apache.openejb.assembler.classic;
 
 import org.apache.openejb.jee.bval.PropertyType;
 import org.apache.openejb.jee.bval.ValidationConfigType;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -96,7 +97,7 @@ public final class ValidatorBuilder {
 
         String providerClassName = info.providerClassName;
         if (providerClassName == null) {
-            providerClassName = System.getProperty(VALIDATION_PROVIDER_KEY);
+            providerClassName = SystemInstance.get().getProperty(VALIDATION_PROVIDER_KEY);
         }
 
         if (providerClassName != null) {

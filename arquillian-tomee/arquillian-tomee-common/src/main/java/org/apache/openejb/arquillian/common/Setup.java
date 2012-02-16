@@ -17,6 +17,7 @@
 package org.apache.openejb.arquillian.common;
 
 import org.apache.openejb.loader.ProvisioningUtil;
+import org.apache.openejb.loader.SystemInstance;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
 
 import java.io.BufferedReader;
@@ -90,7 +91,7 @@ public class Setup {
     }
 
     public static File downloadFile(String artifactName, String altUrl) {
-        final String cache = System.getProperty(ProvisioningUtil.OPENEJB_DEPLOYER_CACHE_FOLDER);
+        final String cache = SystemInstance.get().getProperty(ProvisioningUtil.OPENEJB_DEPLOYER_CACHE_FOLDER);
         System.setProperty(ProvisioningUtil.OPENEJB_DEPLOYER_CACHE_FOLDER, "target");
         try {
             final File artifact = new MavenCache().getArtifact(artifactName, altUrl);

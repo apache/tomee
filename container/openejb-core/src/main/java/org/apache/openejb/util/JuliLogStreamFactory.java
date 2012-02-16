@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.util;
 
+import org.apache.openejb.loader.SystemInstance;
+
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
@@ -39,7 +41,7 @@ public class JuliLogStreamFactory implements LogStreamFactory {
         }
 
         try {
-            if (System.getProperty("openjpa.Log") == null) {
+            if (SystemInstance.get().getProperty("openjpa.Log") == null) {
                 JuliLogStreamFactory.class.getClassLoader().loadClass("org.apache.openjpa.lib.log.LogFactoryAdapter");
                 System.setProperty("openjpa.Log", "org.apache.openejb.openjpa.JULOpenJPALogFactory");
             }

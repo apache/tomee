@@ -267,7 +267,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
     private String getModuleId(final File file) {
         final String filename = file.getName();
-        return System.getProperty(filename + ".moduleId");
+        return SystemInstance.get().getProperty(filename + ".moduleId");
     }
 
     protected AppModule createAppModule(final File jarFile, final String jarPath) throws OpenEJBException {

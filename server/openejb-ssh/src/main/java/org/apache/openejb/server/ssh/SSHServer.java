@@ -34,7 +34,7 @@ import java.net.Socket;
 import java.util.Properties;
 
 public class SSHServer implements ServerService, SelfManaging {
-    private static final String KEY_NAME = System.getProperty("openejb.server.ssh.key", "ssh-key");
+    private static final String KEY_NAME = SystemInstance.get().getProperty("openejb.server.ssh.key", "ssh-key");
 
     private int port;
     private String bind;
