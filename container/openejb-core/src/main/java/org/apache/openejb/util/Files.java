@@ -75,29 +75,35 @@ public class Files {
         return accepted;
     }
 
-    public static void exists(File file, String s) {
+    public static File exists(File file, String s) {
         if (!file.exists()) throw new RuntimeException(s + " does not exist: " + file.getAbsolutePath());
+        return file;
     }
 
-    public static void dir(File file) {
+    public static File dir(File file) {
         if (!file.isDirectory()) throw new RuntimeException("Not a directory: " + file.getAbsolutePath());
+        return file;
     }
 
-    public static void file(File file) {
+    public static File file(File file) {
         if (!file.isFile()) throw new RuntimeException("Not a file: " + file.getAbsolutePath());
+        return file;
     }
 
-    public static void writable(File file) {
+    public static File writable(File file) {
         if (!file.canWrite()) throw new RuntimeException("Not writable: " + file.getAbsolutePath());
+        return file;
     }
 
-    public static void readable(File file) {
+    public static File readable(File file) {
         if (!file.canRead()) throw new RuntimeException("Not readable: " + file.getAbsolutePath());
+        return file;
     }
 
-    public static void mkdir(File file) {
-        if (file.exists()) return;
+    public static File mkdir(File file) {
+        if (file.exists()) return file;
         if (!file.mkdirs()) throw new RuntimeException("Cannot mkdir: " + file.getAbsolutePath());
+        return file;
     }
 
     public static File tmpdir() {
@@ -112,20 +118,21 @@ public class Files {
         }
     }
 
-    public static void mkparent(File file) {
+    public static File mkparent(File file) {
         mkdirs(file.getParentFile());
+        return file;
     }
 
-    public static void mkdirs(File file) {
+    public static File mkdirs(File file) {
 
         if (!file.exists()) {
 
-            assert file.mkdirs() : "mkdirs " + file;
+            if (file.mkdirs()) throw new RuntimeException("Cannot mkdirs: " + file.getAbsolutePath());
 
-            return;
+            return file;
         }
 
-        assert file.isDirectory() : "not a directory" + file;
+        return dir(file);
     }
 
 
