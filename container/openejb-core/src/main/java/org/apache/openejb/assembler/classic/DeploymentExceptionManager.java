@@ -29,7 +29,7 @@ import java.util.Map;
  *
  */
 public class DeploymentExceptionManager {
-    private static final int MAX_SIZE = Integer.parseInt(SystemInstance.get().getProperty("tomee.deployement-exception-max-size", "10"));
+    private static final int MAX_SIZE = SystemInstance.get().getOptions().get("tomee.deployement-exception-max-size", 10);
     private final Map<AppInfo, Exception> deploymentException = new LinkedHashMap<AppInfo, Exception>() {
         @Override // just to avoid potential memory leak
         protected boolean removeEldestEntry(Map.Entry<AppInfo, Exception> eldest) {

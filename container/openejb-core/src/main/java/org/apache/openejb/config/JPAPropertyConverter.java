@@ -49,7 +49,7 @@ public final class JPAPropertyConverter {
 
     // TODO: manage more properties
     public static Pair toOpenJPAValue(String key, String value, Properties properties) {
-        if (!Boolean.parseBoolean(SystemInstance.get().getProperty("openejb.convert-jpa-properties", "false"))) {
+        if (!SystemInstance.get().getOptions().get("openejb.convert-jpa-properties", false)) {
             return null;
         }
 

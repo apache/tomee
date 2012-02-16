@@ -235,7 +235,7 @@ public class TomcatLoader implements Loader {
         // and modifies JNDI ENC references to OpenEJB managed objects such as EJBs.
         processRunningApplications(tomcatWebAppBuilder, standardServer);
 
-        if (Boolean.parseBoolean(SystemInstance.get().getProperty("openejb.servicemanager.enabled", "false"))) {
+        if (SystemInstance.get().getOptions().get("openejb.servicemanager.enabled", false)) {
             manager = ServiceManager.getManager();
             manager.init();
             manager.start(false);
