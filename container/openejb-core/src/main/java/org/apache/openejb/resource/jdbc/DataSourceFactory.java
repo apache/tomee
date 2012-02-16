@@ -46,7 +46,7 @@ public class DataSourceFactory {
 
         final org.apache.commons.dbcp.BasicDataSource ds;
 
-        if (DataSource.class.isAssignableFrom(impl) && !Boolean.parseBoolean(SystemInstance.get().getProperty("org.apache.openejb.resource.jdbc.hot.deploy", "false"))) {
+        if (DataSource.class.isAssignableFrom(impl) && !SystemInstance.get().getOptions().get("org.apache.openejb.resource.jdbc.hot.deploy", false)) {
 
             final ObjectRecipe recipe = new ObjectRecipe(impl);
             recipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);

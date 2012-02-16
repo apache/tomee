@@ -29,7 +29,7 @@ public class ValidateModules implements DynamicDeployer {
 
     public AppModule deploy(AppModule appModule) throws OpenEJBException {
         final AppValidator validator;
-        if (!Boolean.parseBoolean(SystemInstance.get().getProperty(OPENEJB_CHECK_CLASSLOADER, "false"))) {
+        if (!SystemInstance.get().getOptions().get(OPENEJB_CHECK_CLASSLOADER, false)) {
             validator = new AppValidator();
         } else {
             validator = new AppValidator(new CheckClassLoading());

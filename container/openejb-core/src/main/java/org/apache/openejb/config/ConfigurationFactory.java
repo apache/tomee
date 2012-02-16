@@ -120,7 +120,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     static final String OFFLINE_PROPERTY = "openejb.offline";
 
     public ConfigurationFactory() {
-        this(Boolean.parseBoolean(SystemInstance.get().getProperty(ConfigurationFactory.OFFLINE_PROPERTY, "false")));
+        this(SystemInstance.get().getOptions().get(ConfigurationFactory.OFFLINE_PROPERTY, false));
     }
 
     public ConfigurationFactory(final boolean offline) {

@@ -207,7 +207,7 @@ public class CheckClassLoading extends ValidationBase {
         public String toScreen() {
             final String str = "both files " + file1 + '\''
                     + " and " + file2 + '\'';
-            if (Boolean.parseBoolean(SystemInstance.get().getProperty(OPENEJB_CHECK_CLASSLOADER_VERBOSE, "false"))) {
+            if (SystemInstance.get().getOptions().get(OPENEJB_CHECK_CLASSLOADER_VERBOSE, false)) {
                     return str + " contains files=" + files;
             }
             return str;

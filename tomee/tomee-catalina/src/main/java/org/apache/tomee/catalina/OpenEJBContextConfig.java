@@ -57,8 +57,8 @@ public class OpenEJBContextConfig extends ContextConfig {
         }
 
         @Override public int getMajorVersion() {
-            return Integer.parseInt(SystemInstance.get().getProperty(prefix + "." + OPENEJB_WEB_XML_MAJOR_VERSION_PROPERTY),
-                    Integer.parseInt(SystemInstance.get().getProperty(OPENEJB_WEB_XML_MAJOR_VERSION_PROPERTY, Integer.toString(super.getMajorVersion()))));
+            return SystemInstance.get().getOptions().get(prefix + "." + OPENEJB_WEB_XML_MAJOR_VERSION_PROPERTY,
+                SystemInstance.get().getOptions().get(OPENEJB_WEB_XML_MAJOR_VERSION_PROPERTY, super.getMajorVersion()));
         }
     }
 }
