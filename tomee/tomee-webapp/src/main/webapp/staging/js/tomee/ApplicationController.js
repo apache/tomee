@@ -61,10 +61,6 @@ TOMEE.ApplicationController = function () {
         //placeholder
     });
 
-    view.render(function () {
-        view.getHome().getMenu().selectMenu('test');
-    });
-
     //"test" -> data loaded event
     channel.bind('test_connection_exception', function (params) {
 
@@ -83,13 +79,12 @@ TOMEE.ApplicationController = function () {
 
     channel.bind('panel_show', function (params) {
         var panel = params.panel;
-        if (panel.loadData) {
-            panel.loadData();
-        }
+        panel.getMyModel().load();
     });
 
-    testPanelModel.load();
-    jndiPanelModel.load();
+    view.render(function () {
+        view.getHome().getMenu().selectMenu('test');
+    });
 
     return {
 

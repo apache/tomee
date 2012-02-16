@@ -84,6 +84,9 @@ TOMEE.ApplicationHomePanelTest = function (cfg) {
         getEl: function () {
             return elements.all;
         },
-        loadData: loadData
+        loadData: loadData,
+        getMyModel: function () {
+            return model;
+        }
     };
 };
