@@ -47,18 +47,6 @@
         <artifactId>maven-antrun-plugin</artifactId>
         <executions>
           <execution>
-            <id>create-empty-directory</id>
-            <phase>package</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <target>
-                <mkdir dir="${basedir}/target/classes/empty" />
-              </target>
-            </configuration>
-          </execution>
-          <execution>
             <id>cleanup-target</id>
             <phase>package</phase>
             <configuration>

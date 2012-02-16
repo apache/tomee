@@ -82,4 +82,4 @@ OPENEJB_JAVAAGENT_JAR="$OPENEJB_HOME/lib/openejb-javaagent-${version}.jar"
 ## Uncomment for easy debug setup
 # OPENEJB_OPTS="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"
 
-java $OPENEJB_OPTS "-javaagent:$OPENEJB_JAVAAGENT_JAR" -jar "$OPENEJB_CORE_JAR" "$@"
+java $OPENEJB_OPTS  "-Djava.util.logging.config.file=$OPENEJB_HOME/conf/logging.properties" "-javaagent:$OPENEJB_JAVAAGENT_JAR" -jar "$OPENEJB_CORE_JAR" "$@"
