@@ -16,15 +16,13 @@
  */
 package org.apache.openejb.config;
 
-import java.io.ByteArrayInputStream;
-import java.net.URL;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.Set;
-import java.util.TreeSet;
-import javax.xml.bind.JAXBElement;
-
+import org.apache.openejb.jee.ActivationConfig;
+import org.apache.openejb.jee.ActivationConfigProperty;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.EjbRef;
+import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.MessageDrivenBean;
+import org.apache.openejb.jee.jpa.AttributeOverride;
 import org.apache.openejb.jee.jpa.Attributes;
 import org.apache.openejb.jee.jpa.Basic;
 import org.apache.openejb.jee.jpa.Column;
@@ -41,35 +39,37 @@ import org.apache.openejb.jee.jpa.OneToMany;
 import org.apache.openejb.jee.jpa.OneToOne;
 import org.apache.openejb.jee.jpa.RelationField;
 import org.apache.openejb.jee.jpa.Table;
-import org.apache.openejb.jee.jpa.AttributeOverride;
+import org.apache.openejb.jee.oejb2.ActivationConfigPropertyType;
+import org.apache.openejb.jee.oejb2.ActivationConfigType;
+import org.apache.openejb.jee.oejb2.EjbLocalRefType;
+import org.apache.openejb.jee.oejb2.EjbRefType;
 import org.apache.openejb.jee.oejb2.EjbRelationType;
 import org.apache.openejb.jee.oejb2.EjbRelationshipRoleType;
 import org.apache.openejb.jee.oejb2.EntityBeanType;
-import org.apache.openejb.jee.oejb2.JaxbOpenejbJar2;
-import org.apache.openejb.jee.oejb2.OpenejbJarType;
-import org.apache.openejb.jee.oejb2.QueryType;
-import org.apache.openejb.jee.oejb2.MessageDrivenBeanType;
-import org.apache.openejb.jee.oejb2.ActivationConfigType;
-import org.apache.openejb.jee.oejb2.ActivationConfigPropertyType;
-import org.apache.openejb.jee.oejb2.EjbRefType;
-import org.apache.openejb.jee.oejb2.PatternType;
-import org.apache.openejb.jee.oejb2.EjbLocalRefType;
-import org.apache.openejb.jee.oejb2.Jndi;
-import org.apache.openejb.jee.oejb2.SessionBeanType;
-import org.apache.openejb.jee.oejb2.WebServiceSecurityType;
 import org.apache.openejb.jee.oejb2.GeronimoEjbJarType;
+import org.apache.openejb.jee.oejb2.JaxbOpenejbJar2;
+import org.apache.openejb.jee.oejb2.Jndi;
+import org.apache.openejb.jee.oejb2.MessageDrivenBeanType;
+import org.apache.openejb.jee.oejb2.OpenejbJarType;
+import org.apache.openejb.jee.oejb2.PatternType;
+import org.apache.openejb.jee.oejb2.QueryType;
 import org.apache.openejb.jee.oejb2.RpcBean;
+import org.apache.openejb.jee.oejb2.SessionBeanType;
 import org.apache.openejb.jee.oejb2.TssLinkType;
 import org.apache.openejb.jee.oejb2.WebServiceBindingType;
-import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.jee.oejb2.WebServiceSecurityType;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.EjbLink;
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.MessageDrivenBean;
-import org.apache.openejb.jee.EnterpriseBean;
-import org.apache.openejb.jee.ActivationConfigProperty;
-import org.apache.openejb.jee.ActivationConfig;
-import org.apache.openejb.jee.EjbRef;
+import org.apache.openejb.jee.oejb3.OpenejbJar;
+
+import javax.xml.bind.JAXBElement;
+import java.io.ByteArrayInputStream;
+import java.net.URL;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 public class OpenEjb2Conversion implements DynamicDeployer {
     public AppModule deploy(AppModule appModule) {
@@ -159,7 +159,10 @@ public class OpenEjb2Conversion implements DynamicDeployer {
 
                     deployment.getProperties().putAll(webServiceSecurityType.getProperties());
                 }
-                
+
+                if (sessionBean.getWebServiceAddress() != null) {
+                    deployment.getProperties().put("openejb.webservice.deployment.address", sessionBean.getWebServiceAddress());
+                }
             }
 
             deployment.getProperties().putAll(enterpriseBean.getProperties());

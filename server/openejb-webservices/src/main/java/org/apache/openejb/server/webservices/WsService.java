@@ -18,57 +18,57 @@
 package org.apache.openejb.server.webservices;
 
 import org.apache.openejb.BeanContext;
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.server.ServerService;
+import org.apache.openejb.Injection;
+import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.DeploymentListener;
+import org.apache.openejb.assembler.classic.EjbJarInfo;
+import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
+import org.apache.openejb.assembler.classic.PortInfo;
+import org.apache.openejb.assembler.classic.ServletInfo;
+import org.apache.openejb.assembler.classic.SingletonBeanInfo;
+import org.apache.openejb.assembler.classic.StatelessBeanInfo;
+import org.apache.openejb.assembler.classic.WebAppInfo;
+import org.apache.openejb.assembler.classic.WsBuilder;
+import org.apache.openejb.core.CoreContainerSystem;
+import org.apache.openejb.core.WebContext;
+import org.apache.openejb.core.webservices.PortAddressRegistry;
+import org.apache.openejb.core.webservices.PortAddressRegistryImpl;
+import org.apache.openejb.core.webservices.PortData;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.SelfManaging;
+import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.httpd.HttpListenerRegistry;
-import org.apache.openejb.assembler.classic.DeploymentListener;
-import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.AppInfo;
-import org.apache.openejb.assembler.classic.EjbJarInfo;
-import org.apache.openejb.assembler.classic.PortInfo;
-import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
-import org.apache.openejb.assembler.classic.StatelessBeanInfo;
-import org.apache.openejb.assembler.classic.WsBuilder;
-import org.apache.openejb.assembler.classic.WebAppInfo;
-import org.apache.openejb.assembler.classic.ServletInfo;
-import org.apache.openejb.assembler.classic.SingletonBeanInfo;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.core.webservices.PortAddressRegistryImpl;
-import org.apache.openejb.core.webservices.PortAddressRegistry;
-import org.apache.openejb.core.webservices.PortData;
-import org.apache.openejb.core.CoreContainerSystem;
-import org.apache.openejb.core.WebContext;
 import org.apache.openejb.server.httpd.util.HttpUtil;
 import org.apache.openejb.spi.ContainerSystem;
-import org.apache.openejb.Injection;
-import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.StringTemplate;
 
 import javax.naming.Context;
-import java.util.Properties;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.TreeMap;
-import java.util.List;
-import java.util.Collection;
-import java.util.Set;
-import java.util.HashSet;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.IOException;
-import java.io.File;
+import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.URL;
-import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeMap;
 
 public abstract class WsService implements ServerService, SelfManaging, DeploymentListener {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_WS, WsService.class);
     public static final String WS_ADDRESS_FORMAT = "openejb.wsAddress.format";
+    public static final String WS_FORCE_ADDRESS = "openejb.webservice.deployment.address";
     private StringTemplate wsAddressTemplate;
 
     private PortAddressRegistry portAddressRegistry;
@@ -400,6 +400,9 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
     }
 
     private String autoAssignWsLocation(EnterpriseBeanInfo bean, PortData port, Map<String, String> contextData, StringTemplate template) {
+        if (bean.properties.containsKey(WS_FORCE_ADDRESS)) {
+            return bean.properties.getProperty(WS_FORCE_ADDRESS);
+        }
         contextData.put("ejbDeploymentId", bean.ejbDeploymentId);
         contextData.put("ejbType", getEjbType(bean.type));
         contextData.put("ejbClass", bean.ejbClass);
