@@ -39,7 +39,7 @@ That done, let's annotate at class-level or method-level and have fun intercepti
 
     @Log
     @Stateful
-    public class BookForAShowOneInterceptorApplied implements Serializable {
+    public class BookShow implements Serializable {
         private static final long serialVersionUID = 6350400892234496909L;
         public List<String> getMoviesList() {
             List<String> moviesAvailable = new ArrayList<String>();
