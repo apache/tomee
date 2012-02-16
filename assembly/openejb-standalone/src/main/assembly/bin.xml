@@ -66,20 +66,31 @@
       <directory>${basedir}/src/main/conf</directory>
       <includes>
         <include>README.txt</include>
+        <include>logging.properties</include>
+        <include>system.properties</include>
       </includes>
       <outputDirectory>conf/</outputDirectory>
     </fileSet>
     <fileSet>
-      <directory>${basedir}/target/classes/empty</directory>
       <outputDirectory>logs/</outputDirectory>
+      <directory>${project.basedir}/src/main/assembly</directory>
+      <excludes>
+        <exclude>bin.xml</exclude>
+      </excludes>
     </fileSet>
     <fileSet>
-      <directory>${basedir}/target/classes/empty</directory>
       <outputDirectory>apps/</outputDirectory>
+      <directory>${project.basedir}/src/main/assembly</directory>
+      <excludes>
+        <exclude>bin.xml</exclude>
+      </excludes>
     </fileSet>
     <fileSet>
-      <directory>${basedir}/target/classes/empty</directory>
       <outputDirectory>data/</outputDirectory>
+      <directory>${project.basedir}/src/main/assembly</directory>
+      <excludes>
+        <exclude>bin.xml</exclude>
+      </excludes>
     </fileSet>
   </fileSets>
   <files>

@@ -69,7 +69,7 @@ set OPTIONS=-Dopenejb.home=%OPENEJB_HOME%
 
 REM echo %OPENEJB_OPTS% -javaagent:%OPENEJB_JAVAAGENT_JAR% -jar %OPENEJB_CORE_JAR% %*
 
-java %OPENEJB_OPTS% -javaagent:%OPENEJB_JAVAAGENT_JAR% -jar %OPENEJB_CORE_JAR% %*
+java %OPENEJB_OPTS% -Djava.util.logging.config.file=%OPENEJB_HOME%/conf/logging.properties -javaagent:%OPENEJB_JAVAAGENT_JAR% -jar %OPENEJB_CORE_JAR% %*
 
 :EOF
 ENDLOCAL
