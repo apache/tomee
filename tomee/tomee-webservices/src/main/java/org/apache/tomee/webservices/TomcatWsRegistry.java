@@ -287,7 +287,7 @@ public class TomcatWsRegistry implements WsRegistry {
                     contextPath = "/";
                 }
 
-                fullContextpath = new StringBuilder(contextPath)
+                fullContextpath = new StringBuilder(contextPath);
                 if (!WEBSERVICE_SUB_CONTEXT.equals("/")) {
                     fullContextpath.append(WEBSERVICE_SUB_CONTEXT);
                 }
