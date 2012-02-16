@@ -62,6 +62,9 @@ TOMEE.ApplicationHomePanelBody = function (cfg) {
         var currentPanel = myPanels[key];
         if (currentPanel) {
             myBody.append(currentPanel.getEl());
+            channel.send('panel_show', {
+                panel: currentPanel
+            });
         } else {
             var tpl = [
                 '<div class="row">',
