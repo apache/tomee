@@ -86,7 +86,7 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
     private final Map<String,String> servletAddresses = new TreeMap<String,String>();
 
     public WsService() {
-        String format = SystemInstance.get().getProperty(WS_ADDRESS_FORMAT, "/{ejbDeploymentId}");
+        String format = SystemInstance.get().getOptions().get(WS_ADDRESS_FORMAT, "/{ejbDeploymentId}");
         this.wsAddressTemplate = new StringTemplate(format);
     }
 

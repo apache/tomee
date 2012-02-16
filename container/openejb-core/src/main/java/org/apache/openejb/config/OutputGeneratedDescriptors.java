@@ -105,8 +105,8 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
 	}
 
     private File tempFile(String start, String end) throws IOException {
-        if (SystemInstance.get().getProperty(OUTPUT_DESCRIPTORS_FOLDER) != null) {
-            File tmp = new File(SystemInstance.get().getProperty(OUTPUT_DESCRIPTORS_FOLDER));
+        if (SystemInstance.get().getOptions().get(OUTPUT_DESCRIPTORS_FOLDER, (String) null) != null) {
+            File tmp = new File(SystemInstance.get().getOptions().get(OUTPUT_DESCRIPTORS_FOLDER, ""));
             if (!tmp.exists()) {
                 if (!tmp.mkdirs()) {
                     throw new IOException("can't create " + tmp.getAbsolutePath());

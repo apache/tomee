@@ -55,7 +55,7 @@ import static org.apache.tomee.catalina.BackportUtil.getServlet;
 import static org.apache.tomee.catalina.TomcatWebAppBuilder.IGNORE_CONTEXT;
 
 public class TomcatWsRegistry implements WsRegistry {
-    private static final String WEBSERVICE_SUB_CONTEXT = forceSlash(SystemInstance.get().getProperty("tomee.jaxws.subcontext", "/webservices"));
+    private static final String WEBSERVICE_SUB_CONTEXT = forceSlash(SystemInstance.get().getOptions().get("tomee.jaxws.subcontext", "/webservices"));
 
     private static final boolean WEBSERVICE_OLDCONTEXT_ACTIVE = SystemInstance.get().getOptions().get("tomee.jaxws.oldsubcontext", false);
 

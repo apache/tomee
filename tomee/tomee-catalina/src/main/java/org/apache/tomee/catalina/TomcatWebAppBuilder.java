@@ -802,7 +802,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         final Pipeline pipeline = standardContext.getPipeline();
         pipeline.addValve(new OpenEJBValve());
 
-        final String[] valves = SystemInstance.get().getProperty("tomee.valves", "").split(" *, *");
+        final String[] valves = SystemInstance.get().getOptions().get("tomee.valves", "").split(" *, *");
         for (String className : valves) {
             if ("".equals(className)) continue;
             try {

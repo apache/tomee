@@ -39,7 +39,7 @@ public class LocalMBeanServer implements MBeanServer {
     }
 
     private static boolean isJMXActive() {
-        return "true".equalsIgnoreCase(SystemInstance.get().getProperty(OPENEJB_JMX_ACTIVE, "true"));
+        return SystemInstance.get().getOptions().get(OPENEJB_JMX_ACTIVE, true);
     }
 
     private static MBeanServer s() {

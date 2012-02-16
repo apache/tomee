@@ -149,7 +149,7 @@ public class SimpleServiceManager extends ServiceManager {
 
     @Override
     public synchronized void start(boolean block) throws ServiceException {
-        boolean display = SystemInstance.get().getProperty("openejb.nobanner") == null;
+        boolean display = SystemInstance.get().getOptions().get("openejb.nobanner", (String) null) == null;
 
         if (display) {
             LOGGER.info("  ** Starting Services **");

@@ -63,7 +63,7 @@ public class Server implements Service {
 
         OpenEJB.init(props, new ServerFederation());
 
-        if (SystemInstance.get().getProperty("openejb.nobanner") == null) {
+        if (SystemInstance.get().getOptions().get("openejb.nobanner", (String) null) == null) {
             System.out.println("[init] OpenEJB Remote Server");
         }
 

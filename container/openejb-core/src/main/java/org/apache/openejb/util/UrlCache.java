@@ -16,6 +16,9 @@
  */
 package org.apache.openejb.util;
 
+import org.apache.openejb.loader.FileUtils;
+import org.apache.openejb.loader.SystemInstance;
+
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,9 +37,6 @@ import java.util.TreeMap;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
-
-import org.apache.openejb.loader.FileUtils;
-import org.apache.openejb.loader.SystemInstance;
 
 public class UrlCache {
 
@@ -58,7 +58,7 @@ public class UrlCache {
         if (value != null) {
             antiJarLocking = Boolean.valueOf(value);
         } else {
-            final boolean embedded = Boolean.parseBoolean( SystemInstance.get().getProperty("openejb.embedded", "false"));
+            final boolean embedded = SystemInstance.get().getOptions().get("openejb.embedded", false);
             // antiJarLocking is on by default when we are not embedded and running on windows
             antiJarLocking = !embedded && System.getProperty("os.name", "unknown").toLowerCase().startsWith("windows");
         }

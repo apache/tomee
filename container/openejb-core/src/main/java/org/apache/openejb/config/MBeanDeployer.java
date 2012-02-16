@@ -16,20 +16,6 @@
  */
 package org.apache.openejb.config;
 
-import java.lang.management.ManagementFactory;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import javax.management.MBean;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.api.internal.Internal;
@@ -41,6 +27,20 @@ import org.apache.openejb.util.AnnotationUtil;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.xbean.finder.ClassFinder;
+
+import javax.management.MBean;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class MBeanDeployer implements DynamicDeployer {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, MBeanDeployer.class);
@@ -129,7 +129,7 @@ public class MBeanDeployer implements DynamicDeployer {
 
         Map<Class<?>, ObjectName> mbeans = new HashMap<Class<?>, ObjectName>();
 
-        String listProp = SystemInstance.get().getProperty(OPENEJB_MBEAN_CLASSES_PROPERTY);
+        String listProp = SystemInstance.get().getOptions().get(OPENEJB_MBEAN_CLASSES_PROPERTY, (String) null);
         if (OPENEJB_MBEAN_FORCE_FINDER.equals(listProp)) { // the classfinder costs too much to be used by default
             logger.debug("loading mbeans using an annotation finder, you should maybe adjust {} system property",
                                             OPENEJB_MBEAN_CLASSES_PROPERTY);

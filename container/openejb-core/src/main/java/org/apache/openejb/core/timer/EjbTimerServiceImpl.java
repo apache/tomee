@@ -88,7 +88,7 @@ public class EjbTimerServiceImpl implements EjbTimerService {
         Scheduler scheduler = SystemInstance.get().getComponent(Scheduler.class);
         if (scheduler == null) {
             Properties properties = new Properties();
-            properties.put(StdSchedulerFactory.PROP_THREAD_POOL_CLASS, SystemInstance.get().hasProperty(QUARTZ_THREAD_POOL_ADAPTER) ? SystemInstance.get().getProperty(QUARTZ_THREAD_POOL_ADAPTER)
+            properties.put(StdSchedulerFactory.PROP_THREAD_POOL_CLASS, SystemInstance.get().hasProperty(QUARTZ_THREAD_POOL_ADAPTER) ? SystemInstance.get().getOptions().get(QUARTZ_THREAD_POOL_ADAPTER, "")
                     : DefaultTimerThreadPoolAdapter.class.getName());
             properties.put(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, "OpenEJB-TimerService-Scheduler");
             try {

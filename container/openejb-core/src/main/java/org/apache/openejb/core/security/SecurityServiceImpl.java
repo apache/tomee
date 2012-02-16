@@ -57,7 +57,7 @@ public class SecurityServiceImpl extends AbstractSecurityService {
     }
 
     protected static void installJaas() {
-        String path = SystemInstance.get().getProperty("java.security.auth.login.config");
+        String path = SystemInstance.get().getOptions().get("java.security.auth.login.config", (String) null);
 
         if (path != null) {
             return;

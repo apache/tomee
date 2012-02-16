@@ -45,7 +45,7 @@ import static org.apache.openejb.util.URLs.toFile;
  * @version $Rev$ $Date$
  */
 public class DeploymentsResolver implements DeploymentFilterable {
-    private static final String EXCLUDE_INCLUDE_ORDER = SystemInstance.get().getProperty("openejb.exclude-include.order", "include-exclude");
+    private static final String EXCLUDE_INCLUDE_ORDER = SystemInstance.get().getOptions().get("openejb.exclude-include.order", "include-exclude");
 
     private static final Logger logger = DeploymentLoader.logger;
 
