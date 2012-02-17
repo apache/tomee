@@ -18,7 +18,6 @@ package org.apache.openejb.client;
 
 import static org.apache.openejb.client.Exceptions.newIOException;
 
-import javax.ejb.ConcurrentAccessTimeoutException;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,13 +43,13 @@ public class Client {
 
     private static final ProtocolMetaData PROTOCOL_VERSION = new ProtocolMetaData("3.1");
 
-    private List<Class<? extends Throwable>> retryConditions = new CopyOnWriteArrayList();
+    private List<Class<? extends Throwable>> retryConditions = new CopyOnWriteArrayList<Class<? extends Throwable>>();
     private static Client client = new Client();
     private boolean retry = false;
 
     public Client() {
         String retryValue = System.getProperty("openejb.client.requestretry", getRetry() + "");
-        retry = new Boolean(retryValue);
+        retry = Boolean.valueOf(retryValue);
     }
 
     public static boolean addRetryCondition(Class<? extends Throwable> throwable) {
@@ -92,7 +91,7 @@ public class Client {
         /* Get a connection to server */
         /*----------------------------*/
 
-        Connection conn = null;
+        Connection conn;
         try {
             if (preferredServerURI != null) {
                 conn = ConnectionManager.getConnection(preferredServerURI);
@@ -206,7 +205,6 @@ public class Client {
             try {
 
                 in = conn.getInputStream();
-
 
             } catch (IOException e) {
                 throw newIOException("Cannot open input stream to server: ", e);
