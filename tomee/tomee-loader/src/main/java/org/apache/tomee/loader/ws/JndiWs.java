@@ -69,6 +69,7 @@ public class JndiWs {
             } else {
                 final JndiDTO dto = new JndiDTO();
                 dto.path = key;
+                dto.name = pair.getName();
                 dto.value = String.valueOf(obj);
                 jndi.add(dto);
             }

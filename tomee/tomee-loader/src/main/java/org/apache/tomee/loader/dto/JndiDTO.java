@@ -22,5 +22,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class JndiDTO {
 
     public String path;
+    public String name;
     public String value;
 }
