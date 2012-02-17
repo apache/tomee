@@ -30,7 +30,7 @@ import javax.enterprise.context.RequestScoped;
 public class ContextsImpl implements org.jboss.jsr299.tck.spi.Contexts<AbstractContext> {
 
     public AbstractContext getRequestContext() {
-        ContextFactory contextFactory = WebBeansContext.getInstance().getContextFactory();
+        ContextFactory contextFactory = WebBeansContext.currentInstance().getContextFactory();
         RequestContext ctx = (RequestContext) contextFactory.getStandardContext(RequestScoped.class);
 
         if (ctx == null) {
@@ -50,7 +50,7 @@ public class ContextsImpl implements org.jboss.jsr299.tck.spi.Contexts<AbstractC
     }
 
     public AbstractContext getDependentContext() {
-        ContextFactory contextFactory = WebBeansContext.getInstance().getContextFactory();
+        ContextFactory contextFactory = WebBeansContext.currentInstance().getContextFactory();
         return (AbstractContext) contextFactory.getStandardContext(ContextTypes.DEPENDENT);
     }
 
