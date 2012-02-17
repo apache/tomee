@@ -1,122 +1,30 @@
 {"jndi": [
     {
-        "module": "containerSystem",
-        "name": "java:global\/classpath.ear\/openejb-core-4.0.0-beta-3-SNAPSHOT\/openejb\/ConfigurationInfo",
+        "path": "java:global\/classpath.ear\/openejb-core-4.0.0-beta-3-SNAPSHOT\/openejb\/ConfigurationInfo",
         "value": "proxy=org.apache.openejb.assembler.classic.cmd.ConfigurationInfo;deployment=openejb\/ConfigurationInfo;pk=null"
     },
     {
-        "module": "containerSystem",
-        "name": "java:global\/classpath.ear\/openejb-core-4.0.0-beta-3-SNAPSHOT\/openejb\/Deployer!org.apache.openejb.assembler.Deployer",
+        "path": "java:global\/classpath.ear\/openejb-core-4.0.0-beta-3-SNAPSHOT\/openejb\/Deployer!org.apache.openejb.assembler.Deployer",
         "value": "proxy=org.apache.openejb.assembler.Deployer;deployment=openejb\/Deployer;pk=null"
     },
     {
-        "module": "containerSystem",
-        "name": "java:global\/classpath.ear\/openejb-core-4.0.0-beta-3-SNAPSHOT\/openejb\/ConfigurationInfo!org.apache.openejb.assembler.classic.cmd.ConfigurationInfo",
+        "path": "java:global\/classpath.ear\/openejb-core-4.0.0-beta-3-SNAPSHOT\/openejb\/ConfigurationInfo!org.apache.openejb.assembler.classic.cmd.ConfigurationInfo",
         "value": "proxy=org.apache.openejb.assembler.classic.cmd.ConfigurationInfo;deployment=openejb\/ConfigurationInfo;pk=null"
     },
     {
-        "module": "containerSystem",
-        "name": "java:global\/classpath.ear\/openejb-core-4.0.0-beta-3-SNAPSHOT\/openejb\/Deployer",
+        "path": "java:global\/classpath.ear\/openejb-core-4.0.0-beta-3-SNAPSHOT\/openejb\/Deployer",
         "value": "proxy=org.apache.openejb.assembler.Deployer;deployment=openejb\/Deployer;pk=null"
     },
     {
-        "module": "containerSystem",
-        "name": "java:global\/classpath.ear\/openejb-core-4.0.0-beta-3-SNAPSHOT\/MEJB",
+        "path": "java:global\/classpath.ear\/openejb-core-4.0.0-beta-3-SNAPSHOT\/MEJB",
         "value": "proxy=javax.management.j2ee.Management;deployment=MEJB;pk=null"
     },
     {
-        "module": "containerSystem",
-        "name": "java:global\/classpath.ear\/openejb-core-4.0.0-beta-3-SNAPSHOT\/MEJB!javax.management.j2ee.ManagementHome",
+        "path": "java:global\/classpath.ear\/openejb-core-4.0.0-beta-3-SNAPSHOT\/MEJB!javax.management.j2ee.ManagementHome",
         "value": "proxy=javax.management.j2ee.Management;deployment=MEJB;pk=null"
     },
     {
-        "module": "tomee",
-        "name": "java:comp\/UserTransaction",
+        "path": "java:comp\/UserTransaction",
         "value": "org.apache.openejb.core.CoreUserTransaction@53419df2"
-    },
-    {
-        "module": "tomee",
-        "name": "java:comp\/TransactionSynchronizationRegistry",
-        "value": "org.apache.openejb.core.TransactionSynchronizationRegistryWrapper@78e8a591"
-    },
-    {
-        "module": "tomee",
-        "name": "java:comp\/TransactionManager",
-        "value": "org.apache.geronimo.transaction.manager.GeronimoTransactionManager@71ce109a"
-    },
-    {
-        "module": "docs",
-        "name": "java:comp\/UserTransaction",
-        "value": "org.apache.openejb.core.CoreUserTransaction@53419df2"
-    },
-    {
-        "module": "docs",
-        "name": "java:comp\/TransactionSynchronizationRegistry",
-        "value": "org.apache.openejb.core.TransactionSynchronizationRegistryWrapper@78e8a591"
-    },
-    {
-        "module": "docs",
-        "name": "java:comp\/TransactionManager",
-        "value": "org.apache.geronimo.transaction.manager.GeronimoTransactionManager@71ce109a"
-    },
-    {
-        "module": "ROOT",
-        "name": "java:comp\/UserTransaction",
-        "value": "org.apache.openejb.core.CoreUserTransaction@53419df2"
-    },
-    {
-        "module": "ROOT",
-        "name": "java:comp\/TransactionSynchronizationRegistry",
-        "value": "org.apache.openejb.core.TransactionSynchronizationRegistryWrapper@78e8a591"
-    },
-    {
-        "module": "ROOT",
-        "name": "java:comp\/TransactionManager",
-        "value": "org.apache.geronimo.transaction.manager.GeronimoTransactionManager@71ce109a"
-    },
-    {
-        "module": "manager",
-        "name": "java:comp\/UserTransaction",
-        "value": "org.apache.openejb.core.CoreUserTransaction@53419df2"
-    },
-    {
-        "module": "manager",
-        "name": "java:comp\/TransactionSynchronizationRegistry",
-        "value": "org.apache.openejb.core.TransactionSynchronizationRegistryWrapper@78e8a591"
-    },
-    {
-        "module": "manager",
-        "name": "java:comp\/TransactionManager",
-        "value": "org.apache.geronimo.transaction.manager.GeronimoTransactionManager@71ce109a"
-    },
-    {
-        "module": "classpath.ear",
-        "name": "java:comp\/UserTransaction",
-        "value": "org.apache.openejb.core.CoreUserTransaction@53419df2"
-    },
-    {
-        "module": "classpath.ear",
-        "name": "java:comp\/TransactionSynchronizationRegistry",
-        "value": "org.apache.openejb.core.TransactionSynchronizationRegistryWrapper@78e8a591"
-    },
-    {
-        "module": "classpath.ear",
-        "name": "java:comp\/TransactionManager",
-        "value": "org.apache.geronimo.transaction.manager.GeronimoTransactionManager@71ce109a"
-    },
-    {
-        "module": "host-manager",
-        "name": "java:comp\/UserTransaction",
-        "value": "org.apache.openejb.core.CoreUserTransaction@53419df2"
-    },
-    {
-        "module": "host-manager",
-        "name": "java:comp\/TransactionSynchronizationRegistry",
-        "value": "org.apache.openejb.core.TransactionSynchronizationRegistryWrapper@78e8a591"
-    },
-    {
-        "module": "host-manager",
-        "name": "java:comp\/TransactionManager",
-        "value": "org.apache.geronimo.transaction.manager.GeronimoTransactionManager@71ce109a"
     }
 ]}

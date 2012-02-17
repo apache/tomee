@@ -17,7 +17,6 @@
 package org.apache.tomee.loader.ws;
 
 
-import org.apache.openejb.AppContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.tomee.loader.dto.JndiDTO;
@@ -39,26 +38,14 @@ public class JndiWs {
     @Path("/names")
     @GET
     public List<JndiDTO> get() throws NamingException {
-        List<JndiDTO> result = new ArrayList<JndiDTO>();
-        List<Object> objects = new ArrayList<Object>();
-
-
+        final List<JndiDTO> result = new ArrayList<JndiDTO>();
         final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-
-        mountJndiList(result, containerSystem.getJNDIContext(), "containerSystem", "java:global");
-
-        List<AppContext> appCtxs = containerSystem.getAppContexts();
-        for (AppContext appContext : appCtxs) {
-            final Context ctx = appContext.getAppJndiContext();
-            mountJndiList(result, ctx, appContext.getId(), "java:comp");
-            mountJndiList(result, ctx, appContext.getId(), "java:app");
-        }
+        mountJndiList(result, containerSystem.getJNDIContext(), "java:global");
 
         return result;
     }
 
-
-    private void mountJndiList(List<JndiDTO> jndi, Context context, String id, String root) throws NamingException {
+    private void mountJndiList(List<JndiDTO> jndi, Context context, String root) throws NamingException {
         final NamingEnumeration namingEnumeration;
         try {
             namingEnumeration = context.list(root);
@@ -78,11 +65,10 @@ public class JndiWs {
             }
 
             if (Context.class.isInstance(obj)) {
-                mountJndiList(jndi, Context.class.cast(obj), id, key);
+                mountJndiList(jndi, Context.class.cast(obj), key);
             } else {
-                JndiDTO dto = new JndiDTO();
-                dto.module = id;
-                dto.name = key;
+                final JndiDTO dto = new JndiDTO();
+                dto.path = key;
                 dto.value = String.valueOf(obj);
                 jndi.add(dto);
             }

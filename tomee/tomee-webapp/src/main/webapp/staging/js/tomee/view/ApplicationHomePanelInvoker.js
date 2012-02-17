@@ -23,7 +23,7 @@ TOMEE.ApplicationHomePanelInvoker = function (cfg) {
 
     var elements = (function () {
         var tpl = [
-            '<div class="row">',
+            '<div class="well">',
             '<legend>' + TOMEE.ApplicationI18N.get('app.home.menu.tools.ejb.title') + '</legend>',
             '</div>'
         ];

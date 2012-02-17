@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-TOMEE.ApplicationToolbar = function (cfg) {
+TOMEE.ApplicationFooter = function (cfg) {
     "use strict";
 
     return {

@@ -24,7 +24,7 @@ TOMEE.ApplicationI18N = (function () {
         'application.footer': 'Copyright © 2011 The Apache Software Foundation, Licensed under the Apache License, Version 2.0. Apache and the Apache feather logo are trademarks of The Apache Software Foundation.',
 
         'app.toolbar.home': 'Home',
-        'app.toolbar.log': 'Log',
+        'app.toolbar.help': 'Help',
 
         'app.home.menu.unknown': 'Unknown',
 
