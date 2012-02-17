@@ -25,13 +25,12 @@ TOMEE.ApplicationHomePanelJndi = function (cfg) {
     var elements = (function () {
         var tbodyUid = TOMEE.Sequence.next();
         var tpl = [
-            '<div class="row">',
+            '<div class="well" style="overflow:auto">',
             '<legend>' + TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.title') + '</legend>',
 
             '<table class="table table-striped table-bordered table-condensed">',
             '    <thead>',
             '        <tr>',
-            '            <th>' + TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.module') + '</th>',
             '            <th>' + TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.path') + '</th>',
             '            <th>' + TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.resource') + '</th>',
             '        </tr>',
@@ -58,8 +57,7 @@ TOMEE.ApplicationHomePanelJndi = function (cfg) {
     var addRow = function (bean) {
         var row = [
             '        <tr>',
-            '            <td>' + bean.module + '</td>',
-            '            <td>' + bean.name + '</td>',
+            '            <td>' + bean.path + '</td>',
             '            <td>' + bean.value + '</td>',
             '        </tr>'
         ].join('');

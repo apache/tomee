@@ -25,13 +25,11 @@ TOMEE.ApplicationHomePanelTest = function (cfg) {
     var elements = (function () {
         var tbodyUid = TOMEE.Sequence.next();
         var tpl = [
-            '<div class="row">',
+            '<div class="well">',
             '<legend>' + TOMEE.ApplicationI18N.get('app.home.menu.setup.test.title') + '</legend>',
-
             '<table class="table table-striped table-bordered table-condensed">',
             '    <thead>',
             '        <tr>',
-            '            <th>#</th>',
             '            <th>' + TOMEE.ApplicationI18N.get('app.home.menu.setup.test.testname') + '</th>',
             '            <th>' + TOMEE.ApplicationI18N.get('app.home.menu.setup.test.testsatus') + '</th>',
             '        </tr>',
@@ -58,7 +56,6 @@ TOMEE.ApplicationHomePanelTest = function (cfg) {
     var addRow = function (index, bean) {
         var row = [
             '        <tr>',
-            '            <td>' + index + '</td>',
             '            <td>' + TOMEE.ApplicationI18N.get('app.home.menu.setup.test.testname.key.' + bean['key']) + '</td>',
             '            <td>' + bean['success'] + '</td>',
             '        </tr>'

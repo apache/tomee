@@ -21,7 +21,7 @@ TOMEE.ApplicationHomePanelBody = function (cfg) {
 
     var channel = cfg.channel;
 
-    var myBody = $('<div class="span9"/>');
+    var myBody = $('<div class="span6"/>');
 
     var currentPanel = null;
     var myPanels = {
@@ -67,7 +67,7 @@ TOMEE.ApplicationHomePanelBody = function (cfg) {
             });
         } else {
             var tpl = [
-                '<div class="row">',
+                '<div class="well">',
                 '<legend>' + TOMEE.ApplicationI18N.get('app.home.menu.unknown') + '</legend>',
                 '</div>'
             ];
