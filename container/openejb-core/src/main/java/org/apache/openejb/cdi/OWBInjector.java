@@ -45,6 +45,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * It seems it is the same class than the OWB one??
+ *
  * @version $Rev$ $Date$
  */
 public final class OWBInjector {

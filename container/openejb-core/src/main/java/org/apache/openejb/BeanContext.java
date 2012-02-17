@@ -20,7 +20,6 @@ import org.apache.openejb.assembler.classic.ProxyInterfaceResolver;
 import org.apache.openejb.cdi.CdiEjbBean;
 import org.apache.openejb.cdi.ConstructorInjectionBean;
 import org.apache.openejb.cdi.CurrentCreationalContext;
-import org.apache.openejb.cdi.OWBInjector;
 import org.apache.openejb.core.ExceptionType;
 import org.apache.openejb.core.InstanceContext;
 import org.apache.openejb.core.Operation;
@@ -47,6 +46,7 @@ import org.apache.webbeans.component.InjectionTargetBean;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.context.creational.CreationalContextImpl;
 import org.apache.webbeans.inject.AbstractInjectable;
+import org.apache.webbeans.inject.OWBInjector;
 import org.apache.xbean.recipe.ConstructionException;
 
 import javax.ejb.EJBHome;
