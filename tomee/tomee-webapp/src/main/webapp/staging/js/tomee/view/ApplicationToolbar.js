@@ -63,7 +63,7 @@ TOMEE.ApplicationToolbar = function (cfg) {
             title: TOMEE.ApplicationI18N.get('app.toolbar.help'),
             callback: function () {
                 channel.send('toolbar_button_executed', {
-                    key: 'log'
+                    key: 'help'
                 });
             }
         }
