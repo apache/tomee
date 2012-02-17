@@ -62,13 +62,13 @@ public final class OWBInjector {
     private final WebBeansContext webBeansContext;
 
     public OWBInjector() {
-        this(WebBeansContext.getInstance());
+        this(WebBeansContext.currentInstance());
     }
 
     /**
      * Creates a new instance
      *
-     * @param webBeansContext
+     * @param webBeansContext the OWB context
      */
     public OWBInjector(WebBeansContext webBeansContext) {
         //No operation
@@ -97,57 +97,50 @@ public final class OWBInjector {
     @SuppressWarnings("unchecked")
     public OWBInjector inject(Object javaEeComponentInstance, CreationalContext<?> creationalContext) throws Exception {
         BeanManagerImpl beanManager = webBeansContext.getBeanManagerImpl();
-        try {
-            this.javaEEInstance = javaEeComponentInstance;
-            if (creationalContext == null) {
-                this.ownerCreationalContext = (CreationalContextImpl<?>) beanManager.createCreationalContext(null);
-            }
+        this.javaEEInstance = javaEeComponentInstance;
+        if (creationalContext == null) {
+            this.ownerCreationalContext = (CreationalContextImpl<?>) beanManager.createCreationalContext(null);
+        }
 
-            Class<Object> injectableComponentClass = (Class<Object>) javaEeComponentInstance.getClass();
+        Class<Object> injectableComponentClass = (Class<Object>) javaEeComponentInstance.getClass();
 
-            //Look for custom InjectionTarget
-            InjectionTargetWrapper<Object> wrapper = beanManager.getInjectionTargetWrapper(injectableComponentClass);
-            if (wrapper != null) {
-                wrapper.inject(javaEeComponentInstance, (CreationalContext<Object>) this.ownerCreationalContext);
-                return this;
-            }
+        //Look for custom InjectionTarget
+        InjectionTargetWrapper<Object> wrapper = beanManager.getInjectionTargetWrapper(injectableComponentClass);
+        if (wrapper != null) {
+            wrapper.inject(javaEeComponentInstance, (CreationalContext<Object>) this.ownerCreationalContext);
+            return this;
+        }
 
-            AnnotatedType<Object> annotated = (AnnotatedType<Object>) beanManager.createAnnotatedType(injectableComponentClass);
-            Set<InjectionPoint> injectionPoints = WebBeansAnnotatedTypeUtil.getJavaEeComponentInstanceInjectionPoints(webBeansContext, annotated);
-            if (injectionPoints != null && injectionPoints.size() > 0) {
-                for (InjectionPoint injectionPoint : injectionPoints) {
-                    if (injectionPoint.getMember() instanceof Method) {
-                        Method method = (Method) injectionPoint.getMember();
+        AnnotatedType<Object> annotated = beanManager.createAnnotatedType(injectableComponentClass);
+        Set<InjectionPoint> injectionPoints = WebBeansAnnotatedTypeUtil.getJavaEeComponentInstanceInjectionPoints(webBeansContext, annotated);
+        if (injectionPoints != null && injectionPoints.size() > 0) {
+            for (InjectionPoint injectionPoint : injectionPoints) {
+                if (injectionPoint.getMember() instanceof Method) {
+                    Method method = (Method) injectionPoint.getMember();
 
-                        //Get injected method arguments
-                        List<Object> parameters = getInjectedMethodParameterReferences(injectionPoint, beanManager, injectionPoints);
+                    //Get injected method arguments
+                    List<Object> parameters = getInjectedMethodParameterReferences(injectionPoint, beanManager, injectionPoints);
 
-                        //Set method
-                        ClassUtil.callInstanceMethod(method, javaEeComponentInstance, parameters.toArray(new Object[parameters.size()]));
+                    //Set method
+                    ClassUtil.callInstanceMethod(method, javaEeComponentInstance, parameters.toArray(new Object[parameters.size()]));
 
-                    } else if (injectionPoint.getMember() instanceof Field) {
-                        //Get injected object ref
-                        Object object = getInjectedObjectReference(injectionPoint, beanManager);
+                } else if (injectionPoint.getMember() instanceof Field) {
+                    //Get injected object ref
+                    Object object = getInjectedObjectReference(injectionPoint, beanManager);
 
-                        //Set field
-                        Field field = (Field) injectionPoint.getMember();
-                        
-                        try {
-                        	field.setAccessible(true);
-                        	field.set(javaEeComponentInstance, object);
-                        } catch (Exception e) {
-                        	throw new WebBeansException(e);
-                        }
+                    //Set field
+                    Field field = (Field) injectionPoint.getMember();
+
+                    try {
+                        field.setAccessible(true);
+                        field.set(javaEeComponentInstance, object);
+                    } catch (Exception e) {
+                        throw new WebBeansException(e);
                     }
                 }
-
-                return this;
             }
 
-
-        }
-        catch (Exception e) {
-            throw e;
+            return this;
         }
 
         return null;
@@ -182,12 +175,12 @@ public final class OWBInjector {
      * @return injected reference
      */
     private Object getInjectedObjectReference(InjectionPoint injectionPoint, BeanManagerImpl beanManager) {
-        Object object = null;
+        Object object;
 
         //Injected contextual beam
         InjectionResolver injectionResolver = beanManager.getInjectionResolver();
 
-        Bean<?> injectedBean = (Bean<?>) injectionResolver.getInjectionPointBean(injectionPoint);
+        Bean<?> injectedBean = injectionResolver.getInjectionPointBean(injectionPoint);
 
         if (isInstanceProviderInjection(injectionPoint)) {
             InstanceBean.local.set(injectionPoint);
@@ -195,7 +188,7 @@ public final class OWBInjector {
             EventBean.local.set(injectionPoint);
         } else if (WebBeansUtil.isDependent(injectedBean)) {
             if (!InjectionPoint.class.isAssignableFrom(ClassUtil.getClass(injectionPoint.getType()))) {
-                InjectionPointBean.local.set(injectionPoint);
+                InjectionPointBean.setThreadLocal(injectionPoint);
             }
         }
 
