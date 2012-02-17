@@ -52,6 +52,7 @@ TOMEE.ApplicationToolbar = function (cfg) {
 
     var buttons = [
         {
+            key: 'home',
             title: TOMEE.ApplicationI18N.get('app.toolbar.home'),
             callback: function () {
                 channel.send('toolbar_button_executed', {
@@ -60,6 +61,7 @@ TOMEE.ApplicationToolbar = function (cfg) {
             }
         },
         {
+            key: 'help',
             title: TOMEE.ApplicationI18N.get('app.toolbar.help'),
             callback: function () {
                 channel.send('toolbar_button_executed', {
@@ -69,6 +71,16 @@ TOMEE.ApplicationToolbar = function (cfg) {
         }
     ];
 
+    var buttonsMap = {};
+
+    var clickButtonCallback = function (mappedButton) {
+        var allLinks = elements.list.find('li');
+        allLinks.removeClass('active');
+
+        mappedButton.li.addClass('active');
+        mappedButton.button.callback();
+    };
+
     $.each(buttons, function (i, button) {
         var liUid = TOMEE.Sequence.next();
         var anchorUid = TOMEE.Sequence.next();
@@ -77,19 +89,25 @@ TOMEE.ApplicationToolbar = function (cfg) {
         var li = elements.list.find('#' + liUid);
         var anchor = elements.list.find('#' + anchorUid);
 
+        buttonsMap[button.key] = {
+            button: button,
+            li: li,
+            anchor: anchor
+        };
+
         anchor.on("click", function () {
-            var allLinks = elements.list.find('li');
-            allLinks.removeClass('active');
-
-            li.addClass('active');
-
-            button.callback();
+            clickButtonCallback(buttonsMap[button.key]);
         });
     });
+
+    var clickButton = function (key) {
+        clickButtonCallback(buttonsMap[key]);
+    };
 
     return {
         getEl: function () {
             return elements.all;
-        }
+        },
+        clickButton: clickButton
     };
 };

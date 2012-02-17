@@ -26,8 +26,6 @@ TOMEE.ApplicationHomePanel = function (cfg) {
         var tpl = [
             '<div class="container-fluid">',
             '<div id="' + divBodyUid + '" class="row-fluid"/>',
-            '<hr>',
-            '<footer><p>' + TOMEE.ApplicationI18N.get('application.footer') + '</p></footer>',
             '</div>'
         ];
 
