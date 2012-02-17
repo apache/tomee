@@ -63,6 +63,9 @@
       <includes>
         <include>**/*.jsp</include>
         <include>**/*.css</include>
+        <include>**/*.css</include>
+        <include>**/*.png</include>
+        <include>**/*.js</include>
         <include>**/*.html</include>
         <include>images/*.gif</include>
         <include>lib/*.jar</include>

@@ -38,7 +38,10 @@ TOMEE.TestModel = function (cfg) {
 
         return TOMEE.ApplicationModel({
             methodType: 'GET',
-            url: 'js/tomee/mock/test.json',
+
+            url: '/tomee/ws/test/test',
+            //url: 'js/tomee/mock/test.json',
+
             channel: myChannel,
             prepareDataMethod: function (data) {
                 myData = data;
@@ -47,7 +50,7 @@ TOMEE.TestModel = function (cfg) {
     })();
 
     var iterateTestBeans = function (callback) {
-        $.each(myData.tests, function (i, bean) {
+        $.each(myData.test, function (i, bean) {
             callback(bean);
         });
     };

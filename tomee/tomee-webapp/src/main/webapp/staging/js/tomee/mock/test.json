@@ -1,5 +1,5 @@
 {
-    "tests": [
+    "test": [
         {
             "key": "homeSet",
             "success": true
