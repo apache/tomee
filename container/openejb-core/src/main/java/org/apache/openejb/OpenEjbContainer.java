@@ -185,7 +185,7 @@ public class OpenEjbContainer extends EJBContainer {
 
     public static class NoInjectionMetaDataException extends IllegalStateException {
         public NoInjectionMetaDataException(String s) {
-            super(s);
+            super(String.format("%s : Annotate the class with @%s so it can be discovered in the application scanning process", s, javax.annotation.ManagedBean.class.getName()));
         }
     }
 
