@@ -16,51 +16,31 @@
  *  limitations under the License.
  */
 
-TOMEE.ApplicationView = function (cfg) {
+TOMEE.ApplicationHelpPanel = function (cfg) {
     "use strict";
 
     var channel = cfg.channel;
 
-    var appToolbar = TOMEE.ApplicationToolbar(cfg);
-    var home = TOMEE.ApplicationHomePanel(cfg);
-    var help = TOMEE.ApplicationHelpPanel(cfg);
-
     var elements = (function () {
-        var containerUid = TOMEE.Sequence.next();
+        var divBodyUid = TOMEE.Sequence.next();
         var tpl = [
             '<div class="container-fluid">',
-            '<div id="' + containerUid + '" class="row-fluid"/>',
-            '<hr>',
-            '<footer><p>' + TOMEE.ApplicationI18N.get('application.footer') + '</p></footer>',
+            '<div id="' + divBodyUid + '" class="row-fluid"/>',
             '</div>'
         ];
 
         //create the element
         var all = $(tpl.join(''));
-        var body = all.find("#" + containerUid);
+        var body = all.find("#" + divBodyUid);
         return {
             all: all,
             body: body
         };
     })();
 
-    var render = function () {
-        document.title = TOMEE.ApplicationI18N.get('application.name');
-
-        $('body').append(appToolbar.getEl());
-        $('body').append(elements.all);
-        elements.body.append(home.getEl());
-
-        channel.send('application_view_rendered', {});
-    };
-
     return {
-        render: render,
-        getHome: function () {
-            return home;
-        },
-        getToolbar: function () {
-            return appToolbar;
+        getEl: function () {
+            return elements.all;
         }
     };
 };

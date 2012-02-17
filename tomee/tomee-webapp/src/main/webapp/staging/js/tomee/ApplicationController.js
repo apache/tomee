@@ -44,8 +44,10 @@ TOMEE.ApplicationController = function () {
 
     //The user clicked in one of the buttons in the application toolbar
     channel.bind('toolbar_button_executed', function (params) {
-        var a = 0;
-
+        var key = params.key;
+        if(key === 'home') {
+            view.getHome().getMenu().selectMenu('test');
+        }
     });
 
     //The user clicked in one of the items in the home panel
@@ -79,12 +81,17 @@ TOMEE.ApplicationController = function () {
 
     channel.bind('panel_show', function (params) {
         var panel = params.panel;
-        panel.getMyModel().load();
+        if (panel.getMyModel) {
+            var myModel = panel.getMyModel();
+            myModel.load();
+        }
     });
 
-    view.render(function () {
-        view.getHome().getMenu().selectMenu('test');
+    channel.bind('application_view_rendered', function (params) {
+        view.getToolbar().clickButton('home');
     });
+
+    view.render();
 
     return {
 
