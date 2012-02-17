@@ -31,7 +31,7 @@ TOMEE.ApplicationHomePanelJndi = function (cfg) {
             '<table class="table table-striped table-bordered table-condensed">',
             '    <thead>',
             '        <tr>',
-            '            <th>' + TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.path') + '</th>',
+            '            <th>' + TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.name') + '</th>',
             '            <th>' + TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.resource') + '</th>',
             '        </tr>',
             '    </thead>',
@@ -57,7 +57,7 @@ TOMEE.ApplicationHomePanelJndi = function (cfg) {
     var addRow = function (bean) {
         var row = [
             '        <tr>',
-            '            <td>' + bean.path + '</td>',
+            '            <td>' + bean.name + '</td>',
             '            <td>' + bean.value + '</td>',
             '        </tr>'
         ].join('');
