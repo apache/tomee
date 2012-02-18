@@ -22,8 +22,8 @@
 <handler-chains xmlns="http://java.sun.com/xml/ns/javaee">
   <handler-chain>
     <handler>
-      <handler-name>org.superbiz.handler.DummyInterceptor</handler-name>
-      <handler-class>org.superbiz.handler.DummyInterceptor</handler-class>
+      <handler-name>org.superbiz.calculator.ws.handler.DummyInterceptor</handler-name>
+      <handler-class>org.superbiz.calculator.ws.handler.DummyInterceptor</handler-class>
     </handler>
   </handler-chain>
 </handler-chains>

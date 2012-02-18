@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.superbiz.handler;
+package org.superbiz.calculator.ws.handler;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.handler.MessageContext;

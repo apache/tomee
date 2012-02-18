@@ -14,13 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.superbiz.calculator;
+package org.superbiz.calculator.ws;
 
 import junit.framework.TestCase;
 import org.apache.openejb.api.LocalClient;
+import org.superbiz.calculator.ws.CalculatorLocal;
+import org.superbiz.calculator.ws.CalculatorWs;
 
+import javax.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Holder;
 import javax.xml.ws.Service;
@@ -37,19 +39,18 @@ public class CalculatorTest extends TestCase {
     )
     private CalculatorWs calculatorWs;
 
-    //START SNIPPET: setup	
-    private InitialContext initialContext;
-
     // date used to invoke a web service with INOUT parameters
     private static final Date date = new Date();
+    private Context context;
 
     protected void setUp() throws Exception {
+
         Properties properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
         properties.setProperty("openejb.embedded.remotable", "true");
 
-        initialContext = new InitialContext(properties);
-        initialContext.bind("inject", this);
+        context = EJBContainer.createEJBContainer(properties).getContext();
+        context.bind("inject", this);
 
     }
     //END SNIPPET: setup    
@@ -91,7 +92,7 @@ public class CalculatorTest extends TestCase {
     }
 
     public void testCalculatorViaRemoteInterface() throws Exception {
-        CalculatorLocal calc = (CalculatorLocal) initialContext.lookup("CalculatorImplLocal");
+        CalculatorLocal calc = (CalculatorLocal) context.lookup("java:global/simple-webservice/CalculatorImpl");
         assertEquals(10, calc.sum(4, 6));
         assertEquals(12, calc.multiply(3, 4));
 

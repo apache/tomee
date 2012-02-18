@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.superbiz.calculator;
+package org.superbiz.calculator.ws;
 
 import javax.ejb.Stateless;
 import javax.jws.HandlerChain;
@@ -38,7 +38,7 @@ import java.util.Date;
         portName = "CalculatorPort",
         serviceName = "CalculatorWsService",
         targetNamespace = "http://superbiz.org/wsdl",
-        endpointInterface = "org.superbiz.calculator.CalculatorWs")
+        endpointInterface = "org.superbiz.calculator.ws.CalculatorWs")
 @HandlerChain(file = "handler.xml")
 public class CalculatorImpl implements CalculatorWs, CalculatorLocal {
 
