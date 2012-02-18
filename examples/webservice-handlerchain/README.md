@@ -32,7 +32,7 @@ First we'll start with our plain `@WebService` bean, called `Calculator`, which 
 
 Here we see `@HandlerChain` pointing to a file called `handlers.xml`.  This file could be called anything, but it must be in the same jar and java package as our `Calculator` component.
 
-## The handlers.xml file
+## The <handler-chains> file
 
 Our `Calculator` service is in the package `org.superbiz.calculator.wsh`, which means our handler chain xml file must be at `org/superbiz/calculator/wsh/handlers.xml` in our application's classpath or the file will not be found and no handlers will be used.
 
@@ -61,7 +61,7 @@ The order as you might suspect is:
  - `Inflate`
  - `Increment`
 
-## The handler implementation
+## The SOAPHandler implementation
 
 Our `Inflate` handler has the job of monitoring *responses* to the `sum` and `multiply` operations and making them 1000 times better.  Manipulation of the message is done by walking the `SOAPBody` and editing the nodes.  The `handleMessage` method is invoked for both requests and responses, so it is important to check the `SOAPBody` before attempting to naviage the nodes.
 
