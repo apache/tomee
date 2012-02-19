@@ -40,12 +40,12 @@ TOMEE.ApplicationChannel = function (cfg) {
     var bind = function (messageKey, callback) {
         //avoiding "NullPointerException"
         if (!listeners[messageKey]) {
-            listeners[messageKey] = [];
+            listeners[messageKey] = $.Callbacks();
         }
 
         var myListeners = listeners[messageKey];
-        if (myListeners.indexOf(callback) < 0) {
-            myListeners.push(callback);
+        if (!myListeners.has(callback)) {
+            myListeners.add(callback);
         }
     };
 
@@ -61,10 +61,7 @@ TOMEE.ApplicationChannel = function (cfg) {
         }
 
         var myListeners = listeners[messageKey];
-        var index = myListeners.indexOf(callback);
-        if (index >= 0) {
-            myListeners.splice(index, 1);
-        }
+        myListeners.remove(callback);
     };
 
     /**
@@ -86,14 +83,8 @@ TOMEE.ApplicationChannel = function (cfg) {
             safeParamsObj = {};
         }
 
-        TOMEE.log.info("Message " + messageKey + " * " + myListeners.length);
-
-        for (var i = 0; i < myListeners.length; i++) {
-            (function (callback) {
-                callback(safeParamsObj);
-
-            })(myListeners[i]);
-        }
+        TOMEE.log.info("Message " + messageKey + ".");
+        myListeners.fire(safeParamsObj);
     };
 
     return {
