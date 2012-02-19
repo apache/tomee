@@ -61,6 +61,24 @@ TOMEE.ApplicationToolbar = function (cfg) {
             }
         },
         {
+            key: 'jndi',
+            title: TOMEE.ApplicationI18N.get('app.toolbar.jndi'),
+            callback: function () {
+                channel.send('toolbar_button_executed', {
+                    key: 'jndi'
+                });
+            }
+        },
+        {
+            key: 'test',
+            title: TOMEE.ApplicationI18N.get('app.toolbar.test'),
+            callback: function () {
+                channel.send('toolbar_button_executed', {
+                    key: 'test'
+                });
+            }
+        },
+        {
             key: 'help',
             title: TOMEE.ApplicationI18N.get('app.toolbar.help'),
             callback: function () {

@@ -24,6 +24,8 @@ TOMEE.ApplicationI18N = (function () {
         'application.footer': 'Copyright © 2011 The Apache Software Foundation, Licensed under the Apache License, Version 2.0. Apache and the Apache feather logo are trademarks of The Apache Software Foundation.',
 
         'app.toolbar.home': 'Home',
+        'app.toolbar.jndi': 'Jndi',
+        'app.toolbar.test': 'Test',
         'app.toolbar.help': 'Help',
 
         'app.home.menu.unknown': 'Unknown',
@@ -53,14 +55,6 @@ TOMEE.ApplicationI18N = (function () {
         'app.home.menu.tools.jndi.name': 'Name',
         'app.home.menu.tools.jndi.resource': 'Resource',
 
-        'app.home.menu.tools.class': 'Class Viewer',
-        'app.home.menu.tools.class.title': 'OpenEJB Class Viewer',
-
-        'app.home.menu.tools.ejb': 'EJB Viewer',
-        'app.home.menu.tools.ejb.title': 'OpenEJB Enterprise JavaBeans Viewer',
-
-        'app.home.menu.tools.obj': 'Object Invoker',
-        'app.home.menu.tools.obj.title': 'OpenEJB Object Invoker',
 
         'dummy': 'dummy'
     };
