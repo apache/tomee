@@ -53,7 +53,7 @@ public class AttachmentTest extends TestCase {
     //START SNIPPET: webservice
     public void testAttachmentViaWsInterface() throws Exception {
         Service service = Service.create(
-                new URL("http://127.0.0.1:4204/webservice-attachements/AttachmentImpl?wsdl"),
+                new URL("http://127.0.0.1:4204/webservice-attachments/AttachmentImpl?wsdl"),
                 new QName("http://superbiz.org/wsdl", "AttachmentWsService"));
         assertNotNull(service);
 
