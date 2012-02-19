@@ -200,3 +200,153 @@ Simply run `mvn clean install` and you should see output similar to the followin
 
     Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
 
+## Inspecting the messages
+
+The above would generate the following messages.
+
+### Calculator wsdl
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                      name="CalculatorService" targetNamespace="http://superbiz.org/wsdl"
+                      xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                      xmlns:tns="http://superbiz.org/wsdl" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <wsdl:types>
+        <xsd:schema attributeFormDefault="unqualified" elementFormDefault="unqualified"
+                    targetNamespace="http://superbiz.org/wsdl" xmlns:tns="http://superbiz.org/wsdl"
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+          <xsd:element name="multiply" type="tns:multiply"/>
+          <xsd:complexType name="multiply">
+            <xsd:sequence>
+              <xsd:element name="arg0" type="xsd:int"/>
+              <xsd:element name="arg1" type="xsd:int"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:element name="multiplyResponse" type="tns:multiplyResponse"/>
+          <xsd:complexType name="multiplyResponse">
+            <xsd:sequence>
+              <xsd:element name="return" type="xsd:int"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:element name="sum" type="tns:sum"/>
+          <xsd:complexType name="sum">
+            <xsd:sequence>
+              <xsd:element name="arg0" type="xsd:int"/>
+              <xsd:element name="arg1" type="xsd:int"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:element name="sumResponse" type="tns:sumResponse"/>
+          <xsd:complexType name="sumResponse">
+            <xsd:sequence>
+              <xsd:element name="return" type="xsd:int"/>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:schema>
+      </wsdl:types>
+      <wsdl:message name="multiplyResponse">
+        <wsdl:part element="tns:multiplyResponse" name="parameters">
+        </wsdl:part>
+      </wsdl:message>
+      <wsdl:message name="sumResponse">
+        <wsdl:part element="tns:sumResponse" name="parameters">
+        </wsdl:part>
+      </wsdl:message>
+      <wsdl:message name="sum">
+        <wsdl:part element="tns:sum" name="parameters">
+        </wsdl:part>
+      </wsdl:message>
+      <wsdl:message name="multiply">
+        <wsdl:part element="tns:multiply" name="parameters">
+        </wsdl:part>
+      </wsdl:message>
+      <wsdl:portType name="CalculatorWs">
+        <wsdl:operation name="multiply">
+          <wsdl:input message="tns:multiply" name="multiply">
+          </wsdl:input>
+          <wsdl:output message="tns:multiplyResponse" name="multiplyResponse">
+          </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="sum">
+          <wsdl:input message="tns:sum" name="sum">
+          </wsdl:input>
+          <wsdl:output message="tns:sumResponse" name="sumResponse">
+          </wsdl:output>
+        </wsdl:operation>
+      </wsdl:portType>
+      <wsdl:binding name="CalculatorServiceSoapBinding" type="tns:CalculatorWs">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="multiply">
+          <soap:operation soapAction="" style="document"/>
+          <wsdl:input name="multiply">
+            <soap:body use="literal"/>
+          </wsdl:input>
+          <wsdl:output name="multiplyResponse">
+            <soap:body use="literal"/>
+          </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="sum">
+          <soap:operation soapAction="" style="document"/>
+          <wsdl:input name="sum">
+            <soap:body use="literal"/>
+          </wsdl:input>
+          <wsdl:output name="sumResponse">
+            <soap:body use="literal"/>
+          </wsdl:output>
+        </wsdl:operation>
+      </wsdl:binding>
+      <wsdl:service name="CalculatorService">
+        <wsdl:port binding="tns:CalculatorServiceSoapBinding" name="CalculatorPort">
+          <soap:address location="http://127.0.0.1:4204/Calculator?wsdl"/>
+        </wsdl:port>
+      </wsdl:service>
+    </wsdl:definitions>
+
+### SOAP sum and sumResponse
+
+Request:
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+      <soap:Body>
+        <ns1:sum xmlns:ns1="http://superbiz.org/wsdl">
+          <arg0>4</arg0>
+          <arg1>6</arg1>
+        </ns1:sum>
+      </soap:Body>
+    </soap:Envelope>
+
+Response:
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+      <soap:Body>
+        <ns1:sumResponse xmlns:ns1="http://superbiz.org/wsdl">
+          <return>10001</return>
+        </ns1:sumResponse>
+      </soap:Body>
+    </soap:Envelope>
+
+### SOAP multiply and multiplyResponse
+
+Request:
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+      <soap:Body>
+        <ns1:multiply xmlns:ns1="http://superbiz.org/wsdl">
+          <arg0>3</arg0>
+          <arg1>4</arg1>
+        </ns1:multiply>
+      </soap:Body>
+    </soap:Envelope>
+
+Response:
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+      <soap:Body>
+        <ns1:multiplyResponse xmlns:ns1="http://superbiz.org/wsdl">
+          <return>12001</return>
+        </ns1:multiplyResponse>
+      </soap:Body>
+    </soap:Envelope>
