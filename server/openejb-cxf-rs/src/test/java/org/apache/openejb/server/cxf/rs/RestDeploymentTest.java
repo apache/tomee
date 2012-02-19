@@ -144,6 +144,7 @@ public class RestDeploymentTest {
         configuration.facilities.services.add(serviceInfo);
 
         server = new OpenEJBHttpServer();
+        server.init(new Properties());
         daemon = new ServiceDaemon(server, 4204, "localhost");
         daemon.start();
         server.start();
