@@ -52,9 +52,6 @@ If a parameter is not validated an exception is thrown, it is an EJBException wr
     import javax.validation.constraints.Pattern;
     import javax.validation.constraints.Size;
 
-    /**
-     * @author Romain Manni-Bucau
-     */
     @Stateless
     public class OlympicGamesManager {
         public String addSportMan(@Pattern(regexp = "^[A-Za-z]+$") String name, @Size(min = 2, max = 4) String country) {
@@ -72,9 +69,6 @@ If a parameter is not validated an exception is thrown, it is an EJBException wr
     import javax.ejb.Local;
     import javax.validation.constraints.Min;
 
-    /**
-     * @author Romain Manni-Bucau
-     */
     @Local
     public interface PoleVaultingManager {
         int points(@Min(120) int centimeters);
@@ -86,9 +80,6 @@ If a parameter is not validated an exception is thrown, it is an EJBException wr
 
     import javax.ejb.Stateless;
 
-    /**
-     * @author Romain Manni-Bucau
-     */
     @Stateless
     public class PoleVaultingManagerBean implements PoleVaultingManager {
         @Override

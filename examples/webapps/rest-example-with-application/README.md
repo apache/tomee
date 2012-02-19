@@ -10,9 +10,6 @@ Title: REST Example with Application
     import java.util.HashSet;
     import java.util.Set;
 
-    /**
-     * @author rmannibucau
-     */
     @ApplicationPath("/rest-prefix")
     public class ApplicationConfig extends Application {
         public Set<Class<?>> getClasses() {
@@ -29,9 +26,6 @@ Title: REST Example with Application
     import javax.ws.rs.Path;
     import java.util.Date;
 
-    /**
-     * @author rmannibucau
-     */
     @Singleton
     @Lock(LockType.READ)
     @Path("/ejb")
@@ -48,9 +42,6 @@ Title: REST Example with Application
     import javax.ws.rs.Path;
     import java.util.Date;
 
-    /**
-     * @author rmannibucau
-     */
     @Path("/pojo")
     public class SimpleRESTPojo {
         @GET

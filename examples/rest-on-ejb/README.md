@@ -13,9 +13,6 @@ Title: REST on EJB
     import javax.persistence.NamedQuery;
     import javax.xml.bind.annotation.XmlRootElement;
     
-    /**
-     * @author Romain Manni-Bucau
-     */
     @Entity
     @NamedQueries({
             @NamedQuery(name = "user.list", query = "select u from User u")
@@ -47,7 +44,6 @@ Title: REST on EJB
     /**
      * Outputs are copied because of the enhancement of OpenJPA.
      *
-     * @author Romain Manni-Bucau
      */
     @Singleton
     @Lock(LockType.WRITE)
@@ -163,9 +159,6 @@ Title: REST on EJB
     import static junit.framework.Assert.assertNull;
     import static junit.framework.Assert.fail;
     
-    /**
-     * @author Romain Manni-Bucau
-     */
     public class UserServiceTest {
         private static Context context;
         private static UserService service;

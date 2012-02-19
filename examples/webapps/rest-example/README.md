@@ -14,9 +14,6 @@ Title: REST Example
     import java.util.Collections;
     import java.util.List;
     
-    /**
-     * @author Romain Manni-Bucau
-     */
     @Stateless
     public class CommentDAO extends DAO {
         @EJB
@@ -74,7 +71,6 @@ Title: REST Example
      * Simply maps the entitymanager.
      * It simplifies refactoring (unitName change) and wraps some logic (limited queries).
      *
-     * @author Romain Manni-Bucau
      */
     @Stateless
     public class DAO {
@@ -128,9 +124,6 @@ Title: REST Example
     import javax.ejb.Stateless;
     import java.util.List;
     
-    /**
-     * @author Romain Manni-Bucau
-     */
     @Stateless
     public class PostDAO {
         @EJB
@@ -185,9 +178,6 @@ Title: REST Example
     import javax.ejb.Stateless;
     import java.util.List;
     
-    /**
-     * @author Romain Manni-Bucau
-     */
     @Stateless
     public class UserDAO {
         @EJB
@@ -242,9 +232,6 @@ Title: REST Example
     import javax.xml.bind.annotation.XmlRootElement;
     import javax.xml.bind.annotation.XmlTransient;
     
-    /**
-     * @author Romain Manni-Bucau
-     */
     @Entity
     @NamedQueries({
             @NamedQuery(name = "comment.list", query = "select c from Comment c")
@@ -258,9 +245,6 @@ Title: REST Example
     import javax.persistence.PrePersist;
     import java.util.Date;
     
-    /**
-     * @author Romain Manni-Bucau
-     */
     @MappedSuperclass
     public abstract class DatedModel extends Model {
         private Date created;
@@ -291,9 +275,6 @@ Title: REST Example
     import javax.xml.bind.annotation.XmlAccessType;
     import javax.xml.bind.annotation.XmlAccessorType;
     
-    /**
-     * @author Romain Manni-Bucau
-     */
     @MappedSuperclass
     @Access(AccessType.FIELD)
     @XmlAccessorType(XmlAccessType.FIELD)
@@ -330,9 +311,6 @@ Title: REST Example
     import java.util.ArrayList;
     import java.util.List;
     
-    /**
-     * @author Romain Manni-Bucau
-     */
     @Entity
     @NamedQueries({
             @NamedQuery(name = "post.list", query = "select p from Post p")
@@ -350,9 +328,6 @@ Title: REST Example
     import javax.validation.constraints.Size;
     import javax.xml.bind.annotation.XmlRootElement;
     
-    /**
-     * @author Romain Manni-Bucau
-     */
     @Entity
     @NamedQueries({
             @NamedQuery(name = "user.list", query = "select u from User u")
@@ -376,9 +351,6 @@ Title: REST Example
     import javax.ws.rs.QueryParam;
     import java.util.List;
     
-    /**
-     * @author Romain Manni-Bucau
-     */
     @Path("/api/comment")
     @Produces({"text/xml", "application/json"})
     public class CommentService {
@@ -433,9 +405,6 @@ Title: REST Example
     import javax.ws.rs.QueryParam;
     import java.util.List;
     
-    /**
-     * @author Romain Manni-Bucau
-     */
     @Path("/api/post")
     @Produces({"text/xml", "application/json"})
     public class PostService {
@@ -498,9 +467,6 @@ Title: REST Example
     import javax.ws.rs.QueryParam;
     import java.util.List;
     
-    /**
-     * @author Romain Manni-Bucau
-     */
     @Path("/api/user")
     @Produces({"text/xml", "application/json"})
     public class UserService {

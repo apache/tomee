@@ -46,9 +46,6 @@ for one operation. To change the datasource in one transaction is dangerous and 
     import java.util.Map;
     import java.util.concurrent.ConcurrentHashMap;
 
-    /**
-     * @author Romain Manni-Bucau
-     */
     public class DeterminedRouter extends AbstractRouter {
         private String dataSourceNames;
         private String defaultDataSourceName;
@@ -165,9 +162,6 @@ Here we have a `RoutedPersister` stateless bean which uses our `DeterminedRouter
     import javax.persistence.EntityManager;
     import javax.persistence.PersistenceContext;
 
-    /**
-     * @author Romain Manni-Bucau
-     */
     @Stateless
     public class RoutedPersister {
         @PersistenceContext(unitName = "router")

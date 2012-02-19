@@ -80,9 +80,6 @@ For more information please see the [documentation](http://openejb.apache.org/3.
     
     import static junit.framework.Assert.assertNotNull;
     
-    /**
-     * @author Romain Manni-Bucau
-     */
     public class DataSourceCipheredExampleTest {
         private static final String USER = DataSourceCipheredExampleTest.class.getSimpleName().toUpperCase();
         private static final String PASSWORD = "YouLLN3v3rFindM3";

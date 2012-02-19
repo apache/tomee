@@ -11,9 +11,6 @@ Title: Dynamic Implementation
     import javax.ejb.Singleton;
     import javax.interceptor.Interceptors;
     
-    /**
-     * @author rmannibucau
-     */
     @Singleton
     @Proxy(SocialHandler.class)
     @Interceptors(SocialInterceptor.class)
@@ -32,9 +29,6 @@ Title: Dynamic Implementation
     import java.lang.reflect.InvocationHandler;
     import java.lang.reflect.Method;
     
-    /**
-     * @author rmannibucau
-     */
     public class SocialHandler implements InvocationHandler {
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -65,9 +59,6 @@ Title: Dynamic Implementation
     
     import static junit.framework.Assert.assertTrue;
     
-    /**
-     * @author rmannibucau
-     */
     public class SocialTest {
         private static SocialBean social;
         private static EJBContainer container;
