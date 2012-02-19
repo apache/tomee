@@ -16,93 +16,39 @@
  */
 package org.superbiz.calculator.ws;
 
-import junit.framework.TestCase;
-import org.apache.openejb.api.LocalClient;
-import org.superbiz.calculator.ws.CalculatorLocal;
-import org.superbiz.calculator.ws.CalculatorWs;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import javax.ejb.embeddable.EJBContainer;
-import javax.naming.Context;
 import javax.xml.namespace.QName;
-import javax.xml.ws.Holder;
 import javax.xml.ws.Service;
-import javax.xml.ws.WebServiceRef;
 import java.net.URL;
-import java.util.Date;
 import java.util.Properties;
 
-@LocalClient
-public class CalculatorTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-    @WebServiceRef(
-            wsdlLocation = "http://127.0.0.1:4204/CalculatorImpl?wsdl"
-    )
-    private CalculatorWs calculatorWs;
+public class CalculatorTest {
 
-    // date used to invoke a web service with INOUT parameters
-    private static final Date date = new Date();
-    private Context context;
-
-    protected void setUp() throws Exception {
-
+    @BeforeClass
+    public static void setUp() throws Exception {
         Properties properties = new Properties();
-        properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
         properties.setProperty("openejb.embedded.remotable", "true");
-
-        context = EJBContainer.createEJBContainer(properties).getContext();
-        context.bind("inject", this);
-
-    }
-    //END SNIPPET: setup    
-
-    /**
-     * Create a webservice client using wsdl url
-     *
-     * @throws Exception
-     */
-    //START SNIPPET: webservice
-    public void testCalculatorViaWsInterface() throws Exception {
-        Service calcService = Service.create(
-                new URL("http://127.0.0.1:4204/CalculatorImpl?wsdl"),
-                new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
-        assertNotNull(calcService);
-
-        CalculatorWs calc = calcService.getPort(CalculatorWs.class);
-        assertEquals(10, calc.sum(4, 6));
-        assertEquals(12, calc.multiply(3, 4));
-
-        Holder<String> userIdHolder = new Holder<String>("jane");
-        Holder<String> returnCodeHolder = new Holder<String>();
-        Holder<Date> datetimeHolder = new Holder<Date>(date);
-        assertEquals(6, calc.factorial(3, userIdHolder, returnCodeHolder, datetimeHolder));
-        assertEquals(userIdHolder.value, returnCodeHolder.value);
-        assertTrue(date.before(datetimeHolder.value));
+        //properties.setProperty("httpejbd.print", "true");
+        //properties.setProperty("httpejbd.indent.xml", "true");
+        EJBContainer.createEJBContainer(properties);
     }
 
-    public void testWebServiceRefInjection() throws Exception {
-        assertEquals(10, calculatorWs.sum(4, 6));
-        assertEquals(12, calculatorWs.multiply(3, 4));
+    @Test
+    public void test() throws Exception {
+        Service calculatorService = Service.create(
+                new URL("http://127.0.0.1:4204/Calculator?wsdl"),
+                new QName("http://superbiz.org/wsdl", "CalculatorService"));
 
-        Holder<String> userIdHolder = new Holder<String>("jane");
-        Holder<String> returnCodeHolder = new Holder<String>();
-        Holder<Date> datetimeHolder = new Holder<Date>(date);
-        assertEquals(6, calculatorWs.factorial(3, userIdHolder, returnCodeHolder, datetimeHolder));
-        assertEquals(userIdHolder.value, returnCodeHolder.value);
-        assertTrue(date.before(datetimeHolder.value));
+        assertNotNull(calculatorService);
+
+        CalculatorWs calculator = calculatorService.getPort(CalculatorWs.class);
+        assertEquals(10, calculator.sum(4, 6));
+        assertEquals(12, calculator.multiply(3, 4));
     }
-
-    public void testCalculatorViaRemoteInterface() throws Exception {
-        CalculatorLocal calc = (CalculatorLocal) context.lookup("java:global/simple-webservice/CalculatorImpl");
-        assertEquals(10, calc.sum(4, 6));
-        assertEquals(12, calc.multiply(3, 4));
-
-        Holder<String> userIdHolder = new Holder<String>("jane");
-        Holder<String> returnCodeHolder = new Holder<String>();
-        Holder<Date> datetimeHolder = new Holder<Date>(date);
-        assertEquals(6, calc.factorial(3, userIdHolder, returnCodeHolder, datetimeHolder));
-        assertEquals(userIdHolder.value, returnCodeHolder.value);
-        assertTrue(date.before(datetimeHolder.value));
-    }
-    //END SNIPPET: webservice
-
 }

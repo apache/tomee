@@ -16,40 +16,12 @@
  */
 package org.superbiz.calculator.ws;
 
-import javax.jws.WebParam;
 import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
-import javax.jws.soap.SOAPBinding.ParameterStyle;
-import javax.jws.soap.SOAPBinding.Style;
-import javax.jws.soap.SOAPBinding.Use;
-import javax.xml.ws.Holder;
-import java.util.Date;
 
-//END SNIPPET: code
-
-/**
- * This is an EJB 3 webservice interface
- * A webservice interface must be annotated with the @WebService
- * annotation.
- */
-//START SNIPPET: code
-@WebService(
-        name = "CalculatorWs",
-        targetNamespace = "http://superbiz.org/wsdl")
+@WebService(targetNamespace = "http://superbiz.org/wsdl")
 public interface CalculatorWs {
 
     public int sum(int add1, int add2);
 
     public int multiply(int mul1, int mul2);
-
-    // because of CXF bug, BARE must be used instead of default WRAPPED
-
-    @SOAPBinding(use = Use.LITERAL, parameterStyle = ParameterStyle.BARE, style = Style.DOCUMENT)
-    public int factorial(
-            int number,
-            @WebParam(name = "userid", header = true, mode = WebParam.Mode.IN) Holder<String> userId,
-            @WebParam(name = "returncode", header = true, mode = WebParam.Mode.OUT) Holder<String> returnCode,
-            @WebParam(name = "datetime", header = true, mode = WebParam.Mode.INOUT) Holder<Date> datetime);
-
 }
-//END SNIPPET: code
