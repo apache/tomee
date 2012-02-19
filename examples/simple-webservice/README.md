@@ -70,8 +70,8 @@ With this we can get an implementation of the interfacce generated dynamically f
         public static void setUp() throws Exception {
             Properties properties = new Properties();
             properties.setProperty("openejb.embedded.remotable", "true");
-            properties.setProperty("httpejbd.print", "true");
-            properties.setProperty("httpejbd.indent.xml", "true");
+            //properties.setProperty("httpejbd.print", "true");
+            //properties.setProperty("httpejbd.indent.xml", "true");
             EJBContainer.createEJBContainer(properties);
         }
     
