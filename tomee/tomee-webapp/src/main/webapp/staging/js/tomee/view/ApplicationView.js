@@ -22,7 +22,8 @@ TOMEE.ApplicationView = function (cfg) {
     var channel = cfg.channel;
 
     var appToolbar = TOMEE.ApplicationToolbar(cfg);
-    var home = TOMEE.ApplicationHomePanel(cfg);
+    var jndi = TOMEE.ApplicationJndiPanel(cfg);
+    var test = TOMEE.ApplicationTestPanel(cfg);
     var help = TOMEE.ApplicationHelpPanel(cfg);
 
     var elements = (function () {
@@ -49,18 +50,44 @@ TOMEE.ApplicationView = function (cfg) {
 
         $('body').append(appToolbar.getEl());
         $('body').append(elements.all);
-        elements.body.append(home.getEl());
 
         channel.send('application_view_rendered', {});
     };
 
+    var renderPanel = function (key, panel) {
+        elements.body.append(panel.getEl());
+        channel.send('application_panel_rendered', {
+            key: key
+        });
+    };
+
+    var getPanel = function (key) {
+        if (key === 'jndi') {
+            return jndi;
+
+        } else if (key === 'test') {
+            return test;
+
+        } else if (key === 'help') {
+            return help;
+        }
+        return null;
+    };
+
+    var showPanel = function (key) {
+        elements.body.empty();
+        var panel = getPanel(key);
+        if (panel) {
+            renderPanel(key, panel);
+        }
+    };
+
     return {
         render: render,
-        getHome: function () {
-            return home;
-        },
         getToolbar: function () {
             return appToolbar;
-        }
+        },
+        showPanel: showPanel,
+        getPanel: getPanel
     };
 };

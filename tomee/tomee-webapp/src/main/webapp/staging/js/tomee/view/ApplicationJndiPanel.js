@@ -16,22 +16,23 @@
  *  limitations under the License.
  */
 
-TOMEE.ApplicationHomePanelTest = function (cfg) {
+TOMEE.ApplicationJndiPanel = function (cfg) {
     "use strict";
 
     var channel = cfg.channel;
-    var model = cfg.model;
+    var model = cfg.jndiModel;
 
     var elements = (function () {
         var tbodyUid = TOMEE.Sequence.next();
         var tpl = [
-            '<div class="well">',
-            '<legend>' + TOMEE.ApplicationI18N.get('app.home.menu.setup.test.title') + '</legend>',
+            '<div class="well" style="overflow:auto">',
+            '<legend>' + TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.title') + '</legend>',
+
             '<table class="table table-striped table-bordered table-condensed">',
             '    <thead>',
             '        <tr>',
-            '            <th>' + TOMEE.ApplicationI18N.get('app.home.menu.setup.test.testname') + '</th>',
-            '            <th>' + TOMEE.ApplicationI18N.get('app.home.menu.setup.test.testsatus') + '</th>',
+            '            <th>' + TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.name') + '</th>',
+            '            <th>' + TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.resource') + '</th>',
             '        </tr>',
             '    </thead>',
             '    <tbody id="' + tbodyUid + '"/>',
@@ -53,11 +54,11 @@ TOMEE.ApplicationHomePanelTest = function (cfg) {
      *
      * @param bean
      */
-    var addRow = function (index, bean) {
+    var addRow = function (bean) {
         var row = [
             '        <tr>',
-            '            <td>' + TOMEE.ApplicationI18N.get('app.home.menu.setup.test.testname.key.' + bean['key']) + '</td>',
-            '            <td>' + bean['success'] + '</td>',
+            '            <td>' + bean.name + '</td>',
+            '            <td>' + bean.value + '</td>',
             '        </tr>'
         ].join('');
         elements.tbody.append($(row));
@@ -67,23 +68,18 @@ TOMEE.ApplicationHomePanelTest = function (cfg) {
         //remove the current rows if any
         elements.tbody.empty();
 
-        var index = 0;
-
         //The user should give a "getData" method that iterates over
         //the objects that will be used to populate the grid
-        model.iterateTestBeans(function (bean) {
-            addRow(index, bean);
-            index = index + 1;
+        model.iterateJndiBeans(function (bean) {
+            addRow(bean);
         });
     };
+
 
     return {
         getEl: function () {
             return elements.all;
         },
-        loadData: loadData,
-        getMyModel: function () {
-            return model;
-        }
+        loadData: loadData
     };
 };

@@ -16,25 +16,18 @@
  *  limitations under the License.
  */
 
-TOMEE.ApplicationHomePanelJndi = function (cfg) {
+TOMEE.ApplicationTestPanel = function (cfg) {
     "use strict";
 
     var channel = cfg.channel;
-    var model = cfg.model;
+    var model = cfg.testModel;
 
     var elements = (function () {
         var tbodyUid = TOMEE.Sequence.next();
         var tpl = [
-            '<div class="well" style="overflow:auto">',
-            '<legend>' + TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.title') + '</legend>',
-
+            '<div class="well">',
+            '<legend>' + TOMEE.ApplicationI18N.get('app.home.menu.setup.test.title') + '</legend>',
             '<table class="table table-striped table-bordered table-condensed">',
-            '    <thead>',
-            '        <tr>',
-            '            <th>' + TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.name') + '</th>',
-            '            <th>' + TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.resource') + '</th>',
-            '        </tr>',
-            '    </thead>',
             '    <tbody id="' + tbodyUid + '"/>',
             '</table>',
 
@@ -50,15 +43,19 @@ TOMEE.ApplicationHomePanelJndi = function (cfg) {
         };
     })();
 
-    /**
-     *
-     * @param bean
-     */
-    var addRow = function (bean) {
+    var getIcon = function (success) {
+        if (success) {
+            return '<i class="icon-ok-sign"></i>';
+        } else {
+            return '<i class="icon-exclamation-sign"></i>';
+        }
+    };
+
+    var addRow = function (index, bean) {
         var row = [
             '        <tr>',
-            '            <td>' + bean.name + '</td>',
-            '            <td>' + bean.value + '</td>',
+            '            <td>' + TOMEE.ApplicationI18N.get('app.home.menu.setup.test.testname.key.' + bean['key']) + '</td>',
+            '            <td>' + getIcon(bean['success']) + '</td>',
             '        </tr>'
         ].join('');
         elements.tbody.append($(row));
@@ -68,21 +65,20 @@ TOMEE.ApplicationHomePanelJndi = function (cfg) {
         //remove the current rows if any
         elements.tbody.empty();
 
+        var index = 0;
+
         //The user should give a "getData" method that iterates over
         //the objects that will be used to populate the grid
-        model.iterateJndiBeans(function (bean) {
-            addRow(bean);
+        model.iterateTestBeans(function (bean) {
+            addRow(index, bean);
+            index = index + 1;
         });
     };
-
 
     return {
         getEl: function () {
             return elements.all;
         },
-        loadData: loadData,
-        getMyModel: function () {
-            return model;
-        }
+        loadData: loadData
     };
 };

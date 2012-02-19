@@ -45,22 +45,7 @@ TOMEE.ApplicationController = function () {
     //The user clicked in one of the buttons in the application toolbar
     channel.bind('toolbar_button_executed', function (params) {
         var key = params.key;
-        if(key === 'home') {
-            view.getHome().getMenu().selectMenu('test');
-        }
-    });
-
-    //The user clicked in one of the items in the home panel
-    channel.bind('home_menu_executed', function (params) {
-        var menuKey = params.menu;
-        view.getHome().getBody().showPanel(menuKey);
-    });
-
-    //a panel is about to be removed from the view
-    //you have a chance to do some closure here (stop Ajax calls, for example)
-    channel.bind('hiding_panel', function (params) {
-        var panel = params.panel;
-        //placeholder
+        view.showPanel(key);
     });
 
     //"test" -> data loaded event
@@ -68,7 +53,7 @@ TOMEE.ApplicationController = function () {
 
     });
     channel.bind('test_connection_new_data', function (params) {
-        view.getHome().getBody().loadData('test');
+        view.getPanel('test').loadData();
     });
 
     //"jndi" -> data loaded event
@@ -76,19 +61,21 @@ TOMEE.ApplicationController = function () {
 
     });
     channel.bind('jndi_connection_new_data', function (params) {
-        view.getHome().getBody().loadData('jndi');
-    });
-
-    channel.bind('panel_show', function (params) {
-        var panel = params.panel;
-        if (panel.getMyModel) {
-            var myModel = panel.getMyModel();
-            myModel.load();
-        }
+        view.getPanel('jndi').loadData();
     });
 
     channel.bind('application_view_rendered', function (params) {
         view.getToolbar().clickButton('home');
+    });
+
+    channel.bind('application_panel_rendered', function (params) {
+        var key = params.key;
+        if (key === 'jndi') {
+            jndiPanelModel.load();
+        } else if(key === 'test') {
+            testPanelModel.load();
+        }
+
     });
 
     view.render();
