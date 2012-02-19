@@ -16,18 +16,7 @@
  */
 package org.apache.openejb.server.httpd;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.StringWriter;
-import java.net.Socket;
-import java.net.URI;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.ServiceException;
@@ -41,6 +30,16 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.net.Socket;
+import java.net.URI;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * This is the main class for the web administration.  It takes care of the
@@ -228,14 +227,17 @@ public class OpenEJBHttpServer implements HttpServer {
 
         try {
             final TransformerFactory factory = TransformerFactory.newInstance();
-            factory.setAttribute("indent-number", 2);
+            // bugged in some XML implementation
+            // should we use another implementation?
+            //factory.setAttribute("indent-number", 2);
 
             final Transformer transformer = factory.newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 
             final StreamResult result = new StreamResult(new StringWriter());
 
-            transformer.transform(new StreamSource(IO.read(raw)), result);
+            transformer.transform(new StreamSource(new StringReader(raw)), result);
 
             return result.getWriter().toString();
         } catch (TransformerException e) {
