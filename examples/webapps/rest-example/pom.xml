@@ -118,15 +118,6 @@
           </dependency>
         </dependencies>
       </plugin>
-<plugin>
-<groupId>org.apache.openejb</groupId>
-    <version>0.0.1-SNAPSHOT</version>
-<artifactId>dd-maven-plugin</artifactId>
-<executions><execution>
-<id>foo</id>
-<goals><goal>merge</goal></goals>
-</execution>
-</executions></plugin>
     </plugins>
   </build>
   <dependencies>
