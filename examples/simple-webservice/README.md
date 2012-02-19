@@ -311,3 +311,24 @@ Response SOAP message:
         </ns1:multiplyResponse>
       </soap:Body>
     </soap:Envelope>
+
+## Inside the jar
+
+With so much going on it can make things look more complex than they are.  It can be hard to believe that so much can happen with such little code.  That's the benefit of having an app server.
+
+If we look at the jar built by maven, we'll see the application itself is quite small:
+
+    $ jar tvf target/simple-webservice-1.1-SNAPSHOT.jar
+         0 Sat Feb 18 19:17:06 PST 2012 META-INF/
+       127 Sat Feb 18 19:17:04 PST 2012 META-INF/MANIFEST.MF
+         0 Sat Feb 18 19:17:02 PST 2012 org/
+         0 Sat Feb 18 19:17:02 PST 2012 org/superbiz/
+         0 Sat Feb 18 19:17:02 PST 2012 org/superbiz/calculator/
+         0 Sat Feb 18 19:17:02 PST 2012 org/superbiz/calculator/ws/
+       855 Sat Feb 18 19:17:02 PST 2012 org/superbiz/calculator/ws/Calculator.class
+       288 Sat Feb 18 19:17:02 PST 2012 org/superbiz/calculator/ws/CalculatorWs.class
+
+This single jar could be deployed any any compliant Java EE implementation.  In TomEE you'd simply place it in the `tomee.home/webapps/` directory.  No war file necessary.  If you did want to create a war, you'd simply place the jar in the `WEB-INF/lib/` directory of the war.
+
+The server already contains the right libraries to run the code, such as Apache CXF, so no need to include anything extra beyond your own application code.
+
