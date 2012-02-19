@@ -32,7 +32,7 @@ First we'll start with our plain `@WebService` bean, called `Calculator`, which 
 
 Here we see `@HandlerChain` pointing to a file called `handlers.xml`.  This file could be called anything, but it must be in the same jar and java package as our `Calculator` component.
 
-## The <handler-chains> file
+## The &lt;handler-chains> file
 
 Our `Calculator` service is in the package `org.superbiz.calculator.wsh`, which means our handler chain xml file must be at `org/superbiz/calculator/wsh/handlers.xml` in our application's classpath or the file will not be found and no handlers will be used.
 
