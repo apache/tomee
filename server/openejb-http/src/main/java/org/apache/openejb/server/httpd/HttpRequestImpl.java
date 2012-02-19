@@ -20,6 +20,7 @@ import javax.servlet.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
+
 import org.apache.openejb.core.security.jaas.UserPrincipal;
 import org.apache.openejb.util.ArrayEnumeration;
 
@@ -292,16 +293,24 @@ public class HttpRequestImpl implements HttpRequest {
 
         parameters.putAll(this.getFormParameters());
         parameters.putAll(this.getQueryParameters());
+    }
 
-        //temp-debug-------------------------------------------
-        // System.out.println("******************* HEADERS ******************");
-        // for (Map.Entry<String, String> entry : headers.entrySet()) {
-        //    System.out.println(entry);
-        // }
-        // System.out.println("**********************************************");
-        // System.out.println(new String(body));
-        // System.out.println("**********************************************");
-        //end temp-debug---------------------------------------
+    public void print(boolean formatXml) {
+
+        System.out.println("******************* REQUEST ******************");
+        System.out.println(method + " "+this.uri);
+        for (Map.Entry<String, String> entry : headers.entrySet()) {
+            System.out.println(entry);
+        }
+        System.out.println();
+
+        final String text = new String(body);
+        if (formatXml && OpenEJBHttpServer.isTextXml(headers)) {
+            System.out.println(OpenEJBHttpServer.reformat(text));
+        } else {
+            System.out.println(text);
+        }
+        System.out.println("**********************************************");
     }
 
     /**
