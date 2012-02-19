@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.server.httpd;
 
+import org.apache.openejb.loader.IO;
+
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
@@ -343,7 +345,7 @@ public class HttpResponseImpl implements HttpResponse {
      * @param output the output to send the response to
      * @throws java.io.IOException if an exception is thrown
      */
-    protected void writeMessage(OutputStream output) throws IOException{
+    protected void writeMessage(OutputStream output, boolean indent) throws IOException{
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
     	DataOutputStream out = new DataOutputStream(baos);
         //DataOutput log = new DataOutputStream(System.out);
@@ -354,7 +356,7 @@ public class HttpResponseImpl implements HttpResponse {
 //        writeBody(log);
         writeResponseLine(out);
         writeHeaders(out);
-        writeBody(out);
+        writeBody(out, indent);
         out.flush();
         output.write(baos.toByteArray());
         output.flush();
@@ -450,12 +452,18 @@ public class HttpResponseImpl implements HttpResponse {
 
     /** writes the body out to the browser
      * @param out the output stream that writes to the browser
+     * @param indent format xml
      * @throws java.io.IOException if an exception is thrown
      */
-    private void writeBody(DataOutput out) throws IOException{
+    private void writeBody(DataOutput out, boolean indent) throws IOException{
         out.writeBytes(CRLF);
         if (content == null){
-            out.write(sosi.getOutputStream().toByteArray());
+            if (indent && OpenEJBHttpServer.isTextXml(headers)) {
+                final String xml = new String(sosi.getOutputStream().toByteArray());
+                out.write(OpenEJBHttpServer.reformat(xml).getBytes());
+            } else {
+                out.write(sosi.getOutputStream().toByteArray());
+            }
         } else {
             InputStream in = content.getInputStream();
             byte buf[] = new byte[1024];

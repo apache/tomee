@@ -19,15 +19,28 @@ package org.apache.openejb.server.httpd;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringWriter;
 import java.net.Socket;
 import java.net.URI;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.loader.IO;
+import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.OptionsLog;
+
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
 /**
  * This is the main class for the web administration.  It takes care of the
@@ -39,6 +52,8 @@ public class OpenEJBHttpServer implements HttpServer {
     private static final Logger log = Logger.getInstance(LogCategory.HTTPSERVER, "org.apache.openejb.util.resources");
 
     private HttpListener listener;
+    private Set<Output> print;
+    private boolean indent;
 
     public OpenEJBHttpServer() {
         this(getHttpListenerRegistry());
@@ -56,6 +71,11 @@ public class OpenEJBHttpServer implements HttpServer {
 
     public OpenEJBHttpServer(HttpListener listener) {
         this.listener = listener;
+    }
+
+    public static boolean isTextXml(Map<String, String> headers) {
+        final String contentType = headers.get("Content-Type");
+        return contentType != null && contentType.contains("text/xml");
     }
 
     public HttpListener getListener() {
@@ -100,6 +120,15 @@ public class OpenEJBHttpServer implements HttpServer {
     }
 
     public void init(Properties props) throws Exception {
+        final Options options = new Options(props);
+        options.setLogger(new OptionsLog(log));
+        print = options.getAll("print", OpenEJBHttpServer.Output.class);
+        indent = print.size() > 0 && options.get("indent.xml", false);
+
+    }
+
+    public static enum Output {
+        REQUEST, RESPONSE;
     }
 
     public void start() throws ServiceException {
@@ -135,7 +164,10 @@ public class OpenEJBHttpServer implements HttpServer {
             response = HttpResponseImpl.createError(t.getMessage(), t);
         } finally {
             try {
-                response.writeMessage(out);
+                response.writeMessage(out, false);
+                if (print.size() > 0 && print.contains(Output.RESPONSE)) {
+                    response.writeMessage(System.out, indent);
+                }
             } catch (Throwable t2) {
                 log.error("Could not write response", t2);
             }
@@ -149,6 +181,11 @@ public class OpenEJBHttpServer implements HttpServer {
 
         try {
             req.readMessage(in);
+
+            if (print.size() > 0 && print.contains(Output.REQUEST)) {
+                req.print(this.indent);
+            }
+
             res.setRequest(req);
         } catch (Throwable t) {
             res.setCode(400);
@@ -184,4 +221,28 @@ public class OpenEJBHttpServer implements HttpServer {
 
         return res;
     }
+
+
+    public static String reformat(String raw) {
+        if (raw.length() ==0) return raw;
+
+        try {
+            final TransformerFactory factory = TransformerFactory.newInstance();
+            factory.setAttribute("indent-number", 2);
+
+            final Transformer transformer = factory.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+
+            final StreamResult result = new StreamResult(new StringWriter());
+
+            transformer.transform(new StreamSource(IO.read(raw)), result);
+
+            return result.getWriter().toString();
+        } catch (TransformerException e) {
+            e.printStackTrace();
+            return raw;
+        }
+    }
+
+
 }
