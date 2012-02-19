@@ -46,16 +46,23 @@ public class OpenEJBHttpWsRegistry extends OpenEJBHttpRegistry implements WsRegi
 
         StringBuilder deployedPath = new StringBuilder("");
         if (context != null) {
+            if (!context.startsWith("/")) {
+                deployedPath.append("/");
+            }
             deployedPath.append(context);
             if (!context.endsWith("/")) {
                 deployedPath.append("/");
             }
         }
-        deployedPath.append(path);
+        if (path.startsWith("/") && path.length() > 1) {
+            deployedPath.append(path.substring(1));
+        } else if (path.length() > 1) {
+            deployedPath.append(path);
+        }
         addWrappedHttpListener(httpListener, classLoader, deployedPath.toString());
 
         // register wsdl locations for service-ref resolution
-        return getResolvedAddresses(path);
+        return getResolvedAddresses(deployedPath.toString());
     }
 
     public void removeWsContainer(String path) {

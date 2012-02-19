@@ -17,22 +17,22 @@
 
 package org.apache.openejb.server.cxf.rs;
 
-import java.util.Properties;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.embeddable.EJBContainer;
-import javax.naming.Context;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Request;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.server.cxf.rs.beans.SimpleEJB;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.embeddable.EJBContainer;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Request;
+import java.util.Properties;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -60,20 +60,20 @@ public class EjbDeploymentTest {
     }
 
     @Test public void rest() {
-        String response = WebClient.create("http://localhost:4204").path("/ejb/rest").get(String.class);
+        String response = WebClient.create("http://localhost:4204/openejb-cxf-rs").path("/ejb/rest").get(String.class);
         assertEquals("ok", response);
     }
 
     @Test public void restParameterInjected() {
-        String response = WebClient.create("http://localhost:4204").path("/ejb/param").get(String.class);
+        String response = WebClient.create("http://localhost:4204/openejb-cxf-rs").path("/ejb/param").get(String.class);
         assertEquals("true", response);
 
-        response = WebClient.create("http://localhost:4204").path("/ejb/param").query("arg", "foo").get(String.class);
+        response = WebClient.create("http://localhost:4204/openejb-cxf-rs").path("/ejb/param").query("arg", "foo").get(String.class);
         assertEquals("foo", response);
     }
 
     @Test public void restFieldInjected() {
-        Boolean response = WebClient.create("http://localhost:4204").path("/ejb/field").get(Boolean.class);
+        Boolean response = WebClient.create("http://localhost:4204/openejb-cxf-rs").path("/ejb/field").get(Boolean.class);
         assertEquals(true, response.booleanValue());
     }
 

@@ -47,7 +47,7 @@ public class CalculatorTest extends TestCase {
      */
     //START SNIPPET: webservice
     public void testCalculatorViaWsInterface() throws Exception {
-        URL url = new URL("http://127.0.0.1:4204/CalculatorImpl?wsdl");
+        URL url = new URL("http://127.0.0.1:4204/webservice-security/CalculatorImpl?wsdl");
         QName calcServiceQName = new QName("http://superbiz.org/wsdl", "CalculatorWsService");
         Service calcService = Service.create(url, calcServiceQName);
         assertNotNull(calcService);

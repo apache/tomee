@@ -118,9 +118,23 @@
           </dependency>
         </dependencies>
       </plugin>
+<plugin>
+<groupId>org.apache.openejb</groupId>
+    <version>0.0.1-SNAPSHOT</version>
+<artifactId>dd-maven-plugin</artifactId>
+<executions><execution>
+<id>foo</id>
+<goals><goal>merge</goal></goals>
+</execution>
+</executions></plugin>
     </plugins>
   </build>
   <dependencies>
+<dependency>
+<groupId>org.superbiz</groupId>
+  <artifactId>webservice-security</artifactId>
+  <version>1.1-SNAPSHOT</version>
+      </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>

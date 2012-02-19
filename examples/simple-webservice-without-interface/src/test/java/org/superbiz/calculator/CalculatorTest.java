@@ -56,7 +56,7 @@ public class CalculatorTest {
 
     @Test
     public void wsdlExists() throws Exception {
-        final URL url = new URL("http://127.0.0.1:4204/Calculator?wsdl");
+        final URL url = new URL("http://127.0.0.1:4204/simple-webservice-without-interface/Calculator?wsdl");
         assertTrue(IOUtils.readLines(url.openStream()).size() > 0);
         assertTrue(IOUtils.readLines(url.openStream()).toString().contains("CalculatorWsService"));
     }
