@@ -99,6 +99,8 @@
     <module>webservice-inheritance</module>
     <module>webservice-security</module>
     <module>webservice-ws-security</module>
+    <module>webservice-handlerchain</module>
+    <module>webservice-holder</module>
   </modules>
   <profiles>
     <profile>
