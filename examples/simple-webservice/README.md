@@ -44,7 +44,94 @@ Having an endpoint interface is not required, but it can make testing and using 
 
 ## Calculator WSDL
 
-The wsdl for our is automatically created and available at `http://theserver?appName/Calculator?wsdl`  where `theServer` is the address of the server, such as `localhost:8080` and `appName
+The wsdl for our service is autmatically created for us and available at `http://127.0.0.1:4204/Calculator?wsdl`.  In TomEE or Tomcat this would be at `http://127.0.0.1:8080/simple-webservice/Calculator?wsdl`
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="CalculatorService"
+                      targetNamespace="http://superbiz.org/wsdl"
+                      xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                      xmlns:tns="http://superbiz.org/wsdl" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <wsdl:types>
+        <xsd:schema attributeFormDefault="unqualified" elementFormDefault="unqualified"
+                    targetNamespace="http://superbiz.org/wsdl" xmlns:tns="http://superbiz.org/wsdl"
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+          <xsd:element name="multiply" type="tns:multiply"/>
+          <xsd:complexType name="multiply">
+            <xsd:sequence>
+              <xsd:element name="arg0" type="xsd:int"/>
+              <xsd:element name="arg1" type="xsd:int"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:element name="multiplyResponse" type="tns:multiplyResponse"/>
+          <xsd:complexType name="multiplyResponse">
+            <xsd:sequence>
+              <xsd:element name="return" type="xsd:int"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:element name="sum" type="tns:sum"/>
+          <xsd:complexType name="sum">
+            <xsd:sequence>
+              <xsd:element name="arg0" type="xsd:int"/>
+              <xsd:element name="arg1" type="xsd:int"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:element name="sumResponse" type="tns:sumResponse"/>
+          <xsd:complexType name="sumResponse">
+            <xsd:sequence>
+              <xsd:element name="return" type="xsd:int"/>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:schema>
+      </wsdl:types>
+      <wsdl:message name="multiplyResponse">
+        <wsdl:part element="tns:multiplyResponse" name="parameters"/>
+      </wsdl:message>
+      <wsdl:message name="sumResponse">
+        <wsdl:part element="tns:sumResponse" name="parameters"/>
+      </wsdl:message>
+      <wsdl:message name="sum">
+        <wsdl:part element="tns:sum" name="parameters"/>
+      </wsdl:message>
+      <wsdl:message name="multiply">
+        <wsdl:part element="tns:multiply" name="parameters"/>
+      </wsdl:message>
+      <wsdl:portType name="CalculatorWs">
+        <wsdl:operation name="multiply">
+          <wsdl:input message="tns:multiply" name="multiply"/>
+          <wsdl:output message="tns:multiplyResponse" name="multiplyResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="sum">
+          <wsdl:input message="tns:sum" name="sum"/>
+          <wsdl:output message="tns:sumResponse" name="sumResponse"/>
+        </wsdl:operation>
+      </wsdl:portType>
+      <wsdl:binding name="CalculatorServiceSoapBinding" type="tns:CalculatorWs">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="multiply">
+          <soap:operation soapAction="" style="document"/>
+          <wsdl:input name="multiply">
+            <soap:body use="literal"/>
+          </wsdl:input>
+          <wsdl:output name="multiplyResponse">
+            <soap:body use="literal"/>
+          </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="sum">
+          <soap:operation soapAction="" style="document"/>
+          <wsdl:input name="sum">
+            <soap:body use="literal"/>
+          </wsdl:input>
+          <wsdl:output name="sumResponse">
+            <soap:body use="literal"/>
+          </wsdl:output>
+        </wsdl:operation>
+      </wsdl:binding>
+      <wsdl:service name="CalculatorService">
+        <wsdl:port binding="tns:CalculatorServiceSoapBinding" name="CalculatorPort">
+          <soap:address location="http://127.0.0.1:4204/Calculator?wsdl"/>
+        </wsdl:port>
+      </wsdl:service>
+    </wsdl:definitions>
 
 ## Accessing the @WebService with javax.xml.ws.Service
 
