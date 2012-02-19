@@ -72,6 +72,7 @@ Notice:    Licensed to the Apache Software Foundation (ASF) under one
 
  - [simple-webservice](simple-webservice/README.html)
  - [webservice-handlerchain](webservice-handlerchain/README.html)
+ - [webservice-holder](webservice-holder/README.html)
  - [webservice-attachments](webservice-attachments/README.html)
  - [webservice-inheritance](webservice-inheritance/README.html)
  - [webservice-security](webservice-security/README.html)
