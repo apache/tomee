@@ -11,9 +11,6 @@ Title: Resources Declared in Webapp
     import javax.annotation.Resource;
     import javax.ejb.Singleton;
     
-    /**
-     * @author rmannibucau
-     */
     @Singleton
     public class Manager {
         @Resource(name = "My Manager Team", type = ManagerResource.class)
@@ -28,9 +25,6 @@ Title: Resources Declared in Webapp
 
     package org.superbiz.resource;
     
-    /**
-     * @author rmannibucau
-     */
     public class ManagerResource {
         public String resourceType() {
             return "team";
@@ -51,9 +45,6 @@ Title: Resources Declared in Webapp
     import javax.servlet.http.HttpServletResponse;
     import java.io.IOException;
     
-    /**
-     * @author rmannibucau
-     */
     @WebServlet(name = "manager servlet", urlPatterns = "/")
     public class ManagerServlet extends HttpServlet {
         @EJB

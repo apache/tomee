@@ -30,9 +30,6 @@ Dynamic finder can have as much as you want field constraints. For String like i
     import javax.persistence.NamedQueries;
     import javax.persistence.NamedQuery;
     
-    /**
-     * @author rmannibucau
-     */
     @Entity
     @NamedQueries({
             @NamedQuery(name = "dynamic-ejb-impl-test.query", query = "SELECT u FROM User AS u WHERE u.name LIKE :name"),
@@ -74,9 +71,6 @@ Dynamic finder can have as much as you want field constraints. For String like i
 
     package org.superbiz.dynamic;
     
-    /**
-     * @author rmannibucau
-     */
     
     import javax.ejb.Stateless;
     import javax.persistence.PersistenceContext;
@@ -155,9 +149,6 @@ Dynamic finder can have as much as you want field constraints. For String like i
     import static junit.framework.Assert.assertNotNull;
     import static junit.framework.Assert.assertTrue;
     
-    /**
-     * @author rmannibucau
-     */
     public class DynamicUserDaoTest {
         private static UserDao dao;
         private static Util util;

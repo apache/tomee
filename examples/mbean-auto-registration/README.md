@@ -26,9 +26,6 @@ It allows the user to change the value too.
     import javax.management.ManagedAttribute;
     import javax.management.ManagedOperation;
 
-    /**
-     * @author Romain Manni-Bucau
-     */
     @MBean
     @Description("play with me to guess a number")
     public class GuessHowManyMBean {
@@ -79,9 +76,6 @@ Then simply get the platform server and you can play with parameters and operati
 
     import static junit.framework.Assert.assertEquals;
 
-    /**
-     * @author Romain Manni-Bucau
-     */
     public class GuessHowManyMBeanTest {
         private static final String OBJECT_NAME = "openejb.user.mbeans:group=org.superbiz.mbean,application=mbean-auto-registration,name=GuessHowManyMBean";
 

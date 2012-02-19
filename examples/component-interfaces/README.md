@@ -22,7 +22,6 @@ Title: Component Interfaces
      * This is an EJB 3 style pojo stateful session bean
      * it does not need to implement javax.ejb.SessionBean
      *
-     * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
      */
     //START SNIPPET: code
     
@@ -243,7 +242,6 @@ Title: Component Interfaces
     import java.util.Locale;
     
     /**
-     * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
      * @version $Rev: 1090810 $ $Date: 2011-04-10 07:49:26 -0700 (Sun, 10 Apr 2011) $
      */
     public class FriendlyPersonTest extends TestCase {
