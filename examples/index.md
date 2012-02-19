@@ -16,12 +16,15 @@ Notice:    Licensed to the Apache Software Foundation (ASF) under one
            under the License.
 {row
 
+If there is a particular example that you don't see here, just [ask](mailto:dev@openejb.apache.org?subject=Example+request) and there are good odds someone will make it for you.
+All the examples show code, but some are better documented than others.  Examples with full descriptions are annotated with a (/) icon.
+
 {span-one-third
 ### Session Beans
 
- - [simple-singleton](simple-singleton/README.html)
- - [simple-stateful](simple-stateful/README.html)
- - [simple-stateless](simple-stateless/README.html)
+ - [simple-singleton](simple-singleton/README.html) (/)
+ - [simple-stateful](simple-stateful/README.html) (/)
+ - [simple-stateless](simple-stateless/README.html) (/)
  - [simple-stateless-with-descriptor](simple-stateless-with-descriptor/README.html)
 }
 
@@ -37,13 +40,13 @@ Notice:    Licensed to the Apache Software Foundation (ASF) under one
 {span-one-third
 ### CDI
 
- - [cdi-basic](cdi-basic/README.html)
- - [cdi-request-scope](cdi-request-scope/README.html)
- - [cdi-application-scope](cdi-application-scope/README.html)
- - [cdi-interceptors](cdi-interceptors/README.html)
+ - [cdi-basic](cdi-basic/README.html) (/)
+ - [cdi-request-scope](cdi-request-scope/README.html) (/)
+ - [cdi-application-scope](cdi-application-scope/README.html) (/)
+ - [cdi-interceptors](cdi-interceptors/README.html) (/)
  - [cdi-produces-disposes](cdi-produces-disposes/README.html)
  - [decorators](decorators/README.html)
- - [cdi-alternative-and-stereotypes](cdi-alternative-and-stereotypes/README.html)
+ - [cdi-alternative-and-stereotypes](cdi-alternative-and-stereotypes/README.html) (/)
 }
 
 }
@@ -52,9 +55,9 @@ Notice:    Licensed to the Apache Software Foundation (ASF) under one
 {span-one-third
 ### EJB
 
- - [access-timeout](access-timeout/README.html)
- - [async-methods](async-methods/README.html)
- - [schedule-expression](schedule-expression/README.html)
+ - [access-timeout](access-timeout/README.html) (/)
+ - [async-methods](async-methods/README.html) (/)
+ - [schedule-expression](schedule-expression/README.html) (/)
  - [schedule-methods](schedule-methods/README.html)
  - [interceptors](interceptors/README.html)
 }
@@ -70,9 +73,9 @@ Notice:    Licensed to the Apache Software Foundation (ASF) under one
 {span-one-third
 ### Web Services
 
- - [simple-webservice](simple-webservice/README.html)
- - [webservice-handlerchain](webservice-handlerchain/README.html)
- - [webservice-holder](webservice-holder/README.html)
+ - [simple-webservice](simple-webservice/README.html) (/)
+ - [webservice-handlerchain](webservice-handlerchain/README.html) (/)
+ - [webservice-holder](webservice-holder/README.html) (/)
  - [webservice-attachments](webservice-attachments/README.html)
  - [webservice-inheritance](webservice-inheritance/README.html)
  - [webservice-security](webservice-security/README.html)
@@ -87,7 +90,7 @@ Notice:    Licensed to the Apache Software Foundation (ASF) under one
 
  - [injection-of-connectionfactory](injection-of-connectionfactory/README.html)
  - [simple-mdb-with-descriptor](simple-mdb-with-descriptor/README.html)
- - [simple-mdb](simple-mdb/README.html)
+ - [simple-mdb](simple-mdb/README.html) (/)
 }
 
 {span-one-third
@@ -112,15 +115,15 @@ Notice:    Licensed to the Apache Software Foundation (ASF) under one
 ### DataSources
 
  - [injection-of-datasource](injection-of-datasource/README.html)
- - [datasource-ciphered-password](datasource-ciphered-password/README.html)
- - [dynamic-datasource-routing](dynamic-datasource-routing/README.html)
+ - [datasource-ciphered-password](datasource-ciphered-password/README.html) (/)
+ - [dynamic-datasource-routing](dynamic-datasource-routing/README.html) (/)
  - [webapps/resources-declared-in-webapp](webapps/resources-declared-in-webapp/README.html)
 }
 
 {span-one-third
 ### Referencing EJBs
 
- - [injection-of-ejbs](injection-of-ejbs/README.html)
+ - [injection-of-ejbs](injection-of-ejbs/README.html) (/)
  - [lookup-of-ejbs-with-descriptor](lookup-of-ejbs-with-descriptor/README.html)
  - [lookup-of-ejbs](lookup-of-ejbs/README.html)
 }
@@ -138,16 +141,16 @@ Notice:    Licensed to the Apache Software Foundation (ASF) under one
 {span-one-third
 ### Java EE Connectors
 
- - [quartz-app](quartz-app/README.html)
+ - [quartz-app](quartz-app/README.html) (/)
 }
 
 {span-one-third
 ### Testing Techniques
 
- - [alternate-descriptors](alternate-descriptors/README.html)
- - [application-composer](application-composer/README.html)
+ - [alternate-descriptors](alternate-descriptors/README.html) (/)
+ - [application-composer](application-composer/README.html) (/)
  - [testcase-injection](testcase-injection/README.html)
- - [ear-testing](ear-testing/README.html)
+ - [ear-testing](ear-testing/README.html) (/)
 }
 
 {span-one-third
@@ -163,7 +166,7 @@ Notice:    Licensed to the Apache Software Foundation (ASF) under one
 {span-one-third
 ### Meta-Annotations
 
- - [access-timeout-meta](access-timeout-meta/README.html)
+ - [access-timeout-meta](access-timeout-meta/README.html) (/)
  - [schedule-methods-meta](schedule-methods-meta/README.html)
  - [testing-security-meta](testing-security-meta/README.html)
  - [movies-complete-meta](movies-complete-meta/README.html)
@@ -173,7 +176,7 @@ Notice:    Licensed to the Apache Software Foundation (ASF) under one
 {span-one-third
 ###  Proxy Beans
 
- - [dynamic-dao-implementation](dynamic-dao-implementation/README.html)
+ - [dynamic-dao-implementation](dynamic-dao-implementation/README.html) (/)
  - [dynamic-implementation](dynamic-implementation/README.html)
  - [dynamic-proxy-to-access-mbean](dynamic-proxy-to-access-mbean/README.html)
 }
@@ -192,9 +195,9 @@ Notice:    Licensed to the Apache Software Foundation (ASF) under one
 {span-one-third
 ###  Other Features
 
- - [mbean-auto-registration](mbean-auto-registration/README.html)
- - [bean-validation-design-by-contract](bean-validation-design-by-contract/README.html)
- - [telephone-stateful](telephone-stateful/README.html)
+ - [mbean-auto-registration](mbean-auto-registration/README.html) (/)
+ - [bean-validation-design-by-contract](bean-validation-design-by-contract/README.html) (/)
+ - [telephone-stateful](telephone-stateful/README.html) (/)
  - [troubleshooting](troubleshooting/README.html)
 
 }
