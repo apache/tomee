@@ -64,7 +64,7 @@ public class UserServiceTest {
     @Test
     public void create() {
         int expected = service.list(0, 100).size() + 1;
-        Response response = WebClient.create("http://localhost:4204")
+        Response response = WebClient.create("http://localhost:4204/rest-on-ejb")
                 .path("/user/create")
                 .query("name", "dummy")
                 .query("pwd", "unbreakable")
@@ -84,7 +84,7 @@ public class UserServiceTest {
     public void delete() throws Exception {
         User user = service.create("todelete", "dontforget", "delete@me.com");
 
-        WebClient.create("http://localhost:4204").path("/user/delete/" + user.getId()).delete();
+        WebClient.create("http://localhost:4204/rest-on-ejb").path("/user/delete/" + user.getId()).delete();
 
         user = service.find(user.getId());
         assertNull(user);
@@ -92,7 +92,7 @@ public class UserServiceTest {
 
     @Test
     public void show() {
-        User user = WebClient.create("http://localhost:4204")
+        User user = WebClient.create("http://localhost:4204/rest-on-ejb")
                 .path("/user/show/" + users.iterator().next().getId())
                 .get(User.class);
         assertEquals("foo", user.getFullname());
@@ -102,7 +102,7 @@ public class UserServiceTest {
 
     @Test
     public void list() throws Exception {
-        String users = WebClient.create("http://localhost:4204")
+        String users = WebClient.create("http://localhost:4204/rest-on-ejb")
                 .path("/user/list")
                 .get(String.class);
         assertEquals(
@@ -131,7 +131,7 @@ public class UserServiceTest {
     @Test
     public void update() throws Exception {
         User created = service.create("name", "pwd", "mail");
-        Response response = WebClient.create("http://localhost:4204")
+        Response response = WebClient.create("http://localhost:4204/rest-on-ejb")
                 .path("/user/update/" + created.getId())
                 .query("name", "corrected")
                 .query("pwd", "userpwd")

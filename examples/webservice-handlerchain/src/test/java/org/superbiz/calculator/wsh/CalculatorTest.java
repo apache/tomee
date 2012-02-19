@@ -22,6 +22,7 @@ import org.junit.Test;
 import javax.ejb.embeddable.EJBContainer;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
+import java.lang.Thread;
 import java.net.URL;
 import java.util.Properties;
 
@@ -42,7 +43,7 @@ public class CalculatorTest {
     @Test
     public void testCalculatorViaWsInterface() throws Exception {
         final Service calculatorService = Service.create(
-                new URL("http://127.0.0.1:4204/Calculator?wsdl"),
+                new URL("http://127.0.0.1:4204/webservice-handlerchain/Calculator?wsdl"),
                 new QName("http://superbiz.org/wsdl", "CalculatorService"));
 
         assertNotNull(calculatorService);

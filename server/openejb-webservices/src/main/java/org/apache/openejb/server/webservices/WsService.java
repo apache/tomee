@@ -69,6 +69,7 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_WS, WsService.class);
     public static final String WS_ADDRESS_FORMAT = "openejb.wsAddress.format";
     public static final String WS_FORCE_ADDRESS = "openejb.webservice.deployment.address";
+    private static final boolean OLD_WEBSERVICE_DEPLOYMENT = SystemInstance.get().getOptions().get("openejb.webservice.old-deployment", false);
     private StringTemplate wsAddressTemplate;
 
     private PortAddressRegistry portAddressRegistry;
@@ -263,7 +264,11 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
                                     transport = portInfo.transportGuarantee;
                                 }
 
-                                List<String> addresses = wsRegistry.addWsContainer(webContextByEjb.get(bean.ejbClass), location, container, virtualHost, realm, transport, auth, classLoader);
+                                String context = webContextByEjb.get(bean.ejbClass);
+                                if (context == null && !OLD_WEBSERVICE_DEPLOYMENT) {
+                                    context = ejbJar.moduleName;
+                                }
+                                List<String> addresses = wsRegistry.addWsContainer(context, location, container, virtualHost, realm, transport, auth, classLoader);
 
                                 // one of the registered addresses to be the canonical address
                                 String address = HttpUtil.selectSingleAddress(addresses);

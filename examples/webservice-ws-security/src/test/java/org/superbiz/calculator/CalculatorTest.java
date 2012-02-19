@@ -56,7 +56,7 @@ public class CalculatorTest extends TestCase {
 
     //START SNIPPET: webservice
     public void testCalculatorViaWsInterface() throws Exception {
-        Service calcService = Service.create(new URL("http://127.0.0.1:4204/CalculatorImpl?wsdl"),
+        Service calcService = Service.create(new URL("http://127.0.0.1:4204/webservice-ws-security/CalculatorImpl?wsdl"),
                 new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
         assertNotNull(calcService);
 
@@ -85,7 +85,7 @@ public class CalculatorTest extends TestCase {
     }
 
     public void testCalculatorViaWsInterfaceWithTimestamp1way() throws Exception {
-        Service calcService = Service.create(new URL("http://127.0.0.1:4204/CalculatorImplTimestamp1way?wsdl"),
+        Service calcService = Service.create(new URL("http://127.0.0.1:4204/webservice-ws-security/CalculatorImplTimestamp1way?wsdl"),
                 new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
         assertNotNull(calcService);
 
@@ -113,7 +113,7 @@ public class CalculatorTest extends TestCase {
     }
 
     public void testCalculatorViaWsInterfaceWithTimestamp2ways() throws Exception {
-        Service calcService = Service.create(new URL("http://127.0.0.1:4204/CalculatorImplTimestamp2ways?wsdl"),
+        Service calcService = Service.create(new URL("http://127.0.0.1:4204/webservice-ws-security/CalculatorImplTimestamp2ways?wsdl"),
                 new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
         assertNotNull(calcService);
 
@@ -147,7 +147,7 @@ public class CalculatorTest extends TestCase {
     }
 
     public void testCalculatorViaWsInterfaceWithUsernameTokenPlainPassword() throws Exception {
-        Service calcService = Service.create(new URL("http://127.0.0.1:4204/CalculatorImplUsernameTokenPlainPassword?wsdl"),
+        Service calcService = Service.create(new URL("http://127.0.0.1:4204/webservice-ws-security/CalculatorImplUsernameTokenPlainPassword?wsdl"),
                 new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
         assertNotNull(calcService);
 
@@ -186,7 +186,7 @@ public class CalculatorTest extends TestCase {
     }
 
     public void testCalculatorViaWsInterfaceWithUsernameTokenHashedPassword() throws Exception {
-        Service calcService = Service.create(new URL("http://127.0.0.1:4204/CalculatorImplUsernameTokenHashedPassword?wsdl"),
+        Service calcService = Service.create(new URL("http://127.0.0.1:4204/webservice-ws-security/CalculatorImplUsernameTokenHashedPassword?wsdl"),
                 new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
         assertNotNull(calcService);
 
@@ -225,7 +225,7 @@ public class CalculatorTest extends TestCase {
     }
 
     public void testCalculatorViaWsInterfaceWithUsernameTokenPlainPasswordEncrypt() throws Exception {
-        Service calcService = Service.create(new URL("http://127.0.0.1:4204/CalculatorImplUsernameTokenPlainPasswordEncrypt?wsdl"),
+        Service calcService = Service.create(new URL("http://127.0.0.1:4204/webservice-ws-security/CalculatorImplUsernameTokenPlainPasswordEncrypt?wsdl"),
                 new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
         assertNotNull(calcService);
 
@@ -267,7 +267,7 @@ public class CalculatorTest extends TestCase {
     }
 
     public void testCalculatorViaWsInterfaceWithSign() throws Exception {
-        Service calcService = Service.create(new URL("http://127.0.0.1:4204/CalculatorImplSign?wsdl"),
+        Service calcService = Service.create(new URL("http://127.0.0.1:4204/webservice-ws-security/CalculatorImplSign?wsdl"),
                 new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
         assertNotNull(calcService);
 

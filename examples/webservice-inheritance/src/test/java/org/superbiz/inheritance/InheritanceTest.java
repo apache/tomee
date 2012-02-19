@@ -59,7 +59,7 @@ public class InheritanceTest extends TestCase {
     //START SNIPPET: webservice
     public void testInheritanceViaWsInterface() throws Exception {
         Service service = Service.create(
-                new URL("http://127.0.0.1:4204/WakeRiderImpl?wsdl"),
+                new URL("http://127.0.0.1:4204/webservice-inheritance/WakeRiderImpl?wsdl"),
                 new QName("http://superbiz.org/wsdl", "InheritanceWsService"));
         assertNotNull(service);
 

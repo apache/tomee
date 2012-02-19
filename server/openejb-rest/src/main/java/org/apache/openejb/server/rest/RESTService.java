@@ -60,6 +60,7 @@ import java.util.Set;
 
 public abstract class RESTService implements ServerService, SelfManaging, DeploymentListener {
     public static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_RS, RESTService.class);
+    private static final boolean OLD_WEBSERVICE_DEPLOYMENT = SystemInstance.get().getOptions().get("openejb.webservice.old-deployment", false);
 
     private static final String IP = "n/a";
     private static final int PORT = -1;
@@ -213,7 +214,11 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
             final String clazz = ejbs.getKey();
             if (!restEjbs.containsKey(clazz)) {
                 // null is important, it means there is no webroot path in standalone
-                restEjbs.put(clazz, new EJBRestServiceInfo(null, beanContexts.get(clazz)));
+                String context = null;
+                if (!OLD_WEBSERVICE_DEPLOYMENT) {
+                    context = ejbs.getValue().getModuleName();
+                }
+                restEjbs.put(clazz, new EJBRestServiceInfo(context, beanContexts.get(clazz)));
             }
         }
         beanContexts.clear();

@@ -65,13 +65,13 @@ public class CustomProviderTest {
     }
 
     @Test public void customProvider() {
-        String response = WebClient.create("http://localhost:4204").accept("openejb/reverse")
+        String response = WebClient.create("http://localhost:4204/openejb-cxf-rs").accept("openejb/reverse")
             .path("/custom1/reverse").get(String.class);
         assertEquals("provider", response);
     }
 
     @Test public void customSpecificProvider() {
-        String response = WebClient.create("http://localhost:4204").accept("openejb/constant")
+        String response = WebClient.create("http://localhost:4204/openejb-cxf-rs").accept("openejb/constant")
             .path("/custom2/constant").get(String.class);
         assertEquals("it works!", response);
     }
