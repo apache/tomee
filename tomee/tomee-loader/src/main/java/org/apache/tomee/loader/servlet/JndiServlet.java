@@ -18,10 +18,12 @@
 package org.apache.tomee.loader.servlet;
 
 import com.google.gson.Gson;
+import org.apache.openejb.BeanContext;
+import org.apache.openejb.core.ivm.BaseEjbProxyHandler;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.util.proxy.ProxyManager;
 import org.apache.tomee.loader.dto.JndiDTO;
-import org.apache.tomee.loader.dto.TestDTO;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -33,9 +35,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -91,12 +91,29 @@ public class JndiServlet extends HttpServlet {
                 mountJndiList(jndi, Context.class.cast(obj), key);
             } else {
                 final JndiDTO dto = new JndiDTO();
+
                 dto.path = key;
                 dto.name = pair.getName();
                 dto.value = String.valueOf(obj);
+                dto.deploymentId = getDeploymentId(obj);
+
+                final BeanContext beanContext = getDeployment(dto.deploymentId);
+                dto.beanType = String.valueOf(beanContext.getComponentType());
+                
                 jndi.add(dto);
             }
         }
+    }
+
+    private BeanContext getDeployment(String deploymentID) {
+        ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+        BeanContext ejb = containerSystem.getBeanContext(deploymentID);
+        return ejb;
+    }
+
+    private String getDeploymentId(Object ejbObj) throws NamingException {
+        final BaseEjbProxyHandler handler = (BaseEjbProxyHandler) ProxyManager.getInvocationHandler(ejbObj);
+        return String.valueOf(handler.deploymentID);
 
     }
 }
