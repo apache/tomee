@@ -14,30 +14,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.tomee.loader.ws;
 
+package org.apache.tomee.loader.servlet;
 
+import com.google.gson.Gson;
 import org.apache.tomee.loader.dto.TestDTO;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
-@Path("/ws/test")
-@Produces({"application/json"})
-public class TestWs {
+@WebServlet(name = "test", urlPatterns = "/ws/test", asyncSupported = false)
+public class TestServlet extends HttpServlet {
 
-    @Path("/test")
-    @GET
-    public List<TestDTO> get() throws NamingException {
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        final String json;
+        try {
+            final Map<String, Object> result = new HashMap<String, Object>();
+            result.put("test", get());
+            json = new Gson().toJson(result);
+        } catch (NamingException e) {
+            throw new ServletException(e);
+        }
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+        resp.getWriter().write(json);
+    }
+
+    private List<TestDTO> get() throws NamingException {
         final List<TestDTO> result = new ArrayList<TestDTO>();
 
         {
