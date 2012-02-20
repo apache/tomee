@@ -22,6 +22,7 @@ TOMEE.ApplicationView = function (cfg) {
     var channel = cfg.channel;
 
     var appToolbar = TOMEE.ApplicationToolbar(cfg);
+    var home = TOMEE.ApplicationHomePanel(cfg);
     var jndi = TOMEE.ApplicationJndiPanel(cfg);
     var test = TOMEE.ApplicationTestPanel(cfg);
     var help = TOMEE.ApplicationHelpPanel(cfg);
@@ -70,6 +71,9 @@ TOMEE.ApplicationView = function (cfg) {
 
         } else if (key === 'help') {
             return help;
+
+        } else if (key === 'home') {
+            return home;
         }
         return null;
     };
