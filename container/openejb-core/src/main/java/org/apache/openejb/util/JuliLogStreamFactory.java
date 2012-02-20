@@ -19,7 +19,6 @@ package org.apache.openejb.util;
 import org.apache.openejb.loader.SystemInstance;
 
 import java.util.logging.ConsoleHandler;
-import java.util.logging.Level;
 import java.util.logging.LogManager;
 
 /**
@@ -54,6 +53,10 @@ public class JuliLogStreamFactory implements LogStreamFactory {
         @Override
         public String getProperty(final String name) {
             final String parentValue = super.getProperty(name);
+            if (SystemInstance.get().getProperties().containsKey(name)) {
+                return SystemInstance.get().getProperty(name);
+            }
+
             // if it is one of ours loggers and no value is defined let set our nice logging style
             if (OpenEJBLogManager.class.getName().equals(System.getProperty("java.util.logging.manager")) // custom logging
                     && isOverridableLogger(name) // managed loggers
@@ -64,7 +67,7 @@ public class JuliLogStreamFactory implements LogStreamFactory {
                     return "false";
                 }
             }
-            return super.getProperty(name);
+            return parentValue;
         }
 
         private static boolean isOverridableLogger(String name) {
@@ -82,7 +85,6 @@ public class JuliLogStreamFactory implements LogStreamFactory {
     public static class OpenEJBSimpleLayoutHandler extends ConsoleHandler {
         public OpenEJBSimpleLayoutHandler() {
             setFormatter(new SingleLineFormatter());
-            setLevel(Level.INFO);
         }
     }
 
