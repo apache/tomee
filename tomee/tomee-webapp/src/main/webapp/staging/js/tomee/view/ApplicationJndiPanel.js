@@ -62,9 +62,8 @@ TOMEE.ApplicationJndiPanel = function (cfg) {
     var addCarouselItem = function (carouselParams) {
         var captionTpl = [
             '          <br/><br/><br/><br/><br/><br/>',
-            '          <div class="carousel-caption">',
-            '              <h4>{0}</h4>',
-            '              <p>{1}</p>',
+            '          <div class="carousel-caption" style="padding: 5px;">',
+            '{0}',
             '          </div>'
         ].join('');
 
@@ -78,19 +77,18 @@ TOMEE.ApplicationJndiPanel = function (cfg) {
         ].join('');
 
         var result = '';
-        if (carouselParams.caption) {
-            var caption = TOMEE.utils.stringFormat(captionTpl,
-                carouselParams.caption.title,
-                carouselParams.caption.message
-            );
+        if (carouselParams.captionTpl) {
+            var caption = TOMEE.utils.stringFormat(captionTpl, carouselParams.captionTpl);
             result = TOMEE.utils.stringFormat(tpl, carouselParams.bodyTpl, caption);
 
         } else {
             result = TOMEE.utils.stringFormat(tpl, carouselParams.bodyTpl, '');
         }
 
-        elements.carousel.append($(result));
+        var el = $(result);
+        elements.carousel.append(el);
         elements.carousel.carousel('next');
+        return el;
     };
 
     var showBeanPanel = function (bean) {
@@ -102,12 +100,30 @@ TOMEE.ApplicationJndiPanel = function (cfg) {
             '<p>beanType: ' + bean['beanType'] + '</p>'
         ].join('');
 
-        addCarouselItem({
-            caption: {
-                title: TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.browser.bean'),
-                message: TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.browser.bean.details')
-            },
+        var backUid = TOMEE.Sequence.next('CAROUSEL-BACK');
+        var captionTpl = [
+            '<div class="btn-group">',
+            '<a class="btn" id="' + backUid + '" href="#">Back</a>',
+            '<a class="btn" href="#">Invoke</a>',
+            '<a class="btn" href="#">View class</a>',
+            '</div>'
+        ].join('');
+
+        var item = addCarouselItem({
+            captionTpl: captionTpl,
             bodyTpl: bodyTpl
+        });
+
+        var backBtn = item.find("#" + backUid);
+        backBtn.on('click', function() {
+            elements.carousel.carousel('prev');
+
+            var task = TOMEE.DelayedTask({
+                callback:function() {
+                    item.remove();
+                }
+            });
+            task.delay(1000);
         });
     };
 
