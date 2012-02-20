@@ -23,26 +23,26 @@ TOMEE.ApplicationJndiPanel = function (cfg) {
     var model = cfg.jndiModel;
 
     var elements = (function () {
+        var carouselUid = TOMEE.Sequence.next('CAROUSEL');
         var tbodyUid = TOMEE.Sequence.next();
         var tpl = [
             '<div class="well">',
 
-            '<div id="myCarousel" class="carousel slide">',
-            '    <div class="carousel-inner">',
+            '<div class="carousel slide">',
+            '    <div id="' + carouselUid + '" class="carousel-inner">',
             '        <div class="item active">',
-            '<div style="overflow:auto; height: 300px">',
-            '<table class="table table-striped table-bordered table-condensed">',
-            '    <tbody id="' + tbodyUid + '"/>',
-            '</table>',
-            '</div>',
+            '          <div style="overflow:auto; height: 300px">',
+            '          <table class="table table-striped table-bordered table-condensed">',
+            '              <tbody id="' + tbodyUid + '"/>',
+            '          </table>',
+            '          </div>',
 
-            '            <br/><br/><br/><br/><br/><br/>',
-            '            <div class="carousel-caption">',
-            '                <h4>' + TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.browser') + '</h4>',
-            '                <p>' + TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.browser.info') + '</p>',
-            '            </div>',
+            '          <br/><br/><br/><br/><br/><br/>',
+            '          <div class="carousel-caption">',
+            '              <h4>' + TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.browser') + '</h4>',
+            '              <p>' + TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.browser.info') + '</p>',
+            '          </div>',
             '        </div>',
-
             '    </div>',
             '</div>',
             '</div>'
@@ -51,24 +51,77 @@ TOMEE.ApplicationJndiPanel = function (cfg) {
         //create the element
         var all = $(tpl.join(''));
         var tbody = all.find("#" + tbodyUid);
+        var carousel = all.find("#" + carouselUid);
         return {
             all: all,
-            tbody: tbody
+            tbody: tbody,
+            carousel: carousel
         };
     })();
 
-    /**
-     *
-     * @param bean
-     */
+    var addCarouselItem = function (carouselParams) {
+        var captionTpl = [
+            '          <br/><br/><br/><br/><br/><br/>',
+            '          <div class="carousel-caption">',
+            '              <h4>{0}</h4>',
+            '              <p>{1}</p>',
+            '          </div>',
+        ].join('');
+
+        var tpl = [
+            '        <div class="item">',
+            '          <div style="overflow:auto; height: 300px">',
+            '{0}',
+            '          </div>',
+            '{1}',
+            '        </div>'
+        ].join('');
+
+        var result = '';
+        if (carouselParams.caption) {
+            var caption = TOMEE.utils.stringFormat(captionTpl,
+                carouselParams.caption.title,
+                carouselParams.caption.message
+            );
+            result = TOMEE.utils.stringFormat(tpl, carouselParams.bodyTpl, caption);
+
+        } else {
+            result = TOMEE.utils.stringFormat(tpl, carouselParams.bodyTpl, '');
+        }
+
+        elements.carousel.append($(result));
+        elements.carousel.carousel('next');
+    };
+
+    var showBeanPanel = function (bean) {
+        addCarouselItem({
+            caption: {
+                title: 'Details',
+                message: 'Here comes the detail'
+            },
+            bodyTpl: 'Test!!!'
+        });
+    };
+
     var addRow = function (bean) {
+        var aUid = TOMEE.Sequence.next("JNDI-A");
+        var iUid = TOMEE.Sequence.next("JNDI-I");
         var row = [
             '        <tr>',
-            '            <td><a href="#">' + bean.name + '</a></td>',
-            '            <td><i class="icon-chevron-right"></i></td>',
+            '            <td><a id="' + aUid + '" href="#">' + bean.name + '</a></td>',
+            '            <td><i id="' + iUid + '" class="icon-chevron-right"></i></td>',
             '        </tr>'
         ].join('');
         elements.tbody.append($(row));
+        var a = elements.tbody.find("#" + aUid);
+        a.on('click', function () {
+            showBeanPanel(bean);
+        });
+
+        var i = elements.tbody.find("#" + iUid);
+        i.on('click', function () {
+            showBeanPanel(bean);
+        });
     };
 
     var loadData = function () {
