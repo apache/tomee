@@ -33,8 +33,6 @@ TOMEE.ApplicationI18N = (function () {
         'app.home.menu.setup': 'Setup',
         'app.home.menu.setup.test': 'Testing your setup',
         'app.home.menu.setup.test.title': 'Test Results',
-        'app.home.menu.setup.test.testname': 'Test',
-        'app.home.menu.setup.test.testsatus': 'Status',
 
         'app.home.menu.setup.test.testname.key.homeSet': 'openejb.home is set',
         'app.home.menu.setup.test.testname.key.homeExists': 'openejb.home exists',
@@ -48,13 +46,9 @@ TOMEE.ApplicationI18N = (function () {
 
         'app.home.menu.tools': 'Tools',
 
-        'app.home.menu.tools.jndi': 'JNDI Browser',
-        'app.home.menu.tools.jndi.title': 'OpenEJB JNDI Namespace Browser',
-        'app.home.menu.tools.jndi.module': 'Module',
-        'app.home.menu.tools.jndi.path': 'Path',
+        'app.home.menu.tools.jndi.browser': 'Jndi browser',
+        'app.home.menu.tools.jndi.browser.info': 'Click to see more information about the object',
         'app.home.menu.tools.jndi.name': 'Name',
-        'app.home.menu.tools.jndi.resource': 'Resource',
-
 
         'dummy': 'dummy'
     };

@@ -25,19 +25,26 @@ TOMEE.ApplicationJndiPanel = function (cfg) {
     var elements = (function () {
         var tbodyUid = TOMEE.Sequence.next();
         var tpl = [
-            '<div class="well" style="overflow:auto">',
-            '<legend>' + TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.title') + '</legend>',
+            '<div class="well">',
 
+            '<div id="myCarousel" class="carousel slide">',
+            '    <div class="carousel-inner">',
+            '        <div class="item active">',
+            '<div style="overflow:auto; height: 200px">',
             '<table class="table table-striped table-bordered table-condensed">',
-            '    <thead>',
-            '        <tr>',
-            '            <th>' + TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.name') + '</th>',
-            '            <th>' + TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.resource') + '</th>',
-            '        </tr>',
-            '    </thead>',
             '    <tbody id="' + tbodyUid + '"/>',
             '</table>',
+            '</div>',
 
+            '<br/><br/><br/>',
+            '            <div class="carousel-caption">',
+            '                <h4>' + TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.browser') + '</h4>',
+            '                <p>' + TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.browser.info') + '</p>',
+            '            </div>',
+            '        </div>',
+
+            '    </div>',
+            '</div>',
             '</div>'
         ];
 
@@ -58,7 +65,6 @@ TOMEE.ApplicationJndiPanel = function (cfg) {
         var row = [
             '        <tr>',
             '            <td>' + bean.name + '</td>',
-            '            <td>' + bean.value + '</td>',
             '        </tr>'
         ].join('');
         elements.tbody.append($(row));
