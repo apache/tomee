@@ -23,6 +23,8 @@ import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.openejb.server.cli.command.AbstractCommand;
 import org.apache.openejb.server.cli.command.Command;
 import org.apache.openejb.util.OpenEjbVersion;
+import org.apache.openejb.util.URLs;
+
 import org.apache.xbean.finder.Annotated;
 import org.apache.xbean.finder.ClassFinder;
 import org.apache.xbean.finder.UrlSet;
@@ -79,7 +81,7 @@ public class CliRunnable implements Runnable {
             final UrlSet forceCommonCli = new UrlSet(CliRunnable.class.getClassLoader()).matching(".*openejb-common-cli.*");
             UrlSet urls = new UrlSet(CliRunnable.class.getClassLoader());
             urls = NewLoaderLogic.applyBuiltinExcludes(urls);
-            urls = urls.exclude(".*openejb.*");
+            urls = URLs.cullSystemAndOpenEJBJars(urls);
             urls = urls.include(forceCommonCli);
 
             final ClassFinder finder = new ClassFinder(CliRunnable.class.getClassLoader(), urls.getUrls());

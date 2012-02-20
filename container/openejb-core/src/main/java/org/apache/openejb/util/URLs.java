@@ -20,13 +20,18 @@ package org.apache.openejb.util;
 import static org.apache.openejb.loader.JarLocation.decode;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import org.apache.xbean.finder.UrlSet;
+
 
 /**
  * @version $Rev$ $Date$
  */
 public class URLs {
+    public static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, URLs.class.getPackage().getName());
 
     public static File toFile(URL url) {
         if ("jar".equals(url.getProtocol())) {
@@ -53,4 +58,29 @@ public class URLs {
     public static String toFilePath(URL url) {
         return toFile(url).getAbsolutePath();
     }
+
+    public static UrlSet cullSystemAndOpenEJBJars(UrlSet original) throws IOException {
+        return cullSystemJars(cullOpenEJBJars(original));
+    }
+
+    public static UrlSet cullSystemJars(UrlSet original) throws IOException {
+        UrlSet urls = new UrlSet(original.getUrls());
+        urls = urls.exclude(ClassLoader.getSystemClassLoader().getParent());
+        urls = urls.excludeJavaExtDirs();
+        urls = urls.excludeJavaEndorsedDirs();
+        urls = urls.excludeJavaHome();
+        urls = urls.excludePaths(System.getProperty("sun.boot.class.path", ""));
+        urls = urls.exclude(".*/JavaVM.framework/.*");
+        if (LOGGER.isDebugEnabled()) LOGGER.debug("Cullled {} system urls from set", original.size() - urls.size());
+        return urls;
+    }
+
+    public static UrlSet cullOpenEJBJars(UrlSet original) throws IOException {
+        UrlSet urls = new UrlSet(original.getUrls());
+        urls = urls.exclude(".*openejb.*");
+        if (LOGGER.isDebugEnabled()) LOGGER.debug("Cullled {} OpenEJB urls from set", original.size() - urls.size());
+        return urls;
+    }
+
+    private URLs() { }
 }
