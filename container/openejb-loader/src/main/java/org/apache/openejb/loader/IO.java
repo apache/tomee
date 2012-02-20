@@ -20,6 +20,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
@@ -33,6 +34,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.Proxy;
 import java.net.ProxySelector;
 import java.net.URI;
@@ -256,5 +258,17 @@ public class IO {
     public static InputStream read(File source) throws FileNotFoundException {
         final InputStream in = new FileInputStream(source);
         return new BufferedInputStream(in, 32768);
+    }
+
+    public static InputStream read(String content) {
+        return read(content.getBytes());
+    }
+
+    public static InputStream read(String content, String encoding) throws UnsupportedEncodingException {
+        return read(content.getBytes(encoding));
+    }
+
+    public static InputStream read(byte[] content) {
+        return new ByteArrayInputStream(content);
     }
 }

@@ -16,8 +16,11 @@
  */
 package org.apache.openejb.util;
 
+import java.io.File;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @version $Rev$ $Date$
@@ -72,9 +75,27 @@ public class Join {
         return sb.substring(0, sb.length() - delimiter.length());
     }
 
+    public static <T> List<String> strings(Collection<T> collection, NameCallback<T> callback) {
+        final List<String> list = new ArrayList<String>();
+
+        for (T t : collection) {
+            final String name = callback.getName(t);
+            list.add(name);
+        }
+
+        return list;
+    }
+
     public static interface NameCallback<T> {
 
         public String getName(T object);
+    }
+
+    public static class FileCallback implements NameCallback<File> {
+
+        public String getName(File file) {
+            return file.getName();
+        }
     }
 
     public static class MethodCallback implements NameCallback<Method> {

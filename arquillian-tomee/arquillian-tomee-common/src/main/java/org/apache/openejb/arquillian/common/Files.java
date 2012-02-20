@@ -27,7 +27,11 @@ import java.util.List;
 public class Files {
 
     public static File createTempDir() throws IOException {
-        File tempDir = File.createTempFile("tomee", ".conf");
+        return createTempDir("tomee", ".conf");
+    }
+
+    public static File createTempDir(String prefix, String suffix) throws IOException {
+        File tempDir = File.createTempFile(prefix, suffix);
         tempDir.delete();
         tempDir.mkdirs();
         deleteOnExit(tempDir);

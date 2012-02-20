@@ -57,7 +57,7 @@ public class Files {
         return collect(dir, new FileFilter() {
             @Override
             public boolean accept(File file) {
-                return pattern.matcher(file.getAbsolutePath()).matches();
+                return pattern.matcher(file.getName()).matches();
             }
         });
     }
@@ -77,6 +77,11 @@ public class Files {
 
     public static File exists(File file, String s) {
         if (!file.exists()) throw new RuntimeException(s + " does not exist: " + file.getAbsolutePath());
+        return file;
+    }
+
+    public static File exists(File file) {
+        if (!file.exists()) throw new RuntimeException("Does not exist: " + file.getAbsolutePath());
         return file;
     }
 
@@ -170,4 +175,10 @@ public class Files {
         }
     }
 
+    public static File select(File dir, String pattern) {
+        final List<File> matches = collect(dir, pattern);
+        if (matches.size() == 0) throw new IllegalStateException(String.format("Missing '%s'", pattern));
+        if (matches.size() > 1) throw new IllegalStateException(String.format("Too many found '%s': %s", Join.join(", ", new Join.FileCallback(), matches)));
+        return matches.get(0);
+    }
 }
