@@ -17,9 +17,6 @@
  */
 package org.apache.tomee.loader;
 
-import java.io.File;
-import java.util.Properties;
-
 import org.apache.catalina.Container;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
@@ -28,6 +25,18 @@ import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.core.StandardServer;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Enumeration;
+import java.util.Properties;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The sole purpose of this class is to call the {@link TomcatEmbedder#embed} method
@@ -43,7 +52,10 @@ import org.apache.catalina.core.StandardServer;
  * OpenEJB is guaranteed to start before all webapps. 
  */
 public class OpenEJBListener implements LifecycleListener {
+    private static final Logger LOGGER = Logger.getLogger(OpenEJBListener.class.getName());
+
     static private boolean listenerInstalled;
+    static private boolean logWebappNotFound = true;
 
     public static boolean isListenerInstalled() {
         return listenerInstalled;
@@ -54,17 +66,78 @@ public class OpenEJBListener implements LifecycleListener {
         if (listenerInstalled) return;
         
         try {
-	        Properties properties = new Properties();
 	        File webappDir = findOpenEjbWar();
+            if (webappDir == null && event.getSource() instanceof StandardServer) {
+                final StandardServer server = (StandardServer) event.getSource();
+                webappDir = tryToFindAndExtractWar(server);
+                final File exploded = extractDirectory(webappDir);
+                if (webappDir != null) {
+                    extract(webappDir, exploded);
+                }
+                webappDir = exploded;
+                TomcatHelper.setServer(server);
+            }
             if (webappDir != null) {
+                final Properties properties = new Properties();
                 properties.setProperty("tomee.war", webappDir.getAbsolutePath());
                 properties.setProperty("openejb.embedder.source", getClass().getSimpleName());
                 TomcatEmbedder.embed(properties, StandardServer.class.getClassLoader());
                 listenerInstalled = true;
-            } // webapp can be found lazily in some conditions
+            } else if (logWebappNotFound) {
+                LOGGER.info("tomee webapp not found from the listener, will try from the webapp if exists");
+                logWebappNotFound = false;
+            }
         } catch (Exception e) {
-            System.out.println("ERROR: OpenEJB webapp was not found");
+            LOGGER.log(Level.SEVERE, "TomEE Listener can't start OpenEJB", e);
             // e.printStackTrace(System.err);
+        }
+    }
+
+    private File extractDirectory(final File webappDir) {
+        File exploded = new File(webappDir.getAbsolutePath().replace(".war", ""));
+        int i = 0;
+        while (exploded.exists()) {
+            exploded = new File(exploded.getAbsolutePath() + "_" + i++);
+        }
+        return exploded;
+    }
+
+    private static File tryToFindAndExtractWar(final StandardServer source) {
+        if (System.getProperties().containsKey("openejb.war")) {
+            return new File(System.getProperty("openejb.war"));
+        }
+
+        for (Service service : source.findServices()) {
+            final Container container = service.getContainer();
+            if (container instanceof StandardEngine) {
+                final StandardEngine engine = (StandardEngine) container;
+                for (Container child : engine.findChildren()) {
+                    if (child instanceof StandardHost) {
+                        final StandardHost host = (StandardHost) child;
+                        final File base = hostDir(System.getProperty("catalina.base"), host.getAppBase());
+
+                        for (File file : base.listFiles()) {
+                            if (isTomEEWar(file)) {
+                                return file;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private static boolean isTomEEWar(final File file) {
+        final String name = file.getName();
+        try {
+            final JarFile jarFile = new JarFile(file);
+            return jarFile.getEntry("lib") != null
+                    && (name.startsWith("tomee") || name.startsWith("openejb")
+                    && name.endsWith(".war"));
+        } catch (IOException e) {
+            return false;
         }
     }
 
@@ -87,13 +160,7 @@ public class OpenEJBListener implements LifecycleListener {
 					for (Container child : engine.findChildren()) {
 						if (child instanceof StandardHost) {
 							StandardHost host = (StandardHost) child;
-							String appBase = host.getAppBase();
-
-							// determine the host dir (normally webapps)
-							File hostDir = new File(appBase);
-							if (!hostDir.isAbsolute()) {
-								hostDir = new File(catalinaBase, appBase);
-							}
+							final File hostDir = hostDir(catalinaBase, host.getAppBase());
 
 							openEjbWar = findOpenEjbWar(hostDir);
 							if (openEjbWar != null) {
@@ -110,7 +177,15 @@ public class OpenEJBListener implements LifecycleListener {
 		
 		return null;
     }
-    
+
+    private static File hostDir(final String catalinaBase, final String appBase) {
+        File hostDir = new File(appBase);
+        if (!hostDir.isAbsolute()) {
+            hostDir = new File(catalinaBase, appBase);
+        }
+        return hostDir;
+    }
+
     private static File findOpenEjbWar(StandardHost standardHost) {
     	//look for openejb war in a Tomcat context
     	for(Container container : standardHost.findChildren()) {
@@ -163,5 +238,82 @@ public class OpenEJBListener implements LifecycleListener {
             }
         }
         return null;
+    }
+
+    // copied for classloading reason
+    public static void extract(final File src, final File dest) throws IOException {
+        if (dest.exists()) {
+            return;
+        }
+
+        LOGGER.info("Extracting openejb webapp from " + src.getAbsolutePath() + " to " + dest.getAbsolutePath());
+
+        dest.mkdirs();
+
+        JarFile jarFile = null;
+        InputStream input = null;
+        try {
+            jarFile = new JarFile(src);
+            Enumeration jarEntries = jarFile.entries();
+            while (jarEntries.hasMoreElements()) {
+                JarEntry jarEntry = (JarEntry) jarEntries.nextElement();
+                String name = jarEntry.getName();
+                int last = name.lastIndexOf('/');
+                if (last >= 0) {
+                    File parent = new File(dest, name.substring(0, last));
+                    parent.mkdirs();
+                }
+                if (name.endsWith("/")) {
+                    continue;
+                }
+                input = jarFile.getInputStream(jarEntry);
+
+                final File file = new File(dest, name);
+                BufferedOutputStream output = null;
+                try {
+                    output = new BufferedOutputStream(new FileOutputStream(file));
+                    byte buffer[] = new byte[2048];
+                    while (true) {
+                        int n = input.read(buffer);
+                        if (n <= 0)
+                            break;
+                        output.write(buffer, 0, n);
+                    }
+                } finally {
+                    if (output != null) {
+                        try {
+                            output.close();
+                        } catch (IOException e) {
+                            // Ignore
+                        }
+                    }
+                }
+
+                long lastModified = jarEntry.getTime();
+                if (lastModified != -1 && lastModified != 0 && file != null) {
+                    file.setLastModified(lastModified);
+                }
+
+                input.close();
+                input = null;
+            }
+        } finally {
+            if (input != null) {
+                try {
+                    input.close();
+                } catch (Throwable t) {
+                    // no-op
+                }
+            }
+            if (jarFile != null) {
+                try {
+                    jarFile.close();
+                } catch (Throwable t) {
+                    // no-op
+                }
+            }
+        }
+
+        LOGGER.info("Extracted openejb webapp");
     }
 }

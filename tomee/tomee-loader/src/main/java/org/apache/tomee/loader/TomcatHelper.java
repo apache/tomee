@@ -30,20 +30,23 @@ import java.lang.reflect.Method;
 import java.security.Principal;
 
 public class TomcatHelper {
-
+    private static StandardServer server = null;
 	private static boolean stopping = false;
 	
 	public static boolean isStopping() {
 		return stopping;
 	}
 
-	public static void setStopping(boolean stopping) {
+    public static void setServer(StandardServer server) {
+        TomcatHelper.server = server;
+    }
+
+    public static void setStopping(boolean stopping) {
 		TomcatHelper.stopping = stopping;
 	}
 
 	public static StandardServer getServer() {
-		StandardServer server = null;
-
+        StandardServer server = null;
         Class<?> systemInstanceClass = null;
         try {
             // server = SystemInstance.get().getComponent(StandardServer.class)
@@ -54,6 +57,7 @@ public class TomcatHelper {
             // ignored
         }
         if (server != null) {
+            TomcatHelper.server = server;
             return server;
         }
 
@@ -67,6 +71,7 @@ public class TomcatHelper {
             // ignored
 		}
 		if (server != null) {
+            TomcatHelper.server = server;
 			return server;
 		}
 		
@@ -78,9 +83,13 @@ public class TomcatHelper {
             // ignored
 		}
 
-		// if this still fails, that's too bad.
+        if (server != null) {
+            TomcatHelper.server = server;
+            return server;
+        }
 
-		return server;
+        // if this still fails, that's too bad.
+		return TomcatHelper.server;
 	}
 	
 	public static int getContextState(StandardContext standardContext) {
