@@ -30,13 +30,13 @@ TOMEE.ApplicationJndiPanel = function (cfg) {
             '<div id="myCarousel" class="carousel slide">',
             '    <div class="carousel-inner">',
             '        <div class="item active">',
-            '<div style="overflow:auto; height: 200px">',
+            '<div style="overflow:auto; height: 300px">',
             '<table class="table table-striped table-bordered table-condensed">',
             '    <tbody id="' + tbodyUid + '"/>',
             '</table>',
             '</div>',
 
-            '<br/><br/><br/>',
+            '<br/><br/><br/><br/><br/><br/>',
             '            <div class="carousel-caption">',
             '                <h4>' + TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.browser') + '</h4>',
             '                <p>' + TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.browser.info') + '</p>',
@@ -64,7 +64,8 @@ TOMEE.ApplicationJndiPanel = function (cfg) {
     var addRow = function (bean) {
         var row = [
             '        <tr>',
-            '            <td>' + bean.name + '</td>',
+            '            <td><a href="#">' + bean.name + '</a></td>',
+            '            <td><i class="icon-chevron-right"></i></td>',
             '        </tr>'
         ].join('');
         elements.tbody.append($(row));
