@@ -128,22 +128,16 @@ TOMEE.ApplicationJndiPanel = function (cfg) {
     };
 
     var addRow = function (bean) {
-        var aUid = TOMEE.Sequence.next("JNDI-A");
-        var iUid = TOMEE.Sequence.next("JNDI-I");
+        var trUid = TOMEE.Sequence.next("JNDI-TR");
         var row = [
-            '        <tr>',
-            '            <td><a id="' + aUid + '" href="#">' + bean.name + '</a></td>',
-            '            <td><i id="' + iUid + '" class="icon-chevron-right"></i></td>',
+            '        <tr id="' + trUid + '">',
+            '            <td><a href="#">' + bean.name + '</a></td>',
+            '            <td><i class="icon-chevron-right"></i></td>',
             '        </tr>'
         ].join('');
         elements.tbody.append($(row));
-        var a = elements.tbody.find("#" + aUid);
-        a.on('click', function () {
-            showBeanPanel(bean);
-        });
-
-        var i = elements.tbody.find("#" + iUid);
-        i.on('click', function () {
+        var tr = elements.tbody.find("#" + trUid);
+        tr.on('click', function () {
             showBeanPanel(bean);
         });
     };
