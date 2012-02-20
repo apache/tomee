@@ -16,9 +16,6 @@
  */
 package org.apache.tomee.loader.dto;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
-@XmlRootElement(name = "test")
 public class TestDTO {
 
     public String key;

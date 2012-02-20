@@ -39,7 +39,7 @@ TOMEE.JndiModel = function (cfg) {
         return TOMEE.ApplicationModel({
             methodType: 'GET',
 
-            url: '/tomee/ws/jndi/names',
+            url: '/tomee/ws/jndi',
             //url: 'js/tomee/mock/jndi.json',
 
             channel: myChannel,
