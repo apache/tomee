@@ -16,10 +16,20 @@
  */
 package org.apache.tomee.loader.dto;
 
+import java.util.List;
+
 public class JndiDTO {
     public String deploymentId;
     public String path;
     public String name;
     public String value;
     public String beanType;
+    
+    public String remoteInterface;
+    public String homeInterface;
+    public String beanCls;
+    public List<String> businessLocal;
+    public List<String> businessRemote;
+
+    public String primaryKeyCls;
 }
