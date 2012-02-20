@@ -65,7 +65,7 @@ TOMEE.ApplicationJndiPanel = function (cfg) {
             '          <div class="carousel-caption">',
             '              <h4>{0}</h4>',
             '              <p>{1}</p>',
-            '          </div>',
+            '          </div>'
         ].join('');
 
         var tpl = [
@@ -94,12 +94,20 @@ TOMEE.ApplicationJndiPanel = function (cfg) {
     };
 
     var showBeanPanel = function (bean) {
+        var bodyTpl = [
+            '<p>deploymentId: ' + bean.deploymentId + '</p>',
+            '<p>path: ' + bean['path'] + '</p>',
+            '<p>name: ' + bean['name'] + '</p>',
+            '<p>value: ' + bean['value'] + '</p>',
+            '<p>beanType: ' + bean['beanType'] + '</p>'
+        ].join('');
+
         addCarouselItem({
             caption: {
-                title: 'Details',
-                message: 'Here comes the detail'
+                title: TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.browser.bean'),
+                message: TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.browser.bean.details')
             },
-            bodyTpl: 'Test!!!'
+            bodyTpl: bodyTpl
         });
     };
 
@@ -134,7 +142,6 @@ TOMEE.ApplicationJndiPanel = function (cfg) {
             addRow(bean);
         });
     };
-
 
     return {
         getEl: function () {

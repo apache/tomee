@@ -17,8 +17,9 @@
 package org.apache.tomee.loader.dto;
 
 public class JndiDTO {
-
+    public String deploymentId;
     public String path;
     public String name;
     public String value;
+    public String beanType;
 }
