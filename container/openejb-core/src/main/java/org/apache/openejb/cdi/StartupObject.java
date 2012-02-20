@@ -33,6 +33,10 @@ public class StartupObject {
     private final List<BeanContext> beanContexts;
 
     public StartupObject(AppContext appContext, AppInfo appInfo, List<BeanContext> beanContexts) {
+        assert appContext != null;
+        assert appInfo != null;
+        assert beanContexts != null;
+
         this.appContext = appContext;
         this.appInfo = appInfo;
         this.beanContexts = beanContexts;
