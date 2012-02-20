@@ -55,6 +55,18 @@ TOMEE.ApplicationI18N = (function () {
         'app.home.menu.tools.jndi.browser.invoke': 'Invoke',
         'app.home.menu.tools.jndi.browser.class': 'View class',
 
+        'app.home.menu.tools.jndi.browser.businessRemote': 'businessRemote',
+        'app.home.menu.tools.jndi.browser.businessLocal': 'businessLocal',
+        'app.home.menu.tools.jndi.browser.primaryKeyCls': 'primaryKeyCls',
+        'app.home.menu.tools.jndi.browser.beanCls': 'beanCls',
+        'app.home.menu.tools.jndi.browser.homeInterface': 'homeInterface',
+        'app.home.menu.tools.jndi.browser.remoteInterface': 'remoteInterface',
+        'app.home.menu.tools.jndi.browser.beanType': 'beanType',
+        'app.home.menu.tools.jndi.browser.value': 'value',
+        'app.home.menu.tools.jndi.browser.name': 'name',
+        'app.home.menu.tools.jndi.browser.path': 'path',
+        'app.home.menu.tools.jndi.browser.deploymentId': 'deploymentId',
+
         'dummy': 'dummy'
     };
 
