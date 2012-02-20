@@ -136,58 +136,58 @@ TOMEE.ApplicationJndiPanel = function (cfg) {
 
         var fields = [
             TOMEE.utils.stringFormat(fieldTpl,
-                "deploymentId",
+                TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.browser.deploymentId'),
                 getSafeValue(bean['deploymentId']),
                 TOMEE.Sequence.next('FIELD')
             ),
             TOMEE.utils.stringFormat(fieldTpl,
-                "path",
+                TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.browser.path'),
                 getSafeValue(bean['path']),
                 TOMEE.Sequence.next('FIELD')
             ),
             TOMEE.utils.stringFormat(fieldTpl,
-                "name",
+                TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.browser.name'),
                 getSafeValue(bean['name']),
                 TOMEE.Sequence.next('FIELD')
             ),
             TOMEE.utils.stringFormat(fieldTpl,
-                "value",
+                TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.browser.value'),
                 getSafeValue(bean['value']),
                 TOMEE.Sequence.next('FIELD')
             ),
             TOMEE.utils.stringFormat(fieldTpl,
-                "beanType",
+                TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.browser.beanType'),
                 getSafeValue(bean['beanType']),
                 TOMEE.Sequence.next('FIELD')
             ),
             TOMEE.utils.stringFormat(fieldTpl,
-                "remoteInterface",
+                TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.browser.remoteInterface'),
                 getSafeValue(bean['remoteInterface']),
                 TOMEE.Sequence.next('FIELD')
             ),
             TOMEE.utils.stringFormat(fieldTpl,
-                "homeInterface",
+                TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.browser.homeInterface'),
                 getSafeValue(bean['homeInterface']),
                 TOMEE.Sequence.next('FIELD')
             ),
             TOMEE.utils.stringFormat(fieldTpl,
-                "beanCls",
+                TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.browser.beanCls'),
                 getSafeValue(bean['beanCls']),
                 TOMEE.Sequence.next('FIELD')
             ),
             TOMEE.utils.stringFormat(fieldTpl,
-                "primaryKeyCls",
+                TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.browser.primaryKeyCls'),
                 getSafeValue(bean['primaryKeyCls']),
                 TOMEE.Sequence.next('FIELD')
             ),
 
             TOMEE.utils.stringFormat(listFieldTpl,
-                "businessLocal",
+                TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.browser.businessLocal'),
                 mountOptions(bean['businessLocal']),
                 TOMEE.Sequence.next('FIELD')
             ),
             TOMEE.utils.stringFormat(listFieldTpl,
-                "businessRemote",
+                TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.browser.businessRemote'),
                 mountOptions(bean['businessRemote']),
                 TOMEE.Sequence.next('FIELD')
             )
