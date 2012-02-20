@@ -124,73 +124,73 @@ class EjbRequestHandler {
         try {
             switch (req.getRequestMethod()) {
                 // Remote interface methods
-                case RequestMethodConstants.EJB_OBJECT_BUSINESS_METHOD:
+                case EJB_OBJECT_BUSINESS_METHOD:
                     doEjbObject_BUSINESS_METHOD(req, res);
                     updateServer(req, res);
                     break;
 
                 // Home interface methods
-                case RequestMethodConstants.EJB_HOME_CREATE:
+                case EJB_HOME_CREATE:
                     doEjbHome_CREATE(req, res);
                     updateServer(req, res);
                     break;
 
                 // Home interface methods
-                case RequestMethodConstants.EJB_HOME_METHOD:
+                case EJB_HOME_METHOD:
                     doEjbHome_METHOD(req, res);
                     updateServer(req, res);
                     break;
 
-                case RequestMethodConstants.EJB_HOME_FIND:
+                case EJB_HOME_FIND:
                     doEjbHome_FIND(req, res);
                     updateServer(req, res);
                     break;
 
                 // javax.ejb.EJBObject methods
-                case RequestMethodConstants.EJB_OBJECT_GET_EJB_HOME:
+                case EJB_OBJECT_GET_EJB_HOME:
                     doEjbObject_GET_EJB_HOME(req, res);
                     updateServer(req, res);
                     break;
 
-                case RequestMethodConstants.EJB_OBJECT_GET_HANDLE:
+                case EJB_OBJECT_GET_HANDLE:
                     doEjbObject_GET_HANDLE(req, res);
                     updateServer(req, res);
                     break;
 
-                case RequestMethodConstants.EJB_OBJECT_GET_PRIMARY_KEY:
+                case EJB_OBJECT_GET_PRIMARY_KEY:
                     doEjbObject_GET_PRIMARY_KEY(req, res);
                     updateServer(req, res);
                     break;
 
-                case RequestMethodConstants.EJB_OBJECT_IS_IDENTICAL:
+                case EJB_OBJECT_IS_IDENTICAL:
                     doEjbObject_IS_IDENTICAL(req, res);
                     updateServer(req, res);
                     break;
 
-                case RequestMethodConstants.EJB_OBJECT_REMOVE:
+                case EJB_OBJECT_REMOVE:
                     doEjbObject_REMOVE(req, res);
                     break;
 
                 // javax.ejb.EJBHome methods
-                case RequestMethodConstants.EJB_HOME_GET_EJB_META_DATA:
+                case EJB_HOME_GET_EJB_META_DATA:
                     doEjbHome_GET_EJB_META_DATA(req, res);
                     updateServer(req, res);
                     break;
 
-                case RequestMethodConstants.EJB_HOME_GET_HOME_HANDLE:
+                case EJB_HOME_GET_HOME_HANDLE:
                     doEjbHome_GET_HOME_HANDLE(req, res);
                     updateServer(req, res);
                     break;
 
-                case RequestMethodConstants.EJB_HOME_REMOVE_BY_HANDLE:
+                case EJB_HOME_REMOVE_BY_HANDLE:
                     doEjbHome_REMOVE_BY_HANDLE(req, res);
                     break;
 
-                case RequestMethodConstants.EJB_HOME_REMOVE_BY_PKEY:
+                case EJB_HOME_REMOVE_BY_PKEY:
                     doEjbHome_REMOVE_BY_PKEY(req, res);
                     break;
 
-                case RequestMethodConstants.FUTURE_CANCEL:
+                case FUTURE_CANCEL:
                     doFUTURE_CANCEL_METHOD(req, res);
                     break;
             }

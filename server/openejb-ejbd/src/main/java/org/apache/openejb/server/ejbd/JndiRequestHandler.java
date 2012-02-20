@@ -139,8 +139,8 @@ class JndiRequestHandler {
             String prefix = getPrefix(req);
 
             switch(req.getRequestMethod()){
-                case RequestMethodConstants.JNDI_LOOKUP: doLookup(req, res, prefix); break;
-                case RequestMethodConstants.JNDI_LIST: doList(req, res, prefix); break;
+                case JNDI_LOOKUP: doLookup(req, res, prefix); break;
+                case JNDI_LIST: doList(req, res, prefix); break;
             }
 
         } catch (Throwable e) {

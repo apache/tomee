@@ -42,7 +42,7 @@ public class EJBRequestTest extends TestCase {
     }
 
     public void testEJBHomeCreate() throws Exception {
-        int requestMethod = RequestMethodConstants.EJB_HOME_CREATE;
+        RequestMethodCode requestMethod = RequestMethodCode.EJB_HOME_CREATE;
         Method method = FooHome.class.getMethod("create", new Class[]{});
         Object[] args = new Object[]{};
 
@@ -50,7 +50,7 @@ public class EJBRequestTest extends TestCase {
     }
 
     public void testEJBHomeFind() throws Exception {
-        int requestMethod = RequestMethodConstants.EJB_HOME_FIND;
+        RequestMethodCode requestMethod = RequestMethodCode.EJB_HOME_FIND;
         Method method = FooHome.class.getMethod("findByPrimaryKey", new Class[]{Integer.class});
         Object[] args = new Object[]{new Integer(4)};
 
@@ -58,7 +58,7 @@ public class EJBRequestTest extends TestCase {
     }
 
     public void testEJBHomeRemove1() throws Exception {
-        int requestMethod = RequestMethodConstants.EJB_HOME_REMOVE_BY_HANDLE;
+        RequestMethodCode requestMethod = RequestMethodCode.EJB_HOME_REMOVE_BY_HANDLE;
         Method method = FooHome.class.getMethod("remove", new Class[]{Handle.class});
         Object[] args = new Object[]{null};
 
@@ -66,7 +66,7 @@ public class EJBRequestTest extends TestCase {
     }
 
     public void testEJBHomeRemove2() throws Exception {
-        int requestMethod = RequestMethodConstants.EJB_HOME_REMOVE_BY_PKEY;
+        RequestMethodCode requestMethod = RequestMethodCode.EJB_HOME_REMOVE_BY_PKEY;
         Method method = FooHome.class.getMethod("remove", new Class[]{Object.class});
         Object[] args = new Object[]{new Integer(4)};
 
@@ -74,7 +74,7 @@ public class EJBRequestTest extends TestCase {
     }
 
     public void testGetMetaData() throws Exception {
-        int requestMethod = RequestMethodConstants.EJB_HOME_GET_EJB_META_DATA;
+        RequestMethodCode requestMethod = RequestMethodCode.EJB_HOME_GET_EJB_META_DATA;
         Method method = FooHome.class.getMethod("getEJBMetaData", new Class[]{});
         Object[] args = new Object[]{};
 
@@ -82,7 +82,7 @@ public class EJBRequestTest extends TestCase {
     }
 
     public void testGetHomeHandle() throws Exception {
-        int requestMethod = RequestMethodConstants.EJB_HOME_GET_HOME_HANDLE;
+        RequestMethodCode requestMethod = RequestMethodCode.EJB_HOME_GET_HOME_HANDLE;
         Method method = FooHome.class.getMethod("getHomeHandle", new Class[]{});
         Object[] args = new Object[]{};
 
@@ -90,7 +90,7 @@ public class EJBRequestTest extends TestCase {
     }
 
     public void testBusinessMethod() throws Exception {
-        int requestMethod = RequestMethodConstants.EJB_OBJECT_BUSINESS_METHOD;
+        RequestMethodCode requestMethod = RequestMethodCode.EJB_OBJECT_BUSINESS_METHOD;
         Method method = FooObject.class.getMethod("businessMethod", new Class[]{String.class});
         Object[] args = new Object[]{"hola mundo"};
 
@@ -98,7 +98,7 @@ public class EJBRequestTest extends TestCase {
     }
 
     public void testGetEJBHome() throws Exception {
-        int requestMethod = RequestMethodConstants.EJB_OBJECT_GET_EJB_HOME;
+        RequestMethodCode requestMethod = RequestMethodCode.EJB_OBJECT_GET_EJB_HOME;
         Method method = FooObject.class.getMethod("getEJBHome", new Class[]{});
         Object[] args = new Object[]{};
 
@@ -106,7 +106,7 @@ public class EJBRequestTest extends TestCase {
     }
 
     public void testGetHandle() throws Exception {
-        int requestMethod = RequestMethodConstants.EJB_OBJECT_GET_HANDLE;
+        RequestMethodCode requestMethod = RequestMethodCode.EJB_OBJECT_GET_HANDLE;
         Method method = FooObject.class.getMethod("getHandle", new Class[]{});
         Object[] args = new Object[]{};
 
@@ -114,7 +114,7 @@ public class EJBRequestTest extends TestCase {
     }
 
     public void testGetPrimaryKey() throws Exception {
-        int requestMethod = RequestMethodConstants.EJB_OBJECT_GET_PRIMARY_KEY;
+        RequestMethodCode requestMethod = RequestMethodCode.EJB_OBJECT_GET_PRIMARY_KEY;
         Method method = FooObject.class.getMethod("getPrimaryKey", new Class[]{});
         Object[] args = new Object[]{};
 
@@ -122,7 +122,7 @@ public class EJBRequestTest extends TestCase {
     }
 
     public void testIsIdentical() throws Exception {
-        int requestMethod = RequestMethodConstants.EJB_OBJECT_IS_IDENTICAL;
+        RequestMethodCode requestMethod = RequestMethodCode.EJB_OBJECT_IS_IDENTICAL;
         Method method = FooObject.class.getMethod("isIdentical", new Class[]{EJBObject.class});
         Object[] args = new Object[]{null};
 
@@ -130,14 +130,14 @@ public class EJBRequestTest extends TestCase {
     }
 
     public void testEJBObjectRemove() throws Exception {
-        int requestMethod = RequestMethodConstants.EJB_OBJECT_REMOVE;
+        RequestMethodCode requestMethod = RequestMethodCode.EJB_OBJECT_REMOVE;
         Method method = FooObject.class.getMethod("remove", new Class[]{});
         Object[] args = new Object[]{};
 
         invoke(requestMethod, method, args);
     }
 
-    private void invoke(int requestMethod, Method method, Object[] args) throws IOException, ClassNotFoundException {
+    private void invoke(RequestMethodCode requestMethod, Method method, Object[] args) throws IOException, ClassNotFoundException {
         EJBRequest expected = new EJBRequest(requestMethod, ejb, method, args, null);
 
         EJBRequest actual = new EJBRequest();

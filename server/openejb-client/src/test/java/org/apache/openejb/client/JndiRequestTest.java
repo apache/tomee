@@ -31,7 +31,7 @@ import java.io.ObjectOutputStream;
 public class JndiRequestTest extends TestCase {
 
     public void testExternalize() throws Exception {
-        JNDIRequest expected = new JNDIRequest(RequestMethodConstants.JNDI_LOOKUP, "this/is/a/jndi/name");
+        JNDIRequest expected = new JNDIRequest(RequestMethodCode.JNDI_LOOKUP, "this/is/a/jndi/name");
         JNDIRequest actual = new JNDIRequest();
 
         externalize(expected, actual);
@@ -43,7 +43,7 @@ public class JndiRequestTest extends TestCase {
 
 
     public void testExternalize2() throws Exception {
-        JNDIRequest expected = new JNDIRequest(RequestMethodConstants.JNDI_LOOKUP, "this/is/a/jndi/name");
+        JNDIRequest expected = new JNDIRequest(RequestMethodCode.JNDI_LOOKUP, "this/is/a/jndi/name");
         expected.setModuleId("foobar");
         JNDIRequest actual = new JNDIRequest();
 

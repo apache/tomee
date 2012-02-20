@@ -258,7 +258,7 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
     }
 
     private Object _businessMethod(Method method, Object[] args, Object proxy, String requestId) throws Throwable {
-        EJBRequest req = new EJBRequest(RequestMethodConstants.EJB_OBJECT_BUSINESS_METHOD, ejb, method, args, primaryKey);
+        EJBRequest req = new EJBRequest(RequestMethodCode.EJB_OBJECT_BUSINESS_METHOD, ejb, method, args, primaryKey);
 
         //Currently, we only set the requestId while the asynchronous invocation is called
         req.getBody().setRequestId(requestId);
@@ -267,7 +267,7 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
     }
 
     private Object _businessMethod(Method method, Object[] args, Object proxy, String requestId, EJBResponse response) throws Throwable {
-        EJBRequest req = new EJBRequest(RequestMethodConstants.EJB_OBJECT_BUSINESS_METHOD, ejb, method, args, primaryKey);
+        EJBRequest req = new EJBRequest(RequestMethodCode.EJB_OBJECT_BUSINESS_METHOD, ejb, method, args, primaryKey);
 
         //Currently, we only set the request while the asynchronous invocation is called
         req.getBody().setRequestId(requestId);
@@ -374,7 +374,7 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
                     if (lastMayInterruptIfRunningValue.getAndSet(mayInterruptIfRunning) == mayInterruptIfRunning) {
                         return false;
                     }
-                    EJBRequest req = new EJBRequest(RequestMethodConstants.FUTURE_CANCEL, ejb, CANCEL, new Object[] { Boolean.valueOf(mayInterruptIfRunning) }, primaryKey);
+                    EJBRequest req = new EJBRequest(RequestMethodCode.FUTURE_CANCEL, ejb, CANCEL, new Object[] { Boolean.valueOf(mayInterruptIfRunning) }, primaryKey);
                     req.getBody().setRequestId(requestId);
                     try {
                         EJBResponse res = request(req);

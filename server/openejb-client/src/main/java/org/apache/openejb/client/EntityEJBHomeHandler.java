@@ -32,7 +32,7 @@ public class EntityEJBHomeHandler extends EJBHomeHandler {
     }
 
     protected Object findX(Method method, Object[] args, Object proxy) throws Throwable {
-        EJBRequest req = new EJBRequest(RequestMethodConstants.EJB_HOME_FIND, ejb, method, args, null);
+        EJBRequest req = new EJBRequest(RequestMethodCode.EJB_HOME_FIND, ejb, method, args, null);
 
         EJBResponse res = request(req);
 
@@ -98,7 +98,7 @@ public class EntityEJBHomeHandler extends EJBHomeHandler {
 
         if (primKey == null) throw new NullPointerException("The primary key is null.");
 
-        EJBRequest req = new EJBRequest(RequestMethodConstants.EJB_HOME_REMOVE_BY_PKEY, ejb, method, args, primKey);
+        EJBRequest req = new EJBRequest(RequestMethodCode.EJB_HOME_REMOVE_BY_PKEY, ejb, method, args, primKey);
 
         EJBResponse res = request(req);
 
@@ -128,7 +128,7 @@ public class EntityEJBHomeHandler extends EJBHomeHandler {
         Object primKey = ejbObject.getPrimaryKey();
         if (primKey == null) throw new NullPointerException("The handle.getEJBObject().getPrimaryKey() is null.");
 
-        EJBRequest req = new EJBRequest(RequestMethodConstants.EJB_HOME_REMOVE_BY_HANDLE, ejb, method, args, primKey);
+        EJBRequest req = new EJBRequest(RequestMethodCode.EJB_HOME_REMOVE_BY_HANDLE, ejb, method, args, primKey);
 
         EJBResponse res = request(req);
 
