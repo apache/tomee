@@ -439,8 +439,8 @@ public class EJBRequest implements ClusterableRequest {
         private static final int A = 9;
     }
 
-    public byte getRequestType() {
-        return RequestMethodConstants.EJB_REQUEST;
+    public RequestType getRequestType() {
+        return RequestType.EJB_REQUEST;
     }
 
     public RequestMethodCode getRequestMethod() {

@@ -23,7 +23,7 @@ import java.net.Socket;
 import java.net.URL;
 import java.util.Properties;
 
-import org.apache.openejb.client.RequestMethodConstants;
+import org.apache.openejb.client.RequestType;
 
 
 public class Stop {
@@ -36,7 +36,7 @@ public class Stop {
             Socket socket = new Socket(host, port);
             OutputStream out = socket.getOutputStream();
 
-            out.write(RequestMethodConstants.STOP_REQUEST_Stop);
+            out.write(RequestType.STOP_REQUEST_Stop.getCode());
 
         } catch (ConnectException e) {
             System.out.println(":: server not running ::");

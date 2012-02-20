@@ -23,7 +23,7 @@ import java.io.ObjectOutput;
 
 public interface Request extends Externalizable {
 
-    public byte getRequestType();
+    public RequestType getRequestType();
 
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException;
 

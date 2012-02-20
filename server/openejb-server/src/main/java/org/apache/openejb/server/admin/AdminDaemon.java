@@ -20,10 +20,10 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
+import org.apache.openejb.client.RequestType;
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.Server;
-import org.apache.openejb.client.RequestMethodConstants;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -41,24 +41,29 @@ public class AdminDaemon implements ServerService {
         try {
             in = socket.getInputStream();
 
-            byte requestType = (byte) in.read();
+            byte requestTypeByte = (byte) in.read();
+            try {
+                RequestType requestType = RequestType.valueOf(requestTypeByte);
 
-            switch (requestType) {
-                case -1:
-                    return;
-                case RequestMethodConstants.STOP_REQUEST_Quit:
-                case RequestMethodConstants.STOP_REQUEST_quit:
-                case RequestMethodConstants.STOP_REQUEST_Stop:
-                case RequestMethodConstants.STOP_REQUEST_stop:
-                    Server server = SystemInstance.get().getComponent(Server.class);
-                    if (null != server) {
-						server.stop();
-					}
-                    break;
-                default:
-                    //If this turns up in the logs then it is time to take action
-                    Logger.getInstance(LogCategory.OPENEJB_SERVER, AdminDaemon.class).warning("Invalid Server Socket request: " + requestType);
-                    break;
+                switch (requestType) {
+                    case NOP_REQUEST:
+                        return;
+                    case STOP_REQUEST_Quit:
+                    case STOP_REQUEST_quit:
+                    case STOP_REQUEST_Stop:
+                    case STOP_REQUEST_stop:
+                        Server server = SystemInstance.get().getComponent(Server.class);
+                        if (null != server) {
+                            server.stop();
+                        }
+                        break;
+                    default:
+                        //If this turns up in the logs then it is time to take action
+                        Logger.getInstance(LogCategory.OPENEJB_SERVER, AdminDaemon.class).warning("Invalid Server Socket request: " + requestType);
+                        break;
+                }
+            } catch (IllegalArgumentException iae) {
+                Logger.getInstance(LogCategory.OPENEJB_SERVER, AdminDaemon.class).warning("Invalid Server Socket request: " + requestTypeByte);
             }
 
         } catch (Throwable e) {

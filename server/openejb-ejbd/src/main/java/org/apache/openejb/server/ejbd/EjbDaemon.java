@@ -123,7 +123,8 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
 
         ObjectInputStream ois = null;
         ObjectOutputStream oos = null;
-        byte requestType = -1;
+        RequestType requestType = null;
+        byte requestTypeByte = RequestType.NOP_REQUEST.getCode();
 
         try {
 
@@ -140,19 +141,21 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
             ClientObjectFactory.serverMetaData.set(serverMetaData);
 
             // Read request type
-            requestType = (byte) ois.read();
+            requestTypeByte = (byte) ois.read();
+            requestType = RequestType.valueOf(requestTypeByte);
 
-            if (requestType == -1) {
+            if (requestType == RequestType.NOP_REQUEST) {
                 return;
             }
 
-            if (requestType == RequestMethodConstants.CLUSTER_REQUEST) {
+            if (requestType == RequestType.CLUSTER_REQUEST) {
                 processClusterRequest(ois, oos);
             }
 
-            requestType = (byte) ois.read();
+            requestTypeByte = (byte) ois.read();
+            requestType = RequestType.valueOf(requestTypeByte);
 
-            if (requestType == -1) {
+            if (requestType == RequestType.NOP_REQUEST) {
                 return;
             }
 
@@ -160,23 +163,25 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
             // They should handle their own exceptions and clean
             // things up with the client accordingly.
             switch (requestType) {
-                case RequestMethodConstants.EJB_REQUEST:
+                case EJB_REQUEST:
                     processEjbRequest(ois, oos);
                     break;
-                case RequestMethodConstants.JNDI_REQUEST:
+                case JNDI_REQUEST:
                     processJndiRequest(ois, oos);
                     break;
-                case RequestMethodConstants.AUTH_REQUEST:
+                case AUTH_REQUEST:
                     processAuthRequest(ois, oos);
                     break;
                 default:
-                    logger.error("\"" + getTypeName(requestType) + " " + protocolMetaData.getSpec() + "\" FAIL \"Unknown request type " + requestType);
+                    logger.error("\"" + requestType + " " + protocolMetaData.getSpec() + "\" FAIL \"Unknown request type " + requestType);
                     break;
             }
+        } catch (IllegalArgumentException iae) {
+            logger.error("\"" + protocolMetaData.getSpec() + "\" FAIL \"Unknown request type " + requestTypeByte);
         } catch (SecurityException e) {
-            logger.error("\"" + getTypeName(requestType) + " " + protocolMetaData.getSpec() + "\" FAIL \"Security error - " + e.getMessage() + "\"", e);
+            logger.error("\"" + requestType + " " + protocolMetaData.getSpec() + "\" FAIL \"Security error - " + e.getMessage() + "\"", e);
         } catch (Throwable e) {
-            logger.error("\"" + getTypeName(requestType) + " " + protocolMetaData.getSpec() + "\" FAIL \"Unexpected error - " + e.getMessage() + "\"", e);
+            logger.error("\"" + requestType + " " + protocolMetaData.getSpec() + "\" FAIL \"Unexpected error - " + e.getMessage() + "\"", e);
         } finally {
 
             ClientObjectFactory.serverMetaData.remove();
@@ -203,19 +208,6 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
                     //Ignore
                 }
             }
-        }
-    }
-
-    private static String getTypeName(final byte requestType) {
-        switch (requestType) {
-            case RequestMethodConstants.EJB_REQUEST:
-                return "EJB_REQUEST";
-            case RequestMethodConstants.JNDI_REQUEST:
-                return "JNDI_REQUEST";
-            case RequestMethodConstants.AUTH_REQUEST:
-                return "AUTH_REQUEST";
-            default:
-                return requestType + " (UNKNOWN)";
         }
     }
 
