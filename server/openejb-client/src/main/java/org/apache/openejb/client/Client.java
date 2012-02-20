@@ -82,16 +82,19 @@ public class Client {
     }
 
     protected Response processRequest(Request req, Response res, ServerMetaData server, URI preferredServerURI) throws RemoteException {
-        if (server == null)
+        if (server == null){
             throw new IllegalArgumentException("Server instance cannot be null");
+        }
 
-        ClusterMetaData cluster = getClusterMetaData(server);
+        final long start = System.nanoTime();
+
+        final ClusterMetaData cluster = getClusterMetaData(server);
 
         /*----------------------------*/
         /* Get a connection to server */
         /*----------------------------*/
 
-        Connection conn;
+        final Connection conn;
         try {
             if (preferredServerURI != null) {
                 conn = ConnectionManager.getConnection(preferredServerURI);
@@ -286,11 +289,20 @@ public class Client {
                     }
                 }
             }
+
+            final long time = System.nanoTime() - start;
+
         } catch (RemoteException e) {
             throw e;
         } catch (IOException e){
-            Set<URI> failed = getFailed();
-            failed.add(conn.getURI());
+            final URI uri = conn.getURI();
+            final Set<URI> failed = getFailed();
+            final Level level = Level.FINER;
+
+            if (logger.isLoggable(level)) {
+                logger.log(level, "Add Failed " + uri.toString());
+            }
+            failed.add(uri);
             conn.discard();
             //If the preferred server URI is configured, we will not try to fail over to other servers
             //Currently, while calling Future.cancel method remotely, the initial business method invocation server URI should be used.
@@ -351,6 +363,12 @@ public class Client {
     private static final Map<ServerMetaData, ClusterMetaData> clusters = new ConcurrentHashMap<ServerMetaData, ClusterMetaData>();
 
     private static void setClusterMetaData(ServerMetaData server, ClusterMetaData cluster) {
+        final Level level = Level.INFO;
+
+        if (logger.isLoggable(level)) {
+            logger.log(level, "Update ClusterMetaData(version=" + cluster.getVersion() + ", uris=" + cluster.getLocations().length);
+        }
+
         clusters.put(server, cluster);
     }
 

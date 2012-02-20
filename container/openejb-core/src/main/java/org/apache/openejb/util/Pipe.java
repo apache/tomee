@@ -39,6 +39,11 @@ public final class Pipe implements Runnable {
         pipe(System.in, process.getOutputStream());
     }
 
+    public static void read(Process process) {
+        pipe(process.getInputStream(), System.out);
+        pipe(process.getErrorStream(), System.err);
+    }
+
     public static void pipe(InputStream in, OutputStream out) {
         final Thread thread = new Thread(new Pipe(in, out));
         thread.setDaemon(true);
@@ -49,7 +54,7 @@ public final class Pipe implements Runnable {
         try {
             int i = -1;
 
-            byte[] buf = new byte[1024];
+            byte[] buf = new byte[1];
 
             while ((i = in.read(buf)) != -1) {
                 out.write(buf, 0, i);

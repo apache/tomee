@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,31 +14,28 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+package org.apache.openejb.util;
 
-package org.apache.openejb.arquillian.common;
+import org.apache.openejb.loader.IO;
 
 import java.io.File;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+/**
+ * @version $Rev$ $Date$
+ */
 public class Zips {
-
-    private static final Logger logger = Logger.getLogger(Zips.class.getName());
-
     public static void unzip(File zipFile, File destination) {
         unzip(zipFile, destination, false);
     }
 
     public static void unzip(File zipFile, File destination, boolean noparent) {
 
-        logger.info(String.format("Extracting '%s' to '%s'", zipFile.getAbsolutePath(), destination.getAbsolutePath()));
-
-        Files.assertDir(destination);
+        Files.dir(destination);
         Files.writable(destination);
 
-        Files.assertFile(zipFile);
+        Files.file(zipFile);
         Files.readable(zipFile);
 
         try {
@@ -70,9 +67,7 @@ public class Zips {
             in.close();
 
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Unable to unzip " + zipFile.getAbsolutePath(), e);
             throw new IllegalStateException("Unable to unzip " + zipFile.getAbsolutePath(), e);
         }
     }
-
 }

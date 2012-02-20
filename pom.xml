@@ -1163,7 +1163,7 @@
       <dependency>
         <groupId>org.codehaus.swizzle</groupId>
         <artifactId>swizzle-stream</artifactId>
-        <version>1.0.2</version>
+        <version>1.6.1</version>
       </dependency>
       <!--  <dependency>
        <groupId>org.apache.openejb</groupId>

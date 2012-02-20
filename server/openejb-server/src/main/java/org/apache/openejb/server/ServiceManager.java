@@ -18,7 +18,6 @@ package org.apache.openejb.server;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -26,9 +25,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.openejb.EnvProps;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.loader.FileUtils;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -162,10 +163,10 @@ public abstract class ServiceManager {
     }
 
     private void overrideProperties(String serviceName, Properties serviceProperties) throws IOException {
-        FileUtils base = SystemInstance.get().getBase();
+        final FileUtils base = SystemInstance.get().getBase();
 
         // Override with file from conf dir
-        File conf = base.getDirectory("conf");
+        final File conf = base.getDirectory("conf");
         if (conf.exists()) {
             File serviceConfig = new File(conf, serviceName + ".properties");
             if (serviceConfig.exists()) {
@@ -176,24 +177,26 @@ public abstract class ServiceManager {
                     in.close();
                 }
             } else {
-                FileOutputStream out = new FileOutputStream(serviceConfig);
-                try {
-                    String rawPropsContent = (String) serviceProperties.get(Properties.class);
-                    out.write(rawPropsContent.getBytes());
-                } finally {
-                    out.close();
+
+                if (EnvProps.extractConfigurationFiles()){
+
+                    final String rawPropsContent = (String) serviceProperties.get(Properties.class);
+                    IO.copy(IO.read(rawPropsContent), serviceConfig);
+
+                } else {
+                    serviceProperties.put("disabled", "true");
                 }
             }
         }
 
         // Override with system properties
-        String prefix = serviceName + ".";
-        Properties sysProps = new Properties(System.getProperties());
+        final String prefix = serviceName + ".";
+        final Properties sysProps = new Properties(System.getProperties());
         sysProps.putAll(SystemInstance.get().getProperties());
         for (Iterator iterator1 = sysProps.entrySet().iterator(); iterator1.hasNext();) {
-            Map.Entry entry1 = (Map.Entry) iterator1.next();
+            final Map.Entry entry1 = (Map.Entry) iterator1.next();
+            final Object value = entry1.getValue();
             String key = (String) entry1.getKey();
-            Object value = entry1.getValue();
             if (value instanceof String && key.startsWith(prefix)) {
                 key = key.replaceFirst(prefix, "");
                 serviceProperties.setProperty(key, (String) value);

@@ -16,10 +16,12 @@
  */
 package org.apache.openejb.config;
 
+import org.apache.openejb.EnvProps;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.config.sys.Deployments;
 import org.apache.openejb.config.sys.Openejb;
 import org.apache.openejb.config.sys.JaxbOpenejb;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -28,10 +30,7 @@ import org.apache.xbean.finder.ResourceFinder;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
@@ -133,24 +132,22 @@ public class ConfigUtils {
             }
 
 
-            /* [6] No config found! Create a config for them
-             *     using the default.openejb.conf file from 
-             *     the openejb-x.x.x.jar
-             */
+            if (EnvProps.extractConfigurationFiles()) {
 
-            File confDir = SystemInstance.get().getBase().getDirectory("conf", false);
+                /* [6] No config found! Create a config for them
+                 *     using the default.openejb.conf file from
+                 *     the openejb-x.x.x.jar
+                 */
 
-            // TODO: DMB: This logic needs to be revisited 
-            if (confDir.exists()) {
-                File config = new File(confDir, "openejb.xml");
-                logger.info("Cannot find the configuration file [conf/openejb.xml].  Creating one at "+config.getAbsolutePath());
-                file = createConfig(config);
-            } else {
-                logger.info("Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.");
-//                logger.warning("Cannot find the configuration file [conf/openejb.xml].  Using the default configuration.");
-//                ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-//                URL resource = classLoader.getResource("default.openejb.conf");
-//                return resource.toExternalForm();
+                final File confDir = SystemInstance.get().getBase().getDirectory("conf", false);
+
+                if (confDir.exists()) {
+                    File config = new File(confDir, "openejb.xml");
+                    logger.info("Cannot find the configuration file [conf/openejb.xml].  Creating one at "+config.getAbsolutePath());
+                    file = createConfig(config);
+                } else {
+                    logger.info("Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.");
+                }
             }
 
         } catch (java.io.IOException e) {
@@ -158,35 +155,15 @@ public class ConfigUtils {
             throw new OpenEJBException("Could not locate config file: ", e);
         }
 
-        /*TODO:2: Check these too.
-        * OPENJB_HOME/lib/openejb-x.x.x.jar
-        * OPENJB_HOME/dist/openejb-x.x.x.jar
-        */
         return (file == null) ? null : file.getAbsolutePath();
     }
 
     public static File createConfig(File config) throws java.io.IOException {
-        InputStream in = null;
-        OutputStream out = null;
-        try {
-            ResourceFinder finder = new ResourceFinder("");
-            URL defaultConfig = finder.find("default.openejb.conf");
-            in = defaultConfig.openStream();
-            out = new FileOutputStream(config);
+        ResourceFinder finder = new ResourceFinder("");
+        URL defaultConfig = finder.find("default.openejb.conf");
 
-            int b;
-            while ((b = in.read()) != -1) {
-                out.write(b);
-            }
-        } finally {
-            if (in != null) {
-                in.close();
-            }
-            if (out != null) {
-                out.close();
-            }
+        IO.copy(defaultConfig.openStream(), config);
 
-        }
         return config;
     }
 

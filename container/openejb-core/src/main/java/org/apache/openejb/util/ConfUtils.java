@@ -16,15 +16,13 @@
  */
 package org.apache.openejb.util;
 
+import org.apache.openejb.EnvProps;
 import org.apache.openejb.loader.FileUtils;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Collections;
@@ -37,6 +35,8 @@ public class ConfUtils {
 
     public static URL getConfResource(String name) {
         URL resource = getResource(name);
+
+        if (!EnvProps.extractConfigurationFiles()) return resource;
 
         try {
 
@@ -100,28 +100,7 @@ public class ConfUtils {
 
         if (file.exists() && !overwrite) return file;
 
-        InputStream in = resource.openStream();
-        in = new BufferedInputStream(in);
-
-        FileOutputStream fout = new FileOutputStream(file);
-        BufferedOutputStream out = new BufferedOutputStream(fout);
-
-        try {
-            int b = in.read();
-            while (b != -1) {
-                out.write(b);
-                b = in.read();
-            }
-        } finally {
-            try {
-                in.close();
-            } catch (IOException e) {
-            }
-            try {
-                out.close();
-            } catch (IOException e) {
-            }
-        }
+        IO.copy(resource.openStream(), file);
 
         return file;
     }

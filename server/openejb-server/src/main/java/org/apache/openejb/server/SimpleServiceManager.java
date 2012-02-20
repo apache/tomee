@@ -174,6 +174,10 @@ public class SimpleServiceManager extends ServiceManager {
             LOGGER.info("-------");
             LOGGER.info("Ready!");
         }
+
+        System.out.println("Ready!");
+        System.out.flush();
+
         if (!block) {
             return;
         }
