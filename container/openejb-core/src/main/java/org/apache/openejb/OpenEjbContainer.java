@@ -527,10 +527,11 @@ public class OpenEjbContainer extends EJBContainer {
         }
 
         private boolean match(String s, File file) {
-            String s2 = file.getName();
+            final String s2 = file.getName();
+            final String s3 = file.getAbsolutePath();
             boolean matches;
             if (file.isDirectory()) {
-                matches = s2.equals(s) || s2.equals(s + ".jar");
+                matches = s2.equals(s) || s2.equals(s + ".jar") || s3.equals(s);
             } else {
                 matches = s2.equals(s + ".jar");
             }
