@@ -22,6 +22,8 @@ import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.URLs;
+
 import org.apache.xbean.finder.UrlSet;
 import org.apache.xbean.finder.filter.ExcludeIncludeFilter;
 import org.apache.xbean.finder.filter.Filter;
@@ -194,12 +196,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
         try {
             UrlSet urlSet = new UrlSet(classLoader);
 
-            urlSet = urlSet.exclude(ClassLoader.getSystemClassLoader().getParent());
-            urlSet = urlSet.excludeJavaExtDirs();
-            urlSet = urlSet.excludeJavaEndorsedDirs();
-            urlSet = urlSet.excludeJavaHome();
-            urlSet = urlSet.excludePaths(System.getProperty("sun.boot.class.path", ""));
-            urlSet = urlSet.exclude(".*/JavaVM.framework/.*");
+            urlSet = URLs.cullSystemJars(urlSet);
 
             // save the prefiltered list of jars before excluding system apps
             // so that we can choose not to filter modules with descriptors on the full list

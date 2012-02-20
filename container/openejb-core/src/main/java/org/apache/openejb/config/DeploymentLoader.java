@@ -1023,10 +1023,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         UrlSet urlSet;
         try {
             urlSet = new UrlSet(parentClassLoader);
-            urlSet = urlSet.excludeJavaEndorsedDirs();
-            urlSet = urlSet.excludeJavaExtDirs();
-            urlSet = urlSet.excludeJavaHome();
-            urlSet = urlSet.exclude(ClassLoader.getSystemClassLoader());
+            urlSet = URLs.cullSystemJars(urlSet);
         } catch (IOException e) {
             logger.warning("Error scanning class loader for JSP tag libraries", e);
             return urls;

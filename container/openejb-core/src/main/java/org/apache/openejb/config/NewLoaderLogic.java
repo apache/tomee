@@ -342,12 +342,7 @@ public class NewLoaderLogic {
             UrlSet urlSet = new UrlSet(classLoader);
 
             timer.event("exclude system urls");
-            urlSet = urlSet.exclude(ClassLoader.getSystemClassLoader().getParent());
-            urlSet = urlSet.excludeJavaExtDirs();
-            urlSet = urlSet.excludeJavaEndorsedDirs();
-            urlSet = urlSet.excludeJavaHome();
-            urlSet = urlSet.excludePaths(System.getProperty("sun.boot.class.path", ""));
-            urlSet = urlSet.exclude(".*/JavaVM.framework/.*");
+            urlSet = URLs.cullSystemJars(urlSet);
 
 
             timer.event("classpath filter");
