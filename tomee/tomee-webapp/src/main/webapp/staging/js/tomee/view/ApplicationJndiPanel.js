@@ -27,6 +27,8 @@ TOMEE.ApplicationJndiPanel = function (cfg) {
         var tbodyUid = TOMEE.Sequence.next();
         var tpl = [
             '<div class="well">',
+            '<div class="row-fluid">',
+            '<div class="span12">',
 
             '<div class="carousel slide">',
             '    <div id="' + carouselUid + '" class="carousel-inner">',
@@ -44,6 +46,9 @@ TOMEE.ApplicationJndiPanel = function (cfg) {
             '          </div>',
             '        </div>',
             '    </div>',
+            '</div>',
+
+            '</div>',
             '</div>',
             '</div>'
         ];
@@ -92,20 +97,116 @@ TOMEE.ApplicationJndiPanel = function (cfg) {
     };
 
     var showBeanPanel = function (bean) {
+        var fieldTpl = [
+            '    <div class="control-group">',
+            '        <label class="control-label" for="{2}">{0}</label>',
+            '         <div class="controls">',
+            '            <input class="input-xlarge" id="{2}" type="text" placeholder="{1}" style="width:80%;">',
+            '        </div>',
+            '    </div>'
+        ].join('');
+
+        var listFieldTpl = [
+            '    <div class="control-group">',
+            '        <label class="control-label" for="{2}">{0}</label>',
+            '         <div class="controls">',
+            '            <select multiple="multiple" id="{2}" style="width:80%;">',
+            '            {1}',
+            '            </select>',
+            '        </div>',
+            '    </div>'
+        ].join('');
+
+        var mountOptions = function(beanArray) {
+            var myArray = [];
+            $.each(TOMEE.utils.getArray(beanArray), function(index, value) {
+                myArray.push('<option>');
+                myArray.push(value);
+                myArray.push('</option>');
+            });
+            return myArray.join('');
+        };
+
+        var getSafeValue = function(value) {
+            if(value) {
+                return value;
+            }
+            return '';
+        };
+
+        var fields = [
+            TOMEE.utils.stringFormat(fieldTpl,
+                "deploymentId",
+                getSafeValue(bean['deploymentId']),
+                TOMEE.Sequence.next('FIELD')
+            ),
+            TOMEE.utils.stringFormat(fieldTpl,
+                "path",
+                getSafeValue(bean['path']),
+                TOMEE.Sequence.next('FIELD')
+            ),
+            TOMEE.utils.stringFormat(fieldTpl,
+                "name",
+                getSafeValue(bean['name']),
+                TOMEE.Sequence.next('FIELD')
+            ),
+            TOMEE.utils.stringFormat(fieldTpl,
+                "value",
+                getSafeValue(bean['value']),
+                TOMEE.Sequence.next('FIELD')
+            ),
+            TOMEE.utils.stringFormat(fieldTpl,
+                "beanType",
+                getSafeValue(bean['beanType']),
+                TOMEE.Sequence.next('FIELD')
+            ),
+            TOMEE.utils.stringFormat(fieldTpl,
+                "remoteInterface",
+                getSafeValue(bean['remoteInterface']),
+                TOMEE.Sequence.next('FIELD')
+            ),
+            TOMEE.utils.stringFormat(fieldTpl,
+                "homeInterface",
+                getSafeValue(bean['homeInterface']),
+                TOMEE.Sequence.next('FIELD')
+            ),
+            TOMEE.utils.stringFormat(fieldTpl,
+                "beanCls",
+                getSafeValue(bean['beanCls']),
+                TOMEE.Sequence.next('FIELD')
+            ),
+            TOMEE.utils.stringFormat(fieldTpl,
+                "primaryKeyCls",
+                getSafeValue(bean['primaryKeyCls']),
+                TOMEE.Sequence.next('FIELD')
+            ),
+
+            TOMEE.utils.stringFormat(listFieldTpl,
+                "businessLocal",
+                mountOptions(bean['businessLocal']),
+                TOMEE.Sequence.next('FIELD')
+            ),
+            TOMEE.utils.stringFormat(listFieldTpl,
+                "businessRemote",
+                mountOptions(bean['businessRemote']),
+                TOMEE.Sequence.next('FIELD')
+            )
+        ].join('');
+
         var bodyTpl = [
-            '<p>deploymentId: ' + bean.deploymentId + '</p>',
-            '<p>path: ' + bean['path'] + '</p>',
-            '<p>name: ' + bean['name'] + '</p>',
-            '<p>value: ' + bean['value'] + '</p>',
-            '<p>beanType: ' + bean['beanType'] + '</p>'
+            '<form class="form-horizontal">',
+            '<fieldset>',
+            fields,
+            '</fieldset>',
+            '</form>'
         ].join('');
 
         var backUid = TOMEE.Sequence.next('CAROUSEL-BACK');
         var captionTpl = [
             '<div class="btn-group">',
-            '<a class="btn" id="' + backUid + '" href="#">Back</a>',
-            '<a class="btn" href="#">Invoke</a>',
-            '<a class="btn" href="#">View class</a>',
+            '<a class="btn" id="' + backUid + '" href="#">' + TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.browser.back') + '</a>',
+            '<a class="btn" href="#">' + TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.browser.invoke') + '</a>',
+            '<a class="btn" href="#">' + TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.browser.class') + '</a>',
             '</div>'
         ].join('');
 
@@ -115,11 +216,11 @@ TOMEE.ApplicationJndiPanel = function (cfg) {
         });
 
         var backBtn = item.find("#" + backUid);
-        backBtn.on('click', function() {
+        backBtn.on('click', function () {
             elements.carousel.carousel('prev');
 
             var task = TOMEE.DelayedTask({
-                callback:function() {
+                callback: function () {
                     item.remove();
                 }
             });

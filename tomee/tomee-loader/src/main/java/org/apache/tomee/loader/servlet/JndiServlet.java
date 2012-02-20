@@ -26,7 +26,6 @@ import org.apache.openejb.util.proxy.ProxyManager;
 import org.apache.tomee.loader.dto.JndiDTO;
 
 import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.NameClassPair;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -40,7 +39,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 @WebServlet(name = "jndi", urlPatterns = "/ws/jndi", asyncSupported = false)
 public class JndiServlet extends HttpServlet {
@@ -94,14 +92,35 @@ public class JndiServlet extends HttpServlet {
 
                 dto.path = key;
                 dto.name = pair.getName();
-                dto.value = String.valueOf(obj);
+                dto.value = getStr(obj);
                 dto.deploymentId = getDeploymentId(obj);
 
                 final BeanContext beanContext = getDeployment(dto.deploymentId);
-                dto.beanType = String.valueOf(beanContext.getComponentType());
-                
+                dto.beanType = getStr(beanContext.getComponentType());
+
+                dto.remoteInterface = getStr(beanContext.getRemoteInterface());
+                dto.homeInterface = getStr(beanContext.getHomeInterface());
+                dto.beanCls = getStr(beanContext.getBeanClass());
+
+                dto.businessLocal = new ArrayList<String>();
+                populateClassList(dto.businessLocal, beanContext.getBusinessLocalInterfaces());
+
+                dto.businessRemote = new ArrayList<String>();
+                populateClassList(dto.businessRemote, beanContext.getBusinessRemoteInterfaces());
+
+                dto.primaryKeyCls = getStr(beanContext.getPrimaryKeyClass());
+
                 jndi.add(dto);
             }
+        }
+    }
+
+    private void populateClassList(List<String> list, List<Class> classes) {
+        if (classes == null) {
+            return;
+        }
+        for (Class<?> cls : classes) {
+            list.add(getStr(cls));
         }
     }
 
@@ -113,7 +132,14 @@ public class JndiServlet extends HttpServlet {
 
     private String getDeploymentId(Object ejbObj) throws NamingException {
         final BaseEjbProxyHandler handler = (BaseEjbProxyHandler) ProxyManager.getInvocationHandler(ejbObj);
-        return String.valueOf(handler.deploymentID);
+        return getStr(handler.deploymentID);
+    }
 
+
+    private String getStr(Object value) {
+        if(value == null) {
+            return null;
+        }
+        return String.valueOf(value);
     }
 }

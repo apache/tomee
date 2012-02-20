@@ -51,6 +51,10 @@ TOMEE.ApplicationI18N = (function () {
         'app.home.menu.tools.jndi.browser.bean': 'Bean',
         'app.home.menu.tools.jndi.browser.bean.details': 'See your bean details',
 
+        'app.home.menu.tools.jndi.browser.back': 'Back',
+        'app.home.menu.tools.jndi.browser.invoke': 'Invoke',
+        'app.home.menu.tools.jndi.browser.class': 'View class',
+
         'dummy': 'dummy'
     };
 
