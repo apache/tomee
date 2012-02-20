@@ -148,7 +148,7 @@
     <log4j.version>1.2.16</log4j.version>
     <osgi.framework.version>4.2.0</osgi.framework.version>
     <hsqldb.version>2.2.4</hsqldb.version>
-    <openjpa.version>2.1.1</openjpa.version>
+    <openjpa.version>2.2.0</openjpa.version>
 
     <!-- Apache Commons -->
     <commons-beanutils.version>1.8.3</commons-beanutils.version>
