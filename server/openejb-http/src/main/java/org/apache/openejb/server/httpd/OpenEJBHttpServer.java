@@ -165,7 +165,7 @@ public class OpenEJBHttpServer implements HttpServer {
             try {
                 response.writeMessage(out, false);
                 if (print.size() > 0 && print.contains(Output.RESPONSE)) {
-                    response.writeMessage(System.out, indent);
+                    response.writeMessage(new LoggerOutputStream(log, "debug"), indent);
                 }
             } catch (Throwable t2) {
                 log.error("Could not write response", t2);
@@ -182,7 +182,7 @@ public class OpenEJBHttpServer implements HttpServer {
             req.readMessage(in);
 
             if (print.size() > 0 && print.contains(Output.REQUEST)) {
-                req.print(this.indent);
+                req.print(log, indent);
             }
 
             res.setRequest(req);
@@ -246,5 +246,23 @@ public class OpenEJBHttpServer implements HttpServer {
         }
     }
 
+    private static class LoggerOutputStream extends OutputStream {
+        private final Logger logger;
+        private final String level;
 
+        public LoggerOutputStream(final Logger log, final String lvl) {
+            logger = log;
+            level = lvl;
+        }
+
+        @Override
+        public void write(int b) throws IOException {
+            logger.log(level, Character.toString((char) b));
+        }
+
+        @Override // shortcut for String - because we know what we have ;)
+        public void write(byte b[]) throws IOException {
+            logger.log(level, new String(b));
+        }
+    }
 }

@@ -16,8 +16,6 @@
  */
 package org.apache.openejb.server.httpd;
 
-import org.apache.openejb.loader.IO;
-
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;

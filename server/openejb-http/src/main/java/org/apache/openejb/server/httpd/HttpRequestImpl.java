@@ -16,20 +16,41 @@
  */
 package org.apache.openejb.server.httpd;
 
-import javax.servlet.*;
+import org.apache.openejb.core.security.jaas.UserPrincipal;
+import org.apache.openejb.util.ArrayEnumeration;
+import org.apache.openejb.util.Logger;
+
+import javax.servlet.AsyncContext;
+import javax.servlet.DispatcherType;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
-
-import org.apache.openejb.core.security.jaas.UserPrincipal;
-import org.apache.openejb.util.ArrayEnumeration;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInput;
+import java.io.DataInputStream;
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.security.Principal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 /**
  * A class to take care of HTTP Requests.  It parses headers, content, form and url
@@ -295,22 +316,25 @@ public class HttpRequestImpl implements HttpRequest {
         parameters.putAll(this.getQueryParameters());
     }
 
-    public void print(boolean formatXml) {
+    public void print(final Logger log, boolean formatXml) {
+        if (log.isDebugEnabled()) {
+            final StringBuilder builder = new StringBuilder();
+            builder.append("******************* REQUEST ******************\n");
+            builder.append(method + " " + uri).append("\n");
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
+                builder.append(entry).append("\n");
+            }
+            builder.append("\n");
 
-        System.out.println("******************* REQUEST ******************");
-        System.out.println(method + " "+this.uri);
-        for (Map.Entry<String, String> entry : headers.entrySet()) {
-            System.out.println(entry);
+            final String text = new String(body);
+            if (formatXml && OpenEJBHttpServer.isTextXml(headers)) {
+                builder.append(OpenEJBHttpServer.reformat(text)).append("\n");
+            } else {
+                builder.append(text).append("\n");
+            }
+            builder.append("**********************************************").append("\n");
+            log.debug(builder.toString());
         }
-        System.out.println();
-
-        final String text = new String(body);
-        if (formatXml && OpenEJBHttpServer.isTextXml(headers)) {
-            System.out.println(OpenEJBHttpServer.reformat(text));
-        } else {
-            System.out.println(text);
-        }
-        System.out.println("**********************************************");
     }
 
     /**
