@@ -36,7 +36,7 @@ public class CalculatorTest {
         properties.setProperty("openejb.embedded.remotable", "true");
         // properties.setProperty("httpejbd.print", "true");
         // properties.setProperty("httpejbd.indent.xml", "true");
-        // properties.setProperty("OpenEJB.server.http.level", "FINE");
+        // properties.setProperty("logging.level.OpenEJB.server.http", "FINE");
         EJBContainer.createEJBContainer(properties);
     }
 

@@ -53,8 +53,14 @@ public class JuliLogStreamFactory implements LogStreamFactory {
         @Override
         public String getProperty(final String name) {
             final String parentValue = super.getProperty(name);
+
             if (SystemInstance.get().getProperties().containsKey(name)) {
                 return SystemInstance.get().getProperty(name);
+            }
+
+            final String propertyKeyValue = "logging" + reverseProperty(name);
+            if (SystemInstance.get().getProperties().containsKey(propertyKeyValue)) {
+                return SystemInstance.get().getProperty(propertyKeyValue);
             }
 
             // if it is one of ours loggers and no value is defined let set our nice logging style
@@ -68,6 +74,14 @@ public class JuliLogStreamFactory implements LogStreamFactory {
                 }
             }
             return parentValue;
+        }
+
+        private static String reverseProperty(String name) {
+            if (name.contains(".") && !name.endsWith(".")) {
+                int idx = name.lastIndexOf('.');
+                return name.substring(idx) + "." + name.substring(0, idx);
+            }
+            return name;
         }
 
         private static boolean isOverridableLogger(String name) {
