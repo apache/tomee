@@ -29,11 +29,11 @@ public class JuliLogStream implements LogStream {
     public JuliLogStream(LogCategory logCategory) {
         logger = Logger.getLogger(logCategory.getName());
 
-        final String level = logger.getName() + ".level";
-        if (SystemInstance.get().getProperties().containsKey(level)) {
-            final String newLevel = SystemInstance.get().getProperty(level);
+        // if level set through properties force it
+        if (SystemInstance.get().getProperties().containsKey(logger.getName() + ".level")
+                || SystemInstance.get().getProperties().containsKey("logging.level." + logger.getName())) {
             for (Handler handler : logger.getHandlers()) {
-                handler.setLevel(Level.parse(newLevel));
+                handler.setLevel(logger.getLevel());
             }
         }
     }
