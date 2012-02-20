@@ -372,6 +372,35 @@ public class Logger {
         return logStream.isWarnEnabled();
     }
 
+    public boolean isLevelEnable(final String level) {
+        if ("info".equals(level.toLowerCase())) {
+            return isInfoEnabled();
+        } else if ("debug".equals(level.toLowerCase())) {
+            return isDebugEnabled();
+        } else if ("warning".equals(level.toLowerCase())) {
+            return isWarningEnabled();
+        } else if ("fatal".equals(level.toLowerCase())) {
+            return isFatalEnabled();
+        } else if ("error".equals(level.toLowerCase())) {
+            return isErrorEnabled();
+        }
+        return false;
+    }
+
+    public void log(final String level, final String message) {
+        if ("info".equals(level.toLowerCase())) {
+            info(message);
+        } else if ("debug".equals(level.toLowerCase())) {
+            debug(message);
+        } else if ("warning".equals(level.toLowerCase())) {
+            warning(message);
+        } else if ("fatal".equals(level.toLowerCase())) {
+            fatal(message);
+        } else if ("error".equals(level.toLowerCase())) {
+            error(message);
+        }
+    }
+
     /**
      * If this level is enabled, then it finds a message for the given key  and logs it
      *
