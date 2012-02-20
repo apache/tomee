@@ -25,9 +25,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
-
 import javax.jms.ConnectionFactory;
 import javax.naming.Context;
 import javax.naming.NameClassPair;
@@ -40,13 +38,12 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.xml.namespace.QName;
 
+import org.omg.CORBA.ORB;
+import static org.apache.openejb.server.ejbd.ClientObjectFactory.convert;
+
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.Injection;
 import org.apache.openejb.ProxyInfo;
-import static org.apache.openejb.server.ejbd.ClientObjectFactory.convert;
-
-import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.ValidationInfo;
 import org.apache.openejb.client.CallbackMetaData;
 import org.apache.openejb.client.DataSourceMetaData;
 import org.apache.openejb.client.EJBMetaDataImpl;
@@ -57,7 +54,6 @@ import org.apache.openejb.client.JNDIRequest;
 import org.apache.openejb.client.JNDIResponse;
 import org.apache.openejb.client.NameClassPairEnumeration;
 import org.apache.openejb.client.PortRefMetaData;
-import org.apache.openejb.client.RequestMethodConstants;
 import org.apache.openejb.client.ResponseCodes;
 import org.apache.openejb.client.ThrowableArtifact;
 import org.apache.openejb.client.WsMetaData;
@@ -74,16 +70,17 @@ import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.proxy.ProxyManager;
-import org.omg.CORBA.ORB;
+
 
 class JndiRequestHandler {
+
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE.createChild("jndi"), "org.apache.openejb.server.util.resources");
 
     private final Context ejbJndiTree;
     private Context clientJndiTree;
     private final Context deploymentsJndiTree;
 
-    private Context globalJndiTree;    
+    private Context globalJndiTree;
 
     private final ClusterableRequestHandler clusterableRequestHandler;
     private Context rootContext;
@@ -93,12 +90,12 @@ class JndiRequestHandler {
         ejbJndiTree = (Context) containerSystem.getJNDIContext().lookup("openejb/remote");
         deploymentsJndiTree = (Context) containerSystem.getJNDIContext().lookup("openejb/Deployment");
 
-        globalJndiTree = (Context) containerSystem.getJNDIContext().lookup("openejb/global"); 
+        globalJndiTree = (Context) containerSystem.getJNDIContext().lookup("openejb/global");
 
         rootContext = containerSystem.getJNDIContext();
         try {
             clientJndiTree = (Context) containerSystem.getJNDIContext().lookup("openejb/client");
-        } catch (NamingException e) {
+        } catch (NamingException ignore) {
         }
         clusterableRequestHandler = newClusterableRequestHandler();
     }
@@ -119,10 +116,11 @@ class JndiRequestHandler {
             namingException.setRootCause(e);
             res.setResult(new ThrowableArtifact(namingException));
 
-            if (logger.isDebugEnabled()){
+            if (logger.isDebugEnabled()) {
                 try {
-                    logger.debug("JNDI REQUEST: "+req+" -- RESPONSE: " + res);
-                } catch (Exception justInCase) {}
+                    logger.debug("JNDI REQUEST: " + req + " -- RESPONSE: " + res);
+                } catch (Exception ignore) {
+                }
             }
 
             try {
@@ -138,9 +136,13 @@ class JndiRequestHandler {
             }
             String prefix = getPrefix(req);
 
-            switch(req.getRequestMethod()){
-                case JNDI_LOOKUP: doLookup(req, res, prefix); break;
-                case JNDI_LIST: doList(req, res, prefix); break;
+            switch (req.getRequestMethod()) {
+                case JNDI_LOOKUP:
+                    doLookup(req, res, prefix);
+                    break;
+                case JNDI_LIST:
+                    doList(req, res, prefix);
+                    break;
             }
 
         } catch (Throwable e) {
@@ -150,10 +152,11 @@ class JndiRequestHandler {
             res.setResult(new ThrowableArtifact(namingException));
         } finally {
 
-            if (logger.isDebugEnabled()){
+            if (logger.isDebugEnabled()) {
                 try {
-                    logger.debug("JNDI REQUEST: "+req+" -- RESPONSE: " + res);
-                } catch (Exception justInCase) {}
+                    logger.debug("JNDI REQUEST: " + req + " -- RESPONSE: " + res);
+                } catch (Exception ignore) {
+                }
             }
 
             try {
@@ -170,9 +173,9 @@ class JndiRequestHandler {
 
         if (name.startsWith("openejb/Deployment/")) {
             prefix = "";
-        } else if (req.getModuleId() != null && req.getModuleId().equals("openejb/Deployment")){
+        } else if (req.getModuleId() != null && req.getModuleId().equals("openejb/Deployment")) {
             prefix = "openejb/Deployment/";
-        } else if (req.getModuleId() != null && req.getModuleId().equals("openejb/global")){
+        } else if (req.getModuleId() != null && req.getModuleId().equals("openejb/global")) {
             prefix = "openejb/global/";
         } else if (req.getModuleId() != null && clientJndiTree != null) {
             prefix = "openejb/client/" + req.getModuleId() + "/";// + (Context) clientJndiTree.lookup(req.getModuleId());
@@ -207,7 +210,7 @@ class JndiRequestHandler {
                 res.setResponseCode(ResponseCodes.JNDI_CONTEXT);
                 return;
             } else if (object == null) {
-                throw new NullPointerException("lookup of '"+name+"' returned null");
+                throw new NullPointerException("lookup of '" + name + "' returned null");
             } else if (object instanceof DataSource) {
                 if (isDbcpDataSource(object)) {
                     try {
@@ -225,11 +228,11 @@ class JndiRequestHandler {
                     res.setResult(((Referenceable) object).getReference());
                     return;
                 }
-            } else if (object instanceof ConnectionFactory){
+            } else if (object instanceof ConnectionFactory) {
                 res.setResponseCode(ResponseCodes.JNDI_RESOURCE);
                 res.setResult(ConnectionFactory.class.getName());
                 return;
-            } else if (object instanceof ORB){
+            } else if (object instanceof ORB) {
                 res.setResponseCode(ResponseCodes.JNDI_RESOURCE);
                 res.setResult(ORB.class.getName());
                 return;
@@ -315,7 +318,7 @@ class JndiRequestHandler {
                 }
 
                 // add port refs
-                Map<QName,PortRefMetaData> portsByQName = new HashMap<QName,PortRefMetaData>();
+                Map<QName, PortRefMetaData> portsByQName = new HashMap<QName, PortRefMetaData>();
                 for (PortRefData portRef : serviceRef.getPortRefs()) {
                     PortRefMetaData portRefMetaData = new PortRefMetaData();
                     portRefMetaData.setQName(portRef.getQName());
@@ -370,7 +373,7 @@ class JndiRequestHandler {
                 handler = (BaseEjbProxyHandler) field.get(object);
             } catch (Exception e1) {
                 // Not a proxy.  See if it's serializable and send it
-                if (object instanceof java.io.Serializable){
+                if (object instanceof java.io.Serializable) {
                     res.setResponseCode(ResponseCodes.JNDI_OK);
                     res.setResult(object);
                     return;
@@ -389,18 +392,18 @@ class JndiRequestHandler {
 
         updateServer(req, res, proxyInfo);
 
-        switch(proxyInfo.getInterfaceType()){
+        switch (proxyInfo.getInterfaceType()) {
             case EJB_HOME: {
                 res.setResponseCode(ResponseCodes.JNDI_EJBHOME);
                 EJBMetaDataImpl metaData = new EJBMetaDataImpl(beanContext.getHomeInterface(),
-                        beanContext.getRemoteInterface(),
-                        beanContext.getPrimaryKeyClass(),
-                        beanContext.getComponentType().toString(),
-                        deploymentID,
-                        -1,
-                        convert(proxyInfo.getInterfaceType()),
-                        null,
-                        beanContext.getAsynchronousMethodSignatures());
+                                                               beanContext.getRemoteInterface(),
+                                                               beanContext.getPrimaryKeyClass(),
+                                                               beanContext.getComponentType().toString(),
+                                                               deploymentID,
+                                                               -1,
+                                                               convert(proxyInfo.getInterfaceType()),
+                                                               null,
+                                                               beanContext.getAsynchronousMethodSignatures());
                 metaData.loadProperties(beanContext.getProperties());
                 log(metaData);
                 res.setResult(metaData);
@@ -415,14 +418,14 @@ class JndiRequestHandler {
             case BUSINESS_REMOTE: {
                 res.setResponseCode(ResponseCodes.JNDI_BUSINESS_OBJECT);
                 EJBMetaDataImpl metaData = new EJBMetaDataImpl(null,
-                        null,
-                        beanContext.getPrimaryKeyClass(),
-                        beanContext.getComponentType().toString(),
-                        deploymentID,
-                        -1,
-                        convert(proxyInfo.getInterfaceType()),
-                        proxyInfo.getInterfaces(),
-                        beanContext.getAsynchronousMethodSignatures());
+                                                               null,
+                                                               beanContext.getPrimaryKeyClass(),
+                                                               beanContext.getComponentType().toString(),
+                                                               deploymentID,
+                                                               -1,
+                                                               convert(proxyInfo.getInterfaceType()),
+                                                               proxyInfo.getInterfaces(),
+                                                               beanContext.getAsynchronousMethodSignatures());
                 metaData.setPrimaryKey(proxyInfo.getPrimaryKey());
                 metaData.loadProperties(beanContext.getProperties());
 
@@ -488,14 +491,14 @@ class JndiRequestHandler {
         String name = req.getRequestString();
         try {
             NamingEnumeration<NameClassPair> namingEnumeration = rootContext.list(prefix + name);
-            if (namingEnumeration == null){
+            if (namingEnumeration == null) {
                 res.setResponseCode(ResponseCodes.JNDI_OK);
                 res.setResult(null);
             } else {
                 res.setResponseCode(ResponseCodes.JNDI_ENUMERATION);
                 ArrayList<NameClassPair> list = Collections.list(namingEnumeration);
                 for (NameClassPair pair : list) {
-                    if (pair.getClassName().equals(IvmContext.class.getName())){
+                    if (pair.getClassName().equals(IvmContext.class.getName())) {
                         pair.setClassName(javax.naming.Context.class.getName());
                     }
                 }
@@ -503,16 +506,15 @@ class JndiRequestHandler {
             }
         } catch (NameNotFoundException e) {
             res.setResponseCode(ResponseCodes.JNDI_NOT_FOUND);
-            return;
         } catch (NamingException e) {
             res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
             res.setResult(new ThrowableArtifact(e));
-            return;
         }
     }
 
 
     public static class DbcpDataSource {
+
         private final Object object;
         private final Class clazz;
 
@@ -525,13 +527,15 @@ class JndiRequestHandler {
             return (String) clazz.getMethod("getDriverClassName").invoke(object);
         }
 
-        public java.lang.String getPassword() throws Exception{
+        public java.lang.String getPassword() throws Exception {
             return (String) clazz.getMethod("getPassword").invoke(object);
         }
-        public java.lang.String getUrl() throws Exception{
+
+        public java.lang.String getUrl() throws Exception {
             return (String) clazz.getMethod("getUrl").invoke(object);
         }
-        public java.lang.String getUsername() throws Exception{
+
+        public java.lang.String getUsername() throws Exception {
             return (String) clazz.getMethod("getUsername").invoke(object);
         }
     }

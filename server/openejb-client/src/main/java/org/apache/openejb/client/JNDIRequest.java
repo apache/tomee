@@ -35,8 +35,8 @@ public class JNDIRequest implements ClusterableRequest {
         this.requestString = requestString;
     }
 
-    public byte getRequestType() {
-        return RequestMethodConstants.JNDI_REQUEST;
+    public RequestType getRequestType() {
+        return RequestType.JNDI_REQUEST;
     }
 
     public RequestMethodCode getRequestMethod() {

@@ -39,8 +39,8 @@ public class AuthenticationRequest implements Request {
         this.credentials = credentials;
     }
 
-    public byte getRequestType() {
-        return RequestMethodConstants.AUTH_REQUEST;
+    public RequestType getRequestType() {
+        return RequestType.AUTH_REQUEST;
     }
 
     public String getRealm() {

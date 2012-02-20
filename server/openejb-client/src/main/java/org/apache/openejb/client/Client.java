@@ -165,7 +165,7 @@ public class Client {
             try {
 
                 ClusterRequest clusterRequest = new ClusterRequest(cluster);
-                objectOut.write(clusterRequest.getRequestType());
+                objectOut.write(clusterRequest.getRequestType().getCode());
                 clusterRequest.writeExternal(objectOut);
 
             } catch (Throwable e) {
@@ -177,7 +177,7 @@ public class Client {
             /*----------------------------------*/
             try {
 
-                objectOut.write(req.getRequestType());
+                objectOut.write(req.getRequestType().getCode());
 
             } catch (IOException e) {
                 throw newIOException("Cannot write the request type to the server: ", e);

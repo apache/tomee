@@ -33,8 +33,8 @@ public class ClusterRequest implements Request {
         clusterMetaDataVersion = clusterMetaData.getVersion();
     }
 
-    public byte getRequestType() {
-        return RequestMethodConstants.CLUSTER_REQUEST;
+    public RequestType getRequestType() {
+        return RequestType.CLUSTER_REQUEST;
     }
 
     public long getClusterMetaDataVersion() {
