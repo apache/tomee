@@ -56,7 +56,7 @@ public class StatefulEJBObjectHandler extends EJBObjectHandler {
     
     protected Object remove(Method method, Object[] args, Object proxy) throws Throwable {
 
-        EJBRequest req = new EJBRequest(RequestMethodConstants.EJB_OBJECT_REMOVE, ejb, method, args, primaryKey);
+        EJBRequest req = new EJBRequest(RequestMethodCode.EJB_OBJECT_REMOVE, ejb, method, args, primaryKey);
 
         EJBResponse res = request(req);
 

@@ -22,7 +22,7 @@ import java.io.ObjectOutput;
 
 public class JNDIRequest implements ClusterableRequest {
 
-    private transient int requestMethod = -1;
+    private transient RequestMethodCode requestMethod;
     private transient String requestString;
     private transient String moduleId;
     private transient int serverHash;
@@ -30,7 +30,7 @@ public class JNDIRequest implements ClusterableRequest {
     public JNDIRequest() {
     }
 
-    public JNDIRequest(int requestMethod, String requestString) {
+    public JNDIRequest(RequestMethodCode requestMethod, String requestString) {
         this.requestMethod = requestMethod;
         this.requestString = requestString;
     }
@@ -39,7 +39,7 @@ public class JNDIRequest implements ClusterableRequest {
         return RequestMethodConstants.JNDI_REQUEST;
     }
 
-    public int getRequestMethod() {
+    public RequestMethodCode getRequestMethod() {
         return requestMethod;
     }
 
@@ -55,7 +55,7 @@ public class JNDIRequest implements ClusterableRequest {
         this.moduleId = moduleId;
     }
 
-    public void setRequestMethod(int requestMethod) {
+    public void setRequestMethod(RequestMethodCode requestMethod) {
         this.requestMethod = requestMethod;
     }
 
@@ -74,7 +74,12 @@ public class JNDIRequest implements ClusterableRequest {
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         byte version = in.readByte(); // future use
 
-        requestMethod = in.readByte();
+        int code = in.readByte();
+        try {
+            requestMethod = RequestMethodCode.valueOf(code);
+        } catch (IllegalArgumentException iae) {
+            throw new IOException("Invalid request code " + code);
+        }
         requestString = in.readUTF();
         moduleId = (String) in.readObject();
         serverHash = in.readInt();
@@ -84,7 +89,7 @@ public class JNDIRequest implements ClusterableRequest {
         // write out the version of the serialized data for future use
         out.writeByte(1);
 
-        out.writeByte((byte) requestMethod);
+        out.writeByte((byte) requestMethod.getCode());
         out.writeUTF(requestString);
         out.writeObject(moduleId);
         out.writeInt(serverHash);
@@ -93,11 +98,7 @@ public class JNDIRequest implements ClusterableRequest {
     public String toString() {
         StringBuilder sb = new StringBuilder(100);
 
-        switch(requestMethod){
-            case RequestMethodConstants.JNDI_LOOKUP: sb.append("JNDI_LOOKUP:"); break;
-            case RequestMethodConstants.JNDI_LIST: sb.append("JNDI_LIST:"); break;
-            case RequestMethodConstants.JNDI_LIST_BINDINGS: sb.append("JNDI_LIST_BINDINGS:"); break;
-        }
+        sb.append(requestMethod);
         sb.append(this.moduleId).append(":");
         sb.append(this.requestString);
         return sb.toString();

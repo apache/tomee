@@ -21,19 +21,18 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.lang.reflect.Method;
 import java.rmi.Remote;
-import java.util.UUID;
-
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.rmi.PortableRemoteObject;
 import javax.rmi.CORBA.Stub;
 import javax.rmi.CORBA.Tie;
+import javax.rmi.PortableRemoteObject;
 
 import org.omg.CORBA.ORB;
 
+
 public class EJBRequest implements ClusterableRequest {
 
-    private transient int requestMethod;
+    private transient RequestMethodCode requestMethod;
     private transient int deploymentCode = 0;
     private transient Object clientIdentity;
     private transient String deploymentId;
@@ -53,7 +52,7 @@ public class EJBRequest implements ClusterableRequest {
         ejbMetaData = null;
     }
 
-    public EJBRequest(int requestMethod, EJBMetaDataImpl ejb, Method method, Object[] args, Object primaryKey) {
+    public EJBRequest(RequestMethodCode requestMethod, EJBMetaDataImpl ejb, Method method, Object[] args, Object primaryKey) {
         body = new Body(ejb);
 
         this.ejbMetaData = ejb;
@@ -114,8 +113,9 @@ public class EJBRequest implements ClusterableRequest {
     }
 
     public static class Body implements java.io.Externalizable {
+
         private transient EJBMetaDataImpl ejb;
-        private transient ORB orb; 
+        private transient ORB orb;
         private transient Method methodInstance;
         private transient Class interfaceClass;
         private transient String methodName;
@@ -163,21 +163,21 @@ public class EJBRequest implements ClusterableRequest {
             Class methodClass = methodInstance.getDeclaringClass();
 
             if (ejb.homeClass != null) {
-                if (methodClass.isAssignableFrom(ejb.homeClass)){
+                if (methodClass.isAssignableFrom(ejb.homeClass)) {
                     this.interfaceClass = ejb.homeClass;
                     return;
                 }
             }
 
             if (ejb.remoteClass != null) {
-                if (methodClass.isAssignableFrom(ejb.remoteClass)){
+                if (methodClass.isAssignableFrom(ejb.remoteClass)) {
                     this.interfaceClass = ejb.remoteClass;
                     return;
                 }
             }
 
             for (Class businessClass : ejb.businessClasses) {
-                if (methodClass.isAssignableFrom(businessClass)){
+                if (methodClass.isAssignableFrom(businessClass)) {
                     this.interfaceClass = businessClass;
                     return;
                 }
@@ -210,7 +210,7 @@ public class EJBRequest implements ClusterableRequest {
             methodName = null;
             methodInstance = null;
             try {
-                requestId = (String)in.readObject();
+                requestId = (String) in.readObject();
                 primaryKey = in.readObject();
                 interfaceClass = (Class) in.readObject();
 //                methodClass = (Class) in.readObject();
@@ -324,9 +324,9 @@ public class EJBRequest implements ClusterableRequest {
         static final Object[] noArgsO = new Object[0];
 
         /**
-         * Obtain an ORB instance for this request to activate remote 
+         * Obtain an ORB instance for this request to activate remote
          * arguments and return results.
-         * 
+         *
          * @return An ORB instance.
          */
         protected ORB getORB() throws IOException {
@@ -338,13 +338,13 @@ public class EJBRequest implements ClusterableRequest {
                 } catch (Throwable e) {
                     try {
                         // any orb will do if we can't get a context one. 
-                        orb = ORB.init(); 
+                        orb = ORB.init();
                     } catch (Throwable ex) {
                         throw new IOException("Unable to connect PortableRemoteObject stub to an ORB, no ORB bound to java:comp/ORB");
                     }
                 }
             }
-            return orb; 
+            return orb;
         }
 
         protected void readMethodParameters(ObjectInput in) throws IOException, ClassNotFoundException {
@@ -410,7 +410,7 @@ public class EJBRequest implements ClusterableRequest {
                         clazz = (Class) in.readObject();
                         obj = in.readObject();
                         if (obj instanceof Stub) {
-                            Stub stub = (Stub)obj;
+                            Stub stub = (Stub) obj;
                             ORB orb = getORB();
                             stub.connect(orb);
                         }
@@ -443,7 +443,7 @@ public class EJBRequest implements ClusterableRequest {
         return RequestMethodConstants.EJB_REQUEST;
     }
 
-    public int getRequestMethod() {
+    public RequestMethodCode getRequestMethod() {
         return requestMethod;
     }
 
@@ -459,7 +459,7 @@ public class EJBRequest implements ClusterableRequest {
         return deploymentCode;
     }
 
-    public void setRequestMethod(int requestMethod) {
+    public void setRequestMethod(RequestMethodCode requestMethod) {
         this.requestMethod = requestMethod;
     }
 
@@ -484,52 +484,7 @@ public class EJBRequest implements ClusterableRequest {
     }
 
     public String toString() {
-        StringBuilder s = null; 
-        switch (requestMethod) {
-            case RequestMethodConstants.EJB_HOME_GET_EJB_META_DATA:
-                s = new StringBuilder("EJB_HOME.GET_EJB_META_DATA");
-                break;
-            case RequestMethodConstants.EJB_HOME_GET_HOME_HANDLE:
-                s = new StringBuilder("EJB_HOME.GET_HOME_HANDLE");
-                break;
-            case RequestMethodConstants.EJB_HOME_REMOVE_BY_HANDLE:
-                s = new StringBuilder("EJB_HOME.REMOVE_BY_HANDLE");
-                break;
-            case RequestMethodConstants.EJB_HOME_REMOVE_BY_PKEY:
-                s = new StringBuilder("EJB_HOME.REMOVE_BY_PKEY");
-                break;
-            case RequestMethodConstants.EJB_HOME_FIND:
-                s = new StringBuilder("EJB_HOME.FIND");
-                break;
-            case RequestMethodConstants.EJB_HOME_CREATE:
-                s = new StringBuilder("EJB_HOME.CREATE");
-                break;
-            case RequestMethodConstants.EJB_HOME_METHOD:
-                s = new StringBuilder("EJB_HOME.HOME_METHOD");
-                break;
-            case RequestMethodConstants.EJB_OBJECT_GET_EJB_HOME:
-                s = new StringBuilder("EJB_OBJECT.GET_EJB_HOME");
-                break;
-            case RequestMethodConstants.EJB_OBJECT_GET_HANDLE:
-                s = new StringBuilder("EJB_OBJECT.GET_HANDLE");
-                break;
-            case RequestMethodConstants.EJB_OBJECT_GET_PRIMARY_KEY:
-                s = new StringBuilder("EJB_OBJECT.GET_PRIMARY_KEY");
-                break;
-            case RequestMethodConstants.EJB_OBJECT_IS_IDENTICAL:
-                s = new StringBuilder("EJB_OBJECT.IS_IDENTICAL");
-                break;
-            case RequestMethodConstants.EJB_OBJECT_REMOVE:
-                s = new StringBuilder("EJB_OBJECT.REMOVE");
-                break;
-            case RequestMethodConstants.EJB_OBJECT_BUSINESS_METHOD:
-                s = new StringBuilder("EJB_OBJECT.BUSINESS_METHOD");
-                break;
-            case RequestMethodConstants.FUTURE_CANCEL:
-                s = new StringBuilder("FUTURE.CANCEL");
-            default:
-                s = new StringBuilder("EJB_UKNOWN."+requestMethod);
-        }
+        StringBuilder s = new StringBuilder((requestMethod == null ? "null" : requestMethod.toString()));
         s.append(':').append(deploymentId);
         if (body != null) {
             s.append(':').append(body.getMethodName());
@@ -549,12 +504,16 @@ public class EJBRequest implements ClusterableRequest {
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         ClassNotFoundException result = null;
 
-        requestMethod = -1;
         deploymentId = null;
         deploymentCode = -1;
         clientIdentity = null;
 
-        requestMethod = in.readByte();
+        int code = in.readByte();
+        try {
+            requestMethod = RequestMethodCode.valueOf(code);
+        } catch (IllegalArgumentException iae) {
+            throw new IOException("Invalid request code " + code);
+        }
         try {
             deploymentId = (String) in.readObject();
         } catch (ClassNotFoundException cnfe) {
@@ -572,7 +531,7 @@ public class EJBRequest implements ClusterableRequest {
     }
 
     public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeByte(requestMethod);
+        out.writeByte(requestMethod.getCode());
 
         if (deploymentCode > 0) {
             out.writeObject(null);

@@ -211,7 +211,7 @@ public class JNDIContext implements InitialContextFactory, Context {
         }
 
         JNDIRequest req = new JNDIRequest();
-        req.setRequestMethod(RequestMethodConstants.JNDI_LOOKUP);
+        req.setRequestMethod(RequestMethodCode.JNDI_LOOKUP);
         req.setRequestString(name);
         req.setModuleId(moduleId);
 
@@ -355,7 +355,7 @@ public class JNDIContext implements InitialContextFactory, Context {
         else if (name.startsWith("java:")) name = name.replaceFirst("^java:", "");
         else if (!name.startsWith("/")) name = tail + name;
 
-        JNDIRequest req = new JNDIRequest(RequestMethodConstants.JNDI_LIST, name);
+        JNDIRequest req = new JNDIRequest(RequestMethodCode.JNDI_LIST, name);
         req.setModuleId(moduleId);
 
         JNDIResponse res = null;
