@@ -349,7 +349,8 @@ public class OpenEjbContainer extends EJBContainer {
 
             // will be updated if needed
 
-            ClassLoader classLoader = getClass().getClassLoader();
+            // ClassLoader classLoader = getClass().getClassLoader();
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
             if (modules instanceof String) {
 
