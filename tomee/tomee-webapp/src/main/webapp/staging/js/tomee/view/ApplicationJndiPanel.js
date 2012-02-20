@@ -36,7 +36,7 @@ TOMEE.ApplicationJndiPanel = function (cfg) {
             '</table>',
             '</div>',
 
-            '<br/><br/><br/><br/><br/><br/>',
+            '            <br/><br/><br/><br/><br/><br/>',
             '            <div class="carousel-caption">',
             '                <h4>' + TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.browser') + '</h4>',
             '                <p>' + TOMEE.ApplicationI18N.get('app.home.menu.tools.jndi.browser.info') + '</p>',
