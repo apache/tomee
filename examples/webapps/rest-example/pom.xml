@@ -92,6 +92,29 @@
           </webapps>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.openejb</groupId>
+        <version>0.0.1-SNAPSHOT</version>
+        <artifactId>spi-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-scan-xml</id>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <outputFilename>${project.build.directory}/${project.build.finalName}/WEB-INF/org/apache/xbean/scan.xml</outputFilename>
+        </configuration>
+        <dependencies>
+          <dependency> <!-- mandatory for the scanning since we enhanced our entities -->
+            <groupId>org.apache.openjpa</groupId>
+            <artifactId>openjpa</artifactId>
+            <version>2.2.0</version>
+          </dependency>
+        </dependencies>
+      </plugin>
       <plugin> <!-- needed otherwise it will not work at runtime -->
         <groupId>org.apache.openjpa</groupId>
         <artifactId>openjpa-maven-plugin</artifactId>
