@@ -119,6 +119,10 @@ public class FinderFactory {
         return null;
     }
 
+    private static IAnnotationFinder xmlFinder(final DeploymentModule module, final InputStream scanIs, final Iterable<URL> urls) {
+        return xmlFinder(module, scanIs, urls, null);
+    }
+
     private static FileInputStream inputStream(final File file, final String xml) throws FileNotFoundException {
         final File scanFile = new File(file, xml);
         if (scanFile.exists()) {
