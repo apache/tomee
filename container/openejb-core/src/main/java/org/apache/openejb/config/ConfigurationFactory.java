@@ -602,16 +602,6 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         logger.debug("Beginning load: " + jarFile.getAbsolutePath());
 
         try {
-            AppInfo appInfo = PreconfiguredFactory.configureApplication(jarFile);
-            if (appInfo != null) {
-                logger.info("app-info.xml found and loaded: " + jarFile.getAbsolutePath());
-                return appInfo;
-            }
-        } catch (Exception e) {
-            logger.warning("configureApplication.preloadFailed", e, jarFile.getAbsolutePath(), e.getMessage());
-        }
-
-        try {
             final AppModule appModule = deploymentLoader.load(jarFile);
             return configureApplication(appModule);
         } catch (ValidationFailedException e) {
