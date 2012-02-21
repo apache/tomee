@@ -70,12 +70,14 @@ public class OpenEJBListener implements LifecycleListener {
             if (webappDir == null && event.getSource() instanceof StandardServer) {
                 final StandardServer server = (StandardServer) event.getSource();
                 webappDir = tryToFindAndExtractWar(server);
-                final File exploded = extractDirectory(webappDir);
-                if (webappDir != null) {
-                    extract(webappDir, exploded);
+                if (webappDir != null) { // we are using webapp startup
+                    final File exploded = extractDirectory(webappDir);
+                    if (webappDir != null) {
+                        extract(webappDir, exploded);
+                    }
+                    webappDir = exploded;
+                    TomcatHelper.setServer(server);
                 }
-                webappDir = exploded;
-                TomcatHelper.setServer(server);
             }
             if (webappDir != null) {
                 final Properties properties = new Properties();
@@ -93,7 +95,7 @@ public class OpenEJBListener implements LifecycleListener {
         }
     }
 
-    private File extractDirectory(final File webappDir) {
+    private static File extractDirectory(final File webappDir) {
         File exploded = new File(webappDir.getAbsolutePath().replace(".war", ""));
         int i = 0;
         while (exploded.exists()) {
