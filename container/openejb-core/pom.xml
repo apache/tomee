@@ -516,6 +516,11 @@
       <artifactId>xbean-bundleutils</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <version>0.0.1-SNAPSHOT</version>
+      <artifactId>xbean-xml</artifactId>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>provided</scope>
