@@ -56,7 +56,6 @@ import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentLoader;
-import org.apache.openejb.config.PreconfiguredFactory;
 import org.apache.openejb.config.WebModule;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.WebContext;
@@ -946,38 +945,25 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                     continue;
                 }
 
-                AppInfo appInfo = null;
+                AppInfo appInfo;
                 try {
-                    appInfo = PreconfiguredFactory.configureApplication(file);
-                } catch (OpenEJBException e) {
-                    logger.warning("Failed to load META-INF/app-info.xml " + file.getAbsolutePath(), e);
-                }
+                    file = file.getCanonicalFile().getAbsoluteFile();
+                    AppModule appModule = deploymentLoader.load(file);
 
-                try {
-                    AppModule appModule = null;
-                    if (appInfo == null) {
-                        file = file.getCanonicalFile().getAbsoluteFile();
-                        appModule = deploymentLoader.load(file);
-
-                        // Ignore any standalone web modules - this happens when the app is unpaked and doesn't have a WEB-INF dir
-                        if (appModule.getDeploymentModule().size() == 1 && appModule.getWebModules().size() == 1) {
-                            WebModule webModule = appModule.getWebModules().iterator().next();
-                            if (file.getAbsolutePath().equals(webModule.getJarLocation())) {
-                                continue;
-                            }
-                        }
-
-                        // tell web modules to deploy using this host
-                        for (WebModule webModule : appModule.getWebModules()) {
-                            webModule.setHost(standardHost.getName());
-                        }
-
-                        appInfo = configurationFactory.configureApplication(appModule);
-                    } else {
-                        for (WebAppInfo webAppInfo : appInfo.webApps) {
-                            webAppInfo.host = standardHost.getName();
+                    // Ignore any standalone web modules - this happens when the app is unpaked and doesn't have a WEB-INF dir
+                    if (appModule.getDeploymentModule().size() == 1 && appModule.getWebModules().size() == 1) {
+                        WebModule webModule = appModule.getWebModules().iterator().next();
+                        if (file.getAbsolutePath().equals(webModule.getJarLocation())) {
+                            continue;
                         }
                     }
+
+                    // tell web modules to deploy using this host
+                    for (WebModule webModule : appModule.getWebModules()) {
+                        webModule.setHost(standardHost.getName());
+                    }
+
+                    appInfo = configurationFactory.configureApplication(appModule);
 
                     // if this is an unpacked dir, tomcat will pick it up as a webapp so undeploy it first
                     if (file.isDirectory()) {

@@ -26,7 +26,6 @@ import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentLoader;
 import org.apache.openejb.config.DeploymentModule;
-import org.apache.openejb.config.PreconfiguredFactory;
 import org.apache.openejb.config.sys.AdditionalDeployments;
 import org.apache.openejb.config.sys.Deployments;
 import org.apache.openejb.config.sys.JaxbOpenejb;
@@ -117,55 +116,53 @@ public class DeployerEjb implements Deployer {
 
         final File file = new File(realLocation(rawLocation));
 
-        AppInfo appInfo = PreconfiguredFactory.configureApplication(file);
+        AppInfo appInfo;
 
         try {
-            if (appInfo == null) { // using app-info.xml we ignore alt-dd
-                appModule = deploymentLoader.load(file);
+            appModule = deploymentLoader.load(file);
 
-                // Add any alternate deployment descriptors to the modules
-                Map<String, DeploymentModule> modules = new TreeMap<String, DeploymentModule>();
-                for (DeploymentModule module : appModule.getEjbModules()) {
-                    modules.put(module.getModuleId(), module);
-                }
-                for (DeploymentModule module : appModule.getClientModules()) {
-                    modules.put(module.getModuleId(), module);
-                }
-                for (DeploymentModule module : appModule.getWebModules()) {
-                    modules.put(module.getModuleId(), module);
-                }
-                for (DeploymentModule module : appModule.getConnectorModules()) {
-                    modules.put(module.getModuleId(), module);
-                }
+            // Add any alternate deployment descriptors to the modules
+            Map<String, DeploymentModule> modules = new TreeMap<String, DeploymentModule>();
+            for (DeploymentModule module : appModule.getEjbModules()) {
+                modules.put(module.getModuleId(), module);
+            }
+            for (DeploymentModule module : appModule.getClientModules()) {
+                modules.put(module.getModuleId(), module);
+            }
+            for (DeploymentModule module : appModule.getWebModules()) {
+                modules.put(module.getModuleId(), module);
+            }
+            for (DeploymentModule module : appModule.getConnectorModules()) {
+                modules.put(module.getModuleId(), module);
+            }
 
-                for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-                    String name = (String) entry.getKey();
-                    if (name.startsWith(ALT_DD + "/")) {
-                        name = name.substring(ALT_DD.length() + 1);
+            for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+                String name = (String) entry.getKey();
+                if (name.startsWith(ALT_DD + "/")) {
+                    name = name.substring(ALT_DD.length() + 1);
 
-                        DeploymentModule module;
-                        int slash = name.indexOf('/');
-                        if (slash > 0) {
-                            String moduleId = name.substring(0, slash);
-                            name = name.substring(slash + 1);
-                            module = modules.get(moduleId);
+                    DeploymentModule module;
+                    int slash = name.indexOf('/');
+                    if (slash > 0) {
+                        String moduleId = name.substring(0, slash);
+                        name = name.substring(slash + 1);
+                        module = modules.get(moduleId);
+                    } else {
+                        module = appModule;
+                    }
+
+                    if (module != null) {
+                        String value = (String) entry.getValue();
+                        File dd = new File(value);
+                        if (dd.canRead()) {
+                            module.getAltDDs().put(name, dd.toURI().toURL());
                         } else {
-                            module = appModule;
-                        }
-
-                        if (module != null) {
-                            String value = (String) entry.getValue();
-                            File dd = new File(value);
-                            if (dd.canRead()) {
-                                module.getAltDDs().put(name, dd.toURI().toURL());
-                            } else {
-                                module.getAltDDs().put(name, value);
-                            }
+                            module.getAltDDs().put(name, value);
                         }
                     }
                 }
-                appInfo = configurationFactory.configureApplication(appModule);
             }
+            appInfo = configurationFactory.configureApplication(appModule);
 
             if (properties != null && properties.containsKey(OPENEJB_DEPLOYER_FORCED_APP_ID_PROP)) {
                 appInfo.appId = properties.getProperty(OPENEJB_DEPLOYER_FORCED_APP_ID_PROP);
