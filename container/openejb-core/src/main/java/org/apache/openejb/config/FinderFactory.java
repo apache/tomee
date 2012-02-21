@@ -31,6 +31,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Arrays;
 
 public class FinderFactory {
 
@@ -54,7 +55,7 @@ public class FinderFactory {
         if (module instanceof WebModule) {
             WebModule webModule = (WebModule) module;
             final ClassLoader webClassLoader = webModule.getClassLoader();
-            final IAnnotationFinder finder = xmlFinder(module, inputStream(webModule.getFile(), WEB_SCAN_XML));
+            final IAnnotationFinder finder = xmlFinder(module, inputStream(webModule.getFile(), WEB_SCAN_XML), webModule.getScannableUrls(), AggregatedArchive.class);
             if (finder != null) {
                 return finder;
             }
@@ -64,7 +65,7 @@ public class FinderFactory {
         if (module instanceof ConnectorModule) {
         	ConnectorModule connectorModule = (ConnectorModule) module;
         	final ClassLoader connectorClassLoader = connectorModule.getClassLoader();
-            final IAnnotationFinder finder = xmlFinder(module, connectorClassLoader.getResourceAsStream(SCAN_XML));
+            final IAnnotationFinder finder = xmlFinder(module, connectorClassLoader.getResourceAsStream(SCAN_XML), connectorModule.getLibraries());
             if (finder != null) {
                 return finder;
             }
@@ -85,7 +86,7 @@ public class FinderFactory {
                 }
                 if (webInfClassesFolder.getParentFile().exists()) {
                     final FileInputStream fis = inputStream(webInfClassesFolder.getParentFile().getParentFile(), WEB_SCAN_XML);
-                    final IAnnotationFinder finder = xmlFinder(module, fis);
+                    final IAnnotationFinder finder = xmlFinder(module, fis, Arrays.asList(url));
                     if (finder != null) {
                         return finder;
                     }
@@ -94,7 +95,7 @@ public class FinderFactory {
                 url = new URL(location);
             }
 
-            final IAnnotationFinder finder = xmlFinder(module, module.getClassLoader().getResourceAsStream(SCAN_XML));
+            final IAnnotationFinder finder = xmlFinder(module, module.getClassLoader().getResourceAsStream(SCAN_XML), Arrays.asList(url));
             if (finder != null) {
                 return finder;
             }
@@ -105,10 +106,10 @@ public class FinderFactory {
         }
     }
 
-    private static IAnnotationFinder xmlFinder(final DeploymentModule module, final InputStream scanIs) {
+    private static IAnnotationFinder xmlFinder(final DeploymentModule module, final InputStream scanIs, final Iterable<URL> urls, final Class<?> clazz) {
         if (scanIs != null) {
             try {
-                final IAnnotationFinder finder = XMLAnnotationFinderHelper.finderFromXml(scanIs, module.getClassLoader());
+                final IAnnotationFinder finder = XMLAnnotationFinderHelper.finderFromXml(scanIs, module.getClassLoader(), urls, clazz);
                 logger.info("using scan.xml for module " + module.getModuleId());
                 return finder;
             } catch (JAXBException jaxbEx) {
