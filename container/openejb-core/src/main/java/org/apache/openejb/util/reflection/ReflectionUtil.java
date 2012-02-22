@@ -32,7 +32,11 @@ public final class ReflectionUtil {
         try {
             Class<?> current = notNullInstance.getClass();
             while (!current.equals(Object.class) && field == null) {
-                field = current.getDeclaredField(fieldName);
+                try {
+                    field = current.getDeclaredField(fieldName);
+                } catch (NoSuchFieldException nsfe) {
+                    // ignored, will try the same at next level
+                }
                 current = current.getSuperclass();
             }
             accessible = field.isAccessible();
