@@ -517,7 +517,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <version>0.0.1-SNAPSHOT</version>
       <artifactId>xbean-xml</artifactId>
     </dependency>
     <dependency>

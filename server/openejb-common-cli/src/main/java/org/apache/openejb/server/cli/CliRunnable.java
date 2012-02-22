@@ -19,26 +19,34 @@ package org.apache.openejb.server.cli;
 import jline.ConsoleReader;
 import jline.FileNameCompletor;
 import jline.SimpleCompletor;
-import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.openejb.server.cli.command.AbstractCommand;
 import org.apache.openejb.server.cli.command.Command;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.OpenEjbVersion;
-import org.apache.openejb.util.URLs;
-
+import org.apache.openejb.xbean.xml.XMLAnnotationFinderHelper;
 import org.apache.xbean.finder.Annotated;
-import org.apache.xbean.finder.ClassFinder;
-import org.apache.xbean.finder.UrlSet;
+import org.apache.xbean.finder.IAnnotationFinder;
+import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 public class CliRunnable implements Runnable {
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_SERVER, CliRunnable.class);
+
+    public static final String SERVICE_FOLDER = "META-INF/org/apache/openejb/server";
+    public static final String SERVICE_FILE = "commands.xml";
+
     private static final String BRANDING_FILE = "branding.properties";
     private static final String WELCOME_KEY_PREFIX = "welcome_";
     private static final String WELCOME_COMMON_KEY = WELCOME_KEY_PREFIX + "common";
@@ -77,24 +85,40 @@ public class CliRunnable implements Runnable {
             // no-op
         }
 
+        final ClassLoader loader = CliRunnable.class.getClassLoader();
         try {
-            final UrlSet forceCommonCli = new UrlSet(CliRunnable.class.getClassLoader()).matching(".*openejb-common-cli.*");
-            UrlSet urls = new UrlSet(CliRunnable.class.getClassLoader());
-            urls = NewLoaderLogic.applyBuiltinExcludes(urls);
-            urls = URLs.cullSystemAndOpenEJBJars(urls);
-            urls = urls.include(forceCommonCli);
+            final ResourceFinder finder = new ResourceFinder(SERVICE_FOLDER, loader);
+            final List<URL> urls = finder.findAll(SERVICE_FILE);
 
-            final ClassFinder finder = new ClassFinder(CliRunnable.class.getClassLoader(), urls.getUrls());
-            for (Annotated<Class<?>> cmd : finder.findMetaAnnotatedClasses(Command.class)) {
+            for (URL url : urls) {
+                final IAnnotationFinder commandFinder;
+                final String ext = url.toExternalForm();
                 try {
-                    final Command annotation = cmd.getAnnotation(Command.class);
-                    COMMANDS.put(annotation.name(), cmd.get());
+                    final String jar = ext.substring(0, ext.length() - SERVICE_FILE.length() - SERVICE_FOLDER.length() - 1);
+                    commandFinder = XMLAnnotationFinderHelper.finderFromXml(url.openStream(), loader, Arrays.asList(new URL(jar)));
                 } catch (Exception e) {
-                    // command ignored
+                    LOGGER.error("can't parse command list in " + url.toExternalForm());
+                    continue;
+                }
+
+                for (Annotated<Class<?>> cmd : commandFinder.findMetaAnnotatedClasses(Command.class)) {
+                    try {
+                        final Command annotation = cmd.getAnnotation(Command.class);
+                        final String key = annotation.name();
+                        if (!COMMANDS.containsKey(key)) {
+                            COMMANDS.put(key, cmd.get());
+                        } else {
+                            LOGGER.warning("command " + key + " already exists, this one will be ignored (from " + url.toExternalForm() + ")");
+                        }
+                    } catch (Exception e) {
+                        // command ignored
+                    }
                 }
             }
-        } catch (Exception e) {
-            // ignored
+        } catch (RuntimeException e) {
+            LOGGER.error("an error occured while getting commands", e);
+        } catch (IOException e) {
+            LOGGER.error("can't get commands");
         }
     }
 
