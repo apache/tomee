@@ -113,7 +113,7 @@
             <artifactId>openjpa</artifactId>
             <version>2.2.0</version>
           </dependency>
-          <dependency> <!-- to get the jee6 profile -->
+          <dependency> <!-- to get the jee6 profile without configuration -->
             <groupId>org.apache.openejb</groupId>
             <version>0.0.1-SNAPSHOT</version>
             <artifactId>spi-helper-jee6-profile</artifactId>

@@ -499,6 +499,11 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>xbean-xml</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+      </dependency>
+      <dependency>
         <groupId>org.apache.openejb</groupId>
         <artifactId>javaee-api</artifactId>
         <version>${javaee-api.version}</version>
