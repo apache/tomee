@@ -22,8 +22,8 @@
              xsi:schemaLocation="http://java.sun.com/xml/ns/persistence
                        http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
   <persistence-unit name="blog">
-    <jta-data-source>My DataSource</jta-data-source>
-    <non-jta-data-source>My Unmanaged DataSource</non-jta-data-source>
+    <jta-data-source>jdbc/blog</jta-data-source>
+    <non-jta-data-source>jdbc/blog-unmanaged</non-jta-data-source>
     <class>org.superbiz.rest.model.User</class>
     <class>org.superbiz.rest.model.Post</class>
     <class>org.superbiz.rest.model.Comment</class>
