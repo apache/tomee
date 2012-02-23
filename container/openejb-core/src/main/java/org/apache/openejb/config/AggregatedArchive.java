@@ -16,15 +16,11 @@
  */
 package org.apache.openejb.config;
 
-import org.apache.openejb.xbean.xml.XMLAnnotationFinderHelper;
-import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.finder.archive.Archive;
-import org.apache.xbean.finder.archive.ClasspathArchive;
 import org.apache.xbean.finder.archive.CompositeArchive;
 import org.apache.xbean.finder.archive.FilteredArchive;
 import org.apache.xbean.finder.filter.Filter;
 
-import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -38,7 +34,7 @@ import java.util.Map;
 /**
 * @version $Rev$ $Date$
 */
-public class AggregatedArchive implements Archive, ScanConstants {
+public class AggregatedArchive implements Archive {
 
     private final Map<URL, List<String>> classesMap = new HashMap<URL, List<String>>();
     private final Archive archive;
@@ -48,21 +44,9 @@ public class AggregatedArchive implements Archive, ScanConstants {
 
         for (URL url : urls) {
 
-            Archive rawArchive;
-
-            final ResourceFinder scanFinder = new ResourceFinder("", url);
-            try {
-                final URL scanXml = scanFinder.find(SCAN_XML);
-                rawArchive = XMLAnnotationFinderHelper.xmlArchive(scanXml.openStream(), loader, Arrays.asList(url));
-            } catch (IOException e) {
-                rawArchive = ClasspathArchive.archive(loader, url);
-            } catch (JAXBException e) {
-                rawArchive = ClasspathArchive.archive(loader, url);
-            }
-
             final List<String> classes = new ArrayList<String>();
 
-            final Archive archive = new FilteredArchive(rawArchive, new Filter() {
+            final Archive archive = new FilteredArchive(new ConfigurableClasspathArchive(loader, Arrays.asList(url)), new Filter() {
                 @Override
                 public boolean accept(String name) {
                     classes.add(name);
