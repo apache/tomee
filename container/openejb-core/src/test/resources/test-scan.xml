@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<scan>
+  <classes>
+    <class>org.apache.openejb.config.scanning.bean.MyBean1</class>
+    <class>org.apache.openejb.config.scanning.bean.MyBean2</class>
+    <class>org.apache.openejb.config.scanning.bean.MyBean3</class>
+  </classes>
+  <packages/>
+</scan>
