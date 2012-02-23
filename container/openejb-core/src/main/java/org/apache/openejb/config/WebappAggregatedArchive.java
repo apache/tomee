@@ -1,50 +1,99 @@
 package org.apache.openejb.config;
 
+import org.apache.xbean.finder.archive.Archive;
 import org.apache.xbean.finder.archive.CompositeArchive;
 import org.apache.xbean.finder.archive.FilteredArchive;
 import org.apache.xbean.finder.filter.Filter;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
-public class WebappAggregatedArchive extends CompositeArchive implements ScanConstants {
+public class WebappAggregatedArchive implements Archive, ScanConstants {
     private static final String WEBAPP_GLOBAL_SCAN_LOCATION = "WEB-INF/" + SCAN_XML_NAME;
 
+    private final Map<URL, List<String>> map = new HashMap<URL, List<String>>();
+    private ScanUtil.ScanHandler handler = null;
+    private boolean scanXmlExists = false; // faster than using an empty handler
+    private Archive archive;
+
     public WebappAggregatedArchive(final ClassLoader loader, final Iterable<URL> urls) {
-        super(new FilteredArchive(new AggregatedArchive(loader, urls), new ScanFilter(loader)));
-    }
+        final List<Archive> archives = new ArrayList<Archive>();
 
-    private static class ScanFilter implements Filter {
-        private ScanUtil.ScanHandler handler = null;
-        private boolean active = false; // faster then using an empty handler
-
-        public ScanFilter(final ClassLoader loader) {
-            final URL scanXml = loader.getResource(WEBAPP_GLOBAL_SCAN_LOCATION);
-            if (scanXml != null) {
-                try {
-                    handler = ScanUtil.read(scanXml);
-                    active = true;
-                } catch (IOException e) {
-                    // ignored, will not use filtering with scan.xml
-                }
+        final URL scanXml = loader.getResource(WEBAPP_GLOBAL_SCAN_LOCATION);
+        if (scanXml != null) {
+            try {
+                handler = ScanUtil.read(scanXml);
+                scanXmlExists = true;
+            } catch (IOException e) {
+                // ignored, will not use filtering with scan.xml
             }
         }
 
+        for (URL url : urls) {
+            final List<String> classes = new ArrayList<String>();
+            final Archive archive = new FilteredArchive(new ConfigurableClasspathArchive(loader, Arrays.asList(url)), new ScanXmlSaverFilter(scanXmlExists, handler, classes));
+            map.put(url, classes);
+            archives.add(archive);
+        }
+
+        archive = new CompositeArchive(archives);
+    }
+
+    public Map<URL, List<String>> getClassesMap() {
+        return map;
+    }
+
+    @Override
+    public InputStream getBytecode(String className) throws IOException, ClassNotFoundException {
+        return archive.getBytecode(className);
+    }
+
+    @Override
+    public Class<?> loadClass(String className) throws ClassNotFoundException {
+        return archive.loadClass(className);
+    }
+
+    @Override
+    public Iterator<String> iterator() {
+        return archive.iterator();
+    }
+
+    private static class ScanXmlSaverFilter implements Filter {
+        private boolean scanXmlExists;
+        private final ScanUtil.ScanHandler handler;
+        private final List<String> classes;
+
+        private ScanXmlSaverFilter(boolean scanXmlExists, ScanUtil.ScanHandler handler, List<String> classes) {
+            this.scanXmlExists = scanXmlExists;
+            this.handler = handler;
+            this.classes = classes;
+        }
+
         @Override
-        public boolean accept(final String name) {
-            if (active) {
+        public boolean accept(String name) {
+            if (scanXmlExists) {
                 for (String packageName : handler.getPackages()) {
                     if (name.startsWith(packageName)) {
+                        classes.add(name);
                         return true;
                     }
                 }
                 for (String className : handler.getClasses()) {
                     if (className.equals(name)) {
+                        classes.add(name);
                         return true;
                     }
                 }
                 return false;
             }
+            classes.add(name);
             return true;
         }
     }
