@@ -1,0 +1,18 @@
+<resources>
+  <Resource id="jdbc/blog" type="javax.sql.DataSource">
+    JdbcDriver = org.hsqldb.jdbcDriver
+    JdbcUrl = jdbc:hsqldb:mem:blog
+    UserName = SA
+    Password =
+    JtaManaged = true
+  </Resource>
+
+
+  <Resource id="jdbc/blog-unmanaged" type="javax.sql.DataSource">
+    JdbcDriver = org.hsqldb.jdbcDriver
+    JdbcUrl = jdbc:hsqldb:mem:blog
+    UserName = SA
+    Password =
+    JtaManaged = false
+  </Resource>
+</resources>
