@@ -18,6 +18,7 @@
 package org.apache.tomee.loader;
 
 import org.apache.catalina.Container;
+import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Service;
@@ -63,7 +64,7 @@ public class OpenEJBListener implements LifecycleListener {
 
     public void lifecycleEvent(LifecycleEvent event) {
         // only install once
-        if (listenerInstalled) return;
+        if (listenerInstalled || !Lifecycle.AFTER_INIT_EVENT.equals(event.getType())) return;
         
         try {
 	        File webappDir = findOpenEjbWar();
@@ -80,6 +81,7 @@ public class OpenEJBListener implements LifecycleListener {
                 }
             }
             if (webappDir != null) {
+                LOGGER.info("found the tomee webapp on " + webappDir.getPath());
                 final Properties properties = new Properties();
                 properties.setProperty("tomee.war", webappDir.getAbsolutePath());
                 properties.setProperty("openejb.embedder.source", getClass().getSimpleName());
