@@ -10,25 +10,16 @@ import org.apache.xbean.finder.archive.FilteredArchive;
 import org.apache.xbean.finder.filter.Filter;
 import org.apache.xbean.finder.filter.FilterList;
 import org.apache.xbean.finder.filter.PackageFilter;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class ConfigurableClasspathArchive extends CompositeArchive implements ScanConstants {
-    private static final SAXParserFactory SAX_FACTORY = SAXParserFactory.newInstance();
-
     public ConfigurableClasspathArchive(final ClassLoader loader, final URL... urls) {
         this(loader, Arrays.asList(urls));
     }
@@ -57,7 +48,7 @@ public class ConfigurableClasspathArchive extends CompositeArchive implements Sc
         final ResourceFinder scanFinder = new ResourceFinder("", location);
         try {
             final URL scanXml = scanFinder.find(SystemInstance.get().getProperty(SCAN_XML_PROPERTY, SCAN_XML));
-            final ScanHandler scan = read(scanXml);
+            final ScanUtil.ScanHandler scan = ScanUtil.read(scanXml);
             final Archive packageArchive = packageArchive(scan.getPackages(), loader, location);
             final Archive classesArchive = classesArchive(scan.getPackages(), scan.getClasses(), loader);
 
@@ -72,17 +63,6 @@ public class ConfigurableClasspathArchive extends CompositeArchive implements Sc
                 return new ClassesArchive();
             }
             return ClasspathArchive.archive(loader, location);
-        }
-    }
-
-    private static ScanHandler read(final URL scanXml) throws IOException {
-        try {
-            final SAXParser parser = SAX_FACTORY.newSAXParser();
-            final ScanHandler handler = new ScanHandler();
-            parser.parse(new BufferedInputStream(scanXml.openStream()), handler);
-            return handler;
-        } catch (Exception e) {
-            throw new IOException("can't parse " + scanXml.toExternalForm());
         }
     }
 
@@ -133,40 +113,5 @@ public class ConfigurableClasspathArchive extends CompositeArchive implements Sc
             }
         }
         return false;
-    }
-
-    private static final class ScanHandler extends DefaultHandler {
-        private final Set<String> classes = new HashSet<String>();
-        private final Set<String> packages = new HashSet<String>();
-        private Set<String> current = null;
-
-        @Override
-        public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-            if (qName.equals("class")) {
-                current = classes;
-            } else if (qName.equals("package")) {
-                current = packages;
-            }
-        }
-
-        @Override
-        public void characters(char ch[], int start, int length) throws SAXException {
-            if (current != null) {
-                current.add(new String(ch, start, length));
-            }
-        }
-
-        @Override
-        public void endElement(final String uri, final String localName, final String qName) throws SAXException {
-            current = null;
-        }
-
-        public Set<String> getPackages() {
-            return packages;
-        }
-
-        public Set<String> getClasses() {
-            return classes;
-        }
     }
 }

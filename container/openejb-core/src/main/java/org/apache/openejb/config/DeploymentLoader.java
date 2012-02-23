@@ -801,7 +801,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         final EjbModule ejbModule = new EjbModule(appModule.getClassLoader(), "ear-scoped-cdi-beans", new EjbJar(), new OpenejbJar());
         ejbModule.setBeans(complete);
-        ejbModule.setFinder(new FinderFactory.ModuleLimitedFinder(new org.apache.xbean.finder.AnnotationFinder(new AggregatedArchive(appModule.getClassLoader(), xmls))));
+        ejbModule.setFinder(new FinderFactory.ModuleLimitedFinder(new org.apache.xbean.finder.AnnotationFinder(new WebappAggregatedArchive(appModule.getClassLoader(), xmls))));
 
         appModule.getEjbModules().add(ejbModule);
     }
