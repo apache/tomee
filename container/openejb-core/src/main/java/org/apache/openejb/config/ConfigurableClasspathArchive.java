@@ -34,14 +34,18 @@ public class ConfigurableClasspathArchive extends CompositeArchive implements Sc
     }
 
     public ConfigurableClasspathArchive(final ClassLoader loader, final Iterable<URL> urls) {
-        super(archive(loader, urls));
+        this(loader, false, urls);
     }
 
-    public static List<Archive> archive(final ClassLoader loader, final Iterable<URL> urls) {
+    public ConfigurableClasspathArchive(final ClassLoader loader, boolean forceDescriptor, final Iterable<URL> urls) {
+        super(archive(loader, urls, forceDescriptor));
+    }
+
+    public static List<Archive> archive(final ClassLoader loader, final Iterable<URL> urls, boolean forceDescriptor) {
         final List<Archive> archives = new ArrayList<Archive>();
         for (URL location : urls) {
             try {
-                archives.add(archive(loader, location));
+                archives.add(archive(loader, location, forceDescriptor));
             } catch (Exception e) {
                 // ignored
             }
@@ -49,7 +53,7 @@ public class ConfigurableClasspathArchive extends CompositeArchive implements Sc
         return archives;
     }
 
-    public static Archive archive(final ClassLoader loader, final URL location) {
+    public static Archive archive(final ClassLoader loader, final URL location, boolean forceDescriptor) {
         final ResourceFinder scanFinder = new ResourceFinder("", location);
         try {
             final URL scanXml = scanFinder.find(SystemInstance.get().getProperty(SCAN_XML_PROPERTY, SCAN_XML));
@@ -64,6 +68,9 @@ public class ConfigurableClasspathArchive extends CompositeArchive implements Sc
             }
             return classesArchive;
         } catch (IOException e) {
+            if (forceDescriptor) {
+                return new ClassesArchive();
+            }
             return ClasspathArchive.archive(loader, location);
         }
     }

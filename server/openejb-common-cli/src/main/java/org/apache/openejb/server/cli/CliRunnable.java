@@ -19,25 +19,23 @@ package org.apache.openejb.server.cli;
 import jline.ConsoleReader;
 import jline.FileNameCompletor;
 import jline.SimpleCompletor;
+import org.apache.openejb.config.ConfigurableClasspathArchive;
 import org.apache.openejb.server.cli.command.AbstractCommand;
 import org.apache.openejb.server.cli.command.Command;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.OpenEjbVersion;
-import org.apache.openejb.xbean.xml.XMLAnnotationFinderHelper;
 import org.apache.xbean.finder.Annotated;
+import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.IAnnotationFinder;
-import org.apache.xbean.finder.ResourceFinder;
+import org.apache.xbean.finder.UrlSet;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -87,32 +85,21 @@ public class CliRunnable implements Runnable {
 
         final ClassLoader loader = CliRunnable.class.getClassLoader();
         try {
-            final ResourceFinder finder = new ResourceFinder(SERVICE_FOLDER, loader);
-            final List<URL> urls = finder.findAll(SERVICE_FILE);
+            UrlSet urlSet = new UrlSet(loader);
+            urlSet = urlSet.exclude(loader.getParent());
 
-            for (URL url : urls) {
-                final IAnnotationFinder commandFinder;
-                final String ext = url.toExternalForm();
+            final IAnnotationFinder finder = new AnnotationFinder(new ConfigurableClasspathArchive(loader, true, urlSet.getUrls()));
+            for (Annotated<Class<?>> cmd : finder.findMetaAnnotatedClasses(Command.class)) {
                 try {
-                    final String jar = ext.substring(0, ext.length() - SERVICE_FILE.length() - SERVICE_FOLDER.length() - 1);
-                    commandFinder = XMLAnnotationFinderHelper.finderFromXml(url.openStream(), loader, Arrays.asList(new URL(jar)));
-                } catch (Exception e) {
-                    LOGGER.error("can't parse command list in " + url.toExternalForm());
-                    continue;
-                }
-
-                for (Annotated<Class<?>> cmd : commandFinder.findMetaAnnotatedClasses(Command.class)) {
-                    try {
-                        final Command annotation = cmd.getAnnotation(Command.class);
-                        final String key = annotation.name();
-                        if (!COMMANDS.containsKey(key)) {
-                            COMMANDS.put(key, cmd.get());
-                        } else {
-                            LOGGER.warning("command " + key + " already exists, this one will be ignored (from " + url.toExternalForm() + ")");
-                        }
-                    } catch (Exception e) {
-                        // command ignored
+                    final Command annotation = cmd.getAnnotation(Command.class);
+                    final String key = annotation.name();
+                    if (!COMMANDS.containsKey(key)) {
+                        COMMANDS.put(key, cmd.get());
+                    } else {
+                        LOGGER.warning("command " + key + " already exists, this one will be ignored ( " + annotation.description() + ")");
                     }
+                } catch (Exception e) {
+                    // command ignored
                 }
             }
         } catch (RuntimeException e) {
