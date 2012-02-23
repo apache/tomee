@@ -17,12 +17,19 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.xbean.finder.Annotated;
 import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.IAnnotationFinder;
 import org.apache.xbean.finder.archive.ClassesArchive;
 
 import java.io.File;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FinderFactory {
 
@@ -38,19 +45,16 @@ public class FinderFactory {
     }
 
     public IAnnotationFinder create(DeploymentModule module) throws Exception {
+        IAnnotationFinder finder;
         if (module instanceof WebModule) {
             WebModule webModule = (WebModule) module;
             final ClassLoader webClassLoader = webModule.getClassLoader();
-            return new AnnotationFinder(new AggregatedArchive(webClassLoader, webModule.getScannableUrls())).link();
-        }
-        
-        if (module instanceof ConnectorModule) {
+            finder = new AnnotationFinder(new AggregatedArchive(webClassLoader, webModule.getScannableUrls())).link();
+        } else if (module instanceof ConnectorModule) {
         	ConnectorModule connectorModule = (ConnectorModule) module;
         	final ClassLoader connectorClassLoader = connectorModule.getClassLoader();
-        	return new AnnotationFinder(new ConfigurableClasspathArchive(connectorClassLoader, connectorModule.getLibraries())).link();
-        }
-
-        if (module.getJarLocation() != null) {
+        	finder = new AnnotationFinder(new ConfigurableClasspathArchive(connectorClassLoader, connectorModule.getLibraries())).link();
+        } else if (module.getJarLocation() != null) {
             String location = module.getJarLocation();
             File file = new File(location);
 
@@ -66,9 +70,194 @@ public class FinderFactory {
                 url = new URL(location);
             }
 
-            return new AnnotationFinder(new ConfigurableClasspathArchive(module.getClassLoader(), url)).link();
+            finder = new AnnotationFinder(new ConfigurableClasspathArchive(module.getClassLoader(), url)).link();
         } else {
-            return new AnnotationFinder(new ClassesArchive()).link();
+            finder = new AnnotationFinder(new ClassesArchive()).link();
+        }
+        return new ModuleLimitedFinder(finder);
+    }
+
+    public static class ModuleLimitedFinder implements IAnnotationFinder {
+        private final IAnnotationFinder delegate;
+
+        public ModuleLimitedFinder(IAnnotationFinder delegate) {
+            this.delegate = delegate;
+        }
+
+        @Override
+        public boolean isAnnotationPresent(Class<? extends Annotation> annotation) {
+            return delegate.isAnnotationPresent(annotation);
+        }
+
+        @Override
+        public List<String> getClassesNotLoaded() {
+            return delegate.getClassesNotLoaded();
+        }
+
+        @Override
+        public List<Package> findAnnotatedPackages(Class<? extends Annotation> annotation) {
+            return delegate.findAnnotatedPackages(annotation);
+        }
+
+        @Override
+        public List<Class<?>> findAnnotatedClasses(Class<? extends Annotation> annotation) {
+            return filter(delegate.findAnnotatedClasses(annotation), new ClassPredicate<Object>(getAnnotatedClassNames()));
+        }
+
+        @Override
+        public List<Class<?>> findInheritedAnnotatedClasses(Class<? extends Annotation> annotation) {
+            return filter(delegate.findInheritedAnnotatedClasses(annotation), new ClassPredicate<Object>(getAnnotatedClassNames()));
+        }
+
+        @Override
+        public List<Method> findAnnotatedMethods(Class<? extends Annotation> annotation) {
+            return filter(delegate.findAnnotatedMethods(annotation), new MethodPredicate(getAnnotatedClassNames()));
+        }
+
+        @Override
+        public List<Constructor> findAnnotatedConstructors(Class<? extends Annotation> annotation) {
+            return filter(delegate.findAnnotatedConstructors(annotation), new ConstructorPredicate(getAnnotatedClassNames()));
+        }
+
+        @Override
+        public List<Field> findAnnotatedFields(Class<? extends Annotation> annotation) {
+            return filter(delegate.findAnnotatedFields(annotation), new FieldPredicate(getAnnotatedClassNames()));
+        }
+
+        @Override
+        public List<Class<?>> findClassesInPackage(String packageName, boolean recursive) {
+            return filter(delegate.findClassesInPackage(packageName, recursive), new ClassPredicate<Object>(getAnnotatedClassNames()));
+        }
+
+        @Override
+        public <T> List<Class<? extends T>> findSubclasses(Class<T> clazz) {
+            return filter(delegate.findSubclasses(clazz), new ClassPredicate<T>(getAnnotatedClassNames()));
+        }
+
+        @Override
+        public <T> List<Class<? extends T>> findImplementations(Class<T> clazz) {
+            return filter(delegate.findImplementations(clazz), new ClassPredicate<T>(getAnnotatedClassNames()));
+        }
+
+        @Override
+        public List<Annotated<Method>> findMetaAnnotatedMethods(Class<? extends Annotation> annotation) {
+            return filter(delegate.findMetaAnnotatedMethods(annotation), new AnnotatedMethodPredicate(getAnnotatedClassNames()));
+        }
+
+        @Override
+        public List<Annotated<Field>> findMetaAnnotatedFields(Class<? extends Annotation> annotation) {
+            return filter(delegate.findMetaAnnotatedFields(annotation), new AnnotatedFieldPredicate(getAnnotatedClassNames()));
+        }
+
+        @Override
+        public List<Annotated<Class<?>>> findMetaAnnotatedClasses(Class<? extends Annotation> annotation) {
+            return filter(delegate.findMetaAnnotatedClasses(annotation), new AnnotatedClassPredicate(getAnnotatedClassNames()));
+        }
+
+        @Override
+        public List<String> getAnnotatedClassNames() {
+            return delegate.getAnnotatedClassNames();
+        }
+
+        private static <T> List<T> filter(final List<T> list, final Predicate<T> predicate) {
+            final List<T> ts = new ArrayList<T>();
+            for (T t : list) {
+                if (predicate.accept(t)) {
+                    ts.add(t);
+                }
+            }
+            return ts;
+        }
+
+        private static abstract class Predicate<T> {
+            protected final List<String> accepted;
+
+            public Predicate(final List<String> list) {
+                accepted = list;
+            }
+
+            protected boolean accept(T t) {
+                return accepted.contains(name(t));
+            }
+
+            protected abstract String name(T t);
+        }
+
+        private static class ClassPredicate<T> extends Predicate<Class<? extends T>> {
+            public ClassPredicate(final List<String> list) {
+                super(list);
+            }
+
+            @Override
+            protected String name(Class<? extends T> aClass) {
+                return aClass.getName();
+            }
+        }
+
+        private static class MethodPredicate extends Predicate<Method> {
+            public MethodPredicate(final List<String> list) {
+                super(list);
+            }
+
+            @Override
+            protected String name(Method method) {
+                return method.getDeclaringClass().getName();
+            }
+        }
+
+        private static class FieldPredicate extends Predicate<Field> {
+            public FieldPredicate(final List<String> list) {
+                super(list);
+            }
+
+            @Override
+            protected String name(Field field) {
+                return field.getDeclaringClass().getName();
+            }
+        }
+
+        private static class ConstructorPredicate extends Predicate<Constructor> {
+            public ConstructorPredicate(final List<String> list) {
+                super(list);
+            }
+
+            @Override
+            protected String name(Constructor constructor) {
+                return constructor.getDeclaringClass().getName();
+            }
+        }
+
+        private static class AnnotatedClassPredicate<T> extends Predicate<Annotated<Class<?>>> {
+            public AnnotatedClassPredicate(final List<String> list) {
+                super(list);
+            }
+
+            @Override
+            protected String name(Annotated<Class<?>> aClass) {
+                return aClass.get().getName();
+            }
+        }
+
+        private static class AnnotatedMethodPredicate extends Predicate<Annotated<Method>> {
+            public AnnotatedMethodPredicate(final List<String> list) {
+                super(list);
+            }
+
+            @Override
+            protected String name(Annotated<Method> method) {
+                return method.get().getDeclaringClass().getName();
+            }
+        }
+
+        private static class AnnotatedFieldPredicate extends Predicate<Annotated<Field>> {
+            public AnnotatedFieldPredicate(final List<String> list) {
+                super(list);
+            }
+
+            @Override
+            protected String name(Annotated<Field> field) {
+                return field.get().getDeclaringClass().getName();
+            }
         }
     }
 }
