@@ -169,6 +169,10 @@ public class FinderFactory {
             return ts;
         }
 
+        public IAnnotationFinder getDelegate() {
+            return delegate;
+        }
+
         private static abstract class Predicate<T> {
             protected final List<String> accepted;
 

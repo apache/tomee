@@ -1330,17 +1330,19 @@ public class AnnotationDeployer implements DynamicDeployer {
             //  more classes than actually apply to CDI.  This can "pollute"
             //  the CDI class space and break injection points
 
-            if (!(finder instanceof AnnotationFinder)) return finder.getAnnotatedClassNames();
+            if (!(finder instanceof FinderFactory.ModuleLimitedFinder)) return finder.getAnnotatedClassNames();
 
-            final AnnotationFinder annotationFinder = (AnnotationFinder) finder;
+            final IAnnotationFinder delegate = ((FinderFactory.ModuleLimitedFinder) finder).getDelegate();
+            if (!(delegate instanceof AnnotationFinder)) return finder.getAnnotatedClassNames();
+
+            final AnnotationFinder annotationFinder = (AnnotationFinder) delegate;
 
             final Archive archive = annotationFinder.getArchive();
-
-            if (!(archive instanceof AggregatedArchive)) return finder.getAnnotatedClassNames();
+            if (!(archive instanceof WebappAggregatedArchive)) return finder.getAnnotatedClassNames();
 
             final List<String> classes = new ArrayList<String>();
 
-            final AggregatedArchive aggregatedArchive = (AggregatedArchive) archive;
+            final WebappAggregatedArchive aggregatedArchive = (WebappAggregatedArchive) archive;
             final Map<URL, List<String>> map = aggregatedArchive.getClassesMap();
 
             for (Map.Entry<URL, List<String>> entry : map.entrySet()) {

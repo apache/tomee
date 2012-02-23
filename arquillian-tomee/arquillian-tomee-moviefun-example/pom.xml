@@ -181,6 +181,11 @@
       <version>${version.shrinkwrap.descriptor}</version>
     </dependency>
     <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.16</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-embedded</artifactId>
       <version>1.0.0-beta-3-SNAPSHOT</version>
