@@ -16,23 +16,22 @@
  */
 package org.apache.openejb.server;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Properties;
+import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ServicePool implements ServerService {
     private static final Logger log = Logger.getInstance(LogCategory.SERVICEPOOL, "org.apache.openejb.util.resources");
@@ -42,22 +41,22 @@ public class ServicePool implements ServerService {
     private final ThreadPoolExecutor threadPool;
     private final AtomicBoolean stop = new AtomicBoolean();
 
-    public ServicePool(ServerService next, String name, Properties properties) {
+    public ServicePool(final ServerService next, final String name, final Properties properties) {
         this(next, name, new Options(properties).get("threads", 100));
     }
 
-    public ServicePool(ServerService next, final String name, int threads) {
+    public ServicePool(final ServerService next, final String name, final int threads) {
         this.next = next;
 
         final int keepAliveTime = (1000 * 60 * 5);
 
-        threadPool = new ThreadPoolExecutor(threads, threads, keepAliveTime, TimeUnit.MILLISECONDS, new LinkedBlockingQueue());
+        threadPool = new ThreadPoolExecutor(threads, threads, keepAliveTime, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
         threadPool.setThreadFactory(new ThreadFactory() {
             private volatile int id = 0;
 
-            public Thread newThread(Runnable arg0) {
-                Thread thread = new Thread(arg0, name + " " + getNextID());
-                return thread;
+            @Override
+            public Thread newThread(final Runnable arg0) {
+                return new Thread(arg0, name + " " + getNextID());
             }
 
             private int getNextID() {
@@ -70,7 +69,7 @@ public class ServicePool implements ServerService {
         SystemInstance.get().setComponent(ServicePool.class, this);
     }
 
-    public ServicePool(ServerService next, Executor executor) {
+    public ServicePool(final ServerService next, final Executor executor) {
         this.next = next;
         this.executor = executor;
         this.threadPool = null;
@@ -80,17 +79,22 @@ public class ServicePool implements ServerService {
         return threadPool;
     }
 
-    public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
+    @Override
+    public void service(final InputStream in, final OutputStream out) throws ServiceException, IOException {
     }
 
+    @Override
     public void service(final Socket socket) throws ServiceException, IOException {
         final Runnable service = new Runnable() {
+            @Override
             public void run() {
                 try {
                     if (stop.get()) return;
                     next.service(socket);
                 } catch (SecurityException e) {
                     log.error("Security error: " + e.getMessage(), e);
+                } catch (IOException e) {
+                    log.debug("Unexpected IO error", e);
                 } catch (Throwable e) {
                     log.error("Unexpected error", e);
                 } finally {
@@ -112,9 +116,10 @@ public class ServicePool implements ServerService {
         };
 
         final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-        Runnable ctxCL = new Runnable() {
+        final Runnable ctxCL = new Runnable() {
+            @Override
             public void run() {
-                ClassLoader cl = Thread.currentThread().getContextClassLoader();
+                final ClassLoader cl = Thread.currentThread().getContextClassLoader();
                 Thread.currentThread().setContextClassLoader(tccl);
                 try {
                     service.run();
@@ -130,16 +135,18 @@ public class ServicePool implements ServerService {
     /**
      * Pulls out the access log information
      *
-     * @param props
+     * @param props Properties
      * @throws ServiceException
      */
-    public void init(Properties props) throws Exception {
+    @Override
+    public void init(final Properties props) throws Exception {
         // Do our stuff
 
         // Then call the next guy
         next.init(props);
     }
 
+    @Override
     public void start() throws ServiceException {
         // Do our stuff
 
@@ -147,6 +154,7 @@ public class ServicePool implements ServerService {
         next.start();
     }
 
+    @Override
     public void stop() throws ServiceException {
         // Do our stuff
 
@@ -159,6 +167,7 @@ public class ServicePool implements ServerService {
      * Gets the name of the service.
      * Used for display purposes only
      */
+    @Override
     public String getName() {
         return next.getName();
     }
@@ -167,6 +176,7 @@ public class ServicePool implements ServerService {
      * Gets the ip number that the
      * daemon is listening on.
      */
+    @Override
     public String getIP() {
         return next.getIP();
     }
@@ -175,6 +185,7 @@ public class ServicePool implements ServerService {
      * Gets the port number that the
      * daemon is listening on.
      */
+    @Override
     public int getPort() {
         return next.getPort();
     }

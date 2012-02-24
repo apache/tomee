@@ -52,11 +52,11 @@ public class Server implements Service {
 
     // TODO: Remove it once init() suits our (initialisation) needs 
     @Override
-    public void init(Properties props) throws Exception {
+    public void init(final Properties props) throws Exception {
         this.props = props;
 
-        SystemInstance system = SystemInstance.get();
-        File home = system.getHome().getDirectory();
+        final SystemInstance system = SystemInstance.get();
+        final File home = system.getHome().getDirectory();
         system.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, system.getProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*/" + home.getName() + "/lib/.*"));
         system.setProperty(DeploymentFilterable.CLASSPATH_REQUIRE_DESCRIPTOR, system.getProperty(DeploymentFilterable.CLASSPATH_REQUIRE_DESCRIPTOR, "true"));
         system.setProperty(DeploymentFilterable.CLASSPATH_FILTER_SYSTEMAPPS, system.getProperty(DeploymentFilterable.CLASSPATH_FILTER_SYSTEMAPPS, "false"));
@@ -99,21 +99,21 @@ public class Server implements Service {
         manager.stop();
     }
 
-    public void addService(URI uri) {
+    public void addService(final URI uri) {
     }
 
     public static class ServerServiceFactory {
 
-        public ServerService createService(URI location) throws IOException {
+        public ServerService createService(final URI location) throws IOException {
             return null;
         }
     }
 
-    public void setServiceManager(ServiceManager serviceManager) {
+    public void setServiceManager(final ServiceManager serviceManager) {
         manager = serviceManager;
     }
 
-    public void setPropertiesService(PropertiesService propertiesService) {
+    public void setPropertiesService(final PropertiesService propertiesService) {
         this.propertiesService = propertiesService;
     }
 }

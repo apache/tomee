@@ -33,10 +33,10 @@ import org.apache.xbean.finder.UrlSet;
 public class URLs {
     public static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, URLs.class.getPackage().getName());
 
-    public static File toFile(URL url) {
+    public static File toFile(final URL url) {
         if ("jar".equals(url.getProtocol())) {
             try {
-                String spec = url.getFile();
+                final String spec = url.getFile();
 
                 int separator = spec.indexOf('!');
                 /*
@@ -55,15 +55,15 @@ public class URLs {
         }
     }
 
-    public static String toFilePath(URL url) {
+    public static String toFilePath(final URL url) {
         return toFile(url).getAbsolutePath();
     }
 
-    public static UrlSet cullSystemAndOpenEJBJars(UrlSet original) throws IOException {
+    public static UrlSet cullSystemAndOpenEJBJars(final UrlSet original) throws IOException {
         return cullSystemJars(cullOpenEJBJars(original));
     }
 
-    public static UrlSet cullSystemJars(UrlSet original) throws IOException {
+    public static UrlSet cullSystemJars(final UrlSet original) throws IOException {
         UrlSet urls = new UrlSet(original.getUrls());
         urls = urls.exclude(ClassLoader.getSystemClassLoader().getParent());
         urls = urls.excludeJavaExtDirs();
@@ -71,14 +71,14 @@ public class URLs {
         urls = urls.excludeJavaHome();
         urls = urls.excludePaths(System.getProperty("sun.boot.class.path", ""));
         urls = urls.exclude(".*/JavaVM.framework/.*");
-        if (LOGGER.isDebugEnabled()) LOGGER.debug("Cullled {} system urls from set", original.size() - urls.size());
+        if (LOGGER.isDebugEnabled()) LOGGER.debug("Culled {0} system urls from set", original.size() - urls.size());
         return urls;
     }
 
-    public static UrlSet cullOpenEJBJars(UrlSet original) throws IOException {
+    public static UrlSet cullOpenEJBJars(final UrlSet original) throws IOException {
         UrlSet urls = new UrlSet(original.getUrls());
         urls = urls.exclude(".*openejb.*");
-        if (LOGGER.isDebugEnabled()) LOGGER.debug("Cullled {} OpenEJB urls from set", original.size() - urls.size());
+        if (LOGGER.isDebugEnabled()) LOGGER.debug("Culled {0} OpenEJB urls from set", original.size() - urls.size());
         return urls;
     }
 

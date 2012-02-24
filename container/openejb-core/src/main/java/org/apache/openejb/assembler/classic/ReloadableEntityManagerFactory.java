@@ -138,7 +138,7 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory {
             throw new OpenEJBException("can't register the mbean for the entity manager factory " + getPUname(), e);
         } catch (NoClassDefFoundError ncdfe) {
             objectName = null;
-            LOGGER.error("can't register the mbean for the entity manager factory {}", getPUname());
+            LOGGER.error("can't register the mbean for the entity manager factory {0}", getPUname());
         }
     }
 

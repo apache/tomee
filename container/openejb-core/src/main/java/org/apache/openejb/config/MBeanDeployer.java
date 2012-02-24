@@ -131,7 +131,7 @@ public class MBeanDeployer implements DynamicDeployer {
 
         String listProp = SystemInstance.get().getOptions().get(OPENEJB_MBEAN_CLASSES_PROPERTY, (String) null);
         if (OPENEJB_MBEAN_FORCE_FINDER.equals(listProp)) { // the classfinder costs too much to be used by default
-            logger.debug("loading mbeans using an annotation finder, you should maybe adjust {} system property",
+            logger.debug("loading mbeans using an annotation finder, you should maybe adjust {0} system property",
                                             OPENEJB_MBEAN_CLASSES_PROPERTY);
             List<Class<?>> list = Collections.emptyList();
             try {

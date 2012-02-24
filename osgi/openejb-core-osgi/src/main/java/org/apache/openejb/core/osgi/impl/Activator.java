@@ -41,15 +41,16 @@ public class Activator implements BundleActivator {
     private OpenEJBInstance openejb;
     private Object serviceManager;
 
-    public void start(BundleContext context) throws Exception {
-        LOGGER.info("Starting OpenEJB for bundle #{}", context.getBundle().getBundleId());
+    @Override
+    public void start(final BundleContext context) throws Exception {
+        LOGGER.info("Starting OpenEJB for bundle #{0}", context.getBundle().getBundleId());
 
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
         openejb = new OpenEJBInstance();
         OpenEJBBundleContextHolder.set(context);
 
-        Properties env = new Properties();
+        final Properties env = new Properties();
         // env.setProperty("openejb.embedded", "true");
         // default, but to remember that the setting exists
         env.setProperty("openejb.loader", "context");
@@ -72,7 +73,7 @@ public class Activator implements BundleActivator {
         context.addBundleListener(new Deployer(this));
     }
 
-    public synchronized void checkServiceManager(BundleContext context) {
+    public synchronized void checkServiceManager(final BundleContext context) {
         if (serviceManager != null) { // already started
             return;
         }
@@ -100,14 +101,15 @@ public class Activator implements BundleActivator {
     }
 
 
-    private static ServiceTracker getServiceManager(BundleContext context) throws InterruptedException {
-        ServiceTracker serviceManagerTracker = new ServiceTracker(context, SERVICE_MANAGER_NAME, null);
+    private static ServiceTracker getServiceManager(final BundleContext context) throws InterruptedException {
+        final ServiceTracker serviceManagerTracker = new ServiceTracker(context, SERVICE_MANAGER_NAME, null);
         serviceManagerTracker.open();
         serviceManagerTracker.waitForService(TRACKER_TIMEOUT);
         return serviceManagerTracker;
     }
 
-    public void stop(BundleContext context) throws Exception {
+    @Override
+    public void stop(final BundleContext context) throws Exception {
         LOGGER.info("Stopping OpenEJB");
 
         try {
@@ -121,9 +123,10 @@ public class Activator implements BundleActivator {
         OpenEJB.destroy();
     }
 
-    private static void invoke(Object serviceManager, String name) throws OpenEJBException, InvocationTargetException, IllegalAccessException {
+    private static void invoke(final Object serviceManager, final String name) throws OpenEJBException, InvocationTargetException, IllegalAccessException {
         if (serviceManager == null) {
-            LOGGER.warn("can't invoke method {} since the service manager is null", name);
+            LOGGER.warn("can't invoke method {0} since the service manager is null", name);
+            return;
         }
 
         Class<?> current = serviceManager.getClass();
