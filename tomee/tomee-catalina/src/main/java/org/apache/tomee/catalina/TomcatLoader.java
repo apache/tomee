@@ -51,7 +51,6 @@ import org.apache.tomee.loader.TomcatHelper;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -155,23 +154,11 @@ public class TomcatLoader implements Loader {
             return;
         }
 
-        FileInputStream fin = null;
-        File conf = null;
-        // Read in and apply the conf/system.properties
-        try {
-            conf = SystemInstance.get().getBase().getDirectory("conf");
-
-            final File tomeeXml = new File(conf, "tomee.xml");
-            if (tomeeXml.exists()) { // use tomee.xml instead of openejb.xml
-                SystemInstance.get().setProperty("openejb.configuration", tomeeXml.getAbsolutePath());
-                SystemInstance.get().setProperty("openejb.configuration.class", Tomee.class.getName());
-            }
-        } catch (IOException e) {
-            System.out.println("Processing conf/system.properties failed: " + e.getMessage());
-        } finally {
-            if (fin != null) {
-                fin.close();
-            }
+        final File conf = new File(SystemInstance.get().getBase().getDirectory(), "conf");
+        final File tomeeXml = new File(conf, "tomee.xml");
+        if (tomeeXml.exists()) { // use tomee.xml instead of openejb.xml
+            SystemInstance.get().setProperty("openejb.configuration", tomeeXml.getAbsolutePath());
+            SystemInstance.get().setProperty("openejb.configuration.class", Tomee.class.getName());
         }
 
         //Those are set by TomcatHook, why re-set here???
