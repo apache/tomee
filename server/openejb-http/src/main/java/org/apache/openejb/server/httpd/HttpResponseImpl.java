@@ -16,15 +16,27 @@
  */
 package org.apache.openejb.server.httpd;
 
+import org.apache.openejb.util.OpenEjbVersion;
+
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-
-import java.io.*;
-import java.net.URL;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutput;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 /** This class takes care of HTTP Responses.  It sends data back to the browser.
  */
@@ -478,18 +490,9 @@ public class HttpResponseImpl implements HttpResponse {
      */
     public String getServerName(){
         if (server == null) {
-            String version = "???";
-            String os = "(unknown os)";
-
-            try {
-                Properties versionInfo = new Properties();
-                versionInfo.load( new URL( "resource:/openejb-version.properties" ).openConnection().getInputStream() );
-                version = versionInfo.getProperty( "version" );
-                os = System.getProperty("os.name")+"/"+System.getProperty("os.version")+" ("+System.getProperty("os.arch")+")";
-            } catch (IOException e) {
-            }
-
-            server = "OpenEJB/" +version+ " "+os;
+            final String version = OpenEjbVersion.get().getVersion();
+            final String os = System.getProperty("os.name")+"/"+System.getProperty("os.version")+" ("+System.getProperty("os.arch")+")";
+            server = "OpenEJB/" + version + " " + os;
         }
         return server;
     }
