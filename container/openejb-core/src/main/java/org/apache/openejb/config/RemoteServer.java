@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -123,7 +124,7 @@ public class RemoteServer {
                 } else {
                     lib = new File(new File(new File(home, "webapps"), "tomee"), "lib");
                 }
-                
+
                 for (File file : lib.listFiles()) {
                     if (file.getName().startsWith("openejb-core") && file.getName().endsWith("jar")){
                         openejbJar = file;
@@ -286,6 +287,16 @@ public class RemoteServer {
 
                 if (verbose) {
                     System.out.println(Join.join("\n", args));
+                }
+
+                final boolean isWindows = System.getProperty("os.name", "unknown").toLowerCase().startsWith("windows");
+                if (isWindows && "start".equals(cmd)) {
+                    // to fork
+                    final List<String> winList = new ArrayList<String>();
+                    winList.add("cmd");
+                    winList.add("/c");
+                    winList.addAll(Arrays.asList(args));
+                    args = winList.toArray(new String[winList.size()]);
                 }
                 server = Runtime.getRuntime().exec(args);
 
