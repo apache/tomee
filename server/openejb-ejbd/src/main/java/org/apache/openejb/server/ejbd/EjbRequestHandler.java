@@ -44,9 +44,9 @@ class EjbRequestHandler {
 
     private final ClusterableRequestHandler clusterableRequestHandler;
 
-    private Map<String, AtomicBoolean> asynchronousInvocationCancelMap = new ConcurrentHashMap<String, AtomicBoolean>();
+    private final Map<String, AtomicBoolean> asynchronousInvocationCancelMap = new ConcurrentHashMap<String, AtomicBoolean>();
 
-    EjbRequestHandler(EjbDaemon daemon) {
+    EjbRequestHandler(final EjbDaemon daemon) {
         this.daemon = daemon;
 
         clusterableRequestHandler = newClusterableRequestHandler();
@@ -56,14 +56,14 @@ class EjbRequestHandler {
         return new BasicClusterableRequestHandler();
     }
 
-    public void processRequest(ObjectInputStream in, ObjectOutputStream out) {
+    public void processRequest(final ObjectInputStream in, final ObjectOutputStream out) {
         // Setup the client proxy replacement to replace
         // the proxies with the IntraVM proxy implementations
         EJBHomeProxyHandle.resolver.set(SERVER_SIDE_RESOLVER);
         EJBObjectProxyHandle.resolver.set(SERVER_SIDE_RESOLVER);
 
-        EJBRequest req = new EJBRequest();
-        EJBResponse res = new EJBResponse();
+        final EJBRequest req = new EJBRequest();
+        final EJBResponse res = new EJBResponse();
 
         try {
             req.readExternal(in);
@@ -72,9 +72,9 @@ class EjbRequestHandler {
             return;
         }
 
-        SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
+        final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
         try {
-            Object clientIdentity = req.getClientIdentity();
+            final Object clientIdentity = req.getClientIdentity();
             if (clientIdentity != null) securityService.associate(clientIdentity);
         } catch (Throwable t) {
             replyWithFatalError(out, t, "Client identity is not valid");
@@ -101,7 +101,7 @@ class EjbRequestHandler {
         }
 
         //  Need to set this for deserialization of the body
-        ClassLoader classLoader = di.getBeanClass().getClassLoader();
+        final ClassLoader classLoader = di.getBeanClass().getClassLoader();
         Thread.currentThread().setContextClassLoader(classLoader);
 
         try {
@@ -238,14 +238,14 @@ class EjbRequestHandler {
         }
     }
 
-    protected void updateServer(EJBRequest req, EJBResponse res) {
-        CallContext callContext = CallContext.getCallContext();
-        BeanContext beanContext = callContext.getBeanContext();
+    protected void updateServer(final EJBRequest req, final EJBResponse res) {
+        final CallContext callContext = CallContext.getCallContext();
+        final BeanContext beanContext = callContext.getBeanContext();
         clusterableRequestHandler.updateServer(beanContext, req, res);
     }
 
-    protected void doFUTURE_CANCEL_METHOD(EJBRequest req, EJBResponse res) throws Exception {
-        AtomicBoolean invocationCancelTag = asynchronousInvocationCancelMap.get(req.getBody().getRequestId());
+    protected void doFUTURE_CANCEL_METHOD(final EJBRequest req, final EJBResponse res) throws Exception {
+        final AtomicBoolean invocationCancelTag = asynchronousInvocationCancelMap.get(req.getBody().getRequestId());
         if (invocationCancelTag == null) {
             //TODO ?
         } else {
@@ -254,18 +254,18 @@ class EjbRequestHandler {
         }
     }
 
-    protected void doEjbObject_BUSINESS_METHOD(EJBRequest req, EJBResponse res) throws Exception {
+    protected void doEjbObject_BUSINESS_METHOD(final EJBRequest req, final EJBResponse res) throws Exception {
 
-        CallContext call = CallContext.getCallContext();
-        BeanContext beanContext = (BeanContext) call.getBeanContext();
-        boolean asynchronous = beanContext.isAsynchronous(req.getMethodInstance());
+        final CallContext call = CallContext.getCallContext();
+        final BeanContext beanContext = (BeanContext) call.getBeanContext();
+        final boolean asynchronous = beanContext.isAsynchronous(req.getMethodInstance());
         try {
             if (asynchronous) {
-                AtomicBoolean invocationCancelTag = new AtomicBoolean(false);
+                final AtomicBoolean invocationCancelTag = new AtomicBoolean(false);
                 ThreadContext.initAsynchronousCancelled(invocationCancelTag);
                 asynchronousInvocationCancelMap.put(req.getBody().getRequestId(), invocationCancelTag);
             }
-            RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
+            final RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
 
             Object result = c.invoke(req.getDeploymentId(),
                     req.getInterfaceClass(), req.getMethodInstance(),
@@ -287,12 +287,12 @@ class EjbRequestHandler {
         }
     }
 
-    protected void doEjbHome_METHOD(EJBRequest req, EJBResponse res) throws Exception {
+    protected void doEjbHome_METHOD(final EJBRequest req, final EJBResponse res) throws Exception {
 
-        CallContext call = CallContext.getCallContext();
-        RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
+        final CallContext call = CallContext.getCallContext();
+        final RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
 
-        Object result = c.invoke(req.getDeploymentId(),
+        final Object result = c.invoke(req.getDeploymentId(),
                 req.getInterfaceClass(), req.getMethodInstance(),
                 req.getMethodParameters(),
                 req.getPrimaryKey()
@@ -301,10 +301,10 @@ class EjbRequestHandler {
         res.setResponse(ResponseCodes.EJB_OK, result);
     }
 
-    protected void doEjbHome_CREATE(EJBRequest req, EJBResponse res) throws Exception {
+    protected void doEjbHome_CREATE(final EJBRequest req, final EJBResponse res) throws Exception {
 
-        CallContext call = CallContext.getCallContext();
-        RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
+        final CallContext call = CallContext.getCallContext();
+        final RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
 
         Object result = c.invoke(req.getDeploymentId(),
                 req.getInterfaceClass(), req.getMethodInstance(),
@@ -313,7 +313,7 @@ class EjbRequestHandler {
         );
 
         if (result instanceof ProxyInfo) {
-            ProxyInfo info = (ProxyInfo) result;
+            final ProxyInfo info = (ProxyInfo) result;
             res.setResponse(ResponseCodes.EJB_OK, info.getPrimaryKey());
         } else {
 
@@ -323,10 +323,10 @@ class EjbRequestHandler {
         }
     }
 
-    protected void doEjbHome_FIND(EJBRequest req, EJBResponse res) throws Exception {
+    protected void doEjbHome_FIND(final EJBRequest req, final EJBResponse res) throws Exception {
 
-        CallContext call = CallContext.getCallContext();
-        RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
+        final CallContext call = CallContext.getCallContext();
+        final RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
 
         Object result = c.invoke(req.getDeploymentId(),
                 req.getInterfaceClass(), req.getMethodInstance(),
@@ -337,10 +337,10 @@ class EjbRequestHandler {
         /* Multiple instances found */
         if (result instanceof Collection) {
 
-            Object[] primaryKeys = ((Collection) result).toArray();
+            final Object[] primaryKeys = ((Collection) result).toArray();
 
             for (int i = 0; i < primaryKeys.length; i++) {
-                ProxyInfo proxyInfo = ((ProxyInfo) primaryKeys[i]);
+                final ProxyInfo proxyInfo = ((ProxyInfo) primaryKeys[i]);
                 if (proxyInfo == null) {
                     primaryKeys[i] = null;
                 } else {
@@ -352,10 +352,10 @@ class EjbRequestHandler {
 
         } else if (result instanceof java.util.Enumeration) {
 
-            java.util.Enumeration resultAsEnum = (java.util.Enumeration) result;
-            java.util.List<Object> listOfPKs = new ArrayList<Object>();
+            final java.util.Enumeration resultAsEnum = (java.util.Enumeration) result;
+            final java.util.List<Object> listOfPKs = new ArrayList<Object>();
             while (resultAsEnum.hasMoreElements()) {
-                ProxyInfo proxyInfo = ((ProxyInfo) resultAsEnum.nextElement());
+                final ProxyInfo proxyInfo = ((ProxyInfo) resultAsEnum.nextElement());
                 if (proxyInfo == null) {
                     listOfPKs.add(null);
                 } else {
@@ -366,7 +366,7 @@ class EjbRequestHandler {
             res.setResponse(ResponseCodes.EJB_OK_FOUND_ENUMERATION, listOfPKs.toArray(new Object[listOfPKs.size()]));
             /* Single instance found */
         } else if (result instanceof ProxyInfo) {
-            ProxyInfo proxyInfo = ((ProxyInfo) result);
+            final ProxyInfo proxyInfo = ((ProxyInfo) result);
             result = proxyInfo.getPrimaryKey();
             res.setResponse(ResponseCodes.EJB_OK_FOUND, result);
         } else if (result == null) {
@@ -383,28 +383,28 @@ class EjbRequestHandler {
         }
     }
 
-    protected void doEjbObject_GET_EJB_HOME(EJBRequest req, EJBResponse res) throws Exception {
+    protected void doEjbObject_GET_EJB_HOME(final EJBRequest req, final EJBResponse res) throws Exception {
         checkMethodAuthorization(req, res);
     }
 
-    protected void doEjbObject_GET_HANDLE(EJBRequest req, EJBResponse res) throws Exception {
+    protected void doEjbObject_GET_HANDLE(final EJBRequest req, final EJBResponse res) throws Exception {
         checkMethodAuthorization(req, res);
     }
 
-    protected void doEjbObject_GET_PRIMARY_KEY(EJBRequest req, EJBResponse res) throws Exception {
+    protected void doEjbObject_GET_PRIMARY_KEY(final EJBRequest req, final EJBResponse res) throws Exception {
         checkMethodAuthorization(req, res);
     }
 
-    protected void doEjbObject_IS_IDENTICAL(EJBRequest req, EJBResponse res) throws Exception {
+    protected void doEjbObject_IS_IDENTICAL(final EJBRequest req, final EJBResponse res) throws Exception {
         checkMethodAuthorization(req, res);
     }
 
-    protected void doEjbObject_REMOVE(EJBRequest req, EJBResponse res) throws Exception {
+    protected void doEjbObject_REMOVE(final EJBRequest req, final EJBResponse res) throws Exception {
 
-        CallContext call = CallContext.getCallContext();
-        RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
+        final CallContext call = CallContext.getCallContext();
+        final RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
 
-        Object result = c.invoke(req.getDeploymentId(),
+        final Object result = c.invoke(req.getDeploymentId(),
                 req.getInterfaceClass(), req.getMethodInstance(),
                 req.getMethodParameters(),
                 req.getPrimaryKey()
@@ -413,20 +413,20 @@ class EjbRequestHandler {
         res.setResponse(ResponseCodes.EJB_OK, null);
     }
 
-    protected void doEjbHome_GET_EJB_META_DATA(EJBRequest req, EJBResponse res) throws Exception {
+    protected void doEjbHome_GET_EJB_META_DATA(final EJBRequest req, final EJBResponse res) throws Exception {
         checkMethodAuthorization(req, res);
     }
 
-    protected void doEjbHome_GET_HOME_HANDLE(EJBRequest req, EJBResponse res) throws Exception {
+    protected void doEjbHome_GET_HOME_HANDLE(final EJBRequest req, final EJBResponse res) throws Exception {
         checkMethodAuthorization(req, res);
     }
 
-    protected void doEjbHome_REMOVE_BY_HANDLE(EJBRequest req, EJBResponse res) throws Exception {
+    protected void doEjbHome_REMOVE_BY_HANDLE(final EJBRequest req, final EJBResponse res) throws Exception {
 
-        CallContext call = CallContext.getCallContext();
-        RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
+        final CallContext call = CallContext.getCallContext();
+        final RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
 
-        Object result = c.invoke(req.getDeploymentId(),
+        final Object result = c.invoke(req.getDeploymentId(),
                 req.getInterfaceClass(), req.getMethodInstance(),
                 req.getMethodParameters(),
                 req.getPrimaryKey()
@@ -435,12 +435,12 @@ class EjbRequestHandler {
         res.setResponse(ResponseCodes.EJB_OK, null);
     }
 
-    protected void doEjbHome_REMOVE_BY_PKEY(EJBRequest req, EJBResponse res) throws Exception {
+    protected void doEjbHome_REMOVE_BY_PKEY(final EJBRequest req, final EJBResponse res) throws Exception {
 
-        CallContext call = CallContext.getCallContext();
-        RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
+        final CallContext call = CallContext.getCallContext();
+        final RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
 
-        Object result = c.invoke(req.getDeploymentId(),
+        final Object result = c.invoke(req.getDeploymentId(),
                 req.getInterfaceClass(), req.getMethodInstance(),
                 req.getMethodParameters(),
                 req.getPrimaryKey()
@@ -449,11 +449,11 @@ class EjbRequestHandler {
         res.setResponse(ResponseCodes.EJB_OK, null);
     }
 
-    protected void checkMethodAuthorization(EJBRequest req, EJBResponse res) throws Exception {
+    protected void checkMethodAuthorization(final EJBRequest req, final EJBResponse res) throws Exception {
         res.setResponse(ResponseCodes.EJB_OK, null);
     }
 
-    private void replyWithFatalError(ObjectOutputStream out, Throwable error, String message) {
+    private void replyWithFatalError(final ObjectOutputStream out, final Throwable error, final String message) {
 
         //This is fatal for the client, but not the server.
         if (logger.isWarningEnabled()) {

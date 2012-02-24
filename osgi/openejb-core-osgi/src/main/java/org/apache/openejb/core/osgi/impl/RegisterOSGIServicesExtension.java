@@ -50,7 +50,7 @@ public class RegisterOSGIServicesExtension implements Extension {
                 for (ServiceReference service  : services) {
                     final Class<?> clazz = serviceClass(service);
                     abd.addBean(new OSGiServiceBean<Object>(service));
-                    LOGGER.debug("added service {} as a CDI Application scoped bean", clazz.getName());
+                    LOGGER.debug("added service {0} as a CDI Application scoped bean", clazz.getName());
                 }
             }
         }

@@ -51,7 +51,7 @@ public class KeepAliveServer implements ServerService {
 
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_SERVER.createChild("keepalive"), KeepAliveServer.class);
     private final ServerService service;
-    private final long timeout = (1000 * 3);
+    private final long timeout = (1000 * 10);
 
     private final AtomicBoolean running = new AtomicBoolean(false);
     private final ConcurrentHashMap<Thread, Session> sessions = new ConcurrentHashMap<Thread, Session>();
@@ -68,7 +68,9 @@ public class KeepAliveServer implements ServerService {
 
     private void closeInactiveSessions() {
 
-        if (!this.running.get()) return;
+        if (!this.running.get()) {
+            return;
+        }
 
         final BlockingQueue<Runnable> queue = getQueue();
         if (queue == null) return;
@@ -83,24 +85,24 @@ public class KeepAliveServer implements ServerService {
 
         for (final Session session : current) {
 
-            if (session.usage.tryLock()) {
+            final Lock l = session.usage;
+
+            if (l.tryLock()) {
                 try {
                     if (now - session.lastRequest > timeout) {
+
+                        backlog--;
+
                         try {
-                            backlog--;
                             session.socket.close();
-                        } catch (IOException e) {
-                            if (logger.isWarningEnabled()) {
-                                logger.warning("closeInactiveSessions: Error closing socket. Debug for StackTrace");
-                            } else if (logger.isDebugEnabled()) {
-                                logger.debug("closeInactiveSessions: Error closing socket.", e);
-                            }
+                        } catch (Throwable e) {
+                            //Ignore
                         } finally {
                             removeSession(session);
                         }
                     }
                 } finally {
-                    session.usage.unlock();
+                    l.unlock();
                 }
             }
 
@@ -115,23 +117,24 @@ public class KeepAliveServer implements ServerService {
         current.addAll(this.sessions.values());
 
         for (final Session session : current) {
-            if (session.usage.tryLock()) {
+
+            final Lock l = session.usage;
+
+            if (l.tryLock()) {
                 try {
                     session.socket.close();
-                } catch (IOException e) {
-                    if (logger.isWarningEnabled()) {
-                        logger.warning("closeSessions: Error closing socket. Debug for StackTrace");
-                    } else if (logger.isDebugEnabled()) {
-                        logger.debug("closeSessions: Error closing socket.", e);
-                    }
+                } catch (Throwable e) {
+                    //Ignore
                 } finally {
                     removeSession(session);
-                    session.usage.unlock();
+                    l.unlock();
                 }
             } else if (logger.isDebugEnabled()) {
                 logger.debug("Allowing graceful shutdown of " + session.socket.getInetAddress());
             }
         }
+
+        this.sessions.clear();
     }
 
     private BlockingQueue<Runnable> getQueue() {
@@ -179,14 +182,14 @@ public class KeepAliveServer implements ServerService {
         // only used inside the Lock
         private final Socket socket;
 
-        public Session(final KeepAliveServer kas, final Socket socket) {
+        protected Session(final KeepAliveServer kas, final Socket socket) {
             this.kas = kas;
             this.socket = socket;
             this.lastRequest = System.currentTimeMillis();
             this.thread = Thread.currentThread();
         }
 
-        public void service(final Socket socket) throws ServiceException, IOException {
+        protected void service(final Socket socket) throws ServiceException, IOException {
             this.kas.addSession(this);
 
             int i = -1;
@@ -208,15 +211,15 @@ public class KeepAliveServer implements ServerService {
                     }
                     final KeepAliveStyle style = KeepAliveStyle.values()[i];
 
+                    final Lock l = this.usage;
                     try {
-                        usage.lock();
+                        l.lock();
 
                         switch (style) {
                             case PING_PING: {
-                                in.read();
+                                i = in.read();
                                 break;
                             }
-
                             case PING_PONG: {
                                 out.write(style.ordinal());
                                 out.flush();
@@ -224,11 +227,16 @@ public class KeepAliveServer implements ServerService {
                             }
                         }
 
-                        service.service(new Input(in), new Output(out));
-                        out.flush();
+                        try {
+                            service.service(new Input(in), new Output(out));
+                            out.flush();
+                        } catch (SocketException e) {
+                            // Socket closed.
+                            break;
+                        }
                     } finally {
                         this.lastRequest = System.currentTimeMillis();
-                        usage.unlock();
+                        l.unlock();
                     }
                 }
             } catch (ArrayIndexOutOfBoundsException e) {
@@ -240,7 +248,6 @@ public class KeepAliveServer implements ServerService {
             }
         }
     }
-
 
     @Override
     public void service(final Socket socket) throws ServiceException, IOException {
@@ -283,7 +290,11 @@ public class KeepAliveServer implements ServerService {
             } catch (Throwable e) {
                 //Ignore
             }
-            this.timer.cancel();
+            try {
+                this.timer.cancel();
+            } catch (Throwable e) {
+                //Ignore
+            }
         }
     }
 

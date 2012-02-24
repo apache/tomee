@@ -63,7 +63,7 @@ public class Deployer implements BundleListener {
 
     private final Activator openejbActivator;
 
-    public Deployer(Activator activator) {
+    public Deployer(final Activator activator) {
         openejbActivator = activator;
         INSTANCE = this;
     }
@@ -72,7 +72,8 @@ public class Deployer implements BundleListener {
         return INSTANCE;
     }
 
-    public void bundleChanged(BundleEvent event) {
+    @Override
+    public void bundleChanged(final BundleEvent event) {
         openejbActivator.checkServiceManager(OpenEJBBundleContextHolder.get());
         switch (event.getType()) {
             case BundleEvent.STARTED:
@@ -95,14 +96,14 @@ public class Deployer implements BundleListener {
                 } catch (NullPointerException npe) {
                     // can happen when shutting down an OSGi server
                     // because of all stop events
-                    LOGGER.warn("can't undeploy bundle #{}", event.getBundle().getBundleId());
+                    LOGGER.warn("can't undeploy bundle #{0}", event.getBundle().getBundleId());
                 }
                 deploy(event.getBundle());
                 break;
         }
     }
 
-    private void deploy(Bundle bundle) {
+    private void deploy(final Bundle bundle) {
         final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
         final ClassLoader osgiCl = new OSGIClassLoader(bundle, OpenEJBBundleContextHolder.get().getBundle());
         Thread.currentThread().setContextClassLoader(osgiCl);
@@ -114,7 +115,7 @@ public class Deployer implements BundleListener {
                     if (context == null && contexts.containsKey(bundle)) {
                         context = contexts.get(bundle);
                     } else if (context == null) {
-                        LOGGER.warn("can't get bundle context of bundle {}", bundle.getBundleId());
+                        LOGGER.warn("can't get bundle context of bundle {0}", bundle.getBundleId());
                         return;
                     }
 
@@ -129,11 +130,11 @@ public class Deployer implements BundleListener {
                     }
 
                     if (bundleDump == null || !bundleDump.exists()) {
-                        LOGGER.warn("can't find bundle {}", bundle.getBundleId());
+                        LOGGER.warn("can't find bundle {0}", bundle.getBundleId());
                         return;
                     }
 
-                    LOGGER.info("looking bundle {} in {}", bundle.getBundleId(), bundleDump);
+                    LOGGER.info("looking bundle {0} in {1}", bundle.getBundleId(), bundleDump);
                     final AppModule appModule = new OSGiDeploymentLoader(bundle).load(bundleDump);
                     LOGGER.info("deploying bundle #" + bundle.getBundleId() + " as an EJBModule");
 
@@ -162,7 +163,7 @@ public class Deployer implements BundleListener {
         }
     }
 
-    private static File findEquinoxJar(BundleContext bundleContext) {
+    private static File findEquinoxJar(final BundleContext bundleContext) {
         final File root = bundleContext.getDataFile("").getParentFile();
         int idx = 0;
         File out;
@@ -175,7 +176,7 @@ public class Deployer implements BundleListener {
         return out;
     }
 
-    private static File findFelixJar(BundleContext bundleContext) {
+    private static File findFelixJar(final BundleContext bundleContext) {
         final File root = bundleContext.getDataFile("").getParentFile();
         int min = 0;
         int max = 0;
@@ -194,9 +195,9 @@ public class Deployer implements BundleListener {
         return out;
     }
 
-    private void undeploy(Bundle bundle) {
+    private void undeploy(final Bundle bundle) {
         if (registrations.containsKey(bundle)) {
-            for (ServiceRegistration registration : registrations.get(bundle)) {
+            for (final ServiceRegistration registration : registrations.get(bundle)) {
                 try {
                     registration.unregister();
                 } catch (IllegalStateException ise) {
@@ -208,20 +209,20 @@ public class Deployer implements BundleListener {
 
         if (paths.containsKey(bundle)) {
             try {
-                Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
+                final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
                 if (assembler != null) { // openejb stopped before bundles when shuttind down the OSGi container
                     assembler.destroyApplication(paths.remove(bundle));
                 }
             } catch (IllegalStateException ise) {
-                LOGGER.error("Can't undeploy bundle #{}", bundle.getBundleId());
+                LOGGER.error("Can't undeploy bundle #{0}", bundle.getBundleId());
             } catch (UndeployException e) {
-                LOGGER.error("Can't undeploy bundle #{}", bundle.getBundleId(), e);
+                LOGGER.error("Can't undeploy bundle #{0}", bundle.getBundleId(), e);
             } catch (NoSuchApplicationException e) {
-                LOGGER.error("Can't undeploy non existing bundle #{}", bundle.getBundleId(), e);
+                LOGGER.error("Can't undeploy non existing bundle #{0}", bundle.getBundleId(), e);
             }
         }
 
-        LOGGER.info("[Deployer] Bundle {} has been stopped", bundle.getSymbolicName());
+        LOGGER.info("[Deployer] Bundle {0} has been stopped", bundle.getSymbolicName());
     }
 
     /**
@@ -230,42 +231,42 @@ public class Deployer implements BundleListener {
      * @param bundle     the deployed bundle
      * @param appContext the appcontext to search EJBs
      */
-    private void registerService(Bundle bundle, AppContext appContext) {
+    private void registerService(final Bundle bundle, final AppContext appContext) {
         LOGGER.info("Registering remote EJBs as OSGi services");
         final BundleContext context = bundle.getBundleContext();
-        for (BeanContext beanContext : appContext.getBeanContexts()) {
+        for (final BeanContext beanContext : appContext.getBeanContexts()) {
             if (beanContext.getBeanClass().equals(BeanContext.Comp.class) || BeanType.STATEFUL.equals(beanContext.getComponentType())) {
                 continue;
             }
 
             try {
                 if (beanContext.getBusinessRemoteInterface() != null) {
-                    LOGGER.info("registering remote bean: {}", beanContext.getEjbName());
+                    LOGGER.info("registering remote bean: {0}", beanContext.getEjbName());
                     registerService(beanContext, context, beanContext.getBusinessRemoteInterfaces());
                 }
                 if (beanContext.getBusinessLocalInterface() != null) {
-                    LOGGER.info("registering local bean: {}", beanContext.getEjbName());
+                    LOGGER.info("registering local bean: {0}", beanContext.getEjbName());
                     registerService(beanContext, context, beanContext.getBusinessLocalInterfaces());
                 }
                 if (beanContext.isLocalbean()) {
-                    LOGGER.info("registering local view bean: {}", beanContext.getEjbName());
+                    LOGGER.info("registering local view bean: {0}", beanContext.getEjbName());
                     registerService(beanContext, context, Arrays.asList(beanContext.getBusinessLocalBeanInterface()));
                 }
             } catch (Exception e) {
-                LOGGER.error("[Deployer] can't register: {}", beanContext.getEjbName());
+                LOGGER.error("[Deployer] can't register: {0}", beanContext.getEjbName());
             }
         }
     }
 
-    private void registerService(BeanContext beanContext, BundleContext context, List<Class> interfaces) {
+    private void registerService(final BeanContext beanContext, final BundleContext context, final List<Class> interfaces) {
         if (!interfaces.isEmpty()) {
             final Class<?>[] itfs = interfaces.toArray(new Class<?>[interfaces.size()]);
             try {
                 final Object service = ProxyEJB.proxy(beanContext, itfs);
                 registrations.get(context.getBundle()).add(context.registerService(str(itfs), service, new Properties()));
-                LOGGER.info("EJB registered: {} for interfaces {}", beanContext.getEjbName(), interfaces);
+                LOGGER.info("EJB registered: {0} for interfaces {1}", beanContext.getEjbName(), interfaces);
             } catch (IllegalArgumentException iae) {
-                LOGGER.error("can't register: {} for interfaces {}", beanContext.getEjbName(), interfaces);
+                LOGGER.error("can't register: {0} for interfaces {1}", beanContext.getEjbName(), interfaces);
             }
         }
     }
@@ -274,8 +275,8 @@ public class Deployer implements BundleListener {
         return paths.keySet();
     }
 
-    private static String[] str(Class<?>[] itfs) {
-        String[] itfsStr = new String[itfs.length];
+    private static String[] str(final Class<?>[] itfs) {
+        final String[] itfsStr = new String[itfs.length];
         for (int i = 0; i < itfs.length; i++) {
             itfsStr[i] = itfs[i].getName();
         }
@@ -290,13 +291,14 @@ public class Deployer implements BundleListener {
         private final Bundle backingBundle;
         private final Bundle fallbackBundle;
 
-        public OSGIClassLoader(Bundle bundle, Bundle openejbClassloader) {
+        public OSGIClassLoader(final Bundle bundle, final Bundle openejbClassloader) {
             super(null);
             backingBundle = bundle;
             fallbackBundle = openejbClassloader;
         }
 
-        protected Class findClass(String name) throws ClassNotFoundException {
+        @Override
+        protected Class findClass(final String name) throws ClassNotFoundException {
             try {
                 return fallbackBundle.loadClass(name);
             } catch (Exception ignored) {
@@ -308,13 +310,14 @@ public class Deployer implements BundleListener {
             } catch (ClassNotFoundException cnfe) {
                 throw new ClassNotFoundException(name + " not found from bundle [" + backingBundle.getSymbolicName() + "]", cnfe);
             } catch (NoClassDefFoundError ncdfe) {
-                NoClassDefFoundError e = new NoClassDefFoundError(name + " not found from bundle [" + backingBundle + "]");
+                final NoClassDefFoundError e = new NoClassDefFoundError(name + " not found from bundle [" + backingBundle + "]");
                 e.initCause(ncdfe);
                 throw e;
             }
         }
 
-        protected URL findResource(String name) {
+        @Override
+        protected URL findResource(final String name) {
             URL url = fallbackBundle.getResource(name);
             if (url != null) {
                 return url;
@@ -326,11 +329,13 @@ public class Deployer implements BundleListener {
             return null;
         }
 
-        public Enumeration<URL> getResources(String name) throws IOException {
+        @Override
+        public Enumeration<URL> getResources(final String name) throws IOException {
             return findResources(name);
         }
 
-        protected Enumeration findResources(String name) throws IOException {
+        @Override
+        protected Enumeration<URL> findResources(final String name) throws IOException {
             Enumeration<URL> urls;
             try {
                 urls = fallbackBundle.getResources(name);
@@ -350,12 +355,14 @@ public class Deployer implements BundleListener {
             return new EmptyEnumeration<URL>();
         }
 
-        public URL getResource(String name) {
+        @Override
+        public URL getResource(final String name) {
             return findResource(name);
         }
 
-        protected Class loadClass(String name, boolean resolve) throws ClassNotFoundException {
-            Class clazz = findClass(name);
+        @Override
+        protected Class loadClass(final String name, final boolean resolve) throws ClassNotFoundException {
+            final Class clazz = findClass(name);
             if (resolve) {
                 resolveClass(clazz);
             }
@@ -382,18 +389,19 @@ public class Deployer implements BundleListener {
     public class OSGiDeploymentLoader extends DeploymentLoader {
         private final Bundle bundle;
 
-        public OSGiDeploymentLoader(Bundle bdl) {
+        public OSGiDeploymentLoader(final Bundle bdl) {
             bundle = bdl;
         }
 
-        @Override protected ClassLoader getOpenEJBClassLoader(URL url) {
+        @Override
+        protected ClassLoader getOpenEJBClassLoader(final URL url) {
             return new OSGIClassLoader(bundle, OpenEJBBundleContextHolder.get().getBundle());
         }
     }
 
-    private static Class<?> forceLoadClass(String name) {
+    private static Class<?> forceLoadClass(final String name) {
         final Bundle[] bundles = OpenEJBBundleContextHolder.get().getBundles();
-        for (Bundle bundle : bundles) {
+        for (final Bundle bundle : bundles) {
             try {
                 return bundle.loadClass(name);
             } catch (ClassNotFoundException e) {
@@ -403,10 +411,10 @@ public class Deployer implements BundleListener {
         return null;
     }
 
-    private static URL forceLoadResource(String name) {
+    private static URL forceLoadResource(final String name) {
         final Bundle[] bundles = OpenEJBBundleContextHolder.get().getBundles();
-        for (Bundle bundle : bundles) {
-            URL url = bundle.getResource(name);
+        for (final Bundle bundle : bundles) {
+            final URL url = bundle.getResource(name);
             if (url != null) {
                 return url;
             }
@@ -414,9 +422,9 @@ public class Deployer implements BundleListener {
         return null;
     }
 
-    private static Enumeration<URL> forceLoadResources(String name) {
+    private static Enumeration<URL> forceLoadResources(final String name) {
         final Bundle[] bundles = OpenEJBBundleContextHolder.get().getBundles();
-        for (Bundle bundle : bundles) {
+        for (final Bundle bundle : bundles) {
             Enumeration<URL> url = null;
             try {
                 url = bundle.getResources(name);

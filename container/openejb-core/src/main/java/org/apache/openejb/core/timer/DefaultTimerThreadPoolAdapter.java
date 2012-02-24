@@ -17,17 +17,19 @@
 
 package org.apache.openejb.core.timer;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.ThreadPoolExecutor;
-
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.DaemonThreadFactory;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.quartz.SchedulerConfigException;
 import org.quartz.spi.ThreadPool;
+
+import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @version $Rev$ $Date$
@@ -44,28 +46,49 @@ public class DefaultTimerThreadPoolAdapter implements ThreadPool {
 
     private final Object threadAvailableLock = new Object();
 
-    private boolean threadPoolExecutorUsed;
+    private final boolean threadPoolExecutorUsed;
 
     public DefaultTimerThreadPoolAdapter() {
-        executor = SystemInstance.get().getComponent(Executor.class);
-        if (executor == null) {
-            executor = Executors.newFixedThreadPool(10, new DaemonThreadFactory(DefaultTimerThreadPoolAdapter.class));
-            SystemInstance.get().setComponent(Executor.class, executor);
+        this.executor = SystemInstance.get().getComponent(Executor.class);
+
+        if (this.executor == null) {
+            final int size = Integer.parseInt(SystemInstance.get().getProperty("openejb.timer.pool.size", "2"));
+            this.executor = new ThreadPoolExecutor(2
+                    , size
+                    , 60L
+                    , TimeUnit.SECONDS
+                    , new LinkedBlockingQueue<Runnable>(size)
+                    , new DaemonThreadFactory(DefaultTimerThreadPoolAdapter.class)
+                    , new RejectedExecutionHandler() {
+                @Override
+                public void rejectedExecution(final Runnable r, final ThreadPoolExecutor tpe) {
+                    try {
+                        tpe.getQueue().put(r);
+                    } catch (InterruptedException e) {
+                        throw new RejectedExecutionException("Interrupted waiting for executor slot");
+                    }
+                }
+            }
+            );
+            ((ThreadPoolExecutor) this.executor).allowCoreThreadTimeOut(true);
+            SystemInstance.get().setComponent(Executor.class, this.executor);
         }
-        threadPoolExecutorUsed = executor instanceof ThreadPoolExecutor;
-        if (!threadPoolExecutorUsed) {
-            logger.warning("Unrecognized ThreadPool implementation [" + executor.getClass().getName() + "] is used, EJB Timer service may not work correctly");
+
+        this.threadPoolExecutorUsed = (this.executor instanceof ThreadPoolExecutor);
+
+        if (!this.threadPoolExecutorUsed) {
+            logger.warning("Unrecognized ThreadPool implementation [" + this.executor.getClass().getName() + "] is used, EJB Timer service may not work correctly");
         }
     }
 
-//    @Override
+    @Override
     public int blockForAvailableThreads() {
-        if (threadPoolExecutorUsed) {
-            ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) executor;
-            synchronized (threadAvailableLock) {
+        if (this.threadPoolExecutorUsed) {
+            final ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) this.executor;
+            synchronized (this.threadAvailableLock) {
                 while ((threadPoolExecutor.getMaximumPoolSize() - threadPoolExecutor.getActiveCount()) < 1 && !threadPoolExecutor.isShutdown()) {
                     try {
-                        threadAvailableLock.wait(500L);
+                        this.threadAvailableLock.wait(500L);
                     } catch (InterruptedException ignore) {
                     }
                 }
@@ -76,20 +99,28 @@ public class DefaultTimerThreadPoolAdapter implements ThreadPool {
         }
     }
 
-//    @Override
-    public void setInstanceId(String instanceId) {
+    @Override
+    public void setInstanceId(final String instanceId) {
         this.instanceId = instanceId;
     }
 
-//    @Override
-    public void setInstanceName(String instanceName) {
+    @Override
+    public void setInstanceName(final String instanceName) {
         this.instanceName = instanceName;
+    }
+
+    public String getInstanceId() {
+        return this.instanceId;
+    }
+
+    public String getInstanceName() {
+        return this.instanceName;
     }
 
     @Override
     public int getPoolSize() {
-        if (threadPoolExecutorUsed) {
-            return ((ThreadPoolExecutor) executor).getPoolSize();
+        if (this.threadPoolExecutorUsed) {
+            return ((ThreadPoolExecutor) this.executor).getPoolSize();
         } else {
             return 1;
         }
@@ -100,18 +131,18 @@ public class DefaultTimerThreadPoolAdapter implements ThreadPool {
     }
 
     @Override
-    public boolean runInThread(Runnable runnable) {
+    public boolean runInThread(final Runnable runnable) {
         try {
-            executor.execute(runnable);
+            this.executor.execute(runnable);
             return true;
         } catch (RejectedExecutionException e) {
-            logger.error("Fail to executor timer task", e);
+            logger.error("Failed to execute timer task", e);
             return false;
         }
     }
 
     @Override
-    public void shutdown(boolean arg0) {
+    public void shutdown(final boolean arg0) {
         //TODO Seems we should never try to shutdown the thread pool, as it is shared in global scope
     }
 
