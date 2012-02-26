@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.core.webservices;
 
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.util.Base64;
 
 import java.io.File;
@@ -128,7 +129,7 @@ public class UriResolver {
                     }
                     is =  huc.getInputStream();
                 } catch (ClassCastException ex) {
-                    is = url.openStream();
+                    is = IO.read(url);
                 }
             } else if (baseUriStr != null) {
                 URI base;
@@ -149,7 +150,7 @@ public class UriResolver {
                     try {
                         baseFile = new File(base);
                         if (baseFile.exists()) {
-                            is = base.toURL().openStream();
+                            is = IO.read(base.toURL());
                             uri = base;
                         } else {
                             tryClasspath(base.toString().startsWith("file:")
@@ -223,7 +224,7 @@ public class UriResolver {
 
         url = new URL(uriStr);
         try {
-            is = url.openStream();
+            is = IO.read(url);
             try {
                 uri = url.toURI();
             } catch (URISyntaxException ex) {
@@ -260,7 +261,7 @@ public class UriResolver {
                 }
 
             }
-            is = url.openStream();
+            is = IO.read(url);
         }
     }
 
@@ -268,7 +269,7 @@ public class UriResolver {
         try {
             url = new URL(uriStr);
             uri = new URI(url.toString());
-            is = url.openStream();
+            is = IO.read(url);
         } catch (MalformedURLException e) {
             // do nothing
         } catch (URISyntaxException e) {

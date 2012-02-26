@@ -18,6 +18,7 @@ package org.apache.openejb.persistence;
 
 import org.apache.openejb.core.TempClassLoader;
 import org.apache.openejb.javaagent.Agent;
+import org.apache.openejb.loader.IO;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -96,7 +97,7 @@ public class PersistenceBootstrap {
                 String urlPath = url.toExternalForm();
                 debug("found " + urlPath);
                 try {
-                    InputStream in = url.openStream();
+                    InputStream in = IO.read(url);
                     try {
                         collectUnits(in, units, args);
                     } catch (Throwable e) {
@@ -194,7 +195,7 @@ public class PersistenceBootstrap {
             URL resource = classLoader.getResource("PersistenceBootstrap.properties");
             if (resource != null) {
                 debug("found PersistenceBootstrap.properties file");
-                InputStream in = resource.openStream();
+                InputStream in = IO.read(resource);
                 try {
                     properties.load(in);
                 } finally {

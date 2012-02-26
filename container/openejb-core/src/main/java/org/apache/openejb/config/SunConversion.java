@@ -78,6 +78,7 @@ import org.apache.openejb.jee.sun.SunWebApp;
 import org.apache.openejb.jee.sun.Web;
 import org.apache.openejb.jee.sun.WebserviceEndpoint;
 import org.apache.openejb.jee.sun.WsdlPort;
+import org.apache.openejb.loader.IO;
 
 import javax.ejb.Local;
 import javax.ejb.Remote;
@@ -255,7 +256,7 @@ public class SunConversion implements DynamicDeployer {
         }
         if (altDD instanceof URL) {
             try {
-                altDD = JaxbSun.unmarshal(SunApplication.class, ((URL)altDD).openStream());
+                altDD = JaxbSun.unmarshal(SunApplication.class, IO.read(((URL)altDD)));
             } catch (Exception e) {
                 // todo warn about not being able to parse sun descriptor
             }
@@ -277,7 +278,7 @@ public class SunConversion implements DynamicDeployer {
         }
         if (altDD instanceof URL) {
             try {
-                altDD = JaxbSun.unmarshal(SunApplicationClient.class, ((URL)altDD).openStream());
+                altDD = JaxbSun.unmarshal(SunApplicationClient.class, IO.read(((URL)altDD)));
             } catch (Exception e) {
                 // todo warn about not being able to parse sun descriptor
             }
@@ -299,7 +300,7 @@ public class SunConversion implements DynamicDeployer {
         }
         if (altDD instanceof URL) {
             try {
-                altDD = JaxbSun.unmarshal(SunWebApp.class, ((URL)altDD).openStream());
+                altDD = JaxbSun.unmarshal(SunWebApp.class, IO.read(((URL)altDD)));
             } catch (Exception e) {
                 e.printStackTrace();
                 // todo warn about not being able to parse sun descriptor
@@ -322,7 +323,7 @@ public class SunConversion implements DynamicDeployer {
         }
         if (altDD instanceof URL) {
             try {
-                altDD = JaxbSun.unmarshal(SunEjbJar.class, ((URL)altDD).openStream());
+                altDD = JaxbSun.unmarshal(SunEjbJar.class, IO.read(((URL)altDD)));
             } catch (Exception e) {
                 e.printStackTrace();
                 // todo warn about not being able to parse sun descriptor
@@ -345,7 +346,7 @@ public class SunConversion implements DynamicDeployer {
         }
         if (altDD instanceof URL) {
             try {
-                altDD = JaxbSun.unmarshal(SunCmpMappings.class, ((URL)altDD).openStream());
+                altDD = JaxbSun.unmarshal(SunCmpMappings.class, IO.read(((URL)altDD)));
             } catch (Exception e) {
                 e.printStackTrace();
                 // todo warn about not being able to parse sun descriptor

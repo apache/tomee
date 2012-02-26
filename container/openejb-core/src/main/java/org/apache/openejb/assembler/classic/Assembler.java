@@ -27,6 +27,7 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.Container;
+import org.apache.openejb.Core;
 import org.apache.openejb.DuplicateDeploymentIdException;
 import org.apache.openejb.Injection;
 import org.apache.openejb.JndiConstants;
@@ -374,7 +375,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
      * @throws Exception
      * @see OpenEjbConfiguration
      */
-    public void buildContainerSystem(OpenEjbConfiguration configInfo) throws Exception {
+    public void buildContainerSystem(final OpenEjbConfiguration configInfo) throws Exception {
 
         ContainerSystemInfo containerSystemInfo = configInfo.containerSystem;
 

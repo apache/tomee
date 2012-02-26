@@ -57,6 +57,9 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public abstract class JaxbOpenejb {
+
+    private static final SAXParserFactory SAX_PARSER_FACTORY = SAXParserFactory.newInstance();
+
     @SuppressWarnings({"unchecked"})
     public static <T> T create(Class<T> type) {
         if (type == null) throw new NullPointerException("type is null");
@@ -137,7 +140,7 @@ public abstract class JaxbOpenejb {
                 finder = new ResourceFinder("META-INF/", JaxbOpenejb.class.getClassLoader());
                 url = finder.find(resourceName);
             }
-            in = url.openStream();
+            in = IO.read(url);
             ServicesJar servicesJar = parseServicesJar(in);
             return servicesJar;
         } catch (MalformedURLException e) {
@@ -157,7 +160,7 @@ public abstract class JaxbOpenejb {
     private static ServicesJar parseServicesJar(InputStream in) throws ParserConfigurationException, SAXException, IOException {
         InputSource inputSource = new InputSource(in);
 
-        SAXParserFactory factory = SAXParserFactory.newInstance();
+        SAXParserFactory factory = SAX_PARSER_FACTORY;
         factory.setNamespaceAware(true);
         factory.setValidating(false);
         SAXParser parser = factory.newSAXParser();
@@ -216,10 +219,10 @@ public abstract class JaxbOpenejb {
         try {
             if (configFile.startsWith("jar:")) {
                 URL url = new URL(configFile);
-                in = url.openStream();
+                in = IO.read(url);
             } else if (configFile.startsWith("file:")) {
                 URL url = new URL(configFile);
-                in = url.openStream();
+                in = IO.read(url);
             } else {
                 in = new FileInputStream(configFile);
             }

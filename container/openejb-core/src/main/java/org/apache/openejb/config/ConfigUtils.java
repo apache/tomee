@@ -162,7 +162,7 @@ public class ConfigUtils {
         ResourceFinder finder = new ResourceFinder("");
         URL defaultConfig = finder.find("default.openejb.conf");
 
-        IO.copy(defaultConfig.openStream(), config);
+        IO.copy(IO.read(defaultConfig), config);
 
         return config;
     }

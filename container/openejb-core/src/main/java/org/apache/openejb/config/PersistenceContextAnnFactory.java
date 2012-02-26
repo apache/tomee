@@ -17,6 +17,7 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.loader.IO;
 import org.apache.xbean.asm.AnnotationVisitor;
 import org.apache.xbean.asm.ClassReader;
 import org.apache.xbean.asm.FieldVisitor;
@@ -56,7 +57,7 @@ public class PersistenceContextAnnFactory {
 
         try {
             URL u = c.getResource("/" + c.getName().replace('.', '/') + ".class");
-            ClassReader r = new ClassReader(u.openStream());
+            ClassReader r = new ClassReader(IO.read(u));
             r.accept(new PersistenceContextReader(), ClassReader.SKIP_DEBUG);
         } catch (IOException e) {
             throw new OpenEJBException("Unable to read class " + c.getName());

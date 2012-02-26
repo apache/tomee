@@ -242,7 +242,7 @@ public class IvmContext implements Context, Serializable {
                 Enumeration<URL> resources = classLoader.getResources("jndi.properties");
                 while (urlPackagePrefixes == null && resources.hasMoreElements()) {
                     URL resource = resources.nextElement();
-                    InputStream in = resource.openStream();
+                    InputStream in = IO.read(resource);
                     urlPackagePrefixes = getUrlPackagePrefixes(in);
                 }
             } catch (IOException ignored) {

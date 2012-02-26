@@ -22,6 +22,7 @@ import org.apache.xbean.asm.ClassReader;
 import org.apache.xbean.asm.Opcodes;
 import org.apache.xbean.asm.commons.EmptyVisitor;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -103,6 +104,9 @@ public class TempClassLoader extends URLClassLoader {
 //        ( && !name.startsWith("javax.faces.") )||
         String resourceName = name.replace('.', '/') + ".class";
         InputStream in = getResourceAsStream(resourceName);
+        if (!(in instanceof BufferedInputStream)) {
+            in = new BufferedInputStream(in);
+        }
         if (in == null) {
             throw new ClassNotFoundException(name);
         }

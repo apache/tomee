@@ -179,7 +179,7 @@ public class Log4jLogStreamFactory implements LogStreamFactory {
         final Properties properties = new Properties();
         InputStream in = null;
         try {
-            in = resource.openStream();
+            in = IO.read(resource);
             properties.load(in);
         } catch (Throwable e) {
             //Ignore
@@ -209,7 +209,7 @@ public class Log4jLogStreamFactory implements LogStreamFactory {
         FileOutputStream out = null;
 
         try {
-            in = resource.openStream();
+            in = IO.read(resource);
             final Properties props = new Properties();
             props.load(in);
 

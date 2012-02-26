@@ -39,6 +39,7 @@ import org.apache.openejb.jee.WebserviceDescription;
 import org.apache.openejb.jee.Webservices;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.FileUtils;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.AnnotationFinder;
 import org.apache.openejb.util.JarExtractor;
@@ -54,6 +55,7 @@ import org.apache.xbean.finder.archive.JarArchive;
 import org.xml.sax.SAXException;
 
 import javax.xml.bind.JAXBException;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -544,7 +546,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         String mainClass = null;
         if (manifestUrl != null) {
             try {
-                final InputStream is = manifestUrl.openStream();
+                final InputStream is = IO.read(manifestUrl);
                 final Manifest manifest = new Manifest(is);
                 mainClass = manifest.getMainAttributes().getValue(Attributes.Name.MAIN_CLASS);
             } catch (IOException e) {
@@ -1415,7 +1417,7 @@ public class DeploymentLoader implements DeploymentFilterable {
     @SuppressWarnings({"unchecked"})
     public static <T> T unmarshal(final Class<T> type, final String descriptor, final URL url) throws OpenEJBException {
         try {
-            return (T) JaxbJavaee.unmarshalJavaee(type, url.openStream());
+            return (T) JaxbJavaee.unmarshalJavaee(type, new BufferedInputStream(url.openStream()));
         } catch (SAXException e) {
             throw new OpenEJBException("Cannot parse the " + descriptor + " file: " + url.toExternalForm(), e);
         } catch (JAXBException e) {
@@ -1514,7 +1516,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         final URL manifestUrl = descriptors.get("MANIFEST.MF");
         if (scanPotentialClientModules && manifestUrl != null) {
             // In this case scanPotentialClientModules really means "require application-client.xml"
-            final InputStream is = manifestUrl.openStream();
+            final InputStream is = new BufferedInputStream(manifestUrl.openStream());
             final Manifest manifest = new Manifest(is);
             final String mainClass = manifest.getMainAttributes().getValue(Attributes.Name.MAIN_CLASS);
             if (mainClass != null) {

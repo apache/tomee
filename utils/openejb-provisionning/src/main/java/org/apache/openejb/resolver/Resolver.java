@@ -17,6 +17,7 @@
 package org.apache.openejb.resolver;
 
 import org.apache.openejb.loader.FileUtils;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.LocationResolver;
 import org.apache.openejb.resolver.maven.Handler;
 import org.apache.openejb.resolver.maven.Parser;
@@ -46,7 +47,7 @@ public class Resolver implements LocationResolver {
                             throw new Exception("Failed to create: " + parentFile);
                         }
                     }
-                    FileUtils.copy(new FileOutputStream(file), url.openStream());
+                    FileUtils.copy(new FileOutputStream(file), IO.read(url));
                 } catch (Exception e) {
                     if (file.exists()) {
                         if (!file.delete()) {

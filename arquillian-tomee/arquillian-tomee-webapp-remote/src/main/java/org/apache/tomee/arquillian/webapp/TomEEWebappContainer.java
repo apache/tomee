@@ -134,7 +134,7 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
         if (file.exists()) {
             Files.delete(file);
         }
-        InputStream is = resource.openStream();
+        InputStream is = org.apache.openejb.loader.IO.read(resource);
 
         try {
             IO.copy(is, file);
