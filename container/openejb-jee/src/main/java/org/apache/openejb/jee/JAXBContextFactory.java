@@ -17,7 +17,9 @@
  */
 package org.apache.openejb.jee;
 
+import java.io.PrintStream;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
@@ -31,8 +33,12 @@ public final class JAXBContextFactory {
 //            } catch (NoClassDefFoundError e) {
 //            }
 //        }
-
-        return JAXBContext.newInstance(s);
+        final Event event = Event.start(s);
+        try {
+            return JAXBContext.newInstance(s);
+        } finally {
+            event.stop();
+        }
     }
 
     public static JAXBContext newInstance(String s, ClassLoader classLoader) throws JAXBException {
@@ -43,7 +49,12 @@ public final class JAXBContextFactory {
 //            }
 //        }
 
-        return JAXBContext.newInstance(s, classLoader);
+        final Event event = Event.start(s);
+        try {
+            return JAXBContext.newInstance(s, classLoader);
+        } finally {
+            event.stop();
+        }
     }
 
     public static JAXBContext newInstance(String s, ClassLoader classLoader, Map<String, ?> properties) throws JAXBException {
@@ -54,7 +65,12 @@ public final class JAXBContextFactory {
 //            }
 //        }
 
-        return JAXBContext.newInstance(s, classLoader, properties);
+        final Event event = Event.start(s);
+        try {
+            return JAXBContext.newInstance(s, classLoader, properties);
+        } finally {
+            event.stop();
+        }
     }
 
     public static JAXBContext newInstance(Class... classes) throws JAXBException {
@@ -64,8 +80,18 @@ public final class JAXBContextFactory {
 //            } catch (NoClassDefFoundError e) {
 //            }
 //        }
-
-        return JAXBContext.newInstance(classes);
+        final StringBuilder sb = new StringBuilder();
+        for (Class clazz : classes) {
+            sb.append(clazz.getName());
+            sb.append(",");
+        }
+        sb.deleteCharAt(sb.length() - 1);
+        final Event event = Event.start(sb.toString());
+        try {
+            return JAXBContext.newInstance(classes);
+        } finally {
+            event.stop();
+        }
     }
 
     public static JAXBContext newInstance(Class[] classes, Map<String, ?> properties) throws JAXBException {
@@ -76,7 +102,18 @@ public final class JAXBContextFactory {
 //            }
 //        }
 
-        return JAXBContext.newInstance(classes, properties);
+        final StringBuilder sb = new StringBuilder();
+        for (Class clazz : classes) {
+            sb.append(clazz.getName());
+            sb.append(",");
+        }
+        sb.deleteCharAt(sb.length() - 1);
+        final Event event = Event.start(sb.toString());
+        try {
+            return JAXBContext.newInstance(classes, properties);
+        } finally {
+            event.stop();
+        }
     }
 
 //    public static class Sxc {
@@ -111,4 +148,27 @@ public final class JAXBContextFactory {
 //        }
 //    }
 
+
+
+    private static class Event {
+        protected final long start = System.nanoTime();
+        private final String description;
+
+        private Event(String description) {
+            this.description = description;
+        }
+
+        public static Event start(String description) {
+            return new Event(description);
+        }
+
+        public void stop() {
+            stop(System.out);
+        }
+
+        public void stop(PrintStream out) {
+            out.printf("JAXBContext.newInstance %s  %s", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - this.start), this.description);
+            out.println();
+        }
+    }
 }
