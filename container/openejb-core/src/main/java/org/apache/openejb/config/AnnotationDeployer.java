@@ -1900,9 +1900,26 @@ public class AnnotationDeployer implements DynamicDeployer {
                     // Handled in CheckClasses.java along with other missing classes
                     continue;
                 }
-                final AnnotationFinder finder = new AnnotationFinder(new ClassesArchive(clazz));
 
-                final AnnotationFinder annotationFinder = createFinder(clazz);
+
+                final AnnotationFinder finder;
+                final AnnotationFinder annotationFinder;
+
+                if (ejbModule.getFinder() instanceof AnnotationFinder) {
+                    final AnnotationFinder af = (AnnotationFinder) ejbModule.getFinder();
+
+                    final List<Class<?>> ancestors = ancestors(clazz);
+                    final String[] names = new String[ancestors.size()];
+                    int i = 0;
+                    for (Class<?> ancestor : ancestors) {
+                        names[i++] = ancestor.getName();
+                    }
+                    annotationFinder = af.select(names);
+                    finder = af.select(clazz.getName());
+                } else {
+                    annotationFinder = createFinder(clazz);
+                    finder = new AnnotationFinder(new ClassesArchive(clazz));
+                }
 
                 /*
                  * @PostConstruct

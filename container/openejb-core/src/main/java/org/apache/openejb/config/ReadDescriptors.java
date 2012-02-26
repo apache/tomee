@@ -44,6 +44,7 @@ import org.apache.openejb.jee.oejb2.JaxbOpenejbJar2;
 import org.apache.openejb.jee.oejb2.OpenejbJarType;
 import org.apache.openejb.jee.oejb3.JaxbOpenejbJar3;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URLs;
@@ -219,7 +220,7 @@ public class ReadDescriptors implements DynamicDeployer {
         URL url = getUrl(module, "resources.xml");
         if (url != null) {
             try {
-                Resources openejb = JaxbOpenejb.unmarshal(Resources.class, url.openStream());
+                Resources openejb = JaxbOpenejb.unmarshal(Resources.class, IO.read(url));
                 module.initResources(openejb);
 
                 // warn if other entities than resources were declared
@@ -246,7 +247,7 @@ public class ReadDescriptors implements DynamicDeployer {
         if (url != null) {
             ValidationConfigType validationConfigType;
             try {
-                validationConfigType = JaxbOpenejb.unmarshal(ValidationConfigType.class, url.openStream(), false);
+                validationConfigType = JaxbOpenejb.unmarshal(ValidationConfigType.class, IO.read(url), false);
                 module.setValidationConfig(validationConfigType);
             } catch (Exception e) {
                 logger.warning("can't read " + url.toString() + " to construct a validation factory, it will be ignored");
@@ -419,7 +420,7 @@ public class ReadDescriptors implements DynamicDeployer {
         } else if (data instanceof URL) {
             URL url = (URL) data;
             try {
-                EntityMappings entitymappings = (EntityMappings) JaxbJavaee.unmarshalJavaee(EntityMappings.class, url.openStream());
+                EntityMappings entitymappings = (EntityMappings) JaxbJavaee.unmarshalJavaee(EntityMappings.class, IO.read(url));
                 ejbModule.getAltDDs().put("openejb-cmp-orm.xml", entitymappings);
             } catch (SAXException e) {
                 throw new OpenEJBException("Cannot parse the openejb-cmp-orm.xml file: " + url.toExternalForm(), e);
@@ -468,7 +469,7 @@ public class ReadDescriptors implements DynamicDeployer {
     public static ApplicationClient readApplicationClient(URL url) throws OpenEJBException {
         ApplicationClient applicationClient;
         try {
-            applicationClient = (ApplicationClient) JaxbJavaee.unmarshalJavaee(ApplicationClient.class, url.openStream());
+            applicationClient = (ApplicationClient) JaxbJavaee.unmarshalJavaee(ApplicationClient.class, IO.read(url));
         } catch (SAXException e) {
             throw new OpenEJBException("Cannot parse the application-client.xml file: "+ url.toExternalForm(), e);
         } catch (JAXBException e) {
@@ -484,7 +485,7 @@ public class ReadDescriptors implements DynamicDeployer {
     public static EjbJar readEjbJar(URL url) throws OpenEJBException {
         try {
             if (isEmptyEjbJar(url)) return new EjbJar();
-            return (EjbJar) JaxbJavaee.unmarshalJavaee(EjbJar.class, url.openStream());
+            return (EjbJar) JaxbJavaee.unmarshalJavaee(EjbJar.class, IO.read(url));
         } catch (SAXException e) {
             throw new OpenEJBException("Cannot parse the ejb-jar.xml file: " + url.toExternalForm(), e);
         } catch (JAXBException e) {
@@ -499,7 +500,7 @@ public class ReadDescriptors implements DynamicDeployer {
     public static Beans readBeans(URL url) throws OpenEJBException {
         try {
             if (isEmptyBeansXml(url)) return new Beans();
-            return (Beans) JaxbJavaee.unmarshalJavaee(Beans.class, url.openStream());
+            return (Beans) JaxbJavaee.unmarshalJavaee(Beans.class, IO.read(url));
         } catch (SAXException e) {
             throw new OpenEJBException("Cannot parse the beans.xml file: " + url.toExternalForm(), e);
         } catch (JAXBException e) {
@@ -520,7 +521,7 @@ public class ReadDescriptors implements DynamicDeployer {
     }
 
     private static boolean isEmpty(URL url, final String rootElement) throws IOException, ParserConfigurationException, SAXException {
-        final LengthInputStream in = new LengthInputStream(url.openStream());
+        final LengthInputStream in = new LengthInputStream(IO.read(url));
         InputSource inputSource = new InputSource(in);
 
         SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -547,7 +548,7 @@ public class ReadDescriptors implements DynamicDeployer {
     public static Webservices readWebservices(URL url) throws OpenEJBException {
         Webservices webservices;
         try {
-            webservices = (Webservices) JaxbJavaee.unmarshalJavaee(Webservices.class, url.openStream());
+            webservices = (Webservices) JaxbJavaee.unmarshalJavaee(Webservices.class, IO.read(url));
         } catch (SAXException e) {
             throw new OpenEJBException("Cannot parse the webservices.xml file: " + url.toExternalForm(), e);
         } catch (JAXBException e) {
@@ -563,7 +564,7 @@ public class ReadDescriptors implements DynamicDeployer {
     public static HandlerChains readHandlerChains(URL url) throws OpenEJBException {
         HandlerChains handlerChains;
         try {
-            handlerChains = (HandlerChains) JaxbJavaee.unmarshalHandlerChains(HandlerChains.class, url.openStream());
+            handlerChains = (HandlerChains) JaxbJavaee.unmarshalHandlerChains(HandlerChains.class, IO.read(url));
         } catch (SAXException e) {
             throw new OpenEJBException("Cannot parse the webservices.xml file: " + url.toExternalForm(), e);
         } catch (JAXBException e) {
@@ -579,7 +580,7 @@ public class ReadDescriptors implements DynamicDeployer {
     public static JavaWsdlMapping readJaxrpcMapping(URL url) throws OpenEJBException {
         JavaWsdlMapping wsdlMapping;
         try {
-            wsdlMapping = (JavaWsdlMapping) JaxbJavaee.unmarshalJavaee(JavaWsdlMapping.class, url.openStream());
+            wsdlMapping = (JavaWsdlMapping) JaxbJavaee.unmarshalJavaee(JavaWsdlMapping.class, IO.read(url));
         } catch (SAXException e) {
             throw new OpenEJBException("Cannot parse the JaxRPC mapping file: " + url.toExternalForm(), e);
         } catch (JAXBException e) {
@@ -599,7 +600,7 @@ public class ReadDescriptors implements DynamicDeployer {
             WSDLReader reader = factory.newWSDLReader();
             reader.setFeature("javax.wsdl.verbose", true);
             reader.setFeature("javax.wsdl.importDocuments", true);
-            WsdlResolver wsdlResolver = new WsdlResolver(new URL(url, ".").toExternalForm(), new InputSource(url.openStream()));
+            WsdlResolver wsdlResolver = new WsdlResolver(new URL(url, ".").toExternalForm(), new InputSource(IO.read(url)));
             definition = reader.readWSDL(wsdlResolver);
         } catch (IOException e) {
             throw new OpenEJBException("Cannot read the wsdl file: " + url.toExternalForm(), e);
@@ -612,10 +613,10 @@ public class ReadDescriptors implements DynamicDeployer {
     public static Connector readConnector(URL url) throws OpenEJBException {
         Connector connector;
         try {
-            connector = (Connector) JaxbJavaee.unmarshalJavaee(Connector.class, url.openStream());
+            connector = (Connector) JaxbJavaee.unmarshalJavaee(Connector.class, IO.read(url));
         } catch (JAXBException e) {
             try {
-                Connector10 connector10 = (Connector10) JaxbJavaee.unmarshalJavaee(Connector10.class, url.openStream());
+                Connector10 connector10 = (Connector10) JaxbJavaee.unmarshalJavaee(Connector10.class, IO.read(url));
                 connector = Connector.newConnector(connector10);
             } catch (ParserConfigurationException e1) {
                 throw new OpenEJBException("Cannot parse the ra.xml file: " + url.toExternalForm(), e);
@@ -639,7 +640,7 @@ public class ReadDescriptors implements DynamicDeployer {
     public static WebApp readWebApp(URL url) throws OpenEJBException {
         WebApp webApp;
         try {
-            webApp = (WebApp) JaxbJavaee.unmarshalJavaee(WebApp.class, url.openStream());
+            webApp = (WebApp) JaxbJavaee.unmarshalJavaee(WebApp.class, IO.read(url));
         } catch (SAXException e) {
             throw new OpenEJBException("Cannot parse the web.xml file: " + url.toExternalForm(), e);
         } catch (JAXBException e) {
@@ -655,7 +656,7 @@ public class ReadDescriptors implements DynamicDeployer {
     public static TldTaglib readTldTaglib(URL url) throws OpenEJBException {
         TldTaglib tldTaglib;
         try {
-            tldTaglib = (TldTaglib) JaxbJavaee.unmarshalTaglib(TldTaglib.class, url.openStream());
+            tldTaglib = (TldTaglib) JaxbJavaee.unmarshalTaglib(TldTaglib.class, IO.read(url));
         } catch (SAXException e) {
             throw new OpenEJBException("Cannot parse the JSP tag library definition file: " + url.toExternalForm(), e);
         } catch (JAXBException e) {
@@ -672,7 +673,7 @@ public class ReadDescriptors implements DynamicDeployer {
         FacesConfig facesConfig;
         try {
      		facesConfig = (FacesConfig) JaxbJavaee
-    		.unmarshalJavaee(FacesConfig.class, url.openStream());
+    		.unmarshalJavaee(FacesConfig.class, IO.read(url));
         } catch (SAXException e) {
             throw new OpenEJBException("Cannot parse the faces configuration file: " + url.toExternalForm(), e);
         } catch (JAXBException e) {
@@ -708,7 +709,7 @@ public class ReadDescriptors implements DynamicDeployer {
         }
 
         InputStream get() throws IOException {
-            return url.openStream();
+            return IO.read(url);
         }
     }
 

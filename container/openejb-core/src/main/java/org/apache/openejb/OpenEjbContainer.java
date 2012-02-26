@@ -75,6 +75,10 @@ import java.util.Set;
  */
 public class OpenEjbContainer extends EJBContainer {
 
+    static {
+        Core.warmup();
+    }
+
     public static final String OPENEJB_EMBEDDED_REMOTABLE = "openejb.embedded.remotable";
     static Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, OpenEjbContainer.class);
 

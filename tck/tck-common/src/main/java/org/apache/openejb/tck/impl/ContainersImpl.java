@@ -19,6 +19,7 @@ package org.apache.openejb.tck.impl;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.cdi.ThreadSingletonServiceImpl;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.tck.OpenEJBTckDeploymentRuntimeException;
 import org.apache.openejb.tck.util.ZipUtil;
@@ -226,7 +227,7 @@ public class ContainersImpl implements Containers {
                 InputStream src = zin;
 
                 if (resources.containsKey(entryName)) {
-                    src = resources.get(entryName).openStream();
+                    src = IO.read(resources.get(entryName));
                 }
                 resources.remove(entryName);
 
@@ -236,7 +237,7 @@ public class ContainersImpl implements Containers {
 
             for (Map.Entry<String, URL> entry : resources.entrySet()) {
                 zout.putNextEntry(new ZipEntry(entry.getKey()));
-                InputStream in = entry.getValue().openStream();
+                InputStream in = IO.read(entry.getValue());
                 ZipUtil.copy(in, zout);
                 in.close();
             }

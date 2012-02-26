@@ -17,6 +17,7 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
@@ -125,7 +126,7 @@ public class EnvEntriesPropertiesDeployer implements DynamicDeployer {
         if (propsUrl == null) return Collections.emptyMap();
         try {
 
-            InputStream in = propsUrl.openStream();
+            InputStream in = IO.read(propsUrl);
             Properties envEntriesProps = new Properties();
             envEntriesProps.load(in);
 

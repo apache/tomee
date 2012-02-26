@@ -36,13 +36,13 @@ public class SafeToolkit {
     }
 
     private Class forName(String className) throws OpenEJBException {
-        Class clazz = null;
         try {
-            clazz = Class.forName(className);
+            final ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            return loader.loadClass(className);
         } catch (ClassNotFoundException cnfe) {
             OpenEJBErrorHandler.classNotFound(systemLocation, className);
+            return null;
         }
-        return clazz;
     }
 
     public Object newInstance(String className) throws OpenEJBException {

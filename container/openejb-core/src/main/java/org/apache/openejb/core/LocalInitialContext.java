@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.core;
 
+import org.apache.openejb.Core;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.Injection;
 import org.apache.openejb.InjectionProcessor;
@@ -43,6 +44,10 @@ import java.util.List;
  * @version $Rev$ $Date$
  */
 public class LocalInitialContext extends ContextWrapper {
+
+    static {
+        Core.warmup();
+    }
 
     public static final String OPENEJB_EMBEDDED_REMOTABLE = "openejb.embedded.remotable";
     static Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, LocalInitialContext.class);

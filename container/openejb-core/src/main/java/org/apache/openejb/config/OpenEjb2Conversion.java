@@ -61,6 +61,7 @@ import org.apache.openejb.jee.oejb2.WebServiceSecurityType;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.EjbLink;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.loader.IO;
 
 import javax.xml.bind.JAXBElement;
 import java.io.ByteArrayInputStream;
@@ -95,7 +96,7 @@ public class OpenEjb2Conversion implements DynamicDeployer {
         }
         if (altDD instanceof URL) {
             try {
-                altDD = JaxbOpenejbJar2.unmarshal(OpenejbJarType.class, ((URL)altDD).openStream(), false);
+                altDD = JaxbOpenejbJar2.unmarshal(OpenejbJarType.class, IO.read(((URL)altDD)), false);
             } catch (Exception e) {
                 // todo warn about not being able to parse sun descriptor
             }

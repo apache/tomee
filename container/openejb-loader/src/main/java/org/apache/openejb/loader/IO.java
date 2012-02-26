@@ -147,7 +147,7 @@ public class IO {
 
     public static String slurp(URL url) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        copy(url.openStream(), out);
+        copy(read(url), out);
         return new String(out.toByteArray());
     }
 
@@ -270,5 +270,9 @@ public class IO {
 
     public static InputStream read(byte[] content) {
         return new ByteArrayInputStream(content);
+    }
+
+    public static InputStream read(URL url) throws IOException {
+        return url.openStream();
     }
 }

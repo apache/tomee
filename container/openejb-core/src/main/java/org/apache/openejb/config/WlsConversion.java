@@ -24,6 +24,7 @@ import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.wls.JaxbWls;
 import org.apache.openejb.jee.wls.WeblogicEjbJar;
 import org.apache.openejb.jee.wls.WeblogicEnterpriseBean;
+import org.apache.openejb.loader.IO;
 
 import javax.xml.bind.JAXBElement;
 import java.io.ByteArrayInputStream;
@@ -48,7 +49,7 @@ public class WlsConversion implements DynamicDeployer {
         }
         if (altDD instanceof URL) {
             try {
-                altDD = JaxbWls.unmarshal(type, ((URL)altDD).openStream());
+                altDD = JaxbWls.unmarshal(type, IO.read(((URL)altDD)));
             } catch (Exception e) {
                 e.printStackTrace();
                 // todo warn about not being able to parse sun descriptor

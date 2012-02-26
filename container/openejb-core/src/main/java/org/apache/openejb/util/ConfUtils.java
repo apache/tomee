@@ -100,7 +100,7 @@ public class ConfUtils {
 
         if (file.exists() && !overwrite) return file;
 
-        IO.copy(resource.openStream(), file);
+        IO.copy(IO.read(resource), file);
 
         return file;
     }

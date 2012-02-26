@@ -22,6 +22,7 @@ import org.apache.openejb.jee.JAXBContextFactory;
 import org.apache.openejb.jee.oejb2.GeronimoEjbJarType;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.jpa.EntityMappings;
+import org.apache.openejb.loader.IO;
 import org.custommonkey.xmlunit.Diff;
 import org.xml.sax.SAXException;
 
@@ -115,7 +116,7 @@ public class OpenEjb2ConversionTest extends TestCase {
             XMLUnit.setNormalizeWhitespace(true);
             XMLUnit.setNormalize(true);
 
-            isr = new InputStreamReader(getClass().getClassLoader().getResource(expectedFile).openStream());
+            isr = new InputStreamReader(IO.read(getClass().getClassLoader().getResource(expectedFile)));
             final org.w3c.dom.Document actualDoc = XMLUnit.buildDocument(XMLUnit.newTestParser(), new StringReader(actual));
             final org.w3c.dom.Document expectedDoc = XMLUnit.buildDocument(XMLUnit.newControlParser(), isr);
 
