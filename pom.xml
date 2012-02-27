@@ -1215,6 +1215,10 @@
             <groupId>javax.transaction</groupId>
             <artifactId>jta</artifactId>
           </exclusion>
+          <exclusion>
+            <groupId>c3p0</groupId>
+            <artifactId>c3p0</artifactId>
+          </exclusion>
         </exclusions>
       </dependency>
       <dependency>
@@ -1333,6 +1337,12 @@
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-impl</artifactId>
         <version>${org.apache.openwebbeans.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>javassist</groupId>
+            <artifactId>javassist</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
