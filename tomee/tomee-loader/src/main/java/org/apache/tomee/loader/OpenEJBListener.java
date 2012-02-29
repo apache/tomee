@@ -226,19 +226,21 @@ public class OpenEJBListener implements LifecycleListener {
     }
      
     private static File findOpenEjbWarInContext(File contextDir) {
-        // does this war have a web-inf lib dir
-        File webInfLib = new File(new File(contextDir, "WEB-INF"), "lib");
+        // this should be a webapp
+        if (!new File(contextDir, "WEB-INF").exists()) {
+            return null;
+        }
+
+        // this should be the openejb war...
+        // make sure it has a lib directory
+        File webInfLib = new File(contextDir, "lib");
         if (!webInfLib.isDirectory()) {
              return null;
         }
         // iterate over the libs looking for the openejb-loader-*.jar
         for (File file : webInfLib.listFiles()) {
-            if (file.getName().startsWith("tomee-loader-") && file.getName().endsWith(".jar")) {
-                // this should be the openejb war...
-                // make sure it has a lib directory
-                if (new File(contextDir, "lib").isDirectory()) {
-                    return contextDir;
-                }
+            if (file.getName().startsWith("tomee-catalina-") && file.getName().endsWith(".jar")) {
+                return contextDir;
             }
         }
         return null;
