@@ -22,17 +22,17 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.Map;
-import java.util.LinkedHashMap;
 import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * ejb-jar_3_1.xsd
@@ -79,7 +79,6 @@ import java.util.Collection;
         "ejbClientJar"
         })
 public class EjbJar implements NamedModule {
-
     @XmlElement(name = "module-name")
     protected String moduleName;
     @XmlTransient
