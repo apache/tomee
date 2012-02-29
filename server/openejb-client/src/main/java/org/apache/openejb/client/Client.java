@@ -67,21 +67,13 @@ public class Client {
 
     public static Response request(Request req, Response res, ServerMetaData server) throws RemoteException {
         try {
-            return client.processRequest(req, res, server, null);
+            return client.processRequest(req, res, server);
         } finally {
             failed.remove();
         }
     }
 
-    public static Response request(Request req, Response res, ServerMetaData server, URI preferedServerURI) throws RemoteException {
-        try {
-            return client.processRequest(req, res, server, preferedServerURI);
-        } finally {
-            failed.remove();
-        }
-    }
-
-    protected Response processRequest(Request req, Response res, ServerMetaData server, URI preferredServerURI) throws RemoteException {
+    protected Response processRequest(Request req, Response res, ServerMetaData server) throws RemoteException {
         if (server == null){
             throw new IllegalArgumentException("Server instance cannot be null");
         }
@@ -96,14 +88,7 @@ public class Client {
 
         final Connection conn;
         try {
-            if (preferredServerURI != null) {
-                conn = ConnectionManager.getConnection(preferredServerURI);
-            } else {
-                conn = ConnectionManager.getConnection(cluster, server, req);
-            }
-            if (res instanceof EJBResponse) {
-                ((EJBResponse) res).setResponseServerURI(conn.getURI());
-            }
+            conn = ConnectionManager.getConnection(cluster, server, req);
         } catch (IOException e) {
             throw new RemoteException("Unable to connect", e);
         }
@@ -290,7 +275,10 @@ public class Client {
                 }
             }
 
-            final long time = System.nanoTime() - start;
+            if (logger.isLoggable(Level.FINEST)) {
+                final long time = System.nanoTime() - start;
+                logger.log(Level.FINEST, "");
+            }
 
         } catch (RemoteException e) {
             throw e;
@@ -306,9 +294,9 @@ public class Client {
             conn.discard();
             //If the preferred server URI is configured, we will not try to fail over to other servers
             //Currently, while calling Future.cancel method remotely, the initial business method invocation server URI should be used.
-            if ((e instanceof RetryException || getRetry()) && preferredServerURI == null) {
+            if ((e instanceof RetryException || getRetry())) {
                 try {
-                    processRequest(req, res, server, null);
+                    processRequest(req, res, server);
                 } catch (RemoteFailoverException re) {
                     throw re;
                 } catch (RemoteException re) {
