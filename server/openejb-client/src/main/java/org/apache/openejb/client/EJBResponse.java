@@ -27,8 +27,6 @@ public class EJBResponse implements ClusterableResponse {
     private transient Object result;
     private transient ServerMetaData server;
 
-    private transient URI responseServerURI;
-
     public EJBResponse() {
 
     }
@@ -95,14 +93,6 @@ public class EJBResponse implements ClusterableResponse {
         s.append(':').append(result);
 
         return s.toString();
-    }
-
-    public URI getResponseServerURI() {
-        return responseServerURI;
-    }
-
-    public void setResponseServerURI(URI responseServerURI) {
-        this.responseServerURI = responseServerURI;
     }
 
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
