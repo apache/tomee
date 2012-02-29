@@ -17,11 +17,11 @@
  */
 package org.apache.tomee.installer;
 
+import org.apache.tomee.common.TomcatVersion;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.tomee.common.TomcatVersion;
 /**
  * This class is used to verify that all the main directories and files exist.
  * @see #verify() for more details
@@ -213,9 +213,15 @@ public class Paths {
     public File getOpenEJBTomcatLoaderJar() {
         return findOpenEJBJar("tomee-loader");
     }
+
     public File getJavaEEAPIJar() {
         return findOpenEJBJar("javaee-api");
     }
+
+    public File getJAXBImpl() {
+        return findOpenEJBJar("jaxb-impl");
+    }
+
     /**
      * Returns the openejb-javaagent.jar file
      * @return the openejb-javaagent.jar file
