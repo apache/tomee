@@ -38,6 +38,9 @@ import java.net.URI;
 
 public class Client {
     private static final Logger logger = Logger.getLogger("OpenEJB.client");
+    private static final boolean FINEST = logger.isLoggable(Level.FINEST);
+    private static final boolean FINER = logger.isLoggable(Level.FINER);
+    private static final boolean FINE = logger.isLoggable(Level.FINE);
 
     public static final ThreadLocal<Set<URI>> failed = new ThreadLocal<Set<URI>>();
 
@@ -275,9 +278,10 @@ public class Client {
                 }
             }
 
-            if (logger.isLoggable(Level.FINEST)) {
+            if (FINEST) {
                 final long time = System.nanoTime() - start;
-                logger.log(Level.FINEST, "");
+                final String message = String.format("Invocation %sns - %s - Request(%s) - Response(%s)", time, conn.getURI(), req, res);
+                logger.log(Level.FINEST, message);
             }
 
         } catch (RemoteException e) {
@@ -285,16 +289,13 @@ public class Client {
         } catch (IOException e){
             final URI uri = conn.getURI();
             final Set<URI> failed = getFailed();
-            final Level level = Level.FINER;
 
-            if (logger.isLoggable(level)) {
-                logger.log(level, "Add Failed " + uri.toString());
+            if (FINER) {
+                logger.log(Level.FINER, "Add Failed " + uri.toString());
             }
             failed.add(uri);
             conn.discard();
-            //If the preferred server URI is configured, we will not try to fail over to other servers
-            //Currently, while calling Future.cancel method remotely, the initial business method invocation server URI should be used.
-            if ((e instanceof RetryException || getRetry())) {
+            if (e instanceof RetryException || getRetry()) {
                 try {
                     processRequest(req, res, server);
                 } catch (RemoteFailoverException re) {
@@ -351,10 +352,17 @@ public class Client {
     private static final Map<ServerMetaData, ClusterMetaData> clusters = new ConcurrentHashMap<ServerMetaData, ClusterMetaData>();
 
     private static void setClusterMetaData(ServerMetaData server, ClusterMetaData cluster) {
-        final Level level = Level.INFO;
 
-        if (logger.isLoggable(level)) {
-            logger.log(level, "Update ClusterMetaData(version=" + cluster.getVersion() + ", uris=" + cluster.getLocations().length);
+        if (FINE) {
+            logger.log(Level.FINE, "Update ClusterMetaData(version=" + cluster.getVersion() + ", uris=" + cluster.getLocations().length);
+        }
+
+        if (FINER) {
+            int i = 0;
+            for (URI uri : cluster.getLocations()) {
+                final String format = String.format("ClusterMetaData(version=%s) - URI #%s %s", cluster.getVersion(), ++i, uri.toASCIIString());
+                logger.log(Level.FINER, format);
+            }
         }
 
         clusters.put(server, cluster);
