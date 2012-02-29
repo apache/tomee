@@ -260,8 +260,7 @@ public class PersistenceUnit {
     }
 
     public SharedCacheMode getSharedCacheMode() {
-     // TODO: Is this the correct default?
-        return (sharedCacheMode == null) ? SharedCacheMode.NONE : sharedCacheMode;
+        return (sharedCacheMode == null) ? SharedCacheMode.UNSPECIFIED : sharedCacheMode;
     }
 
     public ValidationMode getValidationMode() {
