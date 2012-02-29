@@ -16,12 +16,14 @@
  */
 @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(value=javax.xml.bind.annotation.adapters.CollapsedStringAdapter.class,type=String.class)
 @javax.xml.bind.annotation.XmlSchema(
-        namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED,
-        xmlns = {
+    namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED,
+    xmlns = {
         @javax.xml.bind.annotation.XmlNs(prefix = "o", namespaceURI = "http://openejb.apache.org/xml/ns/openejb-jar-2.2"),
         @javax.xml.bind.annotation.XmlNs(prefix = "sys", namespaceURI = "http://geronimo.apache.org/xml/ns/deployment-1.2"),
         @javax.xml.bind.annotation.XmlNs(prefix = "pkgen", namespaceURI = "http://openejb.apache.org/xml/ns/pkgen-2.1"),
         @javax.xml.bind.annotation.XmlNs(prefix = "naming", namespaceURI = "http://geronimo.apache.org/xml/ns/naming-1.2"),
-        @javax.xml.bind.annotation.XmlNs(prefix = "app", namespaceURI = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2")
-                }
-) package org.apache.openejb.jee.oejb2;
+        @javax.xml.bind.annotation.XmlNs(prefix = "app", namespaceURI = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2"),
+        @javax.xml.bind.annotation.XmlNs(prefix = "secu", namespaceURI = "http://geronimo.apache.org/xml/ns/security-2.0")
+    }
+)
+package org.apache.openejb.jee.oejb2;

@@ -17,18 +17,18 @@
 package org.apache.openejb.jee.oejb2;
 
 import junit.framework.TestCase;
-import junit.framework.AssertionFailedError;
+import org.custommonkey.xmlunit.DetailedDiff;
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.Difference;
+import org.custommonkey.xmlunit.DifferenceListener;
+import org.w3c.dom.Node;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
-
-import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.custommonkey.xmlunit.DetailedDiff;
-
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @version $Rev$ $Date$
@@ -68,7 +68,23 @@ public class ConversionTest extends TestCase {
         String expected = readContent(getInputStream("geronimo-openejb-converted.xml"));
 
         Diff myDiff = new DetailedDiff(new Diff(expected, result));
-        assertTrue("Files are not similar " + myDiff, myDiff.similar());
+        final AtomicInteger differenceNumber = new AtomicInteger(0); // just to get an int wrapper for the test
+        myDiff.overrideDifferenceListener(new DifferenceListener() {
+            @Override
+            public int differenceFound(Difference difference) {
+                if (!difference.isRecoverable()) {
+                    differenceNumber.incrementAndGet();
+                    System.err.println(">>> " + difference.toString());
+                }
+                return 0;
+            }
+
+            @Override
+            public void skippedComparison(Node node, Node node1) {
+                // no-op
+            }
+        });
+        assertTrue("Files are not similar", myDiff.similar());
     }
 
     private <T> void unmarshalAndMarshal(Class<T> type, java.lang.String xmlFileName, java.lang.String expectedFile) throws Exception {
