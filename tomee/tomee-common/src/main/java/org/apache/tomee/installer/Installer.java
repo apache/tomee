@@ -119,6 +119,14 @@ public class Installer {
 
         // a bit odd but we don't want to depend on OSGi and geronimo jaxb api ContextFinder depends on it
         copyClasses(paths.getJavaEEAPIJar(), new File(endorsed, "jaxb-api.jar"), "javax/xml/bind/.*", "javax/xml/bind/ContextFinder.class");
+        final File jaxbImpl = new File(endorsed, "jaxb-impl.jar");
+        if (!jaxbImpl.exists()) {
+            try {
+                Installers.copyFile(paths.getJAXBImpl(), jaxbImpl);
+            } catch (IOException e) {
+                alerts.addError("can't copy " + paths.getJAXBImpl().getPath() + " to " + endorsed.getPath() + "/jaxb-impl.jar");
+            }
+        }
     }
 
     private void copyClasses(File sourceJar, File destinationJar, String pattern, String excludePattern) {
