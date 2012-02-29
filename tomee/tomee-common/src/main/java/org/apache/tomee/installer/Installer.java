@@ -114,10 +114,9 @@ public class Installer {
         File endorsed = new File(paths.getCatalinaHomeDir(), "endorsed");
         endorsed.mkdir();
 
-        File sourceJar = paths.getJavaEEAPIJAr();
 
-        copyClasses(sourceJar, new File(endorsed, "annotation-api.jar"), "javax/annotation/.*");
-//        copyClasses(sourceJar, new File(endorsed, "jaxb-api.jar"), "javax/xml/bind/.*");
+        copyClasses(paths.getJavaEEAPIJar(), new File(endorsed, "annotation-api.jar"), "javax/annotation/.*");
+        copyClasses(paths.getJavaEEAPIJar(), new File(endorsed, "jaxb-api.jar"), "javax/xml/bind/.*");
     }
 
     private void copyClasses(File sourceJar, File destinationJar, String pattern) {

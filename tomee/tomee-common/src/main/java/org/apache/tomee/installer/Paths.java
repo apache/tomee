@@ -213,7 +213,7 @@ public class Paths {
     public File getOpenEJBTomcatLoaderJar() {
         return findOpenEJBJar("tomee-loader");
     }
-    public File getJavaEEAPIJAr() {
+    public File getJavaEEAPIJar() {
         return findOpenEJBJar("javaee-api");
     }
     /**
