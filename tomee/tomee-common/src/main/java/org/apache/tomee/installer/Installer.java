@@ -103,7 +103,7 @@ public class Installer {
         removeTomcatLibJar("annotations-api.jar");
         removeTomcatLibJar("el-api.jar");
         addJavaeeInEndorsed();
-        
+
         if (!alerts.hasErrors()) {
             status = Status.REBOOT_REQUIRED;
         }
@@ -115,11 +115,13 @@ public class Installer {
         endorsed.mkdir();
 
 
-        copyClasses(paths.getJavaEEAPIJar(), new File(endorsed, "annotation-api.jar"), "javax/annotation/.*");
-        copyClasses(paths.getJavaEEAPIJar(), new File(endorsed, "jaxb-api.jar"), "javax/xml/bind/.*");
+        copyClasses(paths.getJavaEEAPIJar(), new File(endorsed, "annotation-api.jar"), "javax/annotation/.*", null);
+
+        // a bit odd but we don't want to depend on OSGi and geronimo jaxb api ContextFinder depends on it
+        copyClasses(paths.getJavaEEAPIJar(), new File(endorsed, "jaxb-api.jar"), "javax/xml/bind/.*", "javax/xml/bind/ContextFinder.class");
     }
 
-    private void copyClasses(File sourceJar, File destinationJar, String pattern) {
+    private void copyClasses(File sourceJar, File destinationJar, String pattern, String excludePattern) {
         if (sourceJar == null) throw new NullPointerException("sourceJar");
         if (destinationJar == null) throw new NullPointerException("destinationJar");
         if (pattern == null) throw new NullPointerException("pattern");
@@ -137,6 +139,8 @@ public class Installer {
                 String entryName = entry.getName();
 
                 if (!entryName.matches(pattern)) continue;
+
+                if (excludePattern != null && entryName.matches(excludePattern)) continue;
 
                 destination.putNextEntry(new ZipEntry(entryName));
 
@@ -262,6 +266,10 @@ public class Installer {
         }
     }
 
+    // NOTE: we specify the jaxbcontext implementation because
+    //       we are using geronimo jaxb API and we don't want to go to
+    //       the geronimo locator to find the implementation
+    //       because it needs some OSGi API we don't want to add
     public void installJavaagent() {
         if (agentInstalled && !force) {
 //            addInfo("OpenEJB Agent already installed");
