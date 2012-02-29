@@ -124,10 +124,11 @@ class SetupCommand {
 
         // clean up duplicate jars since in TomEE it is useless
         // = gain of space ;)
-        ant.delete(file: "${workDir}/apache-tomcat-${tomcatVersion}/webapps/tomee/lib/openejb-javaagent-${openejbVersion}.jar")
-        ant.delete(file: "${workDir}/apache-tomcat-${tomcatVersion}/webapps/tomee/lib/tomee-loader-${openejbVersion}.jar")
-        ant.delete(file: "${workDir}/apache-tomcat-${tomcatVersion}/webapps/tomee/WEB-INF/lib/tomee-loader-${openejbVersion}.jar")
-        ant.delete(file: "${workDir}/apache-tomcat-${tomcatVersion}/webapps/tomee/WEB-INF/lib/swizzle-stream-1.6.1.jar")
+        ant.delete(file: paths.findOpenEJBJar("openejb-javaagent"))
+        ant.delete(file: paths.findOpenEJBJar("jaxb-impl"))
+        ant.delete(file: paths.findOpenEJBJar("tomee-loader"))
+        ant.delete(file: paths.findOpenEJBWebJar("tomee-loader"))
+        ant.delete(file: paths.findOpenEJBWebJar("swizzle-stream"))
 
 		log.info("Assigning execute privileges to scripts in Tomcat bin directory")
 		ant.chmod(dir: "${workDir}/apache-tomcat-${tomcatVersion}/bin", perm: "u+x", includes: "**/*.sh")

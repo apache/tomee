@@ -52,6 +52,8 @@ public class Paths {
      */
     private File serverXmlFile;
 
+    private File openEJBWebLibDir;
+
     public Paths(File openejbWarDir) {
         this.openejbWarDir = openejbWarDir;
     }
@@ -241,12 +243,19 @@ public class Paths {
         return findOpenEJBJar("tomee-common");
     }
 
-    private File findOpenEJBJar(String namePrefix) {
-        File openEJBLibDir = getOpenEJBLibDir();
-        if (openEJBLibDir == null) return null;
+    public File findOpenEJBJar(String namePrefix) {
+        return findJar(getOpenEJBLibDir(), namePrefix);
+    }
+
+    public File findOpenEJBWebJar(String namePrefix) {
+        return findJar(getOpenEJBWebLibDir(), namePrefix);
+    }
+
+    private File findJar(File dir, String namePrefix) {
+        if (dir == null) return null;
 
         File openejbLoaderJar = null;
-        for (File file : openEJBLibDir.listFiles()) {
+        for (File file : dir.listFiles()) {
             if (file.getName().startsWith(namePrefix + "-") && file.getName().endsWith(".jar")) {
                 return file;
             }
@@ -254,6 +263,7 @@ public class Paths {
 
         return openejbLoaderJar;
     }
+
     /**Verifies the following:
      * <ul>
      * 	<li>{@link #openejbWarDir} is unpacked</li>
@@ -418,5 +428,12 @@ public class Paths {
             return new File(fileName.trim());
         }
         return null;
+    }
+
+    public File getOpenEJBWebLibDir() {
+        if (openEJBWebLibDir == null) {
+            openEJBWebLibDir = new File(openejbWarDir, "WEB-INF/lib");
+        }
+        return openEJBWebLibDir;
     }
 }

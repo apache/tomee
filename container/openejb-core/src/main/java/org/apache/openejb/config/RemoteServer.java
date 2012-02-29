@@ -133,6 +133,12 @@ public class RemoteServer {
                         javaagentJar = file;
                     }
                 }
+                if (javaagentJar == null) {
+                    javaagentJar = new File(home, "lib/openejb-javaagent.jar");
+                    if (!javaagentJar.exists()) {
+                        javaagentJar = null;
+                    }
+                }
 
                 if (openejbJar == null){
                     throw new IllegalStateException("Cannot find the openejb-core jar in "+lib.getAbsolutePath());
