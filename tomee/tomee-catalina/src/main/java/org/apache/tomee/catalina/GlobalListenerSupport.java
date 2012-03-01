@@ -360,7 +360,6 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
 
     //Hashmap for monitoring children of engine and host
     public static class MoniterableHashMap extends HashMap<Object, Object> {
-        private static final long serialVersionUID = 1L;
         private final Object source;
         private final String propertyName;
         private final PropertyChangeListener listener;
