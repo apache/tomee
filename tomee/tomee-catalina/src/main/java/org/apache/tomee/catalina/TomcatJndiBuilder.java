@@ -69,7 +69,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.persistence.JtaEntityManager;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.spi.ContainerSystem;
-import org.apache.openejb.util.ContextUtil;
+import org.apache.openejb.util.Contexts;
 import org.apache.tomee.common.EjbFactory;
 import org.apache.tomee.common.EnumFactory;
 import org.apache.tomee.common.LookupFactory;
@@ -204,7 +204,7 @@ public class TomcatJndiBuilder {
                 try {
                     final String key = entry.getKey();
                     Object value = normalize(entry.getValue());
-                    ContextUtil.mkdirs(root, key);
+                    Contexts.createSubcontexts(root, key);
                     root.rebind(key, value);
                 } catch (NamingException e) {
                     e.printStackTrace();
