@@ -63,7 +63,6 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -305,14 +304,7 @@ public class ReadDescriptors implements DynamicDeployer {
                     try {
                         File tempFile = File.createTempFile("openejb-jar-", ".xml");
                         try {
-                            FileOutputStream out = new FileOutputStream(tempFile);
-                            InputStream in = source.get();
-                            int b = in.read();
-                            while (b != -1){
-                                out.write(b);
-                                b = in.read();
-                            }
-                            out.close();
+                            IO.copy(source.get(), tempFile);
                         } catch (IOException e) {
                         }
                         filePath = tempFile.getAbsolutePath();

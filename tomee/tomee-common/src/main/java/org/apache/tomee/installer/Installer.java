@@ -17,18 +17,13 @@
  */
 package org.apache.tomee.installer;
 
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 
 import java.io.ByteArrayOutputStream;
-import java.io.Closeable;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
-import java.io.Flushable;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.jar.JarFile;
@@ -138,7 +133,7 @@ public class Installer {
 
         try {
 
-            final ZipInputStream source = new ZipInputStream(new FileInputStream(sourceJar));
+            final ZipInputStream source = new ZipInputStream(IO.read(sourceJar));
 
             final ByteArrayOutputStream destinationBuffer = new ByteArrayOutputStream(524288);
             final ZipOutputStream destination = new ZipOutputStream(destinationBuffer);
@@ -152,50 +147,18 @@ public class Installer {
 
                 destination.putNextEntry(new ZipEntry(entryName));
 
-                copy(source, destination);
+                IO.copy(source, destination);
             }
 
-            close(source);
-            close(destination);
+            IO.close(source);
+            IO.close(destination);
 
-            writeToFile(destinationJar, destinationBuffer);
+            IO.copy(destinationBuffer.toByteArray(), destinationJar);
         } catch (IOException e) {
             alerts.addError(e.getMessage());
         }
     }
 
-    public static void copy(InputStream from, OutputStream to) throws IOException {
-        byte[] buffer = new byte[1024];
-        int length = 0;
-        while ((length = from.read(buffer)) != -1) {
-            to.write(buffer, 0, length);
-        }
-    }
-
-    public static void close(Closeable closeable) throws IOException {
-        if (closeable == null) return;
-        try {
-            if (closeable instanceof Flushable) {
-                ((Flushable) closeable).flush();
-            }
-        } catch (IOException e) {
-            // no-op
-        }
-        try {
-            closeable.close();
-        } catch (IOException e) {
-            // no-op
-        }
-    }
-
-
-    private static void writeToFile(File file, ByteArrayOutputStream byteArrayOutputStream) throws IOException {
-        final byte[] bytes = byteArrayOutputStream.toByteArray();
-
-        final FileOutputStream fileOutputStream = new FileOutputStream(file);
-        fileOutputStream.write(bytes);
-        fileOutputStream.close();
-    }
 
     private void removeTomcatLibJar(String name) {
         File annotationApi = new File(paths.getCatalinaLibDir(), name);

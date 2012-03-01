@@ -314,16 +314,7 @@ public class Logger {
 
             final File file = new File(conf, "logging.properties");
 
-            final Properties properties = new Properties();
-
-            final InputStream read = IO.read(file);
-
-            try {
-                properties.load(read);
-            } finally {
-                read.close();
-            }
-            return properties;
+            return IO.readProperties(file);
         } catch (IOException e) {
             return new Properties();
         }

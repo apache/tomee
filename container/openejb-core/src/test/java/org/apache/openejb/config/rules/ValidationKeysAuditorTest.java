@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.ResourceBundle;
@@ -33,6 +34,7 @@ import java.util.Map.Entry;
 
 import org.apache.openejb.config.rules.KeysAnnotationVisitor.ClassInfo;
 import org.apache.openejb.config.rules.KeysAnnotationVisitor.MethodInfo;
+import org.apache.openejb.loader.IO;
 import org.apache.xbean.asm.ClassReader;
 import org.apache.xbean.asm.ClassWriter;
 import org.codehaus.swizzle.confluence.Confluence;
@@ -330,12 +332,12 @@ public class ValidationKeysAuditorTest {
 
     private static void file(File file, KeysAnnotationVisitor visitor) {
         try {
-            FileInputStream in = new FileInputStream(file);
+            InputStream in = IO.read(file);
             try {
                 ClassReader classReader = new ClassReader(in);
                 classReader.accept(visitor, ClassWriter.COMPUTE_MAXS);
             } finally {
-                in.close();
+                IO.close(in);
             }
         } catch (IOException e) {
             e.printStackTrace();

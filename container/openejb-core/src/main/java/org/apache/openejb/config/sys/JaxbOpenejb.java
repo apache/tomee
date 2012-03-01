@@ -43,8 +43,6 @@ import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -224,7 +222,7 @@ public abstract class JaxbOpenejb {
                 URL url = new URL(configFile);
                 in = IO.read(url);
             } else {
-                in = new FileInputStream(configFile);
+                in = IO.read(new File(configFile));
             }
             Openejb openejb = (Openejb) unmarshal(SystemInstance.get().getOptions().get("openejb.configuration.class", Openejb.class), in);
             return openejb;
@@ -241,7 +239,7 @@ public abstract class JaxbOpenejb {
         OutputStream out = null;
         try {
             File file = new File(configFile);
-            out = new FileOutputStream(file);
+            out = IO.write(file);
             marshal(Openejb.class, openejb, out);
         } catch (IOException e) {
             throw new OpenEJBException(ConfigUtils.messages.format("conf.1040", configFile, e.getLocalizedMessage()), e);

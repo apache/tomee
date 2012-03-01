@@ -26,6 +26,7 @@ import org.apache.openejb.assembler.classic.ConnectorInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.InfoObject;
 import org.apache.openejb.assembler.classic.WebAppInfo;
+import org.apache.openejb.loader.IO;
 
 import javax.enterprise.deploy.model.DeployableObject;
 import javax.enterprise.deploy.shared.ActionType;
@@ -282,15 +283,10 @@ public class VmDeploymentManager implements DeploymentManager {
         // load properties
         Properties properties = new Properties();
         if (planFile != null) {
-            InputStream in = null;
             try {
-                in = new FileInputStream(planFile);
-                properties.load(in);
+                IO.readProperties(planFile, properties);
             } catch (IOException ignored) {
-            } finally {
-                close(in);
             }
-
         }
 
         ProgressObject progressObject = deploy(targetList, properties);

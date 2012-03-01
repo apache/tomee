@@ -37,6 +37,7 @@ import org.apache.openejb.assembler.classic.InterceptorInfo;
 import org.apache.openejb.assembler.classic.PersistenceUnitInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.cli.SystemExitException;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.JarExtractor;
 import org.apache.openejb.util.Messages;
@@ -45,16 +46,11 @@ import org.apache.openejb.util.OpenEjbVersion;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.List;
 import java.util.Properties;
 import java.util.jar.JarFile;
 
-import static org.apache.openejb.loader.IO.close;
 import static org.apache.openejb.util.JarExtractor.delete;
 
 /**
@@ -300,23 +296,10 @@ public class Deploy {
     }
 
     private static void copyFile(File file, File destFile) throws DeploymentTerminatedException {
-        InputStream in = null;
-        OutputStream out = null;
         try {
-            in = new FileInputStream(file);
-            out = new FileOutputStream(destFile);
-
-            byte[] buffer = new byte[BUF_SIZE];
-            int count = 0;
-            do {
-                out.write(buffer, 0, count);
-                count = in.read(buffer, 0, buffer.length);
-            } while (count != -1);
+            IO.copy(file, destFile);
         } catch (Exception e) {
             throw new DeploymentTerminatedException(messages.format("cmd.deploy.cantCopy", file.getAbsolutePath(), destFile.getAbsolutePath()));
-        } finally {
-            close(in);
-            close(out);
         }
     }
 

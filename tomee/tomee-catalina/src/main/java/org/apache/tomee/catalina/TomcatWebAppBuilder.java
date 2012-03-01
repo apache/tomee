@@ -62,6 +62,7 @@ import org.apache.openejb.core.WebContext;
 import org.apache.openejb.core.ivm.naming.SystemComponentReference;
 import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.WebApp;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LinkResolver;
 import org.apache.openejb.util.LogCategory;
@@ -257,7 +258,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             if (war.isDirectory()) {
                 File cXml = new File(war, Constants.ApplicationContextXml);
                 if (cXml.exists()) {
-                    contextXml = new FileInputStream(cXml);
+                    contextXml = IO.read(cXml);
                     System.out.println("using context file " + cXml.getAbsolutePath());
                 }
             } else { // war

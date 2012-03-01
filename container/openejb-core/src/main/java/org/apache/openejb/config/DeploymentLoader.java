@@ -124,7 +124,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                         !jarFile.getName().endsWith(".rar")) {
                     try {
                         tmpFile = File.createTempFile("AppModule-", "", UrlCache.cacheDir);
-                        JarExtractor.copy(URLs.toFile(baseUrl), tmpFile);
+                        JarExtractor.copyRecursively(URLs.toFile(baseUrl), tmpFile);
                         tempURL = tmpFile.toURI().toURL();
 
                         doNotUseClassLoader = ClassLoaderUtil.createClassLoader(tmpFile.getCanonicalPath(), new URL[]{baseUrl}, getOpenEJBClassLoader(baseUrl));

@@ -38,6 +38,7 @@ import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Logger;
 import org.apache.tomee.catalina.TomcatLoader;
@@ -50,7 +51,6 @@ import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -168,9 +168,8 @@ public class Container {
         properties.setProperty("openejb.servicemanager.enabled", "false");
 
         try {
-            Properties tomcatServerInfo = new Properties();
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            tomcatServerInfo.load(classLoader.getResourceAsStream("org/apache/catalina/util/ServerInfo.properties"));
+            Properties tomcatServerInfo = IO.readProperties(classLoader.getResourceAsStream("org/apache/catalina/util/ServerInfo.properties"), new Properties());
 
             String serverNumber = tomcatServerInfo.getProperty("server.number");
             if (serverNumber == null) {
@@ -313,20 +312,12 @@ public class Container {
     private void copyFileTo(File targetDir, String filename) throws IOException {
         InputStream is = getClass().getResourceAsStream("/org/apache/tomee/configs/" + filename);
         if (is != null) { // should be null since we are using default conf
-            copyStream(is, new FileOutputStream(new File(targetDir, filename)));
+            try {
+                IO.copy(is, new File(targetDir, filename));
+            } finally {
+                IO.close(is);
+            }
         }
-    }
-
-    private void copyStream(InputStream is, FileOutputStream os) throws IOException {
-        byte[] buffer = new byte[8192];
-        int bytesRead = -1;
-
-        while ((bytesRead = is.read(buffer)) > -1) {
-            os.write(buffer, 0, bytesRead);
-        }
-
-        is.close();
-        os.close();
     }
 
     private void createTomcatDirectories(File directory) {

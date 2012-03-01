@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.util;
 
+import org.apache.openejb.loader.IO;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -61,16 +63,7 @@ public class Archives {
             URL resource = loader.getResource(name);
             assertNotNull(resource);
 
-            InputStream in = new BufferedInputStream(resource.openStream());
-            BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file));
-
-            int i = -1;
-            while ((i = in.read()) != -1) {
-                out.write(i);
-            }
-
-            out.close();
-            in.close();
+            IO.copy(IO.read(resource), file);
         }
 
         for (Map.Entry<String, String> entry : entries.entrySet()) {
@@ -83,11 +76,7 @@ public class Archives {
 
             if (!d.exists()) assertTrue(d.getAbsolutePath(), d.mkdirs());
 
-            BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file));
-
-            out.write(entry.getValue().getBytes());
-
-            out.close();
+            IO.copy(entry.getValue().getBytes(), file);
         }
 
         return classpath;

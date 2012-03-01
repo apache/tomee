@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.arquillian.common;
 
-import org.apache.openejb.loader.ProvisioningUtil;
+import org.apache.openejb.loader.*;
 import org.apache.openejb.resolver.Resolver;
 
 import java.io.File;

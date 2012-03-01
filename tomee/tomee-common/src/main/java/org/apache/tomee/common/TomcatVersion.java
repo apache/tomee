@@ -16,6 +16,8 @@
  */
 package org.apache.tomee.common;
 
+import org.apache.openejb.loader.IO;
+
 import java.util.Properties;
 
 /**
@@ -67,9 +69,8 @@ public enum TomcatVersion {
             // common class loader in previous versions can not see the
             // catalina.jar which contains the ServerInfo.properties
             if (serverNumber == null) {
-                Properties properties = new Properties();
-                ClassLoader classLoader = TomcatVersion.class.getClassLoader();
-                properties.load(classLoader.getResourceAsStream("org/apache/catalina/util/ServerInfo.properties"));
+                final ClassLoader classLoader = TomcatVersion.class.getClassLoader();
+                final Properties properties = IO.readProperties(classLoader.getResourceAsStream("org/apache/catalina/util/ServerInfo.properties"), new Properties());
 
                 serverNumber = properties.getProperty("server.number");
                 if (serverNumber == null) {

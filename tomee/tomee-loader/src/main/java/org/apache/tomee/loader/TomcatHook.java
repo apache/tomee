@@ -20,18 +20,14 @@ package org.apache.tomee.loader;
 import org.apache.openejb.loader.Embedder;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.loader.Zips;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import static org.apache.openejb.loader.ProvisioningUtil.realLocation;
 
@@ -138,9 +134,8 @@ class TomcatHook {
         // System.setProperty("tomcat.built", "mmm dd yyyy hh:mm:ss");
         // set the System properties, tomcat.version, tomcat.built
         try {
-            Properties tomcatServerInfo = new Properties();
             ClassLoader classLoader = TomcatHook.class.getClassLoader();
-            tomcatServerInfo.load(classLoader.getResourceAsStream("org/apache/catalina/util/ServerInfo.properties"));
+            Properties tomcatServerInfo = IO.readProperties(classLoader.getResourceAsStream("org/apache/catalina/util/ServerInfo.properties"), new Properties());
 
             String serverNumber = tomcatServerInfo.getProperty("server.number");
             if (serverNumber == null) {
@@ -199,8 +194,7 @@ class TomcatHook {
             return;
         }
 
-        final Properties additionalLibProperties = new Properties();
-        additionalLibProperties.load(new FileInputStream(conf));
+        final Properties additionalLibProperties = IO.readProperties(conf);
 
         final List<String> libToCopy = new ArrayList<String>();
         final String toCopy = additionalLibProperties.getProperty(JAR_KEY);
@@ -268,50 +262,6 @@ class TomcatHook {
     }
 
     public static void unzip(final File source, final File targetDirectory) throws IOException {
-        OutputStream os = null;
-        ZipInputStream is = null;
-        try {
-            is = new ZipInputStream(new FileInputStream(source));
-            ZipEntry entry;
-
-            while ((entry = is.getNextEntry()) != null) {
-                final String name = entry.getName();
-                final File file = new File(targetDirectory, name);
-
-                if (name.endsWith("/")) {
-                    file.mkdirs();
-                } else {
-                    file.createNewFile();
-
-                    int bytesRead;
-                    byte data[] = new byte[8192];
-
-                    os = new FileOutputStream(file);
-                    while ((bytesRead = is.read(data)) != -1) {
-                        os.write(data, 0, bytesRead);
-                    }
-
-                    is.closeEntry();
-                }
-
-            }
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (Exception e) {
-                    // no-op
-                }
-            }
-
-            if (os != null) {
-                try {
-                    os.close();
-                } catch (Exception e) {
-                    // no-op
-                }
-            }
-
-        }
+        Zips.unzip(source, targetDirectory);
     }
 }

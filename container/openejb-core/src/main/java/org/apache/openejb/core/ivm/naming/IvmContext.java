@@ -256,7 +256,7 @@ public class IvmContext implements Context, Serializable {
                 InputStream in = null;
                 try {
                     File propertiesFile = new File(new File(javahome, "lib"), "jndi.properties");
-                    in = new FileInputStream(propertiesFile);
+                    in = IO.read(propertiesFile);
                     urlPackagePrefixes = getUrlPackagePrefixes(in);
                 } catch (FileNotFoundException ignored) {
                 } finally {
@@ -270,10 +270,8 @@ public class IvmContext implements Context, Serializable {
 
     private static String getUrlPackagePrefixes(InputStream in) {
         try {
-            Properties properties = new Properties();
-            properties.load(in);
-            String urlPackagePrefixes = properties.getProperty(Context.URL_PKG_PREFIXES);
-            return urlPackagePrefixes;
+            final Properties properties = IO.readProperties(in, new Properties());
+            return properties.getProperty(Context.URL_PKG_PREFIXES);
         } catch (IOException e) {
             return null;
         }
@@ -577,49 +575,5 @@ public class IvmContext implements Context, Serializable {
 
         throw new NotSerializableException("IntraVM java.naming.Context objects can not be passed as arguments");
     }
-
-    /* for testing only*/
-    public static void main(String str []) throws Exception {
-        String str1 = "root/comp/env/rate/work/doc/lot/pop";
-        String str2 = "root/comp/env/rate/work/doc/lot/price";
-        String str3 = "root/comp/env/rate/work/doc/lot";
-        String str4 = "root/comp/env/rate/work/doc/lot/break/story";
-
-        IvmContext context = new IvmContext();
-        context.bind(str1, new Integer(1));
-        context.bind(str2, new Integer(2));
-        context.bind(str4, new Integer(3));
-/*
-        Object obj = context.lookup(str1);
-        obj = context.lookup(str2);
-        obj = context.lookup(str1);
-        obj = context.lookup(str3);
-        obj = obj;
-
-        NamingEnumeration ne = context.list(str3);
-        while(ne.hasMore()){
-            NameClassPair ncp = (NameClassPair)ne.nextElement();
-            System.out.println(ncp.getName()+" "+ncp.getClassName());
-        }
-        */
-
-        Context subcntx = (Context) context.lookup(str3);
-        org.apache.openejb.core.ivm.IntraVmCopyMonitor x = null;
-        java.io.FileOutputStream fos = new java.io.FileOutputStream("x.ser");
-        java.io.ObjectOutputStream oos = new java.io.ObjectOutputStream(fos);
-        org.apache.openejb.core.ivm.IntraVmCopyMonitor.prePassivationOperation();
-        oos.writeObject(subcntx);
-        org.apache.openejb.core.ivm.IntraVmCopyMonitor.postPassivationOperation();
-        oos.flush();
-        oos.close();
-        java.io.FileInputStream fis = new java.io.FileInputStream("x.ser");
-        java.io.ObjectInputStream ois = new java.io.ObjectInputStream(fis);
-        Object newObj = ois.readObject();
-        ois.close();
-    }
-
-    //
-    // Helper methods for debugging
-    //
 
 }

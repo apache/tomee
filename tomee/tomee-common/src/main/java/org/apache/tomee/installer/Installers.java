@@ -16,6 +16,7 @@
  */
 package org.apache.tomee.installer;
 
+import org.apache.openejb.loader.IO;
 import org.codehaus.swizzle.stream.DelimitedTokenReplacementInputStream;
 import org.codehaus.swizzle.stream.StringTokenHandler;
 
@@ -26,9 +27,6 @@ import java.io.IOException;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.OutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.Closeable;
 
 /**
  * @version $Rev$ $Date$
@@ -37,16 +35,12 @@ public class Installers {
     public static String readEntry(JarFile jarFile, String name, Alerts alerts) {
         ZipEntry entry = jarFile.getEntry(name);
         if (entry == null) return null;
-        InputStream in = null;
         try {
-            in = jarFile.getInputStream(entry);
-            String text = readAll(in);
+            String text = IO.slurp(jarFile.getInputStream(entry));
             return text;
         } catch (Exception e) {
             alerts.addError("Unable to read " + name + " from " + jarFile.getName());
             return null;
-        } finally {
-            close(in);
         }
     }
 
@@ -56,8 +50,15 @@ public class Installers {
         ByteArrayInputStream in = new ByteArrayInputStream(inputText.getBytes());
 
         InputStream replacementStream = new DelimitedTokenReplacementInputStream(in, begin, end, tokenHandler, true);
-        String newServerXml = readAll(replacementStream);
-        close(replacementStream);
+        // SwizzleStream block read methods are broken so read byte at a time
+        StringBuilder sb = new StringBuilder();
+        int i = replacementStream.read();
+        while (i != -1) {
+            sb.append((char) i);
+            i = replacementStream.read();
+        }
+        String newServerXml = sb.toString();
+        IO.close(replacementStream);
         return newServerXml;
     }
 
@@ -80,16 +81,7 @@ public class Installers {
             throw new IOException("Cannot create directory : " + destinationDir);
         }
 
-        InputStream in = null;
-        OutputStream out = null;
-        try {
-            in = new FileInputStream(source);
-            out = new FileOutputStream(destination);
-            writeAll(in, out);
-        } finally {
-            close(in);
-            close(out);
-        }
+        IO.copy(source, destination);
     }
 
     public static boolean writeAll(File file, String text, Alerts alerts) {
@@ -97,8 +89,7 @@ public class Installers {
     	
     	if (file.exists()) {
     		try {
-				FileInputStream is = new FileInputStream(file);
-				String oldText = readAll(is);
+				final String oldText = IO.slurp(file);
 				if (oldText.equals(text)) {
 					return true;
 				}
@@ -110,16 +101,12 @@ public class Installers {
             }
     	}
     	
-        FileOutputStream fileOutputStream = null;
         try {
-            fileOutputStream = new FileOutputStream(file);
-            writeAll(new ByteArrayInputStream(text.getBytes()), fileOutputStream);
+            IO.copy(IO.read(text), file);
             return true;
         } catch (Exception e) {
             alerts.addError("Unable to write to " + file.getAbsolutePath(), e);
             return false;
-        } finally {
-            close(fileOutputStream);
         }
     }
 
@@ -133,16 +120,12 @@ public class Installers {
     }
 
     public static String readAll(File file, Alerts alerts) {
-        FileInputStream in = null;
         try {
-            in = new FileInputStream(file);
-            String text = readAll(in);
+            String text = IO.slurp(file);
             return text;
         } catch (Exception e) {
             alerts.addError("Unable to read " + file.getAbsolutePath());
             return null;
-        } finally {
-            close(in);
         }
     }
 
@@ -150,38 +133,7 @@ public class Installers {
         if (destFile.exists() && destFile.isDirectory()) {
             throw new IOException("Destination '" + destFile + "' exists but is a directory");
         }
-
-        FileInputStream input = new FileInputStream(srcFile);
-        try {
-            FileOutputStream output = new FileOutputStream(destFile);
-            try {
-                writeAll(input, output);
-            } finally {
-                close(output);
-            }
-        } finally {
-            close(input);
-        }
-    }
-
-    public static String readAll(InputStream in) throws IOException {
-        // SwizzleStream block read methods are broken so read byte at a time
-        StringBuilder sb = new StringBuilder();
-        int i = in.read();
-        while (i != -1) {
-            sb.append((char) i);
-            i = in.read();
-        }
-        return sb.toString();
-    }
-
-    public static void close(Closeable thing) {
-        if (thing != null) {
-            try {
-                thing.close();
-            } catch (Exception ignored) {
-            }
-        }
+         IO.copy(srcFile, destFile);
     }
 
     public static class BeginEndTokenHandler extends StringTokenHandler {

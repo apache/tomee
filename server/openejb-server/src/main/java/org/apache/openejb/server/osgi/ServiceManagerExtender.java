@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.server.osgi;
 
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.DiscoveryRegistry;
 import org.apache.openejb.server.ServerService;
@@ -247,46 +248,11 @@ public class ServiceManagerExtender extends ServiceManager {
         }
 
         private Properties loadProperties(URL resource) throws IOException {
-            InputStream in = resource.openStream();
-
-            BufferedInputStream reader = null;
-            try {
-                reader = new BufferedInputStream(in);
-                Properties properties = new Properties();
-                properties.load(reader);
-
-                return properties;
-            } finally {
-                try {
-                    in.close();
-                    reader.close();
-                } catch (Exception e) {
-                }
-            }
+            return IO.readProperties(resource);
         }
         
         private String readContents(URL resource) throws IOException {
-            InputStream in = resource.openStream();
-            BufferedInputStream reader = null;
-            StringBuffer sb = new StringBuffer();
-
-            try {
-                reader = new BufferedInputStream(in);
-
-                int b = reader.read();
-                while (b != -1) {
-                    sb.append((char) b);
-                    b = reader.read();
-                }
-
-                return sb.toString().trim();
-            } finally {
-                try {
-                    in.close();
-                    reader.close();
-                } catch (Exception e) {
-                }
-            }
+            return IO.slurp(resource);
         }
 
     }

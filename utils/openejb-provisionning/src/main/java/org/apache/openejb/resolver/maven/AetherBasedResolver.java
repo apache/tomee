@@ -20,6 +20,7 @@ import org.apache.maven.repository.internal.DefaultArtifactDescriptorReader;
 import org.apache.maven.repository.internal.DefaultVersionRangeResolver;
 import org.apache.maven.repository.internal.DefaultVersionResolver;
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
+import org.apache.openejb.loader.IO;
 import org.ops4j.pax.url.maven.commons.MavenConfigurationImpl;
 import org.ops4j.pax.url.maven.commons.MavenRepositoryURL;
 import org.sonatype.aether.RepositoryException;
@@ -201,7 +202,7 @@ public class AetherBasedResolver {
         final RepositorySystemSession session = newSession();
         Artifact artifact = new DefaultArtifact(groupId, artifactId, classifier, extension, version);
         File resolved = resolve(session, artifact);
-        return new FileInputStream(resolved);
+        return IO.read(resolved);
     }
 
     private File resolve(RepositorySystemSession session, Artifact artifact)

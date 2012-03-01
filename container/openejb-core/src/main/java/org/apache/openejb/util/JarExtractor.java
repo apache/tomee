@@ -16,7 +16,9 @@
  */
 package org.apache.openejb.util;
 
+import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.loader.Zips;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -25,9 +27,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.FileChannel;
-import java.util.Enumeration;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 /**
  * @version $Rev$ $Date$
@@ -67,56 +66,15 @@ public class JarExtractor {
 
         logger.info("Extracting jar: " + file.getAbsolutePath());
 
-        // Create the new document base directory
-        destinationDir.mkdirs();
+        Files.mkdirs(destinationDir);
 
-        // Extract the JAR into the new directory
-        JarFile jarFile = null;
-        InputStream input = null;
         try {
-            jarFile = new JarFile(file);
-            Enumeration jarEntries = jarFile.entries();
-            while (jarEntries.hasMoreElements()) {
-                JarEntry jarEntry = (JarEntry) jarEntries.nextElement();
-                String name = jarEntry.getName();
-                int last = name.lastIndexOf('/');
-                if (last >= 0) {
-                    File parent = new File(destinationDir,
-                            name.substring(0, last));
-                    parent.mkdirs();
-                }
-                if (name.endsWith("/")) {
-                    continue;
-                }
-                input = jarFile.getInputStream(jarEntry);
-
-                File extractedFile = extract(input, destinationDir, name);
-                long lastModified = jarEntry.getTime();
-                if ((lastModified != -1) && (lastModified != 0) && (extractedFile != null)) {
-                    extractedFile.setLastModified(lastModified);
-                }
-
-                input.close();
-                input = null;
-            }
+            Zips.unzip(file, destinationDir);
         } catch (IOException e) {
             // If something went wrong, delete extracted dir to keep things
             // clean
             deleteDir(destinationDir);
             throw e;
-        } finally {
-            if (input != null) {
-                try {
-                    input.close();
-                } catch (Throwable t) {
-                }
-            }
-            if (jarFile != null) {
-                try {
-                    jarFile.close();
-                } catch (Throwable t) {
-                }
-            }
         }
 
         // Return the absolute path to our new document base directory
@@ -130,11 +88,12 @@ public class JarExtractor {
      * @param src  File object representing the source
      * @param dest File object representing the destination
      */
-    public static boolean copy(File src, File dest) {
+    public static boolean copyRecursively(File src, File dest) {
 
         boolean result = true;
 
         String files[];
+
         if (src.isDirectory()) {
             files = src.list();
             result = dest.mkdir();
@@ -142,15 +101,20 @@ public class JarExtractor {
             files = new String[1];
             files[0] = "";
         }
+
         if (files == null) {
             files = new String[0];
         }
         for (int i = 0; (i < files.length) && result; i++) {
-            File fileSrc = new File(src, files[i]);
-            File fileDest = new File(dest, files[i]);
+            final File fileSrc = new File(src, files[i]);
+            final File fileDest = new File(dest, files[i]);
+
             if (fileSrc.isDirectory()) {
-                result = copy(fileSrc, fileDest);
+
+                result = copyRecursively(fileSrc, fileDest);
+
             } else {
+
                 FileChannel ic = null;
                 FileChannel oc = null;
                 try {

@@ -99,13 +99,17 @@ public class MultipointServer {
         serverChannel.configureBlocking(false);
 
         this.port = serverSocket.getLocalPort();
-        me = URI.create("conn://" + this.host + ":" + this.port);
+        if (name != null) {
+            me = URI.create("conn://" + this.host + ":" + this.port + "/" + name);
+        } else {
+            me = URI.create("conn://" + this.host + ":" + this.port);
+        }
 
         selector = Selector.open();
 
         serverChannel.register(selector, SelectionKey.OP_ACCEPT);
 
-        println("Listening");
+        println("Broadcasting ");
     }
 
     public int getPort() {
