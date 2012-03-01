@@ -27,7 +27,6 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.Container;
-import org.apache.openejb.Core;
 import org.apache.openejb.DuplicateDeploymentIdException;
 import org.apache.openejb.Injection;
 import org.apache.openejb.JndiConstants;
@@ -74,7 +73,7 @@ import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.AsmParameterNameLoader;
-import org.apache.openejb.util.ContextUtil;
+import org.apache.openejb.util.Contexts;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
@@ -862,7 +861,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
 
                 // a bit weird but just to be consistent if user doesn't lookup directly the resource
-                Context lastContext = ContextUtil.mkdirs(containerSystemContext, path);
+                Context lastContext = Contexts.createSubcontexts(containerSystemContext, path);
                 try {
                     lastContext.bind(path.substring(path.lastIndexOf("/") + 1, path.length()), value.getValue());
                 } catch (NameAlreadyBoundException nabe) {

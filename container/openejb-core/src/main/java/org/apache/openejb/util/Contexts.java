@@ -20,12 +20,12 @@ package org.apache.openejb.util;
 import javax.naming.Context;
 import javax.naming.NamingException;
 
-public class ContextUtil {
-    private ContextUtil() {
+public class Contexts {
+    private Contexts() {
         // no-op
     }
 
-    public static Context mkdirs(Context context, String key) {
+    public static Context createSubcontexts(Context context, String key) {
         final String[] parts = key.split("/");
 
         int i = 0;
