@@ -39,6 +39,10 @@ import java.util.Map;
  * @version $Rev$ $Date$
  */
 public class Setup {
+    public static final int DEFAULT_HTTP_PORT = 8080;
+    public static final int DEFAULT_STOP_PORT = 8005;
+    public static final int DEFAULT_AJP_PORT = 8009;
+
     public static void exportProperties(File openejbHome, TomEEConfiguration c) {
         System.setProperty("tomee.http.port", String.valueOf(c.getHttpPort()));
         System.setProperty("tomee.ajp.port", String.valueOf(c.getAjpPort()));
@@ -51,11 +55,11 @@ public class Setup {
         System.setProperty("openejb.home", openejbHome.getAbsolutePath());
     }
 
-    public static void updateServerXml(File openejbHome, TomEEConfiguration c) throws IOException {
+    public static void updateServerXml(File openejbHome, TomEEConfiguration c, int http, int stop, int ajp) throws IOException {
         final Map<String, String> replacements = new HashMap<String, String>();
-        replacements.put("8080", String.valueOf(c.getHttpPort()));
-        replacements.put("8005", String.valueOf(c.getStopPort()));
-        replacements.put("8009", String.valueOf(c.getAjpPort()));
+        replacements.put(Integer.toString(http), String.valueOf(c.getHttpPort()));
+        replacements.put(Integer.toString(stop), String.valueOf(c.getStopPort()));
+        replacements.put(Integer.toString(ajp), String.valueOf(c.getAjpPort()));
         final String s = File.separator;
         replace(replacements, new File(openejbHome, "conf" + s + "server.xml"));
     }

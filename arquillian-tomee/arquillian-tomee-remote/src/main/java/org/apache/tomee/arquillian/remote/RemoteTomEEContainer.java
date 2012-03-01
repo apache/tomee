@@ -23,6 +23,7 @@ import org.apache.openejb.config.RemoteServer;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Logger;
@@ -62,46 +63,60 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
 
         try {
 
-            final File workingDirectory = new File(configuration.getDir());
-
-            if (workingDirectory.exists()) {
-
-                Files.assertDir(workingDirectory);
-
-            } else {
-
-                Files.mkdir(workingDirectory);
-                Files.deleteOnExit(workingDirectory);
-            }
-
-            Files.readable(workingDirectory);
-            Files.writable(workingDirectory);
-
-            File openejbHome = Setup.findHome(workingDirectory);
-
-            if (openejbHome == null) {
-                openejbHome = Setup.downloadAndUnpack(workingDirectory, configuration.getArtifactName());
-            }
-
-            Files.assertDir(openejbHome);
-            Files.readable(openejbHome);
-            Files.writable(openejbHome);
-
-            Setup.updateServerXml(openejbHome, configuration);
-
-            Setup.exportProperties(openejbHome, configuration);
-
-            if (false) {
-                Map<Object, Object> map = new TreeMap(System.getProperties());
-                for (Map.Entry<Object, Object> entry : map.entrySet()) {
-                    System.out.printf("%s = %s\n", entry.getKey(), entry.getValue());
-                }
-            }
+            configure(Setup.DEFAULT_HTTP_PORT, Setup.DEFAULT_STOP_PORT, Setup.DEFAULT_AJP_PORT);
 
             container = new RemoteServer();
+
+            if (Setup.isRunning(configuration.getHttpPort())) {
+                // try to reconfigure it
+                // if it was using random ports
+                // it can simply be a conflict
+                resetPortsToOriginal(configuration);
+                setup(configuration);
+                configure(previousHttpPort, previousStopPort, previousAjpPort);
+            }
+
             container.start();
         } catch (Exception e) {
             throw new LifecycleException("Unable to start remote container", e);
+        }
+    }
+
+    private void configure(int http, int stop, int ajp) throws LifecycleException, IOException {
+        final File workingDirectory = new File(configuration.getDir());
+
+        if (workingDirectory.exists()) {
+
+            Files.assertDir(workingDirectory);
+
+        } else {
+
+            Files.mkdir(workingDirectory);
+            Files.deleteOnExit(workingDirectory);
+        }
+
+        Files.readable(workingDirectory);
+        Files.writable(workingDirectory);
+
+        File openejbHome = Setup.findHome(workingDirectory);
+
+        if (openejbHome == null) {
+            openejbHome = Setup.downloadAndUnpack(workingDirectory, configuration.getArtifactName());
+        }
+
+        Files.assertDir(openejbHome);
+        Files.readable(openejbHome);
+        Files.writable(openejbHome);
+
+        Setup.updateServerXml(openejbHome, configuration, http, stop, ajp);
+
+        Setup.exportProperties(openejbHome, configuration);
+
+        if (false) {
+            Map<Object, Object> map = new TreeMap(System.getProperties());
+            for (Map.Entry<Object, Object> entry : map.entrySet()) {
+                System.out.printf("%s = %s\n", entry.getKey(), entry.getValue());
+            }
         }
     }
 
