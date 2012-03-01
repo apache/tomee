@@ -125,10 +125,7 @@ public class EnvEntriesPropertiesDeployer implements DynamicDeployer {
         }
         if (propsUrl == null) return Collections.emptyMap();
         try {
-
-            InputStream in = IO.read(propsUrl);
-            Properties envEntriesProps = new Properties();
-            envEntriesProps.load(in);
+            Properties envEntriesProps = IO.readProperties(propsUrl);
 
             return new HashMap(envEntriesProps);
         } catch (IOException e) {

@@ -18,13 +18,12 @@ package org.apache.openejb.itest.failover;
 
 import org.apache.openejb.client.RemoteInitialContextFactory;
 import org.apache.openejb.itest.failover.ejb.Calculator;
+import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.loader.Zips;
 import org.apache.openejb.server.control.StandaloneServer;
-import org.apache.openejb.util.Files;
 import org.apache.openejb.util.Join;
-import org.apache.openejb.util.Zips;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.ejb.EJBException;
@@ -32,9 +31,15 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
 import java.net.ServerSocket;
+import java.net.SocketAddress;
+import java.nio.channels.ServerSocketChannel;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
@@ -42,10 +47,36 @@ import java.util.concurrent.TimeUnit;
 public class FailoverTest {
 
     @Test
-    public void testNothing() {
+    public void testNothing() throws Exception {
+        ServerSocketChannel serverChannel = ServerSocketChannel.open();
+        ServerSocket serverSocket = serverChannel.socket();
+        InetSocketAddress address = new InetSocketAddress("0.0.0.0", 33333);
+        serverSocket.bind(address);
+
+        final SocketAddress localSocketAddress = serverSocket.getLocalSocketAddress();
+        System.out.println("localSocketAddress = " + localSocketAddress);
+        System.out.println(serverSocket.getInetAddress());
+        final InetAddress[] locahosts = InetAddress.getAllByName("localhost");
+        for (InetAddress locahost : locahosts) {
+            System.out.println(locahost);
+        }
+        final Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+        while (interfaces.hasMoreElements()) {
+            NetworkInterface in = interfaces.nextElement();
+            if (in.isLoopback()) continue;
+            if (in.isVirtual()) continue;
+            if (in.isPointToPoint()) continue;
+            if (!in.isUp()) continue;
+            System.out.println(in);
+            final Enumeration<InetAddress> addresses = in.getInetAddresses();
+            while (addresses.hasMoreElements()) {
+                InetAddress inetAddress = addresses.nextElement();
+                System.out.println(inetAddress);
+            }
+        }
     }
 
-    @Test @Ignore
+    @Test
     public void testFailover() throws Exception {
 
         final File zip = new File("/Users/dblevins/.m2/repository/org/apache/openejb/openejb-standalone/4.0.0-beta-3-SNAPSHOT/openejb-standalone-4.0.0-beta-3-SNAPSHOT.zip");

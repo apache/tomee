@@ -14,11 +14,10 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.util;
-
-import org.apache.openejb.loader.IO;
+package org.apache.openejb.loader;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -26,11 +25,11 @@ import java.util.zip.ZipInputStream;
  * @version $Rev$ $Date$
  */
 public class Zips {
-    public static void unzip(File zipFile, File destination) {
+    public static void unzip(File zipFile, File destination) throws IOException {
         unzip(zipFile, destination, false);
     }
 
-    public static void unzip(File zipFile, File destination, boolean noparent) {
+    public static void unzip(File zipFile, File destination, boolean noparent) throws IOException {
 
         Files.dir(destination);
         Files.writable(destination);
@@ -66,8 +65,8 @@ public class Zips {
 
             in.close();
 
-        } catch (Exception e) {
-            throw new IllegalStateException("Unable to unzip " + zipFile.getAbsolutePath(), e);
+        } catch (IOException e) {
+            throw new IOException("Unable to unzip " + zipFile.getAbsolutePath(), e);
         }
     }
 }

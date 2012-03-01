@@ -256,22 +256,14 @@ public class ServiceUtils {
     }
 
     public static Properties loadProperties(String propertiesFile, Properties defaults) throws OpenEJBException {
-        InputStream in = null;
         try {
-            File pfile = new File(propertiesFile);
-            in = new FileInputStream(pfile);
-
-            try {
-                /*
-                This may not work as expected.  The desired effect is that
-                the load method will read in the properties and overwrite
-                the values of any properties that may have previously been
-                defined.
-                */
-                defaults.load(in);
-            } catch (IOException ex) {
-                throw new OpenEJBException(messages.format("conf.0012", ex.getLocalizedMessage()), ex);
-            }
+            /*
+            The desired effect is that
+            the load method will read in the properties and overwrite
+            the values of any properties that may have previously been
+            defined.
+            */
+            IO.readProperties(new File(propertiesFile), defaults);
 
             return defaults;
         } catch (FileNotFoundException ex) {
@@ -280,8 +272,6 @@ public class ServiceUtils {
             throw new OpenEJBException(messages.format("conf.0007", propertiesFile, ex.getLocalizedMessage()), ex);
         } catch (SecurityException ex) {
             throw new OpenEJBException(messages.format("conf.0005", propertiesFile, ex.getLocalizedMessage()), ex);
-        } finally {
-            IO.close(in);
         }
     }
 

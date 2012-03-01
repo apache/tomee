@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.server.admin;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ConnectException;
@@ -24,6 +25,7 @@ import java.net.URL;
 import java.util.Properties;
 
 import org.apache.openejb.client.RequestType;
+import org.apache.openejb.loader.IO;
 
 
 public class Stop {
@@ -84,8 +86,7 @@ public class Stop {
     private static void printHelp() {
         String header = "OpenEJB Remote Server ";
         try {
-            Properties versionInfo = new Properties();
-            versionInfo.load(new URL("resource:/openejb-version.properties").openConnection().getInputStream());
+            Properties versionInfo = loadVersionProperties();
             header += versionInfo.get("version");
         } catch (java.io.IOException e) {
         }
@@ -107,8 +108,7 @@ public class Stop {
     private static void printExamples() {
         String header = "OpenEJB Remote Server ";
         try {
-            Properties versionInfo = new Properties();
-            versionInfo.load(new URL("resource:/openejb-version.properties").openConnection().getInputStream());
+            Properties versionInfo = loadVersionProperties();
             header += versionInfo.get("version");
         } catch (java.io.IOException e) {
         }
@@ -125,5 +125,9 @@ public class Stop {
             }
         } catch (java.io.IOException e) {
         }
+    }
+
+    private static Properties loadVersionProperties() throws IOException {
+        return IO.readProperties(new URL("resource:/openejb-version.properties"));
     }
 }

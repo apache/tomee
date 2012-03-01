@@ -38,9 +38,8 @@ import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Collection;
@@ -216,8 +215,8 @@ public class DeployerEjb implements Deployer {
         // dump it
         try {
             final AdditionalDeployments additionalDeployments;
-            if (config.exists()) {
-                final FileInputStream fis = new FileInputStream(config);
+            if (config.exists() && config.length() > 0) {
+                final InputStream fis = IO.read(config);
                 try {
                     additionalDeployments = JaxbOpenejb.unmarshal(AdditionalDeployments.class, fis);
                 } finally {
@@ -242,7 +241,7 @@ public class DeployerEjb implements Deployer {
                     }
                 }
             }
-            JaxbOpenejb.marshal(AdditionalDeployments.class, additionalDeployments, new FileOutputStream(config));
+            JaxbOpenejb.marshal(AdditionalDeployments.class, additionalDeployments, IO.write(config));
         } catch (Exception e) {
             LOGGER.error("can't save the added app, will not be present next time you'll start", e);
         }

@@ -14,12 +14,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.util;
+package org.apache.openejb.loader;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -132,7 +133,7 @@ public class Files {
 
         if (!file.exists()) {
 
-            if (file.mkdirs()) throw new RuntimeException("Cannot mkdirs: " + file.getAbsolutePath());
+            if (!file.mkdirs()) throw new RuntimeException("Cannot mkdirs: " + file.getAbsolutePath());
 
             return file;
         }
@@ -178,7 +179,19 @@ public class Files {
     public static File select(File dir, String pattern) {
         final List<File> matches = collect(dir, pattern);
         if (matches.size() == 0) throw new IllegalStateException(String.format("Missing '%s'", pattern));
-        if (matches.size() > 1) throw new IllegalStateException(String.format("Too many found '%s': %s", Join.join(", ", new Join.FileCallback(), matches)));
+        if (matches.size() > 1) throw new IllegalStateException(String.format("Too many found '%s': %s", pattern, join(", ", matches)));
         return matches.get(0);
     }
+
+    private static String join(String delimiter, Collection<File> collection) {
+        if (collection.size() == 0) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (File obj : collection) {
+            sb.append(obj.getName()).append(delimiter);
+        }
+        return sb.substring(0, sb.length() - delimiter.length());
+    }
+
 }

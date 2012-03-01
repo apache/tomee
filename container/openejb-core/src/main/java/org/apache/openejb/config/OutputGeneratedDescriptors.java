@@ -27,6 +27,7 @@ import org.apache.openejb.jee.oejb2.GeronimoEjbJarType;
 import org.apache.openejb.jee.oejb2.JaxbOpenejbJar2;
 import org.apache.openejb.jee.oejb3.JaxbOpenejbJar3;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
@@ -35,10 +36,9 @@ import org.apache.openejb.util.Logger;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Random;
 
 public class OutputGeneratedDescriptors implements DynamicDeployer {
@@ -89,16 +89,15 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
 	    	Connector connector = connectorModule.getConnector();
 	
 	        File tempFile = tempFile("ra-", connectorModule.getModuleId() + ".xml");
-	        FileOutputStream fout = new FileOutputStream(tempFile);
-	        BufferedOutputStream out = new BufferedOutputStream(fout);
-	
+
+            final OutputStream out = IO.write(tempFile);
 	        try {
 		    	JAXBContext ctx = JAXBContextFactory.newInstance(Connector.class);
 		    	Marshaller marshaller = ctx.createMarshaller();
 		    	marshaller.marshal(connector, out);
 	        } catch (JAXBException e) {
 	        } finally {
-	        	out.close();
+	        	IO.close(out);
 	        }
     	} catch (IOException e) {
     	}
@@ -120,15 +119,13 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
 
 	private void writeGenratedCmpMappings(AppModule appModule) {
         try {
-            File tempFile = tempFile("openejb-cmp-generated-orm-", ".xml");
-            FileOutputStream fout = new FileOutputStream(tempFile);
-            BufferedOutputStream out = new BufferedOutputStream(fout);
-
+            final File tempFile = tempFile("openejb-cmp-generated-orm-", ".xml");
+            final OutputStream out = IO.write(tempFile);
             try {
                 JpaJaxbUtil.marshal(EntityMappings.class, appModule.getCmpMappings(), out);
             } catch (JAXBException e) {
             } finally{
-                out.close();
+                IO.close(out);
             }
         } catch (IOException e) {
         }
@@ -136,16 +133,16 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
 
     private void writeOpenejbJar(EjbModule ejbModule) {
         try {
-            OpenejbJar openejbJar = ejbModule.getOpenejbJar();
-            File tempFile = tempFile("openejb-jar-", ejbModule.getModuleId() + ".xml");
-            FileOutputStream fout = new FileOutputStream(tempFile);
-            BufferedOutputStream out = new BufferedOutputStream(fout);
+            final OpenejbJar openejbJar = ejbModule.getOpenejbJar();
+            final File tempFile = tempFile("openejb-jar-", ejbModule.getModuleId() + ".xml");
+
+            final OutputStream out = IO.write(tempFile);
             try {
                 JaxbOpenejbJar3.marshal(OpenejbJar.class, openejbJar, out);
                 logger.info("Dumping Generated openejb-jar.xml to: " + tempFile.getAbsolutePath());
             } catch (JAXBException e) {
             } finally {
-                out.close();
+                IO.close(out);
             }
         } catch (Exception e) {
         }
@@ -153,19 +150,19 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
 
     private void writeGeronimoOpenejb(EjbModule ejbModule) {
         try {
-            GeronimoEjbJarType geronimoEjbJarType = (GeronimoEjbJarType) ejbModule.getAltDDs().get("geronimo-openejb.xml");
+            final GeronimoEjbJarType geronimoEjbJarType = (GeronimoEjbJarType) ejbModule.getAltDDs().get("geronimo-openejb.xml");
 
             if (geronimoEjbJarType == null) return;
 
-            File tempFile = tempFile("geronimo-openejb-", ejbModule.getModuleId() + ".xml");
-            FileOutputStream fout = new FileOutputStream(tempFile);
-            BufferedOutputStream out = new BufferedOutputStream(fout);
+            final File tempFile = tempFile("geronimo-openejb-", ejbModule.getModuleId() + ".xml");
+
+            final OutputStream out = IO.write(tempFile);
             try {
                 JaxbOpenejbJar2.marshal(GeronimoEjbJarType.class, geronimoEjbJarType, out);
                 logger.info("Dumping Generated geronimo-openejb.xml to: " + tempFile.getAbsolutePath());
             } catch (JAXBException e) {
             } finally {
-                out.close();
+                IO.close(out);
             }
         } catch (Exception e) {
         }
@@ -173,16 +170,16 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
 
     private void writeEjbJar(EjbModule ejbModule) {
         try {
-            EjbJar ejbJar = ejbModule.getEjbJar();
-            File tempFile = tempFile("ejb-jar-", ejbModule.getModuleId() + ".xml");
-            FileOutputStream fout = new FileOutputStream(tempFile);
-            BufferedOutputStream out = new BufferedOutputStream(fout);
+            final EjbJar ejbJar = ejbModule.getEjbJar();
+            final File tempFile = tempFile("ejb-jar-", ejbModule.getModuleId() + ".xml");
+
+            final OutputStream out = IO.write(tempFile);
             try {
                 JaxbJavaee.marshal(EjbJar.class, ejbJar, out);
                 logger.info("Dumping Generated ejb-jar.xml to: " + tempFile.getAbsolutePath());
             } catch (JAXBException e) {
             } finally {
-                out.close();
+                IO.close(out);
             }
         } catch (Exception e) {
         }

@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.config.sys;
 
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.util.SuperProperties;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
@@ -28,10 +29,7 @@ import java.util.Properties;
  */
 public class PropertiesAdapter extends XmlAdapter<String, Properties> {
     public Properties unmarshal(String s) throws Exception {
-        Properties properties = new SuperProperties();
-        ByteArrayInputStream in = new ByteArrayInputStream(s.getBytes());
-        properties.load(in);
-        return properties;
+        return IO.readProperties(IO.read(s), new SuperProperties());
     }
 
     public String marshal(Properties properties) throws Exception {

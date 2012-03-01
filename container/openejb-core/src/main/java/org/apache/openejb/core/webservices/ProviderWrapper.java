@@ -39,10 +39,7 @@ import javax.xml.ws.spi.ServiceDelegate;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -383,11 +380,8 @@ public class ProviderWrapper extends Provider {
         String javaHome = System.getProperty("java.home");
         File jaxrpcPropertiesFile = new File(new File(javaHome, "lib"), "jaxrpc.properties");
         if (jaxrpcPropertiesFile.exists()) {
-            InputStream in = null;
             try {
-                in = new FileInputStream(jaxrpcPropertiesFile);
-                Properties properties = new Properties();
-                properties.load(in);
+                final Properties properties = IO.readProperties(jaxrpcPropertiesFile);
 
                 providerClass = properties.getProperty(JAXWSPROVIDER_PROPERTY);
                 provider = createProviderInstance(providerClass, classLoader);
@@ -395,8 +389,6 @@ public class ProviderWrapper extends Provider {
                     return provider;
                 }
             } catch(Exception ignored) {
-            } finally {
-                IO.close(in);
             }
         }
 
@@ -442,7 +434,7 @@ public class ProviderWrapper extends Provider {
             try {
                 File tempFile = File.createTempFile("openejb-jaxws-provider", "tmp");
                 tempFile.deleteOnExit();
-                OutputStream out = new FileOutputStream(tempFile);
+                OutputStream out = IO.write(tempFile);
                 out.write(ProviderWrapper.class.getName().getBytes());
                 out.close();
                 PROVIDER_URL = tempFile.toURI().toURL();

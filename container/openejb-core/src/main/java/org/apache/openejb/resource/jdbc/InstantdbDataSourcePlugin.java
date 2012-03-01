@@ -17,11 +17,11 @@
 package org.apache.openejb.resource.jdbc;
 
 import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.xbean.finder.ResourceFinder;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class InstantdbDataSourcePlugin implements DataSourcePlugin {
@@ -53,21 +53,13 @@ public class InstantdbDataSourcePlugin implements DataSourcePlugin {
             return;
         }
 
-        FileOutputStream out = null;
         try {
             ResourceFinder finder = new ResourceFinder("");
             String defaultProperties = finder.findString("default.instantdb.properties");
-            out = new FileOutputStream(file);
-            out.write(defaultProperties.getBytes());
-            out.flush();
+            IO.copy(defaultProperties.getBytes(), file);
         } catch (IOException e) {
             // TODO; Handle this
             e.printStackTrace();
-        } finally {
-            try {
-                out.close();
-            } catch (IOException e) {
-            }
         }
     }
 

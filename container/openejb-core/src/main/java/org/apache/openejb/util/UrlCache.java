@@ -17,12 +17,13 @@
 package org.apache.openejb.util;
 
 import org.apache.openejb.loader.FileUtils;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
@@ -225,7 +226,7 @@ public class UrlCache {
         try {
             cacheFile = File.createTempFile(prefix, suffix, cacheDir);
             cacheFile.deleteOnExit();
-            success = JarExtractor.copy(sourceFile, cacheFile);
+            success = JarExtractor.copyRecursively(sourceFile, cacheFile);
         } catch (IOException e) {
             success = false;
         }
@@ -292,9 +293,9 @@ public class UrlCache {
             File manifestFile = new File(location, "META-INF/MANIFEST.MF");
 
             if (manifestFile.isFile() && manifestFile.canRead()) {
-                FileInputStream in = null;
+                InputStream in = null;
                 try {
-                    in = new FileInputStream(manifestFile);
+                    in = IO.read(manifestFile);
                     Manifest manifest = new Manifest(in);
                     return manifest;
                 } finally {

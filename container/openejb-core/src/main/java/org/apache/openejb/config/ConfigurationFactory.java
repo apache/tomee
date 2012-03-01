@@ -81,6 +81,7 @@ import javax.ejb.embeddable.EJBContainer;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -453,9 +454,9 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             additionalDeploymentFile = null;
         }
         if (additionalDeploymentFile.exists()) {
-            FileInputStream fis = null;
+            InputStream fis = null;
             try {
-                fis = new FileInputStream(additionalDeploymentFile);
+                fis = IO.read(additionalDeploymentFile);
                 final AdditionalDeployments additionalDeployments = JaxbOpenejb.unmarshal(AdditionalDeployments.class, fis);
                 deployments.addAll(additionalDeployments.getDeployments());
             } catch (Exception e) {

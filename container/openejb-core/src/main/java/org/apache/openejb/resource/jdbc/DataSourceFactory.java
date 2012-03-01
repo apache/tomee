@@ -22,6 +22,7 @@ import org.apache.commons.dbcp.managed.DataSourceXAConnectionFactory;
 import org.apache.commons.dbcp.managed.LocalXAConnectionFactory;
 import org.apache.commons.dbcp.managed.TransactionRegistry;
 import org.apache.commons.dbcp.managed.XAConnectionFactory;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.resource.XAResourceWrapper;
 import org.apache.xbean.recipe.ObjectRecipe;
@@ -72,9 +73,7 @@ public class DataSourceFactory {
     }
 
     private static Map<?, ?> asProperties(String definition) throws IOException {
-        final ByteArrayInputStream in = new ByteArrayInputStream(definition.getBytes());
-        final Properties properties = new Properties();
-        properties.load(in);
+        final Properties properties = IO.readProperties(IO.read(definition), new Properties());
         trimNotSupportedDataSourceProperties(properties);
         return properties;
     }

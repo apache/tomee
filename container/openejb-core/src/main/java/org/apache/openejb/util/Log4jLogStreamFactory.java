@@ -23,12 +23,9 @@ import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -78,13 +75,10 @@ public class Log4jLogStreamFactory implements LogStreamFactory {
 
             if (loggingPropertiesFile.exists()) {
                 // load logging.properties file
-                final BufferedInputStream bis = new BufferedInputStream(new FileInputStream(loggingPropertiesFile));
-                final Properties props = new Properties();
-                props.load(bis);
-                applyOverrides(props);
-                preprocessProperties(props);
-                PropertyConfigurator.configure(props);
-                IO.close(bis);
+                final Properties properties = IO.readProperties(loggingPropertiesFile);
+                applyOverrides(properties);
+                preprocessProperties(properties);
+                PropertyConfigurator.configure(properties);
             } else {
                 // install our logging.properties file into the conf dir
                 installLoggingPropertiesFile(loggingPropertiesFile);
@@ -177,20 +171,10 @@ public class Log4jLogStreamFactory implements LogStreamFactory {
 
     private static Properties asProperies(final URL resource) {
         final Properties properties = new Properties();
-        InputStream in = null;
         try {
-            in = IO.read(resource);
-            properties.load(in);
+            IO.readProperties(resource, properties);
         } catch (Throwable e) {
             //Ignore
-        } finally {
-            if (null != in) {
-                try {
-                    in.close();
-                } catch (Throwable e) {
-                    //Ignore
-                }
-            }
         }
         return properties;
     }
@@ -205,38 +189,18 @@ public class Log4jLogStreamFactory implements LogStreamFactory {
             return;
         }
 
-        InputStream in = null;
-        FileOutputStream out = null;
+        final Properties props = IO.readProperties(resource);
 
+        preprocessProperties(props);
+
+        final OutputStream out = IO.write(loggingPropertiesFile);
         try {
-            in = IO.read(resource);
-            final Properties props = new Properties();
-            props.load(in);
-
-            preprocessProperties(props);
-
-            out = new FileOutputStream(loggingPropertiesFile);
             props.store(out, "OpenEJB Default Log4j Configuration");
-
-            PropertyConfigurator.configure(props);
         } finally {
-
-            if (null != in) {
-                try {
-                    in.close();
-                } catch (Throwable e) {
-                    //Ignore
-                }
-            }
-
-            if (null != out) {
-                try {
-                    out.close();
-                } catch (Throwable e) {
-                    //Ignore
-                }
-            }
+            IO.close(out);
         }
+
+        PropertyConfigurator.configure(props);
 
     }
 }

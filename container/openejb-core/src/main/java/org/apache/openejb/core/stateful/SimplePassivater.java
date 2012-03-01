@@ -17,20 +17,15 @@
 package org.apache.openejb.core.stateful;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.InputStream;
-import java.io.BufferedInputStream;
-import java.io.OutputStream;
-import java.io.BufferedOutputStream;
 import java.util.Map;
 import java.util.Properties;
 
 import org.apache.openejb.SystemException;
 import org.apache.openejb.core.EnvProps;
 import org.apache.openejb.core.ivm.EjbObjectInputStream;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -70,13 +65,15 @@ public class SimplePassivater implements PassivationStrategy {
             File sessionFile = new File(sessionDirectory, filename);
 
             logger.info("Passivating to file " + sessionFile);
-            OutputStream out = new FileOutputStream(sessionFile);
-            out = new BufferedOutputStream(out);
-            ObjectOutputStream oos = new ObjectOutputStream(out);
 
-            oos.writeObject(state);// passivate just the bean instance
-            oos.close();
-            sessionFile.deleteOnExit();
+            final ObjectOutputStream oos = new ObjectOutputStream(IO.write(sessionFile));
+            try {
+                oos.writeObject(state);// passivate just the bean instance
+            } finally {
+                sessionFile.deleteOnExit();
+                IO.close(oos);
+            }
+
         } catch (java.io.NotSerializableException nse) {
             logger.error("Passivation failed ", nse);
             throw (SystemException) new SystemException("The type " + nse.getMessage() + " is not serializable as mandated by the EJB specification.").initCause(nse);
@@ -101,13 +98,13 @@ public class SimplePassivater implements PassivationStrategy {
             if (sessionFile.exists()) {
                 logger.info("Activating from file " + sessionFile);
 
-                InputStream in = new FileInputStream(sessionFile);
-                in = new BufferedInputStream(in);
-                ObjectInputStream ois = new EjbObjectInputStream(in);
-                Object state = ois.readObject();
-                ois.close();
-                sessionFile.delete();
-                return state;
+                final ObjectInputStream ois = new EjbObjectInputStream(IO.read(sessionFile));
+                try {
+                    return ois.readObject();
+                } finally {
+                    IO.close(ois);
+                    sessionFile.delete();
+                }
             } else {
                 logger.info("Activation failed: file not found " + sessionFile);
                 return null;

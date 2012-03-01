@@ -17,7 +17,6 @@
 package org.apache.openejb.assembler.classic;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -30,6 +29,7 @@ import org.apache.openejb.core.cmp.cmp2.CmrField;
 import org.apache.openejb.core.cmp.cmp2.Cmp1Generator;
 import org.apache.openejb.core.cmp.CmpUtil;
 import org.apache.openejb.ClassLoaderUtil;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.util.UrlCache;
 
 /**
@@ -249,7 +249,7 @@ public class CmpJarBuilder {
         }
 
         jarFile.deleteOnExit();
-        JarOutputStream jarOutputStream = new JarOutputStream(new FileOutputStream(jarFile));
+        JarOutputStream jarOutputStream = new JarOutputStream(IO.write(jarFile));
         return jarOutputStream;
     }
 

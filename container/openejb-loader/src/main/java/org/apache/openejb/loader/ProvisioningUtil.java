@@ -18,7 +18,6 @@ package org.apache.openejb.loader;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Proxy;
@@ -51,7 +50,11 @@ public class ProvisioningUtil {
             return null;
         }
 
-        FileUtils.copy(new FileOutputStream(destination), is);
+        try {
+            IO.copy(is, destination);
+        } finally {
+            IO.close(is);
+        }
         return destination.getAbsolutePath();
     }
 

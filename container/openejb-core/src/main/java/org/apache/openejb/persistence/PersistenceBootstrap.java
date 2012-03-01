@@ -195,12 +195,7 @@ public class PersistenceBootstrap {
             URL resource = classLoader.getResource("PersistenceBootstrap.properties");
             if (resource != null) {
                 debug("found PersistenceBootstrap.properties file");
-                InputStream in = IO.read(resource);
-                try {
-                    properties.load(in);
-                } finally {
-                    if (in != null) in.close();
-                }
+                IO.readProperties(resource, properties);
             }
         } catch (Throwable e) {
             debug("can't read PersistenceBootstrap.properties file", e);

@@ -33,6 +33,7 @@ import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.openejb.config.sys.Tomee;
 import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Loader;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.ServerService;
@@ -173,8 +174,7 @@ public class TomcatLoader implements Loader {
         final Set<String> exclusions = new HashSet<String>(Arrays.asList(NewLoaderLogic.getExclusions()));
         final File catalinaProperties = new File(conf, "catalina.properties");
         if (catalinaProperties.exists()) {
-            final Properties catalinaProps = new Properties();
-            catalinaProps.load(new FileInputStream(catalinaProperties));
+            final Properties catalinaProps = IO.readProperties(catalinaProperties);
             final String jarToSkipProp = catalinaProps.getProperty("tomcat.util.scan.DefaultJarScanner.jarsToSkip");
             if (jarToSkipProp != null) {
                 for (String s : jarToSkipProp.split(",")) {

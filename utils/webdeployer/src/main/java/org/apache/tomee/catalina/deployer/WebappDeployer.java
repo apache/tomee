@@ -43,7 +43,7 @@ import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.DeploymentExceptionManager;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
-import org.apache.openejb.loader.FileUtils;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.tomcat.util.modeler.Registry;
 import org.apache.tomee.catalina.TomcatWebAppBuilder;
@@ -96,9 +96,9 @@ public class WebappDeployer implements Deployer {
 
 			File source = new File(location);
 			File destination = new File(System.getProperty(OPENEJB_HOME) + File.separator + WEBAPPS + File.separator + source.getName());
-			FileUtils.copyFile(destination, source);
+            IO.copy(source, destination);
 
-			String destinationWithoutExtension = destination.getAbsolutePath();
+            String destinationWithoutExtension = destination.getAbsolutePath();
 			String destinationFilenameWithoutExtension = destination.getName();
 
 			if (destination.getName().contains(".")) {

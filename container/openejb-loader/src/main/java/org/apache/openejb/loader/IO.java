@@ -78,33 +78,35 @@ public class IO {
     }
 
     public static Properties readProperties(URL resource) throws IOException {
-        Properties properties = new Properties();
-        InputStream in = null;
-        try {
-            in = resource.openStream();
-            in = new BufferedInputStream(in);
-            properties.load(in);
-        } finally{
-            try {
-                if (in != null) in.close();
-            } catch (IOException e) {
-            }
-        }
-        return properties;
+        return readProperties(resource, new Properties());
+    }
+
+    public static Properties readProperties(URL resource, Properties properties) throws IOException {
+        return readProperties(read(resource), properties);
     }
 
     public static Properties readProperties(final File resource) throws IOException {
-        Properties properties = new Properties();
-        InputStream in = null;
+        return readProperties(resource, new Properties());
+    }
+
+    public static Properties readProperties(File resource, Properties properties) throws IOException {
+        return readProperties(read(resource), properties);
+    }
+
+    /**
+     * Reads and closes the input stream
+     * @param in
+     * @param properties
+     * @return
+     * @throws IOException
+     */
+    public static Properties readProperties(InputStream in, Properties properties) throws IOException {
+        if (in == null) throw new NullPointerException("InputStream is null");
+        if (properties == null) throw new NullPointerException("Properties is null");
         try {
-            in = new BufferedInputStream(new FileInputStream(resource));
             properties.load(in);
         } finally{
-            try {
-                if (in != null) in.close();
-            } catch (IOException ignored) {
-                // no-op
-            }
+            close(in);
         }
         return properties;
     }
@@ -188,6 +190,15 @@ public class IO {
         final OutputStream write = write(to);
         try {
             copy(from, write);
+        } finally {
+            close(write);
+        }
+    }
+
+    public static void copy(byte[] from, File to) throws IOException {
+        final OutputStream write = write(to);
+        try {
+            write.write(from);
         } finally {
             close(write);
         }

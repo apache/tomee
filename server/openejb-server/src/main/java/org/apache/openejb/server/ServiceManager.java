@@ -170,12 +170,7 @@ public abstract class ServiceManager {
         if (conf.exists()) {
             File serviceConfig = new File(conf, serviceName + ".properties");
             if (serviceConfig.exists()) {
-                FileInputStream in = new FileInputStream(serviceConfig);
-                try {
-                    serviceProperties.load(in);
-                } finally {
-                    in.close();
-                }
+                IO.readProperties(serviceConfig, serviceProperties);
             } else {
 
                 if (EnvProps.extractConfigurationFiles()){
