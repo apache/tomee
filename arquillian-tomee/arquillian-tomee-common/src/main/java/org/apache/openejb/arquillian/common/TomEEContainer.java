@@ -54,6 +54,10 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
     protected Map<String, File> moduleIds = new HashMap<String, File>();
     private final Options options;
 
+    protected int previousHttpPort;
+    protected int previousStopPort;
+    protected int previousAjpPort;
+
     protected TomEEContainer() {
         this.options = new Options(System.getProperties());
     }
@@ -65,10 +69,12 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
 
         if (prefixes == null) return;
 
+        previousHttpPort = configuration.getHttpPort();
         if (configuration.getHttpPort() <= 0) {
             configuration.setHttpPort(NetworkUtil.getNextAvailablePort());
         }
 
+        previousStopPort = configuration.getStopPort();
         if (configuration.getStopPort() <= 0) {
             configuration.setStopPort(NetworkUtil.getNextAvailablePort());
             if (configuration.getHttpPort() == configuration.getStopPort()) {
@@ -77,6 +83,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         }
 
         // only for remote cases
+        previousAjpPort = configuration.getAjpPort();
         if (configuration.getAjpPort() <= 0) {
             configuration.setAjpPort(NetworkUtil.getNextAvailablePort());
             if (configuration.getAjpPort() == configuration.getStopPort() || configuration.getAjpPort() == configuration.getHttpPort()) {
@@ -103,6 +110,21 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
                 }
             }
         }
+    }
+
+    protected void resetPortsToOriginal(Configuration configuration) {
+        int http = configuration.getHttpPort();
+        configuration.setHttpPort(previousHttpPort);
+        int stop = configuration.getStopPort();
+        configuration.setStopPort(previousStopPort);
+        int ajp = configuration.getAjpPort();
+        configuration.setAjpPort(previousAjpPort);
+
+        // keep this port to be able to re-update the modified config
+        // => it means we can try it only once
+        previousHttpPort = http;
+        previousStopPort = stop;
+        previousAjpPort = ajp;
     }
 
     public abstract void start() throws LifecycleException;
