@@ -31,6 +31,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.net.URI;
+import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -55,6 +56,7 @@ public class MultipointDiscoveryAgent implements DiscoveryAgent, ServerService, 
     private MultipointServer multipointServer;
     private boolean debug = true;
     private String name;
+    private String discoveryHost;
 
     public MultipointDiscoveryAgent() {
     }
@@ -73,6 +75,8 @@ public class MultipointDiscoveryAgent implements DiscoveryAgent, ServerService, 
         port = options.get("port", port);
         initialServers = options.get("initialServers", initialServers);
         heartRate = options.get("heart_rate", heartRate);
+        discoveryHost = options.get("discoveryHost", host);
+        name = options.get("discoveryName", MultipointServer.randomColor());
 
 
         Tracker.Builder builder = new Tracker.Builder();
@@ -132,7 +136,7 @@ public class MultipointDiscoveryAgent implements DiscoveryAgent, ServerService, 
         try {
             if (running.compareAndSet(false, true)) {
 
-                multipointServer = new MultipointServer(host, port, tracker, name, debug).start();
+                multipointServer = new MultipointServer(host, discoveryHost, port, tracker, name, debug).start();
 
                 this.port = multipointServer.getPort();
                 
