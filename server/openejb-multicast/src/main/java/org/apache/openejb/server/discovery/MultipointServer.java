@@ -56,7 +56,6 @@ public class MultipointServer {
 
     private static final URI END_LIST = URI.create("end:list");
 
-    private final String host;
     private final int port;
     private final Selector selector;
     private final URI me;
@@ -86,30 +85,35 @@ public class MultipointServer {
     }
 
     public MultipointServer(String host, int port, Tracker tracker, String name, boolean debug) throws IOException {
+        this(host, host, port, tracker, name, debug);
+    }
+
+    public MultipointServer(String bindHost, String broadcastHost, int port, Tracker tracker, String name, boolean debug) throws IOException {
         if (tracker == null) throw new NullPointerException("tracker cannot be null");
-        this.host = host;
         this.tracker = tracker;
         this.name = name;
         this.debug = debug;
+        String format = String.format("MultipointServer(bindHost=%s, discoveryHost=%s, port=%s, name=%s, debug=%s)", bindHost, broadcastHost, port, name, debug);
+        log.debug(format);
         ServerSocketChannel serverChannel = ServerSocketChannel.open();
 
         ServerSocket serverSocket = serverChannel.socket();
-        InetSocketAddress address = new InetSocketAddress(host, port);
+        InetSocketAddress address = new InetSocketAddress(bindHost, port);
         serverSocket.bind(address);
         serverChannel.configureBlocking(false);
 
         this.port = serverSocket.getLocalPort();
         if (name != null) {
-            me = URI.create("conn://" + this.host + ":" + this.port + "/" + name);
+            me = URI.create("conn://" + broadcastHost + ":" + this.port + "/" + name);
         } else {
-            me = URI.create("conn://" + this.host + ":" + this.port);
+            me = URI.create("conn://" + broadcastHost + ":" + this.port);
         }
 
         selector = Selector.open();
 
         serverChannel.register(selector, SelectionKey.OP_ACCEPT);
 
-        println("Broadcasting ");
+        println("Broadcasting");
     }
 
     public int getPort() {
@@ -773,12 +777,15 @@ public class MultipointServer {
                 session = sessions[0];
                 duplicate = sessions[1];
 
-                session.info(session + "@" + session.hashCode() + " KEEP");
-                duplicate.info(duplicate + "@" + duplicate.hashCode() + " KILL");
+                session.trace(session + "@" + session.hashCode() + " KEEP");
+                duplicate.trace(duplicate + "@" + duplicate.hashCode() + " KILL");
 
                 duplicate.hangup = true;
             }
 
+            if (session.state == State.GREETING) {
+                session.info(session + "@" + session.hashCode() + " DISCOVERED");
+            }
             connections.put(session.uri, session);
         }
     }
@@ -797,7 +804,7 @@ public class MultipointServer {
                 '}';
     }
 
-    private static String randomColor() {
+    public static String randomColor() {
         String[] colors = {
                 "almond",
                 "amber",
