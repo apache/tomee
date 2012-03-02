@@ -16,15 +16,6 @@
  */
 package org.apache.openejb.server;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
 import org.apache.openejb.EnvProps;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.ServiceInfo;
@@ -35,6 +26,14 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * @version $Rev$ $Date$
@@ -169,17 +168,26 @@ public abstract class ServiceManager {
         final File conf = base.getDirectory("conf");
         if (conf.exists()) {
             File serviceConfig = new File(conf, serviceName + ".properties");
+            if (!serviceConfig.exists()) {
+                serviceConfig = new File(conf, "conf.d/" + serviceConfig.getName()); // name was already built so use it
+            }
             if (serviceConfig.exists()) {
                 IO.readProperties(serviceConfig, serviceProperties);
             } else {
+                final File confD = serviceConfig.getParentFile();
+                if (!confD.exists() && !confD.mkdirs()) {
+                    logger.warning("can't create " + serviceConfig.getPath());
+                }
 
-                if (EnvProps.extractConfigurationFiles()){
+                if (confD.exists()) {
+                    if (EnvProps.extractConfigurationFiles()) {
 
-                    final String rawPropsContent = (String) serviceProperties.get(Properties.class);
-                    IO.copy(IO.read(rawPropsContent), serviceConfig);
+                        final String rawPropsContent = (String) serviceProperties.get(Properties.class);
+                        IO.copy(IO.read(rawPropsContent), serviceConfig);
 
-                } else {
-                    serviceProperties.put("disabled", "true");
+                    } else {
+                        serviceProperties.put("disabled", "true");
+                    }
                 }
             }
         }
