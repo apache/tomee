@@ -1362,13 +1362,13 @@ public class DeploymentLoader implements DeploymentFilterable {
         // xbean resource finder has a bug when you use any uri but "META-INF"
         // and the jar file does not contain a directory entry for the uri
 
-        if (warFile.isFile()) {
+        if (warFile.isFile()) { // only to discover module type so xml file filtering is enough
             final URL jarURL = new URL("jar", "", -1, warFile.toURI().toURL() + "!/");
             try {
                 final JarFile jarFile = new JarFile(warFile);
                 for (final JarEntry entry : Collections.list(jarFile.entries())) {
                     final String entryName = entry.getName();
-                    if (!entry.isDirectory() && entryName.startsWith("WEB-INF/") && entryName.indexOf('/', "WEB-INF/".length()) > 0) {
+                    if (!entry.isDirectory() && entryName.startsWith("WEB-INF/") && entryName.endsWith(".xml")) {
                         descriptors.put(entryName, new URL(jarURL, entry.getName()));
                     }
                 }
