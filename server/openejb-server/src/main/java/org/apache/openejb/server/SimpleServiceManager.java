@@ -17,6 +17,7 @@
 package org.apache.openejb.server;
 
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ManagedMBean;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.util.LogCategory;
@@ -26,7 +27,6 @@ import org.apache.xbean.finder.ResourceFinder;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.util.Iterator;
 import java.util.List;
@@ -131,7 +131,7 @@ public class SimpleServiceManager extends ServiceManager {
 
         // register the mbean
         try {
-            ManagementFactory.getPlatformMBeanServer().registerMBean(new ManagedMBean(registry), getObjectName());
+            LocalMBeanServer.get().registerMBean(new ManagedMBean(registry), getObjectName());
         } catch (Throwable e) {
             logger.error("Failed to register 'openejb' MBean", e);
         }
@@ -144,39 +144,51 @@ public class SimpleServiceManager extends ServiceManager {
 
         List<ServerService> enabledServers = initServers(availableServices);
 
-        daemons = (ServerService[]) enabledServers.toArray(new ServerService[]{});
+        daemons = enabledServers.toArray(new ServerService[]{});
     }
 
     @Override
     public synchronized void start(boolean block) throws ServiceException {
         boolean display = SystemInstance.get().getOptions().get("openejb.nobanner", (String) null) == null;
 
-        if (display) {
-            LOGGER.info("  ** Starting Services **");
-            printRow("NAME", "IP", "PORT");
-        }
+        // starting then displaying to get a more relevant log
 
+        Exception[] errors = new Exception[daemons.length];
         for (int i = 0; i < daemons.length; i++) {
             ServerService d = daemons[i];
+            LOGGER.info("Starting service " + d.getName());
             try {
                 d.start();
+                errors[i] = null;
+                LOGGER.info("Started service " + d.getName());
+            } catch (Exception e) {
+                errors[i] = e;
+                LOGGER.info("Can't start service " + d.getName(), e);
+            }
+        }
+
+        if (display) {
+            LOGGER.info("  ** Bound Services **");
+            printRow("NAME", "IP", "PORT");
+        }
+        for (int i = 0; i < daemons.length; i++) {
+            final ServerService d = daemons[i];
+            if (errors[i] == null) {
                 if (display && d.getPort() != -1) {
                     printRow(d.getName(), d.getIP(), d.getPort() + "");
                 }
-            } catch (Exception e) {
-                logger.fatal("Service Start Failed: " + d.getName() + " " + d.getIP() + " " + d.getPort() + ": " + e.getMessage());
+            } else {
+                logger.fatal("Service Start Failed: " + d.getName() + " " + d.getIP() + " " + d.getPort() + ": " + errors[i].getMessage());
                 if (display) {
                     printRow(d.getName(), "----", "FAILED");
                 }
             }
         }
+
         if (display) {
             LOGGER.info("-------");
             LOGGER.info("Ready!");
         }
-
-        System.out.println("Ready!");
-        System.out.flush();
 
         if (!block) {
             return;
@@ -220,7 +232,7 @@ public class SimpleServiceManager extends ServiceManager {
         // De-register the mbean
         try {
 
-            final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+            final MBeanServer server = LocalMBeanServer.get();
             final ObjectName objectName = getObjectName();
 
             if (server.isRegistered(objectName)) {

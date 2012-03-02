@@ -26,6 +26,7 @@ import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
+import org.apache.openejb.monitoring.LocalMBeanServer;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -140,7 +141,7 @@ public class StatelessInvocationStatsTest extends TestCase {
         bean.green();
         bean.blue();
 
-        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+        MBeanServer server = LocalMBeanServer.get();
         ObjectName invocationsName = new ObjectName("openejb.management:J2EEServer=openejb,J2EEApplication=null,EJBModule=StatsModule,StatelessSessionBean=CounterBean,j2eeType=Invocations,name=CounterBean");
 
         // Grab the mbeanInfo and check the expected attributes exist and have the correct return types and parameters
