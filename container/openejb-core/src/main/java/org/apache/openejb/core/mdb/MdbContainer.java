@@ -261,7 +261,7 @@ public class MdbContainer implements RpcContainer {
             if (endpointFactory != null) {
                 resourceAdapter.endpointDeactivation(endpointFactory, endpointFactory.getActivationSpec());
 
-                MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+                MBeanServer server = LocalMBeanServer.get();
                 for (ObjectName objectName : endpointFactory.jmxNames) {
                     try {
                         server.unregisterMBean(objectName);
