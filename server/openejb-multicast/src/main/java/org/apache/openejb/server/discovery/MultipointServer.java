@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.server.discovery;
 
+import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -37,9 +38,11 @@ import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -59,12 +62,12 @@ public class MultipointServer {
     private final int port;
     private final Selector selector;
     private final URI me;
+    private final Set<URI> roots = new LinkedHashSet<URI>();
 
     /**
      * Only used for toString to make debugging easier
      */
     private final String name;
-
 
     private final Tracker tracker;
 
@@ -72,37 +75,49 @@ public class MultipointServer {
     private final Map<URI, Session> connections = new HashMap<URI, Session>();
     private boolean debug = true;
 
+    private long joined = 0;
+    private long reconnectDelay;
+
     public MultipointServer(int port, Tracker tracker) throws IOException {
-        this("localhost", port, tracker);
+        this("localhost", "localhost", port, tracker, randomColor(), true, Collections.EMPTY_SET, new Duration(30, TimeUnit.SECONDS));
     }
 
-    public MultipointServer(String host, int port, Tracker tracker) throws IOException {
-        this(host, port, tracker, randomColor());
-    }
-
-    public MultipointServer(String host, int port, Tracker tracker, String name) throws IOException {
-        this(host, port, tracker, name, true);
-    }
-
-    public MultipointServer(String host, int port, Tracker tracker, String name, boolean debug) throws IOException {
-        this(host, host, port, tracker, name, debug);
-    }
-
-    public MultipointServer(String bindHost, String broadcastHost, int port, Tracker tracker, String name, boolean debug) throws IOException {
+    public MultipointServer(String bindHost, String broadcastHost, int port, Tracker tracker, String name, boolean debug, Set<URI> roots, Duration reconnectDelay) throws IOException {
         if (tracker == null) throw new NullPointerException("tracker cannot be null");
+        if (bindHost == null) throw new NullPointerException("host cannot be null");
+
+        if (broadcastHost == null) broadcastHost = bindHost;
+        if (reconnectDelay == null) reconnectDelay = new Duration(30, TimeUnit.SECONDS);
+
         this.tracker = tracker;
         this.name = name;
         this.debug = debug;
-        String format = String.format("MultipointServer(bindHost=%s, discoveryHost=%s, port=%s, name=%s, debug=%s)", bindHost, broadcastHost, port, name, debug);
-        log.debug(format);
-        ServerSocketChannel serverChannel = ServerSocketChannel.open();
+        if (roots != null) {
+            this.roots.addAll(roots);
+        }
 
-        ServerSocket serverSocket = serverChannel.socket();
-        InetSocketAddress address = new InetSocketAddress(bindHost, port);
-        serverSocket.bind(address);
+        this.reconnectDelay = reconnectDelay.getTime(TimeUnit.NANOSECONDS);
+
+        final String format = String.format("MultipointServer(bindHost=%s, discoveryHost=%s, port=%s, name=%s, debug=%s, roots=%s, reconnectDelay='%s')",
+                bindHost,
+                broadcastHost,
+                port,
+                name,
+                debug,
+                this.roots.size(),
+                reconnectDelay.toString());
+
+        log.debug(format);
+
+        final InetSocketAddress address = new InetSocketAddress(bindHost, port);
+
+        final ServerSocketChannel serverChannel = ServerSocketChannel.open();
         serverChannel.configureBlocking(false);
 
+        final ServerSocket serverSocket = serverChannel.socket();
+        serverSocket.bind(address);
         this.port = serverSocket.getLocalPort();
+
         if (name != null) {
             me = URI.create("conn://" + broadcastHost + ":" + this.port + "/" + name);
         } else {
@@ -120,6 +135,23 @@ public class MultipointServer {
         return port;
     }
 
+    /**
+     * Attempt to connect back to the network if
+     *  - We aren't already connected
+     *  - We aren't already attempting to connect
+     *  - It has been a while since we last tried (reconnectDelay)
+     */
+    private void rejoin() {
+        if (connections.size() > 0) return;
+        if (connect.size() > 0) return;
+        if (System.nanoTime() - joined <= reconnectDelay) return;
+
+        for (URI root : roots) {
+            connect(root);
+        }
+
+        this.joined = System.nanoTime();
+    }
     public MultipointServer start() {
         if (running.compareAndSet(false, true)) {
             Thread thread = new Thread(new Runnable() {
@@ -380,8 +412,14 @@ public class MultipointServer {
             // Here is where we actually will expire missing services
             tracker.checkServices();
 
+            // Fill 'connections' list if we are fully disconnected
+            rejoin();
+
+            // Connect to anyone in the 'connections' list
             initiateConnections();
 
+            // Adjust selector timeout so we execute in even increments
+            // This keeps the heartbeat and rejoin regular
             selectorTimeout = adjustedSelectorTimeout(start);
         }
     }
@@ -715,7 +753,7 @@ public class MultipointServer {
         connect(URI.create("conn://localhost:" + port));
     }
 
-    public void connect(URI uri) throws Exception {
+    public void connect(URI uri) {
         if (me.equals(uri)) return;
 
         synchronized (connect) {

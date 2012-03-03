@@ -21,6 +21,7 @@ import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.DiscoveryAgent;
 import org.apache.openejb.server.DiscoveryListener;
+import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.loader.Options;
@@ -31,8 +32,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.net.URI;
-import java.util.Map;
+import java.util.LinkedHashSet;
 import java.util.Properties;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -57,6 +59,8 @@ public class MultipointDiscoveryAgent implements DiscoveryAgent, ServerService, 
     private boolean debug = true;
     private String name;
     private String discoveryHost;
+    private Set<URI> roots;
+    private Duration reconnectDelay;
 
     public MultipointDiscoveryAgent() {
     }
@@ -68,7 +72,7 @@ public class MultipointDiscoveryAgent implements DiscoveryAgent, ServerService, 
 
     public void init(Properties props) {
 
-        Options options = new Options(props);
+        final Options options = new Options(props);
         options.setLogger(new OptionsLog(log));
 
         host = props.getProperty("bind", host);
@@ -77,7 +81,18 @@ public class MultipointDiscoveryAgent implements DiscoveryAgent, ServerService, 
         heartRate = options.get("heart_rate", heartRate);
         discoveryHost = options.get("discoveryHost", host);
         name = options.get("discoveryName", MultipointServer.randomColor());
+        reconnectDelay = options.get("reconnectDelay", new Duration("30 seconds"));
 
+        final Set<URI> uris = new LinkedHashSet<URI>();
+
+        // Connect the initial set of peer servers
+        StringTokenizer st = new StringTokenizer(initialServers, ",");
+        while (st.hasMoreTokens()) {
+            URI uri = URI.create("conn://" + st.nextToken().trim());
+            uris.add(uri);
+        }
+
+        roots = uris;
 
         Tracker.Builder builder = new Tracker.Builder();
         builder.setHeartRate(heartRate);
@@ -136,15 +151,9 @@ public class MultipointDiscoveryAgent implements DiscoveryAgent, ServerService, 
         try {
             if (running.compareAndSet(false, true)) {
 
-                multipointServer = new MultipointServer(host, discoveryHost, port, tracker, name, debug).start();
+                multipointServer = new MultipointServer(host, discoveryHost, port, tracker, name, debug, roots, reconnectDelay).start();
 
                 this.port = multipointServer.getPort();
-                
-                // Connect the initial set of peer servers
-                StringTokenizer st = new StringTokenizer(initialServers, ",");
-                while (st.hasMoreTokens()) {
-                    multipointServer.connect(URI.create("conn://"+st.nextToken().trim()));
-                }
 
             }
         } catch (Exception e) {

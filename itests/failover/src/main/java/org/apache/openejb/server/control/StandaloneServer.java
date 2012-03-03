@@ -57,6 +57,10 @@ public class StandaloneServer {
     private OutputStream out = System.out;
     private Options options = new Options(properties);
 
+    public StandaloneServer(File home) {
+        this(home, home);
+    }
+
     public StandaloneServer(File home, File base) {
         this.home = home;
         this.base = base;
@@ -80,9 +84,6 @@ public class StandaloneServer {
 
     public class ServerService {
 
-        private String bind;
-        private int threads;
-
         private final String name;
 
         public ServerService(String name) {
@@ -101,8 +102,16 @@ public class StandaloneServer {
             return options.get(name + ".disabled", true);
         }
 
+        public boolean isEnabled() {
+            return !isDisabled();
+        }
+
         public void setDisabled(boolean b) {
             properties.put(name + ".disabled", b + "");
+        }
+
+        public void setEnabled(boolean b) {
+            setDisabled(!b);
         }
 
         public String getBind() {
@@ -121,9 +130,37 @@ public class StandaloneServer {
             properties.put(name + ".threads", threads + "");
         }
 
-        public void set(String name, String value) {
+        public ServerService set(String name, String value) {
             properties.put(this.name + "." + name, value);
+            return this;
         }
+
+        public ServerService threads(int threads) {
+            setThreads(threads);
+            return this;
+        }
+
+        public ServerService port(int port) {
+            setPort(port);
+            return this;
+        }
+
+        public ServerService enable() {
+            setEnabled(true);
+            return this;
+        }
+
+        public ServerService disable() {
+            setDisabled(true);
+            return this;
+        }
+
+        public ServerService bind(String host) {
+            setBind(host);
+            return this;
+        }
+
+
     }
 
     public File getHome() {
@@ -184,6 +221,10 @@ public class StandaloneServer {
 
     public Properties getProperties() {
         return properties;
+    }
+
+    public Object setProperty(String key, String value) {
+        return getProperties().setProperty(key, value);
     }
 
     public void start() {
@@ -249,7 +290,6 @@ public class StandaloneServer {
     }
 
     private void waitForExit() {
-        kill.remove(this);
         try {
             process.waitFor();
         } catch (InterruptedException e) {
@@ -285,14 +325,14 @@ public class StandaloneServer {
     }
 
     public void deploy(String path) {
-        final int code = command("deploy", path);
+        final int code = command("deploy", getServerUrl(), path);
         if (code != 0) {
             throw new DeployException(home, code, path);
         }
     }
 
     public void undeploy(String path) {
-        final int code = command("undeploy", path);
+        final int code = command("undeploy", getServerUrl(), path);
         if (code != 0) {
             throw new UndeployException(home, code, path);
         }
@@ -308,6 +348,7 @@ public class StandaloneServer {
 
 
     public void killOnExit() {
+        if (kill.contains(this)) return;
         kill.add(this);
     }
 
@@ -405,4 +446,15 @@ public class StandaloneServer {
         }
     }
 
+    private String getServerUrl() {
+        final ServerService ejbd = getServerService("ejbd");
+
+        int port = ejbd.getPort();
+        if (port == 0) port = 4201;
+
+        String host = ejbd.getBind();
+        if (host == null || host.length() == 0) host = "localhost";
+
+        return String.format("--server-url=ejbd://%s:%s", host, port);
+    }
 }

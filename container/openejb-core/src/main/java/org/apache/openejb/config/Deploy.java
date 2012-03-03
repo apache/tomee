@@ -64,7 +64,7 @@ public class Deploy {
     private static final int BUF_SIZE = 8192;
 
 
-    public static void main(String[] args) throws SystemExitException {
+    public static void main(String... args) throws SystemExitException {
 
         CommandLineParser parser = new PosixParser();
 
