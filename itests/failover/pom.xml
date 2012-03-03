@@ -27,6 +27,19 @@
   <artifactId>failover</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: iTests Beans</name>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <systemPropertyVariables>
+            <version>${project.version}</version>
+          </systemPropertyVariables>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>
