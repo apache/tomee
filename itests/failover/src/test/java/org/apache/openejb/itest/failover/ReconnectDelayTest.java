@@ -56,9 +56,8 @@ public class ReconnectDelayTest {
 
         Duration reconnectDelay = new Duration("1 second");
 
-        final Repository repository = new Repository();
-        final File zip = repository.getArtifact("org.apache.openejb", "openejb-standalone", "zip").get();
-        final File app = repository.getArtifact("org.apache.openejb.itests", "failover-ejb", "jar").get();
+        final File zip = Repository.getArtifact("org.apache.openejb", "openejb-standalone", "zip");
+        final File app = Repository.getArtifact("org.apache.openejb.itests", "failover-ejb", "jar");
 
         final File dir = Files.tmpdir();
 

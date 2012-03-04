@@ -92,6 +92,7 @@ public class Files {
     }
 
     public static File file(File file) {
+        exists(file);
         if (!file.isFile()) throw new RuntimeException("Not a file: " + file.getAbsolutePath());
         return file;
     }
@@ -104,6 +105,10 @@ public class Files {
     public static File readable(File file) {
         if (!file.canRead()) throw new RuntimeException("Not readable: " + file.getAbsolutePath());
         return file;
+    }
+
+    public static File readableFile(File file) {
+        return readable(file(file));
     }
 
     public static File mkdir(File file) {
