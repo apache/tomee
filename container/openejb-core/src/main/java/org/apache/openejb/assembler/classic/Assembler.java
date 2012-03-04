@@ -34,6 +34,7 @@ import org.apache.openejb.MethodContext;
 import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.UndeployException;
 import org.apache.openejb.cdi.CdiAppContextsService;
 import org.apache.openejb.cdi.CdiBuilder;
@@ -1518,7 +1519,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             // create the connection manager
             ConnectionManager connectionManager = (ConnectionManager) connectionManagerRecipe.create();
             if (connectionManager == null) {
-                throw new RuntimeException(messages.format("assembler.invalidConnectionManager", serviceInfo.id));
+                throw new OpenEJBRuntimeException(messages.format("assembler.invalidConnectionManager", serviceInfo.id));
             }
 
             Map<String, Object> unsetA = serviceRecipe.getUnsetProperties();

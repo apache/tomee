@@ -98,7 +98,7 @@ public class BackportUtil {
             try {
                 standardContext.setConfigFile(contextXmlFile.toURI().toURL());
             } catch (MalformedURLException e) {
-                throw new RuntimeException(e);
+                throw new TomEERuntimeException(e);
             }
         }
     }

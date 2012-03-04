@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import org.apache.openejb.OpenEJBRuntimeException;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -36,8 +38,7 @@ public class Info {
         try {
             JAXB_CONTEXT = JAXBContext.newInstance(Info.class);
         } catch (JAXBException e) {
-            // TODO: find a better exception?
-            throw new RuntimeException("can't create jaxbcontext for Info class");
+            throw new OpenEJBRuntimeException("can't create jaxbcontext for Info class");
         }
     }
 

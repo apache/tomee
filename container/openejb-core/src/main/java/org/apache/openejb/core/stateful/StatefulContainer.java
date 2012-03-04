@@ -22,6 +22,7 @@ import org.apache.openejb.ContainerType;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.InvalidateReferenceException;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.SystemException;
@@ -71,7 +72,6 @@ import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.transaction.Transaction;
-import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
 import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
@@ -998,7 +998,7 @@ public class StatefulContainer implements RpcContainer {
                 // Caller handles transaction rollback and discardInstance
 
                 // [4] throw the java.rmi.RemoteException to the client
-                throw new RuntimeException(message, e);
+                throw new OpenEJBRuntimeException(message, e);
             } finally {
                 ThreadContext.exit(oldCallContext);
             }
@@ -1043,7 +1043,7 @@ public class StatefulContainer implements RpcContainer {
                     discardInstance(callContext);
 
                     // [4] throw the java.rmi.RemoteException to the client
-                    throw new RuntimeException(message, e);
+                    throw new OpenEJBRuntimeException(message, e);
                 } finally {
                     ThreadContext.exit(oldCallContext);
                 }
@@ -1091,7 +1091,7 @@ public class StatefulContainer implements RpcContainer {
             }
 
             if (firstException != null) {
-                throw new RuntimeException("An unexpected system exception occured while invoking the afterCompletion method on the SessionSynchronization object", firstException);
+                throw new OpenEJBRuntimeException("An unexpected system exception occured while invoking the afterCompletion method on the SessionSynchronization object", firstException);
             }
         }
     }

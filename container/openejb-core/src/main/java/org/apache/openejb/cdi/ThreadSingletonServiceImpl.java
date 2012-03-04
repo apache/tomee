@@ -19,6 +19,7 @@
 package org.apache.openejb.cdi;
 
 import org.apache.openejb.AppContext;
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.loader.SystemInstance;
@@ -106,7 +107,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
             try {
                 webBeansContext.getService(ContainerLifecycle.class).startApplication(startupObject);
             } catch (Exception e) {
-                throw new RuntimeException("couldn't start owb context", e);
+                throw new OpenEJBRuntimeException("couldn't start owb context", e);
             }
         } finally {
             contextExited(old);

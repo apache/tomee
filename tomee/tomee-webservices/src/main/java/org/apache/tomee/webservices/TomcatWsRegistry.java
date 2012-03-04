@@ -41,6 +41,7 @@ import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.webservices.WsRegistry;
 import org.apache.openejb.server.webservices.WsServlet;
 import org.apache.tomee.catalina.OpenEJBValve;
+import org.apache.tomee.catalina.TomEERuntimeException;
 import org.apache.tomee.loader.TomcatHelper;
 
 import java.net.URI;
@@ -331,7 +332,7 @@ public class TomcatWsRegistry implements WsRegistry {
                 context.destroy();
                 context.stop();
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new TomEERuntimeException(e);
             }
             Host host = (Host) context.getParent();
             host.removeChild(context);

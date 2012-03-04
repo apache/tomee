@@ -16,6 +16,22 @@
  */
 package org.apache.openejb.core.ivm;
 
+import org.apache.openejb.AppContext;
+import org.apache.openejb.BeanContext;
+import org.apache.openejb.InterfaceType;
+import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.core.ServerFederation;
+import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.spi.ApplicationServer;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+
+import javax.ejb.AccessLocalException;
+import javax.ejb.EJBAccessException;
+import javax.ejb.EJBException;
+import javax.ejb.EJBLocalObject;
+import javax.ejb.EJBObject;
+import javax.ejb.NoSuchEJBException;
 import java.io.ObjectStreamException;
 import java.lang.reflect.Method;
 import java.rmi.AccessException;
@@ -32,23 +48,6 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.ejb.AccessLocalException;
-import javax.ejb.ConcurrentAccessTimeoutException;
-import javax.ejb.EJBAccessException;
-import javax.ejb.EJBException;
-import javax.ejb.EJBLocalObject;
-import javax.ejb.EJBObject;
-import javax.ejb.NoSuchEJBException;
-
-import org.apache.openejb.AppContext;
-import org.apache.openejb.BeanContext;
-import org.apache.openejb.InterfaceType;
-import org.apache.openejb.core.ServerFederation;
-import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.spi.ApplicationServer;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
 
 public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
@@ -111,7 +110,7 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
                         retValue = getEJBLocalHome(m, a, p);
                         break;
                     default:
-                        throw new RuntimeException("Inconsistent internal state");
+                        throw new OpenEJBRuntimeException("Inconsistent internal state");
                 }
             }
 

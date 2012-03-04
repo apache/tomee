@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.client.proxy;
 
+import org.apache.openejb.client.ClientRuntimeException;
+
 import java.util.Properties;
 
 public class ProxyManager {
@@ -30,12 +32,12 @@ public class ProxyManager {
             version = System.getProperty("java.vm.version");
         } catch (Exception e) {
 
-            throw new RuntimeException("Unable to determine the version of your VM.  No ProxyFactory Can be installed");
+            throw new ClientRuntimeException("Unable to determine the version of your VM.  No ProxyFactory Can be installed");
         }
         ClassLoader cl = getContextClassLoader();
 
         if (version.startsWith("1.1")) {
-            throw new RuntimeException("This VM version is not supported: " + version);
+            throw new ClientRuntimeException("This VM version is not supported: " + version);
         } else if (version.startsWith("1.2")) {
             defaultFactoryName = "JDK 1.2 ProxyFactory";
 
@@ -43,14 +45,14 @@ public class ProxyManager {
                 Class.forName("org.opentools.proxies.Proxy", true, cl);
             } catch (Exception e) {
 
-                throw new RuntimeException("No ProxyFactory Can be installed. Unable to load the class org.opentools.proxies.Proxy.  This class is needed for generating proxies in JDK 1.2 VMs.");
+                throw new ClientRuntimeException("No ProxyFactory Can be installed. Unable to load the class org.opentools.proxies.Proxy.  This class is needed for generating proxies in JDK 1.2 VMs.");
             }
 
             try {
                 factory = Class.forName("org.apache.openejb.client.proxy.Jdk12ProxyFactory", true, cl);
             } catch (Exception e) {
 
-                throw new RuntimeException("No ProxyFactory Can be installed. Unable to load the class org.apache.openejb.client.proxy.Jdk12ProxyFactory.");
+                throw new ClientRuntimeException("No ProxyFactory Can be installed. Unable to load the class org.apache.openejb.client.proxy.Jdk12ProxyFactory.");
             }
         } else {
             defaultFactoryName = "JDK 1.3 ProxyFactory";
@@ -59,7 +61,7 @@ public class ProxyManager {
                 factory = Class.forName("org.apache.openejb.client.proxy.Jdk13ProxyFactory", true, cl);
             } catch (Exception e) {
 
-                throw new RuntimeException("No ProxyFactory Can be installed. Unable to load the class org.apache.openejb.client.proxy.Jdk13ProxyFactory.");
+                throw new ClientRuntimeException("No ProxyFactory Can be installed. Unable to load the class org.apache.openejb.client.proxy.Jdk13ProxyFactory.");
             }
         }
 
@@ -70,7 +72,7 @@ public class ProxyManager {
 
         } catch (Exception e) {
 
-            throw new RuntimeException("No ProxyFactory Can be installed. Unable to load the class org.apache.openejb.client.proxy.Jdk13ProxyFactory.");
+            throw new ClientRuntimeException("No ProxyFactory Can be installed. Unable to load the class org.apache.openejb.client.proxy.Jdk13ProxyFactory.");
         }
 
     }

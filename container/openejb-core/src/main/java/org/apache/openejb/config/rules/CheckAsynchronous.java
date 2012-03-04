@@ -17,15 +17,8 @@
 
 package org.apache.openejb.config.rules;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.Future;
-
-import javax.ejb.Asynchronous;
-
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.jee.ApplicationException;
 import org.apache.openejb.jee.AsyncMethod;
@@ -33,6 +26,13 @@ import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.MethodParams;
 import org.apache.openejb.jee.SessionBean;
 import org.apache.xbean.finder.ClassFinder;
+
+import javax.ejb.Asynchronous;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.Future;
 
 /**
  * @version $Rev$ $Date$
@@ -139,7 +139,7 @@ public class CheckAsynchronous extends ValidationBase {
         } catch (NoSuchMethodException e) {
             return null;
         } catch (OpenEJBException e) {
-            throw new RuntimeException(e);
+            throw new OpenEJBRuntimeException(e);
         }
     }
 }

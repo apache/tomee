@@ -18,6 +18,7 @@
 package org.apache.openejb.util.proxy;
 
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -35,7 +36,7 @@ public class DynamicProxyImplFactory {
             try {
                 em = (EntityManager) context.getJndiEnc().lookup(emLookupName);
             } catch (NamingException e) {
-                throw new RuntimeException("a dynamic bean should reference at least one correct PersistenceContext", e);
+                throw new OpenEJBRuntimeException("a dynamic bean should reference at least one correct PersistenceContext", e);
             }
 
             ((QueryProxy) invocationHandler).setEntityManager(em);
@@ -44,7 +45,7 @@ public class DynamicProxyImplFactory {
         try {
             return ProxyManager.newProxyInstance(context.getLocalInterface(), new Handler(invocationHandler));
         } catch (IllegalAccessException e) {
-            throw new RuntimeException("illegal access", e);
+            throw new OpenEJBRuntimeException("illegal access", e);
         }
     }
 

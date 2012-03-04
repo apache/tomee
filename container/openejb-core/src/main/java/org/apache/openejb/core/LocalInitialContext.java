@@ -21,6 +21,7 @@ import org.apache.openejb.OpenEJB;
 import org.apache.openejb.Injection;
 import org.apache.openejb.InjectionProcessor;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.api.LocalClient;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.loader.Options;
@@ -141,7 +142,7 @@ public class LocalInitialContext extends ContextWrapper {
                 ClientSecurity.setIdentity(null);
             }
         } catch (LoginException e) {
-            throw new RuntimeException("User could not be logged out.", e);
+            throw new OpenEJBRuntimeException("User could not be logged out.", e);
         }
     }
 

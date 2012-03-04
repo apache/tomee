@@ -67,7 +67,7 @@ public class ThrowableArtifact implements Externalizable {
             throwable = stack.pop().initCause(throwable);
         }
 
-        return new RuntimeException("The exception sent could not be serialized or deserialized.  This is a mock recreation:\n"+throwable, throwable);
+        return new ClientRuntimeException("The exception sent could not be serialized or deserialized.  This is a mock recreation:\n"+throwable, throwable);
     }
 
     public Throwable getThrowable() {

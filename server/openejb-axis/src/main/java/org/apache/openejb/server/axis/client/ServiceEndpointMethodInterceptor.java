@@ -21,6 +21,7 @@ import net.sf.cglib.proxy.MethodProxy;
 import org.apache.axis.client.Call;
 import org.apache.axis.description.ParameterDesc;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.openejb.server.ServerRuntimeException;
 import org.apache.openejb.server.webservices.saaj.SaajUniverse;
 
 import javax.wsdl.OperationType;
@@ -56,7 +57,7 @@ public class ServiceEndpointMethodInterceptor implements MethodInterceptor {
         int index = methodProxy.getSuperIndex();
         OperationInfo operationInfo = operations[index];
         if (operationInfo == null) {
-            throw new RuntimeException("Operation not mapped: " + method.getName() + " index: " + index + "\n OperationInfos: " + Arrays.asList(operations));
+            throw new ServerRuntimeException("Operation not mapped: " + method.getName() + " index: " + index + "\n OperationInfos: " + Arrays.asList(operations));
         }
         stub.checkCachedEndpoint();
 
@@ -116,7 +117,7 @@ public class ServiceEndpointMethodInterceptor implements MethodInterceptor {
             call.invokeOneWay(unwrapped);
             return null;
         } else {
-            throw new RuntimeException("Invalid messaging style: " + operationInfo.getOperationDesc().getMep());
+            throw new ServerRuntimeException("Invalid messaging style: " + operationInfo.getOperationDesc().getMep());
         }
     }
 

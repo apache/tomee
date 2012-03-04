@@ -16,14 +16,14 @@
  */
 package org.apache.openejb.core.ivm;
 
-import java.io.ObjectStreamException;
+import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.core.ServerFederation;
+import org.apache.openejb.spi.ApplicationServer;
+import org.apache.openejb.util.proxy.ProxyManager;
 
 import javax.ejb.EJBHome;
 import javax.ejb.EJBObject;
-
-import org.apache.openejb.util.proxy.ProxyManager;
-import org.apache.openejb.spi.ApplicationServer;
-import org.apache.openejb.core.ServerFederation;
+import java.io.ObjectStreamException;
 
 public class IntraVmHandle implements java.io.Serializable, javax.ejb.HomeHandle, javax.ejb.Handle {
     protected Object theProxy;
@@ -76,7 +76,7 @@ public class IntraVmHandle implements java.io.Serializable, javax.ejb.HomeHandle
                 ApplicationServer applicationServer = ServerFederation.getApplicationServer();
                 return applicationServer.getHomeHandle(handler.getProxyInfo());
             } else {
-                throw new RuntimeException("Invalid proxy type. Handles are only supported by EJBObject types in EJB 1.1");
+                throw new OpenEJBRuntimeException("Invalid proxy type. Handles are only supported by EJBObject types in EJB 1.1");
             }
         }
     }

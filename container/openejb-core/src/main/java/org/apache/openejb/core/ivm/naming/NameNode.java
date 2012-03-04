@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.core.ivm.naming;
 
+import org.apache.openejb.OpenEJBRuntimeException;
+
 import javax.naming.*;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -333,7 +335,7 @@ public class NameNode implements java.io.Serializable {
         }
         catch (javax.naming.NameNotFoundException exception) {
             exception.printStackTrace();
-            throw new RuntimeException(exception);
+            throw new OpenEJBRuntimeException(exception);
         }
     }
 

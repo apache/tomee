@@ -19,6 +19,7 @@ package org.apache.openejb.core.timer;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.transaction.TransactionType;
@@ -103,7 +104,7 @@ public class EjbTimerServiceImpl implements EjbTimerService {
                         .build();
                 scheduler.addJob(job, true);
             } catch (SchedulerException e) {
-                throw new RuntimeException("Fail to initialize the default scheduler", e);
+                throw new OpenEJBRuntimeException("Fail to initialize the default scheduler", e);
             }
             SystemInstance.get().setComponent(Scheduler.class, scheduler);
         }
@@ -116,7 +117,7 @@ public class EjbTimerServiceImpl implements EjbTimerService {
         if (scheduler != null) try {
             scheduler.shutdown();
         } catch (SchedulerException e) {
-            throw new RuntimeException("Unable to shutdown scheduler", e);
+            throw new OpenEJBRuntimeException("Unable to shutdown scheduler", e);
         }
 
     }
@@ -161,7 +162,7 @@ public class EjbTimerServiceImpl implements EjbTimerService {
             atrigger.setJobName(OPENEJB_TIMEOUT_JOB_NAME);
             atrigger.setJobGroup(OPENEJB_TIMEOUT_JOB_GROUP_NAME);
         } else {
-            throw new RuntimeException("the trigger was not an AbstractTrigger - it shouldn't be possible");
+            throw new OpenEJBRuntimeException("the trigger was not an AbstractTrigger - it shouldn't be possible");
         }
         JobDataMap triggerDataMap = trigger.getJobDataMap();
         triggerDataMap.put(EjbTimeoutJob.EJB_TIMERS_SERVICE, this);

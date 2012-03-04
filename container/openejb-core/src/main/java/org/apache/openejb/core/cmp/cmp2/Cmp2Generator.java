@@ -28,6 +28,7 @@ import java.util.Map;
 
 import javax.ejb.EntityContext;
 
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.xbean.asm.ClassWriter;
 import org.apache.xbean.asm.FieldVisitor;
 import org.apache.xbean.asm.Label;
@@ -1174,7 +1175,7 @@ public class Cmp2Generator implements Opcodes {
                 toObject = objectClass.getMethod("valueOf", primitiveClass);
                 toPrimitive = objectClass.getMethod(toPrimitiveMethodName);
             } catch (NoSuchMethodException e) {
-                throw new RuntimeException(e);
+                throw new OpenEJBRuntimeException(e);
             }
 
             conversionsByPrimitive.put(primitiveClass, this);

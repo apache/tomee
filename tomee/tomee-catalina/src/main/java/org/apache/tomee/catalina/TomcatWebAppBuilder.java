@@ -91,7 +91,6 @@ import javax.servlet.jsp.JspFactory;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -1061,7 +1060,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         try {
             appModule = tomcatDeploymentLoader.load(new File(servletContext.getRealPath(".")).getParentFile());
         } catch (OpenEJBException e) {
-            throw new RuntimeException(e);
+            throw new TomEERuntimeException(e);
         }
 
         // create the web module

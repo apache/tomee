@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.client.proxy;
 
+import org.apache.openejb.client.ClientRuntimeException;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Proxy;
@@ -44,7 +46,7 @@ public class Jdk13ProxyFactory implements ProxyFactory {
                     "Please download the latest 1.3 Virtual Machine.      \n" +
                     "For more details see:                                \n" +
                     "http://developer.java.sun.com/developer/bugParade/bugs/4346224.html\n  ";
-            throw new RuntimeException(message);
+            throw new ClientRuntimeException(message);
         }
     }
 

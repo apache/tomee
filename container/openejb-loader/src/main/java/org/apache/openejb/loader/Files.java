@@ -77,33 +77,33 @@ public class Files {
     }
 
     public static File exists(File file, String s) {
-        if (!file.exists()) throw new RuntimeException(s + " does not exist: " + file.getAbsolutePath());
+        if (!file.exists()) throw new FileRuntimeException(s + " does not exist: " + file.getAbsolutePath());
         return file;
     }
 
     public static File exists(File file) {
-        if (!file.exists()) throw new RuntimeException("Does not exist: " + file.getAbsolutePath());
+        if (!file.exists()) throw new FileRuntimeException("Does not exist: " + file.getAbsolutePath());
         return file;
     }
 
     public static File dir(File file) {
-        if (!file.isDirectory()) throw new RuntimeException("Not a directory: " + file.getAbsolutePath());
+        if (!file.isDirectory()) throw new FileRuntimeException("Not a directory: " + file.getAbsolutePath());
         return file;
     }
 
     public static File file(File file) {
         exists(file);
-        if (!file.isFile()) throw new RuntimeException("Not a file: " + file.getAbsolutePath());
+        if (!file.isFile()) throw new FileRuntimeException("Not a file: " + file.getAbsolutePath());
         return file;
     }
 
     public static File writable(File file) {
-        if (!file.canWrite()) throw new RuntimeException("Not writable: " + file.getAbsolutePath());
+        if (!file.canWrite()) throw new FileRuntimeException("Not writable: " + file.getAbsolutePath());
         return file;
     }
 
     public static File readable(File file) {
-        if (!file.canRead()) throw new RuntimeException("Not readable: " + file.getAbsolutePath());
+        if (!file.canRead()) throw new FileRuntimeException("Not readable: " + file.getAbsolutePath());
         return file;
     }
 
@@ -113,7 +113,7 @@ public class Files {
 
     public static File mkdir(File file) {
         if (file.exists()) return file;
-        if (!file.mkdirs()) throw new RuntimeException("Cannot mkdir: " + file.getAbsolutePath());
+        if (!file.mkdirs()) throw new FileRuntimeException("Cannot mkdir: " + file.getAbsolutePath());
         return file;
     }
 
@@ -125,7 +125,7 @@ public class Files {
             deleteOnExit(file);
             return file;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new FileRuntimeException(e);
         }
     }
 
@@ -138,7 +138,7 @@ public class Files {
 
         if (!file.exists()) {
 
-            if (!file.mkdirs()) throw new RuntimeException("Cannot mkdirs: " + file.getAbsolutePath());
+            if (!file.mkdirs()) throw new FileRuntimeException("Cannot mkdirs: " + file.getAbsolutePath());
 
             return file;
         }
@@ -199,4 +199,13 @@ public class Files {
         return sb.substring(0, sb.length() - delimiter.length());
     }
 
+    public static class FileRuntimeException extends RuntimeException {
+        public FileRuntimeException(final String str) {
+            super(str);
+        }
+
+        public FileRuntimeException(final Exception e) {
+            super(e);
+        }
+    }
 }

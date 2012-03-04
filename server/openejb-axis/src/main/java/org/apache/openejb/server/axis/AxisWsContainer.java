@@ -16,18 +16,6 @@
  */
 package org.apache.openejb.server.axis;
 
-import java.io.InputStream;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URL;
-import java.util.Iterator;
-import java.util.Map;
-import javax.servlet.http.HttpServletResponse;
-import javax.wsdl.OperationType;
-import javax.xml.soap.MimeHeader;
-import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.SOAPMessage;
-
 import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
@@ -39,14 +27,27 @@ import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.Messages;
-import org.apache.openejb.server.webservices.WsConstants;
-import org.apache.openejb.server.webservices.saaj.SaajUniverse;
+import org.apache.openejb.server.ServerRuntimeException;
+import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.httpd.HttpRequest;
 import org.apache.openejb.server.httpd.HttpResponse;
-import org.apache.openejb.server.httpd.HttpListener;
-import org.apache.openejb.util.Logger;
+import org.apache.openejb.server.webservices.WsConstants;
+import org.apache.openejb.server.webservices.saaj.SaajUniverse;
 import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.w3c.dom.Element;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.wsdl.OperationType;
+import javax.xml.soap.MimeHeader;
+import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.SOAPMessage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
+import java.util.Iterator;
+import java.util.Map;
 
 public class AxisWsContainer implements HttpListener {
     private static final Logger logger = Logger.getInstance(LogCategory.AXIS, AxisWsContainer.class);
@@ -151,7 +152,7 @@ public class AxisWsContainer implements HttpListener {
                     res.setStatus(HttpServletResponse.SC_ACCEPTED);
                     return;
                 } else if (responseMessage == null) {
-                    responseMessage = handleException(messageContext, null, new RuntimeException("No response for non-one-way operation"));
+                    responseMessage = handleException(messageContext, null, new ServerRuntimeException("No response for non-one-way operation"));
                 }
             } else if (responseMessage == null) {
                 res.setStatus(HttpServletResponse.SC_ACCEPTED);

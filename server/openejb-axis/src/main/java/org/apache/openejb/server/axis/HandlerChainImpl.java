@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.server.axis;
 
+import org.apache.openejb.server.ServerRuntimeException;
+
 import javax.xml.rpc.JAXRPCException;
 import javax.xml.rpc.handler.Handler;
 import javax.xml.rpc.handler.HandlerInfo;
@@ -149,7 +151,7 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
                 message.saveChanges();
             }
         } catch (SOAPException e) {
-            throw new RuntimeException("Unable to save changes to SOAPMessage : " + e.toString());
+            throw new ServerRuntimeException("Unable to save changes to SOAPMessage : " + e.toString());
         }
     }
 
@@ -190,7 +192,7 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
             try {
                 return message.getSOAPPart().getEnvelope().getBody();
             } catch (SOAPException e) {
-                throw new RuntimeException(e);
+                throw new ServerRuntimeException(e);
             }
         }
 

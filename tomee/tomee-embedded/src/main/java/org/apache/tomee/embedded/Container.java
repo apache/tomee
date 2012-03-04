@@ -41,6 +41,7 @@ import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Logger;
+import org.apache.tomee.catalina.TomEERuntimeException;
 import org.apache.tomee.catalina.TomcatLoader;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -210,7 +211,7 @@ public class Container {
             final File file = File.createTempFile("apache-tomee", "-home");
             return file.getAbsolutePath();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new TomEERuntimeException(e);
         }
     }
 

@@ -19,6 +19,7 @@ package org.apache.openejb.daemon;
 import org.apache.openejb.cli.Bootstrap;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.Server;
+import org.apache.openejb.server.ServerRuntimeException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -85,7 +86,7 @@ public class NTService {
 
             } catch (Exception e) {
                 running.set(false);
-                throw new RuntimeException("Failed to Bootstrap OpenEJB", e);
+                throw new ServerRuntimeException("Failed to Bootstrap OpenEJB", e);
             }
 
         }

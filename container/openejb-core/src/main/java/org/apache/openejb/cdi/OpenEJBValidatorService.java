@@ -18,6 +18,7 @@
 
 package org.apache.openejb.cdi;
 
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.webbeans.spi.ValidatorService;
 
 import javax.naming.InitialContext;
@@ -34,7 +35,7 @@ public class OpenEJBValidatorService implements ValidatorService {
         try {
             return (ValidatorFactory)new InitialContext().lookup("java:comp/ValidatorFactory");
         } catch (NamingException e) {
-            throw new RuntimeException(e);
+            throw new OpenEJBRuntimeException(e);
         }
     }
 
@@ -43,7 +44,7 @@ public class OpenEJBValidatorService implements ValidatorService {
         try {
             return (Validator)new InitialContext().lookup("java:comp/Validator");
         } catch (NamingException e) {
-            throw new RuntimeException(e);
+            throw new OpenEJBRuntimeException(e);
         }
     }
 }

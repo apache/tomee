@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.server.webservices.saaj;
 
+import org.apache.openejb.server.ServerRuntimeException;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
 
@@ -58,7 +59,7 @@ class SaajFactoryFinder {
             } else if (provider.equalsIgnoreCase("sun")) {
                 DEFAULT_SAAJ_UNIVERSE = SaajUniverse.Type.SUN;
             } else {
-                throw new RuntimeException("Invalid SAAJ universe specified: " + provider);
+                throw new ServerRuntimeException("Invalid SAAJ universe specified: " + provider);
             }
 
             logger.info("Default SAAJ universe: " + DEFAULT_SAAJ_UNIVERSE);

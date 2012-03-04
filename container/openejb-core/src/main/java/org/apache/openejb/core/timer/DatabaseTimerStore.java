@@ -17,9 +17,20 @@
 
 package org.apache.openejb.core.timer;
 
+import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.util.Base64;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+
 import javax.ejb.ScheduleExpression;
 import javax.ejb.TimerConfig;
 import javax.sql.DataSource;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -27,16 +38,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectOutputStream;
-import java.io.IOException;
-import java.io.ByteArrayInputStream;
-import java.io.ObjectInputStream;
-import java.lang.reflect.Method;
-
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.Base64;
 
 public class DatabaseTimerStore implements TimerStore {
     private static final Logger log = Logger.getInstance(LogCategory.TIMER, "org.apache.openejb.util.resources");
@@ -282,7 +283,7 @@ public class DatabaseTimerStore implements TimerStore {
             byte[] encoded = Base64.encodeBase64(baos.toByteArray());
             return new String(encoded);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new OpenEJBRuntimeException(e);
         }
     }
 
@@ -293,7 +294,7 @@ public class DatabaseTimerStore implements TimerStore {
             ObjectInputStream in = new ObjectInputStream(bais);
             return in.readObject();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new OpenEJBRuntimeException(e);
         }
     }
 

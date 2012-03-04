@@ -103,7 +103,7 @@ public class Setup {
             return artifact;
         } finally {
             if (cache == null) {
-                System.getProperties().remove(ProvisioningUtil.OPENEJB_DEPLOYER_CACHE_FOLDER);
+                System.clearProperty(ProvisioningUtil.OPENEJB_DEPLOYER_CACHE_FOLDER);
             } else {
                 System.setProperty(ProvisioningUtil.OPENEJB_DEPLOYER_CACHE_FOLDER, cache);
             }

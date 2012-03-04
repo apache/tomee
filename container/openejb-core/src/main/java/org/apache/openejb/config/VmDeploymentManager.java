@@ -18,6 +18,7 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.UndeployException;
 import org.apache.openejb.assembler.Deployer;
 import org.apache.openejb.assembler.classic.AppInfo;
@@ -50,7 +51,6 @@ import javax.enterprise.deploy.spi.status.ProgressObject;
 import javax.naming.InitialContext;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -97,7 +97,7 @@ public class VmDeploymentManager implements DeploymentManager {
             try {
                 openejbUri = new URI("ejbd", null, "localhost", 4201, null, null, null).toString();
             } catch (URISyntaxException e) {
-                throw new RuntimeException(e);
+                throw new OpenEJBRuntimeException(e);
             }
         }
         this.openejbUri = openejbUri;
@@ -116,7 +116,7 @@ public class VmDeploymentManager implements DeploymentManager {
                 InitialContext ctx = new InitialContext(p);
                 deployer = (Deployer) ctx.lookup(deployerJndi);
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new OpenEJBRuntimeException(e);
             }
         }
         return deployer;

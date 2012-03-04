@@ -128,7 +128,7 @@ public class WebModule {
                 JaxbJavaee.marshal(descriptor.getClass(), descriptor, out);
                 return new ByteArrayInputStream(out.toByteArray());
             } catch (JAXBException e) {
-                throw new RuntimeException("Unable to marshal descriptor", e);
+                throw new IllegalArgumentException("Unable to marshal descriptor", e);
             }
         }
     }

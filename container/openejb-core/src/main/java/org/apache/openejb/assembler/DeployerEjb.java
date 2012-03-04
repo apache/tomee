@@ -19,6 +19,7 @@ package org.apache.openejb.assembler;
 import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.UndeployException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
@@ -68,7 +69,7 @@ public class DeployerEjb implements Deployer {
             uniqueFile = new File(tempDir, uniqueName).getCanonicalFile();
             uniqueFile.createNewFile();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new OpenEJBRuntimeException(e);
         }
         uniqueFile.deleteOnExit();
     }

@@ -85,7 +85,7 @@ public class TomEEConfiguration implements ContainerConfiguration {
                 }
             });
         } catch (IOException e) {
-            throw new RuntimeException("can't read " + systemProperties);
+            throw new ArquillianRuntimeException("can't read " + systemProperties);
         }
         return p;
     }

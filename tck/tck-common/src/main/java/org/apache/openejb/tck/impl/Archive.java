@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.tck.impl;
 
+import org.apache.openejb.tck.OpenEJBTCKRuntimeException;
 import org.apache.openejb.tck.util.ZipUtil;
 
 import java.io.BufferedInputStream;
@@ -105,7 +106,7 @@ public class Archive {
 
             this.in = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new OpenEJBTCKRuntimeException(e);
         }
     }
 

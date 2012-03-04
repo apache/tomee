@@ -16,18 +16,17 @@
  */
 package org.apache.openejb.client;
 
+import org.apache.openejb.client.proxy.ProxyManager;
+
+import javax.ejb.EJBException;
+import javax.ejb.EJBHome;
+import javax.ejb.Handle;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
-
-import javax.ejb.EJBHome;
-import javax.ejb.Handle;
-import javax.ejb.EJBException;
-
-import org.apache.openejb.client.proxy.ProxyManager;
 
 public abstract class EJBHomeHandler extends EJBInvocationHandler implements Externalizable {
 
@@ -78,7 +77,7 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
             Class[] interfaces = new Class[]{ejb.homeClass, EJBHomeProxy.class};
             return (EJBHomeProxy) ProxyManager.newProxyInstance(interfaces, this);
         } catch (IllegalAccessException e) {
-            throw new RuntimeException("Unable to create proxy for "+ ejb.homeClass, e);
+            throw new ClientRuntimeException("Unable to create proxy for "+ ejb.homeClass, e);
         }
     }
 

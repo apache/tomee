@@ -18,13 +18,12 @@
 
 package org.apache.openejb.core.ivm.naming;
 
-import java.util.Map;
-
-
-import javax.naming.*;
-
-import org.apache.openejb.core.JndiFactory;
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.SystemException;
+import org.apache.openejb.core.JndiFactory;
+
+import javax.naming.Context;
+import java.util.Map;
 
 /**
  * @version $Rev$ $Date$
@@ -41,7 +40,7 @@ public class IvmJndiFactory implements JndiFactory {
             jndiRootContext.bind("openejb/Deployment/.", "");
             jndiRootContext.bind("openejb/global/.", "");
         } catch (javax.naming.NamingException e) {
-            throw new RuntimeException("this should not happen", e);
+            throw new OpenEJBRuntimeException("this should not happen", e);
         }
     }
 

@@ -33,6 +33,7 @@ import org.apache.openejb.server.rest.RsRegistry;
 import org.apache.openejb.server.rest.RsServlet;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.tomee.catalina.TomEERuntimeException;
 import org.apache.tomee.loader.TomcatHelper;
 
 import java.net.URI;
@@ -184,7 +185,7 @@ public class TomcatRsRegistry implements RsRegistry {
             context.stop();
             context.destroy();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new TomEERuntimeException(e);
         }
         Host host = (Host) context.getParent();
         host.removeChild(context);

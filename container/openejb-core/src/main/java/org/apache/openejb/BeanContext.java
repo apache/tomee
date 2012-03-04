@@ -1018,7 +1018,7 @@ public class BeanContext extends DeploymentContext {
                     mapMethods(method, beanMethod);
                 }
             } catch (NoSuchMethodException nsme) {
-//                throw new RuntimeException("Invalid method [" + method + "] Not declared by " + beanClass.getName() + " class");
+//                throw new OpenEJBRuntimeException("Invalid method [" + method + "] Not declared by " + beanClass.getName() + " class");
             }
         }
     }
@@ -1042,7 +1042,7 @@ public class BeanContext extends DeploymentContext {
                 Method beanMethod = beanClass.getMethod(method.getName(), method.getParameterTypes());
                 mapMethods(method, beanMethod);
             } catch (NoSuchMethodException nsme) {
-                throw new RuntimeException("Invalid method [" + method + "]. Not declared by " + beanClass.getName() + " class");
+                throw new OpenEJBRuntimeException("Invalid method [" + method + "]. Not declared by " + beanClass.getName() + " class");
             }
         }
     }

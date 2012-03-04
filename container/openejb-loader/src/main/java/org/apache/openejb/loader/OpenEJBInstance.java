@@ -40,7 +40,7 @@ public class OpenEJBInstance {
             }
             throw (Error) e.getCause();
         } catch (Exception e) {
-            throw new RuntimeException("OpenEJB.init: ", e);
+            throw new LoaderRuntimeException("OpenEJB.init: ", e);
         }
     }
 
@@ -48,9 +48,9 @@ public class OpenEJBInstance {
         try {
             return (Boolean) isInitialized.invoke(null);
         } catch (InvocationTargetException e) {
-            throw new RuntimeException("OpenEJB.isInitialized: ", e.getCause());
+            throw new LoaderRuntimeException("OpenEJB.isInitialized: ", e.getCause());
         } catch (Exception e) {
-            throw new RuntimeException("OpenEJB.isInitialized: ", e);
+            throw new LoaderRuntimeException("OpenEJB.isInitialized: ", e);
         }
     }
 

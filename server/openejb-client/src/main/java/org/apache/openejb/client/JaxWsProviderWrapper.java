@@ -453,7 +453,7 @@ public class JaxWsProviderWrapper extends Provider {
                 out.close();
                 PROVIDER_URL = tempFile.toURI().toURL();
             } catch (IOException e) {
-                throw new RuntimeException("Cound not create openejb-jaxws-provider file");
+                throw new ClientRuntimeException("Cound not create openejb-jaxws-provider file");
             }
         }
 

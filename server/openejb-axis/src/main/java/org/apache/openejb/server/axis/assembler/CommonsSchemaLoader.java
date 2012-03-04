@@ -22,6 +22,7 @@ import com.ibm.wsdl.extensions.schema.SchemaConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.server.ServerRuntimeException;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
@@ -176,7 +177,7 @@ public class CommonsSchemaLoader {
         public InputSource getBaseInputSource() {
             ZipEntry entry = moduleFile.getEntry(wsdlURI.toString());
             if(entry == null){
-                throw new RuntimeException("The webservices.xml file points to a non-existant WSDL file "+wsdlURI.toString());
+                throw new ServerRuntimeException("The webservices.xml file points to a non-existant WSDL file "+wsdlURI.toString());
             }
 
             InputStream wsdlInputStream;
@@ -184,7 +185,7 @@ public class CommonsSchemaLoader {
                 wsdlInputStream = moduleFile.getInputStream(entry);
                 streams.add(wsdlInputStream);
             } catch (Exception e) {
-                throw new RuntimeException("Could not open stream to wsdl file", e);
+                throw new ServerRuntimeException("Could not open stream to wsdl file", e);
             }
             return new InputSource(wsdlInputStream);
         }
@@ -203,7 +204,7 @@ public class CommonsSchemaLoader {
                 importInputStream = moduleFile.getInputStream(entry);
                 streams.add(importInputStream);
             } catch (Exception e) {
-                throw new RuntimeException("Could not open stream to import file", e);
+                throw new ServerRuntimeException("Could not open stream to import file", e);
             }
 
             InputSource inputSource = new InputSource(importInputStream);
