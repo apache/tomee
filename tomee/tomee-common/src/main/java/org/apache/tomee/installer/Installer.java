@@ -446,7 +446,7 @@ public class Installer {
                 systemPropertiesWriter.write("# tomee.jaxws.oldsubcontext = false\n");
 
                 systemPropertiesWriter.write("\n");
-                systemPropertiesWriter.write("# openejb.servicemanager.enabled = false\n");
+                systemPropertiesWriter.write("# openejb.servicemanager.enabled = true\n");
                 systemPropertiesWriter.write("# openejb.descriptors.output = false\n");
                 systemPropertiesWriter.write("# openejb.strict.interface.declaration = false\n");
                 systemPropertiesWriter.write("# openejb.conf.file = conf/tomee.xml\n");

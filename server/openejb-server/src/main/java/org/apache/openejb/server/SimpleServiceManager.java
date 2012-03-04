@@ -153,9 +153,10 @@ public class SimpleServiceManager extends ServiceManager {
 
         // starting then displaying to get a more relevant log
 
-        Exception[] errors = new Exception[daemons.length];
+        final Exception[] errors = new Exception[daemons.length];
         for (int i = 0; i < daemons.length; i++) {
-            ServerService d = daemons[i];
+            final ServerService d = daemons[i];
+
             LOGGER.info("Starting service " + d.getName());
             try {
                 d.start();

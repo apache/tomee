@@ -63,7 +63,11 @@ public abstract class ServiceManager {
     protected static void setServiceManager(ServiceManager newManager) {
         manager = newManager;
     }
-    
+
+    protected boolean accept(final String serviceName) {
+        return true;
+    }
+
     protected List<ServerService> initServers(Map<String, Properties> availableServices)
         throws IOException {
         List<ServerService> enabledServers = new ArrayList<ServerService>();
@@ -74,7 +78,7 @@ public abstract class ServiceManager {
             Properties serviceProperties = (Properties) entry.getValue();
             
             ServerService service = initServer(serviceName, serviceProperties);
-            if (service != null) {
+            if (service != null && accept(service.getName())) {
                 enabledServers.add(service);
             }
         }
@@ -122,7 +126,7 @@ public abstract class ServiceManager {
 
             try {
                 // Create Service
-                ServerService service = null;
+                ServerService service;
 
                 ObjectRecipe recipe = new ObjectRecipe(serviceClass);
                 try {
