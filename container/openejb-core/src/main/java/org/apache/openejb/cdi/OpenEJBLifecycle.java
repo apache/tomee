@@ -18,6 +18,7 @@ package org.apache.openejb.cdi;
 
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.webbeans.component.InjectionPointBean;
 import org.apache.webbeans.component.InjectionTargetWrapper;
@@ -342,7 +343,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
 
         } catch (Exception e1) {
             Assembler.logger.error("CDI Beans module deployment failed", e1);
-            throw new RuntimeException(e1);
+            throw new OpenEJBRuntimeException(e1);
         }
         //Start actual starting on sub-classes
         afterStartApplication(startupObject);

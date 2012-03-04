@@ -18,6 +18,7 @@ package org.apache.openejb.tck.cdi.tomee.embedded;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.openejb.config.ValidationException;
+import org.apache.openejb.tck.OpenEJBTCKRuntimeException;
 import org.apache.tomee.embedded.Container;
 import org.jboss.testharness.api.DeploymentException;
 import org.jboss.testharness.spi.Containers;
@@ -94,7 +95,7 @@ public class ContainersImpl implements Containers {
             }
             Util.close(fos);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new OpenEJBTCKRuntimeException(e);
         }
     }
 
@@ -123,7 +124,7 @@ public class ContainersImpl implements Containers {
             container.undeploy(name);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException(e);
+            throw new OpenEJBTCKRuntimeException(e);
         }
 
         File file = FILES.remove(name);

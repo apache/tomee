@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.math;
 
+import org.apache.openejb.OpenEJBRuntimeException;
+
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -488,29 +490,7 @@ public class MathRuntimeException extends RuntimeException {
      * @return an {@link java.lang.RuntimeException} for an internal error
      */
     public static RuntimeException createInternalError(final Throwable cause) {
-
-        final String pattern  = "internal error, please fill a bug report at {0}";
-        final String argument = "https://issues.apache.org/jira/browse/MATH";
-
-        return new RuntimeException() {
-
-            /** Serializable version identifier. */
-            private static final long serialVersionUID = -201865440834027016L;
-
-            /** {@inheritDoc} */
-            @Override
-            public String getMessage() {
-                return buildMessage(Locale.US, pattern, argument);
-            }
-
-            /** {@inheritDoc} */
-            @Override
-            public String getLocalizedMessage() {
-                return buildMessage(Locale.getDefault(), pattern, argument);
-            }
-
-        };
-
+        return new OpenEJBRuntimeException("internal error, please fill a bug report at https://issues.apache.org/jira/browse/MATH", cause);
     }
 
 }

@@ -16,41 +16,41 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import static org.apache.openejb.util.Classes.packageName;
-
-import java.util.TreeMap;
-import javax.ejb.embeddable.EJBContainer;
-import javax.naming.NamingException;
-import javax.naming.Reference;
-import javax.naming.NameAlreadyBoundException;
-import javax.naming.Context;
-import javax.jms.MessageListener;
-
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.ModuleContext;
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.core.ivm.naming.BusinessLocalBeanReference;
+import org.apache.openejb.core.ivm.naming.BusinessLocalReference;
+import org.apache.openejb.core.ivm.naming.BusinessRemoteReference;
+import org.apache.openejb.core.ivm.naming.IntraVmJndiReference;
+import org.apache.openejb.core.ivm.naming.ObjectReference;
+import org.apache.openejb.loader.Options;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.Strings;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.loader.Options;
-import org.apache.openejb.core.ivm.naming.BusinessLocalReference;
-import org.apache.openejb.core.ivm.naming.BusinessRemoteReference;
-import org.apache.openejb.core.ivm.naming.ObjectReference;
-import org.apache.openejb.core.ivm.naming.IntraVmJndiReference;
 import org.apache.openejb.util.StringTemplate;
+import org.apache.openejb.util.Strings;
 
+import javax.ejb.embeddable.EJBContainer;
+import javax.jms.MessageListener;
+import javax.naming.Context;
+import javax.naming.NameAlreadyBoundException;
+import javax.naming.NamingException;
+import javax.naming.Reference;
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Map;
-import java.util.HashMap;
-import java.util.Comparator;
 import java.util.Properties;
-import java.lang.reflect.Constructor;
+import java.util.TreeMap;
+
+import static org.apache.openejb.util.Classes.packageName;
 
 
 /**
@@ -410,7 +410,7 @@ public class JndiBuilder {
                 simpleNameRef = ref;
             }
         } catch (NamingException e) {
-            throw new RuntimeException("Unable to bind business remote deployment in jndi.", e);
+            throw new OpenEJBRuntimeException("Unable to bind business remote deployment in jndi.", e);
         }
 
         try {
@@ -432,7 +432,7 @@ public class JndiBuilder {
                 if (simpleNameRef == null) simpleNameRef = ref;
             }
         } catch (NamingException e) {
-            throw new RuntimeException("Unable to bind business local interface for deployment " + id, e);
+            throw new OpenEJBRuntimeException("Unable to bind business local interface for deployment " + id, e);
         }
 
         try {
@@ -455,7 +455,7 @@ public class JndiBuilder {
                 if (simpleNameRef == null) simpleNameRef = ref;
             }
         } catch (NamingException e) {
-            throw new RuntimeException("Unable to bind business remote deployment in jndi.", e);
+            throw new OpenEJBRuntimeException("Unable to bind business remote deployment in jndi.", e);
         }
 
         try {
@@ -479,7 +479,7 @@ public class JndiBuilder {
                 if (simpleNameRef == null) simpleNameRef = ref;
             }
         } catch (NamingException e) {
-            throw new RuntimeException("Unable to bind local home interface for deployment " + id, e);
+            throw new OpenEJBRuntimeException("Unable to bind local home interface for deployment " + id, e);
         }
 
         try {
@@ -504,7 +504,7 @@ public class JndiBuilder {
                 if (simpleNameRef == null) simpleNameRef = ref;
             }
         } catch (NamingException e) {
-            throw new RuntimeException("Unable to bind remote home interface for deployment " + id, e);
+            throw new OpenEJBRuntimeException("Unable to bind remote home interface for deployment " + id, e);
         }
 
         try {
@@ -512,7 +512,7 @@ public class JndiBuilder {
                 bindJava(bean, null, simpleNameRef, bindings, beanInfo);
             }
         } catch (NamingException e) {
-            throw new RuntimeException("Unable to bind simple java:global name in jndi", e);
+            throw new OpenEJBRuntimeException("Unable to bind simple java:global name in jndi", e);
         }
 
         try {
@@ -527,7 +527,7 @@ public class JndiBuilder {
                 bind("openejb/remote/" + deploymentId, reference, bindings, beanInfo, MessageListener.class);
             }
         } catch (NamingException e) {
-            throw new RuntimeException("Unable to bind mdb destination in jndi.", e);
+            throw new OpenEJBRuntimeException("Unable to bind mdb destination in jndi.", e);
         }
     }
 

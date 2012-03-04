@@ -106,7 +106,7 @@ public class Start {
 
         } catch (Exception e) {
 
-            throw new RuntimeException("Cannot start the server.");
+            throw new ServerRuntimeException("Cannot start the server.");
 
         }
 

@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.util;
 
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
@@ -348,7 +349,7 @@ public class UrlCache {
             return dir;
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new OpenEJBRuntimeException(e);
         }
     }
 

@@ -16,14 +16,14 @@
  */
 package org.apache.openejb.core.cmp.cmp2;
 
-import java.lang.reflect.Method;
-import java.util.HashMap;
-
-import javax.ejb.FinderException;
-
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.Container;
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.core.cmp.CmpContainer;
+
+import javax.ejb.FinderException;
+import java.lang.reflect.Method;
+import java.util.HashMap;
 
 /**
  * DO NOT REFACTOR THIS CLASS.  This class is referenced directly by generated code.
@@ -50,7 +50,7 @@ public class EjbSelect {
             selectMethods.put(Float.TYPE, EjbSelect.class.getMethod("execute_float", Object.class, String.class, Object[].class));
             selectMethods.put(Double.TYPE, EjbSelect.class.getMethod("execute_double", Object.class, String.class, Object[].class));
         } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
+            throw new OpenEJBRuntimeException(e);
         }
     }
     

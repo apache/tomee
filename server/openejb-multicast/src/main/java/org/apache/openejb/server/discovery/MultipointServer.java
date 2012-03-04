@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.server.discovery;
 
+import org.apache.openejb.server.ServerRuntimeException;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.LogCategory;
@@ -462,7 +463,7 @@ public class MultipointServer {
                     // seen - needs to get maintained as "connected"
                     // TODO remove from seen
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new ServerRuntimeException(e);
                 }
             }
         }

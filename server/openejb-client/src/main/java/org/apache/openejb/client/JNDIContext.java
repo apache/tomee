@@ -284,7 +284,7 @@ public class JNDIContext implements InitialContextFactory, Context {
                 throw (Error) res.getResult();
 
             default:
-                throw new RuntimeException("Invalid response from server: " + res.getResponseCode());
+                throw new ClientRuntimeException("Invalid response from server: " + res.getResponseCode());
         }
     }
 
@@ -391,7 +391,7 @@ public class JNDIContext implements InitialContextFactory, Context {
                 throw (Error) res.getResult();
 
             default:
-                throw new RuntimeException("Invalid response from server :" + res.getResponseCode());
+                throw new ClientRuntimeException("Invalid response from server :" + res.getResponseCode());
         }
 
     }
@@ -436,7 +436,7 @@ public class JNDIContext implements InitialContextFactory, Context {
                 try {
                     super.setObject(context.lookup(getName()));
                 } catch (NamingException e) {
-                    throw failed = new RuntimeException("Failed to lazily fetch the binding '"+getName()+"'", e);
+                    throw failed = new ClientRuntimeException("Failed to lazily fetch the binding '"+getName()+"'", e);
                 }
             }
             return super.getObject();

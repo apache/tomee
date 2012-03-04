@@ -160,7 +160,7 @@ public class ObjectMap extends AbstractMap<String, Object> {
             } catch (IllegalAccessException e) {
                 throw new IllegalStateException(e);
             } catch (InvocationTargetException e) {
-                throw new RuntimeException(e.getCause());
+                throw new ArquillianRuntimeException(e.getCause());
             }
         }
 

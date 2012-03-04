@@ -20,21 +20,15 @@ package org.apache.openejb.server.cxf.ejb;
 import org.apache.cxf.Bus;
 import org.apache.cxf.binding.soap.SoapMessage;
 import org.apache.cxf.binding.soap.interceptor.MustUnderstandInterceptor;
-import org.apache.cxf.binding.soap.interceptor.ReadHeadersInterceptor;
-import org.apache.cxf.binding.soap.interceptor.SoapActionInInterceptor;
-import org.apache.cxf.binding.soap.interceptor.SoapHeaderInterceptor;
 import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.interceptor.AbstractInDatabindingInterceptor;
-import org.apache.cxf.interceptor.AttachmentInInterceptor;
 import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.interceptor.InterceptorChain;
 import org.apache.cxf.interceptor.OutgoingChainInterceptor;
 import org.apache.cxf.interceptor.ServiceInvokerInterceptor;
-import org.apache.cxf.interceptor.StaxInInterceptor;
 import org.apache.cxf.jaxws.handler.logical.LogicalHandlerInInterceptor;
 import org.apache.cxf.jaxws.handler.soap.SOAPHandlerInterceptor;
 import org.apache.cxf.jaxws.interceptors.HolderInInterceptor;
-import org.apache.cxf.jaxws.interceptors.HolderOutInterceptor;
 import org.apache.cxf.jaxws.interceptors.WrapperClassInInterceptor;
 import org.apache.cxf.jaxws.support.JaxWsEndpointImpl;
 import org.apache.cxf.message.Exchange;
@@ -43,6 +37,7 @@ import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.cxf.phase.PhaseManager;
 import org.apache.cxf.service.Service;
 import org.apache.cxf.staxutils.StaxUtils;
+import org.apache.openejb.server.ServerRuntimeException;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -52,8 +47,6 @@ import javax.xml.soap.SOAPMessage;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.ws.Binding;
-
-import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -116,7 +109,7 @@ public class EjbInterceptor {
                 try {
                     reserialize((SoapMessage) inMessage);
                 } catch (Exception e) {
-                    throw new RuntimeException("Failed to reserialize soap message", e);
+                    throw new ServerRuntimeException("Failed to reserialize soap message", e);
                 }
             } else {
                 // TODO: how to handle XML/HTTP binding?

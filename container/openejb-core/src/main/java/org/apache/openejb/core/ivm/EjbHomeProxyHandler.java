@@ -19,6 +19,7 @@ package org.apache.openejb.core.ivm;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.InterfaceType;
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.core.entity.EntityEjbHomeHandler;
@@ -29,7 +30,6 @@ import org.apache.openejb.core.stateless.StatelessEjbHomeHandler;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.proxy.DynamicProxyImplFactory;
 import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
 
@@ -120,7 +120,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
 
             return ProxyManager.newProxyInstance(proxyInterfaces.toArray(new Class[]{}), handler);
         } catch (Exception e) {
-            throw new RuntimeException("Can't create EJBHome stub" + e.getMessage(), e);
+            throw new OpenEJBRuntimeException("Can't create EJBHome stub" + e.getMessage(), e);
         }
     }
 
@@ -144,7 +144,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
             }
 
         } catch (IllegalAccessException iae) {
-            throw new RuntimeException("Could not create IVM proxy for " + getInterfaces().get(0), iae);
+            throw new OpenEJBRuntimeException("Could not create IVM proxy for " + getInterfaces().get(0), iae);
         }
     }
 
@@ -195,7 +195,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
                         break;
                     }
                     default:
-                        throw new RuntimeException("Inconsistent internal state: value " + operation + " for operation " + methodName);
+                        throw new OpenEJBRuntimeException("Inconsistent internal state: value " + operation + " for operation " + methodName);
                 }
             }
 

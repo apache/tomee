@@ -17,6 +17,7 @@
 
 package org.apache.openejb.junit.context;
 
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.api.LocalClient;
 import org.apache.openejb.junit.ContextConfig;
 import org.apache.openejb.junit.Property;
@@ -124,13 +125,13 @@ public class OpenEjbTestContext implements TestContext {
             performInjections(testObj);
         }
         catch (IOException e) {
-            throw new RuntimeException("Failed to load configuration.", e);
+            throw new OpenEJBRuntimeException("Failed to load configuration.", e);
         }
         catch (NamingException e) {
-            throw new RuntimeException("Failed to configure object.", e);
+            throw new OpenEJBRuntimeException("Failed to configure object.", e);
         }
         catch (Exception e) {
-            throw new RuntimeException("Unknown error trying to configure object.", e);
+            throw new OpenEJBRuntimeException("Unknown error trying to configure object.", e);
         }
     }
 
@@ -326,7 +327,7 @@ public class OpenEjbTestContext implements TestContext {
                 field.set(testObj, injectValue);
             }
             catch (Exception e) {
-                throw new RuntimeException("Failed to inject on: " + clazz.getCanonicalName() + "." + field.getName(), e);
+                throw new OpenEJBRuntimeException("Failed to inject on: " + clazz.getCanonicalName() + "." + field.getName(), e);
             }
         }
     }

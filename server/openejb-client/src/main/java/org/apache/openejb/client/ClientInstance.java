@@ -112,7 +112,7 @@ public class ClientInstance {
         try {
             client = new ClientInstance(System.getProperties());
         } catch (Exception e) {
-            throw new RuntimeException("Failed to create default instance of SystemInstance", e);
+            throw new ClientRuntimeException("Failed to create default instance of SystemInstance", e);
         }
     }
 

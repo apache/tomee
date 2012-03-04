@@ -16,10 +16,11 @@
  */
 package org.apache.openejb.resource.jdbc;
 
+import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.util.Base64;
+
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
-
-import org.apache.openejb.util.Base64;
 
 /**
  * This {@link PasswordCipher} implementation uses a the Triple-DES encryption
@@ -63,7 +64,7 @@ public class StaticDESPasswordCipher implements PasswordCipher {
             return new String(Base64.encodeBase64(cipherText)).toCharArray();
 
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new OpenEJBRuntimeException(e);
         }
     }
 
@@ -91,7 +92,7 @@ public class StaticDESPasswordCipher implements PasswordCipher {
             return plainText;
 
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new OpenEJBRuntimeException(e);
         }
     }
 

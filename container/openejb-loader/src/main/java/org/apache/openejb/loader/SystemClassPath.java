@@ -50,7 +50,7 @@ public class SystemClassPath extends BasicURLClassPath {
         try {
             return getSystemLoader();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new LoaderRuntimeException(e);
         }
     }
 
@@ -105,7 +105,7 @@ public class SystemClassPath extends BasicURLClassPath {
                     }
 
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    throw new LoaderRuntimeException(e);
                 }
 
             }

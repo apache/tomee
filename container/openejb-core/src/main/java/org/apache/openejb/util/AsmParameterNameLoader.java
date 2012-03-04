@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.util;
 
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.xbean.asm.ClassReader;
 import org.apache.xbean.asm.Label;
 import org.apache.xbean.asm.MethodVisitor;
@@ -140,10 +141,10 @@ public class AsmParameterNameLoader implements ParameterNameLoader {
 
             Map exceptions = visitor.getExceptions();
             if (exceptions.size() == 1) {
-                throw new RuntimeException((Exception) exceptions.values().iterator().next());
+                throw new OpenEJBRuntimeException((Exception) exceptions.values().iterator().next());
             }
             if (!exceptions.isEmpty()) {
-                throw new RuntimeException(exceptions.toString());
+                throw new OpenEJBRuntimeException(exceptions.toString());
             }
 
             constructorParameters = visitor.getConstructorParameters();
@@ -190,10 +191,10 @@ public class AsmParameterNameLoader implements ParameterNameLoader {
 
             Map exceptions = visitor.getExceptions();
             if (exceptions.size() == 1) {
-                throw new RuntimeException((Exception) exceptions.values().iterator().next());
+                throw new OpenEJBRuntimeException((Exception) exceptions.values().iterator().next());
             }
             if (!exceptions.isEmpty()) {
-                throw new RuntimeException(exceptions.toString());
+                throw new OpenEJBRuntimeException(exceptions.toString());
             }
 
             methodParameters = visitor.getMethodParameters();

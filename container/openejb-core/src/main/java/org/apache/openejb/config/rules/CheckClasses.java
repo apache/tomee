@@ -17,31 +17,32 @@
 package org.apache.openejb.config.rules;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.api.Proxy;
-import org.apache.openejb.jee.EnterpriseBean;
-import org.apache.openejb.jee.RemoteBean;
-import org.apache.openejb.jee.EntityBean;
-import org.apache.openejb.jee.SessionBean;
-import org.apache.openejb.jee.Interceptor;
 import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.EntityBean;
+import org.apache.openejb.jee.Interceptor;
+import org.apache.openejb.jee.RemoteBean;
+import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.util.SafeToolkit;
 import org.apache.openejb.util.Strings;
 import org.apache.xbean.finder.ClassFinder;
 
+import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
-import javax.ejb.EJBHome;
 import javax.ejb.EJBObject;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.jws.WebService;
 import javax.persistence.PersistenceContext;
-
-import static java.lang.reflect.Modifier.isAbstract;
-import java.lang.reflect.Method;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.lang.reflect.Modifier.isAbstract;
 
 /**
  * @version $Rev$ $Date$
@@ -115,7 +116,7 @@ public class CheckClasses extends ValidationBase {
                     }
                 }
             } catch (RuntimeException e) {
-                throw new RuntimeException(bean.getEjbName(), e);
+                throw new OpenEJBRuntimeException(bean.getEjbName(), e);
             }
         }
 

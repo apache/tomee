@@ -19,17 +19,18 @@ package org.apache.openejb.loader;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.HttpURLConnection;
+import java.net.JarURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.net.JarURLConnection;
 import java.net.URLConnection;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URLDecoder;
-import static java.net.URLDecoder.*;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.jar.JarFile;
+
+import static java.net.URLDecoder.decode;
 
 /*-------------------------------------------------------*/
 /* Tomcat ClassLoader Support */
@@ -56,7 +57,7 @@ public class TomcatClassPath extends BasicURLClassPath {
             try {
                 addURLMethod = getAddURLMethod();
             } catch (Exception tomcat5Exception) {
-                throw new RuntimeException("Failed accessing classloader for Tomcat 5 or 6", tomcat5Exception);
+                throw new LoaderRuntimeException("Failed accessing classloader for Tomcat 5 or 6", tomcat5Exception);
             }
         }
 
@@ -161,7 +162,7 @@ public class TomcatClassPath extends BasicURLClassPath {
                     Class<?> clazz = cp.getClass();
                     return clazz.getDeclaredMethod("getURLs", URL.class);
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    throw new LoaderRuntimeException(e);
                 }
 
             }

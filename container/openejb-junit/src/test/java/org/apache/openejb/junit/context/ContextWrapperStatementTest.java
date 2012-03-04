@@ -16,12 +16,14 @@
  */
 package org.apache.openejb.junit.context;
 
+import org.apache.openejb.OpenEJBRuntimeException;
+import org.junit.Test;
+import org.junit.runners.model.Statement;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import org.junit.Test;
-import org.junit.runners.model.Statement;
 
 public class ContextWrapperStatementTest {
     private static boolean configuredInvoked = false;
@@ -55,7 +57,7 @@ public class ContextWrapperStatementTest {
 
         public void configureTest(Object testObj) {
             if (fail) {
-                throw new RuntimeException("Fail");
+                throw new OpenEJBRuntimeException("Fail");
             }
 
             assertEquals(fakeTestObject, testObj);

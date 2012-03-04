@@ -17,6 +17,7 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.jee.DataSource;
 import org.apache.openejb.jee.JndiConsumer;
@@ -117,7 +118,7 @@ public class ConvertDataSourceDefinitions implements DynamicDeployer {
             p.store(out, "");
             return new String(out.toByteArray());
         } catch (IOException e) {
-            throw new RuntimeException(String.format("Cannot canonicalize the @DataSourceDefinition %s as a properties string", d.getName()));
+            throw new OpenEJBRuntimeException(String.format("Cannot canonicalize the @DataSourceDefinition %s as a properties string", d.getName()));
         }
     }
 

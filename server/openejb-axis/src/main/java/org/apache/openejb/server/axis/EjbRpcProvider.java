@@ -38,6 +38,7 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.InvalidateReferenceException;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.InterfaceType;
+import org.apache.openejb.server.ServerRuntimeException;
 import org.xml.sax.SAXException;
 import org.xml.sax.InputSource;
 
@@ -308,7 +309,7 @@ public class EjbRpcProvider extends RPCProvider {
                 responseEnvelope.removeBody();
                 responseEnvelope.addBodyElement(responseBody);
             } catch (Exception e) {
-                throw new RuntimeException("Failed while creating response message body", e);
+                throw new ServerRuntimeException("Failed while creating response message body", e);
             }
         }
 

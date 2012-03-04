@@ -31,6 +31,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Duration;
@@ -273,7 +274,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
         if (entry != null) {
             lru.remove(entry);
         }
-        throw new RuntimeException("Cache is corrupted: the entry " + key + " in the Map 'cache' is in state PASSIVATED");
+        throw new OpenEJBRuntimeException("Cache is corrupted: the entry " + key + " in the Map 'cache' is in state PASSIVATED");
     }
 
     public void checkIn(K key) {

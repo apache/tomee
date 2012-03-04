@@ -34,6 +34,7 @@ import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.ser.SimpleDeserializerFactory;
 import org.apache.axis.encoding.ser.SimpleSerializerFactory;
 import org.apache.axis.handlers.HandlerInfoChainFactory;
+import org.apache.openejb.server.ServerRuntimeException;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.ServiceException;
@@ -94,7 +95,7 @@ public class SeiFactoryImpl implements SeiFactory {
             Signature signature = operationInfo.getSignature();
             MethodProxy methodProxy = MethodProxy.find(serviceEndpointClass, signature);
             if (methodProxy == null) {
-                throw new RuntimeException("No method proxy for operationInfo " + signature);
+                throw new ServerRuntimeException("No method proxy for operationInfo " + signature);
             }
             int index = methodProxy.getSuperIndex();
             sortedOperationInfos[index] = operationInfo;

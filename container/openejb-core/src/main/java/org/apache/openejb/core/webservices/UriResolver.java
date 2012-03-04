@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.core.webservices;
 
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.util.Base64;
 
@@ -182,7 +183,7 @@ public class UriResolver {
             try {
                 is = new FileInputStream(file);
             } catch (FileNotFoundException e) {
-                throw new RuntimeException("File was deleted! " + uriStr, e);
+                throw new OpenEJBRuntimeException("File was deleted! " + uriStr, e);
             }
             url = file.toURI().toURL();
         } else if (is == null) {

@@ -21,6 +21,7 @@ import org.apache.geronimo.osgi.locator.ProviderLocator;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.util.Exceptions;
 import org.apache.openejb.util.NetworkUtil;
+import org.apache.tomee.catalina.TomEERuntimeException;
 
 import javax.ejb.EJBException;
 import javax.ejb.embeddable.EJBContainer;
@@ -94,7 +95,7 @@ public class EmbeddedTomEEContainer extends EJBContainer {
                 } else if (portValue instanceof String) {
                     port = Integer.parseInt((String) portValue);
                 } else {
-                    throw new RuntimeException("port value should be an integer or a string");
+                    throw new TomEERuntimeException("port value should be an integer or a string");
                 }
                 if (port <= 0) {
                     port = NetworkUtil.getNextAvailablePort();
@@ -139,7 +140,7 @@ public class EmbeddedTomEEContainer extends EJBContainer {
                 if (e instanceof EJBException) {
                     throw (EJBException) e;
                 }
-                throw new RuntimeException("initialization exception", e);
+                throw new TomEERuntimeException("initialization exception", e);
             } finally {
                 if (tomEEContainer == null) {
                     try {

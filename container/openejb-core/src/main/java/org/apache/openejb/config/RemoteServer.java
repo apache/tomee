@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.config;
 
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.Pipe;
@@ -84,7 +85,7 @@ public class RemoteServer {
             remoteServer.serverHasAlreadyBeenStarted = false;
             remoteServer.stop();
         } else {
-            throw new RuntimeException("valid arguments are 'start' or 'stop'");
+            throw new OpenEJBRuntimeException("valid arguments are 'start' or 'stop'");
         }
     }
     public Properties getProperties() {
@@ -309,13 +310,13 @@ public class RemoteServer {
                 Pipe.pipe(server);
 
             } catch (Exception e) {
-                throw (RuntimeException)new RuntimeException("Cannot start the server.  Exception: "+e.getClass().getName()+": "+e.getMessage()).initCause(e);
+                throw (RuntimeException) new OpenEJBRuntimeException("Cannot start the server.  Exception: "+e.getClass().getName()+": "+e.getMessage()).initCause(e);
             }
             if (checkPortAvailable) {
                 if (debug) {
-                    if (!connect(Integer.MAX_VALUE)) throw new RuntimeException("Could not connect to server");
+                    if (!connect(Integer.MAX_VALUE)) throw new OpenEJBRuntimeException("Could not connect to server");
                 } else {
-                    if (!connect(tries)) throw new RuntimeException("Could not connect to server");
+                    if (!connect(tries)) throw new OpenEJBRuntimeException("Could not connect to server");
                 }
             }
         } else {

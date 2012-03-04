@@ -17,6 +17,8 @@
 
 package org.apache.openejb.tck.impl;
 
+import org.apache.openejb.tck.OpenEJBTCKRuntimeException;
+
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -41,7 +43,7 @@ public class AbstractContainers {
             }
             Util.close(fos);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new OpenEJBTCKRuntimeException(e);
         }
     }
 

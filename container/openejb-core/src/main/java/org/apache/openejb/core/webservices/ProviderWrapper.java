@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.core.webservices;
 
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -439,7 +440,7 @@ public class ProviderWrapper extends Provider {
                 out.close();
                 PROVIDER_URL = tempFile.toURI().toURL();
             } catch (IOException e) {
-                throw new RuntimeException("Cound not create openejb-jaxws-provider file");
+                throw new OpenEJBRuntimeException("Cound not create openejb-jaxws-provider file");
             }
         }
 

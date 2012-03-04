@@ -18,7 +18,15 @@
 package org.apache.tomee.catalina;
 
 public class TomEERuntimeException extends RuntimeException {
-    public TomEERuntimeException(Throwable cause) {
+    public TomEERuntimeException(final Throwable cause) {
         super(cause);
+    }
+
+    public TomEERuntimeException(final String str) {
+        super(str);
+    }
+
+    public TomEERuntimeException(final String str, final Throwable e) {
+        super(str, e);
     }
 }

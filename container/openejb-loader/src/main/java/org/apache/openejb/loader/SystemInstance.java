@@ -174,7 +174,7 @@ public class SystemInstance {
             system = new SystemInstance(System.getProperties());
             initialized = false;
         } catch (Exception e) {
-            throw new RuntimeException("Failed to create default instance of SystemInstance", e);
+            throw new LoaderRuntimeException("Failed to create default instance of SystemInstance", e);
         }
     }
 

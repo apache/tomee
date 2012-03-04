@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.core.webservices;
 
+import org.apache.openejb.OpenEJBRuntimeException;
+
 import javax.jws.WebService;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingType;
@@ -187,7 +189,7 @@ public class JaxWsUtils {
                     Class seiClass = clazz.getClassLoader().loadClass(sei.trim());
                     return getNameFromInterface(seiClass);
                 } catch (ClassNotFoundException e) {
-                    throw new RuntimeException("Unable to load SEI class: " + sei, e);
+                    throw new OpenEJBRuntimeException("Unable to load SEI class: " + sei, e);
                 }
             }
             return getName(clazz, webService.name());

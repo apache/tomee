@@ -16,19 +16,6 @@
  */
 package org.apache.tomee.catalina.deployer;
 
-import static javax.ejb.TransactionManagementType.BEAN;
-
-import java.io.File;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Properties;
-
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionManagement;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-
 import org.apache.catalina.Container;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Service;
@@ -46,8 +33,21 @@ import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.tomcat.util.modeler.Registry;
+import org.apache.tomee.catalina.TomEERuntimeException;
 import org.apache.tomee.catalina.TomcatWebAppBuilder;
 import org.apache.tomee.loader.TomcatHelper;
+
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionManagement;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import java.io.File;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Properties;
+
+import static javax.ejb.TransactionManagementType.BEAN;
 
 @Stateless(name = "openejb/WebappDeployer")
 @Remote(Deployer.class)
@@ -67,7 +67,7 @@ public class WebappDeployer implements Deployer {
 	}
 
 	public String getUniqueFile() {
-		throw new RuntimeException("This method is not used");
+		throw new TomEERuntimeException("This method is not used");
 	}
 
 	public Collection<AppInfo> getDeployedApps() {

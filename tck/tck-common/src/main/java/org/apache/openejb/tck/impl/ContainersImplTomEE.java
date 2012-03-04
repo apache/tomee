@@ -22,6 +22,7 @@ import org.apache.openejb.client.RemoteInitialContextFactory;
 import org.apache.openejb.config.RemoteServer;
 import org.apache.openejb.config.ValidationException;
 import org.apache.openejb.loader.Options;
+import org.apache.openejb.tck.OpenEJBTCKRuntimeException;
 import org.jboss.testharness.api.DeploymentException;
 import org.jboss.testharness.spi.Containers;
 
@@ -51,7 +52,7 @@ public class ContainersImplTomEE extends AbstractContainers implements Container
         if (port != null) {
             props.put(Context.PROVIDER_URL, options.get(Context.PROVIDER_URL,"http://localhost:" + port + "/tomee/ejb"));
         } else {
-            throw new RuntimeException("Please set the tomee port as a system property");
+            throw new OpenEJBTCKRuntimeException("Please set the tomee port as a system property");
         }
 
         final String deployerJndi = System.getProperty("openejb.deployer.jndiname", "openejb/DeployerBusinessRemote");
@@ -60,7 +61,7 @@ public class ContainersImplTomEE extends AbstractContainers implements Container
             InitialContext context = new InitialContext(props);
             return (Deployer) context.lookup(deployerJndi);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new OpenEJBTCKRuntimeException(e);
         }
     }
     public ContainersImplTomEE() {
@@ -129,7 +130,7 @@ public class ContainersImplTomEE extends AbstractContainers implements Container
             deployer.undeploy(appInfo.path);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException(e);
+            throw new OpenEJBTCKRuntimeException(e);
         }
 
         File toDelete;

@@ -20,6 +20,7 @@ package org.apache.openejb.tck.impl;
 import org.apache.openejb.client.RemoteInitialContextFactory;
 import org.apache.openejb.config.RemoteServer;
 import org.apache.openejb.loader.Options;
+import org.apache.openejb.tck.OpenEJBTCKRuntimeException;
 import org.apache.tomee.catalina.facade.ExceptionManagerFacade;
 import org.jboss.testharness.api.DeploymentException;
 import org.jboss.testharness.spi.Containers;
@@ -110,14 +111,14 @@ public class FullRestartContainer extends AbstractContainers implements Containe
             System.out.println("provider url = " + "http://localhost:" + port + "/tomee/ejb");
             props.put(Context.PROVIDER_URL, options.get(Context.PROVIDER_URL,"http://localhost:" + port + "/tomee/ejb"));
         } else {
-            throw new RuntimeException("Please set the tomee port as a system property");
+            throw new OpenEJBTCKRuntimeException("Please set the tomee port as a system property");
         }
 
         try {
             InitialContext context = new InitialContext(props);
             return (ExceptionManagerFacade) context.lookup("openejb/ExceptionManagerFacadeRemote");
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new OpenEJBTCKRuntimeException(e);
         }
     }
 }
