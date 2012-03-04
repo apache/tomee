@@ -22,8 +22,6 @@ import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Zips;
 import org.apache.openejb.server.control.StandaloneServer;
-import org.apache.openejb.util.Join;
-import org.apache.openejb.util.NetworkUtil;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -31,7 +29,6 @@ import javax.ejb.EJBException;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -46,9 +43,8 @@ public class SpeedTest extends FailoverTest {
         // To run in an IDE, uncomment and update this line
         //System.setProperty("version", "4.0.0-beta-3-SNAPSHOT");
 
-        final Repository repository = new Repository();
-        final File zip = repository.getArtifact("org.apache.openejb", "openejb-standalone", "zip").get();
-        final File app = repository.getArtifact("org.apache.openejb.itests", "failover-ejb", "jar").get();
+        final File zip = Repository.getArtifact("org.apache.openejb", "openejb-standalone", "zip");
+        final File app = Repository.getArtifact("org.apache.openejb.itests", "failover-ejb", "jar");
 
         final File dir = Files.tmpdir();
 

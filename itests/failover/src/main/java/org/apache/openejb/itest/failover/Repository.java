@@ -16,98 +16,47 @@
  */
 package org.apache.openejb.itest.failover;
 
-import org.apache.openejb.loader.Files;
+import org.apache.openejb.loader.ProvisioningUtil;
+import org.apache.openejb.resolver.Resolver;
 import org.apache.openejb.util.Join;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * @version $Rev$ $Date$
  */
-public class Repository {
-    private final File repository;
+public final class Repository {
+    private static final Resolver RESOLVER = new Resolver();
 
-    public Repository() {
-        this(defaultRepository());
-    }
-
-    public Repository(File repository) {
-        Files.exists(repository);
-        Files.dir(repository);
-
-        this.repository = repository;
-    }
-
-    /**
-     * Checks the system property 'repo'
-     * If not found, defaults to '${user.home}/.m2/repository'
-     * @return
-     */
-    private static File defaultRepository() {
-        final File home = new File(System.getProperty("user.home"));
-        final String property = System.getProperty("repo", Files.path(home, ".m2", "repository").getAbsolutePath());
-        return new File(property);
-    }
-
-    public Artifact getArtifact(String groupId, String artifactId, String type) {
-        return new Artifact(groupId, artifactId, type);
-    }
-
-    public class Artifact {
-        private final String groupId;
-        private final String artifactId;
-        private final String type;
-
-        public Artifact(String groupId, String artifactId, String type) {
-            this.groupId = groupId;
-            this.artifactId = artifactId;
-            this.type = type;
-        }
-
-        public File get(String version) {
-            List<String> path = new ArrayList<String>();
-
-            // GroupID path
-            Collections.addAll(path, groupId.split("\\."));
-            path.add(artifactId);
-            path.add(version);
-            path.add(artifactId + "-" + version + "." + type);
-
-            File file = new File(repository, Join.join(File.separator, path));
-            Files.exists(file);
-            Files.file(file);
-            Files.readable(file);
-
-            return file;
-        }
-
-        public File get() {
-            return get(guessVersion());
-        }
-
-        private String guessVersion() {
-            String[] keys = {artifactId + ".version", groupId + ".version", "version"};
-            for (String key : keys) {
-                final String value = System.getProperty(key);
-                if (value != null) {
-                    return value;
-                }
+    public static File getArtifact(final String groupId, final String artifactId, final String type) {
+        final String oldCache = System.getProperty(ProvisioningUtil.OPENEJB_DEPLOYER_CACHE_FOLDER);
+        System.setProperty(ProvisioningUtil.OPENEJB_DEPLOYER_CACHE_FOLDER, System.getProperty("openejb.itest.failover.cache", "target/cache"));
+        final String path;
+        try {
+            path = RESOLVER.resolve("mvn:" + groupId + ":" + artifactId + ":" + guessVersion(groupId, artifactId) + ":" + type);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (oldCache == null) {
+                System.clearProperty(ProvisioningUtil.OPENEJB_DEPLOYER_CACHE_FOLDER);
+            } else {
+                System.setProperty(ProvisioningUtil.OPENEJB_DEPLOYER_CACHE_FOLDER, oldCache);
             }
-
-            String message = String.format("Cannot find version for %s. Checked the following system properties: %s", this, Join.join(", ", keys));
-            throw new IllegalStateException(message);
         }
 
-        @Override
-        public String toString() {
-            return "Artifact{" +
-                    "groupId='" + groupId + '\'' +
-                    ", artifactId='" + artifactId + '\'' +
-                    ", type='" + type + '\'' +
-                    '}';
+        return new File(path);
+    }
+
+    private static String guessVersion(final String groupId, final String artifactId) {
+        String[] keys = { artifactId + ".version", groupId + ".version", "version" };
+        for (String key : keys) {
+            final String value = System.getProperty(key);
+            if (value != null) {
+                return value;
+            }
         }
+
+        String message = String.format("Cannot find version for %s:%s. Checked the following system properties: %s", groupId, artifactId, Join.join(", ", keys));
+        throw new IllegalStateException(message);
     }
 }

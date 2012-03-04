@@ -36,7 +36,7 @@ public class Resolver implements LocationResolver {
             final String info = rawLocation.substring(MVN_PREFIX.length());
             final Parser parser = new Parser(info);
             final File file = cacheFile(parser.getArtifactPath());
-            if (!file.exists()) {
+            if (!file.exists() || !file.canRead()) {
                 try {
                     final URL url = new URL(MVN_PREFIX.substring(MVN_PREFIX.length() - 1), "localhost", -1, info, new Handler());
                     final File parentFile = file.getParentFile();
