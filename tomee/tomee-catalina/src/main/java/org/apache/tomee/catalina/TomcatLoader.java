@@ -51,7 +51,6 @@ import org.apache.tomee.installer.Paths;
 import org.apache.tomee.loader.TomcatHelper;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -222,14 +221,21 @@ public class TomcatLoader implements Loader {
         // and modifies JNDI ENC references to OpenEJB managed objects such as EJBs.
         processRunningApplications(tomcatWebAppBuilder, standardServer);
 
-        if (SystemInstance.get().getOptions().get("openejb.servicemanager.enabled", false)) {
-            manager = ServiceManager.getManager();
+        final ClassLoader cl = TomcatLoader.class.getClassLoader();
+        if (SystemInstance.get().getOptions().get("openejb.servicemanager.enabled", true)) {
+            final String clazz = SystemInstance.get().getOptions().get("openejb.service.manager.class", "org.apache.tomee.catalina.TomEEServiceManager");
+            try {
+                manager = (ServiceManager) cl.loadClass(clazz).newInstance();
+            } catch (ClassNotFoundException cnfe) {
+                logger.error("can't find the service manager " + clazz + ", the TomEE one will be used");
+                manager = new TomEEServiceManager();
+            }
             manager.init();
             manager.start(false);
         } else {
             // WS
             try {
-                ServerService cxfService = (ServerService) Class.forName("org.apache.openejb.server.cxf.CxfService").newInstance();
+                ServerService cxfService = (ServerService) cl.loadClass("org.apache.openejb.server.cxf.CxfService").newInstance();
                 cxfService.start();
                 services.add(cxfService);
             } catch (ClassNotFoundException ignored) {
@@ -240,7 +246,7 @@ public class TomcatLoader implements Loader {
 
             // REST
             try {
-                ServerService restService = (ServerService) Class.forName("org.apache.openejb.server.cxf.rs.CxfRSService").newInstance();
+                ServerService restService = (ServerService) cl.loadClass("org.apache.openejb.server.cxf.rs.CxfRSService").newInstance();
                 restService.start();
                 services.add(restService);
             } catch (ClassNotFoundException ignored) {
