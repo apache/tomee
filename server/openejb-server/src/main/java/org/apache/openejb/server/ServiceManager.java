@@ -72,13 +72,14 @@ public abstract class ServiceManager {
         throws IOException {
         List<ServerService> enabledServers = new ArrayList<ServerService>();
 
-        for (Iterator iterator = availableServices.entrySet().iterator(); iterator.hasNext();) {
-            Map.Entry entry = (Map.Entry) iterator.next();
-            String serviceName = (String) entry.getKey();
-            Properties serviceProperties = (Properties) entry.getValue();
-            
-            ServerService service = initServer(serviceName, serviceProperties);
-            if (service != null && accept(service.getName())) {
+        for (Map.Entry<String, Properties> serviceInfo : availableServices.entrySet()) {
+            final String serviceName = serviceInfo.getKey();
+            if (!accept(serviceName)) {
+                continue;
+            }
+
+            ServerService service = initServer(serviceName, serviceInfo.getValue());
+            if (service != null) {
                 enabledServers.add(service);
             }
         }
