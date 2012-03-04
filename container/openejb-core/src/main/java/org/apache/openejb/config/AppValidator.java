@@ -37,6 +37,7 @@ import org.apache.openejb.config.rules.CheckInjectionTargets;
 import org.apache.openejb.config.rules.CheckMethods;
 import org.apache.openejb.config.rules.CheckPersistenceRefs;
 import org.apache.openejb.config.rules.CheckUserTransactionRefs;
+import org.apache.openejb.config.rules.CheckAnnotations;
 import org.apache.openejb.config.rules.ValidationBase;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.OpenEjbVersion;
@@ -118,7 +119,8 @@ public class AppValidator {
                 new CheckDependsOn(),
                 new CheckUserTransactionRefs(),
                 new CheckAsynchronous(),
-                new CheckDescriptorLocation()
+                new CheckDescriptorLocation(),
+                new CheckAnnotations()
         };
         if (additionalValidators == null || additionalValidators.length == 0) {
             return defaultRules;
