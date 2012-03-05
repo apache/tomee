@@ -30,7 +30,11 @@ public class ConfigurableClasspathArchive extends CompositeArchive implements Sc
     }
 
     public ConfigurableClasspathArchive(final ClassLoader loader, final Iterable<URL> urls) {
-        this(new FakeModule(loader), urls);
+        this(loader, false, urls);
+    }
+
+    public ConfigurableClasspathArchive(final ClassLoader loader, boolean forceDescriptor, final Iterable<URL> urls) {
+        this(new FakeModule(loader), forceDescriptor, urls);
     }
 
     public ConfigurableClasspathArchive(final ClassLoader loader, final URL url) {
