@@ -15,7 +15,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class ConfigurableClasspathArchive extends CompositeArchive implements ScanConstants {
@@ -122,14 +124,21 @@ public class ConfigurableClasspathArchive extends CompositeArchive implements Sc
         return false;
     }
 
-    private static class FakeModule extends Module {
-        private FakeModule(final ClassLoader loader) {
+    protected static class FakeModule extends Module {
+        public FakeModule(final ClassLoader loader) {
+            this(loader, Collections.EMPTY_MAP);
+        }
+
+        public FakeModule(final ClassLoader loader, final Map<String, Object> altDD) {
             super(false);
             setClassLoader(loader);
 
-            final URL scanXml = loader.getResource(SCAN_XML);
+            URL scanXml = (URL) altDD.get(SCAN_XML_NAME);
+            if (scanXml == null) {
+                scanXml = loader.getResource(SCAN_XML_NAME);
+            }
             if (scanXml != null) {
-                getAltDDs().put(SCAN_XML, scanXml);
+                getAltDDs().put(SCAN_XML_NAME, scanXml);
             }
         }
     }
