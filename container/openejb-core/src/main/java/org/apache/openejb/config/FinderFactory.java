@@ -48,11 +48,9 @@ public class FinderFactory {
         IAnnotationFinder finder;
         if (module instanceof WebModule) {
             WebModule webModule = (WebModule) module;
-            final ClassLoader webClassLoader = webModule.getClassLoader();
             finder = new AnnotationFinder(new WebappAggregatedArchive(webModule, webModule.getScannableUrls())).link();
         } else if (module instanceof ConnectorModule) {
         	ConnectorModule connectorModule = (ConnectorModule) module;
-        	final ClassLoader connectorClassLoader = connectorModule.getClassLoader();
         	finder = new AnnotationFinder(new ConfigurableClasspathArchive(connectorModule, connectorModule.getLibraries())).link();
         } else if (module.getJarLocation() != null) {
             String location = module.getJarLocation();
@@ -235,7 +233,7 @@ public class FinderFactory {
             }
         }
 
-        private static class AnnotatedClassPredicate<T> extends Predicate<Annotated<Class<?>>> {
+        private static class AnnotatedClassPredicate extends Predicate<Annotated<Class<?>>> {
             public AnnotatedClassPredicate(final List<String> list) {
                 super(list);
             }
