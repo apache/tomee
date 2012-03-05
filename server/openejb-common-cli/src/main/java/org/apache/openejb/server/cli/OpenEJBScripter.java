@@ -16,11 +16,15 @@
  */
 package org.apache.openejb.server.cli;
 
+import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.proxy.ProxyEJB;
 
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
@@ -30,6 +34,7 @@ import javax.script.ScriptException;
 import javax.script.SimpleBindings;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class OpenEJBScripter {
@@ -78,6 +83,8 @@ public class OpenEJBScripter {
 
     private static Bindings binding() {
         final Bindings bindings = new SimpleBindings();
+        bindings.put("bm", new BeanManagerHelper());
+
         final ContainerSystem cs = SystemInstance.get().getComponent(ContainerSystem.class);
         for (BeanContext beanContext : cs.deployments()) {
             if (BeanContext.Comp.class.equals(beanContext.getBeanClass())) {
@@ -99,5 +106,44 @@ public class OpenEJBScripter {
             }
         }
         return bindings;
+    }
+
+    public static class BeanManagerHelper {
+        public Object beanFromClass(final String appName, final String classname) {
+            final AppContext appContext = appContext(appName);
+            final BeanManager bm = appContext.getBeanManager();
+            final Class<?> clazz;
+            try {
+                clazz = appContext.getClassLoader().loadClass(classname);
+            } catch (ClassNotFoundException e) {
+                throw new OpenEJBRuntimeException(e);
+            }
+            final Set<Bean<?>> beans = bm.getBeans(clazz);
+            return instance(bm, beans, clazz);
+        }
+
+        public Object beanFromName(final String appName, final String name) {
+            final BeanManager bm = beanManager(appName);
+            final Set<Bean<?>> beans = bm.getBeans(name);
+            return instance(bm, beans, Object.class);
+        }
+
+        private <T> T instance(final BeanManager bm, final Set<Bean<?>> beans, final Class<T> clazz) {
+            final Bean<?> bean = bm.resolve(beans);
+            return (T) bm.getReference(bean, clazz, bm.createCreationalContext(bean));
+        }
+
+        private BeanManager beanManager(final String appName) {
+            return appContext(appName).getBeanManager();
+        }
+
+        private AppContext appContext(final String appName) {
+            final ContainerSystem cs = SystemInstance.get().getComponent(ContainerSystem.class);
+            final AppContext appContext = cs.getAppContext(appName);
+            if (appContext == null) {
+                throw new OpenEJBRuntimeException("can't find application " + appName);
+            }
+            return appContext;
+        }
     }
 }

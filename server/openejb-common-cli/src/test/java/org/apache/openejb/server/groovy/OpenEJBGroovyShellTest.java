@@ -24,6 +24,8 @@ import org.junit.Test;
 import javax.ejb.embeddable.EJBContainer;
 import javax.script.ScriptException;
 
+import java.util.Properties;
+
 import static org.junit.Assert.assertEquals;
 
 public class OpenEJBGroovyShellTest {
@@ -31,7 +33,9 @@ public class OpenEJBGroovyShellTest {
 
     @BeforeClass
     public static void start() {
-        container = EJBContainer.createEJBContainer();
+        final Properties properties = new Properties();
+        properties.setProperty(EJBContainer.APP_NAME, OpenEJBGroovyShellTest.class.getSimpleName());
+        container = EJBContainer.createEJBContainer(properties);
     }
 
     @AfterClass
@@ -44,5 +48,12 @@ public class OpenEJBGroovyShellTest {
         final OpenEJBScripter shell = new OpenEJBScripter();
         final Object out = shell.evaluate("groovy", "Foo.foo()");
         assertEquals("foo", out);
+    }
+
+    @Test
+    public void callUsingCDI() throws ScriptException {
+        final OpenEJBScripter shell = new OpenEJBScripter();
+        final Object out = shell.evaluate("groovy", "bm.beanFromName('OpenEJBGroovyShellTest', 'bar').test()");
+        assertEquals("ok", out);
     }
 }

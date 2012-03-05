@@ -41,6 +41,7 @@ import javax.ejb.TransactionManagement;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Collection;
@@ -214,6 +215,7 @@ public class DeployerEjb implements Deployer {
         }
 
         // dump it
+        OutputStream os = null;
         try {
             final AdditionalDeployments additionalDeployments;
             if (config.exists() && config.length() > 0) {
@@ -242,9 +244,12 @@ public class DeployerEjb implements Deployer {
                     }
                 }
             }
-            JaxbOpenejb.marshal(AdditionalDeployments.class, additionalDeployments, IO.write(config));
+            os = IO.write(config);
+            JaxbOpenejb.marshal(AdditionalDeployments.class, additionalDeployments, os);
         } catch (Exception e) {
             LOGGER.error("can't save the added app, will not be present next time you'll start", e);
+        } finally {
+            IO.close(os);
         }
     }
 
