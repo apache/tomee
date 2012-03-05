@@ -89,6 +89,7 @@ neethi-
 nekohtml-
 openejb-api
 openejb-cxf-bundle
+openejb-cxf-transport
 openejb-hsql
 openejb-javaagent
 openejb-jee
