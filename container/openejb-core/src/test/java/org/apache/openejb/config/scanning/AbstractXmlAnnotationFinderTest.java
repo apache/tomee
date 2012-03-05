@@ -1,6 +1,7 @@
 package org.apache.openejb.config.scanning;
 
 import org.apache.openejb.config.ConfigurableClasspathArchive;
+import org.apache.openejb.config.ScanConstants;
 import org.apache.openejb.config.scanning.bean.MyAnnotation;
 import org.apache.openejb.config.scanning.bean.MyBean1;
 import org.apache.openejb.config.scanning.bean.MyBean2;
@@ -18,13 +19,13 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public abstract class AbstractXmlAnnotationFinderTest {
+public abstract class AbstractXmlAnnotationFinderTest implements ScanConstants {
     protected IAnnotationFinder finder;
 
     @Before
     public void initFinder() throws Exception {
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        System.setProperty("openejb.scan.xml.name", scanXml());
+        System.setProperty(SCAN_XML_PROPERTY, scanXml());
         finder = new AnnotationFinder(new ConfigurableClasspathArchive(loader,
                 Arrays.asList(
                         new URL(loader.getResource(scanXml()).toExternalForm().replace(scanXml(), ""))

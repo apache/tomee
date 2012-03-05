@@ -133,13 +133,17 @@ public class ConfigurableClasspathArchive extends CompositeArchive implements Sc
             this(loader, Collections.EMPTY_MAP);
         }
 
-        public FakeModule(final ClassLoader loader, final Map<String, Object> altDD) {
+        public FakeModule(final ClassLoader loader, final Map<String, Object> altDD)  {
+            this(loader, altDD, System.getProperty(SCAN_XML_PROPERTY, SCAN_XML_NAME));
+        }
+
+        public FakeModule(final ClassLoader loader, final Map<String, Object> altDD, final String name) {
             super(false);
             setClassLoader(loader);
 
-            URL scanXml = (URL) altDD.get(SCAN_XML_NAME);
+            URL scanXml = (URL) altDD.get(name);
             if (scanXml == null) {
-                scanXml = loader.getResource(SCAN_XML_NAME);
+                scanXml = loader.getResource(name);
             }
             if (scanXml != null) {
                 getAltDDs().put(SCAN_XML_NAME, scanXml);
