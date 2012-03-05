@@ -17,16 +17,18 @@
  */
 package org.apache.openejb.jee;
 
-import java.io.PrintStream;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 public final class JAXBContextFactory {
+
+    private static final java.util.logging.Logger log = java.util.logging.Logger.getLogger(JAXBContextFactory.class.getName());
 //    private static boolean useSXC = false;
 
-    public static JAXBContext newInstance(String s) throws JAXBException {
+    public static JAXBContext newInstance(final String s) throws JAXBException {
 //        if (useSXC) {
 //            try {
 //                Sxc.newInstance(s);
@@ -41,7 +43,7 @@ public final class JAXBContextFactory {
         }
     }
 
-    public static JAXBContext newInstance(String s, ClassLoader classLoader) throws JAXBException {
+    public static JAXBContext newInstance(final String s, final ClassLoader classLoader) throws JAXBException {
 //        if (useSXC) {
 //            try {
 //                return Sxc.newInstance(s, classLoader);
@@ -57,7 +59,7 @@ public final class JAXBContextFactory {
         }
     }
 
-    public static JAXBContext newInstance(String s, ClassLoader classLoader, Map<String, ?> properties) throws JAXBException {
+    public static JAXBContext newInstance(final String s, final ClassLoader classLoader, final Map<String, ?> properties) throws JAXBException {
 //        if (useSXC) {
 //            try {
 //                return Sxc.newInstance(s, classLoader, properties);
@@ -73,7 +75,7 @@ public final class JAXBContextFactory {
         }
     }
 
-    public static JAXBContext newInstance(Class... classes) throws JAXBException {
+    public static JAXBContext newInstance(final Class... classes) throws JAXBException {
 //        if (useSXC) {
 //            try {
 //                return Sxc.newInstance(classes);
@@ -81,7 +83,7 @@ public final class JAXBContextFactory {
 //            }
 //        }
         final StringBuilder sb = new StringBuilder();
-        for (Class clazz : classes) {
+        for (final Class clazz : classes) {
             sb.append(clazz.getName());
             sb.append(",");
         }
@@ -94,7 +96,7 @@ public final class JAXBContextFactory {
         }
     }
 
-    public static JAXBContext newInstance(Class[] classes, Map<String, ?> properties) throws JAXBException {
+    public static JAXBContext newInstance(final Class[] classes, final Map<String, ?> properties) throws JAXBException {
 //        if (useSXC) {
 //            try {
 //                return Sxc.newInstance(classes, properties);
@@ -103,7 +105,7 @@ public final class JAXBContextFactory {
 //        }
 
         final StringBuilder sb = new StringBuilder();
-        for (Class clazz : classes) {
+        for (final Class clazz : classes) {
             sb.append(clazz.getName());
             sb.append(",");
         }
@@ -149,26 +151,20 @@ public final class JAXBContextFactory {
 //    }
 
 
-
     private static class Event {
         protected final long start = System.nanoTime();
         private final String description;
 
-        private Event(String description) {
+        private Event(final String description) {
             this.description = description;
         }
 
-        public static Event start(String description) {
+        public static Event start(final String description) {
             return new Event(description);
         }
 
         public void stop() {
-            stop(System.out);
-        }
-
-        public void stop(PrintStream out) {
-            out.printf("JAXBContext.newInstance %s  %s", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - this.start), this.description);
-            out.println();
+            log.log(Level.FINE, String.format("JAXBContext.newInstance %s  %s", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - this.start), this.description));
         }
     }
 }
