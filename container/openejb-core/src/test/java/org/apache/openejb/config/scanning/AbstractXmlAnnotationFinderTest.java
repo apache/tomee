@@ -13,6 +13,7 @@ import org.junit.Test;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -25,9 +26,9 @@ public abstract class AbstractXmlAnnotationFinderTest {
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
         System.setProperty("openejb.scan.xml.name", scanXml());
         finder = new AnnotationFinder(new ConfigurableClasspathArchive(loader,
-                new URL[] {
+                Arrays.asList(
                         new URL(loader.getResource(scanXml()).toExternalForm().replace(scanXml(), ""))
-                }
+                )
         ));
         System.clearProperty("openejb.scan.xml.name");
     }
