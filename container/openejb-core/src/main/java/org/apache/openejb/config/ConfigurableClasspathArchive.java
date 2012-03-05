@@ -1,7 +1,6 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.finder.archive.Archive;
 import org.apache.xbean.finder.archive.ClassesArchive;
 import org.apache.xbean.finder.archive.ClasspathArchive;
@@ -20,23 +19,31 @@ import java.util.List;
 import java.util.Set;
 
 public class ConfigurableClasspathArchive extends CompositeArchive implements ScanConstants {
-    public ConfigurableClasspathArchive(final ClassLoader loader, final URL... urls) {
-        this(loader, Arrays.asList(urls));
+    public ConfigurableClasspathArchive(final Module module, final URL... urls) {
+        this(module, Arrays.asList(urls));
+    }
+
+    public ConfigurableClasspathArchive(final Module module, final Iterable<URL> urls) {
+        this(module, false, urls);
     }
 
     public ConfigurableClasspathArchive(final ClassLoader loader, final Iterable<URL> urls) {
-        this(loader, false, urls);
+        this(new FakeModule(loader), urls);
     }
 
-    public ConfigurableClasspathArchive(final ClassLoader loader, boolean forceDescriptor, final Iterable<URL> urls) {
-        super(archive(loader, urls, forceDescriptor));
+    public ConfigurableClasspathArchive(final ClassLoader loader, final URL url) {
+        this(new FakeModule(loader), Arrays.asList(url));
     }
 
-    public static List<Archive> archive(final ClassLoader loader, final Iterable<URL> urls, boolean forceDescriptor) {
+    public ConfigurableClasspathArchive(final Module module, boolean forceDescriptor, final Iterable<URL> urls) {
+        super(archive(module, urls, forceDescriptor));
+    }
+
+    public static List<Archive> archive(final Module module, final Iterable<URL> urls, boolean forceDescriptor) {
         final List<Archive> archives = new ArrayList<Archive>();
         for (URL location : urls) {
             try {
-                archives.add(archive(loader, location, forceDescriptor));
+                archives.add(archive(module, location, forceDescriptor));
             } catch (Exception e) {
                 // ignored
             }
@@ -44,10 +51,10 @@ public class ConfigurableClasspathArchive extends CompositeArchive implements Sc
         return archives;
     }
 
-    public static Archive archive(final ClassLoader loader, final URL location, boolean forceDescriptor) {
-        final ResourceFinder scanFinder = new ResourceFinder("", location);
+    public static Archive archive(final Module module, final URL location, boolean forceDescriptor) {
+        final ClassLoader loader = module.getClassLoader();
         try {
-            final URL scanXml = scanFinder.find(SystemInstance.get().getProperty(SCAN_XML_PROPERTY, SCAN_XML));
+            final URL scanXml = (URL) module.getAltDDs().get(SystemInstance.get().getProperty(SCAN_XML_PROPERTY, SCAN_XML_NAME));
             final ScanUtil.ScanHandler scan = ScanUtil.read(scanXml);
             final Archive packageArchive = packageArchive(scan.getPackages(), loader, location);
             final Archive classesArchive = classesArchive(scan.getPackages(), scan.getClasses(), loader);
@@ -113,5 +120,17 @@ public class ConfigurableClasspathArchive extends CompositeArchive implements Sc
             }
         }
         return false;
+    }
+
+    private static class FakeModule extends Module {
+        private FakeModule(final ClassLoader loader) {
+            super(false);
+            setClassLoader(loader);
+
+            final URL scanXml = loader.getResource(SCAN_XML);
+            if (scanXml != null) {
+                getAltDDs().put(SCAN_XML, scanXml);
+            }
+        }
     }
 }

@@ -29,14 +29,20 @@ public class Module {
 
     private ClassLoader classLoader;
 
-    private ValidationConfigType validationConfig;
+    private ValidationConfigType validationConfig = null;
     private final Map<String, Object> altDDs = new HashMap<String, Object>();
-    private String uniqueId;
+    private String uniqueId = null;
     private AppModule appModule = null;
-    private Resources resources;
+    private Resources resources = null;
+
+    public Module(boolean needId) {
+        if (needId) {
+            uniqueId = Integer.toString(currentId++);
+        }
+    }
 
     public Module() {
-        uniqueId = Integer.toString(currentId++);
+        this(true);
     }
 
     public ValidationConfigType getValidationConfig() {

@@ -49,11 +49,11 @@ public class FinderFactory {
         if (module instanceof WebModule) {
             WebModule webModule = (WebModule) module;
             final ClassLoader webClassLoader = webModule.getClassLoader();
-            finder = new AnnotationFinder(new WebappAggregatedArchive(webClassLoader, webModule.getScannableUrls())).link();
+            finder = new AnnotationFinder(new WebappAggregatedArchive(webModule, webClassLoader, webModule.getScannableUrls())).link();
         } else if (module instanceof ConnectorModule) {
         	ConnectorModule connectorModule = (ConnectorModule) module;
         	final ClassLoader connectorClassLoader = connectorModule.getClassLoader();
-        	finder = new AnnotationFinder(new ConfigurableClasspathArchive(connectorClassLoader, connectorModule.getLibraries())).link();
+        	finder = new AnnotationFinder(new ConfigurableClasspathArchive(connectorModule, connectorModule.getLibraries())).link();
         } else if (module.getJarLocation() != null) {
             String location = module.getJarLocation();
             File file = new File(location);
@@ -70,7 +70,11 @@ public class FinderFactory {
                 url = new URL(location);
             }
 
-            finder = new AnnotationFinder(new ConfigurableClasspathArchive(module.getClassLoader(), url)).link();
+            if (module instanceof Module) {
+                finder = new AnnotationFinder(new ConfigurableClasspathArchive((Module) module, url)).link();
+            } else {
+                finder = new AnnotationFinder(new ConfigurableClasspathArchive(module.getClassLoader(), url)).link();
+            }
         } else {
             finder = new AnnotationFinder(new ClassesArchive()).link();
         }
