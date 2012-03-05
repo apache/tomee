@@ -37,7 +37,6 @@ public class CheckDescriptorLocationTest {
 
     @Keys({@Key(value = "descriptor.incorrectLocation", type = KeyType.WARNING)})
     public AppModule testWebinfJar() throws Exception {
-
         Map<String, String> map = new HashMap<String, String>();
         map.put("ejb-jar.xml", "<ejb-jar/>"); // Place the descriptor in
         // incorrect location (directly
