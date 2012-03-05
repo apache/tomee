@@ -36,15 +36,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TreeMap;
 
 public class CliRunnable implements Runnable {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_SERVER, CliRunnable.class);
-
-    public static final String SERVICE_FOLDER = "META-INF/org/apache/openejb/server";
-    public static final String SERVICE_FILE = "commands.xml";
 
     private static final String BRANDING_FILE = "branding.properties";
     private static final String WELCOME_KEY_PREFIX = "welcome_";
@@ -63,7 +60,7 @@ public class CliRunnable implements Runnable {
 
     private static final Properties PROPERTIES = new Properties();
     private static final boolean tomee;
-    private static Map<String, Class<?>> COMMANDS = new HashMap<String, Class<?>>();
+    private static final Map<String, Class<?>> COMMANDS = new TreeMap<String, Class<?>>();
     private static final OpenEJBScripter scripter = new OpenEJBScripter();
 
     static {
@@ -219,7 +216,7 @@ public class CliRunnable implements Runnable {
                 }
 
                 if (cmdClass != null) {
-                    ObjectRecipe recipe = new ObjectRecipe(cmdClass);
+                    final ObjectRecipe recipe = new ObjectRecipe(cmdClass);
                     recipe.setProperty("streamManager", streamManager);
                     recipe.setProperty("command", line);
                     recipe.setProperty("scripter", scripter);
