@@ -49,7 +49,7 @@ public class FinderFactory {
         if (module instanceof WebModule) {
             WebModule webModule = (WebModule) module;
             final ClassLoader webClassLoader = webModule.getClassLoader();
-            finder = new AnnotationFinder(new WebappAggregatedArchive(webModule, webClassLoader, webModule.getScannableUrls())).link();
+            finder = new AnnotationFinder(new WebappAggregatedArchive(webModule, webModule.getScannableUrls())).link();
         } else if (module instanceof ConnectorModule) {
         	ConnectorModule connectorModule = (ConnectorModule) module;
         	final ClassLoader connectorClassLoader = connectorModule.getClassLoader();

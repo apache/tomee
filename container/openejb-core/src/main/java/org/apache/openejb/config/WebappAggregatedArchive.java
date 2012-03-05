@@ -21,7 +21,7 @@ public class WebappAggregatedArchive implements Archive, ScanConstants {
     private boolean scanXmlExists = false; // faster than using an empty handler
     private Archive archive;
 
-    public WebappAggregatedArchive(final WebModule module, final ClassLoader loader, final Iterable<URL> urls) {
+    public WebappAggregatedArchive(final Module module, final Iterable<URL> urls) {
         final List<Archive> archives = new ArrayList<Archive>();
 
         final URL scanXml = (URL) module.getAltDDs().get(ScanConstants.SCAN_XML_NAME);
@@ -36,12 +36,16 @@ public class WebappAggregatedArchive implements Archive, ScanConstants {
 
         for (URL url : urls) {
             final List<String> classes = new ArrayList<String>();
-            final Archive archive = new FilteredArchive(new ConfigurableClasspathArchive(loader, Arrays.asList(url)), new ScanXmlSaverFilter(scanXmlExists, handler, classes));
+            final Archive archive = new FilteredArchive(new ConfigurableClasspathArchive(module.getClassLoader(), Arrays.asList(url)), new ScanXmlSaverFilter(scanXmlExists, handler, classes));
             map.put(url, classes);
             archives.add(archive);
         }
 
         archive = new CompositeArchive(archives);
+    }
+
+    public WebappAggregatedArchive(final ClassLoader classLoader, final Map<String, Object> altDDs, ArrayList<URL> xmls) {
+        this(new ConfigurableClasspathArchive.FakeModule(classLoader, altDDs), xmls);
     }
 
     public Map<URL, List<String>> getClassesMap() {
