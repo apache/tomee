@@ -61,6 +61,10 @@ public class ConfigurableClasspathArchive extends CompositeArchive implements Sc
         final ClassLoader loader = module.getClassLoader();
         try {
             final URL scanXml = (URL) module.getAltDDs().get(SystemInstance.get().getProperty(SCAN_XML_PROPERTY, SCAN_XML_NAME));
+            if (scanXml == null) {
+                return ClasspathArchive.archive(loader, location);
+            }
+
             final ScanUtil.ScanHandler scan = ScanUtil.read(scanXml);
             final Archive packageArchive = packageArchive(scan.getPackages(), loader, location);
             final Archive classesArchive = classesArchive(scan.getPackages(), scan.getClasses(), loader);
