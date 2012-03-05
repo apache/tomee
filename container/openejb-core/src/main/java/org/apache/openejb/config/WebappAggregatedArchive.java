@@ -16,17 +16,15 @@ import java.util.List;
 import java.util.Map;
 
 public class WebappAggregatedArchive implements Archive, ScanConstants {
-    private static final String WEBAPP_GLOBAL_SCAN_LOCATION = "WEB-INF/" + SCAN_XML_NAME;
-
     private final Map<URL, List<String>> map = new HashMap<URL, List<String>>();
     private ScanUtil.ScanHandler handler = null;
     private boolean scanXmlExists = false; // faster than using an empty handler
     private Archive archive;
 
-    public WebappAggregatedArchive(final ClassLoader loader, final Iterable<URL> urls) {
+    public WebappAggregatedArchive(final WebModule module, final ClassLoader loader, final Iterable<URL> urls) {
         final List<Archive> archives = new ArrayList<Archive>();
 
-        final URL scanXml = loader.getResource(WEBAPP_GLOBAL_SCAN_LOCATION);
+        final URL scanXml = (URL) module.getAltDDs().get(ScanConstants.SCAN_XML_NAME);
         if (scanXml != null) {
             try {
                 handler = ScanUtil.read(scanXml);
