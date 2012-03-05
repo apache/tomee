@@ -35,6 +35,7 @@ import org.apache.xbean.recipe.Option;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -88,7 +89,7 @@ public class CliRunnable implements Runnable {
             UrlSet urlSet = new UrlSet(loader);
             urlSet = urlSet.exclude(loader.getParent());
 
-            final IAnnotationFinder finder = new AnnotationFinder(new ConfigurableClasspathArchive(loader, true, urlSet.getUrls()));
+            final IAnnotationFinder finder = new AnnotationFinder(new ConfigurableClasspathArchive(new ConfigurableClasspathArchive.FakeModule(loader, Collections.EMPTY_MAP), true, urlSet.getUrls()));
             for (Annotated<Class<?>> cmd : finder.findMetaAnnotatedClasses(Command.class)) {
                 try {
                     final Command annotation = cmd.getAnnotation(Command.class);

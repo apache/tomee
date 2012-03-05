@@ -33,7 +33,7 @@ public class OpenEJBValidatorService implements ValidatorService {
     @Override
     public ValidatorFactory getDefaultValidatorFactory() {
         try {
-            return (ValidatorFactory)new InitialContext().lookup("java:comp/ValidatorFactory");
+            return (ValidatorFactory) new InitialContext().lookup("java:comp/ValidatorFactory");
         } catch (NamingException e) {
             throw new OpenEJBRuntimeException(e);
         }
@@ -42,7 +42,7 @@ public class OpenEJBValidatorService implements ValidatorService {
     @Override
     public Validator getDefaultValidator() {
         try {
-            return (Validator)new InitialContext().lookup("java:comp/Validator");
+            return (Validator) new InitialContext().lookup("java:comp/Validator");
         } catch (NamingException e) {
             throw new OpenEJBRuntimeException(e);
         }

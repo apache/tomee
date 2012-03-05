@@ -1,5 +1,6 @@
 package org.apache.openejb.config;
 
+import org.apache.openejb.core.EmptyResourcesClassLoader;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.xbean.finder.archive.Archive;
 import org.apache.xbean.finder.archive.ClassesArchive;
@@ -12,10 +13,10 @@ import org.apache.xbean.finder.filter.PackageFilter;
 
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -59,13 +60,23 @@ public class ConfigurableClasspathArchive extends CompositeArchive implements Sc
 
     public static Archive archive(final Module module, final URL location, boolean forceDescriptor) {
         final ClassLoader loader = module.getClassLoader();
+        final String name = "META-INF/" + name();
         try {
-            final URL scanXml = (URL) module.getAltDDs().get(SystemInstance.get().getProperty(SCAN_XML_PROPERTY, SCAN_XML_NAME));
-            if (scanXml == null) {
+            URL scanXml = new URLClassLoader(new URL[] { location }, new EmptyResourcesClassLoader()).getResource(name);
+            if (scanXml == null && !forceDescriptor) {
                 return ClasspathArchive.archive(loader, location);
+            } else if (scanXml == null) {
+                return new ClassesArchive();
             }
 
-            final ScanUtil.ScanHandler scan = ScanUtil.read(scanXml);
+            // read descriptors
+            ScanUtil.ScanHandler scan;
+            if (scanXml != null) {
+                scan = ScanUtil.read(scanXml);
+            } else {
+                scan = new ScanUtil.ScanHandler();
+            }
+
             final Archive packageArchive = packageArchive(scan.getPackages(), loader, location);
             final Archive classesArchive = classesArchive(scan.getPackages(), scan.getClasses(), loader);
 
@@ -81,6 +92,10 @@ public class ConfigurableClasspathArchive extends CompositeArchive implements Sc
             }
             return ClasspathArchive.archive(loader, location);
         }
+    }
+
+    private static String name() {
+        return SystemInstance.get().getProperty(SCAN_XML_PROPERTY, SCAN_XML_NAME);
     }
 
     public static Archive packageArchive(final Set<String> packageNames, final ClassLoader loader, final URL url) {
@@ -132,22 +147,24 @@ public class ConfigurableClasspathArchive extends CompositeArchive implements Sc
         return false;
     }
 
-    protected static class FakeModule extends Module {
+    public static class FakeModule extends Module {
         public FakeModule(final ClassLoader loader) {
-            this(loader, Collections.EMPTY_MAP);
+            this(loader, null);
         }
 
         public FakeModule(final ClassLoader loader, final Map<String, Object> altDD)  {
-            this(loader, altDD, System.getProperty(SCAN_XML_PROPERTY, SCAN_XML_NAME));
+            this(loader, altDD, name());
         }
 
         public FakeModule(final ClassLoader loader, final Map<String, Object> altDD, final String name) {
             super(false);
             setClassLoader(loader);
 
-            URL scanXml = (URL) altDD.get(name);
-            if (scanXml == null) {
-                scanXml = loader.getResource(name);
+            final URL scanXml;
+            if (altDD == null) {
+                scanXml = loader.getResource("META-INF/" + name);
+            } else {
+                scanXml = (URL) altDD.get(name);
             }
             if (scanXml != null) {
                 getAltDDs().put(SCAN_XML_NAME, scanXml);
