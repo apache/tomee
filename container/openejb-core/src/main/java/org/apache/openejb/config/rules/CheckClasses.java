@@ -18,7 +18,6 @@ package org.apache.openejb.config.rules;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
-import org.apache.openejb.api.Proxy;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.EntityBean;
@@ -27,6 +26,7 @@ import org.apache.openejb.jee.RemoteBean;
 import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.util.SafeToolkit;
 import org.apache.openejb.util.Strings;
+import org.apache.openejb.util.proxy.DynamicProxyImplFactory;
 import org.apache.xbean.finder.ClassFinder;
 
 import javax.ejb.EJBHome;
@@ -36,7 +36,6 @@ import javax.ejb.EJBObject;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.jws.WebService;
-import javax.persistence.PersistenceContext;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -216,8 +215,7 @@ public class CheckClasses extends ValidationBase {
         String ejbName = b.getEjbName();
 
         Class<?> beanClass = lookForClass(b.getEjbClass(), "ejb-class", ejbName);
-        boolean isDynamicProxyImpl = beanClass.getAnnotation(PersistenceContext.class) != null
-            || beanClass.getAnnotation(Proxy.class) != null;
+        boolean isDynamicProxyImpl = DynamicProxyImplFactory.isKnownDynamicallyImplemented(beanClass);
 
         if (beanClass == null) return null;
         
