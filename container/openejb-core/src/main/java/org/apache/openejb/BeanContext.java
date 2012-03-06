@@ -1279,11 +1279,27 @@ public class BeanContext extends DeploymentContext {
 
             // Create bean instance
             final Object beanInstance;
-            final InjectionProcessor injectionProcessor = new InjectionProcessor(beanConstructor.create(creationalContext), this.getInjections(), InjectionProcessor.unwrap(ctx));
+            final InjectionProcessor injectionProcessor;
             if (!isDynamicallyImplemented()) {
+                injectionProcessor = new InjectionProcessor(beanConstructor.create(creationalContext), getInjections(), InjectionProcessor.unwrap(ctx));
                 beanInstance = injectionProcessor.createInstance();
                 inject(beanInstance, creationalContext);
             } else {
+                // update target
+                final List<Injection> newInjections = new ArrayList<Injection>();
+                for (Injection injection : getInjections()) {
+                    if (beanClass.equals(injection.getTarget())) {
+                        final Injection updated = new Injection(injection.getJndiName(), injection.getName(), beanDefinition.getBeanClass());
+                        newInjections.add(updated);
+                    } else {
+                        newInjections.add(injection);
+                    }
+                }
+                injections.clear();
+                injections.addAll(newInjections);
+
+                injectionProcessor = new InjectionProcessor(beanConstructor.create(creationalContext), injections, InjectionProcessor.unwrap(ctx));
+                injectionProcessor.setProperty("implementingInterfaceClass", beanClass);
                 InvocationHandler handler = (InvocationHandler) injectionProcessor.createInstance();
                 beanInstance = DynamicProxyImplFactory.newProxy(this, handler);
                 inject(handler, creationalContext);
