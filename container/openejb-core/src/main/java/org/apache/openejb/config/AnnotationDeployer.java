@@ -1923,7 +1923,13 @@ public class AnnotationDeployer implements DynamicDeployer {
                         annotationFinder = createFinder(clazz);
                         finder = new AnnotationFinder(new ClassesArchive(clazz));
                     } else {
-                        final Class<?>[] classes = new Class<?>[] { clazz, metaClass.getAnnotation(Proxy.class).value() };
+                        final Class<?>[] classes;
+                        final Proxy proxy = metaClass.getAnnotation(Proxy.class);
+                        if (proxy == null) {
+                            classes = new Class<?>[] { clazz };
+                        } else {
+                            classes = new Class<?>[] { clazz, proxy.value() };
+                        }
                         annotationFinder = createFinder(classes);
                         finder = new AnnotationFinder(new ClassesArchive(classes));
                     }
