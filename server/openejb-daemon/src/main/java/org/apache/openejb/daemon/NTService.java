@@ -86,7 +86,7 @@ public class NTService {
 
             } catch (Exception e) {
                 running.set(false);
-                throw new ServerRuntimeException("Failed to Bootstrap OpenEJB", e);
+                throw new RuntimeException("Failed to Bootstrap OpenEJB", e);
             }
 
         }
