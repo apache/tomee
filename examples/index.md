@@ -160,6 +160,7 @@ All the examples show code, but some are better documented than others.  Example
 ###  Frameworks
 
  - [spring-integration](spring-integration/README.html)
+ - [spring-data-proxy](spring-data-proxy/README.html)
  - [webapps/struts](webapps/struts/README.html)
 }
 
@@ -182,6 +183,7 @@ All the examples show code, but some are better documented than others.  Example
  - [dynamic-dao-implementation](dynamic-dao-implementation/README.html) *
  - [dynamic-implementation](dynamic-implementation/README.html)
  - [dynamic-proxy-to-access-mbean](dynamic-proxy-to-access-mbean/README.html)
+ - [spring-data-proxy](spring-data-proxy/README.html) 
 }
 
 
