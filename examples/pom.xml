@@ -86,6 +86,7 @@
     <module>simple-stateless-with-descriptor</module>
     <module>simple-webservice</module>
     <module>spring-integration</module>
+    <module>spring-data-proxy</module>
     <module>telephone-stateful</module>
     <module>testcase-injection</module>
     <module>testing-security-2</module>
