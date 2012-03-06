@@ -22,7 +22,7 @@
   <artifactId>spring-data-proxy</artifactId>
   <packaging>jar</packaging>
   <version>1.1-SNAPSHOT</version>
-  <name>OpenEJB :: Examples :: Dynamic DAO Implementation</name>
+  <name>OpenEJB :: Examples :: Spring Data</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
