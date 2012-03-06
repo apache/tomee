@@ -66,12 +66,25 @@ public class DeployerEjb implements Deployer {
     static {
         String uniqueName = "OpenEJB-" + new BigInteger(128, new SecureRandom()).toString(Character.MAX_RADIX);
         String tempDir = System.getProperty("java.io.tmpdir");
+        File unique = null;
         try {
-            uniqueFile = new File(tempDir, uniqueName).getCanonicalFile();
-            uniqueFile.createNewFile();
+            unique = new File(tempDir, uniqueName).getCanonicalFile();
+            unique.createNewFile();
         } catch (IOException e) {
-            throw new OpenEJBRuntimeException(e);
+            // same trying in work directory
+            unique = new File(SystemInstance.get().getHome().getDirectory(), "work");
+            if (unique.exists()) {
+                try {
+                    unique = new File(unique, uniqueName).getCanonicalFile();
+                    unique.createNewFile();
+                } catch (IOException e1) {
+                    throw new OpenEJBRuntimeException(e);
+                }
+            } else {
+                throw new OpenEJBRuntimeException("can't create unique file, please set java.io.tmpdir to a writable folder or create work folder", e);
+            }
         }
+        uniqueFile = unique;
         uniqueFile.deleteOnExit();
     }
 
