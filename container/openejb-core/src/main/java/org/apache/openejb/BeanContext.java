@@ -85,7 +85,7 @@ public class BeanContext extends DeploymentContext {
     public static final String USER_INTERCEPTOR_SEPARATOR = ",| |;";
 
     public boolean isDynamicallyImplemented() {
-        return getBeanClass().equals(getLocalInterface());
+        return getBeanClass().equals(getLocalInterface()); // faster than utility method in util.proxy
     }
 
     public interface BusinessLocalHome extends javax.ejb.EJBLocalHome {

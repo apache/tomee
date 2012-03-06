@@ -112,10 +112,10 @@ import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.WebserviceDescription;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.util.AnnotationUtil;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.proxy.DynamicProxyImplFactory;
 import org.apache.xbean.finder.Annotated;
 import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.IAnnotationFinder;
@@ -1420,8 +1420,8 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             // not a dynamic proxy implemented bean
-            if (beanClass.get().getAnnotation(PersistenceContext.class) == null
-                    && beanClass.get().getAnnotation(Proxy.class) == null
+            if (beanClass.getAnnotation(PersistenceContext.class) == null
+                    && beanClass.getAnnotation(Proxy.class) == null
                     && beanClass.get().isInterface()) {
                 ejbModule.getValidation().fail(ejbName, "interfaceAnnotatedAsBean", annotationClass.getSimpleName(), beanClass.get().getName());
                 return false;
@@ -1901,6 +1901,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                     continue;
                 }
 
+                boolean dynamicBean = DynamicProxyImplFactory.isKnownDynamicallyImplemented(clazz);
+                final MetaAnnotatedClass<?> metaClass = new MetaAnnotatedClass(clazz);
 
                 final AnnotationFinder finder;
                 final AnnotationFinder annotationFinder;
@@ -1917,8 +1919,14 @@ public class AnnotationDeployer implements DynamicDeployer {
                     annotationFinder = af.select(names);
                     finder = af.select(clazz.getName());
                 } else {
-                    annotationFinder = createFinder(clazz);
-                    finder = new AnnotationFinder(new ClassesArchive(clazz));
+                    if (!dynamicBean) {
+                        annotationFinder = createFinder(clazz);
+                        finder = new AnnotationFinder(new ClassesArchive(clazz));
+                    } else {
+                        final Class<?>[] classes = new Class<?>[] { clazz, metaClass.getAnnotation(Proxy.class).value() };
+                        annotationFinder = createFinder(classes);
+                        finder = new AnnotationFinder(new ClassesArchive(classes));
+                    }
                 }
 
                 /*
@@ -2735,9 +2743,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                         && all.remote.isEmpty()
                         ) {
 
-                    if (interfaces.size() == 0 ||
-                        (AnnotationUtil.getAnnotation(PersistenceContext.class, clazz) != null
-                            && AnnotationUtil.getAnnotation(Proxy.class, clazz) != null)) {
+                    if (interfaces.size() == 0 || DynamicProxyImplFactory.isKnownDynamicallyImplemented(clazz)) {
                         // No interfaces?  Then @LocalBean
 
                         sessionBean.setLocalBean(new Empty());
@@ -3460,7 +3466,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             boolean localbean = isKnownLocalBean(interfce);
-            boolean dynamicallyImplemented = isKnownDynamicallyImplemented(interfce);
+            boolean dynamicallyImplemented = DynamicProxyImplFactory.isKnownDynamicallyImplemented(interfce);
 
             if ((!localbean) && interfce != null && !isValidEjbInterface(name, interfce, ejbRef.getName())) {
                 return;
@@ -3563,12 +3569,6 @@ public class AnnotationDeployer implements DynamicDeployer {
                 return refName;
             }
             return "java:comp/env/" + refName;
-        }
-
-        private boolean isKnownDynamicallyImplemented(Class<?> clazz) {
-            return clazz.isInterface()
-                && (AnnotationUtil.getAnnotation(PersistenceContext.class, clazz) != null
-                    || AnnotationUtil.getAnnotation(Proxy.class, clazz) != null);
         }
 
         private boolean isKnownLocalBean(Class clazz) {

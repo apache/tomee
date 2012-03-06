@@ -19,15 +19,26 @@ package org.apache.openejb.util.proxy;
 
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.api.Proxy;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.xbean.finder.Annotated;
+import org.apache.xbean.finder.MetaAnnotatedClass;
 
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.lang.reflect.Method;
 
 public class DynamicProxyImplFactory {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, BeanContext.class);
+
+    public static boolean isKnownDynamicallyImplemented(Class<?> clazz) {
+        final Annotated<Class<?>> metaClass = new MetaAnnotatedClass(clazz);
+        return clazz.isInterface()
+                && (metaClass.getAnnotation(PersistenceContext.class) != null
+                || metaClass.getAnnotation(Proxy.class) != null);
+    }
 
     public static Object newProxy(BeanContext context, java.lang.reflect.InvocationHandler invocationHandler) {
         if (invocationHandler instanceof QueryProxy) {
