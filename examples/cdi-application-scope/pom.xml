@@ -13,6 +13,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>cdi-application-scope</artifactId>
+  <name>OpenEJB :: Examples :: CDI Application Scope</name>
   <version>1.0-SNAPSHOT</version>
 
   <build>
