@@ -1052,11 +1052,11 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
      * @param standardContext tomcat context instance
      * @return a openejb application module
      */
-    private AppModule loadApplication(StandardContext standardContext) {
-        ServletContext servletContext = standardContext.getServletContext();
+    private AppModule loadApplication(final StandardContext standardContext) {
+        final ServletContext servletContext = standardContext.getServletContext();
 
-        TomcatDeploymentLoader tomcatDeploymentLoader = new TomcatDeploymentLoader(standardContext, getId(standardContext));
-        AppModule appModule = null;
+        final TomcatDeploymentLoader tomcatDeploymentLoader = new TomcatDeploymentLoader(standardContext, getId(standardContext));
+        final AppModule appModule;
         try {
             appModule = tomcatDeploymentLoader.load(new File(servletContext.getRealPath(".")).getParentFile());
         } catch (OpenEJBException e) {
