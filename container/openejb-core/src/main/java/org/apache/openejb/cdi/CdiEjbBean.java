@@ -36,7 +36,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
     private final BeanContext beanContext;
 
     public CdiEjbBean(BeanContext beanContext, WebBeansContext webBeansContext) {
-        this(beanContext, webBeansContext, beanContext.getBeanClass());
+        this(beanContext, webBeansContext, beanContext.getManagedClass());
     }
 
     public CdiEjbBean(BeanContext beanContext, WebBeansContext webBeansContext, Class beanClass) {
