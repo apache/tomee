@@ -930,7 +930,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             server.registerMBean(new DynamicMBeanWrapper(instance), leaf);
             appMbeans.put(mbeanClass, leaf.getCanonicalName());
-            logger.info("MBean(" + leaf.getCanonicalName() + ")");
+            logger.info("Deployed MBean(" + leaf.getCanonicalName() + ")");
         } catch (Exception e) {
             logger.error("the mbean " + mbeanClass + " can't be registered", e);
         }
