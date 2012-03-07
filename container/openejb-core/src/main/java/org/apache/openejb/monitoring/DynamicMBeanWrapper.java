@@ -16,15 +16,9 @@
  */
 package org.apache.openejb.monitoring;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+
 import javax.management.Attribute;
 import javax.management.AttributeList;
 import javax.management.AttributeNotFoundException;
@@ -43,8 +37,14 @@ import javax.management.ManagedOperation;
 import javax.management.NotificationInfo;
 import javax.management.NotificationInfos;
 import javax.management.ReflectionException;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 public class DynamicMBeanWrapper implements DynamicMBean {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_DEPLOY, DynamicMBeanWrapper.class);
@@ -152,28 +152,11 @@ public class DynamicMBeanWrapper implements DynamicMBean {
                 notificationInfos.toArray(new MBeanNotificationInfo[notificationInfos.size()]));
     }
 
-    public DynamicMBeanWrapper(Class<?> annotatedMBean) {
-        this(instantiate(annotatedMBean));
-    }
-
-    private static Object instantiate(Class<?> annotatedMBean) {
-        try {
-            return annotatedMBean.newInstance();
-        } catch (InstantiationException ie) {
-            logger.error("can't instantiate " + annotatedMBean.getName(), ie);
-            throw new IllegalArgumentException(annotatedMBean.getName());
-        } catch (IllegalAccessException iae) {
-            logger.error("can't instantiate " + annotatedMBean.getName(), iae);
-            throw new IllegalArgumentException(annotatedMBean.getName());
-        }
-    }
-
     private MBeanNotificationInfo getNotificationInfo(NotificationInfo n) {
         String description = getDescription(n.description(), "-");
-        MBeanNotificationInfo ni = new MBeanNotificationInfo(n.types(),
+        return new MBeanNotificationInfo(n.types(),
             n.notificationClass().getName(), description,
             new ImmutableDescriptor(n.descriptorFields()));
-        return ni;
     }
 
     private String getDescription(Description d, String defaultValue) {
@@ -251,10 +234,8 @@ public class DynamicMBeanWrapper implements DynamicMBean {
     @Override
     public AttributeList setAttributes(AttributeList attributes) {
         AttributeList list = new AttributeList();
-        Iterator<Object> it = attributes.iterator();
-
-        while (it.hasNext()) {
-            Attribute attr = (Attribute) it.next();
+        for (Object o : attributes) {
+            final Attribute attr = (Attribute) o;
             try {
                 setAttribute(attr);
                 list.add(attr);

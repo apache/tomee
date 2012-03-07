@@ -18,7 +18,9 @@ package org.apache.openejb.assembler.classic;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 /**
@@ -39,5 +41,6 @@ public class AppInfo extends InfoObject {
     public final JndiEncInfo globalJndiEnc = new JndiEncInfo();
     public final JndiEncInfo appJndiEnc = new JndiEncInfo();
     public String cmpMappingsXml;
-    public Set<String> jmx = new TreeSet<String>();
+    public Map<String, String> jmx = new TreeMap<String, String>();
+    public Set<String> mbeans = new TreeSet<String>();
 }

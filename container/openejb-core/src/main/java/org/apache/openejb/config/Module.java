@@ -20,7 +20,9 @@ import org.apache.openejb.config.sys.Resources;
 import org.apache.openejb.jee.bval.ValidationConfigType;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class Module {
     private static int currentId = 1; // unique id to be able to bind something for each module in the jndi tree
@@ -34,6 +36,7 @@ public class Module {
     private String uniqueId = null;
     private AppModule appModule = null;
     private Resources resources = null;
+    private final Set<String> mbeans = new HashSet<String>();
 
     public Module(boolean needId) {
         if (needId) {
@@ -102,5 +105,9 @@ public class Module {
         }
 
         this.resources = resources;
+    }
+
+    public Set<String> getMbeans() {
+        return mbeans;
     }
 }

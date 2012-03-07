@@ -16,218 +16,148 @@
  */
 package org.apache.openejb.config;
 
-import java.lang.management.ManagementFactory;
-import java.util.Scanner;
-import javax.management.Attribute;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
+import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
-import org.apache.openejb.config.AppModule;
-import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.jee.Beans;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.mbeans.Empty;
+import org.apache.openejb.mbeans.Inheritance;
+import org.apache.openejb.mbeans.MBeanDescription;
+import org.apache.openejb.mbeans.Operation;
+import org.apache.openejb.mbeans.OperationDescription;
+import org.apache.openejb.mbeans.Reader;
+import org.apache.openejb.mbeans.ReaderDescription;
+import org.apache.openejb.mbeans.ReaderWriter;
+import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.management.Attribute;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
-/**
- * Note: each MBeans are at least deployed twice (using old and spec module name).
- *
- *         openejb.user.mbeans.list=org.apache.openejb.mbeans.Empty,
- *         org.apache.openejb.mbeans.Inheritance,
- *         org.apache.openejb.mbeans.MBeanDescription,
- *         org.apache.openejb.mbeans.MBeanNotificationlistener,
- *         org.apache.openejb.mbeans.MultipleNotifications,
- *         org.apache.openejb.mbeans.Notificater,
- *         org.apache.openejb.mbeans.Operation,
- *         org.apache.openejb.mbeans.OperationDescription,
- *         org.apache.openejb.mbeans.Reader,
- *         org.apache.openejb.mbeans.ReaderWriter,
- *         org.apache.openejb.mbeans.ReaderDescription
- */
 public class MBeanDeployerTest {
-    private static final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-    private static final String LIST_PROPR = "openejb.user.mbeans.list";
+    private static final MBeanServer server = LocalMBeanServer.get();
 
-    private static AppModule appModule;
-    private static Assembler assembler;
-    private static ConfigurationFactory config;
+    private AppModule appModule;
+    private Assembler assembler;
+    private ConfigurationFactory config;
+    private AppInfo appInfo;
 
-    /**
-     * needs properties so it is not done in a @Before
-     * because SystemInstance.get().setProperty(LIST_PROPR, ...) is done in @Test methods.
-     */
-    private void startOpenEJB() throws Exception {
+    @Before
+    public void startOpenEJB() throws Exception {
         config = new ConfigurationFactory();
         assembler = new Assembler();
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
-        EjbJar ejbJar = new EjbJar();
-        EjbModule ejbModule = new EjbModule(ejbJar);
+        final EjbJar ejbJar = new EjbJar();
+        final EjbModule ejbModule = new EjbModule(ejbJar);
+        ejbModule.setBeans(new Beans());
+        ejbModule.setModuleId("mbeans-test");
+
+        for (Class<?> clazz : Arrays.asList(Operation.class, OperationDescription.class,
+                Reader.class, ReaderWriter.class, ReaderDescription.class,
+                Empty.class, Inheritance.class, MBeanDescription.class)) {
+            ejbModule.getBeans().addManagedClass(clazz);
+            ejbModule.getMbeans().add(clazz.getName());
+        }
 
         appModule = new AppModule(ejbModule.getClassLoader(), "mbeans");
         appModule.getEjbModules().add(ejbModule);
-        assembler.createApplication(config.configureApplication(appModule));
+        appInfo = config.configureApplication(appModule);
+        assembler.createApplication(appInfo);
     }
 
-    @After public void resetList() {
+    @After
+    public void resetList() {
         assembler.destroy();
         SystemInstance.reset();
     }
 
-    @Test public void empty() throws Exception {
-        SystemInstance.get().setProperty(LIST_PROPR, "org.apache.openejb.mbeans.Empty");
-        startOpenEJB();
-
-        assertEquals(2, appModule.getMBeans().size());
-
-        ObjectName on = new ObjectName(appModule.getMBeans().iterator().next());
-        String cn = on.getCanonicalName();
-        assertTrue(cn.startsWith("openejb.user.mbeans"));
-        assertTrue(cn.contains("group=org.apache.openejb.mbeans"));
-        assertTrue(cn.contains("application=mbeans") || cn.contains("application=EjbModule"));
-        assertTrue(cn.contains("name=Empty"));
-        assertTrue(server.isRegistered(on));
-    }
-
-    @Test public void reader() throws Exception {
-        SystemInstance.get().setProperty(LIST_PROPR, "org.apache.openejb.mbeans.Reader");
-        startOpenEJB();
-
-        assertEquals(2, appModule.getMBeans().size());
-        String cn = appModule.getMBeans().iterator().next();
-        ObjectName on = new ObjectName(cn);
-        assertTrue(cn.startsWith("openejb.user.mbeans"));
-        assertTrue(cn.contains("group=org.apache.openejb.mbeans"));
-        assertTrue(cn.contains("application=mbeans") || cn.contains("application=EjbModule"));
-        assertTrue(cn.contains("name=Reader"));
-        assertTrue(server.isRegistered(on));
-        assertEquals(2, server.getAttribute(on, "value"));
-    }
-
-    @Test public void writer() throws Exception {
-        SystemInstance.get().setProperty(LIST_PROPR, "org.apache.openejb.mbeans.ReaderWriter");
-        startOpenEJB();
-
-        assertEquals(2, appModule.getMBeans().size());
-        String cn = appModule.getMBeans().iterator().next();
-        ObjectName on = new ObjectName(cn);        assertTrue(cn.startsWith("openejb.user.mbeans"));
-        assertTrue(cn.contains("group=org.apache.openejb.mbeans"));
-        assertTrue(cn.contains("application=mbeans") || cn.contains("application=EjbModule"));
-        assertTrue(cn.contains("name=ReaderWriter"));
-        assertTrue(server.isRegistered(on));
-        assertEquals(2, server.getAttribute(on, "value"));
-        server.setAttribute(on, new Attribute("value", 5));
-        assertEquals(5, server.getAttribute(on, "value"));
-    }
-
-    @Test public void emptyAndReader() throws Exception {
-        SystemInstance.get().setProperty(LIST_PROPR, "org.apache.openejb.mbeans.Empty,org.apache.openejb.mbeans.Reader");
-        startOpenEJB();
-
-        assertEquals(4, appModule.getMBeans().size());
-        for (String cn : appModule.getMBeans()) {
-            ObjectName on = new ObjectName(cn);
-            assertTrue(cn.startsWith("openejb.user.mbeans"));
-            assertTrue(cn.contains("group=org.apache.openejb.mbeans"));
-            assertTrue(cn.contains("application=mbeans") || cn.contains("application=EjbModule"));
-            assertTrue(cn.contains("name=Reader") || cn.contains("name=Empty"));
-            assertTrue(server.isRegistered(on));
+    @Test
+    public void mbeans() throws Exception {
+        final Set<String> parsed = new HashSet<String>();
+        for (String name : appInfo.jmx.values()) {
+            final ObjectName on = new ObjectName(name);
+            final String cn = on.getCanonicalName();
+            if (cn.contains("name=Empty")) {
+                assertTrue(cn.startsWith("openejb.user.mbeans"));
+                assertTrue(cn.contains("group=org.apache.openejb.mbeans"));
+                assertTrue(cn.contains("application=mbeans") || cn.contains("application=EjbModule"));
+                assertTrue(server.isRegistered(on));
+                parsed.add(cn);
+            } else if (cn.contains("name=Reader")) {
+                assertTrue(cn.startsWith("openejb.user.mbeans"));
+                assertTrue(cn.contains("group=org.apache.openejb.mbeans"));
+                assertTrue(cn.contains("application=mbeans") || cn.contains("application=EjbModule"));
+                assertTrue(server.isRegistered(on));
+                assertEquals(2, server.getAttribute(on, "value"));
+                parsed.add(cn);
+            } else if (cn.contains("name=ReaderWriter")) {
+                assertTrue(cn.contains("group=org.apache.openejb.mbeans"));
+                assertTrue(cn.contains("application=mbeans") || cn.contains("application=EjbModule"));
+                assertTrue(server.isRegistered(on));
+                assertEquals(2, server.getAttribute(on, "value"));
+                server.setAttribute(on, new Attribute("value", 5));
+                assertEquals(5, server.getAttribute(on, "value"));
+                parsed.add(cn);
+            } else if (cn.contains("name=Inheritance")) {
+                assertTrue(cn.startsWith("openejb.user.mbeans"));
+                assertTrue(cn.contains("group=org.apache.openejb.mbeans"));
+                assertTrue(cn.contains("application=mbeans") || cn.contains("application=EjbModule"));
+                assertTrue(server.isRegistered(on));
+                assertEquals(2, server.getAttribute(on, "value"));
+                server.setAttribute(on, new Attribute("value", 5));
+                assertEquals(5, server.getAttribute(on, "value"));
+                assertEquals("yes - no", server.invoke(on, "returnValue", null, null));
+                parsed.add(cn);
+            } else if (cn.contains("name=MBeanDescription")) {
+                assertTrue(cn.startsWith("openejb.user.mbeans"));
+                assertTrue(cn.contains("group=org.apache.openejb.mbeans"));
+                assertTrue(cn.contains("application=mbeans") || cn.contains("application=EjbModule"));
+                assertTrue(server.isRegistered(on));
+                assertEquals("descr ;)", server.getMBeanInfo(on).getDescription());
+                parsed.add(cn);
+            } else if (cn.contains("name=Operation")) {
+                assertTrue(cn.startsWith("openejb.user.mbeans"));
+                assertTrue(cn.contains("group=org.apache.openejb.mbeans"));
+                assertTrue(cn.contains("application=mbeans") || cn.contains("application=EjbModule"));
+                assertTrue(server.isRegistered(on));
+                assertEquals("yes - no", server.invoke(on, "returnValue", null, null));
+                parsed.add(cn);
+            } else if (cn.contains("name=ReaderDescription")) {
+                assertTrue(cn.startsWith("openejb.user.mbeans"));
+                assertTrue(cn.contains("group=org.apache.openejb.mbeans"));
+                assertTrue(cn.contains("application=mbeans") || cn.contains("application=EjbModule"));
+                assertTrue(cn.contains("name=ReaderDescription"));
+                assertTrue(server.isRegistered(on));
+                assertEquals(1, server.getMBeanInfo(on).getAttributes().length);
+                assertEquals("just a value", server.getMBeanInfo(on).getAttributes()[0].getDescription());
+                parsed.add(cn);
+            } else if (cn.contains("name=OperationDescription")) {
+                assertTrue(cn.startsWith("openejb.user.mbeans"));
+                assertTrue(cn.contains("group=org.apache.openejb.mbeans"));
+                assertTrue(cn.contains("application=mbeans") || cn.contains("application=EjbModule"));
+                assertTrue(server.isRegistered(on));
+                assertEquals(1, server.getMBeanInfo(on).getOperations().length);
+                assertEquals("just an op", server.getMBeanInfo(on).getOperations()[0].getDescription());
+                parsed.add(cn);
+            }
         }
-    }
-
-    @Test public void inheritance() throws Exception {
-        SystemInstance.get().setProperty(LIST_PROPR, "org.apache.openejb.mbeans.Inheritance");
-        startOpenEJB();
-
-        assertEquals(2, appModule.getMBeans().size());
-
-        String cn = appModule.getMBeans().iterator().next();
-        ObjectName on = new ObjectName(cn);
-        assertTrue(cn.startsWith("openejb.user.mbeans"));
-        assertTrue(cn.contains("group=org.apache.openejb.mbeans"));
-        assertTrue(cn.contains("application=mbeans") || cn.contains("application=EjbModule"));
-        assertTrue(cn.contains("name=Inheritance"));
-        assertTrue(server.isRegistered(on));
-        assertEquals(2, server.getAttribute(on, "value"));
-        server.setAttribute(on, new Attribute("value", 5));
-        assertEquals(5, server.getAttribute(on, "value"));
-        assertEquals("yes - no", server.invoke(on, "returnValue", null, null));
-    }
-
-    @Test public void description() throws Exception {
-        SystemInstance.get().setProperty(LIST_PROPR, "org.apache.openejb.mbeans.MBeanDescription");
-        startOpenEJB();
-
-        assertEquals(2, appModule.getMBeans().size());
-
-        String cn = appModule.getMBeans().iterator().next();
-        ObjectName on = new ObjectName(cn);
-        assertTrue(cn.startsWith("openejb.user.mbeans"));
-        assertTrue(cn.contains("group=org.apache.openejb.mbeans"));
-        assertTrue(cn.contains("application=mbeans") || cn.contains("application=EjbModule"));
-        assertTrue(cn.contains("name=MBeanDescription"));
-        assertTrue(server.isRegistered(on));
-        assertEquals("descr ;)", server.getMBeanInfo(on).getDescription());
-    }
-
-    @Test public void operation() throws Exception {
-        SystemInstance.get().setProperty(LIST_PROPR, "org.apache.openejb.mbeans.Operation");
-        startOpenEJB();
-
-        assertEquals(2, appModule.getMBeans().size());
-
-        String cn = appModule.getMBeans().iterator().next();
-        ObjectName on = new ObjectName(cn);
-        assertTrue(cn.startsWith("openejb.user.mbeans"));
-        assertTrue(cn.contains("group=org.apache.openejb.mbeans"));
-        assertTrue(cn.contains("application=mbeans") || cn.contains("application=EjbModule"));
-        assertTrue(cn.contains("name=Operation"));
-        assertTrue(server.isRegistered(on));
-        assertEquals("yes - no", server.invoke(on, "returnValue", null, null));
-    }
-
-    @Test public void readerDescription() throws Exception {
-        SystemInstance.get().setProperty(LIST_PROPR, "org.apache.openejb.mbeans.ReaderDescription");
-        startOpenEJB();
-
-        assertEquals(2, appModule.getMBeans().size());
-
-        String cn = appModule.getMBeans().iterator().next();
-        ObjectName on = new ObjectName(cn);
-        assertTrue(cn.startsWith("openejb.user.mbeans"));
-        assertTrue(cn.contains("group=org.apache.openejb.mbeans"));
-        assertTrue(cn.contains("application=mbeans") || cn.contains("application=EjbModule"));
-        assertTrue(cn.contains("name=ReaderDescription"));
-        assertTrue(server.isRegistered(on));
-        assertEquals(1, server.getMBeanInfo(on).getAttributes().length);
-        assertEquals("just a value", server.getMBeanInfo(on).getAttributes()[0].getDescription());
-    }
-
-    @Test public void operationDescription() throws Exception {
-        SystemInstance.get().setProperty(LIST_PROPR, "org.apache.openejb.mbeans.OperationDescription");
-        startOpenEJB();
-
-        assertEquals(2, appModule.getMBeans().size());
-
-        String cn = appModule.getMBeans().iterator().next();
-        ObjectName on = new ObjectName(cn);
-        assertTrue(cn.startsWith("openejb.user.mbeans"));
-        assertTrue(cn.contains("group=org.apache.openejb.mbeans"));
-        assertTrue(cn.contains("application=mbeans") || cn.contains("application=EjbModule"));
-        assertTrue(cn.contains("name=OperationDescription"));
-        assertTrue(server.isRegistered(on));
-        assertEquals(1, server.getMBeanInfo(on).getOperations().length);
-        assertEquals("just an op", server.getMBeanInfo(on).getOperations()[0].getDescription());
+        assertEquals(8, parsed.size());
     }
 }
 

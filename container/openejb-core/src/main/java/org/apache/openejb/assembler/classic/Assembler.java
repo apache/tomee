@@ -66,7 +66,9 @@ import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.javaagent.Agent;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.monitoring.DynamicMBeanWrapper;
 import org.apache.openejb.monitoring.LocalMBeanServer;
+import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
 import org.apache.openejb.resource.GeronimoConnectionManagerFactory;
@@ -95,6 +97,8 @@ import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 import org.apache.xbean.recipe.UnsetPropertiesRecipe;
 
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanRegistrationException;
 import javax.management.MBeanServer;
@@ -871,6 +875,21 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 containerSystemContext.rebind(path, value.getValue());
             }
 
+            // deploy MBeans
+            for (String mbean : appInfo.mbeans) {
+                deployMBean(appContext.getBeanManager(), classLoader, mbean, appInfo.jmx, appInfo.appId);
+            }
+            for (EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
+                for (String mbean : ejbJarInfo.mbeans) {
+                    deployMBean(appContext.getBeanManager(), classLoader, mbean, appInfo.jmx, ejbJarInfo.moduleName);
+                }
+            }
+            for (ConnectorInfo connectorInfo : appInfo.connectors) {
+                for (String mbean : connectorInfo.mbeans) {
+                    deployMBean(appContext.getBeanManager(), classLoader, mbean, appInfo.jmx, appInfo.appId + ".add-lib");
+                }
+            }
+
 
             logger.info("createApplication.success", appInfo.path);
 
@@ -887,6 +906,33 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 logger.debug("createApplication.undeployFailed", e1, appInfo.path);
             }
             throw new OpenEJBException(messages.format("createApplication.failed", appInfo.path), t);
+        }
+    }
+
+    private static void deployMBean(final BeanManager bm, final ClassLoader cl, final String mbeanClass, final Map<String, String> appMbeans, final String id) {
+        final Class<?> clazz;
+        try {
+            clazz = cl.loadClass(mbeanClass);
+        } catch (ClassNotFoundException e) {
+            throw new OpenEJBRuntimeException(e);
+        }
+        final Set<Bean<?>> beans = bm.getBeans(clazz);
+        final Bean bean = bm.resolve(beans);
+        final Object instance = bm.getReference(bean, clazz, bm.createCreationalContext(bean));
+
+        final MBeanServer server = LocalMBeanServer.get();
+        try {
+            final ObjectName leaf =  new ObjectNameBuilder("openejb.user.mbeans")
+                .set("group", clazz.getPackage().getName())
+                .set("application", id)
+                .set("name", clazz.getSimpleName())
+                .build();
+
+            server.registerMBean(new DynamicMBeanWrapper(instance), leaf);
+            appMbeans.put(mbeanClass, leaf.getCanonicalName());
+            logger.info("MBean(" + leaf.getCanonicalName() + ")");
+        } catch (Exception e) {
+            logger.error("the mbean " + mbeanClass + " can't be registered", e);
         }
     }
 
@@ -1245,7 +1291,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         // mbeans
         MBeanServer server = LocalMBeanServer.get();
-        for (String objectName : appInfo.jmx) {
+        for (String objectName : appInfo.jmx.values()) {
             try {
               ObjectName on = new ObjectName(objectName);
               if (server.isRegistered(on)) {

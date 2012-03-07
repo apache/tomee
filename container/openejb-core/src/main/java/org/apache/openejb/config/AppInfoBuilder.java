@@ -102,7 +102,7 @@ class AppInfoBuilder {
         appInfo.path = appModule.getJarLocation();
         appInfo.standaloneModule = appModule.isStandaloneModule();
         appInfo.watchedResources.addAll(appModule.getWatchedResources());
-        appInfo.jmx = appModule.getMBeans();
+        appInfo.mbeans = appModule.getAdditionalLibMbeans();
 
         if (appInfo.appId == null) throw new IllegalArgumentException("AppInfo.appId cannot be null");
         if (appInfo.path == null) appInfo.path = appInfo.appId;
@@ -134,6 +134,7 @@ class AppInfoBuilder {
         for (EjbModule ejbModule : appModule.getEjbModules()) {
             try {
                 EjbJarInfo ejbJarInfo = ejbJarInfoBuilder.buildInfo(ejbModule);
+                ejbJarInfo.mbeans = ejbModule.getMbeans();
 
                 Map<String, EjbDeployment> deploymentsByEjbName = ejbModule.getOpenejbJar().getDeploymentsByEjbName();
 
@@ -356,6 +357,7 @@ class AppInfoBuilder {
             connectorInfo.watchedResources.addAll(connectorModule.getWatchedResources());
             connectorInfo.validationInfo = ValidatorBuilder.getInfo(connectorModule.getValidationConfig());
             connectorInfo.uniqueId = connectorModule.getUniqueId();
+            connectorInfo.mbeans = connectorModule.getMbeans();
 
             List<URL> libraries = connectorModule.getLibraries();
             for (URL url : libraries) {

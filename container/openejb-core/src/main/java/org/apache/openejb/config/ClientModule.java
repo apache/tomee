@@ -17,17 +17,14 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.jee.ApplicationClient;
-import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.xbean.finder.IAnnotationFinder;
 
+import java.io.File;
 import java.net.URI;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicReference;
-import java.io.File;
 
 /**
  * @version $Rev$ $Date$
