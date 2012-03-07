@@ -16,60 +16,52 @@
  */
 package org.apache.openejb.config;
 
-import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.api.internal.Internal;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.monitoring.DynamicMBeanWrapper;
-import org.apache.openejb.monitoring.LocalMBeanServer;
-import org.apache.openejb.monitoring.ObjectNameBuilder;
-import org.apache.openejb.util.AnnotationUtil;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.xbean.finder.ClassFinder;
+import org.apache.xbean.finder.Annotated;
+import org.apache.xbean.finder.AnnotationFinder;
+import org.apache.xbean.finder.IAnnotationFinder;
 
 import javax.management.MBean;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 public class MBeanDeployer implements DynamicDeployer {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, MBeanDeployer.class);
-    private static final MBeanServer server = LocalMBeanServer.get();
 
-    private static final String OPENEJB_MBEAN_CLASSES_PROPERTY = "openejb.user.mbeans.list";
-    private static final String OPENEJB_MBEAN_CLASSES_SPLIT = ",";
-    private static final String OPENEJB_MBEAN_FORCE_FINDER = "*";
+    // mbeans ObjectNames are stored in the app since they are global and that's easier
+    // mbean classes themself are stored in modules since they depend only on them
 
-    @Override public AppModule deploy(AppModule appModule) throws OpenEJBException {
+    @Override
+    public AppModule deploy(AppModule appModule) throws OpenEJBException {
         logger.debug("looking for annotated MBeans in " + appModule.getModuleId());
-        Set<String> mbeans = new TreeSet<String>();
+        final List<String> done = new ArrayList<String>();
 
-        deploy(mbeans, appModule.getClassLoader(), appModule.getModuleId());
-        List<String> done = new ArrayList<String>();
-        for (WebModule webModule : appModule.getWebModules()) {
-            deploy(mbeans, webModule.getClassLoader(), webModule.getModuleId());
-            done.add(webModule.getJarLocation());
-        }
+        // there is an ejbmodule by webapp so we should't need to go through the webapp
+
         for (EjbModule ejbModule : appModule.getEjbModules()) {
-            if (!done.contains(ejbModule.getJarLocation())) {
-                deploy(mbeans, ejbModule.getClassLoader(), ejbModule.getModuleId());
-                done.add(ejbModule.getJarLocation());
+            for (Annotated<Class<?>> clazz : ejbModule.getFinder().findMetaAnnotatedClasses(MBean.class)) {
+                final Class<?> realClass = clazz.get();
+                final String name = clazz.get().getName();
+                if (done.contains(name)) {
+                    continue;
+                }
+
+                ejbModule.getMbeans().add(name);
+                done.add(name);
             }
         }
         for (ClientModule clientModule : appModule.getClientModules()) {
-            if (!done.contains(clientModule.getJarLocation())) {
-                deploy(mbeans, clientModule.getClassLoader(), clientModule.getModuleId());
-                done.add(clientModule.getJarLocation());
+            for (Annotated<Class<?>> clazz : clientModule.getFinder().findMetaAnnotatedClasses(MBean.class)) {
+                final String name = clazz.get().getName();
+                if (done.contains(name)) {
+                    continue;
+                }
+
+                clientModule.getMbeans().add(name);
             }
         }
 
@@ -84,93 +76,18 @@ public class MBeanDeployer implements DynamicDeployer {
             }
         }
         if (libs.size() > 0) {
-            ClassLoader additionnalLibCl = new URLClassLoader(libs.toArray(new URL[libs.size()]));
-            deploy(mbeans, additionnalLibCl, appModule.getModuleId() + ".add-lib");
+            // force descriptor for additinal libs since it shouldn't occur often and can save some time
+            final IAnnotationFinder finder = new AnnotationFinder(new ConfigurableClasspathArchive(appModule.getClassLoader(), true, libs));
+            for (Annotated<Class<?>> clazz : finder.findMetaAnnotatedClasses(MBean.class)) {
+                final String name = clazz.get().getName();
+                if (done.contains(name)) {
+                    continue;
+                }
+
+                appModule.getAdditionalLibMbeans().add(name);
+            }
         }
 
-        appModule.setMBeans(mbeans);
-        logger.debug("registered " + mbeans.size() + " annotated MBeans in " + appModule.getModuleId());
         return appModule;
-    }
-
-    private static void deploy(Set<String> mbeans, ClassLoader cl, String id) {
-        if (cl == null) {
-            return;
-        }
-
-        for (Map.Entry<Class<?>, ObjectName> mbean : getMbeanClasses(cl, id).entrySet()) {
-            ObjectName objectName = mbean.getValue();
-            try {
-                server.registerMBean(new DynamicMBeanWrapper(mbean.getKey()), objectName);
-                mbeans.add(objectName.getCanonicalName());
-                logger.info("MBean " + objectName.getCanonicalName() + " registered.");
-            } catch (Exception e) {
-                logger.error("the mbean " + mbean.getKey().getName() + " can't be registered", e);
-            }
-        }
-    }
-
-    /**
-     * if OPENEJB_MBEAN_FORCE_FINDER system property is set mbeans will be searched from the class loader
-     * otherwise the OPENEJB_MBEAN_CLASSES_PROPERTY system property will be used.
-     *
-     * @param cl the classloader used
-     * @param id application id
-     * @return the list of mbean classes
-     */
-    private static Map<Class<?>, ObjectName> getMbeanClasses(ClassLoader cl, String id) {
-        ClassLoader classLoader = cl;
-        if (classLoader == null) {
-            classLoader = Thread.currentThread().getContextClassLoader();
-            if (classLoader == null) {
-                classLoader = OpenEJB.class.getClassLoader();
-            }
-        }
-
-        Map<Class<?>, ObjectName> mbeans = new HashMap<Class<?>, ObjectName>();
-
-        String listProp = SystemInstance.get().getOptions().get(OPENEJB_MBEAN_CLASSES_PROPERTY, (String) null);
-        if (OPENEJB_MBEAN_FORCE_FINDER.equals(listProp)) { // the classfinder costs too much to be used by default
-            logger.debug("loading mbeans using an annotation finder, you should maybe adjust {0} system property",
-                                            OPENEJB_MBEAN_CLASSES_PROPERTY);
-            List<Class<?>> list = Collections.emptyList();
-            try {
-                ClassFinder mbeanFinder = new ClassFinder(classLoader, true);
-                list = mbeanFinder.findAnnotatedClasses(MBean.class);
-            } catch (Exception e) {
-                logger.error("can't find annotated MBean", e);
-            }
-
-            for (Class<?> clazz : list) {
-                if (AnnotationUtil.getAnnotation(Internal.class, clazz) == null) {
-                    mbeans.put(clazz, getObjectName(clazz, id));
-                }
-            }
-        } else if (listProp != null) {
-            for (String name : listProp.replace(" ", "").split(OPENEJB_MBEAN_CLASSES_SPLIT)) {
-                name = name.trim();
-                try {
-                    Class<?> clazz = classLoader.loadClass(name);
-                    ObjectName objectName = getObjectName(clazz, id);
-                    if (!server.isRegistered(objectName)) {
-                        mbeans.put(clazz, objectName);
-                    }
-                } catch (ClassNotFoundException ignore) { // it is maybe in another classloader
-                    logger.debug("mbean not found in classloader " + classLoader.toString()
-                        + ", we will try in the next app", ignore);
-                } catch (NoClassDefFoundError ignore) {
-                    logger.debug("mbean not found in the current app", ignore);
-                }
-            }
-        }
-        return mbeans;
-    }
-
-    private static ObjectName getObjectName(Class<?> mBean, String id) {
-        ObjectNameBuilder builder = new ObjectNameBuilder("openejb.user.mbeans");
-        builder.set("group", mBean.getPackage().getName());
-        builder.set("application", id);
-        builder.set("name", mBean.getSimpleName());
-        return builder.build();
     }
 }

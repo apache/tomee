@@ -56,4 +56,5 @@ public class EjbJarInfo extends CommonInfoObject {
 
     public BeansInfo beans;
     public Set<String> repositories = new TreeSet<String>();
+    public Set<String> mbeans = new TreeSet<String>();
 }

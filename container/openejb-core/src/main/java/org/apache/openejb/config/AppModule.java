@@ -16,8 +16,6 @@
  */
 package org.apache.openejb.config;
 
-import java.util.HashSet;
-
 import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.jee.Application;
 import org.apache.openejb.jee.jpa.EntityMappings;
@@ -28,6 +26,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -55,7 +54,7 @@ public class AppModule implements DeploymentModule {
     private final Map<String,Object> altDDs = new HashMap<String,Object>();
     private final Set<String> watchedResources = new TreeSet<String>();
     private final boolean standaloneModule;
-    private Set<String> mBeans = new HashSet<String>();
+    private final Set<String> additionalLibMbeans = new TreeSet<String>();
 
     private ID id;
 
@@ -102,12 +101,8 @@ public class AppModule implements DeploymentModule {
         this.standaloneModule = standaloneModule;
     }
 
-    public Set<String> getMBeans() {
-        return mBeans;
-    }
-
-    public void setMBeans(Set<String> mBeans) {
-        this.mBeans = mBeans;
+    public Set<String> getAdditionalLibMbeans() {
+        return additionalLibMbeans;
     }
 
     public boolean isStandaloneModule() {

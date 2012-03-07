@@ -18,10 +18,11 @@ package org.apache.openejb.mbeans;
 
 import javax.management.Description;
 import javax.management.MBean;
+import javax.management.ManagedAttribute;
 import javax.management.ManagedOperation;
 
 @MBean
-public class Inheritance extends ReaderWriter {
+public class Inheritance extends Parent {
 	@ManagedOperation @Description("just an op") public String returnValue() {
 		return "yes - no";
 	}

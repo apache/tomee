@@ -1015,8 +1015,8 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
            /*
-                    * REST
-                    */
+            * REST
+            */
             // get by annotations
             webModule.getRestClasses().addAll(findRestClasses(webModule, finder));
             // Applications with a default constructor

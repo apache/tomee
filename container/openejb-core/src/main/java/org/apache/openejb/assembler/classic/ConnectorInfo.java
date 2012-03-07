@@ -36,4 +36,5 @@ public class ConnectorInfo extends CommonInfoObject {
     public List<ResourceInfo> outbound = new ArrayList<ResourceInfo>();
     public List<MdbContainerInfo> inbound = new ArrayList<MdbContainerInfo>();
     public List<ResourceInfo> adminObject = new ArrayList<ResourceInfo>();
+    public Set<String> mbeans = new TreeSet<String>();
 }
