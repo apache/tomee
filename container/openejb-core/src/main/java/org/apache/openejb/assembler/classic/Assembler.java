@@ -909,7 +909,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
     }
 
-    private static void deployMBean(final BeanManager bm, final ClassLoader cl, final String mbeanClass, final Map<String, String> appMbeans, final String id) {
+    private static void deployMBean(final BeanManager bm, final ClassLoader cl, final String mbeanClass, final Properties appMbeans, final String id) {
         final Class<?> clazz;
         try {
             clazz = cl.loadClass(mbeanClass);
@@ -1291,9 +1291,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         // mbeans
         MBeanServer server = LocalMBeanServer.get();
-        for (String objectName : appInfo.jmx.values()) {
+        for (Object objectName : appInfo.jmx.values()) {
             try {
-              ObjectName on = new ObjectName(objectName);
+              ObjectName on = new ObjectName((String) objectName);
               if (server.isRegistered(on)) {
                       server.unregisterMBean(on);
               }
