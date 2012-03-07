@@ -62,7 +62,7 @@ public class CxfRsHttpListener implements RsHttpListener {
     public static final String OPENEJB_CXF_JAXRS_PROVIDERS_SUFFIX = ".providers";
     public static final String DEFAULT_CXF_JAXRS_PROVIDERS_KEY = "default";
 
-    private static final List<?> PROVIDERS = createProviderList("");
+    private static final List<?> PROVIDERS = createProviderList("", CxfRsHttpListener.class.getClassLoader());
 
     private HTTPTransportFactory transportFactory;
     private AbstractHTTPDestination destination;
@@ -106,7 +106,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         factory.setDestinationFactory(transportFactory);
         factory.setBus(transportFactory.getBus());
         factory.setAddress(address);
-        factory.setProviders(createProviderList(nameForProviders(clazz)));
+        factory.setProviders(createProviderList(nameForProviders(clazz), clazz.getClassLoader()));
         if (rp != null) {
             factory.setResourceProvider(rp);
         }
@@ -137,7 +137,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         server.stop();
     }
 
-    private static List<?> createProviderList(String prefix) {
+    private static List<?> createProviderList(final String prefix, final ClassLoader loader) {
         String key;
         if (prefix == null || prefix.trim().isEmpty()) {
             key = OPENEJB_CXF_JAXRS_PROVIDERS_KEY;
@@ -160,11 +160,6 @@ public class CxfRsHttpListener implements RsHttpListener {
 
         if (providersProperty != null && !providersProperty.trim().isEmpty()) {
             String[] providers = providersProperty.split(",|;| ");
-            ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            if (cl == null) {
-                cl = CxfRsHttpListener.class.getClassLoader();
-            }
-
             List<Object> providerList = new ArrayList<Object>();
             for (String provider : providers) {
                 if (DEFAULT_CXF_JAXRS_PROVIDERS_KEY.equals(provider)) {
@@ -172,11 +167,11 @@ public class CxfRsHttpListener implements RsHttpListener {
                     providerList.add(jaxb);
                 } else {
                     try {
-                        Class<?> providerClass = cl.loadClass(provider);
+                        Class<?> providerClass = loader.loadClass(provider);
                         Object providerInstance = providerClass.newInstance();
                         providerList.add(providerInstance);
                     } catch (Exception e) {
-                        LOGGER.error("can't add jax-rs provider " + provider, e);
+                        LOGGER.error("can't add jax-rs provider " + provider + " in the current webapp"); // don't print this exception
                     }
                 }
             }
