@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.monitoring;
 
+import javassist.util.proxy.ProxyFactory;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -56,7 +57,11 @@ public class DynamicMBeanWrapper implements DynamicMBean {
     private final Object instance;
 
     public DynamicMBeanWrapper(Object givenInstance) {
-        final Class<?> annotatedMBean = givenInstance.getClass();
+        Class<?> annotatedMBean = givenInstance.getClass();
+        // javaassist looses annotation so simply unwrap it
+        while (ProxyFactory.isProxyClass(annotatedMBean)) {
+            annotatedMBean = annotatedMBean.getSuperclass();
+        }
 
         String description;
         List<MBeanAttributeInfo> attributeInfos = new ArrayList<MBeanAttributeInfo>();
