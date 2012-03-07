@@ -102,7 +102,7 @@ class AppInfoBuilder {
         appInfo.path = appModule.getJarLocation();
         appInfo.standaloneModule = appModule.isStandaloneModule();
         appInfo.watchedResources.addAll(appModule.getWatchedResources());
-        appInfo.mbeans = appModule.getAdditionalLibMbeans();
+        appInfo.mbeans.addAll(appModule.getAdditionalLibMbeans());
 
         if (appInfo.appId == null) throw new IllegalArgumentException("AppInfo.appId cannot be null");
         if (appInfo.path == null) appInfo.path = appInfo.appId;

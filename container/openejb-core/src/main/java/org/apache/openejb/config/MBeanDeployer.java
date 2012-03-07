@@ -43,6 +43,10 @@ public class MBeanDeployer implements DynamicDeployer {
         // there is an ejbmodule by webapp so we should't need to go through the webapp
 
         for (EjbModule ejbModule : appModule.getEjbModules()) {
+            if (ejbModule.getFinder() == null) {
+                continue;
+            }
+
             for (Annotated<Class<?>> clazz : ejbModule.getFinder().findMetaAnnotatedClasses(MBean.class)) {
                 final Class<?> realClass = clazz.get();
                 final String name = clazz.get().getName();
@@ -55,6 +59,10 @@ public class MBeanDeployer implements DynamicDeployer {
             }
         }
         for (ClientModule clientModule : appModule.getClientModules()) {
+            if (clientModule.getFinder() == null) {
+                continue;
+            }
+
             for (Annotated<Class<?>> clazz : clientModule.getFinder().findMetaAnnotatedClasses(MBean.class)) {
                 final String name = clazz.get().getName();
                 if (done.contains(name)) {

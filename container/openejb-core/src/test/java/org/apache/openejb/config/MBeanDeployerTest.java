@@ -90,8 +90,8 @@ public class MBeanDeployerTest {
     @Test
     public void mbeans() throws Exception {
         final Set<String> parsed = new HashSet<String>();
-        for (String name : appInfo.jmx.values()) {
-            final ObjectName on = new ObjectName(name);
+        for (Object name : appInfo.jmx.values()) {
+            final ObjectName on = new ObjectName((String) name);
             final String cn = on.getCanonicalName();
             if (cn.contains("name=Empty")) {
                 assertTrue(cn.startsWith("openejb.user.mbeans"));
