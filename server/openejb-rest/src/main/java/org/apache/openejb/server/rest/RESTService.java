@@ -216,7 +216,11 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
                 // null is important, it means there is no webroot path in standalone
                 String context = null;
                 if (!OLD_WEBSERVICE_DEPLOYMENT) {
-                    context = ejbs.getValue().getModuleName();
+                    if (appInfo.appId != null && !appInfo.appId.isEmpty()) {
+                        context = appInfo.appId;
+                    } else {
+                        context = ejbs.getValue().getModuleName();
+                    }
                 }
                 restEjbs.put(clazz, new EJBRestServiceInfo(context, beanContexts.get(clazz)));
             }
