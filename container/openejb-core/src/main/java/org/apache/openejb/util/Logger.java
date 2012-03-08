@@ -21,7 +21,6 @@ import org.apache.openejb.loader.SystemInstance;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +38,7 @@ public class Logger {
         configure();
     }
 
-    public static void configure() {
+    public static synchronized void configure() {
 
         //See if user factory has been specified
         String factoryName = SystemInstance.get().getOptions().get("openejb.log.factory", JuliLogStreamFactory.class.getName());
@@ -103,11 +102,11 @@ public class Logger {
 
             final String format = "Ignored %s property '%s'";
 
-            for (Object key : configFile.keySet()) {
+            for (final Object key : configFile.keySet()) {
                 stream.warn(String.format(format, "conf/logging.properties", key));
             }
 
-            for (Object key : systemProperties.keySet()) {
+            for (final Object key : systemProperties.keySet()) {
                 stream.warn(String.format(format, "Property overrides", key));
             }
         } catch (Throwable e) {
@@ -116,7 +115,7 @@ public class Logger {
         }
     }
 
-    private static LogStreamFactory createFactory(String factoryName) {
+    private static LogStreamFactory createFactory(final String factoryName) {
 
         final Class<?> factoryClass = load(factoryName);
 
@@ -132,22 +131,25 @@ public class Logger {
         return null;
     }
 
-    private static Class<?> load(String factoryName) {
+    private static Class<?> load(final String factoryName) {
         try {
             final ClassLoader classLoader = Logger.class.getClassLoader();
             return classLoader.loadClass(factoryName);
         } catch (Throwable e) {
+            //Ignore
         }
 
         try {
             final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
             return contextClassLoader.loadClass(factoryName);
         } catch (Throwable e1) {
+            //Ignore
         }
 
         try {
             return Class.forName(factoryName);
-        } catch (Throwable  e2) {
+        } catch (Throwable e2) {
+            //Ignore
         }
 
         return null;
@@ -159,9 +161,9 @@ public class Logger {
      */
     private static final Computable<String, String> heirarchyResolver = new Computable<String, String>() {
         @Override
-        public String compute(String key) throws InterruptedException {
-            int index = key.lastIndexOf(".");
-            String parent = key.substring(0, index);
+        public String compute(final String key) throws InterruptedException {
+            final int index = key.lastIndexOf(".");
+            final String parent = key.substring(0, index);
             if (parent.contains(OPENEJB))
                 return parent;
             return null;
@@ -173,7 +175,7 @@ public class Logger {
      */
     private static final Computable<String, ResourceBundle> bundleResolver = new Computable<String, ResourceBundle>() {
         @Override
-        public ResourceBundle compute(String baseName) throws InterruptedException {
+        public ResourceBundle compute(final String baseName) throws InterruptedException {
             try {
                 return ResourceBundle.getBundle(baseName + SUFFIX);
             } catch (MissingResourceException e) {
@@ -187,10 +189,10 @@ public class Logger {
      */
     private static final Computable<Object[], Logger> loggerResolver = new Computable<Object[], Logger>() {
         @Override
-        public Logger compute(Object[] args) throws InterruptedException {
-            LogCategory category = (LogCategory) args[0];
-            LogStream logStream = logStreamFactory.createLogStream(category);
-            String baseName = (String) args[1];
+        public Logger compute(final Object[] args) throws InterruptedException {
+            final LogCategory category = (LogCategory) args[0];
+            final LogStream logStream = logStreamFactory.createLogStream(category);
+            final String baseName = (String) args[1];
             return new Logger(category, logStream, baseName);
         }
     };
@@ -200,7 +202,7 @@ public class Logger {
      */
     private static final Computable<String, MessageFormat> messageFormatResolver = new Computable<String, MessageFormat>() {
         @Override
-        public MessageFormat compute(String message) throws InterruptedException {
+        public MessageFormat compute(final String message) throws InterruptedException {
             return new MessageFormat(message);
         }
     };
@@ -232,14 +234,14 @@ public class Logger {
      * @param baseName - The baseName for the ResourceBundle
      * @return Logger
      */
-    public static Logger getInstance(LogCategory category, String baseName) {
+    public static Logger getInstance(final LogCategory category, final String baseName) {
         try {
             return loggerCache.compute(new Object[]{category, baseName});
         } catch (InterruptedException e) {
             // Don't return null here. Just create a new Logger and set it up.
             // It will not be stored in the cache, but a later lookup for the
             // same Logger would probably end up in the cache
-            LogStream logStream = logStreamFactory.createLogStream(category);
+            final LogStream logStream = logStreamFactory.createLogStream(category);
             return new Logger(category, logStream, baseName);
         }
     }
@@ -248,59 +250,57 @@ public class Logger {
     private final LogStream logStream;
     private final String baseName;
 
-    public Logger(LogCategory category, LogStream logStream, String baseName) {
+    public Logger(final LogCategory category, final LogStream logStream, final String baseName) {
         this.category = category;
         this.logStream = logStream;
         this.baseName = baseName;
     }
 
-    public static Logger getInstance(LogCategory category, Class clazz) {
+    public static Logger getInstance(final LogCategory category, final Class clazz) {
         return getInstance(category, packageName(clazz));
     }
 
-    private static String packageName(Class clazz) {
-        String name = clazz.getName();
+    private static String packageName(final Class clazz) {
+        final String name = clazz.getName();
         return name.substring(0, name.lastIndexOf("."));
     }
 
+    private static Boolean isLog4j = null;
+
     public static boolean isLog4jImplied() {
 
-        final List<String> locations = new ArrayList<String>();
+        if (null == isLog4j) {
 
-        {
-            final Properties configFile = log4j(loadLoggingProperties());
+            isLog4j = false;
 
-            final Properties systemProperties = log4j(SystemInstance.get().getProperties());
+            final List<String> locations = new ArrayList<String>();
+            {
+                final Properties configFile = log4j(loadLoggingProperties());
 
-            if (configFile.size() > 0) locations.add("conf/logging.properties");
-            if (systemProperties.size() > 0) locations.add("Properties overrides");
-        }
+                final Properties systemProperties = log4j(SystemInstance.get().getProperties());
 
+                if (configFile.size() > 0) locations.add("conf/logging.properties");
+                if (systemProperties.size() > 0) locations.add("Properties overrides");
+            }
 
-        if (locations.size() > 0) {
-            if (exists("org.apache.log4j.Logger")) {
-
-                System.out.println(String.format("Defaulting 'openejb.log.factory' to 'log4j' because it is referenced in %s.", Join.join(" and ", locations)));
-
-                return true;
-
-            } else {
-
-                return false;
+            if (locations.size() > 0) {
+                if (exists("org.apache.log4j.Logger")) {
+                    isLog4j = true;
+                }
             }
         }
 
-        return false;
+        return isLog4j;
     }
 
-    private static boolean exists(String s) {
+    private static boolean exists(final String s) {
         return load(s) != null;
     }
 
-    private static Properties log4j(Properties system) {
+    private static Properties log4j(final Properties system) {
         final Properties properties = new Properties();
-        for (Map.Entry<Object, Object> entry : system.entrySet()) {
-            String key = entry.getKey().toString();
+        for (final Map.Entry<Object, Object> entry : system.entrySet()) {
+            final String key = entry.getKey().toString();
             if (key.startsWith("log4j.") && !key.equals("log4j.configuration")) {
                 properties.put(key, entry.getValue());
             }
@@ -320,7 +320,7 @@ public class Logger {
         }
     }
 
-    public Logger getChildLogger(String child) {
+    public Logger getChildLogger(final String child) {
         return Logger.getInstance(this.category.createChild(child), this.baseName);
     }
 
@@ -331,7 +331,7 @@ public class Logger {
      * @param args    Object...
      * @return the formatted message
      */
-    private String formatMessage(String message, Object... args) {
+    private String formatMessage(final String message, final Object... args) {
         if (args.length == 0) return message;
 
         try {
@@ -398,17 +398,17 @@ public class Logger {
      * @param message - This could be a plain message or a key in Messages.properties
      * @return the formatted i18n message
      */
-    public String debug(String message) {
+    public String debug(final String message) {
 
         if (isDebugEnabled()) {
-            String msg = getMessage(message, baseName);
+            final String msg = getMessage(message, baseName);
             logStream.debug(msg);
             return msg;
         }
         return message;
     }
 
-    public String debug(String message, Object... args) {
+    public String debug(final String message, final Object... args) {
 
         if (isDebugEnabled()) {
             String msg = getMessage(message, baseName);
@@ -419,17 +419,17 @@ public class Logger {
         return message;
     }
 
-    public String debug(String message, Throwable t) {
+    public String debug(final String message, final Throwable t) {
 
         if (isDebugEnabled()) {
-            String msg = getMessage(message, baseName);
+            final String msg = getMessage(message, baseName);
             logStream.debug(msg, t);
             return msg;
         }
         return message;
     }
 
-    public String debug(String message, Throwable t, Object... args) {
+    public String debug(final String message, final Throwable t, final Object... args) {
 
         if (isDebugEnabled()) {
             String msg = getMessage(message, baseName);
@@ -440,17 +440,17 @@ public class Logger {
         return message;
     }
 
-    public String error(String message) {
+    public String error(final String message) {
 
         if (isErrorEnabled()) {
-            String msg = getMessage(message, baseName);
+            final String msg = getMessage(message, baseName);
             logStream.error(msg);
             return msg;
         }
         return message;
     }
 
-    public String error(String message, Object... args) {
+    public String error(final String message, final Object... args) {
 
         if (isErrorEnabled()) {
             String msg = getMessage(message, baseName);
@@ -461,17 +461,17 @@ public class Logger {
         return message;
     }
 
-    public String error(String message, Throwable t) {
+    public String error(final String message, final Throwable t) {
 
         if (isErrorEnabled()) {
-            String msg = getMessage(message, baseName);
+            final String msg = getMessage(message, baseName);
             logStream.error(msg, t);
             return msg;
         }
         return message;
     }
 
-    public String error(String message, Throwable t, Object... args) {
+    public String error(final String message, final Throwable t, final Object... args) {
 
         if (isErrorEnabled()) {
             String msg = getMessage(message, baseName);
@@ -482,16 +482,16 @@ public class Logger {
         return message;
     }
 
-    public String fatal(String message) {
+    public String fatal(final String message) {
         if (isFatalEnabled()) {
-            String msg = getMessage(message, baseName);
+            final String msg = getMessage(message, baseName);
             logStream.fatal(msg);
             return msg;
         }
         return message;
     }
 
-    public String fatal(String message, Object... args) {
+    public String fatal(final String message, final Object... args) {
         if (isFatalEnabled()) {
             String msg = getMessage(message, baseName);
             msg = formatMessage(msg, args);
@@ -501,16 +501,16 @@ public class Logger {
         return message;
     }
 
-    public String fatal(String message, Throwable t) {
+    public String fatal(final String message, final Throwable t) {
         if (isFatalEnabled()) {
-            String msg = getMessage(message, baseName);
+            final String msg = getMessage(message, baseName);
             logStream.fatal(msg, t);
             return msg;
         }
         return message;
     }
 
-    public String fatal(String message, Throwable t, Object... args) {
+    public String fatal(final String message, final Throwable t, final Object... args) {
         if (isFatalEnabled()) {
             String msg = getMessage(message, baseName);
             msg = formatMessage(msg, args);
@@ -520,16 +520,16 @@ public class Logger {
         return message;
     }
 
-    public String info(String message) {
+    public String info(final String message) {
         if (isInfoEnabled()) {
-            String msg = getMessage(message, baseName);
+            final String msg = getMessage(message, baseName);
             logStream.info(msg);
             return msg;
         }
         return message;
     }
 
-    public String info(String message, Object... args) {
+    public String info(final String message, final Object... args) {
         if (isInfoEnabled()) {
             String msg = getMessage(message, baseName);
             msg = formatMessage(msg, args);
@@ -539,16 +539,16 @@ public class Logger {
         return message;
     }
 
-    public String info(String message, Throwable t) {
+    public String info(final String message, final Throwable t) {
         if (isInfoEnabled()) {
-            String msg = getMessage(message, baseName);
+            final String msg = getMessage(message, baseName);
             logStream.info(msg, t);
             return msg;
         }
         return message;
     }
 
-    public String info(String message, Throwable t, Object... args) {
+    public String info(final String message, final Throwable t, final Object... args) {
         if (isInfoEnabled()) {
             String msg = getMessage(message, baseName);
             msg = formatMessage(msg, args);
@@ -558,16 +558,16 @@ public class Logger {
         return message;
     }
 
-    public String warning(String message) {
+    public String warning(final String message) {
         if (isWarningEnabled()) {
-            String msg = getMessage(message, baseName);
+            final String msg = getMessage(message, baseName);
             logStream.warn(msg);
             return msg;
         }
         return message;
     }
 
-    public String warning(String message, Object... args) {
+    public String warning(final String message, final Object... args) {
         if (isWarningEnabled()) {
             String msg = getMessage(message, baseName);
             msg = formatMessage(msg, args);
@@ -577,16 +577,16 @@ public class Logger {
         return message;
     }
 
-    public String warning(String message, Throwable t) {
+    public String warning(final String message, final Throwable t) {
         if (isWarningEnabled()) {
-            String msg = getMessage(message, baseName);
+            final String msg = getMessage(message, baseName);
             logStream.warn(msg, t);
             return msg;
         }
         return message;
     }
 
-    public String warning(String message, Throwable t, Object... args) {
+    public String warning(final String message, final Throwable t, final Object... args) {
         if (isWarningEnabled()) {
             String msg = getMessage(message, baseName);
             msg = formatMessage(msg, args);
@@ -607,15 +607,15 @@ public class Logger {
      * @param baseName String
      * @return String
      */
-    private String getMessage(String key, String baseName) {
+    private String getMessage(final String key, final String baseName) {
         try {
 
-            ResourceBundle bundle = bundleCache.compute(baseName);
+            final ResourceBundle bundle = bundleCache.compute(baseName);
             if (bundle != null) {
                 try {
                     return bundle.getString(key);
                 } catch (MissingResourceException e) {
-                    String parentName = heirarchyCache.compute(baseName);
+                    final String parentName = heirarchyCache.compute(baseName);
                     if (parentName == null)
                         return key;
                     else
@@ -623,7 +623,7 @@ public class Logger {
                 }
 
             } else {
-                String parentName = heirarchyCache.compute(baseName);
+                final String parentName = heirarchyCache.compute(baseName);
                 if (parentName == null)
                     return key;
                 else

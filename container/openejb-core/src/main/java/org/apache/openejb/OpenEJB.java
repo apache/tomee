@@ -107,8 +107,8 @@ public final class OpenEJB {
                 }
             }
 
-            logger.info("openejb.home = " + SystemInstance.get().getHome().getDirectory().getAbsolutePath());
-            logger.info("openejb.base = " + SystemInstance.get().getBase().getDirectory().getAbsolutePath());
+            logger.info("openejb.home = " + system.getHome().getDirectory().getAbsolutePath());
+            logger.info("openejb.base = " + system.getBase().getDirectory().getAbsolutePath());
 
             //OWB support.  The classloader has to be able to load all OWB components including the ones supplied by OpenEjb.
             CdiBuilder.initializeOWB(getClass().getClassLoader());
