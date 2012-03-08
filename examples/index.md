@@ -216,5 +216,6 @@ All the examples show code, but some are better documented than others.  Example
  - [webapps/jsf](webapps/jsf/README.html)
  - [webapps/moviefun](webapps/moviefun/README.html)
  - [helloworld-weblogic](helloworld-weblogic/README.html)
+ - [polling-parent](polling-parent/README.html)
 }
 }

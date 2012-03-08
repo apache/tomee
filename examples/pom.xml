@@ -68,6 +68,7 @@
     <module>movies-complete-meta</module>
     <module>movies-complete</module>
     <module>persistence-fragment</module>
+    <module>polling-parent</module>
     <module>quartz-app</module>
     <module>reload-persistence-unit-properties</module>
     <module>rest-on-ejb</module>

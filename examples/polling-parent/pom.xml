@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>jug</groupId>
+  <artifactId>polling-parent</artifactId>
+  <version>1.0</version>
+  <packaging>pom</packaging>
+  <name>Polling</name>
+
+  <modules>
+    <module>polling-domain</module>
+    <module>polling-core</module>
+    <module>polling-web</module>
+    <module>polling-client</module>
+  </modules>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- API -->
+      <dependency>
+        <groupId>org.apache.openejb</groupId>
+        <artifactId>javaee-api</artifactId>
+        <version>6.0-3</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.openejb</groupId>
+        <artifactId>openejb-api</artifactId>
+        <version>4.0.0-beta-3-SNAPSHOT</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <!-- impl - for standard code scope test is fine -->
+      <dependency>
+        <groupId>org.apache.openejb</groupId>
+        <artifactId>openejb-core</artifactId>
+        <version>4.0.0-beta-3-SNAPSHOT</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.openejb</groupId>
+        <artifactId>openejb-cxf-rs</artifactId>
+        <version>4.0.0-beta-3-SNAPSHOT</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <!-- test -->
+      <dependency>
+        <groupId>org.apache.openejb</groupId>
+        <artifactId>arquillian-tomee-embedded</artifactId>
+        <version>1.0.0-beta-3-SNAPSHOT</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.openejb</groupId>
+        <artifactId>tomee-webservices</artifactId>
+        <version>4.0.0-beta-3-SNAPSHOT</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.openejb</groupId>
+        <artifactId>ziplock</artifactId>
+        <version>1.0.0-beta-3-SNAPSHOT</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.10</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>2.0.1</version>
+        <scope>test</scope>
+      </dependency>
+
+      <!-- client -->
+      <dependency>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-bundle</artifactId>
+        <version>2.5.2</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.xbean</groupId>
+        <artifactId>xbean-finder-shaded</artifactId>
+        <version>3.10-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.xbean</groupId>
+        <artifactId>xbean-reflect</artifactId>
+        <version>3.10-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>jline</groupId>
+        <artifactId>jline</artifactId>
+        <version>0.9.94</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.jettison</groupId>
+        <artifactId>jettison</artifactId>
+        <version>1.3.1</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+</project>
