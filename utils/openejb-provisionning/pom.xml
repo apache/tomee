@@ -130,6 +130,12 @@
       <version>${plexus-utils.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.1.1</version>
+    </dependency>
+
     <!-- for resolver -->
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -143,6 +149,8 @@
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
+
+
   </dependencies>
 
   <build>
