@@ -17,16 +17,15 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.EnvEntry;
+import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.jee.EnvEntry;
-import org.apache.openejb.jee.EnterpriseBean;
-import org.apache.openejb.jee.JndiConsumer;
+import org.apache.openejb.util.Logger;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
@@ -120,7 +119,7 @@ public class EnvEntriesPropertiesDeployer implements DynamicDeployer {
     @SuppressWarnings({"unchecked"})
     private Map<String, String> getEnvEntries(DeploymentModule module) {
         URL propsUrl = (URL) module.getAltDDs().get("env-entries.properties");
-        if (propsUrl == null){
+        if (propsUrl == null) {
             propsUrl = (URL) module.getAltDDs().get("env-entry.properties");
         }
         if (propsUrl == null) return Collections.emptyMap();

@@ -65,6 +65,7 @@ import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -92,6 +93,7 @@ public class DeploymentLoader implements DeploymentFilterable {
     private static final String OPENEJB_ALTDD_PREFIX = "openejb.altdd.prefix";
     private static final String ddDir = "META-INF/";
     private boolean scanManagedBeans = true;
+    private static final Collection<String> KNOWN_DESCRIPTORS = Arrays.asList("web.xml", "ejb-jar.xml", "openejb-jar.xml", "env-entries.properties", "beans.xml", "ra.xml", "application.xml", "application-client.xml", "persistence-fragment.xml", "persistence.xml", "validation.xml");
 
     public AppModule load(final File jarFile) throws OpenEJBException {
         // verify we have a valid file
@@ -1320,8 +1322,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         if (map.size() == 0) {
 
-            final String[] known = {"web.xml", "ejb-jar.xml", "openejb-jar.xml", "env-entries.properties", "beans.xml", "ra.xml", "application.xml", "application-client.xml", "persistence-fragment.xml", "persistence.xml", "validation.xml"};
-            for (final String descriptor : known) {
+            for (final String descriptor : KNOWN_DESCRIPTORS) {
 
                 final URL url = finder.getResource(ddDir + descriptor);
                 if (url != null) map.put(descriptor, url);
@@ -1389,7 +1390,8 @@ public class DeploymentLoader implements DeploymentFilterable {
                 final JarFile jarFile = new JarFile(warFile);
                 for (final JarEntry entry : Collections.list(jarFile.entries())) {
                     final String entryName = entry.getName();
-                    if (!entry.isDirectory() && entryName.startsWith("WEB-INF/") && entryName.endsWith(".xml")) {
+                    if (!entry.isDirectory() && entryName.startsWith("WEB-INF/")
+                            && (KNOWN_DESCRIPTORS.contains(entryName) || entryName.endsWith(".xml"))) { // + web.xml, web-fragment.xml...
                         descriptors.put(entryName, new URL(jarURL, entry.getName()));
                     }
                 }
