@@ -857,6 +857,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             Collections.addAll(jndiConsumers, ejbModule.getEjbJar().getEnterpriseBeans());
         }
 
+        final List<ResourceInfo> resourceInfos = new ArrayList<ResourceInfo>();
         for (Resource resource : resources) {
             Properties properties = resource.getProperties();
 
@@ -899,9 +900,15 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 }
             }
 
+            resourceInfos.add(resourceInfo);
+        }
+
+        Collections.sort(resourceInfos, new ConfigurationFactory.ResourceInfoComparator(resourceInfos));
+        for (ResourceInfo resourceInfo : resourceInfos) {
             installResource(module.getModuleId(), resourceInfo);
         }
 
+        resourceInfos.clear();
         resources.clear();
     }
 
