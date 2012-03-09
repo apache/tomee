@@ -26,7 +26,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -48,7 +48,7 @@ public class AppModule implements DeploymentModule {
     private final List<EjbModule> ejbModules = new ArrayList<EjbModule>();
     private final List<PersistenceModule> persistenceModules = new ArrayList<PersistenceModule>();
     // TODO We could turn this into the Resources JAXB object and support containers and other things as well
-    private final Collection<Resource> resources = new HashSet<Resource>();
+    private final Collection<Resource> resources = new LinkedHashSet<Resource>();
     private final ClassLoader classLoader;
     private EntityMappings cmpMappings;
     private final Map<String,Object> altDDs = new HashMap<String,Object>();
