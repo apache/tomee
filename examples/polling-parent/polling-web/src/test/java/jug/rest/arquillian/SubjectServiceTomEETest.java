@@ -4,6 +4,7 @@ import jug.dao.SubjectDao;
 import jug.domain.Subject;
 import jug.monitoring.VoteCounter;
 import jug.rest.SubjectService;
+import jug.routing.PollingRouter;
 import org.apache.commons.io.IOUtils;
 import org.apache.ziplock.JarLocation;
 import org.apache.ziplock.WebModule;
@@ -32,6 +33,7 @@ public class SubjectServiceTomEETest {
                 .addAsWebInfResource(new ClassLoaderAsset("META-INF/persistence.xml"), "persistence.xml")
                 .addAsWebInfResource(new ClassLoaderAsset("META-INF/env-entries.properties"), "env-entries.properties")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
+                .addPackage(PollingRouter.class.getPackage()) // core
                 .addPackage(SubjectDao.class.getPackage()) // core
                 .addPackage(SubjectService.class.getPackage()) // front
                 .addAsLibrary(JarLocation.jarLocation(IOUtils.class)) // helper for client test

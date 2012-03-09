@@ -1,0 +1,4 @@
+<ServiceJar>
+  <ServiceProvider id="PollingRouter"
+      service="Resource" type="org.apache.openejb.resource.jdbc.Router" class-name="jug.routing.PollingRouter" />
+</ServiceJar>

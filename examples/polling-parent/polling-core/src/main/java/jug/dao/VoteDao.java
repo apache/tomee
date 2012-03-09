@@ -12,7 +12,7 @@ import javax.persistence.PersistenceContext;
 @Singleton
 @Lock(LockType.READ)
 public class VoteDao {
-    @PersistenceContext
+    @PersistenceContext(unitName = "polling")
     private EntityManager em;
 
     public Vote create(final Value voteValue) {

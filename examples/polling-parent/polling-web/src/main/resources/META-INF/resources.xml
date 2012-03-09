@@ -1,22 +1,46 @@
 <resources>
-  <Resource id="jdbc/polling" type="javax.sql.DataSource">
+  <!-- router -->
+  <Resource id="ClientRouter" type="jug.routing.PollingRouter" provider="jug.polling:PollingRouter" />
+
+  <!-- routed datasources -->
+  <Resource id="jdbc/polling" provider="RoutedDataSource" type="javax.sql.DataSource">
+    Router = ClientRouter
+  </Resource>
+
+  <!-- real datasources -->
+  <Resource id="jdbc/client1" type="javax.sql.DataSource">
     JdbcDriver org.hsqldb.jdbcDriver
-    JdbcUrl jdbc:hsqldb:mem:polling
+    JdbcUrl jdbc:hsqldb:mem:client1
     UserName sa
     Password
     JtaManaged true
   </Resource>
 
-
-  <Resource id="jdbc/polling-non-jta" type="javax.sql.DataSource">
+  <Resource id="jdbc/client1-non-jta" type="javax.sql.DataSource">
     JdbcDriver org.hsqldb.jdbcDriver
-    JdbcUrl jdbc:hsqldb:mem:polling
+    JdbcUrl jdbc:hsqldb:mem:client1
     UserName sa
     Password
     JtaManaged false
   </Resource>
 
-  <!--
+  <Resource id="jdbc/client2" type="javax.sql.DataSource">
+    JdbcDriver org.hsqldb.jdbcDriver
+    JdbcUrl jdbc:hsqldb:mem:client2
+    UserName sa
+    Password
+    JtaManaged true
+  </Resource>
+
+  <Resource id="jdbc/client2-non-jta" type="javax.sql.DataSource">
+    JdbcDriver org.hsqldb.jdbcDriver
+    JdbcUrl jdbc:hsqldb:mem:client2
+    UserName sa
+    Password
+    JtaManaged false
+  </Resource>
+
+  <!-- for remote ejb injection
   <Resource id="middle-server" type="org.apache.openejb.config.sys.JndiProvider">
     java.naming.factory.initial = org.apache.openejb.client.RemoteInitialContextFactory
     java.naming.provider.url = failover:ejb://192.168.1.20:4201,ejbd://192.168.1.30:4201
