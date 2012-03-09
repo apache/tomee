@@ -1,5 +1,7 @@
 package jug.rest;
 
+import jug.routing.DataSourceInitializer;
+import jug.routing.PollingRouter;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.loader.IO;
@@ -8,7 +10,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import javax.annotation.Resource;
 import javax.ejb.embeddable.EJBContainer;
+import javax.inject.Inject;
 import javax.naming.NamingException;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
@@ -19,6 +23,12 @@ import static org.junit.Assert.assertTrue;
 
 public class SubjectServiceTest {
     private static EJBContainer container;
+
+    @Inject
+    private DataSourceInitializer init;
+
+    @Resource(name = "ClientRouter", type = PollingRouter.class)
+    private PollingRouter router;
 
     @BeforeClass
     public static void start() {
@@ -31,6 +41,7 @@ public class SubjectServiceTest {
     @Before
     public void inject() throws NamingException {
         container.getContext().bind("inject", this);
+        init.init();
     }
 
     @AfterClass
@@ -45,6 +56,7 @@ public class SubjectServiceTest {
                                     .accept("application/json")
                                     .query("name", "TOMEE_JUG_JSON")
                                     .post("was it cool?");
-        assertTrue(IO.slurp((InputStream) response.getEntity()).contains("TOMEE_JUG_JSON"));
+        final String output = IO.slurp((InputStream) response.getEntity());
+        assertTrue("output doesn't contain TOMEE_JUG_JSON '" + output + "'", output.contains("TOMEE_JUG_JSON"));
     }
 }

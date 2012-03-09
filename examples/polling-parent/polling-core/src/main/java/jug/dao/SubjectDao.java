@@ -14,7 +14,7 @@ import java.util.Collection;
 @Singleton
 @Lock(LockType.READ)
 public class SubjectDao {
-    @PersistenceContext
+    @PersistenceContext(unitName = "polling")
     private EntityManager em;
 
     public Subject create(final String name, final String question) {

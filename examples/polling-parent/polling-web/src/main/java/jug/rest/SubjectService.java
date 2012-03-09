@@ -48,7 +48,7 @@ public class SubjectService {
     @Path("create")
     public Subject create(final String question, @QueryParam("name") final String name) {
         if (blackList.contains(name)) {
-            throw new IllegalArgumentException("name blaclisted");
+            throw new IllegalArgumentException("name blacklisted");
         }
 
         final Subject subject = dao.create(name, question);
