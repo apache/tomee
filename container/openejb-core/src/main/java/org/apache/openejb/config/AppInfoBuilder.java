@@ -567,6 +567,8 @@ class AppInfoBuilder {
         public static final String OPENJPA_RUNTIME_UNENHANCED_CLASSES = "openjpa.RuntimeUnenhancedClasses";
         public static final String DEFAULT_RUNTIME_UNENHANCED_CLASSES = "supported";
         public static final String REMOVE_DEFAULT_RUNTIME_UNENHANCED_CLASSES = "disable";
+        public static final String OPENJPA_MANAGED_RUNTIME = "openjpa.ManagedRuntime";
+        public static final String DEFAULT_MANAGED_RUNTIME = "jndi(TransactionManagerName=java:comp/TransactionManager)";
 
         public static final String PROVIDER_PROP = "javax.persistence.provider";
         public static final String TRANSACTIONTYPE_PROP = "javax.persistence.transactionType";
@@ -671,6 +673,14 @@ class AppInfoBuilder {
                     info.properties.remove(OPENJPA_RUNTIME_UNENHANCED_CLASSES);
                     logger.info("Adjusting PersistenceUnit(name=" + info.name + ") removing property "
                                                                     + OPENJPA_RUNTIME_UNENHANCED_CLASSES);
+                }
+
+                // default OpenJPA values are not good for us
+                String managedRuntime = info.properties.getProperty(OPENJPA_MANAGED_RUNTIME);
+                if (managedRuntime == null){
+                    info.properties.setProperty(OPENJPA_MANAGED_RUNTIME, DEFAULT_MANAGED_RUNTIME);
+                    logger.debug("Adjusting PersistenceUnit(name=" + info.name + ") property to "
+                            + OPENJPA_MANAGED_RUNTIME + "=" + DEFAULT_MANAGED_RUNTIME);
                 }
 
                 final Set<String> keys = new HashSet<String>(info.properties.stringPropertyNames());
