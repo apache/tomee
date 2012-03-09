@@ -1554,12 +1554,6 @@ public class DeploymentLoader implements DeploymentFilterable {
             return PersistenceModule.class;
         }
 
-        // fallback -> webapp as in tomcat
-        final File pathFile = new File(path);
-        if (pathFile.exists() && pathFile.isDirectory()) {
-            return WebModule.class;
-        }
-
         throw new UnknownModuleTypeException("Unknown module type: url=" + path); // baseUrl can be null
     }
 
