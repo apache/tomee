@@ -142,9 +142,11 @@ public class RemoteServer {
                 }
 
                 if (openejbJar == null){
+                    dumpLibs(lib);
                     throw new IllegalStateException("Cannot find the openejb-core jar in "+lib.getAbsolutePath());
                 }
                 if (javaagentJar == null){
+                    dumpLibs(lib);
                     throw new IllegalStateException("Cannot find the openejb-javaagent jar in "+lib.getAbsolutePath());
                 }
 
@@ -321,6 +323,17 @@ public class RemoteServer {
             }
         } else {
             if (verbose) System.out.println("[] FOUND STARTED SERVER");
+        }
+    }
+
+    // for debug purpose
+    private static void dumpLibs(final File dir) {
+        if (!dir.exists()) {
+            System.out.println("lib dir doesn't exist");
+            return;
+        }
+        for (File lib : dir.listFiles()) {
+            System.out.println(lib.getAbsolutePath());
         }
     }
 
