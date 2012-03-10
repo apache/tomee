@@ -113,7 +113,7 @@ Regardless if you use `EnumType.STRING` or `EnumType.ORDINAL`, you still always 
 
     }
 
-## `EnumType.STRING` vs `EnumType.ORDINAL`
+## EnumType.STRING vs EnumType.ORDINAL
 
 It is a matter of style how you would like your `enum` data represented in the database.  Either `name()` or `ordinal()` are supported:
 
@@ -124,7 +124,7 @@ The default is `EnumType.ORDINAL`
 
 There are advantages and disadvantages to each.
 
-### Disadvantage of `EnumType.ORDINAL`
+### Disadvantage of EnumType.ORDINAL
 
 A disadvantage of `EnumType.ORDINAL` is the effect of time and the desire to keep `enums` in a logical order.  With `EnumType.ORDINAL` any new enum elements must be added to the
 **end** of the list or you will accidentally change the meaning of all your records.
@@ -137,7 +137,7 @@ Let's use our `Rating` enum and see how it would have had to evolve over time to
         G,
         PG,
         R,
-        UNRATED,
+        UNRATED
     }
 
 **1984** PG-13 is added
@@ -161,7 +161,7 @@ Let's use our `Rating` enum and see how it would have had to evolve over time to
         NC17
     }
 
-If `EnumType.STRING` was used, then the enum could be reordered at anytime could instead look as we have defined it originally with ratings starting at `G` and increasing in severity to `NC17` and eventually `UNRATED`.  With `EnumType.ORDINAL` the logical ordering would not have withstood the test of time as new values were added.
+If `EnumType.STRING` was used, then the enum could be reordered at anytime and would instead look as we have defined it originally with ratings starting at `G` and increasing in severity to `NC17` and eventually `UNRATED`.  With `EnumType.ORDINAL` the logical ordering would not have withstood the test of time as new values were added.
 
 If the order of the enum values is significant to your code, avoid `EnumType.ORDINAL`
 

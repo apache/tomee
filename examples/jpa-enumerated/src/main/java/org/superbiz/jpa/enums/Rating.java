@@ -17,11 +17,10 @@
 package org.superbiz.jpa.enums;
 
 public enum Rating {
-
-    UNRATED,
     G,
     PG,
     PG13,
     R,
-    NC17
+    NC17,
+    UNRATED
 }
