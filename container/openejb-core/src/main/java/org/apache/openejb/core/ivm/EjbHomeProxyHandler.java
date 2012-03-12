@@ -27,7 +27,6 @@ import org.apache.openejb.core.managed.ManagedHomeHandler;
 import org.apache.openejb.core.singleton.SingletonEjbHomeHandler;
 import org.apache.openejb.core.stateful.StatefulEjbHomeHandler;
 import org.apache.openejb.core.stateless.StatelessEjbHomeHandler;
-import org.apache.openejb.jee.SessionType;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -141,7 +140,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
                 List<Class> proxyInterfaces = new ArrayList<Class>(handler.getInterfaces().size() + 1);
                 proxyInterfaces.addAll(handler.getInterfaces());
                 proxyInterfaces.add(IntraVmProxy.class);
-                if (SessionType.STATEFUL.equals(type) || SessionType.MANAGED.equals(type)) {
+                if (BeanType.STATEFUL.equals(type) || BeanType.MANAGED.equals(type)) {
                     proxyInterfaces.add(BeanContext.Removable.class);
                 }
                 return ProxyManager.newProxyInstance(proxyInterfaces.toArray(new Class[]{}), handler);
