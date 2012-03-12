@@ -27,6 +27,7 @@ import org.apache.openejb.core.managed.ManagedHomeHandler;
 import org.apache.openejb.core.singleton.SingletonEjbHomeHandler;
 import org.apache.openejb.core.stateful.StatefulEjbHomeHandler;
 import org.apache.openejb.core.stateless.StatelessEjbHomeHandler;
+import org.apache.openejb.jee.SessionType;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -129,7 +130,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
 
             InterfaceType objectInterfaceType = this.interfaceType.getCounterpart();
 
-            EjbObjectProxyHandler handler = newEjbObjectHandler(getBeanContext(), primaryKey, objectInterfaceType, this.getInterfaces(), mainInterface);
+            EjbObjectProxyHandler handler = newEjbObjectHandler(getBeanContext(), primaryKey, objectInterfaceType, getInterfaces(), mainInterface);
 
             // TODO Is it correct for ManagedBean injection via managed bean class?
             if ((InterfaceType.LOCALBEAN.equals(objectInterfaceType) || getBeanContext().getComponentType().equals(BeanType.MANAGED))
@@ -139,7 +140,9 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
                 List<Class> proxyInterfaces = new ArrayList<Class>(handler.getInterfaces().size() + 1);
                 proxyInterfaces.addAll(handler.getInterfaces());
                 proxyInterfaces.add(IntraVmProxy.class);
-                proxyInterfaces.add(BeanContext.Removable.class);
+                if (SessionType.STATEFUL.equals(getBeanContext().getComponentType())) {
+                    proxyInterfaces.add(BeanContext.Removable.class);
+                }
                 return ProxyManager.newProxyInstance(proxyInterfaces.toArray(new Class[]{}), handler);
             }
 
