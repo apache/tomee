@@ -133,7 +133,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
 
             // TODO Is it correct for ManagedBean injection via managed bean class?
             if ((InterfaceType.LOCALBEAN.equals(objectInterfaceType) || getBeanContext().getComponentType().equals(BeanType.MANAGED))
-                    &&! getBeanContext().isDynamicallyImplemented()) {
+                    && !getBeanContext().isDynamicallyImplemented()) {
                 return LocalBeanProxyFactory.newProxyInstance(handler.getBeanContext().getClassLoader(), handler.getBeanContext().getBeanClass(), handler);
             } else {
                 List<Class> proxyInterfaces = new ArrayList<Class>(handler.getInterfaces().size() + 1);
