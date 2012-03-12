@@ -82,7 +82,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
 
     @Override
     public String getId() {
-        return (String) beanContext.getDeploymentID() + this.getReturnType().getName();
+        return beanContext.getDeploymentID() + getReturnType().getName();
     }
 
     @Override
