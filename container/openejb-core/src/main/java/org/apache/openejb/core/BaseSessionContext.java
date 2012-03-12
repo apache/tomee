@@ -16,28 +16,29 @@
  */
 package org.apache.openejb.core;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.ArrayList;
+import org.apache.openejb.BeanContext;
+import org.apache.openejb.BeanType;
+import org.apache.openejb.InterfaceType;
+import org.apache.openejb.InternalErrorException;
+import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
+import org.apache.openejb.core.ivm.IntraVmProxy;
+import org.apache.openejb.core.managed.ManagedObjectHandler;
+import org.apache.openejb.core.singleton.SingletonEjbObjectHandler;
+import org.apache.openejb.core.stateful.StatefulEjbObjectHandler;
+import org.apache.openejb.core.stateless.StatelessEjbObjectHandler;
+import org.apache.openejb.jee.SessionType;
+import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
+import org.apache.openejb.util.proxy.ProxyManager;
 
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 import javax.ejb.SessionContext;
 import javax.transaction.UserTransaction;
 import javax.xml.rpc.handler.MessageContext;
-
-import org.apache.openejb.BeanContext;
-import org.apache.openejb.InterfaceType;
-import org.apache.openejb.InternalErrorException;
-import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
-import org.apache.openejb.core.ivm.IntraVmProxy;
-import org.apache.openejb.core.stateless.StatelessEjbObjectHandler;
-import org.apache.openejb.core.stateful.StatefulEjbObjectHandler;
-import org.apache.openejb.core.singleton.SingletonEjbObjectHandler;
-import org.apache.openejb.core.managed.ManagedObjectHandler;
-import org.apache.openejb.spi.SecurityService;
-import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
-import org.apache.openejb.util.proxy.ProxyManager;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @version $Rev$ $Date$
@@ -95,10 +96,11 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
         check(Call.getBusinessObject);
         if (interfce == null) throw new IllegalStateException("Interface argument cannot me null.");
 
-        ThreadContext threadContext = ThreadContext.getThreadContext();
-        BeanContext di = threadContext.getBeanContext();
+        final ThreadContext threadContext = ThreadContext.getThreadContext();
+        final BeanContext di = threadContext.getBeanContext();
 
-        InterfaceType interfaceType = di.getInterfaceType(interfce);
+        final InterfaceType interfaceType = di.getInterfaceType(interfce);
+        final BeanType type = di.getComponentType();
 
         if (interfaceType == null){
             throw new IllegalStateException("Component has no such interface: " + interfce.getName());
@@ -136,7 +138,9 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
                 List<Class> interfaces = new ArrayList<Class>();
                 interfaces.addAll(di.getInterfaces(interfaceType));
                 interfaces.add(IntraVmProxy.class);
-                interfaces.add(BeanContext.Removable.class);
+                if (SessionType.STATEFUL.equals(type) || SessionType.MANAGED.equals(type)) {
+                    interfaces.add(BeanContext.Removable.class);
+                }
                 return ProxyManager.newProxyInstance(interfaces.toArray(new Class[interfaces.size()]), handler);
             }
         } catch (IllegalAccessException iae) {

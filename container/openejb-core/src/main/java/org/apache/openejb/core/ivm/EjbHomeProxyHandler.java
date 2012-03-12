@@ -128,9 +128,10 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
     public Object createProxy(Object primaryKey, Class mainInterface) {
         try {
 
-            InterfaceType objectInterfaceType = this.interfaceType.getCounterpart();
+            final InterfaceType objectInterfaceType = this.interfaceType.getCounterpart();
+            final BeanType type = getBeanContext().getComponentType();
 
-            EjbObjectProxyHandler handler = newEjbObjectHandler(getBeanContext(), primaryKey, objectInterfaceType, getInterfaces(), mainInterface);
+            final EjbObjectProxyHandler handler = newEjbObjectHandler(getBeanContext(), primaryKey, objectInterfaceType, getInterfaces(), mainInterface);
 
             // TODO Is it correct for ManagedBean injection via managed bean class?
             if ((InterfaceType.LOCALBEAN.equals(objectInterfaceType) || getBeanContext().getComponentType().equals(BeanType.MANAGED))
@@ -140,7 +141,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
                 List<Class> proxyInterfaces = new ArrayList<Class>(handler.getInterfaces().size() + 1);
                 proxyInterfaces.addAll(handler.getInterfaces());
                 proxyInterfaces.add(IntraVmProxy.class);
-                if (SessionType.STATEFUL.equals(getBeanContext().getComponentType())) {
+                if (SessionType.STATEFUL.equals(type) || SessionType.MANAGED.equals(type)) {
                     proxyInterfaces.add(BeanContext.Removable.class);
                 }
                 return ProxyManager.newProxyInstance(proxyInterfaces.toArray(new Class[]{}), handler);
