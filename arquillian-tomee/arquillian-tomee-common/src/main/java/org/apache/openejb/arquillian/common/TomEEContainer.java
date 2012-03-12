@@ -162,7 +162,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
 
     public ProtocolMetaData deploy(Archive<?> archive) throws DeploymentException {
         try {
-            String tmpDir = System.getProperty("java.io.tmpdir");
+            String tmpDir = configuration.getAppWorkingDir();
             File file;
             int i = 0;
             do { // be sure we don't override something existing
