@@ -7,7 +7,6 @@ import javax.sql.DataSource;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 public class PollingRouter extends AbstractRouter {
     private Map<String, DataSource> dataSources = null;
@@ -35,7 +34,11 @@ public class PollingRouter extends AbstractRouter {
         currentDataSource.set(ds);
     }
 
-    private void init() {
+    private synchronized void init() {
+        if (dataSources != null) {
+            return;
+        }
+
         dataSources = new HashMap<String, DataSource>();
         for (String ds : Arrays.asList("jdbc/client1", "jdbc/client2")) {
             try {

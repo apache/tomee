@@ -1,5 +1,6 @@
 package jug.client.command.api;
 
+import jug.client.util.ClientNameHolder;
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.codehaus.jettison.util.StringIndenter;
@@ -51,6 +52,9 @@ public abstract class AbstractCommand {
     public void setUrl(String url) {
         this.url = url;
         client = WebClient.create(url).accept(MediaType.APPLICATION_JSON);
+        if (ClientNameHolder.getCurrent() != null) {
+            client.query("client", ClientNameHolder.getCurrent());
+        }
     }
 
     public static String slurp(final InputStream from) throws IOException {

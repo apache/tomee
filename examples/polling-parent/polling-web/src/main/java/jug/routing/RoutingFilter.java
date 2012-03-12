@@ -31,7 +31,10 @@ public class RoutingFilter implements Filter {
 
     @Override
     public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse, final FilterChain filterChain) throws IOException, ServletException {
-        final String client = getClient();
+        String client = servletRequest.getParameter("client");
+        if (client == null) {
+            client = getRandomClient();
+        }
         LOGGER.info("using client " + client);
         router.setDataSource(client);
         try {
@@ -41,7 +44,7 @@ public class RoutingFilter implements Filter {
         }
     }
 
-    private String getClient() {
+    private String getRandomClient() {
         return "client" +  (1 + COUNTER.getAndIncrement() % 2); // 2 clients
     }
 

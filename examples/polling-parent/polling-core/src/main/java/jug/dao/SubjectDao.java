@@ -4,6 +4,7 @@ import jug.domain.Subject;
 import jug.domain.Value;
 import jug.domain.Vote;
 
+import javax.ejb.EJB;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
@@ -16,6 +17,9 @@ import java.util.Collection;
 public class SubjectDao {
     @PersistenceContext(unitName = "polling")
     private EntityManager em;
+
+    @EJB
+    private ReadSubjectDao readDao;
 
     public Subject create(final String name, final String question) {
         final Subject subject = new Subject();
@@ -35,9 +39,11 @@ public class SubjectDao {
     }
 
     public Subject findByName(final String name) {
-        return em.createNamedQuery(Subject.FIND_BY_NAME_QUERY, Subject.class)
-                .setParameter("name", name)
-                .getSingleResult();
+        return readDao.findByName(name);
+    }
+
+    public Collection<Subject> findAll() {
+        return readDao.findAll();
     }
 
     public int subjectLikeVoteNumber(final String subjectName) {
@@ -67,10 +73,6 @@ public class SubjectDao {
         return t;
     }
 
-    public Collection<Subject> findAll() {
-        return em.createNamedQuery(Subject.FIND_ALL, Subject.class).getResultList();
-    }
-
     public Subject bestSubject() {
         int bestScore = 0;
         Subject best = null;
@@ -82,5 +84,13 @@ public class SubjectDao {
             }
         }
         return best;
+    }
+
+    @Singleton
+    @Lock(LockType.READ)
+    @PersistenceContext(name = "polling")
+    public static interface ReadSubjectDao {
+        Subject findByName(final String name);
+        Collection<Subject> findAll();
     }
 }
