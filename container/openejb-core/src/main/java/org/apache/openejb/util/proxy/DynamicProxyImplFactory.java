@@ -18,10 +18,9 @@
 package org.apache.openejb.util.proxy;
 
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.api.Proxy;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
 import org.apache.xbean.finder.Annotated;
 import org.apache.xbean.finder.MetaAnnotatedClass;
 
@@ -31,8 +30,6 @@ import javax.persistence.PersistenceContext;
 import java.lang.reflect.Method;
 
 public class DynamicProxyImplFactory {
-    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, BeanContext.class);
-
     public static boolean isKnownDynamicallyImplemented(Class<?> clazz) {
         final Annotated<Class<?>> metaClass = new MetaAnnotatedClass(clazz);
         return clazz.isInterface()
@@ -42,14 +39,19 @@ public class DynamicProxyImplFactory {
 
     public static Object newProxy(BeanContext context, java.lang.reflect.InvocationHandler invocationHandler) {
         if (invocationHandler instanceof QueryProxy) {
-            String emLookupName = context.getInjections().get(context.getInjections().size() - 1).getJndiName();
-            EntityManager em;
-            try {
-                em = (EntityManager) context.getJndiEnc().lookup(emLookupName);
-            } catch (NamingException e) {
-                throw new OpenEJBRuntimeException("a dynamic bean should reference at least one correct PersistenceContext", e);
+            EntityManager em = null;
+            for (Injection injection : context.getInjections()) {
+                if (QueryProxy.class.equals(injection.getTarget())) {
+                    try {
+                        em = (EntityManager) context.getJndiEnc().lookup(injection.getJndiName());
+                    } catch (NamingException e) {
+                        throw new OpenEJBRuntimeException("a dynamic bean should reference at least one correct PersistenceContext", e);
+                    }
+                }
             }
-
+            if (em == null) {
+                throw new OpenEJBRuntimeException("can't find the entity manager to use for the dynamic bean " + context.getEjbName());
+            }
             ((QueryProxy) invocationHandler).setEntityManager(em);
         }
 

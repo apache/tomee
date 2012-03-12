@@ -1299,7 +1299,9 @@ public class BeanContext extends DeploymentContext {
                 injections.addAll(newInjections);
 
                 injectionProcessor = new InjectionProcessor(beanConstructor.create(creationalContext), injections, InjectionProcessor.unwrap(ctx));
-                injectionProcessor.setProperty("implementingInterfaceClass", beanClass);
+                if (hasField(proxyClass, "implementingInterfaceClass")) {
+                    injectionProcessor.setProperty("implementingInterfaceClass", beanClass);
+                }
                 InvocationHandler handler = (InvocationHandler) injectionProcessor.createInstance();
                 beanInstance = DynamicProxyImplFactory.newProxy(this, handler);
                 inject(handler, creationalContext);
@@ -1380,6 +1382,19 @@ public class BeanContext extends DeploymentContext {
         } finally {
             ThreadContext.exit(oldContext);
         }                        
+    }
+
+    private boolean hasField(final Class<?> clazz, final String name) {
+        Class<?> current = clazz;
+        while (current != null && !Object.class.equals(current)) {
+            try {
+                current.getDeclaredField(name);
+                return true;
+            } catch (NoSuchFieldException e) {
+                // ignored
+            }
+        }
+        return false;
     }
 
     protected <X> X getBean(Class<X> clazz, Bean<?> bean) {
