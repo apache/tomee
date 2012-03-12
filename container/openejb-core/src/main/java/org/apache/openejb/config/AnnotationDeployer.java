@@ -349,6 +349,7 @@ public class AnnotationDeployer implements DynamicDeployer {
     public static boolean isShareableJNDINamespace(String jndiName) {
         return jndiName.startsWith("java:global/") || jndiName.startsWith("java:app/") || jndiName.startsWith("java:module/");
     }
+
     public static class DiscoverAnnotatedBeans implements DynamicDeployer {
         public AppModule deploy(AppModule appModule) throws OpenEJBException {
             for (EjbModule ejbModule : appModule.getEjbModules()) {

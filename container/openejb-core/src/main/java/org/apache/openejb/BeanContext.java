@@ -40,7 +40,6 @@ import org.apache.openejb.util.Index;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.proxy.DynamicProxyImplFactory;
-import org.apache.openejb.util.proxy.QueryProxy;
 import org.apache.webbeans.component.AbstractInjectionTargetBean;
 import org.apache.webbeans.component.InjectionTargetBean;
 import org.apache.webbeans.config.WebBeansContext;
@@ -85,7 +84,7 @@ public class BeanContext extends DeploymentContext {
     public static final String USER_INTERCEPTOR_SEPARATOR = ",| |;";
 
     public boolean isDynamicallyImplemented() {
-        return getBeanClass().equals(getLocalInterface()); // faster than utility method in util.proxy
+        return proxyClass != null;
     }
 
     public interface BusinessLocalHome extends javax.ejb.EJBLocalHome {
@@ -1299,9 +1298,6 @@ public class BeanContext extends DeploymentContext {
                 injections.addAll(newInjections);
 
                 injectionProcessor = new InjectionProcessor(beanConstructor.create(creationalContext), injections, InjectionProcessor.unwrap(ctx));
-                if (hasField(proxyClass, "implementingInterfaceClass")) {
-                    injectionProcessor.setProperty("implementingInterfaceClass", beanClass);
-                }
                 InvocationHandler handler = (InvocationHandler) injectionProcessor.createInstance();
                 beanInstance = DynamicProxyImplFactory.newProxy(this, handler);
                 inject(handler, creationalContext);
@@ -1382,20 +1378,6 @@ public class BeanContext extends DeploymentContext {
         } finally {
             ThreadContext.exit(oldContext);
         }                        
-    }
-
-    private boolean hasField(final Class<?> clazz, final String name) {
-        Class<?> current = clazz;
-        while (current != null && !Object.class.equals(current)) {
-            try {
-                current.getDeclaredField(name);
-                current = current.getSuperclass();
-                return true;
-            } catch (NoSuchFieldException e) {
-                // ignored
-            }
-        }
-        return false;
     }
 
     protected <X> X getBean(Class<X> clazz, Bean<?> bean) {
@@ -1496,9 +1478,6 @@ public class BeanContext extends DeploymentContext {
     }
 
     public Class<?> getProxyClass() {
-        if (isDynamicallyImplemented() && proxyClass == null) {
-            return QueryProxy.class;
-        }
         return proxyClass;
     }
 

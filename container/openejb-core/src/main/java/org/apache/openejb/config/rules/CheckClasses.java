@@ -81,6 +81,11 @@ public class CheckClasses extends ValidationBase {
                 if (beanClass == null) continue;
                 
                 if (!(bean instanceof RemoteBean)) continue;
+
+                if (bean instanceof SessionBean && ((SessionBean) bean).getProxy() != null) {
+                    continue;
+                }
+
                 RemoteBean b = (RemoteBean) bean;
 
                 check_isEjbClass(b);

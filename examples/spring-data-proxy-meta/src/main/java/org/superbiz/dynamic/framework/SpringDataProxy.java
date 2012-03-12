@@ -3,6 +3,7 @@ package org.superbiz.dynamic.framework;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
 import org.springframework.data.repository.Repository;
 
+import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.lang.reflect.InvocationHandler;
@@ -13,6 +14,7 @@ public class SpringDataProxy implements InvocationHandler {
     @PersistenceContext(unitName = "dynamic")
     private EntityManager em;
 
+    @Resource(name = "implementingInterfaceClass")
     private Class<Repository<?, ?>> implementingInterfaceClass; // implicitly for this kind of proxy
 
     private final AtomicReference<Repository<?, ?>> repository = new AtomicReference<Repository<?, ?>>();

@@ -18,6 +18,7 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.Vendor;
+import org.apache.openejb.api.Proxy;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.BmpEntityContainerInfo;
@@ -61,10 +62,13 @@ import org.apache.openejb.config.sys.ServiceProvider;
 import org.apache.openejb.config.sys.TransactionManager;
 import org.apache.openejb.jee.Application;
 import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.Handler;
 import org.apache.openejb.jee.HandlerChain;
 import org.apache.openejb.jee.HandlerChains;
 import org.apache.openejb.jee.ParamValue;
+import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Options;
@@ -76,10 +80,11 @@ import org.apache.openejb.util.SuperProperties;
 import org.apache.openejb.util.URISupport;
 import org.apache.openejb.util.URLs;
 import org.apache.openejb.util.UpdateChecker;
+import org.apache.openejb.util.proxy.QueryProxy;
+import org.apache.xbean.finder.MetaAnnotatedClass;
 
 import javax.ejb.embeddable.EJBContainer;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -144,9 +149,12 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         chain.add(new AnnotationDeployer());
 
+        chain.add(new ProxyBeanClassUpdate());
+
         chain.add(new GeneratedClientModules.Prune());
 
         chain.add(new ClearEmptyMappedName());
+
         //START SNIPPET: code
         if (!options.get(VALIDATION_SKIP_PROPERTY, false)) {
             chain.add(new ValidateModules());
@@ -255,6 +263,49 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             handlerChains.add(handlerChainInfo);
         }
         return handlerChains;
+    }
+
+    public static class ProxyBeanClassUpdate implements DynamicDeployer {
+        @Override
+        public AppModule deploy(final AppModule appModule) throws OpenEJBException {
+            for (EjbModule module : appModule.getEjbModules()) {
+                for (EnterpriseBean eb : module.getEjbJar().getEnterpriseBeans()) {
+                    if (!(eb instanceof SessionBean)) {
+                        continue;
+                    }
+
+                    final SessionBean bean = (SessionBean) eb;
+                    final Class<?> ejbClass;
+                    try {
+                        ejbClass = module.getClassLoader().loadClass(bean.getEjbClass());
+                    } catch (ClassNotFoundException e) {
+                        logger.warning("can't load " + bean.getEjbClass());
+                        continue;
+                    }
+
+                    final Class<?> proxyClass;
+                    if (ejbClass.isInterface()) { // dynamic proxy implementation
+                        bean.setLocal(ejbClass.getName());
+                        final Proxy proxyAnnotation = (Proxy) new MetaAnnotatedClass(ejbClass).getAnnotation(Proxy.class);
+                        if (proxyAnnotation != null) {
+                            proxyClass = proxyAnnotation.value();
+                        } else {
+                            proxyClass = QueryProxy.class;
+                        }
+                        bean.setProxy(proxyClass.getName());
+                    } else {
+                        continue;
+                    }
+
+                    for (EnvEntry entry : bean.getEnvEntry()) {
+                        if ("java:comp/env/implementingInterfaceClass".equals(entry.getName())) {
+                            entry.setEnvEntryValue(ejbClass.getName());
+                        }
+                    }
+                }
+            }
+            return appModule;
+        }
     }
 
     public static class Chain implements DynamicDeployer {

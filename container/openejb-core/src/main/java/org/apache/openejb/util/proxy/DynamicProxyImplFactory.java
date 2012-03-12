@@ -56,7 +56,7 @@ public class DynamicProxyImplFactory {
         }
 
         try {
-            return ProxyManager.newProxyInstance(context.getLocalInterface(), new Handler(invocationHandler));
+            return ProxyManager.newProxyInstance(context.getBeanClass(), new Handler(invocationHandler));
         } catch (IllegalAccessException e) {
             throw new OpenEJBRuntimeException("illegal access", e);
         }
