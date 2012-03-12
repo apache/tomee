@@ -158,7 +158,7 @@ public class Compat3to2Test extends TestCase {
     }
 
     private String join(String delimeter, List items) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (Object item : items) {
             sb.append(item.toString()).append(delimeter);
         }

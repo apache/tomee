@@ -700,7 +700,7 @@ public class VmDeploymentManager implements DeploymentManager {
         }
 
         public String toString() {
-            StringBuffer buf = new StringBuffer();
+            StringBuilder buf = new StringBuilder();
             buf.append("DeploymentStatus[").append(command).append(',');
             buf.append(state);
             if (message != null) {

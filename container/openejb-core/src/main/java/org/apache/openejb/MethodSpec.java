@@ -97,7 +97,7 @@ public class MethodSpec implements Comparable, Serializable {
     }
 
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         if (methodIntf != null) {
             buffer.append(methodIntf);
         } else {

@@ -128,7 +128,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
     private String readContents(URL resource) throws IOException {
         InputStream in = resource.openStream();
         BufferedInputStream reader = null;
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         try {
             reader = new BufferedInputStream(in);

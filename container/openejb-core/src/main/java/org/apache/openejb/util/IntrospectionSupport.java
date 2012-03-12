@@ -221,7 +221,7 @@ public class IntrospectionSupport {
     static public String toString(Object target, Class stopClass) {
         LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
         addFields(target, target.getClass(), stopClass, map);
-        StringBuffer buffer = new StringBuffer(simpleName(target.getClass()));
+        StringBuilder buffer = new StringBuilder(simpleName(target.getClass()));
         buffer.append(" {");
         Set entrySet = map.entrySet();
         boolean first = true;
@@ -240,7 +240,7 @@ public class IntrospectionSupport {
         return buffer.toString();
     }
 
-    protected static void appendToString(StringBuffer buffer, Object value) {
+    protected static void appendToString(StringBuilder buffer, Object value) {
         buffer.append(value);
     }
 

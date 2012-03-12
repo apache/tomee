@@ -17,18 +17,6 @@
  */
 package org.apache.openejb.core.stateful;
 
-import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Stack;
-import java.util.ArrayList;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
-import javax.ejb.*;
-import javax.naming.InitialContext;
-import javax.transaction.TransactionManager;
-
 import junit.framework.TestCase;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
@@ -40,6 +28,24 @@ import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.loader.SystemInstance;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
+import javax.ejb.Local;
+import javax.ejb.LocalBean;
+import javax.ejb.PostActivate;
+import javax.ejb.PrePassivate;
+import javax.ejb.Remote;
+import javax.ejb.Remove;
+import javax.ejb.SessionContext;
+import javax.naming.InitialContext;
+import javax.transaction.TransactionManager;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Stack;
 
 /**
  * @version $Revision$ $Date$
@@ -247,7 +253,7 @@ public class StatefulContainerTest extends TestCase {
     }
 
     private static String join(String delimeter, List items){
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (Object item : items) {
             sb.append(item.toString()).append(delimeter);
         }

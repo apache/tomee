@@ -56,7 +56,7 @@ public class CheckInjectionTargets extends ValidationBase {
                     String shortNameInvalid = name;
 
                     if (name.startsWith("set") && name.length() >= 4 && Character.isUpperCase(name.charAt(3))) {
-                        StringBuffer correctName = new StringBuffer(name);
+                        StringBuilder correctName = new StringBuilder(name);
                         correctName.delete(0, 3);
                         correctName.setCharAt(0, Character.toLowerCase(correctName.charAt(0)));
                         String shortNameCorrect = correctName.toString();

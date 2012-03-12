@@ -19,7 +19,6 @@ package org.apache.openejb.util;
 import org.apache.openejb.OpenEJBException;
 
 import java.util.HashMap;
-import java.util.Properties;
 
 public class SafeToolkit {
     public static final Messages messages = new Messages("org.apache.openejb.util.resources");
@@ -74,7 +73,7 @@ public class SafeToolkit {
     }
 
     private static String getCodebase(java.net.URLClassLoader urlClassLoader) {
-        StringBuffer codebase = new StringBuffer();
+        StringBuilder codebase = new StringBuilder();
         java.net.URL urlList[] = urlClassLoader.getURLs();
         codebase.append(urlList[0].toString());
         for (int i = 1; i < urlList.length; ++i) {
