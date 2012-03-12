@@ -16,15 +16,6 @@
  */
 package org.apache.openejb.config;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.ApplicationExceptionInfo;
 import org.apache.openejb.assembler.classic.BeansInfo;
@@ -103,6 +94,14 @@ import org.apache.openejb.jee.oejb3.ResourceLink;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @version $Revision$ $Date$
@@ -631,6 +630,7 @@ public class EjbJarInfoBuilder {
         bean.remote = s.getRemote();
         bean.localHome = s.getLocalHome();
         bean.local = s.getLocal();
+        bean.proxy = s.getProxy();
         bean.businessLocal.addAll(s.getBusinessLocal());
         bean.businessRemote.addAll(s.getBusinessRemote());
         TransactionType txType = s.getTransactionType();

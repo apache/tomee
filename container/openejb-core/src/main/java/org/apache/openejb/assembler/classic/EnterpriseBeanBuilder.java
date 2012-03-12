@@ -21,7 +21,6 @@ import org.apache.openejb.BeanType;
 import org.apache.openejb.Injection;
 import org.apache.openejb.ModuleContext;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.api.Proxy;
 import org.apache.openejb.core.cmp.CmpUtil;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
@@ -29,7 +28,6 @@ import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.Index;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.SafeToolkit;
-import org.apache.xbean.finder.MetaAnnotatedClass;
 
 import javax.ejb.TimedObject;
 import javax.ejb.Timer;
@@ -89,16 +87,13 @@ class EnterpriseBeanBuilder {
             remote = loadClass(bean.remote, "classNotFound.remote");
         }
 
+        Class<?> proxy = null;
+        if (bean.proxy != null) {
+            proxy = loadClass(bean.proxy, "classNotFound.proxy");
+        }
+
         Class<?> localhome = null;
         Class<?> local = null;
-        Class<?> proxy = null;
-        if (ejbClass.isInterface()) { // dynamic proxy implementation
-            local = ejbClass;
-            Proxy proxyAnnotation = new MetaAnnotatedClass<Class<?>>(ejbClass).getAnnotation(Proxy.class);
-            if (proxyAnnotation != null) {
-                proxy = proxyAnnotation.value();
-            }
-        }
         if (bean.localHome != null) {
             localhome = loadClass(bean.localHome, "classNotFound.localHome");
             local = loadClass(bean.local, "classNotFound.local");

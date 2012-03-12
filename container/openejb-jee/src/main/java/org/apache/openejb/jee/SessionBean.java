@@ -256,6 +256,9 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
     @XmlTransient
     private boolean restService = false;
 
+    @XmlTransient
+    private String proxy;
+
     public SessionBean() {
     }
 
@@ -894,5 +897,13 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
 
     public void setRestService(boolean restService) {
         this.restService = restService;
+    }
+
+    public void setProxy(String name) {
+        proxy = name;
+    }
+
+    public String getProxy() {
+        return proxy;
     }
 }
