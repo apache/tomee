@@ -130,7 +130,7 @@ public class JaxWsUtils {
                 tokens[i] = tokenizer.nextToken();
             }
         }
-        StringBuffer namespace = new StringBuffer("http://");
+        StringBuilder namespace = new StringBuilder("http://");
         String dot = "";
         for (int i = 0; i < tokens.length; i++) {
             if (i == 1) {

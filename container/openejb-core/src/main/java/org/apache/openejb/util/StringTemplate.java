@@ -31,7 +31,7 @@ public class StringTemplate {
 
 	public String apply(Map<String, String> map) {
     	Matcher matcher = PATTERN.matcher(template);
-    	StringBuffer buf = new StringBuffer();
+        StringBuffer buf = new StringBuffer();
  
     	while (matcher.find()) {
     		String key = matcher.group(2);

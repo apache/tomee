@@ -16,8 +16,6 @@
  */
 package org.apache.openejb.core.ivm.naming;
 
-import java.util.Arrays;
-
 public class ParsedName implements java.io.Serializable {
     final static int IS_EQUAL = 0;
     final static int IS_LESS = -1;
@@ -124,7 +122,7 @@ public class ParsedName implements java.io.Serializable {
         if (components.length == 0) {
             return "";
         }
-        StringBuffer buffer = new StringBuffer(components[0]);
+        StringBuilder buffer = new StringBuilder(components[0]);
         for (int i = 1; i < components.length; ++i) {
             buffer.append('/');
             buffer.append(components[i]);
@@ -142,7 +140,7 @@ with a slash.  It may be the empty string. */
         int n = len;
         while ((n > 0) && (pathname.charAt(n - 1) == '/')) n--;
         if (n == 0) return "/";
-        StringBuffer sb = new StringBuffer(pathname.length());
+        StringBuilder sb = new StringBuilder(pathname.length());
         if (off > 0) sb.append(pathname.substring(0, off));
         char prevChar = 0;
         for (int i = off; i < n; i++) {

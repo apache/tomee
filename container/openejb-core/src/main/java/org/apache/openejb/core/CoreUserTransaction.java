@@ -16,16 +16,16 @@
  */
 package org.apache.openejb.core;
 
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
 import javax.transaction.NotSupportedException;
 import javax.transaction.RollbackException;
+import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.TransactionManager;
-import javax.transaction.Status;
-
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
 
 /**
  * @org.apache.xbean.XBean element="userTransaction"
@@ -89,9 +89,7 @@ public class CoreUserTransaction implements javax.transaction.UserTransaction, j
     }
 
     private static String getStatus(int status) {
-        StringBuffer buffer;
-
-        buffer = new StringBuffer(100);
+        final StringBuilder buffer = new StringBuilder(100);
         switch (status) {
             case Status.STATUS_ACTIVE:
                 buffer.append("STATUS_ACTIVE: ");

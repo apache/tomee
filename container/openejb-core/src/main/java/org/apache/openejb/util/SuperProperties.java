@@ -16,6 +16,20 @@
  */
 package org.apache.openejb.util;
 
+import org.w3c.dom.Comment;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,20 +48,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Comment;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.EntityResolver;
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 /**
  * Properties is a Hashtable where the keys and values must be Strings. Each Properties can have a default
@@ -344,7 +344,7 @@ public class SuperProperties extends Properties {
         if (out == null) {
             throw new NullPointerException();
         }
-        StringBuffer buffer = new StringBuffer(80);
+        StringBuilder buffer = new StringBuilder(80);
         Enumeration<?> keys = propertyNames();
         while (keys.hasMoreElements()) {
             String key = (String) keys.nextElement();
@@ -369,7 +369,7 @@ public class SuperProperties extends Properties {
         if (writer == null) {
             throw new NullPointerException();
         }
-        StringBuffer buffer = new StringBuffer(80);
+        StringBuilder buffer = new StringBuilder(80);
         Enumeration<?> keys = propertyNames();
         while (keys.hasMoreElements()) {
             String key = (String) keys.nextElement();

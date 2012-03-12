@@ -17,25 +17,23 @@
 package org.apache.openejb.core.singleton;
 
 import junit.framework.TestCase;
-
-import javax.naming.InitialContext;
-import javax.ejb.SessionContext;
-import javax.annotation.Resource;
-import java.util.List;
-import java.util.Arrays;
-import java.util.Stack;
-import java.util.ArrayList;
-
-import org.apache.openejb.core.ivm.naming.InitContextFactory;
-import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
-import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.SingletonSessionContainerInfo;
-import org.apache.openejb.jee.SingletonBean;
+import org.apache.openejb.assembler.classic.TransactionServiceInfo;
+import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.Empty;
+import org.apache.openejb.jee.SingletonBean;
+
+import javax.annotation.Resource;
+import javax.ejb.SessionContext;
+import javax.naming.InitialContext;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Stack;
 
 /**
  * @version $Revision$ $Date$
@@ -131,7 +129,7 @@ public class SingletonContainerTest extends TestCase {
     }
 
     private static String join(String delimeter, List items) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (Object item : items) {
             sb.append(item.toString()).append(delimeter);
         }

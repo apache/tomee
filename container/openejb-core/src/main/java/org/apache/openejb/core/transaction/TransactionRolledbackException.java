@@ -172,7 +172,7 @@ public class TransactionRolledbackException extends javax.transaction.Transactio
         if (msg == null) {
             return name;
         }
-        return new StringBuffer(name.length() + 2 + msg.length()).append(name).append(": ").append(msg).toString();
+        return new StringBuilder(name.length() + 2 + msg.length()).append(name).append(": ").append(msg).toString();
     }
 
     /**
