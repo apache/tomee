@@ -272,7 +272,11 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
     protected Transaction suspendTransaction() throws SystemException {
         try {
             Transaction tx = transactionManager.suspend();
-            txLogger.info("TX {0}: Suspended transaction {1}", transactionType, tx);
+            if (tx == null) {
+                txLogger.debug("TX {0}: No transaction to suspend", transactionType);
+            } else {
+                txLogger.debug("TX {0}: Suspended transaction {1}", transactionType, tx);
+            }
             return tx;
         } catch (javax.transaction.SystemException se) {
             txLogger.error("Exception during suspend()", se);
