@@ -1389,6 +1389,7 @@ public class BeanContext extends DeploymentContext {
         while (current != null && !Object.class.equals(current)) {
             try {
                 current.getDeclaredField(name);
+                current = current.getSuperclass();
                 return true;
             } catch (NoSuchFieldException e) {
                 // ignored
