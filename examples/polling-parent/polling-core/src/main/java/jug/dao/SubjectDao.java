@@ -8,6 +8,7 @@ import javax.ejb.EJB;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Collection;
@@ -18,7 +19,7 @@ public class SubjectDao {
     @PersistenceContext(unitName = "polling")
     private EntityManager em;
 
-    @EJB
+    @Inject
     private ReadSubjectDao readDao;
 
     public Subject create(final String name, final String question) {
