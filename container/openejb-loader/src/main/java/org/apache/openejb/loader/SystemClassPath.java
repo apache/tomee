@@ -16,11 +16,11 @@
  */
 package org.apache.openejb.loader;
 
-import java.lang.reflect.Method;
-import java.net.URLClassLoader;
-import java.net.URL;
-import java.net.URLDecoder;
 import java.io.File;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.net.URLDecoder;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
@@ -40,7 +40,6 @@ public class SystemClassPath extends BasicURLClassPath {
 
     @Override
     public void addJarToPath(final URL jar) throws Exception {
-
         this.addJarToPath(jar, getSystemLoader());
         this.rebuildJavaClassPathVariable();
     }
@@ -98,8 +97,8 @@ public class SystemClassPath extends BasicURLClassPath {
                     final Object cp = getURLClassPath(loader);
                     final Class<?> clazz = cp.getClass();
 
-                     try {
-                         return clazz.getDeclaredMethod("getURLs", URL.class);
+                    try {
+                        return clazz.getDeclaredMethod("getURLs", URL.class);
                     } catch (NoSuchMethodException e) {
                         return clazz.getDeclaredMethod("getURLs");
                     }

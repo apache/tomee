@@ -24,13 +24,12 @@ import java.util.Properties;
 /**
  * This class aims to be the one and only static in the entire system
  * A static, singleton, instance of this class can be created with the {@link #init(Properties)} method
- *
+ * <p/>
  * It is assumed that only one singleton per classloader is possible in any given VM
  * Thus loading this instance in a classloader will mean there can only be one OpenEJB
  * instance for that classloader and all children classloaders.
  *
  * @version $Revision$ $Date$
- * 
  * @org.apache.xbean.XBean element="system"
  */
 public class SystemInstance {
@@ -57,7 +56,7 @@ public class SystemInstance {
     private final ClassPath classPath;
 
     // FIXME: Why is Exception thrown at all? It's almost impossible that it'll happen.
-    private SystemInstance(Properties properties) throws Exception {
+    private SystemInstance(final Properties properties) throws Exception {
         this.components = new HashMap<Class, Object>();
 
         this.internalProperties.putAll(System.getProperties());
@@ -73,9 +72,6 @@ public class SystemInstance {
         this.internalProperties.setProperty("openejb.home", home.getDirectory().getCanonicalPath());
         this.internalProperties.setProperty("openejb.base", base.getDirectory().getCanonicalPath());
         System.setProperty("derby.system.home", base.getDirectory().getCanonicalPath());
-        // set the magic system property that causes derby to use explicity
-        // file sync instead of relying on vm support for file open rws
-        System.setProperty("derby.storage.fileSyncTransactionLog", "true");
     }
 
     public long getStartTime() {
@@ -90,25 +86,25 @@ public class SystemInstance {
         return internalProperties;
     }
 
-    public String getProperty(String key) {
+    public String getProperty(final String key) {
         return internalProperties.getProperty(key);
     }
 
-    public String getProperty(String key, String defaultValue) {
+    public String getProperty(final String key, final String defaultValue) {
         return internalProperties.getProperty(key, defaultValue);
     }
 
-    public Object setProperty(String key, String value) {
+    public Object setProperty(final String key, final String value) {
         return setProperty(key, value, false);
     }
 
     /**
-     * @param key property name
-     * @param value property value
+     * @param key                property name
+     * @param value              property value
      * @param isExternalProperty should the property be set to System by {@link System#setProperty(String, String)}
      * @return property value
      */
-    public Object setProperty(String key, String value, boolean isExternalProperty) {
+    public Object setProperty(final String key, final String value, final boolean isExternalProperty) {
         if (isExternalProperty) {
             this.externalProperties.setProperty(key, value);
             System.setProperty(key, value);
@@ -142,19 +138,19 @@ public class SystemInstance {
      * @return the object associated with the class type or null
      * @throws IllegalStateException of the component isn't found
      */
-    public <T> T getComponent(Class<T> type) {
-        return (T)components.get(type);
+    public <T> T getComponent(final Class<T> type) {
+        return (T) components.get(type);
     }
 
-    public <T> T removeComponent(Class<T> type) {
-        return (T)components.remove(type);
+    public <T> T removeComponent(final Class<T> type) {
+        return (T) components.remove(type);
     }
 
     /**
      * @param type the class type of the component required
      */
-    public <T> T setComponent(Class<T> type, T value) {
-        return (T)components.put(type, value);
+    public <T> T setComponent(final Class<T> type, final T value) {
+        return (T) components.put(type, value);
     }
 
     private static SystemInstance system;
@@ -169,7 +165,7 @@ public class SystemInstance {
         return initialized;
     }
 
-    public static void reset(){
+    public static synchronized void reset() {
         try {
             system = new SystemInstance(System.getProperties());
             initialized = false;
@@ -178,7 +174,7 @@ public class SystemInstance {
         }
     }
 
-    public static void init(Properties properties) throws Exception {
+    public static synchronized void init(final Properties properties) throws Exception {
         if (initialized) return;
         system = new SystemInstance(properties);
         readUserSystemProperties();
@@ -203,7 +199,7 @@ public class SystemInstance {
     }
 
     private static void addSystemProperties(final File file) {
-        if (!file.exists()){
+        if (!file.exists()) {
             return;
         }
 
@@ -224,10 +220,9 @@ public class SystemInstance {
 
     /**
      * @param propName property name
-     * 
      * @return true when property is set; false otherwise
      */
-    public boolean hasProperty(String propName) {
+    public boolean hasProperty(final String propName) {
         return this.internalProperties.get(propName) != null;
     }
 

@@ -164,6 +164,7 @@
     <commons-lang3.version>3.1</commons-lang3.version>
     <commons-lang.version>2.6</commons-lang.version>
     <commons-io.version>1.4</commons-io.version>
+    <commons-net.version>3.1</commons-net.version>
   </properties>
 
   <build>
@@ -872,7 +873,16 @@
             <groupId>activemq</groupId>
             <artifactId>jmdns</artifactId>
           </exclusion>
+		  <exclusion>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+          </exclusion>
         </exclusions>
+      </dependency>
+	  <dependency>
+        <groupId>commons-net</groupId>
+        <artifactId>commons-net</artifactId>
+        <version>${commons-net.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.activemq</groupId>
