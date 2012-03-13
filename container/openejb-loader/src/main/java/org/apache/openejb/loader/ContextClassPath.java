@@ -17,8 +17,8 @@
 package org.apache.openejb.loader;
 
 import java.io.File;
-import java.net.URLClassLoader;
 import java.net.URL;
+import java.net.URLClassLoader;
 
 /*-------------------------------------------------------*/
 /* Thread Context ClassLoader Support */
@@ -26,22 +26,25 @@ import java.net.URL;
 
 public class ContextClassPath extends BasicURLClassPath {
 
+    @Override
     public ClassLoader getClassLoader() {
         return getContextClassLoader();
     }
 
-    public void addJarsToPath(File dir) throws Exception {
-        ClassLoader contextClassLoader = getContextClassLoader();
+    @Override
+    public void addJarsToPath(final File dir) throws Exception {
+        final ClassLoader contextClassLoader = getContextClassLoader();
         if (contextClassLoader instanceof URLClassLoader) {
-            URLClassLoader loader = (URLClassLoader) contextClassLoader;
+            final URLClassLoader loader = (URLClassLoader) contextClassLoader;
             this.addJarsToPath(dir, loader);
         }
     }
 
-    public void addJarToPath(URL jar) throws Exception {
-        ClassLoader contextClassLoader = getContextClassLoader();
+    @Override
+    public void addJarToPath(final URL jar) throws Exception {
+        final ClassLoader contextClassLoader = getContextClassLoader();
         if (contextClassLoader instanceof URLClassLoader) {
-            URLClassLoader loader = (URLClassLoader) contextClassLoader;
+            final URLClassLoader loader = (URLClassLoader) contextClassLoader;
             this.addJarToPath(jar, loader);
         }
     }

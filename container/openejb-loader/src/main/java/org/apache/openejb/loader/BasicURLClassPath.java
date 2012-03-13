@@ -40,7 +40,7 @@ public abstract class BasicURLClassPath implements ClassPath {
     protected void addJarToPath(final URL jar, final URLClassLoader loader) throws Exception {
         final Object cp = getURLClassPath(loader);
         final Method addURLMethod = getAddURLMethod(loader);
-        addURLMethod.invoke(cp, new URL[]{jar});
+        addURLMethod.invoke(cp, jar);
     }
 
     private Method getAddURLMethod(final URLClassLoader loader) {
@@ -88,7 +88,7 @@ public abstract class BasicURLClassPath implements ClassPath {
         final Object cp = getURLClassPath(loader);
         final Method addURLMethod = getAddURLMethod(loader);
         for (final URL jar : jars) {
-            addURLMethod.invoke(cp, new URL[]{jar});
+            addURLMethod.invoke(cp, jar);
         }
     }
 
