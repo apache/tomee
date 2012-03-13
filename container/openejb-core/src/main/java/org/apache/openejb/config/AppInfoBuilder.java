@@ -734,7 +734,7 @@ class AppInfoBuilder {
                 final String property = (String) (prefix.equalsIgnoreCase(info.name) ? entry.getKey() : prefix + "." + entry.getKey());
                 final String value = (String) entry.getValue();
 
-                if (info.properties.contains(property)){
+                if (info.properties.containsKey(property)){
                     logger.debug("Overriding persistence-unit "+info.name +" property " + property + "="+value);
                 } else {
                     logger.debug("Adding persistence-unit "+info.name +" property " + property + "="+value);
