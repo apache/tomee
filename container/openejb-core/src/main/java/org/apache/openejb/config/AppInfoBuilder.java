@@ -675,13 +675,15 @@ class AppInfoBuilder {
                                                                     + OPENJPA_RUNTIME_UNENHANCED_CLASSES);
                 }
 
-                // default OpenJPA values are not good for us
+                /**
+                // default OpenJPA values are not good for us OPENEJB-1798
                 String managedRuntime = info.properties.getProperty(OPENJPA_MANAGED_RUNTIME);
                 if (managedRuntime == null){
                     info.properties.setProperty(OPENJPA_MANAGED_RUNTIME, DEFAULT_MANAGED_RUNTIME);
                     logger.debug("Adjusting PersistenceUnit(name=" + info.name + ") property to "
                             + OPENJPA_MANAGED_RUNTIME + "=" + DEFAULT_MANAGED_RUNTIME);
                 }
+                */
 
                 final Set<String> keys = new HashSet<String>(info.properties.stringPropertyNames());
                 for (String key : keys) {
