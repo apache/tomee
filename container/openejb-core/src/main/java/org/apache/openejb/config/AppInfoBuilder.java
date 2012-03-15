@@ -568,7 +568,7 @@ class AppInfoBuilder {
         public static final String DEFAULT_RUNTIME_UNENHANCED_CLASSES = "supported";
         public static final String REMOVE_DEFAULT_RUNTIME_UNENHANCED_CLASSES = "disable";
         public static final String OPENJPA_MANAGED_RUNTIME = "openjpa.ManagedRuntime";
-        public static final String DEFAULT_MANAGED_RUNTIME = "jndi(TransactionManagerName=java:comp/TransactionManager)";
+        public static final String DEFAULT_MANAGED_RUNTIME = "invocation(TransactionManagerMethod=org.apache.openejb.OpenEJB.getTransactionManager)";
 
         public static final String PROVIDER_PROP = "javax.persistence.provider";
         public static final String TRANSACTIONTYPE_PROP = "javax.persistence.transactionType";
