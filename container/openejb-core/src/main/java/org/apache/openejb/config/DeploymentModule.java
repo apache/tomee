@@ -17,6 +17,7 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.jee.NamedModule;
+import org.apache.openejb.loader.SystemInstance;
 
 import java.io.File;
 import java.net.URI;
@@ -29,6 +30,8 @@ import java.util.Set;
  * @version $Rev$ $Date$
  */
 public interface DeploymentModule {
+    static String OPENEJB_MODULENAME_USE_HASH = "openejb.modulename.useHash";
+
     String getModuleId();
     
     URI getModuleUri();
@@ -79,6 +82,7 @@ public interface DeploymentModule {
             if (spec != null && spec.getModuleName() != null) return spec.getModuleName().trim();
             if (spec != null && spec.getId() != null) return spec.getId().trim();
             if (uri != null) return stripExtension(uri.getPath());
+            if (location != null && SystemInstance.get().getOptions().get(OPENEJB_MODULENAME_USE_HASH, false)) return moduleName(location) + module.hashCode();
             if (location != null) return moduleName(location);
             if (name != null) return name;
             return "@" + module.getClass().getSimpleName() + module.hashCode();
