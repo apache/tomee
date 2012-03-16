@@ -44,11 +44,12 @@ public class EntityManagerFactoryCallable implements Callable<EntityManagerFacto
         properties.put("javax.persistence.validator.ValidatorFactory", new ValidatorFactoryWrapper());
         EntityManagerFactory emf = persistenceProvider.createContainerEntityManagerFactory(unitInfo, properties);
 
-
-        final ImportSql importer = new ImportSql(appClassLoader, unitInfo.getPersistenceUnitName(), unitInfo.getNonJtaDataSource());
-        if (importer.hasSomethingToImport()) {
-            emf.createEntityManager().close(); // to let OpenJPA create the database if configured this way
-            importer.doImport();
+        if (unitInfo.getNonJtaDataSource() != null) {
+            final ImportSql importer = new ImportSql(appClassLoader, unitInfo.getPersistenceUnitName(), unitInfo.getNonJtaDataSource());
+            if (importer.hasSomethingToImport()) {
+                emf.createEntityManager().close(); // to let OpenJPA create the database if configured this way
+                importer.doImport();
+            }
         }
 
         return emf;
