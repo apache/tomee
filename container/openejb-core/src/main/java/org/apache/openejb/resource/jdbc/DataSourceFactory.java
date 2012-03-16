@@ -30,7 +30,6 @@ import org.apache.xbean.recipe.Option;
 
 import javax.sql.DataSource;
 import javax.sql.XADataSource;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

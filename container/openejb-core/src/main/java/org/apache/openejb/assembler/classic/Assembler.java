@@ -117,6 +117,7 @@ import javax.resource.spi.ResourceAdapter;
 import javax.resource.spi.ResourceAdapterInternalException;
 import javax.resource.spi.XATerminator;
 import javax.resource.spi.work.WorkManager;
+import javax.sql.DataSource;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 import javax.validation.ValidationException;
@@ -1579,6 +1580,18 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             // service becomes a ConnectorReference which merges connection manager and mcf
             service = new ConnectorReference(connectionManager, managedConnectionFactory);
         } else {
+            if (service instanceof DataSource) {
+                ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+                if (classLoader == null) {
+                    classLoader = getClass().getClassLoader();
+                }
+
+                final ImportSql importer = new ImportSql(classLoader, serviceInfo.id, (DataSource) service);
+                if (importer.hasSomethingToImport()) {
+                    importer.doImport();
+                }
+            }
+
             logUnusedProperties(serviceRecipe, serviceInfo);
         }
 
