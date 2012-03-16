@@ -27,6 +27,7 @@ import org.apache.openejb.spi.CallerPrincipal;
 import org.apache.tomee.loader.TomcatHelper;
 
 import javax.security.auth.Subject;
+import javax.security.auth.login.CredentialNotFoundException;
 import javax.security.auth.login.LoginException;
 import java.io.Serializable;
 import java.security.Principal;
@@ -63,7 +64,9 @@ public class TomcatSecurityService extends AbstractSecurityService {
             throw new LoginException("No Tomcat realm available");
         }
 
-        Principal principal = defaultRealm.authenticate(username, password);
+        final Principal principal = defaultRealm.authenticate(username, password);
+        if (principal == null) throw new CredentialNotFoundException(username);
+
         Subject subject = createSubject(defaultRealm, principal);
         UUID token = registerSubject(subject);
         return token;
