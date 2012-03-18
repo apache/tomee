@@ -16,6 +16,11 @@
  */
 package org.apache.openejb.client;
 
+import org.apache.openejb.client.proxy.ProxyManager;
+import org.apache.openejb.client.util.ClassLoaderUtil;
+
+import javax.ejb.EJBException;
+import javax.ejb.EJBObject;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -34,11 +39,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.ejb.EJBException;
-import javax.ejb.EJBObject;
-
-import org.apache.openejb.client.proxy.ProxyManager;
 
 public abstract class EJBObjectHandler extends EJBInvocationHandler {
 
@@ -133,11 +133,12 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
             interfaces.add(EJBObjectProxy.class);
 
             ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
-            if (oldCl != getClass().getClassLoader()) {
+            boolean parent = ClassLoaderUtil.isParent(getClass().getClassLoader(), oldCl);
+            if (!parent) {
                 Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             }
             ejbObject = (EJBObjectProxy) ProxyManager.newProxyInstance(interfaces.toArray(new Class[interfaces.size()]), this);
-            if (oldCl != getClass().getClassLoader()) {
+            if (!parent) {
                 Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             }
         } catch (IllegalAccessException e) {
