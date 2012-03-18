@@ -14,12 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.config;
+package org.apache.openejb.config.rules;
 
-import org.apache.openejb.config.rules.Key;
-import org.apache.openejb.config.rules.KeyType;
-import org.apache.openejb.config.rules.Keys;
-import org.apache.openejb.config.rules.ValidationRunner;
+import org.apache.openejb.config.AppModule;
+import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.ManagedBean;
 import org.apache.openejb.jee.MessageDrivenBean;
