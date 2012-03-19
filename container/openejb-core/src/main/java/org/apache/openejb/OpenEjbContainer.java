@@ -45,7 +45,6 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.OptionsLog;
 import org.apache.openejb.util.ServiceManagerProxy;
-import org.apache.webbeans.inject.OWBInjector;
 import org.apache.xbean.naming.context.ContextFlyweight;
 
 import javax.ejb.EJBException;
@@ -84,14 +83,11 @@ public class OpenEjbContainer extends EJBContainer {
 
     private static OpenEjbContainer instance;
 
-    private final AppContext appContext;
-
     private ServiceManagerProxy serviceManager;
     private Options options;
     private OpenEjbContainer.GlobalContext globalJndiContext;
 
     private OpenEjbContainer(Map<?, ?> map, AppContext appContext) {
-        this.appContext = appContext;
         this.globalJndiContext = new GlobalContext(appContext.getGlobalJndiContext());
 
         final Properties properties = new Properties();
@@ -131,24 +127,15 @@ public class OpenEjbContainer extends EJBContainer {
 
         if (context == null) throw new NoInjectionMetaDataException(clazz.getName());
 
-        final InjectionProcessor processor = new InjectionProcessor(object, context.getInjections(), context.getJndiContext());
-
         try {
-            OWBInjector beanInjector = new OWBInjector(appContext.getWebBeansContext());
-            beanInjector.inject(object);
-        } catch (Throwable t) {
-            // TODO handle this differently
-            // this is temporary till the injector can be rewritten
-        }
-
-        try {
-            return (T) processor.createInstance();
-        } catch (OpenEJBException e) {
+            context.inject(object, null);
+            return object;
+        } catch (Exception e) {
             throw new InjectionException(clazz.getName(), e);
         }
     }
 
-    private <T> BeanContext resolve(Class<?> clazz) {
+    private BeanContext resolve(Class<?> clazz) {
 
         final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
 
@@ -322,6 +309,7 @@ public class OpenEjbContainer extends EJBContainer {
                     try {
                         OpenEJB.destroy();
                     } catch (Exception e) {
+                        // no-op
                     }
                 }
             }
@@ -333,11 +321,7 @@ public class OpenEjbContainer extends EJBContainer {
 
                 final Class<?> clazz = loader.loadClass(caller);
 
-                if (clazz.isEnum()) return false;
-                if (clazz.isInterface()) return false;
-                if (Modifier.isAbstract(clazz.getModifiers())) return false;
-
-                return true;
+                return !clazz.isEnum() && !clazz.isInterface() && !Modifier.isAbstract(clazz.getModifiers());
             } catch (ClassNotFoundException e) {
                 return false;
             }
@@ -445,45 +429,44 @@ public class OpenEjbContainer extends EJBContainer {
             AppModule m;
 
             {
-                final Object obj = modules;
                 Application application = null;
                 AppModule appModule = new AppModule(this.getClass().getClassLoader(), appId);
 
                 {
-                    if (obj instanceof EjbJar) {
+                    if (modules instanceof EjbJar) {
 
-                        final EjbJar ejbJar = (EjbJar) obj;
+                        final EjbJar ejbJar = (EjbJar) modules;
                         appModule.getEjbModules().add(new EjbModule(ejbJar));
 
-                    } else if (obj instanceof EnterpriseBean) {
+                    } else if (modules instanceof EnterpriseBean) {
 
-                        final EnterpriseBean bean = (EnterpriseBean) obj;
+                        final EnterpriseBean bean = (EnterpriseBean) modules;
                         final EjbJar ejbJar = new EjbJar();
                         ejbJar.addEnterpriseBean(bean);
                         appModule.getEjbModules().add(new EjbModule(ejbJar));
 
-                    } else if (obj instanceof Application) {
+                    } else if (modules instanceof Application) {
 
-                        application = (Application) obj;
+                        application = (Application) modules;
 
-                    } else if (obj instanceof Connector) {
+                    } else if (modules instanceof Connector) {
 
-                        final Connector connector = (Connector) obj;
+                        final Connector connector = (Connector) modules;
                         appModule.getConnectorModules().add(new ConnectorModule(connector));
 
-                    } else if (obj instanceof Persistence) {
+                    } else if (modules instanceof Persistence) {
 
-                        final Persistence persistence = (Persistence) obj;
+                        final Persistence persistence = (Persistence) modules;
                         appModule.getPersistenceModules().add(new PersistenceModule("", persistence));
 
-                    } else if (obj instanceof PersistenceUnit) {
+                    } else if (modules instanceof PersistenceUnit) {
 
-                        final PersistenceUnit unit = (PersistenceUnit) obj;
+                        final PersistenceUnit unit = (PersistenceUnit) modules;
                         appModule.getPersistenceModules().add(new PersistenceModule("", new Persistence(unit)));
 
-                    } else if (obj instanceof Beans) {
+                    } else if (modules instanceof Beans) {
 
-                        final Beans beans = (Beans) obj;
+                        final Beans beans = (Beans) modules;
                         final EjbModule ejbModule = new EjbModule(new EjbJar());
                         ejbModule.setBeans(beans);
                         appModule.getEjbModules().add(ejbModule);
@@ -520,14 +503,9 @@ public class OpenEjbContainer extends EJBContainer {
         }
 
         private static boolean isOtherProvider(Map<?, ?> properties) {
-            Object provider = properties.get(EJBContainer.PROVIDER);
-
-            if (provider != null && !provider.equals(OpenEjbContainer.class) && !provider.equals(OpenEjbContainer.class.getName())) {
-
-                return true;
-
-            }
-            return false;
+            final Object provider = properties.get(EJBContainer.PROVIDER);
+            return provider != null && !provider.equals(OpenEjbContainer.class) && !provider.equals(OpenEjbContainer.class.getName())
+                    && !"openejb".equals(provider);
         }
 
         private boolean match(String s, File file) {
