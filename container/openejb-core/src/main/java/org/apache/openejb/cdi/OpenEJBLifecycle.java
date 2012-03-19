@@ -402,7 +402,9 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             this.contextsService.destroy(endObject);
 
             //Unbind BeanManager
-            jndiService.unbind(WebBeansConstants.WEB_BEANS_MANAGER_JNDI_NAME);
+            if (jndiService != null) {
+                jndiService.unbind(WebBeansConstants.WEB_BEANS_MANAGER_JNDI_NAME);
+            }
 
             //Free all plugin resources
             webBeansContext.getPluginLoader().shutDown();
