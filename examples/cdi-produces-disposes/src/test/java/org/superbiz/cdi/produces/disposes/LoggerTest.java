@@ -22,7 +22,6 @@ import org.junit.Test;
 
 import javax.ejb.embeddable.EJBContainer;
 import javax.inject.Inject;
-import javax.naming.Context;
 
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertFalse;
@@ -33,13 +32,13 @@ public class LoggerTest {
     @Inject
     Logger logger;
 
-    private Context ctxt;
+    private EJBContainer container;
 
     @Before
     public void setUp() {
         try {
-            ctxt = EJBContainer.createEJBContainer().getContext();
-            ctxt.bind("inject", this);
+            container = EJBContainer.createEJBContainer();
+            container.getContext().bind("inject", this);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -48,8 +47,8 @@ public class LoggerTest {
     @After
     public void cleanUp() {
         try {
-            ctxt.unbind("inject");
-            ctxt.close();
+            container.getContext().unbind("inject");
+            container.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
