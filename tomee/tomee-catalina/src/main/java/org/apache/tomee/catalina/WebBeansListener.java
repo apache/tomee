@@ -24,7 +24,6 @@ import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.conversation.ConversationManager;
 import org.apache.webbeans.el.ELContextStore;
 import org.apache.webbeans.logger.WebBeansLogger;
-import org.apache.webbeans.spi.ContainerLifecycle;
 import org.apache.webbeans.spi.FailOverService;
 import org.apache.webbeans.util.WebBeansUtil;
 import org.apache.webbeans.web.context.WebContextsService;
@@ -58,7 +57,6 @@ public class WebBeansListener implements ServletContextListener, ServletRequestL
     /**
      * Manages the container lifecycle
      */
-    protected ContainerLifecycle lifeCycle = null;
     protected WebBeansContext webBeansContext;
 
     /**
@@ -100,11 +98,9 @@ public class WebBeansListener implements ServletContextListener, ServletRequestL
                 elStore.destroyELContextStore();
             }
 
-            if (this.lifeCycle != null) {
-                this.lifeCycle.getContextService().endContext(RequestScoped.class, event);
-            }
 
-            this.cleanupRequestThreadLocals();
+            webBeansContext.getContextsService().endContext(RequestScoped.class, event);
+            cleanupRequestThreadLocals();
         } finally {
             ThreadSingletonServiceImpl.enter((WebBeansContext) oldContext);
         }
