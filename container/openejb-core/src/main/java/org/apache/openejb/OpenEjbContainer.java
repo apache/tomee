@@ -45,11 +45,14 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.OptionsLog;
 import org.apache.openejb.util.ServiceManagerProxy;
+import org.apache.webbeans.config.WebBeansContext;
+import org.apache.webbeans.inject.OWBInjector;
 import org.apache.xbean.naming.context.ContextFlyweight;
 
 import javax.ejb.EJBException;
 import javax.ejb.embeddable.EJBContainer;
 import javax.ejb.spi.EJBContainerProvider;
+import javax.enterprise.context.spi.CreationalContext;
 import javax.naming.Context;
 import javax.naming.Name;
 import javax.naming.NameNotFoundException;
@@ -86,9 +89,12 @@ public class OpenEjbContainer extends EJBContainer {
     private ServiceManagerProxy serviceManager;
     private Options options;
     private OpenEjbContainer.GlobalContext globalJndiContext;
+    private WebBeansContext webBeanContext;
+    private CreationalContext<Object> creationalContext = null;
 
     private OpenEjbContainer(Map<?, ?> map, AppContext appContext) {
-        this.globalJndiContext = new GlobalContext(appContext.getGlobalJndiContext());
+        webBeanContext = appContext.getWebBeansContext();
+        globalJndiContext = new GlobalContext(appContext.getGlobalJndiContext());
 
         final Properties properties = new Properties();
         properties.putAll(map);
@@ -121,16 +127,30 @@ public class OpenEjbContainer extends EJBContainer {
 
         assert object != null;
 
+        if (creationalContext != null) {
+            creationalContext.release();
+            creationalContext = null;
+        }
+
         final Class<?> clazz = object.getClass();
 
         final BeanContext context = resolve(clazz);
 
         if (context == null) throw new NoInjectionMetaDataException(clazz.getName());
 
+        final InjectionProcessor processor = new InjectionProcessor(object, context.getInjections(), context.getJndiContext());
+
         try {
-            context.inject(object, null);
-            return object;
-        } catch (Exception e) {
+            final OWBInjector beanInjector = new OWBInjector(webBeanContext);
+            beanInjector.inject(object);
+        } catch (Throwable t) {
+            // TODO handle this differently
+            // this is temporary till the injector can be rewritten
+        }
+
+        try {
+            return (T) processor.createInstance();
+        } catch (OpenEJBException e) {
             throw new InjectionException(clazz.getName(), e);
         }
     }
@@ -562,6 +582,28 @@ public class OpenEjbContainer extends EJBContainer {
         public void bind(String name, Object obj) throws NamingException {
             if (name != null && "inject".equals(name)) inject(obj);
             else super.bind(name, obj);
+        }
+
+        @Override
+        public void unbind(Name name) throws NamingException {
+            if (name.size() == 1 && "inject".equals(name.get(0))) {
+                if (creationalContext != null) {
+                    creationalContext.release();
+                }
+            } else {
+                super.unbind(name);
+            }
+        }
+
+        @Override
+        public void unbind(String name) throws NamingException {
+            if (name != null && "inject".equals(name)) {
+                if (creationalContext != null) {
+                    creationalContext.release();
+                }
+            } else {
+                super.unbind(name);
+            }
         }
     }
 
