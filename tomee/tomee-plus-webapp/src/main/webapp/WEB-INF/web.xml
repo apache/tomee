@@ -19,34 +19,54 @@
 <web-app xmlns="http://java.sun.com/xml/ns/javaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
-         version="3.0">
+         version="3.0" metadata-complete="true">
 
-  <display-name>OpenEJB Loader Application</display-name>
 
-  <servlet>
-    <servlet-name>LoaderServlet</servlet-name>
-    <servlet-class>org.apache.tomee.loader.LoaderServlet</servlet-class>
-    <load-on-startup>0</load-on-startup>
-  </servlet>
+    <display-name>OpenEJB Loader Application</display-name>
 
-  <servlet>
-    <servlet-name>ServerServlet</servlet-name>
-    <servlet-class>org.apache.openejb.server.httpd.ServerServlet</servlet-class>
-  </servlet>
+    <servlet>
+        <servlet-name>LoaderServlet</servlet-name>
+        <servlet-class>org.apache.tomee.loader.LoaderServlet</servlet-class>
+        <load-on-startup>0</load-on-startup>
+    </servlet>
 
-  <servlet>
-    <servlet-name>InstallerServlet</servlet-name>
-    <servlet-class>org.apache.tomee.installer.InstallerServlet</servlet-class>
-  </servlet>
+    <servlet>
+        <servlet-name>ServerServlet</servlet-name>
+        <servlet-class>org.apache.openejb.server.httpd.ServerServlet</servlet-class>
+    </servlet>
 
-  <servlet-mapping>
-    <servlet-name>ServerServlet</servlet-name>
-    <url-pattern>/ejb/*</url-pattern>
-  </servlet-mapping>
+    <servlet>
+        <servlet-name>InstallerServlet</servlet-name>
+        <servlet-class>org.apache.tomee.installer.InstallerServlet</servlet-class>
+    </servlet>
 
-  <servlet-mapping>
-    <servlet-name>InstallerServlet</servlet-name>
-    <url-pattern>/installer</url-pattern>
-  </servlet-mapping>
+    <servlet>
+        <servlet-name>WsJndi</servlet-name>
+        <servlet-class>org.apache.tomee.loader.servlet.JndiServlet</servlet-class>
+    </servlet>
 
+    <servlet>
+        <servlet-name>WsTest</servlet-name>
+        <servlet-class>org.apache.tomee.loader.servlet.TestServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ServerServlet</servlet-name>
+        <url-pattern>/ejb/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>InstallerServlet</servlet-name>
+        <url-pattern>/installer</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>WsJndi</servlet-name>
+        <url-pattern>/ws/jndi/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>WsTest</servlet-name>
+        <url-pattern>/ws/test/*</url-pattern>
+    </servlet-mapping>
 </web-app>

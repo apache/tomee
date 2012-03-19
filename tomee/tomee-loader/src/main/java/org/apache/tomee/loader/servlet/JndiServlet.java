@@ -30,7 +30,6 @@ import javax.naming.NameClassPair;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,7 +39,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@WebServlet(name = "jndi", urlPatterns = "/ws/jndi", asyncSupported = false)
 public class JndiServlet extends HttpServlet {
 
     @Override
@@ -137,7 +135,7 @@ public class JndiServlet extends HttpServlet {
 
 
     private String getStr(Object value) {
-        if(value == null) {
+        if (value == null) {
             return null;
         }
         return String.valueOf(value);
