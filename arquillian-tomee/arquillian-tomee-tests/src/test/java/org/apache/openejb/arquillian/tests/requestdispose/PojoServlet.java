@@ -17,7 +17,6 @@
 
 package org.apache.openejb.arquillian.tests.requestdispose;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -27,7 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @WebServlet(name = "producer dispose servlet", urlPatterns = "/test")
-@RequestScoped
 public class PojoServlet extends HttpServlet {
     @Inject
     private Pojo foo;
