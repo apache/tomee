@@ -49,11 +49,15 @@ public class WebModule {
         this(ShrinkWrap.create(WebArchive.class, name));
     }
 
-    public WebModule(Class<?> clazz) {
-        this(clazz, clazz.getSimpleName() + ".war");
+    /**
+     * @param clazz class used to extract the package to include in the webarchive
+     * @param excluded list of excluded files (will not be in the webarchive) contained in the selected package
+     */
+    public WebModule(final Class<?> clazz, final Class<?>... excluded) {
+        this(clazz, clazz.getSimpleName() + ".war", excluded);
     }
 
-    public WebModule(Class<?> clazz, String appName) {
+    public WebModule(Class<?> clazz, String appName, final Class<?>... excluded) {
         this(appName);
 
         final URL archiveURL;
@@ -78,9 +82,20 @@ public class WebModule {
                 if (name.endsWith(".xml")) {
                     this.archive.add(new Named("WEB-INF/" + name, new UrlAsset(url)));
                 } else {
-                    final String path = url.getPath();
-                    final String relativePath = path.substring(path.indexOf(packageName));
-                    this.archive.add(new Named("WEB-INF/classes/" + relativePath, new UrlAsset(url)));
+                    boolean keep = true;
+                    if (excluded != null) {
+                        for (Class<?> excludedClazz : excluded) {
+                            if (name.equals(excludedClazz.getSimpleName().concat(".class"))) {
+                                keep = false;
+                            }
+                        }
+                    }
+
+                    if (keep) {
+                        final String path = url.getPath();
+                        final String relativePath = path.substring(path.indexOf(packageName));
+                        this.archive.add(new Named("WEB-INF/classes/" + relativePath, new UrlAsset(url)));
+                    }
                 }
             }
         } catch (IOException e) {

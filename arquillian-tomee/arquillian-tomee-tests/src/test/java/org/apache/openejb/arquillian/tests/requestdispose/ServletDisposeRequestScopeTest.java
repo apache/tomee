@@ -49,7 +49,8 @@ public class ServletDisposeRequestScopeTest {
 
     @Deployment(testable = false)
     public static WebArchive createDeployment() {
-        return new WebModule(ServletDisposeRequestScopeTest.class).getArchive()
+        return new WebModule(ServletDisposeRequestScopeTest.class, ServletDisposeRequestScopeTest.class)
+                .getArchive()
                 .setWebXML(new StringAsset(Descriptors.create(WebAppDescriptor.class)
                         .version("3.0").exportAsString()))
                 .addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
