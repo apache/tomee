@@ -400,22 +400,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 }
             }
 
-            setInitParameter(context, "org.apache.myfaces.PRETTY_HTML", "true");
-            setInitParameter(context, "org.apache.myfaces.ALLOW_JAVASCRIPT", "true");
-            setInitParameter(context, "org.apache.myfaces.RENDER_CLEAR_JAVASCRIPT_FOR_BUTTON", "false");
-            setInitParameter(context, "org.apache.myfaces.RENDER_HIDDEN_FIELDS_FOR_LINK_PARAMS", "false");
-            setInitParameter(context, "org.apache.myfaces.SAVE_FORM_SUBMIT_LINK_IE", "false");
-            setInitParameter(context, "org.apache.myfaces.READONLY_AS_DISABLED_FOR_SELECTS", "true");
-            setInitParameter(context, "org.apache.myfaces.RENDER_VIEWSTATE_ID", "true");
-            setInitParameter(context, "org.apache.myfaces.STRICT_XHTML_LINKS", "true");
-            setInitParameter(context, "org.apache.myfaces.RENDER_FORM_SUBMIT_SCRIPT_INLINE", "false");
-            setInitParameter(context, "org.apache.myfaces.CONFIG_REFRESH_PERIOD", "2");
-            setInitParameter(context, "org.apache.myfaces.VIEWSTATE_JAVASCRIPT", "false");
-            setInitParameter(context, "org.apache.myfaces.REFRESH_TRANSIENT_BUILD_ON_PSS", "auto");
-            setInitParameter(context, "org.apache.myfaces.REFRESH_TRANSIENT_BUILD_ON_PSS_PRESERVE_STATE", "false");
-            setInitParameter(context, "org.apache.myfaces.VALIDATE_XML", "false");
-            setInitParameter(context, "org.apache.myfaces.WRAP_SCRIPT_CONTENT_WITH_XML_COMMENT_TAG", "true");
-            setInitParameter(context, "org.apache.myfaces.DEBUG_PHASE_LISTENER", "false");
+            setInitParameter(context, "org.apache.myfaces.LOG_WEB_CONTEXT_PARAMS", "false");
         }
     }
 
