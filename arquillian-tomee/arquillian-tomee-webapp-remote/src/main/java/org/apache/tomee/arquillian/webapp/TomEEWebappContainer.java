@@ -116,6 +116,10 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
                 write(logging, new File(openejbHome, "conf" + s + "logging.properties"));
             }
 
+            if (configuration.isRemoveUnusedWebapps()) {
+                Setup.removeUselessWebapps(openejbHome);
+            }
+
             if (false) {
                 Map<Object, Object> map = new TreeMap(System.getProperties());
                 for (Map.Entry<Object, Object> entry : map.entrySet()) {

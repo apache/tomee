@@ -30,6 +30,7 @@ public class TomEEWebappConfiguration extends TomEEConfiguration {
     private String artifactId = "tomee-webapp";
     private String version = "1.0.0-beta-3-SNAPSHOT";
     private String type = "war";
+    private boolean removeUnusedWebapps = true;
 
     public String getGroupId() {
         return groupId;
@@ -77,4 +78,11 @@ public class TomEEWebappConfiguration extends TomEEConfiguration {
         this.tomcatVersion = tomcatVersion;
     }
 
+    public boolean isRemoveUnusedWebapps() {
+        return removeUnusedWebapps;
+    }
+
+    public void setRemoveUnusedWebapps(boolean removeUnusedWebapps) {
+        this.removeUnusedWebapps = removeUnusedWebapps;
+    }
 }
