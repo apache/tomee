@@ -33,6 +33,7 @@
     <module>tomee-loader</module>
     <module>tomee-catalina</module>
     <module>tomee-common</module>
+    <module>tomee-myfaces</module>
     <module>tomee-webapp</module>
     <module>tomee-plus-webapp</module>
     <module>tomee-webservices</module>

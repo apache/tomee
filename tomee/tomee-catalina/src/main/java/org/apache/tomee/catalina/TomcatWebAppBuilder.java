@@ -128,6 +128,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     private static final Digester CONTEXT_DIGESTER = createDigester();
     public static final String OPENEJB_WEBAPP_MODULE_ID = "openejb.webapp.moduleId";
     public static final String TOMEE_EAT_EXCEPTION_PROP = "tomee.eat-exception";
+    public static final String MYFACES_TOMEE_ANNOTATION_FINDER = "org.apache.tomee.myfaces.TomEEAnnotationProvider";
 
     /**
      * Context information for web applications
