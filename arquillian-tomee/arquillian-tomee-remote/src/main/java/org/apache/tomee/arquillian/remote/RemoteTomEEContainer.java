@@ -112,6 +112,10 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
 
         Setup.exportProperties(openejbHome, configuration);
 
+        if (configuration.isRemoveUnusedWebapps()) {
+            Setup.removeUselessWebapps(openejbHome);
+        }
+
         if (false) {
             Map<Object, Object> map = new TreeMap(System.getProperties());
             for (Map.Entry<Object, Object> entry : map.entrySet()) {

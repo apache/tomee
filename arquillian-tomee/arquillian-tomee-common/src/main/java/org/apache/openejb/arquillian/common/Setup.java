@@ -18,6 +18,7 @@ package org.apache.openejb.arquillian.common;
 
 import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.JarExtractor;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
 
 import java.io.BufferedReader;
@@ -177,5 +178,17 @@ public class Setup {
         }
 
         return tmpFile;
+    }
+
+    public static void removeUselessWebapps(final File openejbHome) {
+        final File webapps = new File(openejbHome, "webapps");
+        if (webapps.isDirectory()) {
+            for (File webapp : webapps.listFiles()) {
+                final String name = webapp.getName();
+                if (webapp.isDirectory() && !name.equals("openejb") && !name.equals("tomee")) {
+                    JarExtractor.delete(webapp);
+                }
+            }
+        }
     }
 }

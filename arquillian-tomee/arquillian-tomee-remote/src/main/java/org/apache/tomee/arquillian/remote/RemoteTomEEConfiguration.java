@@ -30,6 +30,7 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
     private String version = "1.0.0-beta-3-SNAPSHOT";
     private String classifier = "webprofile";
     private String type = "zip";
+    private boolean removeUnusedWebapps = true;
 
     public String getGroupId() {
         return groupId;
@@ -77,5 +78,13 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
 
         return String.format(format, getGroupId(), getArtifactId(), getVersion(), getType(), getClassifier());
 
+    }
+
+    public boolean isRemoveUnusedWebapps() {
+        return removeUnusedWebapps;
+    }
+
+    public void setRemoveUnusedWebapps(boolean removeUnusedWebapps) {
+        this.removeUnusedWebapps = removeUnusedWebapps;
     }
 }
