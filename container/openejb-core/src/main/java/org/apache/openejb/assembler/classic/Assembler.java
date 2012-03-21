@@ -924,8 +924,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         final MBeanServer server = LocalMBeanServer.get();
         try {
             final ObjectName leaf =  new ObjectNameBuilder("openejb.user.mbeans")
-                .set("group", clazz.getPackage().getName())
                 .set("application", id)
+                .set("group", clazz.getPackage().getName())
                 .set("name", clazz.getSimpleName())
                 .build();
 
