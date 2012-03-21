@@ -2151,12 +2151,20 @@ public class AnnotationDeployer implements DynamicDeployer {
                     if (remoteBean instanceof SessionBean) {
                         SessionBean sessionBean = (SessionBean) remoteBean;
 
+                        // add parents
+                        sessionBean.getParents().add(clazz.getName());
+                        if (!clazz.isInterface()) {
+                            for(Class<?> current = clazz.getSuperclass(); !current.equals(Object.class); current = current.getSuperclass()) {
+                                sessionBean.getParents().add(current.getName());
+                            }
+                        }
+
                         /*
-                         * @Remote
-                         * @Local
-                         * @WebService
-                         * @WebServiceProvider
-                         */
+                        * @Remote
+                        * @Local
+                        * @WebService
+                        * @WebServiceProvider
+                        */
                         processSessionInterfaces(sessionBean, clazz, ejbModule);
 
                         /*

@@ -16,23 +16,57 @@
  */
 package org.apache.openejb.config;
 
-import static org.apache.openejb.assembler.classic.EjbResolver.Scope.EJBJAR;
-import static org.apache.openejb.assembler.classic.EjbResolver.Scope.EAR;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.assembler.classic.*;
-import org.apache.openejb.jee.*;
+import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.assembler.classic.EjbJarInfo;
+import org.apache.openejb.assembler.classic.EjbLocalReferenceInfo;
+import org.apache.openejb.assembler.classic.EjbReferenceInfo;
+import org.apache.openejb.assembler.classic.EjbResolver;
+import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
+import org.apache.openejb.assembler.classic.EnvEntryInfo;
+import org.apache.openejb.assembler.classic.InjectableInfo;
+import org.apache.openejb.assembler.classic.InjectionInfo;
+import org.apache.openejb.assembler.classic.JndiEncInfo;
+import org.apache.openejb.assembler.classic.PersistenceContextReferenceInfo;
+import org.apache.openejb.assembler.classic.PersistenceUnitReferenceInfo;
+import org.apache.openejb.assembler.classic.PortRefInfo;
+import org.apache.openejb.assembler.classic.ReferenceLocationInfo;
+import org.apache.openejb.assembler.classic.ResourceEnvReferenceInfo;
+import org.apache.openejb.assembler.classic.ResourceReferenceInfo;
+import org.apache.openejb.assembler.classic.ServiceReferenceInfo;
+import org.apache.openejb.jee.EjbLocalRef;
+import org.apache.openejb.jee.EjbReference;
+import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.EnvEntry;
+import org.apache.openejb.jee.Injectable;
+import org.apache.openejb.jee.InjectionTarget;
+import org.apache.openejb.jee.JndiConsumer;
+import org.apache.openejb.jee.JndiReference;
+import org.apache.openejb.jee.MessageDestinationRef;
+import org.apache.openejb.jee.PersistenceContextRef;
+import org.apache.openejb.jee.PersistenceContextType;
+import org.apache.openejb.jee.PersistenceUnitRef;
+import org.apache.openejb.jee.PortComponentRef;
+import org.apache.openejb.jee.Property;
+import org.apache.openejb.jee.ResAuth;
+import org.apache.openejb.jee.ResourceEnvRef;
+import org.apache.openejb.jee.ResourceRef;
+import org.apache.openejb.jee.ServiceRef;
+import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
+import static org.apache.openejb.assembler.classic.EjbResolver.Scope.EAR;
+import static org.apache.openejb.assembler.classic.EjbResolver.Scope.EJBJAR;
 
 /**
  * @version $Rev$ $Date$
@@ -375,7 +409,7 @@ public class JndiEncInfoBuilder {
 
     private boolean isIntefaceLocalBean(String moduleId, String interfaceClassName) {
         EnterpriseBeanInfo beanInfo = getInterfaceBeanInfo(moduleId, interfaceClassName);
-        return isLocalBean(beanInfo) && beanInfo.ejbClass.equals(interfaceClassName);
+        return isLocalBean(beanInfo) && beanInfo.parents.contains(interfaceClassName);
     }
 
     private EnterpriseBeanInfo getInterfaceBeanInfo(String moduleId, String interfaceClassName) {
@@ -391,6 +425,15 @@ public class JndiEncInfoBuilder {
                         || interfaceClassName.equals(enterpriseBean.remote)
                         || (enterpriseBean.businessLocal != null && enterpriseBean.businessLocal.contains(interfaceClassName))
                         || (enterpriseBean.businessRemote != null && enterpriseBean.businessRemote.contains(interfaceClassName))) {
+                    return enterpriseBean;
+                }
+            }
+        }
+
+        // look if it is an abstract injection (local bean)
+        for (EjbJarInfo ejbJar : ejbJars) {
+            for (EnterpriseBeanInfo enterpriseBean : ejbJar.enterpriseBeans) {
+                if (enterpriseBean.parents.contains(interfaceClassName)) {
                     return enterpriseBean;
                 }
             }

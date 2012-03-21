@@ -631,6 +631,7 @@ public class EjbJarInfoBuilder {
         bean.localHome = s.getLocalHome();
         bean.local = s.getLocal();
         bean.proxy = s.getProxy();
+        bean.parents.addAll(s.getParents());
         bean.businessLocal.addAll(s.getBusinessLocal());
         bean.businessRemote.addAll(s.getBusinessRemote());
         TransactionType txType = s.getTransactionType();
