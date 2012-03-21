@@ -187,7 +187,7 @@ public class JndiEncBuilder {
             } else if (referenceInfo.ejbDeploymentId == null) {
                 reference = new LazyEjbReference(new Ref(referenceInfo), moduleUri, useCrossClassLoaderRef);
             } else {
-                String jndiName = "openejb/Deployment/" + JndiBuilder.format(referenceInfo.ejbDeploymentId, referenceInfo.interfaceClassName, InterfaceType.BUSINESS_REMOTE);
+                String jndiName = "openejb/Deployment/" + JndiBuilder.format(referenceInfo.ejbDeploymentId, referenceInfo.interfaceClassName, referenceInfo.localbean ? InterfaceType.LOCALBEAN : InterfaceType.BUSINESS_REMOTE);
                 if (useCrossClassLoaderRef && referenceInfo.externalReference) {
                     reference = new CrossClassLoaderJndiReference(jndiName);
                 } else {

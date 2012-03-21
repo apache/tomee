@@ -117,6 +117,9 @@ public class EjbResolver {
 
         if (bean.localbean) {
             addInterfaces(new Interfaces(bean.ejbClass, Type.LOCAL, bean.ejbDeploymentId));
+            for (String parent : bean.parents) {
+                addInterfaces(new Interfaces(parent, Type.LOCAL, bean.ejbDeploymentId));
+            }
         }
     }
 

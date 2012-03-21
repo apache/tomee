@@ -400,6 +400,13 @@ public class JndiBuilder {
 
                 optionalBind(bindings, ref, "openejb/Deployment/" + format(bean.getDeploymentID(), beanClass.getName(), InterfaceType.LOCALBEAN));
 
+                // if the user inject the EJB using a parent class
+                if (!bean.getBeanClass().isInterface()) {
+                    for(Class<?> clazz = bean.getBeanClass().getSuperclass(); !clazz.equals(Object.class); clazz = clazz.getSuperclass()) {
+                        optionalBind(bindings, ref, "openejb/Deployment/" + format(bean.getDeploymentID(), clazz.getName(), InterfaceType.LOCALBEAN));
+                    }
+                }
+
                 String internalName = "openejb/Deployment/" + format(bean.getDeploymentID(), beanClass.getName(), InterfaceType.BUSINESS_LOCALBEAN_HOME);
                 bind(internalName, ref, bindings, beanInfo, beanClass);
 

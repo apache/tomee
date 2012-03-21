@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.cdi;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.jee.Beans;
 import org.apache.openejb.jee.EjbJar;
@@ -31,8 +31,8 @@ import org.junit.runner.RunWith;
 import static junit.framework.Assert.assertTrue;
 
 @RunWith(ApplicationComposer.class)
-public class AbstractInjectionTest {
-    @EJB private AppCDI cdi;
+public class AbstractCDIInjectionTest {
+    @Inject private AppCDI cdi;
 
 
     @Module public EjbModule app() throws Exception {
@@ -64,7 +64,7 @@ public class AbstractInjectionTest {
     public static class AppJpaDAO extends PlcBaseJpaDAO {}
 
     public static class AppCDI {
-        @EJB
+        @Inject
         private PlcBaseDAO baseDao;
 
         public boolean ok() {

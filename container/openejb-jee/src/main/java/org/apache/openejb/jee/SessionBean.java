@@ -259,6 +259,9 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
     @XmlTransient
     private String proxy;
 
+    @XmlTransient
+    private Collection<String> parents = new ArrayList<String>(); // always needed so initialize it early
+
     public SessionBean() {
     }
 
@@ -905,5 +908,9 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
 
     public String getProxy() {
         return proxy;
+    }
+
+    public Collection<String> getParents() {
+        return parents;
     }
 }
