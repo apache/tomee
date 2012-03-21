@@ -46,11 +46,14 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
 
 
         if (beanContext.isLocalbean()) {
-            addApiType(beanContext.getBeanClass());
-            Class<?> current = beanContext.getBeanClass().getSuperclass();
-            while (!Object.class.equals(current) && Modifier.isAbstract(current.getModifiers())) {
-                addApiType(current);
-                current = current.getSuperclass();
+            final Class<?> clazz = beanContext.getBeanClass();
+            addApiType(clazz);
+            if (!clazz.isInterface()) {
+                Class<?> current = clazz.getSuperclass();
+                while (!Object.class.equals(current) && Modifier.isAbstract(current.getModifiers())) {
+                    addApiType(current);
+                    current = current.getSuperclass();
+                }
             }
         }
 
