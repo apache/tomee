@@ -35,6 +35,7 @@ public class SubjectServiceTest {
         final Properties properties = new Properties();
         properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
         properties.setProperty(EJBContainer.APP_NAME, "polling/api");
+        properties.setProperty(EJBContainer.PROVIDER, "openejb");
         container = EJBContainer.createEJBContainer(properties);
     }
 
