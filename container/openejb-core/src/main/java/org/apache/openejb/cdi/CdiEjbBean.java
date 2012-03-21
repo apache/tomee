@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.cdi;
 
+import java.lang.reflect.Modifier;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.assembler.classic.ProxyInterfaceResolver;
@@ -44,7 +45,14 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
         this.beanContext = beanContext;
 
 
-        if (beanContext.isLocalbean()) addApiType(beanContext.getBeanClass());
+        if (beanContext.isLocalbean()) {
+            addApiType(beanContext.getBeanClass());
+            Class<?> current = beanContext.getBeanClass().getSuperclass();
+            while (!Object.class.equals(current) && Modifier.isAbstract(current.getModifiers())) {
+                addApiType(current);
+                current = current.getSuperclass();
+            }
+        }
 
         addApiType(beanContext.getHomeInterface());
         addApiType(beanContext.getLocalHomeInterface());
