@@ -16,22 +16,20 @@
  */
 package org.apache.openejb.cdi;
 
-import java.lang.reflect.Modifier;
-import org.apache.openejb.BeanContext;
-import org.apache.openejb.BeanType;
-import org.apache.openejb.assembler.classic.ProxyInterfaceResolver;
-import org.apache.webbeans.config.WebBeansContext;
-import org.apache.webbeans.ejb.common.component.BaseEjbBean;
-
+import java.lang.reflect.Member;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import javax.ejb.Remove;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.SessionBeanType;
-import java.lang.reflect.Member;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
+import org.apache.openejb.BeanContext;
+import org.apache.openejb.BeanType;
+import org.apache.openejb.assembler.classic.ProxyInterfaceResolver;
+import org.apache.webbeans.config.WebBeansContext;
+import org.apache.webbeans.ejb.common.component.BaseEjbBean;
 
 public class CdiEjbBean<T> extends BaseEjbBean<T> {
     private final BeanContext beanContext;
@@ -43,25 +41,6 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
     public CdiEjbBean(BeanContext beanContext, WebBeansContext webBeansContext, Class beanClass) {
         super(beanClass, toSessionType(beanContext.getComponentType()), webBeansContext);
         this.beanContext = beanContext;
-
-
-        if (beanContext.isLocalbean()) {
-            final Class<?> clazz = beanContext.getBeanClass();
-            addApiType(clazz);
-            if (!clazz.isInterface()) {
-                Class<?> current = clazz.getSuperclass();
-                while (!Object.class.equals(current) && Modifier.isAbstract(current.getModifiers())) {
-                    addApiType(current);
-                    current = current.getSuperclass();
-                }
-            }
-        }
-
-        addApiType(beanContext.getHomeInterface());
-        addApiType(beanContext.getLocalHomeInterface());
-
-        for (Class clazz : beanContext.getBusinessLocalInterfaces()) addApiType(clazz);
-
         beanContext.set(Bean.class, this);
     }
 
@@ -129,6 +108,10 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
 
     public String getEjbName() {
         return this.beanContext.getEjbName();
+    }
+
+    public boolean needsBeanLocalViewAddedToTypes() {
+        return beanContext.isLocalbean();
     }
 
     @Override
