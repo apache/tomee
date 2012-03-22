@@ -21,6 +21,7 @@ import org.apache.xbean.finder.Annotated;
 import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.IAnnotationFinder;
 import org.apache.xbean.finder.archive.ClassesArchive;
+import org.apache.xbean.finder.archive.ClasspathArchive;
 
 import java.io.File;
 import java.lang.annotation.Annotation;
@@ -42,6 +43,10 @@ public class FinderFactory {
 
     public static IAnnotationFinder createFinder(DeploymentModule module) throws Exception {
         return get().create(module);
+    }
+
+    public static AnnotationFinder getFinder(ClassLoader classLoader, URL url) {
+        return new AnnotationFinder(ClasspathArchive.archive(classLoader, url));
     }
 
     public IAnnotationFinder create(DeploymentModule module) throws Exception {
