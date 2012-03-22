@@ -1,5 +1,6 @@
 ApacheJMeter
 XmlSchema-
+activation-
 activeio-
 activemq-
 aether-
@@ -82,6 +83,7 @@ log4j-
 logkit-
 maven-
 mbean-annotation-api-
+mimepull-
 mina-
 myfaces-api
 myfaces-impl
@@ -125,6 +127,7 @@ webbeans-ee
 webbeans-ejb
 webbeans-impl
 webbeans-spi
+woodstox-core-asl-
 wsdl4j-
 wss4j-
 wstx-asl-
@@ -134,5 +137,7 @@ xercesImpl-
 xml-apis-
 xml-resolver-
 xmlrpc-
+xmlschema-
 xmlsec-
+xmltooling-
 xmlunit-

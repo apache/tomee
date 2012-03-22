@@ -16,13 +16,6 @@
  */
 package org.apache.openejb.config;
 
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.xbean.finder.Annotated;
-import org.apache.xbean.finder.AnnotationFinder;
-import org.apache.xbean.finder.IAnnotationFinder;
-import org.apache.xbean.finder.archive.ClassesArchive;
-import org.apache.xbean.finder.archive.ClasspathArchive;
-
 import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -30,11 +23,20 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.xbean.finder.Annotated;
+import org.apache.xbean.finder.AnnotationFinder;
+import org.apache.xbean.finder.IAnnotationFinder;
+import org.apache.xbean.finder.archive.ClassesArchive;
+import org.apache.xbean.finder.archive.ClasspathArchive;
 
 public class FinderFactory {
 
     private static final FinderFactory factory = new FinderFactory();
+    private static final Map<ClassLoader, IAnnotationFinder> FINDERS = new HashMap<ClassLoader, IAnnotationFinder>();
 
     private static FinderFactory get() {
         FinderFactory factory = SystemInstance.get().getComponent(FinderFactory.class);
@@ -47,6 +49,13 @@ public class FinderFactory {
 
     public static AnnotationFinder getFinder(ClassLoader classLoader, URL url) {
         return new AnnotationFinder(ClasspathArchive.archive(classLoader, url));
+    }
+
+    public static IAnnotationFinder getFinder(final ClassLoader classLoader) {
+        if (FINDERS.containsKey(classLoader)) {
+            return FINDERS.get(classLoader);
+        }
+        return null; // means not found, another method should be called to built it
     }
 
     public IAnnotationFinder create(DeploymentModule module) throws Exception {
@@ -81,6 +90,8 @@ public class FinderFactory {
         } else {
             finder = new AnnotationFinder(new ClassesArchive()).link();
         }
+
+        FINDERS.put(module.getClassLoader(), finder);
         return new ModuleLimitedFinder(finder);
     }
 
