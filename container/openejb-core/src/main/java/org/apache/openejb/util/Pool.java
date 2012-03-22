@@ -113,7 +113,7 @@ public class Pool<T> {
 
     public Pool start() {
         if (timer.compareAndSet(null, new Timer("PoolEviction@" + hashCode(), true))) {
-            timer.get().scheduleAtFixedRate(sweeper, 0, this.sweepInterval);
+            timer.get().scheduleAtFixedRate(sweeper, this.sweepInterval, this.sweepInterval);
         }
         return this;
     }
@@ -132,7 +132,7 @@ public class Pool<T> {
     private Executor createExecutor() {
         return new ThreadPoolExecutor(5, 10,
                                       0L, TimeUnit.SECONDS,
-                                      new LinkedBlockingQueue<Runnable>(), new DaemonThreadFactory("o.a.openejb.util.Pool", hashCode()));
+                                      new LinkedBlockingQueue<Runnable>(), new DaemonThreadFactory("org.apache.openejb.util.Pool", hashCode()));
     }
 
     private void greater(String maxName, long max, String minName, long min) {
