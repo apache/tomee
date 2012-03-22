@@ -16,23 +16,23 @@
  */
 package org.apache.openejb.core.stateless;
 
-import junit.framework.TestCase;
-import org.apache.openejb.api.Monitor;
-import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.SecurityServiceInfo;
-import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
-import org.apache.openejb.assembler.classic.TransactionServiceInfo;
-import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.core.ivm.naming.InitContextFactory;
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.StatelessBean;
-import org.apache.openejb.test.util.Asserts;
-
+import java.io.Flushable;
+import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.TreeMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
-import javax.annotation.PostConstruct;
-import javax.ejb.SessionContext;
 import javax.ejb.ConcurrentAccessException;
+import javax.ejb.SessionContext;
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanAttributeInfo;
@@ -44,21 +44,17 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
 import javax.naming.InitialContext;
-import java.io.Flushable;
-import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Date;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.text.SimpleDateFormat;
-import java.text.DateFormat;
+import junit.framework.TestCase;
+import org.apache.openejb.api.Monitor;
+import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.SecurityServiceInfo;
+import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
+import org.apache.openejb.assembler.classic.TransactionServiceInfo;
+import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.core.ivm.naming.InitContextFactory;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.StatelessBean;
+import org.apache.openejb.test.util.Asserts;
 
 public class StatelessPoolStatsTest extends TestCase {
     private final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
@@ -72,6 +68,7 @@ public class StatelessPoolStatsTest extends TestCase {
         Properties properties = new Properties();
         properties.setProperty("AccessTimeout", "100");
         properties.setProperty("MaxSize", "15");
+        properties.setProperty("SweepInterval", "10 ms");
         properties.setProperty("MinSize", "3");
         properties.setProperty("StrictPooling", "true");
 
@@ -132,7 +129,7 @@ public class StatelessPoolStatsTest extends TestCase {
 
 
         // The hardest part, check the values of each, PoolVersion is AtomicaInteger, *.Latest are time-sensitive, so not verified.
-        Map<String, Object> expectedAttributesValue = new HashMap<String, Object>();
+        Map<String, Object> expectedAttributesValue = new TreeMap<String, Object>();
         expectedAttributesValue.put("AccessTimeouts", (long) 0);
         expectedAttributesValue.put("Aged", (long) 0);
         expectedAttributesValue.put("AvailablePermits", 15);
@@ -156,15 +153,16 @@ public class StatelessPoolStatsTest extends TestCase {
         expectedAttributesValue.put("ReplaceAged", true);
         expectedAttributesValue.put("ReplaceFlushed", false);
         expectedAttributesValue.put("Replaced", (long) 0);
-        expectedAttributesValue.put("SweepInterval", (long) 300000);
-        expectedAttributesValue.put("Sweeps", (long) 1);
+        expectedAttributesValue.put("SweepInterval", (long) 10);
+        // expectedAttributesValue.put("Sweeps", (long) 1);
         expectedAttributesValue.put("StrictPooling", true);
 
         List<MBeanAttributeInfo> actualAttributes = new ArrayList<MBeanAttributeInfo>();
-        Map<String, Object> actualAttributesValue = new HashMap<String, Object>();
+        Map<String, Object> actualAttributesValue = new TreeMap<String, Object>();
         for (MBeanAttributeInfo info : poolMBeanInfo.getAttributes()) {
             actualAttributes.add(info);
-            if (!info.getName().endsWith(".Latest") && !info.getName().endsWith(".LatestTime")) {
+            if (!info.getName().endsWith(".Latest") && !info.getName().endsWith(".LatestTime")
+                    && !info.getName().equals("Sweeps")) {
                 actualAttributesValue.put(info.getName(), server.getAttribute(objectName, info.getName()));
             }
         }
@@ -471,7 +469,7 @@ public class StatelessPoolStatsTest extends TestCase {
      */
     public void testSweeps() throws Exception {
     	Properties properties = new Properties();
-    	properties.setProperty("SweepInterval", "100");
+    	properties.setProperty("SweepInterval", "75ms");
 
         Date expectedDate = new Date(); // now
 
