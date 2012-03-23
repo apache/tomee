@@ -26,7 +26,7 @@ import java.util.Properties;
 
 public abstract class AbstractCommand {
     protected StreamManager streamManager;
-    protected  String command;
+    protected String command;
 
     public abstract void execute(final String cmd);
 
