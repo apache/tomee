@@ -46,6 +46,7 @@ import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.ClassListInfo;
 import org.apache.openejb.assembler.classic.ConnectorInfo;
 import org.apache.openejb.assembler.classic.DeploymentExceptionManager;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
@@ -625,7 +626,11 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             }
 
             // save jsf stuff
-            jsfClasses.put(standardContext.getLoader().getClassLoader(), webAppInfo.jsfAnnotatedClasses);
+            final Map<String, Set<String>> scannedJsfClasses = new HashMap<String, Set<String>>();
+            for (ClassListInfo info : webAppInfo.jsfAnnotatedClasses) {
+                scannedJsfClasses.put(info.name, info.list);
+            }
+            jsfClasses.put(standardContext.getLoader().getClassLoader(), scannedJsfClasses);
 
             try {
 

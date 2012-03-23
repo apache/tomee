@@ -16,12 +16,10 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.List;
-import java.util.ArrayList;
 
 public class WebAppInfo extends CommonInfoObject {
     public String path;
@@ -40,5 +38,5 @@ public class WebAppInfo extends CommonInfoObject {
     public final List<PortInfo> portInfos = new ArrayList<PortInfo>();
     public final JndiEncInfo jndiEnc = new JndiEncInfo();
     public final List<ServletInfo> servlets = new ArrayList<ServletInfo>();
-    public final Map<String, Set<String>> jsfAnnotatedClasses = new HashMap<String, Set<String>>();
+    public final List<ClassListInfo> jsfAnnotatedClasses = new ArrayList<ClassListInfo>();
 }
