@@ -18,6 +18,7 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.assembler.classic.ClassListInfo;
 import org.apache.openejb.assembler.classic.ClientInfo;
 import org.apache.openejb.assembler.classic.ConnectorInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
@@ -318,7 +319,13 @@ class AppInfoBuilder {
             webAppInfo.restClass.addAll(webModule.getRestClasses());
             webAppInfo.ejbWebServices.addAll(webModule.getEjbWebServices());
             webAppInfo.ejbRestServices.addAll(webModule.getEjbRestServices());
-            webAppInfo.jsfAnnotatedClasses.putAll(webModule.getJsfAnnotatedClasses());
+
+            for (Map.Entry<String, Set<String>> entry : webModule.getJsfAnnotatedClasses().entrySet()) {
+                final ClassListInfo info = new ClassListInfo();
+                info.name = entry.getKey();
+                info.list.addAll(entry.getValue());
+                webAppInfo.jsfAnnotatedClasses.add(info);
+            }
 
             webAppInfo.host = webModule.getHost();
             webAppInfo.contextRoot = webModule.getContextRoot();
