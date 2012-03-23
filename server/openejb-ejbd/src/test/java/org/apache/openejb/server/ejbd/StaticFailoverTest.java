@@ -18,9 +18,6 @@ package org.apache.openejb.server.ejbd;
 
 import junit.framework.TestCase;
 import org.apache.openejb.OpenEJB;
-import org.apache.openejb.client.ConnectionPoolTimeoutException;
-import org.apache.openejb.client.Client;
-import org.apache.openejb.util.CountingLatch;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.config.ConfigurationFactory;
@@ -28,32 +25,31 @@ import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.server.ServiceDaemon;
-import org.apache.openejb.server.ServicePool;
-import org.apache.openejb.server.ServerServiceFilter;
 import org.apache.openejb.server.ServerService;
+import org.apache.openejb.server.ServerServiceFilter;
+import org.apache.openejb.server.ServiceDaemon;
 import org.apache.openejb.server.ServiceException;
+import org.apache.openejb.server.ServicePool;
+import org.apache.openejb.util.CountingLatch;
 
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
-import javax.ejb.ConcurrentAccessTimeoutException;
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import java.util.Properties;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.net.URI;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @version $Rev$ $Date$
  */
-public class FullPoolFailoverTest extends TestCase {
+public class StaticFailoverTest extends TestCase {
 
     private Counter counter;
 
@@ -67,175 +63,26 @@ public class FullPoolFailoverTest extends TestCase {
 
     public void testStatelessBeanTimeout() throws Exception {
 
-        setup(10, 20);
-
-        Client.addRetryCondition(ConcurrentAccessTimeoutException.class);
-
-        resume = new CountDownLatch(1);
-        paused = new CountingLatch(10);
-
-        // Do a business method...
-        Runnable r = new Runnable(){
-        	public void run(){
-                counter.hit();
-        	}
-        };
-
-        hold.add(red);
-        
-        for (int i = 0; i < 10; i++) {
-            Thread t = new Thread(r);
-            t.start();
-        }
-
-        // Wait for the beans to reach the start line
-        assertTrue("expected 10 invocations", paused.await(3000, TimeUnit.MILLISECONDS));
-
-        assertEquals(10, CounterBean.instances.get());
-        assertEquals(10, hits.size());
-
-        List<URI> expected = new ArrayList<URI>();
-        for (int i = 0; i < 10; i++) expected.add(red);
-
-        assertEquals(expected, hits);
-
-        // This one should failover to the blue server
-        try {
-            counter.hit();
-            fail("Expected ConcurrentAccessTimeoutException");
-        } catch (ConcurrentAccessTimeoutException e) {
-            // both "red" and "blue" servers are technically using the
-            // same stateless session bean pool, which is fully busy
-            // but ... this exception should have come from the "blue" server
-        }
-
-        // one more hit on red that should have failed over to blue
-        expected.add(red);
-        expected.add(blue);
-
-        assertEquals(expected, hits);
-
-        // A second invoke on this should now have using talking to blue
-        // then it should fail back to red
-        try {
-            counter.hit();
-            fail("Expected ConcurrentAccessTimeoutException");
-        } catch (ConcurrentAccessTimeoutException e) {
-        }
-
-        expected.add(blue);
-        expected.add(red);
-
-        assertEquals(expected, hits);
-
-        resume.countDown(); // go
-    }
-
-    public void testConnectionPoolTimeout() throws Exception {
-
-        setup(30, 10);
-
-        resume = new CountDownLatch(1);
-
-        // This is used to cause invoking threads to pause
-        // so all pools can be depleted
-        paused = new CountingLatch(10);
-
-        // Do a business method...
-        Runnable r = new Runnable(){
-        	public void run(){
-                counter.hit();
-        	}
-        };
-
-        hold.add(red);
-
-        List<URI> expected = new ArrayList<URI>();
-
-        for (int i = 0; i < 10; i++) {
-            expected.add(red);
-            Thread t = new Thread(r);
-            t.start();
-        }
-
-        // Wait for the beans to reach the start line
-        assertTrue("expected 10 invocations", paused.await(3000, TimeUnit.MILLISECONDS));
-
-        assertEquals(10, CounterBean.instances.get());
-        assertEquals(10, hits.size());
-        assertEquals(expected, hits);
-
-        // This one should failover to the blue server
-        URI uri = counter.hit();
-        assertEquals(blue, uri);
-
-        // the red pool is fully busy, so we should have failed over to blue
-        expected.add(blue);
-        assertEquals(expected, hits);
-
-        // Now hold blue as well
-        hold.add(blue);
-
-        for (int i = 0; i < 10; i++) {
-            paused.countUp();
-            expected.add(blue);
-            Thread t = new Thread(r);
-            t.start();
-        }
-
-        // Wait for the beans to reach the start line
-        assertTrue("expected 20 invocations", paused.await(3000, TimeUnit.MILLISECONDS));
-
-        // The extra 10 invocations should all have been on the "blue" server
-        assertEquals(expected, hits);
-
-        // A second invoke on this should now have using talking to blue
-        // then it should fail back to red
-        try {
-            counter.hit();
-            fail("Expected javax.ejb.EJBException");
-        } catch (javax.ejb.EJBException e) {
-        }
-
-        // there should be no hits on any server, both connection pools are fully busy
-        assertEquals(expected, hits);
-
-        resume.countDown(); // go
-    }
-
-
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-
-        for (ServiceDaemon daemon : daemons) daemon.stop();
-
-        OpenEJB.destroy();
-    }
-
-    private final List<ServiceDaemon> daemons = new ArrayList<ServiceDaemon>();
-
-    protected void setup(int statelessPoolSize, int connectionPoolSize) throws Exception {
         Properties initProps = new Properties();
         initProps.setProperty("openejb.deployments.classpath.include", "");
         initProps.setProperty("openejb.deployments.classpath.filter.descriptors", "true");
         OpenEJB.init(initProps, new ServerFederation());
 
-        System.setProperty(org.apache.openejb.client.SocketConnectionFactory.PROPERTY_POOL_SIZE, "" + connectionPoolSize);
+        System.setProperty(org.apache.openejb.client.SocketConnectionFactory.PROPERTY_POOL_SIZE, "" + 20);
 
         EjbServer ejbServer = new EjbServer();
         ejbServer.init(new Properties());
 
-        daemons.add(createServiceDaemon(connectionPoolSize, ejbServer, red));
-        daemons.add(createServiceDaemon(connectionPoolSize, ejbServer, blue));
-        
+        daemons.add(createServiceDaemon(20, ejbServer, red));
+        daemons.add(createServiceDaemon(20, ejbServer, blue));
+
         ConfigurationFactory config = new ConfigurationFactory();
         Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
 
         // containers
         StatelessSessionContainerInfo statelessContainerInfo = config.configureService(StatelessSessionContainerInfo.class);
         statelessContainerInfo.properties.setProperty("TimeOut", "100");
-        statelessContainerInfo.properties.setProperty("PoolSize", "" + statelessPoolSize);
+        statelessContainerInfo.properties.setProperty("PoolSize", "" + 10);
         statelessContainerInfo.properties.setProperty("MinSize", "2");
         statelessContainerInfo.properties.setProperty("StrictPooling", "true");
         assembler.createContainer(statelessContainerInfo);
@@ -254,7 +101,7 @@ public class FullPoolFailoverTest extends TestCase {
         CounterBean.instances.set(0);
         assembler.createApplication(config.configureApplication(ejbJar));
 
-        String failoverURI = "failover:sticky:";
+        String failoverURI = "failover:roundrobin:";
         failoverURI += "ejbd://127.0.0.1:" + daemons.get(0).getPort() + "?red,";
         failoverURI += "ejbd://127.0.0.1:" + daemons.get(1).getPort() + "?blue";
 
@@ -264,9 +111,28 @@ public class FullPoolFailoverTest extends TestCase {
         Context context = new InitialContext(props);
         counter = (Counter) context.lookup("CounterBeanRemote");
 
-        hold.clear();
-        hits.clear();
+        System.out.println(counter.hit());
+        System.out.println(counter.hit());
+        System.out.println(counter.hit());
+        System.out.println(counter.hit());
+        System.out.println(counter.hit());
+        System.out.println(counter.hit());
+        System.out.println(counter.hit());
+        System.out.println(counter.hit());
+        System.out.println(counter.hit());
+
     }
+
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+
+        for (ServiceDaemon daemon : daemons) daemon.stop();
+
+        OpenEJB.destroy();
+    }
+
+    private final List<ServiceDaemon> daemons = new ArrayList<ServiceDaemon>();
 
     private ServiceDaemon createServiceDaemon(int poolSize, EjbServer ejbServer, URI uri) throws ServiceException {
         ServiceIdentifier serviceIdentifier = new ServiceIdentifier(ejbServer, uri);

@@ -36,6 +36,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -51,13 +54,22 @@ import static org.junit.Assert.assertFalse;
  * service EJB requests.
  *
  */
-public class DedicatedRootServerTest {
+public class StickyConnectionStrategyTest {
+
+    static final Logger logger = Logger.getLogger("org.apache.openejb.client");
+    static {
+        final ConsoleHandler consoleHandler = new ConsoleHandler();
+        consoleHandler.setLevel(Level.FINER);
+        logger.addHandler(consoleHandler);
+        logger.setLevel(Level.FINER);
+        logger.setUseParentHandlers(false);
+    }
 
     @Test
     public void test() throws Exception {
 
         // To run in an IDE, uncomment and update this line
-        //System.setProperty("version", "4.0.0-beta-3-SNAPSHOT");
+//        System.setProperty("version", "4.0.0-beta-3-SNAPSHOT");
 
         final File zip = Repository.getArtifact("org.apache.openejb", "openejb-standalone", "zip");
         final File app = Repository.getArtifact("org.apache.openejb.itests", "failover-ejb", "jar");
@@ -86,6 +98,7 @@ public class DedicatedRootServerTest {
             multipoint.set("discoveryName", name);
             root = root1;
 
+            logger.info("Starting Root server");
             root.start();
         }
 
@@ -106,9 +119,11 @@ public class DedicatedRootServerTest {
             IO.copy(IO.read("<openejb><Deployments dir=\"apps/\"/></openejb>"), Files.path(home, "conf", "openejb.xml"));
 
             final StandaloneServer.ServerService ejbd = server.getServerService("ejbd");
+            ejbd.setBind("localhost");
             ejbd.setDisabled(false);
             ejbd.setPort(getAvailablePort());
             ejbd.setThreads(5);
+            ejbd.set("discovery", "ejb:ejbd://{bind}:{port}/" + name);
 
             final StandaloneServer.ServerService multipoint = server.getServerService("multipoint");
             multipoint.setPort(getAvailablePort());
@@ -117,6 +132,9 @@ public class DedicatedRootServerTest {
             multipoint.set("initialServers", "localhost:"+root.getServerService("multipoint").getPort());
 
             servers.put(name, server);
+
+            logger.info(String.format("Starting %s server", name));
+
             server.start(1, TimeUnit.MINUTES);
 
             invoke(name, server);
@@ -124,9 +142,11 @@ public class DedicatedRootServerTest {
 
         System.setProperty("openejb.client.requestretry", "true");
 
+        logger.info("Beginning Test");
+
         final Properties environment = new Properties();
         environment.put(Context.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName());
-        environment.put(Context.PROVIDER_URL, "ejbd://localhost:" + servers.values().iterator().next().getServerService("ejbd").getPort());
+        environment.put(Context.PROVIDER_URL, "ejbd://localhost:" + servers.values().iterator().next().getServerService("ejbd").getPort() + "/provider");
 
         final InitialContext context = new InitialContext(environment);
         final Calculator bean = (Calculator) context.lookup("CalculatorBeanRemote");
@@ -135,8 +155,12 @@ public class DedicatedRootServerTest {
         String previous = null;
         for (StandaloneServer ignored : servers.values()) {
 
+            logger.info("Looping");
+
             // What server are we talking to now?
             final String name = bean.name();
+
+            logger.info("Sticky request to " + name);
 
             // The root should not be serving apps
             assertFalse("root".equals(name));
@@ -145,26 +169,43 @@ public class DedicatedRootServerTest {
             if (previous != null) assertFalse(name.equals(previous));
             previous = name;
 
+            final int i = 1000;
+
+            logger.info(String.format("Performing %s invocations, expecting %s to be used for each invocation.", i, name));
+
             // Should be the same server for the next N calls
-            invoke(bean, 1000, name);
+            invoke(bean, i, name);
+
+            logger.info("Shutting down " + name);
 
             // Now let's kill that server
             servers.get(name).kill();
         }
 
-        System.out.println("All servers destroyed");
+        logger.info("All Servers Shutdown");
 
         try {
+            logger.info("Making one last request, expecting complete failover");
+
             final String name = bean.name();
             Assert.fail("Server should be destroyed: " + name);
         } catch (EJBException e) {
+            logger.info(String.format("Pass.  Request resulted in %s: %s", e.getCause().getClass().getSimpleName(), e.getMessage()));
             // good
         }
+
 
         // Let's start a server again and invocations should now succeed
         final Iterator<StandaloneServer> iterator = servers.values().iterator();
         iterator.next();
-        iterator.next().start(1, TimeUnit.MINUTES);
+
+        final StandaloneServer server = iterator.next();
+
+        logger.info(String.format("Starting %s server", server.getProperties().get("name")));
+
+        server.start(1, TimeUnit.MINUTES);
+
+        logger.info("Performing one more invocation");
 
         assertEquals(5, bean.sum(2, 3));
     }
@@ -172,7 +213,7 @@ public class DedicatedRootServerTest {
     private void invoke(String name, StandaloneServer server) throws NamingException {
         final Properties environment = new Properties();
         environment.put(Context.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName());
-        environment.put(Context.PROVIDER_URL, "ejbd://localhost:" + server.getServerService("ejbd").getPort());
+        environment.put(Context.PROVIDER_URL, "ejbd://localhost:" + server.getServerService("ejbd").getPort() + "/" + name);
 
         final InitialContext context = new InitialContext(environment);
         final Calculator bean = (Calculator) context.lookup("CalculatorBeanRemote");

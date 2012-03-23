@@ -64,6 +64,12 @@
       </openejb.osgi.export.pkg>
   </properties>
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -91,6 +97,30 @@
             <exclude>src/main/resources/META-INF/org.apache.openejb.client.IdentityResolver/*</exclude>
           </excludes>
         </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <tstamp>
+                  <format property="TSTAMP" pattern="hh:mm"/>
+                </tstamp>
+                <replace file="target/classes/openejb-client-version.properties"
+                         token="@DATE-REPLACED-BY-MAVEN@" value="${DSTAMP}"/>
+                <replace file="target/classes/openejb-client-version.properties"
+                         token="@TIME-REPLACED-BY-MAVEN@" value="${TSTAMP}"/>
+              </target>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

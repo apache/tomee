@@ -56,6 +56,7 @@ public class StandaloneServer {
     private boolean verbose = false;
     private OutputStream out = System.out;
     private Options options = new Options(properties);
+    private Context context = new Context();
 
     public StandaloneServer(File home) {
         this(home, home);
@@ -76,6 +77,17 @@ public class StandaloneServer {
 
         jvmOpts.add("-XX:+HeapDumpOnOutOfMemoryError");
         jvmOpts.add("-javaagent:" + javaagentJar.getAbsolutePath());
+    }
+
+    /**
+     * Used as a convenience for tracking objects associated
+     * with this server.  Does not affect the running server
+     * and none of these objects are in any way sent or part
+     * of the server itself.
+     * @return
+     */
+    public Context getContext() {
+        return context;
     }
 
     public ServerService getServerService(String string) {
@@ -133,6 +145,10 @@ public class StandaloneServer {
         public ServerService set(String name, String value) {
             properties.put(this.name + "." + name, value);
             return this;
+        }
+
+        public Object get(String name) {
+            return properties.get(this.name + "." + name);
         }
 
         public ServerService threads(int threads) {

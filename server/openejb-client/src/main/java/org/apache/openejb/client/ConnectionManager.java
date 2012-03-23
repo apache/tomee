@@ -16,6 +16,13 @@
  */
 package org.apache.openejb.client;
 
+import org.apache.openejb.client.event.ConnectionFactoryAdded;
+import org.apache.openejb.client.event.ConnectionFactoryRemoved;
+import org.apache.openejb.client.event.ConnectionFailed;
+import org.apache.openejb.client.event.ConnectionStrategyAdded;
+import org.apache.openejb.client.event.ConnectionStrategyFailed;
+import org.apache.openejb.client.event.Log;
+
 import java.io.IOException;
 import java.net.URI;
 import java.util.Properties;
@@ -31,26 +38,31 @@ public class ConnectionManager {
     static {
         SocketConnectionFactory ejbdFactory = new SocketConnectionFactory();
 
-        factories.register("default", ejbdFactory);
-        factories.register("ejbd", ejbdFactory);
-        factories.register("ejbds", ejbdFactory);
+        registerFactory("default", ejbdFactory);
+        registerFactory("ejbd", ejbdFactory);
+        registerFactory("ejbds", ejbdFactory);
 
         HttpConnectionFactory httpFactory = new HttpConnectionFactory();
-        factories.register("http", httpFactory);
-        factories.register("https", httpFactory);
+        registerFactory("http", httpFactory);
+        registerFactory("https", httpFactory);
 
-        factories.register("multicast", new MulticastConnectionFactory());
-        factories.register("failover", new FailoverConnectionFactory());
+        registerFactory("multicast", new MulticastConnectionFactory());
+        registerFactory("failover", new FailoverConnectionFactory());
         
-        strategies.register("sticky", new StickyConnectionStrategy());
-        strategies.register("random", new RandomConnectionStrategy());
-        strategies.register("roundrobin", new RoundRobinConnectionStrategy());
-        strategies.register("round-robin", strategies.get("roundrobin"));
-        strategies.register("default", strategies.get("sticky"));
+        registerStrategy("sticky", new StickyConnectionStrategy());
+        registerStrategy("sticky+random", new StickyConnectionStrategy(new RandomConnectionStrategy()));
+        registerStrategy("sticky+round", new StickyConnectionStrategy(new RoundRobinConnectionStrategy()));
+        registerStrategy("random", new RandomConnectionStrategy());
+        registerStrategy("roundrobin", new RoundRobinConnectionStrategy());
+        registerStrategy("round-robin", strategies.get("roundrobin"));
+        registerStrategy("default", strategies.get("sticky"));
     }
 
 
     public static Connection getConnection(ClusterMetaData cluster, ServerMetaData server, Request req) throws IOException {
+        if (cluster == null) throw new IllegalArgumentException("cluster cannot be null");
+        if (server == null) throw new IllegalArgumentException("server cannot be null");
+
         String name = cluster.getConnectionStrategy();
 
         if (req instanceof EJBRequest) {
@@ -58,41 +70,73 @@ public class ConnectionManager {
             final Properties p = ejbRequest.getEjbMetaData().getProperties();
             name = p.getProperty("openejb.client.connection.strategy", name);
         }
+
         if (name == null) name = "default";
 
         ConnectionStrategy strategy = strategies.get(name);
 
-        if (strategy == null) throw new IOException("Unsupported ConnectionStrategy  \"" + name + "\"");
+        try {
+            if (strategy == null) throw new UnsupportedConnectionStrategyException(name);
 
-        logger.fine("connect: strategy=" + name + ", uri=" + server.getLocation() + ", strategy-impl=" + strategy.getClass().getName());
-        return strategy.connect(cluster, server);
+            // On finest because this happens every invocation
+            logger.finest("connect: strategy=" + name + ", uri=" + server.getLocation() + ", strategy-impl=" + strategy.getClass().getName());
+
+            return strategy.connect(cluster, server);
+        } catch (IOException e) {
+            Client.fireEvent(new ConnectionStrategyFailed(strategy, cluster, server, e));
+            throw e;
+        }
     }
 
     public static Connection getConnection(URI uri) throws IOException {
+        if (uri == null) throw new IllegalArgumentException("uri cannot be null");
         String scheme = uri.getScheme();
 
         ConnectionFactory factory = factories.get(scheme);
 
-        if (factory == null) throw new IOException("Unsupported ConnectionFactory URI scheme  \"" + scheme + "\"");
+        try {
+            if (factory == null) {
+                throw new UnsupportedConnectionFactoryException(scheme);
+            }
 
-        logger.fine("connect: scheme=" + scheme + ", uri=" + uri + ", factory-impl=" + factory.getClass().getName());
-        return factory.getConnection(uri);
+            // On finest because this happens every invocation
+            logger.finest("connect: scheme=" + scheme + ", uri=" + uri + ", factory-impl=" + factory.getClass().getName());
+
+            return factory.getConnection(uri);
+        } catch (IOException e) {
+            Client.fireEvent(new ConnectionFailed(uri, e));
+            throw e;
+        }
     }
 
     public static void registerFactory(String scheme, ConnectionFactory factory) {
         factories.register(scheme, factory);
+        Client.fireEvent(new ConnectionFactoryAdded(scheme, factory));
     }
 
     public static ConnectionFactory unregisterFactory(String scheme) {
-        return factories.unregister(scheme);
+        final ConnectionFactory factory = factories.unregister(scheme);
+
+        if (factory != null){
+            Client.fireEvent(new ConnectionFactoryRemoved(scheme, factory));
+        }
+
+        return factory;
     }
 
     public static void registerStrategy(String scheme, ConnectionStrategy factory) {
         strategies.register(scheme, factory);
+        Client.fireEvent(new ConnectionStrategyAdded(scheme, factory));
     }
 
     public static ConnectionStrategy unregisterStrategy(String scheme) {
-        return strategies.unregister(scheme);
+        final ConnectionStrategy strategy = strategies.unregister(scheme);
+
+        if (strategy != null) {
+            Client.fireEvent(new ConnectionStrategyAdded(scheme, strategy));
+        }
+
+        return strategy;
     }
 
     /**
@@ -102,5 +146,19 @@ public class ConnectionManager {
      */
     public static void setFactory(ConnectionFactory factory) throws IOException {
         registerFactory("default", factory);
+    }
+
+    @Log(Log.Level.SEVERE)
+    public static class UnsupportedConnectionStrategyException extends IOException {
+        public UnsupportedConnectionStrategyException(String message) {
+            super(message);
+        }
+    }
+
+    @Log(Log.Level.SEVERE)
+    public static class UnsupportedConnectionFactoryException extends IOException {
+        public UnsupportedConnectionFactoryException(String message) {
+            super(message);
+        }
     }
 }
