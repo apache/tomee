@@ -30,7 +30,5 @@ public class UserSessionTest {
         final List<?> result = service.getJndi("");
         org.junit.Assert.assertNotNull(result);
         org.junit.Assert.assertFalse(result.isEmpty());
-
-        for()
     }
 }
