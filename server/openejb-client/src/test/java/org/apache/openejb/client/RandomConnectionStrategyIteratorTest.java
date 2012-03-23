@@ -56,12 +56,12 @@ public class RandomConnectionStrategyIteratorTest {
             Assert.assertTrue(found.contains(uri));
         }
 
-        Assert.assertFalse(
-                found.get(0).equals(uris[0]) &&
-                found.get(1).equals(uris[1]) &&
-                found.get(2).equals(uris[2]) &&
-                found.get(3).equals(uris[3])
-        );
+//        Assert.assertFalse(
+//                found.get(0).equals(uris[0]) &&
+//                found.get(1).equals(uris[1]) &&
+//                found.get(2).equals(uris[2]) &&
+//                found.get(3).equals(uris[3])
+//        );
     }
 
     private URI[] uris(String... strings) {
