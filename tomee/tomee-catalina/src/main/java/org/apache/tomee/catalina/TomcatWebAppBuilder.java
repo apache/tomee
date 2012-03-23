@@ -168,6 +168,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
      */
     private CoreContainerSystem containerSystem;
 
+    private Map<ClassLoader, Map<String, Set<String>>> jsfClasses = new HashMap<ClassLoader, Map<String, Set<String>>>();
+
     /**
      * Creates a new web application builder
      * instance.
@@ -621,6 +623,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             if (appContext == null) {
                 appContext = getContainerSystem().getAppContext(contextInfo.appInfo.appId);
             }
+
+            // save jsf stuff
+            jsfClasses.put(standardContext.getLoader().getClassLoader(), webAppInfo.jsfAnnotatedClasses);
 
             try {
 
@@ -1295,5 +1300,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             }
             return false;
         }
+    }
+
+    public Map<ClassLoader, Map<String, Set<String>>> getJsfClasses() {
+        return jsfClasses;
     }
 }

@@ -237,6 +237,16 @@ public class AnnotationDeployer implements DynamicDeployer {
     public static final Logger startupLogger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, "org.apache.openejb.util.resources");
     private static final ThreadLocal<DeploymentModule> currentModule = new ThreadLocal<DeploymentModule>();
     private static final Set<String> lookupMissing = new HashSet<String>(2);
+    private static final String[] JSF_CLASSES = new String[] {
+            "javax.faces.bean.ManagedBean",
+            "javax.faces.component.FacesComponent",
+            "javax.faces.component.behavior.FacesBehavior",
+            "javax.faces.convert.FacesConverter",
+            "javax.faces.event.NamedEvent",
+            "javax.faces.render.FacesBehaviorRenderer",
+            "javax.faces.render.FacesRenderer",
+            "javax.faces.validator.FacesValidator"
+    };
 
     public static final Set<String> knownResourceEnvTypes = new TreeSet<String>(asList(
             "javax.ejb.EJBContext",
@@ -1033,6 +1043,26 @@ public class AnnotationDeployer implements DynamicDeployer {
                         }
                     }
                 }
+            }
+
+            /*
+             * JSF
+             */
+            final ClassLoader classLoader = webModule.getClassLoader();
+            for (String jsfClass : JSF_CLASSES) {
+                final Class<? extends Annotation> clazz;
+                try {
+                    clazz = (Class<? extends Annotation>) classLoader.loadClass(jsfClass);
+                } catch (ClassNotFoundException e) {
+                    continue;
+                }
+
+                final List<Annotated<Class<?>>> found = finder.findMetaAnnotatedClasses(clazz);
+                final Set<String> convertedClasses = new HashSet<String>(found.size());
+                for (Annotated<Class<?>> annotated : found) {
+                    convertedClasses.add(annotated.get().getName());
+                }
+                webModule.getJsfAnnotatedClasses().put(jsfClass, convertedClasses);
             }
 
             return webModule;

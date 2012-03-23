@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-
 import org.apache.openejb.jee.FacesConfig;
 import org.apache.openejb.jee.TldTaglib;
 import org.apache.openejb.jee.WebApp;
@@ -51,6 +50,7 @@ public class WebModule extends Module implements WsModule, RESTModule {
     private final Set<String> ejbWebServices = new TreeSet<String>();
     private final Set<String> ejbRestServices = new TreeSet<String>();
     private final Set<String> restApplications = new TreeSet<String>();
+    private final Map<String, Set<String>> jsfAnnotatedClasses = new HashMap<String, Set<String>>();
 
     private ID id;
     
@@ -194,5 +194,9 @@ public class WebModule extends Module implements WsModule, RESTModule {
 
     public void setScannableUrls(List<URL> scannableUrls) {
         this.scannableUrls = scannableUrls;
+    }
+
+    public Map<String, Set<String>> getJsfAnnotatedClasses() {
+        return jsfAnnotatedClasses;
     }
 }
