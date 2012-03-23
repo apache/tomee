@@ -23,7 +23,8 @@ import org.apache.openejb.core.ivm.BaseEjbProxyHandler;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.proxy.ProxyManager;
-import org.apache.tomee.loader.dto.JndiDTO;
+import org.apache.tomee.loader.listener.UserSessionListener;
+import org.apache.tomee.loader.service.ServletsService;
 
 import javax.naming.Context;
 import javax.naming.NameClassPair;
@@ -33,8 +34,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +49,7 @@ public class JndiServlet extends HttpServlet {
         final String json;
         try {
             final Map<String, Object> result = new HashMap<String, Object>();
-            result.put("jndi", get());
+            result.put("jndi", get(req.getSession()));
             json = new Gson().toJson(result);
         } catch (NamingException e) {
             throw new ServletException(e);
@@ -56,88 +59,14 @@ public class JndiServlet extends HttpServlet {
         resp.getWriter().write(json);
     }
 
-    public List<JndiDTO> get() throws NamingException {
-        final List<JndiDTO> result = new ArrayList<JndiDTO>();
-        final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-        mountJndiList(result, containerSystem.getJNDIContext(), "java:global");
+    public List<Map<String, Object>> get(HttpSession session) throws NamingException {
+        final List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
 
-        return result;
-    }
-
-    private void mountJndiList(List<JndiDTO> jndi, Context context, String root) throws NamingException {
-        final NamingEnumeration namingEnumeration;
-        try {
-            namingEnumeration = context.list(root);
-        } catch (NamingException e) {
-            //not found?
-            return;
+        final ServletsService service = (ServletsService) session.getAttribute(UserSessionListener.USER_CONTEXT);
+        if (service == null) {
+            return Collections.emptyList(); //do nothing
         }
-        while (namingEnumeration.hasMoreElements()) {
-            final NameClassPair pair = (NameClassPair) namingEnumeration.next();
-            final String key = root + "/" + pair.getName();
-            final Object obj;
-            try {
-                obj = context.lookup(key);
-            } catch (NamingException e) {
-                //not found?
-                continue;
-            }
-
-            if (Context.class.isInstance(obj)) {
-                mountJndiList(jndi, Context.class.cast(obj), key);
-            } else {
-                final JndiDTO dto = new JndiDTO();
-
-                dto.path = key;
-                dto.name = pair.getName();
-                dto.value = getStr(obj);
-                dto.deploymentId = getDeploymentId(obj);
-
-                final BeanContext beanContext = getDeployment(dto.deploymentId);
-                dto.beanType = getStr(beanContext.getComponentType());
-
-                dto.remoteInterface = getStr(beanContext.getRemoteInterface());
-                dto.homeInterface = getStr(beanContext.getHomeInterface());
-                dto.beanCls = getStr(beanContext.getBeanClass());
-
-                dto.businessLocal = new ArrayList<String>();
-                populateClassList(dto.businessLocal, beanContext.getBusinessLocalInterfaces());
-
-                dto.businessRemote = new ArrayList<String>();
-                populateClassList(dto.businessRemote, beanContext.getBusinessRemoteInterfaces());
-
-                dto.primaryKeyCls = getStr(beanContext.getPrimaryKeyClass());
-
-                jndi.add(dto);
-            }
-        }
+        return service.getJndi("");
     }
 
-    private void populateClassList(List<String> list, List<Class> classes) {
-        if (classes == null) {
-            return;
-        }
-        for (Class<?> cls : classes) {
-            list.add(getStr(cls));
-        }
-    }
-
-    private BeanContext getDeployment(String deploymentID) {
-        ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-        BeanContext ejb = containerSystem.getBeanContext(deploymentID);
-        return ejb;
-    }
-
-    private String getDeploymentId(Object ejbObj) throws NamingException {
-        final BaseEjbProxyHandler handler = (BaseEjbProxyHandler) ProxyManager.getInvocationHandler(ejbObj);
-        return getStr(handler.deploymentID);
-    }
-
-
-    private String getStr(Object value) {
-        if (value == null) {
-            return null;
-        }
-        return String.valueOf(value);
-    }
 }

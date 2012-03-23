@@ -24,6 +24,10 @@
 
     <display-name>OpenEJB Loader Application</display-name>
 
+    <listener>
+        <listener-class>org.apache.tomee.loader.listener.UserSessionListener</listener-class>
+    </listener>
+
     <servlet>
         <servlet-name>LoaderServlet</servlet-name>
         <servlet-class>org.apache.tomee.loader.LoaderServlet</servlet-class>
