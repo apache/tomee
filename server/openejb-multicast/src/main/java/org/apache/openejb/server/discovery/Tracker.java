@@ -177,8 +177,8 @@ public class Tracker {
     });
 
     private void fireServiceRemovedEvent(final URI uri) {
-        if (debug()) {
-            log.debug(String.format("Removed Service{uri=%s}", uri));
+        if (log.isInfoEnabled()) {
+            log.info(String.format("Removed Service{uri=%s}", uri));
         }
 
         if (discoveryListener != null) {
@@ -198,8 +198,8 @@ public class Tracker {
     }
 
     private void fireServiceAddedEvent(final URI uri) {
-        if (debug()) {
-            log.debug(String.format("Added Service{uri=%s}", uri));
+        if (log.isInfoEnabled()) {
+            log.info(String.format("Added Service{uri=%s}", uri));
         }
 
         if (discoveryListener != null) {

@@ -16,78 +16,100 @@
  */
 package org.apache.openejb.client;
 
-import java.io.IOException;
+import org.apache.openejb.client.event.FailoverSelection;
+import org.apache.openejb.client.event.StickyFailoverSelection;
+
 import java.net.URI;
-import java.rmi.RemoteException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
 
-public class StickyConnectionStrategy implements ConnectionStrategy {
-    private static final Logger LOGGER = Logger.getLogger("OpenEJB.client");
-
-    public Connection connect(ClusterMetaData cluster, ServerMetaData server) throws IOException {
-        Set<URI> failed = Client.getFailed();
-
-        URI[] locations = cluster.getLocations();
-
-        if (locations.length == 0){
-            return connect(cluster, server.getLocation());
-        }
-
-        URI lastLocation = cluster.getLastLocation();
-        if (null != lastLocation && !failed.contains(lastLocation)) {
-            try {
-                return connect(cluster, lastLocation);
-            } catch (IOException e) {
-                if (locations.length > 1){
-                    LOGGER.log(Level.WARNING, "Failing over.  Cannot connect to last server: " + lastLocation.toString() + " Exception: " + e.getClass().getName() +" " + e.getMessage());
-                }
-            }
-        }
+public class StickyConnectionStrategy extends AbstractConnectionStrategy {
 
 
-        Set<URI> remaining = new LinkedHashSet<URI>(Arrays.asList(locations));
-        remaining.remove(lastLocation);
-        remaining.removeAll(failed);
+    private final AbstractConnectionStrategy secondaryConnectionStrategy;
 
-        for (URI uri : remaining) {
-            try {
-                return connect(cluster, uri);
-            } catch (IOException e) {
-                failed.add(uri);
-                LOGGER.log(Level.WARNING, "Failover: Cannot connect to server(s): " + uri.toString() + " Exception: " + e.getMessage()+".  Trying next.");
-            } catch (Throwable e) {
-                failed.add(uri);
-                throw new RemoteException("Failover: Cannot connect to server: " +  uri.toString() + " due to an unkown exception in the OpenEJB client: ", e);
-            }
-        }
-
-        remaining.removeAll(failed);
-
-        if (remaining.size() == 0 && server.getLocation() != null && !failed.contains(server.getLocation())){
-            return connect(cluster, server.getLocation());
-        }
-
-        // If no servers responded, throw an error
-        StringBuilder buffer = new StringBuilder();
-        for (int i = 0; i < locations.length; i++) {
-            URI uri = locations[i];
-            buffer.append((i != 0 ? ", " : "") + "Server #" + i + ": " + uri);
-        }
-        throw new RemoteException("Cannot connect to any servers: " + buffer.toString());
+    public StickyConnectionStrategy() {
+        this(new RoundRobinConnectionStrategy());
     }
 
-    protected Connection connect(ClusterMetaData cluster, URI uri) throws IOException {
-        Connection connection = ConnectionManager.getConnection(uri);
+    public StickyConnectionStrategy(AbstractConnectionStrategy secondaryConnectionStrategy) {
+        this.secondaryConnectionStrategy = secondaryConnectionStrategy;
+    }
 
-        // Grabbing the URI from the associated connection allows the ConnectionFactory to
-        // employ discovery to find and connect to a server.  We then attempt to connect
-        // to the discovered server rather than repeat the discovery process again.
-        cluster.setLastLocation(connection.getURI());
-        return connection;
+    public AbstractConnectionStrategy getSecondaryConnectionStrategy() {
+        return secondaryConnectionStrategy;
+    }
+
+    @Override
+    protected FailoverSelection createFailureEvent(Set<URI> remaining, Set<URI> failed, URI uri) {
+        return new StickyFailoverSelection(remaining, failed, uri);
+    }
+
+    @Override
+    protected Iterable<URI> createIterable(ClusterMetaData cluster) {
+        return new StickyIterable(cluster);
+    }
+
+    public class StickyIterable implements Iterable<URI> {
+
+        private final ClusterMetaData cluster;
+        private final Iterable<URI> iterable;
+
+        public StickyIterable(ClusterMetaData cluster) {
+            this.cluster = cluster;
+            this.iterable = secondaryConnectionStrategy.createIterable(cluster);
+        }
+
+        @Override
+        public Iterator<URI> iterator() {
+            return new StickyIterator();
+        }
+
+        public class StickyIterator implements Iterator<URI> {
+            private Iterator<URI> iterator;
+            private URI last;
+            private boolean first = true;
+
+            private StickyIterator() {
+                setLast(cluster.getLastLocation());
+            }
+
+            private void setLast(URI lastLocation) {
+                last = lastLocation;
+            }
+
+            @Override
+            public boolean hasNext() {
+                return first && last != null || getIterator().hasNext();
+            }
+
+            @Override
+
+            public URI next() {
+                if (!hasNext()) throw new NoSuchElementException();
+
+                if (first && last != null) {
+                    first = false;
+                    return last;
+                }
+
+                Iterator<URI> iterator = getIterator();
+
+                return iterator.next();
+            }
+
+            private Iterator<URI> getIterator() {
+                if (iterator == null) {
+                    iterator = iterable.iterator();
+                }
+                return iterator;
+            }
+
+            @Override
+            public void remove() {
+            }
+        }
     }
 
 }

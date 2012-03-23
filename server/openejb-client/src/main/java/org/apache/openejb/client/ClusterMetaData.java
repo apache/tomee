@@ -30,7 +30,8 @@ public class ClusterMetaData implements Externalizable {
     private URI[] locations;
     private long version;
     private String connectionStrategy;
-    private URI lastLocation;
+    private volatile URI lastLocation;
+    private transient final Context context = new Context();
 
     public ClusterMetaData() {
     }
@@ -38,6 +39,10 @@ public class ClusterMetaData implements Externalizable {
     public ClusterMetaData(long version, URI... locations) {
         this.locations = locations;
         this.version = version;
+    }
+
+    public Context getContext() {
+        return context;
     }
 
     public URI getLastLocation() {

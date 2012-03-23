@@ -20,12 +20,13 @@ import org.apache.openejb.itest.failover.ejb.Calculator;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.Zips;
 import org.apache.openejb.server.control.StandaloneServer;
-import org.apache.openejb.util.NetworkUtil;
 import org.junit.Assert;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+
+import static org.apache.openejb.util.NetworkUtil.getNextAvailablePort;
 
 /**
  * @version $Rev$ $Date$
@@ -74,13 +75,10 @@ public class FailoverTest {
 
         final StandaloneServer.ServerService multipoint = server.getServerService("multipoint");
         multipoint.setBind("localhost");
-        multipoint.setPort(NetworkUtil.getNextAvailablePort());
+        multipoint.setPort(getNextAvailablePort());
         multipoint.setEnabled(true);
         multipoint.set("discoveryName", name);
         return server;
     }
 
-    public int getAvailablePort() {
-        return NetworkUtil.getNextAvailablePort();
-    }
 }

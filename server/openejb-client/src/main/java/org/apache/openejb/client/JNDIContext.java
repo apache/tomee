@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.client;
 
+import org.apache.openejb.client.event.RemoteInitialContextCreated;
 import org.omg.CORBA.ORB;
 
 import javax.naming.AuthenticationException;
@@ -102,7 +103,7 @@ public class JNDIContext implements InitialContextFactory, Context {
         String providerUrl = (String) env.get(Context.PROVIDER_URL);
         moduleId = (String) env.get("openejb.client.moduleId");
 
-        URI location;
+        final URI location;
         try {
             providerUrl = addMissingParts(providerUrl);
             location = new URI(providerUrl);
@@ -110,6 +111,15 @@ public class JNDIContext implements InitialContextFactory, Context {
             throw (ConfigurationException) new ConfigurationException("Property value for " + Context.PROVIDER_URL + " invalid: " + providerUrl + " - " + e.getMessage()).initCause(e);
         }
         this.server = new ServerMetaData(location);
+
+        final Client.Context context = Client.getContext(this.server);
+        context.getProperties().putAll(environment);
+
+        final String strategy = context.getOptions().get("openejb.client.connection.strategy", "default");
+        context.getClusterMetaData().setConnectionStrategy(strategy);
+
+        Client.fireEvent(new RemoteInitialContextCreated(location));
+
         //TODO:1: Either aggressively initiate authentication or wait for the
         //        server to send us an authentication challange.
         if (userID != null) {

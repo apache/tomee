@@ -483,14 +483,24 @@ public class EJBRequest implements ClusterableRequest {
         return serverHash;
     }
 
+    @Override
     public String toString() {
-        StringBuilder s = new StringBuilder((requestMethod == null ? "null" : requestMethod.toString()));
-        s.append(':').append(deploymentId);
-        if (body != null) {
-            s.append(':').append(body.getMethodName());
-            s.append(':').append(body.getPrimaryKey());
+        final StringBuilder sb = new StringBuilder();
+        sb.append("EJBRequest{");
+        sb.append("deploymentId='");
+        sb.append(deploymentId);
+        sb.append("'");
+
+        if (requestMethod != null) {
+            sb.append(", type=").append(requestMethod);
         }
-        return s.toString();
+        if (body != null) {
+            sb.append(", method='").append(body.getMethodName());
+            sb.append("', primaryKey='").append(body.getPrimaryKey());
+            sb.append("'");
+        }
+        sb.append("}");
+        return sb.toString();
     }
 
     /*

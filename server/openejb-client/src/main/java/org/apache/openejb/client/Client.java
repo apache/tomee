@@ -16,6 +16,16 @@
  */
 package org.apache.openejb.client;
 
+import org.apache.openejb.client.event.ClientVersion;
+import org.apache.openejb.client.event.ClusterMetaDataUpdated;
+import org.apache.openejb.client.event.ObserverAdded;
+import org.apache.openejb.client.event.RequestFailed;
+import org.apache.openejb.client.event.RetryConditionAdded;
+import org.apache.openejb.client.event.RetryConditionRemoved;
+import org.apache.openejb.client.event.RetryingRequest;
+import org.apache.openejb.client.event.ServerAdded;
+import org.apache.openejb.client.event.ServerRemoved;
+
 import static org.apache.openejb.client.Exceptions.newIOException;
 
 import java.io.EOFException;
@@ -26,7 +36,9 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.rmi.RemoteException;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.List;
@@ -38,9 +50,9 @@ import java.net.URI;
 
 public class Client {
     private static final Logger logger = Logger.getLogger("OpenEJB.client");
-    private static final boolean FINEST = logger.isLoggable(Level.FINEST);
-    private static final boolean FINER = logger.isLoggable(Level.FINER);
-    private static final boolean FINE = logger.isLoggable(Level.FINE);
+    private boolean FINEST = logger.isLoggable(Level.FINEST);
+    private boolean FINER = logger.isLoggable(Level.FINER);
+    private boolean FINE = logger.isLoggable(Level.FINE);
 
     public static final ThreadLocal<Set<URI>> failed = new ThreadLocal<Set<URI>>();
 
@@ -50,21 +62,53 @@ public class Client {
     private static Client client = new Client();
     private boolean retry = false;
 
+    private final Observers observers = new Observers();
+
     public Client() {
         String retryValue = System.getProperty("openejb.client.requestretry", getRetry() + "");
         retry = Boolean.valueOf(retryValue);
+
+        observers.addObserver(new EventLogger());
+        observers.fireEvent(new ClientVersion());
+    }
+
+    public static void addEventObserver(Object observer) {
+        if (observer == null) throw new IllegalArgumentException("observer cannot be null");
+
+        if (client.observers.addObserver(observer)) {
+            fireEvent(new ObserverAdded(observer));
+        }
+    }
+
+    public static void removeEventObserver(Object observer) {
+        if (observer == null) throw new IllegalArgumentException("observer cannot be null");
+
+        if (client.observers.removeObserver(observer)) {
+            fireEvent(new ObserverAdded(observer));
+        }
+    }
+
+    public static void fireEvent(Object event) {
+        client.observers.fireEvent(event);
     }
 
     public static boolean addRetryCondition(Class<? extends Throwable> throwable) {
-        return client.retryConditions.add(throwable);
+        if (throwable == null) throw new IllegalArgumentException("throwable cannot be null");
+        final boolean add = client.retryConditions.add(throwable);
+        if (add) fireEvent(new RetryConditionAdded(throwable));
+        return add;
     }
 
     public static boolean removeRetryCondition(Class<? extends Throwable> throwable) {
-        return client.retryConditions.remove(throwable);
+        if (throwable == null) throw new IllegalArgumentException("throwable cannot be null");
+        final boolean remove = client.retryConditions.remove(throwable);
+        if (remove) fireEvent(new RetryConditionRemoved(throwable));
+        return remove;
     }
 
     // This lame hook point if only of testing
     public static void setClient(Client client) {
+        if (client == null) throw new IllegalArgumentException("client cannot be null");
         Client.client = client;
     }
 
@@ -290,13 +334,19 @@ public class Client {
             final URI uri = conn.getURI();
             final Set<URI> failed = getFailed();
 
+            Client.fireEvent(new RequestFailed(uri, req));
+
             if (FINER) {
                 logger.log(Level.FINER, "Add Failed " + uri.toString());
             }
             failed.add(uri);
             conn.discard();
+
             if (e instanceof RetryException || getRetry()) {
                 try {
+
+                    Client.fireEvent(new RetryingRequest(req, server));
+
                     processRequest(req, res, server);
                 } catch (RemoteFailoverException re) {
                     throw re;
@@ -349,36 +399,99 @@ public class Client {
         return set;
     }
 
-    private static final Map<ServerMetaData, ClusterMetaData> clusters = new ConcurrentHashMap<ServerMetaData, ClusterMetaData>();
-
     private static void setClusterMetaData(ServerMetaData server, ClusterMetaData cluster) {
-
-        if (FINE) {
-            logger.log(Level.FINE, "Update ClusterMetaData(version=" + cluster.getVersion() + ", uris=" + cluster.getLocations().length);
-        }
-
-        if (FINER) {
-            int i = 0;
-            for (URI uri : cluster.getLocations()) {
-                final String format = String.format("ClusterMetaData(version=%s) - URI #%s %s", cluster.getVersion(), ++i, uri.toASCIIString());
-                logger.log(Level.FINER, format);
-            }
-        }
-
-        clusters.put(server, cluster);
+        final Context context = getContext(server);
+        context.setClusterMetaData(cluster);
     }
 
     private static ClusterMetaData getClusterMetaData(ServerMetaData server) {
-        ClusterMetaData cluster = clusters.get(server);
-        if (cluster == null) {
-            cluster = new ClusterMetaData(0, server.getLocation());
-            clusters.put(server, cluster);
-        }
-
-        return cluster;
+        return getContext(server).getClusterMetaData();
     }
+
+    //openejb.client.connection.strategy
 
     private boolean getRetry() {
         return retry = Boolean.valueOf(System.getProperty("openejb.client.requestretry", retry + ""));
+    }
+
+    private static final Map<ServerMetaData, Context> contexts = new ConcurrentHashMap<ServerMetaData, Context>();
+
+    public static Context getContext(ServerMetaData serverMetaData) {
+        Context context = contexts.get(serverMetaData);
+        if (context == null) {
+            context = new Context(serverMetaData);
+            contexts.put(serverMetaData, context);
+        }
+        return context;
+    }
+
+    public static class Context {
+        private final Properties properties = new Properties();
+        private final ServerMetaData serverMetaData;
+        private ClusterMetaData clusterMetaData;
+        private Options options;
+
+        private Context(ServerMetaData serverMetaData) {
+            this.serverMetaData = serverMetaData;
+            this.clusterMetaData = new ClusterMetaData(0, serverMetaData.getLocation());
+
+            options = new Options(properties, new Options(System.getProperties()));
+        }
+
+        public ServerMetaData getServerMetaData() {
+            return serverMetaData;
+        }
+
+        public ClusterMetaData getClusterMetaData() {
+            return clusterMetaData;
+        }
+
+        public void setClusterMetaData(ClusterMetaData updated) {
+            if (updated == null) throw new IllegalArgumentException("clusterMetaData cannot be null");
+
+            ClusterMetaData previous = this.clusterMetaData;
+            this.clusterMetaData = updated;
+
+            if (updated.getConnectionStrategy() == null) {
+                updated.setConnectionStrategy(previous.getConnectionStrategy());
+            }
+            updated.setLastLocation(previous.getLastLocation());
+            final ClusterMetaDataUpdated clusterMetaDataUpdated = new ClusterMetaDataUpdated(serverMetaData, updated, clusterMetaData);
+
+            fireEvent(clusterMetaDataUpdated);
+
+            final Set<URI> found = locations(updated);
+            final Set<URI> existing = locations(previous);
+
+            for (URI uri : diff(existing, found)) {
+                fireEvent(new ServerAdded(clusterMetaDataUpdated, uri));
+            }
+
+            for (URI uri : diff(found, existing)) {
+                fireEvent(new ServerRemoved(clusterMetaDataUpdated, uri));
+            }
+
+        }
+
+        private HashSet<URI> locations(ClusterMetaData updated) {
+            return new HashSet<URI>(Arrays.asList(updated.getLocations()));
+        }
+
+        public Properties getProperties() {
+            return properties;
+        }
+
+        public Options getOptions() {
+            return options;
+        }
+
+        public Set<URI> diff(Set<URI> a, Set<URI> b) {
+            final Set<URI> diffs = new HashSet<URI>();
+            for (URI uri : b) {
+                if (!a.contains(uri)) diffs.add(uri);
+            }
+
+            return diffs;
+        }
     }
 }
