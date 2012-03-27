@@ -18,23 +18,20 @@
 package org.apache.tomee.loader.servlet;
 
 import com.google.gson.Gson;
-import org.apache.tomee.loader.dto.TestDTO;
+import org.apache.tomee.loader.listener.UserSessionListener;
+import org.apache.tomee.loader.service.ServiceContext;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 public class TestServlet extends HttpServlet {
 
@@ -43,7 +40,7 @@ public class TestServlet extends HttpServlet {
         final String json;
         try {
             final Map<String, Object> result = new HashMap<String, Object>();
-            result.put("test", get());
+            result.put("test", get(req.getSession()));
             json = new Gson().toJson(result);
         } catch (NamingException e) {
             throw new ServletException(e);
@@ -53,81 +50,14 @@ public class TestServlet extends HttpServlet {
         resp.getWriter().write(json);
     }
 
-    private List<TestDTO> get() throws NamingException {
-        final List<TestDTO> result = new ArrayList<TestDTO>();
-
-        {
-            final String homePath = System.getProperty("openejb.home");
-            result.add(createDTO("homeSet", !(homePath == null)));
-
-            final File openejbHome = new File(homePath);
-            result.add(createDTO("homeExists", openejbHome.exists()));
-
-            result.add(createDTO("homeDirectory", openejbHome.isDirectory()));
-
-            final File openejbHomeLib;
-            if (org.apache.tomee.common.TomcatVersion.v6.isTheVersion()
-                    || org.apache.tomee.common.TomcatVersion.v7.isTheVersion()) {
-                openejbHomeLib = new File(openejbHome, "lib");
-            } else {
-                final File common = new File(openejbHome, "common");
-                openejbHomeLib = new File(common, "lib");
-            }
-            result.add(createDTO("libDirectory", openejbHomeLib.exists()));
+    private List<Map<String, Object>> get(HttpSession session) throws NamingException {
+        final ServiceContext service = UserSessionListener.getServiceContext(session);
+        if (service == null) {
+            return Collections.emptyList(); //do nothing
         }
+        return service.getTest();
 
-        {
-            ClassLoader myLoader = this.getClass().getClassLoader();
-
-            try {
-                Class openejb = Class.forName("org.apache.openejb.OpenEJB", true, myLoader);
-                result.add(createDTO("openEjbInstalled", true));
-
-                try {
-                    Method isInitialized = openejb.getDeclaredMethod("isInitialized");
-                    Boolean running = (Boolean) isInitialized.invoke(openejb);
-                    result.add(createDTO("openEjbStarted", running));
-                } catch (Exception e) {
-                    result.add(createDTO("openEjbStarted", false));
-                }
-            } catch (Exception e) {
-                result.add(createDTO("openEjbInstalled", false));
-            }
-
-            try {
-                Class.forName("javax.ejb.EJBHome", true, myLoader);
-                result.add(createDTO("ejbsInstalled", true));
-            } catch (Exception e) {
-                result.add(createDTO("ejbsInstalled", false));
-            }
-
-            try {
-                final Properties properties = new Properties();
-                properties.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
-                properties.put("openejb.loader", "embed");
-
-                final InitialContext ctx = new InitialContext(properties);
-                Object obj = ctx.lookup("");
-
-                if (obj.getClass().getName().equals("org.apache.openejb.core.ivm.naming.IvmContext")) {
-                    result.add(createDTO("testLookup", true));
-                } else {
-                    result.add(createDTO("testLookup", false));
-                }
-
-            } catch (Exception e) {
-                result.add(createDTO("testLookup", false));
-            }
-        }
-
-
-        return result;
     }
 
-    private TestDTO createDTO(String key, boolean success) {
-        TestDTO result = new TestDTO();
-        result.key = key;
-        result.success = success;
-        return result;
-    }
+
 }

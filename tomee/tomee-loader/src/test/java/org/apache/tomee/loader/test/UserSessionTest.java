@@ -16,19 +16,24 @@
  */
 package org.apache.tomee.loader.test;
 
-import org.apache.tomee.loader.service.ServletsService;
+import org.apache.tomee.loader.service.ServiceContext;
 import org.junit.Test;
 
 import java.util.List;
+import java.util.Map;
 
 public class UserSessionTest {
 
     @Test()
     public void test() throws Exception {
 
-        final ServletsService service = new ServletsService();
-        final List<?> result = service.getJndi("");
+        final ServiceContext service = new ServiceContext();
+        final List<Map<String, Object>> result = service.getJndi("");
         org.junit.Assert.assertNotNull(result);
         org.junit.Assert.assertFalse(result.isEmpty());
+
+        for(Map<String, Object> bean : result) {
+            System.out.println("BEAN -> " + bean);
+        }
     }
 }

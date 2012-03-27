@@ -17,26 +17,32 @@
 
 package org.apache.tomee.loader.listener;
 
-import org.apache.tomee.loader.service.ServletsService;
+import org.apache.tomee.loader.service.ServiceContext;
 
+import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
 public class UserSessionListener implements HttpSessionListener {
-    public static final String USER_CONTEXT = "UserSessionListener_USER_CONTEXT";
+    private static final String USER_CONTEXT = "UserSessionListener_USER_CONTEXT";
 
     @Override
     public void sessionCreated(HttpSessionEvent httpSessionEvent) {
-        final ServletsService servletsService = new ServletsService();
+        final ServiceContext servletsService = new ServiceContext();
         httpSessionEvent.getSession().setAttribute(USER_CONTEXT, servletsService);
     }
 
     @Override
     public void sessionDestroyed(HttpSessionEvent httpSessionEvent) {
-        final ServletsService servletsService = (ServletsService) httpSessionEvent.getSession().getAttribute(USER_CONTEXT);
+        final ServiceContext servletsService = (ServiceContext) httpSessionEvent.getSession().getAttribute(USER_CONTEXT);
         if (servletsService == null) {
             return; //do nothing
         }
         servletsService.close();
+    }
+
+    public static ServiceContext getServiceContext(HttpSession session) {
+        final ServiceContext service = (ServiceContext) session.getAttribute(USER_CONTEXT);
+        return service;
     }
 }
