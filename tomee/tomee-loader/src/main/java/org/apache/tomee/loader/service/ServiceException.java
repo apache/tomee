@@ -14,11 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.tomee.loader.dto;
 
-public class TestDTO {
+package org.apache.tomee.loader.service;
 
-    public String key;
-    public boolean success;
+public class ServiceException extends RuntimeException {
+
+    public ServiceException(Throwable cause) {
+        super(cause);
+    }
 
 }

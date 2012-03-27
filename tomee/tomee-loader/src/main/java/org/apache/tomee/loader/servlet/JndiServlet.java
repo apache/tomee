@@ -18,17 +18,9 @@
 package org.apache.tomee.loader.servlet;
 
 import com.google.gson.Gson;
-import org.apache.openejb.BeanContext;
-import org.apache.openejb.core.ivm.BaseEjbProxyHandler;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.spi.ContainerSystem;
-import org.apache.openejb.util.proxy.ProxyManager;
 import org.apache.tomee.loader.listener.UserSessionListener;
-import org.apache.tomee.loader.service.ServletsService;
+import org.apache.tomee.loader.service.ServiceContext;
 
-import javax.naming.Context;
-import javax.naming.NameClassPair;
-import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -62,7 +54,7 @@ public class JndiServlet extends HttpServlet {
     public List<Map<String, Object>> get(HttpSession session) throws NamingException {
         final List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
 
-        final ServletsService service = (ServletsService) session.getAttribute(UserSessionListener.USER_CONTEXT);
+        final ServiceContext service = UserSessionListener.getServiceContext (session);
         if (service == null) {
             return Collections.emptyList(); //do nothing
         }

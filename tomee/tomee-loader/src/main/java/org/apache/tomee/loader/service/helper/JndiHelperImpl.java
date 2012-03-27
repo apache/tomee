@@ -15,16 +15,16 @@
  * limitations under the License.
  */
 
-package org.apache.tomee.loader.service;
+package org.apache.tomee.loader.service.helper;
 
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.ivm.BaseEjbProxyHandler;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.proxy.ProxyManager;
+import org.apache.tomee.loader.service.ServiceException;
 
 import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.NameClassPair;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -33,46 +33,30 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
-public class ServletsService {
+public class JndiHelperImpl implements JndiHelper {
     private final Context ctx;
 
-    public void close() {
-        if (this.ctx == null) {
-            return; //do nothing
-        }
 
-        try {
-            this.ctx.close();
-        } catch (NamingException e) {
-            //do nothing
-        }
-    }
-
-    public ServletsService() {
-        Context ctx = null;
-        {
-            final Properties properties = new Properties();
-            properties.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
-            properties.put("openejb.loader", "embed");
-            try {
-                ctx = new InitialContext(properties);
-            } catch (NamingException e) {
-                //do nothing
-            }
-        }
+    public JndiHelperImpl(Context ctx) {
         this.ctx = ctx;
     }
 
-
-    public List<Map<String, Object>> getJndi(String path) throws NamingException {
+    @Override
+    public List<Map<String, Object>> getJndi(String path) {
         final List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
 
         if (this.ctx == null) {
             return Collections.emptyList(); //do nothing
         }
-        mountJndiList(result, this.ctx, path);
+
+        try {
+            mountJndiList(result, this.ctx, path);
+        } catch (NamingException e) {
+            //Throwing a runtimeexception instead.
+            throw new ServiceException(e);
+        }
+
         return result;
     }
 
@@ -86,7 +70,10 @@ public class ServletsService {
         }
         while (namingEnumeration.hasMoreElements()) {
             final NameClassPair pair = (NameClassPair) namingEnumeration.next();
-            final String key = root + "/" + pair.getName();
+            final String key = pair.getName();
+
+            System.out.println("(A)");
+
             final Object obj;
             try {
                 obj = context.lookup(key);
