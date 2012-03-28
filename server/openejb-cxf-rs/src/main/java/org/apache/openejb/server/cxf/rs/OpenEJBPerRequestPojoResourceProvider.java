@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.ws.rs.WebApplicationException;
 import org.apache.cxf.jaxrs.lifecycle.PerRequestResourceProvider;
 import org.apache.cxf.message.Message;
@@ -37,29 +36,11 @@ public class OpenEJBPerRequestPojoResourceProvider extends PerRequestResourcePro
     protected Context context;
     protected WebBeansContext webbeansContext;
 
-    public OpenEJBPerRequestPojoResourceProvider(Class<?> clazz, Collection<Injection> injectionCollection, Context ctx, WebBeansContext owbCtx) {
+    public OpenEJBPerRequestPojoResourceProvider(final Class<?> clazz, final Collection<Injection> injectionCollection, final Context initialContext, final WebBeansContext owbCtx) {
         super(clazz);
         injections = injectionCollection;
         webbeansContext = owbCtx;
-        context = ctx;
-        if (ctx == null) {
-            // TODO: context shouldn't be null here so it should be removed
-            context = (Context) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[]{Context.class}, new InvocationHandler() {
-                @Override public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                    Context ctx = new InitialContext();
-                    if (method.getName().equals("lookup")) {
-                        if (args[0].getClass().equals(String.class)) {
-                            try {
-                                return ctx.lookup("java:" + String.class.cast(args[0]));
-                            } catch (NamingException ne) {
-                                // let try it in the normal way (without java:)
-                            }
-                        }
-                    }
-                    return method.invoke(ctx, args);
-                }
-            });
-        }
+        context = (Context) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[]{Context.class}, new InitialContextWrapper(initialContext));
     }
 
     protected Object createInstance(Message m) {
@@ -77,6 +58,49 @@ public class OpenEJBPerRequestPojoResourceProvider extends PerRequestResourcePro
             return injector.getInstance();
         } catch (Exception e) {
             throw new WebApplicationException(e);
+        }
+    }
+
+    private static class InitialContextWrapper implements InvocationHandler {
+        private Context ctx;
+
+        public InitialContextWrapper(Context initialContext) {
+            ctx = initialContext;
+        }
+
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            if (method.getName().equals("lookup")) {
+                final String name = "java:" + String.class.cast(args[0]);
+                if (args[0].getClass().equals(String.class)) {
+                    // Note: we catch exception instead of namingexception
+                    // because in environment with proxies on Context
+                    // InvocationtargetException can be throuwn instead of NamingException
+                    if (ctx != null) {
+                        try {
+                            return ctx.lookup(name);
+                        } catch (Exception ne) {
+                            try {
+                                return ctx.lookup(String.class.cast(args[0]));
+                            } catch (Exception ignored) {
+                                // no-op
+                            }
+                        }
+                    } else {
+                        final Context initialContext = new InitialContext();
+                        try {
+                            return initialContext.lookup(name);
+                        } catch (Exception swallowed) {
+                            try {
+                                return initialContext.lookup(String.class.cast(args[0]));
+                            } catch (Exception ignored) {
+                                // no-op
+                            }
+                        }
+                    }
+                }
+            }
+            return method.invoke(ctx, args);
         }
     }
 }
