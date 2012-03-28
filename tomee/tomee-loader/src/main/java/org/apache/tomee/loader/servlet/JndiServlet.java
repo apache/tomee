@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class JndiServlet extends HttpServlet {
@@ -47,8 +46,8 @@ public class JndiServlet extends HttpServlet {
         resp.getWriter().write(json);
     }
 
-    public List<Map<String, Object>> get(HttpServletRequest req) throws NamingException {
-        return UserSessionListener.getServiceContext(req.getSession()).getJndi("");
+    public Map<String, Object> get(HttpServletRequest req) throws NamingException {
+        return UserSessionListener.getServiceContext(req.getSession()).getJndiHelper().getJndi();
     }
 
 }

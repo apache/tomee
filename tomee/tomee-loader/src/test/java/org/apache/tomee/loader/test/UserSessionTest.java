@@ -20,21 +20,35 @@ import org.apache.tomee.loader.service.ServiceContext;
 import org.apache.tomee.loader.service.ServiceContextImpl;
 import org.junit.Test;
 
-import java.util.List;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import java.util.Map;
+import java.util.Properties;
 
 public class UserSessionTest {
 
     @Test()
     public void test() throws Exception {
+        {
+            final Properties properties = new Properties();
+            properties.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
+            properties.put("openejb.loader", "embed");
+            try {
+                new InitialContext(properties);
+            } catch (NamingException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         final ServiceContext service = new ServiceContextImpl();
-        final List<Map<String, Object>> result = service.getJndi("");
+        final Map<String, Object> result = service.getJndiHelper().getJndi();
         org.junit.Assert.assertNotNull(result);
         org.junit.Assert.assertFalse(result.isEmpty());
 
-        for(Map<String, Object> bean : result) {
-            System.out.println("BEAN -> " + bean);
-        }
+        System.out.println("*******************************************");
+        System.out.println(result);
+        System.out.println("*******************************************");
     }
+
 }

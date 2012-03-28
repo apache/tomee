@@ -15,18 +15,16 @@
  * limitations under the License.
  */
 
-package org.apache.tomee.loader.service;
+package org.apache.tomee.loader.service.helper;
 
-import org.apache.tomee.loader.service.helper.JndiHelper;
-import org.apache.tomee.loader.service.helper.OpenEJBHelper;
-import org.apache.tomee.loader.service.helper.TestHelper;
+import org.apache.openejb.AppContext;
 
-public interface ServiceContext {
+import javax.naming.NamingException;
+import java.util.List;
 
-    OpenEJBHelper getOpenEJBHelper();
+public interface OpenEJBHelper {
 
-    JndiHelper getJndiHelper();
-
-    TestHelper getTestHelper();
+    List<AppContext> getAppContexts();
+    Object lookup(String path) throws NamingException;
 
 }

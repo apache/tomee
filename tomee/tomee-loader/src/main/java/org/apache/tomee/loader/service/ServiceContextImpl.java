@@ -19,60 +19,37 @@ package org.apache.tomee.loader.service;
 
 import org.apache.tomee.loader.service.helper.JndiHelper;
 import org.apache.tomee.loader.service.helper.JndiHelperImpl;
+import org.apache.tomee.loader.service.helper.OpenEJBHelper;
+import org.apache.tomee.loader.service.helper.OpenEJBHelperImpl;
 import org.apache.tomee.loader.service.helper.TestHelper;
 import org.apache.tomee.loader.service.helper.TestHelperImpl;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 public class ServiceContextImpl implements ServiceContext {
-    private final Context ctx;
+    private final OpenEJBHelper openEJBHelper;
     private final JndiHelper jndiHelper;
     private final TestHelper testHelper;
 
-    public void close() {
-        if (this.ctx == null) {
-            return; //do nothing
-        }
-
-        try {
-            this.ctx.close();
-        } catch (NamingException e) {
-            throw new ServiceException(e);
-        }
-    }
-
     public ServiceContextImpl() {
-        Context ctx = null;
-        {
-            final Properties properties = new Properties();
-            properties.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
-            properties.put("openejb.loader", "embed");
-            try {
-                ctx = new InitialContext(properties);
-            } catch (NamingException e) {
-                throw new ServiceException(e);
-            }
-        }
-        this.ctx = ctx;
+        this.openEJBHelper = new OpenEJBHelperImpl();
         this.jndiHelper = new JndiHelperImpl(this);
         this.testHelper = new TestHelperImpl(this);
     }
 
-
-    public List<Map<String, Object>> getJndi(String path) {
-        return this.jndiHelper.getJndi(path);
+    @Override
+    public OpenEJBHelper getOpenEJBHelper() {
+        return openEJBHelper;
     }
 
-    public List<Map<String, Object>> getTest() {
-        return this.testHelper.getTestResults();
+    @Override
+    public JndiHelper getJndiHelper() {
+        return jndiHelper;
     }
 
-    public Context getContext() {
-        return this.ctx;
+    @Override
+    public TestHelper getTestHelper() {
+        return testHelper;
     }
 }

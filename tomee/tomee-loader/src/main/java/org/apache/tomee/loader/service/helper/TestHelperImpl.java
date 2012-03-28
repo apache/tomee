@@ -18,10 +18,7 @@
 package org.apache.tomee.loader.service.helper;
 
 import org.apache.tomee.loader.service.ServiceContext;
-import org.apache.tomee.loader.service.ServiceException;
 
-import javax.naming.Context;
-import javax.naming.NamingException;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -87,7 +84,7 @@ public class TestHelperImpl implements TestHelper {
             }
 
             try {
-                final Object obj = lookup(this.srvCtx.getContext(), Object.class, "");
+                final Object obj = this.srvCtx.getOpenEJBHelper().lookup("");
                 if (obj.getClass().getName().equals("org.apache.openejb.core.ivm.naming.IvmContext")) {
                     result.add(createDTO("testLookup", true));
                 } else {
@@ -98,16 +95,6 @@ public class TestHelperImpl implements TestHelper {
             }
         }
         return result;
-    }
-
-    public <T> T lookup(Context ctx, Class<T> cls, String path) {
-        final Object obj;
-        try {
-            obj = ctx.lookup(path);
-        } catch (NamingException e) {
-            throw new ServiceException(e);
-        }
-        return cls.cast(obj);
     }
 
     private Map<String, Object> createDTO(String key, boolean success) {
