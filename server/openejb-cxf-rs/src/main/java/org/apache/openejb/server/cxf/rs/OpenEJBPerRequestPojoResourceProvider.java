@@ -75,7 +75,7 @@ public class OpenEJBPerRequestPojoResourceProvider extends PerRequestResourcePro
                 if (args[0].getClass().equals(String.class)) {
                     // Note: we catch exception instead of namingexception
                     // because in environment with proxies on Context
-                    // InvocationtargetException can be throuwn instead of NamingException
+                    // InvocationtargetException can be thrown instead of NamingException
                     if (ctx != null) {
                         try {
                             return ctx.lookup(name);
@@ -86,16 +86,15 @@ public class OpenEJBPerRequestPojoResourceProvider extends PerRequestResourcePro
                                 // no-op
                             }
                         }
-                    } else {
-                        final Context initialContext = new InitialContext();
+                    }
+                    final Context initialContext = new InitialContext();
+                    try {
+                        return initialContext.lookup(name);
+                    } catch (Exception swallowed) {
                         try {
-                            return initialContext.lookup(name);
-                        } catch (Exception swallowed) {
-                            try {
-                                return initialContext.lookup(String.class.cast(args[0]));
-                            } catch (Exception ignored) {
-                                // no-op
-                            }
+                            return initialContext.lookup(String.class.cast(args[0]));
+                        } catch (Exception ignored) {
+                            // no-op
                         }
                     }
                 }
