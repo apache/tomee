@@ -19,17 +19,13 @@ package org.apache.tomee.loader.servlet;
 
 import com.google.gson.Gson;
 import org.apache.tomee.loader.listener.UserSessionListener;
-import org.apache.tomee.loader.service.ServiceContext;
 
 import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +37,7 @@ public class JndiServlet extends HttpServlet {
         final String json;
         try {
             final Map<String, Object> result = new HashMap<String, Object>();
-            result.put("jndi", get(req.getSession()));
+            result.put("jndi", get(req));
             json = new Gson().toJson(result);
         } catch (NamingException e) {
             throw new ServletException(e);
@@ -51,14 +47,8 @@ public class JndiServlet extends HttpServlet {
         resp.getWriter().write(json);
     }
 
-    public List<Map<String, Object>> get(HttpSession session) throws NamingException {
-        final List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
-
-        final ServiceContext service = UserSessionListener.getServiceContext (session);
-        if (service == null) {
-            return Collections.emptyList(); //do nothing
-        }
-        return service.getJndi("");
+    public List<Map<String, Object>> get(HttpServletRequest req) throws NamingException {
+        return UserSessionListener.getServiceContext(req.getSession()).getJndi("");
     }
 
 }

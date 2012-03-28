@@ -22,6 +22,7 @@ import org.apache.openejb.core.ivm.BaseEjbProxyHandler;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.proxy.ProxyManager;
+import org.apache.tomee.loader.service.ServiceContext;
 import org.apache.tomee.loader.service.ServiceException;
 
 import javax.naming.Context;
@@ -29,29 +30,24 @@ import javax.naming.NameClassPair;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class JndiHelperImpl implements JndiHelper {
-    private final Context ctx;
 
+    private final ServiceContext srvCtx;
 
-    public JndiHelperImpl(Context ctx) {
-        this.ctx = ctx;
+    public JndiHelperImpl(ServiceContext srvCtx) {
+        this.srvCtx = srvCtx;
     }
 
     @Override
     public List<Map<String, Object>> getJndi(String path) {
         final List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
 
-        if (this.ctx == null) {
-            return Collections.emptyList(); //do nothing
-        }
-
         try {
-            mountJndiList(result, this.ctx, path);
+            mountJndiList(result, this.srvCtx.getContext(), path);
         } catch (NamingException e) {
             //Throwing a runtimeexception instead.
             throw new ServiceException(e);
