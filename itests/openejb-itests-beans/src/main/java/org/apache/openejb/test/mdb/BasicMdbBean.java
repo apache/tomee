@@ -158,29 +158,29 @@ public class BasicMdbBean implements BasicMdbObject, MessageDrivenBean, MessageL
 		/*[0] Test getEJBHome /////////////////*/
 		try {
 			mdbContext.getEJBHome();
-			policy.allow(policy.Context_getEJBHome);
-		} catch (IllegalStateException ise) {
+			policy.allow(OperationsPolicy.Context_getEJBHome);
+		} catch (IllegalStateException ignored) {
 		}
 
 		/*[1] Test getCallerPrincipal /////////*/
 		try {
 			mdbContext.getCallerPrincipal();
-			policy.allow( policy.Context_getCallerPrincipal );
-		} catch (IllegalStateException ise) {
+			policy.allow(OperationsPolicy.Context_getCallerPrincipal);
+		} catch (IllegalStateException ignored) {
 		}
 
 		/*[2] Test isCallerInRole /////////////*/
 		try {
 			mdbContext.isCallerInRole("TheMan");
-			policy.allow( policy.Context_isCallerInRole );
-		} catch (IllegalStateException ise) {
+			policy.allow(OperationsPolicy.Context_isCallerInRole);
+		} catch (IllegalStateException ignored) {
 		}
 
 		/*[3] Test getRollbackOnly ////////////*/
 		try {
 			mdbContext.getRollbackOnly();
-			policy.allow( policy.Context_getRollbackOnly );
-		} catch (IllegalStateException ise) {
+			policy.allow(OperationsPolicy.Context_getRollbackOnly);
+		} catch (IllegalStateException ignored) {
 		}
 
 		/*[4] Test setRollbackOnly ////////////*/
@@ -189,8 +189,8 @@ public class BasicMdbBean implements BasicMdbObject, MessageDrivenBean, MessageL
 		/*[5] Test getUserTransaction /////////*/
 		try {
 			mdbContext.getUserTransaction();
-			policy.allow( policy.Context_getUserTransaction );
-		} catch (IllegalStateException ise) {
+			policy.allow(OperationsPolicy.Context_getUserTransaction);
+		} catch (IllegalStateException ignored) {
 		}
 
 		/*[6] Test getEJBObject ///////////////
@@ -209,16 +209,16 @@ public class BasicMdbBean implements BasicMdbObject, MessageDrivenBean, MessageL
 
 			String actual = (String)jndiContext.lookup("java:comp/env/stateless/references/JNDI_access_to_java_comp_env");
 
-			policy.allow( policy.JNDI_access_to_java_comp_env );
-		} catch (IllegalStateException ise) {
-		} catch (javax.naming.NamingException ne) {
+			policy.allow(OperationsPolicy.JNDI_access_to_java_comp_env);
+		} catch (IllegalStateException ignored) {
+		} catch (javax.naming.NamingException ignored) {
 		}
 
         /*[11] Test lookup /////////*/
         try {
             mdbContext.lookup("stateless/references/JNDI_access_to_java_comp_env");
-            policy.allow( policy.Context_lookup );
-        } catch (IllegalArgumentException ise) {
+            policy.allow(OperationsPolicy.Context_lookup);
+        } catch (IllegalArgumentException ignored) {
         }
 
 		allowedOperationsTable.put(methodName, policy);

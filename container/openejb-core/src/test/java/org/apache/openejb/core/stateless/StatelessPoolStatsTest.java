@@ -16,6 +16,24 @@
  */
 package org.apache.openejb.core.stateless;
 
+import junit.framework.TestCase;
+import org.apache.openejb.api.Monitor;
+import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.SecurityServiceInfo;
+import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
+import org.apache.openejb.assembler.classic.TransactionServiceInfo;
+import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.StatelessBean;
+import org.apache.openejb.test.util.Asserts;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
+import javax.ejb.ConcurrentAccessException;
+import javax.ejb.SessionContext;
+import javax.management.*;
+import javax.naming.InitialContext;
 import java.io.Flushable;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
@@ -28,44 +46,17 @@ import java.util.Properties;
 import java.util.TreeMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
-import javax.ejb.ConcurrentAccessException;
-import javax.ejb.SessionContext;
-import javax.management.AttributeNotFoundException;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanException;
-import javax.management.MBeanInfo;
-import javax.management.MBeanOperationInfo;
-import javax.management.MBeanParameterInfo;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-import javax.management.ReflectionException;
-import javax.naming.InitialContext;
-import junit.framework.TestCase;
-import org.apache.openejb.api.Monitor;
-import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.SecurityServiceInfo;
-import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
-import org.apache.openejb.assembler.classic.TransactionServiceInfo;
-import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.core.ivm.naming.InitContextFactory;
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.StatelessBean;
-import org.apache.openejb.test.util.Asserts;
 
 public class StatelessPoolStatsTest extends TestCase {
     private final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
     private ObjectName objectName;
 
     /**
-     * @throws Exception
+     * @throws Exception On error
      */
     public void testBasic() throws Exception {
 
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
         properties.setProperty("AccessTimeout", "100");
         properties.setProperty("MaxSize", "15");
         properties.setProperty("SweepInterval", "10 ms");
@@ -75,13 +66,13 @@ public class StatelessPoolStatsTest extends TestCase {
         deploy("testBasic", properties);
 
         // Grab the mbeanInfo and check the expected attributes exist and have the correct return types and parameters
-        MBeanInfo poolMBeanInfo = server.getMBeanInfo(objectName);
+        final MBeanInfo poolMBeanInfo = server.getMBeanInfo(objectName);
 
         /*
         * Pool MBeanInfo
         *
         */
-        List<MBeanAttributeInfo> expectedAttributes = new ArrayList<MBeanAttributeInfo>();
+        final List<MBeanAttributeInfo> expectedAttributes = new ArrayList<MBeanAttributeInfo>();
         expectedAttributes.add(new MBeanAttributeInfo("AccessTimeouts", "long", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("AccessTimeouts.Latest", "java.lang.String", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("AccessTimeouts.LatestTime", "long", "", true, false, false));
@@ -129,7 +120,7 @@ public class StatelessPoolStatsTest extends TestCase {
 
 
         // The hardest part, check the values of each, PoolVersion is AtomicaInteger, *.Latest are time-sensitive, so not verified.
-        Map<String, Object> expectedAttributesValue = new TreeMap<String, Object>();
+        final Map<String, Object> expectedAttributesValue = new TreeMap<String, Object>();
         expectedAttributesValue.put("AccessTimeouts", (long) 0);
         expectedAttributesValue.put("Aged", (long) 0);
         expectedAttributesValue.put("AvailablePermits", 15);
@@ -157,9 +148,9 @@ public class StatelessPoolStatsTest extends TestCase {
         // expectedAttributesValue.put("Sweeps", (long) 1);
         expectedAttributesValue.put("StrictPooling", true);
 
-        List<MBeanAttributeInfo> actualAttributes = new ArrayList<MBeanAttributeInfo>();
-        Map<String, Object> actualAttributesValue = new TreeMap<String, Object>();
-        for (MBeanAttributeInfo info : poolMBeanInfo.getAttributes()) {
+        final List<MBeanAttributeInfo> actualAttributes = new ArrayList<MBeanAttributeInfo>();
+        final Map<String, Object> actualAttributesValue = new TreeMap<String, Object>();
+        for (final MBeanAttributeInfo info : poolMBeanInfo.getAttributes()) {
             actualAttributes.add(info);
             if (!info.getName().endsWith(".Latest") && !info.getName().endsWith(".LatestTime")
                     && !info.getName().equals("Sweeps")) {
@@ -171,25 +162,25 @@ public class StatelessPoolStatsTest extends TestCase {
         assertEquals(expectedAttributesValue, actualAttributesValue);
 
         // Grab pool mbean operations
-        MBeanParameterInfo[] operations = {
+        final MBeanParameterInfo[] operations = {
                 new MBeanParameterInfo("excludeRegex", "java.lang.String", "\"\""),
                 new MBeanParameterInfo("includeRegex", "java.lang.String", "\"\"")};
-        List<MBeanOperationInfo> expectedOperations = new ArrayList<MBeanOperationInfo>();
+        final List<MBeanOperationInfo> expectedOperations = new ArrayList<MBeanOperationInfo>();
         expectedOperations.add(new MBeanOperationInfo(
                 "FilterAttributes",
                 "Filters the attributes that show up in the MBeanInfo.  The exclude is applied first, then any attributes that match the include are re-added.  It may be required to disconnect and reconnect the JMX console to force a refresh of the MBeanInfo",
                 operations, "void", MBeanOperationInfo.UNKNOWN));
 
-        List<MBeanOperationInfo> actualOperations = new ArrayList<MBeanOperationInfo>();
+        final List<MBeanOperationInfo> actualOperations = new ArrayList<MBeanOperationInfo>();
         actualOperations.addAll(Arrays.asList(poolMBeanInfo.getOperations()));
         assertEquals(expectedOperations, actualOperations);
     }
 
-    public static void assertEquals(List<?> expectedList, List<?> actualList) {
+    public static void assertEquals(final List<?> expectedList, final List<?> actualList) {
         Asserts.assertEquals(expectedList, actualList);
     }
 
-    public static void assertEquals(Map<?,?> expectedMap, Map<?,?> actualMap) {
+    public static void assertEquals(final Map<?, ?> expectedMap, final Map<?, ?> actualMap) {
         Asserts.assertEquals(expectedMap, actualMap);
     }
 
@@ -205,7 +196,7 @@ public class StatelessPoolStatsTest extends TestCase {
      * javax.management.MBeanAttributeInfo[description=, name=GarbageCollection, type=boolean, read-only, descriptor={}]
      * javax.management.MBeanAttributeInfo[description=, name=IdleTimeout, type=long, read-only, descriptor={}]
      *
-     * @throws Exception
+     * @throws Exception On error
      */
     public void testConfigOptions() throws Exception {
         final Properties properties = new Properties();
@@ -220,7 +211,7 @@ public class StatelessPoolStatsTest extends TestCase {
         properties.put("SweepInterval", "999999 milliseconds");
 
         deploy("testConfigOptions", properties);
-        
+
         assertAttribute("GarbageCollection", false);
         assertAttribute("IdleTimeout", 23L);
         assertAttribute("MaxAge", 12456789L);
@@ -239,7 +230,7 @@ public class StatelessPoolStatsTest extends TestCase {
      * javax.management.MBeanAttributeInfo[description=, name=PoolVersion, type=int, read-only, descriptor={}]
      * javax.management.MBeanAttributeInfo[description=, name=Replaced, type=long, read-only, descriptor={}]
      *
-     * @throws Exception
+     * @throws Exception On error
      */
     public void testFlushing() throws Exception {
         final Properties properties = new Properties();
@@ -249,7 +240,7 @@ public class StatelessPoolStatsTest extends TestCase {
         final CounterBean bean = deploy("testFlushing", properties);
 
         checkout(bean, 8).release();
-        
+
         CounterBean.constructed = new CountDownLatch(3);
 
         final Checkout checkout = checkout(bean, 7);
@@ -279,7 +270,7 @@ public class StatelessPoolStatsTest extends TestCase {
      * javax.management.MBeanAttributeInfo[description=, name=PoolVersion, type=int, read-only, descriptor={}]
      * javax.management.MBeanAttributeInfo[description=, name=Replaced, type=long, read-only, descriptor={}]
      *
-     * @throws Exception
+     * @throws Exception On error
      */
     public void testFlushingWithReplacement() throws Exception {
         final Properties properties = new Properties();
@@ -320,7 +311,7 @@ public class StatelessPoolStatsTest extends TestCase {
      * javax.management.MBeanAttributeInfo[description=, name=InstancesIdle, type=int, read-only, descriptor={}]
      * javax.management.MBeanAttributeInfo[description=, name=InstancesActive, type=int, read-only, descriptor={}]
      *
-     * @throws Exception
+     * @throws Exception On error
      */
     public void testInstances() throws Exception {
         final Properties properties = new Properties();
@@ -361,7 +352,7 @@ public class StatelessPoolStatsTest extends TestCase {
      * javax.management.MBeanAttributeInfo[description=, name=Aged, type=long, read-only, descriptor={}]
      * javax.management.MBeanAttributeInfo[description=, name=Replaced, type=long, read-only, descriptor={}]
      *
-     * @throws Exception
+     * @throws Exception On error
      */
     public void testAging() throws Exception {
         final Properties properties = new Properties();
@@ -376,7 +367,7 @@ public class StatelessPoolStatsTest extends TestCase {
         assertAttribute("MaxAge", 100L);
 
         checkout(bean, 5).release();
-        
+
         final Checkout checkout = checkout(bean, 5);
 
         CounterBean.constructed = new CountDownLatch(3);
@@ -397,7 +388,7 @@ public class StatelessPoolStatsTest extends TestCase {
      * javax.management.MBeanAttributeInfo[description=, name=Aged, type=long, read-only, descriptor={}]
      * javax.management.MBeanAttributeInfo[description=, name=Replaced, type=long, read-only, descriptor={}]
      *
-     * @throws Exception
+     * @throws Exception On error
      */
     public void testAgingWithReplacement() throws Exception {
         final Properties properties = new Properties();
@@ -433,7 +424,7 @@ public class StatelessPoolStatsTest extends TestCase {
      * Requires an invocation against a maxed pool with all instances checked out, must be a strict pool
      * javax.management.MBeanAttributeInfo[description=, name=AccessTimeouts, type=long, read-only, descriptor={}]
      *
-     * @throws Exception
+     * @throws Exception On error
      */
     public void testAccessTimeouts() throws Exception {
         final Properties properties = new Properties();
@@ -456,7 +447,7 @@ public class StatelessPoolStatsTest extends TestCase {
         }
 
         checkout.release();
-        
+
         assertAttribute("AccessTimeouts", 7l);
     }
 
@@ -465,13 +456,13 @@ public class StatelessPoolStatsTest extends TestCase {
      * javax.management.MBeanAttributeInfo[description=, name=Sweeps, type=long, read-only, descriptor={}]
      * javax.management.MBeanAttributeInfo[description=, name=Sweeps.Latest, type=java.lang.String, read-only, descriptor={}]
      *
-     * @throws Exception
+     * @throws Exception On error
      */
     public void testSweeps() throws Exception {
-    	Properties properties = new Properties();
-    	properties.setProperty("SweepInterval", "75ms");
+        final Properties properties = new Properties();
+        properties.setProperty("SweepInterval", "100");
 
-        Date expectedDate = new Date(); // now
+        final Date expectedDate = new Date(); // now
 
         deploy("testSweeps", properties);
 
@@ -481,13 +472,13 @@ public class StatelessPoolStatsTest extends TestCase {
         assertTrue("sweeps=" + sweeps, sweeps >= 1L);
 
         final Object attribute = server.getAttribute(objectName, "Sweeps.LatestTime");
-        final Date actualDate = new Date((Long)attribute);
+        final Date actualDate = new Date((Long) attribute);
 
         final String message = display("actual", actualDate) + " after " + display("expected", expectedDate);
         assertTrue(message, actualDate.after(expectedDate));
     }
 
-    private String display(String name, Date date) {
+    private String display(final String name, final Date date) {
         return name + "=" + date.getTime();
     }
 
@@ -495,7 +486,7 @@ public class StatelessPoolStatsTest extends TestCase {
      * Fill a pool to the max, let the non-min instances timeout, check the IdleTimeouts
      * javax.management.MBeanAttributeInfo[description=, name=IdleTimeouts, type=long, read-only, descriptor={}]
      *
-     * @throws Exception
+     * @throws Exception On error
      */
     public void testIdleTimeouts() throws Exception {
         final Properties properties = new Properties();
@@ -510,7 +501,7 @@ public class StatelessPoolStatsTest extends TestCase {
         assertAttribute("IdleTimeout", 100L);
 
         CounterBean.discarded = new CountDownLatch(2);
-        
+
         checkout(bean, 5).release();
 
         assertAttribute("InstancesPooled", 5);
@@ -528,10 +519,10 @@ public class StatelessPoolStatsTest extends TestCase {
      * reflects the number of instances beyond the max that were created
      * javax.management.MBeanAttributeInfo[description=, name=Overdrafts, type=long, read-only, descriptor={}]
      *
-     * @throws Exception
+     * @throws Exception On error
      */
     public void testOverdrafts() throws Exception {
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
         properties.setProperty("MaxSize", "2");
         properties.setProperty("MinSize", "0");
         properties.setProperty("StrictPooling", "false");
@@ -548,39 +539,39 @@ public class StatelessPoolStatsTest extends TestCase {
 
         assertAttribute("Overdrafts", 0L);
         assertAttribute("AvailablePermits", -5);
-        
+
         checkout.release();
 
         assertAttribute("AvailablePermits", 2);
         assertAttribute("Overdrafts", 5L);
     }
 
-    private void assertAttribute(String name, Object value) throws MBeanException, AttributeNotFoundException, InstanceNotFoundException, ReflectionException {
+    private void assertAttribute(final String name, final Object value) throws MBeanException, AttributeNotFoundException, InstanceNotFoundException, ReflectionException {
         assertEquals(name, value, server.getAttribute(objectName, name));
     }
 
-    private CounterBean deploy(String moduleId, Properties properties) throws Exception {
+    private CounterBean deploy(final String moduleId, final Properties properties) throws Exception {
         objectName = new ObjectName("openejb.management:J2EEServer=openejb,J2EEApplication=null,EJBModule=" + moduleId + ",StatelessSessionBean=CounterBean,j2eeType=Pool,name=CounterBean");
 
-        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
+        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, org.apache.openejb.core.LocalInitialContextFactory.class.getName());
 
-        ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
 
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
         // containers
-        StatelessSessionContainerInfo statelessContainerInfo = config.configureService(StatelessSessionContainerInfo.class);
+        final StatelessSessionContainerInfo statelessContainerInfo = config.configureService(StatelessSessionContainerInfo.class);
         statelessContainerInfo.properties.putAll(properties);
 
         assembler.createContainer(statelessContainerInfo);
 
-        EjbJar ejbJar = new EjbJar(moduleId);
+        final EjbJar ejbJar = new EjbJar(moduleId);
         ejbJar.addEnterpriseBean(new StatelessBean(CounterBean.class));
         assembler.createApplication(config.configureApplication(ejbJar));
 
-        javax.naming.Context context = new InitialContext();
+        final javax.naming.Context context = new InitialContext();
         return (CounterBean) context.lookup("CounterBeanLocalBean");
     }
 
@@ -597,18 +588,19 @@ public class StatelessPoolStatsTest extends TestCase {
      * // Release them all back into the pool
      * startingPistol.countDown();
      *
-     * @param bean
-     * @param count
-     * @return
-     * @throws InterruptedException
+     * @param bean  CounterBean
+     * @param count int
+     * @return Checkout
+     * @throws InterruptedException On error
      */
-    private Checkout checkout(final CounterBean bean, int count) throws InterruptedException {
+    private Checkout checkout(final CounterBean bean, final int count) throws InterruptedException {
         final CountDownLatch startingLine = new CountDownLatch(count);
 
         final Checkout checkout = new Checkout(count);
 
         for (int i = 0; i < count; i++) {
-            Thread thread = new Thread(new Runnable() {
+            final Thread thread = new Thread(new Runnable() {
+                @Override
                 public void run() {
                     bean.checkout(startingLine, checkout.startingPistol);
                     checkout.finishLine.countDown();
@@ -627,7 +619,7 @@ public class StatelessPoolStatsTest extends TestCase {
         final CountDownLatch startingPistol = new CountDownLatch(1);
         final CountDownLatch finishLine;
 
-        public Checkout(int count) {
+        public Checkout(final int count) {
             finishLine = new CountDownLatch(count);
         }
 
@@ -661,9 +653,10 @@ public class StatelessPoolStatsTest extends TestCase {
             discarded.countDown();
         }
 
-        public void doSomething(){}
-        
-        public void checkout(CountDownLatch startingLine, CountDownLatch startPistol) {
+        public void doSomething() {
+        }
+
+        public void checkout(final CountDownLatch startingLine, final CountDownLatch startPistol) {
             try {
                 startingLine.countDown();
                 startPistol.await(60, TimeUnit.SECONDS);

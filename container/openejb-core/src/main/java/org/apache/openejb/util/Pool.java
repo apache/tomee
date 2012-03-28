@@ -24,18 +24,21 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.concurrent.LinkedBlockingQueue;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
+
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 /**
  * Any successful pop() call requires a corresponding push() or discard() call.
@@ -63,9 +66,9 @@ public class Pool<T> {
 
     @Managed
     private final AtomicInteger poolVersion = new AtomicInteger();
-    
+
     private final Supplier<T> supplier;
-    private final AtomicReference<Timer> timer = new AtomicReference<Timer>();
+    private final AtomicReference<ScheduledExecutorService> scheduler = new AtomicReference<ScheduledExecutorService>();
     private final Sweeper sweeper;
 
     private final CountingLatch out = new CountingLatch();
@@ -88,11 +91,11 @@ public class Pool<T> {
     @Managed
     private final boolean garbageCollection;
 
-    public Pool(int max, int min, boolean strict) {
+    public Pool(final int max, final int min, final boolean strict) {
         this(max, min, strict, 0, 0, 0, null, null, false, -1, false, false);
     }
-    
-    public Pool(int max, int min, boolean strict, long maxAge, long idleTimeout, long sweepInterval, Executor executor, Supplier<T> supplier, boolean replaceAged, double maxAgeOffset, boolean garbageCollection, boolean replaceFlushed) {
+
+    public Pool(final int max, final int min, final boolean strict, final long maxAge, final long idleTimeout, long sweepInterval, final Executor executor, final Supplier<T> supplier, final boolean replaceAged, final double maxAgeOffset, final boolean garbageCollection, final boolean replaceFlushed) {
         if (min > max) greater("max", max, "min", min);
         if (maxAge != 0 && idleTimeout > maxAge) greater("MaxAge", maxAge, "IdleTimeout", idleTimeout);
         this.executor = executor != null ? executor : createExecutor();
@@ -112,30 +115,37 @@ public class Pool<T> {
     }
 
     public Pool start() {
-        if (timer.compareAndSet(null, new Timer("PoolEviction@" + hashCode(), true))) {
-            timer.get().scheduleAtFixedRate(sweeper, this.sweepInterval, this.sweepInterval);
+        if (this.scheduler.compareAndSet(null, Executors.newScheduledThreadPool(1, new SchedulerThreadFactory()))) {
+            this.scheduler.get().scheduleAtFixedRate(sweeper, 0, this.sweepInterval, MILLISECONDS);
         }
         return this;
     }
 
     public void stop() {
-        Timer timer = this.timer.get();
-        if (timer != null && this.timer.compareAndSet(timer, null)) {
-            timer.cancel();
+        final ScheduledExecutorService scheduler = this.scheduler.get();
+        if (scheduler != null && this.scheduler.compareAndSet(scheduler, null)) {
+            scheduler.shutdown();
+            try {
+                if (!scheduler.awaitTermination(10000, MILLISECONDS)) {
+                    java.util.logging.Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Pool scheduler termination timeout expired");
+                }
+            } catch (InterruptedException e) {
+                //Ignore
+            }
         }
     }
 
     public boolean running() {
-        return timer.get() != null;
+        return this.scheduler.get() != null;
     }
 
     private Executor createExecutor() {
         return new ThreadPoolExecutor(5, 10,
-                                      0L, TimeUnit.SECONDS,
-                                      new LinkedBlockingQueue<Runnable>(), new DaemonThreadFactory("org.apache.openejb.util.Pool", hashCode()));
+                0L, TimeUnit.SECONDS,
+                new LinkedBlockingQueue<Runnable>(), new DaemonThreadFactory("org.apache.openejb.util.Pool", hashCode()));
     }
 
-    private void greater(String maxName, long max, String minName, long min) {
+    private void greater(final String maxName, final long max, final String minName, final long min) {
         throw new IllegalArgumentException(minName + " cannot be greater than " + maxName + ": " + minName + "=" + min + ", " + maxName + "=" + max);
     }
 
@@ -154,9 +164,10 @@ public class Pool<T> {
      * @return an entry from the pool or null indicating permission to create and push() an instance into the pool
      * @throws InterruptedException  vm level thread interruption
      * @throws IllegalStateException if a permit could not be acquired
-     * @throws java.util.concurrent.TimeoutException      if no instance could be obtained within the timeout
+     * @throws java.util.concurrent.TimeoutException
+     *                               if no instance could be obtained within the timeout
      */
-    public Entry pop(long timeout, TimeUnit unit) throws InterruptedException, TimeoutException {
+    public Entry pop(final long timeout, final TimeUnit unit) throws InterruptedException, TimeoutException {
         return pop(timeout, unit, true);
     }
 
@@ -167,15 +178,15 @@ public class Pool<T> {
      *
      * @param timeout time to block while waiting for an instance
      * @param unit    unit of time dicated by the timeout
-     * @param record should this be reflected in the stats
+     * @param record  should this be reflected in the stats
      * @return an entry from the pool or null indicating permission to create and push() an instance into the pool
      * @throws InterruptedException  vm level thread interruption
      * @throws IllegalStateException if a permit could not be acquired
      * @throws TimeoutException      if no instance could be obtained within the timeout
      */
-    private Entry pop(long timeout, TimeUnit unit, boolean record) throws InterruptedException, TimeoutException {
+    private Entry pop(final long timeout, final TimeUnit unit, final boolean record) throws InterruptedException, TimeoutException {
         if (timeout == -1) {
-             available.tryAcquire();
+            available.tryAcquire();
         } else if (!available.tryAcquire(timeout, unit)) {
             if (record) stats.accessTimeouts.record();
             throw new TimeoutException("Waited " + timeout + " " + unit);
@@ -216,7 +227,7 @@ public class Pool<T> {
      * @param obj object to add to the pool
      * @return true of the item as added
      */
-    public boolean add(T obj) {
+    public boolean add(final T obj) {
         return add(obj, 0);
     }
 
@@ -227,7 +238,7 @@ public class Pool<T> {
      * @param offset creation time offset, used for maxAge
      * @return true of the item as added
      */
-    public boolean add(T obj, long offset) {
+    public boolean add(final T obj, final long offset) {
         try {
             if (available.tryAcquire(100, MILLISECONDS)) {
 
@@ -257,7 +268,7 @@ public class Pool<T> {
      * @param obj object to push onto the pool
      * @return false if the pool max size was exceeded
      */
-    public boolean push(T obj) {
+    public boolean push(final T obj) {
         return push(obj, 0);
     }
 
@@ -267,27 +278,27 @@ public class Pool<T> {
      * <p/>
      * Failure to do so will increase the max pool size by one.
      *
-     * @param obj object to push onto the pool
+     * @param obj    object to push onto the pool
      * @param offset
      * @return false if the pool max size was exceeded
      */
-    private boolean push(T obj, long offset) {
-        if (instances.tryAcquire()){
+    private boolean push(final T obj, final long offset) {
+        if (instances.tryAcquire()) {
             return push(new Entry(obj, offset));
         }
 
         if (obj != null) new Discard(obj, Event.FULL).run();
 
         if (available instanceof Overdraft) available.release();
-        
+
         return false;
     }
 
-    public boolean push(Entry entry) {
+    public boolean push(final Entry entry) {
         return push(entry, false);
     }
 
-    private boolean push(Entry entry, boolean sweeper) {
+    private boolean push(final Entry entry, final boolean sweeper) {
         boolean added = false;
         boolean release = true;
         Event event = Event.FULL;
@@ -344,7 +355,7 @@ public class Pool<T> {
                 obj.discard(event).run();
             }
         }
-        
+
         return added;
     }
 
@@ -368,23 +379,23 @@ public class Pool<T> {
         discard(null);
     }
 
-    public void discard(Entry entry) {
+    public void discard(final Entry entry) {
         if (entry != null) {
 
             if (entry.hasHardReference()) {
                 minimum.release();
             }
-            
+
             instances.release();
         }
 
         available.release();
     }
 
-    public boolean close(long timeout, TimeUnit unit) throws InterruptedException {
+    public boolean close(final long timeout, final TimeUnit unit) throws InterruptedException {
         // drain all keys so no new instances will be accepted into the pool
-        while (instances.tryAcquire());
-        while (minimum.tryAcquire());
+        while (instances.tryAcquire()) ;
+        while (minimum.tryAcquire()) ;
 
         // Stop the sweeper thread
         stop();
@@ -394,7 +405,7 @@ public class Pool<T> {
         sweeper.run();
 
         // Drain all leases
-        if (!(available instanceof Overdraft)) while (available.tryAcquire());
+        if (!(available instanceof Overdraft)) while (available.tryAcquire()) ;
 
         // Wait for any pending discards
         return out.await(timeout, unit);
@@ -412,7 +423,7 @@ public class Pool<T> {
      * @param hard the "min" pool item that will be discarded
      * @param soft the "min" pool item to replace the discarded instance
      */
-    private void discardAndReplace(Entry hard, Entry soft) {
+    private void discardAndReplace(final Entry hard, final Entry soft) {
         // The replacement becomes a hard reference -- a "min" pool item
         soft.hard.set(soft.active());
         push(soft);
@@ -450,11 +461,11 @@ public class Pool<T> {
          * @param obj    object that this Entry will wrap
          * @param offset creation time offset, used for maxAge
          */
-        private Entry(T obj, long offset) {
+        private Entry(final T obj, final long offset) {
             if (obj == null) throw new NullPointerException("entry is null");
             final Instance instance = new Instance(obj);
-            this.soft = garbageCollection?
-                    new SoftReference<Instance>(instance):
+            this.soft = garbageCollection ?
+                    new SoftReference<Instance>(instance) :
                     new HardReference<Instance>(instance);
             this.version = poolVersion.get();
             this.active.set(instance);
@@ -493,7 +504,7 @@ public class Pool<T> {
 
         @Override
         public String toString() {
-            long now = now();
+            final long now = now();
             return "Entry{" +
                     "min=" + (hard.get() != null) +
                     ", age=" + (now - created) +
@@ -503,6 +514,7 @@ public class Pool<T> {
         }
 
         private class Discarded implements Runnable {
+            @Override
             public void run() {
             }
         }
@@ -516,16 +528,20 @@ public class Pool<T> {
 
             private final T instance;
 
-            public Instance(T instance) {
+            public Instance(final T instance) {
                 this.instance = instance;
             }
 
             @Override
             protected void finalize() throws Throwable {
-                discard(Event.GC).run();
+                try {
+                    discard(Event.GC).run();
+                } finally {
+                    super.finalize();
+                }
             }
 
-            public Runnable discard(Event event) {
+            public Runnable discard(final Event event) {
                 if (callback.compareAndSet(false, true)) {
                     return new Discard(instance, event);
                 }
@@ -534,23 +550,24 @@ public class Pool<T> {
         }
     }
 
-    private final class Sweeper extends TimerTask {
+    private final class Sweeper implements Runnable {
 
         private final AtomicInteger previousVersion = new AtomicInteger(poolVersion.get());
         private final long idleTimeout;
         private final boolean timeouts;
         private final int max;
 
-        private Sweeper(long idleTimeout, int max) {
+        private Sweeper(final long idleTimeout, final int max) {
             this.idleTimeout = idleTimeout;
             timeouts = maxAge > 0 || idleTimeout > 0;
             this.max = max;
         }
 
+        @Override
         public void run() {
 
             stats.sweeps.record();
-            
+
             final int currentVersion = poolVersion.get();
 
             final boolean isCurrent = previousVersion.getAndSet(currentVersion) == currentVersion;
@@ -559,10 +576,10 @@ public class Pool<T> {
             // Pool version not changed?
             // Just return
             if (!timeouts && isCurrent) return;
-            
+
             final long now = now();
 
-            final List<Entry> entries = new ArrayList(max);
+            final List<Entry> entries = new ArrayList<Entry>(max);
 
             // Pull all the entries from the pool
             try {
@@ -627,7 +644,7 @@ public class Pool<T> {
             // timeout setting so that they may take the place of the
             // expired instances
 
-            Iterator<Expired> discardables = expiredList.iterator();
+            final Iterator<Expired> discardables = expiredList.iterator();
             while (discardables.hasNext() && entries.size() > 0) {
 
                 if (discardables.next().replaceMinEntry(entries.get(0))) {
@@ -670,9 +687,9 @@ public class Pool<T> {
             // If there are any "min" pool instances left over
             // we need to queue up creation of a replacement
 
-            List<Expired> replace = new ArrayList<Expired>();
+            final List<Expired> replace = new ArrayList<Expired>();
 
-            for (Expired expired : expiredList) {
+            for (final Expired expired : expiredList) {
                 executor.execute(expired.entry.active().discard(expired.event));
 
                 if (expired.entry.hasHardReference() || expired.aged() && replaceAged) {
@@ -681,7 +698,7 @@ public class Pool<T> {
             }
 
             for (int i = 0; i < replace.size(); i++) {
-                long offset = maxAge > 0 ? ((long) (maxAge / replace.size() * i * maxAgeOffset)) % maxAge : 0l;
+                final long offset = maxAge > 0 ? ((long) (maxAge / replace.size() * i * maxAgeOffset)) % maxAge : 0l;
                 executor.execute(new Replace(replace.get(i).entry, offset));
             }
         }
@@ -697,7 +714,7 @@ public class Pool<T> {
         private final AtomicBoolean discarded = new AtomicBoolean();
         private final Event event;
 
-        private Expired(Entry entry, Event event) {
+        private Expired(final Entry entry, final Event event) {
             this.entry = entry;
             this.event = event;
         }
@@ -714,7 +731,7 @@ public class Pool<T> {
             return true;
         }
 
-        public boolean replaceMinEntry(Entry replacement) {
+        public boolean replaceMinEntry(final Entry replacement) {
             if (!entry.hasHardReference()) return false;
             if (replacement.hasHardReference()) return false;
             if (discarded.getAndSet(true)) return false;
@@ -729,21 +746,22 @@ public class Pool<T> {
         private final Entry expired;
         private final long offset;
 
-        private Replace(Entry expired) {
+        private Replace(final Entry expired) {
             this(expired, 0);
         }
 
-        private Replace(Entry expired, long offset) {
+        private Replace(final Entry expired, final long offset) {
             this.expired = expired;
             this.offset = offset;
         }
 
+        @Override
         public void run() {
             if (!running()) {
                 discard(expired);
                 return;
             }
-            
+
             try {
                 final T t = supplier.create();
 
@@ -768,20 +786,31 @@ public class Pool<T> {
         private final T expired;
         private final Event event;
 
-        private Discard(T expired, Event event) {
+        private Discard(final T expired, final Event event) {
             out.countUp();
             if (expired == null) throw new NullPointerException("expired object cannot be null");
             this.expired = expired;
             this.event = event;
         }
 
+        @Override
         public void run() {
             switch (event) {
-                case AGED: stats.aged.record(); break;
-                case FLUSHED: stats.flushed.record(); break;
-                case FULL: stats.overdrafts.record(); break;
-                case IDLE: stats.idleTimeouts.record(); break;
-                case GC: stats.garbageCollected.record(); break;
+                case AGED:
+                    stats.aged.record();
+                    break;
+                case FLUSHED:
+                    stats.flushed.record();
+                    break;
+                case FULL:
+                    stats.overdrafts.record();
+                    break;
+                case IDLE:
+                    stats.idleTimeouts.record();
+                    break;
+                case GC:
+                    stats.garbageCollected.record();
+                    break;
             }
             try {
                 supplier.discard(expired, event);
@@ -800,18 +829,22 @@ public class Pool<T> {
     }
 
     private static class NoSupplier implements Supplier {
-        public void discard(Object o, Event reason) {
+        @Override
+        public void discard(final Object o, final Event reason) {
         }
 
+        @Override
         public Object create() {
             return null;
         }
     }
 
     private static final class Overdraft extends Semaphore {
+
+        private static final long serialVersionUID = 1L;
         private final AtomicInteger permits = new AtomicInteger();
 
-        public Overdraft(int permits) {
+        public Overdraft(final int permits) {
             super(0);
             this.permits.set(permits);
         }
@@ -833,29 +866,29 @@ public class Pool<T> {
         }
 
         @Override
-        public boolean tryAcquire(long timeout, TimeUnit unit) throws InterruptedException {
+        public boolean tryAcquire(final long timeout, final TimeUnit unit) throws InterruptedException {
             permits.decrementAndGet();
             return true;
         }
 
         @Override
-        public void acquire(int permits) throws InterruptedException {
+        public void acquire(final int permits) throws InterruptedException {
             this.permits.addAndGet(-permits);
         }
 
         @Override
-        public void acquireUninterruptibly(int permits) {
+        public void acquireUninterruptibly(final int permits) {
             this.permits.addAndGet(-permits);
         }
 
         @Override
-        public boolean tryAcquire(int permits) {
+        public boolean tryAcquire(final int permits) {
             this.permits.addAndGet(-permits);
             return true;
         }
 
         @Override
-        public boolean tryAcquire(int permits, long timeout, TimeUnit unit) throws InterruptedException {
+        public boolean tryAcquire(final int permits, final long timeout, final TimeUnit unit) throws InterruptedException {
             this.permits.addAndGet(-permits);
             return true;
         }
@@ -866,7 +899,7 @@ public class Pool<T> {
         }
 
         @Override
-        public void release(int permits) {
+        public void release(final int permits) {
             this.permits.addAndGet(permits);
         }
 
@@ -881,7 +914,7 @@ public class Pool<T> {
         }
 
         @Override
-        protected void reducePermits(int reduction) {
+        protected void reducePermits(final int reduction) {
         }
     }
 
@@ -924,7 +957,7 @@ public class Pool<T> {
         @Managed
         private long idleTimeout;
 
-        private Stats(int minSize, int maxSize, long idleTimeout) {
+        private Stats(final int minSize, final int maxSize, final long idleTimeout) {
             this.minSize = minSize;
             this.maxSize = maxSize;
             this.idleTimeout = idleTimeout;
@@ -973,15 +1006,15 @@ public class Pool<T> {
         private boolean strict = true;
         private Duration maxAge = new Duration(0, MILLISECONDS);
         private double maxAgeOffset = -1;
-        private Duration idleTimeout =  new Duration(0, MILLISECONDS);
-        private Duration interval =  new Duration(5 * 60, TimeUnit.SECONDS);
+        private Duration idleTimeout = new Duration(0, MILLISECONDS);
+        private Duration interval = new Duration(5 * 60, TimeUnit.SECONDS);
         private Supplier<T> supplier;
         private Executor executor;
         private boolean replaceAged;
         private boolean replaceFlushed;
         private boolean garbageCollection = true;
 
-        public Builder(Builder<T> that) {
+        public Builder(final Builder<T> that) {
             this.max = that.max;
             this.min = that.min;
             this.strict = that.strict;
@@ -1007,40 +1040,41 @@ public class Pool<T> {
             return garbageCollection;
         }
 
-        public void setGarbageCollection(boolean garbageCollection) {
+        public void setGarbageCollection(final boolean garbageCollection) {
             this.garbageCollection = garbageCollection;
         }
 
-        public void setReplaceAged(boolean replaceAged) {
+        public void setReplaceAged(final boolean replaceAged) {
             this.replaceAged = replaceAged;
         }
 
-        public void setReplaceFlushed(boolean replaceFlushed) {
+        public void setReplaceFlushed(final boolean replaceFlushed) {
             this.replaceFlushed = replaceFlushed;
         }
 
-        public void setMaxSize(int max) {
+        public void setMaxSize(final int max) {
             this.max = max;
         }
 
         /**
          * Alias for pool size
+         *
          * @param max
          * @return
          */
-        public void setPoolSize(int max) {
+        public void setPoolSize(final int max) {
             setMaxSize(max);
         }
 
-        public void setMinSize(int min) {
+        public void setMinSize(final int min) {
             this.min = min;
         }
 
-        public void setStrictPooling(boolean strict) {
+        public void setStrictPooling(final boolean strict) {
             this.strict = strict;
         }
 
-        public void setMaxAge(Duration maxAge) {
+        public void setMaxAge(final Duration maxAge) {
             this.maxAge = maxAge;
         }
 
@@ -1064,7 +1098,7 @@ public class Pool<T> {
             return replaceAged;
         }
 
-        public void setMaxAgeOffset(double maxAgeOffset) {
+        public void setMaxAgeOffset(final double maxAgeOffset) {
             this.maxAgeOffset = maxAgeOffset;
         }
 
@@ -1072,23 +1106,24 @@ public class Pool<T> {
             return maxAgeOffset;
         }
 
-        public void setIdleTimeout(Duration idleTimeout) {
+        public void setIdleTimeout(final Duration idleTimeout) {
             this.idleTimeout = idleTimeout;
         }
 
-        public void setSweepInterval(Duration interval) {
+        public void setSweepInterval(final Duration interval) {
             this.interval = interval;
         }
 
-        public void setSupplier(Supplier<T> supplier) {
+        public void setSupplier(final Supplier<T> supplier) {
             this.supplier = supplier;
         }
 
-        public void setExecutor(Executor executor) {
+        public void setExecutor(final Executor executor) {
             this.executor = executor;
         }
 
         public Pool<T> build() {
+            //noinspection unchecked
             return new Pool(max, min, strict, maxAge.getTime(MILLISECONDS), idleTimeout.getTime(MILLISECONDS), interval.getTime(MILLISECONDS), executor, supplier, replaceAged, maxAgeOffset, this.garbageCollection, replaceFlushed);
         }
     }
@@ -1099,9 +1134,34 @@ public class Pool<T> {
          */
         private final T hard;
 
-        public HardReference(T referent) {
+        public HardReference(final T referent) {
             super(referent);
             this.hard = referent;
+        }
+    }
+
+    static class SchedulerThreadFactory implements ThreadFactory {
+
+        private static final AtomicInteger count = new AtomicInteger(1);
+        private final ThreadGroup group;
+
+        SchedulerThreadFactory() {
+            final SecurityManager s = System.getSecurityManager();
+            this.group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
+        }
+
+        @Override
+        public Thread newThread(final Runnable r) {
+            final Thread t = new Thread(group, r, "org.apache.openejb.pool.scheduler." + count.getAndIncrement());
+            if (!t.isDaemon()) {
+                t.setDaemon(true);
+            }
+
+            if (t.getPriority() != Thread.NORM_PRIORITY) {
+                t.setPriority(Thread.NORM_PRIORITY);
+            }
+
+            return t;
         }
     }
 }
