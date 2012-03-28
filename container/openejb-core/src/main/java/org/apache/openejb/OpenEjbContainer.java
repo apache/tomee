@@ -25,6 +25,8 @@ import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.openejb.config.PersistenceModule;
 import org.apache.openejb.config.ValidationFailedException;
+import org.apache.openejb.core.Operation;
+import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.jee.Application;
 import org.apache.openejb.jee.Beans;
 import org.apache.openejb.jee.Connector;
@@ -140,12 +142,17 @@ public class OpenEjbContainer extends EJBContainer {
 
         final InjectionProcessor processor = new InjectionProcessor(object, context.getInjections(), context.getJndiContext());
 
+        final ThreadContext callContext = new ThreadContext(context, null, Operation.INJECTION);
+        final ThreadContext oldContext = ThreadContext.enter(callContext);
         try {
             final OWBInjector beanInjector = new OWBInjector(webBeanContext);
             beanInjector.inject(object);
         } catch (Throwable t) {
+            logger.warning("an error occured while injecting the class '" + clazz.getName() + "': " + t.getMessage());
             // TODO handle this differently
             // this is temporary till the injector can be rewritten
+        } finally {
+            ThreadContext.exit(oldContext);
         }
 
         try {
