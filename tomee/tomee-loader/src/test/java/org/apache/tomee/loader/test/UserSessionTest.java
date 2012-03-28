@@ -17,6 +17,7 @@
 package org.apache.tomee.loader.test;
 
 import org.apache.tomee.loader.service.ServiceContext;
+import org.apache.tomee.loader.service.ServiceContextImpl;
 import org.junit.Test;
 
 import java.util.List;
@@ -27,7 +28,7 @@ public class UserSessionTest {
     @Test()
     public void test() throws Exception {
 
-        final ServiceContext service = new ServiceContext();
+        final ServiceContext service = new ServiceContextImpl();
         final List<Map<String, Object>> result = service.getJndi("");
         org.junit.Assert.assertNotNull(result);
         org.junit.Assert.assertFalse(result.isEmpty());

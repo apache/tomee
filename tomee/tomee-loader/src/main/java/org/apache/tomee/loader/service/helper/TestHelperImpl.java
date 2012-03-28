@@ -17,21 +17,24 @@
 
 package org.apache.tomee.loader.service.helper;
 
+import org.apache.tomee.loader.service.ServiceContext;
+import org.apache.tomee.loader.service.ServiceException;
+
 import javax.naming.Context;
-import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 public class TestHelperImpl implements TestHelper {
-    private final Context ctx;
 
-    public TestHelperImpl(Context ctx) {
-        this.ctx = ctx;
+    private final ServiceContext srvCtx;
+
+    public TestHelperImpl(ServiceContext srvCtx) {
+        this.srvCtx = srvCtx;
     }
 
     @Override
@@ -84,26 +87,27 @@ public class TestHelperImpl implements TestHelper {
             }
 
             try {
-                final Properties properties = new Properties();
-                properties.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
-                properties.put("openejb.loader", "embed");
-
-                final InitialContext ctx = new InitialContext(properties);
-                Object obj = ctx.lookup("");
-
+                final Object obj = lookup(this.srvCtx.getContext(), Object.class, "");
                 if (obj.getClass().getName().equals("org.apache.openejb.core.ivm.naming.IvmContext")) {
                     result.add(createDTO("testLookup", true));
                 } else {
                     result.add(createDTO("testLookup", false));
                 }
-
             } catch (Exception e) {
                 result.add(createDTO("testLookup", false));
             }
         }
-
-
         return result;
+    }
+
+    public <T> T lookup(Context ctx, Class<T> cls, String path) {
+        final Object obj;
+        try {
+            obj = ctx.lookup(path);
+        } catch (NamingException e) {
+            throw new ServiceException(e);
+        }
+        return cls.cast(obj);
     }
 
     private Map<String, Object> createDTO(String key, boolean success) {

@@ -18,6 +18,7 @@
 package org.apache.tomee.loader.listener;
 
 import org.apache.tomee.loader.service.ServiceContext;
+import org.apache.tomee.loader.service.ServiceContextImpl;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
@@ -28,8 +29,8 @@ public class UserSessionListener implements HttpSessionListener {
 
     @Override
     public void sessionCreated(HttpSessionEvent httpSessionEvent) {
-        final ServiceContext servletsService = new ServiceContext();
-        httpSessionEvent.getSession().setAttribute(USER_CONTEXT, servletsService);
+        final ServiceContext cxt = new ServiceContextImpl();
+        httpSessionEvent.getSession().setAttribute(USER_CONTEXT, cxt);
     }
 
     @Override
@@ -42,7 +43,7 @@ public class UserSessionListener implements HttpSessionListener {
     }
 
     public static ServiceContext getServiceContext(HttpSession session) {
-        final ServiceContext service = (ServiceContext) session.getAttribute(USER_CONTEXT);
-        return service;
+        final ServiceContext cxt = (ServiceContext) session.getAttribute(USER_CONTEXT);
+        return cxt;
     }
 }
