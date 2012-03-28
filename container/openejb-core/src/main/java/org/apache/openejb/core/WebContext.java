@@ -16,6 +16,13 @@
  */
 package org.apache.openejb.core;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
+import javax.enterprise.context.spi.CreationalContext;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.Injection;
 import org.apache.openejb.InjectionProcessor;
@@ -24,19 +31,6 @@ import org.apache.openejb.cdi.ConstructorInjectionBean;
 import org.apache.webbeans.component.InjectionTargetBean;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.inject.AbstractInjectable;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.enterprise.context.spi.CreationalContext;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
 
 public class WebContext {
     private String id;

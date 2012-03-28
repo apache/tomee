@@ -23,11 +23,12 @@ import javax.ws.rs.core.Application;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.Injection;
 import org.apache.openejb.server.httpd.HttpListener;
+import org.apache.webbeans.config.WebBeansContext;
 
 public interface RsHttpListener extends HttpListener {
     void deploySingleton(String fullContext, Object o, Application appInstance);
 
-    void deployPojo(String fullContext, Class<?> loadedClazz, Application app, Collection<Injection> injections, Context context);
+    void deployPojo(String fullContext, Class<?> loadedClazz, Application app, Collection<Injection> injections, Context context, WebBeansContext owbCtx);
 
     void deployEJB(String fullContext, BeanContext beanContext);
 
