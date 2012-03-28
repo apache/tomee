@@ -17,17 +17,12 @@
 
 package org.apache.tomee.loader.service.helper;
 
+import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
-import org.apache.openejb.core.ivm.BaseEjbProxyHandler;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.spi.ContainerSystem;
-import org.apache.openejb.util.proxy.ProxyManager;
+import org.apache.openejb.ModuleContext;
 import org.apache.tomee.loader.service.ServiceContext;
-import org.apache.tomee.loader.service.ServiceException;
 
 import javax.naming.Context;
-import javax.naming.NameClassPair;
-import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,6 +31,12 @@ import java.util.Map;
 
 public class JndiHelperImpl implements JndiHelper {
 
+    public static final String CONTEXT_NODE_TYPE = "context";
+    public static final String LEAF_NODE_TYPE = "leaf";
+    public static final String APPLICATION_NODE_TYPE = "application";
+    public static final String MODULE_NODE_TYPE = "module";
+    public static final String ROOT_NODE_TYPE = "root";
+
     private final ServiceContext srvCtx;
 
     public JndiHelperImpl(ServiceContext srvCtx) {
@@ -43,78 +44,58 @@ public class JndiHelperImpl implements JndiHelper {
     }
 
     @Override
-    public List<Map<String, Object>> getJndi(String path) {
-        final List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+    public Map<String, Object> getJndi() {
+        final Map<String, Object> root = JndiHelperImpl.createTreeNode(ROOT_NODE_TYPE, "/", null);
+
+        for (AppContext appContext : this.srvCtx.getOpenEJBHelper().getAppContexts()) {
+            final Map<String, Object> appNode = JndiHelperImpl.createTreeNode(APPLICATION_NODE_TYPE, appContext.getId(), root);
+
+            // is there a simpler way?
+            // id = guarantee unity
+            final Map<String, ModuleContext> modules = new HashMap<String, ModuleContext>();
+            for (BeanContext beanContext : appContext.getBeanContexts()) {
+                if (!beanContext.getBeanClass().equals(BeanContext.Comp.class)) {
+                    final ModuleContext moduleContext = beanContext.getModuleContext();
+                    modules.put(moduleContext.getUniqueId(), moduleContext);
+                }
+            }
+
+            for (ModuleContext module : modules.values()) {
+                final Map<String, Object> moduleNode = JndiHelperImpl.createTreeNode(MODULE_NODE_TYPE, appContext.getId(), appNode);
+                addSubContext(module.getModuleJndiContext(), "module", moduleNode);
+            }
+
+            addSubContext(appContext.getAppJndiContext(), "app", appNode);
+            addSubContext(appContext.getGlobalJndiContext(), "global", appNode);
+        }
+
+        return root;
+    }
+
+    private void addSubContext(final Context context, final String subContext, final Map<String, Object> parent) {
+        final Map<String, Object> subNode = JndiHelperImpl.createTreeNode(CONTEXT_NODE_TYPE, subContext, parent);
 
         try {
-            mountJndiList(result, this.srvCtx.getContext(), path);
+            JndiTreeHelperImpl.runOnJndiTree((Context) context.lookup(subContext), subNode);
         } catch (NamingException e) {
-            //Throwing a runtimeexception instead.
-            throw new ServiceException(e);
+            //do nothing
+        }
+    }
+
+    public static Map<String, Object> createTreeNode(String type, String path, Map<String, Object> parent) {
+        final Map<String, Object> result = new HashMap<String, Object>();
+        result.put("type", type);
+        result.put("path", path);
+        
+        if(parent != null) {
+            List<Map<String, Object>> children = (List<Map<String, Object>>) parent.get("children");
+            if(children == null) {
+                children = new ArrayList<Map<String, Object>>();
+                parent.put("children", children);
+            }
+            children.add(result);
         }
 
         return result;
-    }
-
-    private void mountJndiList(List<Map<String, Object>> jndi, Context context, String root) throws NamingException {
-        final NamingEnumeration namingEnumeration;
-        try {
-            namingEnumeration = context.list(root);
-        } catch (NamingException e) {
-            //not found?
-            return;
-        }
-        while (namingEnumeration.hasMoreElements()) {
-            final NameClassPair pair = (NameClassPair) namingEnumeration.next();
-            final String key = pair.getName();
-
-            System.out.println("(A)");
-
-            final Object obj;
-            try {
-                obj = context.lookup(key);
-            } catch (NamingException e) {
-                //not found?
-                continue;
-            }
-
-            if (Context.class.isInstance(obj)) {
-                mountJndiList(jndi, Context.class.cast(obj), key);
-            } else {
-                final Map<String, Object> dto = new HashMap<String, Object>();
-                dto.put("path", key);
-                dto.put("name", pair.getName());
-                dto.put("value", getStr(obj));
-
-                jndi.add(dto);
-            }
-        }
-    }
-
-    private void populateClassList(List<String> list, List<Class> classes) {
-        if (classes == null) {
-            return;
-        }
-        for (Class<?> cls : classes) {
-            list.add(getStr(cls));
-        }
-    }
-
-    private BeanContext getDeployment(String deploymentID) {
-        ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-        BeanContext ejb = containerSystem.getBeanContext(deploymentID);
-        return ejb;
-    }
-
-    private String getDeploymentId(Object ejbObj) throws NamingException {
-        final BaseEjbProxyHandler handler = (BaseEjbProxyHandler) ProxyManager.getInvocationHandler(ejbObj);
-        return getStr(handler.deploymentID);
-    }
-
-    private String getStr(Object value) {
-        if (value == null) {
-            return null;
-        }
-        return String.valueOf(value);
     }
 }

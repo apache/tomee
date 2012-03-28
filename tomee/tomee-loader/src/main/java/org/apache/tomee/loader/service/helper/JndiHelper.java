@@ -17,11 +17,10 @@
 
 package org.apache.tomee.loader.service.helper;
 
-import java.util.List;
 import java.util.Map;
 
 public interface JndiHelper {
 
-    List<Map<String, Object>> getJndi(String path);
+    Map<String, Object> getJndi();
 
 }

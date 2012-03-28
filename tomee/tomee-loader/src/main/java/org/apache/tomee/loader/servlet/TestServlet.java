@@ -48,8 +48,7 @@ public class TestServlet extends HttpServlet {
     }
 
     private List<Map<String, Object>> get(HttpServletRequest req) throws NamingException {
-        return UserSessionListener.getServiceContext(req.getSession()).getTest();
-
+        return UserSessionListener.getServiceContext(req.getSession()).getTestHelper().getTestResults();
     }
 
 }

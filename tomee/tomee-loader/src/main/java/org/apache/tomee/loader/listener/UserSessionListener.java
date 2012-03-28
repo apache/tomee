@@ -35,11 +35,7 @@ public class UserSessionListener implements HttpSessionListener {
 
     @Override
     public void sessionDestroyed(HttpSessionEvent httpSessionEvent) {
-        final ServiceContext servletsService = (ServiceContext) httpSessionEvent.getSession().getAttribute(USER_CONTEXT);
-        if (servletsService == null) {
-            return; //do nothing
-        }
-        servletsService.close();
+        //do nothing
     }
 
     public static ServiceContext getServiceContext(HttpSession session) {
