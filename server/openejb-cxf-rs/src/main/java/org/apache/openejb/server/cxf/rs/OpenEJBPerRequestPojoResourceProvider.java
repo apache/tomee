@@ -29,14 +29,18 @@ import org.apache.cxf.jaxrs.lifecycle.PerRequestResourceProvider;
 import org.apache.cxf.message.Message;
 import org.apache.openejb.Injection;
 import org.apache.openejb.InjectionProcessor;
+import org.apache.webbeans.config.WebBeansContext;
+import org.apache.webbeans.inject.OWBInjector;
 
 public class OpenEJBPerRequestPojoResourceProvider extends PerRequestResourceProvider {
     protected Collection<Injection> injections;
     protected Context context;
+    protected WebBeansContext webbeansContext;
 
-    public OpenEJBPerRequestPojoResourceProvider(Class<?> clazz, Collection<Injection> injectionCollection, Context ctx) {
+    public OpenEJBPerRequestPojoResourceProvider(Class<?> clazz, Collection<Injection> injectionCollection, Context ctx, WebBeansContext owbCtx) {
         super(clazz);
         injections = injectionCollection;
+        webbeansContext = owbCtx;
         context = ctx;
         if (ctx == null) {
             // TODO: context shouldn't be null here so it should be removed
@@ -61,8 +65,14 @@ public class OpenEJBPerRequestPojoResourceProvider extends PerRequestResourcePro
     protected Object createInstance(Message m) {
         Object o = super.createInstance(m);
         try {
-            InjectionProcessor<?> injector = new InjectionProcessor<Object>(o, new ArrayList<Injection>(injections), InjectionProcessor.unwrap(context));
+            final InjectionProcessor<?> injector = new InjectionProcessor<Object>(o, new ArrayList<Injection>(injections), InjectionProcessor.unwrap(context));
             injector.createInstance();
+            try {
+                final OWBInjector beanInjector = new OWBInjector(webbeansContext);
+                beanInjector.inject(injector.getInstance());
+            } catch (Throwable t) {
+                // ignored
+            }
             injector.postConstruct();
             return injector.getInstance();
         } catch (Exception e) {

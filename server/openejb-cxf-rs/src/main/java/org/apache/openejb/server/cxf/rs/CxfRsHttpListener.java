@@ -46,6 +46,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.webbeans.config.WebBeansContext;
 
 /**
  * System property:
@@ -92,8 +93,8 @@ public class CxfRsHttpListener implements RsHttpListener {
         deploy(o.getClass(), fullContext, new SingletonResourceProvider(o), o, appInstance, null);
     }
 
-    @Override public void deployPojo(String fullContext, Class<?> loadedClazz, Application app, Collection<Injection> injections, Context context) {
-        deploy(loadedClazz, fullContext, new OpenEJBPerRequestPojoResourceProvider(loadedClazz, injections, context), null, app, null);
+    @Override public void deployPojo(String fullContext, Class<?> loadedClazz, Application app, Collection<Injection> injections, Context context, WebBeansContext owbCtx) {
+        deploy(loadedClazz, fullContext, new OpenEJBPerRequestPojoResourceProvider(loadedClazz, injections, context, owbCtx), null, app, null);
     }
 
     @Override public void deployEJB(String fullContext, BeanContext beanContext) {

@@ -57,6 +57,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import org.apache.webbeans.config.WebBeansContext;
 
 public abstract class RESTService implements ServerService, SelfManaging, DeploymentListener {
     public static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_RS, RESTService.class);
@@ -88,7 +89,11 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
 
         final ClassLoader classLoader = getClassLoader(webContext.getClassLoader());
         final Collection<Injection> injections = webContext.getInjections();
-        final Context context = webContext.getJndiEnc();
+        final WebBeansContext owbCtx = webContext.getAppContext().getWebBeansContext();
+        Context context = webContext.getJndiEnc();
+        if (context == null) { // usually true since it is set in org.apache.tomee.catalina.TomcatWebAppBuilder.afterStart() and lookup(comp) fails
+            context = webContext.getAppContext().getAppJndiContext();
+        }
 
         // The spec says:
         //
@@ -147,7 +152,7 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
                 if (restEjbs.containsKey(clazz.getName())) {
                     deployEJB(appPrefix, restEjbs.get(clazz.getName()).context);
                 } else {
-                    deployPojo(appPrefix, clazz, appInstance, classLoader, injections, context);
+                    deployPojo(appPrefix, clazz, appInstance, classLoader, injections, context, owbCtx);
                 }
             }
 
@@ -162,7 +167,7 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
                 } else {
                     try {
                         Class<?> loadedClazz = classLoader.loadClass(clazz);
-                        deployPojo(appPrefix, loadedClazz, null, classLoader, injections, context);
+                        deployPojo(appPrefix, loadedClazz, null, classLoader, injections, context, owbCtx);
                     } catch (ClassNotFoundException e) {
                         throw new OpenEJBRestRuntimeException("can't find class " + clazz, e);
                     }
@@ -249,7 +254,7 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
         return address.substring(0, idx) + contextRoot;
     }
 
-    private void deployPojo(String contextRoot, Class<?> loadedClazz, Application app, ClassLoader classLoader, Collection<Injection> injections, Context context) {
+    private void deployPojo(String contextRoot, Class<?> loadedClazz, Application app, ClassLoader classLoader, Collection<Injection> injections, Context context, WebBeansContext owbCtx) {
         if (loadedClazz.isInterface()) {
             return;
         }
@@ -259,7 +264,7 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
         final RsRegistry.AddressInfo address = rsRegistry.createRsHttpListener(contextRoot, listener, classLoader, nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost);
 
         services.add(address.complete);
-        listener.deployPojo(getFullContext(address.base, contextRoot), loadedClazz, app, injections, context);
+        listener.deployPojo(getFullContext(address.base, contextRoot), loadedClazz, app, injections, context, owbCtx);
 
         LOGGER.info("REST Service: " + address.complete + "  -> Pojo " + loadedClazz.getName());
     }
