@@ -43,6 +43,10 @@ public class JndiHelperImpl implements JndiHelper {
         this.srvCtx = srvCtx;
     }
 
+//    public List<Method> getJndiMethods(String path) {
+//
+//    }
+
     @Override
     public Map<String, Object> getJndi() {
         final Map<String, Object> root = JndiHelperImpl.createTreeNode(ROOT_NODE_TYPE, "/", null);
@@ -69,6 +73,7 @@ public class JndiHelperImpl implements JndiHelper {
             addSubContext(appContext.getGlobalJndiContext(), "global", appNode);
         }
 
+        normalizePaths(new ArrayList<String>(), root);
         return root;
     }
 
@@ -97,5 +102,36 @@ public class JndiHelperImpl implements JndiHelper {
         }
 
         return result;
+    }
+
+    private void normalizePaths(final List<String> path, final Map<String, Object> jndiEntry) {
+        final List<String> innerPath = new ArrayList<String>(path);
+
+        if ("context".equals(jndiEntry.get("type"))) {
+            innerPath.add((String) jndiEntry.get("path"));
+
+        } else if ("leaf".equals(jndiEntry.get("type"))) {
+            String[] entryPaths = ((String) jndiEntry.get("path")).split("/");
+            String leafName = entryPaths[entryPaths.length - 1];
+
+            StringBuffer resultingPath = new StringBuffer();
+            for (String pathEntry : path) {
+                resultingPath.append(pathEntry);
+                resultingPath.append("/");
+            }
+            resultingPath.append(leafName);
+
+            jndiEntry.put("path", resultingPath.toString());
+            return;
+        }
+
+        List<Map<String, Object>> jndiEntries = (List<Map<String, Object>>) jndiEntry.get("children");
+        if (jndiEntries != null && !jndiEntries.isEmpty()) {
+
+            for (Map<String, Object> child : jndiEntries) {
+                normalizePaths(innerPath, child);
+            }
+        }
+
     }
 }
