@@ -161,7 +161,10 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
         }
 
         if (!useApp) {
-            for (String clazz : webApp.restClass) {
+            final Set<String> restClasses = new HashSet<String>(webApp.restClass);
+            restClasses.addAll(webApp.ejbRestServices);
+
+            for (String clazz : restClasses) {
                 if (restEjbs.containsKey(clazz)) {
                     deployEJB(appPrefix, restEjbs.get(clazz).context);
                 } else {
