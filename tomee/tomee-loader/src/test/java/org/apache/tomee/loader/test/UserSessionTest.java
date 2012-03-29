@@ -49,7 +49,7 @@ public class UserSessionTest {
         org.junit.Assert.assertFalse(result.isEmpty());
 
         final List<String> names = new ArrayList<String>();
-        mountPathsList(names, new ArrayList<String>(), result);
+        mountPathsList(names, result);
 
         System.out.println("*******************************************");
         System.out.println(result);
@@ -77,41 +77,14 @@ public class UserSessionTest {
         System.out.println("*******************************************");
     }
 
-    private void mountPathsList(final List<String> names, final List<String> path, final Map<String, Object> jndiEntry) {
-        if ("module".equals(jndiEntry.get("type"))) {
-            return;
-        }
-
-        final List<String> innerPath = new ArrayList<String>(path);
-
-        if ("context".equals(jndiEntry.get("type"))) {
-            innerPath.add((String) jndiEntry.get("path"));
-
-        } else if ("leaf".equals(jndiEntry.get("type"))) {
-            if ("/AppName".equals(jndiEntry.get("path"))
-                    || "/ModuleName".equals(jndiEntry.get("path"))) {
-                return;
-            }
-
-            String[] entryPaths = ((String) jndiEntry.get("path")).split("/");
-            String leafName = entryPaths[entryPaths.length - 1];
-
-            StringBuffer resultingPath = new StringBuffer();
-            for (String pathEntry : path) {
-                resultingPath.append(pathEntry);
-                resultingPath.append("/");
-            }
-            resultingPath.append(leafName);
-
-            names.add(resultingPath.toString());
-            return;
-        }
+    private void mountPathsList(final List<String> names, final Map<String, Object> jndiEntry) {
+        names.add((String) jndiEntry.get("path"));
 
         List<Map<String, Object>> jndiEntries = (List<Map<String, Object>>) jndiEntry.get("children");
         if (jndiEntries != null && !jndiEntries.isEmpty()) {
 
             for (Map<String, Object> child : jndiEntries) {
-                mountPathsList(names, innerPath, child);
+                mountPathsList(names, child);
             }
         }
 
