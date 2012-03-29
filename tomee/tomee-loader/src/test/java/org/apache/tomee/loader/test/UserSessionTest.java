@@ -55,23 +55,21 @@ public class UserSessionTest {
         System.out.println(result);
         System.out.println("*******************************************");
         for (String name : names) {
-            System.out.println(name);
-        }
-        System.out.println("*******************************************");
-        for (String name : names) {
             Object srv = null;
             try {
                 srv = service.getOpenEJBHelper().lookup(name);
             } catch (NamingException e) {
-                System.out.println(name + " (NOT FOUND) ");
+                //not found
             }
 
             if (DummyEjb.class.isInstance(srv)) {
                 final DummyEjb dummyEjb = DummyEjb.class.cast(srv);
 
-                System.out.println(name + " -> " + dummyEjb.sayHi());
+                System.out.println(name + " -> dummyEjb.sayHi() -> " + dummyEjb.sayHi());
             } else {
-                if (srv != null) {
+                if (srv == null) {
+                    System.out.println(name + " (NOT FOUND) ");
+                } else {
                     System.out.println(name);
                 }
             }
