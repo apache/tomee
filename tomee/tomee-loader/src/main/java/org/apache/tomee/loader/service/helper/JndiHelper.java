@@ -17,10 +17,13 @@
 
 package org.apache.tomee.loader.service.helper;
 
+import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Map;
 
 public interface JndiHelper {
 
     Map<String, Object> getJndi();
+    List<Method> getJndiMethods(String path);
 
 }

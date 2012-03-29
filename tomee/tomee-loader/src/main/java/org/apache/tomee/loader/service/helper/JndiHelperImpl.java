@@ -24,7 +24,10 @@ import org.apache.tomee.loader.service.ServiceContext;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,9 +46,19 @@ public class JndiHelperImpl implements JndiHelper {
         this.srvCtx = srvCtx;
     }
 
-//    public List<Method> getJndiMethods(String path) {
-//
-//    }
+    @Override
+    public List<Method> getJndiMethods(String path) {
+        Object srv = null;
+        try {
+            srv = srvCtx.getOpenEJBHelper().lookup(path);
+        } catch (NamingException e) {
+            //not found
+            return Collections.emptyList();
+        }
+
+        final Class<?> srvCls = srv.getClass();
+        return new ArrayList<Method>(Arrays.asList(srvCls.getMethods()));
+    }
 
     @Override
     public Map<String, Object> getJndi() {
@@ -91,10 +104,10 @@ public class JndiHelperImpl implements JndiHelper {
         final Map<String, Object> result = new HashMap<String, Object>();
         result.put("type", type);
         result.put("path", path);
-        
-        if(parent != null) {
+
+        if (parent != null) {
             List<Map<String, Object>> children = (List<Map<String, Object>>) parent.get("children");
-            if(children == null) {
+            if (children == null) {
                 children = new ArrayList<Map<String, Object>>();
                 parent.put("children", children);
             }

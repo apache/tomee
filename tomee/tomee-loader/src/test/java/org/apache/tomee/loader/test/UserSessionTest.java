@@ -23,6 +23,7 @@ import org.junit.Test;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -58,23 +59,33 @@ public class UserSessionTest {
             Object srv = null;
             try {
                 srv = service.getOpenEJBHelper().lookup(name);
+
             } catch (NamingException e) {
                 //not found
             }
 
             if (DummyEjb.class.isInstance(srv)) {
                 final DummyEjb dummyEjb = DummyEjb.class.cast(srv);
-
                 System.out.println(name + " -> dummyEjb.sayHi() -> " + dummyEjb.sayHi());
+                showMethods(service, name);
             } else {
                 if (srv == null) {
                     System.out.println(name + " (NOT FOUND) ");
                 } else {
                     System.out.println(name);
+                    showMethods(service, name);
                 }
             }
         }
         System.out.println("*******************************************");
+    }
+    
+    private void showMethods(final ServiceContext service, String name) {
+        //show methods
+        final List<Method> methods = service.getJndiHelper().getJndiMethods(name);
+        for(Method method : methods) {
+            System.out.println("    METHOD -> " + method);
+        }
     }
 
     private void mountPathsList(final List<String> names, final Map<String, Object> jndiEntry) {
