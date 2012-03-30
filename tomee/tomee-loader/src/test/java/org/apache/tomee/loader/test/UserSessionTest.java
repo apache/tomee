@@ -18,6 +18,7 @@ package org.apache.tomee.loader.test;
 
 import org.apache.tomee.loader.service.ServiceContext;
 import org.apache.tomee.loader.service.ServiceContextImpl;
+import org.apache.tomee.loader.service.helper.TypeAndValueEntry;
 import org.junit.Test;
 
 import javax.naming.Context;
@@ -67,11 +68,16 @@ public class UserSessionTest {
             }
 
             if (DummyEjb.class.isInstance(srv)) {
-                System.out.println(name + " -> dummyEjb.sayHi() -> " + service.getJndiHelper().invokeJndiMethod(
+                System.out.println(name + " -> " + service.getJndiHelper().invokeJndiMethod(
                         context,
                         name,
                         "sayHi",
-                        "buddy"
+                        new TypeAndValueEntry(String.class, "buddy")
+                ));
+                System.out.println(name + " -> " + service.getJndiHelper().invokeJndiMethod(
+                        context,
+                        name,
+                        "sayWhassup"
                 ));
                 showMethods(service, name);
             } else {
