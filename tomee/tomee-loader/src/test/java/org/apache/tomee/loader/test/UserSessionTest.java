@@ -72,13 +72,22 @@ public class UserSessionTest {
                         context,
                         name,
                         "sayHi",
+                        new TypeAndValueEntry(String.class, null)
+                ));
+
+                System.out.println(name + " -> " + service.getJndiHelper().invokeJndiMethod(
+                        context,
+                        name,
+                        "sayHi",
                         new TypeAndValueEntry(String.class, "buddy")
                 ));
+
                 System.out.println(name + " -> " + service.getJndiHelper().invokeJndiMethod(
                         context,
                         name,
                         "sayWhassup"
                 ));
+
                 showMethods(service, name);
             } else {
                 if (srv == null) {
