@@ -17,6 +17,7 @@
 
 package org.apache.tomee.loader.service.helper;
 
+import javax.naming.Context;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,11 @@ import java.util.Map;
 public interface JndiHelper {
 
     Map<String, Object> getJndi();
+
     List<Method> getJndiMethods(String path);
+
+    Context getContext(String user, String password);
+
+    Object invokeJndiMethod(Context context, String path, String methodName, Object... params);
 
 }

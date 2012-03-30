@@ -46,6 +46,8 @@ public class UserSessionTest {
 
         final ServiceContext service = new ServiceContextImpl();
         final Map<String, Object> result = service.getJndiHelper().getJndi();
+        final Context context = service.getJndiHelper().getContext(null, null);
+
         org.junit.Assert.assertNotNull(result);
         org.junit.Assert.assertFalse(result.isEmpty());
 
@@ -58,15 +60,19 @@ public class UserSessionTest {
         for (String name : names) {
             Object srv = null;
             try {
-                srv = service.getOpenEJBHelper().lookup(name);
+                srv = context.lookup(name);
 
             } catch (NamingException e) {
                 //not found
             }
 
             if (DummyEjb.class.isInstance(srv)) {
-                final DummyEjb dummyEjb = DummyEjb.class.cast(srv);
-                System.out.println(name + " -> dummyEjb.sayHi() -> " + dummyEjb.sayHi());
+                System.out.println(name + " -> dummyEjb.sayHi() -> " + service.getJndiHelper().invokeJndiMethod(
+                        context,
+                        name,
+                        "sayHi",
+                        "buddy"
+                ));
                 showMethods(service, name);
             } else {
                 if (srv == null) {
@@ -79,11 +85,11 @@ public class UserSessionTest {
         }
         System.out.println("*******************************************");
     }
-    
+
     private void showMethods(final ServiceContext service, String name) {
         //show methods
         final List<Method> methods = service.getJndiHelper().getJndiMethods(name);
-        for(Method method : methods) {
+        for (Method method : methods) {
             System.out.println("    METHOD -> " + method);
         }
     }

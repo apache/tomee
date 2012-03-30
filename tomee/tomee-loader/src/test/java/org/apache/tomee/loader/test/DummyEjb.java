@@ -21,7 +21,7 @@ import javax.ejb.Stateless;
 @Stateless
 public class DummyEjb {
 
-    public String sayHi() {
-        return "Hi, buddy!";
+    public String sayHi(String name) {
+        return "Hi " + name + "!";
     }
 }
