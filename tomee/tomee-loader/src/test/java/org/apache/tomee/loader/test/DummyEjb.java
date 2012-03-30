@@ -24,4 +24,8 @@ public class DummyEjb {
     public String sayHi(String name) {
         return "Hi " + name + "!";
     }
+
+    public String sayWhassup() {
+        return "Whassuuuuuup??!";
+    }
 }

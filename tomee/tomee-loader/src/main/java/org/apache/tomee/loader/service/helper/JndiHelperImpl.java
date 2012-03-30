@@ -88,7 +88,7 @@ public class JndiHelperImpl implements JndiHelper {
 
 
     @Override
-    public Object invokeJndiMethod(Context context, String path, String methodName, Object... params) {
+    public Object invokeJndiMethod(Context context, String path, String methodName, TypeAndValueEntry... params) {
         final Object obj;
         try {
             obj = context.lookup(path);
@@ -98,13 +98,17 @@ public class JndiHelperImpl implements JndiHelper {
         final Class<?> cls = obj.getClass();
 
         final Method method;
+        final Object[] parameterValues;
         try {
-            if(params == null) {
+            if (params == null) {
+                parameterValues = null;
                 method = cls.getMethod(methodName);
             } else {
                 final Class<?>[] parameterTypes = new Class<?>[params.length];
+                parameterValues = new Object[params.length];
                 for (int i = 0; i < params.length; i++) {
-                    parameterTypes[i] = params[i].getClass();
+                    parameterTypes[i] = params[i].type;
+                    parameterValues[i] = params[i].value;
                 }
                 method = cls.getMethod(methodName, parameterTypes);
             }
@@ -114,8 +118,11 @@ public class JndiHelperImpl implements JndiHelper {
 
         final Object result;
         try {
-            result = method.invoke(obj, params);
-
+            if (parameterValues == null) {
+                result = method.invoke(obj);
+            } else {
+                result = method.invoke(obj, parameterValues);
+            }
         } catch (IllegalAccessException e) {
             throw new ServiceException(e);
         } catch (InvocationTargetException e) {
