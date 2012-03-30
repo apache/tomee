@@ -21,9 +21,12 @@ import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.ModuleContext;
 import org.apache.tomee.loader.service.ServiceContext;
+import org.apache.tomee.loader.service.ServiceException;
 
 import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,6 +34,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 public class JndiHelperImpl implements JndiHelper {
 
@@ -59,6 +63,67 @@ public class JndiHelperImpl implements JndiHelper {
         final Class<?> srvCls = srv.getClass();
         return new ArrayList<Method>(Arrays.asList(srvCls.getMethods()));
     }
+
+    @Override
+    public Context getContext(String user, String password) {
+        final Properties ctxParams = new Properties();
+        ctxParams.put("java.naming.factory.initial", "org.apache.openejb.client.LocalInitialContextFactory");
+
+        if (user != null && !"".equals(user.trim())) {
+            ctxParams.put("java.naming.security.principal", user);
+        }
+
+        if (password != null) {
+            ctxParams.put("java.naming.security.credentials", password);
+        }
+
+        final Context ctx;
+        try {
+            ctx = new InitialContext(ctxParams);
+        } catch (NamingException e) {
+            throw new ServiceException(e);
+        }
+        return ctx;
+    }
+
+
+    @Override
+    public Object invokeJndiMethod(Context context, String path, String methodName, Object... params) {
+        final Object obj;
+        try {
+            obj = context.lookup(path);
+        } catch (NamingException e) {
+            throw new ServiceException(e);
+        }
+        final Class<?> cls = obj.getClass();
+
+        final Method method;
+        try {
+            if(params == null) {
+                method = cls.getMethod(methodName);
+            } else {
+                final Class<?>[] parameterTypes = new Class<?>[params.length];
+                for (int i = 0; i < params.length; i++) {
+                    parameterTypes[i] = params[i].getClass();
+                }
+                method = cls.getMethod(methodName, parameterTypes);
+            }
+        } catch (NoSuchMethodException e) {
+            throw new ServiceException(e);
+        }
+
+        final Object result;
+        try {
+            result = method.invoke(obj, params);
+
+        } catch (IllegalAccessException e) {
+            throw new ServiceException(e);
+        } catch (InvocationTargetException e) {
+            throw new ServiceException(e);
+        }
+        return result;
+    }
+
 
     @Override
     public Map<String, Object> getJndi() {
@@ -134,7 +199,7 @@ public class JndiHelperImpl implements JndiHelper {
             }
             resultingPath.append(leafName);
 
-            jndiEntry.put("path", resultingPath.toString());
+            jndiEntry.put("path", "java:" + resultingPath.toString());
             return;
         }
 
