@@ -18,6 +18,7 @@ package org.apache.openejb.util;
 
 import org.apache.openejb.loader.SystemInstance;
 
+import java.util.Properties;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -30,11 +31,13 @@ public class JuliLogStream implements LogStream {
         logger = Logger.getLogger(logCategory.getName());
 
         // if level set through properties force it
-        if (SystemInstance.get().getProperties().containsKey(logger.getName() + ".level")
-                || SystemInstance.get().getProperties().containsKey("logging.level." + logger.getName())) {
-            for (Handler handler : logger.getHandlers()) {
-                handler.setLevel(logger.getLevel());
-            }
+        final Properties p = SystemInstance.get().getProperties();
+        final String levelName = p.getProperty("logging.level." + logger.getName());
+        if (levelName == null) return;
+
+        final Level level = Level.parse(levelName);
+        for (Handler handler : logger.getHandlers()) {
+            handler.setLevel(level);
         }
     }
 
