@@ -92,4 +92,21 @@ public class Classes {
     public static Class<?> deprimitivize(Class<?> fieldType) {
         return fieldType = fieldType.isPrimitive() ? primitiveWrappers.get(fieldType): fieldType;
     }
+
+    /**
+     * Creates a list of the specified class and all its parent classes
+     *
+     * @param clazz
+     * @return
+     */
+    public static List<Class<?>> ancestors(Class clazz) {
+        ArrayList<Class<?>> ancestors = new ArrayList<Class<?>>();
+
+        while (clazz != null && !clazz.equals(Object.class)) {
+            ancestors.add(clazz);
+            clazz = clazz.getSuperclass();
+        }
+
+        return ancestors;
+    }
 }

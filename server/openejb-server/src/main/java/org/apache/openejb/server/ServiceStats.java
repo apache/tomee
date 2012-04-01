@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,57 +17,42 @@
 package org.apache.openejb.server;
 
 import org.apache.openejb.monitoring.Managed;
-import org.apache.openejb.server.ServerService;
-import org.apache.openejb.server.ServiceException;
+import org.apache.openejb.monitoring.Stats;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.IOException;
 import java.net.Socket;
-import java.util.Properties;
 
 /**
- * TODO: Make this the superclass of the appropriate ServerService implementations
  * @version $Rev$ $Date$
  */
-public class ServerServiceFilter implements ServerService {
+@Managed
+public class ServiceStats extends ServerServiceFilter {
 
     @Managed
-    private final ServerService service;
+    private final Stats stats = new Stats();
 
-    public ServerServiceFilter(ServerService service) {
-        this.service = service;
-    }
-
-    public String getIP() {
-        return service.getIP();
-    }
-
-    public String getName() {
-        return service.getName();
-    }
-
-    public int getPort() {
-        return service.getPort();
+    public ServiceStats(ServerService service) {
+        super(service);
     }
 
     public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
-        service.service(in, out);
+        final long start = System.nanoTime();
+        try {
+            super.service(in, out);
+        } finally {
+            stats.record(System.nanoTime() - start);
+        }
     }
 
     public void service(Socket socket) throws ServiceException, IOException {
-        service.service(socket);
+        final long start = System.nanoTime();
+        try {
+            super.service(socket);
+        } finally {
+            stats.record(System.nanoTime() - start);
+        }
     }
 
-    public void start() throws ServiceException {
-        service.start();
-    }
-
-    public void stop() throws ServiceException {
-        service.stop();
-    }
-
-    public void init(Properties props) throws Exception {
-        service.init(props);
-    }
 }

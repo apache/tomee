@@ -18,7 +18,6 @@ package org.apache.openejb.server.ejbd;
 
 import junit.framework.TestCase;
 import org.apache.openejb.OpenEJB;
-import org.apache.openejb.client.ConnectionPoolTimeoutException;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.config.ConfigurationFactory;
@@ -34,7 +33,6 @@ import javax.ejb.Stateless;
 import javax.ejb.ConcurrentAccessException;
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -192,7 +190,7 @@ public class MultithreadTest extends TestCase {
         OpenEJB.init(initProps, new ServerFederation());
         ejbServer.init(new Properties());
 
-        ServicePool pool = new ServicePool(keepAliveServer, "ejbd", (poolSize*2));
+        ServicePool pool = new ServicePool(keepAliveServer, (poolSize*2));
         this.serviceDaemon = new ServiceDaemon(pool, 0, "localhost");
         serviceDaemon.start();
 

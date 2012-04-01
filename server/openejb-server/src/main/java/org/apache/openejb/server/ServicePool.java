@@ -18,6 +18,7 @@ package org.apache.openejb.server;
 
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.monitoring.Managed;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -26,27 +27,25 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Properties;
-import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class ServicePool implements ServerService {
+@Managed
+public class ServicePool extends ServerServiceFilter {
     private static final Logger log = Logger.getInstance(LogCategory.SERVICEPOOL, "org.apache.openejb.util.resources");
 
-    private final ServerService next;
-    private final Executor executor;
     private final ThreadPoolExecutor threadPool;
     private final AtomicBoolean stop = new AtomicBoolean();
 
-    public ServicePool(final ServerService next, final String name, final Properties properties) {
-        this(next, name, new Options(properties).get("threads", 100));
+    public ServicePool(final ServerService next, final Properties properties) {
+        this(next, new Options(properties).get("threads", 100));
     }
 
-    public ServicePool(final ServerService next, final String name, final int threads) {
-        this.next = next;
+    public ServicePool(final ServerService next, final int threads) {
+        super(next);
 
         final int keepAliveTime = (1000 * 60 * 5);
 
@@ -56,7 +55,7 @@ public class ServicePool implements ServerService {
 
             @Override
             public Thread newThread(final Runnable arg0) {
-                return new Thread(arg0, name + " " + getNextID());
+                return new Thread(arg0, getName() + " " + getNextID());
             }
 
             private int getNextID() {
@@ -65,14 +64,7 @@ public class ServicePool implements ServerService {
 
         });
 
-        executor = threadPool;
         SystemInstance.get().setComponent(ServicePool.class, this);
-    }
-
-    public ServicePool(final ServerService next, final Executor executor) {
-        this.next = next;
-        this.executor = executor;
-        this.threadPool = null;
     }
 
     public ThreadPoolExecutor getThreadPool() {
@@ -90,7 +82,7 @@ public class ServicePool implements ServerService {
             public void run() {
                 try {
                     if (stop.get()) return;
-                    next.service(socket);
+                    ServicePool.super.service(socket);
                 } catch (SecurityException e) {
                     log.error("Security error: " + e.getMessage(), e);
                 } catch (IOException e) {
@@ -129,65 +121,92 @@ public class ServicePool implements ServerService {
             }
         };
 
-        executor.execute(ctxCL);
+        threadPool.execute(ctxCL);
     }
 
-    /**
-     * Pulls out the access log information
-     *
-     * @param props Properties
-     * @throws ServiceException
-     */
-    @Override
-    public void init(final Properties props) throws Exception {
-        // Do our stuff
+    @Managed
+    private final Pool pool = new Pool();
 
-        // Then call the next guy
-        next.init(props);
+    @Managed(append = true)
+    public class Pool {
+        @Managed
+        public boolean isShutdown() {
+            return threadPool.isShutdown();
+        }
+
+        @Managed
+        public boolean isTerminating() {
+            return threadPool.isTerminating();
+        }
+
+        @Managed
+        public boolean isTerminated() {
+            return threadPool.isTerminated();
+        }
+
+        @Managed
+        public int getPoolSize() {
+            return threadPool.getPoolSize();
+        }
+
+        @Managed
+        public int getCorePoolSize() {
+            return threadPool.getCorePoolSize();
+        }
+
+        @Managed
+        public int getMaximumPoolSize() {
+            return threadPool.getMaximumPoolSize();
+        }
+
+        @Managed
+        public long getKeepAliveTime(TimeUnit unit) {
+            return threadPool.getKeepAliveTime(unit);
+        }
+
+        @Managed
+        public int getQueueSize() {
+            return threadPool.getQueue().size();
+        }
+
+        @Managed
+        public int getActiveCount() {
+            return threadPool.getActiveCount();
+        }
+
+        @Managed
+        public int getLargestPoolSize() {
+            return threadPool.getLargestPoolSize();
+        }
+
+        @Managed
+        public long getTaskCount() {
+            return threadPool.getTaskCount();
+        }
+
+        @Managed
+        public long getCompletedTaskCount() {
+            return threadPool.getCompletedTaskCount();
+        }
+
+        @Managed
+        public void setMaximumPoolSize(int maximumPoolSize) {
+            threadPool.setMaximumPoolSize(maximumPoolSize);
+        }
+
+        @Managed
+        public void setCorePoolSize(int corePoolSize) {
+            getThreadPool().setCorePoolSize(corePoolSize);
+        }
+
+        @Managed
+        public void allowCoreThreadTimeOut(boolean value) {
+            getThreadPool().allowCoreThreadTimeOut(value);
+        }
+
+        @Managed(description = "Sets time in nanoseconds")
+        public void setKeepAliveTime(long time) {
+            getThreadPool().setKeepAliveTime(time, TimeUnit.NANOSECONDS);
+        }
     }
-
-    @Override
-    public void start() throws ServiceException {
-        // Do our stuff
-
-        // Then call the next guy
-        next.start();
-    }
-
-    @Override
-    public void stop() throws ServiceException {
-        // Do our stuff
-
-        // Then call the next guy
-        next.stop();
-    }
-
-
-    /**
-     * Gets the name of the service.
-     * Used for display purposes only
-     */
-    @Override
-    public String getName() {
-        return next.getName();
-    }
-
-    /**
-     * Gets the ip number that the
-     * daemon is listening on.
-     */
-    @Override
-    public String getIP() {
-        return next.getIP();
-    }
-
-    /**
-     * Gets the port number that the
-     * daemon is listening on.
-     */
-    @Override
-    public int getPort() {
-        return next.getPort();
-    }
-
 }

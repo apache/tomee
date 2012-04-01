@@ -112,6 +112,7 @@ import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.WebserviceDescription;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.Classes;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -1941,7 +1942,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 if (ejbModule.getFinder() instanceof AnnotationFinder) {
                     final AnnotationFinder af = (AnnotationFinder) ejbModule.getFinder();
 
-                    final List<Class<?>> ancestors = ancestors(clazz);
+                    final List<Class<?>> ancestors = Classes.ancestors(clazz);
                     final String[] names = new String[ancestors.size()];
                     int i = 0;
                     for (Class<?> ancestor : ancestors) {
@@ -2546,7 +2547,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             all.local.addAll(xml.local);
             all.remote.addAll(xml.remote);
 
-            final List<Class<?>> classes = strict ? new ArrayList(asList(beanClass)) : ancestors(beanClass);
+            final List<Class<?>> classes = strict ? new ArrayList(asList(beanClass)) : Classes.ancestors(beanClass);
 
             for (Class<?> clazz : classes) {
 
@@ -2881,7 +2882,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             List<String> classPermissions = getDeclaredClassPermissions(assemblyDescriptor, ejbName);
 
-            for (Class<?> clazzz : ancestors(beanClass)) {
+            for (Class<?> clazzz : Classes.ancestors(beanClass)) {
                 final MetaAnnotatedClass<?> clazz = new MetaAnnotatedClass(clazzz);
                 /*
                  * Process annotations at the class level
@@ -4614,23 +4615,6 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         /**
-         * Creates a list of the specified class and all its parent classes
-         *
-         * @param clazz
-         * @return
-         */
-        private List<Class<?>> ancestors(Class clazz) {
-            ArrayList<Class<?>> ancestors = new ArrayList<Class<?>>();
-
-            while (clazz != null && !clazz.equals(Object.class)) {
-                ancestors.add(clazz);
-                clazz = clazz.getSuperclass();
-            }
-
-            return ancestors;
-        }
-
-        /**
          * Creates a list of the specified class and all its parent
          * classes then creates a AnnotationFinder from that list which
          * can be used for easy annotation scanning.
@@ -4641,7 +4625,7 @@ public class AnnotationDeployer implements DynamicDeployer {
         private AnnotationFinder createFinder(Class<?>... classes) {
             Set<Class<?>> parents = new HashSet<Class<?>>();
             for (Class<?> clazz : classes) {
-                parents.addAll(ancestors(clazz));
+                parents.addAll(Classes.ancestors(clazz));
             }
 
             return new AnnotationFinder(new ClassesArchive(parents)).link();

@@ -17,11 +17,14 @@
 package org.apache.openejb.server;
 
 
+import org.apache.openejb.monitoring.Event;
+import org.apache.openejb.monitoring.Managed;
 import org.apache.openejb.server.auth.IPAddressPermission;
 import org.apache.openejb.server.auth.ExactIPAddressPermission;
 import org.apache.openejb.server.auth.ExactIPv6AddressPermission;
 import org.apache.openejb.server.auth.IPAddressPermissionFactory;
 import org.apache.openejb.server.auth.PermitAllPermission;
+import org.apache.openejb.util.Join;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,24 +33,28 @@ import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
-public class ServiceAccessController implements ServerService {
+@Managed
+public class ServiceAccessController extends ServerServiceFilter {
 
-    private final ServerService next;
+    private final Event rejections = new Event();
+
     private IPAddressPermission[] hostPermissions;
 
     public ServiceAccessController(ServerService next) {
-        this.next = next;
+        super(next);
     }
 
     public void service(Socket socket) throws ServiceException, IOException {
         // Check authorization
         checkHostsAuthorization(socket.getInetAddress(), socket.getLocalAddress());
 
-        next.service(socket);
+        super.service(socket);
     }
 
     public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
@@ -68,6 +75,7 @@ public class ServiceAccessController implements ServerService {
             }
         }
 
+        rejections.record();
         throw new SecurityException("Host " + clientAddress.getHostAddress() + " is not authorized to access this service.");
     }
 
@@ -116,27 +124,29 @@ public class ServiceAccessController implements ServerService {
 
     public void init(Properties props) throws Exception {
         parseAdminIPs(props);
-        next.init(props);
+        super.init(props);
     }
 
-    public void start() throws ServiceException {
-        next.start();
-    }
+    @Managed
+    private final Access access = new Access();
 
-    public void stop() throws ServiceException {
-        next.stop();
-    }
+    @Managed(append = true)
+    public class Access {
 
-    public String getName() {
-        return next.getName();
-    }
+        @Managed
+        public List<String> getHostPermissions() {
+            List<String> list = new ArrayList<String>();
+            for (IPAddressPermission hostPermission : hostPermissions) {
+                list.add(hostPermission.toString());
+            }
 
-    public String getIP() {
-        return next.getIP();
-    }
+            return list;
+        }
 
-    public int getPort() {
-        return next.getPort();
-    }
+        @Managed
+        public Event getRejections() {
+            return rejections;
+        }
 
+    }
 }
