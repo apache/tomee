@@ -408,11 +408,15 @@ public class JndiEncInfoBuilder {
     }
 
     private boolean isIntefaceLocalBean(String moduleId, String interfaceClassName) {
+        if (interfaceClassName == null) return false;
+
         EnterpriseBeanInfo beanInfo = getInterfaceBeanInfo(moduleId, interfaceClassName);
         return isLocalBean(beanInfo) && beanInfo.parents.contains(interfaceClassName);
     }
 
     private EnterpriseBeanInfo getInterfaceBeanInfo(String moduleId, String interfaceClassName) {
+        if (interfaceClassName == null) throw new IllegalArgumentException("interfaceClassName cannot be null");
+
         List<EjbJarInfo> ejbJars = appInfo.ejbJars;
         for (EjbJarInfo ejbJar : ejbJars) {
             // DMB Not sure why we don't allow @LocalBean references in other modules in the EAR
