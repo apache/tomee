@@ -17,6 +17,8 @@
 package org.apache.openejb.client;
 
 import org.apache.openejb.client.event.ConnectionOpened;
+import org.apache.openejb.client.event.ConnectionPoolCreated;
+import org.apache.openejb.client.event.ConnectionPoolTimeout;
 
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
@@ -176,6 +178,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
         private final Lock lock = new ReentrantLock();
         private OutputStream out;
         private BufferedInputStream in;
+        private long checkoutTime;
 
         public SocketConnection(final URI uri, final Pool pool) {
             this.uri = uri;
@@ -327,6 +330,8 @@ public class SocketConnectionFactory implements ConnectionFactory {
             for (int i = 0; i < size; i++) {
                 pool.push(null);
             }
+
+            Client.fireEvent(new ConnectionPoolCreated(uri, size, timeout, timeUnit));
         }
 
         public SocketConnection get() throws IOException {
@@ -338,7 +343,10 @@ public class SocketConnectionFactory implements ConnectionFactory {
                 Thread.interrupted();
             }
 
-            throw new ConnectionPoolTimeoutException("No connections available in pool (size " + size + ").  Waited for " + timeout + " milliseconds for a connection.");
+            ConnectionPoolTimeoutException exception = new ConnectionPoolTimeoutException("No connections available in pool (size " + size + ").  Waited for " + timeout + " milliseconds for a connection.");
+            exception.fillInStackTrace();
+            Client.fireEvent(new ConnectionPoolTimeout(uri, size, timeout, timeUnit, exception));
+            throw exception;
         }
 
         public void put(final SocketConnection connection) {

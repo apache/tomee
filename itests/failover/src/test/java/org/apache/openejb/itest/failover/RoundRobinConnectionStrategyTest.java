@@ -33,7 +33,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import java.io.File;
 import java.net.URI;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -55,10 +55,15 @@ public class RoundRobinConnectionStrategyTest {
     static final Logger logger = Logger.getLogger("org.apache.openejb.client");
 
     static {
+//        set(logger, Level.FINEST);
+//        set(Logger.getLogger("OpenEJB.client"), Level.FINEST);
+    }
+
+    private static void set(Logger logger, Level level) {
         final ConsoleHandler consoleHandler = new ConsoleHandler();
-        consoleHandler.setLevel(Level.FINER);
+        consoleHandler.setLevel(level);
         logger.addHandler(consoleHandler);
-        logger.setLevel(Level.FINER);
+        logger.setLevel(level);
         logger.setUseParentHandlers(false);
     }
 
@@ -71,6 +76,7 @@ public class RoundRobinConnectionStrategyTest {
 
         final File zip = Repository.getArtifact("org.apache.openejb", "openejb-standalone", "zip");
         final File app = Repository.getArtifact("org.apache.openejb.itests", "failover-ejb", "jar");
+
 
         final File dir = Files.tmpdir();
 
@@ -243,6 +249,7 @@ public class RoundRobinConnectionStrategyTest {
         private final Condition condition = lock.newCondition();
 
         private final Set<URI> expected = new HashSet<URI>();
+        private final Set<URI> found = new HashSet<URI>();
 
         public Services() {
         }
@@ -260,8 +267,8 @@ public class RoundRobinConnectionStrategyTest {
         }
 
         public void observe(@Observes ClusterMetaDataUpdated updated) {
-            final URI[] locations = updated.getClusterMetaData().getLocations();
-            final Set<URI> found = new HashSet<URI>(Arrays.asList(locations));
+            found.clear();
+            Collections.addAll(found, updated.getClusterMetaData().getLocations());
 
             if (expected.equals(found)) {
                 lock.lock();
@@ -300,7 +307,10 @@ public class RoundRobinConnectionStrategyTest {
             }
         }
 
+
         public boolean await(long timeout, TimeUnit unit) throws InterruptedException {
+            if (expected.equals(found)) return true;
+
             lock.lock();
             try {
                 return condition.await(timeout, unit);
@@ -319,7 +329,13 @@ public class RoundRobinConnectionStrategyTest {
 
         @Override
         public Object call() throws Exception {
-            return bean.name();
+            try {
+                logger.info("Invoke");
+                return bean.name();
+            } catch (Exception e) {
+                logger.log(Level.SEVERE, "bean invocation failed", e);
+                throw e;
+            }
         }
     }
 }

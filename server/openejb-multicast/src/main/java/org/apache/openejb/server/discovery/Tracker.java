@@ -16,10 +16,12 @@
  */
 package org.apache.openejb.server.discovery;
 
+import org.apache.openejb.monitoring.Managed;
 import org.apache.openejb.server.DiscoveryListener;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,14 +37,21 @@ import java.io.IOException;
 /**
  * @version $Rev$ $Date$
 */
+@Managed(append = false)
 public class Tracker {
     
     private final Logger log;
     
+    @Managed
     private final String group;
     private final String groupPrefix;
+
+    @Managed
     private final long heartRate;
+
+    @Managed
     private final int maxMissedHeartbeats;
+
     private final long reconnectDelay;
     private final long maxReconnectDelay;
     private final int maxReconnectAttempts;
@@ -85,6 +94,16 @@ public class Tracker {
 
     public Set<String> getRegisteredServices() {
         return registeredServices.keySet();
+    }
+
+    @Managed
+    public Set<String> getServicesRegistered() {
+        return new HashSet<String>(registeredServices.keySet());
+    }
+
+    @Managed
+    public Set<String> getServicesDiscovered() {
+        return new HashSet<String>(discoveredServices.keySet());
     }
 
     public void registerService(URI serviceUri) throws IOException {
@@ -226,8 +245,11 @@ public class Tracker {
         }
     }
 
+    @Managed
     public class Service {
+        @Managed
         private final URI uri;
+        @Managed
         private final String broadcastString;
 
         public Service(URI uri) {
@@ -253,11 +275,16 @@ public class Tracker {
 
     private class ServiceVitals {
 
+        @Managed
         private final Service service;
 
+        @Managed
         private long lastHeartBeat;
+        @Managed
         private long recoveryTime;
+        @Managed
         private int failureCount;
+        @Managed
         private boolean dead;
 
         public ServiceVitals(Service service) {
