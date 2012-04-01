@@ -22,11 +22,16 @@ import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.monitoring.LocalMBeanServer;
+import org.apache.openejb.monitoring.ManagedMBean;
+import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -155,6 +160,19 @@ public abstract class ServiceManager {
                 if (service instanceof DiscoveryAgent){
                     DiscoveryAgent agent = (DiscoveryAgent) service;
                     registry.addDiscoveryAgent(agent);
+                }
+
+                MBeanServer server = LocalMBeanServer.get();
+
+                final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb");
+                jmxName.set("type", "ServerService");
+                jmxName.set("name", serviceName);
+
+                try {
+                    final ObjectName objectName = jmxName.build();
+                    server.registerMBean(new ManagedMBean(service), objectName);
+                } catch (Exception e) {
+                    logger.error("Unable to register MBean ", e);
                 }
 
                 return service;

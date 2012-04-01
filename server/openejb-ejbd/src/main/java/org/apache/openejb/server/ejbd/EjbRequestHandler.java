@@ -57,6 +57,7 @@ class EjbRequestHandler {
     }
 
     public void processRequest(final ObjectInputStream in, final ObjectOutputStream out) {
+
         // Setup the client proxy replacement to replace
         // the proxies with the IntraVM proxy implementations
         EJBHomeProxyHandle.resolver.set(SERVER_SIDE_RESOLVER);
@@ -64,6 +65,8 @@ class EjbRequestHandler {
 
         final EJBRequest req = new EJBRequest();
         final EJBResponse res = new EJBResponse();
+
+        res.start(EJBResponse.Time.TOTAL);
 
         try {
             req.readExternal(in);
@@ -105,7 +108,11 @@ class EjbRequestHandler {
         Thread.currentThread().setContextClassLoader(classLoader);
 
         try {
+            res.start(EJBResponse.Time.DESERIALIZATION);
+
             req.getBody().readExternal(in);
+
+            res.stop(EJBResponse.Time.DESERIALIZATION);
         } catch (Throwable t) {
             replyWithFatalError(out, t, "Error caught during request processing");
             return;
@@ -120,6 +127,7 @@ class EjbRequestHandler {
             return;
         }
 
+        res.start(EJBResponse.Time.CONTAINER);
         boolean respond = true;
         try {
             switch (req.getRequestMethod()) {
@@ -194,6 +202,7 @@ class EjbRequestHandler {
                     doFUTURE_CANCEL_METHOD(req, res);
                     break;
             }
+            res.stop(EJBResponse.Time.CONTAINER);
 
         } catch (org.apache.openejb.InvalidateReferenceException e) {
             res.setResponse(ResponseCodes.EJB_SYS_EXCEPTION, new ThrowableArtifact(e.getRootCause()));

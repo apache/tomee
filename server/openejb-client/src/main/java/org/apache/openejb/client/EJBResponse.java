@@ -19,13 +19,13 @@ package org.apache.openejb.client;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.net.URI;
 
 public class EJBResponse implements ClusterableResponse {
 
     private transient int responseCode = -1;
     private transient Object result;
     private transient ServerMetaData server;
+    private transient long[] times = new long[Time.values().length];
 
     public EJBResponse() {
 
@@ -90,9 +90,19 @@ public class EJBResponse implements ClusterableResponse {
             default:
                 s = new StringBuffer("UNKNOWN_RESPONSE");
         }
-        s.append(':').append(result);
+        s.append(", serverTime=").append(times[Time.TOTAL.ordinal()]).append("ns");
+        s.append(", containerTime").append(times[Time.CONTAINER.ordinal()]).append("ns");
+        s.append(" : ").append(result);
 
         return s.toString();
+    }
+
+    public void start(EJBResponse.Time time) {
+        times[time.ordinal()] = System.nanoTime();
+    }
+
+    public void stop(EJBResponse.Time time) {
+        times[time.ordinal()] = System.nanoTime() - times[time.ordinal()];
     }
 
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
@@ -107,6 +117,11 @@ public class EJBResponse implements ClusterableResponse {
         responseCode = in.readByte();
 
         result = in.readObject();
+
+        times = new long[in.readByte()];
+        for (int i = 0; i < times.length; i++) {
+            times[i] = in.readLong();
+        }
     }
 
     public void writeExternal(ObjectOutput out) throws IOException {
@@ -131,7 +146,22 @@ public class EJBResponse implements ClusterableResponse {
                     result = new ThrowableArtifact(throwable);
                 }
         }
+
+        start(Time.SERIALIZATION);
         out.writeObject(result);
+        stop(Time.SERIALIZATION);
+        stop(Time.TOTAL);
+
+        out.writeByte(times.length);
+        for (int i = 0; i < times.length; i++) {
+            out.writeLong(times[i]);
+        }
     }
 
+    public static enum Time {
+        TOTAL,
+        CONTAINER,
+        SERIALIZATION,
+        DESERIALIZATION
+    }
 }

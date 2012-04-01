@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.server.discovery;
 
+import org.apache.openejb.monitoring.Event;
+import org.apache.openejb.monitoring.Managed;
 import org.apache.openejb.server.ServerRuntimeException;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.Join;
@@ -51,19 +53,31 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @version $Rev$ $Date$
  */
+@Managed
 public class MultipointServer {
-    private static final Logger log = Logger.getInstance(LogCategory.OPENEJB_SERVER.createChild("discovery"), MultipointServer.class);
+    private static final Logger log = Logger.getInstance(LogCategory.OPENEJB_SERVER.createChild("discovery").createChild("multipoint"), MultipointServer.class);
 
     private static final URI END_LIST = URI.create("end:list");
 
     private final int port;
-    private final Selector selector;
+
     private final URI me;
+
     private final Set<URI> roots = new LinkedHashSet<URI>();
+
+    private final Event runs = new Event();
+
+    private final Event heartbeats = new Event();
+
+    private final Event reconnects = new Event();
+    private final Event sessionsCreated = new Event();
 
     /**
      * Only used for toString to make debugging easier
@@ -74,10 +88,18 @@ public class MultipointServer {
 
     private final LinkedList<URI> connect = new LinkedList<URI>();
     private final Map<URI, Session> connections = new HashMap<URI, Session>();
-    private boolean debug = true;
 
     private long joined = 0;
+
     private long reconnectDelay;
+
+    private ServerSocketChannel serverChannel;
+
+    private final Selector selector;
+
+    private final Lock lock = new ReentrantLock();
+    private final Condition started = lock.newCondition();
+    private final Condition stopped = lock.newCondition();
 
     public MultipointServer(int port, Tracker tracker) throws IOException {
         this("localhost", "localhost", port, tracker, randomColor(), true, Collections.EMPTY_SET, new Duration(30, TimeUnit.SECONDS));
@@ -92,7 +114,7 @@ public class MultipointServer {
 
         this.tracker = tracker;
         this.name = name;
-        this.debug = debug;
+
         if (roots != null) {
             this.roots.addAll(roots);
         }
@@ -110,9 +132,11 @@ public class MultipointServer {
 
         log.debug(format);
 
-        final InetSocketAddress address = new InetSocketAddress(bindHost, port);
 
-        final ServerSocketChannel serverChannel = ServerSocketChannel.open();
+        selector = Selector.open();
+
+        final InetSocketAddress address = new InetSocketAddress(bindHost, port);
+        serverChannel = ServerSocketChannel.open();
         serverChannel.configureBlocking(false);
 
         final ServerSocket serverSocket = serverChannel.socket();
@@ -125,11 +149,53 @@ public class MultipointServer {
             me = URI.create("conn://" + broadcastHost + ":" + this.port);
         }
 
-        selector = Selector.open();
-
         serverChannel.register(selector, SelectionKey.OP_ACCEPT);
 
         println("Broadcasting");
+    }
+
+    public URI getMe() {
+        return me;
+    }
+
+    public Set<URI> getRoots() {
+        return roots;
+    }
+
+    public Event getRuns() {
+        return runs;
+    }
+
+    public Event getHeartbeats() {
+        return heartbeats;
+    }
+
+    public Event getReconnects() {
+        return reconnects;
+    }
+
+    public Event getSessionsCreated() {
+        return sessionsCreated;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public long getJoined() {
+        return joined;
+    }
+
+    public List<URI> getSessions() {
+        return new ArrayList<URI>(connections.keySet());
+    }
+
+    public List<URI> getConnectionsQueued() {
+        return new ArrayList<URI>(connect);
+    }
+
+    public long getReconnectDelay() {
+        return reconnectDelay;
     }
 
     public int getPort() {
@@ -147,6 +213,10 @@ public class MultipointServer {
         if (connect.size() > 0) return;
         if (System.nanoTime() - joined <= reconnectDelay) return;
 
+        log.info("MultipointReconnect{initialServers=" + roots.size() + "}");
+
+        reconnects.record();
+
         for (URI root : roots) {
             connect(root);
         }
@@ -155,19 +225,63 @@ public class MultipointServer {
     }
     public MultipointServer start() {
         if (running.compareAndSet(false, true)) {
+
+            String multipointServer = Join.join(".", "MultipointServer", name, port);
+            log.info("MultipointServer Starting : Thread '" + multipointServer + "'");
+
             Thread thread = new Thread(new Runnable() {
                 public void run() {
-                    _run();
+                    signal(started);
+                    try {
+                        _run();
+                    } finally {
+                        signal(stopped);
+                    }
                 }
             });
-            thread.setName(Join.join(".", "MultipointServer", name, port));
+            thread.setName(multipointServer);
             thread.start();
+
+            await(started, 10, TimeUnit.SECONDS);
         }
         return this;
     }
 
+    private void signal(Condition condition) {
+        lock.lock();
+        try {
+            condition.signal();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    private void await(Condition condition, long time, TimeUnit unit) {
+        lock.lock();
+        try {
+            condition.await(time, unit);
+        } catch (InterruptedException e) {
+            Thread.interrupted();
+        } finally {
+            lock.unlock();
+        }
+    }
+
     public void stop() {
         running.set(false);
+        try {
+            serverChannel.close();
+        } catch (IOException e) {
+            throw new CloseException(e);
+        } finally {
+            await(stopped, 10, TimeUnit.SECONDS);
+        }
+    }
+
+    public static class CloseException extends RuntimeException {
+        public CloseException(Throwable cause) {
+            super(cause);
+        }
     }
 
     public class Session {
@@ -178,8 +292,11 @@ public class MultipointServer {
         private final ByteBuffer read = ByteBuffer.allocate(1024);
         private final SelectionKey key;
         private final List<URI> listed = new ArrayList<URI>();
+        private final long created = System.currentTimeMillis();
 
         private ByteBuffer write;
+
+        @Managed
         private State state = State.OPEN;
         private URI uri;
         public boolean hangup;
@@ -190,6 +307,8 @@ public class MultipointServer {
             this.client = uri != null;
             this.uri = uri != null ? uri : URI.create("conn://" + address.getHostName() + ":" + address.getPort());
             this.key = channel.register(selector, 0, this);
+            sessionsCreated.record();
+            log.info("Constructing " + this);
         }
 
         public Session ops(int ops) {
@@ -197,8 +316,17 @@ public class MultipointServer {
             return this;
         }
 
+        public long getCreated() {
+            return created;
+        }
+
         public void state(int ops, State state) {
 //            trace("transition "+state +"  "+ops);
+            if (this.state != state) {
+                if (log.isDebugEnabled()) {
+                    log.debug(message(state.name()));
+                }
+            }
             this.state = state;
             if (ops > 0) key.interestOps(ops);
         }
@@ -210,8 +338,9 @@ public class MultipointServer {
         private void trace(String str) {
 //            println(message(str));
 
-            if (debug && log.isDebugEnabled()) {
+            if (log.isDebugEnabled()) {
                 log.debug(message(str));
+//                new Exception().fillInStackTrace().printStackTrace();
             }
         }
 
@@ -297,6 +426,7 @@ public class MultipointServer {
         public String toString() {
             return "Session{" +
                     "uri=" + uri +
+                    ", created=" + created +
                     ", state=" + state +
                     ", owner=" + port +
                     ", s=" + (client ? channel.socket().getPort() : channel.socket().getLocalPort()) +
@@ -321,11 +451,12 @@ public class MultipointServer {
         }
 
         private void heartbeat() throws IOException {
+            heartbeats.record();
 
             final Set<String> strings = tracker.getRegisteredServices();
-            for (String string : strings) {
-                trace(string);
-            }
+//            for (String string : strings) {
+//                trace(string);
+//            }
             write(strings);
             state(SelectionKey.OP_READ | SelectionKey.OP_WRITE, State.HEARTBEAT);
         }
@@ -351,15 +482,26 @@ public class MultipointServer {
         // on each iteration of the loop, shrinking it down just a little to a
         // account for the execution time of the loop itself.
 
+        int failed = 0;
         while (running.get()) {
+            runs.record();
 
             final long start = System.nanoTime();
 
             try {
                 selector.select(selectorTimeout);
+                failed = 0;
             } catch (IOException ex) {
-                ex.printStackTrace();
-                break;
+                if (failed++ > 100) {
+                    log.fatal("Too many Multipoint Failures.  Terminating service.", ex);
+                    return;
+                }
+                log.error("Multipoint Failure.", ex);
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    Thread.interrupted();
+                }
             }
 
             final Set keys = selector.selectedKeys();
@@ -494,7 +636,7 @@ public class MultipointServer {
                         // CLIENTs list last, so at this point we've read
                         // the server's list and have written ours
 
-                        session.trace("DONE WRITING");
+//                        session.trace("DONE WRITING");
 
                         session.state(SelectionKey.OP_READ, State.HEARTBEAT);
 
@@ -515,7 +657,7 @@ public class MultipointServer {
 
                     session.last = System.currentTimeMillis();
 
-                    session.trace("send");
+//                    session.trace("send");
 
                     session.state(SelectionKey.OP_READ, State.HEARTBEAT);
 
@@ -580,7 +722,7 @@ public class MultipointServer {
 
                 while ((message = session.read()) != null) {
 
-                    session.trace(message);
+//                    session.trace(message);
 
                     final URI uri = URI.create(message);
 
@@ -648,7 +790,7 @@ public class MultipointServer {
 
                 String message = null;
                 while ((message = session.read()) != null) {
-                    session.trace(message);
+//                    session.trace(message);
                     tracker.processData(message);
                 }
             }
@@ -718,7 +860,6 @@ public class MultipointServer {
     private void close(SelectionKey key) {
         final Session session = (Session) key.attachment();
 
-        session.state(0, State.CLOSED);
 
         if (session.hangup) {
             // This was a duplicate connection and was closed
@@ -726,14 +867,17 @@ public class MultipointServer {
             // map as this particular session is not in that
             // map -- only the good session that will not be
             // closed is in there.
+            log.info("Hungup " + session);
             session.trace("hungup");
         } else {
+            log.info("Closed " + session);
             session.trace("closed");
             synchronized (connect) {
                 connections.remove(session.uri);
             }
         }
 
+        session.state(0, State.CLOSED);
         hangup(key);
     }
 
@@ -759,6 +903,7 @@ public class MultipointServer {
 
         synchronized (connect) {
             if (!connections.containsKey(uri) && !connect.contains(uri)) {
+                log.debug("Queuing{uri=" + uri + "}");
                 connect.addLast(uri);
             }
         }
@@ -771,15 +916,36 @@ public class MultipointServer {
 //            Session duplicate = null;
 
             if (duplicate != null) {
+
+
                 session.trace("duplicate");
 
                 // At this point we know we have two sockets open
-                // to the client, one created by them and one created
-                // by us.  We will both have detected this situation
+                // to the client, this can happen in two different ways
+                //
+                //  1. one created by them and one created by us.
+                //  2. two created by them and none created by us.
+                //
+                // For case #1, we will both have detected this situation
                 // and know it needs fixing.  Only one of us can hangup
+                //
+                // For case #2, the client was likely disconnected and
+                // is calling back.
 
                 final Session[] sessions = {session, duplicate};
-                Arrays.sort(sessions, new Comparator<Session>() {
+
+                if (!sessions[0].client && !sessions[1].client) {
+                    // Case 1 -- Client is calling back
+                    Arrays.sort(sessions, new Comparator<Session>() {
+                        @Override
+                        public int compare(Session a, Session b) {
+                            return (int) (b.created - a.created);
+                        }
+                    });
+                } else {
+                    // Case 2 -- We called each other at the same time
+
+                    Arrays.sort(sessions, new Comparator<Session>() {
                     // Goal: Keep the connection with the lowest port number
                     ///
                     // Low vs high is not very significant.  The critical
@@ -812,6 +978,7 @@ public class MultipointServer {
                         return !a.client ? socket.getPort() : socket.getLocalPort();
                     }
                 });
+                }
 
                 session = sessions[0];
                 duplicate = sessions[1];
