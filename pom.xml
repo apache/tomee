@@ -306,21 +306,38 @@
     </plugins>
   </build>
 
-  <modules>
-    <module>deps</module>
-    <module>itests</module>
-    <module>container</module>
-    <module>server</module>
-    <module>examples</module>
-    <module>assembly</module>
-    <module>arquillian-tomee</module>
-    <module>utils</module>
-    <module>tomee</module>
-    <module>osgi</module>
-    <module>tck</module>
-  </modules>
-
   <profiles>
+    <profile>
+      <id>main</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <modules>
+        <module>deps</module>
+        <module>itests</module>
+        <module>container</module>
+        <module>server</module>
+        <module>examples</module>
+        <module>assembly</module>
+        <module>arquillian-tomee</module>
+        <module>utils</module>
+        <module>tomee</module>
+        <module>osgi</module>
+        <module>tck</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>quick</id>
+      <modules>
+        <module>deps</module>
+        <module>container</module>
+        <module>server</module>
+        <module>assembly</module>
+        <module>arquillian-tomee</module>
+        <module>utils</module>
+        <module>tomee</module>
+      </modules>
+    </profile>
     <profile>
       <id>rat</id>
       <modules>
