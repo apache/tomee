@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.server;
 
+import org.apache.openejb.monitoring.Managed;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.loader.Options;
@@ -43,23 +44,21 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.TimeUnit;
 
+@Managed
 public class ServiceDaemon implements ServerService {
 
     private static final Logger log = Logger.getInstance(LogCategory.OPENEJB_SERVER, ServiceDaemon.class);
 
-    private ServerService next;
+    @Managed
+    private final ServerService next;
 
     private SocketListener socketListener;
 
     private int timeout = 1000;
 
-    private InetAddress address;
+    private InetAddress inetAddress;
 
     private int port;
-
-    private String name;
-
-    boolean stop = true;
 
     private int backlog;
 
@@ -67,7 +66,7 @@ public class ServiceDaemon implements ServerService {
 
     private boolean secure;
     private StringTemplate discoveryUriFormat;
-    private URI uri;
+    private URI serviceUri;
     private Properties props;
 
     public ServiceDaemon(ServerService next) {
@@ -77,7 +76,7 @@ public class ServiceDaemon implements ServerService {
     public ServiceDaemon(ServerService next, int port, String ip) {
         this.port = port;
         this.ip = ip;
-        this.address = getAddress(ip);
+        this.inetAddress = getAddress(ip);
         this.next = next;
     }
 
@@ -89,24 +88,12 @@ public class ServiceDaemon implements ServerService {
         }
     }
 
-    public void setSoTimeout(int timeout) throws SocketException {
-         this.timeout = timeout;
-         if (socketListener != null) {
-             socketListener.setSoTimeout(timeout);
-         }
-     }
-
-    public int getSoTimeout() throws IOException {
-        if (socketListener == null) return 0;
-        return socketListener.getSoTimeout();
-    }
-
     /**
      * Gets the inetAddress number that the
      * daemon is listening on.
      */
-    public InetAddress getAddress() {
-        return address;
+    public InetAddress getInetAddress() {
+        return inetAddress;
     }
 
     public void init(Properties props) throws Exception {
@@ -120,7 +107,7 @@ public class ServiceDaemon implements ServerService {
 
         ip = props.getProperty("bind");
 
-        address = getAddress(ip);
+        inetAddress = getAddress(ip);
 
         Options options = new Options(props);
 
@@ -150,11 +137,11 @@ public class ServiceDaemon implements ServerService {
             try {
                 if (secure) {
                     ServerSocketFactory factory = SSLServerSocketFactory.getDefault();
-                    serverSocket = factory.createServerSocket(port, backlog, address);
+                    serverSocket = factory.createServerSocket(port, backlog, inetAddress);
                     final String[] enabledCipherSuites = { "SSL_DH_anon_WITH_RC4_128_MD5" };
                     ((SSLServerSocket) serverSocket).setEnabledCipherSuites(enabledCipherSuites);
                 } else {
-                    serverSocket = new ServerSocket(port, backlog, address);
+                    serverSocket = new ServerSocket(port, backlog, inetAddress);
                 }
 
                 port = serverSocket.getLocalPort();
@@ -165,7 +152,7 @@ public class ServiceDaemon implements ServerService {
 
             socketListener = new SocketListener(next, serverSocket);
             Thread thread = new Thread(socketListener);
-            thread.setName("service." + name + "@" + socketListener.hashCode());
+            thread.setName("service." + getName() + "@" + socketListener.hashCode());
             thread.setDaemon(true);
             thread.start();
 
@@ -194,8 +181,8 @@ public class ServiceDaemon implements ServerService {
                 map.put("bind", address);
                 String uriString = discoveryUriFormat.apply(map);
                 try {
-                    uri = new URI(uriString);
-                    agent.registerService(uri);
+                    serviceUri = new URI(uriString);
+                    agent.registerService(serviceUri);
                 } catch (Exception e) {
                     log.error("Cannot register service '" + getName() + "' with DiscoveryAgent.", e);
                 }
@@ -209,9 +196,9 @@ public class ServiceDaemon implements ServerService {
 
         synchronized (this) {
             DiscoveryAgent agent = SystemInstance.get().getComponent(DiscoveryAgent.class);
-            if (agent != null && discoveryUriFormat != null && uri != null) {
+            if (agent != null && discoveryUriFormat != null && serviceUri != null) {
                 try {
-                    agent.unregisterService(uri);
+                    agent.unregisterService(serviceUri);
                 } catch (IOException e) {
                     log.error("Cannot unregister service '" + getName() + "' with DiscoveryAgent.", e);
                 }
@@ -232,8 +219,14 @@ public class ServiceDaemon implements ServerService {
      * Gets the port number that the
      * daemon is listening on.
      */
+    @Managed
     public int getPort() {
         return port;
+    }
+
+    @Managed
+    public String getBind() {
+        return ip;
     }
 
     public void service(Socket socket) throws ServiceException, IOException {
@@ -315,6 +308,106 @@ public class ServiceDaemon implements ServerService {
 
         public int getSoTimeout() throws IOException {
             return serverSocket.getSoTimeout();
+        }
+
+        public ServerSocket getServerSocket() {
+            return serverSocket;
+        }
+    }
+
+    @Managed
+    public URI getServiceUri() {
+        return serviceUri;
+    }
+
+    @Managed
+    public boolean isSecure() {
+        return secure;
+    }
+
+    @Managed
+    private final AddressMonitor address = new AddressMonitor();
+
+    @Managed(append = true)
+    public class AddressMonitor {
+        @Managed
+        public String getHostName() {
+            return inetAddress.getHostName();
+        }
+
+        @Managed
+        public String getCanonicalHostName() {
+            return inetAddress.getCanonicalHostName();
+        }
+
+        @Managed
+        public String getHostAddress() {
+            return inetAddress.getHostAddress();
+        }
+
+        @Managed
+        public byte[] getAddress() {
+            return inetAddress.getAddress();
+        }
+    }
+
+    public ServerSocket getServerSocket() {
+        return socketListener.getServerSocket();
+    }
+
+    @Managed
+    private final SocketMonitor socket = new SocketMonitor();
+
+    @Managed(append = true)
+    public class SocketMonitor {
+        @Managed
+        public int getLocalPort() {
+            return getServerSocket().getLocalPort();
+        }
+
+        @Managed
+        public boolean getReuseAddress() throws SocketException {
+            return getServerSocket().getReuseAddress();
+        }
+
+        @Managed
+        public int getSoTimeout() throws IOException {
+            return getServerSocket().getSoTimeout();
+        }
+
+        @Managed
+        public boolean isClosed() {
+            return getServerSocket().isClosed();
+        }
+
+        @Managed
+        public boolean isBound() {
+            return getServerSocket().isBound();
+        }
+
+        @Managed
+        public int getReceiveBufferSize() throws SocketException {
+            return getServerSocket().getReceiveBufferSize();
+        }
+
+        @Managed
+        public void setReceiveBufferSize(int size) throws SocketException {
+            getServerSocket().setReceiveBufferSize(size);
+        }
+
+        @Managed
+        public void setPerformancePreferences(int connectionTime, int latency, int bandwidth) {
+            getServerSocket().setPerformancePreferences(connectionTime, latency, bandwidth);
+        }
+
+        @Managed
+        public void setReuseAddress(boolean on) throws SocketException {
+            getServerSocket().setReuseAddress(on);
+        }
+
+        @Managed
+        public void setSoTimeout(int timeout) throws SocketException {
+            getServerSocket().setSoTimeout(timeout);
         }
     }
 }

@@ -18,7 +18,6 @@ package org.apache.openejb.server.ejbd;
 
 import junit.framework.TestCase;
 import org.apache.openejb.OpenEJB;
-import org.apache.openejb.client.ConnectionPoolTimeoutException;
 import org.apache.openejb.client.Client;
 import org.apache.openejb.util.CountingLatch;
 import org.apache.openejb.assembler.classic.Assembler;
@@ -271,7 +270,7 @@ public class FullPoolFailoverTest extends TestCase {
     private ServiceDaemon createServiceDaemon(int poolSize, EjbServer ejbServer, URI uri) throws ServiceException {
         ServiceIdentifier serviceIdentifier = new ServiceIdentifier(ejbServer, uri);
         KeepAliveServer keepAliveServer = new KeepAliveServer(serviceIdentifier);
-        ServicePool pool = new ServicePool(keepAliveServer, "ejbd", poolSize);
+        ServicePool pool = new ServicePool(keepAliveServer, poolSize);
         ServiceDaemon daemon = new ServiceDaemon(pool, 0, "localhost");
         daemon.start();
         return daemon;

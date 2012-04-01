@@ -137,7 +137,7 @@ public class StaticFailoverTest extends TestCase {
     private ServiceDaemon createServiceDaemon(int poolSize, EjbServer ejbServer, URI uri) throws ServiceException {
         ServiceIdentifier serviceIdentifier = new ServiceIdentifier(ejbServer, uri);
         KeepAliveServer keepAliveServer = new KeepAliveServer(serviceIdentifier);
-        ServicePool pool = new ServicePool(keepAliveServer, "ejbd", poolSize);
+        ServicePool pool = new ServicePool(keepAliveServer, poolSize);
         ServiceDaemon daemon = new ServiceDaemon(pool, 0, "localhost");
         daemon.start();
         return daemon;

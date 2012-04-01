@@ -56,7 +56,7 @@ public class PropertiesPropogationTest extends TestCase {
         OpenEJB.init(initProps, new ServerFederation());
         ejbServer.init(new Properties());
 
-        ServicePool pool = new ServicePool(ejbServer, "ejbd", 10);
+        ServicePool pool = new ServicePool(ejbServer, 10);
         ServiceDaemon serviceDaemon = new ServiceDaemon(pool, 0, "localhost");
         serviceDaemon.start();
 

@@ -17,7 +17,6 @@
  */
 package org.apache.openejb.server.auth;
 
-import java.io.Serializable;
 import java.net.InetAddress;
 
 /**

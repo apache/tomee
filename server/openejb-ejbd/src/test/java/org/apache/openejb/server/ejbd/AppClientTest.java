@@ -61,7 +61,7 @@ public class AppClientTest extends TestCase {
         OpenEJB.init(initProps, new ServerFederation());
         ejbServer.init(new Properties());
 
-        final ServicePool pool = new ServicePool(ejbServer, "ejbd", 10);
+        final ServicePool pool = new ServicePool(ejbServer, 10);
         final ServiceDaemon serviceDaemon = new ServiceDaemon(pool, 0, "localhost");
         serviceDaemon.start();
 

@@ -21,11 +21,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
+import org.apache.openejb.monitoring.Managed;
 import org.apache.openejb.spi.Service;
 
 /**
  * @version $Rev$ $Date$
  */
+@Managed
 public interface ServerService extends Service {
 
     public void start() throws ServiceException;

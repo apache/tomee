@@ -149,10 +149,7 @@ public abstract class ServiceManager {
                 service = (ServerService) recipe.create(serviceClass.getClassLoader());
 
                 if (!(service instanceof SelfManaging)) {
-                    service = new ServicePool(service, serviceName, serviceProperties);
-                    service = new ServiceLogger(service);
-                    service = new ServiceAccessController(service);
-                    service = new ServiceDaemon(service);
+                    service = manage(serviceName, serviceProperties, service);
                 }
 
                 service.init(serviceProperties);
@@ -164,16 +161,7 @@ public abstract class ServiceManager {
 
                 MBeanServer server = LocalMBeanServer.get();
 
-                final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb");
-                jmxName.set("type", "ServerService");
-                jmxName.set("name", serviceName);
-
-                try {
-                    final ObjectName objectName = jmxName.build();
-                    server.registerMBean(new ManagedMBean(service), objectName);
-                } catch (Exception e) {
-                    logger.error("Unable to register MBean ", e);
-                }
+                register(serviceName, service, server);
 
                 return service;
             } catch (Throwable t) {
@@ -182,6 +170,29 @@ public abstract class ServiceManager {
         }
        
         return null;
+    }
+
+    public static void register(String serviceName, ServerService service, MBeanServer server) {
+        final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb");
+        jmxName.set("type", "ServerService");
+        jmxName.set("name", serviceName);
+
+        try {
+            final ObjectName objectName = jmxName.build();
+            server.registerMBean(new ManagedMBean(service), objectName);
+        } catch (Exception e) {
+            logger.error("Unable to register MBean ", e);
+        }
+    }
+
+    public static ServerService manage(String serviceName, Properties serviceProperties, ServerService service) {
+        service = new NamedService(service, serviceName);
+        service = new ServiceStats(service);
+        service = new ServiceLogger(service);
+        service = new ServicePool(service, serviceProperties);
+        service = new ServiceAccessController(service);
+        service = new ServiceDaemon(service);
+        return service;
     }
 
     private void overrideProperties(String serviceName, Properties serviceProperties) throws IOException {

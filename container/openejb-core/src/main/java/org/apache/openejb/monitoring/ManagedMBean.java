@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.monitoring;
 
+import org.apache.openejb.util.Classes;
 import org.apache.xbean.finder.ClassFinder;
 import org.apache.xbean.propertyeditor.PropertyEditors;
 
@@ -127,7 +128,7 @@ public class ManagedMBean implements DynamicMBean {
     }
 
     private void scan(Object target, String prefix) {
-        ClassFinder finder = new ClassFinder(target.getClass());
+        ClassFinder finder = new ClassFinder(Classes.ancestors(target.getClass()));
 
         List<Field> fields = finder.findAnnotatedFields(Managed.class);
         for (Field field : fields) {
