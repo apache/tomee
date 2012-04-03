@@ -20,6 +20,7 @@ import org.apache.catalina.Container;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
 import org.apache.catalina.LifecycleListener;
+import org.apache.catalina.Manager;
 import org.apache.catalina.Pipeline;
 import org.apache.catalina.Service;
 import org.apache.catalina.Valve;
@@ -114,6 +115,7 @@ import static org.apache.tomee.catalina.BackportUtil.getNamingContextListener;
  */
 public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     public static final String OPENEJB_CROSSCONTEXT_PROPERTY = "openejb.crosscontext";
+    public static final String OPENEJB_SESSION_MANAGER_PROPERTY = "openejb.session.manager";
     public static final String OPENEJB_JSESSION_ID_SUPPORT = "openejb.jsessionid-support";
     public static final String OPENEJB_MYFACES_DISABLE_DEFAULT_VALUES = "openejb.myfaces.disable-default-values";
 
@@ -170,6 +172,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     private CoreContainerSystem containerSystem;
 
     private Map<ClassLoader, Map<String, Set<String>>> jsfClasses = new HashMap<ClassLoader, Map<String, Set<String>>>();
+
+    private Class<?> sessionManagerClass = null;
 
     /**
      * Creates a new web application builder
@@ -467,6 +471,24 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         replaceHashSetForJspPropertyGroupsByLinkedHashSet(standardContext);
         standardContext.setCrossContext(SystemInstance.get().getOptions().get(OPENEJB_CROSSCONTEXT_PROPERTY, false));
         standardContext.setNamingResources(new OpenEJBNamingResource());
+
+        final String sessionManager = SystemInstance.get().getOptions().get(OPENEJB_SESSION_MANAGER_PROPERTY, (String) null);
+        if (sessionManager != null) {
+            if (sessionManagerClass == null) {
+                try { // the manager should be in standardclassloader
+                    sessionManagerClass = TomcatHelper.getServer().getParentClassLoader().loadClass(sessionManager);
+                } catch (ClassNotFoundException e) {
+                    logger.error("can't find '" + sessionManager + "', StandardManager will be used", e);
+                }
+            }
+
+            try {
+                final Manager mgr = (Manager) sessionManagerClass.newInstance();
+                standardContext.setManager(mgr);
+            } catch (Exception e) {
+                logger.error("can't instantiate '" + sessionManager + "', StandardManager will be used", e);
+            }
+        }
 
         if (standardContext.getConfigFile() == null) {
             String s = File.pathSeparator;
