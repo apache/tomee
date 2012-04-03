@@ -472,7 +472,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         standardContext.setCrossContext(SystemInstance.get().getOptions().get(OPENEJB_CROSSCONTEXT_PROPERTY, false));
         standardContext.setNamingResources(new OpenEJBNamingResource());
 
-        final String sessionManager = SystemInstance.get().getOptions().get(OPENEJB_SESSION_MANAGER_PROPERTY, (String) null);
+        String sessionManager = SystemInstance.get().getOptions().get(OPENEJB_SESSION_MANAGER_PROPERTY + "." + standardContext.getName(), (String) null);
+        if (sessionManager == null) {
+            sessionManager = SystemInstance.get().getOptions().get(OPENEJB_SESSION_MANAGER_PROPERTY, (String) null);
+        }
         if (sessionManager != null) {
             if (sessionManagerClass == null) {
                 try { // the manager should be in standardclassloader
