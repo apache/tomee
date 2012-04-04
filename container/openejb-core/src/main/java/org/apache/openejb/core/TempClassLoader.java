@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.core;
 
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.xbean.asm.ClassReader;
@@ -117,13 +118,12 @@ public class TempClassLoader extends URLClassLoader {
         // copy the input stream into a byte array
         byte[] bytes;
         try {
-            byte[] buf = new byte[4 * 1024];
-            for (int count; (count = in.read(buf)) >= 0;) {
-                bout.write(buf, 0, count);
-            }
+            IO.copy(in, bout);
             bytes = bout.toByteArray();
         } catch (IOException e) {
             throw new ClassNotFoundException(name, e);
+        } finally {
+            IO.close(in);
         }
 
         // Annotation classes must be loaded by the normal classloader
