@@ -22,14 +22,14 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
+    <artifactId>maven</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <artifactId>maven-plugins-parent</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>4.0.0-beta-3-SNAPSHOT</version>
   </parent>
 
   <artifactId>tomee-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <name>OpenEJB Maven Plugins :: TomEE Maven Plugin</name>
+  <name>OpenEJB :: Maven Plugins :: TomEE Maven Plugin</name>
 
   <dependencies>
     <dependency>

@@ -69,7 +69,7 @@
       <plugin>
         <groupId>org.apache.openejb</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>4.0.0-beta-3-SNAPSHOT</version>
         <configuration>
           <tomeeVersion>1.0.0-beta-3-SNAPSHOT</tomeeVersion>
         </configuration>

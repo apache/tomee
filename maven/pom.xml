@@ -22,16 +22,14 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.apache</groupId>
-    <artifactId>apache</artifactId>
-    <version>10</version>
+    <artifactId>openejb</artifactId>
+    <groupId>org.apache.openejb</groupId>
+    <version>4.0.0-beta-3-SNAPSHOT</version>
   </parent>
 
-  <groupId>org.apache.openejb</groupId>
-  <artifactId>maven-plugins-parent</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <artifactId>maven</artifactId>
   <packaging>pom</packaging>
-  <name>OpenEJB Maven Plugins</name>
+  <name>OpenEJB :: Maven Plugins</name>
 
   <modules>
     <module>tomee-maven-plugin</module>
@@ -67,35 +65,23 @@
       <dependency>
         <groupId>org.sonatype.aether</groupId>
         <artifactId>aether-api</artifactId>
-        <version>1.8</version>
+        <version>${aether.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.openejb</groupId>
         <artifactId>openejb-core</artifactId>
-        <version>${openejb.version}</version>
+        <version>${project.version}</version>
       </dependency>
         <dependency>
         <groupId>org.apache.openejb</groupId>
         <artifactId>openejb-client</artifactId>
-        <version>${openejb.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.xbean</groupId>
-        <artifactId>xbean-finder-shaded</artifactId>
-        <version>3.10-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>4.10</version>
+        <version>${project.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
 
   <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.version>2.2.1</maven.version>
-    <openejb.version>4.0.0-beta-3-SNAPSHOT</openejb.version>
   </properties>
 
   <build>
@@ -106,14 +92,6 @@
         <version>2.9</version>
         <configuration>
           <goalPrefix>${maven-plugin.prefix}</goalPrefix>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
         </configuration>
       </plugin>
     </plugins>
