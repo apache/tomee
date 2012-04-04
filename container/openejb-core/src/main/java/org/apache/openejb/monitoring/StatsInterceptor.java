@@ -347,6 +347,6 @@ public class StatsInterceptor {
     }
 
     public static boolean isStatsActivated() {
-        return SystemInstance.get().getOptions().get(DISABLE_STAT_INTERCEPTOR_PROPERTY, false);
+        return SystemInstance.get().getOptions().get(DISABLE_STAT_INTERCEPTOR_PROPERTY, true);
     }
 }
