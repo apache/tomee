@@ -251,6 +251,12 @@
         <artifactId>maven-bundle-plugin</artifactId>
         <extensions>true</extensions>
         <configuration>
+          <supportedProjectTypes>
+            <supportedProjectType>bundle</supportedProjectType>
+            <supportedProjectType>jar</supportedProjectType>
+            <!-- because we specify the MANIFEST.MF from this plugin and we don't want to break everything for maven -->
+            <supportedProjectType>maven-plugin</supportedProjectType>
+          </supportedProjectTypes>
           <instructions>
             <Bundle-Name>Apache ${project.name}</Bundle-Name>
             <Bundle-Activator>${openejb.bundle.activator}</Bundle-Activator>
@@ -315,6 +321,7 @@
       <modules>
         <module>deps</module>
         <module>itests</module>
+        <module>maven</module>
         <module>container</module>
         <module>server</module>
         <module>examples</module>
@@ -330,6 +337,7 @@
       <id>quick</id>
       <modules>
         <module>deps</module>
+        <module>maven</module>
         <module>container</module>
         <module>server</module>
         <module>assembly</module>
@@ -343,6 +351,7 @@
       <modules>
         <module>deps</module>
         <module>itests</module>
+        <module>maven</module>
         <module>container</module>
         <module>server</module>
         <module>examples</module>

@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.monitoring;
 
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.math.stat.descriptive.SynchronizedDescriptiveStatistics;
 import org.apache.xbean.finder.ClassFinder;
 import org.apache.openejb.api.Monitor;
@@ -42,6 +43,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @version $Rev$ $Date$
  */
 public class StatsInterceptor {
+    private static final String DISABLE_STAT_INTERCEPTOR_PROPERTY = "openejb.stats.interceptor.disable";
 
     public static final InterceptorData metadata = InterceptorData.scan(StatsInterceptor.class);
 
@@ -342,5 +344,9 @@ public class StatsInterceptor {
             samples.addValue(time);
         }
 
+    }
+
+    public static boolean isStatsActivated() {
+        return SystemInstance.get().getOptions().get(DISABLE_STAT_INTERCEPTOR_PROPERTY, false);
     }
 }

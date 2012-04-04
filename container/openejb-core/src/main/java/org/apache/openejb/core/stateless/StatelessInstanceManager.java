@@ -16,6 +16,30 @@
  */
 package org.apache.openejb.core.stateless;
 
+import java.io.Flushable;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import javax.ejb.ConcurrentAccessTimeoutException;
+import javax.ejb.EJBContext;
+import javax.ejb.SessionBean;
+import javax.ejb.SessionContext;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import javax.naming.Context;
+import javax.naming.NamingException;
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBException;
@@ -40,32 +64,6 @@ import org.apache.openejb.util.Pool;
 import org.apache.openejb.util.SafeToolkit;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
-
-import javax.ejb.ConcurrentAccessTimeoutException;
-import javax.ejb.EJBContext;
-import javax.ejb.SessionBean;
-import javax.ejb.SessionContext;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-import javax.naming.Context;
-import javax.naming.NamingException;
-import java.io.Flushable;
-import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 public class StatelessInstanceManager {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
@@ -325,13 +323,7 @@ public class StatelessInstanceManager {
         long maxAge = builder.getMaxAge().getTime(TimeUnit.MILLISECONDS);
         double maxAgeOffset = builder.getMaxAgeOffset();
 
-        // Create stats interceptor
-        StatsInterceptor stats = new StatsInterceptor(beanContext.getBeanClass());
-        beanContext.addSystemInterceptor(stats);
-
-        MBeanServer server = LocalMBeanServer.get();
-
-        ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
+        final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
         jmxName.set("J2EEServer", "openejb");
         jmxName.set("J2EEApplication", null);
         jmxName.set("EJBModule", beanContext.getModuleID());
@@ -339,13 +331,21 @@ public class StatelessInstanceManager {
         jmxName.set("j2eeType", "");
         jmxName.set("name", beanContext.getEjbName());
 
-        // register the invocation stats interceptor
-        try {
-            ObjectName objectName = jmxName.set("j2eeType", "Invocations").build();
-            server.registerMBean(new ManagedMBean(stats), objectName);
-            data.add(objectName);
-        } catch (Exception e) {
-            logger.error("Unable to register MBean ", e);
+        final MBeanServer server = LocalMBeanServer.get();
+
+        // Create stats interceptor
+        if (StatsInterceptor.isStatsActivated()) {
+            StatsInterceptor stats = new StatsInterceptor(beanContext.getBeanClass());
+            beanContext.addSystemInterceptor(stats);
+
+            // register the invocation stats interceptor
+            try {
+                ObjectName objectName = jmxName.set("j2eeType", "Invocations").build();
+                server.registerMBean(new ManagedMBean(stats), objectName);
+                data.add(objectName);
+            } catch (Exception e) {
+                logger.error("Unable to register MBean ", e);
+            }
         }
 
         // register the pool

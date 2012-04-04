@@ -287,26 +287,28 @@ public class StatefulContainer implements RpcContainer {
         beanContext.setContainerData(data);
 
         // Create stats interceptor
-        StatsInterceptor stats = new StatsInterceptor(beanContext.getBeanClass());
-        beanContext.addSystemInterceptor(stats);
+        if (StatsInterceptor.isStatsActivated()) {
+            StatsInterceptor stats = new StatsInterceptor(beanContext.getBeanClass());
+            beanContext.addSystemInterceptor(stats);
 
-        MBeanServer server = LocalMBeanServer.get();
+            MBeanServer server = LocalMBeanServer.get();
 
-        ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
-        jmxName.set("J2EEServer", "openejb");
-        jmxName.set("J2EEApplication", null);
-        jmxName.set("EJBModule", beanContext.getModuleID());
-        jmxName.set("StatefulSessionBean", beanContext.getEjbName());
-        jmxName.set("j2eeType", "");
-        jmxName.set("name", beanContext.getEjbName());
+            ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
+            jmxName.set("J2EEServer", "openejb");
+            jmxName.set("J2EEApplication", null);
+            jmxName.set("EJBModule", beanContext.getModuleID());
+            jmxName.set("StatefulSessionBean", beanContext.getEjbName());
+            jmxName.set("j2eeType", "");
+            jmxName.set("name", beanContext.getEjbName());
 
-        // register the invocation stats interceptor
-        try {
-            ObjectName objectName = jmxName.set("j2eeType", "Invocations").build();
-            server.registerMBean(new ManagedMBean(stats), objectName);
-            data.jmxNames.add(objectName);
-        } catch (Exception e) {
-            logger.error("Unable to register MBean ", e);
+            // register the invocation stats interceptor
+            try {
+                ObjectName objectName = jmxName.set("j2eeType", "Invocations").build();
+                server.registerMBean(new ManagedMBean(stats), objectName);
+                data.jmxNames.add(objectName);
+            } catch (Exception e) {
+                logger.error("Unable to register MBean ", e);
+            }
         }
 
         try {
