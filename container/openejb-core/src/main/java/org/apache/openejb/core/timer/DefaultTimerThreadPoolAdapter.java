@@ -52,7 +52,12 @@ public class DefaultTimerThreadPoolAdapter implements ThreadPool {
         this.executor = SystemInstance.get().getComponent(Executor.class);
 
         if (this.executor == null) {
-            final int size = Integer.parseInt(SystemInstance.get().getProperty("openejb.timer.pool.size", "2"));
+
+            int size = Integer.parseInt(SystemInstance.get().getProperty("openejb.timer.pool.size", "2"));
+            if (size < 2) {
+                size = 2;
+            }
+
             this.executor = new ThreadPoolExecutor(2
                     , size
                     , 60L
@@ -62,8 +67,15 @@ public class DefaultTimerThreadPoolAdapter implements ThreadPool {
                     , new RejectedExecutionHandler() {
                 @Override
                 public void rejectedExecution(final Runnable r, final ThreadPoolExecutor tpe) {
+
+                    if (null == r || null == tpe || tpe.isShutdown() || tpe.isTerminated() || tpe.isTerminating()) {
+                        return;
+                    }
+
                     try {
-                        tpe.getQueue().put(r);
+                        if (!tpe.getQueue().offer(r, 30, TimeUnit.SECONDS)) {
+                            throw new RejectedExecutionException("Timeout waiting for executor slot");
+                        }
                     } catch (InterruptedException e) {
                         throw new RejectedExecutionException("Interrupted waiting for executor slot");
                     }

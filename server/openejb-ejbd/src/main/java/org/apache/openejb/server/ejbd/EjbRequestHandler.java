@@ -19,7 +19,12 @@ package org.apache.openejb.server.ejbd;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.RpcContainer;
-import org.apache.openejb.client.*;
+import org.apache.openejb.client.EJBHomeProxyHandle;
+import org.apache.openejb.client.EJBObjectProxyHandle;
+import org.apache.openejb.client.EJBRequest;
+import org.apache.openejb.client.EJBResponse;
+import org.apache.openejb.client.ResponseCodes;
+import org.apache.openejb.client.ThrowableArtifact;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
@@ -78,14 +83,16 @@ class EjbRequestHandler {
         final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
         try {
             final Object clientIdentity = req.getClientIdentity();
-            if (clientIdentity != null) securityService.associate(clientIdentity);
+            if (clientIdentity != null) {//noinspection unchecked
+                securityService.associate(clientIdentity);
+            }
         } catch (Throwable t) {
-            replyWithFatalError(out, t, "Client identity is not valid");
+            replyWithFatalError(out, t, "Client identity is not valid: " + req);
             return;
         }
 
-        CallContext call = null;
-        BeanContext di = null;
+        final CallContext call;
+        final BeanContext di;
 
         try {
             di = this.daemon.getDeployment(req);
@@ -266,7 +273,7 @@ class EjbRequestHandler {
     protected void doEjbObject_BUSINESS_METHOD(final EJBRequest req, final EJBResponse res) throws Exception {
 
         final CallContext call = CallContext.getCallContext();
-        final BeanContext beanContext = (BeanContext) call.getBeanContext();
+        final BeanContext beanContext = call.getBeanContext();
         final boolean asynchronous = beanContext.isAsynchronous(req.getMethodInstance());
         try {
             if (asynchronous) {

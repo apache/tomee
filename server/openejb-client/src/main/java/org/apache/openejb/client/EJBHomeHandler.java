@@ -39,11 +39,11 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
     public EJBHomeHandler() {
     }
 
-    public EJBHomeHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client) {
+    public EJBHomeHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client) {
         super(ejb, server, client);
     }
 
-    public static EJBHomeHandler createEJBHomeHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client) {
+    public static EJBHomeHandler createEJBHomeHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client) {
         switch (ejb.type) {
             case EJBMetaDataImpl.BMP_ENTITY:
             case EJBMetaDataImpl.CMP_ENTITY:
@@ -74,16 +74,16 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
             // Interface class must be listed first otherwise the proxy code will select
             // the openejb system class loader for proxy creation instead of the
             // application class loader
-            Class[] interfaces = new Class[]{ejb.homeClass, EJBHomeProxy.class};
+            final Class[] interfaces = new Class[]{ejb.homeClass, EJBHomeProxy.class};
             return (EJBHomeProxy) ProxyManager.newProxyInstance(interfaces, this);
         } catch (IllegalAccessException e) {
             throw new ClientRuntimeException("Unable to create proxy for "+ ejb.homeClass, e);
         }
     }
 
-    protected Object _invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    protected Object _invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
 
-        String methodName = method.getName();
+        final String methodName = method.getName();
 
         try {
 
@@ -176,10 +176,10 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
 
     }
 
-    public Object homeMethod(Method method, Object[] args, Object proxy) throws Throwable {
-        EJBRequest req = new EJBRequest(RequestMethodCode.EJB_HOME_METHOD, ejb, method, args, null);
+    public Object homeMethod(final Method method, final Object[] args, final Object proxy) throws Throwable {
+        final EJBRequest req = new EJBRequest(RequestMethodCode.EJB_HOME_METHOD, ejb, method, args, null);
 
-        EJBResponse res = request(req);
+        final EJBResponse res = request(req);
 
         switch (res.getResponseCode()) {
             case ResponseCodes.EJB_ERROR:
@@ -200,10 +200,10 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
     /*  Home interface methods                         */
     /*-------------------------------------------------*/
 
-    protected Object create(Method method, Object[] args, Object proxy) throws Throwable {
-        EJBRequest req = new EJBRequest(RequestMethodCode.EJB_HOME_CREATE, ejb, method, args, null);
+    protected Object create(final Method method, final Object[] args, final Object proxy) throws Throwable {
+        final EJBRequest req = new EJBRequest(RequestMethodCode.EJB_HOME_CREATE, ejb, method, args, null);
 
-        EJBResponse res = request(req);
+        final EJBResponse res = request(req);
 
         switch (res.getResponseCode()) {
             case ResponseCodes.EJB_ERROR:
@@ -214,8 +214,8 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
                 throw new ApplicationException((ThrowableArtifact) res.getResult());
             case ResponseCodes.EJB_OK:
 
-                Object primKey = res.getResult();
-                EJBObjectHandler handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primKey);
+                final Object primKey = res.getResult();
+                final EJBObjectHandler handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primKey);
                 handler.setEJBHomeProxy((EJBHomeProxy) proxy);
 
                 return handler.createEJBObjectProxy();
@@ -230,11 +230,11 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
     /*  EJBHome methods                                */
     /*-------------------------------------------------*/
 
-    protected Object getEJBMetaData(Method method, Object[] args, Object proxy) throws Throwable {
+    protected Object getEJBMetaData(final Method method, final Object[] args, final Object proxy) throws Throwable {
         return ejb;
     }
 
-    protected Object getHomeHandle(Method method, Object[] args, Object proxy) throws Throwable {
+    protected Object getHomeHandle(final Method method, final Object[] args, final Object proxy) throws Throwable {
 
         return new EJBHomeHandle((EJBHomeProxy) proxy);
     }
@@ -243,10 +243,10 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
 
     protected abstract Object removeByPrimaryKey(Method method, Object[] args, Object proxy) throws Throwable;
 
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
     }
 
-    public void writeExternal(ObjectOutput out) throws IOException {
+    public void writeExternal(final ObjectOutput out) throws IOException {
     }
 
 }
