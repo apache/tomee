@@ -180,8 +180,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
      * instance.
      */
     public TomcatWebAppBuilder() {
-    	
-    	// TODO: re-write this bit, so this becomes part of the listener, and we register this with the mbean server.
+
+        // TODO: re-write this bit, so this becomes part of the listener, and we register this with the mbean server.
     	
         StandardServer standardServer = TomcatHelper.getServer();
         globalListenerSupport = new GlobalListenerSupport(standardServer, this);
@@ -508,7 +508,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 standardContext.removeLifecycleListener(l);
             }
         }
-        standardContext.addLifecycleListener(new OpenEJBContextConfig());
+        standardContext.addLifecycleListener(new OpenEJBContextConfig(new StandardContextInfo(standardContext)));
 
         // force manually the namingContextListener to merge jndi in an easier way
         NamingContextListener ncl = new NamingContextListener();
@@ -516,6 +516,34 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         standardContext.setNamingContextListener(ncl);
         standardContext.addLifecycleListener(ncl);
         standardContext.addLifecycleListener(new TomcatJavaJndiBinder());
+    }
+
+    public class StandardContextInfo {
+
+        private final StandardContext standardContext;
+
+        public StandardContextInfo(StandardContext standardContext) {
+            this.standardContext = standardContext;
+        }
+
+        public WebAppInfo get() {
+            final ContextInfo contextInfo = getContextInfo(standardContext);
+            System.out.println("contextInfo = " + contextInfo);
+            System.out.println("standardContext = " + standardContext);
+            for (WebAppInfo webApp : contextInfo.appInfo.webApps) {
+                if (standardContext.getName().equals("/"+webApp.contextRoot)) {
+                    return webApp;
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public String toString() {
+            return "StandardContextInfo{" +
+                    "standardContext=" + standardContext +
+                    '}';
+        }
     }
 
     /**

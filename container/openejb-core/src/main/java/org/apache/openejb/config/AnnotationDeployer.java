@@ -249,6 +249,12 @@ public class AnnotationDeployer implements DynamicDeployer {
             "javax.faces.validator.FacesValidator"
     };
 
+    private static final String[] WEB_CLASSES = new String[] {
+            "javax.servlet.annotation.WebServlet",
+            "javax.servlet.annotation.WebFilter",
+            "javax.servlet.annotation.WebListener"
+    };
+
     public static final Set<String> knownResourceEnvTypes = new TreeSet<String>(asList(
             "javax.ejb.EJBContext",
             "javax.ejb.SessionContext",
@@ -1064,6 +1070,23 @@ public class AnnotationDeployer implements DynamicDeployer {
                     convertedClasses.add(annotated.get().getName());
                 }
                 webModule.getJsfAnnotatedClasses().put(jsfClass, convertedClasses);
+            }
+
+            /*
+             * Servlet, Filter, Listener
+             */
+            for (String apiClassName : WEB_CLASSES) {
+                final Class<? extends Annotation> clazz;
+                try {
+                    clazz = (Class<? extends Annotation>) classLoader.loadClass(apiClassName);
+                } catch (ClassNotFoundException e) {
+                    continue;
+                }
+
+                final List<Class<?>> found = finder.findAnnotatedClasses(clazz);
+                for (Class<?> annotatedClass : found) {
+                    webModule.getWebAnnotatedClasses().add(annotatedClass.getName());
+                }
             }
 
             return webModule;
