@@ -1876,7 +1876,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             IAnnotationFinder finder = webModule.getFinder();
 
-            if (finder != null) {
+            if (finder != null && false) {
                 // Add all the classes of the previous finder
                 // TODO this part can be optimized
                 final List<String> classNames = finder.getAnnotatedClassNames();
