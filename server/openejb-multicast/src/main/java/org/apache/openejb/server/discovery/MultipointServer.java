@@ -116,7 +116,9 @@ public class MultipointServer {
         this.name = name;
 
         if (roots != null) {
-            this.roots.addAll(roots);
+            for (URI uri : roots) {
+                this.roots.add(normalize(uri));
+            }
         }
 
         this.reconnectDelay = reconnectDelay.getTime(TimeUnit.NANOSECONDS);
@@ -143,15 +145,19 @@ public class MultipointServer {
         serverSocket.bind(address);
         this.port = serverSocket.getLocalPort();
 
-        if (name != null) {
-            me = URI.create("conn://" + broadcastHost + ":" + this.port + "/" + name);
-        } else {
-            me = URI.create("conn://" + broadcastHost + ":" + this.port);
-        }
+        me = createURI(broadcastHost, this.port);
 
         serverChannel.register(selector, SelectionKey.OP_ACCEPT);
 
         println("Broadcasting");
+    }
+
+    private URI normalize(URI uri) {
+        return createURI(uri.getHost(), uri.getPort());
+    }
+
+    private URI createURI(String host, final int port) {
+        return URI.create("conn://" + host.toLowerCase() + ":" + port);
     }
 
     public URI getMe() {
@@ -209,19 +215,18 @@ public class MultipointServer {
      *  - It has been a while since we last tried (reconnectDelay)
      */
     private void rejoin() {
-        if (connections.size() > 0) return;
-        if (connect.size() > 0) return;
+        if (roots.size() <= 0) return;
         if (System.nanoTime() - joined <= reconnectDelay) return;
 
-        log.info("MultipointReconnect{initialServers=" + roots.size() + "}");
-
-        reconnects.record();
-
-        for (URI root : roots) {
-            connect(root);
+        for (URI uri : roots) {
+            synchronized (connect) {
+                if (!connections.containsKey(uri) && !connect.contains(uri)) {
+                    log.info("Reconnect{uri=" + uri + "}");
+                    connect.addLast(uri);
+                    this.joined = System.nanoTime();
+                }
+            }
         }
-
-        this.joined = System.nanoTime();
     }
     public MultipointServer start() {
         if (running.compareAndSet(false, true)) {
@@ -305,7 +310,7 @@ public class MultipointServer {
         public Session(SocketChannel channel, InetSocketAddress address, URI uri) throws ClosedChannelException {
             this.channel = channel;
             this.client = uri != null;
-            this.uri = uri != null ? uri : URI.create("conn://" + address.getHostName() + ":" + address.getPort());
+            this.uri = uri != null ? uri : createURI(address.getHostName(), address.getPort());
             this.key = channel.register(selector, 0, this);
             sessionsCreated.record();
             log.info("Constructing " + this);
@@ -899,6 +904,7 @@ public class MultipointServer {
     }
 
     public void connect(URI uri) {
+        uri = normalize(uri);
         if (me.equals(uri)) return;
 
         synchronized (connect) {

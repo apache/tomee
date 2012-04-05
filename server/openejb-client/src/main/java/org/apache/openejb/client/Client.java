@@ -456,7 +456,7 @@ public class Client {
                 updated.setConnectionStrategy(previous.getConnectionStrategy());
             }
             updated.setLastLocation(previous.getLastLocation());
-            final ClusterMetaDataUpdated clusterMetaDataUpdated = new ClusterMetaDataUpdated(serverMetaData, updated, clusterMetaData);
+            final ClusterMetaDataUpdated clusterMetaDataUpdated = new ClusterMetaDataUpdated(serverMetaData, updated, previous);
 
             fireEvent(clusterMetaDataUpdated);
 
