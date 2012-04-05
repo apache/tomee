@@ -34,6 +34,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This test verifies the situation where none of the
@@ -44,7 +47,22 @@ import java.util.concurrent.TimeUnit;
  * list.  How long to wait between attempts is dictated by the
  * 'reconnectDelay' setting, which is 30 seconds by default.
  */
-public class ReconnectDelayTest {
+public class ReconnectDelayListSelfTest {
+
+    static final Logger logger = Logger.getLogger("org.apache.openejb.client");
+
+    static {
+        set(logger, Level.FINER);
+        set(Logger.getLogger("OpenEJB.client"), Level.FINER);
+    }
+
+    private static void set(Logger logger, Level level) {
+        final ConsoleHandler consoleHandler = new ConsoleHandler();
+        consoleHandler.setLevel(level);
+        logger.addHandler(consoleHandler);
+        logger.setLevel(level);
+        logger.setUseParentHandlers(false);
+    }
 
     private static final String MULTIPOINT = "multipoint";
 
@@ -104,7 +122,8 @@ public class ReconnectDelayTest {
         for (Map.Entry<String, StandaloneServer> entry : servers.entrySet()) {
             final StandaloneServer server = entry.getValue();
             final StandaloneServer.ServerService multipoint = server.getServerService(MULTIPOINT);
-            multipoint.set("initialServers", "localhost:" + red.getServerService(MULTIPOINT).getPort());
+            final String value = "localhost:" + red.getServerService(MULTIPOINT).getPort() + ",localhost:"+multipoint.getPort();
+            multipoint.set("initialServers", value);
         }
 
         // Start all the servers except RED
