@@ -28,6 +28,7 @@ import org.apache.catalina.startup.Tomcat;
 import org.apache.coyote.http11.Http11Protocol;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.Core;
 import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
@@ -38,8 +39,15 @@ import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.config.sys.JaxbOpenejb;
+import org.apache.openejb.config.sys.Openejb;
+import org.apache.openejb.jee.JaxbJavaee;
+import org.apache.openejb.jee.TldTaglib;
+import org.apache.openejb.jee.WebApp;
+import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.DaemonThreadFactory;
 import org.apache.openejb.util.Logger;
 import org.apache.tomee.catalina.TomEERuntimeException;
 import org.apache.tomee.catalina.TomcatLoader;
@@ -51,6 +59,7 @@ import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
+import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -59,6 +68,8 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @version $Rev$ $Date$
@@ -69,6 +80,43 @@ public class Container {
         // org.apache.naming
         Assembler.installNaming("org.apache.naming", true);
     }
+
+    static {
+        Core.warmup();
+        final ExecutorService executor = Executors.newFixedThreadPool(4, new DaemonThreadFactory("warmup"));
+
+        executor.execute(new JaxbJavaeeLoad(WebApp.class));
+        executor.execute(new JaxbJavaeeLoad(TldTaglib.class));
+        executor.execute(new Runnable(){
+            @Override
+            public void run() {
+                try {
+                    JaxbOpenejb.getContext(Openejb.class);
+                } catch (JAXBException e) {
+                }
+            }
+        });
+        executor.execute(new JaxbJavaeeLoad(Persistence.class));
+    }
+
+
+    private static class JaxbJavaeeLoad implements Runnable {
+
+        private final Class<?> type;
+
+        private JaxbJavaeeLoad(Class<?> type) {
+            this.type = type;
+        }
+
+        @Override
+        public void run() {
+            try {
+                JaxbJavaee.getContext(type);
+            } catch (JAXBException e) {
+            }
+        }
+    }
+
     private Bootstrap bootstrap;
     protected Configuration configuration;
     private File base;
