@@ -85,7 +85,7 @@ java.util.Properties
 
     <div class="container-fluid">
         <div class="row-fluid">
-            <div class="span9">
+            <div class="span12">
         <%
             try{
                 String selected = request.getParameter("selected");
@@ -102,15 +102,15 @@ java.util.Properties
                     p.put("openejb.loader", "embed");
                     try {
                         ctx = new InitialContext( p );
-                        out.print("<h1>OpenEJB Global JNDI Namespace</h1>");
+                        out.print("<h2>OpenEJB Global JNDI Namespace</h2>");
                     } catch(Exception e) {
-                        out.print("<h1>OpenEJB Not Installed</h1>");
+                        out.print("<h2>OpenEJB Not Installed</h2>");
                     }
                 } else {
                     ctx = (Context)session.getAttribute(ctxID);
                     if (ctxID.startsWith("enc")) {
         %>
-        <h1>JNDI Environment Naming Context <a href="#" rel="tooltip" title="This is the private namespace of an Enterprise JavaBean">(ENC)</a></h1><a href="enc-help.html">[Info]</A>
+        <h2>JNDI Environment Naming Context <a href="#" rel="tooltip" title="This is the private namespace of an Enterprise JavaBean">(ENC)</a></h2><a href="enc-help.html">[Info]</A>
         <%
                     }
                 }
@@ -128,7 +128,6 @@ java.util.Properties
                 //return;
             }
         %>
-
             </div>
         </div>
 

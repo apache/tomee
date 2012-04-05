@@ -74,71 +74,31 @@
 
     <div class="container-fluid">
         <div class="row-fluid">
-            <div class="span9">
+            <div class="span12">
                 <div class="hero-unit">
                     <h1>Welcome to Apache TomEE</h1>
                     <p>You can test your setup and play around with the tools provided below!</p>
+
+                    <div class="btn-group">
+                        <a class="btn btn-primary btn-large" href="testhome.jsp">Testing your setup &raquo;</a>
+
+                        <% if (!Installer.isListenerInstalled() && !Installer.isAgentInstalled()) { %>
+                        <a class="btn btn-primary btn-large" href="installer">[Optional] Install Listener and JavaAgent &raquo;</a>
+
+                        <% } else if (!Installer.isListenerInstalled()) { %>
+                        <a class="btn btn-primary btn-large" href="installer">[Optional] Install Listener &raquo;</a>
+
+                        <% } else if (!Installer.isAgentInstalled()) { %>
+                        <a class="btn btn-primary btn-large" href="installer">[Optional] JavaAgent &raquo;</a>
+
+                        <% } %>
+
+                        <a class="btn btn-primary btn-large" href="viewjndi.jsp">JNDI Browser &raquo;</a>
+                        <a class="btn btn-primary btn-large" href="viewclass.jsp">Class Viewer &raquo;</a>
+                        <a class="btn btn-primary btn-large" href="viewejb.jsp">EJB Viewer &raquo;</a>
+                        <a class="btn btn-primary btn-large" href="invokeobj.jsp">Object Invoker &raquo;</a>
+                    </div>
                 </div>
-                <div class="row-fluid">
-                    <div class="span4">
-                        <h2>Setup</h2>
-                        <p>Testing your setup</p>
-                        <p><a class="btn" href="testhome.jsp">View details &raquo;</a></p>
-                    </div><!--/span-->
-
-
-                    <% if (!Installer.isListenerInstalled() && !Installer.isAgentInstalled()) { %>
-                    <div class="span4">
-                        <h2>Install</h2>
-                        <p>[Optional] Install Listener and JavaAgent</p>
-                        <p><a class="btn" href="installer">View details &raquo;</a></p>
-                    </div><!--/span-->
-
-                    <% } else if (!Installer.isListenerInstalled()) { %>
-                    <div class="span4">
-                        <h2>Install</h2>
-                        <p>[Optional] Install Listener</p>
-                        <p><a class="btn" href="installer">View details &raquo;</a></p>
-                    </div><!--/span-->
-
-                    <% } else if (!Installer.isAgentInstalled()) { %>
-                    <div class="span4">
-                        <h2>Install</h2>
-                        <p>[Optional] JavaAgent</p>
-                        <p><a class="btn" href="installer">View details &raquo;</a></p>
-                    </div><!--/span-->
-
-                    <% } %>
-
-
-
-
-
-
-                    <div class="span4">
-                        <h2>JNDI Browser</h2>
-                        <p>Lookup for beans from your web browser</p>
-                        <p><a class="btn" href="viewjndi.jsp">View details &raquo;</a></p>
-                    </div><!--/span-->
-                    <div class="span4">
-                        <h2>Class Viewer</h2>
-                        <p>See the classes your application have</p>
-                        <p><a class="btn" href="viewclass.jsp">View details &raquo;</a></p>
-                    </div><!--/span-->
-                </div><!--/row-->
-                <div class="row-fluid">
-                    <div class="span4">
-                        <h2>EJB Viewer</h2>
-                        <p>See the EJBs you have in your context</p>
-                        <p><a class="btn" href="viewejb.jsp">View details &raquo;</a></p>
-                    </div><!--/span-->
-                    <div class="span4">
-                        <h2>Object Invoker</h2>
-                        <p>Execute an EJB method from the browser</p>
-                        <p><a class="btn" href="invokeobj.jsp">View details &raquo;</a></p>
-                    </div><!--/span-->
-
-                </div><!--/row-->
             </div><!--/span-->
         </div><!--/row-->
 
