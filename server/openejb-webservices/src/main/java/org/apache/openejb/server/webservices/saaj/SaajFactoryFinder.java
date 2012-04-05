@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.server.webservices.saaj;
 
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.ServerRuntimeException;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
@@ -52,7 +53,7 @@ class SaajFactoryFinder {
     }
 
     private static void initDefaultSAAJProvider() {
-        String provider = System.getProperty(SAAJ_PROVIDER_PROPERTY);
+        final String provider = SystemInstance.get().getOptions().get(SAAJ_PROVIDER_PROPERTY, (String) null);
         if (provider != null) {
             if (provider.equalsIgnoreCase("axis2")) {
                 DEFAULT_SAAJ_UNIVERSE = SaajUniverse.Type.AXIS2;
