@@ -16,11 +16,17 @@
  */
 package org.apache.openejb.util;
 
+import org.apache.openejb.loader.IO;
+import org.hsqldb.lib.Collection;
+
 import javax.naming.Binding;
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -108,6 +114,52 @@ public class Debug {
         private static final Trace trace = new Trace();
 
         private final Map<String, Node> elements = new LinkedHashMap<String, Node>();
+
+        private final List<Event> events = new ArrayList<Event>();
+
+        private static class Event {
+            private final long time = System.currentTimeMillis();
+            private final List<StackTraceElement> elements;
+
+            private Event(List<StackTraceElement> elements) {
+                this.elements = Collections.unmodifiableList(elements);
+            }
+
+            @Override
+            public String toString() {
+                return "<li>" +
+                        "time=" + time +
+                        ", elements=" + elements +
+                        "</li>";
+            }
+        }
+
+        public static void record() {
+            try {
+                final File file = new File("/tmp/trace.html");
+                final OutputStream write = IO.write(file);
+
+                report(write);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public static void report(OutputStream write) {
+            final PrintStream stream = new PrintStream(write);
+            report(stream);
+            stream.close();
+        }
+
+        public static void report(PrintStream stream) {
+            trace.print(stream);
+
+            stream.print("<br/><ul>");
+            for (Trace.Event event : trace.events) {
+                stream.println(event);
+            }
+            stream.print("</ul>");
+        }
 
         public static void mark() {
             Throwable throwable = new Exception().fillInStackTrace();
@@ -213,7 +265,13 @@ public class Debug {
             }
         }
 
+        public static void reset() {
+            trace.events.clear();
+            trace.elements.clear();
+        }
+
         public void link(List<StackTraceElement> elements) {
+            events.add(new Event(elements));
             Iterator<StackTraceElement> iterator = elements.iterator();
             if (!iterator.hasNext()) return;
 
