@@ -319,6 +319,7 @@ class AppInfoBuilder {
             webAppInfo.restClass.addAll(webModule.getRestClasses());
             webAppInfo.ejbWebServices.addAll(webModule.getEjbWebServices());
             webAppInfo.ejbRestServices.addAll(webModule.getEjbRestServices());
+            webAppInfo.webAnnotatedClasses.addAll(webModule.getWebAnnotatedClasses());
 
             for (Map.Entry<String, Set<String>> entry : webModule.getJsfAnnotatedClasses().entrySet()) {
                 final ClassListInfo info = new ClassListInfo();

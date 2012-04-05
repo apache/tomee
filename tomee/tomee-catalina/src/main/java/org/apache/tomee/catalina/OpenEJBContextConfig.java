@@ -20,14 +20,32 @@ import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.deploy.WebXml;
 import org.apache.catalina.startup.ContextConfig;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.reflection.ReflectionUtil;
+import org.xml.sax.InputSource;
 
 import javax.servlet.descriptor.JspPropertyGroupDescriptor;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.LinkedHashSet;
 
 public class OpenEJBContextConfig extends ContextConfig {
-    @Override protected WebXml createWebXml() {
+
+    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("catalina").createChild("context"), OpenEJBContextConfig.class);
+
+    private TomcatWebAppBuilder.StandardContextInfo info;
+
+    public OpenEJBContextConfig(TomcatWebAppBuilder.StandardContextInfo standardContextInfo) {
+        info = standardContextInfo;
+    }
+
+    @Override
+    protected WebXml createWebXml() {
         String prefix = "";
         if (context instanceof StandardContext) {
             StandardContext standardContext = (StandardContext) context;
@@ -56,9 +74,58 @@ public class OpenEJBContextConfig extends ContextConfig {
             }
         }
 
-        @Override public int getMajorVersion() {
+        @Override
+        public int getMajorVersion() {
             return SystemInstance.get().getOptions().get(prefix + "." + OPENEJB_WEB_XML_MAJOR_VERSION_PROPERTY,
-                SystemInstance.get().getOptions().get(OPENEJB_WEB_XML_MAJOR_VERSION_PROPERTY, super.getMajorVersion()));
+                    SystemInstance.get().getOptions().get(OPENEJB_WEB_XML_MAJOR_VERSION_PROPERTY, super.getMajorVersion()));
+        }
+    }
+
+    @Override
+    protected void parseWebXml(InputSource source, WebXml dest, boolean fragment) {
+        super.parseWebXml(source, dest, fragment);
+    }
+
+    @Override
+    protected void processAnnotationsUrl(URL url, WebXml fragment) {
+        if (SystemInstance.get().getOptions().get("tomee.tomcat.scan", false)) {
+            super.processAnnotationsUrl(url, fragment);
+            return;
+        }
+
+        try {
+            final WebAppInfo webAppInfo = info.get();
+
+            if (webAppInfo == null) {
+                logger.warning("WebAppInfo not found. " + info);
+                super.processAnnotationsUrl(url, fragment);
+                return;
+            }
+
+            // TODO We should just remember which jars each class came from
+            // then we wouldn't need to lookup the class from the URL in this
+            // way to guarantee we only add classes from this URL.
+            final URLClassLoader loader = new URLClassLoader(new URL[]{url});
+            for (String webAnnotatedClassName : webAppInfo.webAnnotatedClasses) {
+                final String classFile = webAnnotatedClassName.replace('.', '/') + ".class";
+                final URL classUrl = loader.getResource(classFile);
+
+                if (classUrl == null) {
+                    continue;
+                }
+
+                final InputStream inputStream = classUrl.openStream();
+                try {
+                    processAnnotationsStream(inputStream, fragment);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    inputStream.close();
+                }
+
+            }
+        } catch (Exception e) {
+            logger.error("OpenEJBContextConfig.processAnnotationsUrl: failed.", e);
         }
     }
 }

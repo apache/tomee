@@ -35,6 +35,7 @@ public class WebAppInfo extends CommonInfoObject {
     public final Set<String> restApplications = new TreeSet<String>();
     public final Set<String> ejbWebServices = new TreeSet<String>();
     public final Set<String> ejbRestServices = new TreeSet<String>();
+    public final Set<String> webAnnotatedClasses = new TreeSet<String>();
     public final List<PortInfo> portInfos = new ArrayList<PortInfo>();
     public final JndiEncInfo jndiEnc = new JndiEncInfo();
     public final List<ServletInfo> servlets = new ArrayList<ServletInfo>();
