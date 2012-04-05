@@ -38,21 +38,22 @@ public class SaajUniverse {
     }
 
     enum Type { DEFAULT, AXIS1, AXIS2, SUN }
-    
+
     public static final Type DEFAULT = Type.DEFAULT;
     public static final Type SUN = Type.SUN;
     public static final Type AXIS1 = Type.AXIS1;
     public static final Type AXIS2 = Type.AXIS2;
     
     private static final ThreadLocal<LinkedList<Type>> currentUniverse = 
-        new InheritableThreadLocal<LinkedList<Type>>();
+        new ThreadLocal<LinkedList<Type>>() {
+            @Override
+            protected LinkedList<Type> initialValue() {
+                return new LinkedList<Type>();
+            }
+        };
         
     public void set(Type newUniverse) {
-        LinkedList<Type> universeList = currentUniverse.get();
-        if (universeList == null) {
-            universeList = new LinkedList<Type>();
-            currentUniverse.set(universeList);
-        }
+        final LinkedList<Type> universeList = currentUniverse.get();
         universeList.add(newUniverse);
         if (logger.isDebugEnabled()) {
             logger.debug("Set universe: " + Thread.currentThread() + " " + newUniverse);
@@ -60,7 +61,7 @@ public class SaajUniverse {
     }
     
     public void unset() {
-        LinkedList<Type> universeList = currentUniverse.get();
+        final LinkedList<Type> universeList = currentUniverse.get();
         if (universeList != null && !universeList.isEmpty()) {
             universeList.removeLast();
             if (logger.isDebugEnabled()) {
@@ -70,7 +71,7 @@ public class SaajUniverse {
     }
     
     static Type getCurrentUniverse() {
-        LinkedList<Type> universeList = currentUniverse.get();
+        final LinkedList<Type> universeList = currentUniverse.get();
         if (universeList != null && !universeList.isEmpty()) {
             return universeList.getLast();
         } else {
