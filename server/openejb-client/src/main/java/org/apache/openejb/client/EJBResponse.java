@@ -25,13 +25,14 @@ public class EJBResponse implements ClusterableResponse {
     private transient int responseCode = -1;
     private transient Object result;
     private transient ServerMetaData server;
-    private transient long[] times = new long[Time.values().length];
+    private transient final long[] times = new long[Time.values().length];
+    private transient final int timesLength = times.length;
 
     public EJBResponse() {
 
     }
 
-    public EJBResponse(int code, Object obj) {
+    public EJBResponse(final int code, final Object obj) {
         responseCode = code;
         result = obj;
     }
@@ -44,12 +45,13 @@ public class EJBResponse implements ClusterableResponse {
         return result;
     }
 
-    public void setResponse(int code, Object result) {
+    public void setResponse(final int code, final Object result) {
         this.responseCode = code;
         this.result = result;
     }
 
-    public void setServer(ServerMetaData server) {
+    @Override
+    public void setServer(final ServerMetaData server) {
         this.server = server;
     }
 
@@ -58,7 +60,9 @@ public class EJBResponse implements ClusterableResponse {
     }
 
     public String toString() {
-        StringBuffer s = null;
+
+        final StringBuffer s;
+
         switch (responseCode) {
             case ResponseCodes.EJB_APP_EXCEPTION:
                 s = new StringBuffer("EJB_APP_EXCEPTION");
@@ -90,6 +94,7 @@ public class EJBResponse implements ClusterableResponse {
             default:
                 s = new StringBuffer("UNKNOWN_RESPONSE");
         }
+
         s.append(", serverTime=").append(times[Time.TOTAL.ordinal()]).append("ns");
         s.append(", containerTime").append(times[Time.CONTAINER.ordinal()]).append("ns");
         s.append(" : ").append(result);
@@ -97,34 +102,43 @@ public class EJBResponse implements ClusterableResponse {
         return s.toString();
     }
 
-    public void start(EJBResponse.Time time) {
+    public void start(final EJBResponse.Time time) {
         times[time.ordinal()] = System.nanoTime();
     }
 
-    public void stop(EJBResponse.Time time) {
+    public void stop(final EJBResponse.Time time) {
         times[time.ordinal()] = System.nanoTime() - times[time.ordinal()];
     }
 
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        byte version = in.readByte(); // future use
+    @Override
+    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
 
-        boolean readServer = in.readBoolean();
-        if (readServer) {
-            server = new ServerMetaData();
-            server.readExternal(in);
-        }
+        final byte version = in.readByte(); // future use
 
-        responseCode = in.readByte();
+        if (version == 1) {
 
-        result = in.readObject();
+            final boolean readServer = in.readBoolean();
+            if (readServer) {
+                server = new ServerMetaData();
+                server.readExternal(in);
+            }
 
-        times = new long[in.readByte()];
-        for (int i = 0; i < times.length; i++) {
-            times[i] = in.readLong();
+            responseCode = in.readByte();
+
+            result = in.readObject();
+
+//            final byte size = in.readByte();
+//
+//            for (int i = 0; (i < size && i < timesLength); i++) {
+//                times[i] = in.readLong();
+//            }
+        }else{
+            throw new IOException("Invalid EJBResponse version: " + version);
         }
     }
 
-    public void writeExternal(ObjectOutput out) throws IOException {
+    @Override
+    public void writeExternal(final ObjectOutput out) throws IOException {
         // write out the version of the serialized data for future use
         out.writeByte(1);
 
@@ -141,10 +155,11 @@ public class EJBResponse implements ClusterableResponse {
             case ResponseCodes.EJB_APP_EXCEPTION:
             case ResponseCodes.EJB_ERROR:
             case ResponseCodes.EJB_SYS_EXCEPTION:
-                if (result instanceof Throwable && !(result instanceof ThrowableArtifact)) {
-                    Throwable throwable = (Throwable) result;
+                if (result instanceof Throwable) {
+                    final Throwable throwable = (Throwable) result;
                     result = new ThrowableArtifact(throwable);
                 }
+				break;
         }
 
         start(Time.SERIALIZATION);
@@ -152,10 +167,11 @@ public class EJBResponse implements ClusterableResponse {
         stop(Time.SERIALIZATION);
         stop(Time.TOTAL);
 
-        out.writeByte(times.length);
-        for (int i = 0; i < times.length; i++) {
-            out.writeLong(times[i]);
-        }
+//        out.writeByte(timesLength);
+//
+//        for (final long time : times) {
+//            out.writeLong(time);
+//        }
     }
 
     public static enum Time {
