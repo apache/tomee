@@ -37,82 +37,99 @@ javax.naming.InitialContext
 <%@ page import="java.lang.reflect.Field" %>
 <%@ page import="java.lang.reflect.Method" %>
 <html>
+
+
 <head>
-    <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>OpenEJB/Tomcat</title>
-    <link href="default.css" rel="stylesheet">
-</head>
-<body marginwidth="0" marginheight="0" leftmargin="0" bottommargin="0" topmargin="0" vlink="#6763a9" link="#6763a9" bgcolor="#ffffff">
-<a name="top"></a>
-<table width="712" cellspacing="0" cellpadding="0" border="0">
-    <tr>
-        <td bgcolor="#5A5CB8" align="left" valign="top" width="7"><img height="9" width="1" border="0" src="images/dotTrans.gif"></td>
-        <td bgcolor="#5A5CB8" align="left" valign="top" width="40"><img border="0" height="6" width="40" src="images/dotTrans.gif"></td>
-        <td bgcolor="#5A5CB8" align="left" valign="top" height="2" width="430"><img border="0" height="6" width="430" src="images/top_2.gif"></td>
-        <td bgcolor="#E24717" align="left" valign="top" height="2" width="120"><img src="images/top_3.gif" width="120" height="6" border="0"></td>
-    </tr>
-    <tr>
-        <td bgcolor="#5A5CB8" align="left" valign="top" bgcolor="#ffffff" width="13"><img border="0" height="15" width="13" src="images/dotTrans.gif"></td>
-        <td align="left" valign="top" width="40"><img border="0" height="1" width="1" src="images/dotTrans.gif"></td>
-        <td align="left" valign="middle" width="430"><a href="http://openejb.apache.org"><span class="menuTopOff">OpenEJB</span></a><img border="0" height="2" width="20" src="images/dotTrans.gif"><a href="index.jsp"><span class="menuTopOff">Index</span></a><img border="0" height="2" width="20" src="images/dotTrans.gif"><a href="viewjndi.jsp"><span class="menuTopOff">JNDI</span></a><img border="0" height="2" width="20" src="images/dotTrans.gif"><a href="viewejb.jsp"><span class="menuTopOff">EJB</span></a><img border="0" height="2" width="20" src="images/dotTrans.gif"><a href="viewclass.jsp"><span class="menuTopOff">Class</span></a><img border="0" height="2" width="20" src="images/dotTrans.gif"><a href="invokeobj.jsp"><span class="menuTopOff">Invoke</span></a><img border="0" height="2" width="20" src="images/dotTrans.gif"></td>
-        <td align="left" valign="top" height="20" width="120"><img border="0" height="2" width="10" src="images/dotTrans.gif"></td>
-    </tr>
-    <tr>
-        <td align="left" valign="top" bgcolor="#a9a5de" width="7"><img border="0" height="3" width="7" src="images/line_sm.gif"></td>
-        <td align="left" valign="top" height="3" width="40"><img border="0" height="3" width="40" src="images/line_light.gif"></td>
-        <td align="left" valign="top" height="3" width="430"><img border="0" height="3" width="430" src="images/line_light.gif"></td>
-        <td align="left" valign="top" height="3" width="120"><img height="1" width="1" border="0" src="images/dotTrans.gif"></td>
-    </tr>
-    <tr>
-        <td align="left" valign="top" bgcolor="#a9a5de" width="7">&nbsp;</td>
-        <td align="left" valign="top" width="40">&nbsp;</td>
-        <td valign="top" width="430" rowspan="4">
-            <table width="430" cellspacing="0" cellpadding="0" border="0" rows="2" cols="1">
-                <tr>
-                    <td align="left" valign="top"><br>
-                        <img width="200" vspace="0" src="images/logo_ejb2.gif" hspace="0" height="55" border="0">
-                        <br>
-                        <img src="images/dotTrans.gif" hspace="0" height="7" border="0"><br>
-                            <span class="pageTitle">
-                            OpenEJB Enterprise JavaBeans Viewer
-                            </span>
-                        <br>
-                        <img src="images/dotTrans.gif" hspace="0" height="1" border="0"></td>
-                </tr>
-            </table>
-            <p>
-            </p>
-            <FONT SIZE="2">
-                <%
-    try{
-        String ejb = request.getParameter("ejb");
-        String jndiName = request.getParameter("jndiName");
-        String contextID = request.getParameter("ctxID");
-        if (ejb == null) {
-            out.print("No EJB specified");
-        } else {
-            printEjb(ejb,jndiName,contextID,out, session);
+    <meta charset="utf-8">
+    <title>TomEE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+        body {
+            padding-top: 60px;
+            padding-bottom: 40px;
         }
-    } catch (Exception e){
-        
-        out.println("FAIL: ");
-        out.print(e.getMessage());
-        throw e;
-        //return;
-    }
-%>
-<BR><BR>
-<BR>
-</FONT>
+        .sidebar-nav {
+            padding: 9px 0;
+        }
+    </style>
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
 
-            </td>
-            <td align="left" valign="top" height="5" width="120">
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container-fluid">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+            <a class="brand" href="http://openejb.apache.org">TomEE</a>
+            <div class="nav-collapse">
+                <ul class="nav">
+                    <li><a href="index.jsp">Index</a></li>
+                    <li><a href="viewjndi.jsp">JNDI</a></li>
+                    <li class="active"><a href="viewejb.jsp">EJB</a></li>
+                    <li><a href="viewclass.jsp">Class</a></li>
+                    <li><a href="invokeobj.jsp">Invoke</a></li>
+                </ul>
+
+            </div><!--/.nav-collapse -->
+        </div>
+    </div>
+</div>
+
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span12">
+    <%
+        try{
+            String ejb = request.getParameter("ejb");
+            String jndiName = request.getParameter("jndiName");
+            String contextID = request.getParameter("ctxID");
+            if (ejb == null) {
+                out.print("<p>No EJB specified</p>");
+            } else {
+                printEjb(ejb,jndiName,contextID,out, session);
+
+            }
+        } catch (Exception e){
+
+            out.println("<p>FAIL: <br>");
+            out.print(e.getMessage() + "</p>");
+            throw e;
+            //return;
+        }
+    %>
+            </div>
+        </div>
+
+        <hr>
+
+        <footer>
+            <p>Copyright &copy; 2012  The Apache Software Foundation, Licensed under the Apache License, Version 2.0. Apache and the Apache feather logo are trademarks of The Apache Software Foundation.</p>
+        </footer>
+    </div> <!-- /container -->
 
 
-                &nbsp;</td>
-        </tr>
-    </table>
-    </body>
+<!-- Le javascript
+================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="js/jquery/jquery-1.7.1.js"></script>
+    <script src="js/bootstrap/bootstrap.js"></script>
+
+</body>
 </html>
 
 <%!
@@ -126,14 +143,12 @@ javax.naming.InitialContext
         }
     }
 
-    String tab = "&nbsp;&nbsp;&nbsp;&nbsp;";
-
     public void printEjb(String name,String jndiName, String contextID, javax.servlet.jsp.JspWriter out, HttpSession session) throws Exception {
         String id = (name.startsWith("/")) ? name.substring(1, name.length()) : name;
         BeanContext ejb = getDeployment(id);
 
         if (ejb == null) {
-            out.print("No such EJB: " + id);
+            out.print("<p>No such EJB: " + id + "</p>");
             return;
         }
         String type = null;
@@ -161,8 +176,8 @@ javax.naming.InitialContext
                 type = "Unkown Bean Type";
                 break;
         }
-        out.print("<b>" + type + "</b><br>");
-        out.print("<table>");
+        out.print("<h2>" + type + "</h2>");
+        out.print("<table class=\"table table-striped table-bordered\"><tbody>");
         printRow("JNDI Name", jndiName, out);
         if(ejb.getRemoteInterface() != null)
         printRow("Remote Interface", getClassRef(ejb.getRemoteInterface(),session), out);
@@ -177,10 +192,7 @@ javax.naming.InitialContext
         if (ejb.getComponentType() == BeanType.BMP_ENTITY || ejb.getComponentType() == BeanType.CMP_ENTITY) {
             printRow("Primary Key", getClassRef(ejb.getPrimaryKeyClass(),session), out);
         }
-        String pepperImg = "<img src='images/pepper.gif' border='0'>";
-        out.print("</table>");
-        out.print("<br><br><b>Actions:</b><br>");
-        out.print("<table>");
+        out.print("</tbody></table>");
 
         // Browse JNDI with this ejb
         //javax.servlet.http.HttpSession session = this.session;
@@ -190,7 +202,6 @@ javax.naming.InitialContext
             objects = new HashMap<String, Object>();
             session.setAttribute("objects", objects);
         }
-        
         
         Context ctx;
         if(contextID == null){
@@ -207,24 +218,21 @@ javax.naming.InitialContext
  //       String objID = ejb.getHomeInterface().getName() + "@" + obj.hashCode(); 
         String objID = ""+obj.hashCode(); //TODO: Not the best of the ID's, more meaningful ID would be better. Right now hashcode would suffice
         objects.put(objID, obj);
-        String invokerURL = "<a href='invokeobj.jsp?obj=" + objID + "'>Invoke this EJB</a>";
-        printRow(pepperImg, invokerURL, out);
+        String invokeURL = "<a class='btn' href='invokeobj.jsp?obj=\" + objID + \"'>Invoke this EJB</a>";
 
         Context enc = ejb.getJndiEnc();
         String ctxID = "enc" + enc.hashCode();
         session.setAttribute(ctxID, enc);
-        String jndiURL = "<a href='viewjndi.jsp?ctxID=" + ctxID + "'>Browse this EJB's private JNDI namespace</a>";
-        printRow(pepperImg, jndiURL, out);
-        out.print("</table>");
+        String jndiURL = "<a class='btn' href='viewjndi.jsp?ctxID=\" + ctxID + \"'>Browse this EJB's private JNDI namespace</a>";
 
+        out.print("<div class='btn-group'>" + invokeURL + jndiURL + "</div>");
     }
 
     protected void printRow(String col1, String col2, javax.servlet.jsp.JspWriter out) throws IOException {
-        out.print("<tr><td><font size='2'>");
-        out.print(col1);
-        out.print("</font></td><td><font size='2'>");
-        out.print(col2);
-        out.print("</font></td></tr>");
+        out.print("<tr>");
+        out.print("<td>" + col1 + "</td>");
+        out.print("<td>" + col2 + "</td>");
+        out.print("</tr>");
     }
 
     public String getClassRef(Class clazz, HttpSession session) throws Exception {
@@ -232,6 +240,7 @@ javax.naming.InitialContext
         session.setAttribute(name,clazz);
         return "<a href='viewclass.jsp?class=" + name + "'>" + name + "</a>";
     }
+
     public String getClassRefs(List<Class> classes, HttpSession session) throws Exception{
         String refs = "";
         for(Class clazz: classes){
@@ -239,23 +248,5 @@ javax.naming.InitialContext
         }
         return refs;
     }
-    public String getShortClassRef(Class clazz) throws Exception {
-        if (clazz.isPrimitive()) {
-            return "<font color='gray'>" + clazz.getName() + "</font>";
-        } else if (clazz.isArray() && clazz.getComponentType().isPrimitive()) {
-            return "<font color='gray'>" + clazz.getComponentType() + "[]</font>";
-        } else if (clazz.isArray()) {
-            String name = clazz.getComponentType().getName();
-            int dot = name.lastIndexOf(".") + 1;
-            String shortName = name.substring(dot, name.length());
-            return "<a href='viewclass.jsp?class=" + name + "'>" + shortName + "[]</a>";
-        } else {
-            String name = clazz.getName();
-            int dot = name.lastIndexOf(".") + 1;
-            String shortName = name.substring(dot, name.length());
-            return "<a href='viewclass.jsp?class=" + name + "'>" + shortName + "</a>";
-        }
-    }
-
 %>
 
