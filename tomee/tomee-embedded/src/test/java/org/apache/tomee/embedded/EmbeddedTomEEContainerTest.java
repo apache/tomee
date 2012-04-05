@@ -33,14 +33,16 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
 public class EmbeddedTomEEContainerTest {
-    @Test(expected = OpenEjbContainer.NoModulesFoundException.class) public void noModule() {
+    @Test(expected = OpenEjbContainer.NoModulesFoundException.class)
+    public void noModule() {
         Properties p = new Properties();
         p.setProperty(EJBContainer.APP_NAME, "test");
         p.setProperty(EJBContainer.PROVIDER, EmbeddedTomEEContainer.class.getName());
         EJBContainer.createEJBContainer(p);
     }
 
-    @Test public void containerTest() throws Exception {
+    @Test
+    public void containerTest() throws Exception {
         File war = createWar();
         Properties p = new Properties();
         p.setProperty(EJBContainer.APP_NAME, "test");
