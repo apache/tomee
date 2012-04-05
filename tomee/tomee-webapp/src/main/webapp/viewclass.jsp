@@ -26,75 +26,85 @@ java.util.Map
 "%>
 <html>
 <head>
-    <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>OpenEJB/Tomcat</title>
-    <link href="default.css" rel="stylesheet">
-</head>
-<body marginwidth="0" marginheight="0" leftmargin="0" bottommargin="0" topmargin="0" vlink="#6763a9" link="#6763a9" bgcolor="#ffffff">
-<a name="top"></a>
-<table width="712" cellspacing="0" cellpadding="0" border="0">
-    <tr>
-        <td bgcolor="#5A5CB8" align="left" valign="top" width="7"><img height="9" width="1" border="0" src="images/dotTrans.gif"></td>
-        <td bgcolor="#5A5CB8" align="left" valign="top" width="40"><img border="0" height="6" width="40" src="images/dotTrans.gif"></td>
-        <td bgcolor="#5A5CB8" align="left" valign="top" height="2" width="530"><img border="0" height="6" width="530" src="images/top_2.gif"></td>
-        <td bgcolor="#E24717" align="left" valign="top" height="2" width="120"><img src="images/top_3.gif" width="120" height="6" border="0"></td>
-    </tr>
-    <tr>
-        <td bgcolor="#5A5CB8" align="left" valign="top" bgcolor="#ffffff" width="13"><img border="0" height="15" width="13" src="images/dotTrans.gif"></td>
-        <td align="left" valign="top" width="40"><img border="0" height="1" width="1" src="images/dotTrans.gif"></td>
-        <td align="left" valign="middle" width="530"><a href="http://openejb.apache.org"><span class="menuTopOff">OpenEJB</span></a><img border="0" height="2" width="20" src="images/dotTrans.gif"><a href="index.jsp"><span class="menuTopOff">Index</span></a><img border="0" height="2" width="20" src="images/dotTrans.gif"><a href="viewjndi.jsp"><span class="menuTopOff">JNDI</span></a><img border="0" height="2" width="20" src="images/dotTrans.gif"><a href="viewejb.jsp"><span class="menuTopOff">EJB</span></a><img border="0" height="2" width="20" src="images/dotTrans.gif"><a href="viewclass.jsp"><span class="menuTopOff">Class</span></a><img border="0" height="2" width="20" src="images/dotTrans.gif"><a href="invokeobj.jsp"><span class="menuTopOff">Invoke</span></a><img border="0" height="2" width="20" src="images/dotTrans.gif"></td>
-        <td align="left" valign="top" height="20" width="120"><img border="0" height="2" width="10" src="images/dotTrans.gif"></td>
-    </tr>
-    <tr>
-        <td align="left" valign="top" bgcolor="#a9a5de" width="7"><img border="0" height="3" width="7" src="images/line_sm.gif"></td>
-        <td align="left" valign="top" height="3" width="40"><img border="0" height="3" width="40" src="images/line_light.gif"></td>
-        <td align="left" valign="top" height="3" width="530"><img border="0" height="3" width="530" src="images/line_light.gif"></td>
-        <td align="left" valign="top" height="3" width="120"><img height="1" width="1" border="0" src="images/dotTrans.gif"></td>
-    </tr>
-    <tr>
-        <td align="left" valign="top" bgcolor="#a9a5de" width="7">&nbsp;</td>
-        <td align="left" valign="top" width="40">&nbsp;</td>
-        <td valign="top" width="530" rowspan="4">
-            <table width="530" cellspacing="0" cellpadding="0" border="0" rows="2" cols="1">
-                <tr>
-                    <td align="left" valign="top"><br>
-                        <img width="200" vspace="0" src="images/logo_ejb2.gif" hspace="0" height="55" border="0">
-                        <br>
-                        <img src="images/dotTrans.gif" hspace="0" height="7" border="0"><br>
-                            <span class="pageTitle">
-                            OpenEJB Class Viewer
-                            </span>
-                        <br>
-                        <img src="images/dotTrans.gif" hspace="0" height="1" border="0"></td>
-                </tr>
-            </table>
-            <p>
-            </p>
-            <FONT SIZE="2">
+    <meta charset="utf-8">
+    <title>TomEE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-                <%
+    <!-- Le styles -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+        body {
+            padding-top: 60px;
+            padding-bottom: 40px;
+        }
+        .sidebar-nav {
+            padding: 9px 0;
+        }
+    </style>
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container-fluid">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+            <a class="brand" href="http://openejb.apache.org">TomEE</a>
+            <div class="nav-collapse">
+                <ul class="nav">
+                    <li><a href="index.jsp">Index</a></li>
+                    <li><a href="viewjndi.jsp">JNDI</a></li>
+                    <li><a href="viewejb.jsp">EJB</a></li>
+                    <li class="active"><a href="viewclass.jsp">Class</a></li>
+                    <li><a href="invokeobj.jsp">Invoke</a></li>
+                </ul>
+
+            </div><!--/.nav-collapse -->
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+
+<%
                
      String className = request.getParameter("class");
     try{
        
         if (className == null || className.trim().length() == 0) {
-            out.print("<b>Enter a class name to browse:</b>");
-            out.print("<FORM NAME='view' METHOD='GET' ACTION='viewclass.jsp'>");
-            out.print("<INPUT type='text' NAME='class' size='40' VALUE=''>");
-            out.print("<INPUT type='SUBMIT' NAME='view' value='View'>");
-            out.print("</form>");
-            out.print("<b>Or browse one of these fun classes:</b><br><br>");
-            out.print(tab+getClassRef("javax.ejb.EJBHome")+"<br>");
-            out.print(tab+getClassRef("javax.ejb.EJBObject")+"<br>");
-            out.print(tab+getClassRef("javax.ejb.EnterpriseBean")+"<br>");
-            out.print(tab+getClassRef("javax.ejb.SessionBean")+"<br>");
-            out.print(tab+getClassRef("javax.ejb.EntityBean")+"<br>");
-            out.print(tab+getClassRef("javax.servlet.http.HttpServlet")+"<br>");
-            out.print(tab+getClassRef("javax.servlet.http.HttpServletRequest")+"<br>");
-            out.print(tab+getClassRef("javax.servlet.http.HttpServletResponse")+"<br>");
-            out.print(tab+getClassRef("javax.servlet.http.HttpSession")+"<br>");
-            out.print(tab+getClassRef("javax.naming.InitialContext")+"<br>");
-            out.print(tab+getClassRef("javax.naming.Context")+"<br>");
+%>
+<form class="well form-search" NAME='view' METHOD='GET' ACTION='viewclass.jsp'>
+    <input type="text" class="input-xlarge search-query" NAME='class' placeholder="Class name">
+    <button class="btn" type="submit"><i class="icon-search"></i> Search</button>
+</form>
+<%
+            out.print("<table class='table table-striped table-bordered table-condensed'><tbody>");
+            out.print("<tr><td>" + getClassRef("javax.ejb.EJBHome") + "</td></tr>");
+            out.print("<tr><td>" + getClassRef("javax.ejb.EJBObject") + "</td></tr>");
+            out.print("<tr><td>" + getClassRef("javax.ejb.EnterpriseBean") + "</td></tr>");
+            out.print("<tr><td>" + getClassRef("javax.ejb.SessionBean") + "</td></tr>");
+            out.print("<tr><td>" + getClassRef("javax.ejb.EntityBean") + "</td></tr>");
+            out.print("<tr><td>" + getClassRef("javax.servlet.http.HttpServlet") + "</td></tr>");
+            out.print("<tr><td>" + getClassRef("javax.servlet.http.HttpServletRequest") + "</td></tr>");
+            out.print("<tr><td>" + getClassRef("javax.servlet.http.HttpServletResponse") + "</td></tr>");
+            out.print("<tr><td>" + getClassRef("javax.servlet.http.HttpSession") + "</td></tr>");
+            out.print("<tr><td>" + getClassRef("javax.naming.InitialContext") + "</td></tr>");
+            out.print("<tr><td>" + getClassRef("javax.naming.Context") + "</td></tr>");
+            out.print("</tbody></table>");
 
         } else {
             Class clazz = (Class)session.getAttribute(className); 
@@ -109,79 +119,44 @@ java.util.Map
         //return;
     }
 %>
-<BR><BR>
-<% if (hasMethods) { %>
-<font color='green'>*</font>&nbsp;Public &nbsp; 
-<font color='red'>*</font>&nbsp;Private &nbsp;
-<font color='blue'>*</font>&nbsp;Protected &nbsp;
-<font color='yellow'>*</font>&nbsp;Default 
-<BR>
-<%}%>
-<BR>
-</FONT>
-
-            </td>
-            <td align="left" valign="top" height="5" width="120">
 
 
-                &nbsp;</td>
-        </tr>
-    </table>
-    </body>
+        </div>
+    </div>
+</div>
+</body>
 </html>
 
 <%!
-    String tab = "&nbsp;&nbsp;&nbsp;&nbsp;";
-    boolean hasMethods;
 
     public void printClass(Class clazz, javax.servlet.jsp.JspWriter out, HttpSession session) throws Exception {
-        out.print("<b>"+clazz.getName()+"</b><br>");
+        out.print("<h2>"+clazz.getName()+"</h2>");
         Method[] methods = clazz.getDeclaredMethods();
-        hasMethods = (methods.length > 0);
+        out.print("<table class='table table-striped table-bordered table-condensed'><tbody>");
         for (int i=0; i < methods.length; i++){
             printMethod( methods[i], out );
         }
+        out.print("</tbody></table>");
 
-/*        //out.print("&nbsp;&nbsp;<font color='gray'><u>Public Methods:</u></font><br>");
-        for (int i=0; i < methods.length; i++){
-            if (Modifier.isPublic(methods[i].getModifiers())){
-                printMethod( methods[i], out );
-            }
-        }
-        //out.print("&nbsp;&nbsp;<font color='gray'><u>Private Methods:</u></font><br>");
-        for (int i=0; i < methods.length; i++){
-            if (Modifier.isPrivate(methods[i].getModifiers())){
-                printMethod( methods[i], out );
-            }
-        }
-        for (int i=0; i < methods.length; i++){
-            if (Modifier.isProtected(methods[i].getModifiers())){
-                printMethod( methods[i], out );
-            }
-        }
-        for (int i=0; i < methods.length; i++){
-            if (!Modifier.isSrict(methods[i].getModifiers())){
-                printMethod( methods[i], out );
-            }
-        }
-*/         
         Class sup = clazz.getSuperclass();
         if (sup != null) {
-            out.print("<br><b>Extends:</b><br>");
-            out.print(tab+getClassRef(sup,session)+"<br>");
+            out.print("<h3>Extends:</h3>");
+            out.print("<p>" + getClassRef(sup,session) + "</p>");
         }
 
         Class[] intf = clazz.getInterfaces();
         if (intf.length > 0) {
-            out.print("<br><b>Implements:</b><br>");
+            out.print("<h3>Implements:</h3>");
+            out.print("<table class='table table-striped table-bordered table-condensed'><tbody>");
             for (int i=0; i < intf.length; i++){
-                out.print(tab+getClassRef(intf[i],session)+"<br>");
+                out.print("<tr><td>" + getClassRef(intf[i],session) + "</td></tr>");
             }
+            out.print("</tbody></table>");
         }
     }
 
     public void printMethod(Method m, javax.servlet.jsp.JspWriter out) throws Exception {
-        out.print(tab);
+        out.print("<tr><td>");
         out.print(" "+getModifier(m));
         
         out.print(" "+getShortClassRef(m.getReturnType())+"&nbsp;&nbsp;");
@@ -207,22 +182,23 @@ java.util.Map
                 }
             }
         }
-        out.print("<br>");
+        out.print("</td></tr>");
     }
     public String getModifier(Method m) throws Exception {
         int mod = m.getModifiers();
-        String color = "";
 
         if (Modifier.isPublic(mod)) {
-            color = "green";
+            return "public";
+
         } else if (Modifier.isPrivate(mod)) {
-            color = "red";
+            return "private";
+
         } else if (Modifier.isProtected(mod)) {
-            color = "blue";
+            return "protected";
+
         } else {
-            color = "yellow";
+            return "";
         }
-        return "<font color='"+color+"'>*</font>";
     }
 
 /*    public String getClassRef(Class clazz) throws Exception {
@@ -231,13 +207,13 @@ java.util.Map
     }
   */    
     public String getClassRef(String name) throws Exception {
-            return "<a href='viewclass.jsp?class="+name+"'>"+name+"</a>";
+            return "<a href='viewclass.jsp?class=" +name + "'>" + name + "</a>";
     }
 
    public String getClassRef(Class clazz, HttpSession session) throws Exception {
         String name = clazz.getName();
         session.setAttribute(name,clazz);
-        return "<a href='viewclass.jsp?class=" + name + "'>" + name + "</a>";
+        return getClassRef(name);
     }
 
     public String getShortClassRef(Class clazz) throws Exception {
