@@ -295,7 +295,7 @@ public abstract class JaxbOpenejb {
         marshaller.marshal(object, out);
     }
 
-    private static <T> JAXBContext getContext(Class<T> type) throws JAXBException {
+    public static <T> JAXBContext getContext(Class<T> type) throws JAXBException {
         JAXBContext jaxbContext = jaxbContexts.get(type);
         if (jaxbContext == null) {
             jaxbContext = JAXBContextFactory.newInstance(type);
