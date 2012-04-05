@@ -218,12 +218,12 @@ javax.naming.InitialContext
  //       String objID = ejb.getHomeInterface().getName() + "@" + obj.hashCode(); 
         String objID = ""+obj.hashCode(); //TODO: Not the best of the ID's, more meaningful ID would be better. Right now hashcode would suffice
         objects.put(objID, obj);
-        String invokeURL = "<a class='btn' href='invokeobj.jsp?obj=\" + objID + \"'>Invoke this EJB</a>";
+        String invokeURL = "<a class='btn' href='invokeobj.jsp?obj=" + objID + "'>Invoke this EJB</a>";
 
         Context enc = ejb.getJndiEnc();
         String ctxID = "enc" + enc.hashCode();
         session.setAttribute(ctxID, enc);
-        String jndiURL = "<a class='btn' href='viewjndi.jsp?ctxID=\" + ctxID + \"'>Browse this EJB's private JNDI namespace</a>";
+        String jndiURL = "<a class='btn' href='viewjndi.jsp?ctxID=" + ctxID + "'>Browse this EJB's private JNDI namespace</a>";
 
         out.print("<div class='btn-group'>" + invokeURL + jndiURL + "</div>");
     }
