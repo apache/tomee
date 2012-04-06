@@ -1595,9 +1595,17 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             logUnusedProperties(serviceRecipe, serviceInfo);
         }
 
+        final String name = OPENEJB_RESOURCE_JNDI_PREFIX + serviceInfo.id;
         try {
-            final String name = OPENEJB_RESOURCE_JNDI_PREFIX + serviceInfo.id;
             containerSystem.getJNDIContext().bind(name, service);
+        } catch (NameAlreadyBoundException nabe) {
+            logger.warning("unbounding resource " + name + " can happen because of a redeployment or because of a duplicated id");
+            try {
+                containerSystem.getJNDIContext().unbind(name);
+                containerSystem.getJNDIContext().bind(name, service);
+            } catch (NamingException e) {
+                throw new OpenEJBException("Cannot bind resource adapter with id " + serviceInfo.id, e);
+            }
         } catch (NamingException e) {
             throw new OpenEJBException("Cannot bind resource adapter with id " + serviceInfo.id, e);
         }
