@@ -75,7 +75,7 @@
         <configuration>
           <tomcatHttpPort>1234</tomcatHttpPort>
           <tomcatShutdownPort>13245</tomcatShutdownPort>
-          <tomcatVersion>7.0.21</tomcatVersion>
+          <tomcatVersion>7.0.27</tomcatVersion>
           <webapps>
             <webappArtifact>
               <groupId>org.apache.openejb</groupId>

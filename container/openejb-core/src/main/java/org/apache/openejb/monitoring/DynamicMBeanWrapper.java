@@ -55,13 +55,17 @@ public class DynamicMBeanWrapper implements DynamicMBean {
     private final Map<String, Method> setters = new HashMap<String, Method>();
     private final Map<String, Method> operations = new HashMap<String, Method>();
     private final Object instance;
+    private final ClassLoader classloader;
 
     public DynamicMBeanWrapper(Object givenInstance) {
         Class<?> annotatedMBean = givenInstance.getClass();
+
         // javaassist looses annotation so simply unwrap it
         while (ProxyFactory.isProxyClass(annotatedMBean)) {
             annotatedMBean = annotatedMBean.getSuperclass();
         }
+
+        classloader = annotatedMBean.getClassLoader();
 
         String description;
         List<MBeanAttributeInfo> attributeInfos = new ArrayList<MBeanAttributeInfo>();
@@ -191,6 +195,8 @@ public class DynamicMBeanWrapper implements DynamicMBean {
         throws AttributeNotFoundException, MBeanException,
         ReflectionException {
         if (getters.containsKey(attribute)) {
+            final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
+            Thread.currentThread().setContextClassLoader(classloader);
             try {
                 return getters.get(attribute).invoke(instance);
             } catch (IllegalArgumentException e) {
@@ -199,6 +205,8 @@ public class DynamicMBeanWrapper implements DynamicMBean {
                 logger.error("can't get " + attribute + " value", e);
             } catch (InvocationTargetException e) {
                 logger.error("can't get " + attribute + " value", e);
+            } finally {
+                Thread.currentThread().setContextClassLoader(oldCl);
             }
         }
         throw new AttributeNotFoundException();
@@ -209,6 +217,8 @@ public class DynamicMBeanWrapper implements DynamicMBean {
         throws AttributeNotFoundException, InvalidAttributeValueException,
         MBeanException, ReflectionException {
         if (setters.containsKey(attribute.getName())) {
+            final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
+            Thread.currentThread().setContextClassLoader(classloader);
             try {
                 setters.get(attribute.getName()).invoke(instance, attribute.getValue());
             } catch (IllegalArgumentException e) {
@@ -217,6 +227,8 @@ public class DynamicMBeanWrapper implements DynamicMBean {
                 logger.error("can't set " + attribute + " value", e);
             } catch (InvocationTargetException e) {
                 logger.error("can't set " + attribute + " value", e);
+            } finally {
+                Thread.currentThread().setContextClassLoader(oldCl);
             }
         } else {
             throw new AttributeNotFoundException();
@@ -255,6 +267,8 @@ public class DynamicMBeanWrapper implements DynamicMBean {
     public Object invoke(String actionName, Object[] params, String[] signature)
         throws MBeanException, ReflectionException {
         if (operations.containsKey(actionName)) {
+            final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
+            Thread.currentThread().setContextClassLoader(classloader);
             try {
                 return operations.get(actionName).invoke(instance, params);
             } catch (IllegalArgumentException e) {
@@ -263,6 +277,8 @@ public class DynamicMBeanWrapper implements DynamicMBean {
                 logger.error(actionName + "can't be invoked", e);
             } catch (InvocationTargetException e) {
                 logger.error(actionName + "can't be invoked", e);
+            } finally {
+                Thread.currentThread().setContextClassLoader(oldCl);
             }
         }
         throw new MBeanException(new IllegalArgumentException(), actionName + " doesn't exist");

@@ -55,7 +55,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>apache-tomcat</artifactId>
-      <version>${tomcat.version}</version>
+      <version>${tomcat.bundle.version}</version>
       <type>zip</type>
       <scope>compile</scope>
     </dependency>
@@ -121,7 +121,7 @@
                 <artifactItem>
                   <groupId>org.apache.openejb</groupId>
                   <artifactId>apache-tomcat</artifactId>
-                  <version>${tomcat.version}</version>
+                  <version>${tomcat.bundle.version}</version>
                   <type>zip</type>
                   <outputDirectory>${webprofile.work-dir}</outputDirectory>
                 </artifactItem>
@@ -139,7 +139,7 @@
                 <artifactItem>
                   <groupId>org.apache.openejb</groupId>
                   <artifactId>apache-tomcat</artifactId>
-                  <version>${tomcat.version}</version>
+                  <version>${tomcat.bundle.version}</version>
                   <type>zip</type>
                   <outputDirectory>${plus.work-dir}</outputDirectory>
                 </artifactItem>
