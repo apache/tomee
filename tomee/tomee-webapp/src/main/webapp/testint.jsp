@@ -32,52 +32,62 @@ java.util.Properties
 "%>
 <html>
 <head>
-    <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>OpenEJB/Tomcat</title>
-    <link href="default.css" rel="stylesheet">
+    <meta charset="utf-8">
+    <title>TomEE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+        body {
+            padding-top: 60px;
+            padding-bottom: 40px;
+        }
+        .sidebar-nav {
+            padding: 9px 0;
+        }
+    </style>
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
 </head>
-<body marginwidth="0" marginheight="0" leftmargin="0" bottommargin="0" topmargin="0" vlink="#6763a9" link="#6763a9" bgcolor="#ffffff">
-<a name="top"></a>
-<table width="712" cellspacing="0" cellpadding="0" border="0">
-    <tr>
-        <td bgcolor="#5A5CB8" align="left" valign="top" width="7"><img height="9" width="1" border="0" src="images/dotTrans.gif"></td>
-        <td bgcolor="#5A5CB8" align="left" valign="top" width="40"><img border="0" height="6" width="40" src="images/dotTrans.gif"></td>
-        <td bgcolor="#5A5CB8" align="left" valign="top" height="2" width="530"><img border="0" height="6" width="530" src="images/top_2.gif"></td>
-        <td bgcolor="#E24717" align="left" valign="top" height="2" width="120"><img src="images/top_3.gif" width="120" height="6" border="0"></td>
-    </tr>
-    <tr>
-        <td bgcolor="#5A5CB8" align="left" valign="top" bgcolor="#ffffff" width="13"><img border="0" height="15" width="13" src="images/dotTrans.gif"></td>
-        <td align="left" valign="top" width="40"><img border="0" height="1" width="1" src="images/dotTrans.gif"></td>
-        <td align="left" valign="middle" width="530"><a href="http://openejb.apache.org"><span class="menuTopOff">OpenEJB</span></a><img border="0" height="2" width="20" src="images/dotTrans.gif"><a href="index.jsp"><span class="menuTopOff">Index</span></a><img border="0" height="2" width="20" src="images/dotTrans.gif"><a href="viewjndi.jsp"><span class="menuTopOff">JNDI</span></a><img border="0" height="2" width="20" src="images/dotTrans.gif"><a href="viewejb.jsp"><span class="menuTopOff">EJB</span></a><img border="0" height="2" width="20" src="images/dotTrans.gif"><a href="viewclass.jsp"><span class="menuTopOff">Class</span></a><img border="0" height="2" width="20" src="images/dotTrans.gif"><a href="invokeobj.jsp"><span class="menuTopOff">Invoke</span></a><img border="0" height="2" width="20" src="images/dotTrans.gif"></td>
-        <td align="left" valign="top" height="20" width="120"><img border="0" height="2" width="10" src="images/dotTrans.gif"></td>
-    </tr>
-    <tr>
-        <td align="left" valign="top" bgcolor="#a9a5de" width="7"><img border="0" height="3" width="7" src="images/line_sm.gif"></td>
-        <td align="left" valign="top" height="3" width="40"><img border="0" height="3" width="40" src="images/line_light.gif"></td>
-        <td align="left" valign="top" height="3" width="530"><img border="0" height="3" width="530" src="images/line_light.gif"></td>
-        <td align="left" valign="top" height="3" width="120"><img height="1" width="1" border="0" src="images/dotTrans.gif"></td>
-    </tr>
-    <tr>
-        <td align="left" valign="top" bgcolor="#a9a5de" width="7">&nbsp;</td>
-        <td align="left" valign="top" width="40">&nbsp;</td>
-        <td valign="top" width="530" rowspan="4">
-            <table width="530" cellspacing="0" cellpadding="0" border="0" rows="2" cols="1">
-                <tr>
-                    <td align="left" valign="top"><br>
-                        <img width="200" vspace="0" src="images/logo_ejb2.gif" hspace="0" height="55" border="0">
-                        <br>
-                        <img src="images/dotTrans.gif" hspace="0" height="7" border="0"><br>
-                            <span class="pageTitle">
-                            Testing integration
-                            </span>
-                        <br>
-                        <img src="images/dotTrans.gif" hspace="0" height="1" border="0"></td>
-                </tr>
-            </table>
-            <p>
-            </p>
-            <FONT SIZE="2">
-                <%
+
+<body>
+
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container-fluid">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+            <a class="brand" href="http://openejb.apache.org">TomEE</a>
+            <div class="nav-collapse">
+                <ul class="nav">
+                    <li><a class="active" href="index.jsp">Index</a></li>
+                    <li><a href="viewjndi.jsp">JNDI</a></li>
+                    <li><a href="viewejb.jsp">EJB</a></li>
+                    <li><a href="viewclass.jsp">Class</a></li>
+                    <li><a href="invokeobj.jsp">Invoke</a></li>
+                </ul>
+
+            </div><!--/.nav-collapse -->
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            <h2>Testing openejb.home validity</h2>
+            <table class='table table-striped table-bordered table-condensed'><tbody>
+<%
     try{
         synchronized (this) {
             main(request, session, out);
@@ -88,44 +98,32 @@ java.util.Properties
         return;
     }
 %>
-<BR><BR>
-<BR>
-</FONT>
+            </tbody></table>
+        </div>
+    </div>
+    <hr>
 
-            </td>
-            <td align="left" valign="top" height="5" width="120">
+    <footer>
+        <p>Copyright &copy; 2012  The Apache Software Foundation, Licensed under the Apache License, Version 2.0. Apache and the Apache feather logo are trademarks of The Apache Software Foundation.</p>
+    </footer>
+</div>
 
 
-                &nbsp;</td>
-        </tr>
-    </table>
-    </body>
+</body>
 </html>
 
 <%!
-    String tab = "&nbsp;&nbsp;&nbsp;&nbsp;";
-
     static String invLock = "lock";
     static int invCount;
 
-    HttpSession session;
-    HttpServletRequest request;
-    JspWriter out;
-
-    String OK = "<td><font size='2' color='green'><b>OK</b></font></td></tr>";
-    String FAIL = "<td><font size='2' color='red'><b>FAIL</b></font></td></tr>";
-    String HR = "<img border='0' height='3' width='340' src='images/line_light.gif'><br>";
-    String pepperImg = "<img src='images/pepper.gif' border='0'>";
+    String OK = "<span style='color: green'><b>OK</b></span>";
+    String FAIL = "<span style='color: red'><b>FAIL</b></span>";
 
     /**
      * The main method of this JSP
      */
-    public void main(HttpServletRequest request, HttpSession session, JspWriter out) throws Exception {
-        this.request = request;
-        this.session = session;
-        this.out = out;
-
-        InitialContext ctx = null;
+    public void main(final HttpServletRequest request, final HttpSession session, final JspWriter out) throws Exception {
+        final InitialContext ctx;
         try {
             Properties p = new Properties();
 
@@ -136,103 +134,104 @@ java.util.Properties
 
         } catch (Exception e) {
             formatThrowable(e);
+            return;
         }
 
-        try {
-            out.print(HR);
-            out.print("<table width='300' cellspacing='4' cellpadding='4' border='0'>");
+        // ---------------------------------------------------
+        //  Were the OpenEJB classes installed?
+        // ---------------------------------------------------
 
-            // ---------------------------------------------------
-            //  Were the OpenEJB classes installed?
-            // ---------------------------------------------------
-
-            printTest("Were the OpenEJB classes installed");
-            ClassLoader myLoader = null;
-            Class openejb = null;
-            try {
-                myLoader = this.getClass().getClassLoader();
-                openejb = Class.forName("org.apache.openejb.OpenEJB", true, myLoader);
-                out.print(OK);
-            } catch (Exception e) {
-                out.print(FAIL);
-            }
-
-            // ---------------------------------------------------
-            //  Are the EJB libraries visible?
-            // ---------------------------------------------------
-
-            printTest("Were the EJB classes installed");
-            try {
-                Class.forName("javax.ejb.EJBHome", true, myLoader);
-                out.print(OK);
-            } catch (Exception e) {
-                out.print(FAIL);
-            }
-
-            // ---------------------------------------------------
-            //  Was OpenEJB initialized (aka started)?
-            // ---------------------------------------------------
-
-            printTest("Was OpenEJB initialized (aka started)");
-
-            try {
-                Method isInitialized = openejb.getDeclaredMethod("isInitialized");
-                Boolean running = (Boolean) isInitialized.invoke(openejb);
-
-                if (running) {
-                    out.print(OK);
-                } else {
-                    out.print(FAIL);
+        printTest(out, "Were the OpenEJB classes installed", new TestAction() {
+            @Override
+            public String run() {
+                ClassLoader myLoader = null;
+                Class openejb = null;
+                try {
+                    myLoader = this.getClass().getClassLoader();
+                    openejb = Class.forName("org.apache.openejb.OpenEJB", true, myLoader);
+                    return OK;
+                } catch (Exception e) {
+                    return FAIL;
                 }
-            } catch (Exception e) {
-                out.print(FAIL);
             }
+        });
 
-            // ---------------------------------------------------
-            //  Can I lookup anything?
-            // ---------------------------------------------------
 
-            printTest("Performing a test lookup");
+        // ---------------------------------------------------
+        //  Are the EJB libraries visible?
+        // ---------------------------------------------------
 
-            try {
-                Object obj = ctx.lookup("");
+        printTest(out, "Were the EJB classes installed", new TestAction() {
+            @Override
+            public String run() {
 
-                if (obj.getClass().getName().equals("org.apache.openejb.core.ivm.naming.IvmContext")) {
-                    out.print(OK);
-                } else {
-                    out.print(FAIL);
+                try {
+                    Class.forName("javax.ejb.EJBHome", true, this.getClass().getClassLoader());
+                    return OK;
+                } catch (Exception e) {
+                    return FAIL;
                 }
-
-            } catch (Exception e) {
-                out.print(FAIL);
             }
+        });
 
-            out.print("</table>");
-            out.print(HR);
-            try {
-                Object obj = ctx.lookup("client");
-                if (obj instanceof Context) {
-                    out.print("<br><table><tr><td>" + pepperImg + "</td><td><font size='2'>");
-                    out.print("<a href='testejb.jsp'>Continue tests</a>");
-                    out.print("</font></td></tr></table>");
+
+        // ---------------------------------------------------
+        //  Was OpenEJB initialized (aka started)?
+        // ---------------------------------------------------
+
+        printTest(out, "Was OpenEJB initialized (aka started)", new TestAction() {
+            @Override
+            public String run() {
+                try {
+                    Class openejb = Class.forName("org.apache.openejb.OpenEJB", true, this.getClass().getClassLoader());
+                    Method isInitialized = openejb.getDeclaredMethod("isInitialized");
+                    Boolean running = (Boolean) isInitialized.invoke(openejb);
+
+                    if (running) {
+                        return OK;
+                    } else {
+                        return FAIL;
+                    }
+                } catch (Exception e) {
+                    return FAIL;
                 }
-
-            } catch (Exception e) {
             }
+        });
 
-        } catch (Exception e) {
-            out.print(FAIL);
-            out.print("</table>");
-            out.print(HR);
+        // ---------------------------------------------------
+        //  Can I lookup anything?
+        // ---------------------------------------------------
 
-            out.print(e.getMessage());
-        }
+        printTest(out, "Performing a test lookup", new TestAction() {
+            @Override
+            public String run() {
+                try {
+                    Object obj = ctx.lookup("");
+
+                    if (obj.getClass().getName().equals("org.apache.openejb.core.ivm.naming.IvmContext")) {
+                        return OK;
+                    } else {
+                        return FAIL;
+                    }
+
+                } catch (Exception e) {
+                    return FAIL;
+                }
+            }
+        });
+
     }
 
-    protected void printTest(String test) throws IOException {
-        out.print("<tr><td><font size='2'>");
+    private interface TestAction {
+        String run();
+    }
+
+    protected void printTest(JspWriter out, String test, TestAction testAction) throws IOException {
+        out.print("<tr><td>");
         out.print(test);
-        out.print("</font></td>");
+        out.print("</td><td>");
+        out.print(testAction.run());
+        out.print("</td></tr>");
     }
 
     public String formatThrowable(Throwable err) throws Exception {
