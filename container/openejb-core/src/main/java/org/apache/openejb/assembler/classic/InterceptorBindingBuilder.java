@@ -335,7 +335,7 @@ public class InterceptorBindingBuilder {
 
         for (CallbackInfo callbackInfo : callbackInfos) {
             Class<?> usedClazz = clazz;
-            if (!callbackInfo.className.equals(clazz.getName())) { // dynamic mbean for instance
+            if (clazz.isInterface() && !callbackInfo.className.equals(clazz.getName())) { // dynamic mbean for instance
                 try {
                     usedClazz = clazz.getClassLoader().loadClass(callbackInfo.className);
                 } catch (ClassNotFoundException e) {
