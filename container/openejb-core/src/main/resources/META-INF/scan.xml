@@ -1,0 +1,11 @@
+<?xml version="1.0" ?><scan>
+  <classes>
+    <class>org.apache.openejb.assembler.DeployerEjb</class>
+    <class>org.apache.openejb.assembler.JMXDeployer</class>
+    <class>org.apache.openejb.assembler.classic.cmd.ConfigurationInfoEjb</class>
+    <class>org.apache.openejb.bval.BeanValidationAppendixInterceptor</class>
+    <class>org.apache.openejb.cdi.CdiInterceptor</class>
+    <class>org.apache.openejb.mgmt.MEJBBean</class>
+    <class>org.apache.openejb.monitoring.StatsInterceptor</class>
+  </classes>
+</scan>
