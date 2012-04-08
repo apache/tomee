@@ -919,7 +919,20 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
         final Set<Bean<?>> beans = bm.getBeans(clazz);
         final Bean bean = bm.resolve(beans);
-        final Object instance = bm.getReference(bean, clazz, bm.createCreationalContext(bean));
+        final Object instance;
+        if (bean == null) {
+            try {
+                instance = clazz.newInstance();
+            } catch (InstantiationException e) {
+                logger.error("the mbean " + mbeanClass + " can't be registered because it can't be instantiated", e);
+                return;
+            } catch (IllegalAccessException e) {
+                logger.error("the mbean " + mbeanClass + " can't be registered because it can't be accessed", e);
+                return;
+            }
+        } else {
+            instance = bm.getReference(bean, clazz, bm.createCreationalContext(bean));
+        }
 
         final MBeanServer server = LocalMBeanServer.get();
         try {

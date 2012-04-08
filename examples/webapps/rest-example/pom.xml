@@ -72,6 +72,7 @@
         <version>4.0.0-beta-3-SNAPSHOT</version>
         <configuration>
           <tomeeVersion>1.0.0-beta-3-SNAPSHOT</tomeeVersion>
+          <tomeeClassifier>plus</tomeeClassifier>
         </configuration>
       </plugin>
       <plugin>
@@ -81,7 +82,7 @@
         <configuration>
           <tomcatHttpPort>1234</tomcatHttpPort>
           <tomcatShutdownPort>13245</tomcatShutdownPort>
-          <tomcatVersion>7.0.21</tomcatVersion>
+          <tomcatVersion>7.0.27</tomcatVersion>
           <webapps>
             <webappArtifact>
               <groupId>org.apache.openejb</groupId>

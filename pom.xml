@@ -115,7 +115,8 @@
     <javaee-api.version>6.0-3</javaee-api.version>
 
     <!-- Used mainly in assembly/openejb-tomcat* projects  -->
-    <tomcat.version>7.0.21</tomcat.version>
+    <tomcat.bundle.version>7.0.27-SNAPSHOT</tomcat.bundle.version>
+    <tomcat.version>7.0.27</tomcat.version>
 
     <!-- used mainly by jetty modules -->
     <openejb-cxf.version>2.5.2-SNAPSHOT</openejb-cxf.version>

@@ -25,7 +25,7 @@ import org.apache.openejb.arquillian.common.TomEEConfiguration;
 @Prefixes({"tomee", "tomee.webapp"})
 public class TomEEWebappConfiguration extends TomEEConfiguration {
 
-    private String tomcatVersion = "7.0.21";
+    private String tomcatVersion = "7.0.27";
     private String groupId = "org.apache.openejb";
     private String artifactId = "tomee-webapp";
     private String version = "1.0.0-beta-3-SNAPSHOT";

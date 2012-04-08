@@ -253,7 +253,7 @@
               <systemPropertyVariables>
                 <tomee.artifactId>tomee-webapp</tomee.artifactId>
                 <tomee.version>4.0.0-beta-3-SNAPSHOT</tomee.version>
-                <tomee.tomcatVersion>7.0.21</tomee.tomcatVersion>
+                <tomee.tomcatVersion>7.0.27</tomee.tomcatVersion>
               </systemPropertyVariables>
               <excludes>
                 <exclude>**/jaxrs/**</exclude>
@@ -278,7 +278,7 @@
         <dependency>
           <groupId>${project.groupId}</groupId>
           <artifactId>apache-tomcat</artifactId>
-          <version>7.0.21</version>
+          <version>${tomcat.bundle.version}</version>
           <type>zip</type>
           <scope>compile</scope>
         </dependency>
@@ -302,7 +302,7 @@
               <systemPropertyVariables>
                 <tomee.artifactId>tomee-plus-webapp</tomee.artifactId>
                 <tomee.version>4.0.0-beta-3-SNAPSHOT</tomee.version>
-                <tomee.tomcatVersion>7.0.21</tomee.tomcatVersion>
+                <tomee.tomcatVersion>7.0.27</tomee.tomcatVersion>
               </systemPropertyVariables>
             </configuration>
           </plugin>
@@ -323,7 +323,7 @@
         <dependency>
           <groupId>${project.groupId}</groupId>
           <artifactId>apache-tomcat</artifactId>
-          <version>7.0.21</version>
+          <version>${tomcat.bundle.version}</version>
           <type>zip</type>
           <scope>compile</scope>
         </dependency>

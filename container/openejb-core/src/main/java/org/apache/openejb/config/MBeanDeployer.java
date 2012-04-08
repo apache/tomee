@@ -49,7 +49,7 @@ public class MBeanDeployer implements DynamicDeployer {
 
             for (Annotated<Class<?>> clazz : ejbModule.getFinder().findMetaAnnotatedClasses(MBean.class)) {
                 final Class<?> realClass = clazz.get();
-                final String name = clazz.get().getName();
+                final String name = realClass.getName();
                 if (done.contains(name)) {
                     continue;
                 }
