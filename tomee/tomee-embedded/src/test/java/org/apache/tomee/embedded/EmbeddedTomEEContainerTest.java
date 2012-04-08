@@ -38,6 +38,7 @@ public class EmbeddedTomEEContainerTest {
         Properties p = new Properties();
         p.setProperty(EJBContainer.APP_NAME, "test");
         p.setProperty(EJBContainer.PROVIDER, EmbeddedTomEEContainer.class.getName());
+        p.setProperty(EmbeddedTomEEContainer.TOMEE_EJBCONTAINER_HTTP_PORT, "-1");
         EJBContainer.createEJBContainer(p);
     }
 
