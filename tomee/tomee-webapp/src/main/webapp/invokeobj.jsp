@@ -34,52 +34,61 @@ java.util.Set
 <%@ page import="java.util.Map" %>
 <html>
 <head>
-    <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>OpenEJB/Tomcat</title>
-    <link href="default.css" rel="stylesheet">
+    <meta charset="utf-8">
+    <title>TomEE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+        body {
+            padding-top: 60px;
+            padding-bottom: 40px;
+        }
+        .sidebar-nav {
+            padding: 9px 0;
+        }
+    </style>
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
 </head>
-<body marginwidth="0" marginheight="0" leftmargin="0" bottommargin="0" topmargin="0" vlink="#6763a9" link="#6763a9" bgcolor="#ffffff">
-<a name="top"></a>
-<table width="712" cellspacing="0" cellpadding="0" border="0">
-    <tr>
-        <td bgcolor="#5A5CB8" align="left" valign="top" width="7"><img height="9" width="1" border="0" src="images/dotTrans.gif"></td>
-        <td bgcolor="#5A5CB8" align="left" valign="top" width="40"><img border="0" height="6" width="40" src="images/dotTrans.gif"></td>
-        <td bgcolor="#5A5CB8" align="left" valign="top" height="2" width="530"><img border="0" height="6" width="530" src="images/top_2.gif"></td>
-        <td bgcolor="#E24717" align="left" valign="top" height="2" width="120"><img src="images/top_3.gif" width="120" height="6" border="0"></td>
-    </tr>
-    <tr>
-        <td bgcolor="#5A5CB8" align="left" valign="top" bgcolor="#ffffff" width="13"><img border="0" height="15" width="13" src="images/dotTrans.gif"></td>
-        <td align="left" valign="top" width="40"><img border="0" height="1" width="1" src="images/dotTrans.gif"></td>
-        <td align="left" valign="middle" width="530"><a href="http://openejb.apache.org"><span class="menuTopOff">OpenEJB</span></a><img border="0" height="2" width="20" src="images/dotTrans.gif"><a href="index.jsp"><span class="menuTopOff">Index</span></a><img border="0" height="2" width="20" src="images/dotTrans.gif"><a href="viewjndi.jsp"><span class="menuTopOff">JNDI</span></a><img border="0" height="2" width="20" src="images/dotTrans.gif"><a href="viewejb.jsp"><span class="menuTopOff">EJB</span></a><img border="0" height="2" width="20" src="images/dotTrans.gif"><a href="viewclass.jsp"><span class="menuTopOff">Class</span></a><img border="0" height="2" width="20" src="images/dotTrans.gif"><a href="invokeobj.jsp"><span class="menuTopOff">Invoke</span></a><img border="0" height="2" width="20" src="images/dotTrans.gif"></td>
-        <td align="left" valign="top" height="20" width="120"><img border="0" height="2" width="10" src="images/dotTrans.gif"></td>
-    </tr>
-    <tr>
-        <td align="left" valign="top" bgcolor="#a9a5de" width="7"><img border="0" height="3" width="7" src="images/line_sm.gif"></td>
-        <td align="left" valign="top" height="3" width="40"><img border="0" height="3" width="40" src="images/line_light.gif"></td>
-        <td align="left" valign="top" height="3" width="530"><img border="0" height="3" width="530" src="images/line_light.gif"></td>
-        <td align="left" valign="top" height="3" width="120"><img height="1" width="1" border="0" src="images/dotTrans.gif"></td>
-    </tr>
-    <tr>
-        <td align="left" valign="top" bgcolor="#a9a5de" width="7">&nbsp;</td>
-        <td align="left" valign="top" width="40">&nbsp;</td>
-        <td valign="top" width="530" rowspan="4">
-            <table width="530" cellspacing="0" cellpadding="0" border="0" rows="2" cols="1">
-                <tr>
-                    <td align="left" valign="top"><br>
-                        <img width="200" vspace="0" src="images/logo_ejb2.gif" hspace="0" height="55" border="0">
-                        <br>
-                        <img src="images/dotTrans.gif" hspace="0" height="7" border="0"><br>
-                            <span class="pageTitle">
-                            OpenEJB Object Invoker
-                            </span>
-                        <br>
-                        <img src="images/dotTrans.gif" hspace="0" height="1" border="0"></td>
-                </tr>
-            </table>
-            <p>
-            </p>
-            <FONT SIZE="2">
-                <%
+
+<body>
+
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container-fluid">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+            <a class="brand" href="http://openejb.apache.org">TomEE</a>
+            <div class="nav-collapse">
+                <ul class="nav">
+                    <li><a class="active" href="index.jsp">Index</a></li>
+                    <li><a href="viewjndi.jsp">JNDI</a></li>
+                    <li><a href="viewejb.jsp">EJB</a></li>
+                    <li><a href="viewclass.jsp">Class</a></li>
+                    <li><a href="invokeobj.jsp">Invoke</a></li>
+                </ul>
+
+            </div><!--/.nav-collapse -->
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            <h2>OpenEJB Object Invoker</h2>
+<%
     try{
         synchronized (this) {
             main(request, session, out);
@@ -90,18 +99,15 @@ java.util.Set
         return;
     }
 %>
-<BR><BR>
-<BR>
-</FONT>
+        </div>
+    </div>
+    <hr>
 
-            </td>
-            <td align="left" valign="top" height="5" width="120">
-
-
-                &nbsp;</td>
-        </tr>
-    </table>
-    </body>
+    <footer>
+        <p>Copyright &copy; 2012  The Apache Software Foundation, Licensed under the Apache License, Version 2.0. Apache and the Apache feather logo are trademarks of The Apache Software Foundation.</p>
+    </footer>
+</div>
+</body>
 </html>
 
 <%!
