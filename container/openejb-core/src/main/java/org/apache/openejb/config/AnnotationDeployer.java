@@ -1899,18 +1899,18 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             IAnnotationFinder finder = webModule.getFinder();
 
-            if (finder != null && false) {
-                // Add all the classes of the previous finder
-                // TODO this part can be optimized
-                final List<String> classNames = finder.getAnnotatedClassNames();
-                for (String rawClassName : classNames) {
-                    final String className = realClassName(rawClassName);
+            if (finder != null) {
+
+                for (String apiClassName : WEB_CLASSES) {
+                    final Class<? extends Annotation> clazz;
                     try {
-                        Class clazz = classLoader.loadClass(className);
-                        classes.add(clazz);
-                    } catch (Throwable e) {
-                        logger.debug(String.format("%s: Unable to load class for scanning: %s", e.getClass().getName(), className));
+                        clazz = (Class<? extends Annotation>) classLoader.loadClass(apiClassName);
+                    } catch (ClassNotFoundException e) {
+                        continue;
                     }
+
+                    final List<Class<?>> found = finder.findAnnotatedClasses(clazz);
+                    classes.addAll(found);
                 }
             }
 
