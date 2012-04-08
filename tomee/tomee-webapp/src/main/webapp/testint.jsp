@@ -109,6 +109,12 @@ java.util.Properties
 </div>
 
 
+<!-- Le javascript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="js/jquery/jquery-1.7.1.js"></script>
+<script src="js/bootstrap/bootstrap.js"></script>
+
 </body>
 </html>
 
