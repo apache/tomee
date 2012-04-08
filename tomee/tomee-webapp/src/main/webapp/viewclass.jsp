@@ -123,6 +123,11 @@ java.util.Map
 
         </div>
     </div>
+    <hr>
+
+    <footer>
+        <p>Copyright &copy; 2012  The Apache Software Foundation, Licensed under the Apache License, Version 2.0. Apache and the Apache feather logo are trademarks of The Apache Software Foundation.</p>
+    </footer>
 </div>
 </body>
 </html>
