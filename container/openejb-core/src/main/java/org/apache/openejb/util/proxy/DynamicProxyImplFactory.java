@@ -62,6 +62,16 @@ public class DynamicProxyImplFactory {
         }
     }
 
+    public static Object realHandler(final Object proxy) {
+        if (proxy != null && java.lang.reflect.Proxy.isProxyClass(proxy.getClass())) {
+            final Object handler = java.lang.reflect.Proxy.getInvocationHandler(proxy);
+            if (handler instanceof Handler) {
+                return ((Handler) handler).realHandler();
+            }
+        }
+        return null;
+    }
+
     private static class Handler implements InvocationHandler {
         private java.lang.reflect.InvocationHandler handler;
 
@@ -71,6 +81,10 @@ public class DynamicProxyImplFactory {
 
         @Override public InvocationHandler getInvocationHandler() {
             return this;
+        }
+
+        public java.lang.reflect.InvocationHandler realHandler() {
+            return handler;
         }
 
         @Override

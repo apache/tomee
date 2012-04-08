@@ -19,6 +19,7 @@ package org.apache.openejb.core.interceptor;
 import static org.apache.openejb.util.Join.join;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.util.Classes;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.proxy.DynamicProxyImplFactory;
 
 /**
  * @version $Rev$ $Date$
@@ -65,7 +67,13 @@ public class InterceptorStack {
 
             Set<Method> methods = interceptorData.getMethods(operation);
             for (Method method : methods) {
-                Interceptor interceptor = new Interceptor(interceptorInstance, method);
+                final Interceptor interceptor;
+                Object handler = DynamicProxyImplFactory.realHandler(interceptorInstance);
+                if (handler != null && method.getDeclaringClass().equals(handler.getClass())) { // dynamic impl
+                    interceptor = new Interceptor(handler, method);
+                } else {
+                    interceptor = new Interceptor(interceptorInstance, method);
+                }
                 interceptors.add(interceptor);
             }
         }
