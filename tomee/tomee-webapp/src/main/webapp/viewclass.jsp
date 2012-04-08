@@ -129,6 +129,13 @@ java.util.Map
         <p>Copyright &copy; 2012  The Apache Software Foundation, Licensed under the Apache License, Version 2.0. Apache and the Apache feather logo are trademarks of The Apache Software Foundation.</p>
     </footer>
 </div>
+
+<!-- Le javascript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="js/jquery/jquery-1.7.1.js"></script>
+<script src="js/bootstrap/bootstrap.js"></script>
+
 </body>
 </html>
 
