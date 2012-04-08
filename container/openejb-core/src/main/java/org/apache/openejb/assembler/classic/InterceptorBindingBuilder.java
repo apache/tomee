@@ -334,8 +334,17 @@ public class InterceptorBindingBuilder {
         List<Method> methods = new ArrayList<Method>();
 
         for (CallbackInfo callbackInfo : callbackInfos) {
+            Class<?> usedClazz = clazz;
+            if (!callbackInfo.className.equals(clazz.getName())) { // dynamic mbean for instance
+                try {
+                    usedClazz = clazz.getClassLoader().loadClass(callbackInfo.className);
+                } catch (ClassNotFoundException e) {
+                    // ignored
+                }
+            }
+
             try {
-                Method method = getMethod(clazz, callbackInfo.method, parameterTypes);
+                Method method = getMethod(usedClazz, callbackInfo.method, parameterTypes);
                 if (callbackInfo.className == null && !methods.contains(method)){
                     methods.add(method);
                 } else if (method.getDeclaringClass().getName().equals(callbackInfo.className) && !methods.contains(method)){
