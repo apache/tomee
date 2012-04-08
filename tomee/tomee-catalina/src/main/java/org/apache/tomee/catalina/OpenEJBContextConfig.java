@@ -86,8 +86,8 @@ public class OpenEJBContextConfig extends ContextConfig {
         super.parseWebXml(source, dest, fragment);
     }
 
-    @Override
-    protected void processAnnotationsUrl(URL url, WebXml fragment) {
+//    @Override
+    protected void DISABLE_processAnnotationsUrl(URL url, WebXml fragment) {
         if (SystemInstance.get().getOptions().get("tomee.tomcat.scan", false)) {
             super.processAnnotationsUrl(url, fragment);
             return;
@@ -102,6 +102,8 @@ public class OpenEJBContextConfig extends ContextConfig {
                 return;
             }
 
+            logger.debug("Optimized Scan of URL " + url);
+
             // TODO We should just remember which jars each class came from
             // then we wouldn't need to lookup the class from the URL in this
             // way to guarantee we only add classes from this URL.
@@ -111,12 +113,16 @@ public class OpenEJBContextConfig extends ContextConfig {
                 final URL classUrl = loader.getResource(classFile);
 
                 if (classUrl == null) {
+                    logger.debug("Not present " + webAnnotatedClassName);
                     continue;
                 }
+
+                logger.debug("Found " + webAnnotatedClassName);
 
                 final InputStream inputStream = classUrl.openStream();
                 try {
                     processAnnotationsStream(inputStream, fragment);
+                    logger.debug("Succeeded " + webAnnotatedClassName);
                 } catch (IOException e) {
                     e.printStackTrace();
                 } finally {
