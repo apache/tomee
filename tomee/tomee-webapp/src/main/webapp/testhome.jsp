@@ -66,7 +66,7 @@ java.io.File
             <a class="brand" href="http://openejb.apache.org">TomEE</a>
             <div class="nav-collapse">
                 <ul class="nav">
-                    <li><a class="active" href="index.jsp">Index</a></li>
+                    <li class="active"><a href="index.jsp">Index</a></li>
                     <li><a href="viewjndi.jsp">JNDI</a></li>
                     <li><a href="viewejb.jsp">EJB</a></li>
                     <li><a href="viewclass.jsp">Class</a></li>

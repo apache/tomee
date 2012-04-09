@@ -76,7 +76,7 @@ java.util.Set
                     <li><a href="viewjndi.jsp">JNDI</a></li>
                     <li><a href="viewejb.jsp">EJB</a></li>
                     <li><a href="viewclass.jsp">Class</a></li>
-                    <li><a class="active" href="invokeobj.jsp">Invoke</a></li>
+                    <li class="active"><a href="invokeobj.jsp">Invoke</a></li>
                 </ul>
 
             </div><!--/.nav-collapse -->
