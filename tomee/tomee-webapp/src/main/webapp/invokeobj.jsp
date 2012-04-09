@@ -72,11 +72,11 @@ java.util.Set
             <a class="brand" href="http://openejb.apache.org">TomEE</a>
             <div class="nav-collapse">
                 <ul class="nav">
-                    <li><a class="active" href="index.jsp">Index</a></li>
+                    <li><a href="index.jsp">Index</a></li>
                     <li><a href="viewjndi.jsp">JNDI</a></li>
                     <li><a href="viewejb.jsp">EJB</a></li>
                     <li><a href="viewclass.jsp">Class</a></li>
-                    <li><a href="invokeobj.jsp">Invoke</a></li>
+                    <li><a class="active" href="invokeobj.jsp">Invoke</a></li>
                 </ul>
 
             </div><!--/.nav-collapse -->
@@ -94,7 +94,7 @@ java.util.Set
             main(request, session, out);
         }
     } catch (Exception e){
-        out.println("FAIL");
+        out.println("<p>FAIL</p>");
         //throw e;
         return;
     }
@@ -107,6 +107,14 @@ java.util.Set
         <p>Copyright &copy; 2012  The Apache Software Foundation, Licensed under the Apache License, Version 2.0. Apache and the Apache feather logo are trademarks of The Apache Software Foundation.</p>
     </footer>
 </div>
+
+
+<!-- Le javascript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="js/jquery/jquery-1.7.1.js"></script>
+<script src="js/bootstrap/bootstrap.js"></script>
+
 </body>
 </html>
 
@@ -186,8 +194,8 @@ java.util.Set
             printObjectList();
 
         } else {
-            out.print("<b>Object:</b><br>");
-            out.print(tab + inv.objID + " <a href='invokeobj.jsp'>[change]</a><br><br>");
+            out.print("<h3>Object</h3>");
+            out.print("<p>" + inv.objID + " <a href='invokeobj.jsp'>[change]</a></p>");
 
             // Show the selected item and continue
             printMethodSection(inv);
@@ -201,23 +209,19 @@ java.util.Set
 
         Map<String, Object> objects = getObjectMap();
         if (objects.size() == 0) {
-            out.print("<b>No object have been created</b><br>");
-            out.print("<table>");
-            printRow(pepperImg, "<A HREF='viewjndi.jsp'>Browse for an EJB</A>");
-            out.print("</table>");
+            out.print("<p>No object have been created. <A HREF='viewjndi.jsp'>Browse for an EJB</A></p>");
 
         } else {
-            out.print("<b>Pick and object to invoke</b><br>");
+            out.print("<h3>Pick and object to invoke</h3>");
 
-            //out.print("<b>Objects:</b><br>");
             Set keys = objects.keySet();
             Iterator iterator = keys.iterator();
-            out.print("<table>");
+            out.print("<ul>");
             while (iterator.hasNext()) {
                 String entry = (String) iterator.next();
-                printRow(tab + "<a href='invokeobj.jsp?obj=" + entry + "'>" + entry + "</a>", "<a href='invokeobj.jsp?remove=" + entry + "'>[remove]</a>");
+                printRow("<li><a href='invokeobj.jsp?obj=" + entry + "'>" + entry + "</a>", "<a href='invokeobj.jsp?remove=" + entry + "'> [remove]</a></li>");
             }
-            out.print("</table>");
+            out.print("</ul>");
         }
     }
 
@@ -245,8 +249,8 @@ java.util.Set
             printMethodList(inv);
 
         } else {
-            out.print("<b>Method:</b><br>");
-            out.print(tab + formatMethod(inv.method) + " <a href='invokeobj.jsp?m=-1&inv=" + inv.id + "'>[change]</a><br><br>");
+            out.print("<h3>Method</h3>");
+            out.print("<p>" + formatMethod(inv.method) + " <a href='invokeobj.jsp?m=-1&inv=" + inv.id + "'>[change]</a></<p>");
 
             // Show the selected item and continue
             printArgumentSection(inv);
@@ -272,17 +276,15 @@ java.util.Set
         }
         inv.clazz = clazz;
 
-        out.print("<table>");
+        out.print("<ul>");
         Method[] methods = clazz.getMethods();
         for (int i = 0; i < methods.length; i++) {
             Method m = methods[i];
             if (Modifier.isPublic(m.getModifiers())) {
-                out.print("<tr><td><font size='2'>");
-                out.print(tab + "<a href='invokeobj.jsp?inv=" + inv.id + "&m=" + i + "'>" + formatMethod(m) + "</a><br>");
-                out.print("</font></td></tr>");
+                out.print("<li><a href='invokeobj.jsp?inv=" + inv.id + "&m=" + i + "'>" + formatMethod(m) + "</a></li>");
             }
         }
-        out.print("</table>");
+        out.print("</ul>");
     }
 
     /**
@@ -304,15 +306,21 @@ java.util.Set
         if (inv.args == null) {
             printArgumentList(inv);
         } else {
-            out.print("<b>Arguments:</b><br>");
+            out.print("<h3>Arguments</h3>");
+
             if (inv.args.length == 0) {
-                out.print(tab + "none<br>");
+                out.print("<p>none</p>");
             }
+
+            out.print("<ol>");
+
             for (int i = 0; i < inv.args.length; i++) {
                 String val = formatObject(inv.args[i]);
-                out.print(tab + "arg" + i + "&nbsp;&nbsp;<i>" + val + "</i><br>");
+                out.print("<li><i>" + val + "</i>");
             }
-            out.print("<br>");
+
+            out.print("</ol>");
+
             printInvokeSection(inv);
         }
     }
@@ -380,33 +388,30 @@ java.util.Set
         try {
             inv.result = inv.invoke();
 
-            out.print("<b>Result:</b><br>");
+            out.print("<h3>Result:</h3>");
             if (inv.method.getReturnType() == java.lang.Void.TYPE) {
-                out.print(tab + "Done");
+                out.print("<p>Done</p>");
             } else if (inv.result == null) {
-                out.print(tab + "<i>null</i>");
+                out.print("<p><i>null</i></p>");
             } else {
                 String clazz = inv.result.getClass().getName();
                 String objID = getObjectID(inv.result);
                 setObject(objID, inv.result);
 
-                out.print("<table>");
+                out.print("<table class='table table-bordered table-striped'><colgroup><col class='span2'><col class='span10'></colgroup><tbody>");
                 printRow("<i>id</i>", objID);
                 printRow("<i>class</i>", "<a href='viewclass.jsp?class=" + clazz + "'>" + clazz + "</a>");
                 printRow("<i>toString</i>", formatObject(inv.result));
-                out.print("</table>");
+                out.print("</tbody></table>");
 
-                out.print("<br><br><b>Actions:</b><br>");
-                out.print("<table>");
-                String invokerURL = "<a href='invokeobj.jsp?obj=" + objID + "'>Invoke a method on the object</a>";
-                printRow(pepperImg, invokerURL);
-                String discardURL = "<a href='invokeobj.jsp?remove=" + objID + "'>Discard the object</a>";
-                printRow(pepperImg, discardURL);
-                out.print("</table>");
+                out.print("<h3>Actions:</h3>");
+                out.print("<a href='invokeobj.jsp?obj=" + objID + "'>Invoke a method on the object</a> or <a href='invokeobj.jsp?remove="  + objID + "'>Discard the object</a>");
             }
         } catch (InvocationTargetException e) {
-            out.print("<b>Exception:</b><br><br>");
+            out.print("<h3>Exception:</h3>");
             Throwable t = e.getTargetException();
+
+            out.print("<p>");
             out.print("Received a " + t.getClass().getName());
             //out.print(inv.method+"<br><br>");
             if (t instanceof java.rmi.RemoteException) {
@@ -423,9 +428,14 @@ java.util.Set
                 out.print("<br><br>" + formatThrowable(t));
             }
 
+            out.print("</p>");
+
         } catch (Throwable e) {
-            out.print("<b>Exception:</b><br><br>");
+            out.print("<h3>Exception:</h3>");
+
+            out.print("<p>");
             out.print(formatObject(e));
+            out.print("</p>");
         }
     }
 
