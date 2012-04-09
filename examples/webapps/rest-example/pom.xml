@@ -25,8 +25,8 @@
   <name>OpenEJB :: Web Examples :: REST Example</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <openejb.version>4.0.0-beta-3-SNAPSHOT</openejb.version>
-    <tomee.version>1.0.0-beta-3-SNAPSHOT</tomee.version>
+    <openejb.version>4.0.0</openejb.version>
+    <tomee.version>1.0.0</tomee.version>
   </properties>
   <repositories>
     <repository>
@@ -69,9 +69,9 @@
       <plugin>
         <groupId>org.apache.openejb</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>4.0.0-beta-3-SNAPSHOT</version>
+        <version>4.0.0</version>
         <configuration>
-          <tomeeVersion>1.0.0-beta-3-SNAPSHOT</tomeeVersion>
+          <tomeeVersion>1.0.0</tomeeVersion>
           <tomeeClassifier>plus</tomeeClassifier>
         </configuration>
       </plugin>

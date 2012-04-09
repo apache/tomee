@@ -22,19 +22,19 @@
 
   <groupId>org.apache.openejb</groupId>
   <artifactId>webdeployer</artifactId>
-  <version>4.0.0-beta-3-SNAPSHOT</version>
+  <version>4.0.0</version>
   <name>OpenEJB :: Utils :: TomEE Webapps-based Deployer EJB</name>
   <parent>
     <artifactId>utils</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.0.0-beta-3-SNAPSHOT</version>
+    <version>4.0.0</version>
   </parent>
   <packaging>jar</packaging>
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-catalina</artifactId>
-      <version>4.0.0-beta-3-SNAPSHOT</version>
+      <version>4.0.0</version>
       <type>jar</type>
       <scope>provided</scope>
     </dependency>

@@ -19,7 +19,7 @@
 <project name="dev-helper" default="copy_static">
 
     <target name="copy_static">
-        <copy verbose="true" todir="apache-tomee/target/apache-tomee-webprofile-1.0.0-beta-3-SNAPSHOT/webapps/tomee/staging">
+        <copy verbose="true" todir="apache-tomee/target/apache-tomee-webprofile-1.0.0/webapps/tomee/staging">
             <fileset dir="tomee-webapp/src/main/webapp/staging" includes="**"/>
         </copy>
     </target>
