@@ -110,7 +110,7 @@ java.util.Properties
                     ctx = (Context)session.getAttribute(ctxID);
                     if (ctxID.startsWith("enc")) {
         %>
-        <h2>JNDI Environment Naming Context <a href="#" rel="tooltip" title="This is the private namespace of an Enterprise JavaBean">(ENC)</a></h2><a href="enc-help.html">[Info]</A>
+        <h2>JNDI Environment Naming Context <a href="#" rel="tooltip" title="This is the private namespace of an Enterprise JavaBean">(ENC)</a></h2>
         <%
                     }
                 }

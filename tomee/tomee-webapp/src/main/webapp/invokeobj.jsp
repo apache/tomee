@@ -415,9 +415,10 @@ java.util.Set
             out.print("Received a " + t.getClass().getName());
             //out.print(inv.method+"<br><br>");
             if (t instanceof java.rmi.RemoteException) {
-                out.print(" <a href='re-help.html'>[Tip]</a><br><br>");
+                out.print("<br><br>");
                 out.print("<i>RemoteException message:</i><br>");
-                out.print(t.getMessage() + "<br><br>");
+                out.print(t.getMessage());
+                out.print("<br><br>");
                 out.print("<i>Nested exception's stack trace:</i><br>");
 
                 while (t instanceof java.rmi.RemoteException) {
