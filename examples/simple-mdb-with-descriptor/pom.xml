@@ -24,7 +24,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>simple-mdb-with-descriptor</artifactId>
   <packaging>jar</packaging>
-  <version>1.1-SNAPSHOT</version>
+  <version>1.0</version>
   <name>OpenEJB :: Examples :: Simple MDB Using Deployment Descriptor Example</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

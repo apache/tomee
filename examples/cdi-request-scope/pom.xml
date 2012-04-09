@@ -14,7 +14,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>cdi-request-scope</artifactId>
   <name>OpenEJB :: Examples :: CDI Request Scope</name>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
 
   <build>
     <defaultGoal>install</defaultGoal>

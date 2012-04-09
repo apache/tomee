@@ -14,7 +14,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>cdi-application-scope</artifactId>
   <name>OpenEJB :: Examples :: CDI Application Scope</name>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
 
   <build>
     <defaultGoal>install</defaultGoal>
