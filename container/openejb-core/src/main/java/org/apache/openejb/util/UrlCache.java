@@ -27,15 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
@@ -46,25 +38,9 @@ public class UrlCache {
     public static final boolean antiJarLocking;
     public static final File cacheDir;
 
-    static {
-        String value = null;
-        for (Map.Entry<Object, Object> entry : System.getProperties().entrySet()) {
-            if (entry.getKey() instanceof String && entry.getValue() instanceof String) {
-                if ("antiJarLocking".equalsIgnoreCase((String) entry.getKey())) {
-                    value = (String) entry.getValue();
-                    break;
-                }
-            }
-        }
-
-        if (value != null) {
-            antiJarLocking = Boolean.valueOf(value);
-        } else {
-            final boolean embedded = SystemInstance.get().getOptions().get("openejb.embedded", false);
-            // antiJarLocking is on by default when we are not embedded and running on windows
-            antiJarLocking = !embedded && System.getProperty("os.name", "unknown").toLowerCase().startsWith("windows");
-        }
-
+    static {        
+        antiJarLocking = SystemInstance.get().getOptions().get("antiJarLocking", false);
+     
         if (antiJarLocking) {
             cacheDir = createCacheDir();
             logger.info("AntiJarLocking enabled. Using URL cache dir " + cacheDir);
@@ -72,6 +48,7 @@ public class UrlCache {
             cacheDir = null;
         }
     }
+    
     private final Map<String, Map<URL, File>> cache = new TreeMap<String, Map<URL, File>>();
 
     public synchronized URL[] cacheUrls(String appId, URL[] urls) {
@@ -330,8 +307,8 @@ public class UrlCache {
             }
 
             // if we are embedded, tmp dir is in the system tmp dir
-            if (dir == null) {
-                dir = File.createTempFile("OpenEJB-temp-", "");
+            if (dir == null) {                
+                dir = new File(new File(System.getProperty("java.io.tmpdir")), UUID.randomUUID().toString());
             }
 
             // If the cache dir already exists then empty its contents
@@ -354,9 +331,20 @@ public class UrlCache {
     }
 
     private static File createCacheDir(File dir) throws IOException {
-        if (!dir.mkdirs() && !dir.isDirectory()) {
+        
+        if(dir.exists() && dir.isDirectory()){
+            return dir;
+        }
+        
+        if (dir.exists() && !dir.isDirectory()) {
+            throw new IOException("Cache temp directory held by file: " + dir);
+        }
+        
+        if (!dir.mkdirs()) {
             throw new IOException("Unable to create cache temp directory: " + dir);
         }
+        
+        Thread.yield();
 
         return dir;
     }
