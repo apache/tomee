@@ -74,10 +74,11 @@ public class ConnectionManager {
         if (name == null) name = "default";
 
         final ConnectionStrategy strategy = strategies.get(name);
+        if (strategy == null) {
+            throw new UnsupportedConnectionStrategyException(name);
+        }
 
         try {
-            if (strategy == null) throw new UnsupportedConnectionStrategyException(name);
-
             //Do not leave this in production code
             //logger.finest("connect: strategy=" + name + ", uri=" + server.getLocation() + ", strategy-impl=" + strategy.getClass().getName());
 
@@ -97,15 +98,12 @@ public class ConnectionManager {
         if (uri == null) throw new IllegalArgumentException("uri cannot be null");
 
         final String scheme = uri.getScheme();
+        final ConnectionFactory factory = factories.get(scheme);
+        if (factory == null) {
+            throw new UnsupportedConnectionFactoryException(scheme);
+        }
 
         try {
-
-            final ConnectionFactory factory = factories.get(scheme);
-
-            if (factory == null) {
-                throw new UnsupportedConnectionFactoryException(scheme);
-            }
-
             //Do not leave this in production code
             //logger.finest("connect: scheme=" + scheme + ", uri=" + uri + ", factory-impl=" + factory.getClass().getName());
 
@@ -152,10 +150,11 @@ public class ConnectionManager {
     }
 
     /**
-     * @param factory
-     * @throws IOException
-     * @Deprecated use register("default", factory);
+     * @param factory ConnectionFactory
+     * @throws IOException On error
+     * @deprecated Use register("default", factory);
      */
+    @Deprecated
     public static void setFactory(final ConnectionFactory factory) throws IOException {
         registerFactory("default", factory);
     }
