@@ -40,8 +40,15 @@ public class MBeanDeployer implements DynamicDeployer {
         logger.debug("looking for annotated MBeans in " + appModule.getModuleId());
         final List<String> done = new ArrayList<String>();
 
+        ClassLoader cl = appModule.getClassLoader();
+        if (cl == null) {
+            cl = Thread.currentThread().getContextClassLoader();
+            if (cl == null) {
+                cl = getClass().getClassLoader();
+            }
+        }
         try { // for OSGi environment, javax.management is imported by the JRE
-            appModule.getClassLoader().loadClass("javax.management.MBean");
+            cl.loadClass("javax.management.MBean");
         } catch (NoClassDefFoundError noClassDefFoundError) {
             return appModule;
         } catch (ClassNotFoundException e) {
