@@ -23,8 +23,8 @@
 
   <parent>
     <artifactId>maven</artifactId>
-    <groupId>org.apache.openejb</groupId>
-    <version>4.0.0</version>
+    <groupId>org.apache.openejb.maven</groupId>
+    <version>1.0-alpha-1</version>
   </parent>
 
   <artifactId>tomee-maven-plugin</artifactId>
