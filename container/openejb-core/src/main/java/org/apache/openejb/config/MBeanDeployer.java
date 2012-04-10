@@ -40,6 +40,14 @@ public class MBeanDeployer implements DynamicDeployer {
         logger.debug("looking for annotated MBeans in " + appModule.getModuleId());
         final List<String> done = new ArrayList<String>();
 
+        try { // for OSGi environment, javax.management is imported by the JRE
+            appModule.getClassLoader().loadClass("javax.management.MBean");
+        } catch (NoClassDefFoundError noClassDefFoundError) {
+            return appModule;
+        } catch (ClassNotFoundException e) {
+            return appModule;
+        }
+
         // there is an ejbmodule by webapp so we should't need to go through the webapp
 
         for (EjbModule ejbModule : appModule.getEjbModules()) {
