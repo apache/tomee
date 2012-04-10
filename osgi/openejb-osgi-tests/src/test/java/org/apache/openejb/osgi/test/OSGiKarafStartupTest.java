@@ -17,32 +17,34 @@
 
 package org.apache.openejb.osgi.test;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import javax.inject.Inject;
 import org.apache.felix.service.command.CommandProcessor;
 import org.apache.felix.service.command.CommandSession;
-import org.apache.karaf.tooling.exam.options.KarafDistributionConfigurationFilePutOption;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.NetworkUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openengsb.labs.paxexam.karaf.options.KarafDistributionConfigurationFilePutOption;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.ops4j.pax.exam.junit.ProbeBuilder;
 
-import javax.inject.Inject;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-
-import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.karafDistributionConfiguration;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.openengsb.labs.paxexam.karaf.options.KarafDistributionOption.karafDistributionConfiguration;
 import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.osgi.framework.Constants.DYNAMICIMPORT_PACKAGE;
+
+// if you replace openengsb by karaf 3.0.0 dependency for testing use:
+// import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.karafDistributionConfiguration;
 
 @RunWith(JUnit4TestRunner.class)
 public class OSGiKarafStartupTest {
