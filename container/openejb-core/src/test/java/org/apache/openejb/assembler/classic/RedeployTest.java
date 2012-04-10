@@ -29,6 +29,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.io.File;
+import java.lang.Exception;
 import java.util.Properties;
 
 /**
@@ -38,6 +39,9 @@ public class RedeployTest extends TestCase {
     public void test() throws Exception {
         // create reference to openejb itests
         File file = JarLocation.jarLocation(BasicStatelessBean.class);
+        if(!file.exists()){
+            throw new Exception("File not found: " + file);
+        }
 
         // These two objects pretty much encompas all the EJB Container
         ConfigurationFactory config = new ConfigurationFactory();
