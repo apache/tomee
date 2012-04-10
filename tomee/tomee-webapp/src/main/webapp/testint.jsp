@@ -88,17 +88,28 @@ java.util.Properties
             <h2>Testing openejb.home validity</h2>
             <table class='table table-striped table-bordered table-condensed'><tbody>
 <%
+    final InitialContext ctx;
     try{
         synchronized (this) {
-            main(request, session, out);
+            ctx = main(request, session, out);
         }
     } catch (Exception e){
-        out.println("FAIL");
-        //throw e;
+        out.println("<p>FAIL</p>");
         return;
     }
 %>
             </tbody></table>
+<%
+    try {
+        Object obj = ctx.lookup("client");
+        if (obj instanceof Context) {
+            out.print("<a class='btn' href='testejb.jsp'>Continue tests</a>");
+        }
+
+    } catch (Exception e) {
+    }
+%>
+
         </div>
     </div>
     <hr>
@@ -128,20 +139,13 @@ java.util.Properties
     /**
      * The main method of this JSP
      */
-    public void main(final HttpServletRequest request, final HttpSession session, final JspWriter out) throws Exception {
-        final InitialContext ctx;
-        try {
-            Properties p = new Properties();
+    public InitialContext main(final HttpServletRequest request, final HttpSession session, final JspWriter out) throws Exception {
+        Properties p = new Properties();
 
-            p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
-            p.put("openejb.loader", "embed");
+        p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
+        p.put("openejb.loader", "embed");
 
-            ctx = new InitialContext(p);
-
-        } catch (Exception e) {
-            formatThrowable(e);
-            return;
-        }
+        final InitialContext ctx = new InitialContext(p);
 
         // ---------------------------------------------------
         //  Were the OpenEJB classes installed?
@@ -149,16 +153,10 @@ java.util.Properties
 
         printTest(out, "Were the OpenEJB classes installed", new TestAction() {
             @Override
-            public String run() {
-                ClassLoader myLoader = null;
-                Class openejb = null;
-                try {
-                    myLoader = this.getClass().getClassLoader();
-                    openejb = Class.forName("org.apache.openejb.OpenEJB", true, myLoader);
-                    return OK;
-                } catch (Exception e) {
-                    return FAIL;
-                }
+            public String run() throws Exception {
+                ClassLoader myLoader = this.getClass().getClassLoader();
+                Class.forName("org.apache.openejb.OpenEJB", true, myLoader);
+                return OK;
             }
         });
 
@@ -169,14 +167,9 @@ java.util.Properties
 
         printTest(out, "Were the EJB classes installed", new TestAction() {
             @Override
-            public String run() {
-
-                try {
-                    Class.forName("javax.ejb.EJBHome", true, this.getClass().getClassLoader());
-                    return OK;
-                } catch (Exception e) {
-                    return FAIL;
-                }
+            public String run() throws Exception {
+                Class.forName("javax.ejb.EJBHome", true, this.getClass().getClassLoader());
+                return OK;
             }
         });
 
@@ -187,18 +180,14 @@ java.util.Properties
 
         printTest(out, "Was OpenEJB initialized (aka started)", new TestAction() {
             @Override
-            public String run() {
-                try {
-                    Class openejb = Class.forName("org.apache.openejb.OpenEJB", true, this.getClass().getClassLoader());
-                    Method isInitialized = openejb.getDeclaredMethod("isInitialized");
-                    Boolean running = (Boolean) isInitialized.invoke(openejb);
+            public String run() throws Exception {
+                Class openejb = Class.forName("org.apache.openejb.OpenEJB", true, this.getClass().getClassLoader());
+                Method isInitialized = openejb.getDeclaredMethod("isInitialized");
+                Boolean running = (Boolean) isInitialized.invoke(openejb);
 
-                    if (running) {
-                        return OK;
-                    } else {
-                        return FAIL;
-                    }
-                } catch (Exception e) {
+                if (running) {
+                    return OK;
+                } else {
                     return FAIL;
                 }
             }
@@ -210,37 +199,37 @@ java.util.Properties
 
         printTest(out, "Performing a test lookup", new TestAction() {
             @Override
-            public String run() {
-                try {
-                    Object obj = ctx.lookup("");
+            public String run() throws Exception {
+                Object obj = ctx.lookup("");
 
-                    if (obj.getClass().getName().equals("org.apache.openejb.core.ivm.naming.IvmContext")) {
-                        return OK;
-                    } else {
-                        return FAIL;
-                    }
-
-                } catch (Exception e) {
+                if (obj.getClass().getName().equals("org.apache.openejb.core.ivm.naming.IvmContext")) {
+                    return OK;
+                } else {
                     return FAIL;
                 }
             }
         });
 
+        return ctx;
     }
 
     private interface TestAction {
-        String run();
+        String run() throws Exception ;
     }
 
     protected void printTest(JspWriter out, String test, TestAction testAction) throws IOException {
         out.print("<tr><td>");
         out.print(test);
         out.print("</td><td>");
-        out.print(testAction.run());
+        try {
+            out.print(testAction.run());
+        } catch (Exception e) {
+            out.print(FAIL + "<BR>" + formatThrowable(e));
+        }
         out.print("</td></tr>");
     }
 
-    public String formatThrowable(Throwable err) throws Exception {
+    public String formatThrowable(Throwable err) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         err.printStackTrace(new PrintStream(baos));
         byte[] bytes = baos.toByteArray();
