@@ -33,225 +33,224 @@ java.util.Properties
 <%@ page import="java.io.PrintWriter" %>
 <html>
 <head>
-    <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>OpenEJB/Tomcat</title>
-    <link href="default.css" rel="stylesheet">
+    <meta charset="utf-8">
+    <title>TomEE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+        body {
+            padding-top: 60px;
+            padding-bottom: 40px;
+        }
+        .sidebar-nav {
+            padding: 9px 0;
+        }
+    </style>
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
 </head>
-<body marginwidth="0" marginheight="0" leftmargin="0" bottommargin="0" topmargin="0" vlink="#6763a9" link="#6763a9" bgcolor="#ffffff">
-<a name="top"></a>
-<table width="712" cellspacing="0" cellpadding="0" border="0">
-    <tr>
-        <td bgcolor="#5A5CB8" align="left" valign="top" width="7"><img height="9" width="1" border="0" src="images/dotTrans.gif"></td>
-        <td bgcolor="#5A5CB8" align="left" valign="top" width="40"><img border="0" height="6" width="40" src="images/dotTrans.gif"></td>
-        <td bgcolor="#5A5CB8" align="left" valign="top" height="2" width="530"><img border="0" height="6" width="530" src="images/top_2.gif"></td>
-        <td bgcolor="#E24717" align="left" valign="top" height="2" width="120"><img src="images/top_3.gif" width="120" height="6" border="0"></td>
-    </tr>
-    <tr>
-        <td bgcolor="#5A5CB8" align="left" valign="top" bgcolor="#ffffff" width="13"><img border="0" height="15" width="13" src="images/dotTrans.gif"></td>
-        <td align="left" valign="top" width="40"><img border="0" height="1" width="1" src="images/dotTrans.gif"></td>
-        <td align="left" valign="middle" width="530"><a href="http://openejb.apache.org"><span class="menuTopOff">OpenEJB</span></a><img border="0" height="2" width="20" src="images/dotTrans.gif"><a href="index.jsp"><span class="menuTopOff">Index</span></a><img border="0" height="2" width="20" src="images/dotTrans.gif"><a href="viewjndi.jsp"><span class="menuTopOff">JNDI</span></a><img border="0" height="2" width="20" src="images/dotTrans.gif"><a href="viewejb.jsp"><span class="menuTopOff">EJB</span></a><img border="0" height="2" width="20" src="images/dotTrans.gif"><a href="viewclass.jsp"><span class="menuTopOff">Class</span></a><img border="0" height="2" width="20" src="images/dotTrans.gif"><a href="invokeobj.jsp"><span class="menuTopOff">Invoke</span></a><img border="0" height="2" width="20" src="images/dotTrans.gif"></td>
-        <td align="left" valign="top" height="20" width="120"><img border="0" height="2" width="10" src="images/dotTrans.gif"></td>
-    </tr>
-    <tr>
-        <td align="left" valign="top" bgcolor="#a9a5de" width="7"><img border="0" height="3" width="7" src="images/line_sm.gif"></td>
-        <td align="left" valign="top" height="3" width="40"><img border="0" height="3" width="40" src="images/line_light.gif"></td>
-        <td align="left" valign="top" height="3" width="530"><img border="0" height="3" width="530" src="images/line_light.gif"></td>
-        <td align="left" valign="top" height="3" width="120"><img height="1" width="1" border="0" src="images/dotTrans.gif"></td>
-    </tr>
-    <tr>
-        <td align="left" valign="top" bgcolor="#a9a5de" width="7">&nbsp;</td>
-        <td align="left" valign="top" width="40">&nbsp;</td>
-        <td valign="top" width="530" rowspan="4">
-            <table width="530" cellspacing="0" cellpadding="0" border="0" rows="2" cols="1">
-                <tr>
-                    <td align="left" valign="top"><br>
-                        <img width="200" vspace="0" src="images/logo_ejb2.gif" hspace="0" height="55" border="0">
-                        <br>
-                        <img src="images/dotTrans.gif" hspace="0" height="7" border="0"><br>
-                            <span class="pageTitle">
-                            Testing an Enterprise JavaBean
-                            </span>
-                        <br>
-                        <img src="images/dotTrans.gif" hspace="0" height="1" border="0"></td>
-                </tr>
-            </table>
-            <p>
-            </p>
-            <FONT SIZE="2">
-                <%
+
+<body>
+
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container-fluid">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+            <a class="brand" href="http://openejb.apache.org">TomEE</a>
+            <div class="nav-collapse">
+                <ul class="nav">
+                    <li class="active"><a href="index.jsp">Index</a></li>
+                    <li><a href="viewjndi.jsp">JNDI</a></li>
+                    <li><a href="viewejb.jsp">EJB</a></li>
+                    <li><a href="viewclass.jsp">Class</a></li>
+                    <li><a href="invokeobj.jsp">Invoke</a></li>
+                </ul>
+
+            </div><!--/.nav-collapse -->
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            <h2>Testing an Enterprise JavaBean</h2>
+            <table class='table table-striped table-bordered table-condensed'><tbody>
+<%
     try{
         synchronized (this) {
             main(request, session, out);
         }
     } catch (Exception e){
-        out.println("FAIL");
-        //throw e;
+        out.println("<p>FAIL</p>");
         return;
     }
 %>
-<BR><BR>
-<BR>
-</FONT>
+            </tbody></table>
+        </div>
+    </div>
+    <hr>
 
-            </td>
-            <td align="left" valign="top" height="5" width="120">
+    <footer>
+        <p>Copyright &copy; 2012  The Apache Software Foundation, Licensed under the Apache License, Version 2.0. Apache and the Apache feather logo are trademarks of The Apache Software Foundation.</p>
+    </footer>
+</div>
 
 
-                &nbsp;</td>
-        </tr>
-    </table>
-    </body>
+<!-- Le javascript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="js/jquery/jquery-1.7.1.js"></script>
+<script src="js/bootstrap/bootstrap.js"></script>
+
+</body>
 </html>
 
 <%!
-    String tab = "&nbsp;&nbsp;&nbsp;&nbsp;";
-
     static String invLock = "lock";
     static int invCount;
 
-    HttpSession session;
-    HttpServletRequest request;
-    JspWriter out;
+    String OK = "<span style='color: green'><b>OK</b></span>";
+    String FAIL = "<span style='color: red'><b>FAIL</b></span>";
 
-    String OK = "<td><font size='2' color='green'><b>OK</b></font></td></tr>";
-    String FAIL = "<td><font size='2' color='red'><b>FAIL</b></font></td></tr>";
-    String HR = "<img border='0' height='3' width='340' src='images/line_light.gif'><br>";
-    String pepperImg = "<img src='images/pepper.gif' border='0'>";
+    private Object getEjbObj(InitialContext ctx, ClassLoader myLoader) {
+        try {
+            Class[] params = new Class[0];
+            Class homeInterface = Class.forName("javax.management.j2ee.ManagementHome", true, myLoader);
+            Method create = homeInterface.getDeclaredMethod("create", params);
+
+            Object ejbHome = ctx.lookup("MEJB");
+            Object ejbObject = create.invoke(ejbHome);
+
+            return ejbObject;
+
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
     /**
      * The main method of this JSP
      */
-    public void main(HttpServletRequest request, HttpSession session, JspWriter out) throws Exception {
-        this.request = request;
-        this.session = session;
-        this.out = out;
+    public void main(final HttpServletRequest request, final HttpSession session, final JspWriter out) throws Exception {
+        final ClassLoader myLoader = this.getClass().getClassLoader();
+        final Properties p = new Properties();
+        p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
+        p.put("openejb.loader", "embed");
 
-        InitialContext ctx = null;
-        ClassLoader myLoader = null;
-        try {
-            myLoader = this.getClass().getClassLoader();
-            Properties p = new Properties();
+        final InitialContext ctx = new InitialContext(p);
 
-            p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
-            p.put("openejb.loader", "embed");
+        // ---------------------------------------------------
+        //  Can I lookup a home interface from the testsuite?
+        // ---------------------------------------------------
 
-            ctx = new InitialContext(p);
-
-        } catch (Exception e) {
-            formatThrowable(e);
-        }
-
-        try {
-            out.print(HR);
-            out.print("<table width='350' cellspacing='4' cellpadding='4' border='0'>");
-
-            // ---------------------------------------------------
-            //  Can I lookup a home interface from the testsuite?
-            // ---------------------------------------------------
-
-            printTest("Looking up an ejb home  ");
-
-            Object ejbHome = null;
-            try {
-                ejbHome = ctx.lookup("MEJB");
-                if (ejbHome instanceof java.rmi.Remote) out.println(OK);
-            } catch (Exception e) {
-                e.printStackTrace(new PrintWriter(out));
-                out.println(FAIL);
-                return;
+        printTest(out, "Looking up an ejb home", new TestAction() {
+            @Override
+            public String run() throws Exception {
+                Object ejbHome = ctx.lookup("MEJB");
+                if (ejbHome instanceof java.rmi.Remote) {
+                    return OK;
+                } else {
+                    return FAIL;
+                }
             }
+        });
 
-            // ---------------------------------------------------
-            //  Is the home interface visible?
-            // ---------------------------------------------------
+        // ---------------------------------------------------
+        //  Is the home interface visible?
+        // ---------------------------------------------------
 
-            printTest("Checking for the home interface class definition ");
-
-            Class homeInterface;
-            try {
-                homeInterface = Class.forName("javax.management.j2ee.ManagementHome", true, myLoader);
-                out.println(OK);
-            } catch (Exception e) {
-                out.println(FAIL);
-                return;
+        printTest(out, "Checking for the home interface class definition", new TestAction() {
+            @Override
+            public String run() throws Exception {
+                Class.forName("javax.management.j2ee.ManagementHome", true, myLoader);
+                return OK;
             }
+        });
 
-            // ---------------------------------------------------
-            //  Can I invoke a create method on the ejb home?
-            // ---------------------------------------------------
+        // ---------------------------------------------------
+        //  Can I invoke a create method on the ejb home?
+        // ---------------------------------------------------
 
-            printTest("Invoking the create method on the ejb home  ");
-
-            Object ejbObject = null;
-            try {
-                Class[] params = new Class[0];
-                Method create = null;
-                create = homeInterface.getDeclaredMethod("create", params);
-                ejbObject = create.invoke(ejbHome);
-
-                if (ejbObject instanceof java.rmi.Remote) out.println(OK);
-
-            } catch (Exception e) {
-                out.println(FAIL);
-                return;
+        printTest(out, "Invoking the create method on the ejb home", new TestAction() {
+            @Override
+            public String run() throws Exception {
+                Object ejbObject = getEjbObj(ctx, myLoader);
+                if (java.rmi.Remote.class.isInstance(ejbObject)) {
+                    return OK;
+                } else {
+                    return FAIL;
+                }
             }
+        });
 
-            // ---------------------------------------------------
-            //  Is the remote interface visible?
-            // ---------------------------------------------------
+        // ---------------------------------------------------
+        //  Is the remote interface visible?
+        // ---------------------------------------------------
 
-            printTest("Checking for the remote interface class definition ");
-
-            Class remoteInterface;
-            try {
-                remoteInterface = Class.forName("javax.management.j2ee.Management", true, myLoader);
-                out.println(OK);
-            } catch (Exception e) {
-                out.println(FAIL);
-                return;
+        printTest(out, "Checking for the remote interface class definition", new TestAction() {
+            @Override
+            public String run() throws Exception {
+                Class.forName("javax.management.j2ee.Management", true, myLoader);
+                return OK;
             }
+        });
 
-            // ---------------------------------------------------
-            //  Can I invoke a business method on the ejb object?
-            // ---------------------------------------------------
+        // ---------------------------------------------------
+        //  Can I invoke a business method on the ejb object?
+        // ---------------------------------------------------
 
-            printTest("Invoking a business method on the ejb object ");
-
-            Object returnValue = null;
-            try {
+        printTest(out, "Invoking a business method on the ejb object", new TestAction() {
+            @Override
+            public String run() throws Exception {
+                Class remoteInterface = Class.forName("javax.management.j2ee.Management", true, myLoader);
                 Method businessMethod = remoteInterface.getDeclaredMethod("getMBeanCount");
-                returnValue = businessMethod.invoke(ejbObject);
+                Object ejbObject = getEjbObj(ctx, myLoader);
 
-                if (returnValue instanceof java.lang.Integer) out.println(OK);
+                Object returnValue = null;
+                if(ejbObject != null) {
+                    returnValue = businessMethod.invoke(ejbObject);
+                }
 
-            } catch (Exception e) {
-                out.println(FAIL);
-                return;
+                if (java.lang.Integer.class.isInstance(returnValue)) {
+                    return OK;
+                } else {
+                    return FAIL;
+                }
             }
-            out.print("</table>");
-            out.print(HR);
+        });
 
-//            out.println("<br>The Enterprise Bean returned the following message:<br><br>");
-
-//            out.println("<b>" + returnValue + "</b>");
-
-
-        } catch (Exception e) {
-            out.print(FAIL);
-            out.print("</table>");
-            out.print(HR);
-
-            out.print(e.getMessage());
-        }
     }
 
-    protected void printTest(String test) throws IOException {
-        out.print("<tr><td><font size='2'>");
+    private interface TestAction {
+        String run() throws Exception;
+    }
+
+    protected void printTest(JspWriter out, String test, TestAction testAction) throws IOException {
+        out.print("<tr><td>");
         out.print(test);
-        out.print("</font></td>");
+        out.print("</td><td>");
+        try {
+            out.print(testAction.run());
+        } catch (Exception e) {
+            out.print(FAIL + "<BR>" + formatThrowable(e));
+        }
+        out.print("</td></tr>");
     }
 
-    public String formatThrowable(Throwable err) throws Exception {
+    public String formatThrowable(Throwable err) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         err.printStackTrace(new PrintStream(baos));
         byte[] bytes = baos.toByteArray();
