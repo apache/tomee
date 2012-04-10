@@ -11,7 +11,7 @@
 
   <artifactId>apache-tomcat</artifactId>
   <name>OpenEJB :: TomEE :: Apache Tomcat</name>
-  <version>7.0.27-SNAPSHOT</version>
+  <version>7.0.27</version>
   <packaging>pom</packaging>
 
   <build>
