@@ -94,8 +94,8 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.apache.openejb</groupId>
-        <version>1.0</version>
+        <groupId>org.apache.openejb.maven</groupId>
+        <version>1.0-alpha-1</version>
         <artifactId>spi-helper-maven-plugin</artifactId>
         <executions>
           <execution>
@@ -115,8 +115,8 @@
             <version>2.2.0</version>
           </dependency>
           <dependency> <!-- to get the jee6 profile without configuration -->
-            <groupId>org.apache.openejb</groupId>
-            <version>1.0</version>
+            <groupId>org.apache.openejb.maven</groupId>
+            <version>1.0-alpha-1</version>
             <artifactId>spi-helper-jee6-profile</artifactId>
           </dependency>
         </dependencies>
