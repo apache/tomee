@@ -22,6 +22,13 @@ import java.io.ObjectOutput;
 
 public class EJBResponse implements ClusterableResponse {
 
+    /**
+     * 1. Initial
+     * 2. Append times.
+     */
+    public static final byte VERSION = 2;
+
+    private transient byte version = VERSION;
     private transient int responseCode = -1;
     private transient Object result;
     private transient ServerMetaData server;
@@ -29,12 +36,6 @@ public class EJBResponse implements ClusterableResponse {
     private transient final int timesLength = times.length;
 
     public EJBResponse() {
-
-    }
-
-    public EJBResponse(final int code, final Object obj) {
-        responseCode = code;
-        result = obj;
     }
 
     public int getResponseCode() {
@@ -45,7 +46,8 @@ public class EJBResponse implements ClusterableResponse {
         return result;
     }
 
-    public void setResponse(final int code, final Object result) {
+    public void setResponse(final byte version, final int code, final Object result) {
+        this.version = version;
         this.responseCode = code;
         this.result = result;
     }
@@ -113,34 +115,32 @@ public class EJBResponse implements ClusterableResponse {
     @Override
     public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
 
-        final byte version = in.readByte(); // future use
+        final byte version = in.readByte();
 
-        if (version == 1) {
+        final boolean readServer = in.readBoolean();
+        if (readServer) {
+            server = new ServerMetaData();
+            server.readExternal(in);
+        }
 
-            final boolean readServer = in.readBoolean();
-            if (readServer) {
-                server = new ServerMetaData();
-                server.readExternal(in);
+        responseCode = in.readByte();
+
+        result = in.readObject();
+
+        if (version == 2) {
+
+            final byte size = in.readByte();
+
+            for (int i = 0; (i < size && i < timesLength); i++) {
+                times[i] = in.readLong();
             }
-
-            responseCode = in.readByte();
-
-            result = in.readObject();
-
-//            final byte size = in.readByte();
-//
-//            for (int i = 0; (i < size && i < timesLength); i++) {
-//                times[i] = in.readLong();
-//            }
-        }else{
-            throw new IOException("Invalid EJBResponse version: " + version);
         }
     }
 
     @Override
     public void writeExternal(final ObjectOutput out) throws IOException {
-        // write out the version of the serialized data for future use
-        out.writeByte(1);
+
+        out.writeByte(this.version);
 
         if (null != server) {
             out.writeBoolean(true);
@@ -159,7 +159,7 @@ public class EJBResponse implements ClusterableResponse {
                     final Throwable throwable = (Throwable) result;
                     result = new ThrowableArtifact(throwable);
                 }
-				break;
+                break;
         }
 
         start(Time.SERIALIZATION);
@@ -167,11 +167,14 @@ public class EJBResponse implements ClusterableResponse {
         stop(Time.SERIALIZATION);
         stop(Time.TOTAL);
 
-//        out.writeByte(timesLength);
-//
-//        for (final long time : times) {
-//            out.writeLong(time);
-//        }
+        if (this.version == 2) {
+
+            out.writeByte(timesLength);
+
+            for (final long time : times) {
+                out.writeLong(time);
+            }
+        }
     }
 
     public static enum Time {
