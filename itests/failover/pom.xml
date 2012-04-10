@@ -26,7 +26,7 @@
   <groupId>org.apache.openejb.itests</groupId>
   <artifactId>failover</artifactId>
   <packaging>jar</packaging>
-  <name>OpenEJB :: iTests Beans</name>
+  <name>OpenEJB :: iTests Failover</name>
   <build>
     <plugins>
       <plugin>
