@@ -52,7 +52,7 @@ public class EJBRequest implements ClusterableRequest {
         ejbMetaData = null;
     }
 
-    public EJBRequest(RequestMethodCode requestMethod, EJBMetaDataImpl ejb, Method method, Object[] args, Object primaryKey) {
+    public EJBRequest(final RequestMethodCode requestMethod, final EJBMetaDataImpl ejb, final Method method, final Object[] args, final Object primaryKey) {
         body = new Body(ejb);
 
         this.ejbMetaData = ejb;
@@ -92,15 +92,15 @@ public class EJBRequest implements ClusterableRequest {
         return body.getPrimaryKey();
     }
 
-    public void setMethodInstance(Method methodInstance) {
+    public void setMethodInstance(final Method methodInstance) {
         body.setMethodInstance(methodInstance);
     }
 
-    public void setMethodParameters(Object[] methodParameters) {
+    public void setMethodParameters(final Object[] methodParameters) {
         body.setMethodParameters(methodParameters);
     }
 
-    public void setPrimaryKey(Object primaryKey) {
+    public void setPrimaryKey(final Object primaryKey) {
         body.setPrimaryKey(primaryKey);
     }
 
@@ -108,8 +108,12 @@ public class EJBRequest implements ClusterableRequest {
         return body;
     }
 
-    public void setBody(Body body) {
+    public void setBody(final Body body) {
         this.body = body;
+    }
+
+    public byte getVersion() {
+        return this.body.getVersion();
     }
 
     public static class Body implements java.io.Externalizable {
@@ -124,9 +128,17 @@ public class EJBRequest implements ClusterableRequest {
         private transient Object primaryKey;
 
         private transient String requestId;
+        private byte version = EJBResponse.VERSION;
 
-        public Body(EJBMetaDataImpl ejb) {
+        public Body(final EJBMetaDataImpl ejb) {
             this.ejb = ejb;
+        }
+
+        public Body() {
+        }
+
+        public byte getVersion() {
+            return version;
         }
 
         public Method getMethodInstance() {
@@ -153,14 +165,14 @@ public class EJBRequest implements ClusterableRequest {
             return methodParamTypes;
         }
 
-        public void setMethodInstance(Method methodInstance) {
+        public void setMethodInstance(final Method methodInstance) {
             if (methodInstance == null) {
                 throw new NullPointerException("methodInstance input parameter is null");
             }
             this.methodInstance = methodInstance;
             this.methodName = methodInstance.getName();
             this.methodParamTypes = methodInstance.getParameterTypes();
-            Class methodClass = methodInstance.getDeclaringClass();
+            final Class methodClass = methodInstance.getDeclaringClass();
 
             if (ejb.homeClass != null) {
                 if (methodClass.isAssignableFrom(ejb.homeClass)) {
@@ -176,7 +188,7 @@ public class EJBRequest implements ClusterableRequest {
                 }
             }
 
-            for (Class businessClass : ejb.businessClasses) {
+            for (final Class businessClass : ejb.businessClasses) {
                 if (methodClass.isAssignableFrom(businessClass)) {
                     this.interfaceClass = businessClass;
                     return;
@@ -184,11 +196,11 @@ public class EJBRequest implements ClusterableRequest {
             }
         }
 
-        public void setMethodParameters(Object[] methodParameters) {
+        public void setMethodParameters(final Object[] methodParameters) {
             this.methodParameters = methodParameters;
         }
 
-        public void setPrimaryKey(Object primaryKey) {
+        public void setPrimaryKey(final Object primaryKey) {
             this.primaryKey = primaryKey;
         }
 
@@ -196,12 +208,14 @@ public class EJBRequest implements ClusterableRequest {
             return requestId;
         }
 
-        public void setRequestId(String requestId) {
+        public void setRequestId(final String requestId) {
             this.requestId = requestId;
         }
 
-        public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-            byte version = in.readByte(); // future use
+        @Override
+        public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+
+            this.version = in.readByte();
 
             requestId = null;
             ClassNotFoundException result = null;
@@ -215,7 +229,7 @@ public class EJBRequest implements ClusterableRequest {
                 interfaceClass = (Class) in.readObject();
 //                methodClass = (Class) in.readObject();
             } catch (ClassNotFoundException cnfe) {
-                if (result == null) result = cnfe;
+                result = cnfe;
             }
             methodName = in.readUTF();
 
@@ -236,9 +250,10 @@ public class EJBRequest implements ClusterableRequest {
                 throw result;
         }
 
-        public void writeExternal(ObjectOutput out) throws IOException {
-            // write out the version of the serialized data for future use
-            out.writeByte(1);
+        @Override
+        public void writeExternal(final ObjectOutput out) throws IOException {
+
+            out.writeByte(this.version);
 
             out.writeObject(requestId);
 
@@ -251,53 +266,53 @@ public class EJBRequest implements ClusterableRequest {
             writeMethodParameters(out, methodParamTypes, methodParameters);
         }
 
-        protected void writeMethodParameters(ObjectOutput out, Class[] types, Object[] args) throws IOException {
+        protected void writeMethodParameters(final ObjectOutput out, final Class[] types, final Object[] args) throws IOException {
 
             out.writeByte(types.length);
 
             for (int i = 0; i < types.length; i++) {
-                Class type = types[i];
+                final Class type = types[i];
                 Object obj = args[i];
 
                 if (type.isPrimitive()) {
                     if (type == Byte.TYPE) {
                         out.write(B);
-                        byte bytevalue = ((Byte) obj).byteValue();
+                        final byte bytevalue = (Byte) obj;
                         out.writeByte(bytevalue);
 
                     } else if (type == Character.TYPE) {
                         out.write(C);
-                        char charvalue = ((Character) obj).charValue();
+                        final char charvalue = (Character) obj;
                         out.writeChar(charvalue);
 
                     } else if (type == Integer.TYPE) {
                         out.write(I);
-                        int intvalue = ((Integer) obj).intValue();
+                        final int intvalue = (Integer) obj;
                         out.writeInt(intvalue);
 
                     } else if (type == Boolean.TYPE) {
                         out.write(Z);
-                        boolean booleanvalue = ((Boolean) obj).booleanValue();
+                        final boolean booleanvalue = (Boolean) obj;
                         out.writeBoolean(booleanvalue);
 
                     } else if (type == Long.TYPE) {
                         out.write(J);
-                        long longvalue = ((Long) obj).longValue();
+                        final long longvalue = (Long) obj;
                         out.writeLong(longvalue);
 
                     } else if (type == Float.TYPE) {
                         out.write(F);
-                        float fvalue = ((Float) obj).floatValue();
+                        final float fvalue = (Float) obj;
                         out.writeFloat(fvalue);
 
                     } else if (type == Double.TYPE) {
                         out.write(D);
-                        double dvalue = ((Double) obj).doubleValue();
+                        final double dvalue = (Double) obj;
                         out.writeDouble(dvalue);
 
                     } else if (type == Short.TYPE) {
                         out.write(S);
-                        short shortvalue = ((Short) obj).shortValue();
+                        final short shortvalue = (Short) obj;
                         out.writeShort(shortvalue);
 
                     } else {
@@ -305,11 +320,11 @@ public class EJBRequest implements ClusterableRequest {
                     }
                 } else {
                     if (obj instanceof PortableRemoteObject && obj instanceof Remote) {
-                        Tie tie = javax.rmi.CORBA.Util.getTie((Remote) obj);
+                        final Tie tie = javax.rmi.CORBA.Util.getTie((Remote) obj);
                         if (tie == null) {
                             throw new IOException("Unable to serialize PortableRemoteObject; object has not been exported: " + obj);
                         }
-                        ORB orb = getORB();
+                        final ORB orb = getORB();
                         tie.orb(orb);
                         obj = PortableRemoteObject.toStub((Remote) obj);
                     }
@@ -328,12 +343,13 @@ public class EJBRequest implements ClusterableRequest {
          * arguments and return results.
          *
          * @return An ORB instance.
+         * @throws java.io.IOException On error
          */
         protected ORB getORB() throws IOException {
             // first ORB request?  Check our various sources 
             if (orb == null) {
                 try {
-                    Context initialContext = new InitialContext();
+                    final Context initialContext = new InitialContext();
                     orb = (ORB) initialContext.lookup("java:comp/ORB");
                 } catch (Throwable e) {
                     try {
@@ -347,8 +363,8 @@ public class EJBRequest implements ClusterableRequest {
             return orb;
         }
 
-        protected void readMethodParameters(ObjectInput in) throws IOException, ClassNotFoundException {
-            int length = in.read();
+        protected void readMethodParameters(final ObjectInput in) throws IOException, ClassNotFoundException {
+            final int length = in.read();
 
             if (length < 1) {
                 methodParamTypes = noArgsC;
@@ -356,62 +372,62 @@ public class EJBRequest implements ClusterableRequest {
                 return;
             }
 
-            Class[] types = new Class[length];
-            Object[] args = new Object[length];
+            final Class[] types = new Class[length];
+            final Object[] args = new Object[length];
 
             for (int i = 0; i < types.length; i++) {
                 Class clazz = null;
                 Object obj = null;
 
-                int type = in.read();
+                final int type = in.read();
 
                 switch (type) {
                     case B:
                         clazz = Byte.TYPE;
-                        obj = new Byte(in.readByte());
+                        obj = in.readByte();
                         break;
 
                     case C:
                         clazz = Character.TYPE;
-                        obj = new Character(in.readChar());
+                        obj = in.readChar();
                         break;
 
                     case I:
                         clazz = Integer.TYPE;
-                        obj = new Integer(in.readInt());
+                        obj = in.readInt();
                         break;
 
                     case Z:
                         clazz = Boolean.TYPE;
-                        obj = new Boolean(in.readBoolean());
+                        obj = in.readBoolean();
                         break;
 
                     case J:
                         clazz = Long.TYPE;
-                        obj = new Long(in.readLong());
+                        obj = in.readLong();
                         break;
 
                     case F:
                         clazz = Float.TYPE;
-                        obj = new Float(in.readFloat());
+                        obj = in.readFloat();
                         break;
 
                     case D:
                         clazz = Double.TYPE;
-                        obj = new Double(in.readDouble());
+                        obj = in.readDouble();
                         break;
 
                     case S:
                         clazz = Short.TYPE;
-                        obj = new Short(in.readShort());
+                        obj = in.readShort();
                         break;
 
                     case L:
                         clazz = (Class) in.readObject();
                         obj = in.readObject();
                         if (obj instanceof Stub) {
-                            Stub stub = (Stub) obj;
-                            ORB orb = getORB();
+                            final Stub stub = (Stub) obj;
+                            final ORB orb = getORB();
                             stub.connect(orb);
                         }
                         break;
@@ -439,6 +455,7 @@ public class EJBRequest implements ClusterableRequest {
         private static final int A = 9;
     }
 
+    @Override
     public RequestType getRequestType() {
         return RequestType.EJB_REQUEST;
     }
@@ -459,26 +476,28 @@ public class EJBRequest implements ClusterableRequest {
         return deploymentCode;
     }
 
-    public void setRequestMethod(RequestMethodCode requestMethod) {
+    public void setRequestMethod(final RequestMethodCode requestMethod) {
         this.requestMethod = requestMethod;
     }
 
-    public void setClientIdentity(Object clientIdentity) {
+    public void setClientIdentity(final Object clientIdentity) {
         this.clientIdentity = clientIdentity;
     }
 
-    public void setDeploymentId(String deploymentId) {
+    public void setDeploymentId(final String deploymentId) {
         this.deploymentId = deploymentId;
     }
 
-    public void setDeploymentCode(int deploymentCode) {
+    public void setDeploymentCode(final int deploymentCode) {
         this.deploymentCode = deploymentCode;
     }
 
-    public void setServerHash(int serverHash) {
+    @Override
+    public void setServerHash(final int serverHash) {
         this.serverHash = serverHash;
     }
 
+    @Override
     public int getServerHash() {
         return serverHash;
     }
@@ -511,14 +530,15 @@ public class EJBRequest implements ClusterableRequest {
     There will be one request instance for each handler
     */
 
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+    @Override
+    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
         ClassNotFoundException result = null;
 
         deploymentId = null;
         deploymentCode = -1;
         clientIdentity = null;
 
-        int code = in.readByte();
+        final int code = in.readByte();
         try {
             requestMethod = RequestMethodCode.valueOf(code);
         } catch (IllegalArgumentException iae) {
@@ -540,7 +560,8 @@ public class EJBRequest implements ClusterableRequest {
             throw result;
     }
 
-    public void writeExternal(ObjectOutput out) throws IOException {
+    @Override
+    public void writeExternal(final ObjectOutput out) throws IOException {
         out.writeByte(requestMethod.getCode());
 
         if (deploymentCode > 0) {

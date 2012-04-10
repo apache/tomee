@@ -17,6 +17,7 @@
 package org.apache.openejb.server.ejbd;
 
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.InterfaceType;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.client.EJBHomeProxyHandle;
@@ -69,6 +70,7 @@ class EjbRequestHandler {
         EJBObjectProxyHandle.resolver.set(SERVER_SIDE_RESOLVER);
 
         final EJBRequest req = new EJBRequest();
+        byte version = req.getVersion();
         final EJBResponse res = new EJBResponse();
 
         res.start(EJBResponse.Time.TOTAL);
@@ -76,7 +78,7 @@ class EjbRequestHandler {
         try {
             req.readExternal(in);
         } catch (Throwable t) {
-            replyWithFatalError(out, t, "Bad request");
+            replyWithFatalError(version, out, t, "Bad request");
             return;
         }
 
@@ -87,7 +89,7 @@ class EjbRequestHandler {
                 securityService.associate(clientIdentity);
             }
         } catch (Throwable t) {
-            replyWithFatalError(out, t, "Client identity is not valid: " + req);
+            replyWithFatalError(version, out, t, "Client identity is not valid - " + req);
             return;
         }
 
@@ -97,16 +99,10 @@ class EjbRequestHandler {
         try {
             di = this.daemon.getDeployment(req);
         } catch (RemoteException e) {
-            replyWithFatalError(out, e, "No such deployment");
+            replyWithFatalError(version, out, e, "No such deployment");
             return;
-            /*
-                logger.warn( req + "No such deployment: "+e.getMessage());
-                res.setResponse( EJB_SYS_EXCEPTION, e);
-                res.writeExternal( out );
-                return;
-            */
         } catch (Throwable t) {
-            replyWithFatalError(out, t, "Unkown error occured while retrieving deployment");
+            replyWithFatalError(version, out, t, "Unkown error occured while retrieving deployment");
             return;
         }
 
@@ -118,10 +114,11 @@ class EjbRequestHandler {
             res.start(EJBResponse.Time.DESERIALIZATION);
 
             req.getBody().readExternal(in);
+            version = req.getVersion();
 
             res.stop(EJBResponse.Time.DESERIALIZATION);
         } catch (Throwable t) {
-            replyWithFatalError(out, t, "Error caught during request processing");
+            replyWithFatalError(version, out, t, "Error caught during request processing");
             return;
         }
 
@@ -130,7 +127,7 @@ class EjbRequestHandler {
             call.setEJBRequest(req);
             call.setBeanContext(di);
         } catch (Throwable t) {
-            replyWithFatalError(out, t, "Unable to set the thread context for this request");
+            replyWithFatalError(version, out, t, "Unable to set the thread context for this request");
             return;
         }
 
@@ -209,18 +206,19 @@ class EjbRequestHandler {
                     doFUTURE_CANCEL_METHOD(req, res);
                     break;
             }
+
             res.stop(EJBResponse.Time.CONTAINER);
 
         } catch (org.apache.openejb.InvalidateReferenceException e) {
-            res.setResponse(ResponseCodes.EJB_SYS_EXCEPTION, new ThrowableArtifact(e.getRootCause()));
+            res.setResponse(version, ResponseCodes.EJB_SYS_EXCEPTION, new ThrowableArtifact(e.getRootCause()));
         } catch (org.apache.openejb.ApplicationException e) {
-            res.setResponse(ResponseCodes.EJB_APP_EXCEPTION, new ThrowableArtifact(e.getRootCause()));
+            res.setResponse(version, ResponseCodes.EJB_APP_EXCEPTION, new ThrowableArtifact(e.getRootCause()));
         } catch (org.apache.openejb.SystemException e) {
-            res.setResponse(ResponseCodes.EJB_ERROR, new ThrowableArtifact(e.getRootCause()));
+            res.setResponse(version, ResponseCodes.EJB_ERROR, new ThrowableArtifact(e.getRootCause()));
             logger.error(req + ": OpenEJB encountered an unknown system error in container: ", e);
         } catch (Throwable t) {
 
-            replyWithFatalError(out, t, "Unknown error in container");
+            replyWithFatalError(version, out, t, "Unknown error in container");
             respond = false;
 
         } finally {
@@ -266,7 +264,7 @@ class EjbRequestHandler {
             //TODO ?
         } else {
             invocationCancelTag.set((Boolean) req.getBody().getMethodParameters()[0]);
-            res.setResponse(ResponseCodes.EJB_OK, null);
+            res.setResponse(req.getVersion(), ResponseCodes.EJB_OK, null);
         }
     }
 
@@ -283,18 +281,26 @@ class EjbRequestHandler {
             }
             final RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
 
-            Object result = c.invoke(req.getDeploymentId(),
-                    req.getInterfaceClass(), req.getMethodInstance(),
+//            Object result = c.invoke(req.getDeploymentId(),
+//                    req.getInterfaceClass(), req.getMethodInstance(),
+//                    req.getMethodParameters(),
+//                    req.getPrimaryKey()
+//            );
+
+            Object result = c.invoke(
+                    req.getDeploymentId(),
+                    InterfaceType.EJB_OBJECT,
+                    req.getInterfaceClass(),
+                    req.getMethodInstance(),
                     req.getMethodParameters(),
-                    req.getPrimaryKey()
-            );
+                    req.getPrimaryKey());
 
             //Pass the internal value to the remote client, as AsyncResult is not serializable
             if (result != null && asynchronous) {
                 result = ((Future) result).get();
             }
 
-            res.setResponse(ResponseCodes.EJB_OK, result);
+            res.setResponse(req.getVersion(), ResponseCodes.EJB_OK, result);
         } finally {
             if (asynchronous) {
                 ThreadContext.removeAsynchronousCancelled();
@@ -308,13 +314,16 @@ class EjbRequestHandler {
         final CallContext call = CallContext.getCallContext();
         final RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
 
-        final Object result = c.invoke(req.getDeploymentId(),
-                req.getInterfaceClass(), req.getMethodInstance(),
+        final Object result = c.invoke(
+                req.getDeploymentId(),
+                InterfaceType.EJB_HOME,
+                req.getInterfaceClass(),
+                req.getMethodInstance(),
                 req.getMethodParameters(),
                 req.getPrimaryKey()
         );
 
-        res.setResponse(ResponseCodes.EJB_OK, result);
+        res.setResponse(req.getVersion(), ResponseCodes.EJB_OK, result);
     }
 
     protected void doEjbHome_CREATE(final EJBRequest req, final EJBResponse res) throws Exception {
@@ -322,20 +331,23 @@ class EjbRequestHandler {
         final CallContext call = CallContext.getCallContext();
         final RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
 
-        Object result = c.invoke(req.getDeploymentId(),
-                req.getInterfaceClass(), req.getMethodInstance(),
+        Object result = c.invoke(
+                req.getDeploymentId(),
+                InterfaceType.EJB_HOME,
+                req.getInterfaceClass(),
+                req.getMethodInstance(),
                 req.getMethodParameters(),
                 req.getPrimaryKey()
         );
 
         if (result instanceof ProxyInfo) {
             final ProxyInfo info = (ProxyInfo) result;
-            res.setResponse(ResponseCodes.EJB_OK, info.getPrimaryKey());
+            res.setResponse(req.getVersion(), ResponseCodes.EJB_OK, info.getPrimaryKey());
         } else {
 
             result = new RemoteException("The bean is not EJB compliant.  The bean should be created or and exception should be thrown.");
             logger.error(req + "The bean is not EJB compliant.  The bean should be created or and exception should be thrown.");
-            res.setResponse(ResponseCodes.EJB_SYS_EXCEPTION, new ThrowableArtifact((Throwable) result));
+            res.setResponse(req.getVersion(), ResponseCodes.EJB_SYS_EXCEPTION, new ThrowableArtifact((Throwable) result));
         }
     }
 
@@ -344,8 +356,11 @@ class EjbRequestHandler {
         final CallContext call = CallContext.getCallContext();
         final RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
 
-        Object result = c.invoke(req.getDeploymentId(),
-                req.getInterfaceClass(), req.getMethodInstance(),
+        Object result = c.invoke(
+                req.getDeploymentId(),
+                InterfaceType.EJB_HOME,
+                req.getInterfaceClass(),
+                req.getMethodInstance(),
                 req.getMethodParameters(),
                 req.getPrimaryKey()
         );
@@ -364,7 +379,7 @@ class EjbRequestHandler {
                 }
             }
 
-            res.setResponse(ResponseCodes.EJB_OK_FOUND_COLLECTION, primaryKeys);
+            res.setResponse(req.getVersion(), ResponseCodes.EJB_OK_FOUND_COLLECTION, primaryKeys);
 
         } else if (result instanceof java.util.Enumeration) {
 
@@ -379,14 +394,14 @@ class EjbRequestHandler {
                 }
             }
 
-            res.setResponse(ResponseCodes.EJB_OK_FOUND_ENUMERATION, listOfPKs.toArray(new Object[listOfPKs.size()]));
+            res.setResponse(req.getVersion(), ResponseCodes.EJB_OK_FOUND_ENUMERATION, listOfPKs.toArray(new Object[listOfPKs.size()]));
             /* Single instance found */
         } else if (result instanceof ProxyInfo) {
             final ProxyInfo proxyInfo = ((ProxyInfo) result);
             result = proxyInfo.getPrimaryKey();
-            res.setResponse(ResponseCodes.EJB_OK_FOUND, result);
+            res.setResponse(req.getVersion(), ResponseCodes.EJB_OK_FOUND, result);
         } else if (result == null) {
-            res.setResponse(ResponseCodes.EJB_OK_FOUND, null);
+            res.setResponse(req.getVersion(), ResponseCodes.EJB_OK_FOUND, null);
         } else {
 
             final String message = "The bean is not EJB compliant. " +
@@ -395,7 +410,7 @@ class EjbRequestHandler {
                     "but [" + result.getClass().getName() + "]";
             result = new RemoteException(message);
             logger.error(req + " " + message);
-            res.setResponse(ResponseCodes.EJB_SYS_EXCEPTION, result);
+            res.setResponse(req.getVersion(), ResponseCodes.EJB_SYS_EXCEPTION, result);
         }
     }
 
@@ -420,13 +435,16 @@ class EjbRequestHandler {
         final CallContext call = CallContext.getCallContext();
         final RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
 
-        final Object result = c.invoke(req.getDeploymentId(),
-                req.getInterfaceClass(), req.getMethodInstance(),
+        c.invoke(
+                req.getDeploymentId(),
+                InterfaceType.EJB_OBJECT,
+                req.getInterfaceClass(),
+                req.getMethodInstance(),
                 req.getMethodParameters(),
                 req.getPrimaryKey()
         );
 
-        res.setResponse(ResponseCodes.EJB_OK, null);
+        res.setResponse(req.getVersion(), ResponseCodes.EJB_OK, null);
     }
 
     protected void doEjbHome_GET_EJB_META_DATA(final EJBRequest req, final EJBResponse res) throws Exception {
@@ -442,13 +460,16 @@ class EjbRequestHandler {
         final CallContext call = CallContext.getCallContext();
         final RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
 
-        final Object result = c.invoke(req.getDeploymentId(),
-                req.getInterfaceClass(), req.getMethodInstance(),
+        c.invoke(
+                req.getDeploymentId(),
+                InterfaceType.EJB_HOME,
+                req.getInterfaceClass(),
+                req.getMethodInstance(),
                 req.getMethodParameters(),
                 req.getPrimaryKey()
         );
 
-        res.setResponse(ResponseCodes.EJB_OK, null);
+        res.setResponse(req.getVersion(), ResponseCodes.EJB_OK, null);
     }
 
     protected void doEjbHome_REMOVE_BY_PKEY(final EJBRequest req, final EJBResponse res) throws Exception {
@@ -456,20 +477,23 @@ class EjbRequestHandler {
         final CallContext call = CallContext.getCallContext();
         final RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
 
-        final Object result = c.invoke(req.getDeploymentId(),
-                req.getInterfaceClass(), req.getMethodInstance(),
+        c.invoke(
+                req.getDeploymentId(),
+                InterfaceType.EJB_HOME,
+                req.getInterfaceClass(),
+                req.getMethodInstance(),
                 req.getMethodParameters(),
                 req.getPrimaryKey()
         );
 
-        res.setResponse(ResponseCodes.EJB_OK, null);
+        res.setResponse(req.getVersion(), ResponseCodes.EJB_OK, null);
     }
 
     protected void checkMethodAuthorization(final EJBRequest req, final EJBResponse res) throws Exception {
-        res.setResponse(ResponseCodes.EJB_OK, null);
+        res.setResponse(req.getVersion(), ResponseCodes.EJB_OK, null);
     }
 
-    private void replyWithFatalError(final ObjectOutputStream out, final Throwable error, final String message) {
+    private void replyWithFatalError(final byte version, final ObjectOutputStream out, final Throwable error, final String message) {
 
         //This is fatal for the client, but not the server.
         if (logger.isWarningEnabled()) {
@@ -480,7 +504,7 @@ class EjbRequestHandler {
 
         final RemoteException re = new RemoteException(message, error);
         final EJBResponse res = new EJBResponse();
-        res.setResponse(ResponseCodes.EJB_ERROR, new ThrowableArtifact(re));
+        res.setResponse(version, ResponseCodes.EJB_ERROR, new ThrowableArtifact(re));
 
         try {
             res.writeExternal(out);
