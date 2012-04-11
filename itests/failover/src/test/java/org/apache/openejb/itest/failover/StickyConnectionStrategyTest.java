@@ -69,7 +69,7 @@ public class StickyConnectionStrategyTest {
     public void test() throws Exception {
 
         // To run in an IDE, uncomment and update this line
-        System.setProperty("version", "4.0.0-beta-3-SNAPSHOT");
+        //System.setProperty("version", "4.0.0-beta-3-SNAPSHOT");
 
         final File zip = Repository.getArtifact("org.apache.openejb", "openejb-standalone", "zip");
         final File app = Repository.getArtifact("org.apache.openejb.itests", "failover-ejb", "jar");

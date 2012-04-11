@@ -70,7 +70,7 @@ public class ReconnectDelayCaseInsensitiveTest {
     public void test() throws Exception {
 
         // To run in an IDE, uncomment and update this line
-        System.setProperty("version", "4.0.0-beta-3-SNAPSHOT");
+        //System.setProperty("version", "4.0.0-beta-3-SNAPSHOT");
 
         Duration reconnectDelay = new Duration("1 second");
 
