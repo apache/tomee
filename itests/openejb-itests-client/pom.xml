@@ -28,7 +28,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-itests-client</artifactId>
   <packaging>jar</packaging>
-  <name>OpenEJB :: iTests Client</name>
+  <name>OpenEJB :: iTests :: Client</name>
   <build>
     <resources>
       <resource>

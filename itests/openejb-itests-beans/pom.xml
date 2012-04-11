@@ -25,7 +25,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-itests-beans</artifactId>
   <packaging>jar</packaging>
-  <name>OpenEJB :: iTests Beans</name>
+  <name>OpenEJB :: iTests :: Beans</name>
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>
