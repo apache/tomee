@@ -18,8 +18,8 @@
 version="${openejb.version}"
 port=8080
 
-# DEBUG=
-DEBUG="-Xnoagent -Djava.compiler=NONE -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"
+DEBUG=
+#DEBUG="-Xnoagent -Djava.compiler=NONE -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"
 
 # get java
 cygwin=false
