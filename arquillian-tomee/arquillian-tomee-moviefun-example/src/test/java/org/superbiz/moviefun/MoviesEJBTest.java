@@ -16,73 +16,68 @@
  */
 package org.superbiz.moviefun;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import java.util.List;
-
 import javax.ejb.EJB;
-
+import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.impl.base.asset.ClassLoaderAsset;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.superbiz.moviefun.setup.ExampleDataProducer;
 import org.superbiz.moviefun.setup.Examples;
 import org.superbiz.moviefun.setup.Setup;
 
-import javax.inject.Inject;
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(Arquillian.class)
 public class MoviesEJBTest {
-	@Deployment public static WebArchive createDeployment() {
-		return ShrinkWrap.create(WebArchive.class, "test.war")
+    @Deployment public static WebArchive createDeployment() {
+        return ShrinkWrap.create(WebArchive.class, "test.war")
                 .addClasses(Movie.class, MoviesImpl.class, Movies.class, MoviesRemote.class, MoviesEJBTest.class, Setup.class, Examples.class, ExampleDataProducer.class)
                 .addAsResource(new ClassLoaderAsset("META-INF/ejb-jar.xml"), "META-INF/ejb-jar.xml")
                 .addAsResource(new ClassLoaderAsset("META-INF/persistence.xml"), "META-INF/persistence.xml")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
-	}
+    }
 
-	@EJB private Movies movies;
-	@Inject private Setup setup;
+    @EJB private Movies movies;
+    @Inject private Setup setup;
 
     @Before @After public void clean() {
         movies.clean();
     }
 
-	@Test public void shouldBeAbleToAddAMovie() throws Exception {
-		assertNotNull("Verify that the ejb was injected", movies);
-		assertNotNull("Verify that the setup CDI bean was injected", setup);
-		
-		setup.setup();
-		
-		assertEquals(7, movies.getMovies().size());
+    @Test public void shouldBeAbleToAddAMovie() throws Exception {
+        assertNotNull("Verify that the ejb was injected", movies);
+        assertNotNull("Verify that the setup CDI bean was injected", setup);
 
-		Movie movie = new Movie();
-		movie.setDirector("Michael Bay");
-		movie.setGenre("Action");
-		movie.setRating(9);
-		movie.setTitle("Bad Boys");
-		movie.setYear(1995);
-		movies.addMovie(movie);
-		
-		assertEquals(8, movies.count());
-		List<Movie> moviesFound = movies.findByTitle("Bad Boys");
-		
-		assertEquals(1, moviesFound.size());
-		assertEquals("Michael Bay", moviesFound.get(0).getDirector());
-		assertEquals("Action", moviesFound.get(0).getGenre());
-		assertEquals(9, moviesFound.get(0).getRating());
-		assertEquals("Bad Boys", moviesFound.get(0).getTitle());
-		assertEquals(1995, moviesFound.get(0).getYear());
-	}
+        setup.setup();
+
+        assertEquals(7, movies.getMovies().size());
+
+        Movie movie = new Movie();
+        movie.setDirector("Michael Bay");
+        movie.setGenre("Action");
+        movie.setRating(9);
+        movie.setTitle("Bad Boys");
+        movie.setYear(1995);
+        movies.addMovie(movie);
+
+        assertEquals(8, movies.count());
+        List<Movie> moviesFound = movies.findByTitle("Bad Boys");
+
+        assertEquals(1, moviesFound.size());
+        assertEquals("Michael Bay", moviesFound.get(0).getDirector());
+        assertEquals("Action", moviesFound.get(0).getGenre());
+        assertEquals(9, moviesFound.get(0).getRating());
+        assertEquals("Bad Boys", moviesFound.get(0).getTitle());
+        assertEquals(1995, moviesFound.get(0).getYear());
+    }
 
 }
