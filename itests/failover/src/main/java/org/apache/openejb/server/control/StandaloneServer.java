@@ -33,15 +33,12 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import static org.apache.openejb.loader.Files.dir;
-import static org.apache.openejb.loader.Files.exists;
-import static org.apache.openejb.loader.Files.file;
-import static org.apache.openejb.loader.Files.readable;
-import static org.apache.openejb.loader.Files.select;
+import static org.apache.openejb.loader.Files.*;
 
 /**
  * @version $Rev$ $Date$
  */
+@SuppressWarnings({"UnusedDeclaration"})
 public class StandaloneServer {
 
     private final File home;
@@ -73,7 +70,9 @@ public class StandaloneServer {
 
         final File javaHome = readable(dir(exists(new File(System.getProperty("java.home")))));
 
-        java = readable(file(Files.path(javaHome, "bin", "java")));
+        final boolean isWindows = System.getProperty("os.name").toLowerCase().contains("win");
+
+        java = readable(file(Files.path(javaHome, "bin", isWindows ? "java.exe" : "java")));
 
         jvmOpts.add("-XX:+HeapDumpOnOutOfMemoryError");
         jvmOpts.add("-javaagent:" + javaagentJar.getAbsolutePath());
@@ -84,7 +83,8 @@ public class StandaloneServer {
      * with this server.  Does not affect the running server
      * and none of these objects are in any way sent or part
      * of the server itself.
-     * @return
+     *
+     * @return Context
      */
     public Context getContext() {
         return context;
@@ -381,6 +381,7 @@ public class StandaloneServer {
                             server.process.destroy();
                         }
                     } catch (Throwable e) {
+                        //Ignore
                     }
                 }
             }

@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.test;
 
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
 
@@ -29,7 +30,8 @@ public class TomcatRemoteTestServer implements TestServer {
 //
 //    private boolean serverHasAlreadyBeenStarted = true;
 
-    public void init(Properties props) {
+    @Override
+    public void init(final Properties props) {
         properties = props;
         serverUri = System.getProperty("openejb.server.uri", "http://127.0.0.1:8080/tomee/ejb");
         if (!serverUri.startsWith("http:")) {
@@ -51,6 +53,7 @@ public class TomcatRemoteTestServer implements TestServer {
 //        }
     }
 
+    @Override
     public void start() {
         if (connect()) {
             return;
@@ -71,15 +74,13 @@ public class TomcatRemoteTestServer implements TestServer {
 //            e.printStackTrace();
 //            throw new RuntimeException("Cannot start the server: " + e.getClass().getName() + ": " + e.getMessage(), e);
 //        }
-        connect(10);
-        // Wait a wee bit longer for good measure
-        try {
-            Thread.sleep(5000);
-        } catch (Exception e) {
-            e.printStackTrace();
+
+        if (!connect(20)) {
+            throw new RuntimeException("Failed to connect");
         }
     }
 
+    @Override
     public void stop() {
 //        if (!serverHasAlreadyBeenStarted) {
 //            try {
@@ -115,6 +116,7 @@ public class TomcatRemoteTestServer implements TestServer {
 //        serverErr.start();
 //    }
 
+    @Override
     public Properties getContextEnvironment() {
         return (Properties) properties.clone();
     }
@@ -142,9 +144,10 @@ public class TomcatRemoteTestServer implements TestServer {
 
     private boolean connect(int tries) {
         //System.out.println("CONNECT "+ tries);
+        InputStream is = null;
         try {
-            URL url = new URL(serverUri);
-            url.openStream();
+            final URL url = new URL(serverUri);
+            is = url.openStream();
         } catch (Exception e) {
             tries--;
             //System.out.println(e.getMessage());
@@ -152,11 +155,19 @@ public class TomcatRemoteTestServer implements TestServer {
                 return false;
             } else {
                 try {
-                    Thread.sleep(5000);
+                    Thread.sleep(2000);
                 } catch (Exception e2) {
                     e.printStackTrace();
                 }
                 return connect(tries);
+            }
+        } finally {
+            if (null != is) {
+                try {
+                    is.close();
+                } catch (Throwable e) {
+                    //Ignore
+                }
             }
         }
 

@@ -19,19 +19,11 @@ package org.apache.openejb.server;
 import org.apache.openejb.util.Connect;
 
 import java.io.File;
-
 import java.io.InputStream;
-
 import java.io.OutputStream;
-
 import java.lang.reflect.Method;
-
 import java.util.ArrayList;
-
-import java.util.Iterator;
-
 import java.util.Map;
-
 import java.util.Set;
 
 public class Start {
@@ -66,11 +58,14 @@ public class Start {
 
         try {
 
-            ArrayList cmd = new ArrayList();
+            ArrayList<String> cmd = new ArrayList<String>();
 
             String s = java.io.File.separator;
 
-            String java = System.getProperty("java.home") + s + "bin" + s + "java";
+            //Not really required here for exec, but as a reminder that we run on all platforms
+            final boolean isWindows = System.getProperty("os.name").toLowerCase().contains("win");
+
+            String java = System.getProperty("java.home") + s + "bin" + s + (isWindows ? "java.exe" : "java");
 
             cmd.add(java);
 
@@ -82,7 +77,7 @@ public class Start {
 
             cmd.add("org.apache.openejb.server.Main");
 
-            String[] command = (String[]) cmd.toArray(new String[0]);
+            String[] command = cmd.toArray(new String[cmd.size()]);
 
             Runtime runtime = Runtime.getRuntime();
 
@@ -112,13 +107,13 @@ public class Start {
 
     }
 
-    private void addSystemProperties(ArrayList cmd) {
+    private void addSystemProperties(ArrayList<String> cmd) {
 
         Set set = System.getProperties().entrySet();
 
-        for (Iterator iter = set.iterator(); iter.hasNext();) {
+        for (final Object aSet : set) {
 
-            Map.Entry entry = (Map.Entry) iter.next();
+            Map.Entry entry = (Map.Entry) aSet;
 
             String key = (String) entry.getKey();
 
@@ -190,6 +185,7 @@ public class Start {
 
         }
 
+        @Override
         public void run() {
 
             try {
