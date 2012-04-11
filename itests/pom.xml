@@ -36,8 +36,6 @@
     <module>openejb-itests-interceptor-beans</module>
     <module>openejb-itests-app</module>
     <module>openejb-itests-web</module>
-    <module>failover</module>
-    <module>failover-ejb</module>
   </modules>
 </project>
 
