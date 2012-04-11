@@ -45,6 +45,11 @@
     </servlet>
 
     <servlet>
+        <servlet-name>WsConsole</servlet-name>
+        <servlet-class>org.apache.tomee.loader.servlet.ConsoleServlet</servlet-class>
+    </servlet>
+
+    <servlet>
         <servlet-name>WsJndi</servlet-name>
         <servlet-class>org.apache.tomee.loader.servlet.JndiServlet</servlet-class>
     </servlet>
@@ -62,6 +67,11 @@
     <servlet-mapping>
         <servlet-name>InstallerServlet</servlet-name>
         <url-pattern>/installer</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>WsConsole</servlet-name>
+        <url-pattern>/ws/console/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
