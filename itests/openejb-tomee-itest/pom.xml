@@ -16,34 +16,46 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <artifactId>itests</artifactId>
     <groupId>org.apache.openejb</groupId>
     <version>4.0.0-beta-3-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>openejb-itests-servlets</artifactId>
-  <packaging>jar</packaging>
-  <name>OpenEJB :: iTests :: Servlets</name>
+
+  <artifactId>openejb-tomee-itest</artifactId>
+  <name>OpenEJB :: iTests :: TomEE Helper</name>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>javaee-api</artifactId>
-      <scope>provided</scope>
+      <artifactId>openejb-core</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-itests-beans</artifactId>
+      <artifactId>openejb-provisionning</artifactId>
       <version>${project.version}</version>
-      <type>ejb</type>
-      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>arquillian-tomee-common</artifactId>
+      <version>1.0.0-beta-3-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>compile</scope>
     </dependency>
+    <dependency> <!-- just to avoid bad dependency relationship in our build -->
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>apache-tomee</artifactId>
+      <version>1.0.0-beta-3-SNAPSHOT</version>
+      <type>zip</type>
+      <classifier>webprofile</classifier>
+    </dependency>
   </dependencies>
 </project>
-

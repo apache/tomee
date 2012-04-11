@@ -29,7 +29,7 @@
 
   <artifactId>openejb-itests-interceptor-beans</artifactId>
   <packaging>jar</packaging>
-  <name>OpenEJB :: iTests Interceptor Beans</name>
+  <name>OpenEJB :: iTests :: Interceptor Beans</name>
 
   <dependencies>
     <dependency>
