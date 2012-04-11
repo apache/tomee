@@ -17,9 +17,6 @@
 package org.apache.openejb.test;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -38,7 +35,8 @@ public class RemoteTestServer implements org.apache.openejb.test.TestServer {
 
     private Properties properties;
 
-    public void init(Properties props) {
+    @Override
+    public void init(final Properties props) {
         properties = props;
         if (props.contains("java.naming.security.principal")) throw new IllegalArgumentException("Not allowed 'java.naming.security.principal'");
 //        props.put("test.server.class","org.apache.openejb.test.RemoteTestServer");
@@ -48,64 +46,60 @@ public class RemoteTestServer implements org.apache.openejb.test.TestServer {
 //        props.put("java.naming.security.credentials", "testpassword");
     }
 
-    public Properties getProperties() {
-        return properties;
-    }
-
-    public void destroy() {
-    }
-
+    @Override
     public void start() {
         if (!connect()) {
             try {
                 System.out.println("[] START SERVER");
 
-                String openejbHome = System.getProperty("openejb.home");
+                final String openejbHome = System.getProperty("openejb.home");
 
-                File home = new File(openejbHome);
-                System.out.println("OPENEJB_HOME = "+home.getAbsolutePath());
-                String systemInfo = "Java " + System.getProperty("java.version") + "; " + System.getProperty("os.name") + "/" + System.getProperty("os.version");
-                System.out.println("SYSTEM_INFO  = "+systemInfo);
+                final File home = new File(openejbHome);
+                System.out.println("OPENEJB_HOME = " + home.getAbsolutePath());
+                final String systemInfo = "Java " + System.getProperty("java.version") + "; " + System.getProperty("os.name") + "/" + System.getProperty("os.version");
+                System.out.println("SYSTEM_INFO  = " + systemInfo);
 
                 serverHasAlreadyBeenStarted = false;
-                String version = null;
 
                 File openejbJar = null;
-                File lib = new File(home, "lib");
-                File[] files = lib.listFiles();
+                final File lib = new File(home, "lib");
+                final File[] files = lib.listFiles();
                 for (int i = 0; i < files.length && openejbJar == null; i++) {
-                    File file = files[i];
-                    if (file.getName().startsWith("openejb-core") && file.getName().endsWith("jar")){
+                    final File file = files[i];
+                    if (file.getName().startsWith("openejb-core") && file.getName().endsWith("jar")) {
                         openejbJar = file;
                     }
                 }
 
-                if (openejbJar == null){
-                    throw new IllegalStateException("Cannot find the openejb-core jar in "+lib.getAbsolutePath());
+                if (openejbJar == null) {
+                    throw new IllegalStateException("Cannot find the openejb-core jar in " + lib.getAbsolutePath());
                 }
-                
+
                 //File openejbJar = new File(lib, "openejb-core-" + version + ".jar");
+
+                //Not really required here for exec, but as a reminder that we run on all platforms
+                final boolean isWindows = System.getProperty("os.name").toLowerCase().contains("win");
 
                 //DMB: If you don't use an array, you get problems with jar paths containing spaces
                 // the command won't parse correctly
-                String[] args = {"java", "-jar", openejbJar.getAbsolutePath(), "start"};
-                Process server = Runtime.getRuntime().exec(args);
+                final String[] args = {(isWindows ? "java.exe" : "java"), "-jar", openejbJar.getAbsolutePath(), "start"};
+                final Process server = Runtime.getRuntime().exec(args);
 
                 // Pipe the processes STDOUT to ours
-                InputStream out = server.getInputStream();
-                Thread serverOut = new Thread(new Pipe(out, System.out));
+                final InputStream out = server.getInputStream();
+                final Thread serverOut = new Thread(new Pipe(out, System.out));
 
                 serverOut.setDaemon(true);
                 serverOut.start();
 
                 // Pipe the processes STDERR to ours
-                InputStream err = server.getErrorStream();
-                Thread serverErr = new Thread(new Pipe(err, System.err));
+                final InputStream err = server.getErrorStream();
+                final Thread serverErr = new Thread(new Pipe(err, System.err));
 
                 serverErr.setDaemon(true);
                 serverErr.start();
             } catch (Exception e) {
-                throw (RuntimeException)new RuntimeException("Cannot start the server.").initCause(e);
+                throw (RuntimeException) new RuntimeException("Cannot start the server.").initCause(e);
             }
             connect(10);
         } else {
@@ -113,75 +107,14 @@ public class RemoteTestServer implements org.apache.openejb.test.TestServer {
         }
     }
 
-    private void oldStart() throws IOException, FileNotFoundException {
-        String s = java.io.File.separator;
-        String java = System.getProperty("java.home") + s + "bin" + s + "java";
-        String classpath = System.getProperty("java.class.path");
-        String openejbHome = System.getProperty("openejb.home");
-
-
-        String[] cmd = new String[ 5 ];
-        cmd[0] = java;
-        cmd[1] = "-classpath";
-        cmd[2] = classpath;
-        cmd[3] = "-Dopenejb.home=" + openejbHome;
-        cmd[4] = "org.apache.openejb.server.Main";
-        for (int i = 0; i < cmd.length; i++) {
-            //System.out.println("[] "+cmd[i]);
-        }
-
-        Process remoteServerProcess = Runtime.getRuntime().exec(cmd);
-
-        // it seems as if OpenEJB wouldn't start up till the output stream was read
-        final java.io.InputStream is = remoteServerProcess.getInputStream();
-        final java.io.OutputStream out = new FileOutputStream("logs/testsuite.out");
-        Thread serverOut = new Thread(new Runnable() {
-            public void run() {
-                try {
-                    //while ( is.read() != -1 );
-                    int i = is.read();
-                    out.write(i);
-                    while (i != -1) {
-                        //System.out.write( i );
-                        i = is.read();
-                        out.write(i);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        serverOut.setDaemon(true);
-        serverOut.start();
-
-        final java.io.InputStream is2 = remoteServerProcess.getErrorStream();
-        Thread serverErr = new Thread(new Runnable() {
-            public void run() {
-                try {
-                    //while ( is.read() != -1 );
-                    int i = is2.read();
-                    out.write(i);
-                    while (i != -1) {
-                        //System.out.write( i );
-                        i = is2.read();
-                        out.write(i);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        serverErr.setDaemon(true);
-        serverErr.start();
-    }
-
+    @Override
     public void stop() {
         if (!serverHasAlreadyBeenStarted) {
             try {
                 System.out.println("[] STOP SERVER");
 
-                Socket socket = new Socket("localhost", 4200);
-                OutputStream out = socket.getOutputStream();
+                final Socket socket = new Socket("localhost", 4200);
+                final OutputStream out = socket.getOutputStream();
 
                 out.write("Stop".getBytes());
 
@@ -191,6 +124,7 @@ public class RemoteTestServer implements org.apache.openejb.test.TestServer {
         }
     }
 
+    @Override
     public Properties getContextEnvironment() {
         return (Properties) properties.clone();
     }
@@ -201,9 +135,10 @@ public class RemoteTestServer implements org.apache.openejb.test.TestServer {
 
     private boolean connect(int tries) {
         //System.out.println("CONNECT "+ tries);
+        OutputStream out = null;
         try {
-            Socket socket = new Socket("localhost", 4200);
-            OutputStream out = socket.getOutputStream();
+            final Socket socket = new Socket("localhost", 4200);
+            out = socket.getOutputStream();
         } catch (Exception e) {
             //System.out.println(e.getMessage());
             if (tries < 2) {
@@ -216,6 +151,14 @@ public class RemoteTestServer implements org.apache.openejb.test.TestServer {
                 }
                 return connect(--tries);
             }
+        } finally {
+            if (null != out) {
+                try {
+                    out.close();
+                } catch (Throwable e) {
+                    //Ignore
+                }
+            }
         }
 
         return true;
@@ -225,12 +168,13 @@ public class RemoteTestServer implements org.apache.openejb.test.TestServer {
         private final InputStream is;
         private final OutputStream out;
 
-        private Pipe(InputStream is, OutputStream out) {
+        private Pipe(final InputStream is, final OutputStream out) {
             super();
             this.is = is;
             this.out = out;
         }
 
+        @Override
         public void run() {
             try {
                 int i = is.read();

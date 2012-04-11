@@ -23,8 +23,10 @@ import java.io.ObjectOutput;
 
 public interface Response extends Externalizable {
 
+    @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException;
 
+    @Override
     public void writeExternal(ObjectOutput out) throws IOException;
 
 }

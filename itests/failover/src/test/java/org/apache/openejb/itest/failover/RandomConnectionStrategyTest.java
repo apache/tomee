@@ -102,7 +102,7 @@ public class RandomConnectionStrategyTest {
         Client.addEventObserver(services);
 
         final Map<String, StandaloneServer> servers = new HashMap<String, StandaloneServer>();
-        for (String name : new String[]{"red", "green", "blue"}) {
+        for (final String name : new String[]{"red", "green", "blue"}) {
 
             final File home = new File(dir, name);
             Files.mkdir(home);
@@ -154,7 +154,7 @@ public class RandomConnectionStrategyTest {
         final InitialContext context = new InitialContext(environment);
         final Calculator bean = (Calculator) context.lookup("CalculatorBeanRemote");
 
-        for (Map.Entry<String, StandaloneServer> entry : servers.entrySet()) {
+        for (final Map.Entry<String, StandaloneServer> entry : servers.entrySet()) {
             final String name = entry.getKey();
             final StandaloneServer server = entry.getValue();
             final URI serverURI = server.getContext().get(URI.class);
@@ -183,7 +183,7 @@ public class RandomConnectionStrategyTest {
         }
 
 
-        for (Map.Entry<String, StandaloneServer> entry : servers.entrySet()) {
+        for (final Map.Entry<String, StandaloneServer> entry : servers.entrySet()) {
             final String name = entry.getKey();
             final StandaloneServer server = entry.getValue();
             final URI serverURI = server.getContext().get(URI.class);
@@ -201,28 +201,28 @@ public class RandomConnectionStrategyTest {
         }
     }
 
-    private void assertBalance(Calculator bean, int size) {
+    private void assertBalance(final Calculator bean, final int size) {
         final int expectedInvocations = 1000;
         final double percent = 0.10;
         final int totalInvocations = size * expectedInvocations;
 
 
         // Verify the work reached all servers
-        Set<Map.Entry<String, AtomicInteger>> entries = invoke(bean, totalInvocations).entrySet();
+        final Set<Map.Entry<String, AtomicInteger>> entries = invoke(bean, totalInvocations).entrySet();
 
         Assert.assertEquals(size, entries.size());
 
         // And each server got a minimum of %10 percent of the traffic
-        for (Map.Entry<String, AtomicInteger> entry : entries) {
+        for (final Map.Entry<String, AtomicInteger> entry : entries) {
 
             final int actualInvocations = entry.getValue().get();
 
-            Assert.assertTrue(String.format("%s out of %s is too low", actualInvocations, expectedInvocations), actualInvocations > expectedInvocations * percent );
+            Assert.assertTrue(String.format("%s out of %s is too low", actualInvocations, expectedInvocations), actualInvocations > expectedInvocations * percent);
         }
     }
 
 
-    private Map<String, AtomicInteger> invoke(Calculator bean, int max) {
+    private Map<String, AtomicInteger> invoke(final Calculator bean, final int max) {
         final Map<String, AtomicInteger> invocations = new HashMap<String, AtomicInteger>();
         for (int i = 0; i < max; i++) {
             final String name = bean.name();
@@ -234,7 +234,7 @@ public class RandomConnectionStrategyTest {
             invocations.get(name).incrementAndGet();
         }
 
-        for (Map.Entry<String, AtomicInteger> entry : invocations.entrySet()) {
+        for (final Map.Entry<String, AtomicInteger> entry : invocations.entrySet()) {
             logger.info(String.format("Server %s invoked %s times", entry.getKey(), entry.getValue()));
         }
 
@@ -256,15 +256,15 @@ public class RandomConnectionStrategyTest {
             return expected;
         }
 
-        public boolean add(URI uri) {
+        public boolean add(final URI uri) {
             return expected.add(uri);
         }
 
-        public boolean remove(URI o) {
+        public boolean remove(final URI o) {
             return expected.remove(o);
         }
 
-        public void observe(@Observes ClusterMetaDataUpdated updated) {
+        public void observe(@Observes final ClusterMetaDataUpdated updated) {
             final URI[] locations = updated.getClusterMetaData().getLocations();
             final Set<URI> found = new HashSet<URI>(Arrays.asList(locations));
 
@@ -278,20 +278,20 @@ public class RandomConnectionStrategyTest {
             }
         }
 
-        public Set<URI> diff(Set<URI> a, Set<URI> b) {
+        public Set<URI> diff(final Set<URI> a, final Set<URI> b) {
             final Set<URI> diffs = new HashSet<URI>();
-            for (URI uri : b) {
+            for (final URI uri : b) {
                 if (!a.contains(uri)) diffs.add(uri);
             }
 
             return diffs;
         }
 
-        public void assertServices(long timeout, TimeUnit unit, Callable callable) {
+        public void assertServices(final long timeout, final TimeUnit unit, final Callable callable) {
             assertServices(timeout, unit, callable, 10);
         }
 
-        public void assertServices(long timeout, TimeUnit unit, Callable callable, int delay) {
+        public void assertServices(final long timeout, final TimeUnit unit, final Callable callable, final int delay) {
             final ClientThread client = new ClientThread(callable);
             client.delay(delay);
             client.start();
@@ -305,7 +305,7 @@ public class RandomConnectionStrategyTest {
             }
         }
 
-        public boolean await(long timeout, TimeUnit unit) throws InterruptedException {
+        public boolean await(final long timeout, final TimeUnit unit) throws InterruptedException {
             lock.lock();
             try {
                 return condition.await(timeout, unit);
@@ -318,7 +318,7 @@ public class RandomConnectionStrategyTest {
     private static class CalculatorCallable implements Callable {
         private final Calculator bean;
 
-        public CalculatorCallable(Calculator bean) {
+        public CalculatorCallable(final Calculator bean) {
             this.bean = bean;
         }
 
