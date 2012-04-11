@@ -101,9 +101,10 @@ var ctx = new InitialContext(p);
 var ejbHome = ctx.lookup("MEJB");
 var bean = ejbHome.create();
 
-//the "util" object has tow methods: write and getJson
+//the "util" object has two methods: write and getJson
 util.write(bean.getDefaultDomain());
 
+//now hit the "Run" button bellow.
                 </textarea><BR>
                 <a class="btn btn-primary" href="#" onclick="TOMEE.executeScript();">Run</a>
             </p>
