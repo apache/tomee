@@ -40,6 +40,8 @@ import java.net.ProxySelector;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -169,11 +171,76 @@ public class IO {
     }
 
     public static void copy(final File from, final File to) throws IOException {
-        final FileOutputStream fos = new FileOutputStream(to);
-        try {
-            copy(from, fos);
-        } finally {
-            close(fos);
+        if (!from.isDirectory()) {
+            final FileOutputStream fos = new FileOutputStream(to);
+            try {
+                copy(from, fos);
+            } finally {
+                close(fos);
+            }
+        } else {
+            copyDirectory(from, to);
+        }
+    }
+
+    public static void copyDirectory(final File srcDir, final File destDir) throws IOException {
+        if (srcDir == null) {
+            throw new NullPointerException("Source must not be null");
+        }
+        if (destDir == null) {
+            throw new NullPointerException("Destination must not be null");
+        }
+        if (srcDir.exists() == false) {
+            throw new FileNotFoundException("Source '" + srcDir + "' does not exist");
+        }
+        if (srcDir.isDirectory() == false) {
+            throw new IOException("Source '" + srcDir + "' exists but is not a directory");
+        }
+        if (srcDir.getCanonicalPath().equals(destDir.getCanonicalPath())) {
+            throw new IOException("Source '" + srcDir + "' and destination '" + destDir + "' are the same");
+        }
+
+        // Cater for destination being directory within the source directory (see IO-141)
+        List<String> exclusionList = null;
+        if (destDir.getCanonicalPath().startsWith(srcDir.getCanonicalPath())) {
+            File[] srcFiles = srcDir.listFiles();
+            if (srcFiles != null && srcFiles.length > 0) {
+                exclusionList = new ArrayList<String>(srcFiles.length);
+                for (File srcFile : srcFiles) {
+                    File copiedFile = new File(destDir, srcFile.getName());
+                    exclusionList.add(copiedFile.getCanonicalPath());
+                }
+            }
+        }
+        doCopyDirectory(srcDir, destDir, exclusionList);
+    }
+
+    private static void doCopyDirectory(final File srcDir, final File destDir, final List<String> exclusionList) throws IOException {
+        final File[] files = srcDir.listFiles();
+        if (files == null) {  // null if security restricted
+            throw new IOException("Failed to list contents of " + srcDir);
+        }
+        if (destDir.exists()) {
+            if (destDir.isDirectory() == false) {
+                throw new IOException("Destination '" + destDir + "' exists but is not a directory");
+            }
+        } else {
+            if (destDir.mkdirs() == false) {
+                throw new IOException("Destination '" + destDir + "' directory cannot be created");
+            }
+        }
+        if (destDir.canWrite() == false) {
+            throw new IOException("Destination '" + destDir + "' cannot be written to");
+        }
+        for (File file : files) {
+            final File copiedFile = new File(destDir, file.getName());
+            if (exclusionList == null || !exclusionList.contains(file.getCanonicalPath())) {
+                if (file.isDirectory()) {
+                    doCopyDirectory(file, copiedFile, exclusionList);
+                } else {
+                    copy(file, copiedFile);
+                }
+            }
         }
     }
 
