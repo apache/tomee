@@ -16,22 +16,27 @@
  */
 package org.apache.openejb.resource.jdbc;
 
+import org.apache.openejb.loader.SystemInstance;
+
+import javax.sql.DataSource;
 import java.io.File;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 
-import javax.sql.DataSource;
-
-import org.apache.openejb.loader.SystemInstance;
-
+@SuppressWarnings({"UnusedDeclaration"})
 public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
-    
+
+    private static final ReentrantLock lock = new ReentrantLock();
+
+    private Logger logger = null;
+
     /**
      * The password codec to be used to retrieve the plain text password from a
      * ciphered value.
-     * 
+     * <p/>
      * <em>The default is no codec.</em>. In other words, it means password is
      * not ciphered. The {@link PlainTextPasswordCipher} can also be used.
      */
@@ -40,89 +45,151 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
     /**
      * Returns the password codec class name to use to retrieve plain text
      * password.
-     * 
+     *
      * @return the password codec class
      */
-    public synchronized String getPasswordCipher() {
-        return this.passwordCipher;
+    public String getPasswordCipher() {
+        final ReentrantLock l = lock;
+        l.lock();
+        try {
+            return this.passwordCipher;
+        } finally {
+            l.unlock();
+        }
     }
 
     /**
      * <p>
      * Sets the {@link #passwordCipher}.
      * </p>
-     * 
-     * @param passwordCipher
-     *            password codec value
+     *
+     * @param passwordCipher password codec value
      */
-    public synchronized void setPasswordCipher(String passwordCipher) {
-        this.passwordCipher = passwordCipher;
-    }
-    
-
-    public synchronized String getUserName() {
-        return super.getUsername();
-    }
-
-    public synchronized void setUserName(String string) {
-        super.setUsername(string);
-    }
-    
-    public synchronized String getJdbcDriver() {
-        return super.getDriverClassName();
-    }
-
-    public synchronized void setJdbcDriver(String string) {
-        super.setDriverClassName(string);
-    }
-
-    public synchronized String getJdbcUrl() {
-        return super.getUrl();
-    }
-
-    public synchronized void setJdbcUrl(String string) {
-        super.setUrl(string);
-    }
-
-    public synchronized void setDefaultTransactionIsolation(String s) {
-        if (s == null || s.equals("")) return;
-        int level = IsolationLevels.getIsolationLevel(s);
-        super.setDefaultTransactionIsolation(level);
-    }
-
-    public synchronized void setMaxWait(final int maxWait) {
-        super.setMaxWait((long)maxWait);
-    }
-
-    protected synchronized DataSource createDataSource() throws SQLException {
-        if (dataSource != null) {
-            return dataSource;
+    public void setPasswordCipher(String passwordCipher) {
+        final ReentrantLock l = lock;
+        l.lock();
+        try {
+            this.passwordCipher = passwordCipher;
+        } finally {
+            l.unlock();
         }
-        
-        // check password codec if available
-        if (null != passwordCipher) {
-            PasswordCipher cipher = BasicDataSourceUtil.getPasswordCipher(passwordCipher);
-            String plainPwd = cipher.decrypt(password.toCharArray());
+    }
 
-            // override previous password value
-            super.setPassword(plainPwd);
+
+    public String getUserName() {
+        final ReentrantLock l = lock;
+        l.lock();
+        try {
+            return super.getUsername();
+        } finally {
+            l.unlock();
         }
+    }
 
-        // get the plugin
-        DataSourcePlugin helper = BasicDataSourceUtil.getDataSourcePlugin(getUrl());
-
-        // configure this
-        if (helper != null) {
-            helper.configure(this);
+    public void setUserName(String string) {
+        final ReentrantLock l = lock;
+        l.lock();
+        try {
+            super.setUsername(string);
+        } finally {
+            l.unlock();
         }
+    }
 
-        // creat the data source
-        if (helper == null || !helper.enableUserDirHack()) {
-            return super.createDataSource();
-        } else {
-            // wrap super call with code that sets user.dir to openejb.base and then resets it
-            Properties systemProperties = System.getProperties();
-            synchronized (systemProperties) {
+    public String getJdbcDriver() {
+        final ReentrantLock l = lock;
+        l.lock();
+        try {
+            return super.getDriverClassName();
+        } finally {
+            l.unlock();
+        }
+    }
+
+    public void setJdbcDriver(String string) {
+        final ReentrantLock l = lock;
+        l.lock();
+        try {
+            super.setDriverClassName(string);
+        } finally {
+            l.unlock();
+        }
+    }
+
+    public String getJdbcUrl() {
+        final ReentrantLock l = lock;
+        l.lock();
+        try {
+            return super.getUrl();
+        } finally {
+            l.unlock();
+        }
+    }
+
+    public void setJdbcUrl(String string) {
+        final ReentrantLock l = lock;
+        l.lock();
+        try {
+            super.setUrl(string);
+        } finally {
+            l.unlock();
+        }
+    }
+
+    public void setDefaultTransactionIsolation(String s) {
+        final ReentrantLock l = lock;
+        l.lock();
+        try {
+            if (s == null || s.equals("")) return;
+            int level = IsolationLevels.getIsolationLevel(s);
+            super.setDefaultTransactionIsolation(level);
+        } finally {
+            l.unlock();
+        }
+    }
+
+    public void setMaxWait(final int maxWait) {
+        final ReentrantLock l = lock;
+        l.lock();
+        try {
+            super.setMaxWait((long) maxWait);
+        } finally {
+            l.unlock();
+        }
+    }
+
+    protected DataSource createDataSource() throws SQLException {
+        final ReentrantLock l = lock;
+        l.lock();
+        try {
+            if (dataSource != null) {
+                return dataSource;
+            }
+
+            // check password codec if available
+            if (null != passwordCipher) {
+                PasswordCipher cipher = BasicDataSourceUtil.getPasswordCipher(passwordCipher);
+                String plainPwd = cipher.decrypt(password.toCharArray());
+
+                // override previous password value
+                super.setPassword(plainPwd);
+            }
+
+            // get the plugin
+            DataSourcePlugin helper = BasicDataSourceUtil.getDataSourcePlugin(getUrl());
+
+            // configure this
+            if (helper != null) {
+                helper.configure(this);
+            }
+
+            // create the data source
+            if (helper == null || !helper.enableUserDirHack()) {
+                return super.createDataSource();
+            } else {
+                // wrap super call with code that sets user.dir to openejb.base and then resets it
+                Properties systemProperties = System.getProperties();
+
                 String userDir = systemProperties.getProperty("user.dir");
                 try {
                     File base = SystemInstance.get().getBase().getDirectory();
@@ -131,15 +198,38 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
                 } finally {
                     systemProperties.setProperty("user.dir", userDir);
                 }
+
             }
+        } finally {
+            l.unlock();
+        }
+    }
+
+    public void close() throws SQLException {
+        //TODO - Prevent unuathorized call
+        final ReentrantLock l = lock;
+        l.lock();
+        try {
+            super.close();
+        } finally {
+            l.unlock();
         }
     }
 
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        final ReentrantLock l = lock;
+        l.lock();
         try {
-            return (Logger) DataSource.class.getDeclaredMethod("getParentLogger").invoke(dataSource);
+
+            if (null == this.logger) {
+                this.logger = (Logger) DataSource.class.getDeclaredMethod("getParentLogger").invoke(dataSource);
+            }
+
+            return this.logger;
         } catch (Throwable e) {
             throw new SQLFeatureNotSupportedException();
+        } finally {
+            l.unlock();
         }
     }
 

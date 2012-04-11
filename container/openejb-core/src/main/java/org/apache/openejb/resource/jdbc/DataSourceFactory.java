@@ -96,6 +96,14 @@ public class DataSourceFactory {
         return ds;
     }
 
+    private static void setUrl(final DataSource dataSource, final String url, final ClassLoader classLoader, final String clazz, final String method) throws Exception {
+
+        final Class<?> hsql = classLoader.loadClass(clazz);
+        final Method setDatabase = hsql.getMethod(method, String.class);
+        setDatabase.setAccessible(true);
+        setDatabase.invoke(dataSource, url);
+    }
+
     public static class DbcpDataSource extends BasicDataSource {
 
         private final DataSource dataSource;
@@ -113,12 +121,14 @@ public class DataSourceFactory {
         public void setJdbcUrl(String url) {
             // TODO This is a big whole and we will need to rework this
             try {
-                // only works if hsql is available and datasource is an HSQL jdbcDataSource
-                final Class<?> hsql = this.getClass().getClassLoader().loadClass("org.hsqldb.jdbc.JDBCDataSource");
-                final Method setDatabase = hsql.getMethod("setDatabase", String.class);
-                setDatabase.setAccessible(true);
-                setDatabase.invoke(dataSource, url);
-            } catch (Throwable e) {
+
+                if (url.contains("jdbc:derby:")) {
+                    DataSourceFactory.setUrl(this.dataSource, url.replace("jdbc:derby:", ""), this.getClass().getClassLoader(), "org.apache.derby.jdbc.EmbeddedDataSource", "setDatabaseName");
+                } else {
+                    DataSourceFactory.setUrl(this.dataSource, url, this.getClass().getClassLoader(), "org.hsqldb.jdbc.JDBCDataSource", "setDatabase");
+                }
+
+            } catch (Throwable e1) {
                 super.setUrl(url);
             }
         }
@@ -136,12 +146,14 @@ public class DataSourceFactory {
         public void setJdbcUrl(String url) {
             // TODO This is a big whole and we will need to rework this
             try {
-                // only works if hsql is available and datasource is an HSQL jdbcDataSource
-                final Class<?> hsql = this.getClass().getClassLoader().loadClass("org.hsqldb.jdbc.JDBCDataSource");
-                final Method setDatabase = hsql.getMethod("setDatabase", String.class);
-                setDatabase.setAccessible(true);
-                setDatabase.invoke(dataSource, url);
-            } catch (Throwable e) {
+
+                if (url.contains("jdbc:derby:")) {
+                    DataSourceFactory.setUrl(this.dataSource, url.replace("jdbc:derby:", ""), this.getClass().getClassLoader(), "org.apache.derby.jdbc.EmbeddedDataSource", "setDatabaseName");
+                } else {
+                    DataSourceFactory.setUrl(this.dataSource, url, this.getClass().getClassLoader(), "org.hsqldb.jdbc.JDBCDataSource", "setDatabase");
+                }
+
+            } catch (Throwable e1) {
                 super.setUrl(url);
             }
         }
