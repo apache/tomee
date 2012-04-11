@@ -27,6 +27,7 @@
     <rat:report xmlns:rat="antlib:org.apache.rat.anttasks"> 
       <fileset dir="."> 
         <patternset id="exclusions"> 
+          <exclude name="**/.idea/**"/>
           <exclude name="**/target/**"/>
           <exclude name="**/*.iml"/>
           <exclude name="**/*.log"/>
