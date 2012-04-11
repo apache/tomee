@@ -17,12 +17,11 @@
 
 package org.apache.openejb.logging;
 
+import java.util.logging.LogRecord;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.Priority;
 import org.apache.log4j.spi.LoggingEvent;
-
-import java.util.logging.LogRecord;
 
 public final class Converter {
     private Converter() {
