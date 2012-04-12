@@ -14,7 +14,7 @@ public @interface Server {
     int http() default -1;
     int shutdown() default -1;
     int ajp() default -1;
-    Class<? extends ServerTweaker> tweaker() default SimpleTweaker.class;
     boolean cleanWebapp() default true;
-    Artifact artifact() default @Artifact;
+    Class<? extends ServerTweaker> tweaker() default org.apache.openejb.itest.tomee.SimpleTweaker.class;
+    Artifact artifact() default @org.apache.openejb.itest.tomee.Artifact;
 }
