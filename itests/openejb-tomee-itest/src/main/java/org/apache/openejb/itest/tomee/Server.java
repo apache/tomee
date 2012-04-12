@@ -15,6 +15,6 @@ public @interface Server {
     int shutdown() default -1;
     int ajp() default -1;
     boolean cleanWebapp() default true;
-    Class<? extends ServerTweaker> tweaker() default org.apache.openejb.itest.tomee.SimpleTweaker.class;
-    Artifact artifact() default @org.apache.openejb.itest.tomee.Artifact(groupId = "org.apache.openejb", artifactId = "apache-tomee", version = "1.0.0-beta-3-SNAPSHOT", type = "zip", classifier = "webprofile");
+    Class<? extends ServerTweaker> tweaker() default SimpleTweaker.class;
+    Artifact artifact() default @Artifact;
 }
