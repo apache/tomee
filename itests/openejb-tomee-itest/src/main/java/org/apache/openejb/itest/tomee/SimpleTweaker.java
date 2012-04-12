@@ -12,11 +12,19 @@ public class SimpleTweaker implements ServerTweaker {
 
     protected void addLib(final File home, final String groupId, final String artifactId, final String version) {
         final File jar = findJar(groupId, artifactId, version);
+        addLib(home, jar);
+    }
+
+    protected void addLib(final File home, final File jar) {
         copy(jar, new File(home, "lib/" + jar.getName()));
     }
 
     protected void addWebapp(final File home, final String groupId, final String artifactId, final String version) {
         final File war = findWebapp(groupId, artifactId, version);
+        addWebapp(home, war);
+    }
+
+    protected void addWebapp(final File home, final File war) {
         copy(war, new File(home, "webapps/" + war.getName()));
     }
 

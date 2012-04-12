@@ -57,5 +57,11 @@
       <type>zip</type>
       <classifier>webprofile</classifier>
     </dependency>
+    <dependency>
+      <groupId>org.jboss.shrinkwrap</groupId>
+      <artifactId>shrinkwrap-impl-base</artifactId>
+      <version>1.0.0</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 </project>
