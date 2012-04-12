@@ -1554,6 +1554,11 @@ public class DeploymentLoader implements DeploymentFilterable {
             return PersistenceModule.class;
         }
 
+        final Class<? extends DeploymentModule> defaultType = (Class<? extends DeploymentModule>) SystemInstance.get().getOptions().get("openejb.default.deployment-module", (Class<?>) null);
+        if (defaultType != null) {
+            logger.info("type for '" + path + "' was not found, defaulting to " + defaultType.getSimpleName());
+            return defaultType;
+        }
         throw new UnknownModuleTypeException("Unknown module type: url=" + path); // baseUrl can be null
     }
 
