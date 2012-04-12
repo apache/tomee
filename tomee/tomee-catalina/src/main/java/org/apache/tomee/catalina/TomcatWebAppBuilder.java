@@ -961,10 +961,14 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 Map.Entry<String, DeployedApplication> entry = iterator.next();
                 DeployedApplication deployedApplication = entry.getValue();
                 if (deployedApplication.isModified()) {
-                    try {
-                        getAssembler().destroyApplication(deployedApplication.appInfo.path);
-                    } catch (Exception e) {
-                        logger.error("Unable to application " + deployedApplication.appInfo.path + ": Exception: " + e.getMessage(), e);
+                    if (deployedApplication.appInfo != null) { // can happen with badly formed config
+                        try {
+                            getAssembler().destroyApplication(deployedApplication.appInfo.path);
+                        } catch (Exception e) {
+                            logger.error("Unable to application " + deployedApplication.appInfo.path, e);
+                        }
+                    } else {
+                        logger.error("appinfo is null for " + deployedApplication);
                     }
                     iterator.remove();
                 }
