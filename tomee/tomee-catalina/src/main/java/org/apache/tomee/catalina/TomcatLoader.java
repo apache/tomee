@@ -161,6 +161,9 @@ public class TomcatLoader implements Loader {
             SystemInstance.get().setProperty("openejb.configuration.class", Tomee.class.getName());
         }
 
+        // tomcat default behavior is webapp, simply keep it, it is overridable by system property too
+        SystemInstance.get().setProperty("openejb.default.deployment-module", System.getProperty("openejb.default.deployment-module", "org.apache.openejb.config.WebModule"));
+
         //Those are set by TomcatHook, why re-set here???
         System.setProperty("openejb.home", SystemInstance.get().getHome().getDirectory().getAbsolutePath());
         System.setProperty("openejb.base", SystemInstance.get().getBase().getDirectory().getAbsolutePath());
