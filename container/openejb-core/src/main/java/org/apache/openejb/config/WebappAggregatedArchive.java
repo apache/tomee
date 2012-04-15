@@ -79,7 +79,7 @@ public class WebappAggregatedArchive implements Archive, ScanConstants {
     }
 
     @Override
-    public Iterator<String> iterator() {
+    public Iterator<Entry> iterator() {
         return archive.iterator();
     }
 
