@@ -53,8 +53,11 @@ public class FinderFactory {
         if (module instanceof WebModule) {
             WebModule webModule = (WebModule) module;
             AnnotationFinder annotationFinder = new AnnotationFinder(new WebappAggregatedArchive(webModule, webModule.getScannableUrls()));
-            if (annotationFinder.hasMetaAnnotations()) annotationFinder = annotationFinder.link();
-            finder = annotationFinder;
+
+            // always link otherwise the ModuleLimitedFinder will not be able to use getAnnotatedClassNames() method
+            // and result will always be empty
+            // if (annotationFinder.hasMetaAnnotations())
+            finder = annotationFinder.link();
         } else if (module instanceof ConnectorModule) {
         	ConnectorModule connectorModule = (ConnectorModule) module;
         	finder = new AnnotationFinder(new ConfigurableClasspathArchive(connectorModule, connectorModule.getLibraries())).link();
