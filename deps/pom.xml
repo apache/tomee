@@ -31,5 +31,6 @@
     <module>mbean-annotation-api</module>
     <module>cxf-bundle-patched</module>
     <module>openwebbeans-jsf-patched</module>
+    <module>openjpa-asm-shaded</module>
   </modules>
 </project>

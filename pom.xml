@@ -1110,8 +1110,8 @@
         </exclusions>
       </dependency>
       <dependency>
-        <groupId>org.apache.openjpa</groupId>
-        <artifactId>openjpa</artifactId>
+        <artifactId>openjpa-asm-shaded</artifactId>
+        <groupId>org.apache.openejb.patch</groupId>
         <version>${openjpa.version}</version>
         <exclusions>
           <exclusion>

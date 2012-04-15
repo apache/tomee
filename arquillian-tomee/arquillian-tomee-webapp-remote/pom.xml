@@ -202,6 +202,10 @@
           <groupId>org.apache.openjpa</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>openjpa-asm-shaded</artifactId>
+          <groupId>org.apache.openejb.patch</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>openwebbeans-web</artifactId>
           <groupId>org.apache.openwebbeans</groupId>
         </exclusion>

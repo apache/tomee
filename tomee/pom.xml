@@ -111,6 +111,10 @@
               <artifactId>openjpa</artifactId>
             </exclusion>
             <exclusion>
+              <artifactId>openjpa-asm-shaded</artifactId>
+              <groupId>org.apache.openejb.patch</groupId>
+            </exclusion>
+            <exclusion>
               <groupId>org.apache.bval</groupId>
               <artifactId>bval-core</artifactId>
             </exclusion>

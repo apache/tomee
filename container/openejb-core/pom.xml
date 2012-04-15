@@ -612,8 +612,8 @@
       <artifactId>javassist</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.openjpa</groupId>
-      <artifactId>openjpa</artifactId>
+      <groupId>org.apache.openejb.patch</groupId>
+      <artifactId>openjpa-asm-shaded</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.bval</groupId>

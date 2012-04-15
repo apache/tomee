@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.apache.openejb</groupId>
+    <artifactId>deps</artifactId>
+    <version>4.0.0</version>
+  </parent>
+
+  <groupId>org.apache.openejb.patch</groupId>
+  <artifactId>openjpa-asm-shaded</artifactId>
+  <version>2.2.0</version>
+  <name>Apache OpenEJB Patch :: OpenJPA</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.openjpa</groupId>
+      <artifactId>openjpa</artifactId>
+      <version>2.2.0</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-jpa_2.0_spec</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-jms_1.1_spec</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-jta_1.1_spec</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>commons-pool</groupId>
+          <artifactId>commons-pool</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.xml.bind</groupId>
+          <artifactId>jaxb-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.sun.xml.bind</groupId>
+          <artifactId>jaxb-impl</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>asm</groupId>
+          <artifactId>asm</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.xbean</groupId>
+      <artifactId>xbean-asm-shaded</artifactId>
+      <version>3.9</version> <!-- we don't really care, it is provided by us, just use an already released version   -->
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.3</version>
+        <executions>
+          <execution>
+            <id>patch</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <excludes>org/apache/openjpa/enhance/AsmAdaptor.class</excludes>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.apache.openjpa</groupId>
+                  <artifactId>openjpa</artifactId>
+                  <version>2.2.0</version>
+                  <overWrite>false</overWrite>
+                  <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
