@@ -25,11 +25,22 @@ import java.net.ProxySelector;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Properties;
 
 public class ProvisioningUtil {
     public static final String OPENEJB_DEPLOYER_CACHE_FOLDER = "openejb.deployer.cache.folder";
     public static final String HTTP_PREFIX = "http";
     private static final int CONNECT_TIMEOUT = 10000;
+
+    private static final String ADDITIONAL_LIB_CONFIG = "provisioning.properties";
+    private static final String ZIP_KEY = "zip";
+    private static final String DESTINATION_KEY = "destination";
+    private static final String JAR_KEY = "jar";
+    public static final String TEMP_DIR = "temp";
 
     private ProvisioningUtil() {
         // no-op
@@ -67,7 +78,7 @@ public class ProvisioningUtil {
                 urlConnection.setConnectTimeout(CONNECT_TIMEOUT);
                 return new BufferedInputStream(urlConnection.getInputStream());
             } catch (IOException e) {
-                continue;
+                // ignored
             }
         }
         return null;
@@ -103,5 +114,91 @@ public class ProvisioningUtil {
         } catch (Exception e) {
             return rawLocation;
         }
+    }
+
+    public static void addAdditionalLibraries() throws IOException {
+        final File conf = new File(SystemInstance.get().getBase().getDirectory("conf"), ADDITIONAL_LIB_CONFIG);
+        if (!conf.exists()) {
+            return;
+        }
+
+        final Properties additionalLibProperties = IO.readProperties(conf);
+
+        final List<String> libToCopy = new ArrayList<String>();
+        final String toCopy = additionalLibProperties.getProperty(JAR_KEY);
+        if (toCopy != null) {
+            for (String lib : toCopy.split(",")) {
+                libToCopy.add(realLocation(lib.trim()));
+            }
+        }
+        final String toExtract = additionalLibProperties.getProperty(ZIP_KEY);
+        if (toExtract != null) {
+            for (String zip : toExtract.split(",")) {
+                libToCopy.addAll(extract(realLocation(zip)));
+            }
+        }
+
+        File destination;
+        if (additionalLibProperties.containsKey(DESTINATION_KEY)) {
+            destination = new File(additionalLibProperties.getProperty(DESTINATION_KEY));
+        } else {
+            destination = new File(SystemInstance.get().getBase().getDirectory(), Embedder.ADDITIONAL_LIB_FOLDER);
+        }
+        if (!destination.exists()) {
+            Files.mkdirs(destination);
+        }
+
+        for (String lib : libToCopy) {
+            copy(new File(lib), destination);
+        }
+    }
+
+    private static void copy(final File file, final File lib) throws IOException {
+        final File dest = new File(lib, file.getName());
+        if (dest.exists()) {
+            return;
+        }
+        IO.copy(file, dest);
+    }
+
+    private static Collection<String> extract(final String zip) throws IOException {
+        final File tmp = new File(SystemInstance.get().getBase().getDirectory(), TEMP_DIR);
+        if (!tmp.exists()) {
+            try {
+                Files.mkdirs(tmp);
+            } catch (Files.FileRuntimeException fre) {
+                // ignored
+            }
+        }
+
+        final File zipFile = new File(realLocation(zip));
+        final File extracted = new File(tmp, zipFile.getName().replace(".zip", ""));
+        if (extracted.exists()) {
+            return list(extracted);
+        }
+
+        Zips.unzip(zipFile, extracted);
+        return list(extracted);
+    }
+
+    private static Collection<String> list(final File dir) {
+        if (dir == null) {
+            return Collections.emptyList();
+        }
+
+        final Collection<String> libs = new ArrayList<String>();
+        final File[] files = dir.listFiles();
+        if (files == null) {
+            return Collections.emptyList();
+        }
+
+        for (File file : files) {
+            if (file.isDirectory()) {
+                libs.addAll(list(file));
+            } else {
+                libs.add(file.getAbsolutePath());
+            }
+        }
+        return libs;
     }
 }
