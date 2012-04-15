@@ -17,19 +17,13 @@
  */
 package org.apache.tomee.loader;
 
-import org.apache.openejb.loader.Embedder;
-import org.apache.openejb.loader.IO;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.loader.Zips;
-
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.Properties;
-
-import static org.apache.openejb.loader.ProvisioningUtil.realLocation;
+import org.apache.openejb.loader.Embedder;
+import org.apache.openejb.loader.IO;
+import org.apache.openejb.loader.ProvisioningUtil;
+import org.apache.openejb.loader.SystemInstance;
 
 /**
  * This class should only be loadded and used via reflection from TomcatEmbedder.
@@ -63,12 +57,6 @@ import static org.apache.openejb.loader.ProvisioningUtil.realLocation;
  * See org.apache.tomee.catalina.TomcatLoader for the next part of the story
  */
 class TomcatHook {
-    static final String ADDITIONAL_LIB_CONFIG = "provisioning.properties";
-    static final String ZIP_KEY = "zip";
-    static final String DESTINATION_KEY = "destination";
-    static final String JAR_KEY = "jar";
-    public static final String TEMP_DIR = "temp";
-
     /**
      * Using tomee.war path, it sets several required
      * system properties and init {@link SystemInstance#init(Properties)}
@@ -164,7 +152,7 @@ class TomcatHook {
 
         // manage additional libraries
         try {
-            addAdditionalLibraries(SystemInstance.get().getBase().getDirectory("conf"), new File(SystemInstance.get().getBase().getDirectory(), ADDITIONAL_LIB_CONFIG));
+            ProvisioningUtil.addAdditionalLibraries();
         } catch (IOException e) {
             // ignored
         }
@@ -186,82 +174,5 @@ class TomcatHook {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private static void addAdditionalLibraries(final File confDir, final File libDir) throws IOException {
-        final File conf = new File(confDir, ADDITIONAL_LIB_CONFIG);
-        if (!conf.exists()) {
-            return;
-        }
-
-        final Properties additionalLibProperties = IO.readProperties(conf);
-
-        final List<String> libToCopy = new ArrayList<String>();
-        final String toCopy = additionalLibProperties.getProperty(JAR_KEY);
-        if (toCopy != null) {
-            for (String lib : toCopy.split(",")) {
-                libToCopy.add(realLocation(lib.trim()));
-            }
-        }
-        final String toExtract = additionalLibProperties.getProperty(ZIP_KEY);
-        if (toExtract != null) {
-            for (String zip : toExtract.split(",")) {
-                libToCopy.addAll(extract(realLocation(zip)));
-            }
-        }
-
-        File destination;
-        if (additionalLibProperties.containsKey(DESTINATION_KEY)) {
-            destination = new File(additionalLibProperties.getProperty(DESTINATION_KEY));
-        } else {
-            destination = new File(SystemInstance.get().getBase().getDirectory(), Embedder.ADDITIONAL_LIB_FOLDER);
-        }
-        if (!destination.exists()) {
-            destination = libDir;
-        }
-
-        for (String lib : libToCopy) {
-            copy(new File(lib), destination);
-        }
-    }
-
-    private static void copy(final File file, final File lib) throws IOException {
-        final File dest = new File(lib, file.getName());
-        if (dest.exists()) {
-            return;
-        }
-        IO.copy(file, dest);
-    }
-
-    private static Collection<String> extract(final String zip) throws IOException {
-        final File tmp = new File(SystemInstance.get().getBase().getDirectory(), TEMP_DIR);
-        if (!tmp.exists()) {
-            tmp.mkdirs();
-        }
-
-        final File zipFile = new File(realLocation(zip));
-        final File extracted = new File(tmp, zipFile.getName().replace(".zip", ""));
-        if (extracted.exists()) {
-            return list(extracted);
-        }
-
-        unzip(zipFile, extracted);
-        return list(extracted);
-    }
-
-    private static Collection<String> list(File dir) {
-        final Collection<String> libs = new ArrayList<String>();
-        for (File file : dir.listFiles()) {
-            if (file.isDirectory()) {
-                libs.addAll(list(file));
-            } else {
-                libs.add(file.getAbsolutePath());
-            }
-        }
-        return libs;
-    }
-
-    public static void unzip(final File source, final File targetDirectory) throws IOException {
-        Zips.unzip(source, targetDirectory);
     }
 }
