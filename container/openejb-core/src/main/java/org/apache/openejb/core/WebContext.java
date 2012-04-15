@@ -40,6 +40,18 @@ public class WebContext {
     private final AppContext appContext;
     private Map<String,Object> bindings;
 
+    public Context getInitialContext() {
+        if (initialContext != null) return initialContext;
+        try {
+            initialContext = (Context) new InitialContext().lookup("java:");
+        } catch (NamingException e) {
+            throw new IllegalStateException(e);
+        }
+        return initialContext;
+    }
+
+    private Context initialContext;
+
     public WebContext(AppContext appContext) {
         this.appContext = appContext;
     }
@@ -78,7 +90,6 @@ public class WebContext {
 
     public Object newInstance(Class beanClass) throws OpenEJBException {
 
-        try {
             final WebBeansContext webBeansContext = getAppContext().getWebBeansContext();
 
             final ConstructorInjectionBean<Object> beanDefinition = new ConstructorInjectionBean<Object>(webBeansContext, beanClass).complete();
@@ -87,8 +98,7 @@ public class WebContext {
 
             // Create bean instance
             final Object o = beanDefinition.create(creationalContext);
-            final Context initialContext = (Context) new InitialContext().lookup("java:");
-            final Context unwrap = InjectionProcessor.unwrap(initialContext);
+            final Context unwrap = InjectionProcessor.unwrap(getInitialContext());
             final InjectionProcessor injectionProcessor = new InjectionProcessor(o, injections, unwrap);
 
             final Object beanInstance = injectionProcessor.createInstance();
@@ -114,9 +124,6 @@ public class WebContext {
             }
 
             return beanInstance;
-        } catch (NamingException e) {
-            throw new OpenEJBException(e);
-        }
     }
 
     public Object inject(Object o) throws OpenEJBException {
