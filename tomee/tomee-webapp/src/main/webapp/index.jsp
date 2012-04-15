@@ -1,3 +1,4 @@
+<% out.print("<!DOCTYPE html>"); %>
 <!--
 
     Licensed to the Apache Software Foundation (ASF) under one or more
@@ -20,6 +21,7 @@
 <!-- $Rev: 597221 $ $Date: 2007-11-21 22:51:05 +0100 (Wed, 21 Nov 2007) $ -->
 
 <%@ page import="org.apache.tomee.installer.Installer" %>
+
 <html>
 <head>
     <meta charset="utf-8">

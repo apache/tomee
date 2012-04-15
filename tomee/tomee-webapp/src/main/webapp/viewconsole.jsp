@@ -1,3 +1,4 @@
+<% out.print("<!DOCTYPE html>"); %>
 <!--
 
 Licensed to the Apache Software Foundation (ASF) under one or more
@@ -20,8 +21,6 @@ limitations under the License.
 <!-- $Rev: 597221 $ $Date: 2007-11-21 22:51:05 +0100 (Wed, 21 Nov 2007) $ -->
 
 <html>
-
-
 <head>
     <meta charset="utf-8">
     <title>TomEE</title>
