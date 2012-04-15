@@ -56,7 +56,7 @@ public class FinderFactory {
 
             // always link otherwise the ModuleLimitedFinder will not be able to use getAnnotatedClassNames() method
             // and result will always be empty
-            // if (annotationFinder.hasMetaAnnotations())
+            // moreover we call findSubclasses in annotation finder so that's mandatory
             finder = annotationFinder.link();
         } else if (module instanceof ConnectorModule) {
         	ConnectorModule connectorModule = (ConnectorModule) module;
