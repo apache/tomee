@@ -1173,7 +1173,7 @@
         <version>2.2.5</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.xbean</groupId>
+        <groupId>org.apache.openejb.patch</groupId>
         <artifactId>xbean-finder-shaded</artifactId>
         <version>${xbeanVersion}</version>
       </dependency>

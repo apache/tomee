@@ -124,7 +124,7 @@
         </exclusion>
         <exclusion>
           <artifactId>xbean-finder-shaded</artifactId>
-          <groupId>org.apache.xbean</groupId>
+          <groupId>org.apache.openejb.patch</groupId>
         </exclusion>
         <exclusion>
           <artifactId>xbean-reflect</artifactId>

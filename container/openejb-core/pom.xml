@@ -500,7 +500,7 @@
       <artifactId>xbean-asm-shaded</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.xbean</groupId>
+      <groupId>org.apache.openejb.patch</groupId>
       <artifactId>xbean-finder-shaded</artifactId>
     </dependency>
     <dependency>

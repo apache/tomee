@@ -107,7 +107,7 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.xbean</groupId>
+      <groupId>org.apache.openejb.patch</groupId>
       <artifactId>xbean-finder-shaded</artifactId>
     </dependency>
   </dependencies>

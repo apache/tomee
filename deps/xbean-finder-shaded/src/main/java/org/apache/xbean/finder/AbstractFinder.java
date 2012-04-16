@@ -20,306 +20,75 @@
 
 package org.apache.xbean.finder;
 
-import org.apache.xbean.finder.archive.Archive;
-import org.apache.xbean.finder.util.Classes;
-import org.apache.xbean.finder.util.SingleLinkedList;
-import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.Attribute;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.FieldVisitor;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.EmptyVisitor;
-import org.objectweb.asm.signature.SignatureVisitor;
-
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Target;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.Member;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+
+import org.apache.xbean.finder.util.SingleLinkedList;
+import org.apache.xbean.asm.AnnotationVisitor;
+import org.apache.xbean.asm.ClassReader;
+import org.apache.xbean.asm.FieldVisitor;
+import org.apache.xbean.asm.MethodVisitor;
+import org.apache.xbean.asm.commons.EmptyVisitor;
+import org.apache.xbean.asm.signature.SignatureVisitor;
 
 /**
- * ClassFinder searches the classpath of the specified classloader for
- * packages, classes, constructors, methods, or fields with specific annotations.
- * <p/>
- * For security reasons ASM is used to find the annotations.  Classes are not
- * loaded unless they match the requirements of a called findAnnotated* method.
- * Once loaded, these classes are cached.
- *
  * @version $Rev$ $Date$
  */
-public class AnnotationFinder implements IAnnotationFinder {
-
-    private final Set<Class<? extends Annotation>> metaroots = new HashSet<Class<? extends Annotation>>();
-
+public abstract class AbstractFinder implements IAnnotationFinder {
     private final Map<String, List<Info>> annotated = new HashMap<String, List<Info>>();
-
     protected final Map<String, ClassInfo> classInfos = new HashMap<String, ClassInfo>();
     protected final Map<String, ClassInfo> originalInfos = new HashMap<String, ClassInfo>();
     private final List<String> classesNotLoaded = new ArrayList<String>();
     private final int ASM_FLAGS = ClassReader.SKIP_CODE + ClassReader.SKIP_DEBUG + ClassReader.SKIP_FRAMES;
-    private final Archive archive;
 
-    private AnnotationFinder(AnnotationFinder parent, Iterable<String> classNames) {
-        this.archive = new SubArchive(classNames);
-        this.metaroots.addAll(parent.metaroots);
-        for (Class<? extends Annotation> metaroot : metaroots) {
-            final ClassInfo info = parent.classInfos.get(metaroot.getName());
-            if (info == null) continue;
-            readClassDef(info);
-        }
-        for (String name : classNames) {
-            final ClassInfo info = parent.classInfos.get(name);
-            if (info == null) continue;
-            readClassDef(info);
-        }
+    protected abstract URL getResource(String className);
 
-        resolveAnnotations(parent, new ArrayList<String>());
-        for (ClassInfo classInfo : classInfos.values()) {
-            if (isMetaRoot(classInfo)) {
-                try {
-                    metaroots.add((Class<? extends Annotation>) classInfo.get());
-                } catch (ClassNotFoundException e) {
-                    classesNotLoaded.add(classInfo.getName());
-                }
-            }
-        }
-
-        for (Class<? extends Annotation> metaroot : metaroots) {
-            List<Info> infoList = annotated.get(metaroot.getName());
-            for (Info info : infoList) {
-                final String className = info.getName() + "$$";
-                final ClassInfo i = parent.classInfos.get(className);
-                if (i == null) continue;
-                readClassDef(i);
-            }
-        }
-    }
-
-    public AnnotationFinder(Archive archive) {
-        this.archive = archive;
-
-        for (Archive.Entry entry : archive) {
-            final String className = entry.getName();
-            try {
-                readClassDef(entry.getBytecode());
-            } catch (NoClassDefFoundError e) {
-                throw new NoClassDefFoundError("Could not fully load class: " + className + "\n due to:" + e.getMessage());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        // keep track of what was originally from the archives
-        originalInfos.putAll(classInfos);
-    }
-
-    public boolean hasMetaAnnotations() {
-        return metaroots.size() > 0;
-    }
-
-    private void readClassDef(ClassInfo info) {
-        classInfos.put(info.name, info);
-        index(info);
-        index(info.constructors);
-        index(info.methods);
-        index(info.fields);
-    }
-
-    private void resolveAnnotations(AnnotationFinder parent, List<String> scanned) {
-        // Get a list of the annotations that exist before we start
-        final List<String> annotations = new ArrayList<String>(annotated.keySet());
-
-        for (String annotation : annotations) {
-            if (scanned.contains(annotation)) continue;
-            final ClassInfo info = parent.classInfos.get(annotation);
-            if (info == null) continue;
-            readClassDef(info);
-        }
-
-        // If the "annotated" list has grown, then we must scan those
-        if (annotated.keySet().size() != annotations.size()) {
-            resolveAnnotations(parent, annotations);
-        }
-    }
-
-
-    private void index(List<? extends Info> infos) {
-        for (Info i : infos) {
-            index(i);
-        }
-    }
-
-    private void index(Info i) {
-        for (AnnotationInfo annotationInfo : i.getAnnotations()) {
-            index(annotationInfo, i);
-        }
-    }
+    protected abstract Class<?> loadClass(String fixedName) throws ClassNotFoundException;
 
     public List<String> getAnnotatedClassNames() {
         return new ArrayList<String>(originalInfos.keySet());
     }
 
-    public Archive getArchive() {
-        return archive;
-    }
-
     /**
      * The link() method must be called to successfully use the findSubclasses and findImplementations methods
-     *
      * @return
-     * @throws java.io.IOException
+     * @throws IOException
      */
-    public AnnotationFinder link() {
+    public AbstractFinder link() throws IOException {
+        // already linked?
+        if (originalInfos.size() > 0) return this;
 
-        enableFindSubclasses();
+        // keep track of what was originally from the archives
+        originalInfos.putAll(classInfos);
 
-        enableFindImplementations();
-
-        enableMetaAnnotations();
-
-        return this;
-    }
-
-    public AnnotationFinder enableMetaAnnotations() {
-        // diff new and old lists
-        resolveAnnotations(new ArrayList<String>());
-
-        linkMetaAnnotations();
-
-        return this;
-    }
-
-    public AnnotationFinder enableFindImplementations() {
-        for (ClassInfo classInfo : classInfos.values().toArray(new ClassInfo[classInfos.size()])) {
-
-            linkInterfaces(classInfo);
-
-        }
-
-        return this;
-    }
-
-    public AnnotationFinder enableFindSubclasses() {
         for (ClassInfo classInfo : classInfos.values().toArray(new ClassInfo[classInfos.size()])) {
 
             linkParent(classInfo);
         }
 
+        for (ClassInfo classInfo : classInfos.values().toArray(new ClassInfo[classInfos.size()])) {
+
+            linkInterfaces(classInfo);
+        }
+
         return this;
     }
 
-    /**
-     * Used to support meta annotations
-     * <p/>
-     * Once the list of classes has been read from the Archive, we
-     * iterate over all the annotations that are used by those classes
-     * and recursively resolve any annotations those annotations use.
-     *
-     * @param scanned
-     * @throws ClassNotFoundException
-     * @throws IOException
-     */
-    private void resolveAnnotations(List<String> scanned) {
-        // Get a list of the annotations that exist before we start
-        final List<String> annotations = new ArrayList<String>(annotated.keySet());
-
-        for (String annotation : annotations) {
-            if (scanned.contains(annotation)) continue;
-            readClassDef(annotation);
-        }
-
-        // If the "annotated" list has grown, then we must scan those
-        if (annotated.keySet().size() != annotations.size()) {
-            resolveAnnotations(annotations);
-        }
-
-
-//        for (ClassInfo classInfo : classInfos.values()) {
-//            for (AnnotationInfo annotationInfo : classInfo.getAnnotations()) {
-//                for (AnnotationInfo info : annotationInfo.getAnnotations()) {
-//                    final String annotation = info.getName();
-//
-//                    if (hasName(annotation, "Metaroot") && !scanned.contains(annotation)) {
-//                        readClassDef(annotation);
-//                    }
-//                }
-//            }
-//        }
-    }
-
-    private void linkMetaAnnotations() {
-        for (ClassInfo classInfo : classInfos.values()) {
-            if (isMetaRoot(classInfo)) {
-                try {
-                    metaroots.add((Class<? extends Annotation>) classInfo.get());
-                } catch (ClassNotFoundException e) {
-                    classesNotLoaded.add(classInfo.getName());
-                }
-            }
-        }
-
-        for (Class<? extends Annotation> metaroot : metaroots) {
-            List<Info> infoList = annotated.get(metaroot.getName());
-            for (Info info : infoList) {
-                readClassDef(info.getName() + "$$");
-            }
-        }
-    }
-
-    private boolean isMetaRoot(ClassInfo classInfo) {
-        if (!classInfo.isAnnotation()) return false;
-
-        if (classInfo.getName().equals("javax.annotation.Metatype")) return true;
-        if (isSelfAnnotated(classInfo, "Metatype")) return true;
-        if (isSelfAnnotated(classInfo, "Metaroot")) return false;
-
-        for (AnnotationInfo annotationInfo : classInfo.getAnnotations()) {
-            final ClassInfo annotation = classInfos.get(annotationInfo.getName());
-            if (annotation == null) return false;
-            if (annotation.getName().equals("javax.annotation.Metaroot")) return true;
-            if (isSelfAnnotated(annotation, "Metaroot")) return true;
-        }
-
-        return false;
-    }
-
-    private boolean isSelfAnnotated(ClassInfo classInfo, String metatype) {
-        if (!classInfo.isAnnotation()) return false;
-
-        final String name = classInfo.getName();
-        if (!hasName(name, metatype)) return false;
-
-        for (AnnotationInfo info : classInfo.getAnnotations()) {
-            if (info.getName().equals(name)) return true;
-        }
-
-        return true;
-    }
-
-    private boolean hasName(String className, String simpleName) {
-        return className.equals(simpleName) || className.endsWith("." + simpleName) || className.endsWith("$" + simpleName);
-    }
-
-    private void linkParent(ClassInfo classInfo) {
+    private void linkParent(ClassInfo classInfo) throws IOException {
         if (classInfo.superType == null) return;
         if (classInfo.superType.equals("java.lang.Object")) return;
-
+        
         ClassInfo parentInfo = classInfo.superclassInfo;
 
         if (parentInfo == null) {
@@ -337,7 +106,7 @@ public class AnnotationFinder implements IAnnotationFinder {
                 parentInfo = classInfos.get(classInfo.superType);
 
                 if (parentInfo == null) return;
-
+                
                 linkParent(parentInfo);
             }
 
@@ -349,16 +118,16 @@ public class AnnotationFinder implements IAnnotationFinder {
         }
     }
 
-    private void linkInterfaces(ClassInfo classInfo) {
+    private void linkInterfaces(ClassInfo classInfo) throws IOException {
         final List<ClassInfo> infos = new ArrayList<ClassInfo>();
 
-        if (classInfo.clazz != null) {
+        if (classInfo.clazz != null){
             final Class<?>[] interfaces = classInfo.clazz.getInterfaces();
 
             for (Class<?> clazz : interfaces) {
                 ClassInfo interfaceInfo = classInfos.get(clazz.getName());
 
-                if (interfaceInfo == null) {
+                if (interfaceInfo == null){
                     readClassDef(clazz);
                 }
 
@@ -372,7 +141,7 @@ public class AnnotationFinder implements IAnnotationFinder {
             for (String className : classInfo.interfaces) {
                 ClassInfo interfaceInfo = classInfos.get(className);
 
-                if (interfaceInfo == null) {
+                if (interfaceInfo == null){
                     readClassDef(className);
                 }
 
@@ -404,7 +173,6 @@ public class AnnotationFinder implements IAnnotationFinder {
      * results from the last findAnnotated* method call.
      * <p/>
      * This method is not thread safe.
-     *
      * @return an unmodifiable live view of classes that could not be loaded in previous findAnnotated* call.
      */
     public List<String> getClassesNotLoaded() {
@@ -454,77 +222,12 @@ public class AnnotationFinder implements IAnnotationFinder {
     }
 
     public List<Annotated<Class<?>>> findMetaAnnotatedClasses(Class<? extends Annotation> annotation) {
-        classesNotLoaded.clear();
-        Set<Class<?>> classes = findMetaAnnotatedClasses(annotation, new HashSet<Class<?>>());
-
+        List<Class<?>> classes = findAnnotatedClasses(annotation);
         List<Annotated<Class<?>>> list = new ArrayList<Annotated<Class<?>>>();
-
-        for (Class<?> clazz : classes) {
-            if (Annotation.class.isAssignableFrom(clazz) && isMetaAnnotation((Class<? extends Annotation>) clazz)) continue;
+        for (final Class<?> clazz : classes) {
             list.add(new MetaAnnotatedClass(clazz));
         }
-
         return list;
-    }
-
-    private static boolean isMetaAnnotation(Class<? extends Annotation> clazz) {
-        for (Annotation annotation : clazz.getDeclaredAnnotations()) {
-            if (isMetatypeAnnotation(annotation.annotationType())) return true;
-        }
-
-        return false;
-    }
-
-    private static boolean isMetatypeAnnotation(Class<? extends Annotation> type) {
-        if (isSelfAnnotated(type, "Metatype")) return true;
-
-        for (Annotation annotation : type.getAnnotations()) {
-            if (isSelfAnnotated(annotation.annotationType(), "Metaroot")) return true;
-        }
-
-        return false;
-    }
-
-    private static boolean isSelfAnnotated(Class<? extends Annotation> type, String name) {
-        return type.isAnnotationPresent(type) && type.getSimpleName().equals(name) && validTarget(type);
-    }
-
-    private static boolean validTarget(Class<? extends Annotation> type) {
-        final Target target = type.getAnnotation(Target.class);
-
-        if (target == null) return false;
-
-        final ElementType[] targets = target.value();
-
-        return targets.length == 1 && targets[0] == ElementType.ANNOTATION_TYPE;
-    }
-
-
-    private Set<Class<?>> findMetaAnnotatedClasses(Class<? extends Annotation> annotation, Set<Class<?>> classes) {
-        List<Info> infos = getAnnotationInfos(annotation.getName());
-        for (Info info : infos) {
-            if (info instanceof ClassInfo) {
-                ClassInfo classInfo = (ClassInfo) info;
-                try {
-                    Class clazz = classInfo.get();
-
-                    if (classes.contains(clazz)) continue;
-
-                    // double check via proper reflection
-                    if (clazz.isAnnotationPresent(annotation)) {
-                        classes.add(clazz);
-                    }
-
-                    String meta = info.getMetaAnnotationName();
-                    if (meta != null) {
-                        classes.addAll(findMetaAnnotatedClasses((Class<? extends Annotation>) clazz, classes));
-                    }
-                } catch (ClassNotFoundException e) {
-                    classesNotLoaded.add(classInfo.getName());
-                }
-            }
-        }
-        return classes;
     }
 
     /**
@@ -539,9 +242,9 @@ public class AnnotationFinder implements IAnnotationFinder {
         List<Info> infos = getAnnotationInfos(annotation.getName());
         for (Info info : infos) {
             try {
-                if (info instanceof ClassInfo) {
-                    classes.add(((ClassInfo) info).get());
-                }
+            	if(info instanceof ClassInfo){
+                   classes.add(((ClassInfo) info).get());
+            	}
             } catch (ClassNotFoundException cnfe) {
                 // TODO: ignored, but a log message would be appropriate
             }
@@ -565,9 +268,9 @@ public class AnnotationFinder implements IAnnotationFinder {
                     }
                     // check whether any interface is annotated
                     List<String> interfces = classInfo.getInterfaces();
-                    for (String interfce : interfces) {
+                    for (String interfce: interfces) {
                         for (Class clazz : classes) {
-                            if (interfce.replaceFirst("<.*>", "").equals(clazz.getName())) {
+                            if (interfce.replaceFirst("<.*>","").equals(clazz.getName())) {
                                 classes.add(classInfo.get());
                                 tempClassInfos.remove(pos);
                                 annClassFound = true;
@@ -615,121 +318,12 @@ public class AnnotationFinder implements IAnnotationFinder {
     }
 
     public List<Annotated<Method>> findMetaAnnotatedMethods(Class<? extends Annotation> annotation) {
-        classesNotLoaded.clear();
-
-        Set<Method> methods = findMetaAnnotatedMethods(annotation, new HashSet<Method>(), new HashSet<String>());
-
-        List<Annotated<Method>> targets = new ArrayList<Annotated<Method>>();
-
-        for (Method method : methods) {
-            targets.add(new MetaAnnotatedMethod(method));
+        List<Method> methods = findAnnotatedMethods(annotation);
+        List<Annotated<Method>> list = new ArrayList<Annotated<Method>>();
+        for (final Method method : methods) {
+            list.add(new MetaAnnotatedMethod(method));
         }
-
-        return targets;
-    }
-
-    private Set<Method> findMetaAnnotatedMethods(Class<? extends Annotation> annotation, Set<Method> methods, Set<String> seen) {
-        List<Info> infos = getAnnotationInfos(annotation.getName());
-
-        for (Info info : infos) {
-
-            String meta = info.getMetaAnnotationName();
-            if (meta != null) {
-                if (meta.equals(annotation.getName())) continue;
-                if (!seen.add(meta)) continue;
-
-
-                ClassInfo metaInfo = classInfos.get(meta);
-
-                Class<?> clazz;
-                try {
-                    clazz = metaInfo.get();
-                } catch (ClassNotFoundException e) {
-                    classesNotLoaded.add(metaInfo.getName());
-                    continue;
-                }
-
-                findMetaAnnotatedMethods((Class<? extends Annotation>) clazz, methods, seen);
-
-            } else if (info instanceof MethodInfo && !((MethodInfo) info).isConstructor()) {
-
-                MethodInfo methodInfo = (MethodInfo) info;
-
-                ClassInfo classInfo = methodInfo.getDeclaringClass();
-
-                try {
-                    Class clazz = classInfo.get();
-                    for (Method method : clazz.getDeclaredMethods()) {
-                        if (method.isAnnotationPresent(annotation)) {
-                            methods.add(method);
-                        }
-                    }
-                } catch (ClassNotFoundException e) {
-                    classesNotLoaded.add(classInfo.getName());
-                }
-            }
-        }
-
-        return methods;
-    }
-
-    public List<Annotated<Field>> findMetaAnnotatedFields(Class<? extends Annotation> annotation) {
-        classesNotLoaded.clear();
-
-        Set<Field> fields = findMetaAnnotatedFields(annotation, new HashSet<Field>(), new HashSet<String>());
-
-        List<Annotated<Field>> targets = new ArrayList<Annotated<Field>>();
-
-        for (Field field : fields) {
-            targets.add(new MetaAnnotatedField(field));
-        }
-
-        return targets;
-    }
-
-    private Set<Field> findMetaAnnotatedFields(Class<? extends Annotation> annotation, Set<Field> fields, Set<String> seen) {
-        List<Info> infos = getAnnotationInfos(annotation.getName());
-
-        for (Info info : infos) {
-
-            String meta = info.getMetaAnnotationName();
-            if (meta != null) {
-                if (meta.equals(annotation.getName())) continue;
-                if (!seen.add(meta)) continue;
-
-
-                ClassInfo metaInfo = classInfos.get(meta);
-
-                Class<?> clazz;
-                try {
-                    clazz = metaInfo.get();
-                } catch (ClassNotFoundException e) {
-                    classesNotLoaded.add(metaInfo.getName());
-                    continue;
-                }
-
-                findMetaAnnotatedFields((Class<? extends Annotation>) clazz, fields, seen);
-
-            } else if (info instanceof FieldInfo) {
-
-                FieldInfo fieldInfo = (FieldInfo) info;
-
-                ClassInfo classInfo = fieldInfo.getDeclaringClass();
-
-                try {
-                    Class clazz = classInfo.get();
-                    for (Field field : clazz.getDeclaredFields()) {
-                        if (field.isAnnotationPresent(annotation)) {
-                            fields.add(field);
-                        }
-                    }
-                } catch (ClassNotFoundException e) {
-                    classesNotLoaded.add(classInfo.getName());
-                }
-            }
-        }
-
-        return fields;
+        return list;
     }
 
     public List<Constructor> findAnnotatedConstructors(Class<? extends Annotation> annotation) {
@@ -790,14 +384,24 @@ public class AnnotationFinder implements IAnnotationFinder {
         return fields;
     }
 
+    public List<Annotated<Field>> findMetaAnnotatedFields(Class<? extends Annotation> annotation) {
+        List<Field> fields = findAnnotatedFields(annotation);
+        List<Annotated<Field>> list = new ArrayList<Annotated<Field>>();
+        for (final Field field : fields) {
+            list.add(new MetaAnnotatedField(field));
+        }
+
+        return list;
+    }
+
     public List<Class<?>> findClassesInPackage(String packageName, boolean recursive) {
         classesNotLoaded.clear();
         List<Class<?>> classes = new ArrayList<Class<?>>();
         for (ClassInfo classInfo : classInfos.values()) {
             try {
-                if (recursive && classInfo.getPackageName().startsWith(packageName)) {
+                if (recursive && classInfo.getPackageName().startsWith(packageName)){
                     classes.add(classInfo.get());
-                } else if (classInfo.getPackageName().equals(packageName)) {
+                } else if (classInfo.getPackageName().equals(packageName)){
                     classes.add(classInfo.get());
                 }
             } catch (ClassNotFoundException e) {
@@ -890,6 +494,7 @@ public class AnnotationFinder implements IAnnotationFinder {
                     // Optimization: Don't need to call this method if parent class was already searched
 
 
+
                     classes.addAll(_findSubclasses(impl));
                 }
 
@@ -918,7 +523,7 @@ public class AnnotationFinder implements IAnnotationFinder {
                         infos.addAll(collectImplementations(classInfo.name));
 
                     }
-
+                    
                 } catch (ClassNotFoundException ignore) {
                     // we'll deal with this later
                 }
@@ -928,12 +533,6 @@ public class AnnotationFinder implements IAnnotationFinder {
     }
 
     protected List<Info> getAnnotationInfos(String name) {
-        final List<Info> infos = annotated.get(name);
-        if (infos != null) return infos;
-        return Collections.EMPTY_LIST;
-    }
-
-    protected List<Info> initAnnotationInfos(String name) {
         List<Info> infos = annotated.get(name);
         if (infos == null) {
             infos = new SingleLinkedList<Info>();
@@ -943,32 +542,52 @@ public class AnnotationFinder implements IAnnotationFinder {
     }
 
     protected void readClassDef(String className) {
-        if (classInfos.containsKey(className)) return;
-        try {
-            readClassDef(archive.getBytecode(className));
-        } catch (Exception e) {
-            if (className.endsWith("$$")) return;
-            classesNotLoaded.add(className);
+        int pos = className.indexOf("<");
+        if (pos > -1) {
+            className = className.substring(0, pos);
         }
+        pos = className.indexOf(">");
+        if (pos > -1) {
+            className = className.substring(0, pos);
+        }
+        if (!className.endsWith(".class")) {
+            className = className.replace('.', '/') + ".class";
+        }
+        try {
+            URL resource = getResource(className);
+            if (resource != null) {
+                InputStream in = resource.openStream();
+                try {
+                    readClassDef(in);
+                } finally {
+                    in.close();
+                }
+            } else {
+                classesNotLoaded.add(className + " (no resource found for class)");
+            }
+        } catch (IOException e) {
+            classesNotLoaded.add(className + e.getMessage());
+        }
+
     }
 
     protected void readClassDef(InputStream in) throws IOException {
-        try {
-            ClassReader classReader = new ClassReader(in);
-            classReader.accept(new InfoBuildingVisitor(), ASM_FLAGS);
-        } finally {
-            in.close();
-        }
+        readClassDef(in, null);
+    }
+
+    protected void readClassDef(InputStream in, String path) throws IOException {
+        ClassReader classReader = new ClassReader(in);
+        classReader.accept(new InfoBuildingVisitor(path), ASM_FLAGS);
     }
 
     protected void readClassDef(Class clazz) {
         List<Info> infos = new ArrayList<Info>();
 
         Package aPackage = clazz.getPackage();
-        if (aPackage != null) {
+        if (aPackage != null){
             final PackageInfo info = new PackageInfo(aPackage);
             for (AnnotationInfo annotation : info.getAnnotations()) {
-                List<Info> annotationInfos = initAnnotationInfos(annotation.getName());
+                List<Info> annotationInfos = getAnnotationInfos(annotation.getName());
                 if (!annotationInfos.contains(info)) {
                     annotationInfos.add(info);
                 }
@@ -992,70 +611,8 @@ public class AnnotationFinder implements IAnnotationFinder {
 
         for (Info info : infos) {
             for (AnnotationInfo annotation : info.getAnnotations()) {
-                List<Info> annotationInfos = initAnnotationInfos(annotation.getName());
+                List<Info> annotationInfos = getAnnotationInfos(annotation.getName());
                 annotationInfos.add(info);
-            }
-        }
-    }
-
-    public AnnotationFinder select(Class<?>... clazz) {
-        String[] names = new String[clazz.length];
-        int i = 0;
-        for (Class<?> name : clazz) {
-            names[i++] = name.getName();
-        }
-
-        return new AnnotationFinder(this, Arrays.asList(names));
-    }
-
-    public AnnotationFinder select(String... clazz) {
-        return new AnnotationFinder(this, Arrays.asList(clazz));
-    }
-
-    public AnnotationFinder select(Iterable<String> clazz) {
-        return new AnnotationFinder(this, clazz);
-    }
-
-    public class SubArchive implements Archive {
-        private List<Entry> classes = new ArrayList<Entry>();
-
-        public SubArchive(String... classes) {
-            for (String name : classes) {
-                this.classes.add(new E(name));
-            }
-        }
-
-        public SubArchive(Iterable<String> classes) {
-            for (String name : classes) {
-                this.classes.add(new E(name));
-            }
-        }
-
-        public InputStream getBytecode(String className) throws IOException, ClassNotFoundException {
-            return archive.getBytecode(className);
-        }
-
-        public Class<?> loadClass(String className) throws ClassNotFoundException {
-            return archive.loadClass(className);
-        }
-
-        public Iterator<Entry> iterator() {
-            return classes.iterator();
-        }
-
-        public class E implements Entry {
-            private final String name;
-
-            public E(String name) {
-                this.name = name;
-            }
-
-            public String getName() {
-                return name;
-            }
-
-            public InputStream getBytecode() throws IOException {
-                return new ByteArrayInputStream(new byte[0]);
             }
         }
     }
@@ -1072,34 +629,27 @@ public class AnnotationFinder implements IAnnotationFinder {
         public Annotatable() {
         }
 
-        public Annotation[] getDeclaredAnnotations() {
-            return new Annotation[0];
-        }
-
         public List<AnnotationInfo> getAnnotations() {
             return annotations;
         }
-
-        public String getMetaAnnotationName() {
-            return null;
-        }
-
+        
         /**
-         * Utility method to get around some errors caused by
-         * interactions between the Equinox class loaders and
-         * the OpenJPA transformation process.  There is a window
-         * where the OpenJPA transformation process can cause
-         * an annotation being processed to get defined in a
-         * classloader during the actual defineClass call for
-         * that very class (e.g., recursively).  This results in
-         * a LinkageError exception.  If we see one of these,
-         * retry the request.  Since the annotation will be
-         * defined on the second pass, this should succeed.  If
-         * we get a second exception, then it's likely some
-         * other problem.
-         *
+         * Utility method to get around some errors caused by 
+         * interactions between the Equinox class loaders and 
+         * the OpenJPA transformation process.  There is a window 
+         * where the OpenJPA transformation process can cause 
+         * an annotation being processed to get defined in a 
+         * classloader during the actual defineClass call for 
+         * that very class (e.g., recursively).  This results in 
+         * a LinkageError exception.  If we see one of these, 
+         * retry the request.  Since the annotation will be 
+         * defined on the second pass, this should succeed.  If 
+         * we get a second exception, then it's likely some 
+         * other problem. 
+         * 
          * @param element The AnnotatedElement we need information for.
-         * @return An array of the Annotations defined on the element.
+         * 
+         * @return An array of the Annotations defined on the element. 
          */
         private Annotation[] getAnnotations(AnnotatedElement element) {
             try {
@@ -1112,14 +662,9 @@ public class AnnotationFinder implements IAnnotationFinder {
     }
 
     public static interface Info {
-
-        String getMetaAnnotationName();
-
         String getName();
 
         List<AnnotationInfo> getAnnotations();
-
-        Annotation[] getDeclaredAnnotations();
     }
 
     public class PackageInfo extends Annotatable implements Info {
@@ -1127,7 +672,7 @@ public class AnnotationFinder implements IAnnotationFinder {
         private final ClassInfo info;
         private final Package pkg;
 
-        public PackageInfo(Package pkg) {
+        public PackageInfo(Package pkg){
             super(pkg);
             this.pkg = pkg;
             this.name = pkg.getName();
@@ -1145,7 +690,7 @@ public class AnnotationFinder implements IAnnotationFinder {
         }
 
         public Package get() throws ClassNotFoundException {
-            return (pkg != null) ? pkg : info.get().getPackage();
+            return (pkg != null)?pkg:info.get().getPackage();
         }
 
         @Override
@@ -1175,15 +720,16 @@ public class AnnotationFinder implements IAnnotationFinder {
         private final List<ClassInfo> subclassInfos = new SingleLinkedList<ClassInfo>();
         private final List<String> interfaces = new SingleLinkedList<String>();
         private final List<FieldInfo> fields = new SingleLinkedList<FieldInfo>();
+        //e.g. bundle class path prefix.
+        private String path;
         private Class<?> clazz;
-
 
         public ClassInfo(Class clazz) {
             super(clazz);
             this.clazz = clazz;
             this.name = clazz.getName();
             Class superclass = clazz.getSuperclass();
-            this.superType = superclass != null ? superclass.getName() : null;
+            this.superType = superclass != null ? superclass.getName(): null;
             for (Class intrface : clazz.getInterfaces()) {
                 this.interfaces.add(intrface.getName());
             }
@@ -1194,26 +740,8 @@ public class AnnotationFinder implements IAnnotationFinder {
             this.superType = superType;
         }
 
-        @Override
-        public String getMetaAnnotationName() {
-            for (AnnotationInfo info : getAnnotations()) {
-                for (Class<? extends Annotation> metaroot : metaroots) {
-                    if (info.getName().equals(metaroot.getName())) return name;
-                }
-            }
-
-            if (name.endsWith("$$")) {
-                ClassInfo info = classInfos.get(name.substring(0, name.length() - 2));
-                if (info != null) {
-                    return info.getMetaAnnotationName();
-                }
-            }
-
-            return null;
-        }
-
-        public String getPackageName() {
-            return name.indexOf(".") > 0 ? name.substring(0, name.lastIndexOf(".")) : "";
+        public String getPackageName(){
+            return name.indexOf(".") > 0 ? name.substring(0, name.lastIndexOf(".")) : "" ;
         }
 
         public List<MethodInfo> getConstructors() {
@@ -1240,15 +768,11 @@ public class AnnotationFinder implements IAnnotationFinder {
             return superType;
         }
 
-        public boolean isAnnotation() {
-            return "java.lang.Object".equals(superType) && interfaces.size() == 1 && "java.lang.annotation.Annotation".equals(interfaces.get(0));
-        }
-
         public Class<?> get() throws ClassNotFoundException {
             if (clazz != null) return clazz;
             try {
                 String fixedName = name.replaceFirst("<.*>", "");
-                this.clazz = archive.loadClass(fixedName);
+                this.clazz = loadClass(fixedName);
                 return clazz;
             } catch (ClassNotFoundException notFound) {
                 classesNotLoaded.add(name);
@@ -1259,53 +783,36 @@ public class AnnotationFinder implements IAnnotationFinder {
         public String toString() {
             return name;
         }
+
+        public String getPath() {
+            return path;
+        }
     }
 
     public class MethodInfo extends Annotatable implements Info {
         private final ClassInfo declaringClass;
-        private final String descriptor;
+        private final String returnType;
         private final String name;
         private final List<List<AnnotationInfo>> parameterAnnotations = new ArrayList<List<AnnotationInfo>>();
-        private Member method;
 
-        public MethodInfo(ClassInfo info, Constructor constructor) {
+        public MethodInfo(ClassInfo info, Constructor constructor){
             super(constructor);
             this.declaringClass = info;
             this.name = "<init>";
-            this.descriptor = null;
+            this.returnType = Void.TYPE.getName();
         }
 
-        public MethodInfo(ClassInfo info, Method method) {
+        public MethodInfo(ClassInfo info, Method method){
             super(method);
             this.declaringClass = info;
             this.name = method.getName();
-            this.descriptor = method.getReturnType().getName();
-            this.method = method;
+            this.returnType = method.getReturnType().getName();
         }
 
-        public MethodInfo(ClassInfo declarignClass, String name, String descriptor) {
+        public MethodInfo(ClassInfo declarignClass, String name, String returnType) {
             this.declaringClass = declarignClass;
             this.name = name;
-            this.descriptor = descriptor;
-        }
-
-        @Override
-        public String getMetaAnnotationName() {
-            return declaringClass.getMetaAnnotationName();
-        }
-
-        @Override
-        public Annotation[] getDeclaredAnnotations() {
-            super.getDeclaredAnnotations();
-            try {
-                return ((AnnotatedElement) get()).getDeclaredAnnotations();
-            } catch (ClassNotFoundException e) {
-                return super.getDeclaredAnnotations();
-            }
-        }
-
-        public boolean isConstructor() {
-            return getName().equals("<init>");
+            this.returnType = returnType;
         }
 
         public List<List<AnnotationInfo>> getParameterAnnotations() {
@@ -1330,64 +837,25 @@ public class AnnotationFinder implements IAnnotationFinder {
             return declaringClass;
         }
 
+        public String getReturnType() {
+            return returnType;
+        }
+
         public String toString() {
             return declaringClass + "@" + name;
         }
-
-        public Member get() throws ClassNotFoundException {
-            if (method == null) {
-                method = toMethod();
-            }
-
-            return method;
-        }
-
-        private Method toMethod() throws ClassNotFoundException {
-            org.objectweb.asm.commons.Method method = new org.objectweb.asm.commons.Method(name, descriptor);
-
-            Class<?> clazz = this.declaringClass.get();
-            List<Class> parameterTypes = new ArrayList<Class>();
-
-            for (Type type : method.getArgumentTypes()) {
-                String paramType = type.getClassName();
-                try {
-                    parameterTypes.add(Classes.forName(paramType, clazz.getClassLoader()));
-                } catch (ClassNotFoundException cnfe) {
-                    throw new IllegalStateException("Parameter class could not be loaded for type " + paramType, cnfe);
-                }
-            }
-
-            Class[] parameters = parameterTypes.toArray(new Class[parameterTypes.size()]);
-
-            IllegalStateException noSuchMethod = null;
-            while (clazz != null) {
-                try {
-                    return clazz.getDeclaredMethod(name, parameters);
-                } catch (NoSuchMethodException e) {
-                    if (noSuchMethod == null) {
-                        noSuchMethod = new IllegalStateException("Callback method does not exist: " + clazz.getName() + "." + name, e);
-                    }
-                    clazz = clazz.getSuperclass();
-                }
-            }
-
-            throw noSuchMethod;
-        }
-
     }
 
     public class FieldInfo extends Annotatable implements Info {
         private final String name;
         private final String type;
         private final ClassInfo declaringClass;
-        private Field field;
 
-        public FieldInfo(ClassInfo info, Field field) {
+        public FieldInfo(ClassInfo info, Field field){
             super(field);
             this.declaringClass = info;
             this.name = field.getName();
             this.type = field.getType().getName();
-            this.field = field;
         }
 
         public FieldInfo(ClassInfo declaringClass, String name, String type) {
@@ -1411,47 +879,12 @@ public class AnnotationFinder implements IAnnotationFinder {
         public String toString() {
             return declaringClass + "#" + name;
         }
-
-        @Override
-        public String getMetaAnnotationName() {
-            return declaringClass.getMetaAnnotationName();
-        }
-
-        @Override
-        public Annotation[] getDeclaredAnnotations() {
-            super.getDeclaredAnnotations();
-            try {
-                return ((AnnotatedElement) get()).getDeclaredAnnotations();
-            } catch (ClassNotFoundException e) {
-                return super.getDeclaredAnnotations();
-            }
-        }
-
-        public Member get() throws ClassNotFoundException {
-            if (field == null) {
-                field = toField();
-            }
-
-            return field;
-        }
-
-        private Field toField() throws ClassNotFoundException {
-
-            Class<?> clazz = this.declaringClass.get();
-
-            try {
-                return clazz.getDeclaredField(name);
-            } catch (NoSuchFieldException e) {
-                throw new IllegalStateException(name, e);
-            }
-
-        }
     }
 
     public class AnnotationInfo extends Annotatable implements Info {
         private final String name;
 
-        public AnnotationInfo(Annotation annotation) {
+        public AnnotationInfo(Annotation annotation){
             this(annotation.getClass().getName());
         }
 
@@ -1460,7 +893,8 @@ public class AnnotationFinder implements IAnnotationFinder {
         }
 
         public AnnotationInfo(String name) {
-            name = Type.getType(name).getClassName();
+            name = name.replaceAll("^L|;$", "");
+            name = name.replace('/', '.');
             this.name = name.intern();
         }
 
@@ -1473,14 +907,12 @@ public class AnnotationFinder implements IAnnotationFinder {
         }
     }
 
-    private void index(AnnotationInfo annotationInfo, Info info) {
-        initAnnotationInfos(annotationInfo.getName()).add(info);
-    }
-
     public class InfoBuildingVisitor extends EmptyVisitor {
         private Info info;
+        private String path;
 
-        public InfoBuildingVisitor() {
+        public InfoBuildingVisitor(String path) {
+            this.path = path;
         }
 
         public InfoBuildingVisitor(Info info) {
@@ -1492,9 +924,8 @@ public class AnnotationFinder implements IAnnotationFinder {
             if (name.endsWith("package-info")) {
                 info = new PackageInfo(javaName(name));
             } else {
-
                 ClassInfo classInfo = new ClassInfo(javaName(name), javaName(superName));
-
+                classInfo.path = path;
 //                if (signature == null) {
                     for (String interfce : interfaces) {
                         classInfo.getInterfaces().add(javaName(interfce));
@@ -1504,30 +935,19 @@ public class AnnotationFinder implements IAnnotationFinder {
 //                    new SignatureReader(signature).accept(new GenericAwareInfoBuildingVisitor(GenericAwareInfoBuildingVisitor.TYPE.CLASS, classInfo));
 //                }
                 info = classInfo;
-
                 classInfos.put(classInfo.getName(), classInfo);
             }
         }
 
         private String javaName(String name) {
-            return (name == null) ? null : name.replace('/', '.');
-        }
-
-        @Override
-        public void visitInnerClass(String name, String outerName, String innerName, int access) {
-            super.visitInnerClass(name, outerName, innerName, access);
-        }
-
-        @Override
-        public void visitAttribute(Attribute attribute) {
-            super.visitAttribute(attribute);
+            return (name == null)? null:name.replace('/', '.');
         }
 
         @Override
         public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
             AnnotationInfo annotationInfo = new AnnotationInfo(desc);
             info.getAnnotations().add(annotationInfo);
-            index(annotationInfo, info);
+            getAnnotationInfos(annotationInfo.getName()).add(info);
             return new InfoBuildingVisitor(annotationInfo);
         }
 
@@ -1543,11 +963,9 @@ public class AnnotationFinder implements IAnnotationFinder {
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             ClassInfo classInfo = ((ClassInfo) info);
             MethodInfo methodInfo = new MethodInfo(classInfo, name, desc);
-
             classInfo.getMethods().add(methodInfo);
             return new InfoBuildingVisitor(methodInfo);
         }
-
 
         @Override
         public AnnotationVisitor visitParameterAnnotation(int param, String desc, boolean visible) {
@@ -1714,9 +1132,8 @@ public class AnnotationFinder implements IAnnotationFinder {
         }
 
         private String javaName(String name) {
-            return (name == null) ? null : name.replace('/', '.');
+            return (name == null)? null:name.replace('/', '.');
         }
 
     }
-
 }
