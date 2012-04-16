@@ -52,7 +52,10 @@ public class FinderFactory {
         IAnnotationFinder finder;
         if (module instanceof WebModule) {
             WebModule webModule = (WebModule) module;
-            finder = new AnnotationFinder(new WebappAggregatedArchive(webModule, webModule.getScannableUrls())).link();
+            final AnnotationFinder annotationFinder = new AnnotationFinder(new WebappAggregatedArchive(webModule, webModule.getScannableUrls()));
+            if (annotationFinder.hasMetaAnnotations()) annotationFinder.enableMetaAnnotations();
+            if (enableFindSubclasses()) annotationFinder.enableFindSubclasses();
+            finder = annotationFinder;
         } else if (module instanceof ConnectorModule) {
         	ConnectorModule connectorModule = (ConnectorModule) module;
         	finder = new AnnotationFinder(new ConfigurableClasspathArchive(connectorModule, connectorModule.getLibraries())).link();
@@ -82,6 +85,19 @@ public class FinderFactory {
         }
 
         return new ModuleLimitedFinder(finder);
+    }
+
+    private boolean enableFindSubclasses() {
+        return isJaxRsInstalled() && SystemInstance.get().getOptions().get("tomee.jaxrs.deploy.undeclared", false);
+    }
+
+    public boolean isJaxRsInstalled() {
+        try {
+            this.getClass().getClassLoader().loadClass("org.apache.openejb.server.rest.RsRegistry");
+            return true;
+        } catch (Throwable e) {
+            return false;
+        }
     }
 
     public static class ModuleLimitedFinder implements IAnnotationFinder {
