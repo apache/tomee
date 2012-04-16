@@ -53,6 +53,8 @@ public class OpenEJBHttpWsRegistry extends OpenEJBHttpRegistry implements WsRegi
             if (!context.endsWith("/")) {
                 deployedPath.append("/");
             }
+        } else {
+            deployedPath.append("/");
         }
         if (path.startsWith("/") && path.length() > 1) {
             deployedPath.append(path.substring(1));
