@@ -16,27 +16,13 @@
  */
 package org.apache.openejb.config;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
-
 import javax.annotation.Resource;
 import javax.ejb.ApplicationException;
 import javax.ejb.Local;
@@ -68,7 +54,7 @@ import javax.resource.spi.endpoint.MessageEndpointFactory;
 import javax.resource.spi.work.WorkContext;
 import javax.security.auth.Subject;
 import javax.transaction.xa.XAResource;
-
+import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Application;
 import org.apache.openejb.assembler.classic.AppInfo;
@@ -85,11 +71,16 @@ import org.apache.openejb.jee.WebApp;
 import org.apache.xbean.finder.Annotated;
 import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.ClassFinder;
-import org.apache.xbean.finder.archive.Archive;
 import org.apache.xbean.finder.archive.ClassesArchive;
-import org.apache.xbean.finder.archive.JarArchive;
 import org.junit.Assert;
 import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @version $Rev$ $Date$
@@ -526,6 +517,7 @@ public class AnnotationDeployerTest {
         }
     }
 
+    @ApplicationPath("/")
     public static class RESTApp extends Application {
         public java.util.Set<java.lang.Class<?>> getClasses() {
             return new HashSet<Class<?>>() {{
