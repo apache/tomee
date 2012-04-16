@@ -21,10 +21,12 @@ package org.apache.openejb.arquillian.tests.jaxrs.httpheaders;
 
 import java.util.HashSet;
 import java.util.Set;
+import javax.ws.rs.ApplicationPath;
 
 /**
  * Application to test the HTTP headers
  */
+@ApplicationPath("/")
 public class Application extends javax.ws.rs.core.Application {
 
     @Override

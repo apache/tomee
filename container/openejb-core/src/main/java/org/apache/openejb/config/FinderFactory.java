@@ -34,6 +34,7 @@ import org.apache.xbean.finder.archive.ClasspathArchive;
 public class FinderFactory {
 
     private static final FinderFactory factory = new FinderFactory();
+    public static final String TOMEE_JAXRS_DEPLOY_UNDECLARED_PROP = "tomee.jaxrs.deploy.undeclared";
 
     private static FinderFactory get() {
         FinderFactory factory = SystemInstance.get().getComponent(FinderFactory.class);
@@ -52,15 +53,17 @@ public class FinderFactory {
         IAnnotationFinder finder;
         if (module instanceof WebModule) {
             WebModule webModule = (WebModule) module;
-            AnnotationFinder annotationFinder = new AnnotationFinder(new WebappAggregatedArchive(webModule, webModule.getScannableUrls()));
-
-            // always link otherwise the ModuleLimitedFinder will not be able to use getAnnotatedClassNames() method
-            // and result will always be empty
-            // moreover we call findSubclasses in annotation finder so that's mandatory
-            finder = annotationFinder.link();
+            final AnnotationFinder annotationFinder = new AnnotationFinder(new WebappAggregatedArchive(webModule, webModule.getScannableUrls()));
+            if (annotationFinder.hasMetaAnnotations()) {
+                annotationFinder.enableMetaAnnotations();
+            }
+            if (enableFindSubclasses()) {
+                annotationFinder.enableFindSubclasses();
+            }
+            finder = annotationFinder;
         } else if (module instanceof ConnectorModule) {
-        	ConnectorModule connectorModule = (ConnectorModule) module;
-        	finder = new AnnotationFinder(new ConfigurableClasspathArchive(connectorModule, connectorModule.getLibraries())).link();
+            ConnectorModule connectorModule = (ConnectorModule) module;
+            finder = new AnnotationFinder(new ConfigurableClasspathArchive(connectorModule, connectorModule.getLibraries())).link();
         } else if (module.getJarLocation() != null) {
             String location = module.getJarLocation();
             File file = new File(location);
@@ -68,10 +71,10 @@ public class FinderFactory {
             URL url;
             if (file.exists()) {
                 url = file.toURI().toURL();
-                
+
                 File webInfClassesFolder = new File(file, "WEB-INF/classes"); // is it possible?? normally no
-				if (webInfClassesFolder.exists() && webInfClassesFolder.isDirectory()) {
-                	url = webInfClassesFolder.toURI().toURL();
+                if (webInfClassesFolder.exists() && webInfClassesFolder.isDirectory()) {
+                    url = webInfClassesFolder.toURI().toURL();
                 }
             } else {
                 url = new URL(location);
@@ -87,6 +90,19 @@ public class FinderFactory {
         }
 
         return new ModuleLimitedFinder(finder);
+    }
+
+    private static boolean enableFindSubclasses() {
+        return isJaxRsInstalled() && SystemInstance.get().getOptions().get(TOMEE_JAXRS_DEPLOY_UNDECLARED_PROP, false);
+    }
+
+    public static boolean isJaxRsInstalled() {
+        try {
+            FinderFactory.class.getClassLoader().loadClass("org.apache.openejb.server.rest.RsRegistry");
+            return true;
+        } catch (Throwable e) {
+            return false;
+        }
     }
 
     public static class ModuleLimitedFinder implements IAnnotationFinder {

@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.config;
 
+import javax.ws.rs.ApplicationPath;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.api.LocalClient;
@@ -1037,19 +1038,28 @@ public class AnnotationDeployer implements DynamicDeployer {
             */
             // get by annotations
             webModule.getRestClasses().addAll(findRestClasses(webModule, finder));
+
             // Applications with a default constructor
+            // findSubclasses will not work by default to gain a lot of time
+            // look FinderFactory for the flag to activate it or
+            // use @ApplicationPath("/")
             List<Class<? extends Application>> applications = finder.findSubclasses(Application.class);
             for (Class<? extends Application> app : applications) {
-                if (app.getConstructors().length == 0) {
-                    webModule.getRestApplications().add(app.getName());
-                } else {
-                    for (Constructor<?> ctr : app.getConstructors()) {
-                        if (ctr.getParameterTypes().length == 0) {
-                            webModule.getRestApplications().add(app.getName());
-                            break;
-                        }
-                    }
+                addRestApplicationIfPossible(webModule, app);
+            }
+
+            // look for ApplicationPath, it will often return the same than the previous one
+            // but without finder.link() invocation it still works
+            // so it can save a lot of startup time
+            List<Annotated<Class<?>>> applicationsByAnnotation = finder.findMetaAnnotatedClasses(ApplicationPath.class);
+            for (Annotated<Class<?>> annotatedApp : applicationsByAnnotation) {
+                final Class<?> app = annotatedApp.get();
+                if (!Application.class.isAssignableFrom(app)) {
+                    logger.error("class '" + app.getName() + "' is annotated with @ApplicationPath but doesn't implement " + Application.class.getName());
+                    continue;
                 }
+
+                addRestApplicationIfPossible(webModule, (Class<? extends Application>) app);
             }
 
             /*
@@ -1090,6 +1100,19 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             return webModule;
+        }
+
+        private static void addRestApplicationIfPossible(final WebModule webModule, final Class<? extends Application> app) {
+            if (app.getConstructors().length == 0) {
+                webModule.getRestApplications().add(app.getName());
+            } else {
+                for (Constructor<?> ctr : app.getConstructors()) {
+                    if (ctr.getParameterTypes().length == 0) {
+                        webModule.getRestApplications().add(app.getName());
+                        break;
+                    }
+                }
+            }
         }
 
         public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
