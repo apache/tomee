@@ -16,6 +16,55 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.instrument.ClassFileTransformer;
+import java.lang.instrument.Instrumentation;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanRegistrationException;
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+import javax.naming.Binding;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NameAlreadyBoundException;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.resource.spi.BootstrapContext;
+import javax.resource.spi.ConnectionManager;
+import javax.resource.spi.ManagedConnectionFactory;
+import javax.resource.spi.ResourceAdapter;
+import javax.resource.spi.ResourceAdapterInternalException;
+import javax.resource.spi.XATerminator;
+import javax.resource.spi.work.WorkManager;
+import javax.sql.DataSource;
+import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
+import javax.validation.ValidationException;
+import javax.validation.ValidatorFactory;
 import org.apache.geronimo.connector.GeronimoBootstrapContext;
 import org.apache.geronimo.connector.work.GeronimoWorkManager;
 import org.apache.geronimo.connector.work.HintsContextHandler;
@@ -67,6 +116,7 @@ import org.apache.openejb.javaagent.Agent;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.monitoring.DynamicMBeanWrapper;
+import org.apache.openejb.monitoring.JMXContainer;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
@@ -97,56 +147,6 @@ import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 import org.apache.xbean.recipe.UnsetPropertiesRecipe;
 
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanRegistrationException;
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
-import javax.naming.Binding;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NameAlreadyBoundException;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-import javax.resource.spi.BootstrapContext;
-import javax.resource.spi.ConnectionManager;
-import javax.resource.spi.ManagedConnectionFactory;
-import javax.resource.spi.ResourceAdapter;
-import javax.resource.spi.ResourceAdapterInternalException;
-import javax.resource.spi.XATerminator;
-import javax.resource.spi.work.WorkManager;
-import javax.sql.DataSource;
-import javax.transaction.TransactionManager;
-import javax.transaction.TransactionSynchronizationRegistry;
-import javax.validation.ValidationException;
-import javax.validation.ValidatorFactory;
-import java.io.File;
-import java.io.IOException;
-import java.lang.instrument.ClassFileTransformer;
-import java.lang.instrument.Instrumentation;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.atomic.AtomicInteger;
-
 public class Assembler extends AssemblerTool implements org.apache.openejb.spi.Assembler, JndiConstants {
 
     static {
@@ -156,6 +156,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     public static final String OPENEJB_URL_PKG_PREFIX = IvmContext.class.getPackage().getName();
 
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, Assembler.class);
+
+    private static final String GLOBAL_UNIQUE_ID = "global";
 
     Messages messages = new Messages(Assembler.class.getPackage().getName());
 
@@ -168,7 +170,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     private final Map<String, AppInfo> deployedApplications = new HashMap<String, AppInfo> ();
     private final List<DeploymentListener> deploymentListeners = new ArrayList<DeploymentListener>();
     private final Set<String> moduleIds = new HashSet<String>();
-    private static final String GLOBAL_UNIQUE_ID = "global";
+    private final Set<ObjectName> containersObjectNames = new HashSet<ObjectName>();
 
 
     public org.apache.openejb.spi.ContainerSystem getContainerSystem() {
@@ -1062,6 +1064,17 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
         }
 
+        final Iterator<ObjectName> it = containersObjectNames.iterator();
+        final MBeanServer server = LocalMBeanServer.get();
+        while (it.hasNext()) {
+            try {
+                server.unregisterMBean(it.next());
+            } catch (Exception ignored) {
+                // no-op
+            }
+            it.remove();
+        }
+
         NamingEnumeration<Binding> namingEnumeration = null;
         try {
             namingEnumeration = containerSystem.getJNDIContext().listBindings("openejb/Resource");
@@ -1409,6 +1422,18 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         config.containerSystem.containers.add(serviceInfo);
 
         logger.getChildLogger("service").debug("createService.success", serviceInfo.service, serviceInfo.id, serviceInfo.className);
+
+        if (service instanceof Container) {
+            final ObjectName objectName = ObjectNameBuilder.uniqueName("containers", serviceInfo.id, service);
+            try {
+                LocalMBeanServer.get().registerMBean(new DynamicMBeanWrapper(new JMXContainer(serviceInfo, (Container) service)), objectName);
+                containersObjectNames.add(objectName);
+            } catch (Exception e) {
+                // no-op
+            } catch (NoClassDefFoundError ncdfe) { // OSGi
+                // no-op
+            }
+        }
     }
 
     private void bindService(ServiceInfo serviceInfo, Object service) throws OpenEJBException {

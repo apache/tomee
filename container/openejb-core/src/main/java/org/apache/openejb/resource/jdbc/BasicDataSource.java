@@ -25,6 +25,7 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
+import org.apache.openejb.monitoring.JMXBasicDataSource;
 
 @SuppressWarnings({"UnusedDeclaration"})
 public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {

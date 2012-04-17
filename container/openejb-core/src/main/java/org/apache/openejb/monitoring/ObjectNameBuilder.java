@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.monitoring;
 
+import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import java.util.LinkedHashMap;
@@ -78,5 +79,19 @@ public class ObjectNameBuilder {
         builder.domain = this.domain;
         builder.map.putAll(this.map);
         return builder;
+    }
+
+    public static ObjectName uniqueName(final String type, final String name, final Object object) {
+        final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
+        jmxName.set("ObjectType", type);
+        jmxName.set("DataSource", name);
+        ObjectName objectName = jmxName.build();
+
+        final MBeanServer server = LocalMBeanServer.get();
+        if (server.isRegistered(objectName)) {
+            jmxName.set("DataSource", name + "(" + System.identityHashCode(object) + ")");
+            objectName = jmxName.build();
+        }
+        return objectName;
     }
 }

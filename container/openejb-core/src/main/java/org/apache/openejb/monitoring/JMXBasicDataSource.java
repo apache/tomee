@@ -1,16 +1,12 @@
-package org.apache.openejb.resource.jdbc;
+package org.apache.openejb.monitoring;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.management.Description;
-import javax.management.MBeanServer;
 import javax.management.ManagedAttribute;
 import javax.management.ManagedOperation;
 import javax.management.ObjectName;
-import org.apache.openejb.monitoring.DynamicMBeanWrapper;
-import org.apache.openejb.monitoring.LocalMBeanServer;
-import org.apache.openejb.monitoring.ObjectNameBuilder;
 
 // @MBean: don't put it since it is not a pojo
 @Description("describe a datasource pool")
@@ -22,18 +18,9 @@ public class JMXBasicDataSource {
     public JMXBasicDataSource(final String name, final org.apache.commons.dbcp.BasicDataSource ds) {
         this.ds = ds;
 
-        final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
-        jmxName.set("ObjectType", "datasources");
-        jmxName.set("DataSource", name);
-        objectName = jmxName.build();
-
-        final MBeanServer server = LocalMBeanServer.get();
-        if (server.isRegistered(objectName)) {
-            jmxName.set("DataSource", name + "(" + System.identityHashCode(this) + ")");
-            objectName = jmxName.build();
-        }
+        objectName = ObjectNameBuilder.uniqueName("datasources", name, ds);
         try {
-            server.registerMBean(new DynamicMBeanWrapper(this), objectName);
+            LocalMBeanServer.get().registerMBean(new DynamicMBeanWrapper(this), objectName);
         } catch (Exception e) {
             e.printStackTrace(); // TODO
         }
