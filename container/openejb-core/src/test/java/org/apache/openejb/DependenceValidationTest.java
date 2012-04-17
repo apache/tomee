@@ -16,16 +16,7 @@
  */
 package org.apache.openejb;
 
-import static org.apache.openejb.util.URLs.toFile;
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
-import junit.framework.TestResult;
-import org.apache.openejb.loader.IO;
-import org.apache.xbean.asm.ClassReader;
-import org.apache.xbean.asm.ClassWriter;
-
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -33,6 +24,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
+import junit.framework.TestResult;
+import org.apache.openejb.loader.IO;
+import org.apache.xbean.asm.ClassReader;
+import org.apache.xbean.asm.ClassWriter;
+
+import static org.apache.openejb.util.URLs.toFile;
 
 public class DependenceValidationTest extends TestCase {
 
@@ -56,7 +55,7 @@ public class DependenceValidationTest extends TestCase {
 
         // Nothing may depend on the Assembler except the config code
         String dynamicAssembler = "org.apache.openejb.assembler.dynamic";
-        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.assembler.classic", "org.apache.openejb.assembler", "org.apache.openejb.config", "org.apache.openejb.assembler.dynamic", "org.apache.openejb.assembler.classic.cmd", "org.apache.openejb.cdi", "org.apache.openejb.junit");
+        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.assembler.classic", "org.apache.openejb.assembler", "org.apache.openejb.config", "org.apache.openejb.assembler.dynamic", "org.apache.openejb.assembler.classic.cmd", "org.apache.openejb.assembler.monitoring", "org.apache.openejb.cdi", "org.apache.openejb.junit");
 
         // Nothing may depend on the Dynamic Assembler
         assertNotDependentOn("org.apache.openejb", dynamicAssembler);
