@@ -55,7 +55,7 @@ public class GetResourcesTest {
     }
 
     @Test public void check() throws IOException {
-        assertOutput("http://localhost:" + System.getProperty("tomee.http.port", "11080") + "/" + TEST_NAME + "/get-resources", "foundFromListener=1");
-        assertOutput("http://localhost:" + System.getProperty("tomee.http.port", "11080") + "/" + TEST_NAME + "/get-resources", "servletContextGetResource=ok");
+        assertOutput("http://localhost:" + System.getProperty("tomee.httpPort", "11080") + "/" + TEST_NAME + "/get-resources", "foundFromListener=1");
+        assertOutput("http://localhost:" + System.getProperty("tomee.httpPort", "11080") + "/" + TEST_NAME + "/get-resources", "servletContextGetResource=ok");
     }
 }

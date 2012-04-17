@@ -63,7 +63,7 @@ public class JAXWSDDTest {
     }
 
     private void checkWSDLExists(final String name) throws Exception {
-        final URL url = new URL("http://localhost:" + System.getProperty("tomee.http.port", "11080") + "/JAXWSDDTest/webservices/" + name + "?wsdl");
+        final URL url = new URL("http://localhost:" + System.getProperty("tomee.httpPort", "11080") + "/JAXWSDDTest/webservices/" + name + "?wsdl");
         assertTrue(IO.slurp(url).contains(name));
     }
 }

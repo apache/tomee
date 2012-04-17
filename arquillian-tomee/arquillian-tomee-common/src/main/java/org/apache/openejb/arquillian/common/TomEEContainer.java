@@ -54,10 +54,6 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
     protected Map<String, File> moduleIds = new HashMap<String, File>();
     private final Options options;
 
-    protected int previousHttpPort;
-    protected int previousStopPort;
-    protected int previousAjpPort;
-
     protected TomEEContainer() {
         this.options = new Options(System.getProperties());
     }
@@ -69,28 +65,9 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
 
         if (prefixes == null) return;
 
-        previousHttpPort = configuration.getHttpPort();
-        if (configuration.getHttpPort() <= 0) {
-            configuration.setHttpPort(NetworkUtil.getNextAvailablePort());
-        }
-
-        previousStopPort = configuration.getStopPort();
-        if (configuration.getStopPort() <= 0) {
-            configuration.setStopPort(NetworkUtil.getNextAvailablePort());
-            if (configuration.getHttpPort() == configuration.getStopPort()) {
-                configuration.setStopPort(configuration.getHttpPort() + 1);
-            }
-        }
-
-        // only for remote cases
-        previousAjpPort = configuration.getAjpPort();
-        if (configuration.getAjpPort() <= 0) {
-            configuration.setAjpPort(NetworkUtil.getNextAvailablePort());
-            if (configuration.getAjpPort() == configuration.getStopPort() || configuration.getAjpPort() == configuration.getHttpPort()) {
-                configuration.setAjpPort(Math.max(configuration.getHttpPort(), configuration.getStopPort()) + 1);
-            }
-        }
-
+        //
+        // Override the config with system properties
+        //
         final ObjectMap map = new ObjectMap(configuration);
         for (String key : map.keySet()) {
             for (String prefix : prefixes.value()) {
@@ -110,21 +87,38 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
                 }
             }
         }
-    }
+        //
+        // Set ports if they are unspecified
+        //
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            if (!entry.getKey().toLowerCase().endsWith("port")) continue;
+            try {
+                Object value = entry.getValue();
+                int port = new Integer(value + "");
+                if (port <= 0) {
+                    port = NetworkUtil.getNextAvailablePort();
+                    entry.setValue(port);
+                }
+            } catch (NumberFormatException mustNotBeAPortConfig) {
+            }
+        }
+        //
+        // Export the config back out to properties
+        //
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            for (String prefix : prefixes.value()) {
+                try {
+                    final String property = prefix + "." + entry.getKey();
+                    final String value = entry.getValue().toString();
 
-    protected void resetPortsToOriginal(Configuration configuration) {
-        int http = configuration.getHttpPort();
-        configuration.setHttpPort(previousHttpPort);
-        int stop = configuration.getStopPort();
-        configuration.setStopPort(previousStopPort);
-        int ajp = configuration.getAjpPort();
-        configuration.setAjpPort(previousAjpPort);
+                    LOGGER.log(Level.FINER, String.format("Exporting '%s=%s'", property, value));
 
-        // keep this port to be able to re-update the modified config
-        // => it means we can try it only once
-        previousHttpPort = http;
-        previousStopPort = stop;
-        previousAjpPort = ajp;
+                    System.setProperty(property, value);
+                } catch (Throwable e) {
+                    // value cannot be converted to a string
+                }
+            }
+        }
     }
 
     public abstract void start() throws LifecycleException;

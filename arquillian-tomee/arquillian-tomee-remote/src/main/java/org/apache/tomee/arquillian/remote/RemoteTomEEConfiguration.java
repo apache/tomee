@@ -31,6 +31,7 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
     private String classifier = "webprofile";
     private String type = "zip";
     private boolean removeUnusedWebapps = true;
+    private int ajpPort = 8009;
 
     public String getGroupId() {
         return groupId;
@@ -86,5 +87,13 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
 
     public void setRemoveUnusedWebapps(boolean removeUnusedWebapps) {
         this.removeUnusedWebapps = removeUnusedWebapps;
+    }
+
+    public int getAjpPort() {
+        return ajpPort;
+    }
+
+    public void setAjpPort(int ajpPort) {
+        this.ajpPort = ajpPort;
     }
 }

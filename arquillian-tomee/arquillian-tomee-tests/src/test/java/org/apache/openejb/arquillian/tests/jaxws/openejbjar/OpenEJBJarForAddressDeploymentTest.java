@@ -38,7 +38,7 @@ public class OpenEJBJarForAddressDeploymentTest {
     @Test
     public void invoke() throws Exception {
         final String s = OpenEJBJarForAddressDeploymentTest.class.getSimpleName();
-        final URL url = new URL("http://localhost:" + System.getProperty("tomee.http.port", "11080") + "/" + s + "/webservices/foo/bar/my-ws?wsdl");
+        final URL url = new URL("http://localhost:" + System.getProperty("tomee.httpPort", "11080") + "/" + s + "/webservices/foo/bar/my-ws?wsdl");
         final String wsdl = IO.slurp(url);
         assertTrue(wsdl.contains("LengthCalculator"));
     }
