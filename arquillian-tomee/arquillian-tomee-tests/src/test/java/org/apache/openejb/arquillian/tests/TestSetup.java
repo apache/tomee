@@ -16,7 +16,12 @@
  */
 package org.apache.openejb.arquillian.tests;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import org.apache.ziplock.JarLocation;
+import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -24,24 +29,14 @@ import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
-import org.junit.Assert;
 import org.junit.Test;
-
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.net.URL;
 
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
 public abstract class TestSetup {
+    @ArquillianResource
+    private URL url;
 
     public WebArchive createDeployment(Class...archiveClasses) {
         WebAppDescriptor descriptor = Descriptors.create(WebAppDescriptor.class)
@@ -80,10 +75,10 @@ public abstract class TestSetup {
     }
 
     protected void validateTest(String servlet, String expectedOutput) throws IOException {
-        final InputStream is = new URL("http://localhost:" + System.getProperty("tomee.httpPort", "11080") + "/" + getTestContextName() + "/" + servlet).openStream();
+        final InputStream is = new URL(url.toExternalForm() + "/" + servlet).openStream();
         final ByteArrayOutputStream os = new ByteArrayOutputStream();
 
-        int bytesRead = -1;
+        int bytesRead;
         byte[] buffer = new byte[8192];
         while ((bytesRead = is.read(buffer)) > -1) {
             os.write(buffer, 0, bytesRead);

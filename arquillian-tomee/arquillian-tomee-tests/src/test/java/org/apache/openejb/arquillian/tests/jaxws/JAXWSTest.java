@@ -17,27 +17,24 @@
 
 package org.apache.openejb.arquillian.tests.jaxws;
 
+import java.net.URL;
+import javax.xml.namespace.QName;
+import javax.xml.ws.Service;
 import org.apache.ziplock.WebModule;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.ArchivePaths;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.descriptor.api.Descriptors;
-import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.xml.namespace.QName;
-import javax.xml.ws.Service;
-import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Arquillian.class)
 public class JAXWSTest {
+
+    @ArquillianResource
+    private URL url;
 
     @Deployment(testable = false)
     public static WebArchive createDeployment() {
@@ -46,8 +43,7 @@ public class JAXWSTest {
 
     @Test
     public void invoke() throws Exception {
-        final String s = JAXWSTest.class.getSimpleName();
-        final Service service = Service.create(new URL("http://localhost:" + System.getProperty("tomee.httpPort", "11080") + "/" + s + "/webservices/HelloWS?wsdl"), new QName("http://jaxws.tests.arquillian.openejb.apache.org/", "HelloWSService"));
+        final Service service = Service.create(new URL(url.toExternalForm() + "webservices/HelloWS?wsdl"), new QName("http://jaxws.tests.arquillian.openejb.apache.org/", "HelloWSService"));
         final Hello hello = service.getPort(Hello.class);
         assertEquals("hi foo!", hello.hi("foo"));
     }

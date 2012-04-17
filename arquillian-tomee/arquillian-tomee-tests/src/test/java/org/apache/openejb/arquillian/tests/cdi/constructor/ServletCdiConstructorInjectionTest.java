@@ -16,10 +16,12 @@
  */
 package org.apache.openejb.arquillian.tests.cdi.constructor;
 
+import java.net.URL;
 import org.apache.openejb.arquillian.tests.TestRun;
 import org.apache.openejb.arquillian.tests.Tests;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -36,6 +38,9 @@ import java.io.IOException;
 public class ServletCdiConstructorInjectionTest {
 
     public static final String TEST_NAME = ServletCdiConstructorInjectionTest.class.getSimpleName();
+
+    @ArquillianResource
+    private URL url;
 
     @Test
     public void pojoInjectionShouldSucceed() throws Exception {
@@ -67,7 +72,7 @@ public class ServletCdiConstructorInjectionTest {
     }
 
     private void validateTest(String expectedOutput) throws IOException {
-        Tests.assertOutput("http://localhost:" + System.getProperty("tomee.httpPort", "11080") + "/" + TEST_NAME + "/" + TEST_NAME, expectedOutput);
+        Tests.assertOutput(url.toExternalForm() + TEST_NAME, expectedOutput);
     }
 }
 

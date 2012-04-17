@@ -529,8 +529,9 @@
           service="Resource"
           types="javax.sql.DataSource, DataSource"
           factory-name="create"
-          constructor="JtaManaged, JdbcDriver, Definition"
+          constructor="ServiceId, JtaManaged, JdbcDriver, Definition"
           class-name="org.apache.openejb.resource.jdbc.DataSourceFactory">
+    ServiceId
 
     Definition
 
@@ -727,8 +728,9 @@
           service="Resource"
           types="javax.sql.DataSource, DataSource"
           factory-name="create"
-          constructor="JtaManaged, JdbcDriver, Definition"
+          constructor="ServiceId, JtaManaged, JdbcDriver, Definition"
           class-name="org.apache.openejb.resource.jdbc.DataSourceFactory">
+    ServiceId
 
     Definition
 

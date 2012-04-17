@@ -17,9 +17,12 @@
 
 package org.apache.openejb.arquillian.tests.getresources;
 
+import java.io.IOException;
+import java.net.URL;
 import org.apache.ziplock.JarLocation;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -27,9 +30,6 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.io.File;
-import java.io.IOException;
 
 import static org.apache.openejb.arquillian.tests.Tests.assertOutput;
 
@@ -40,6 +40,9 @@ import static org.apache.openejb.arquillian.tests.Tests.assertOutput;
 @RunWith(Arquillian.class)
 public class GetResourcesTest {
     public static final String TEST_NAME = GetResourcesTest.class.getSimpleName();
+
+    @ArquillianResource
+    private URL url;
 
     @Deployment(testable = false) public static WebArchive createDeployment() {
         return ShrinkWrap.create(WebArchive.class, TEST_NAME + ".war")
@@ -55,7 +58,7 @@ public class GetResourcesTest {
     }
 
     @Test public void check() throws IOException {
-        assertOutput("http://localhost:" + System.getProperty("tomee.httpPort", "11080") + "/" + TEST_NAME + "/get-resources", "foundFromListener=1");
-        assertOutput("http://localhost:" + System.getProperty("tomee.httpPort", "11080") + "/" + TEST_NAME + "/get-resources", "servletContextGetResource=ok");
+        assertOutput(url.toExternalForm() + "get-resources", "foundFromListener=1");
+        assertOutput(url.toExternalForm() + TEST_NAME + "get-resources", "servletContextGetResource=ok");
     }
 }
