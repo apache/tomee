@@ -20,6 +20,7 @@ package org.apache.openejb.arquillian.embedded;
 import org.apache.commons.io.IOUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -45,6 +46,9 @@ public class EmbeddedTomEEContainerTest {
     @EJB
     private AnEJB ejb;
 
+    @ArquillianResource
+    private URL url;
+
     @Test
     public void testEjbIsNotNull() throws Exception {
         assertNotNull(ejb);
@@ -52,7 +56,7 @@ public class EmbeddedTomEEContainerTest {
 
     @Test
     public void servletIsDeployed() throws Exception {
-        final String read = IOUtils.toString(new URL("http://localhost:" + System.getProperty("tomee.httpPort", "8080") + "/test/a-servlet").openStream());
+        final String read = IOUtils.toString(new URL(url.toExternalForm() + "a-servlet").openStream());
         assertEquals("ok=true", read);
     }
 

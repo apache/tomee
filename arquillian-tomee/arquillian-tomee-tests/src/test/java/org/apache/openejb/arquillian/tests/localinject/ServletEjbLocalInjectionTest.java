@@ -18,6 +18,7 @@ package org.apache.openejb.arquillian.tests.localinject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -38,6 +39,9 @@ import static junit.framework.Assert.assertTrue;
 public class ServletEjbLocalInjectionTest {
 
     public static final String TEST_NAME = ServletEjbLocalInjectionTest.class.getSimpleName();
+
+    @ArquillianResource
+    private URL url;
 
     @Test
     public void localEjbInjectionShouldSucceed() throws Exception {
@@ -68,7 +72,7 @@ public class ServletEjbLocalInjectionTest {
     }
 
     private void validateTest(String expectedOutput) throws IOException {
-        final InputStream is = new URL("http://localhost:" + System.getProperty("tomee.httpPort", "11080") + "/" + TEST_NAME + "/" + TEST_NAME).openStream();
+        final InputStream is = new URL(url.toExternalForm() + TEST_NAME).openStream();
         final ByteArrayOutputStream os = new ByteArrayOutputStream();
 
         int bytesRead;

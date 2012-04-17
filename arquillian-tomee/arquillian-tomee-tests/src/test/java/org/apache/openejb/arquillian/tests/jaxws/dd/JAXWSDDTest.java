@@ -23,6 +23,7 @@ import org.apache.ziplock.IO;
 import org.apache.ziplock.JarLocation;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
@@ -38,6 +39,9 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(Arquillian.class)
 public class JAXWSDDTest {
+    @ArquillianResource
+    private URL deployedUrl;
+
     @Deployment(testable = false)
     public static WebArchive createDeployment() {
         final WebAppDescriptor descriptor = Descriptors.create(WebAppDescriptor.class)
@@ -63,7 +67,7 @@ public class JAXWSDDTest {
     }
 
     private void checkWSDLExists(final String name) throws Exception {
-        final URL url = new URL("http://localhost:" + System.getProperty("tomee.httpPort", "11080") + "/JAXWSDDTest/webservices/" + name + "?wsdl");
+        final URL url = new URL(deployedUrl.toExternalForm() + "/webservices/" + name + "?wsdl");
         assertTrue(IO.slurp(url).contains(name));
     }
 }

@@ -18,6 +18,7 @@ package org.apache.openejb.arquillian.tests.enventry;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -44,6 +45,8 @@ public class ServletEnvEntryInjectionTest {
 
     public static final String TEST_NAME = ServletEnvEntryInjectionTest.class.getSimpleName();
 
+    @ArquillianResource
+    private URL url;
 
     @Test
     public void stringEnvEntryInjectionShouldSucceed() throws Exception {
@@ -148,7 +151,7 @@ public class ServletEnvEntryInjectionTest {
     }
 
     private void validateTest(String expectedOutput) throws IOException {
-        final InputStream is = new URL("http://localhost:" + System.getProperty("tomee.httpPort", "11080") + "/" + TEST_NAME + "/" + TEST_NAME).openStream();
+        final InputStream is = new URL(url.toExternalForm() + TEST_NAME).openStream();
         final ByteArrayOutputStream os = new ByteArrayOutputStream();
 
         int bytesRead;

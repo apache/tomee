@@ -16,12 +16,15 @@
  */
 package org.apache.openejb.arquillian.tests.ext.enventries;
 
+import java.io.IOException;
+import java.net.URL;
 import org.apache.openejb.arquillian.tests.Tests;
 import org.apache.openejb.arquillian.tests.enventry.Code;
 import org.apache.openejb.arquillian.tests.enventry.PojoServlet;
 import org.apache.ziplock.JarLocation;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -32,9 +35,6 @@ import org.jboss.shrinkwrap.descriptor.spi.node.NodeDescriptor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.File;
-import java.io.IOException;
-
 /**
  * @version $Rev$ $Date$
  */
@@ -42,6 +42,9 @@ import java.io.IOException;
 public class StratocasterTest {
 
     public static final String TEST_NAME = StratocasterTest.class.getSimpleName();
+
+    @ArquillianResource
+    private URL url;
 
     @Test
     public void lookupEnvEntryInjectionShouldSucceed() throws Exception {
@@ -85,7 +88,7 @@ public class StratocasterTest {
     }
 
     private void validateTest(String expectedOutput) throws IOException {
-        Tests.assertOutput("http://localhost:" + System.getProperty("tomee.httpPort", "11080") + "/" + TEST_NAME + "/" + TEST_NAME, expectedOutput);
+        Tests.assertOutput(url.toExternalForm() + TEST_NAME, expectedOutput);
     }
 
 }

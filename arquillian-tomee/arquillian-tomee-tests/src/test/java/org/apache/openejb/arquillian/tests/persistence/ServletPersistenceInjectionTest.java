@@ -16,10 +16,15 @@
  */
 package org.apache.openejb.arquillian.tests.persistence;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import org.apache.openejb.arquillian.tests.Runner;
 import org.apache.ziplock.JarLocation;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
@@ -29,12 +34,6 @@ import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
@@ -42,6 +41,9 @@ import static junit.framework.Assert.assertTrue;
 public class ServletPersistenceInjectionTest {
 
     public static final String TEST_NAME = ServletPersistenceInjectionTest.class.getSimpleName();
+
+    @ArquillianResource
+    private URL url;
 
     @Test
     public void transactionInjectionShouldSucceed() throws Exception {
@@ -82,7 +84,7 @@ public class ServletPersistenceInjectionTest {
 
 
     private void validateTest(String expectedOutput) throws IOException {
-        final InputStream is = new URL("http://localhost:" + System.getProperty("tomee.httpPort", "11080") + "/" + TEST_NAME + "/" + TEST_NAME).openStream();
+        final InputStream is = new URL(url.toExternalForm() + TEST_NAME).openStream();
         final ByteArrayOutputStream os = new ByteArrayOutputStream();
 
         int bytesRead;

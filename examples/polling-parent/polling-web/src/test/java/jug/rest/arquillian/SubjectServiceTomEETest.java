@@ -27,6 +27,7 @@ import org.apache.ziplock.WebModule;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -41,6 +42,9 @@ import static org.junit.Assert.assertTrue;
 @RunAsClient
 @RunWith(Arquillian.class)
 public class SubjectServiceTomEETest {
+    @ArquillianResource
+    private URL url;
+
     @Deployment
     public static WebArchive archive() {
         return new WebModule(SubjectServiceTomEETest.class).getArchive()
@@ -58,8 +62,8 @@ public class SubjectServiceTomEETest {
 
     @Test
     public void checkThereIsSomeOutput() throws Exception {
-        final String base = "http://localhost:" + System.getProperty("tomee.http.port");
-        final URL url = new URL(base + "/SubjectServiceTomEETest/api/subject/list");
+        final String base = url.toExternalForm();
+        final URL url = new URL(base + "api/subject/list");
         final String output = IOUtils.toString(new BufferedInputStream(url.openStream()));
         assertTrue(output.contains("subject"));
     }
