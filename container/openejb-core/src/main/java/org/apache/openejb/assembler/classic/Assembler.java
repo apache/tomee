@@ -116,7 +116,7 @@ import org.apache.openejb.javaagent.Agent;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.monitoring.DynamicMBeanWrapper;
-import org.apache.openejb.monitoring.JMXContainer;
+import org.apache.openejb.assembler.monitoring.JMXContainer;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;

@@ -24,7 +24,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 import javax.sql.DataSource;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.monitoring.JMXBasicDataSource;
+import org.apache.openejb.assembler.monitoring.JMXBasicDataSource;
 
 @SuppressWarnings({"UnusedDeclaration"})
 public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.BasicManagedDataSource {
