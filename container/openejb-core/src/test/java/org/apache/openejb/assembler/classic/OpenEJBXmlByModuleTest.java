@@ -16,7 +16,15 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import java.io.IOException;
+import java.util.Properties;
+import javax.annotation.Resource;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
@@ -27,14 +35,6 @@ import org.apache.openejb.jee.SingletonBean;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import javax.annotation.Resource;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
-import java.io.IOException;
-import java.util.Properties;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -63,6 +63,9 @@ public class OpenEJBXmlByModuleTest {
 
         Properties properties = new Properties();
         properties.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
+        properties.setProperty("openejb.embedded.initialcontext.close", "destroy");
+
+        // some hack to be sure to call destroy()
         context = new InitialContext(properties);
 
         bean = (UselessBean) context.lookup("UselessBeanLocalBean");
@@ -71,6 +74,7 @@ public class OpenEJBXmlByModuleTest {
     @After public void close() throws NamingException {
         if (context != null) {
             context.close();
+            OpenEJB.destroy(); // has to be called manually since we start openejb in a custom way
         }
     }
 

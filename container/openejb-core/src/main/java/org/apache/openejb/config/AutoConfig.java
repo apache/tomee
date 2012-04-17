@@ -858,6 +858,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         }
 
         final List<ResourceInfo> resourceInfos = new ArrayList<ResourceInfo>();
+        final Map<ResourceInfo, Resource> resourcesMap = new HashMap<ResourceInfo, Resource>(resources.size());
         for (Resource resource : resources) {
             Properties properties = resource.getProperties();
 
@@ -901,15 +902,17 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             }
 
             resourceInfos.add(resourceInfo);
+            resourcesMap.put(resourceInfo, resource);
         }
 
         Collections.sort(resourceInfos, new ConfigurationFactory.ResourceInfoComparator(resourceInfos));
         for (ResourceInfo resourceInfo : resourceInfos) {
-            installResource(module.getModuleId(), resourceInfo);
+            final String id = installResource(module.getModuleId(), resourceInfo);
+            resourcesMap.remove(resourceInfo).setId(id);
         }
 
         resourceInfos.clear();
-        resources.clear();
+        // resources.clear(); // don't clear it since we want to keep this to be able to undeploy resources with the app
     }
 
     private String dataSourceLookupName(Resource datasource) {
