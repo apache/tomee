@@ -33,7 +33,8 @@ public class ManagedDataSourceWithRecovery extends BasicManagedDataSource {
     private TransactionManager suppliedTransactionManager;
     private final XAResourceWrapper xaResourceWrapper;
 
-    public ManagedDataSourceWithRecovery(XAResourceWrapper xaResourceWrapper) {
+    public ManagedDataSourceWithRecovery(final String name, final XAResourceWrapper xaResourceWrapper) {
+        super(name);
         this.xaResourceWrapper = xaResourceWrapper;
     }
 

@@ -273,7 +273,7 @@ public class JpaTest extends TestCase {
     }
 
     private DataSource createJtaDataSource(TransactionManager transactionManager) throws Exception {
-        BasicManagedDataSource ds = new BasicManagedDataSource();
+        BasicManagedDataSource ds = new BasicManagedDataSource(getClass().getName() + "createJtaDs");
         ds.setTransactionManager(transactionManager);
         ds.setDriverClassName("org.hsqldb.jdbcDriver");
         ds.setUrl("jdbc:hsqldb:mem:JpaTest");
@@ -286,7 +286,7 @@ public class JpaTest extends TestCase {
     }
 
     private DataSource createNonJtaDataSource() throws Exception {
-        BasicDataSource ds = new BasicDataSource();
+        BasicDataSource ds = new BasicDataSource(getClass().getName() + "createNonJtaDs");
         ds.setDriverClassName("org.hsqldb.jdbcDriver");
         ds.setUrl("jdbc:hsqldb:mem:JpaTest");
         ds.setUsername("sa");
