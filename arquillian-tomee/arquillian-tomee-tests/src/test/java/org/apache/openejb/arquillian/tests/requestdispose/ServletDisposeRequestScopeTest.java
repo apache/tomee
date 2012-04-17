@@ -57,7 +57,7 @@ public class ServletDisposeRequestScopeTest {
     }
 
     private String invoke() throws IOException {
-        final InputStream is = new URL("http://localhost:" + System.getProperty("tomee.http.port", "11080") + "/" + TEST_NAME + "/test").openStream();
+        final InputStream is = new URL("http://localhost:" + System.getProperty("tomee.httpPort", "11080") + "/" + TEST_NAME + "/test").openStream();
         final ByteArrayOutputStream os = new ByteArrayOutputStream();
 
         int bytesRead;

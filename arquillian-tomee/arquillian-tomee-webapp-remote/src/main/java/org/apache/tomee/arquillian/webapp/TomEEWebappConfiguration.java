@@ -31,6 +31,7 @@ public class TomEEWebappConfiguration extends TomEEConfiguration {
     private String version = "1.0.0-beta-3-SNAPSHOT";
     private String type = "war";
     private boolean removeUnusedWebapps = true;
+    private int ajpPort = 8009;
 
     public String getGroupId() {
         return groupId;
@@ -84,5 +85,13 @@ public class TomEEWebappConfiguration extends TomEEConfiguration {
 
     public void setRemoveUnusedWebapps(boolean removeUnusedWebapps) {
         this.removeUnusedWebapps = removeUnusedWebapps;
+    }
+
+    public int getAjpPort() {
+        return ajpPort;
+    }
+
+    public void setAjpPort(int ajpPort) {
+        this.ajpPort = ajpPort;
     }
 }

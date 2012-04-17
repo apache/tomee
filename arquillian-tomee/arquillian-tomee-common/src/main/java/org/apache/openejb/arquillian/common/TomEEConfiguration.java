@@ -29,11 +29,9 @@ import java.util.Properties;
 public class TomEEConfiguration implements ContainerConfiguration {
 
     private int httpPort = 8080;
-    private int ajpPort = 8009;
     private int stopPort = 8005;
     private String dir = System.getProperty("java.io.tmpdir") + "/arquillian-apache-tomee";
     private String appWorkingDir = System.getProperty("java.io.tmpdir");
-    private String systemProperties = "";
 
     public int getHttpPort() {
         return httpPort;
@@ -51,14 +49,6 @@ public class TomEEConfiguration implements ContainerConfiguration {
         this.stopPort = stopPort;
     }
 
-    public int getAjpPort() {
-        return ajpPort;
-    }
-
-    public void setAjpPort(int ajpPort) {
-        this.ajpPort = ajpPort;
-    }
-
     public String getDir() {
         return dir;
     }
@@ -67,36 +57,12 @@ public class TomEEConfiguration implements ContainerConfiguration {
         this.dir = dir;
     }
 
-    public String getSystemProperties() {
-        return systemProperties;
-    }
-
-    public void setSystemProperties(String systemProperties) {
-        this.systemProperties = systemProperties;
-    }
-
     public String getAppWorkingDir() {
         return appWorkingDir;
     }
 
     public void setAppWorkingDir(String appWorkingDir) {
         this.appWorkingDir = appWorkingDir;
-    }
-
-    public Properties systemProperties() {
-        final Properties p = new Properties();
-        final Reader reader = new StringReader(systemProperties);
-        try {
-            p.load(new InputStream() {
-                @Override
-                public int read() throws IOException {
-                    return reader.read();
-                }
-            });
-        } catch (IOException e) {
-            throw new ArquillianRuntimeException("can't read " + systemProperties);
-        }
-        return p;
     }
 
     public void validate() throws ConfigurationException {

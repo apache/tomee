@@ -45,22 +45,20 @@ public class Setup {
     public static final int DEFAULT_AJP_PORT = 8009;
 
     public static void exportProperties(File openejbHome, TomEEConfiguration c) {
-        System.setProperty("tomee.http.port", String.valueOf(c.getHttpPort()));
-        System.setProperty("tomee.ajp.port", String.valueOf(c.getAjpPort()));
-        System.setProperty("tomee.shutdown.port", String.valueOf(c.getStopPort()));
         System.setProperty("java.naming.provider.url", "http://localhost:" + c.getHttpPort() + "/tomee/ejb");
         System.setProperty("connect.tries", "90");
         System.setProperty("server.http.port", String.valueOf(c.getHttpPort()));
         System.setProperty("server.shutdown.port", String.valueOf(c.getStopPort()));
-        System.setProperty("java.opts", "-Xmx512m -Xms256m -XX:PermSize=64m -XX:MaxPermSize=256m -XX:ReservedCodeCacheSize=64m -Dtomee.http.port=" + c.getHttpPort());
+        System.setProperty("java.opts", "-Xmx512m -Xms256m -XX:PermSize=64m -XX:MaxPermSize=256m -XX:ReservedCodeCacheSize=64m -Dtomee.httpPort=" + c.getHttpPort());
         System.setProperty("openejb.home", openejbHome.getAbsolutePath());
+        System.setProperty("tomee.home", openejbHome.getAbsolutePath());
     }
 
-    public static void updateServerXml(File openejbHome, TomEEConfiguration c, int http, int stop, int ajp) throws IOException {
+    public static void updateServerXml(File openejbHome, final int httpPort, final int stopPort, final int ajpPort) throws IOException {
         final Map<String, String> replacements = new HashMap<String, String>();
-        replacements.put(Integer.toString(http), String.valueOf(c.getHttpPort()));
-        replacements.put(Integer.toString(stop), String.valueOf(c.getStopPort()));
-        replacements.put(Integer.toString(ajp), String.valueOf(c.getAjpPort()));
+        replacements.put(Integer.toString(DEFAULT_HTTP_PORT), String.valueOf(httpPort));
+        replacements.put(Integer.toString(DEFAULT_STOP_PORT), String.valueOf(stopPort));
+        replacements.put(Integer.toString(DEFAULT_AJP_PORT), String.valueOf(ajpPort));
         final String s = File.separator;
         replace(replacements, new File(openejbHome, "conf" + s + "server.xml"));
     }
@@ -152,6 +150,7 @@ public class Setup {
                 writer.close();
             }
         }
+        IO.copy(file, System.out);
     }
 
     private static File copyToTempFile(File file) throws IOException {

@@ -72,7 +72,7 @@ public class JaxrsTest {
 
     protected URI uri(String path) {
         if (path.startsWith("/")) path = path.substring(1);
-        final String port = System.getProperty("tomee.http.port", "11080");
+        final String port = System.getProperty("tomee.httpPort", "11080");
         return URI.create(String.format("http://localhost:%s/%s/%s", port, this.getClass().getSimpleName(), path));
     }
 
