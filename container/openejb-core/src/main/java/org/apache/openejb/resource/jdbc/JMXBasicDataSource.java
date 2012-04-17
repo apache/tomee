@@ -1,8 +1,12 @@
 package org.apache.openejb.resource.jdbc;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import javax.management.Description;
 import javax.management.MBeanServer;
 import javax.management.ManagedAttribute;
+import javax.management.ManagedOperation;
 import javax.management.ObjectName;
 import org.apache.openejb.monitoring.DynamicMBeanWrapper;
 import org.apache.openejb.monitoring.LocalMBeanServer;
@@ -180,5 +184,47 @@ public class JMXBasicDataSource {
     @Description("The default TransactionIsolation state of connections created by this pool.")
     public int getDefaultTransactionIsolation() {
         return ds.getDefaultTransactionIsolation();
+    }
+
+    @ManagedOperation
+    @Description("Execute the validation query.")
+    public String executeValidationQuery() {
+        final String query = ds.getValidationQuery();
+        if (query == null || query.trim().isEmpty()) {
+            return "no validation query defined";
+        }
+
+        final Connection conn;
+        try {
+            conn = ds.getConnection();
+        } catch (SQLException e) {
+            return e.getMessage();
+        }
+
+        Statement statement = null;
+        try {
+            statement = conn.createStatement();
+            if (statement.execute(query)) {
+                return "OK";
+            }
+            return "KO";
+        } catch (SQLException e) {
+            return e.getMessage();
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    // no-op
+                }
+            }
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    // no-op
+                }
+            }
+        }
     }
 }
