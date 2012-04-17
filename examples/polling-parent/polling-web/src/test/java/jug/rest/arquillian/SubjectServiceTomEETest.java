@@ -58,7 +58,7 @@ public class SubjectServiceTomEETest {
 
     @Test
     public void checkThereIsSomeOutput() throws Exception {
-        final String base = "http://localhost:" + System.getProperty("tomee.http.port");
+        final String base = "http://localhost:" + System.getProperty("tomee.httpPort");
         final URL url = new URL(base + "/SubjectServiceTomEETest/api/subject/list");
         final String output = IOUtils.toString(new BufferedInputStream(url.openStream()));
         assertTrue(output.contains("subject"));
