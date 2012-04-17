@@ -70,9 +70,14 @@ public class Strings {
         return sb.toString();
     }
 
-    public static String camelCase(String string){
-        StringBuilder sb = new StringBuilder();
-        String[] strings = string.split("-");
+    public static String camelCase(String string) {
+        return camelCase(string, "-");
+    }
+
+    public static String camelCase(final String string, final String delimiter){
+        final StringBuilder sb = new StringBuilder();
+        final String[] strings = string.split(delimiter);
+
         for (String s : strings) {
             int l = sb.length();
             sb.append(s);
