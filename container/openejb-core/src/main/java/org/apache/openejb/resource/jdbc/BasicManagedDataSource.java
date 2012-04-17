@@ -49,8 +49,10 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
     private void registerAsMbean(final String name) {
         try {
             jmxDs = new JMXBasicDataSource(name, this);
-        } catch (Exception ignored) {
-            // probably osgi where dynamic mbean is not supported
+        } catch (Exception e) {
+            jmxDs = null;
+        } catch (NoClassDefFoundError ncdfe) { // OSGi
+            jmxDs = null;
         }
     }
 
