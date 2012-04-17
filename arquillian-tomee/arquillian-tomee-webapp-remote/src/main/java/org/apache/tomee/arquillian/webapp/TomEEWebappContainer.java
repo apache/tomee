@@ -45,13 +45,6 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
     private boolean shutdown = false;
 
     public void start() throws LifecycleException {
-        if (System.getProperty("tomee.http.port") != null) {
-            configuration.setHttpPort(Integer.parseInt(System.getProperty("tomee.http.port")));
-        }
-        if (System.getProperty("tomee.shutdown.port") != null) {
-            configuration.setStopPort(Integer.parseInt(System.getProperty("tomee.shutdown.port")));
-        }
-
         // see if TomEE is already running by checking the http port
         if (Setup.isRunning(configuration.getHttpPort())) {
 
@@ -108,7 +101,7 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
             Files.readable(openejbHome);
             Files.writable(openejbHome);
 
-            Setup.updateServerXml(openejbHome, configuration, Setup.DEFAULT_HTTP_PORT, Setup.DEFAULT_STOP_PORT, Setup.DEFAULT_AJP_PORT);
+            Setup.updateServerXml(openejbHome, configuration.getHttpPort(), configuration.getStopPort(), 0);
             Setup.exportProperties(openejbHome, configuration);
 
             final URL logging = Thread.currentThread().getContextClassLoader().getResource("default.remote.logging.properties");

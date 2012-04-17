@@ -47,13 +47,17 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
     public static final String TOMEE_ARQUILLIAN_HTTP_PORT = "tomee.arquillian.http";
     public static final String TOMEE_ARQUILLIAN_STOP_PORT = "tomee.arquillian.stop";
 
-    @Inject @ContainerScoped private InstanceProducer<Context> contextInstance;
-    @Inject @DeploymentScoped private InstanceProducer<BeanManager> beanManagerInstance;
+    @Inject
+    @ContainerScoped
+    private InstanceProducer<Context> contextInstance;
+
+    @Inject
+    @DeploymentScoped
+    private InstanceProducer<BeanManager> beanManagerInstance;
 
     private static final Map<Archive<?>, File> ARCHIVES = new ConcurrentHashMap<Archive<?>, File>();
 
     private Container container;
-    private Properties savedProperties;
 
     public Class<EmbeddedTomEEConfiguration> getConfigurationClass() {
         return EmbeddedTomEEConfiguration.class;
@@ -61,7 +65,6 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
 
     public void setup(EmbeddedTomEEConfiguration configuration) {
         super.setup(configuration);
-        setSystemProperties();
         container = new Container();
         container.setup(convertConfiguration(configuration));
     }
@@ -73,23 +76,10 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
     private Configuration convertConfiguration(EmbeddedTomEEConfiguration tomeeConfiguration) {
     	Configuration configuration = new Configuration();
     	configuration.setDir(tomeeConfiguration.getDir());
-    	configuration.setHttpPort(getPortAndShare(TOMEE_ARQUILLIAN_HTTP_PORT, tomeeConfiguration.getHttpPort()));
-    	configuration.setStopPort(getPortAndShare(TOMEE_ARQUILLIAN_STOP_PORT, tomeeConfiguration.getStopPort()));
+    	configuration.setHttpPort(tomeeConfiguration.getHttpPort());
+    	configuration.setStopPort(tomeeConfiguration.getStopPort());
 		return configuration;
 	}
-
-    private static int getPortAndShare(String systemPropName, int value) {
-        int port = value;
-        if (port <= 0) {
-            port = NetworkUtil.getNextAvailablePort();
-        }
-        System.setProperty(systemPropName, Integer.toString(port));
-
-        // some hack to simply be able to use the same system property than other adapters
-        System.setProperty(systemPropName.replace(".arquillian", "") + ".port", Integer.toString(port));
-
-        return port;
-    }
 
     public void start() throws LifecycleException {
         try {
@@ -101,37 +91,12 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
         }
     }
 
-    private void setSystemProperties() {
-        savedProperties = new Properties();
-        final Properties props = System.getProperties();
-        for (Map.Entry<Object, Object> entry : configuration.systemProperties().entrySet()) {
-            final String key = (String) entry.getKey();
-            if (props.contains(key)) {
-                savedProperties.put(key, System.getProperty(key));
-            }
-            props.setProperty(key, (String) entry.getValue());
-        }
-    }
-
-    private void clearSystemProperties() {
-        final Properties props = System.getProperties();
-        for (Map.Entry<Object, Object> entry : configuration.systemProperties().entrySet()) {
-            final String key = (String) entry.getKey();
-            if (savedProperties.contains(key)) {
-                System.setProperty(key, savedProperties.getProperty(key));
-            } else {
-                props.remove(key);
-            }
-        }
-    }
-
     public void stop() throws LifecycleException {
         try {
             container.stop();
         } catch (Exception e) {
             throw new LifecycleException("Unable to stop server", e);
         }
-        clearSystemProperties();
     }
 
     public ProtocolDescription getDefaultProtocol() {

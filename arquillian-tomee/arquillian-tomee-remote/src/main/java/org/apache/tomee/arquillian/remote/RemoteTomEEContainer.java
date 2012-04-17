@@ -39,18 +39,6 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
     private boolean shutdown = false;
 
     public void start() throws LifecycleException {
-        if (System.getProperty("tomee.http.port") != null) {
-            configuration.setHttpPort(Integer.parseInt(System.getProperty("tomee.http.port")));
-        }
-
-        if (System.getProperty("tomee.shutdown.port") != null) {
-            configuration.setStopPort(Integer.parseInt(System.getProperty("tomee.shutdown.port")));
-        }
-
-        if (System.getProperty("tomee.ajp.port") != null) {
-            configuration.setStopPort(Integer.parseInt(System.getProperty("tomee.ajp.port")));
-        }
-
         // see if TomEE is already running by checking the http port
         if (Setup.isRunning(configuration.getHttpPort())) {
 
@@ -63,18 +51,9 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
 
         try {
 
-            configure(Setup.DEFAULT_HTTP_PORT, Setup.DEFAULT_STOP_PORT, Setup.DEFAULT_AJP_PORT);
+            configure();
 
             container = new RemoteServer();
-
-            if (Setup.isRunning(configuration.getHttpPort())) {
-                // try to reconfigure it
-                // if it was using random ports
-                // it can simply be a conflict
-                resetPortsToOriginal(configuration);
-                setup(configuration);
-                configure(previousHttpPort, previousStopPort, previousAjpPort);
-            }
 
             container.start();
         } catch (Exception e) {
@@ -82,7 +61,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
         }
     }
 
-    private void configure(int http, int stop, int ajp) throws LifecycleException, IOException {
+    private void configure() throws LifecycleException, IOException {
         final File workingDirectory = new File(configuration.getDir());
 
         if (workingDirectory.exists()) {
@@ -108,7 +87,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
         Files.readable(openejbHome);
         Files.writable(openejbHome);
 
-        Setup.updateServerXml(openejbHome, configuration, http, stop, ajp);
+        Setup.updateServerXml(openejbHome, configuration.getHttpPort(), configuration.getStopPort(), configuration.getAjpPort());
 
         Setup.exportProperties(openejbHome, configuration);
 

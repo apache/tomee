@@ -25,4 +25,13 @@ import org.apache.openejb.arquillian.common.TomEEConfiguration;
 @Prefixes({"tomee", "tomee.embedded"})
 public class EmbeddedTomEEConfiguration extends TomEEConfiguration {
 
+    private int ajpPort = 8009;
+
+    public int getAjpPort() {
+        return ajpPort;
+    }
+
+    public void setAjpPort(int ajpPort) {
+        this.ajpPort = ajpPort;
+    }
 }

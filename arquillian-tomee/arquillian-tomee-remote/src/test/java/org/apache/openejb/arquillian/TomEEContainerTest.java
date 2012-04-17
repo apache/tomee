@@ -19,6 +19,8 @@ package org.apache.openejb.arquillian;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.ejb.EJB;
 
@@ -53,7 +55,8 @@ public class TomEEContainerTest {
 
     @Test
     public void testShouldBeAbleToAccessServletAndEjb() throws Exception {
-        InputStream is = new URL("http://127.0.0.1:" + System.getProperty("tomee.http.port", "10080") + "/test/ejb").openStream();
+        URL url = new URL("http://127.0.0.1:" + System.getProperty("tomee.httpPort", "10080") + "/test/ejb");
+        InputStream is = url.openStream();
         ByteArrayOutputStream os = new ByteArrayOutputStream();
 
         int bytesRead;
