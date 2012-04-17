@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.arquillian.common;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.JarExtractor;
@@ -40,6 +42,8 @@ import java.util.Map;
  * @version $Rev$ $Date$
  */
 public class Setup {
+    private static final Logger LOGGER = Logger.getLogger(Setup.class.getName()); // JUL is used by arquillian so that's fine
+
     public static final int DEFAULT_HTTP_PORT = 8080;
     public static final int DEFAULT_STOP_PORT = 8005;
     public static final int DEFAULT_AJP_PORT = 8009;
@@ -150,7 +154,9 @@ public class Setup {
                 writer.close();
             }
         }
-        IO.copy(file, System.out);
+        if (LOGGER.isLoggable(Level.FINE)) {
+            IO.copy(file, System.out);
+        }
     }
 
     private static File copyToTempFile(File file) throws IOException {
