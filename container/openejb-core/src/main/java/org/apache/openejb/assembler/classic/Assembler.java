@@ -1333,6 +1333,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
         }
 
+        for (String id : appInfo.resourceIds) {
+            try {
+                containerSystem.getJNDIContext().unbind(OPENEJB_RESOURCE_JNDI_PREFIX + id);
+            } catch (NamingException e) {
+                logger.warning("can't unbind resource '{0}'", id);
+            }
+        }
+
         containerSystem.removeAppContext(appInfo.appId);
 
         ClassLoaderUtil.destroyClassLoader(appInfo.path);
@@ -1810,6 +1818,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         for (String property : unsetProperties.keySet()) {
             //TODO: DMB: Make more robust later
             if (property.equalsIgnoreCase("properties")) return;
+            if (property.equalsIgnoreCase("ApplicationWide")) return;
             if (property.equalsIgnoreCase("transactionManager")) return;
             if (info.types.contains("javax.mail.Session")) return;
             //---

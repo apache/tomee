@@ -272,14 +272,15 @@ class AppInfoBuilder {
 
     private void buildAppResources(AppModule module, AppInfo info) {
         for (Resource def : module.getResources()) {
-            ResourceInfo resourceInfo = new ResourceInfo();
-            resourceInfo.id = module.getModuleId() + "/" + def.getJndi().replace("java:", "");
-
-            resourceInfo.service = "Resource";
-            resourceInfo.types.add(def.getType());
-            resourceInfo.properties = def.getProperties();
-
-            info.resourceInfos.add(resourceInfo);
+            // the resource is already deployed
+            // however we keep its id to be able to undeployed it later
+            // note: if ApplicationWide property was specified
+            // we want this application be managed only by the container
+            // once deployed = not undeployed with the app
+            // so we skip the undeployement skipping the id
+            if (!def.getProperties().containsKey("ApplicationWide")) {
+                info.resourceIds.add(def.getId());
+            }
         }
     }
 
