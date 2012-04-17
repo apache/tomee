@@ -136,12 +136,12 @@
       <dependency>
         <groupId>org.apache.xbean</groupId>
         <artifactId>xbean-finder-shaded</artifactId>
-        <version>3.10-SNAPSHOT</version>
+        <version>${xbean.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.xbean</groupId>
         <artifactId>xbean-reflect</artifactId>
-        <version>3.11-SNAPSHOT</version>
+        <version>${xbean.version}</version>
       </dependency>
       <dependency>
         <groupId>jline</groupId>
@@ -157,6 +157,7 @@
   </dependencyManagement>
 
   <properties>
+    <xbean.version>3.11-SNAPSHOT</xbean.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
