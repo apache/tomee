@@ -16,15 +16,14 @@
  */
 package org.apache.openejb.resource.jdbc;
 
-import org.apache.openejb.loader.SystemInstance;
-
-import javax.sql.DataSource;
 import java.io.File;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
+import javax.sql.DataSource;
+import org.apache.openejb.loader.SystemInstance;
 
 @SuppressWarnings({"UnusedDeclaration"})
 public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.BasicManagedDataSource {
@@ -41,6 +40,19 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
      * not ciphered. The {@link PlainTextPasswordCipher} can also be used.
      */
     private String passwordCipher = null;
+    private JMXBasicDataSource jmxDs = null;
+
+    public BasicManagedDataSource(final String name) {
+        registerAsMbean(name);
+    }
+
+    private void registerAsMbean(final String name) {
+        try {
+            jmxDs = new JMXBasicDataSource(name, this);
+        } catch (Exception ignored) {
+            // probably osgi where dynamic mbean is not supported
+        }
+    }
 
     /**
      * Returns the password codec class name to use to retrieve plain text
@@ -214,9 +226,21 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
         final ReentrantLock l = lock;
         l.lock();
         try {
+            try {
+                unregisterMBean();
+            } catch (Exception ignored) {
+                // no-op
+            }
+
             super.close();
         } finally {
             l.unlock();
+        }
+    }
+
+    private void unregisterMBean() {
+        if (jmxDs != null) {
+            jmxDs.unregister();
         }
     }
 

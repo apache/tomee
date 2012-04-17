@@ -41,6 +41,19 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
      * not ciphered. The {@link PlainTextPasswordCipher} can also be used.
      */
     private String passwordCipher = null;
+    private JMXBasicDataSource jmxDs = null;
+
+    public BasicDataSource(final String name) {
+        registerAsMbean(name);
+    }
+
+    private void registerAsMbean(final String name) {
+        try {
+            jmxDs = new JMXBasicDataSource(name, this);
+        } catch (Exception ignored) {
+            // probably osgi where dynamic mbean is not supported
+        }
+    }
 
     /**
      * Returns the password codec class name to use to retrieve plain text
@@ -210,9 +223,21 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
         final ReentrantLock l = lock;
         l.lock();
         try {
+            try {
+                unregisterMBean();
+            } catch (Exception ignored) {
+                // no-op
+            }
+
             super.close();
         } finally {
             l.unlock();
+        }
+    }
+
+    private void unregisterMBean() {
+        if (jmxDs != null) {
+            jmxDs.unregister();
         }
     }
 

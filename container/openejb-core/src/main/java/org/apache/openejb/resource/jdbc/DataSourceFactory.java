@@ -42,7 +42,7 @@ import java.util.Properties;
  */
 public class DataSourceFactory {
 
-    public static DataSource create(final boolean managed, final Class impl, final String definition) throws IllegalAccessException, InstantiationException, IOException {
+    public static DataSource create(final String name, final boolean managed, final Class impl, final String definition) throws IllegalAccessException, InstantiationException, IOException {
 
         final org.apache.commons.dbcp.BasicDataSource ds;
 
@@ -57,12 +57,12 @@ public class DataSourceFactory {
             DataSource dataSource = (DataSource) recipe.create();
 
             if (managed) {
-                ds = new DbcpManagedDataSource(dataSource);
+                ds = new DbcpManagedDataSource(name, dataSource);
             } else {
-                ds = new DbcpDataSource(dataSource);
+                ds = new DbcpDataSource(name, dataSource);
             }
         } else {
-            ds = (org.apache.commons.dbcp.BasicDataSource) create(managed);
+            ds = (org.apache.commons.dbcp.BasicDataSource) create(name, managed);
         }
 
         // force the driver class to be set
@@ -81,17 +81,17 @@ public class DataSourceFactory {
         properties.remove("LoginTimeout");
     }
 
-    public static DataSource create(boolean managed) {
+    public static DataSource create(String name, boolean managed) {
         org.apache.commons.dbcp.BasicDataSource ds;
         if (managed) {
             XAResourceWrapper xaResourceWrapper = SystemInstance.get().getComponent(XAResourceWrapper.class);
             if (xaResourceWrapper != null) {
-                ds = new ManagedDataSourceWithRecovery(xaResourceWrapper);
+                ds = new ManagedDataSourceWithRecovery(name, xaResourceWrapper);
             } else {
-                ds = new BasicManagedDataSource();
+                ds = new BasicManagedDataSource(name);
             }
         } else {
-            ds = new BasicDataSource();
+            ds = new BasicDataSource(name);
         }
         return ds;
     }
@@ -108,7 +108,8 @@ public class DataSourceFactory {
 
         private final DataSource dataSource;
 
-        public DbcpDataSource(DataSource dataSource) {
+        public DbcpDataSource(final String name, final DataSource dataSource) {
+            super(name);
             this.dataSource = dataSource;
         }
 
@@ -138,7 +139,8 @@ public class DataSourceFactory {
 
         private final DataSource dataSource;
 
-        public DbcpManagedDataSource(DataSource dataSource) {
+        public DbcpManagedDataSource(final String name, final DataSource dataSource) {
+            super(name);
             this.dataSource = dataSource;
         }
 
