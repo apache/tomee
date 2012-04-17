@@ -30,6 +30,14 @@
       </includes>
       <outputDirectory>/</outputDirectory>
     </fileSet>
+    <fileSet>
+      <directory>${project.basedir}/src/main/legal</directory>
+      <includes>
+        <include>LICENCE</include>
+        <include>NOTICE</include>
+      </includes>
+      <outputDirectory>/</outputDirectory>
+    </fileSet>
   </fileSets>
   <dependencySets>
     <dependencySet>
