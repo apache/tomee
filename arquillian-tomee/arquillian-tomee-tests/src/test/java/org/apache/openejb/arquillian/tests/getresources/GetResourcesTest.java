@@ -59,6 +59,6 @@ public class GetResourcesTest {
 
     @Test public void check() throws IOException {
         assertOutput(url.toExternalForm() + "get-resources", "foundFromListener=1");
-        assertOutput(url.toExternalForm() + TEST_NAME + "get-resources", "servletContextGetResource=ok");
+        assertOutput(url.toExternalForm() + "get-resources", "servletContextGetResource=ok");
     }
 }
