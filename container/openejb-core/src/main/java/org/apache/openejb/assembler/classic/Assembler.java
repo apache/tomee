@@ -1084,31 +1084,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         while (namingEnumeration != null && namingEnumeration.hasMoreElements()) {
             Binding binding = namingEnumeration.nextElement();
             Object object = binding.getObject();
-            if (object instanceof ResourceAdapter) {
-                ResourceAdapter resourceAdapter = (ResourceAdapter) object;
-                try {
-                    logger.info("Stopping ResourceAdapter: " + binding.getName());
-
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Stopping ResourceAdapter: " + binding.getClassName());
-                    }
-
-                    resourceAdapter.stop();
-                } catch (Throwable t) {
-                    logger.fatal("ResourceAdapter Shutdown Failed: " + binding.getName(), t);
-                }
-            } else if (object instanceof org.apache.commons.dbcp.BasicDataSource) {
-                logger.info("Closing DataSource: " + binding.getName());
-
-                try {
-                    ((org.apache.commons.dbcp.BasicDataSource) object).close();
-                } catch (Throwable t) {
-                    //Ignore
-                }
-
-            } else if (logger.isDebugEnabled()) {
-                logger.debug("Not processing resource on destroy: " + binding.getClassName());
-            }
+            destroyResource(binding.getName(), binding.getClassName(), object);
         }
 
         SystemInstance.get().removeComponent(OpenEjbConfiguration.class);
@@ -1116,6 +1092,34 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         SystemInstance.get().removeComponent(TransactionSynchronizationRegistry.class);
         SystemInstance.get().removeComponent(EjbResolver.class);
         SystemInstance.reset();
+    }
+
+    private void destroyResource(final String name, final String className, final Object object) {
+        if (object instanceof ResourceAdapter) {
+            ResourceAdapter resourceAdapter = (ResourceAdapter) object;
+            try {
+                logger.info("Stopping ResourceAdapter: " + name);
+
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Stopping ResourceAdapter: " + className);
+                }
+
+                resourceAdapter.stop();
+            } catch (Throwable t) {
+                logger.fatal("ResourceAdapter Shutdown Failed: " + name, t);
+            }
+        } else if (object instanceof org.apache.commons.dbcp.BasicDataSource) {
+            logger.info("Closing DataSource: " + name);
+
+            try {
+                ((org.apache.commons.dbcp.BasicDataSource) object).close();
+            } catch (Throwable t) {
+                //Ignore
+            }
+
+        } else if (logger.isDebugEnabled()) {
+            logger.debug("Not processing resource on destroy: " + className);
+        }
     }
 
     public synchronized void destroyApplication(String filePath) throws UndeployException, NoSuchApplicationException {
@@ -1333,9 +1337,19 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
         }
 
+        final Context ic = containerSystem.getJNDIContext();
         for (String id : appInfo.resourceIds) {
+            final String name = OPENEJB_RESOURCE_JNDI_PREFIX + id;
             try {
-                containerSystem.getJNDIContext().unbind(OPENEJB_RESOURCE_JNDI_PREFIX + id);
+                final Object object = ic.lookup(name);
+                final String clazz;
+                if (object == null) { // should it be possible?
+                    clazz = "?";
+                } else {
+                    clazz = object.getClass().getName();
+                }
+                destroyResource(id, clazz, object);
+                ic.unbind(name);
             } catch (NamingException e) {
                 logger.warning("can't unbind resource '{0}'", id);
             }
