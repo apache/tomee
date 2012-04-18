@@ -313,9 +313,9 @@ public class DynamicEJBImplTest {
 
     @Configuration public Properties config() {
         final Properties p = new Properties();
-        p.put("bvalDatabase", "new://Resource?type=DataSource");
-        p.put("bvalDatabase.JdbcDriver", "org.hsqldb.jdbcDriver");
-        p.put("bvalDatabase.JdbcUrl", "jdbc:hsqldb:mem:bval");
+        p.put("dynamicEjbDatabase", "new://Resource?type=DataSource");
+        p.put("dynamicEjbDatabase.JdbcDriver", "org.hsqldb.jdbcDriver");
+        p.put("dynamicEjbDatabase.JdbcUrl", "jdbc:hsqldb:mem:bval");
         return p;
     }
 
