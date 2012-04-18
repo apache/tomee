@@ -220,7 +220,7 @@ java.util.Set
             out.print("<ul>");
             while (iterator.hasNext()) {
                 String entry = (String) iterator.next();
-                printRow("<li><a href='invokeobj.jsp?obj=" + entry + "'>" + entry + "</a>", "<a href='invokeobj.jsp?remove=" + entry + "'> [remove]</a></li>");
+                out.print("<li><a href='invokeobj.jsp?obj=" + entry + "'>" + entry + "</a><a href='invokeobj.jsp?remove=" + entry + "'> [remove]</a></li>");
             }
             out.print("</ul>");
         }
