@@ -21,7 +21,7 @@ import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.lifecycle.ResourceProvider;
 import org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider;
 import org.apache.cxf.jaxrs.provider.JAXBElementProvider;
-import org.apache.cxf.jaxrs.provider.JSONProvider;
+import org.apache.cxf.jaxrs.provider.json.JSONProvider;
 import org.apache.cxf.service.invoker.Invoker;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
