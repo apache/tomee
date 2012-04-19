@@ -299,7 +299,7 @@ public class RemoteServer {
                 }
 
                 final boolean isWindows = System.getProperty("os.name", "unknown").toLowerCase().startsWith("windows");
-                if (isWindows && "start".equals(cmd)) {
+                if (isWindows && "start".equals(cmd) && options.get("server.windows.fork", false)) {
                     // to fork
                     final List<String> winList = new ArrayList<String>();
                     winList.add("cmd");
