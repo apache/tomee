@@ -375,6 +375,8 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             System.setProperty("server.debug.port", Integer.toString(debugPort));
         }
 
+        System.setProperty("server.windows.fork", "true");
+
         final List<String> strings = new ArrayList<String>();
         if (systemVariables != null) {
             for (Map.Entry<String, String> entry : systemVariables.entrySet()) {
