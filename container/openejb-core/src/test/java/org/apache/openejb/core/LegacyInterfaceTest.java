@@ -33,9 +33,6 @@ import org.apache.openejb.jee.Query;
 import org.apache.openejb.jee.QueryMethod;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.jee.TransAttribute;
-import org.apache.openejb.test.entity.cmr.cmrmapping.OneInverseSideBean;
-import org.apache.openejb.test.entity.cmr.cmrmapping.OneInverseSideLocal;
-import org.apache.openejb.test.entity.cmr.cmrmapping.OneInverseSideLocalHome;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
@@ -44,6 +41,7 @@ import javax.ejb.LocalHome;
 import javax.ejb.RemoteHome;
 import javax.ejb.RemoveException;
 import javax.ejb.SessionContext;
+import java.io.File;
 import java.rmi.RemoteException;
 import java.util.List;
 
@@ -124,7 +122,12 @@ public class LegacyInterfaceTest extends TestCase {
         transactions.add(new ContainerTransaction(TransAttribute.SUPPORTS, null, "MyCmpBean", "*"));
         transactions.add(new ContainerTransaction(TransAttribute.SUPPORTS, null, "MySingletonBean", "*"));
 
-        AppModule module = new AppModule(this.getClass().getClassLoader(), "test");
+        final File f = new File("test").getAbsoluteFile();
+        if (!f.exists() && !f.mkdirs()) {
+            throw new Exception("Failed to create test directory: " + f);
+        }
+
+        AppModule module = new AppModule(this.getClass().getClassLoader(), f.getAbsolutePath());
         module.getEjbModules().add(new EjbModule(ejbJar));
         assembler.createApplication(config.configureApplication(module));
 
@@ -262,8 +265,9 @@ public class LegacyInterfaceTest extends TestCase {
     @RemoteHome(MySessionRemoteHome.class)
     public static class MySingletonBean implements javax.ejb.SessionBean {
 
-        public void doit(){}
-        
+        public void doit() {
+        }
+
         public void ejbCreateObject() throws javax.ejb.CreateException {
         }
 
