@@ -126,6 +126,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                         !jarFile.getName().endsWith(".rar")) {
                     try {
                         tmpFile = File.createTempFile("AppModule-", "", UrlCache.cacheDir);
+                        Thread.yield();
                         JarExtractor.copyRecursively(URLs.toFile(baseUrl), tmpFile);
                         tempURL = tmpFile.toURI().toURL();
 

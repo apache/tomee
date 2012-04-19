@@ -28,7 +28,7 @@ public class LoginTestUtil {
     public static void initialize() throws Exception {
         String path = System.getProperty("java.security.auth.login.config");
         if (path == null) {
-            URL resource = ClientLoginTest.class.getClassLoader().getResource("client.login.conf");
+            final URL resource = ClientLoginTest.class.getClassLoader().getResource("client.login.conf");
             if (resource != null) {
                 path = URLDecoder.decode(resource.getFile());
                 System.setProperty("java.security.auth.login.config", path);
@@ -37,7 +37,7 @@ public class LoginTestUtil {
 
         Client.setClient(new Client() {
             @Override
-            protected Response processRequest(Request req, Response res, ServerMetaData server) throws RemoteException {
+            protected Response processRequest(final Request req, final Response res, final ServerMetaData server) throws RemoteException {
                 serverRequest = req;
                 return serverResponse;
             }

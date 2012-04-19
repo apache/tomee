@@ -242,11 +242,9 @@ public class CmpJarBuilder {
         }
 
         // if url caching is enabled, generate the file directly in the cache dir, so it doesn't have to be recoppied
-        if (UrlCache.cacheDir != null) {
-            jarFile = File.createTempFile("OpenEJB_Generated_", ".jar", UrlCache.cacheDir);
-        } else {
-            jarFile = File.createTempFile("OpenEJB_Generated_", ".jar");
-        }
+        jarFile = File.createTempFile("OpenEJB_Generated_", ".jar", UrlCache.cacheDir);
+
+        Thread.yield();
 
         jarFile.deleteOnExit();
         JarOutputStream jarOutputStream = new JarOutputStream(IO.write(jarFile));
