@@ -45,14 +45,21 @@ import java.util.Set;
  */
 // Note: this class is a fork from OpenJPA
 public class TempClassLoader extends URLClassLoader {
-    private static boolean skipLog4j = false;
+    // log4j is optional
+    private static final boolean SKIP_LOG4J = skipLib("org.apache.log4j.Logger");
+    // commons-net is only in tomee-plus
+    private static final boolean SKIP_COMMONS_NET = skipLib("org.apache.commons.net.pop3.POP3Client");
 
-    static {
+    // - will not match anything, that's the desired default behavior
+    private static final String FORCED_SKIP = SystemInstance.get().getOptions().get("openejb.classloader.forced-skip", "-");
+    private static final String FORCED_LOAD = SystemInstance.get().getOptions().get("openejb.classloader.forced-load", "-");
+
+    private static boolean skipLib(final String includedClass) {
         try {
-            TempClassLoader.class.getClassLoader().loadClass("org.apache.log4j.Logger");
-            skipLog4j = true;
+            TempClassLoader.class.getClassLoader().loadClass(includedClass);
+            return true;
         } catch (ClassNotFoundException e) {
-            skipLog4j = false;
+            return false;
         }
     }
 
@@ -159,25 +166,45 @@ public class TempClassLoader extends URLClassLoader {
 
     // TODO: for jsf it can be useful to include commons-logging and openwebbeans...
     private boolean skip(String name) {
-        if (skip.equals(Skip.ALL)) {
+        if (skip.contains(Skip.ALL)) {
             return true;
         }
+        if (name.startsWith(FORCED_SKIP)) {
+            return true;
+        }
+        if (name.startsWith(FORCED_LOAD)) {
+            return false;
+        }
+
+        if (name.startsWith("java.")) return true;
+        if (name.startsWith("javax.")) return true;
+        if (name.startsWith("sun.")) return true;
 
         if (name.startsWith("javax.faces.")) return false;
         if (name.startsWith("javax.servlet.jsp.jstl")) return false;
         if (name.equals("org.apache.commons.logging.impl.LogFactoryImpl")) return false;
         if (name.startsWith("org.apache.webbeans.jsf")) return false;
 
-        if (name.startsWith("java.")) return true;
-        if (name.startsWith("javax.")) return true;
-        if (name.startsWith("sun.")) return true;
+        // don't stop on commons package since we don't bring all commons
+        if (name.startsWith("org.apache.commons.beanutils")) return true;
+        if (name.startsWith("org.apache.commons.cli")) return true;
+        if (name.startsWith("org.apache.commons.codec")) return true;
+        if (name.startsWith("org.apache.commons.collections")) return true;
+        if (name.startsWith("org.apache.commons.dbcp")) return true;
+        if (name.startsWith("org.apache.commons.digester")) return true;
+        if (name.startsWith("org.apache.commons.jocl")) return true;
+        if (name.startsWith("org.apache.commons.lang")) return true;
+        if (name.startsWith("org.apache.commons.lang3")) return true;
+        if (name.startsWith("org.apache.commons.logging")) return true;
+        if (SKIP_COMMONS_NET && name.startsWith("org.apache.commons.net")) return true;
+        if (name.startsWith("org.apache.commons.pool")) return true;
+
         if (name.startsWith("org.apache.openjpa.")) return true;
         if (name.startsWith("org.apache.derby.")) return true;
         if (name.startsWith("org.apache.xbean.")) return true;
         if (name.startsWith("org.eclipse.jdt.")) return true;
         if (name.startsWith("org.apache.openejb.jee.")) return true;
         if (name.startsWith("org.apache.openejb.api.")) return true;
-        if (name.startsWith("org.apache.commons.")) return true;
         if (name.startsWith("javassist")) return true;
         if (name.startsWith("org.codehaus.swizzle")) return true;
         if (name.startsWith("org.w3c.dom")) return true;
@@ -190,7 +217,7 @@ public class TempClassLoader extends URLClassLoader {
 
         if (name.startsWith("org.slf4j")) return true;
 
-        if (skipLog4j && name.startsWith("org.apache.log4j")) return true;
+        if (SKIP_LOG4J && name.startsWith("org.apache.log4j")) return true;
 
 //        if (name.startsWith("org.apache.myfaces.")) return true;
 //        if (name.startsWith("org.apache.taglibs.")) return true;
