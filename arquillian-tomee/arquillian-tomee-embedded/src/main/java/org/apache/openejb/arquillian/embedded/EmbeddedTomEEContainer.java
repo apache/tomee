@@ -19,7 +19,6 @@ package org.apache.openejb.arquillian.embedded;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.arquillian.common.Files;
 import org.apache.openejb.arquillian.common.TomEEContainer;
-import org.apache.openejb.util.NetworkUtil;
 import org.apache.tomee.embedded.Configuration;
 import org.apache.tomee.embedded.Container;
 import org.jboss.arquillian.container.spi.client.container.DeploymentException;
@@ -46,6 +45,7 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
 
     public static final String TOMEE_ARQUILLIAN_HTTP_PORT = "tomee.arquillian.http";
     public static final String TOMEE_ARQUILLIAN_STOP_PORT = "tomee.arquillian.stop";
+    private static final String LOCALHOST = "localhost";
 
     @Inject
     @ContainerScoped
@@ -115,7 +115,7 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
 
             AppContext appContext = container.deploy(name, file);
 
-            HTTPContext httpContext = new HTTPContext("0.0.0.0", configuration.getHttpPort());
+            HTTPContext httpContext = new HTTPContext(LOCALHOST, configuration.getHttpPort());
             httpContext.add(new Servlet("ArquillianServletRunner", "/" + getArchiveNameWithoutExtension(archive)));
             beanManagerInstance.set(appContext.getBeanManager());
             return new ProtocolMetaData().addContext(httpContext);
