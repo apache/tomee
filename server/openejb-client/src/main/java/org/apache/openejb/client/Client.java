@@ -55,7 +55,7 @@ public class Client {
 
     public static final ThreadLocal<Set<URI>> failed = new ThreadLocal<Set<URI>>();
     private static final ProtocolMetaData PROTOCOL_VERSION = new ProtocolMetaData("3.1");
-    private static final int maxRetry = Integer.parseInt(System.getProperty("openejb.client.retry.max", "20"));
+    private static final int maxConditionRetry = Integer.parseInt(System.getProperty("openejb.client.retry.condition.max", "20"));
 
     private List<Class<? extends Throwable>> retryConditions = new CopyOnWriteArrayList<Class<? extends Throwable>>();
     private static Client client = new Client();
@@ -316,7 +316,16 @@ public class Client {
                         final ThrowableArtifact artifact = (ThrowableArtifact) ejbResponse.getResult();
                         //noinspection ThrowableResultOfMethodCallIgnored
                         if (retryConditions.contains(artifact.getThrowable().getClass())) {
+
                             throw new RetryException(res);
+
+//                            if (? < maxConditionRetry) {
+//                                throw new RetryException(res);
+//                            } else {
+//                                if (FINER) {
+//                                    logger.log(Level.FINER, "Giving up on " + artifact.getThrowable().getClass().getName().toString());
+//                                }
+//                            }
                         }
                     }
                 }
@@ -342,28 +351,22 @@ public class Client {
             failed.add(uri);
             conn.discard();
 
-            if (failed.size() < maxRetry) {
+            if (e instanceof RetryException || getRetry()) {
+                try {
 
-                if (e instanceof RetryException || getRetry()) {
-                    try {
+                    Client.fireEvent(new RetryingRequest(req, server));
 
-                        Client.fireEvent(new RetryingRequest(req, server));
-
-                        processRequest(req, res, server);
-                    } catch (RemoteFailoverException re) {
-                        throw re;
-                    } catch (RemoteException re) {
-                        if (e instanceof RetryException) {
-                            return ((RetryException) e).getResponse();
-                        }
-                        throw new RemoteFailoverException("Cannot complete request.  Retry attempted on " + failed.size() + " servers", e);
+                    processRequest(req, res, server);
+                } catch (RemoteFailoverException re) {
+                    throw re;
+                } catch (RemoteException re) {
+                    if (e instanceof RetryException) {
+                        return ((RetryException) e).getResponse();
                     }
-                }
-            } else {
-                if (FINER) {
-                    logger.log(Level.FINER, "Giving up on " + uri.toString());
+                    throw new RemoteFailoverException("Cannot complete request.  Retry attempted on " + failed.size() + " servers", e);
                 }
             }
+
         } catch (Throwable error) {
             throw new RemoteException("Error while communicating with server: ", error);
 
