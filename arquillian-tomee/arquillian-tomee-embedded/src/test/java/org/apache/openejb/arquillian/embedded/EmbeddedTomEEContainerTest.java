@@ -31,6 +31,7 @@ import org.junit.runner.RunWith;
 
 import javax.ejb.EJB;
 import java.net.URL;
+import java.util.concurrent.CountDownLatch;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -62,7 +63,7 @@ public class EmbeddedTomEEContainerTest {
 
     @Test
     public void restServiceIsDeployed() throws Exception {
-        final String read = IOUtils.toString(new URL("http://localhost:" + System.getProperty("tomee.httpPort", "8080") + "/test/rest/foo").openStream());
+        final String read = IOUtils.toString(new URL(url.toExternalForm() + "rest/foo").openStream());
         assertEquals("foo", read);
     }
 }
