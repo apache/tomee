@@ -55,7 +55,7 @@ public class RemoteServer {
     private final int shutdownPort;
 
     public RemoteServer() {
-        this(options.get("connect.tries", 10), options.get("verbose", false));
+        this(options.get("connect.tries", 60), options.get("verbose", false));
     }
 
     public RemoteServer(int tries, boolean verbose) {
