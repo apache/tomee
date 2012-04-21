@@ -121,7 +121,7 @@ class SetupCommand {
 		System.setProperty("catalina.base", "${catalinaHome}")
 		Paths paths = new Paths(new File("${catalinaHome}/webapps/tomee"))
 		Installer installer = new Installer(paths, true)
-		installer.installAll()
+		installer.installFull()
 
         // clean up duplicate jars since in TomEE it is useless
         // = gain of space ;)
