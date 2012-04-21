@@ -25,7 +25,6 @@ import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.tomee.loader.TomcatHelper;
-import org.apache.tomee.loader.TomcatHook;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -78,7 +77,7 @@ public class ServerListener implements LifecycleListener {
             // System.setProperty("tomcat.built", "mmm dd yyyy hh:mm:ss");
             // set the System properties, tomcat.version, tomcat.built
             try {
-                ClassLoader classLoader = TomcatHook.class.getClassLoader();
+                ClassLoader classLoader = ServerListener.class.getClassLoader();
                 Properties tomcatServerInfo = IO.readProperties(classLoader.getResourceAsStream("org/apache/catalina/util/ServerInfo.properties"), new Properties());
 
                 String serverNumber = tomcatServerInfo.getProperty("server.number");
