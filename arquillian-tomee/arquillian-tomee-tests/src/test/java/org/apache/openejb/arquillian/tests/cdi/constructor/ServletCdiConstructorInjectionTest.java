@@ -20,6 +20,7 @@ import org.apache.openejb.arquillian.tests.TestRun;
 import org.apache.openejb.arquillian.tests.Tests;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -31,6 +32,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
+import java.net.URL;
 
 @RunWith(Arquillian.class)
 public class ServletCdiConstructorInjectionTest {
@@ -65,6 +67,9 @@ public class ServletCdiConstructorInjectionTest {
 
         return archive;
     }
+
+    @ArquillianResource
+    private URL url;
 
     private void validateTest(String expectedOutput) throws IOException {
         Tests.assertOutput("http://localhost:" + System.getProperty("tomee.httpPort", "11080") + "/" + TEST_NAME + "/" + TEST_NAME, expectedOutput);

@@ -22,7 +22,6 @@ package org.apache.tomee.embedded;
 public class Configuration {
 
     private int httpPort = 8080;
-    private int ajpPort = 8009;
     private int stopPort = 8005;
     protected String dir;
 
@@ -40,14 +39,6 @@ public class Configuration {
 
     public void setStopPort(int stopPort) {
         this.stopPort = stopPort;
-    }
-
-    public int getAjpPort() {
-        return ajpPort;
-    }
-
-    public void setAjpPort(int ajpPort) {
-        this.ajpPort = ajpPort;
     }
 
     public String getDir() {

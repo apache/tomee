@@ -17,8 +17,11 @@
  */
 package org.apache.openejb.jee;
 
+import com.sun.xml.bind.api.JAXBRIContext;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -90,7 +93,9 @@ public final class JAXBContextFactory {
         sb.deleteCharAt(sb.length() - 1);
         final Event event = Event.start(sb.toString());
         try {
-            return JAXBContext.newInstance(classes);
+            final Map<String, Object> properties = new HashMap<String, Object>();
+//            properties.put(JAXBRIContext.XMLACCESSORFACTORY_SUPPORT, true);
+            return JAXBContext.newInstance(classes, properties);
         } finally {
             event.stop();
         }

@@ -18,6 +18,8 @@
 
 package org.apache.openejb.jee;
 
+import com.sun.xml.bind.XmlAccessorFactory;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -78,6 +80,7 @@ import java.util.Map;
         "assemblyDescriptor",
         "ejbClientJar"
         })
+@XmlAccessorFactory(GeneratedAccessorFactory.class)
 public class EjbJar implements NamedModule {
     @XmlElement(name = "module-name")
     protected String moduleName;
