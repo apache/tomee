@@ -116,39 +116,11 @@ public class RemoteServer {
 
                 serverHasAlreadyBeenStarted = false;
 
-                File openejbJar = null;
-                File javaagentJar = null;
+                final File lib = new File(home, "lib");
+                final File webapplib = new File(new File(new File(home, "webapps"), "tomee"), "lib");
 
-                File lib;
-                if (!tomcat) {
-                    lib = new File(home, "lib");
-                } else {
-                    lib = new File(new File(new File(home, "webapps"), "tomee"), "lib");
-                }
-
-                for (File file : lib.listFiles()) {
-                    if (file.getName().startsWith("openejb-core") && file.getName().endsWith("jar")){
-                        openejbJar = file;
-                    }
-                    if (file.getName().startsWith("openejb-javaagent") && file.getName().endsWith("jar")){
-                        javaagentJar = file;
-                    }
-                }
-                if (javaagentJar == null) {
-                    javaagentJar = new File(home, "lib/openejb-javaagent.jar");
-                    if (!javaagentJar.exists()) {
-                        javaagentJar = null;
-                    }
-                }
-
-                if (openejbJar == null){
-                    dumpLibs(lib);
-                    throw new IllegalStateException("Cannot find the openejb-core jar in "+lib.getAbsolutePath());
-                }
-                if (javaagentJar == null){
-                    dumpLibs(lib);
-                    throw new IllegalStateException("Cannot find the openejb-javaagent jar in "+lib.getAbsolutePath());
-                }
+                final File openejbJar = lib("openejb-core", lib, webapplib);
+                final File javaagentJar = lib("openejb-javaagent", lib, webapplib);
 
                 //File openejbJar = new File(lib, "openejb-core-" + version + ".jar");
 
@@ -324,6 +296,21 @@ public class RemoteServer {
         } else {
             if (verbose) System.out.println("[] FOUND STARTED SERVER");
         }
+    }
+
+    private File lib(String name, File... dirs) {
+        for (File dir : dirs) {
+            for (File file : dir.listFiles()) {
+                if (!file.isFile()) continue;
+                if (!file.getName().endsWith(".jar")) continue;
+                if (file.getName().startsWith(name)) return file;
+            }
+        }
+
+        for (File dir : dirs) {
+            dumpLibs(dir);
+        }
+        throw new IllegalStateException("Cannot find the " + name + " jar");
     }
 
     // for debug purpose

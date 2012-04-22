@@ -47,7 +47,9 @@ public class LoaderServlet extends HttpServlet {
         // only install once
         if (embedded) return;
         embedded = true;
-        
+
+        if (System.getProperties().containsKey("openejb.embedder.source")) return;
+
         //Gets parameters from servlet initialization parameter
         Properties properties = initParamsToProperties(config);
         
