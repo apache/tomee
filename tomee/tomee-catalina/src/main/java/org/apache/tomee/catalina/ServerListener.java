@@ -22,11 +22,9 @@ import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.core.StandardServer;
 import org.apache.openejb.loader.IO;
-import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.tomee.loader.TomcatHelper;
 
-import java.io.IOException;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -100,13 +98,6 @@ public class ServerListener implements LifecycleListener {
                 }
             } catch (Throwable e) {
                 // no-op
-            }
-
-            // manage additional libraries
-            try {
-                ProvisioningUtil.addAdditionalLibraries();
-            } catch (IOException e) {
-                // ignored
             }
 
             TomcatLoader loader = new TomcatLoader();
