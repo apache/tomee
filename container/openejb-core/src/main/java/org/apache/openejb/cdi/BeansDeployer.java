@@ -380,6 +380,12 @@ public class BeansDeployer {
     protected void checkPassivationScope(Bean<?> beanObj)
     {
         boolean validate = false;
+        if (beanObj instanceof OwbBean && !((OwbBean)beanObj).isEnabled())
+        {
+            // we skip disabled beans
+            return;
+        }
+
 
         if (EnterpriseBeanMarker.class.isAssignableFrom(beanObj.getClass())) {
             EnterpriseBeanMarker marker = (EnterpriseBeanMarker) beanObj;
