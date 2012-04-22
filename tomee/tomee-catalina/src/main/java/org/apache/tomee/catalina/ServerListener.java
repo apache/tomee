@@ -47,6 +47,7 @@ public class ServerListener implements LifecycleListener {
             TomcatHelper.setServer(server);
 
             final Properties properties = new Properties();
+            System.getProperties().setProperty("openejb.embedder.source", getClass().getSimpleName());
             properties.setProperty("openejb.embedder.source", getClass().getSimpleName());
 
 
@@ -108,7 +109,6 @@ public class ServerListener implements LifecycleListener {
                 // ignored
             }
 
-            SystemInstance.init(properties);
             TomcatLoader loader = new TomcatLoader();
             loader.init(properties);
 
