@@ -112,7 +112,7 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
 
             AppContext appContext = container.deploy(name, file);
 
-            HTTPContext httpContext = new HTTPContext("0.0.0.0", configuration.getHttpPort());
+            HTTPContext httpContext = new HTTPContext("localhost", configuration.getHttpPort());
             httpContext.add(new Servlet("ArquillianServletRunner", "/" + getArchiveNameWithoutExtension(archive)));
             beanManagerInstance.set(appContext.getBeanManager());
             return new ProtocolMetaData().addContext(httpContext);
