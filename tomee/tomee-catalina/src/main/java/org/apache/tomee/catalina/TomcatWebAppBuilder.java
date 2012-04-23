@@ -60,7 +60,6 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LinkResolver;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.reflection.ReflectionUtil;
 import org.apache.tomcat.InstanceManager;
 import org.apache.tomcat.util.digester.Digester;
 import org.apache.tomee.common.LegacyAnnotationProcessor;
