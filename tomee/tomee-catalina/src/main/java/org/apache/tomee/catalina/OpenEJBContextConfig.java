@@ -16,23 +16,18 @@
  */
 package org.apache.tomee.catalina;
 
-import org.apache.catalina.core.StandardContext;
-import org.apache.catalina.deploy.WebXml;
-import org.apache.catalina.startup.ContextConfig;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.assembler.classic.WebAppInfo;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.reflection.ReflectionUtil;
-import org.xml.sax.InputSource;
-
-import javax.servlet.descriptor.JspPropertyGroupDescriptor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.LinkedHashSet;
+import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.deploy.WebXml;
+import org.apache.catalina.startup.ContextConfig;
+import org.apache.openejb.assembler.classic.WebAppInfo;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+import org.xml.sax.InputSource;
 
 public class OpenEJBContextConfig extends ContextConfig {
 
@@ -64,14 +59,6 @@ public class OpenEJBContextConfig extends ContextConfig {
 
         public OpenEJBWebXml(String prefix) {
             this.prefix = prefix;
-
-            // some hack since tomcat doesn't preserve order of jsppropertygroup because of the hashset
-            // to remove if tomcat fixes it.
-            try {
-                ReflectionUtil.set(this, "jspPropertyGroups", new LinkedHashSet<JspPropertyGroupDescriptor>());
-            } catch (OpenEJBException e) {
-                // ignored, applications often work even with this error...which shouldn't happen often
-            }
         }
 
         @Override

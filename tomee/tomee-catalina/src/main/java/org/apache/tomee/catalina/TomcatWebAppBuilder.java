@@ -469,7 +469,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
      */
     @Override
     public void init(final StandardContext standardContext) {
-        replaceHashSetForJspPropertyGroupsByLinkedHashSet(standardContext);
         standardContext.setCrossContext(SystemInstance.get().getOptions().get(OPENEJB_CROSSCONTEXT_PROPERTY, false));
         standardContext.setNamingResources(new OpenEJBNamingResource());
 
@@ -544,21 +543,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             return "StandardContextInfo{" +
                     "standardContext=" + standardContext +
                     '}';
-        }
-    }
-
-    /**
-     * a small hack to preserve order of jsppropertygroups.
-     * <p/>
-     * to remove if tomcat fixes it.
-     *
-     * @param standardContext
-     */
-    private static void replaceHashSetForJspPropertyGroupsByLinkedHashSet(final StandardContext standardContext) {
-        try {
-            ReflectionUtil.set(standardContext.getJspConfigDescriptor(), "jspPropertyGroups", new LinkedHashSet<JspPropertyGroupDescriptor>());
-        } catch (OpenEJBException e) {
-            // ignored, applications often work even with this error...which shouldn't happen often
         }
     }
 
