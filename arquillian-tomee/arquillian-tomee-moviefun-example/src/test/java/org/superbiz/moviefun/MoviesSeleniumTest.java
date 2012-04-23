@@ -78,11 +78,14 @@ public class MoviesSeleniumTest {
 		}
 		
 		if (sourceFile.isDirectory()) {
-			for (File file : sourceFile.listFiles()) {
-				if (file.getName().startsWith(".")) continue;
-				addResources(source + File.separator + file.getName(), target + File.separator + file.getName(), archive);
-			}
-		}
+            final File[] files = sourceFile.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (file.getName().startsWith(".")) continue;
+                    addResources(source + File.separator + file.getName(), target + File.separator + file.getName(), archive);
+                }
+            }
+        }
 	}
 
 	@Test

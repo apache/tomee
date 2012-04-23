@@ -120,9 +120,12 @@ public class OpenEJBListener implements LifecycleListener {
                         final StandardHost host = (StandardHost) child;
                         final File base = hostDir(System.getProperty("catalina.base"), host.getAppBase());
 
-                        for (File file : base.listFiles()) {
-                            if (isTomEEWar(file)) {
-                                return file;
+                        final File[] files = base.listFiles();
+                        if (files != null) {
+                            for (File file : files) {
+                                if (isTomEEWar(file)) {
+                                    return file;
+                                }
                             }
                         }
                     }
@@ -238,9 +241,12 @@ public class OpenEJBListener implements LifecycleListener {
              return null;
         }
         // iterate over the libs looking for the openejb-loader-*.jar
-        for (File file : webInfLib.listFiles()) {
-            if (file.getName().startsWith("tomee-catalina-") && file.getName().endsWith(".jar")) {
-                return contextDir;
+        final File[] files = webInfLib.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.getName().startsWith("tomee-catalina-") && file.getName().endsWith(".jar")) {
+                    return contextDir;
+                }
             }
         }
         return null;

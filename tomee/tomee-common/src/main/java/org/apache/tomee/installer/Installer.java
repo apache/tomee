@@ -124,16 +124,21 @@ public class Installer {
     private void moveLibs() {
 
         final File libs = paths.getCatalinaLibDir();
-        for (File file : paths.getOpenEJBLibDir().listFiles()) {
-            if (file.isDirectory()) continue;
-            if (!file.getName().endsWith(".jar")) continue;
+        final File[] files = paths.getOpenEJBLibDir().listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) continue;
+                if (!file.getName().endsWith(".jar")) continue;
 
-            try {
-                Installers.copyFile(file, new File(libs, file.getName()));
-                file.delete();
-                alerts.addInfo("Copy " + file.getName() + " to lib");
-            } catch (IOException e) {
-                alerts.addError("Unable to " + file.getName() + " to Tomcat lib directory.  This will need to be performed manually.", e);
+                try {
+                    Installers.copyFile(file, new File(libs, file.getName()));
+                    if(!file.delete()){
+                        file.deleteOnExit();
+                    }
+                    alerts.addInfo("Copy " + file.getName() + " to lib");
+                } catch (IOException e) {
+                    alerts.addError("Unable to " + file.getName() + " to Tomcat lib directory.  This will need to be performed manually.", e);
+                }
             }
         }
     }

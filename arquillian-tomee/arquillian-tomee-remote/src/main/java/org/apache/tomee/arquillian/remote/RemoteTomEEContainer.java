@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /*
@@ -57,12 +58,13 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
 
             container.start();
         } catch (Exception e) {
-            throw new LifecycleException("Unable to start remote container", e);
+            logger.log(Level.SEVERE, "Unable to start remote container", e);
+            throw new LifecycleException("Unable to start remote container:" + e.getMessage(), e);
         }
     }
 
     private void configure() throws LifecycleException, IOException {
-        final File workingDirectory = new File(configuration.getDir());
+        final File workingDirectory = new File(configuration.getDir()).getAbsoluteFile();
 
         if (workingDirectory.exists()) {
 
@@ -81,6 +83,8 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
 
         if (openejbHome == null) {
             openejbHome = Setup.downloadAndUnpack(workingDirectory, configuration.getArtifactName());
+
+            logger.log(Level.INFO, "Downloaded container to: " + openejbHome);
         }
 
         Files.assertDir(openejbHome);
@@ -95,10 +99,10 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
             Setup.removeUselessWebapps(openejbHome);
         }
 
-        if (false) {
+        if (logger.isLoggable(Level.FINE)) {
             Map<Object, Object> map = new TreeMap(System.getProperties());
             for (Map.Entry<Object, Object> entry : map.entrySet()) {
-                System.out.printf("%s = %s\n", entry.getKey(), entry.getValue());
+                logger.log(Level.FINE, String.format("%s = %s\n", entry.getKey(), entry.getValue()));
             }
         }
     }

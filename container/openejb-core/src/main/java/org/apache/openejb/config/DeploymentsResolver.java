@@ -23,7 +23,6 @@ import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URLs;
-
 import org.apache.xbean.finder.UrlSet;
 import org.apache.xbean.finder.filter.ExcludeIncludeFilter;
 import org.apache.xbean.finder.filter.Filter;
@@ -125,24 +124,28 @@ public class DeploymentsResolver implements DeploymentFilterable {
         //
         ////////////////////////////////
         boolean hasNestedArchives = false;
-        for (final File file : dir.listFiles()) {
-            try {
+        final File[] dirFiles = dir.listFiles();
 
-                final URL url = file.toURI().toURL();
-                if (jarList.contains(url)) continue;
+        if (null != dirFiles) {
+            for (final File file : dirFiles) {
+                try {
 
-                if (file.getName().endsWith(".jar") || file.getName().endsWith(".war") || file.getName().endsWith(".rar") || file.getName().endsWith(".ear")) {
-                    jarList.add(url);
-                    hasNestedArchives = true;
-                } else if (new File(file, "META-INF").exists()) { // Unpacked ear or jar
-                    jarList.add(url);
-                    hasNestedArchives = true;
-                } else if (new File(file, "WEB-INF").exists()) {  // Unpacked webapp
-                    jarList.add(url);
-                    hasNestedArchives = true;
+                    final URL url = file.toURI().toURL();
+                    if (jarList.contains(url)) continue;
+
+                    if (file.getName().endsWith(".jar") || file.getName().endsWith(".war") || file.getName().endsWith(".rar") || file.getName().endsWith(".ear")) {
+                        jarList.add(url);
+                        hasNestedArchives = true;
+                    } else if (new File(file, "META-INF").exists()) { // Unpacked ear or jar
+                        jarList.add(url);
+                        hasNestedArchives = true;
+                    } else if (new File(file, "WEB-INF").exists()) {  // Unpacked webapp
+                        jarList.add(url);
+                        hasNestedArchives = true;
+                    }
+                } catch (Exception e) {
+                    logger.debug("loadFrom", e);
                 }
-            } catch (Exception e) {
-                logger.debug("loadFrom", e);
             }
         }
 

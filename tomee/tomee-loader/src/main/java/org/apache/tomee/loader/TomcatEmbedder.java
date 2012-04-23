@@ -168,9 +168,12 @@ public class TomcatEmbedder {
         if (openEJBLibDir == null) return null;
 
         File openejbLoaderJar = null;
-        for (File file : openEJBLibDir.listFiles()) {
-            if (file.getName().startsWith(namePrefix + "-") && file.getName().endsWith(".jar")) {
-                return file;
+        final File[] files = openEJBLibDir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.getName().startsWith(namePrefix + "-") && file.getName().endsWith(".jar")) {
+                    return file;
+                }
             }
         }
 

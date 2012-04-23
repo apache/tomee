@@ -16,19 +16,22 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<arquillian 
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xsi:schemaLocation="http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
-	
-       <container qualifier="tomee" default="true">
-           <configuration>
-               <property name="httpPort">-1</property>
-               <property name="ajpPort">-1</property>
-               <property name="stopPort">-1</property>
-               <property name="tomcatVersion">7.0.27</property>
-               <property name="version">4.0.0-beta-3-SNAPSHOT</property>
-               <property name="dir">target/apache-tomee-remote</property>
-               <property name="appWorkingDir">target/arquillian-test-working-dir</property>
-           </configuration>
-       </container>
+<arquillian xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xmlns="http://jboss.org/schema/arquillian"
+            xsi:schemaLocation="
+      http://jboss.org/schema/arquillian
+      http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
+
+    <container qualifier="tomee"
+               default="true">
+        <configuration>
+            <property name="httpPort">-1</property>
+            <property name="ajpPort">-1</property>
+            <property name="stopPort">-1</property>
+            <property name="tomcatVersion">7.0.27</property>
+            <property name="version">4.0.0-beta-3-SNAPSHOT</property>
+            <property name="dir">target/apache-tomee-remote</property>
+            <property name="appWorkingDir">target/arquillian-test-working-dir</property>
+        </configuration>
+    </container>
 </arquillian>

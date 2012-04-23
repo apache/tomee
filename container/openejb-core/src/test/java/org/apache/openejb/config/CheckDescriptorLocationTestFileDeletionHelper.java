@@ -19,6 +19,7 @@ package org.apache.openejb.config;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,7 +31,13 @@ public class CheckDescriptorLocationTestFileDeletionHelper {
     public void deleteFile() {
         File fileLocation = new File(System.getProperty("java.io.tmpdir"));
         assertTrue(fileLocation.isDirectory());
-        List<File> asList = Arrays.asList(fileLocation.listFiles());
+        final File[] list = fileLocation.listFiles();
+        List<File> asList = null;
+        if (list != null) {
+            asList = Arrays.asList(list);
+        } else{
+            asList = new ArrayList<File>();
+        }
         deleteTestCreatedFiles(asList);
 
     }

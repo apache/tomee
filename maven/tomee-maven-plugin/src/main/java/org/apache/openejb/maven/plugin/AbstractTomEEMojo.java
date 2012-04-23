@@ -348,22 +348,25 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             return;
         }
 
-        for (File f : dir.listFiles()) {
-            if (f.isDirectory() || f.isHidden()) {
-                continue;
-            }
+        final File[] files = dir.listFiles();
+        if (files != null) {
+            for (final File f : files) {
+                if (f.isDirectory() || f.isHidden()) {
+                    continue;
+                }
 
-            InputStream in = null;
-            OutputStream out = null;
-            try {
-                in = new FileInputStream(f);
-                out = new FileOutputStream(new File(catalinaBase, dir.getName() + "/" + f.getName()));
-                copy(in, out);
-            } catch (Exception e) {
-                throw new TomEEException(e.getMessage(), e);
-            } finally {
-                close(in);
-                close(out);
+                InputStream in = null;
+                OutputStream out = null;
+                try {
+                    in = new FileInputStream(f);
+                    out = new FileOutputStream(new File(catalinaBase, dir.getName() + "/" + f.getName()));
+                    copy(in, out);
+                } catch (Exception e) {
+                    throw new TomEEException(e.getMessage(), e);
+                } finally {
+                    close(in);
+                    close(out);
+                }
             }
         }
     }

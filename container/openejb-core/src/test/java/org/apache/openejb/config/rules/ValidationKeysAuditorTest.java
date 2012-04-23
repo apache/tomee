@@ -321,11 +321,14 @@ public class ValidationKeysAuditorTest {
     }
 
     private static void dir(File dir, KeysAnnotationVisitor visitor) {
-        for (File file : dir.listFiles()) {
-            if (file.isDirectory()) {
-                dir(file, visitor);
-            } else if (file.getName().endsWith(".class")) {
-                file(file, visitor);
+        final File[] files = dir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    dir(file, visitor);
+                } else if (file.getName().endsWith(".class")) {
+                    file(file, visitor);
+                }
             }
         }
     }

@@ -864,11 +864,13 @@ public class ResourceFinder {
         File dir = new File(decode(location.getPath()));
         if (dir.isDirectory()) {
             File[] files = dir.listFiles();
-            for (File file : files) {
-                if (!file.isDirectory()) {
-                    String name = file.getName();
-                    URL url = file.toURI().toURL();
-                    resources.put(name, url);
+            if (files != null) {
+                for (File file : files) {
+                    if (!file.isDirectory()) {
+                        String name = file.getName();
+                        URL url = file.toURI().toURL();
+                        resources.put(name, url);
+                    }
                 }
             }
         }

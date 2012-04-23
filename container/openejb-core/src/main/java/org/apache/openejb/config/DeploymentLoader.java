@@ -277,7 +277,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                     persistenceUrls.add((URL) otherUrl);
                 } else if (otherUrl instanceof List) {
                     final List<URL> otherList = (List<URL>) otherDD.get(name);
-                    for (URL url : otherList) {
+                    for (final URL url : otherList) {
                         if (!persistenceUrls.contains(url)) {
                             persistenceUrls.add(url);
                         }
@@ -851,20 +851,22 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         final File libDir = new File(webInfDir, "lib");
         if (libDir.exists()) {
-            for (final File file : libDir.listFiles()) {
-                if (file.getName().endsWith(".jar") || file.getName().endsWith(".zip")) {
-                    try {
-                        webClassPath.add(file.toURI().toURL());
-                    } catch (MalformedURLException e) {
-                        logger.warning("War path bad: " + file, e);
+            final File[] list = libDir.listFiles();
+            if (list != null) {
+                for (final File file : list) {
+                    if (file.getName().endsWith(".jar") || file.getName().endsWith(".zip")) {
+                        try {
+                            webClassPath.add(file.toURI().toURL());
+                        } catch (MalformedURLException e) {
+                            logger.warning("War path bad: " + file, e);
+                        }
                     }
                 }
             }
         }
 
         // create the class loader
-        final URL[] webUrls = webClassPath.toArray(new URL[webClassPath.size()]);
-        return webUrls;
+        return webClassPath.toArray(new URL[webClassPath.size()]);
     }
 
     private void addWebservices(final WsModule wsModule) throws OpenEJBException {
@@ -1095,11 +1097,14 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         // skip the lib and classes dir in WEB-INF
         final LinkedList<File> files = new LinkedList<File>();
-        for (final File file : webInfDir.listFiles()) {
-            if ("lib".equals(file.getName()) || "classes".equals(file.getName())) {
-                continue;
+        final File[] list = webInfDir.listFiles();
+        if (list != null) {
+            for (final File file : list) {
+                if ("lib".equals(file.getName()) || "classes".equals(file.getName())) {
+                    continue;
+                }
+                files.add(file);
             }
-            files.add(file);
         }
 
         if (files.isEmpty()) return urls;
@@ -1108,7 +1113,10 @@ public class DeploymentLoader implements DeploymentFilterable {
         while (!files.isEmpty()) {
             File file = files.removeFirst();
             if (file.isDirectory()) {
-                files.addAll(Arrays.asList(file.listFiles()));
+                final File[] a = file.listFiles();
+                if (a != null) {
+                    files.addAll(Arrays.asList(a));
+                }
             } else if (file.getName().endsWith(".tld")) {
                 try {
                     file = file.getCanonicalFile().getAbsoluteFile();
@@ -1402,9 +1410,12 @@ public class DeploymentLoader implements DeploymentFilterable {
         } else if (warFile.isDirectory()) {
             final File webInfDir = new File(warFile, "WEB-INF");
             if (webInfDir.isDirectory()) {
-                for (final File file : webInfDir.listFiles()) {
-                    if (!file.isDirectory()) {
-                        descriptors.put(file.getName(), file.toURI().toURL());
+                final File[] files = webInfDir.listFiles();
+                if (files != null) {
+                    for (final File file : files) {
+                        if (!file.isDirectory()) {
+                            descriptors.put(file.getName(), file.toURI().toURL());
+                        }
                     }
                 }
             }
@@ -1457,18 +1468,21 @@ public class DeploymentLoader implements DeploymentFilterable {
         scanDir(dir, files, path, true);
     }
 
-    public static void scanDir(final File dir, final Map<String, URL> files, final String path, boolean recursive) {
-        for (final File file : dir.listFiles()) {
-            if (file.isDirectory()) {
-                if (recursive) {
-                    scanDir(file, files, path + file.getName() + "/");
-                }
-            } else {
-                final String name = file.getName();
-                try {
-                    files.put(path + name, file.toURI().toURL());
-                } catch (MalformedURLException e) {
-                    logger.warning("EAR path bad: " + path + name, e);
+    public static void scanDir(final File dir, final Map<String, URL> files, final String path, final boolean recursive) {
+        final File[] dirFiles = dir.listFiles();
+        if (dirFiles != null) {
+            for (final File file : dirFiles) {
+                if (file.isDirectory()) {
+                    if (recursive) {
+                        scanDir(file, files, path + file.getName() + "/");
+                    }
+                } else {
+                    final String name = file.getName();
+                    try {
+                        files.put(path + name, file.toURI().toURL());
+                    } catch (MalformedURLException e) {
+                        logger.warning("EAR path bad: " + path + name, e);
+                    }
                 }
             }
         }

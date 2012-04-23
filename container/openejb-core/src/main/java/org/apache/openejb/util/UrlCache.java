@@ -53,19 +53,19 @@ public class UrlCache {
     
     private final Map<String, Map<URL, File>> cache = new TreeMap<String, Map<URL, File>>();
 
-    public synchronized URL[] cacheUrls(String appId, URL[] urls) {
+    public synchronized URL[] cacheUrls(final String appId, final URL[] urls) {
         if (!antiJarLocking) {
             return urls;
         }
 
         // the final cached urls
-        LinkedHashSet<URL> cachedUrls = new LinkedHashSet<URL>();
+        final LinkedHashSet<URL> cachedUrls = new LinkedHashSet<URL>();
 
         // this stack contains the urls to be processed... when manifest class path entries
         // are added they are added to the top (front) of the stack so manifest order is maintained
-        LinkedList<URL> locationStack = new LinkedList<URL>(Arrays.asList(urls));
+        final LinkedList<URL> locationStack = new LinkedList<URL>(Arrays.asList(urls));
         while (!locationStack.isEmpty()) {
-            URL url = locationStack.removeFirst();
+            final URL url = locationStack.removeFirst();
 
             // Skip any duplicate urls in the claspath
             if (cachedUrls.contains(url)) {
@@ -73,7 +73,7 @@ public class UrlCache {
             }
 
             // cache the URL
-            File file = cacheUrl(appId, url);
+            final File file = cacheUrl(appId, url);
 
             // if the url was successfully cached, process it's manifest classpath
             if (file != null) {
@@ -81,7 +81,7 @@ public class UrlCache {
                     cachedUrls.add(file.toURI().toURL());
 
                     // push the manifest classpath on the stack (make sure to maintain the order)
-                    List<URL> manifestClassPath = getManifestClassPath(url, file);
+                    final List<URL> manifestClassPath = getManifestClassPath(url, file);
                     locationStack.addAll(0, manifestClassPath);
                 } catch (MalformedURLException e) {
                     // invalid cache file - this should never happen
@@ -97,12 +97,12 @@ public class UrlCache {
         return cachedUrls.toArray(new URL[cachedUrls.size()]);
     }
 
-    public synchronized void releaseUrls(String appId) {
+    public synchronized void releaseUrls(final String appId) {
         logger.debug("Releasing URLs for application " + appId);
 
-        Map<URL, File> urlFileMap = cache.remove(appId);
+        final Map<URL, File> urlFileMap = cache.remove(appId);
         if (urlFileMap != null) {
-            for (File file : urlFileMap.values()) {
+            for (final File file : urlFileMap.values()) {
                 if (file.delete()) {
                     logger.debug("Deleted cached file " + file);
                 } else {
@@ -112,25 +112,25 @@ public class UrlCache {
         }
     }
 
-    public File getUrlCachedName(String appId, URL url) {
-        Map<URL, File> appCache = getAppCache(appId);
+    public File getUrlCachedName(final String appId, final URL url) {
+        final Map<URL, File> appCache = getAppCache(appId);
         if (appCache.containsKey(url)) {
             return appCache.get(url);
         }
         return null;
     }
 
-    public boolean isUrlCached(String appId, URL url) {
-        Map<URL, File> appCache = getAppCache(appId);
+    public boolean isUrlCached(final String appId, final URL url) {
+        final Map<URL, File> appCache = getAppCache(appId);
         return appCache.containsKey(url);
     }
 
-    public URL getUrlKeyCached(String appId, File file) {
+    public URL getUrlKeyCached(final String appId, final File file) {
     	if (file == null) {
     		return null;
     	}
         final Map<URL, File> appCache = getAppCache(appId);
-        for (Map.Entry<URL, File> entry : appCache.entrySet()) {
+        for (final Map.Entry<URL, File> entry : appCache.entrySet()) {
         	if (entry.getValue().equals(file)) {
         		return entry.getKey();
         	}
@@ -148,7 +148,7 @@ public class UrlCache {
         return null;
     }
 
-    private synchronized File cacheUrl(String appId, URL url) {
+    private synchronized File cacheUrl(final String appId, URL url) {
         File sourceFile;
         if (!"file".equals(url.getProtocol())) {
             // todo: download the jar ourselves?
@@ -178,7 +178,7 @@ public class UrlCache {
         }
 
         // check if file is already cached
-        Map<URL, File> appCache = getAppCache(appId);
+        final Map<URL, File> appCache = getAppCache(appId);
         if (appCache.containsKey(url)) {
             return appCache.get(url);
         }
@@ -191,8 +191,8 @@ public class UrlCache {
         }
 
         // generate a nice cache file name
-        String name = sourceFile.getName();
-        int dot = name.lastIndexOf(".");
+        final String name = sourceFile.getName();
+        final int dot = name.lastIndexOf(".");
         String prefix = name;
         String suffix = "";
         if (dot > 0) {
@@ -224,7 +224,7 @@ public class UrlCache {
         }
     }
 
-    private synchronized Map<URL, File> getAppCache(String appId) {
+    private synchronized Map<URL, File> getAppCache(final String appId) {
         Map<URL, File> urlFileMap = cache.get(appId);
         if (urlFileMap == null) {
             urlFileMap = new LinkedHashMap<URL, File>();
@@ -233,29 +233,29 @@ public class UrlCache {
         return urlFileMap;
     }
 
-    private List<URL> getManifestClassPath(URL codeSource, File location) {
+    private List<URL> getManifestClassPath(final URL codeSource, final File location) {
         try {
             // get the manifest, if possible
-            Manifest manifest = loadManifest(location);
+            final Manifest manifest = loadManifest(location);
             if (manifest == null) {
                 // some locations don't have a manifest
                 return Collections.emptyList();
             }
 
             // get the class-path attribute, if possible
-            String manifestClassPath = manifest.getMainAttributes().getValue(Attributes.Name.CLASS_PATH);
+            final String manifestClassPath = manifest.getMainAttributes().getValue(Attributes.Name.CLASS_PATH);
             if (manifestClassPath == null) {
                 return Collections.emptyList();
             }
 
             // build the urls...
             // the class-path attribute is space delimited
-            LinkedList<URL> classPathUrls = new LinkedList<URL>();
+            final LinkedList<URL> classPathUrls = new LinkedList<URL>();
             for (StringTokenizer tokenizer = new StringTokenizer(manifestClassPath, " "); tokenizer.hasMoreTokens();) {
-                String entry = tokenizer.nextToken();
+                final String entry = tokenizer.nextToken();
                 try {
                     // the class path entry is relative to the resource location code source
-                    URL entryUrl = new URL(codeSource, entry);
+                    final URL entryUrl = new URL(codeSource, entry);
                     classPathUrls.addLast(entryUrl);
                 } catch (MalformedURLException ignored) {
                     // most likely a poorly named entry
@@ -268,24 +268,24 @@ public class UrlCache {
         }
     }
 
-    private Manifest loadManifest(File location) throws IOException {
+    private Manifest loadManifest(final File location) throws IOException {
         if (location.isDirectory()) {
-            File manifestFile = new File(location, "META-INF/MANIFEST.MF");
+            final File manifestFile = new File(location, "META-INF/MANIFEST.MF");
 
             if (manifestFile.isFile() && manifestFile.canRead()) {
                 InputStream in = null;
                 try {
                     in = IO.read(manifestFile);
-                    Manifest manifest = new Manifest(in);
+                    final Manifest manifest = new Manifest(in);
                     return manifest;
                 } finally {
                     close(in);
                 }
             }
         } else {
-            JarFile jarFile = new JarFile(location);
+            final JarFile jarFile = new JarFile(location);
             try {
-                Manifest manifest = jarFile.getManifest();
+                final Manifest manifest = jarFile.getManifest();
                 return manifest;
             } finally {
                 close(jarFile);
@@ -296,7 +296,7 @@ public class UrlCache {
 
     private static File createCacheDir() {
         try {
-            FileUtils openejbBase = SystemInstance.get().getBase();
+            final FileUtils openejbBase = SystemInstance.get().getBase();
 
             File dir = null;
             // if we are not embedded, cache (temp) dir is under base dir
@@ -332,7 +332,7 @@ public class UrlCache {
         }
     }
 
-    private static File createCacheDir(File dir) throws IOException {
+    private static File createCacheDir(final File dir) throws IOException {
         
         if(dir.exists() && dir.isDirectory()){
             return dir;
@@ -357,14 +357,14 @@ public class UrlCache {
      *
      * @param dir File object representing the directory to be deleted
      */
-    public static void deleteDir(File dir) {
+    public static void deleteDir(final File dir) {
         if (dir == null) {
             return;
         }
 
-        File[] fileNames = dir.listFiles();
+        final File[] fileNames = dir.listFiles();
         if (fileNames != null) {
-            for (File file : fileNames) {
+            for (final File file : fileNames) {
                 if (file.isDirectory()) {
                     deleteDir(file);
                 } else {
@@ -384,7 +384,7 @@ public class UrlCache {
         }
     }
 
-    private static void close(Closeable closeable) {
+    private static void close(final Closeable closeable) {
         if (closeable != null) {
             try {
                 closeable.close();
@@ -393,7 +393,7 @@ public class UrlCache {
         }
     }
 
-    private static void close(JarFile closeable) {
+    private static void close(final JarFile closeable) {
         if (closeable != null) {
             try {
                 closeable.close();

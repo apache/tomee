@@ -66,23 +66,28 @@ public class WebappDeployer implements Deployer {
 		mBeanServer = Registry.getRegistry(null, null).getMBeanServer();
 	}
 
-	public String getUniqueFile() {
+	@Override
+    public String getUniqueFile() {
 		throw new TomEERuntimeException("This method is not used");
 	}
 
-	public Collection<AppInfo> getDeployedApps() {
+	@Override
+    public Collection<AppInfo> getDeployedApps() {
 		return assembler.getDeployedApplications();
 	}
 
-	public AppInfo deploy(String location) throws OpenEJBException {
+	@Override
+    public AppInfo deploy(final String location) throws OpenEJBException {
 		return deploy(location, null);
 	}
 
-	public AppInfo deploy(Properties properties) throws OpenEJBException {
+	@Override
+    public AppInfo deploy(final Properties properties) throws OpenEJBException {
 		return deploy(null, properties);
 	}
 
-	public AppInfo deploy(String location, Properties properties) throws OpenEJBException {
+	@Override
+    public AppInfo deploy(String location, Properties properties) throws OpenEJBException {
 		try {
 			if (location == null && properties == null) {
 				throw new NullPointerException("location and properties are null");
@@ -94,8 +99,8 @@ public class WebappDeployer implements Deployer {
 				properties = new Properties();
 			}
 
-			File source = new File(location);
-			File destination = new File(System.getProperty(OPENEJB_HOME) + File.separator + WEBAPPS + File.separator + source.getName());
+			final File source = new File(location);
+			final File destination = new File(System.getProperty(OPENEJB_HOME) + File.separator + WEBAPPS + File.separator + source.getName());
             IO.copy(source, destination);
 
             String destinationWithoutExtension = destination.getAbsolutePath();
@@ -112,7 +117,7 @@ public class WebappDeployer implements Deployer {
 				check();
 			}
 
-			final AppInfo info = findAppInfo(new String[] { destination.getAbsolutePath(), destinationWithoutExtension });
+			final AppInfo info = findAppInfo(destination.getAbsolutePath(), destinationWithoutExtension);
             if (info == null) {
                 throw new NullPointerException("appinfo not found");
             }
@@ -131,13 +136,13 @@ public class WebappDeployer implements Deployer {
 		}
 	}
 
-	private AppInfo findAppInfo(String... paths) {
-		Collection<AppInfo> deployedApps = getDeployedApps();
+	private AppInfo findAppInfo(final String... paths) {
+		final Collection<AppInfo> deployedApps = getDeployedApps();
 
-		Iterator<AppInfo> iterator = deployedApps.iterator();
+		final Iterator<AppInfo> iterator = deployedApps.iterator();
 		while (iterator.hasNext()) {
-			AppInfo appInfo = iterator.next();
-			for (String path : paths) {
+			final AppInfo appInfo = iterator.next();
+			for (final String path : paths) {
 				if (appInfo.path.equals(path)) {
 					return appInfo;
 				}
@@ -148,13 +153,13 @@ public class WebappDeployer implements Deployer {
 	}
 
 	private void check() {
-		StandardServer server = TomcatHelper.getServer();
-		for (Service service : server.findServices()) {
+		final StandardServer server = TomcatHelper.getServer();
+		for (final Service service : server.findServices()) {
 			if (service.getContainer() instanceof Engine) {
-				Engine engine = (Engine) service.getContainer();
-				for (Container engineChild : engine.findChildren()) {
+				final Engine engine = (Engine) service.getContainer();
+				for (final Container engineChild : engine.findChildren()) {
 					if (engineChild instanceof StandardHost) {
-						StandardHost host = (StandardHost) engineChild;
+						final StandardHost host = (StandardHost) engineChild;
 						webappBuilder.checkHost(host);
 					}
 				}
@@ -162,34 +167,36 @@ public class WebappDeployer implements Deployer {
 		}
 	}
 
-	private void checkWebapp(String webappName) {
+	private void checkWebapp(final String webappName) {
 		try {
-			ContextName cn = new ContextName(webappName);
+			final ContextName cn = new ContextName(webappName);
 
-			String name = "Catalina:type=Deployer,host=localhost";
-			ObjectName oname = new ObjectName(name);
+			final String name = "Catalina:type=Deployer,host=localhost";
+			final ObjectName oname = new ObjectName(name);
 
-			String[] params = { cn.getName() };
-			String[] signature = { "java.lang.String" };
+			final String[] params = { cn.getName() };
+			final String[] signature = { "java.lang.String" };
 			mBeanServer.invoke(oname, "check", params, signature);
 		} catch (Exception e) {
+            //Ignore
 		}
 	}
 
-	public void undeploy(String moduleId) throws UndeployException, NoSuchApplicationException {
+	@Override
+    public void undeploy(final String moduleId) throws UndeployException, NoSuchApplicationException {
 		try {
-			AppInfo appInfo = findAppInfo(moduleId);
+			final AppInfo appInfo = findAppInfo(moduleId);
 			if (appInfo !=  null) {
 				webappBuilder.undeployWebApps(appInfo);
 			}
 			
 			assembler.destroyApplication(moduleId);
 
-			File moduleFile = new File(moduleId);
+			final File moduleFile = new File(moduleId);
 			
 			if (moduleFile.getName().contains(".")) {
 				// delete matching directory
-				File dir = new File(moduleFile.getAbsolutePath().substring(0, moduleFile.getAbsolutePath().lastIndexOf('.')));
+				final File dir = new File(moduleFile.getAbsolutePath().substring(0, moduleFile.getAbsolutePath().lastIndexOf('.')));
 				if (dir.exists() && dir.isDirectory()) {
 					delete(dir);
 				}
@@ -206,24 +213,30 @@ public class WebappDeployer implements Deployer {
 		}
 	}
 
-	private void delete(File f) {
+	private void delete(final File f) {
 		if (f == null || (!f.exists())) {
 			return;
 		}
 		
 		if (f.isFile()) {
-			f.delete();
+			if(!f.delete()){
+                f.deleteOnExit();
+            }
 			return;
 		}
 		
 		if (f.isDirectory()) {
-			File[] listFiles = f.listFiles();
-			for (File file : listFiles) {
-				if (file.getName().equals(".") || file.getName().equals("..")) continue;
-				delete(file);
-			}
-			
-			f.delete();
+			final File[] listFiles = f.listFiles();
+            if (listFiles != null) {
+                for (final File file : listFiles) {
+                    if (file.getName().equals(".") || file.getName().equals("..")) continue;
+                    delete(file);
+                }
+            }
+
+            if(!f.delete()){
+                f.deleteOnExit();
+            }
 		}
 	}
 

@@ -198,14 +198,16 @@ public class AnnotationFinder {
 
     private void scanDir(File dir, List<String> classNames, String packageName) {
         File[] files = dir.listFiles();
-        for (File file : files) {
-            if (file.isDirectory()) {
-                scanDir(file, classNames, packageName + file.getName() + ".");
-            } else if (file.getName().endsWith(".class")) {
-                String name = file.getName();
-                name = name.replaceFirst(".class$", "");
-                if (name.contains(".")) continue;
-                classNames.add(packageName + name);
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    scanDir(file, classNames, packageName + file.getName() + ".");
+                } else if (file.getName().endsWith(".class")) {
+                    String name = file.getName();
+                    name = name.replaceFirst(".class$", "");
+                    if (name.contains(".")) continue;
+                    classNames.add(packageName + name);
+                }
             }
         }
     }

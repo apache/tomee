@@ -177,7 +177,9 @@ public class Files {
                 }
             }
 
-            file.delete();
+            if(!file.delete()){
+                file.deleteOnExit();
+            }
         }
     }
 

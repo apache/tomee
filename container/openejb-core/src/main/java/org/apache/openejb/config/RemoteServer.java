@@ -300,10 +300,13 @@ public class RemoteServer {
 
     private File lib(String name, File... dirs) {
         for (File dir : dirs) {
-            for (File file : dir.listFiles()) {
-                if (!file.isFile()) continue;
-                if (!file.getName().endsWith(".jar")) continue;
-                if (file.getName().startsWith(name)) return file;
+            final File[] files = dir.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (!file.isFile()) continue;
+                    if (!file.getName().endsWith(".jar")) continue;
+                    if (file.getName().startsWith(name)) return file;
+                }
             }
         }
 

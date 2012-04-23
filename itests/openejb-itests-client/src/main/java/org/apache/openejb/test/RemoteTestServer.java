@@ -64,10 +64,12 @@ public class RemoteTestServer implements org.apache.openejb.test.TestServer {
                 File openejbJar = null;
                 final File lib = new File(home, "lib");
                 final File[] files = lib.listFiles();
-                for (int i = 0; i < files.length && openejbJar == null; i++) {
-                    final File file = files[i];
-                    if (file.getName().startsWith("openejb-core") && file.getName().endsWith("jar")) {
-                        openejbJar = file;
+                if (null != files) {
+                    for (int i = 0; i < files.length && openejbJar == null; i++) {
+                        final File file = files[i];
+                        if (file.getName().startsWith("openejb-core") && file.getName().endsWith("jar")) {
+                            openejbJar = file;
+                        }
                     }
                 }
 

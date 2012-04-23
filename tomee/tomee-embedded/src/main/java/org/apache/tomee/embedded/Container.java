@@ -87,7 +87,7 @@ public class Container {
 
         executor.execute(new JaxbJavaeeLoad(WebApp.class));
         executor.execute(new JaxbJavaeeLoad(TldTaglib.class));
-        executor.execute(new Runnable(){
+        executor.execute(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -322,7 +322,9 @@ public class Container {
             return;
 
         if (file.isFile()) {
-            file.delete();
+            if (!file.delete()) {
+                file.deleteOnExit();
+            }
             return;
         }
 
@@ -334,11 +336,15 @@ public class Container {
 
             File[] children = file.listFiles();
 
-            for (File child : children) {
-                deleteTree(child);
+            if (children != null) {
+                for (File child : children) {
+                    deleteTree(child);
+                }
             }
 
-            file.delete();
+            if (!file.delete()) {
+                file.deleteOnExit();
+            }
         }
     }
 
@@ -387,9 +393,9 @@ public class Container {
 
         return dir;
     }
-    
+
     public void await() {
-    	tomcat.getServer().await();
+        tomcat.getServer().await();
     }
 
     private static class TomcatWithFastSessionIDs extends Tomcat {

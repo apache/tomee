@@ -174,22 +174,25 @@ public class TomcatHelper {
 		File openejbApp = new File(System.getProperty("tomee.war"));
 		File libFolder = new File(openejbApp, "lib");
 		StringBuilder builder = new StringBuilder();
-		
-		for (File f : libFolder.listFiles()) {
-			if (f.getName().startsWith("javaee-api-embedded")) continue;
-			if (f.getName().startsWith("myfaces")) continue;
-			
-			
-			
-			if (f.getName().toLowerCase().endsWith(".jar")) {
-				if (builder.length() > 0) {
-					builder.append(",");
-				}
-				
-				builder.append(f.getName());
-			}
-		}
-		
-		return builder.toString();
+
+        final File[] files = libFolder.listFiles();
+        if (files != null) {
+            for (File f : files) {
+                if (f.getName().startsWith("javaee-api-embedded")) continue;
+                if (f.getName().startsWith("myfaces")) continue;
+
+
+
+                if (f.getName().toLowerCase().endsWith(".jar")) {
+                    if (builder.length() > 0) {
+                        builder.append(",");
+                    }
+
+                    builder.append(f.getName());
+                }
+            }
+        }
+
+        return builder.toString();
 	}
 }
