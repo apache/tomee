@@ -44,8 +44,11 @@ public class LsCommand extends PathCommand {
         if (!base.endsWith("/")) {
             removed = removed + "/";
         }
-        for (File file : dir.listFiles()) { // not recursive otherwise it starts to be complicated
-            streamManager.writeOut(type(file) + " " + file.getAbsolutePath().replace(removed, ""));
+        final File[] files = dir.listFiles();
+        if (files != null) {
+            for (final File file : files) { // not recursive otherwise it starts to be complicated
+                streamManager.writeOut(type(file) + " " + file.getAbsolutePath().replace(removed, ""));
+            }
         }
     }
 

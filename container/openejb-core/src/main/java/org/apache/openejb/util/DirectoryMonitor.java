@@ -96,21 +96,23 @@ public class DirectoryMonitor {
     private void initialize() {
         getLogger().debug("Doing initial scan of " + target.getAbsolutePath());
 
-        File[] files = (target.isDirectory()) ? target.listFiles(): new File[]{target};
+        final File[] files = (target.isDirectory()) ? target.listFiles(): new File[]{target};
 
-        for (File file : files) {
+        if (files != null) {
+            for (final File file : files) {
 
-            if (!file.canRead()) {
-                continue;
+                if (!file.canRead()) {
+                    continue;
+                }
+
+                final FileInfo now = newInfo(file);
+                now.setChanging(false);
             }
-
-            FileInfo now = newInfo(file);
-            now.setChanging(false);
         }
     }
 
-    private FileInfo newInfo(File child) {
-        FileInfo fileInfo = child.isDirectory() ? new DirectoryInfo(child) : new FileInfo(child);
+    private FileInfo newInfo(final File child) {
+        final FileInfo fileInfo = child.isDirectory() ? new DirectoryInfo(child) : new FileInfo(child);
         files.put(fileInfo.getPath(), fileInfo);
         return fileInfo;
     }
@@ -120,47 +122,49 @@ public class DirectoryMonitor {
      */
     public void scan() {
 
-        File[] files = (target.isDirectory()) ? target.listFiles(): new File[]{target};
+        final File[] files = (target.isDirectory()) ? target.listFiles(): new File[]{target};
 
-        HashSet<String> missingFilesList = new HashSet(this.files.keySet());
+        final HashSet<String> missingFilesList = new HashSet<String>(this.files.keySet());
 
-        for (File file : files) {
+        if (files != null) {
+            for (final File file : files) {
 
-            missingFilesList.remove(file.getAbsolutePath());
+                missingFilesList.remove(file.getAbsolutePath());
 
-            if (!file.canRead()) {
-                getLogger().debug("not readable " + file.getName());
-                continue;
+                if (!file.canRead()) {
+                    getLogger().debug("not readable " + file.getName());
+                    continue;
+                }
+
+                final FileInfo oldStatus = oldInfo(file);
+                final FileInfo newStatus = newInfo(file);
+
+                newStatus.diff(oldStatus);
+
+                if (oldStatus == null) {
+                    // Brand new, but assume it's changing and
+                    // wait a bit to make sure it's not still changing
+                    getLogger().debug("File Discovered: " + newStatus);
+                } else if (newStatus.isChanging()) {
+                    // The two records are different -- record the latest as a file that's changing
+                    // and later when it stops changing we'll do the add or update as appropriate.
+                    getLogger().debug("File Changing: " + newStatus);
+                } else if (oldStatus.isNewFile()) {
+                    // Used to be changing, now in (hopefully) its final state
+                    getLogger().info("New File: " + newStatus);
+                    newStatus.setNewFile(!listener.fileAdded(file));
+                } else if (oldStatus.isChanging()) {
+                    getLogger().info("Updated File: " + newStatus);
+                    listener.fileUpdated(file);
+
+                    missingFilesList.remove(oldStatus.getPath());
+                }
+                // else it's just totally unchanged and we ignore it this pass
             }
-
-            FileInfo oldStatus = oldInfo(file);
-            FileInfo newStatus = newInfo(file);
-
-            newStatus.diff(oldStatus);
-
-            if (oldStatus == null) {
-                // Brand new, but assume it's changing and
-                // wait a bit to make sure it's not still changing
-                getLogger().debug("File Discovered: " + newStatus);
-            } else if (newStatus.isChanging()) {
-                // The two records are different -- record the latest as a file that's changing
-                // and later when it stops changing we'll do the add or update as appropriate.
-                getLogger().debug("File Changing: " + newStatus);
-            } else if (oldStatus.isNewFile()) {
-                // Used to be changing, now in (hopefully) its final state
-                getLogger().info("New File: " + newStatus);
-                newStatus.setNewFile(!listener.fileAdded(file));
-            } else if (oldStatus.isChanging()) {
-                getLogger().info("Updated File: " + newStatus);
-                listener.fileUpdated(file);
-
-                missingFilesList.remove(oldStatus.getPath());
-            }
-            // else it's just totally unchanged and we ignore it this pass
         }
 
         // Look for any files we used to know about but didn't find in this pass
-        for (String path : missingFilesList) {
+        for (final String path : missingFilesList) {
             getLogger().info("File removed: " + path);
 
             if (listener.fileRemoved(new File(path))) {
@@ -169,7 +173,7 @@ public class DirectoryMonitor {
         }
     }
 
-    private FileInfo oldInfo(File file) {
+    private FileInfo oldInfo(final File file) {
         return (FileInfo) files.get(file.getAbsolutePath());
     }
 
@@ -201,24 +205,24 @@ public class DirectoryMonitor {
             assert dir != null;
 
             long value = dir.lastModified();
-            File[] children = dir.listFiles();
+            final File[] children = dir.listFiles();
             long test;
 
-            for (int i = 0; i < children.length; i++) {
-                File child = children[i];
+            if (children != null) {
+                for (final File child : children) {
+                    if (!child.canRead()) {
+                        continue;
+                    }
 
-                if (!child.canRead()) {
-                    continue;
-                }
+                    if (child.isDirectory()) {
+                        test = getLastModifiedInDir(child);
+                    } else {
+                        test = child.lastModified();
+                    }
 
-                if (child.isDirectory()) {
-                    test = getLastModifiedInDir(child);
-                } else {
-                    test = child.lastModified();
-                }
-
-                if (test > value) {
-                    value = test;
+                    if (test > value) {
+                        value = test;
+                    }
                 }
             }
 

@@ -30,8 +30,8 @@ public class Files {
         return createTempDir("tomee", ".conf");
     }
 
-    public static File createTempDir(String prefix, String suffix) throws IOException {
-        File tempDir = File.createTempFile(prefix, suffix);
+    public static File createTempDir(final String prefix, final String suffix) throws IOException {
+        final File tempDir = File.createTempFile(prefix, suffix);
         tempDir.delete();
         tempDir.mkdirs();
         deleteOnExit(tempDir);
@@ -54,54 +54,59 @@ public class Files {
         });
     }
 
-    public static void deleteOnExit(File file) {
+    public static void deleteOnExit(final File file) {
         delete.add(file.getAbsolutePath());
     }
 
     private static void delete() {
-        for (String path : delete) {
+        for (final String path : delete) {
             delete(new File(path));
         }
     }
 
-    public static void delete(File file) {
+    public static void delete(final File file) {
         if (file.exists()) {
             if (file.isDirectory()) {
-                for (File f : file.listFiles()) {
-                    delete(f);
+                final File[] files = file.listFiles();
+                if (files != null) {
+                    for (final File f : files) {
+                        delete(f);
+                    }
                 }
             }
 
-            file.delete();
+            if(!file.delete()){
+                file.deleteOnExit();
+            }
         }
     }
 
-    public static void mkdir(File dir) {
+    public static void mkdir(final File dir) {
         if (dir.exists()) return;
         if (!dir.mkdirs()) {
             throw new IllegalStateException("cannot make directory: " + dir.getAbsolutePath());
         }
     }
 
-    public static void writable(File file) {
+    public static void writable(final File file) {
         if (!file.canWrite()) {
             throw new IllegalStateException("Not writable: " + file.getAbsolutePath());
         }
     }
 
-    public static void readable(File file) {
+    public static void readable(final File file) {
         if (!file.canRead()) {
             throw new IllegalStateException("Not readable: " + file.getAbsolutePath());
         }
     }
 
-    public static void assertDir(File file) {
+    public static void assertDir(final File file) {
         if (!file.isDirectory()) {
             throw new IllegalStateException("Not a directory: " + file.getAbsolutePath());
         }
     }
 
-    public static void assertFile(File file) {
+    public static void assertFile(final File file) {
         if (!file.isFile()) {
             throw new IllegalStateException("Not a file: " + file.getAbsolutePath());
         }

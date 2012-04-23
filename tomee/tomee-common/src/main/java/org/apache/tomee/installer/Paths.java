@@ -255,9 +255,12 @@ public class Paths {
         if (dir == null) return null;
 
         File openejbLoaderJar = null;
-        for (File file : dir.listFiles()) {
-            if (file.getName().startsWith(namePrefix + "-") && file.getName().endsWith(".jar")) {
-                return file;
+        final File[] files = dir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.getName().startsWith(namePrefix + "-") && file.getName().endsWith(".jar")) {
+                    return file;
+                }
             }
         }
 

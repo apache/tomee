@@ -29,14 +29,14 @@ import java.io.InputStream;
 public class AbstractContainers {
     protected static final String tmpDir = System.getProperty("java.io.tmpdir");
 
-    protected void writeToFile(File file, InputStream archive) {
+    protected void writeToFile(final File file, final InputStream archive) {
         if (!file.getParentFile().exists()) {
             file.getParentFile().mkdirs();
         }
 
         try {
-            FileOutputStream fos = new FileOutputStream(file);
-            byte[] buffer = new byte[4096];
+            final FileOutputStream fos = new FileOutputStream(file);
+            final byte[] buffer = new byte[4096];
             int bytesRead;
             while ((bytesRead = archive.read(buffer)) > -1) {
                 fos.write(buffer, 0, bytesRead);
@@ -47,10 +47,13 @@ public class AbstractContainers {
         }
     }
 
-    protected static void delete(File file) {
+    protected static void delete(final File file) {
         if (file.isDirectory()) {
-            for (File f : file.listFiles()) {
-                delete(f);
+            final File[] files = file.listFiles();
+            if (files != null) {
+                for (final File f : files) {
+                    delete(f);
+                }
             }
         }
         if (!file.delete()) {
@@ -59,7 +62,7 @@ public class AbstractContainers {
     }
 
     protected static final class Util {
-        static void close(Closeable closeable) throws IOException {
+        static void close(final Closeable closeable) throws IOException {
             if (closeable == null)
                 return;
             try {

@@ -16,27 +16,18 @@
  */
 package org.apache.openejb.arquillian.common;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.JarExtractor;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @version $Rev$ $Date$
@@ -48,7 +39,7 @@ public class Setup {
     public static final int DEFAULT_STOP_PORT = 8005;
     public static final int DEFAULT_AJP_PORT = 8009;
 
-    public static void exportProperties(File openejbHome, TomEEConfiguration c) {
+    public static void exportProperties(final File openejbHome, final TomEEConfiguration c) {
         System.setProperty("java.naming.provider.url", "http://localhost:" + c.getHttpPort() + "/tomee/ejb");
         System.setProperty("connect.tries", "90");
         System.setProperty("server.http.port", String.valueOf(c.getHttpPort()));
@@ -58,7 +49,7 @@ public class Setup {
         System.setProperty("tomee.home", openejbHome.getAbsolutePath());
     }
 
-    public static void updateServerXml(File openejbHome, final int httpPort, final int stopPort, final int ajpPort) throws IOException {
+    public static void updateServerXml(final File openejbHome, final int httpPort, final int stopPort, final int ajpPort) throws IOException {
         final Map<String, String> replacements = new HashMap<String, String>();
         replacements.put(Integer.toString(DEFAULT_HTTP_PORT), String.valueOf(httpPort));
         replacements.put(Integer.toString(DEFAULT_STOP_PORT), String.valueOf(stopPort));
@@ -68,42 +59,59 @@ public class Setup {
     }
 
     public static File findHome(File directory) {
-        final File conf = new File(directory, "conf");
-        final File webapps = new File(directory, "webapps");
+
+        directory = directory.getAbsoluteFile();
+
+        final File f = findHomeImpl(directory);
+
+        if (null == f) {
+            LOGGER.log(Level.INFO, "Unable to find home in: " + directory);
+        }
+
+        return f;
+    }
+
+    public static File findHomeImpl(final File directory) {
+        final File conf = new File(directory, "conf").getAbsoluteFile();
+        final File webapps = new File(directory, "webapps").getAbsoluteFile();
 
         if (conf.exists() && conf.isDirectory() && webapps.exists() && webapps.isDirectory()) {
             return directory;
         }
 
-        for (File file : directory.listFiles()) {
-            if (".".equals(file.getName()) || "..".equals(file.getName())) continue;
+        final File[] files = directory.listFiles();
+        if (null != files) {
 
-            final File found = findHome(file);
+            for (final File file : files) {
+                if (".".equals(file.getName()) || "..".equals(file.getName())) continue;
 
-            if (found != null) {
-                return found;
+                final File found = findHome(file);
+
+                if (found != null) {
+                    return found;
+                }
             }
         }
 
         return null;
     }
 
-    public static File downloadAndUnpack(File dir, String artifactID) throws LifecycleException {
+    public static File downloadAndUnpack(final File dir, final String artifactID) throws LifecycleException {
 
-        File zipFile = downloadFile(artifactID, null);
+        final File zipFile = downloadFile(artifactID, null);
 
         Zips.unzip(zipFile, dir);
 
         return findHome(dir);
     }
 
-    public static File downloadFile(String artifactName, String altUrl) {
+    public static File downloadFile(final String artifactName, final String altUrl) {
         final String cache = SystemInstance.get().getOptions().get(ProvisioningUtil.OPENEJB_DEPLOYER_CACHE_FOLDER, (String) null);
         System.setProperty(ProvisioningUtil.OPENEJB_DEPLOYER_CACHE_FOLDER, "target");
         try {
             final File artifact = new MavenCache().getArtifact(artifactName, altUrl);
             if (artifact == null) throw new NullPointerException(String.format("No such artifact: %s", artifactName));
-            return artifact;
+            return artifact.getAbsoluteFile();
         } finally {
             if (cache == null) {
                 System.clearProperty(ProvisioningUtil.OPENEJB_DEPLOYER_CACHE_FOLDER);
@@ -113,10 +121,10 @@ public class Setup {
         }
     }
 
-    public static boolean isRunning(int port) {
+    public static boolean isRunning(final int port) {
         try {
-            Socket socket = new Socket("localhost", port);
-            OutputStream out = socket.getOutputStream();
+            final Socket socket = new Socket("localhost", port);
+            final OutputStream out = socket.getOutputStream();
             out.close();
             return true;
         } catch (Exception e) {
@@ -124,21 +132,21 @@ public class Setup {
         }
     }
 
-    public static void replace(Map<String, String> replacements, File file) throws IOException {
+    public static void replace(final Map<String, String> replacements, final File file) throws IOException {
         BufferedReader reader = null;
         PrintWriter writer = null;
 
         try {
-            File tmpFile = copyToTempFile(file);
+            final File tmpFile = copyToTempFile(file);
             reader = new BufferedReader(new FileReader(tmpFile));
             writer = new PrintWriter(new FileWriter(file));
             String line;
 
             while ((line = reader.readLine()) != null) {
-                Iterator<String> iterator = replacements.keySet().iterator();
+                final Iterator<String> iterator = replacements.keySet().iterator();
                 while (iterator.hasNext()) {
-                    String pattern = iterator.next();
-                    String replacement = replacements.get(pattern);
+                    final String pattern = iterator.next();
+                    final String replacement = replacements.get(pattern);
 
                     line = line.replaceAll(pattern, replacement);
                 }
@@ -159,7 +167,7 @@ public class Setup {
         }
     }
 
-    private static File copyToTempFile(File file) throws IOException {
+    private static File copyToTempFile(final File file) throws IOException {
         InputStream is = null;
         OutputStream os = null;
 
@@ -188,10 +196,13 @@ public class Setup {
     public static void removeUselessWebapps(final File openejbHome) {
         final File webapps = new File(openejbHome, "webapps");
         if (webapps.isDirectory()) {
-            for (File webapp : webapps.listFiles()) {
-                final String name = webapp.getName();
-                if (webapp.isDirectory() && !name.equals("openejb") && !name.equals("tomee")) {
-                    JarExtractor.delete(webapp);
+            final File[] files = webapps.listFiles();
+            if (files != null) {
+                for (final File webapp : files) {
+                    final String name = webapp.getName();
+                    if (webapp.isDirectory() && !name.equals("openejb") && !name.equals("tomee")) {
+                        JarExtractor.delete(webapp);
+                    }
                 }
             }
         }
