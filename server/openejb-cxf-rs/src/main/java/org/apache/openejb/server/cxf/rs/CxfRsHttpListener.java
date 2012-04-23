@@ -46,6 +46,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.openejb.util.ObjectRecipeHelper;
 import org.apache.webbeans.config.WebBeansContext;
 
 /**
@@ -139,11 +140,14 @@ public class CxfRsHttpListener implements RsHttpListener {
     }
 
     private static List<?> createProviderList(final String prefix, final ClassLoader loader) {
-        String key;
+        final String key;
+        final String systPropPrefix;
         if (prefix == null || prefix.trim().isEmpty()) {
             key = OPENEJB_CXF_JAXRS_PROVIDERS_KEY;
+            systPropPrefix = key + ".";
         } else {
             key = prefix + OPENEJB_CXF_JAXRS_PROVIDERS_SUFFIX;
+            systPropPrefix = prefix + ".";
         }
         String providersProperty = SystemInstance.get().getProperty(key);
         // if no overriding
@@ -168,9 +172,7 @@ public class CxfRsHttpListener implements RsHttpListener {
                     providerList.add(jaxb);
                 } else {
                     try {
-                        Class<?> providerClass = loader.loadClass(provider);
-                        Object providerInstance = providerClass.newInstance();
-                        providerList.add(providerInstance);
+                        providerList.add(ObjectRecipeHelper.createMeFromSystemProps(systPropPrefix, null, loader.loadClass(provider)));
                     } catch (Exception e) {
                         LOGGER.error("can't add jax-rs provider " + provider + " in the current webapp"); // don't print this exception
                     }
