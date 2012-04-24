@@ -29,6 +29,7 @@ import org.apache.openejb.jee.FacesConfig;
 import org.apache.openejb.jee.HandlerChains;
 import org.apache.openejb.jee.JavaWsdlMapping;
 import org.apache.openejb.jee.JaxbJavaee;
+import org.apache.openejb.jee.Listener;
 import org.apache.openejb.jee.TldTaglib;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.Webservices;
@@ -646,6 +647,16 @@ public class ReadDescriptors implements DynamicDeployer {
     }
 
     public static TldTaglib readTldTaglib(URL url) throws OpenEJBException {
+        // TOMEE-164 Optimization on reading built-in tld files
+        if (url.getPath().contains("jstl-1.2.jar")) return new TldTaglib();
+        if (url.getPath().contains("myfaces-impl")) {
+            final TldTaglib taglib = new TldTaglib();
+            final Listener listener = new Listener();
+            listener.setListenerClass("org.apache.myfaces.webapp.StartupServletContextListener");
+            taglib.getListener().add(listener);
+            return taglib;
+        }
+
         TldTaglib tldTaglib;
         try {
             tldTaglib = (TldTaglib) JaxbJavaee.unmarshalTaglib(TldTaglib.class, IO.read(url));
