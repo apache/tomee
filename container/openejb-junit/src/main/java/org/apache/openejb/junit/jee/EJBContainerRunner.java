@@ -1,17 +1,26 @@
-package org.apache.openejb.junit.ejbcontainer;
+package org.apache.openejb.junit.jee;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.ConsoleHandler;
 import javax.ejb.embeddable.EJBContainer;
+import javax.naming.Context;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEjbContainer;
+import org.apache.openejb.junit.jee.config.Properties;
+import org.apache.openejb.junit.jee.config.Property;
+import org.apache.openejb.junit.jee.config.PropertyFile;
+import org.apache.openejb.junit.jee.resources.TestResource;
+import org.apache.openejb.junit.jee.transaction.TransactionRule;
+import org.apache.openejb.osgi.client.LocalInitialContextFactory;
 import org.apache.openejb.util.JuliLogStreamFactory;
 import org.apache.openejb.util.SingleLineFormatter;
 import org.junit.Rule;
@@ -24,13 +33,16 @@ import org.junit.runners.model.Statement;
 
 public class EJBContainerRunner extends BlockJUnit4ClassRunner {
     static { // logging conf
-        System.setProperty("java.util.logging.manager", JuliLogStreamFactory.OpenEJBLogManager.class.getName());
-        java.util.logging.Logger logger = java.util.logging.Logger.getLogger("net");
-        logger.setUseParentHandlers(false);
-        logger.addHandler(new ConsoleHandler());
-        logger.getHandlers()[0].setFormatter(new SingleLineFormatter());
+        if (!System.getProperties().containsKey("java.util.logging.manager")) {
+            System.setProperty("java.util.logging.manager", JuliLogStreamFactory.OpenEJBLogManager.class.getName());
+            java.util.logging.Logger logger = java.util.logging.Logger.getLogger("net");
+            logger.setUseParentHandlers(false);
+            logger.addHandler(new ConsoleHandler());
+            logger.getHandlers()[0].setFormatter(new SingleLineFormatter());
+        }
     }
 
+    private java.util.Properties properties;
     private EJBContainer container;
 
     public EJBContainerRunner(final Class<?> klass) throws InitializationError {
@@ -60,6 +72,7 @@ public class EJBContainerRunner extends BlockJUnit4ClassRunner {
     protected List<TestRule> getTestRules(Object target) {
         final List<TestRule> rules = new ArrayList<TestRule>();
         rules.add(new InjectRule(target));
+        rules.add(new TransactionRule());
         rules.addAll(getTestClass().getAnnotatedFieldValues(target, Rule.class, TestRule.class));
         return rules;
     }
@@ -98,7 +111,7 @@ public class EJBContainerRunner extends BlockJUnit4ClassRunner {
         @Override
         protected void before() throws Exception {
             final Class<?> clazz = getTestClass().getJavaClass();
-            final Map<String, String> properties = new HashMap<String, String>();
+            properties = new java.util.Properties();
             properties.put(OpenEjbContainer.Provider.OPENEJB_ADDITIONNAL_CALLERS_KEY, clazz.getName());
 
             final PropertyFile propertyFile = clazz.getAnnotation(PropertyFile.class);
@@ -130,6 +143,10 @@ public class EJBContainerRunner extends BlockJUnit4ClassRunner {
                 }
             }
 
+            if (!properties.containsKey(Context.INITIAL_CONTEXT_FACTORY)) {
+                properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
+            }
+
             container = EJBContainer.createEJBContainer(properties);
         }
     }
@@ -143,6 +160,7 @@ public class EJBContainerRunner extends BlockJUnit4ClassRunner {
         protected void after() throws Exception {
             if (container != null) {
                 container.close();
+                OpenEJB.destroy();
                 container = null;
             }
         }
@@ -172,6 +190,27 @@ public class EJBContainerRunner extends BlockJUnit4ClassRunner {
 
         @Override
         public void evaluate() throws Throwable {
+            Class<?> clazz = test.getClass();
+            while (!Object.class.equals(clazz)) {
+                for (Field field : clazz.getDeclaredFields()) {
+                    final TestResource resource = field.getAnnotation(TestResource.class);
+                    if (resource != null) {
+                        if (Context.class.isAssignableFrom(field.getType())) {
+                            field.setAccessible(true);
+                            field.set(test, container.getContext());
+                        } else if (Hashtable.class.isAssignableFrom(field.getType())) {
+                            field.setAccessible(true);
+                            field.set(test, properties);
+                        } else if (EJBContainer.class.isAssignableFrom(field.getType())) {
+                            field.setAccessible(true);
+                            field.set(test, container);
+                        } else {
+                            throw new OpenEJBException("can't inject field '" + field.getName() + "'");
+                        }
+                    }
+                }
+                clazz = clazz.getSuperclass();
+            }
             container.getContext().bind("inject", test);
             statement.evaluate();
         }
