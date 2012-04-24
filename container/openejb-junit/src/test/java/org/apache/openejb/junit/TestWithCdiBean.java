@@ -1,11 +1,12 @@
 package org.apache.openejb.junit;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import org.apache.openejb.config.DeploymentFilterable;
-import org.apache.openejb.junit.ejbcontainer.EJBContainerRunner;
-import org.apache.openejb.junit.ejbcontainer.Properties;
-import org.apache.openejb.junit.ejbcontainer.Property;
+import org.apache.openejb.junit.jee.EJBContainerRunner;
+import org.apache.openejb.junit.jee.config.Properties;
+import org.apache.openejb.junit.jee.config.Property;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -22,10 +23,18 @@ public class TestWithCdiBean {
     @Inject
     private EjbBean ejb;
 
+    @EJB
+    private EjbBean ejb2;
+
     @Test
-    public void checkInjections() {
+    public void checkCDIInjections() {
         assertNotNull(cdi);
         assertNotNull(ejb);
+    }
+
+    @Test
+    public void checkEJBInjection() {
+        assertNotNull(ejb2);
     }
 
     public static class CdiBean {}

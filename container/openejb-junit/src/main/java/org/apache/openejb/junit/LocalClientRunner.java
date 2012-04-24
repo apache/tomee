@@ -151,7 +151,6 @@ public class LocalClientRunner extends BlockJUnit4ClassRunner {
 
             if (annotation == null) {
                 annotation = (A) clazz.getAnnotation(annotationClass);
-                ;
             }
 
             return annotation;

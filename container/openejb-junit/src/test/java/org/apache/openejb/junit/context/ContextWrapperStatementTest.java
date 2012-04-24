@@ -64,6 +64,11 @@ public class ContextWrapperStatementTest {
 
             configuredInvoked = true;
         }
+
+        @Override
+        public void close() {
+            // no-op
+        }
     }
 
     public ContextWrapperStatementTest() {

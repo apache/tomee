@@ -17,6 +17,7 @@
 
 package org.apache.openejb.junit.context;
 
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.api.LocalClient;
 import org.apache.openejb.junit.ContextConfig;
@@ -35,6 +36,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URLDecoder;
 import java.util.Properties;
+import org.apache.openejb.loader.SystemInstance;
 
 /**
  * To implement your own context, you need to create an implementation of TestContext
@@ -133,6 +135,17 @@ public class OpenEjbTestContext implements TestContext {
         catch (Exception e) {
             throw new OpenEJBRuntimeException("Unknown error trying to configure object.", e);
         }
+    }
+
+    @Override
+    public void close() {
+        try {
+            initialContext.close();
+        } catch (NamingException e) {
+            // ignored
+        }
+        OpenEJB.destroy();
+        SystemInstance.reset();
     }
 
     /**
