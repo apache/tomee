@@ -131,7 +131,6 @@ public class TomcatLoader implements Loader {
         setIfNull(properties, "openejb.system.apps", "true");
         setIfNull(properties, "openejb.deployments.classpath", "false");
         setIfNull(properties, "openejb.deployments.classpath.filter.systemapps", "false");
-        setIfNull(properties, "openejb.vendor.config", "glassfish");
 
         //Sets default service provider
         setIfNull(properties, "openejb.provider.default", "org.apache.tomee");
