@@ -176,12 +176,25 @@ public class EjbJar implements NamedModule {
 
     public void setEnterpriseBeans(EnterpriseBean[] v) {
         enterpriseBeans.clear();
-        for (EnterpriseBean e : v) enterpriseBeans.put(e.getEjbName(), e);
+        for (EnterpriseBean e : v) {
+            defaultName(e);
+            enterpriseBeans.put(e.getEjbName(), e);
+        }
+    }
+
+    private void defaultName(EnterpriseBean e) {
+        if (e.getEjbName() == null) {
+            e.setEjbName("@NULL@" + e.hashCode());
+        }
     }
 
     public <T extends EnterpriseBean> T addEnterpriseBean(T bean){
         enterpriseBeans.put(bean.getEjbName(), bean);
         return bean;
+    }
+
+    public EnterpriseBean removeEnterpriseBean(EnterpriseBean bean){
+        return removeEnterpriseBean(bean.getEjbName());
     }
 
     public EnterpriseBean removeEnterpriseBean(String name){
