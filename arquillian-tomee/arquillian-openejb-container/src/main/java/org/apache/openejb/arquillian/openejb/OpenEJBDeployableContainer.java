@@ -7,6 +7,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.OpenEJB;
+import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.assembler.DeployerEjb;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.config.DeploymentFilterable;
@@ -36,6 +37,12 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
         PROPERTIES.setProperty(Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
         PROPERTIES.setProperty(LocalInitialContext.ON_CLOSE, LocalInitialContext.Close.DESTROY.name());
         PROPERTIES.setProperty(DeploymentFilterable.DEPLOYMENTS_CLASSPATH_PROPERTY, "false");
+        try {
+            OpenEJBDeployableContainer.class.getClassLoader().loadClass("org.apache.openejb.server.ServiceManager");
+            PROPERTIES.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
+        } catch (Exception e) {
+            // ignored
+        }
     }
 
     private InitialContext initialContext;
