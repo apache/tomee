@@ -189,6 +189,7 @@ public class EjbJar implements NamedModule {
     }
 
     public <T extends EnterpriseBean> T addEnterpriseBean(T bean){
+        defaultName(bean);
         enterpriseBeans.put(bean.getEjbName(), bean);
         return bean;
     }
