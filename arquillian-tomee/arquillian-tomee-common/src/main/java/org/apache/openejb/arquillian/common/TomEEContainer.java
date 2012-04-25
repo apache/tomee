@@ -16,9 +16,11 @@
  */
 package org.apache.openejb.arquillian.common;
 
+import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.Deployer;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Info;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.util.NetworkUtil;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
@@ -37,8 +39,10 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.io.File;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -157,11 +161,17 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
     public ProtocolMetaData deploy(Archive<?> archive) throws DeploymentException {
         try {
             String tmpDir = configuration.getAppWorkingDir();
-            File file;
+            File file, folderFile;
             int i = 0;
             do { // be sure we don't override something existing
                 file = new File(tmpDir + File.separator + i++ + File.separator + archive.getName());
-            } while (file.exists());
+                if (file.isDirectory() || !file.getName().endsWith("ar")) {
+                	folderFile = file;
+                } else {
+                	final String name = file.getName();
+                	folderFile = new File(file.getParentFile(), name.substring(0, name.length() - 4));
+                }
+            } while (file.exists() || folderFile.exists()); // we unpack the war/ear and the delete of "i" can fail (on win in particular)
             if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
                 LOGGER.warning("can't create " + file.getParent());
             }

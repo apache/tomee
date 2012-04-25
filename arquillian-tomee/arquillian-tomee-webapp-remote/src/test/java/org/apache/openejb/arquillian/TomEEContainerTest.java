@@ -26,6 +26,7 @@ import junit.framework.Assert;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -34,13 +35,17 @@ import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+// todo: add arquillian enricher to use @ArquillianResource URl url;
 @RunWith(Arquillian.class)
 public class TomEEContainerTest {
 
     @Deployment
     public static WebArchive createDeployment() {
-        return ShrinkWrap.create(WebArchive.class, "test.war").addClass(TestServlet.class).addClass(TestEjb.class).addClass(TomEEContainerTest.class)
-                .setWebXML(new StringAsset(Descriptors.create(WebAppDescriptor.class).version("3.0").servlet(TestServlet.class, "/ejb").exportAsString()));
+        return ShrinkWrap.create(WebArchive.class, "test.war")
+        		.addClass(TestServlet.class).addClass(TestEjb.class).addClass(TomEEContainerTest.class)
+                .setWebXML(new StringAsset(
+                		Descriptors.create(WebAppDescriptor.class)
+                			.version("3.0").servlet(TestServlet.class, "/ejb").exportAsString()));
     }
 
     @EJB
@@ -53,7 +58,7 @@ public class TomEEContainerTest {
 
     @Test
     public void testShouldBeAbleToAccessServletAndEjb() throws Exception {
-        InputStream is = new URL("http://127.0.0.1:" + System.getProperty("tomee.httpPort", "10080") + "/test/ejb").openStream();
+        InputStream is = new URL("http://localhost:" + System.getProperty("tomee.httpPort", "10080") + "/test/ejb").openStream();
         ByteArrayOutputStream os = new ByteArrayOutputStream();
 
         int bytesRead = -1;
