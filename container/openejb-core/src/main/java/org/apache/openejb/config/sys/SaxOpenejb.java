@@ -181,6 +181,12 @@ class SaxOpenejb extends DefaultHandler {
         }
 
         @Override
+        public void startElement(String uri, String localName, String qName, Attributes attributes) {
+            super.startElement(uri, localName, qName, attributes);
+            service.setType(attributes.getValue("ctype"));
+        }
+
+        @Override
         public void endElement(String uri, String localName, String qName) {
             openejb.getContainer().add(service);
             super.endElement(uri, localName, qName);
