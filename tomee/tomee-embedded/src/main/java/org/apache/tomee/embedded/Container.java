@@ -81,42 +81,6 @@ public class Container {
         Assembler.installNaming("org.apache.naming", true);
     }
 
-    static {
-        Core.warmup();
-        final ExecutorService executor = Executors.newFixedThreadPool(4, new DaemonThreadFactory("warmup"));
-
-        executor.execute(new JaxbJavaeeLoad(WebApp.class));
-//        executor.execute(new JaxbJavaeeLoad(TldTaglib.class));
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    JaxbOpenejb.getContext(Openejb.class);
-                } catch (JAXBException e) {
-                }
-            }
-        });
-        executor.execute(new JaxbJavaeeLoad(Persistence.class));
-    }
-
-
-    private static class JaxbJavaeeLoad implements Runnable {
-
-        private final Class<?> type;
-
-        private JaxbJavaeeLoad(Class<?> type) {
-            this.type = type;
-        }
-
-        @Override
-        public void run() {
-            try {
-                JaxbJavaee.getContext(type);
-            } catch (JAXBException e) {
-            }
-        }
-    }
-
     private Bootstrap bootstrap;
     protected Configuration configuration;
     private File base;

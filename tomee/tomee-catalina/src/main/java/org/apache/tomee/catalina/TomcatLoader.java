@@ -87,6 +87,10 @@ import java.util.Set;
  */
 public class TomcatLoader implements Loader {
 
+    static {
+        Warmup.warmup();
+    }
+
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, TomcatLoader.class);
     public static final String TOMEE_NOSHUTDOWNHOOK_PROP = "tomee.noshutdownhook";
 
@@ -124,8 +128,10 @@ public class TomcatLoader implements Loader {
     }
 
     public void initDefaults(Properties properties) {
-        setIfNull(properties, "openejb.deployments.classpath", "true");
+        setIfNull(properties, "openejb.system.apps", "true");
+        setIfNull(properties, "openejb.deployments.classpath", "false");
         setIfNull(properties, "openejb.deployments.classpath.filter.systemapps", "false");
+        setIfNull(properties, "openejb.vendor.config", "glassfish");
 
         //Sets default service provider
         setIfNull(properties, "openejb.provider.default", "org.apache.tomee");
