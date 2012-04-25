@@ -564,7 +564,11 @@ public class EjbJarInfoBuilder {
         } else if (s.getSessionType() == SessionType.MANAGED) {
             bean = new ManagedBeanInfo();
             ManagedBeanInfo managed = ((ManagedBeanInfo) bean);
-            managed.hidden = ((ManagedBean) s).isHidden();
+            if (s instanceof ManagedBean) { // this way we support managed beans in ejb-jar.xml (not in the spec but can be useful)
+                managed.hidden = ((ManagedBean) s).isHidden();
+            } else {
+                managed.hidden = true;
+            }
 
             copyCallbacks(s.getPostActivate(), managed.postActivate);
             copyCallbacks(s.getPrePassivate(), managed.prePassivate);
