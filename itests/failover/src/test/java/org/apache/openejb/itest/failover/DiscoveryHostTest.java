@@ -25,6 +25,7 @@ import org.apache.openejb.server.control.StandaloneServer;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.NetworkUtil;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.ejb.EJBException;
@@ -39,6 +40,7 @@ import java.util.concurrent.TimeUnit;
 
 public class DiscoveryHostTest {
 
+    @Ignore
     @Test
     public void test() throws Exception {
 
