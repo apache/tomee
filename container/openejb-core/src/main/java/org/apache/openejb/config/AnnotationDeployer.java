@@ -1197,7 +1197,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 try {
                     final Class<?> clazz = ejbModule.getClassLoader().loadClass(bean.getEjbClass());
                     sessionBean.setSessionType(getSessionType(clazz));
-                } catch (ClassNotFoundException handledInValidation) {
+                } catch (Throwable handledInValidation) {
                 }
             }
 
@@ -1210,7 +1210,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                         final Class<?> clazz = ejbModule.getClassLoader().loadClass(bean.getEjbClass());
                         final String ejbName = getEjbName(bean, clazz);
                         bean.setEjbName(ejbName);
-                    } catch (ClassNotFoundException handledInValidation) {
+                    } catch (Throwable handledInValidation) {
                     }
                     ejbModule.getEjbJar().addEnterpriseBean(bean);
                 }
