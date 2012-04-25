@@ -183,7 +183,8 @@ class SaxOpenejb extends DefaultHandler {
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) {
             super.startElement(uri, localName, qName, attributes);
-            service.setType(attributes.getValue("ctype"));
+            final String ctype = attributes.getValue("ctype");
+            if (ctype != null) service.setType(ctype);
         }
 
         @Override
