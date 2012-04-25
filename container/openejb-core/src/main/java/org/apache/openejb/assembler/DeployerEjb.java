@@ -223,7 +223,7 @@ public class DeployerEjb implements Deployer {
             config = null;
         }
         if (config == null || !config.getParentFile().exists()) {
-            LOGGER.error("can't save the added app because the conf folder doesn't exist, it will not be present next time you'll start");
+            LOGGER.info("can't save the added app because the conf folder doesn't exist, it will not be present next time you'll start");
             return;
         }
 

@@ -48,5 +48,6 @@
     <module>arquillian-tomee-tests</module>
     <module>arquillian-tomee-moviefun-example</module>
     <module>ziplock</module>
+    <module>arquillian-openejb-container</module>
   </modules>
 </project>
