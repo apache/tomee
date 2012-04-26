@@ -1,5 +1,6 @@
 @ECHO off
 CLS
+setlocal
 REM ================================================
 REM Licensed to the Apache Software Foundation (ASF) under one or more
 REM contributor license agreements.  See the NOTICE file distributed with
@@ -44,9 +45,20 @@ IF /i %proc% EQU undefined (
 SET jvm=auto
 REM SET JAVA_HOME=[Full path to JDK or JRE]
 
-REM Prefer a local JRE if we find one in the current directory
-IF EXIST "%~dp0jre" (
-	SET JAVA_HOME="%~dp0"
+REM Prefer a local JRE or JDK if we find one in the current or parent directory
+pushd..
+set dir=%cd%
+popd
+
+IF EXIST "%dir%\jre" (
+	SET JAVA_HOME="%dir%"
+	ECHO Found local JRE
+	GOTO found_java_home
+)
+
+IF EXIST "%dir%\jdk" (
+	SET JAVA_HOME="%dir%\jdk"
+	ECHO Found local JDK
 	GOTO found_java_home
 )
 
