@@ -51,6 +51,7 @@ import org.apache.xbean.finder.IAnnotationFinder;
 import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.finder.UrlSet;
 import org.apache.xbean.finder.archive.Archive;
+import org.apache.xbean.finder.archive.ClassesArchive;
 import org.apache.xbean.finder.archive.JarArchive;
 import org.xml.sax.SAXException;
 
@@ -83,6 +84,8 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 import static org.apache.openejb.config.NewLoaderLogic.applyBuiltinExcludes;
+import static org.apache.openejb.config.TldScanner.scanForTagLibs;
+import static org.apache.openejb.config.TldScanner.scanWarForTagLibs;
 import static org.apache.openejb.util.URLs.toFile;
 
 /**
@@ -677,14 +680,56 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         try {
             // TODO:  Put our scanning ehnancements back, here
-            final IAnnotationFinder finder = FinderFactory.createFinder(webModule);
-            webModule.setFinder(finder);
-            webEjbModule.setFinder(finder);
+            fillEjbJar(webModule, webEjbModule);
+
+            if (isMetadataComplete(webModule, webEjbModule)) {
+                final IAnnotationFinder finder = new org.apache.xbean.finder.AnnotationFinder(new ClassesArchive());
+                webModule.setFinder(finder);
+                webEjbModule.setFinder(finder);
+            }  else {
+                final IAnnotationFinder finder = FinderFactory.createFinder(webModule);
+                webModule.setFinder(finder);
+                webEjbModule.setFinder(finder);
+            }
         } catch (Exception e) {
             throw new OpenEJBException("Unable to create annotation scanner for web module " + webModule.getModuleId(), e);
         }
 
         addWebservices(webEjbModule);
+    }
+
+    /**
+     * If the web.xml is metadata-complete and there is no ejb-jar.xml
+     * then per specification we use the web.xml metadata-complete setting
+     * to imply the same for EJBs.
+     *
+     * @param webModule
+     * @param ejbModule
+     */
+    private void fillEjbJar(WebModule webModule, EjbModule ejbModule) {
+        final Object o = webModule.getAltDDs().get("ejb-jar.xml");
+        if (o != null) return;
+        if (ejbModule.getEjbJar() != null) return;
+
+        final EjbJar ejbJar = new EjbJar();
+        final WebApp webApp = webModule.getWebApp();
+
+        ejbJar.setMetadataComplete(webApp.isMetadataComplete());
+
+        ejbModule.setEjbJar(ejbJar);
+    }
+
+    private boolean isMetadataComplete(WebModule webModule, EjbModule ejbModule) {
+        if (webModule.getWebApp() == null) return false;
+        if (!webModule.getWebApp().isMetadataComplete()) return false;
+
+        // At this point we know the web.xml is metadata-complete
+        // We need to determine if there are cdi or ejb xml files
+        if (webModule.getAltDDs().get("beans.xml") == null) return true;
+        if (ejbModule.getEjbJar() == null) return true;
+        if (!ejbModule.getEjbJar().isMetadataComplete()) return false;
+
+        return true;
     }
 
     public WebModule createWebModule(final String appId, final String warPath, final ClassLoader parentClassLoader, final String contextRoot, final String moduleName) throws OpenEJBException {
@@ -956,7 +1001,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         // Search all libs
         final ClassLoader parentClassLoader = webModule.getClassLoader().getParent();
-        urls = scanClassLoaderForTagLibs(parentClassLoader);
+        urls = TldScanner.scan(parentClassLoader);
         tldLocations.addAll(urls);
 
         // load the tld files

@@ -17,6 +17,7 @@
 package org.apache.openejb.config.sys;
 
 import org.apache.openejb.config.Service;
+import org.apache.openejb.util.SuperProperties;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -97,7 +98,7 @@ public abstract class AbstractService implements Service {
      */
     public Properties getProperties() {
         if (properties == null) {
-            properties = new Properties();
+            properties = new SuperProperties();
         }
         return properties;
     }

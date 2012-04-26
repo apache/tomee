@@ -447,13 +447,23 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
 
         final boolean embedded = SystemInstance.get().hasProperty(EJBContainer.class.getName());
-        if (SystemInstance.get().getOptions().get(DEPLOYMENTS_CLASSPATH_PROPERTY, !embedded)) {
+        final Options options = SystemInstance.get().getOptions();
+
+        if (options.get("openejb.system.apps", false)) {
+            try {
+                final AppInfo appInfo = configureApplication(new AppModule(SystemApps.getSystemModule()));
+                sys.containerSystem.applications.add(appInfo);
+            } catch (OpenEJBException e) {
+                logger.error("Unable to load the system applications.", e);
+            }
+        } else if (options.get(DEPLOYMENTS_CLASSPATH_PROPERTY, !embedded)) {
+
             final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
             final ArrayList<File> jarFiles = getModulesFromClassPath(declaredApps, classLoader);
             final String appId = "classpath.ear";
 
-            final boolean classpathAsEar = SystemInstance.get().getOptions().get(CLASSPATH_AS_EAR, true);
+            final boolean classpathAsEar = options.get(CLASSPATH_AS_EAR, true);
             try {
                 if (classpathAsEar && !jarFiles.isEmpty()) {
 
