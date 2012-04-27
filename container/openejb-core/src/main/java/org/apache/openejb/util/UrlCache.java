@@ -18,6 +18,7 @@ package org.apache.openejb.util;
 
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.loader.FileUtils;
+import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 
@@ -310,7 +311,7 @@ public class UrlCache {
 
             // if we are embedded, tmp dir is in the system tmp dir
             if (dir == null) {                
-                dir = new File(new File(System.getProperty("java.io.tmpdir")), UUID.randomUUID().toString());
+                dir = Files.tmpdir();
             }
 
             // If the cache dir already exists then empty its contents
