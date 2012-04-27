@@ -29,6 +29,7 @@ import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -47,6 +48,7 @@ public class SessionScopeTest {
     }
 
     @Test
+    @Ignore
     public void testShouldBeAbleToAccessServletAndEjb() throws Exception {
         String[] sessionResult = new String[2];
         for (int i = 0; i < sessionResult.length; i++) {
