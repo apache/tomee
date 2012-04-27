@@ -196,7 +196,9 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
 
             HTTPContext httpContext = new HTTPContext(LOCALHOST, configuration.getHttpPort());
             String arquillianServlet;
-            if (archive instanceof WebArchive) {
+            // Avoids "inconvertible types" error in windows build
+            final Object object = archive;
+            if (object instanceof WebArchive) {
                 arquillianServlet = "/" + getArchiveNameWithoutExtension(archive);
             } else {
                 arquillianServlet = "/arquillian-protocol";
