@@ -27,6 +27,7 @@ import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.monitoring.LocalMBeanServer;
+import org.junit.Ignore;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -307,7 +308,8 @@ public class StatelessInvocationStatsTest extends TestCase {
                     || info.getName().equals("waitSecs().Percentile90")
                     || info.getName().equals("waitSecs().Percentile99")
                     || info.getName().equals("waitSecs().Sum")) {
-                assertTrue(((Double) (server.getAttribute(invocationsName, info.getName()))) >= 999);
+                final Double actual = (Double) (server.getAttribute(invocationsName, info.getName()));
+                assertTrue("Expected: " + actual + " >= 999", actual >= 999);
             }
         }
         ejbJar.removeEnterpriseBean("StatsInvocModule");
@@ -381,7 +383,9 @@ public class StatelessInvocationStatsTest extends TestCase {
         }
 
         public void waitSecs() throws InterruptedException {
-            Thread.sleep((long) (1000));
+            // Sleep is not guaranteed to be super accurate
+            // On windows it sleeps for a bit under the specified time
+            Thread.sleep((long) (1100));
         }
 
         public void checkout(CountDownLatch startingLine, CountDownLatch startPistol) {

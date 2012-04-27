@@ -55,7 +55,7 @@ public class SharedEnvironmentTest extends TestSetup {
     @Deployment(testable = false)
     public static WebArchive getArchive() {
         WebArchive deployment = new SharedEnvironmentTest().createDeployment(TestRun.class, PojoServletFilter.class, Orange.class, Green.class, Environment.class);
-        deployment.as(ExplodedExporter.class).exportExploded(new File("/tmp"));
+        deployment.as(ExplodedExporter.class).exportExploded(new File(System.getProperty("java.io.tmpdir")));
 		return deployment;
     }
 
