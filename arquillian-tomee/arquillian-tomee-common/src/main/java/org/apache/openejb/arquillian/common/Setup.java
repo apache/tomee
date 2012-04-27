@@ -75,7 +75,7 @@ public class Setup {
             return directory;
         }
 
-        for (File file : directory.listFiles()) {
+        for (File file : files(directory)) {
             if (".".equals(file.getName()) || "..".equals(file.getName())) continue;
 
             final File found = findHome(file);
@@ -86,6 +86,12 @@ public class Setup {
         }
 
         return null;
+    }
+
+    private static File[] files(File directory) {
+        final File[] files = directory.listFiles();
+        if (files != null) return files;
+        return new File[0];
     }
 
     public static File downloadAndUnpack(File dir, String artifactID) throws LifecycleException {
@@ -188,7 +194,7 @@ public class Setup {
     public static void removeUselessWebapps(final File openejbHome) {
         final File webapps = new File(openejbHome, "webapps");
         if (webapps.isDirectory()) {
-            for (File webapp : webapps.listFiles()) {
+            for (File webapp : files(webapps)) {
                 final String name = webapp.getName();
                 if (webapp.isDirectory() && !name.equals("openejb") && !name.equals("tomee")) {
                     JarExtractor.delete(webapp);

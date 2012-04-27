@@ -51,6 +51,7 @@ import org.apache.xbean.finder.IAnnotationFinder;
 import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.finder.UrlSet;
 import org.apache.xbean.finder.archive.Archive;
+import org.apache.xbean.finder.archive.ClassesArchive;
 import org.apache.xbean.finder.archive.JarArchive;
 import org.xml.sax.SAXException;
 
@@ -83,6 +84,8 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 import static org.apache.openejb.config.NewLoaderLogic.applyBuiltinExcludes;
+import static org.apache.openejb.config.TldScanner.scanForTagLibs;
+import static org.apache.openejb.config.TldScanner.scanWarForTagLibs;
 import static org.apache.openejb.util.URLs.toFile;
 
 /**
@@ -110,42 +113,16 @@ public class DeploymentLoader implements DeploymentFilterable {
         // do not use this class loader for any other purposes... it is
         // non-temp class loader and usage will mess up JPA
         ClassLoader doNotUseClassLoader = null;// = ClassLoaderUtil.createClassLoader(jarPath, new URL[]{baseUrl}, OpenEJB.class.getClassLoader());
-        File tmpFile = null;
 
         try {
             // determine the module type
             Class<? extends DeploymentModule> moduleClass;
 
             try {
-                // TODO: ClassFinder is leaking file locks, so copy the jar to a temp dir
-                // when we have a possible ejb-jar file (only ejb-jars result in a ClassFinder being used)
-                URL tempURL = baseUrl;
-                if (jarFile.isFile() && UrlCache.cacheDir != null &&
-                        !jarFile.getName().endsWith(".ear") &&
-                        !jarFile.getName().endsWith(".war") &&
-                        !jarFile.getName().endsWith(".rar")) {
-                    try {
-                        tmpFile = File.createTempFile("AppModule-", "", UrlCache.cacheDir);
-                        JarExtractor.copyRecursively(URLs.toFile(baseUrl), tmpFile);
-                        tempURL = tmpFile.toURI().toURL();
-
-                        doNotUseClassLoader = ClassLoaderUtil.createClassLoader(tmpFile.getCanonicalPath(), new URL[]{baseUrl}, getOpenEJBClassLoader(baseUrl));
-
-                    } catch (Exception e) {
-                        throw new OpenEJBException(e);
-                    }
-                } else {
-                    doNotUseClassLoader = ClassLoaderUtil.createClassLoader(jarPath, new URL[]{baseUrl}, getOpenEJBClassLoader(baseUrl));
-                }
-
-                moduleClass = discoverModuleType(tempURL, ClassLoaderUtil.createTempClassLoader(doNotUseClassLoader), true);
+                doNotUseClassLoader = ClassLoaderUtil.createClassLoader(jarPath, new URL[]{baseUrl}, getOpenEJBClassLoader(baseUrl));
+                moduleClass = discoverModuleType(baseUrl, ClassLoaderUtil.createTempClassLoader(doNotUseClassLoader), true);
             } catch (Exception e) {
                 throw new UnknownModuleTypeException("Unable to determine module type for jar: " + baseUrl.toExternalForm(), e);
-            } finally {
-                //Try delete here, but will not work if used in doNotUseClassLoader
-                if (tmpFile != null && !tmpFile.delete()) {
-                    tmpFile.deleteOnExit();
-                }
             }
 
             if (ResourcesModule.class.equals(moduleClass)) {
@@ -253,11 +230,6 @@ public class DeploymentLoader implements DeploymentFilterable {
 
                 //Really try and flush this classloader out
                 System.gc();
-            }
-
-            //Try delete here, but will not work if used in doNotUseClassLoader
-            if (tmpFile != null && !tmpFile.delete()) {
-                tmpFile.deleteOnExit();
             }
         }
     }
@@ -677,14 +649,56 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         try {
             // TODO:  Put our scanning ehnancements back, here
-            final IAnnotationFinder finder = FinderFactory.createFinder(webModule);
-            webModule.setFinder(finder);
-            webEjbModule.setFinder(finder);
+            fillEjbJar(webModule, webEjbModule);
+
+            if (isMetadataComplete(webModule, webEjbModule)) {
+                final IAnnotationFinder finder = new org.apache.xbean.finder.AnnotationFinder(new ClassesArchive());
+                webModule.setFinder(finder);
+                webEjbModule.setFinder(finder);
+            }  else {
+                final IAnnotationFinder finder = FinderFactory.createFinder(webModule);
+                webModule.setFinder(finder);
+                webEjbModule.setFinder(finder);
+            }
         } catch (Exception e) {
             throw new OpenEJBException("Unable to create annotation scanner for web module " + webModule.getModuleId(), e);
         }
 
         addWebservices(webEjbModule);
+    }
+
+    /**
+     * If the web.xml is metadata-complete and there is no ejb-jar.xml
+     * then per specification we use the web.xml metadata-complete setting
+     * to imply the same for EJBs.
+     *
+     * @param webModule
+     * @param ejbModule
+     */
+    private void fillEjbJar(WebModule webModule, EjbModule ejbModule) {
+        final Object o = webModule.getAltDDs().get("ejb-jar.xml");
+        if (o != null) return;
+        if (ejbModule.getEjbJar() != null) return;
+
+        final EjbJar ejbJar = new EjbJar();
+        final WebApp webApp = webModule.getWebApp();
+
+        ejbJar.setMetadataComplete(webApp.isMetadataComplete());
+
+        ejbModule.setEjbJar(ejbJar);
+    }
+
+    private boolean isMetadataComplete(WebModule webModule, EjbModule ejbModule) {
+        if (webModule.getWebApp() == null) return false;
+        if (!webModule.getWebApp().isMetadataComplete()) return false;
+
+        // At this point we know the web.xml is metadata-complete
+        // We need to determine if there are cdi or ejb xml files
+        if (webModule.getAltDDs().get("beans.xml") == null) return true;
+        if (ejbModule.getEjbJar() == null) return true;
+        if (!ejbModule.getEjbJar().isMetadataComplete()) return false;
+
+        return true;
     }
 
     public WebModule createWebModule(final String appId, final String warPath, final ClassLoader parentClassLoader, final String contextRoot, final String moduleName) throws OpenEJBException {
@@ -956,7 +970,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         // Search all libs
         final ClassLoader parentClassLoader = webModule.getClassLoader().getParent();
-        urls = scanClassLoaderForTagLibs(parentClassLoader);
+        urls = TldScanner.scan(parentClassLoader);
         tldLocations.addAll(urls);
 
         // load the tld files

@@ -86,7 +86,7 @@ public class Container {
         final ExecutorService executor = Executors.newFixedThreadPool(4, new DaemonThreadFactory("warmup"));
 
         executor.execute(new JaxbJavaeeLoad(WebApp.class));
-        executor.execute(new JaxbJavaeeLoad(TldTaglib.class));
+//        executor.execute(new JaxbJavaeeLoad(TldTaglib.class));
         executor.execute(new Runnable(){
             @Override
             public void run() {

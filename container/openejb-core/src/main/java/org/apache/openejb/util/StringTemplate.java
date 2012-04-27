@@ -35,6 +35,9 @@ public class StringTemplate {
  
     	while (matcher.find()) {
     		String key = matcher.group(2);
+
+            if (key == null) throw new IllegalStateException("Key is null. Template '" + template + "'");
+
     		String value = map.get(key);
     		
     		if (key.toLowerCase().endsWith(".lc")) {
@@ -44,8 +47,9 @@ public class StringTemplate {
     		} else if (key.toLowerCase().endsWith(".cc")) {
     			value = Strings.camelCase(map.get(key.substring(0, key.length() - 3)));
 			}
-    		
-    		matcher.appendReplacement(buf, value);
+
+            if (value == null) throw new IllegalStateException("Value is null for key '" + key + "'. Template '" + template + "'. Keys: " + Join.join(", ", map.keySet()));
+            matcher.appendReplacement(buf, value);
     	}
 
     	matcher.appendTail(buf);

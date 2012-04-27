@@ -224,8 +224,7 @@ public abstract class JaxbOpenejb {
             } else {
                 in = IO.read(new File(configFile));
             }
-            Openejb openejb = (Openejb) unmarshal(SystemInstance.get().getOptions().get("openejb.configuration.class", Openejb.class), in);
-            return openejb;
+            return SaxOpenejb.parse(new InputSource(in));
         } catch (MalformedURLException e) {
             throw new OpenEJBException("Unable to resolve location " + configFile, e);
         } catch (Exception e) {

@@ -1185,6 +1185,36 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             final Set<Class<?>> specializingClasses = new HashSet<Class<?>>();
 
+
+            // Fill in default sessionType for xml declared EJBs
+            for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
+                if (!(bean instanceof SessionBean)) continue;
+
+                SessionBean sessionBean = (SessionBean) bean;
+
+                if (sessionBean.getSessionType() != null) continue;
+
+                try {
+                    final Class<?> clazz = ejbModule.getClassLoader().loadClass(bean.getEjbClass());
+                    sessionBean.setSessionType(getSessionType(clazz));
+                } catch (Throwable handledInValidation) {
+                }
+            }
+
+            // Fill in default ejbName for xml declared EJBs
+            for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
+                if (bean.getEjbClass() == null) continue;
+                if (bean.getEjbName() == null || bean.getEjbName().startsWith("@NULL@")) {
+                    ejbModule.getEjbJar().removeEnterpriseBean(bean.getEjbName());
+                    try {
+                        final Class<?> clazz = ejbModule.getClassLoader().loadClass(bean.getEjbClass());
+                        final String ejbName = getEjbName(bean, clazz);
+                        bean.setEjbName(ejbName);
+                    } catch (Throwable handledInValidation) {
+                    }
+                    ejbModule.getEjbJar().addEnterpriseBean(bean);
+                }
+            }
             /* 19.2:  ejb-name: Default is the unqualified name of the bean class */
 
             EjbJar ejbJar = ejbModule.getEjbJar();
@@ -1395,6 +1425,54 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             return ejbModule;
+        }
+
+        private SessionType getSessionType(Class<?> clazz) {
+            if (clazz.isAnnotationPresent(Stateful.class)) return SessionType.STATEFUL;
+            if (clazz.isAnnotationPresent(Stateless.class)) return SessionType.STATELESS;
+            if (clazz.isAnnotationPresent(Singleton.class)) return SessionType.SINGLETON;
+            if (clazz.isAnnotationPresent(ManagedBean.class)) return SessionType.MANAGED;
+            return null;
+        }
+
+        private String getEjbName(EnterpriseBean bean, Class<?> clazz) {
+
+            if (bean instanceof SessionBean) {
+                SessionBean sessionBean = (SessionBean) bean;
+                switch (sessionBean.getSessionType()) {
+                    case STATEFUL: {
+                        final Stateful annotation = clazz.getAnnotation(Stateful.class);
+                        if (annotation != null && specified(annotation.name())) {
+                            return annotation.name();
+                        }
+                    }
+                    case STATELESS: {
+                        final Stateless annotation = clazz.getAnnotation(Stateless.class);
+                        if (annotation != null && specified(annotation.name())) {
+                            return annotation.name();
+                        }
+                    }
+                    case SINGLETON: {
+                        final Singleton annotation = clazz.getAnnotation(Singleton.class);
+                        if (annotation != null && specified(annotation.name())) {
+                            return annotation.name();
+                        }
+                    }
+                }
+            }
+
+            if (bean instanceof MessageDrivenBean) {
+                final MessageDriven annotation = clazz.getAnnotation(MessageDriven.class);
+                if (annotation != null && specified(annotation.name())) {
+                    return annotation.name();
+                }
+            }
+
+            return clazz.getSimpleName();
+        }
+
+        private static boolean specified(final String name) {
+            return name != null && name.length() != 0;
         }
 
         private List<String> getBeanClasses(IAnnotationFinder finder) {
