@@ -47,6 +47,7 @@
     <module>component-interfaces</module>
     <module>custom-injection</module>
     <module>datasource-ciphered-password</module>
+    <module>datasource-definition</module>
     <module>decorators</module>
     <module>dynamic-dao-implementation</module>
     <module>dynamic-datasource-routing</module>
