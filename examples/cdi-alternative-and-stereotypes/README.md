@@ -1,6 +1,6 @@
 # Introduction
 
-CDI is a revolution for JEE world. This specification is the best one to avoid coupling between classes.
+CDI is a revolution for Java EE world. This specification is the best one to avoid coupling between classes.
 
 This example simply aims to override bindings at runtime to simplify mocking work.
 
