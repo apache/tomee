@@ -63,10 +63,9 @@ public class DataSourceFactory {
             }
         } else {
             ds = (org.apache.commons.dbcp.BasicDataSource) create(name, managed);
+            // force the driver class to be set
+            ds.setDriverClassName(impl.getName());
         }
-
-        // force the driver class to be set
-        ds.setDriverClassName(impl.getName());
 
         return ds;
     }

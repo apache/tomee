@@ -2,6 +2,7 @@ package org.superbiz.dsdef;
 
 import javax.annotation.Resource;
 import javax.annotation.sql.DataSourceDefinition;
+import javax.inject.Named;
 import javax.sql.DataSource;
 
 @DataSourceDefinition(transactional = true,
@@ -13,8 +14,9 @@ import javax.sql.DataSource;
         initialPoolSize = 1,
         maxPoolSize = 3
 )
+@Named
 public class Persister {
-    @Resource
+    @Resource(lookup = "java:app/jdbc/persister")
     private DataSource ds;
 
     public DataSource getDs() {

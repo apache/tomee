@@ -75,6 +75,13 @@ public class DataSourceDefinitionTest {
         assertEquals("foo", set.getString("NAME"));
     }
 
+    @Test
+    public void lookup() throws NamingException {
+        final Object o = container.getContext().lookup("java:app/jdbc/persister");
+        assertNotNull(o);
+        assertEquals(persister.getDs(), o);
+    }
+
     private void execute(final Connection connection, final String sql) throws SQLException {
         connection.prepareStatement(sql).execute();
     }
