@@ -2001,8 +2001,11 @@ public class AnnotationDeployer implements DynamicDeployer {
             IAnnotationFinder finder = webModule.getFinder();
 
             if (finder != null) {
+                final List<String> apis = new ArrayList<String>(WEB_CLASSES.length + JSF_CLASSES.length);
+                apis.addAll(Arrays.asList(JSF_CLASSES));
+                apis.addAll(Arrays.asList(WEB_CLASSES));
 
-                for (String apiClassName : WEB_CLASSES) {
+                for (String apiClassName : apis) {
                     final Class<? extends Annotation> clazz;
                     try {
                         clazz = (Class<? extends Annotation>) classLoader.loadClass(apiClassName);
@@ -2013,6 +2016,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     final List<Class<?>> found = finder.findAnnotatedClasses(clazz);
                     classes.addAll(found);
                 }
+
             }
 
             AnnotationFinder annotationFinder = createFinder(classes.toArray(new Class<?>[classes.size()]));
