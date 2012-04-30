@@ -6,7 +6,7 @@ In this example we exercise the `TimerService`.
 The EJB Timer Service allows entity beans, stateless session beans, and message-driven beans to be registered for timer 
 callback events at a specified time, after a specified elapsed time, or after a specified interval."
 
-For a complete description of the TimerService, please refer to the JEE tutorial dedicated to the 
+For a complete description of the TimerService, please refer to the Java EE tutorial dedicated to the 
 [Timer Service](http://docs.oracle.com/javaee/6/tutorial/doc/bnboy.html).
 
 ## FarmerBrown
