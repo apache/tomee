@@ -106,7 +106,6 @@
     <module>webservice-ws-security</module>
     <module>webservice-handlerchain</module>
     <module>webservice-holder</module>
-    <module>datasource-definition</module>
   </modules>
   <profiles>
     <profile>
