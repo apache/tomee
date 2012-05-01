@@ -256,6 +256,12 @@ public class AnnotationDeployer implements DynamicDeployer {
             "javax.servlet.annotation.WebListener"
     };
 
+    private static final Collection<String> API_CLASSES = new ArrayList<String>(WEB_CLASSES.length + JSF_CLASSES.length);
+    static {
+        API_CLASSES.addAll(Arrays.asList(JSF_CLASSES));
+        API_CLASSES.addAll(Arrays.asList(WEB_CLASSES));
+    }
+
     public static final Set<String> knownResourceEnvTypes = new TreeSet<String>(asList(
             "javax.ejb.EJBContext",
             "javax.ejb.SessionContext",
@@ -1093,10 +1099,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                     continue;
                 }
 
-                final List<Class<?>> found = finder.findAnnotatedClasses(clazz);
-                for (Class<?> annotatedClass : found) {
-                    webModule.getWebAnnotatedClasses().add(annotatedClass.getName());
-                }
+                final List<Annotated<Class<?>>> found = finder.findMetaAnnotatedClasses(clazz);
+                webModule.getWebAnnotatedClasses().addAll(metaToStr(found));
             }
 
             return webModule;
@@ -2001,11 +2005,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             IAnnotationFinder finder = webModule.getFinder();
 
             if (finder != null) {
-                final List<String> apis = new ArrayList<String>(WEB_CLASSES.length + JSF_CLASSES.length);
-                apis.addAll(Arrays.asList(JSF_CLASSES));
-                apis.addAll(Arrays.asList(WEB_CLASSES));
-
-                for (String apiClassName : apis) {
+                for (String apiClassName : API_CLASSES) {
                     final Class<? extends Annotation> clazz;
                     try {
                         clazz = (Class<? extends Annotation>) classLoader.loadClass(apiClassName);
@@ -2013,8 +2013,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                         continue;
                     }
 
-                    final List<Class<?>> found = finder.findAnnotatedClasses(clazz);
-                    classes.addAll(found);
+                    final List<Annotated<Class<?>>> found = finder.findMetaAnnotatedClasses(clazz);
+                    classes.addAll(metaToClass(found));
                 }
 
             }
@@ -5064,5 +5064,21 @@ public class AnnotationDeployer implements DynamicDeployer {
             return rawClassName.replace("/", ".");
         }
         return rawClassName;
+    }
+
+    private static Collection<Class<?>> metaToClass(List<Annotated<Class<?>>> found) {
+        final Collection<Class<?>> classes = new ArrayList<Class<?>>(found.size());
+        for (Annotated<Class<?>> clazz : found) {
+            classes.add(clazz.get());
+        }
+        return classes;
+    }
+
+    private static Collection<String> metaToStr(List<Annotated<Class<?>>> found) {
+        final Collection<String> classes = new ArrayList<String>(found.size());
+        for (Annotated<Class<?>> clazz : found) {
+            classes.add(clazz.get().getName());
+        }
+        return classes;
     }
 }
