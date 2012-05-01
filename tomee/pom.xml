@@ -39,7 +39,9 @@
     <module>tomee-webservices</module>
     <module>tomee-embedded</module>
     <module>apache-tomee</module>
+    <!-- no need since it is on repo1, reactivate when you'll need another version
     <module>apache-tomcat</module>
+    -->
   </modules>
 
   <repositories>
