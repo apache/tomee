@@ -93,6 +93,8 @@ import static org.apache.openejb.config.ServiceUtils.NONE;
 import static org.apache.openejb.config.ServiceUtils.hasServiceProvider;
 import static org.apache.openejb.resource.jdbc.DataSourceFactory.trimNotSupportedDataSourceProperties;
 import static org.apache.openejb.util.Join.join;
+import static org.apache.openejb.util.PropertyPlaceHolderHelper.holds;
+import static org.apache.openejb.util.PropertyPlaceHolderHelper.value;
 
 public class AutoConfig implements DynamicDeployer, JndiConstants {
     public static final String ORIGIN_ANNOTATION = "Annotation";
@@ -860,6 +862,10 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         final List<ResourceInfo> resourceInfos = new ArrayList<ResourceInfo>();
         final Map<ResourceInfo, Resource> resourcesMap = new HashMap<ResourceInfo, Resource>(resources.size());
         for (Resource resource : resources) {
+            resource.setId(value(resource.getId()));
+            resource.setJndi(value(resource.getJndi()));
+            resource.getProperties().putAll(holds(resource.getProperties()));
+
             Properties properties = resource.getProperties();
 
             if (DataSource.class.getName().equals(resource.getType())
