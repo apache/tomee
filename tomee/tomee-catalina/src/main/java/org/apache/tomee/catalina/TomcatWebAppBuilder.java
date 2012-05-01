@@ -969,6 +969,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                     if (name.toLowerCase().endsWith(".war") || name.equals("ROOT") || name.equalsIgnoreCase("META-INF") || name.equalsIgnoreCase("WEB-INF")) {
                         continue;
                     }
+                    // Simple fix for TOMEE-23
+                    if (name.toLowerCase().equals(".ds_store")) {
+                        continue;
+                    }
                     // ignore unpacked web apps
                     if (file.isDirectory() && new File(file, "WEB-INF").exists()) {
                         continue;
