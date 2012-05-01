@@ -95,7 +95,7 @@
       </plugin>
       <plugin>
         <groupId>org.apache.openejb</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>${openejb.version}</version>
         <artifactId>spi-helper-maven-plugin</artifactId>
         <executions>
           <execution>
