@@ -35,15 +35,17 @@ import java.util.Map;
  *
  */
 public class OpenEJBRuntimeDelegateImpl extends RuntimeDelegateImpl {
-    @Override public UriBuilder createUriBuilder() {
+    @Override
+    public UriBuilder createUriBuilder() {
         return new OpenEJBUriBuilderImpl();
     }
 
     private static class OpenEJBUriBuilderImpl extends UriBuilderImpl {
-        private static final String[][] PREFIX = new String[][]{ { "http:/", "http://" }, { "https:/", "https://" } };
+        private static final String[][] PREFIX = new String[][]{{"http:/", "http://"}, {"https:/", "https://"}};
         private boolean init = false;
 
-        @Override public UriBuilder replacePath(String value) {
+        @Override
+        public UriBuilder replacePath(String value) {
             // UriBuilder.fromPath("foo").replacePath(null) is ok
             // but not UriBuilder.fromPath(null)
             if (value == null && !init) {
@@ -53,7 +55,8 @@ public class OpenEJBRuntimeDelegateImpl extends RuntimeDelegateImpl {
             return super.replacePath(value);
         }
 
-        @Override public URI build(Object... values) throws IllegalArgumentException, UriBuilderException {
+        @Override
+        public URI build(Object... values) throws IllegalArgumentException, UriBuilderException {
             return getFixedUri(super.build(values).toString());
         }
 
@@ -73,15 +76,18 @@ public class OpenEJBRuntimeDelegateImpl extends RuntimeDelegateImpl {
             }
         }
 
-        @Override public URI buildFromEncoded(Object... values) throws IllegalArgumentException, UriBuilderException {
+        @Override
+        public URI buildFromEncoded(Object... values) throws IllegalArgumentException, UriBuilderException {
             return getFixedUri(super.buildFromEncoded(values).toString());
         }
 
-        @Override public URI buildFromEncodedMap(Map<String, ?> map) throws IllegalArgumentException, UriBuilderException {
+        @Override
+        public URI buildFromEncodedMap(Map<String, ?> map) throws IllegalArgumentException, UriBuilderException {
             return getFixedUri(super.buildFromEncodedMap(map).toString());
         }
 
-        @Override public URI buildFromMap(Map<String, ?> map) throws IllegalArgumentException, UriBuilderException {
+        @Override
+        public URI buildFromMap(Map<String, ?> map) throws IllegalArgumentException, UriBuilderException {
             return getFixedUri(super.buildFromMap(map).toString());
         }
     }
