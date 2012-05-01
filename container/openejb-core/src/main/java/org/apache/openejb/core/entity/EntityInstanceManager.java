@@ -250,7 +250,7 @@ public class EntityInstanceManager {
                 logger.error("Encountered exception during call to ejbActivate()", e);
                 TransactionPolicy txPolicy = callContext.getTransactionPolicy();
                 if (txPolicy != null && txPolicy.isTransactionActive()) {
-                    txPolicy.setRollbackOnly();
+                    txPolicy.setRollbackOnly(e);
                     throw new ApplicationException(new TransactionRolledbackException("Reflection exception thrown while attempting to call ejbActivate() on the instance", e));
                 }
                 throw new ApplicationException(new RemoteException("Exception thrown while attempting to call ejbActivate() on the instance. Exception message = " + e.getMessage(), e));
@@ -341,7 +341,7 @@ public class EntityInstanceManager {
                     bean.ejbPassivate();
                 } catch (Throwable e) {
                     if (txPolicy.isTransactionActive()) {
-                        txPolicy.setRollbackOnly();
+                        txPolicy.setRollbackOnly(e);
                         throw new ApplicationException(new TransactionRolledbackException("Reflection exception thrown while attempting to call ejbPassivate() on the instance", e));
                     }
                     throw new ApplicationException(new RemoteException("Reflection exception thrown while attempting to call ejbPassivate() on the instance. Exception message = " + e.getMessage(), e));
@@ -537,7 +537,7 @@ public class EntityInstanceManager {
                     bean.ejbStore();
                 } catch (Exception re) {
                     logger.error("Exception occured during ejbStore()", re);
-                    txPolicy.setRollbackOnly();
+                    txPolicy.setRollbackOnly(re);
                 } finally {
                     ThreadContext.exit(oldCallContext);
                 }

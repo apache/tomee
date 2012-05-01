@@ -16,6 +16,12 @@
  */
 package org.apache.openejb.config;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Properties;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.config.sys.Resource;
@@ -23,13 +29,7 @@ import org.apache.openejb.jee.DataSource;
 import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.jee.KeyedCollection;
 import org.apache.openejb.jee.Property;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
+import org.apache.openejb.util.PropertyPlaceHolderHelper;
 
 /**
  * @version $Rev$ $Date$
@@ -136,7 +136,7 @@ public class ConvertDataSourceDefinitions implements DynamicDeployer {
         if (key == null) return;
         if (value == null) return;
 
-        properties.put(key, value + "");
+        properties.put(key, PropertyPlaceHolderHelper.value(value + ""));
     }
 
     private List<JndiConsumer> collectConsumers(AppModule appModule) {
