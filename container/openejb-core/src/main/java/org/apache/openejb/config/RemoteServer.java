@@ -107,12 +107,16 @@ public class RemoteServer {
         }
         if (ok) {
             try {
-                System.out.println("[] " + cmd.toUpperCase() + " SERVER");
+                if (verbose) {
+                    System.out.println("[] " + cmd.toUpperCase() + " SERVER");
+                }
 
                 File home = getHome();
-                System.out.println("OPENEJB_HOME = "+ home.getAbsolutePath());
-                String systemInfo = "Java " + System.getProperty("java.version") + "; " + System.getProperty("os.name") + "/" + System.getProperty("os.version");
-                System.out.println("SYSTEM_INFO  = "+systemInfo);
+                if (verbose) {
+                    System.out.println("OPENEJB_HOME = "+ home.getAbsolutePath());
+                    String systemInfo = "Java " + System.getProperty("java.version") + "; " + System.getProperty("os.name") + "/" + System.getProperty("os.version");
+                    System.out.println("SYSTEM_INFO  = "+systemInfo);
+                }
 
                 serverHasAlreadyBeenStarted = false;
 
@@ -350,7 +354,9 @@ public class RemoteServer {
     public void stop() {
         if (!serverHasAlreadyBeenStarted) {
             try {
-                System.out.println("[] STOP SERVER");
+                if (verbose) {
+                    System.out.println("[] STOP SERVER");
+                }
 
                 String command = "SHUTDOWN" + Character.toString((char) 0); // SHUTDOWN + EOF
 
