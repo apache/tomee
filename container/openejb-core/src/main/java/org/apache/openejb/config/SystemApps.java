@@ -20,6 +20,7 @@ import org.apache.openejb.assembler.DeployerEjb;
 import org.apache.openejb.assembler.classic.cmd.ConfigurationInfoEjb;
 import org.apache.openejb.assembler.monitoring.JMXDeployer;
 import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
@@ -44,9 +45,12 @@ public class SystemApps {
 
         final String className = "org.apache.tomee.catalina.deployer.WebappDeployer";
         if (exists(className)) {
-            final StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean("openejb/WebappDeployer", className));
+            final SingletonBean bean = ejbJar.addEnterpriseBean(new SingletonBean("openejb/WebappDeployer", className));
             final EjbDeployment deployment = openejbJar.addEjbDeployment(bean);
             deployment.getProperties().put("openejb.jndiname.format", "{deploymentId}{interfaceType.annotationName}");
+
+            final SingletonBean exceptionManager = ejbJar.addEnterpriseBean(new SingletonBean("openejb/ExceptionManagerFacade", "org.apache.tomee.catalina.facade.ExceptionManagerFacadeBean"));
+            openejbJar.addEjbDeployment(exceptionManager).getProperties().put("openejb.jndiname.format", "{deploymentId}{interfaceType.annotationName}");
         }
 
 

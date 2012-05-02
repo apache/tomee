@@ -16,6 +16,17 @@
  */
 package org.apache.tomee.catalina.deployer;
 
+import java.io.File;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Properties;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import javax.ejb.Remote;
+import javax.ejb.Singleton;
+import javax.ejb.TransactionManagement;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import org.apache.catalina.Container;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Service;
@@ -37,19 +48,10 @@ import org.apache.tomee.catalina.TomEERuntimeException;
 import org.apache.tomee.catalina.TomcatWebAppBuilder;
 import org.apache.tomee.loader.TomcatHelper;
 
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionManagement;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-import java.io.File;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Properties;
-
 import static javax.ejb.TransactionManagementType.BEAN;
 
-@Stateless(name = "openejb/WebappDeployer")
+@Lock(LockType.READ)
+@Singleton(name = "openejb/WebappDeployer")
 @Remote(Deployer.class)
 @TransactionManagement(BEAN)
 public class WebappDeployer implements Deployer {
