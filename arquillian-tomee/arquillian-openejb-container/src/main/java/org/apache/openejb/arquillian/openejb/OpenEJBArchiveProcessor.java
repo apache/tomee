@@ -3,6 +3,7 @@ package org.apache.openejb.arquillian.openejb;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -12,17 +13,13 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.EjbModule;
-import org.apache.openejb.config.PersistenceModule;
 import org.apache.openejb.config.ReadDescriptors;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.ManagedBean;
 import org.apache.openejb.jee.TransactionType;
-import org.apache.openejb.jee.jpa.unit.JaxbPersistenceFactory;
-import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.IO;
-import org.apache.openejb.util.LengthInputStream;
 import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.archive.ClassesArchive;
 import org.jboss.arquillian.container.test.spi.client.deployment.ApplicationArchiveProcessor;
@@ -96,23 +93,7 @@ public class OpenEJBArchiveProcessor implements ApplicationArchiveProcessor {
         {
             final Node persistenceXml = archive.get(META_INF.concat(PERSISTENCE_XML));
             if (persistenceXml != null) {
-                String rootUrl = persistenceXml.getPath().getParent().getParent().get();
-                if ("/".equals(rootUrl)) {
-                    rootUrl = ""; // "/" is too bad for a rootUrl and it can't be null
-                }
-
-                LengthInputStream lis = null;
-                try {
-                    lis = new LengthInputStream(persistenceXml.getAsset().openStream());
-                    final Persistence persistence = JaxbPersistenceFactory.getPersistence(Persistence.class, lis);
-                    final PersistenceModule persistenceModule = new PersistenceModule(rootUrl, persistence);
-                    persistenceModule.getWatchedResources().add(rootUrl);
-                    appModule.getPersistenceModules().add(persistenceModule);
-                } catch (Exception e) {
-                    LOGGER.log(Level.SEVERE, "can't read persistence.xml", e);
-                } finally {
-                    IO.close(lis);
-                }
+                appModule.getAltDDs().put(PERSISTENCE_XML, Arrays.asList(new AssetSource(persistenceXml.getAsset())));
             }
         }
 

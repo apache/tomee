@@ -111,32 +111,46 @@ public class ReadDescriptors implements DynamicDeployer {
             readResourcesXml(webModule);
         }
 
-        List<URL> persistenceUrls = (List<URL>) appModule.getAltDDs().get("persistence.xml");
+        List<Object> persistenceUrls = (List<Object>) appModule.getAltDDs().get("persistence.xml");
         if (persistenceUrls != null) {
-            for (URL persistenceUrl : persistenceUrls) {
-                File file = URLs.toFile(persistenceUrl);
-                String path = file.getAbsolutePath();
+            for (Object persistenceUrl : persistenceUrls) {
+                final boolean url = persistenceUrl instanceof URL;
+                final Source source = getSource(persistenceUrl);
 
-                if (file.getName().endsWith("persistence.xml")) {
-                    file = file.getParentFile().getParentFile();
-                }
-                String  moduleName = file.toURI().toString();
+                final String moduleName;
+                final String path;
+                final String rootUrl;
+                if (url) {
+                    final URL pUrl = (URL) persistenceUrl;
+                    File file = URLs.toFile(pUrl);
+                    path = file.getAbsolutePath();
 
-                String rootUrl = moduleName;
+                    if (file.getName().endsWith("persistence.xml")) {
+                        file = file.getParentFile().getParentFile();
+                    }
+                    moduleName = file.toURI().toString();
 
-                String extForm = persistenceUrl.toExternalForm();
-                if (extForm.contains("WEB-INF/classes/META-INF/")) {
-                    rootUrl = extForm.substring(0, extForm.indexOf("/META-INF"));
-                }
-                if (rootUrl.endsWith(".war")) {
-                    rootUrl = rootUrl.substring(0, rootUrl.length() - ".war".length());
+                    String tmpRootUrl = moduleName;
+
+                    String extForm = pUrl.toExternalForm();
+                    if (extForm.contains("WEB-INF/classes/META-INF/")) {
+                        tmpRootUrl = extForm.substring(0, extForm.indexOf("/META-INF"));
+                    }
+                    if (tmpRootUrl.endsWith(".war")) {
+                        tmpRootUrl = tmpRootUrl.substring(0, tmpRootUrl.length() - ".war".length());
+                    }
+                    rootUrl = tmpRootUrl;
+                } else {
+                    moduleName = "";
+                    rootUrl = "";
+                    path = null;
                 }
 
                 try {
-                    Persistence persistence = JaxbPersistenceFactory.getPersistence(Persistence.class, persistenceUrl);
+                    Persistence persistence = JaxbPersistenceFactory.getPersistence(Persistence.class, source.get());
                     PersistenceModule persistenceModule = new PersistenceModule(rootUrl, persistence);
                     persistenceModule.getWatchedResources().add(moduleName);
-                    if ("file".equals(persistenceUrl.getProtocol())) {
+                    if (url && "file".equals(((URL) persistenceUrl).getProtocol())) {
                         persistenceModule.getWatchedResources().add(path);
                     }
                     appModule.getPersistenceModules().add(persistenceModule);
