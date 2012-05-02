@@ -78,7 +78,7 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
 
     @Override
     public void start() throws LifecycleException {
-        // todo: manage properties (aquillian.xml/annotation on test)
+        // todo: manage properties (aquillian.xml)
         try {
             initialContext = new InitialContext(PROPERTIES);
         } catch (NamingException e) {

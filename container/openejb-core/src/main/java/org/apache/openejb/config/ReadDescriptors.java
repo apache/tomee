@@ -263,14 +263,14 @@ public class ReadDescriptors implements DynamicDeployer {
         if (module.getValidationConfig() != null) {
             return;
         }
-        URL url = getUrl(module, "validation.xml");
-        if (url != null) {
-            ValidationConfigType validationConfigType;
+
+        final Source value = getSource(module.getAltDDs().get("validation.xml"));
+        if (value != null) {
             try {
-                validationConfigType = JaxbOpenejb.unmarshal(ValidationConfigType.class, IO.read(url), false);
+                ValidationConfigType validationConfigType = JaxbOpenejb.unmarshal(ValidationConfigType.class, ((Source) value).get(), false);
                 module.setValidationConfig(validationConfigType);
             } catch (Exception e) {
-                logger.warning("can't read " + url.toString() + " to construct a validation factory, it will be ignored");
+                logger.warning("can't read validation.xml to construct a validation factory, it will be ignored");
             }
         }
     }
@@ -394,16 +394,17 @@ public class ReadDescriptors implements DynamicDeployer {
         }
     }
 
-    private void readEjbJar(EjbModule ejbModule, AppModule appModule) throws OpenEJBException {
+    public void readEjbJar(EjbModule ejbModule, AppModule appModule) throws OpenEJBException {
         if (ejbModule.getEjbJar() != null) return;
 
-        Object data = ejbModule.getAltDDs().get("ejb-jar.xml");
-        if (data instanceof EjbJar) {
-            ejbModule.setEjbJar((EjbJar) data);
-        } else if (data instanceof URL) {
-            URL url = (URL) data;
-            EjbJar ejbJar = readEjbJar(url);
-            ejbModule.setEjbJar(ejbJar);
+        final Source data = getSource(ejbModule.getAltDDs().get("ejb-jar.xml"));
+        if (data != null) {
+            try {
+                EjbJar ejbJar = readEjbJar(((Source) data).get());
+                ejbModule.setEjbJar(ejbJar);
+            } catch (IOException e) {
+                throw new OpenEJBException(e);
+            }
         } else {
             DeploymentLoader.logger.debug("No ejb-jar.xml found assuming annotated beans present: " + appModule.getJarLocation() + ", module: " + ejbModule.getModuleId());
             ejbModule.setEjbJar(new EjbJar());
@@ -413,13 +414,14 @@ public class ReadDescriptors implements DynamicDeployer {
     private void readBeans(EjbModule ejbModule, AppModule appModule) throws OpenEJBException {
         if (ejbModule.getBeans() != null) return;
 
-        Object data = ejbModule.getAltDDs().get("beans.xml");
-        if (data instanceof Beans) {
-            ejbModule.setBeans((Beans) data);
-        } else if (data instanceof URL) {
-            URL url = (URL) data;
-            Beans beans = readBeans(url);
-            ejbModule.setBeans(beans);
+        final Source data = getSource(ejbModule.getAltDDs().get("beans.xml"));
+        if (data != null) {
+            try {
+                Beans beans = readBeans(((Source) data).get());
+                ejbModule.setBeans(beans);
+            } catch (IOException e) {
+                throw new OpenEJBException(e);
+            }
         } else {
 //            DeploymentLoader.logger.debug("No beans.xml found assuming annotated beans present: " + appModule.getJarLocation() + ", module: " + ejbModule.getModuleId());
 //            ejbModule.setBeans(new Beans());
@@ -495,46 +497,46 @@ public class ReadDescriptors implements DynamicDeployer {
         return applicationClient;
     }
 
-    public static EjbJar readEjbJar(URL url) throws OpenEJBException {
+    public static EjbJar readEjbJar(final InputStream is) throws OpenEJBException {
         try {
-            if (isEmptyEjbJar(url)) return new EjbJar();
-            return (EjbJar) JaxbJavaee.unmarshalJavaee(EjbJar.class, IO.read(url));
+            if (isEmptyEjbJar(is)) return new EjbJar();
+            return (EjbJar) JaxbJavaee.unmarshalJavaee(EjbJar.class, is);
         } catch (SAXException e) {
-            throw new OpenEJBException("Cannot parse the ejb-jar.xml file: " + url.toExternalForm(), e);
+            throw new OpenEJBException("Cannot parse the ejb-jar.xml"); // file: " + url.toExternalForm(), e);
         } catch (JAXBException e) {
-            throw new OpenEJBException("Cannot unmarshall the ejb-jar.xml file: " + url.toExternalForm(), e);
+            throw new OpenEJBException("Cannot unmarshall the ejb-jar.xml"); // file: " + url.toExternalForm(), e);
         } catch (IOException e) {
-            throw new OpenEJBException("Cannot read the ejb-jar.xml file: " + url.toExternalForm(), e);
+            throw new OpenEJBException("Cannot read the ejb-jar.xml"); // file: " + url.toExternalForm(), e);
         } catch (Exception e) {
-            throw new OpenEJBException("Encountered unknown error parsing the ejb-jar.xml file: " + url.toExternalForm(), e);
+            throw new OpenEJBException("Encountered unknown error parsing the ejb-jar.xml"); // file: " + url.toExternalForm(), e);
         }
     }
 
-    public static Beans readBeans(URL url) throws OpenEJBException {
+    public static Beans readBeans(final InputStream inputStream) throws OpenEJBException {
         try {
-            if (isEmptyBeansXml(url)) return new Beans();
-            return (Beans) JaxbJavaee.unmarshalJavaee(Beans.class, IO.read(url));
+            if (isEmptyBeansXml(inputStream)) return new Beans();
+            return (Beans) JaxbJavaee.unmarshalJavaee(Beans.class, inputStream);
         } catch (SAXException e) {
-            throw new OpenEJBException("Cannot parse the beans.xml file: " + url.toExternalForm(), e);
+            throw new OpenEJBException("Cannot parse the beans.xml");// file: " + url.toExternalForm(), e);
         } catch (JAXBException e) {
-            throw new OpenEJBException("Cannot unmarshall the beans.xml file: " + url.toExternalForm(), e);
+            throw new OpenEJBException("Cannot unmarshall the beans.xml");// file: " + url.toExternalForm(), e);
         } catch (IOException e) {
-            throw new OpenEJBException("Cannot read the beans.xml file: " + url.toExternalForm(), e);
+            throw new OpenEJBException("Cannot read the beans.xml");// file: " + url.toExternalForm(), e);
         } catch (Exception e) {
-            throw new OpenEJBException("Encountered unknown error parsing the beans.xml file: " + url.toExternalForm(), e);
+            throw new OpenEJBException("Encountered unknown error parsing the beans.xml");// file: " + url.toExternalForm(), e);
         }
     }
 
-    private static boolean isEmptyEjbJar(URL url) throws IOException, ParserConfigurationException, SAXException {
-        return isEmpty(url, "ejb-jar");
+    private static boolean isEmptyEjbJar(final InputStream is) throws IOException, ParserConfigurationException, SAXException {
+        return isEmpty(is, "ejb-jar");
     }
 
-    private static boolean isEmptyBeansXml(URL url) throws IOException, ParserConfigurationException, SAXException {
-        return isEmpty(url, "beans");
+    private static boolean isEmptyBeansXml(final InputStream is) throws IOException, ParserConfigurationException, SAXException {
+        return isEmpty(is, "beans");
     }
 
-    private static boolean isEmpty(URL url, final String rootElement) throws IOException, ParserConfigurationException, SAXException {
-        final LengthInputStream in = new LengthInputStream(IO.read(url));
+    private static boolean isEmpty(final InputStream is, final String rootElement) throws IOException, ParserConfigurationException, SAXException {
+        final LengthInputStream in = new LengthInputStream(is);
         InputSource inputSource = new InputSource(in);
 
         SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -725,30 +727,32 @@ public class ReadDescriptors implements DynamicDeployer {
         return null;
     }
 
-    public static abstract class Source {
-        abstract InputStream get() throws IOException;
+    public interface Source {
+        InputStream get() throws IOException;
     }
 
-    public static class UrlSource extends Source {
+    public static class UrlSource implements Source {
         private final URL url;
 
         public UrlSource(URL url) {
             this.url = url;
         }
 
-        InputStream get() throws IOException {
+        @Override
+        public InputStream get() throws IOException {
             return IO.read(url);
         }
     }
 
-    public static class StringSource extends Source {
+    public static class StringSource implements Source {
         private byte[] bytes;
 
         public StringSource(String content) {
             bytes = content.getBytes();
         }
 
-        InputStream get() throws IOException {
+        @Override
+        public InputStream get() throws IOException {
             return new ByteArrayInputStream(bytes);
         }
     }
