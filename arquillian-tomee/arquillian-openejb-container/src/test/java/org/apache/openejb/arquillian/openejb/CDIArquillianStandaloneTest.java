@@ -1,10 +1,7 @@
 package org.apache.openejb.arquillian.openejb;
 
-import javax.annotation.Resource;
-import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.inject.Inject;
-import javax.sql.DataSource;
 import org.apache.openejb.loader.SystemInstance;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -19,24 +16,17 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(Arquillian.class)
-public class SimpleArquillianStandaloneTest {
+public class CDIArquillianStandaloneTest {
     @Inject
     private ABean bean;
 
     @Inject
     private AnEJB ejbFromCdiAnnotation;
 
-    @EJB
-    private AnEJB ejbFromEjbAnnotation;
-
-    @Resource
-    private DataSource defaultDs;
-
     @Deployment
     public static JavaArchive archive() {
-        return ShrinkWrap.create(JavaArchive.class, SimpleArquillianStandaloneTest.class.getSimpleName().concat(".jar"))
-                    .addClass(ABean.class)
-                    .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("ejb-jar.xml"))
+        return ShrinkWrap.create(JavaArchive.class, CDIArquillianStandaloneTest.class.getSimpleName().concat(".jar"))
+                    .addClasses(ABean.class, AnEJB.class)
                     .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
     }
 
@@ -46,11 +36,9 @@ public class SimpleArquillianStandaloneTest {
     }
 
     @Test
-    public void checkInjection() {
+    public void checkInjections() {
         assertNotNull(bean);
         assertNotNull(ejbFromCdiAnnotation);
-        assertNotNull(ejbFromEjbAnnotation);
-        assertNotNull(defaultDs);
     }
 
     public static class ABean {}

@@ -118,7 +118,12 @@ public class EnvEntriesPropertiesDeployer implements DynamicDeployer {
 
     @SuppressWarnings({"unchecked"})
     private Map<String, String> getEnvEntries(DeploymentModule module) {
-        URL propsUrl = (URL) module.getAltDDs().get("env-entries.properties");
+        final Object value = module.getAltDDs().get("env-entries.properties");
+        if (value instanceof Map) {
+            return (Map<String, String>) value;
+        }
+
+        URL propsUrl = (URL) value;
         if (propsUrl == null) {
             propsUrl = (URL) module.getAltDDs().get("env-entry.properties");
         }

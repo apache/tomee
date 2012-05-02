@@ -33,12 +33,12 @@ public class OpenEJBInjectionEnricher implements TestEnricher {
             // ignored
         }
 
-        final BeanContext context = containerSystem.get().getBeanContext(testInstance.getClass().getSimpleName());
+        final BeanContext context = containerSystem.get().getBeanContext(testInstance.getClass().getName());
         if (context != null) {
             ThreadContext callContext = new ThreadContext(context, null, Operation.INJECTION);
             ThreadContext oldContext = ThreadContext.enter(callContext);
             try {
-                final InjectionProcessor processor = new InjectionProcessor(testInstance, context.getInjections(), context.getJndiContext());
+                final InjectionProcessor processor = new InjectionProcessor<Object>(testInstance, context.getInjections(), context.getJndiContext());
                 processor.createInstance();
             } catch (OpenEJBException e) {
                 // ignored
