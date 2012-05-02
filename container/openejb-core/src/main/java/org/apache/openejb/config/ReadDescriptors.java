@@ -414,7 +414,7 @@ public class ReadDescriptors implements DynamicDeployer {
         final Source data = getSource(ejbModule.getAltDDs().get("ejb-jar.xml"));
         if (data != null) {
             try {
-                EjbJar ejbJar = readEjbJar(((Source) data).get());
+                EjbJar ejbJar = readEjbJar(data.get());
                 ejbModule.setEjbJar(ejbJar);
             } catch (IOException e) {
                 throw new OpenEJBException(e);
@@ -431,7 +431,7 @@ public class ReadDescriptors implements DynamicDeployer {
         final Source data = getSource(ejbModule.getAltDDs().get("beans.xml"));
         if (data != null) {
             try {
-                Beans beans = readBeans(((Source) data).get());
+                Beans beans = readBeans(data.get());
                 ejbModule.setBeans(beans);
             } catch (IOException e) {
                 throw new OpenEJBException(e);
@@ -513,8 +513,9 @@ public class ReadDescriptors implements DynamicDeployer {
 
     public static EjbJar readEjbJar(final InputStream is) throws OpenEJBException {
         try {
-            if (isEmptyEjbJar(is)) return new EjbJar();
-            return (EjbJar) JaxbJavaee.unmarshalJavaee(EjbJar.class, is);
+            final String content = IO.slurp(is);
+            if (isEmptyEjbJar(new ByteArrayInputStream(content.getBytes()))) return new EjbJar();
+            return (EjbJar) JaxbJavaee.unmarshalJavaee(EjbJar.class, new ByteArrayInputStream(content.getBytes()));
         } catch (SAXException e) {
             throw new OpenEJBException("Cannot parse the ejb-jar.xml"); // file: " + url.toExternalForm(), e);
         } catch (JAXBException e) {
@@ -528,8 +529,9 @@ public class ReadDescriptors implements DynamicDeployer {
 
     public static Beans readBeans(final InputStream inputStream) throws OpenEJBException {
         try {
-            if (isEmptyBeansXml(inputStream)) return new Beans();
-            return (Beans) JaxbJavaee.unmarshalJavaee(Beans.class, inputStream);
+            final String content = IO.slurp(inputStream);
+            if (isEmptyBeansXml(new ByteArrayInputStream(content.getBytes()))) return new Beans();
+            return (Beans) JaxbJavaee.unmarshalJavaee(Beans.class, new ByteArrayInputStream(content.getBytes()));
         } catch (SAXException e) {
             throw new OpenEJBException("Cannot parse the beans.xml");// file: " + url.toExternalForm(), e);
         } catch (JAXBException e) {
