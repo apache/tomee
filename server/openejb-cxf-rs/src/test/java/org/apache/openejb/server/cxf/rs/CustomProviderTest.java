@@ -58,7 +58,7 @@ public class CustomProviderTest {
             container.close();
         }
         if (providers == null) {
-            System.getProperties().remove(CxfRsHttpListener.OPENEJB_CXF_JAXRS_PROVIDERS_KEY);
+            System.clearProperty(CxfRsHttpListener.OPENEJB_CXF_JAXRS_PROVIDERS_KEY);
         } else {
             System.setProperty(CxfRsHttpListener.OPENEJB_CXF_JAXRS_PROVIDERS_KEY, providers);
         }
