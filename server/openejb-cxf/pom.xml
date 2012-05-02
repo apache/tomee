@@ -84,8 +84,8 @@
       <artifactId>slf4j-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb.patch</groupId>
-      <artifactId>openejb-cxf-bundle</artifactId>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-bundle</artifactId>
       <exclusions>
         <exclusion>
           <groupId>antlr</groupId>

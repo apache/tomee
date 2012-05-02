@@ -1,5 +1,6 @@
 package org.apache.openejb.arquillian.openejb;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,17 +11,14 @@ import java.util.logging.Logger;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.config.PersistenceModule;
-import org.apache.openejb.config.sys.JaxbOpenejb;
-import org.apache.openejb.jee.Beans;
+import org.apache.openejb.config.ReadDescriptors;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.JaxbJavaee;
 import org.apache.openejb.jee.ManagedBean;
 import org.apache.openejb.jee.TransactionType;
-import org.apache.openejb.jee.bval.ValidationConfigType;
 import org.apache.openejb.jee.jpa.unit.JaxbPersistenceFactory;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
-import org.apache.openejb.jee.oejb3.JaxbOpenejbJar3;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.util.LengthInputStream;
@@ -34,20 +32,20 @@ import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePath;
 import org.jboss.shrinkwrap.api.Node;
+import org.jboss.shrinkwrap.api.asset.Asset;
 import org.jboss.shrinkwrap.impl.base.filter.IncludeRegExpPaths;
 
 public class OpenEJBArchiveProcessor implements ApplicationArchiveProcessor {
     private static final Logger LOGGER = Logger.getLogger(OpenEJBArchiveProcessor.class.getName());
 
     private static final String META_INF = "META-INF/";
-    public static final String ENV_ENTRIES_PROPERTIES_NAME = "env-entries.properties";
+    private static final String EJB_JAR_XML = "ejb-jar.xml";
 
-    private static final String BEANS_XML = META_INF.concat("beans.xml");
-    private static final String EJB_JAR_XML = META_INF.concat("ejb-jar.xml");
-    private static final String VALIDATION_XML = META_INF.concat("validation.xml");
-    private static final String PERSISTENCE_XML = META_INF.concat("persistence.xml");
-    private static final String OPENEJB_JAR_XML = META_INF.concat("openejb-jar.xml");
-    private static final String ENV_ENTRIES_PROPERTIES = META_INF.concat(ENV_ENTRIES_PROPERTIES_NAME);
+    private static final String BEANS_XML = "beans.xml";
+    private static final String VALIDATION_XML = "validation.xml";
+    private static final String PERSISTENCE_XML = "persistence.xml";
+    private static final String OPENEJB_JAR_XML = "openejb-jar.xml";
+    private static final String ENV_ENTRIES_PROPERTIES = "env-entries.properties";
 
     @Inject
     @SuiteScoped
@@ -72,7 +70,7 @@ public class OpenEJBArchiveProcessor implements ApplicationArchiveProcessor {
         final org.apache.xbean.finder.archive.Archive finderArchive = finderArchive(archive, appModule.getClassLoader());
 
         final EjbJar ejbJar;
-        final Node ejbJarXml = archive.get(EJB_JAR_XML);
+        final Node ejbJarXml = archive.get(META_INF.concat(EJB_JAR_XML));
         if (ejbJarXml != null) {
             EjbJar readEjbJar = null;
             LengthInputStream lis = null;
@@ -98,27 +96,14 @@ public class OpenEJBArchiveProcessor implements ApplicationArchiveProcessor {
         appModule.getEjbModules().add(ejbModule);
 
         {
-            final Node beansXml = archive.get(BEANS_XML);
+            final Node beansXml = archive.get(META_INF.concat(BEANS_XML));
             if (beansXml != null) {
-                LengthInputStream lis = null;
-                try {
-                    lis = new LengthInputStream(beansXml.getAsset().openStream());
-                    final Beans beans = (Beans) JaxbJavaee.unmarshalJavaee(Beans.class, lis);
-                    ejbModule.setBeans(beans);
-                } catch (Exception e) {
-                    if (lis != null && lis.getLength() == 0) {
-                        ejbModule.setBeans(new Beans());
-                    } else {
-                        LOGGER.log(Level.SEVERE, "can't read beans.xml", e);
-                    }
-                } finally {
-                    IO.close(lis);
-                }
+                ejbModule.getAltDDs().put(BEANS_XML, new AssetSource(beansXml.getAsset()));
             }
         }
 
         {
-            final Node persistenceXml = archive.get(PERSISTENCE_XML);
+            final Node persistenceXml = archive.get(META_INF.concat(PERSISTENCE_XML));
             if (persistenceXml != null) {
                 String rootUrl = persistenceXml.getPath().getParent().getParent().get();
                 if ("/".equals(rootUrl)) {
@@ -141,49 +126,31 @@ public class OpenEJBArchiveProcessor implements ApplicationArchiveProcessor {
         }
 
         {
-            final Node openejbJarXml = archive.get(OPENEJB_JAR_XML);
+            final Node openejbJarXml = archive.get(META_INF.concat(OPENEJB_JAR_XML));
             if (openejbJarXml != null) {
-                InputStream is = null;
-                try {
-                    is = openejbJarXml.getAsset().openStream();
-                    final OpenejbJar openejbJar = JaxbOpenejbJar3.unmarshal(OpenejbJar.class, is);
-                    ejbModule.setOpenejbJar(openejbJar);
-                } catch (Exception e) {
-                    LOGGER.log(Level.SEVERE, "can't read openejb-jar.xml", e);
-                } finally {
-                    IO.close(is);
-                }
+                ejbModule.getAltDDs().put(OPENEJB_JAR_XML, new AssetSource(openejbJarXml.getAsset()));
             }
         }
 
         {
-            final Node validationXml = archive.get(VALIDATION_XML);
+            final Node validationXml = archive.get(META_INF.concat(VALIDATION_XML));
             if (validationXml != null) {
-                InputStream is = null;
-                try {
-                    is = validationXml.getAsset().openStream();
-                    final ValidationConfigType validation = JaxbOpenejb.unmarshal(ValidationConfigType.class, is, false);
-                    ejbModule.setValidationConfig(validation);
-                } catch (Exception e) {
-                    LOGGER.log(Level.SEVERE, "can't read validation.xml", e);
-                } finally {
-                    IO.close(is);
-                }
+                ejbModule.getAltDDs().put(VALIDATION_XML, new AssetSource(validationXml.getAsset()));
             }
         }
 
         {
-            final Node envEntriesProperties = archive.get(ENV_ENTRIES_PROPERTIES);
+            final Node envEntriesProperties = archive.get(META_INF.concat(ENV_ENTRIES_PROPERTIES));
             if (envEntriesProperties != null) {
                 InputStream is = null;
                 final Properties properties = new Properties();
                 try {
                     is = envEntriesProperties.getAsset().openStream();
                     properties.load(is);
-                    ejbModule.getAltDDs().put(ENV_ENTRIES_PROPERTIES_NAME, properties);
+                    ejbModule.getAltDDs().put(ENV_ENTRIES_PROPERTIES, properties);
 
                     // do it for test class too
-                    appModule.getEjbModules().iterator().next().getAltDDs().put(ENV_ENTRIES_PROPERTIES_NAME, properties);
+                    appModule.getEjbModules().iterator().next().getAltDDs().put(ENV_ENTRIES_PROPERTIES, properties);
                 } catch (Exception e) {
                     LOGGER.log(Level.SEVERE, "can't read env-entries.properties", e);
                 } finally {
@@ -191,8 +158,6 @@ public class OpenEJBArchiveProcessor implements ApplicationArchiveProcessor {
                 }
             }
         }
-
-        // "env-entries.properties"
 
         // export it to be usable in the container
         module.set(appModule);
@@ -215,5 +180,18 @@ public class OpenEJBArchiveProcessor implements ApplicationArchiveProcessor {
     private static String name(final String raw) {
         final String name = raw.replace('/', '.');
         return name.substring(1, name.length() - 6);
+    }
+
+    private static class AssetSource implements ReadDescriptors.Source {
+        private Asset asset;
+
+        private AssetSource(Asset asset) {
+            this.asset = asset;
+        }
+
+        @Override
+        public InputStream get() throws IOException {
+            return asset.openStream();
+        }
     }
 }

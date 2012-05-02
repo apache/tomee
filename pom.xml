@@ -118,7 +118,7 @@
     <tomcat.version>7.0.27</tomcat.version>
 
     <!-- used mainly by jetty modules -->
-    <openejb-cxf.version>2.6.0-SNAPSHOT</openejb-cxf.version>
+    <openejb-cxf.version>2.6.0</openejb-cxf.version>
     <jetty.version>7.5.3.v20111011</jetty.version>
     <pax-url.version>1.3.5</pax-url.version>
     <aether.version>1.13.1</aether.version>
@@ -757,8 +757,8 @@
         </exclusions>
       </dependency>
       <dependency>
-        <groupId>org.apache.openejb.patch</groupId>
-        <artifactId>openejb-cxf-bundle</artifactId>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-bundle</artifactId>
         <version>${openejb-cxf.version}</version>
       </dependency>
       <dependency>
