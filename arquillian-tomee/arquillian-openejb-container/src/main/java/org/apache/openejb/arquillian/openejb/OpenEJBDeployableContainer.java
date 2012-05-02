@@ -1,11 +1,14 @@
 package org.apache.openejb.arquillian.openejb;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Properties;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.OpenEJB;
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
@@ -14,6 +17,7 @@ import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentFilterable;
 import org.apache.openejb.core.LocalInitialContext;
 import org.apache.openejb.core.LocalInitialContextFactory;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
@@ -45,6 +49,9 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
         }
     }
 
+    // config
+    private Properties properties;
+
     // system
     private Assembler assembler;
     private InitialContext initialContext;
@@ -73,14 +80,22 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
 
     @Override
     public void setup(final OpenEJBConfiguration openEJBConfiguration) {
-        // no-op
+        properties = new Properties();
+        final ByteArrayInputStream bais = new ByteArrayInputStream(openEJBConfiguration.getProperties().getBytes());
+        try {
+            properties.load(bais);
+        } catch (IOException e) {
+            throw new OpenEJBRuntimeException(e);
+        } finally {
+            IO.close(bais);
+        }
+        properties.putAll(PROPERTIES);
     }
 
     @Override
     public void start() throws LifecycleException {
-        // todo: manage properties (aquillian.xml)
         try {
-            initialContext = new InitialContext(PROPERTIES);
+            initialContext = new InitialContext(properties);
         } catch (NamingException e) {
             throw new LifecycleException("can't start the OpenEJB container", e);
         }
