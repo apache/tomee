@@ -46,7 +46,6 @@ import org.apache.openejb.util.JarExtractor;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URLs;
-import org.apache.openejb.util.UrlCache;
 import org.apache.xbean.finder.IAnnotationFinder;
 import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.finder.UrlSet;
@@ -586,7 +585,11 @@ public class DeploymentLoader implements DeploymentFilterable {
         EjbJar ejbJar = null;
         final URL ejbJarXmlUrl = descriptors.get("ejb-jar.xml");
         if (ejbJarXmlUrl != null) {
-            ejbJar = ReadDescriptors.readEjbJar(ejbJarXmlUrl);
+            try {
+                ejbJar = ReadDescriptors.readEjbJar(ejbJarXmlUrl.openStream());
+            } catch (IOException e) {
+                throw new OpenEJBException(e);
+            }
         }
 
         // create the EJB Module
@@ -780,7 +783,12 @@ public class DeploymentLoader implements DeploymentFilterable {
         for (final URL url : xmls) {
             if (url == null) continue;
             try {
-                final Beans beans = ReadDescriptors.readBeans(url);
+                final Beans beans;
+                try {
+                    beans = ReadDescriptors.readBeans(url.openStream());
+                } catch (IOException e) {
+                    continue;
+                }
 
                 if (complete == null) {
                     complete = beans;
@@ -816,8 +824,12 @@ public class DeploymentLoader implements DeploymentFilterable {
         for (final URL url : xmls) {
             if (url == null) continue;
             try {
-
-                final Beans beans = ReadDescriptors.readBeans(url);
+                final Beans beans;
+                try {
+                    beans = ReadDescriptors.readBeans(url.openStream());
+                } catch (IOException e) {
+                    continue;
+                }
 
                 if (complete == null) {
                     complete = beans;
