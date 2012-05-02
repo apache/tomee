@@ -215,6 +215,27 @@ public class ReadDescriptors implements DynamicDeployer {
         return url;
     }
 
+    /**
+     * All the readFooXml(URL) methods could simply use this method
+     * @param module
+     * @param name
+     * @return
+     */
+    private static Source getSource(Module module, String name) {
+        Object o = module.getAltDDs().get(name);
+        if (o != null) return getSource(o);
+
+        if (module.getClassLoader() != null) {
+            URL url = module.getClassLoader().getResource("META-INF/" + name);
+            if (url != null) {
+                module.getAltDDs().put(name, url);
+            }
+
+            return new UrlSource(url);
+        }
+        return null;
+    }
+
     public static void readResourcesXml(Module module) {
         URL url = getUrl(module, "resources.xml");
         if (url != null) {
@@ -687,7 +708,12 @@ public class ReadDescriptors implements DynamicDeployer {
         }
         return facesConfig;
     }
-    private Source getSource(Object o) {
+
+    private static Source getSource(Object o) {
+        if (o instanceof Source) {
+            return (Source) o;
+        }
+
         if (o instanceof URL) {
             return new UrlSource((URL) o);
         }
