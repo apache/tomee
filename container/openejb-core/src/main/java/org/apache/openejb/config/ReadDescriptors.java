@@ -428,7 +428,8 @@ public class ReadDescriptors implements DynamicDeployer {
     private void readBeans(EjbModule ejbModule, AppModule appModule) throws OpenEJBException {
         if (ejbModule.getBeans() != null) return;
 
-        final Source data = getSource(ejbModule.getAltDDs().get("beans.xml"));
+        final Object raw = ejbModule.getAltDDs().get("beans.xml");
+        final Source data = getSource(raw);
         if (data != null) {
             try {
                 Beans beans = readBeans(data.get());
@@ -436,6 +437,8 @@ public class ReadDescriptors implements DynamicDeployer {
             } catch (IOException e) {
                 throw new OpenEJBException(e);
             }
+        } else if (raw instanceof Beans) {
+            ejbModule.setBeans((Beans) raw);
         } else {
 //            DeploymentLoader.logger.debug("No beans.xml found assuming annotated beans present: " + appModule.getJarLocation() + ", module: " + ejbModule.getModuleId());
 //            ejbModule.setBeans(new Beans());
