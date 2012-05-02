@@ -1,92 +1,219 @@
 package org.apache.openejb.arquillian.openejb;
 
-import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.openejb.config.AppModule;
+import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.config.PersistenceModule;
+import org.apache.openejb.config.sys.JaxbOpenejb;
+import org.apache.openejb.jee.Beans;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.JaxbJavaee;
+import org.apache.openejb.jee.ManagedBean;
+import org.apache.openejb.jee.TransactionType;
+import org.apache.openejb.jee.bval.ValidationConfigType;
+import org.apache.openejb.jee.jpa.unit.JaxbPersistenceFactory;
+import org.apache.openejb.jee.jpa.unit.Persistence;
+import org.apache.openejb.jee.oejb3.EjbDeployment;
+import org.apache.openejb.jee.oejb3.JaxbOpenejbJar3;
+import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.util.LengthInputStream;
+import org.apache.xbean.finder.AnnotationFinder;
+import org.apache.xbean.finder.archive.ClassesArchive;
 import org.jboss.arquillian.container.test.spi.client.deployment.ApplicationArchiveProcessor;
+import org.jboss.arquillian.core.api.InstanceProducer;
+import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.test.spi.TestClass;
+import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePath;
-import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.Node;
-import org.jboss.shrinkwrap.api.asset.Asset;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.asset.StringAsset;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.jboss.shrinkwrap.impl.base.filter.IncludeRegExpPaths;
 
 public class OpenEJBArchiveProcessor implements ApplicationArchiveProcessor {
-    private static final String EJB_JAR_XML = "ejb-jar.xml";
-    private static final String WEB_INF = "/WEB-INF";
-    private static final String META_INF = "/META-INF";
+    private static final Logger LOGGER = Logger.getLogger(OpenEJBArchiveProcessor.class.getName());
+
+    private static final String META_INF = "META-INF/";
+    public static final String ENV_ENTRIES_PROPERTIES_NAME = "env-entries.properties";
+
+    private static final String BEANS_XML = META_INF.concat("beans.xml");
+    private static final String EJB_JAR_XML = META_INF.concat("ejb-jar.xml");
+    private static final String VALIDATION_XML = META_INF.concat("validation.xml");
+    private static final String PERSISTENCE_XML = META_INF.concat("persistence.xml");
+    private static final String OPENEJB_JAR_XML = META_INF.concat("openejb-jar.xml");
+    private static final String ENV_ENTRIES_PROPERTIES = META_INF.concat(ENV_ENTRIES_PROPERTIES_NAME);
+
+    @Inject
+    @SuiteScoped
+    private InstanceProducer<AppModule> module;
 
     @Override
     public void process(final Archive<?> archive, final TestClass testClass) {
-        final ArchivePath path = ArchivePaths.create(EJB_JAR_XML);
-        final Asset newAsset;
-        if (archive.contains(ArchivePaths.create(path.get()))) {
-            final Node node = archive.get(path);
-            final Asset asset = node.getAsset();
-            newAsset = enhancedAsset(asset, testClass.getJavaClass());
-        } else {
-            newAsset = new StringAsset(ejbJar(testClass.getJavaClass()));
+        final Class<?> javaClass = testClass.getJavaClass();
+        final AppModule appModule = new AppModule(javaClass.getClassLoader(), javaClass.getName());
+
+        // add the test as a managed bean to be able to inject into it easily
+        {
+            final EjbJar ejbJar = new EjbJar();
+            final OpenejbJar openejbJar = new OpenejbJar();
+            final ManagedBean bean = ejbJar.addEnterpriseBean(new ManagedBean(javaClass.getSimpleName(), javaClass.getName(), true));
+            bean.setTransactionType(TransactionType.BEAN);
+            final EjbDeployment ejbDeployment = openejbJar.addEjbDeployment(bean);
+            ejbDeployment.setDeploymentId(javaClass.getName());
+            appModule.getEjbModules().add(new EjbModule(ejbJar, openejbJar));
         }
 
+        final org.apache.xbean.finder.archive.Archive finderArchive = finderArchive(archive, appModule.getClassLoader());
 
-        if (archive instanceof WebArchive) {
-            archive.delete(WEB_INF + path.get());
-            ((WebArchive) archive).addAsWebInfResource(newAsset, path);
-        } else if (archive instanceof JavaArchive) {
-            archive.delete(META_INF + path.get());
-            ((JavaArchive) archive).addAsManifestResource(newAsset, path);
-        }
-    }
-
-    private Asset enhancedAsset(Asset asset, Class<?> javaClass) {
-        if (asset instanceof EmptyAsset) {
-            return new StringAsset(ejbJar(javaClass));
-        } else {
-            String content;
+        final EjbJar ejbJar;
+        final Node ejbJarXml = archive.get(EJB_JAR_XML);
+        if (ejbJarXml != null) {
+            EjbJar readEjbJar = null;
+            LengthInputStream lis = null;
             try {
-                content = IO.slurp(asset.openStream());
-            } catch (IOException e) {
-                content = "";
+                lis = new LengthInputStream(ejbJarXml.getAsset().openStream());
+                readEjbJar = (EjbJar) JaxbJavaee.unmarshalJavaee(EjbJar.class, lis);
+            } catch (Exception e) {
+                if (lis != null && lis.getLength() == 0) {
+                    readEjbJar = new EjbJar();
+                } else {
+                    LOGGER.log(Level.SEVERE, "can't read ejb-jar.xml", e);
+                }
+            } finally {
+                IO.close(lis);
             }
-
-            if (content == null || content.isEmpty()) {
-                return new StringAsset(ejbJar(javaClass));
-            } else if (content.contains("<enterprise-beans>")) {
-                content = content.replace("<enterprise-beans>", "<enterprise-beans>\n" + managedBeanBlock(javaClass));
-                return new StringAsset(content);
-            } else if (content.contains("<ejb-jar>")) {
-                content = content.replace("<ejb-jar>", "<ejb-jar>\n" + enterpriseBean(javaClass));
-                return new StringAsset(content);
-            }
-            return asset; // shouldn't happen
+            ejbJar = readEjbJar;
+        } else {
+            ejbJar = new EjbJar();
         }
+
+        final EjbModule ejbModule = new EjbModule(ejbJar);
+        ejbModule.setFinder(new AnnotationFinder(finderArchive));
+        appModule.getEjbModules().add(ejbModule);
+
+        {
+            final Node beansXml = archive.get(BEANS_XML);
+            if (beansXml != null) {
+                LengthInputStream lis = null;
+                try {
+                    lis = new LengthInputStream(beansXml.getAsset().openStream());
+                    final Beans beans = (Beans) JaxbJavaee.unmarshalJavaee(Beans.class, lis);
+                    ejbModule.setBeans(beans);
+                } catch (Exception e) {
+                    if (lis != null && lis.getLength() == 0) {
+                        ejbModule.setBeans(new Beans());
+                    } else {
+                        LOGGER.log(Level.SEVERE, "can't read beans.xml", e);
+                    }
+                } finally {
+                    IO.close(lis);
+                }
+            }
+        }
+
+        {
+            final Node persistenceXml = archive.get(PERSISTENCE_XML);
+            if (persistenceXml != null) {
+                String rootUrl = persistenceXml.getPath().getParent().getParent().get();
+                if ("/".equals(rootUrl)) {
+                    rootUrl = ""; // "/" is too bad for a rootUrl and it can't be null
+                }
+
+                LengthInputStream lis = null;
+                try {
+                    lis = new LengthInputStream(persistenceXml.getAsset().openStream());
+                    final Persistence persistence = JaxbPersistenceFactory.getPersistence(Persistence.class, lis);
+                    final PersistenceModule persistenceModule = new PersistenceModule(rootUrl, persistence);
+                    persistenceModule.getWatchedResources().add(rootUrl);
+                    appModule.getPersistenceModules().add(persistenceModule);
+                } catch (Exception e) {
+                    LOGGER.log(Level.SEVERE, "can't read persistence.xml", e);
+                } finally {
+                    IO.close(lis);
+                }
+            }
+        }
+
+        {
+            final Node openejbJarXml = archive.get(OPENEJB_JAR_XML);
+            if (openejbJarXml != null) {
+                InputStream is = null;
+                try {
+                    is = openejbJarXml.getAsset().openStream();
+                    final OpenejbJar openejbJar = JaxbOpenejbJar3.unmarshal(OpenejbJar.class, is);
+                    ejbModule.setOpenejbJar(openejbJar);
+                } catch (Exception e) {
+                    LOGGER.log(Level.SEVERE, "can't read openejb-jar.xml", e);
+                } finally {
+                    IO.close(is);
+                }
+            }
+        }
+
+        {
+            final Node validationXml = archive.get(VALIDATION_XML);
+            if (validationXml != null) {
+                InputStream is = null;
+                try {
+                    is = validationXml.getAsset().openStream();
+                    final ValidationConfigType validation = JaxbOpenejb.unmarshal(ValidationConfigType.class, is, false);
+                    ejbModule.setValidationConfig(validation);
+                } catch (Exception e) {
+                    LOGGER.log(Level.SEVERE, "can't read validation.xml", e);
+                } finally {
+                    IO.close(is);
+                }
+            }
+        }
+
+        {
+            final Node envEntriesProperties = archive.get(ENV_ENTRIES_PROPERTIES);
+            if (envEntriesProperties != null) {
+                InputStream is = null;
+                final Properties properties = new Properties();
+                try {
+                    is = envEntriesProperties.getAsset().openStream();
+                    properties.load(is);
+                    ejbModule.getAltDDs().put(ENV_ENTRIES_PROPERTIES_NAME, properties);
+
+                    // do it for test class too
+                    appModule.getEjbModules().iterator().next().getAltDDs().put(ENV_ENTRIES_PROPERTIES_NAME, properties);
+                } catch (Exception e) {
+                    LOGGER.log(Level.SEVERE, "can't read env-entries.properties", e);
+                } finally {
+                    IO.close(is);
+                }
+            }
+        }
+
+        // "env-entries.properties"
+
+        // export it to be usable in the container
+        module.set(appModule);
     }
 
-    private String enterpriseBean(final Class<?> clazz) {
-        return "   <enterprise-beans>\n" +
-                managedBeanBlock(clazz) +
-                "   </enterprise-beans>\n";
+    private org.apache.xbean.finder.archive.Archive finderArchive(final Archive<?> archive, final ClassLoader cl) {
+        final List<Class<?>> classes = new ArrayList<Class<?>>();
+        final Map<ArchivePath, Node> content = archive.getContent(new IncludeRegExpPaths(".*.class"));
+        for (Map.Entry<ArchivePath, Node> node : content.entrySet()) {
+            final String classname = name(node.getKey().get());
+            try {
+                classes.add(cl.loadClass(classname));
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        return new ClassesArchive(classes);
     }
 
-    private String ejbJar(final Class<?> clazz) {
-        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                "<ejb-jar xmlns=\"http://java.sun.com/xml/ns/javaee\" \n" +
-                "         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" \n" +
-                "         xsi:schemaLocation=\"http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_0.xsd\"\n" +
-                "         version=\"3.0\">\n" +
-                enterpriseBean(clazz) +
-                "</ejb-jar>\n";
-    }
-
-    private String managedBeanBlock(final Class<?> clazz) {
-        return "      <session>\n" +
-                "         <ejb-name>" + clazz.getSimpleName() + "</ejb-name>\n" +
-                "         <ejb-class>" + clazz.getName() + "</ejb-class>\n" +
-                "         <session-type>Managed</session-type>\n" +
-                "         <transaction-type>Bean</transaction-type>\n" +
-                "      </session>\n";
+    private static String name(final String raw) {
+        final String name = raw.replace('/', '.');
+        return name.substring(1, name.length() - 6);
     }
 }

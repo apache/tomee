@@ -16,6 +16,20 @@
  */
 package org.apache.openejb.config;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.List;
+import javax.wsdl.Definition;
+import javax.wsdl.factory.WSDLFactory;
+import javax.wsdl.xml.WSDLReader;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.config.sys.JaxbOpenejb;
 import org.apache.openejb.config.sys.Resources;
@@ -46,6 +60,7 @@ import org.apache.openejb.jee.oejb2.OpenejbJarType;
 import org.apache.openejb.jee.oejb3.JaxbOpenejbJar3;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.util.LengthInputStream;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URLs;
@@ -53,22 +68,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-
-import javax.wsdl.Definition;
-import javax.wsdl.factory.WSDLFactory;
-import javax.wsdl.xml.WSDLReader;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FilterInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.List;
 
 public class ReadDescriptors implements DynamicDeployer {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, ReadDescriptors.class);
@@ -725,39 +724,6 @@ public class ReadDescriptors implements DynamicDeployer {
 
         InputStream get() throws IOException {
             return new ByteArrayInputStream(bytes);
-        }
-    }
-
-    private static class LengthInputStream extends FilterInputStream {
-        private long length;
-
-        public LengthInputStream(InputStream in) throws IOException {
-            super(in);
-        }
-
-        @Override
-        public int read() throws IOException {
-            final int i = super.read();
-            if (i > 0) length++;
-            return i;
-        }
-
-        @Override
-        public int read(byte[] b) throws IOException {
-            final int i = super.read(b);
-            if (i > 0) length += i;
-            return i;
-        }
-
-        @Override
-        public int read(byte[] b, int off, int len) throws IOException {
-            final int i = super.read(b, off, len);
-            if (i > 0) length += i;
-            return i;
-        }
-
-        public long getLength() {
-            return length;
         }
     }
 }
