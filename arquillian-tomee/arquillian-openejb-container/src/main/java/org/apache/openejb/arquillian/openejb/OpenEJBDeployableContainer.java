@@ -38,6 +38,7 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
     private static final Properties PROPERTIES = new Properties();
 
     static {
+        // global properties
         PROPERTIES.setProperty(Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
         PROPERTIES.setProperty(LocalInitialContext.ON_CLOSE, LocalInitialContext.Close.DESTROY.name());
         PROPERTIES.setProperty(DeploymentFilterable.DEPLOYMENTS_CLASSPATH_PROPERTY, "false");
