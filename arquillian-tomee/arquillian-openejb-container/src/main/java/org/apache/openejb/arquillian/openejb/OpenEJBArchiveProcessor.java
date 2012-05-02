@@ -8,12 +8,13 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.config.PersistenceModule;
 import org.apache.openejb.config.ReadDescriptors;
 import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.JaxbJavaee;
 import org.apache.openejb.jee.ManagedBean;
 import org.apache.openejb.jee.TransactionType;
 import org.apache.openejb.jee.jpa.unit.JaxbPersistenceFactory;
@@ -72,21 +73,11 @@ public class OpenEJBArchiveProcessor implements ApplicationArchiveProcessor {
         final EjbJar ejbJar;
         final Node ejbJarXml = archive.get(META_INF.concat(EJB_JAR_XML));
         if (ejbJarXml != null) {
-            EjbJar readEjbJar = null;
-            LengthInputStream lis = null;
             try {
-                lis = new LengthInputStream(ejbJarXml.getAsset().openStream());
-                readEjbJar = (EjbJar) JaxbJavaee.unmarshalJavaee(EjbJar.class, lis);
-            } catch (Exception e) {
-                if (lis != null && lis.getLength() == 0) {
-                    readEjbJar = new EjbJar();
-                } else {
-                    LOGGER.log(Level.SEVERE, "can't read ejb-jar.xml", e);
-                }
-            } finally {
-                IO.close(lis);
+                ejbJar = ReadDescriptors.readEjbJar(ejbJarXml.getAsset().openStream());
+            } catch (OpenEJBException e) {
+                throw new OpenEJBRuntimeException(e);
             }
-            ejbJar = readEjbJar;
         } else {
             ejbJar = new EjbJar();
         }
