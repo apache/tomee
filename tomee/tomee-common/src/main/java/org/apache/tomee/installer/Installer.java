@@ -149,10 +149,10 @@ public class Installer {
         endorsed.mkdir();
 
 
-        copyClasses(paths.getJavaEEAPIJar(), new File(endorsed, "annotation-api.jar"), "javax/annotation/.*", null);
+        copyClasses(paths.getJavaEEAPIJar(), new File(endorsed, "annotation-api.jar"), "javax/annotation/.*");
 
         // a bit odd but we don't want to depend on OSGi and geronimo jaxb api ContextFinder depends on it
-        copyClasses(paths.getJavaEEAPIJar(), new File(endorsed, "jaxb-api.jar"), "javax/xml/bind/.*", "javax/xml/bind/ContextFinder.class");
+        copyClasses(paths.getJavaEEAPIJar(), new File(endorsed, "jaxb-api.jar"), "javax/xml/bind/.*");
         final File jaxbImpl = new File(endorsed, "jaxb-impl.jar");
         if (!jaxbImpl.exists()) {
             try {
@@ -163,7 +163,7 @@ public class Installer {
         }
     }
 
-    private void copyClasses(File sourceJar, File destinationJar, String pattern, String excludePattern) {
+    private void copyClasses(File sourceJar, File destinationJar, String pattern) {
         if (sourceJar == null) throw new NullPointerException("sourceJar");
         if (destinationJar == null) throw new NullPointerException("destinationJar");
         if (pattern == null) throw new NullPointerException("pattern");
@@ -181,8 +181,6 @@ public class Installer {
                 String entryName = entry.getName();
 
                 if (!entryName.matches(pattern)) continue;
-
-                if (excludePattern != null && entryName.matches(excludePattern)) continue;
 
                 destination.putNextEntry(new ZipEntry(entryName));
 
