@@ -125,9 +125,10 @@ class SetupCommand {
 
         // clean up duplicate jars since in TomEE it is useless
         // = gain of space ;)
-        ant.delete(file: paths.findOpenEJBJar("openejb-javaagent"))
-        ant.delete(file: paths.findOpenEJBJar("jaxb-impl"))
-        ant.delete(file: paths.findOpenEJBJar("tomee-loader"))
+        ant.delete(file: paths.getOpenEJBJavaagentJar())
+        ant.delete(file: paths.getJAXBImpl())
+        ant.delete(file: paths.getOpenEJBTomcatLoaderJar())
+        ant.delete(file: paths.findTomEELibJar("jaxb-impl"))
         ant.delete(file: paths.findOpenEJBWebJar("tomee-loader"))
         ant.delete(file: paths.findOpenEJBWebJar("swizzle-stream"))
 

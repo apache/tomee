@@ -251,6 +251,10 @@ public class Paths {
         return findJar(getOpenEJBWebLibDir(), namePrefix);
     }
 
+    public File findTomEELibJar(final String prefix) {
+        return findJar(getCatalinaLibDir(), prefix);
+    }
+
     private File findJar(File dir, String namePrefix) {
         if (dir == null) return null;
 
