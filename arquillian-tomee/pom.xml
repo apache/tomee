@@ -47,7 +47,7 @@
     <module>arquillian-tomee-webapp-remote</module>
     <module>arquillian-tomee-tests</module>
     <module>arquillian-tomee-moviefun-example</module>
+    <module>arquillian-openejb-embedded-4</module>
     <module>ziplock</module>
-    <module>arquillian-openejb-container</module>
   </modules>
 </project>
