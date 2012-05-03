@@ -134,6 +134,8 @@
         </exclusion>
       </exclusions>
     </dependency>
+
+    <!-- if i'm not mistaken we decided to remove it from our default deliveries
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-provisionning</artifactId>
@@ -146,6 +148,7 @@
       <version>${openejb.version}</version>
       <scope>runtime</scope>
     </dependency>
+    -->
   </dependencies>
 
   <build>
