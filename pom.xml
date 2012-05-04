@@ -118,7 +118,7 @@
     <tomcat.version>7.0.27</tomcat.version>
 
     <!-- used mainly by jetty modules -->
-    <cxf.version>2.6.0</cxf.version>
+    <cxf.version>2.6.1-SNAPSHOT</cxf.version>
     <ehcache.version>2.5.1</ehcache.version> <!-- used by cxf for security (replay attack) -->
     <jetty.version>7.5.3.v20111011</jetty.version>
     <pax-url.version>1.3.5</pax-url.version>
