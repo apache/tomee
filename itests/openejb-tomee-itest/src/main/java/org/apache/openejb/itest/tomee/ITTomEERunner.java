@@ -108,23 +108,17 @@ public class ITTomEERunner extends BlockJUnit4ClassRunner {
                 Files.mkdirs(tomee);
                 Zips.unzip(info.server, tomee, true);
 
-                final TomEEConfiguration config = new TomEEConfiguration();
                 if (info.httpPort <= 0) {
                     info.httpPort = NetworkUtil.getNextAvailablePort();
                 }
-                config.setHttpPort(info.httpPort);
-
                 if (info.shutdownPort <= 0) {
                     info.shutdownPort = info.httpPort + 1;
                 }
-                config.setStopPort(NetworkUtil.getNextAvailablePort());
-
                 if (info.ajpPort <= 0) {
                     info.ajpPort = info.shutdownPort + 1;
                 }
-                config.setAjpPort(NetworkUtil.getNextAvailablePort());
 
-                Setup.updateServerXml(tomee, config, 8080, 8005, 8009);
+                Setup.updateServerXml(tomee, info.httpPort, info.shutdownPort, info.ajpPort);
 
                 if (info.clean) { // speed up a bit
                     Setup.removeUselessWebapps(tomee);
@@ -139,7 +133,7 @@ public class ITTomEERunner extends BlockJUnit4ClassRunner {
 
                 // start the server
                 System.setProperty(OPENEJB_HOME, tomee.getCanonicalPath());
-                System.setProperty(SERVER_SHUTDOWN_PORT, Integer.toString(config.getStopPort()));
+                System.setProperty(SERVER_SHUTDOWN_PORT, Integer.toString(info.shutdownPort));
                 remoteServers[i] = new RemoteServer(Integer.getInteger(TOMEE_TEST_IT_RETRIES, 100), true);
                 remoteServers[i].start();
 
