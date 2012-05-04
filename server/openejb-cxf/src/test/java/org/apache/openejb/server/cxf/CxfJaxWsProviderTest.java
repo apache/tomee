@@ -26,6 +26,7 @@ import javax.naming.InitialContext;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.Properties;
 
@@ -44,7 +45,7 @@ public class CxfJaxWsProviderTest extends TestCase {
 
         initialContext = new InitialContext(properties);
     }
-    //END SNIPPET: setup    
+    //END SNIPPET: setup
 
     public void test00_runCheckedException() {
         try {
