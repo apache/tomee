@@ -44,6 +44,7 @@
     <module>openejb-rest</module>
     <module>openejb-ssh</module>
     <module>openejb-common-cli</module>
+    <module>openejb-wink</module>
   </modules>
 </project>
 
