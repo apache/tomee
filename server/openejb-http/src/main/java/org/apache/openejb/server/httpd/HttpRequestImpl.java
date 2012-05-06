@@ -17,6 +17,7 @@
 package org.apache.openejb.server.httpd;
 
 import org.apache.openejb.core.security.jaas.UserPrincipal;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.ArrayEnumeration;
 import org.apache.openejb.util.Logger;
 
@@ -687,6 +688,22 @@ public class HttpRequestImpl implements HttpRequest {
         return path;
     }
 
+    public String extractContextPath() {
+        if (SystemInstance.get().getOptions().get("openejb.webservice.old-deployment", false)) {
+            return path;
+        }
+
+        String uri = getURI().getPath();
+        if (uri.startsWith("/")) {
+            uri = uri.substring(1);
+        }
+        int idx = uri.indexOf("/");
+        if (idx < 0) {
+            return uri;
+        }
+        return uri.substring(0, idx);
+    }
+
     @Override
     public Cookie[] getCookies() {
         if (cookies != null) return toCookies(cookies);
@@ -932,5 +949,13 @@ public class HttpRequestImpl implements HttpRequest {
     @Override
     public void removeAttribute(String s) {
         attributes.remove(s);
+    }
+
+    public String requestRawPath() {
+        try {
+            return new URI(getRequestURI()).getRawPath();
+        } catch (URISyntaxException e) {
+            return getRequestURI();
+        }
     }
 }

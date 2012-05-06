@@ -26,6 +26,8 @@ import java.util.Map;
  *
  */
 public interface HttpRequest extends java.io.Serializable, HttpServletRequest {
+
+
     /**
      * Request methods
      */
