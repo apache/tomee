@@ -50,6 +50,22 @@
       <artifactId>junit</artifactId>
       <scope>compile</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jboss.shrinkwrap</groupId>
+      <artifactId>shrinkwrap-api</artifactId>
+      <version>${version.shrinkwrap.shrinkwrap}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.shrinkwrap</groupId>
+      <artifactId>shrinkwrap-impl-base</artifactId>
+      <version>${version.shrinkwrap.shrinkwrap}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>ziplock</artifactId>
+      <version>1.0.0-beta-3-SNAPSHOT</version>
+    </dependency>
+
     <dependency> <!-- just to avoid bad dependency relationship in our build -->
       <groupId>org.apache.openejb</groupId>
       <artifactId>apache-tomee</artifactId>

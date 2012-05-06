@@ -166,6 +166,9 @@
     <commons-lang.version>2.6</commons-lang.version>
     <commons-io.version>1.4</commons-io.version>
     <commons-net.version>3.1</commons-net.version>
+
+    <!-- arquillian/shrinkwrap versions used across multiple parents -->
+    <version.shrinkwrap.shrinkwrap>1.0.0</version.shrinkwrap.shrinkwrap>
   </properties>
 
   <build>
