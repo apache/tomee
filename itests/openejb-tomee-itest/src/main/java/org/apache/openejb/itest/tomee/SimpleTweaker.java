@@ -25,7 +25,19 @@ public class SimpleTweaker implements ServerTweaker {
     }
 
     protected void addWebapp(final File home, final File war) {
-        copy(war, new File(home, "webapps/" + war.getName()));
+        copy(war, webApp(home, war.getName()));
+    }
+
+    protected void addArchive(final File home, final File war) {
+        copy(war, archive(home, war.getName()));
+    }
+
+    protected File webApp(final File home, final String name) {
+        return new File(home, "webapps/" + name);
+    }
+
+    protected File archive(final File home, final String name) {
+        return new File(home, "apps/" + name);
     }
 
     protected File findJar(final String groupId, final String artifactId, final String version) {

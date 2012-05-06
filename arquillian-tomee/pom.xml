@@ -37,7 +37,6 @@
     <version.openejb>4.0.0-beta-3-SNAPSHOT</version.openejb>
     <version.tomee>1.0.0-beta-3-SNAPSHOT</version.tomee>
     <version.shrinkwrap.descriptor>1.1.0-beta-1</version.shrinkwrap.descriptor>
-    <version.shrinkwrap.shrinkwrap>1.0.0</version.shrinkwrap.shrinkwrap>
   </properties>
 
   <modules>

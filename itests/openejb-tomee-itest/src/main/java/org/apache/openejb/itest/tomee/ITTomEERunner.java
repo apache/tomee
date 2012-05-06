@@ -1,10 +1,13 @@
 package org.apache.openejb.itest.tomee;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.arquillian.common.Setup;
-import org.apache.openejb.arquillian.common.TomEEConfiguration;
 import org.apache.openejb.config.RemoteServer;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
@@ -20,17 +23,19 @@ public class ITTomEERunner extends BlockJUnit4ClassRunner {
     public static final String HTTP_PROP_PREFIX = "tomee.it.";
     public static final String HTTP_PROP_SUFFIX = ".http";
 
+    protected static final String DEFAULT_SERVER = "_DEFAULT_";
+
     private static final String WORKING_DIR = System.getProperty(TOMEE_TEST_IT_WORKING_DIR, "target/it-working-dir");
     private static final String OPENEJB_HOME = "openejb.home";
     private static final String SERVER_SHUTDOWN_PORT = "server.shutdown.port";
 
-    private final List<ServerInfo> servers;
+    private final Map<String, ServerInfo> servers;
     private final RemoteServer[] remoteServers;
 
     public ITTomEERunner(final Class<?> klass) throws InitializationError {
         super(klass);
 
-        servers = new ArrayList<ServerInfo>();
+        servers = new HashMap<String, ServerInfo>();
 
         final Servers serversAnnotation = klass.getAnnotation(Servers.class);
         if (serversAnnotation != null) {
@@ -45,6 +50,53 @@ public class ITTomEERunner extends BlockJUnit4ClassRunner {
         }
 
         remoteServers = new RemoteServer[servers.size()];
+
+        for (Method method : klass.getMethods()) {
+            if (isProducerMethod(method)) {
+                {
+                    final Archive webapp = method.getAnnotation(Archive.class);
+                    if (webapp != null && org.jboss.shrinkwrap.api.Archive.class.isAssignableFrom(method.getReturnType())) {
+                        final String server = webapp.value();
+                        final ServerInfo info = servers.get(server);
+                        if (info == null) {
+                            throw new OpenEJBRuntimeException("can't find server '" + server + "'");
+                        }
+
+                        final org.jboss.shrinkwrap.api.Archive<?> archive;
+                        try {
+                            archive = (org.jboss.shrinkwrap.api.Archive<?>) method.invoke(null);
+                        } catch (Exception e) {
+                            throw new OpenEJBRuntimeException("can't create archive from '" + method.toGenericString() + "'", e);
+                        }
+                        info.tweaker = new ShrinkWrapEnhancedTweaker(info.tweaker, archive);
+                    }
+                }
+
+                {
+                    final Library library = method.getAnnotation(Library.class);
+                    if (library != null && File.class.isAssignableFrom(method.getReturnType())) {
+                        final String server = library.value();
+                        final ServerInfo info = servers.get(server);
+                        if (info == null) {
+                            throw new OpenEJBRuntimeException("can't find server '" + server + "'");
+                        }
+
+                        final File lib;
+                        try {
+                            lib = (File) method.invoke(null);
+                        } catch (Exception e) {
+                            throw new OpenEJBRuntimeException("can't create archive from '" + method.toGenericString() + "'", e);
+                        }
+                        info.tweaker = new LibraryEnhancedTweaker(info.tweaker, lib);
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean isProducerMethod(final Method method) {
+        final int modifiers = method.getModifiers();
+        return Modifier.isPublic(modifiers) && Modifier.isStatic(modifiers) && method.getParameterTypes().length == 0;
     }
 
     private void addServer(final Server server) throws InitializationError {
@@ -77,7 +129,7 @@ public class ITTomEERunner extends BlockJUnit4ClassRunner {
         final Artifact art = server.artifact();
         info.server = Repository.getArtifact(art.groupId(), art.artifactId(), art.version(), art.type(), art.classifier());
 
-        servers.add(info);
+        servers.put(info.name, info);
     }
 
     @Override
@@ -103,7 +155,7 @@ public class ITTomEERunner extends BlockJUnit4ClassRunner {
             final String oldShutdownPort = System.getProperty(SERVER_SHUTDOWN_PORT);
 
             int i = 0;
-            for (ServerInfo info : servers) {
+            for (ServerInfo info : servers.values()) {
                 final File tomee = new File(WORKING_DIR, info.name);
                 Files.mkdirs(tomee);
                 Zips.unzip(info.server, tomee, true);

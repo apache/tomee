@@ -9,7 +9,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({ TYPE })
 @Retention(RUNTIME)
 public @interface Server {
-    String name() default ""; // name
+    String name() default ITTomEERunner.DEFAULT_SERVER; // name
     String configurationDir() default "";
     int http() default -1;
     int shutdown() default -1;
