@@ -36,6 +36,7 @@ import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.ContextTransaction;
 import org.apache.catalina.deploy.NamingResources;
+import org.apache.catalina.loader.WebappClassLoader;
 import org.apache.catalina.startup.Constants;
 import org.apache.catalina.startup.ContextConfig;
 import org.apache.catalina.startup.HostConfig;
@@ -753,8 +754,22 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             Context openejbContext = getContainerSystem().getJNDIContext();
             openejbContext = (Context) openejbContext.lookup("openejb");
 
-            final Context root = (Context) ContextBindings.getClassLoader().lookup("");
-            final Context comp = (Context) ContextBindings.getClassLoader().lookup("comp"); // usually fails
+            final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+            // normal case = startup case use standardclassloader
+            // so simply reproduce it even is a method is called from another context.
+            // that said this code (try) shouldn't be useful anymore for tomcat 7
+            if (tccl instanceof WebappClassLoader) {
+                Thread.currentThread().setContextClassLoader(tccl.getParent());
+            }
+
+            final Context root;
+            final Context comp;
+            try {
+                root = (Context) ContextBindings.getClassLoader().lookup("");
+                comp = (Context) ContextBindings.getClassLoader().lookup("comp"); // usually fails
+            } finally {
+                Thread.currentThread().setContextClassLoader(tccl);
+            }
 
             // Context root = ncl.getNamingContext();
             // Context comp = (Context) root.lookup("comp");
