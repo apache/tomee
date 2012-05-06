@@ -29,6 +29,7 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.Injection;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.httpd.HttpRequest;
+import org.apache.openejb.server.httpd.HttpRequestImpl;
 import org.apache.openejb.server.httpd.HttpResponse;
 import org.apache.openejb.server.rest.RsHttpListener;
 import org.apache.openejb.util.LogCategory;
@@ -81,11 +82,10 @@ public class CxfRsHttpListener implements RsHttpListener {
             // so without stripping the address until the context the behavior is weird
             // this is just a workaround waiting for something better
             @Override public String getRequestURI() {
-                try {
-                    return new URI(httpRequest.getRequestURI()).getRawPath();
-                } catch (URISyntaxException e) {
-                    return httpRequest.getRequestURI();
+                if (httpRequest instanceof HttpRequestImpl) {
+                    return ((HttpRequestImpl) httpRequest).requestRawPath();
                 }
+                return super.getRequestURI();
             }
         }, httpResponse);
     }
