@@ -17,25 +17,16 @@ import org.junit.runner.RunWith;
 
 import static org.junit.Assert.assertEquals;
 
-@RunAsClient // can be replaced by testable = false in @Deployment
 @RunWith(Arquillian.class)
-public class MultipleTomEETests {
-    @ArquillianResource
-    @OperateOnDeployment("war1")
-    private URL url1;
-
-    @ArquillianResource
-    @OperateOnDeployment("war2")
-    private URL url2;
-
-    @Deployment(name = "war1")
+public class MultipleTomEETest {
+    @Deployment(name = "war1", testable = false)
     @TargetsContainer("tomee-1")
     public static WebArchive createDep1() {
         return ShrinkWrap.create(WebArchive.class, "application1.war")
                 .addAsWebResource(new StringAsset("Hello from TomEE 1"), "index.html");
     }
 
-    @Deployment(name = "war2")
+    @Deployment(name = "war2", testable = false)
     @TargetsContainer("tomee-2")
     public static WebArchive createDep2() {
         return ShrinkWrap.create(WebArchive.class, "application2.war")
@@ -44,15 +35,15 @@ public class MultipleTomEETests {
 
     @Test
     @OperateOnDeployment("war1")
-    public void testRunningInDep1() throws IOException {
-        final String content = IO.slurp(url1);
+    public void testRunningInDep1(@ArquillianResource final URL url) throws IOException {
+        final String content = IO.slurp(url);
         assertEquals("Hello from TomEE 1", content);
     }
 
     @Test
     @OperateOnDeployment("war2")
-    public void testRunningInDep2() throws IOException {
-        final String content = IO.slurp(url2);
+    public void testRunningInDep2(@ArquillianResource final URL url) throws IOException {
+        final String content = IO.slurp(url);
         assertEquals("Hello from TomEE 2", content);
     }
 }
