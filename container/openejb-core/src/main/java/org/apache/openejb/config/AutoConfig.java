@@ -1228,6 +1228,21 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 continue;
             }
 
+            // another try prefixing datasource name with app moduleid, case of datasourcedefinition for instance
+            final String prefix = app.getModuleId() + "/";
+            required.put("JtaManaged", "true");
+            jtaDataSourceId = findResourceId(prefix + unit.getJtaDataSource(), "DataSource", required, null);
+
+            required.put("JtaManaged", "false");
+            nonJtaDataSourceId = findResourceId(prefix + unit.getNonJtaDataSource(), "DataSource", required, null);
+
+            if (jtaDataSourceId != null && nonJtaDataSourceId != null){
+                // Both DataSources were explicitly configured.
+                setJtaDataSource(unit, jtaDataSourceId);
+                setNonJtaDataSource(unit, nonJtaDataSourceId);
+                continue;
+            }
+
             //
             //  If the jta-data-source or the non-jta-data-source link to
             //  third party resources, then we can't do any auto config
