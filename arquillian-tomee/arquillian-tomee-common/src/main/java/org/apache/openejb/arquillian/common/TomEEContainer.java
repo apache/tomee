@@ -83,9 +83,13 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
                     map.put(key, value);
                 } catch (Exception e) {
                     try {
-                        map.put(key, Integer.parseInt(value)); // we manage String and int so let's try an int
+                        map.put(key, Integer.parseInt(value)); // we manage String and int and boolean so let's try an int
                     } catch (Exception ignored) {
-                        LOGGER.log(Level.WARNING, String.format("Override failed '%s=%s'", property, value), e);
+                        try {
+                            map.put(key, Boolean.parseBoolean(value)); // idem let's try a boolean
+                        } catch (Exception ignored2) {
+                            LOGGER.log(Level.WARNING, String.format("Override failed '%s=%s'", property, value), e);
+                        }
                     }
                 }
             }
@@ -105,20 +109,24 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
             } catch (NumberFormatException mustNotBeAPortConfig) {
             }
         }
-        //
-        // Export the config back out to properties
-        //
-        for (Map.Entry<String, Object> entry : map.entrySet()) {
-            for (String prefix : prefixes.value()) {
-                try {
-                    final String property = prefix + "." + entry.getKey();
-                    final String value = entry.getValue().toString();
 
-                    LOGGER.log(Level.FINER, String.format("Exporting '%s=%s'", property, value));
+        // with multiple containers we don't want it so let the user eb able to skip it
+        if (configuration.getExportConfAsSystemProperty()) {
+            //
+            // Export the config back out to properties
+            //
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                for (String prefix : prefixes.value()) {
+                    try {
+                        final String property = prefix + "." + entry.getKey();
+                        final String value = entry.getValue().toString();
 
-                    System.setProperty(property, value);
-                } catch (Throwable e) {
-                    // value cannot be converted to a string
+                        LOGGER.log(Level.FINER, String.format("Exporting '%s=%s'", property, value));
+
+                        System.setProperty(property, value);
+                    } catch (Throwable e) {
+                        // value cannot be converted to a string
+                    }
                 }
             }
         }

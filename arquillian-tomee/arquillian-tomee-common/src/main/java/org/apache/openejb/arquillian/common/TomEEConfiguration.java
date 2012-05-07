@@ -28,6 +28,7 @@ import java.util.Properties;
 
 public class TomEEConfiguration implements ContainerConfiguration {
 
+    private boolean exportConfAsSystemProperty = false;
     private int httpPort = 8080;
     private int stopPort = 8005;
     private String dir = System.getProperty("java.io.tmpdir") + "/arquillian-apache-tomee";
@@ -66,5 +67,13 @@ public class TomEEConfiguration implements ContainerConfiguration {
     }
 
     public void validate() throws ConfigurationException {
+    }
+
+    public boolean getExportConfAsSystemProperty() {
+        return exportConfAsSystemProperty;
+    }
+
+    public void setExportConfAsSystemProperty(boolean exportConfAsSystemProperty) {
+        this.exportConfAsSystemProperty = exportConfAsSystemProperty;
     }
 }
