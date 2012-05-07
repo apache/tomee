@@ -106,6 +106,7 @@
     <module>webservice-ws-security</module>
     <module>webservice-handlerchain</module>
     <module>webservice-holder</module>
+    <module>multiple-tomee-arquillian</module>
   </modules>
   <profiles>
     <profile>
