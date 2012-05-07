@@ -39,7 +39,7 @@ public class BasicAppilcationTest extends JaxrsTest {
     @Test
     public void invoke() throws Exception {
 
-        Assert.assertEquals("olleh", get("/echo/reverse/hello"));
+        Assert.assertEquals("olleh", get("echo/reverse/hello"));
 
     }
 

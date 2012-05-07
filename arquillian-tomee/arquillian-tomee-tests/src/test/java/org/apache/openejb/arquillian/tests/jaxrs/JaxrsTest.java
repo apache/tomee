@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.arquillian.tests.jaxrs;
 
+import java.net.URL;
 import junit.framework.Assert;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -28,11 +29,14 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+import org.jboss.arquillian.test.api.ArquillianResource;
 
 /**
  * @version $Rev$ $Date$
  */
 public class JaxrsTest {
+    @ArquillianResource
+    private URL url;
 
     protected HttpClient client = new DefaultHttpClient();
 
@@ -71,9 +75,7 @@ public class JaxrsTest {
     }
 
     protected URI uri(String path) {
-        if (path.startsWith("/")) path = path.substring(1);
-        final String port = System.getProperty("tomee.httpPort", "11080");
-        return URI.create(String.format("http://localhost:%s/%s/%s", port, this.getClass().getSimpleName(), path));
+        return URI.create(String.format("%s%s", url.toExternalForm(), path));
     }
 
     public static void assertStatusCode(int actual, HttpResponse response) {

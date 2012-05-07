@@ -41,7 +41,7 @@ public class ListedApplicationTest extends JaxrsTest {
     @Test
     public void invoke() throws Exception {
 
-        Assert.assertEquals("olleh", get("/rest/echo/reverse/hello"));
+        Assert.assertEquals("olleh", get("rest/echo/reverse/hello"));
 
         try {
             get("/rest/unlisted/reverse/hello");
