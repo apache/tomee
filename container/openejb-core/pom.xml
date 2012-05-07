@@ -453,10 +453,6 @@
     <!-- ActiveMQ -->
     <dependency>
       <groupId>org.apache.activemq</groupId>
-      <artifactId>kahadb</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-ra</artifactId>
     </dependency>
     <dependency>
