@@ -45,9 +45,9 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.12</version>
         <configuration>
-          <systemProperties> <!-- to activate the group -->
+          <systemPropertyVariables>
             <arquillian.launch>tomee-cluster</arquillian.launch>
-          </systemProperties>
+          </systemPropertyVariables>
         </configuration>
       </plugin>
     </plugins>
