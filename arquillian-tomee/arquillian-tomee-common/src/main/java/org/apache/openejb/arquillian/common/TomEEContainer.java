@@ -16,11 +16,20 @@
  */
 package org.apache.openejb.arquillian.common;
 
-import org.apache.openejb.OpenEJBException;
+import java.io.File;
+import java.io.OutputStream;
+import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import org.apache.openejb.assembler.Deployer;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Info;
-import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.util.NetworkUtil;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
@@ -34,20 +43,6 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.Socket;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public abstract class TomEEContainer<Configuration extends TomEEConfiguration> implements DeployableContainer<Configuration> {
     protected static final Logger LOGGER = Logger.getLogger(TomEEContainer.class.getName());
@@ -87,7 +82,11 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
                     LOGGER.log(Level.INFO, String.format("Applying override '%s=%s'", property, value));
                     map.put(key, value);
                 } catch (Exception e) {
-                    LOGGER.log(Level.WARNING, String.format("Override failed '%s=%s'", property, value), e);
+                    try {
+                        map.put(key, Integer.parseInt(value)); // we manage String and int so let's try an int
+                    } catch (Exception ignored) {
+                        LOGGER.log(Level.WARNING, String.format("Override failed '%s=%s'", property, value), e);
+                    }
                 }
             }
         }
