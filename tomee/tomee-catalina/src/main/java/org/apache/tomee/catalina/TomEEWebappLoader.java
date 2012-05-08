@@ -17,6 +17,7 @@
 
 package org.apache.tomee.catalina;
 
+import java.net.URLClassLoader;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.loader.WebappClassLoader;
 import org.apache.catalina.loader.WebappLoader;
@@ -53,7 +54,7 @@ public class TomEEWebappLoader extends WebappLoader {
 
     @Override protected void startInternal() throws LifecycleException {
         super.startInternal();
-        final ClassLoader webappCl = super.getClassLoader();
+        final WebappClassLoader webappCl = (WebappClassLoader) super.getClassLoader();
         tomEEClassLoader = new TomEEClassLoader(appPath, appClassLoader, webappCl);
         try {
              DirContextURLStreamHandler.bind(tomEEClassLoader, getContainer().getResources());
@@ -63,13 +64,13 @@ public class TomEEWebappLoader extends WebappLoader {
         }
     }
 
-    public static class TomEEClassLoader extends ClassLoader {
+    public static class TomEEClassLoader extends URLClassLoader {
         private ClassLoader app;
-        private ClassLoader webapp;
+        private WebappClassLoader webapp;
         private String appPath;
 
-        public TomEEClassLoader(final String appId, final ClassLoader appCl, final ClassLoader webappCl) {
-            super(webappCl); // in fact this classloader = webappclassloader since we add nothing to this
+        public TomEEClassLoader(final String appId, final ClassLoader appCl, final WebappClassLoader webappCl) {
+            super(webappCl.getURLs(), webappCl); // in fact this classloader = webappclassloader since we add nothing to this
             this.appPath = appId;
             this.app = appCl; // only used to manage resources since webapp.getParent() should be app
             this.webapp = webappCl;
@@ -89,7 +90,7 @@ public class TomEEWebappLoader extends WebappLoader {
             final Map<String, URL> urls = new HashMap<String, URL>();
 
 
-            if (webapp instanceof WebappClassLoader && ((WebappClassLoader) webapp).isStarted() || webapp.getParent() == null) { // we set a parent so if it is null webapp was detroyed
+            if (webapp.isStarted() || webapp.getParent() == null) { // we set a parent so if it is null webapp was detroyed
                 add(urls, app.getResources(name));
                 add(urls, webapp.getResources(name));
                 return new ArrayEnumeration(clear(urls.values()));

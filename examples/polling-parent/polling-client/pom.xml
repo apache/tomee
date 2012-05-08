@@ -79,7 +79,7 @@
           <includePluginDependencies>true</includePluginDependencies>
           <mainClass>jug.client.Client</mainClass>
           <arguments>
-            <argument>http://localhost:8080/polling-web-1.0/</argument>
+            <argument>http://localhost:8080/polling-web-${project.version}/</argument>
           </arguments>
         </configuration>
         <dependencies>
