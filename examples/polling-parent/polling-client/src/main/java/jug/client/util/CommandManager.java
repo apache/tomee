@@ -37,7 +37,8 @@ public class CommandManager {
         final ClassLoader loader = CommandManager.class.getClassLoader();
         try {
             UrlSet urlSet = new UrlSet(loader);
-            urlSet = urlSet.exclude(loader.getParent());
+            urlSet = urlSet.exclude(loader);
+            urlSet = urlSet.include(CommandManager.class.getProtectionDomain().getCodeSource().getLocation());
 
             final IAnnotationFinder finder = new AnnotationFinder(new ConfigurableClasspathArchive(loader, urlSet.getUrls()));
             for (Annotated<Class<?>> cmd : finder.findMetaAnnotatedClasses(Command.class)) {
@@ -56,7 +57,7 @@ public class CommandManager {
         } catch (RuntimeException e) {
             LOGGER.log(Level.SEVERE, "an error occured while getting commands", e);
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "can't get commands");
+            LOGGER.log(Level.SEVERE, "an error occured while getting commands", e);
         }
     }
 
