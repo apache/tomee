@@ -20,7 +20,7 @@
 <!-- $Rev: 576067 $ $Date: 2007-09-16 03:17:08 -0700 (Sun, 16 Sep 2007) $ -->
 
 <assembly>
-  <id>tomee-plus</id>
+  <id>tomee-jaxrs</id>
   <formats>
     <format>tar.gz</format>
     <format>zip</format>
@@ -28,8 +28,8 @@
   <includeBaseDirectory>false</includeBaseDirectory>
   <fileSets>
     <fileSet>
-      <directory>${plus.work-dir}/apache-tomcat-${tomcat.version}</directory>
-      <outputDirectory>/apache-tomee-plus-${project.version}</outputDirectory>
+      <directory>${jaxrs.work-dir}/apache-tomcat-${tomcat.version}</directory>
+      <outputDirectory>/apache-tomee-jaxrs-${project.version}</outputDirectory>
       <includes>
         <include>**/*</include>
       </includes>
@@ -42,21 +42,21 @@
     </fileSet>
     <fileSet>
       <directory>${project.basedir}/target/maven-shared-archive-resources/META-INF/</directory>
-      <outputDirectory>/apache-tomee-plus-${project.version}</outputDirectory>
+      <outputDirectory>/apache-tomee-jaxrs-${project.version}</outputDirectory>
       <includes>
         <include>LICENSE</include>
       </includes>
     </fileSet>
     <fileSet>
-      <directory>${project.basedir}/src/main/resources/META-INF/plus/</directory>
-      <outputDirectory>/apache-tomee-plus-${project.version}</outputDirectory>
+      <directory>${project.basedir}/src/main/resources/META-INF/jaxrs/</directory>
+      <outputDirectory>/apache-tomee-jaxrs-${project.version}</outputDirectory>
       <includes>
         <include>*</include>
       </includes>
     </fileSet>
     <fileSet>
       <directory>${project.basedir}/target/classes</directory>
-      <outputDirectory>/apache-tomee-plus-${project.version}/bin</outputDirectory>
+      <outputDirectory>/apache-tomee-jaxrs-${project.version}/bin</outputDirectory>
       <includes>
         <include>service.*</include>
         <include>TomEE.*</include>
@@ -64,15 +64,15 @@
     </fileSet>
     <fileSet>
       <directory>${project.basedir}/target/classes</directory>
-      <outputDirectory>/apache-tomee-plus-${project.version}/bin</outputDirectory>
+      <outputDirectory>/apache-tomee-jaxrs-${project.version}/bin</outputDirectory>
       <includes>
         <include>*.sh</include>
       </includes>
       <fileMode>0755</fileMode>
     </fileSet>
     <fileSet>
-      <directory>${plus.work-dir}/apache-tomcat-${tomcat.version}</directory>
-      <outputDirectory>/apache-tomee-plus-${project.version}</outputDirectory>
+      <directory>${jaxrs.work-dir}/apache-tomcat-${tomcat.version}</directory>
+      <outputDirectory>/apache-tomee-jaxrs-${project.version}</outputDirectory>
       <includes>
         <include>**/bin/**/*</include>
       </includes>

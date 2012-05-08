@@ -63,6 +63,14 @@
           <groupId>org.codehaus.woodstox</groupId>
           <artifactId>woodstox-core-asl</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>xalan</groupId>
+          <artifactId>xalan</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>xalan</groupId>
+          <artifactId>serializer</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -70,6 +78,7 @@
       <artifactId>cxf-rt-rs-extension-providers</artifactId>
       <version>${cxf.version}</version>
     </dependency>
+    <!--
     <dependency>
       <groupId>xalan</groupId>
       <artifactId>serializer</artifactId>
@@ -82,6 +91,7 @@
       <groupId>xml-resolver</groupId>
       <artifactId>xml-resolver</artifactId>
     </dependency>
+    -->
     <dependency>
       <groupId>org.codehaus.jettison</groupId>
       <artifactId>jettison</artifactId>

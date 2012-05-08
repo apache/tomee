@@ -129,6 +129,24 @@
             </configuration>
           </execution>
           <execution>
+            <id>copy-tomcat-for-jaxrs</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.apache.openejb</groupId>
+                  <artifactId>apache-tomcat</artifactId>
+                  <version>${tomcat.bundle.version}</version>
+                  <type>zip</type>
+                  <outputDirectory>${jaxrs.work-dir}</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+          <execution>
             <id>copy-tomcat-for-plus</id>
             <phase>prepare-package</phase>
             <goals>
@@ -205,6 +223,33 @@
             </configuration>
           </execution>
           <execution>
+            <id>execute-jaxrs-installer</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>execute</goal>
+            </goals>
+            <configuration>
+              <source>new commands.SetupCommand(this).execute()</source>
+              <properties>
+                <tomee.workdir>${jaxrs.work-dir}</tomee.workdir>
+                <tomee.webapp>tomee-jaxrs-webapp</tomee.webapp>
+              </properties>
+              <classpath>
+                <element>
+                  <groupId>jline</groupId>
+                  <artifactId>jline</artifactId>
+                  <version>0.9.94</version>
+                </element>
+                <element>
+                  <groupId>org.apache.ant</groupId>
+                  <artifactId>ant-nodeps</artifactId>
+                  <version>1.7.1</version>
+                  <type>jar</type>
+                </element>
+              </classpath>
+            </configuration>
+          </execution>
+          <execution>
             <id>execute-plus-installer</id>
             <phase>prepare-package</phase>
             <goals>
@@ -254,6 +299,21 @@
             </goals>
           </execution>
           <execution>
+            <id>jaxrs</id>
+            <phase>package</phase>
+            <configuration>
+              <descriptors>
+                <descriptor>src/main/assembly/tomee-jaxrs.xml</descriptor>
+              </descriptors>
+              <attach>false</attach>
+              <appendAssemblyId>false</appendAssemblyId>
+              <finalName>apache-tomee-jaxrs-${project.version}</finalName>
+            </configuration>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+          <execution>
             <id>plus</id>
             <phase>package</phase>
             <configuration>
@@ -295,6 +355,16 @@
                   <classifier>webprofile</classifier>
                 </artifact>
                 <artifact>
+                  <file>${project.build.directory}/apache-tomee-jaxrs-${project.version}.zip</file>
+                  <type>zip</type>
+                  <classifier>jaxrs</classifier>
+                </artifact>
+                <artifact>
+                  <file>${project.build.directory}/apache-tomee-jaxrs-${project.version}.tar.gz</file>
+                  <type>tar.gz</type>
+                  <classifier>jaxrs</classifier>
+                </artifact>
+                <artifact>
                   <file>${project.build.directory}/apache-tomee-plus-${project.version}.zip</file>
                   <type>zip</type>
                   <classifier>plus</classifier>
@@ -322,6 +392,7 @@
 
     <webprofile.work-dir>${project.build.directory}/webprofile-work-dir</webprofile.work-dir>
     <plus.work-dir>${project.build.directory}/plus-work-dir</plus.work-dir>
+    <jaxrs.work-dir>${project.build.directory}/jaxrs-work-dir</jaxrs.work-dir>
   </properties>
 
 </project>
