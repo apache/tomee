@@ -111,6 +111,11 @@
       <version>${tomcat.version}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>tomee-rs</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 </project>
 
