@@ -58,7 +58,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>tomee-rs</artifactId>
+      <artifactId>tomee-jaxrs</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
       <exclusions>
