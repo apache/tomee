@@ -34,6 +34,7 @@ import org.apache.openejb.server.rest.RsServlet;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.tomee.catalina.TomEERuntimeException;
+import org.apache.tomee.catalina.TomcatWebAppBuilder;
 import org.apache.tomee.loader.TomcatHelper;
 
 import java.net.URI;
@@ -118,7 +119,7 @@ public class TomcatRsRegistry implements RsRegistry {
             public void lifecycleEvent(LifecycleEvent event) {
                 Context context = (Context) event.getLifecycle();
                 if (event.getType().equals(Lifecycle.BEFORE_START_EVENT)) {
-                    context.getServletContext().setAttribute(IGNORE_CONTEXT, "true");
+                    context.getServletContext().setAttribute(TomcatWebAppBuilder.IGNORE_CONTEXT, "true");
                 }
                 if (event.getType().equals(Lifecycle.START_EVENT) || event.getType().equals(Lifecycle.BEFORE_START_EVENT) || event.getType().equals("configure_start")) {
                     context.setConfigured(true);

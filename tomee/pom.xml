@@ -38,6 +38,8 @@
     <module>tomee-plus-webapp</module>
     <module>tomee-webservices</module>
     <module>tomee-embedded</module>
+    <module>tomee-rs</module>
+    <module>tomee-jaxrs-webapp</module>
     <module>apache-tomee</module>
     <!-- no need since it is on repo1, reactivate when you'll need another version
     <module>apache-tomcat</module>
