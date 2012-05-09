@@ -27,6 +27,7 @@ import java.util.Set;
 import javax.interceptor.Interceptor;
 
 import org.apache.openejb.AppContext;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.BeansInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
@@ -144,7 +145,10 @@ public class CdiScanner implements ScannerService {
             for (String className : beans.managedClasses) {
                 if (ejbClasses.contains(className)) continue;
                 final Class clazz = load(className, classLoader);
-                if (clazz != null && classLoader.equals(clazz.getClassLoader())) {
+                final ClassLoader clazzClassloader = clazz.getClassLoader();
+                if (clazz != null
+                        && (classLoader.equals(clazzClassloader) // normal case
+                                || clazzClassloader.equals(CdiScanner.class.getClassLoader()))) { // can happen in standalone
                     classes.add(clazz);
                 }
             }
