@@ -227,7 +227,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             deployManagedBeans(scannerService.getBeanClasses(), stuff.getBeanContexts());
 
             for (BeanContext beanContext : stuff.getBeanContexts()) {
-                if (!beanContext.getComponentType().isCdiCompatible()) continue;
+                if (!beanContext.getComponentType().isCdiCompatible() || stuff.getWebContext() != null) continue;
 
                 final Class implClass = beanContext.getManagedClass();
 
