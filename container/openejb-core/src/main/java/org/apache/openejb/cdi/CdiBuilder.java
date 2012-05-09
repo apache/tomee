@@ -23,13 +23,14 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.WebContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.config.WebBeansFinder;
 import org.apache.webbeans.logger.WebBeansLogger;
 
 /**
- * @version $Rev$ $Date$
+ * @version $Rev$ $Date$C
  */
 public class CdiBuilder {
     private static final WebBeansLogger logger = WebBeansLogger.getLogger(CdiBuilder.class);
@@ -38,7 +39,10 @@ public class CdiBuilder {
     }
 
     public void build(AppInfo appInfo, AppContext appContext, List<BeanContext> allDeployments) {
+        initSingleton().initialize(new StartupObject(appContext, appInfo, allDeployments));
+    }
 
+    private ThreadSingletonService initSingleton() {
         ThreadContext.addThreadContextListener(new RequestScopedThreadContextListener());
         ThreadSingletonService singletonService = SystemInstance.get().getComponent(ThreadSingletonService.class);
         logger.info("existing thread singleton service in SystemInstance() " + singletonService);
@@ -47,7 +51,12 @@ public class CdiBuilder {
         if (singletonService == null) {
             singletonService = initializeOWB(getClass().getClassLoader());
         }
-        singletonService.initialize(new StartupObject(appContext, appInfo, allDeployments));
+        return singletonService;
+    }
+
+    public void build(AppInfo appInfo, AppContext appContext, List<BeanContext> allDeployments, WebContext webContext) {
+        ThreadSingletonService singletonService = initSingleton();
+        singletonService.initialize(new StartupObject(appContext, appInfo, allDeployments, webContext));
     }
 
     private boolean hasBeans(AppInfo appInfo) {

@@ -42,4 +42,5 @@ public class AppInfo extends InfoObject {
     public String cmpMappingsXml;
     public final Properties jmx = new Properties();
     public final Set<String> mbeans = new TreeSet<String>();
+    public boolean webAppAlone;
 }

@@ -266,6 +266,9 @@ class AppInfoBuilder {
         reportValidationResults.deploy(appModule);
 
         logger.info("config.appLoaded", appInfo.path);
+
+        appInfo.webAppAlone = appModule.isWebapp();
+
         return appInfo;
 
     }

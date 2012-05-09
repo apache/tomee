@@ -197,6 +197,7 @@ class JndiRequestHandler {
                 List<Injection> injections = (List<Injection>) rootContext.lookup(prefix + name);
                 InjectionMetaData metaData = new InjectionMetaData();
                 for (Injection injection : injections) {
+                    if (injection.getTarget() == null) continue;
                     metaData.addInjection(injection.getTarget().getName(), injection.getName(), injection.getJndiName());
                 }
                 res.setResponseCode(ResponseCodes.JNDI_INJECTIONS);

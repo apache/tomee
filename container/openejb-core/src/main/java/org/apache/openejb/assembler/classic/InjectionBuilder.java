@@ -34,117 +34,75 @@ public class InjectionBuilder {
         List<Injection> injections = new ArrayList<Injection>();
         for (EnvEntryInfo info : jndiEnc.envEntries) {
             for (InjectionInfo target : info.targets) {
-                final Class<?> targetClass;
-                try {
-                    targetClass = loadClass(target.className);
-                } catch (OpenEJBException ex) {
-                    continue;
-                }
-
-                Injection injection = new Injection(info.referenceName, target.propertyName, targetClass);
+                Injection injection = injection(info.referenceName, target.propertyName, target.className);
                 injections.add(injection);
             }
         }
 
         for (EjbReferenceInfo info : jndiEnc.ejbReferences) {
             for (InjectionInfo target : info.targets) {
-                final Class<?> targetClass;
-                try {
-                    targetClass = loadClass(target.className);
-                } catch (OpenEJBException ex) {
-                    continue;
-                }
-
-                Injection injection = new Injection(info.referenceName, target.propertyName, targetClass);
+                Injection injection = injection(info.referenceName, target.propertyName, target.className);
                 injections.add(injection);
             }
         }
 
         for (EjbReferenceInfo info : jndiEnc.ejbLocalReferences) {
             for (InjectionInfo target : info.targets) {
-                final Class<?> targetClass;
-                try {
-                    targetClass = loadClass(target.className);
-                } catch (OpenEJBException ex) {
-                    continue;
-                }
-
-                Injection injection = new Injection(info.referenceName, target.propertyName, targetClass);
+                Injection injection = injection(info.referenceName, target.propertyName, target.className);
                 injections.add(injection);
             }
         }
 
         for (PersistenceUnitReferenceInfo info : jndiEnc.persistenceUnitRefs) {
             for (InjectionInfo target : info.targets) {
-                final Class<?> targetClass;
-                try {
-                    targetClass = loadClass(target.className);
-                } catch (OpenEJBException ex) {
-                    continue;
-                }
-
-                Injection injection = new Injection(info.referenceName, target.propertyName, targetClass);
+                Injection injection = injection(info.referenceName, target.propertyName, target.className);
                 injections.add(injection);
             }
         }
 
         for (PersistenceContextReferenceInfo info : jndiEnc.persistenceContextRefs) {
             for (InjectionInfo target : info.targets) {
-                final Class<?> targetClass;
-                try {
-                    targetClass = loadClass(target.className);
-                } catch (OpenEJBException ex) {
-                    continue;
-                }
-
-                Injection injection = new Injection(info.referenceName, target.propertyName, targetClass);
+                Injection injection = injection(info.referenceName, target.propertyName, target.className);
                 injections.add(injection);
             }
         }
 
         for (ResourceReferenceInfo info : jndiEnc.resourceRefs) {
             for (InjectionInfo target : info.targets) {
-                final Class<?> targetClass;
-                try {
-                    targetClass = loadClass(target.className);
-                } catch (OpenEJBException ex) {
-                    continue;
-                }
-
-                Injection injection = new Injection(info.referenceName, target.propertyName, targetClass);
+                Injection injection = injection(info.referenceName, target.propertyName, target.className);
                 injections.add(injection);
             }
         }
 
         for (ResourceEnvReferenceInfo info : jndiEnc.resourceEnvRefs) {
             for (InjectionInfo target : info.targets) {
-                final Class<?> targetClass;
-                try {
-                    targetClass = loadClass(target.className);
-                } catch (OpenEJBException ex) {
-                    continue;
-                }
-
-                Injection injection = new Injection(info.referenceName, target.propertyName, targetClass);
+                Injection injection = injection(info.referenceName, target.propertyName, target.className);
                 injections.add(injection);
             }
         }
 
         for (ServiceReferenceInfo info : jndiEnc.serviceRefs) {
             for (InjectionInfo target : info.targets) {
-                final Class<?> targetClass;
-                try {
-                    targetClass = loadClass(target.className);
-                } catch (OpenEJBException ex) {
-                    continue;
-                }
-
-                Injection injection = new Injection(info.referenceName, target.propertyName, targetClass);
+                Injection injection = injection(info.referenceName, target.propertyName, target.className);
                 injections.add(injection);
             }
         }
 
         return injections;
+    }
+
+    private Injection injection(String referenceName, String propertyName, String className) {
+        Class<?> targetClass;
+        try {
+            targetClass = loadClass(className);
+        } catch (OpenEJBException ex) {
+            targetClass = null;
+        }
+
+        if (targetClass == null) {
+            return new Injection(referenceName, propertyName, className);
+        }
+        return new Injection(referenceName, propertyName, targetClass);
     }
 
     private Class loadClass(String className) throws OpenEJBException {

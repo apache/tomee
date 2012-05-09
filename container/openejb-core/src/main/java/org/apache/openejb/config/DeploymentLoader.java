@@ -201,6 +201,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 addWebPersistenceDD("persistence.xml", otherDD, appModule);
                 addWebPersistenceDD("persistence-fragment.xml", otherDD, appModule);
                 addPersistenceUnits(appModule, baseUrl);
+                appModule.setStandloneWebModule();
                 return appModule;
             }
 

@@ -23,6 +23,8 @@ import java.util.List;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.core.WebContext;
+import org.apache.webbeans.config.WebBeansContext;
 
 /**
  * @version $Rev:$ $Date:$
@@ -31,8 +33,13 @@ public class StartupObject {
     private final AppInfo appInfo;
     private final AppContext appContext;
     private final List<BeanContext> beanContexts;
+    private final WebContext webContext;
 
     public StartupObject(AppContext appContext, AppInfo appInfo, List<BeanContext> beanContexts) {
+        this(appContext, appInfo, beanContexts, null);
+    }
+
+    public StartupObject(AppContext appContext, AppInfo appInfo, List<BeanContext> beanContexts, WebContext webContext) {
         assert appContext != null;
         assert appInfo != null;
         assert beanContexts != null;
@@ -40,6 +47,7 @@ public class StartupObject {
         this.appContext = appContext;
         this.appInfo = appInfo;
         this.beanContexts = beanContexts;
+        this.webContext = webContext;
     }
 
     public AppContext getAppContext() {
@@ -52,5 +60,16 @@ public class StartupObject {
 
     public List<BeanContext> getBeanContexts() {
         return beanContexts;
+    }
+
+    public WebContext getWebContext() {
+        return webContext;
+    }
+
+    public ClassLoader getClassLoader() {
+        if (webContext != null) {
+            return webContext.getClassLoader();
+        }
+        return appContext.getClassLoader();
     }
 }

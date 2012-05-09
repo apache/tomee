@@ -20,7 +20,8 @@ package org.apache.openejb;
  * @version $Rev$ $Date$
  */
 public class Injection {
-    private final Class target;
+    private Class target;
+    private final String classname;
     private final String name;
     private final String jndiName;
 
@@ -28,6 +29,14 @@ public class Injection {
         this.jndiName = jndiName;
         this.name = name;
         this.target = target;
+        this.classname = target.getName();
+    }
+
+    public Injection(String jndiName, String name, String classname) {
+        this.jndiName = jndiName;
+        this.name = name;
+        this.classname = classname;
+        this.target = null;
     }
 
     public String getJndiName() {
@@ -42,10 +51,18 @@ public class Injection {
         return target;
     }
 
+    public void setTarget(Class<?> target) {
+        this.target = target;
+    }
+
+    public String getClassname() {
+        return classname;
+    }
+
     @Override
     public String toString() {
         return "Injection{" +
-                "target=" + ((target != null) ? target.getName() : null) +
+                "target=" + classname +
                 ", name='" + name + '\'' +
                 ", jndiName='" + jndiName + '\'' +
                 '}';
@@ -59,14 +76,14 @@ public class Injection {
         Injection injection = (Injection) o;
 
         if (name != null ? !name.equals(injection.name) : injection.name != null) return false;
-        if (target != null ? !target.equals(injection.target) : injection.target != null) return false;
+        if (classname != null ? !classname.equals(injection.classname) : injection.classname != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = target != null ? target.hashCode() : 0;
+        int result = classname != null ? classname.hashCode() : 0;
         result = 31 * result + (name != null ? name.hashCode() : 0);
         return result;
     }

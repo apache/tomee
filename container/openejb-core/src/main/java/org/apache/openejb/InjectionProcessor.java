@@ -176,6 +176,7 @@ public class InjectionProcessor<T> {
         if (suppliedInstance != null) clazz = suppliedInstance.getClass();
 
         for (Injection injection : injections) {
+            if (injection.getTarget() == null) continue;
             if (!injection.getTarget().isAssignableFrom(clazz)) continue;
             try {
                 String jndiName = injection.getJndiName();
