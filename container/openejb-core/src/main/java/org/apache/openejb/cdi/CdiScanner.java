@@ -142,14 +142,10 @@ public class CdiScanner implements ScannerService {
                 }
             }
 
-            final ClassLoader scl = ClassLoader.getSystemClassLoader();
             for (String className : beans.managedClasses) {
                 if (ejbClasses.contains(className)) continue;
                 final Class clazz = load(className, classLoader);
-                final ClassLoader clazzClassloader = clazz.getClassLoader();
-                if (clazz != null
-                        && (classLoader.equals(clazzClassloader) // normal case
-                                || clazzClassloader.equals(scl))) { // can happen in standalone
+                if (clazz != null) { // can happen in standalone
                     classes.add(clazz);
                 }
             }
