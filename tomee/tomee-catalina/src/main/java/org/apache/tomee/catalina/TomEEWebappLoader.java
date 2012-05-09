@@ -151,5 +151,10 @@ public class TomEEWebappLoader extends WebappLoader {
 		private static File file(URL jarUrl) {
             return URLs.toFile(jarUrl);
 		}
+
+        @Override
+        public boolean equals(Object other) {
+            return other == this || other == webapp;
+        }
     }
 }
