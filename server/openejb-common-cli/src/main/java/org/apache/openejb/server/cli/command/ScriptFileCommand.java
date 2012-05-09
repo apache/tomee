@@ -68,7 +68,7 @@ public class ScriptFileCommand extends ScriptCommand {
     }
 
     private void parse(final String cmd) {
-        script = cmd.substring(12);
+        script = cmd;
         final int dotIdx = script.lastIndexOf(".");
         if (dotIdx < 0) {
             throw new IllegalArgumentException("bad syntax, see help");

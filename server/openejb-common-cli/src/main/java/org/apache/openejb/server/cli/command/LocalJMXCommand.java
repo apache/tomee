@@ -42,7 +42,7 @@ import org.apache.xbean.propertyeditor.PropertyEditors;
 public class LocalJMXCommand extends AbstractCommand {
     @Override
     public void execute(final String cmd) {
-        final String jmxCmd = cmd.substring("jmx".length()).trim();
+        final String jmxCmd = cmd.trim();
         if ("list".equals(jmxCmd)) {
             listMBeans();
             return;

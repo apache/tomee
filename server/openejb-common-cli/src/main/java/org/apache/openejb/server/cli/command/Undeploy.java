@@ -24,7 +24,7 @@ public class Undeploy extends AbstractCommand {
     @Override
     public void execute(String cmd) {
         try {
-            lookup(Deployer.class, "openejb/DeployerBusinessRemote").undeploy(cmd.substring(8).trim());
+            lookup(Deployer.class, "openejb/DeployerBusinessRemote").undeploy(cmd.trim());
         } catch (Exception e) {
             streamManager.writeErr(e);
         }

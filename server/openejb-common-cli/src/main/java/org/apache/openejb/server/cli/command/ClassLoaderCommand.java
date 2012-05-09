@@ -92,11 +92,12 @@ public class ClassLoaderCommand extends AbstractCommand {
         }
     }
 
-    protected String extractAppName(final String cmd) {
-        if (CLASSLOADER_CMD.length() == cmd.length()) {
+    protected String extractAppName(final String raw) {
+        final String cmd = raw.trim();
+        if (0 == cmd.length()) {
             return "";
         }
-        return cmd.substring(CLASSLOADER_CMD.length()).trim();
+        return cmd;
     }
 
     private class URLComparator implements Comparator<URL> {

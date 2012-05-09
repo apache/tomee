@@ -35,8 +35,7 @@ public class ScriptCommand extends AbstractCommand {
         }
     }
 
-    private void parse(final String cmd) {
-        final String parseableCmd = cmd.substring(7);
+    private void parse(final String parseableCmd) {
         final int spaceIdx = parseableCmd.indexOf(" ");
         if (spaceIdx < 0) {
             throw new IllegalArgumentException("bad syntax, see help");

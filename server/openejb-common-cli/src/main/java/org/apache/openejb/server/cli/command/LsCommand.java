@@ -24,7 +24,7 @@ public class LsCommand extends PathCommand {
     public void execute(final String cmd) {
         final File file;
         try {
-            file = resolve("ls", cmd);
+            file = resolve(cmd);
         } catch (IllegalArgumentException iae) {
             streamManager.writeErr(iae.getMessage());
             return;

@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 
 @Command(name = "part", usage = "part <first line>-<last line> <path>", description = "print the specified line range of a file (in tomee directories only)")
 public class PartCommand extends PathCommand {
-    private static final Pattern PATTERN = Pattern.compile("part ([0-9]*)-([0-9]*) (.*)");
+    private static final Pattern PATTERN = Pattern.compile("([0-9]*)-([0-9]*) (.*)");
     @Override
     public void execute(final String cmd) {
         final Matcher matcher = PATTERN.matcher(cmd);
@@ -49,7 +49,7 @@ public class PartCommand extends PathCommand {
         final String path = matcher.group(3);
         final File file;
         try {
-            file = resolve(null, path);
+            file = resolve(path);
         } catch (IllegalArgumentException iae) {
             streamManager.writeErr(iae.getMessage());
             return;

@@ -19,6 +19,7 @@ package org.apache.openejb.server.cli;
 import jline.ConsoleReader;
 import jline.FileNameCompletor;
 import jline.SimpleCompletor;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.openejb.config.ConfigurableClasspathArchive;
 import org.apache.openejb.server.cli.command.AbstractCommand;
 import org.apache.openejb.server.cli.command.Command;
@@ -208,9 +209,11 @@ public class CliRunnable implements Runnable {
                 }
 
                 Class<?> cmdClass = null;
+                String key = null;
                 for (Map.Entry<String, Class<?>> cmd : COMMANDS.entrySet()) {
                     if (line.startsWith(cmd.getKey())) {
                         cmdClass = cmd.getValue();
+                        key = cmd.getKey();
                         break;
                     }
                 }
@@ -228,7 +231,7 @@ public class CliRunnable implements Runnable {
 
                     try {
                         final AbstractCommand cmdInstance = (AbstractCommand) recipe.create();
-                        cmdInstance.execute(line);
+                        cmdInstance.execute(trunc(line, key));
                     } catch (Exception e) {
                         streamManager.writeErr(e);
                     }
@@ -242,6 +245,21 @@ public class CliRunnable implements Runnable {
             clean();
             throw new CliRuntimeException(e);
         }
+    }
+
+    private String trunc(final String line, final String cmd) {
+        if (line.length() == cmd.length()) {
+            return "";
+        }
+        final String trunc = line.substring(cmd.length());
+        int idx = 0;
+        while (trunc.charAt(idx) == ' ') {
+            idx++;
+        }
+        if (idx < trunc.length()) {
+            return trunc.substring(idx);
+        }
+        return "";
     }
 
     private String prompt() {
