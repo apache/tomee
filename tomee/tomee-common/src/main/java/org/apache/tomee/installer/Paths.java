@@ -262,7 +262,9 @@ public class Paths {
         final File[] files = dir.listFiles();
         if (files != null) {
             for (File file : files) {
-                if (file.getName().startsWith(namePrefix + "-") && file.getName().endsWith(".jar")) {
+                final String name = file.getName();
+                if ((name.startsWith(namePrefix + "-") && name.endsWith(".jar"))
+                        || name.equals(namePrefix)) {
                     return file;
                 }
             }
