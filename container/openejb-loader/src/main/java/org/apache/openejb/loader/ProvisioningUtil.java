@@ -175,6 +175,8 @@ public class ProvisioningUtil {
         final File extracted = new File(tmp, zipFile.getName().replace(".zip", ""));
         if (extracted.exists()) {
             return list(extracted);
+        } else {
+            Files.mkdirs(extracted);
         }
 
         Zips.unzip(zipFile, extracted);
