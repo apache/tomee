@@ -24,15 +24,11 @@ public abstract class PathCommand extends AbstractCommand {
     public static final String HOME = "$home";
     public static final String BASE = "$base";
 
-    protected File resolve(final String prefix, final String cmd) {
-        if (cmd == null || (prefix != null && cmd.trim().equals(prefix)) || cmd.trim().isEmpty()) {
+    protected File resolve(final String cmd) {
+        if (cmd == null || cmd.trim().isEmpty()) {
             return SystemInstance.get().getBase().getDirectory();
         }
-        int idx = 0;
-        if (prefix != null) {
-            idx = prefix.length() + 1;
-        }
-        String path = cmd.substring(idx);
+        String path = cmd.trim();
         File workingFile = new File(path);
         if ((!path.startsWith(HOME) && !path.startsWith(BASE) && workingFile.getPath().equals(workingFile.getAbsolutePath())) || path.startsWith("..")) {
             throw new IllegalArgumentException("path should start with " + BASE + " or " + HOME + " or be relative");

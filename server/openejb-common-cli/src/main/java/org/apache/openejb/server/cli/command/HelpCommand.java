@@ -29,7 +29,7 @@ public class HelpCommand extends AbstractCommand {
                 final Class<?> clazz = command.getValue();
                 final Command annotation = clazz.getAnnotation(Command.class);
                 streamManager.writeOut(annotation.name() + ": " + annotation.description());
-                streamManager.writeOut("\tUsage: " + annotation.usage());
+                streamManager.writeOut("\tUsage: " + annotation.usage(), "\n");
             } catch (Exception e) {
                 // ignored = command not available
             }

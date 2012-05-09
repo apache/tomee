@@ -29,7 +29,7 @@ public class CatCommand extends PathCommand {
     public void execute(final String cmd) {
         final File file;
         try {
-            file = resolve("cat", cmd);
+            file = resolve(cmd);
         } catch (IllegalArgumentException iae) {
             streamManager.writeErr(iae.getMessage());
             return;

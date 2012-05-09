@@ -121,4 +121,10 @@ public class StreamManager {
     public void writeErr(final String s) {
         write(serr, s);
     }
+
+    public void writeOut(final String text, final String sep) {
+        for (String line : text.split(sep)) {
+            writeOut(line);
+        }
+    }
 }

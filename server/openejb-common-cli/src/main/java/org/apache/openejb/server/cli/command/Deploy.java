@@ -24,7 +24,7 @@ public class Deploy extends AbstractCommand {
     @Override
     public void execute(String cmd) {
         try {
-            lookup(Deployer.class, "openejb/DeployerBusinessRemote").deploy(cmd.substring(6).trim());
+            lookup(Deployer.class, "openejb/DeployerBusinessRemote").deploy(cmd.trim());
         } catch (Exception e) {
             streamManager.writeErr(e);
         }
