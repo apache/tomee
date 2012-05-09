@@ -226,55 +226,53 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             //Discover classpath classes
             deployManagedBeans(scannerService.getBeanClasses(), stuff.getBeanContexts());
 
-            if (stuff.getWebContext() == null) { // otherwise we are in an ear and we already fired ejbs
-                for (BeanContext beanContext : stuff.getBeanContexts()) {
-                    if (!beanContext.getComponentType().isCdiCompatible()) continue;
+            for (BeanContext beanContext : stuff.getBeanContexts()) {
+                if (!beanContext.getComponentType().isCdiCompatible()) continue;
 
-                    final Class implClass = beanContext.getManagedClass();
+                final Class implClass = beanContext.getManagedClass();
 
-                    //Define annotation type
-                    AnnotatedType<?> annotatedType = webBeansContext.getAnnotatedElementFactory().newAnnotatedType(implClass);
+                //Define annotation type
+                AnnotatedType<?> annotatedType = webBeansContext.getAnnotatedElementFactory().newAnnotatedType(implClass);
 
-                    //Fires ProcessAnnotatedType
-                    ProcessAnnotatedTypeImpl<?> processAnnotatedEvent = webBeansContext.getWebBeansUtil().fireProcessAnnotatedTypeEvent(annotatedType);
+                //Fires ProcessAnnotatedType
+                ProcessAnnotatedTypeImpl<?> processAnnotatedEvent = webBeansContext.getWebBeansUtil().fireProcessAnnotatedTypeEvent(annotatedType);
 
-                    // TODO Can you really veto an EJB?
-                    //if veto() is called
-                    if (processAnnotatedEvent.isVeto()) {
-                        continue;
-                    }
+                // TODO Can you really veto an EJB?
+                //if veto() is called
+                if (processAnnotatedEvent.isVeto()) {
+                    continue;
+                }
 
-                    CdiEjbBean<Object> bean = new CdiEjbBean<Object>(beanContext, webBeansContext);
+                CdiEjbBean<Object> bean = new CdiEjbBean<Object>(beanContext, webBeansContext);
 
-                    beanContext.set(CdiEjbBean.class, bean);
-                    beanContext.set(CurrentCreationalContext.class, new CurrentCreationalContext());
-                    beanContext.addSystemInterceptor(new CdiInterceptor(bean, beanManager, cdiPlugin.getContexsServices()));
+                beanContext.set(CdiEjbBean.class, bean);
+                beanContext.set(CurrentCreationalContext.class, new CurrentCreationalContext());
+                beanContext.addSystemInterceptor(new CdiInterceptor(bean, beanManager, cdiPlugin.getContexsServices()));
 
-                    EjbUtility.fireEvents((Class<Object>) implClass, bean, (ProcessAnnotatedTypeImpl<Object>) processAnnotatedEvent);
+                EjbUtility.fireEvents((Class<Object>) implClass, bean, (ProcessAnnotatedTypeImpl<Object>) processAnnotatedEvent);
 
-                    webBeansContext.getWebBeansUtil().setInjectionTargetBeanEnableFlag(bean);
+                webBeansContext.getWebBeansUtil().setInjectionTargetBeanEnableFlag(bean);
 
-                    Class clazz = beanContext.getBeanClass();
-                    while (clazz.isAnnotationPresent(Specializes.class)) {
-                        clazz = clazz.getSuperclass();
+                Class clazz = beanContext.getBeanClass();
+                while (clazz.isAnnotationPresent(Specializes.class)) {
+                    clazz = clazz.getSuperclass();
 
-                        if (clazz == null || Object.class.equals(clazz)) break;
+                    if (clazz == null || Object.class.equals(clazz)) break;
 
-                        final CdiEjbBean<Object> superBean = new CdiEjbBean<Object>(beanContext, webBeansContext, clazz);
+                    final CdiEjbBean<Object> superBean = new CdiEjbBean<Object>(beanContext, webBeansContext, clazz);
 
-                        EjbBeanCreatorImpl<?> ejbBeanCreator = new EjbBeanCreatorImpl(superBean);
+                    EjbBeanCreatorImpl<?> ejbBeanCreator = new EjbBeanCreatorImpl(superBean);
 
-                        //Define meta-data
-                        ejbBeanCreator.defineSerializable();
-                        ejbBeanCreator.defineStereoTypes();
-                        ejbBeanCreator.defineScopeType("Session Bean implementation class : " + clazz.getName() + " stereotypes must declare same @ScopeType annotations", false);
-                        ejbBeanCreator.defineQualifier();
-                        ejbBeanCreator.defineName(WebBeansUtil.getManagedBeanDefaultName(clazz.getSimpleName()));
+                    //Define meta-data
+                    ejbBeanCreator.defineSerializable();
+                    ejbBeanCreator.defineStereoTypes();
+                    ejbBeanCreator.defineScopeType("Session Bean implementation class : " + clazz.getName() + " stereotypes must declare same @ScopeType annotations", false);
+                    ejbBeanCreator.defineQualifier();
+                    ejbBeanCreator.defineName(WebBeansUtil.getManagedBeanDefaultName(clazz.getSimpleName()));
 
-                        bean.specialize(superBean);
+                    bean.specialize(superBean);
 
-                        EjbUtility.defineSpecializedData(clazz, bean);
-                    }
+                    EjbUtility.defineSpecializedData(clazz, bean);
                 }
             }
 
