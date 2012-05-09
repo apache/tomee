@@ -16,6 +16,9 @@
  */
 package org.apache.tomee.catalina;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import org.apache.catalina.Container;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
@@ -36,6 +39,7 @@ import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.ContextTransaction;
 import org.apache.catalina.deploy.NamingResources;
+import org.apache.catalina.loader.StandardClassLoader;
 import org.apache.catalina.loader.WebappClassLoader;
 import org.apache.catalina.startup.Constants;
 import org.apache.catalina.startup.ContextConfig;
@@ -44,9 +48,11 @@ import org.apache.catalina.startup.RealmRuleSet;
 import org.apache.naming.ContextAccessController;
 import org.apache.naming.ContextBindings;
 import org.apache.openejb.AppContext;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.*;
+import org.apache.openejb.cdi.CdiBuilder;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentLoader;
@@ -676,6 +682,13 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 // determine the injections
                 final Set<Injection> injections = new HashSet<Injection>();
                 injections.addAll(appContext.getInjections());
+
+                if (!contextInfo.appInfo.webAppAlone) {
+                    updateInjections(injections, classLoader);
+                    for (BeanContext bean : appContext.getBeanContexts()) { // TODO: how if the same class in multiple webapps?
+                        updateInjections(bean.getInjections(), classLoader);
+                    }
+                }
                 injections.addAll(new InjectionBuilder(classLoader).buildInjections(webAppInfo.jndiEnc));
 
                 // jndi bindings
@@ -696,6 +709,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 appContext.getWebContexts().add(webContext);
                 cs.addWebContext(webContext);
 
+                if (!contextInfo.appInfo.webAppAlone) {
+                    new CdiBuilder().build(contextInfo.appInfo, appContext, appContext.getBeanContexts(), webContext);
+                }
+
                 standardContext.setInstanceManager(new JavaeeInstanceManager(webContext, standardContext));
                 standardContext.getServletContext().setAttribute(InstanceManager.class.getName(), standardContext.getInstanceManager());
 
@@ -712,6 +729,21 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                     final ELAdaptor elAdaptor = context.getService(ELAdaptor.class);
                     final ELResolver resolver = elAdaptor.getOwbELResolver();
                     applicationCtx.addELResolver(resolver);
+                }
+            }
+        }
+    }
+
+    private static void updateInjections(Collection<Injection> injections, ClassLoader classLoader) {
+        final Iterator<Injection> it = injections.iterator();
+        while (it.hasNext()) { // update not loaded injections for classloader issues or remove them
+            final Injection injection = it.next();
+            if (injection.getTarget() == null) {
+                try {
+                    final Class<?> target = classLoader.loadClass(injection.getClassname());
+                    injection.setTarget(target);
+                } catch (ClassNotFoundException cnfe) {
+                    it.remove();
                 }
             }
         }

@@ -107,6 +107,7 @@ public class CdiResourceInjectionService implements ResourceInjectionService {
         for (BeanContext beanContext : compContexts) {
 
             for (Injection injection : beanContext.getInjections()) {
+                if (injection.getTarget() == null) continue;
                 if (!injection.getTarget().isAssignableFrom(clazz)) continue;
                 try {
                     Object value = lookup(beanContext, injection);

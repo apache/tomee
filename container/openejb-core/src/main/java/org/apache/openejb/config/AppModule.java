@@ -57,6 +57,7 @@ public class AppModule implements DeploymentModule {
     private final Set<String> additionalLibMbeans = new TreeSet<String>();
 
     private ID id;
+    private boolean webapp = false;
 
     public AppModule(ClassLoader classLoader, String jarLocation) {
         this(classLoader, jarLocation, null, false);
@@ -278,4 +279,11 @@ public class AppModule implements DeploymentModule {
                 '}';
     }
 
+    public void setStandloneWebModule() {
+        webapp = true;
+    }
+
+    public boolean isWebapp() {
+        return webapp;
+    }
 }

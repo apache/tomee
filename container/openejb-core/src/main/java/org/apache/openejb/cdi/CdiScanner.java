@@ -21,14 +21,17 @@ package org.apache.openejb.cdi;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.interceptor.Interceptor;
 
+import org.apache.openejb.AppContext;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.BeansInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
+import org.apache.openejb.core.WebContext;
 import org.apache.webbeans.annotation.AnnotationManager;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.decorator.DecoratorsManager;
@@ -59,7 +62,7 @@ public class CdiScanner implements ScannerService {
         }
         StartupObject startupObject = (StartupObject) object;
         AppInfo appInfo = startupObject.getAppInfo();
-        ClassLoader classLoader = startupObject.getAppContext().getClassLoader();
+        ClassLoader classLoader = startupObject.getClassLoader();
 
         WebBeansContext webBeansContext = startupObject.getAppContext().getWebBeansContext();
         final AlternativesManager alternativesManager = webBeansContext.getAlternativesManager();
