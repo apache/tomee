@@ -24,6 +24,12 @@ import org.apache.webbeans.container.BeanManagerImpl;
 
 public class WebappBeanManager extends BeanManagerImpl {
     private final WebappWebBeansContext webappCtx;
+    private final ThreadLocal<Boolean> internalUse = new ThreadLocal<Boolean>() {
+        @Override
+        public Boolean initialValue() {
+            return false;
+        }
+    };
 
     public WebappBeanManager(WebappWebBeansContext ctx) {
         super(ctx);
@@ -60,7 +66,7 @@ public class WebappBeanManager extends BeanManagerImpl {
     public <T> CreationalContext<T> createCreationalContext(Contextual<T> contextual) {
         try {
             return super.createCreationalContext(contextual);
-        } catch (RuntimeException e) {
+        } catch (RuntimeException e) { // can happen?
             try {
                 return getParentBm().createCreationalContext(contextual);
             } catch (RuntimeException ignored) {
@@ -72,16 +78,32 @@ public class WebappBeanManager extends BeanManagerImpl {
     @Override
     public Set<Bean<?>> getBeans(Type beanType, Annotation... qualifiers) {
         final Set<Bean<?>> beans = new HashSet<Bean<?>>();
-        beans.addAll(super.getBeans(beanType, qualifiers));
-        beans.addAll(getParentBm().getBeans(beanType, qualifiers));
+        internalUse.set(true);
+        try {
+            beans.addAll(super.getBeans(beanType, qualifiers));
+        } finally {
+            internalUse.set(false);
+        }
+        if (!internalUse.get()) {
+            beans.addAll(getParentBm().getBeans(beanType, qualifiers));
+        }
+        internalUse.remove();
         return beans;
     }
 
     @Override
     public Set<Bean<?>> getBeans(String name) {
         final Set<Bean<?>> beans = new HashSet<Bean<?>>();
-        beans.addAll(super.getBeans(name));
-        beans.addAll(getParentBm().getBeans(name));
+        internalUse.set(true);
+        try {
+            beans.addAll(super.getBeans(name));
+        } finally {
+            internalUse.set(false);
+        }
+        if (!internalUse.get()) {
+            beans.addAll(getParentBm().getBeans(name));
+        }
+        internalUse.remove();
         return beans;
     }
 
@@ -127,24 +149,47 @@ public class WebappBeanManager extends BeanManagerImpl {
     @Override
     public <T> Set<ObserverMethod<? super T>> resolveObserverMethods(T event, Annotation... qualifiers) {
         final Set<ObserverMethod<? super T>> mtds = new HashSet<ObserverMethod<? super T>>();
-        mtds.addAll(super.resolveObserverMethods(event, qualifiers));
-        mtds.addAll(getParentBm().resolveObserverMethods(event, qualifiers));
+        internalUse.set(true);
+        try {
+            mtds.addAll(super.resolveObserverMethods(event, qualifiers));
+        } finally {
+            internalUse.set(false);
+        }
+        if (!internalUse.get()) {
+            mtds.addAll(getParentBm().resolveObserverMethods(event, qualifiers));
+        }
+        internalUse.remove();
         return mtds;
     }
 
     @Override
     public List<Decorator<?>> resolveDecorators(Set<Type> types, Annotation... qualifiers) {
         final List<Decorator<?>> decorators = new ArrayList<Decorator<?>>();
-        decorators.addAll(super.resolveDecorators(types, qualifiers));
-        decorators.addAll(getParentBm().resolveDecorators(types, qualifiers));
+        internalUse.set(true);
+        try {
+            decorators.addAll(super.resolveDecorators(types, qualifiers));
+        } finally {
+            internalUse.set(false);
+        }
+        if (!internalUse.get()) {
+            decorators.addAll(getParentBm().resolveDecorators(types, qualifiers));
+        }
         return decorators;
     }
 
     @Override
     public List<Interceptor<?>> resolveInterceptors(InterceptionType type, Annotation... qualifiers) {
         final List<Interceptor<?>> interceptors = new ArrayList<Interceptor<?>>();
-        interceptors.addAll(super.resolveInterceptors(type, qualifiers));
-        interceptors.addAll(getParentBm().resolveInterceptors(type, qualifiers));
+        internalUse.set(true);
+        try {
+            interceptors.addAll(super.resolveInterceptors(type, qualifiers));
+        } finally {
+            internalUse.set(false);
+        }
+        if (!internalUse.get()) {
+            interceptors.addAll(getParentBm().resolveInterceptors(type, qualifiers));
+        }
+        internalUse.remove();
         return interceptors;
     }
 
@@ -257,8 +302,16 @@ public class WebappBeanManager extends BeanManagerImpl {
     @Override
     public Set<Annotation> getStereotypeDefinition(Class<? extends Annotation> stereotype) {
         final Set<Annotation> mtds = new HashSet<Annotation>();
-        mtds.addAll(super.getStereotypeDefinition(stereotype));
-        mtds.addAll(getParentBm().getStereotypeDefinition(stereotype));
+        internalUse.set(true);
+        try {
+            mtds.addAll(super.getStereotypeDefinition(stereotype));
+        } finally {
+            internalUse.set(false);
+        }
+        if (!internalUse.get()) {
+            mtds.addAll(getParentBm().getStereotypeDefinition(stereotype));
+        }
+        internalUse.remove();
         return mtds;
     }
 

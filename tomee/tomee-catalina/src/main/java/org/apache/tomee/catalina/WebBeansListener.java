@@ -18,6 +18,7 @@ package org.apache.tomee.catalina;
 
 import org.apache.openejb.cdi.OpenEJBLifecycle;
 import org.apache.openejb.cdi.ThreadSingletonServiceImpl;
+import org.apache.openejb.cdi.WebappWebBeansContext;
 import org.apache.webbeans.component.InjectionPointBean;
 import org.apache.webbeans.config.OWBLogConst;
 import org.apache.webbeans.config.WebBeansContext;
@@ -100,6 +101,9 @@ public class WebBeansListener implements ServletContextListener, ServletRequestL
 
 
             webBeansContext.getContextsService().endContext(RequestScoped.class, event);
+            if (webBeansContext instanceof WebappWebBeansContext) {
+                ((WebappWebBeansContext) webBeansContext).getParent().getContextsService().endContext(RequestScoped.class, event);
+            }
             cleanupRequestThreadLocals();
         } finally {
             ThreadSingletonServiceImpl.enter((WebBeansContext) oldContext);
@@ -130,6 +134,9 @@ public class WebBeansListener implements ServletContextListener, ServletRequestL
             }
 
             this.webBeansContext.getContextsService().startContext(RequestScoped.class, event);
+            if (webBeansContext instanceof WebappWebBeansContext) {
+                ((WebappWebBeansContext) webBeansContext).getParent().getContextsService().startContext(RequestScoped.class, event);
+            }
 
             // we don't initialise the Session here but do it lazily if it gets requested
             // the first time. See OWB-457
@@ -149,6 +156,9 @@ public class WebBeansListener implements ServletContextListener, ServletRequestL
                 logger.debug("Starting a session with session id : [{0}]", event.getSession().getId());
             }
             this.webBeansContext.getContextsService().startContext(SessionScoped.class, event.getSession());
+            if (webBeansContext instanceof WebappWebBeansContext) {
+                ((WebappWebBeansContext) webBeansContext).getParent().getContextsService().startContext(SessionScoped.class, event.getSession());
+            }
         } catch (Exception e) {
             logger.error(OWBLogConst.ERROR_0020, event.getSession());
             WebBeansUtil.throwRuntimeExceptions(e);
@@ -164,6 +174,9 @@ public class WebBeansListener implements ServletContextListener, ServletRequestL
         }
 
         this.webBeansContext.getContextsService().endContext(SessionScoped.class, event.getSession());
+        if (webBeansContext instanceof WebappWebBeansContext) {
+            ((WebappWebBeansContext) webBeansContext).getParent().getContextsService().endContext(SessionScoped.class, event.getSession());
+        }
 
         ConversationManager conversationManager = webBeansContext.getConversationManager();
         conversationManager.destroyConversationContextWithSessionId(event.getSession().getId());

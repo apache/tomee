@@ -177,9 +177,12 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         CdiPlugin cdiPlugin = (CdiPlugin) webBeansContext.getPluginLoader().getEjbPlugin();
 
         final AppContext appContext = stuff.getAppContext();
+        if (stuff.getWebContext() == null) {
+            appContext.setWebBeansContext(webBeansContext);
+        }
 
-        cdiPlugin.setAppContext(appContext);
-        appContext.setWebBeansContext(webBeansContext);
+        cdiPlugin.setClassLoader(stuff.getClassLoader());
+        cdiPlugin.setWebBeansContext(webBeansContext);
         cdiPlugin.startup();
 
         //Configure EJB Deployments

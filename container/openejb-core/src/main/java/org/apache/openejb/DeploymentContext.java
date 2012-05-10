@@ -41,12 +41,12 @@ public class DeploymentContext {
     }
 
     @SuppressWarnings({"unchecked"})
-        public <T> T get(Class<T> type) {
+    public <T> T get(Class<T> type) {
         return (T)data.get(type);
     }
 
     @SuppressWarnings({"unchecked"})
-        public <T> T set(Class<T> type, T value) {
+    public <T> T set(Class<T> type, T value) {
         return (T) data.put(type, value);
     }
 

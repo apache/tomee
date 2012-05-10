@@ -152,7 +152,9 @@ public class CdiScanner implements ScannerService {
                 }
 
                 final ClassLoader cl = clazz.getClassLoader();
-                if (classLoader.equals(cl) || cl.equals(scl)) {
+                // 1. this classloader is the good one
+                // 2. the classloader is the appclassloader one and we are in the ear parent
+                if (classLoader.equals(cl) || (cl.equals(scl) && startupObject.getWebContext() == null)) {
                     classes.add(clazz);
                 }
             }
