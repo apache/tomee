@@ -704,6 +704,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 final WebContext webContext = new WebContext(appContext);
                 webContext.setClassLoader(classLoader);
                 webContext.setId(webAppInfo.moduleId);
+                webContext.setContextRoot(webAppInfo.contextRoot);
                 webContext.setBindings(bindings);
                 webContext.getInjections().addAll(injections);
                 appContext.getWebContexts().add(webContext);
@@ -907,15 +908,37 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         if (webBeansContext == null) return null;
 
         for (WebContext web : appContext.getWebContexts()) {
-            final String name = web.getId();
-            final String stdName = contextInfo.standardContext.getName();
-            if (stdName.equals(name) || stdName.equals("/" + name) || ("/" + name).equals(stdName + ".war")) {
+            final String stdName = removeFirstSlashAndWar(contextInfo.standardContext.getName());
+            if (stdName == null) {
+                continue;
+            }
+
+            final String name = removeFirstSlashAndWar(web.getContextRoot());
+            if (stdName.equals(name)) {
                 webBeansContext = web.getWebbeansContext();
                 break;
             }
         }
 
+        if (webBeansContext == null) webBeansContext = appContext.getWebBeansContext();
+
         return new WebBeansListener(webBeansContext);
+    }
+
+    private static String removeFirstSlashAndWar(String name) {
+        if (name == null || "/".equals(name) || name.isEmpty()) {
+            return "";
+        }
+
+        String out = name;
+        if (out.startsWith("/")) {
+            out = out.substring(1);
+        }
+        if (out.endsWith(".war")) {
+            return out.substring(0, Math.max(out.length() - 4, 0));
+        }
+
+        return out;
     }
 
 

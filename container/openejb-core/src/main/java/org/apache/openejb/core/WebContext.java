@@ -40,6 +40,7 @@ public class WebContext {
     private final AppContext appContext;
     private Map<String,Object> bindings;
     private WebBeansContext webbeansContext;
+    private String contextRoot;
 
     public Context getInitialContext() {
         if (initialContext != null) return initialContext;
@@ -183,5 +184,13 @@ public class WebContext {
 
     public WebBeansContext getWebbeansContext() {
         return webbeansContext;
+    }
+
+    public void setContextRoot(String contextRoot) {
+        this.contextRoot = contextRoot;
+    }
+
+    public String getContextRoot() {
+        return contextRoot;
     }
 }
