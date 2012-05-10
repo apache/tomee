@@ -902,9 +902,16 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
 
         if (appContext == null) return null;
 
-        final WebBeansContext webBeansContext = appContext.getWebBeansContext();
+        WebBeansContext webBeansContext = appContext.getWebBeansContext();
 
         if (webBeansContext == null) return null;
+
+        for (WebContext web : appContext.getWebContexts()) {
+            if (contextInfo.standardContext.getName().equals(web.getId())) {
+                webBeansContext = web.getWebbeansContext();
+                break;
+            }
+        }
 
         return new WebBeansListener(webBeansContext);
     }

@@ -18,7 +18,11 @@
 <suite name="CDI TCK" verbose="0">
   <test name="CDI TCK">
     <classes>
+      <class name="org.jboss.jsr299.tck.tests.extensions.container.event.ContainerEventTest" />
+      <!--
       <class name="org.jboss.jsr299.tck.tests.deployment.packaging.bundledLibrary.LibraryInEarTest"/>
+      <class name="org.jboss.jsr299.tck.tests.context.application.ejb.ApplicationContextSharedTest" />
+      -->
     </classes>
   </test>
 </suite>

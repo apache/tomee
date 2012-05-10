@@ -142,10 +142,17 @@ public class CdiScanner implements ScannerService {
                 }
             }
 
+            // here for ears we need to skip classes in the parent classloader
+            final ClassLoader scl = ClassLoader.getSystemClassLoader();
             for (String className : beans.managedClasses) {
                 if (ejbClasses.contains(className)) continue;
                 final Class clazz = load(className, classLoader);
-                if (clazz != null) { // can happen in standalone
+                if (clazz == null) {
+                    continue;
+                }
+
+                final ClassLoader cl = clazz.getClassLoader();
+                if (classLoader.equals(cl) || cl.equals(scl)) {
                     classes.add(clazz);
                 }
             }
