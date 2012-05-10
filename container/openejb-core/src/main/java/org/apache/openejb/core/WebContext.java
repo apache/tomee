@@ -39,6 +39,7 @@ public class WebContext {
     private Context jndiEnc;
     private final AppContext appContext;
     private Map<String,Object> bindings;
+    private WebBeansContext webbeansContext;
 
     public Context getInitialContext() {
         if (initialContext != null) return initialContext;
@@ -174,5 +175,13 @@ public class WebContext {
 
     public Map<String, Object> getBindings() {
         return bindings;
+    }
+
+    public void setWebbeansContext(WebBeansContext webbeansContext) {
+        this.webbeansContext = webbeansContext;
+    }
+
+    public WebBeansContext getWebbeansContext() {
+        return webbeansContext;
     }
 }

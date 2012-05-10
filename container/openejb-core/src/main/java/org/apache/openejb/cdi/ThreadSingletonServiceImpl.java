@@ -81,7 +81,11 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
 
         services.put(AppContext.class, appContext);
         services.put(TransactionService.class, new OpenEJBTransactionService());
-        services.put(ELAdaptor.class,new CustomELAdapter(appContext));
+        if (startupObject.getWebContext() == null) {
+            services.put(ELAdaptor.class,new CustomELAdapter(appContext));
+        } else {
+            services.put(ELAdaptor.class,new CustomELAdapter(appContext, startupObject.getWebContext()));
+        }
         services.put(ContextsService.class, new CdiAppContextsService(true));
         services.put(ResourceInjectionService.class, new CdiResourceInjectionService());
         services.put(ScannerService.class, new CdiScanner());
@@ -100,8 +104,14 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         WebBeansContext webBeansContext;
         Object old = null;
         try {
-            webBeansContext = new WebBeansContext(services, properties);
-            appContext.set(WebBeansContext.class, webBeansContext);
+            if (startupObject.getWebContext() == null) {
+                webBeansContext = new WebBeansContext(services, properties);
+                appContext.set(WebBeansContext.class, webBeansContext);
+            } else {
+                webBeansContext = new WebappWebBeansContext(services, properties, appContext.getWebBeansContext());
+                startupObject.getWebContext().setWebbeansContext(webBeansContext);
+            }
+
             old = contextEntered(webBeansContext);
             setConfiguration(webBeansContext.getOpenWebBeansConfiguration());
             try {

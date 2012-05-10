@@ -17,6 +17,7 @@
 package org.apache.openejb.cdi;
 
 import org.apache.openejb.AppContext;
+import org.apache.openejb.core.WebContext;
 import org.apache.webbeans.el.WebBeansELResolver;
 import org.apache.webbeans.el.WrappedExpressionFactory;
 import org.apache.webbeans.spi.adaptor.ELAdaptor;
@@ -30,10 +31,15 @@ import javax.el.ExpressionFactory;
 public class CustomELAdapter implements ELAdaptor {
 
     private final AppContext appContext;
+    private final WebContext webContext;
 
     public CustomELAdapter(AppContext appContext) {
-        this.appContext = appContext;
+        this(appContext, null);
+    }
 
+    public CustomELAdapter(AppContext appContext, WebContext webContext) {
+        this.appContext = appContext;
+        this.webContext = webContext;
     }
 
     @Override
