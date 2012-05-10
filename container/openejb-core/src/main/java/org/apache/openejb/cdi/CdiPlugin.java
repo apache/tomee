@@ -26,7 +26,8 @@ import javax.enterprise.context.spi.Contextual;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
-
+import org.apache.openejb.BeanContext;
+import org.apache.openejb.OpenEJBException;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.config.WebBeansFinder;
 import org.apache.webbeans.container.InjectionResolver;
@@ -39,18 +40,22 @@ import org.apache.webbeans.spi.plugins.OpenWebBeansEjbPlugin;
 import org.apache.webbeans.spi.plugins.OpenWebBeansJavaEEPlugin;
 import org.apache.webbeans.util.WebBeansUtil;
 
-import org.apache.openejb.AppContext;
-import org.apache.openejb.BeanContext;
-import org.apache.openejb.OpenEJBException;
-
 
 public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPlugin, OpenWebBeansEjbPlugin {
 
-    private AppContext appContext;
 	private Set<Class<?>> beans;
 
     private WebBeansContext webBeansContext;
     private CdiAppContextsService contexsServices;
+    private ClassLoader classLoader;
+
+    public void setWebBeansContext(WebBeansContext webBeansContext) {
+        this.webBeansContext = webBeansContext;
+    }
+
+    public void setClassLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
 
     @Override
     public void shutDown() {
@@ -59,10 +64,6 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
         if (beans != null) {
             this.beans.clear();
         }
-    }
-
-    public void setAppContext(AppContext appContext) {
-        this.appContext = appContext;
     }
 
     public void configureDeployments(List<BeanContext> ejbDeployments) {
@@ -80,7 +81,6 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
     }
 
     public void startup() {
-        webBeansContext = appContext.getWebBeansContext();
         this.contexsServices = (CdiAppContextsService) webBeansContext.getContextsService();
         this.contexsServices.init(null);
     }
@@ -89,10 +89,10 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
         ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
         try {
             // Setting context class loader for cleaning
-            Thread.currentThread().setContextClassLoader(appContext.getClassLoader());
+            Thread.currentThread().setContextClassLoader(classLoader);
 
             // Fire shut down
-            appContext.getBeanManager().fireEvent(new BeforeShutdownImpl());
+            webBeansContext.getBeanManagerImpl().fireEvent(new BeforeShutdownImpl());
 
             // Destroys context
             this.contexsServices.destroy(null);
