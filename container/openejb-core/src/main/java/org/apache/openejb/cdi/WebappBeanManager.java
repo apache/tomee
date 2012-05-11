@@ -39,26 +39,18 @@ public class WebappBeanManager extends BeanManagerImpl {
     @Override
     public Object getReference(Bean<?> bean, Type beanType, CreationalContext<?> ctx) {
         try {
-            return super.getReference(bean, beanType, ctx);
+            return getParentBm().getReference(bean, beanType, ctx);
         } catch (RuntimeException e) {
-            try {
-                return getParentBm().getReference(bean, beanType, ctx);
-            } catch (RuntimeException ignored) {
-                throw e;
-            }
+            return super.getReference(bean, beanType, ctx);
         }
     }
 
     @Override
     public Object getInjectableReference(InjectionPoint injectionPoint, CreationalContext<?> ctx) {
         try {
-            return super.getInjectableReference(injectionPoint, ctx);
+            return getParentBm().getInjectableReference(injectionPoint, ctx);
         } catch (RuntimeException e) {
-            try {
-                return getParentBm().getInjectableReference(injectionPoint, ctx);
-            } catch (RuntimeException ignored) {
-                throw e;
-            }
+            return super.getInjectableReference(injectionPoint, ctx);
         }
     }
 
@@ -110,13 +102,9 @@ public class WebappBeanManager extends BeanManagerImpl {
     @Override
     public Bean<?> getPassivationCapableBean(String id) {
         try {
-            return super.getPassivationCapableBean(id);
+            return getParentBm().getPassivationCapableBean(id);
         } catch (RuntimeException e) {
-            try {
-                return getParentBm().getPassivationCapableBean(id);
-            } catch (RuntimeException ignored) {
-                throw e;
-            }
+            return super.getPassivationCapableBean(id);
         }
     }
 
@@ -135,15 +123,8 @@ public class WebappBeanManager extends BeanManagerImpl {
 
     @Override
     public void fireEvent(Object event, Annotation... qualifiers) {
-        try {
-            super.fireEvent(event, qualifiers);
-        } catch (RuntimeException e) {
-            try {
-                getParentBm().fireEvent(event, qualifiers);
-            } catch (RuntimeException ignored) {
-                throw e;
-            }
-        }
+        super.fireEvent(event, qualifiers);
+        getParentBm().fireEvent(event, qualifiers);
     }
 
     @Override
@@ -195,15 +176,8 @@ public class WebappBeanManager extends BeanManagerImpl {
 
     @Override
     public void validate(InjectionPoint injectionPoint) {
-        try {
-            super.validate(injectionPoint);
-        } catch (RuntimeException e) {
-            try {
-                getParentBm().validate(injectionPoint);
-            } catch (RuntimeException ignored) {
-                throw e;
-            }
-        }
+        super.validate(injectionPoint);
+        getParentBm().validate(injectionPoint); // TODO: check it
     }
 
     @Override
