@@ -56,6 +56,7 @@ public class Activator implements BundleActivator {
         env.setProperty("openejb.loader", "context");
         env.setProperty("openejb.deployments.classpath", "false");
         env.setProperty("openejb.nobanner", "true");
+        env.setProperty("openejb.modulename.useHash", "true");
 
         SystemInstance.init(env);
         // OptionsLog.install();
