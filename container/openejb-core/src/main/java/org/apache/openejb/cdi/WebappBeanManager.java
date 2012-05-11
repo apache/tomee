@@ -38,11 +38,16 @@ public class WebappBeanManager extends BeanManagerImpl {
 
     @Override
     public Object getReference(Bean<?> bean, Type beanType, CreationalContext<?> ctx) {
+        Object ref;
         try {
-            return getParentBm().getReference(bean, beanType, ctx);
+            ref = getParentBm().getReference(bean, beanType, ctx);
+            if (ref == null) {
+                ref = super.getReference(bean, beanType, ctx);
+            }
         } catch (RuntimeException e) {
-            return super.getReference(bean, beanType, ctx);
+            ref = super.getReference(bean, beanType, ctx);
         }
+        return ref;
     }
 
     @Override
