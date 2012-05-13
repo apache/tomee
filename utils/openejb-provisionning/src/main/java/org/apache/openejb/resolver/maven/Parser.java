@@ -17,6 +17,7 @@
 package org.apache.openejb.resolver.maven;
 
 import java.net.MalformedURLException;
+import org.ops4j.pax.url.maven.commons.MavenRepositoryURL;
 
 public class Parser {
     public static final String VERSION_LATEST = "LATEST";
@@ -38,6 +39,7 @@ public class Parser {
     private String m_type;
     private String m_classifier;
     private String m_fullClassifier;
+    private MavenRepositoryURL m_repositoryURL;
 
     public Parser(final String rawPath)
             throws MalformedURLException {
@@ -53,7 +55,7 @@ public class Parser {
         if (path.contains(REPOSITORY_SEPARATOR)) {
             int pos = path.lastIndexOf(REPOSITORY_SEPARATOR);
             parseArtifactPart(path.substring(pos + 1));
-            //m_repositoryURL = new MavenRepositoryURL(path.substring(0, pos) + "@snapshots");
+            m_repositoryURL = new MavenRepositoryURL(path.substring(0, pos) + "@snapshots");
         } else {
             parseArtifactPart(path);
         }
@@ -197,5 +199,9 @@ public class Parser {
                 .append(FILE_SEPARATOR)
                 .append(METADATA_FILE)
                 .toString();
+    }
+
+    public MavenRepositoryURL getRepositoryURL() {
+        return m_repositoryURL;
     }
 }
