@@ -285,7 +285,7 @@ public class Deployer implements BundleListener {
 
     /**
      * using dynamic imports can be too tricky when this class is often enough.
-     * Note: user can stil refine the version he needs...but manually.
+     * Note: user can still refine the version he needs...but manually.
      */
     private static class OSGIClassLoader extends ClassLoader {
         private final Bundle backingBundle;
@@ -295,6 +295,11 @@ public class Deployer implements BundleListener {
             super(null);
             backingBundle = bundle;
             fallbackBundle = openejbClassloader;
+        }
+
+        @Override
+        public boolean equals(final Object other) {
+            return this == other || backingBundle.equals(other);
         }
 
         @Override
@@ -397,48 +402,5 @@ public class Deployer implements BundleListener {
         protected ClassLoader getOpenEJBClassLoader(final URL url) {
             return new OSGIClassLoader(bundle, OpenEJBBundleContextHolder.get().getBundle());
         }
-    }
-
-    private static Class<?> forceLoadClass(final String name) {
-        final Bundle[] bundles = OpenEJBBundleContextHolder.get().getBundles();
-        for (final Bundle bundle : bundles) {
-            try {
-                return bundle.loadClass(name);
-            } catch (ClassNotFoundException e) {
-                // ignored
-            }
-        }
-        return null;
-    }
-
-    private static URL forceLoadResource(final String name) {
-        final Bundle[] bundles = OpenEJBBundleContextHolder.get().getBundles();
-        for (final Bundle bundle : bundles) {
-            final URL url = bundle.getResource(name);
-            if (url != null) {
-                return url;
-            }
-        }
-        return null;
-    }
-
-    private static Enumeration<URL> forceLoadResources(final String name) {
-        final Bundle[] bundles = OpenEJBBundleContextHolder.get().getBundles();
-        for (final Bundle bundle : bundles) {
-            Enumeration<URL> url = null;
-            try {
-                url = bundle.getResources(name);
-            } catch (IOException e) {
-                // ignored
-            }
-            if (url != null && url.hasMoreElements()) {
-                return url;
-            }
-        }
-        return null;
-    }
-
-    private static String className(final String name) {
-        return name.replace('/', '.');
     }
 }
