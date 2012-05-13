@@ -17,6 +17,7 @@
 
 package org.apache.openejb.assembler.classic;
 
+import javax.persistence.spi.*;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.api.internal.Internal;
 import org.apache.openejb.jee.JAXBContextFactory;
@@ -53,7 +54,6 @@ import javax.persistence.SharedCacheMode;
 import javax.persistence.ValidationMode;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.metamodel.Metamodel;
-import javax.persistence.spi.PersistenceUnitTransactionType;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import java.io.File;
@@ -319,6 +319,10 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory {
 
     public void removeManagedClasses(String clazz) {
         entityManagerFactoryCallable.getUnitInfo().getManagedClassNames().remove(clazz);
+    }
+
+    public javax.persistence.spi.PersistenceUnitInfo info() {
+        return entityManagerFactoryCallable.getUnitInfo();
     }
 
     @MBean

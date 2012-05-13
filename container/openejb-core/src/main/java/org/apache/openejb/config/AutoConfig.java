@@ -1218,10 +1218,10 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             }
 
             required.put("JtaManaged", "true");
-            String jtaDataSourceId = findResourceId(unit.getJtaDataSource(), "DataSource", required, null);
+            String jtaDataSourceId = findResourceId(replaceJavaAndSlash(unit.getJtaDataSource()), "DataSource", required, null);
 
             required.put("JtaManaged", "false");
-            String nonJtaDataSourceId = findResourceId(unit.getNonJtaDataSource(), "DataSource", required, null);
+            String nonJtaDataSourceId = findResourceId(replaceJavaAndSlash(unit.getNonJtaDataSource()), "DataSource", required, null);
 
             if (jtaDataSourceId != null && nonJtaDataSourceId != null){
                 // Both DataSources were explicitly configured.
@@ -1232,11 +1232,15 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
             // another try prefixing datasource name with app moduleid, case of datasourcedefinition for instance
             final String prefix = app.getModuleId() + "/";
-            required.put("JtaManaged", "true");
-            jtaDataSourceId = findResourceId(prefix + unit.getJtaDataSource(), "DataSource", required, null);
+            if (jtaDataSourceId == null) {
+                required.put("JtaManaged", "true");
+                jtaDataSourceId = findResourceId(prefix + replaceJavaAndSlash(unit.getJtaDataSource()), "DataSource", required, null);
+            }
 
-            required.put("JtaManaged", "false");
-            nonJtaDataSourceId = findResourceId(prefix + unit.getNonJtaDataSource(), "DataSource", required, null);
+            if (nonJtaDataSourceId == null) {
+                required.put("JtaManaged", "false");
+                nonJtaDataSourceId = findResourceId(prefix + replaceJavaAndSlash(unit.getNonJtaDataSource()), "DataSource", required, null);
+            }
 
             if (jtaDataSourceId != null && nonJtaDataSourceId != null){
                 // Both DataSources were explicitly configured.
@@ -1285,8 +1289,8 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             //
 
             required.put("JtaManaged", ANY);
-            String possibleJta = findResourceId(unit.getJtaDataSource(), "DataSource", required, null);
-            String possibleNonJta = findResourceId(unit.getNonJtaDataSource(), "DataSource", required, null);
+            String possibleJta = findResourceId(replaceJavaAndSlash(unit.getJtaDataSource()), "DataSource", required, null);
+            String possibleNonJta = findResourceId(replaceJavaAndSlash(unit.getNonJtaDataSource()), "DataSource", required, null);
             if (possibleJta != null && possibleJta == possibleNonJta){
                 ResourceInfo dataSource = configFactory.getResourceInfo(possibleJta);
 
@@ -1544,6 +1548,20 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             if (jtaDataSourceId != null) setJtaDataSource(unit, jtaDataSourceId);
             if (nonJtaDataSourceId != null) setNonJtaDataSource(unit, nonJtaDataSourceId);
         }
+    }
+
+    private String replaceJavaAndSlash(final String name) {
+        if (name == null) {
+            return null;
+        }
+
+        if (name.startsWith("java:")) {
+            return replaceJavaAndSlash(name.substring("java:".length()));
+        }
+        if (name.startsWith("/")) {
+            return name.substring(1);
+        }
+        return name;
     }
 
     private void setNonJtaDataSource(PersistenceUnit unit, String current) {
