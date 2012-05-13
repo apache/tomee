@@ -882,7 +882,9 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                     && resource.getProperties().getProperty(ORIGIN_FLAG).equals(ORIGIN_ANNOTATION)) {
                 properties.remove(ORIGIN_FLAG);
 
-                resourceInfo.id = module.getModuleId() + "/" + resourceInfo.id;
+                if (!(resourceInfo.id.startsWith("global") || resourceInfo.id.startsWith("/global"))) {
+                    resourceInfo.id = module.getModuleId() + "/" + resourceInfo.id;
+                }
 
                 if (properties.get("JdbcUrl") == null) {
                     final String url = getVendorUrl(properties);
