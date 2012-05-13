@@ -737,21 +737,26 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
 
     private static void updateInjections(Collection<Injection> injections, ClassLoader classLoader, boolean keepInjection) {
         final Iterator<Injection> it = injections.iterator();
-        while (it.hasNext()) { // update not loaded injections for classloader issues or remove them
+        final List<Injection> newOnes = new ArrayList<Injection>();
+        while (it.hasNext()) {
             final Injection injection = it.next();
             if (injection.getTarget() == null) {
                 try {
                     final Class<?> target = classLoader.loadClass(injection.getClassname());
                     if (keepInjection) {
                         final Injection added = new Injection(injection.getJndiName(), injection.getName(), target);
-                        injections.add(added);
+                        newOnes.add(added);
                     } else {
                         injection.setTarget(target);
                     }
                 } catch (ClassNotFoundException cnfe) {
-                    it.remove();
+                    // ignored
                 }
             }
+        }
+
+        if (!newOnes.isEmpty()) {
+            injections.addAll(newOnes);
         }
     }
 
