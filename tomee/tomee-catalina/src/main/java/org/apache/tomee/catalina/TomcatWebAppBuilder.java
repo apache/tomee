@@ -684,9 +684,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 injections.addAll(appContext.getInjections());
 
                 if (!contextInfo.appInfo.webAppAlone) {
-                    updateInjections(injections, classLoader);
+                    updateInjections(injections, classLoader, false);
                     for (BeanContext bean : appContext.getBeanContexts()) { // TODO: how if the same class in multiple webapps?
-                        updateInjections(bean.getInjections(), classLoader);
+                        updateInjections(bean.getInjections(), classLoader, true);
                     }
                 }
                 injections.addAll(new InjectionBuilder(classLoader).buildInjections(webAppInfo.jndiEnc));
@@ -735,14 +735,19 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         }
     }
 
-    private static void updateInjections(Collection<Injection> injections, ClassLoader classLoader) {
+    private static void updateInjections(Collection<Injection> injections, ClassLoader classLoader, boolean keepInjection) {
         final Iterator<Injection> it = injections.iterator();
         while (it.hasNext()) { // update not loaded injections for classloader issues or remove them
             final Injection injection = it.next();
             if (injection.getTarget() == null) {
                 try {
                     final Class<?> target = classLoader.loadClass(injection.getClassname());
-                    injection.setTarget(target);
+                    if (keepInjection) {
+                        final Injection added = new Injection(injection.getJndiName(), injection.getName(), target);
+                        injections.add(added);
+                    } else {
+                        injection.setTarget(target);
+                    }
                 } catch (ClassNotFoundException cnfe) {
                     it.remove();
                 }
