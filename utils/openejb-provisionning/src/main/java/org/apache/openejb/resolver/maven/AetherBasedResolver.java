@@ -83,20 +83,24 @@ public class AetherBasedResolver {
     final private MavenConfigurationImpl m_config;
     final private MirrorSelector m_mirrorSelector;
     final private ProxySelector m_proxySelector;
+    final private MavenRepositoryURL m_repositoryUrl;
 
     /**
      * Create a AetherBasedResolver
      *
+     *
      * @param configuration (must be not null)
+     * @param repositoryURL
      * @throws java.net.MalformedURLException in case of url problems in configuration.
      */
-    public AetherBasedResolver(final MavenConfigurationImpl configuration) throws MalformedURLException {
+    public AetherBasedResolver(final MavenConfigurationImpl configuration, MavenRepositoryURL repositoryURL) throws MalformedURLException {
         m_repoSystem = newRepositorySystem();
         m_config = configuration;
 
         m_remoteRepos = selectRepositories(getRemoteRepositories(configuration));
         m_mirrorSelector = selectMirrors();
         m_proxySelector = selectProxies();
+        m_repositoryUrl = repositoryURL;
         assignProxyAndMirrors();
     }
 
@@ -140,6 +144,10 @@ public class AetherBasedResolver {
         List<MavenRepositoryURL> r = new ArrayList<MavenRepositoryURL>();
         for (MavenRepositoryURL s : configuration.getRepositories()) {
             r.add(s);
+        }
+        if (m_repositoryUrl != null) {
+            // 0 should be local so add it just after to downlad the dependency quicker
+            r.add(r.size() == 0 ? 0 : 1, m_repositoryUrl);
         }
         r.add(new MavenRepositoryURL("https://repository.apache.org/content/repositories/snapshots/@snapshots@id=apache-snapshot"));
         r.add(new MavenRepositoryURL("https://repository.apache.org/content/repositories/releases/@id=apache-release"));

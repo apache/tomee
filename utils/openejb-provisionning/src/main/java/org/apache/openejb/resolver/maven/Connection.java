@@ -31,7 +31,7 @@ public class Connection extends URLConnection {
     public Connection( final URL url, final MavenConfigurationImpl configuration ) throws MalformedURLException {
         super(url);
         m_parser = new Parser( url.getPath() );
-        m_aetherBasedResolver = new AetherBasedResolver( configuration );
+        m_aetherBasedResolver = new AetherBasedResolver( configuration, m_parser.getRepositoryURL() );
     }
 
     @Override
