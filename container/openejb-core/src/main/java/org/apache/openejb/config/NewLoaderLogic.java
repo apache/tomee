@@ -57,6 +57,7 @@ import java.util.Set;
  */
 public class NewLoaderLogic {
     private static final Logger logger = DeploymentLoader.logger;
+    public static final String DEFAULT_EXCLUSIONS_ALIAS = "default-list";
     public static final String ADDITIONAL_EXCLUDES = SystemInstance.get().getOptions().get("openejb.additional.exclude", (String) null);
     public static final String ADDITIONAL_INCLUDE = SystemInstance.get().getOptions().get("openejb.additional.include", (String) null);
     private static final String EXCLUSION_FILE = "exclusions.list";
@@ -203,18 +204,7 @@ public class NewLoaderLogic {
 
         if (exclusions == null) {
 
-            InputStream is = null;
-            try {
-                is = NewLoaderLogic.class.getResourceAsStream("/default.exclusions");
-                exclusions = readInputStreamList(is);
-
-                logger.debug("Loaded default.exclusions");
-
-            } catch (Throwable e) {
-                // ignored
-            } finally {
-                IO.close(is);
-            }
+            exclusions = readDefaultExclusions();
         }
 
         final List<String> excludes = null != exclusions ? Arrays.asList(exclusions) : new ArrayList<String>();
@@ -239,6 +229,24 @@ public class NewLoaderLogic {
         return excludes.toArray(new String[excludes.size()]);
     }
 
+    private static String[] readDefaultExclusions() {
+        InputStream is = null;
+        String[] read = null;
+        try {
+            is = NewLoaderLogic.class.getResourceAsStream("/default.exclusions");
+            read = readInputStreamList(is);
+
+            logger.debug("Loaded default.exclusions");
+
+        } catch (Throwable e) {
+            // ignored
+        } finally {
+            IO.close(is);
+        }
+
+        return read;
+    }
+
     private static String[] readInputStreamList(final InputStream is) {
 
         final List<String> list = new ArrayList<String>();
@@ -251,7 +259,11 @@ public class NewLoaderLogic {
 
             while ((line = reader.readLine()) != null) {
                 final String value = line.trim();
-                if (!value.isEmpty()) {
+                if (DEFAULT_EXCLUSIONS_ALIAS.equals(value)) {
+                    for (String v : readDefaultExclusions()) {
+                        list.add(v);
+                    }
+                } else if (!value.isEmpty()) {
                     list.add(value);
                 }
             }
