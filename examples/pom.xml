@@ -44,6 +44,7 @@
     <module>cdi-request-scope</module>
     <module>cdi-application-scope</module>
     <module>cdi-produces-disposes</module>
+    <module>cdi-produces-field</module>
     <module>component-interfaces</module>
     <module>custom-injection</module>
     <module>datasource-ciphered-password</module>
@@ -107,6 +108,7 @@
     <module>webservice-handlerchain</module>
     <module>webservice-holder</module>
     <module>multiple-tomee-arquillian</module>
+    <module>cdi-produces-field</module>
   </modules>
   <profiles>
     <profile>
