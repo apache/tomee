@@ -108,7 +108,6 @@
     <module>webservice-handlerchain</module>
     <module>webservice-holder</module>
     <module>multiple-tomee-arquillian</module>
-    <module>cdi-produces-field</module>
   </modules>
   <profiles>
     <profile>
