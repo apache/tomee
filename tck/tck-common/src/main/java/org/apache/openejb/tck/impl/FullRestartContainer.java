@@ -116,7 +116,7 @@ public class FullRestartContainer extends AbstractContainers implements Containe
 
         try {
             InitialContext context = new InitialContext(props);
-            return (ExceptionManagerFacade) context.lookup("openejb/ExceptionManagerFacadeRemote");
+            return (ExceptionManagerFacade) context.lookup("openejb/ExceptionManagerFacadeBusinessRemote");
         } catch (Exception e) {
             throw new OpenEJBTCKRuntimeException(e);
         }
