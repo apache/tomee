@@ -41,7 +41,7 @@ public class JSFInjectionTest {
     @ArquillianResource
     private URL url;
 
-    @Deployment
+    @Deployment(testable = false)
     public static WebArchive getArchive() {
         final WebAppDescriptor descriptor = Descriptors.create(WebAppDescriptor.class)
                 .version("3.0");
