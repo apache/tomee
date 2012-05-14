@@ -1,0 +1,3 @@
+<tomee>
+  <Resource id="myDataSource" type="DataSource" /> <!-- configure it -->
+</tomee>
