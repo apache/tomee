@@ -50,7 +50,8 @@ public class SystemApps {
             deployment.getProperties().put("openejb.jndiname.format", "{deploymentId}{interfaceType.annotationName}");
 
             final SingletonBean exceptionManager = ejbJar.addEnterpriseBean(new SingletonBean("openejb/ExceptionManagerFacade", "org.apache.tomee.catalina.facade.ExceptionManagerFacadeBean"));
-            openejbJar.addEjbDeployment(exceptionManager).getProperties().put("openejb.jndiname.format", "{deploymentId}{interfaceType.annotationName}");
+            final EjbDeployment exceptionMgr = openejbJar.addEjbDeployment(exceptionManager);
+            exceptionMgr.getProperties().put("openejb.jndiname.format", "{deploymentId}{interfaceType.annotationName}");
         }
 
 
