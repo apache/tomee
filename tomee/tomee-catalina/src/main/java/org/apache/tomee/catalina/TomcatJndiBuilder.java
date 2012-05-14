@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import javax.ejb.spi.HandleDelegate;
 import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.naming.LinkRef;
 import javax.naming.NamingException;
 import javax.naming.RefAddr;
@@ -38,6 +39,7 @@ import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.UserTransaction;
 import org.apache.catalina.core.NamingContextListener;
 import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.deploy.ContextEjb;
 import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextResource;
@@ -57,6 +59,7 @@ import org.apache.openejb.assembler.classic.PersistenceContextReferenceInfo;
 import org.apache.openejb.assembler.classic.PersistenceUnitReferenceInfo;
 import org.apache.openejb.assembler.classic.PortRefInfo;
 import org.apache.openejb.assembler.classic.ResourceEnvReferenceInfo;
+import org.apache.openejb.assembler.classic.ResourceInfo;
 import org.apache.openejb.assembler.classic.ResourceReferenceInfo;
 import org.apache.openejb.assembler.classic.ServiceReferenceInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
@@ -747,6 +750,33 @@ public class TomcatJndiBuilder {
 
     private void setResource(ContextResource resource, Object object) {
         setStaticValue(new Resource(resource), object);
+    }
+
+    public static void importOpenEJBResourcesInTomcat(final Collection<ResourceInfo> resources, final StandardServer server) {
+        final NamingResources naming = server.getGlobalNamingResources();
+        final Context ctx;
+        try {
+            ctx = new InitialContext();
+        } catch (NamingException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        for (ResourceInfo info : resources) {
+            final String name = info.id;
+            if (name == null || naming.findResource(name) != null) {
+                continue;
+            }
+
+            final ContextResource resource = new ContextResource();
+            resource.setName(name);
+            resource.setProperty(Constants.FACTORY, ResourceFactory.class.getName());
+            resource.setProperty(NAME, name);
+            resource.setType(info.className);
+            resource.setAuth("Container");
+
+            naming.addResource(resource);
+        }
     }
 
     private static class Resource implements NamingUtil.Resource {

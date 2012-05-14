@@ -28,6 +28,8 @@ import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.startup.Bootstrap;
 import org.apache.catalina.startup.Catalina;
 import org.apache.openejb.OpenEJB;
+import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.openejb.config.sys.Tomee;
@@ -40,6 +42,7 @@ import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.ServiceManager;
 import org.apache.openejb.server.ejbd.EjbServer;
+import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.Service;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.LogCategory;
@@ -210,6 +213,7 @@ public class TomcatLoader implements Loader {
         ejbServer = new EjbServer();
         SystemInstance.get().setComponent(EjbServer.class, ejbServer);
         OpenEJB.init(properties, new ServerFederation());
+        TomcatJndiBuilder.importOpenEJBResourcesInTomcat(SystemInstance.get().getComponent(OpenEjbConfiguration.class).facilities.resources, TomcatHelper.getServer());
 
         Properties ejbServerProps = new Properties();
         ejbServerProps.putAll(properties);
