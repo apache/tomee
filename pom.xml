@@ -890,16 +890,40 @@
             <artifactId>geronimo-j2ee-connector_1.5_spec</artifactId>
           </exclusion>
           <exclusion>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jms_1.1_spec</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-j2ee-management_1.1_spec</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+          </exclusion>
+          <exclusion>
             <groupId>activemq</groupId>
             <artifactId>jmdns</artifactId>
           </exclusion>
-		  <exclusion>
+          <exclusion>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>com.google.inject.extensions</groupId>
+            <artifactId>guice-multibindings</artifactId>
+          </exclusion>
+		      <exclusion>
             <groupId>commons-net</groupId>
             <artifactId>commons-net</artifactId>
           </exclusion>
+          <exclusion>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-core</artifactId>
+          </exclusion>
         </exclusions>
       </dependency>
-	  <dependency>
+	    <dependency>
         <groupId>commons-net</groupId>
         <artifactId>commons-net</artifactId>
         <version>${commons-net.version}</version>
@@ -1024,6 +1048,18 @@
           <exclusion>
             <groupId>org.springframework</groupId>
             <artifactId>spring</artifactId>
+          </exclusion>
+          <exclusion>
+            <artifactId>jasypt</artifactId>
+            <groupId>org.jasypt</groupId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.apache.hadoop</groupId>
