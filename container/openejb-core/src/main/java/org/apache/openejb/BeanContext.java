@@ -16,6 +16,7 @@
  */
 package org.apache.openejb;
 
+import java.util.LinkedHashMap;
 import org.apache.openejb.assembler.classic.ProxyInterfaceResolver;
 import org.apache.openejb.cdi.CdiEjbBean;
 import org.apache.openejb.cdi.ConstructorInjectionBean;
@@ -25,6 +26,7 @@ import org.apache.openejb.core.InstanceContext;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.cmp.KeyGenerator;
+import org.apache.openejb.core.interceptor.Interceptor;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorInstance;
 import org.apache.openejb.core.interceptor.InterceptorStack;
@@ -35,6 +37,7 @@ import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.core.transaction.TransactionPolicyFactory;
 import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.monitoring.StatsInterceptor;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.Index;
 import org.apache.openejb.util.LogCategory;
@@ -834,6 +837,10 @@ public class BeanContext extends DeploymentContext {
         systemInterceptors.add(new InterceptorInstance(interceptor));
     }
 
+    public void addFirstSystemInterceptor(Object interceptor) {
+        systemInterceptors.add(0, new InterceptorInstance(interceptor));
+    }
+
     public void addUserInterceptor(Object interceptor) {
         userInterceptors.add(new InterceptorInstance(interceptor));
     }
@@ -1304,7 +1311,7 @@ public class BeanContext extends DeploymentContext {
             }
 
             // Create interceptors
-            final HashMap<String, Object> interceptorInstances = new HashMap<String, Object>();
+            final Map<String, Object> interceptorInstances = new LinkedHashMap<String, java.lang.Object>();
 
             // Add the stats interceptor instance and other already created interceptor instances
             for (InterceptorInstance interceptorInstance : this.getUserAndSystemInterceptors()) {

@@ -336,7 +336,7 @@ public class StatelessInstanceManager {
         // Create stats interceptor
         if (StatsInterceptor.isStatsActivated()) {
             StatsInterceptor stats = new StatsInterceptor(beanContext.getBeanClass());
-            beanContext.addSystemInterceptor(stats);
+            beanContext.addFirstSystemInterceptor(stats);
 
             // register the invocation stats interceptor
             try {
