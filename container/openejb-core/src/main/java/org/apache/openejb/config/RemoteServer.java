@@ -53,6 +53,7 @@ public class RemoteServer {
     private final int tries;
     private final boolean verbose;
     private final int shutdownPort;
+    private final String host;
 
     public RemoteServer() {
         this(options.get("connect.tries", 60), options.get("verbose", false));
@@ -65,6 +66,7 @@ public class RemoteServer {
         tomcat = (home != null) && (new File(new File(home, "bin"), "catalina.sh").exists());
 
         shutdownPort = options.get("server.shutdown.port", tomcat ? 8005 : 4200);
+        host = options.get("server.shutdown.host", "localhost");
     }
 
     public void init(Properties props) {
@@ -326,8 +328,11 @@ public class RemoteServer {
             System.out.println("lib dir doesn't exist");
             return;
         }
-        for (File lib : dir.listFiles()) {
-            System.out.println(lib.getAbsolutePath());
+        final File[] files = dir.listFiles();
+        if (files != null) {
+            for (File lib : files) {
+                System.out.println(lib.getAbsolutePath());
+            }
         }
     }
 
@@ -360,7 +365,7 @@ public class RemoteServer {
 
                 String command = "SHUTDOWN" + Character.toString((char) 0); // SHUTDOWN + EOF
 
-                Socket socket = new Socket("localhost", shutdownPort);
+                Socket socket = new Socket(host, shutdownPort);
                 OutputStream out = socket.getOutputStream();
                 out.write(command.getBytes());
 
@@ -383,7 +388,7 @@ public class RemoteServer {
         //System.out.println("CONNECT "+ tries);
         try {
 
-            Socket socket = new Socket("localhost", shutdownPort);
+            Socket socket = new Socket(host, shutdownPort);
             OutputStream out = socket.getOutputStream();
             out.close();
             if (verbose) System.out.println("[] CONNECTED IN " + (this.tries - tries));
