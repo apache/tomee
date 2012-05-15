@@ -292,7 +292,7 @@ public class SingletonInstanceManager {
         // Create stats interceptor
         if (StatsInterceptor.isStatsActivated()) {
             StatsInterceptor stats = new StatsInterceptor(beanContext.getBeanClass());
-            beanContext.addSystemInterceptor(stats);
+            beanContext.addFirstSystemInterceptor(stats);
 
             MBeanServer server = LocalMBeanServer.get();
 
