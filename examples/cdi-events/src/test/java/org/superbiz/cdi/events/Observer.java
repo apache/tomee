@@ -33,7 +33,7 @@ public class Observer {
 
     public void saveDate(@Observes Date date) {
         dates.add(date);
-        LOGGER.info("received date '{0}'", date);
+        LOGGER.info("received date '{}'", date);
     }
 
     public List<Date> getDates() {
