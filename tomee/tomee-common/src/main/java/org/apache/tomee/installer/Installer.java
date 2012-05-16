@@ -99,8 +99,41 @@ public class Installer {
         removeTomcatLibJar("el-api.jar");
         addJavaeeInEndorsed();
 
+        addTomEEAdminConfInTomcatUsers();
+
         if (!alerts.hasErrors()) {
             status = Status.REBOOT_REQUIRED;
+        }
+    }
+
+    public void addTomEEAdminConfInTomcatUsers() {
+        // read server.xml
+        String tomcatUsersXml = Installers.readAll(paths.getTomcatUsersXml(), alerts);
+
+        // server xml will be null if we couldn't read the file
+        if (tomcatUsersXml == null) {
+            return;
+        }
+
+        if (tomcatUsersXml.contains("tomee-admin")) {
+            alerts.addWarning("Can't add tomee user to tomcat-users.xml");
+            return;
+        }
+
+        // if we can't backup the file, do not modify it
+        if (!Installers.backup(paths.getTomcatUsersXml(), alerts)) {
+            return;
+        }
+
+        // add our listener
+        final String newTomcatUsers = tomcatUsersXml.replace("</tomcat-users>",
+                "  <role rolename=\"tomee-admin\" />\n" +
+                "  <user username=\"tomee\" password=\"tomee\" roles=\"tomee-admin\" />" +
+                "\n</tomcat-users>\n");
+
+        // overwrite server.xml
+        if (Installers.writeAll(paths.getTomcatUsersXml(), newTomcatUsers, alerts)) {
+            alerts.addInfo("Add tomee user to tomcat-users.xml");
         }
     }
 
@@ -115,6 +148,8 @@ public class Installer {
         removeTomcatLibJar("el-api.jar");
         addJavaeeInEndorsed();
         moveLibs();
+
+        addTomEEAdminConfInTomcatUsers();
 
         if (!alerts.hasErrors()) {
             status = Status.REBOOT_REQUIRED;

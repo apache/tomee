@@ -19,68 +19,131 @@
 <web-app xmlns="http://java.sun.com/xml/ns/javaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
-         version="3.0"  metadata-complete="true">
+         version="3.0" metadata-complete="true">
 
 
-    <display-name>OpenEJB Loader Application</display-name>
+  <display-name>OpenEJB Loader Application</display-name>
 
-    <listener>
-        <listener-class>org.apache.tomee.loader.listener.UserSessionListener</listener-class>
-    </listener>
+  <listener>
+    <listener-class>org.apache.tomee.loader.listener.UserSessionListener</listener-class>
+  </listener>
 
-    <servlet>
-        <servlet-name>LoaderServlet</servlet-name>
-        <servlet-class>org.apache.tomee.loader.LoaderServlet</servlet-class>
-        <load-on-startup>0</load-on-startup>
-    </servlet>
+  <servlet>
+    <servlet-name>LoaderServlet</servlet-name>
+    <servlet-class>org.apache.tomee.loader.LoaderServlet</servlet-class>
+    <load-on-startup>0</load-on-startup>
+  </servlet>
 
-    <servlet>
-        <servlet-name>ServerServlet</servlet-name>
-        <servlet-class>org.apache.openejb.server.httpd.ServerServlet</servlet-class>
-    </servlet>
+  <servlet>
+    <servlet-name>ServerServlet</servlet-name>
+    <servlet-class>org.apache.openejb.server.httpd.ServerServlet</servlet-class>
+  </servlet>
 
-    <servlet>
-        <servlet-name>InstallerServlet</servlet-name>
-        <servlet-class>org.apache.tomee.installer.InstallerServlet</servlet-class>
-    </servlet>
+  <servlet>
+    <servlet-name>InstallerServlet</servlet-name>
+    <servlet-class>org.apache.tomee.installer.InstallerServlet</servlet-class>
+  </servlet>
 
-    <servlet>
-        <servlet-name>WsConsole</servlet-name>
-        <servlet-class>org.apache.tomee.loader.servlet.ConsoleServlet</servlet-class>
-    </servlet>
+  <servlet>
+    <servlet-name>WsConsole</servlet-name>
+    <servlet-class>org.apache.tomee.loader.servlet.ConsoleServlet</servlet-class>
+  </servlet>
 
-    <servlet>
-        <servlet-name>WsJndi</servlet-name>
-        <servlet-class>org.apache.tomee.loader.servlet.JndiServlet</servlet-class>
-    </servlet>
+  <servlet>
+    <servlet-name>WsJndi</servlet-name>
+    <servlet-class>org.apache.tomee.loader.servlet.JndiServlet</servlet-class>
+  </servlet>
 
-    <servlet>
-        <servlet-name>WsTest</servlet-name>
-        <servlet-class>org.apache.tomee.loader.servlet.TestServlet</servlet-class>
-    </servlet>
+  <servlet>
+    <servlet-name>WsTest</servlet-name>
+    <servlet-class>org.apache.tomee.loader.servlet.TestServlet</servlet-class>
+  </servlet>
 
-    <servlet-mapping>
-        <servlet-name>ServerServlet</servlet-name>
-        <url-pattern>/ejb/*</url-pattern>
-    </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ServerServlet</servlet-name>
+    <url-pattern>/ejb/*</url-pattern>
+  </servlet-mapping>
 
-    <servlet-mapping>
-        <servlet-name>InstallerServlet</servlet-name>
-        <url-pattern>/installer</url-pattern>
-    </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>InstallerServlet</servlet-name>
+    <url-pattern>/installer</url-pattern>
+  </servlet-mapping>
 
-    <servlet-mapping>
-        <servlet-name>WsConsole</servlet-name>
-        <url-pattern>/ws/console/*</url-pattern>
-    </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>WsConsole</servlet-name>
+    <url-pattern>/ws/console/*</url-pattern>
+  </servlet-mapping>
 
-    <servlet-mapping>
-        <servlet-name>WsJndi</servlet-name>
-        <url-pattern>/ws/jndi/*</url-pattern>
-    </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>WsJndi</servlet-name>
+    <url-pattern>/ws/jndi/*</url-pattern>
+  </servlet-mapping>
 
-    <servlet-mapping>
-        <servlet-name>WsTest</servlet-name>
-        <url-pattern>/ws/test/*</url-pattern>
-    </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>WsTest</servlet-name>
+    <url-pattern>/ws/test/*</url-pattern>
+  </servlet-mapping>
+
+  <!-- basic security to replace context.xml and allow remote accesses -->
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Admin Installer</web-resource-name>
+      <url-pattern>/installer</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>tomee-admin</role-name>
+    </auth-constraint>
+  </security-constraint>
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Admin Webservices</web-resource-name>
+      <url-pattern>/ws/*</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>tomee-admin</role-name>
+    </auth-constraint>
+  </security-constraint>
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Admin Interface</web-resource-name>
+      <url-pattern>*.jsp</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>tomee-admin</role-name>
+    </auth-constraint>
+  </security-constraint>
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Admin Style</web-resource-name>
+      <url-pattern>/css/*</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>tomee-admin</role-name>
+    </auth-constraint>
+  </security-constraint>
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Admin Images</web-resource-name>
+      <url-pattern>/images/*</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>tomee-admin</role-name>
+    </auth-constraint>
+  </security-constraint>
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Admin Javascript</web-resource-name>
+      <url-pattern>/js/*</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>tomee-admin</role-name>
+    </auth-constraint>
+  </security-constraint>
+  <login-config>
+    <auth-method>BASIC</auth-method>
+    <realm-name>TomEE Webapp</realm-name>
+  </login-config>
+  <security-role>
+    <role-name>tomee-admin</role-name>
+  </security-role>
 </web-app>
