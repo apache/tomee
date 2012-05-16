@@ -28,6 +28,7 @@ public class TomEEServiceManager extends SimpleServiceManager {
         // managed manually or done in a different way in TomEE
         return !"httpejbd".equals(serviceName)
                 && !"ejbd".equals(serviceName)
-                && !"ejbds".equals(serviceName);
+                && !"ejbds".equals(serviceName)
+                && !"admin".equals(serviceName);
     }
 }
