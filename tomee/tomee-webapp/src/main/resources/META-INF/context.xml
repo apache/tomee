@@ -17,5 +17,7 @@
     limitations under the License.
 -->
 <Context>
+  <!-- commenting since web.xml security should be enough by default
   <Valve className="org.apache.catalina.valves.RemoteAddrValve" allow="127\.0\.0\.1|0:0:0:0:0:0:0:1(%.*)?|^::1$" deny=""/>
+  -->
 </Context>

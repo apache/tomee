@@ -54,6 +54,8 @@ public class Paths {
 
     private File openEJBWebLibDir;
 
+    private File tomcatUsersXml;
+
     public Paths(File openejbWarDir) {
         this.openejbWarDir = openejbWarDir;
     }
@@ -444,5 +446,16 @@ public class Paths {
             openEJBWebLibDir = new File(openejbWarDir, "WEB-INF/lib");
         }
         return openEJBWebLibDir;
+    }
+
+    public File getTomcatUsersXml() {
+        if (tomcatUsersXml == null) {
+            final File confdir = getCatalinaConfDir();
+            if (confdir == null) {
+                return null;
+            }
+            tomcatUsersXml = new File(confdir, "tomcat-users.xml");
+        }
+        return tomcatUsersXml;
     }
 }
