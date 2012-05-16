@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.core.ivm.naming;
 
+import java.util.concurrent.ConcurrentHashMap;
 import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.core.ivm.IntraVmCopyMonitor;
 import org.apache.openejb.core.ivm.IntraVmProxy;
@@ -69,7 +70,7 @@ public class IvmContext implements Context, Serializable {
     private static final long serialVersionUID = -626353930051783641L;
     Hashtable<String, Object> myEnv;
     boolean readOnly = false;
-    Map<String, Object> fastCache = new HashMap<String, Object>();
+    Map<String, Object> fastCache = new ConcurrentHashMap<String, Object>();
     public NameNode mynode;
 
     public static IvmContext createRootContext() {
