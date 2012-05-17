@@ -23,6 +23,7 @@ import org.apache.tomee.loader.service.ServiceContextImpl;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
+import java.util.HashMap;
 
 public class UserSessionListener implements HttpSessionListener {
     private static final String USER_CONTEXT = "UserSessionListener_USER_CONTEXT";
@@ -31,6 +32,7 @@ public class UserSessionListener implements HttpSessionListener {
     public void sessionCreated(HttpSessionEvent httpSessionEvent) {
         final ServiceContext cxt = new ServiceContextImpl();
         httpSessionEvent.getSession().setAttribute(USER_CONTEXT, cxt);
+        httpSessionEvent.getSession().setAttribute("objects", new HashMap<String, Object>());
     }
 
     @Override

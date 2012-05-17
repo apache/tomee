@@ -599,10 +599,6 @@ java.util.Set
     @SuppressWarnings({"unchecked"})
     public Map<String, Object> getObjectMap() {
         Map<String, Object> objects = (Map<String, Object>) session.getAttribute("objects");
-        if (objects == null) {
-            objects = new HashMap<String, Object>();
-            session.setAttribute("objects", objects);
-        }
         return objects;
     }
 
