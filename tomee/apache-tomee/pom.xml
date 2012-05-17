@@ -80,6 +80,13 @@
       <type>war</type>
       <scope>provided</scope>
     </dependency>
+    <dependency> <!-- to be sure to have it -->
+      <groupId>${project.groupId}</groupId>
+      <artifactId>tomee-jaxrs-webapp</artifactId>
+      <version>${openejb.version}</version>
+      <type>war</type>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <build>
