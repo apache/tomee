@@ -82,28 +82,6 @@ limitations under the License.
         <div class="span12">
             <p>
                 <textarea id='scriptCodeTXT' class="span8 input-xlarge" id="textarea" rows="25">
-//See http://docs.oracle.com/javase/6/docs/technotes/guides/scripting/programmer_guide/index.html for more
-//information about java scripting
-
-//import what you need
-importClass(javax.naming.Context);
-importClass(java.util.Properties);
-importClass(javax.naming.InitialContext);
-
-//create the initial context
-var p = new Properties();
-p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
-p.put("openejb.loader", "embed");
-var ctx = new InitialContext(p);
-
-//lookup and execute your ejb
-var ejbHome = ctx.lookup("MEJB");
-var bean = ejbHome.create();
-
-//the "util" object has two methods: write and getJson
-util.write(bean.getDefaultDomain());
-
-//now hit the "Run" button bellow.
                 </textarea><BR>
                 <a class="btn btn-primary" href="#" onclick="TOMEE.executeScript();">Run</a>
             </p>

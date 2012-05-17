@@ -199,11 +199,7 @@ javax.naming.InitialContext
         //javax.servlet.http.HttpSession session = this.session;
         //noinspection unchecked
         Map<String, Object> objects = (Map<String, Object>) session.getAttribute("objects");
-        if (objects == null) {
-            objects = new HashMap<String, Object>();
-            session.setAttribute("objects", objects);
-        }
-        
+
         Context ctx;
         if(contextID == null){
         Properties p = new Properties();

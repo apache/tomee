@@ -17,8 +17,6 @@
 
 package org.apache.tomee.loader.servlet;
 
-import com.google.gson.Gson;
-
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
@@ -26,13 +24,16 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Map;
 
 public class ConsoleServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
         final ScriptEngineManager manager = new ScriptEngineManager();
+        final HttpSession session = req.getSession();
 
         String engineName = req.getParameter("engineName");
         if (engineName == null || "".equals(engineName.trim())) {
@@ -52,8 +53,9 @@ public class ConsoleServlet extends HttpServlet {
             }
 
             @Override
-            public String getJson(Object obj) {
-                return new Gson().toJson(obj);
+            public void save(String key, Object obj) {
+                Map<String, Object> objects = (Map<String, Object>) session.getAttribute("objects");
+                objects.put(key, obj);
             }
         });
 
@@ -70,6 +72,6 @@ public class ConsoleServlet extends HttpServlet {
 
     private interface Utility {
         void write(Object obj) throws Exception;
-        String getJson(Object obj);
+        void save(String key, Object obj);
     }
 }
