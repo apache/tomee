@@ -24,10 +24,12 @@ import org.apache.openejb.jee.JAXBContextFactory;
 import org.apache.openejb.jee.Persistence;
 import org.apache.openejb.jee.PersistenceUnitCaching;
 import org.apache.openejb.jee.PersistenceUnitValidationMode;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.monitoring.DynamicMBeanWrapper;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.persistence.PersistenceUnitInfoImpl;
+import org.apache.openejb.persistence.QueryLogEntityManager;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -67,28 +69,54 @@ import java.util.Properties;
 
 public class ReloadableEntityManagerFactory implements EntityManagerFactory {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, ReloadableEntityManagerFactory.class);
+
     public static final String JAVAX_PERSISTENCE_SHARED_CACHE_MODE = "javax.persistence.sharedCache.mode";
     public static final String JAVAX_PERSISTENCE_VALIDATION_MODE = "javax.persistence.validation.mode";
     public static final String JAVAX_PERSISTENCE_TRANSACTION_TYPE = "javax.persistence.transactionType";
+
+    public static final String OPENEJB_JPA_CRITERIA_LOG_JPQL = "openejb.jpa.criteria.log.jpql";
+    public static final String OPENEJB_JPA_CRITERIA_LOG_JPQL_LEVEL = "openejb.jpa.criteria.log.jpql.level";
 
     private ClassLoader classLoader;
     private EntityManagerFactory delegate;
     private EntityManagerFactoryCallable entityManagerFactoryCallable;
     private ObjectName objectName = null;
 
-    public ReloadableEntityManagerFactory(final ClassLoader cl, final EntityManagerFactory emf, EntityManagerFactoryCallable callable) {
+    private boolean logCriteriaJpql;
+    private String logCriteriaJpqlLevel;
+
+    public ReloadableEntityManagerFactory(final ClassLoader cl, final EntityManagerFactory emf, final EntityManagerFactoryCallable callable, final Properties props) {
         classLoader = cl;
         delegate = emf;
         entityManagerFactoryCallable = callable;
+
+        logCriteriaJpql = logCriteriaQueryJpql(props);
+        logCriteriaJpqlLevel = logCriteriaQueryJpqlLevel(props);
+    }
+
+    private String logCriteriaQueryJpqlLevel(final Properties props) {
+        return SystemInstance.get().getOptions().get(OPENEJB_JPA_CRITERIA_LOG_JPQL_LEVEL, props.getProperty(OPENEJB_JPA_CRITERIA_LOG_JPQL_LEVEL, "INFO"));
+    }
+
+    private boolean logCriteriaQueryJpql(final Properties prop) {
+        return SystemInstance.get().getOptions().get(OPENEJB_JPA_CRITERIA_LOG_JPQL, Boolean.parseBoolean(prop.getProperty(OPENEJB_JPA_CRITERIA_LOG_JPQL, "false")));
     }
 
     @Override public EntityManager createEntityManager() {
-        return delegate.createEntityManager();
+        final EntityManager em = delegate.createEntityManager();
+        if (logCriteriaJpql) {
+            return new QueryLogEntityManager(em, logCriteriaJpqlLevel);
+        }
+        return em;
     }
 
     @Override
     public EntityManager createEntityManager(Map map) {
-        return delegate.createEntityManager(map);
+        final EntityManager em = delegate.createEntityManager(map);
+        if (logCriteriaJpql) {
+            return new QueryLogEntityManager(em, logCriteriaJpqlLevel);
+        }
+        return em;
     }
 
     @Override

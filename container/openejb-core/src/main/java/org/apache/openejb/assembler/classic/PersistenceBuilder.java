@@ -147,7 +147,7 @@ public class PersistenceBuilder {
         final long start = System.nanoTime();
         try {
             final EntityManagerFactoryCallable callable = new EntityManagerFactoryCallable(persistenceProviderClassName, unitInfo);
-            return new ReloadableEntityManagerFactory(classLoader, createEmf(classLoader, callable), callable);
+            return new ReloadableEntityManagerFactory(classLoader, createEmf(classLoader, callable), callable, unitInfo.getProperties());
         } finally {
             final long time = TimeUnit.MILLISECONDS.convert(System.nanoTime() - start, TimeUnit.NANOSECONDS);
             logger.info("assembler.buildingPersistenceUnit", unitInfo.getPersistenceUnitName(), unitInfo.getPersistenceProviderClassName(), time+"");
