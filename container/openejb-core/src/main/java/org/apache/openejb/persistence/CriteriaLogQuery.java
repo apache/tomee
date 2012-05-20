@@ -18,6 +18,7 @@ import org.apache.openejb.util.Logger;
 public class CriteriaLogQuery<T> implements TypedQuery<T> {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_JPA, CriteriaLogQuery.class);
     private static final Map<Class<?>, Method> methodsCache = new ConcurrentHashMap<Class<?>, Method>();
+    private static final Map<Class<?>, Class<?>> unwrapCache = new ConcurrentHashMap<Class<?>, Class<?>>();
     private static final String GET_QUERY_STRING_MTD = "getQueryString";
 
     private final TypedQuery<T> delegate;
@@ -31,29 +32,41 @@ public class CriteriaLogQuery<T> implements TypedQuery<T> {
     private void logJPQLQuery() {
         final Class<?> clazz = delegate.getClass();
         Method mtd = methodsCache.get(clazz);
+        Class<?> unwrapQuery = unwrapCache.get(clazz);
         if (mtd == null) {
-            try {
+            try { // openjpa
                 mtd = clazz.getMethod(GET_QUERY_STRING_MTD);
             } catch (NoSuchMethodException e) {
-                try {
-                    mtd = getClass().getMethod(GET_QUERY_STRING_MTD);
-                } catch (NoSuchMethodException shouldntOccur) {
-                    // ignored
+                try { // hibernate
+                    unwrapQuery = clazz.getClassLoader().loadClass("org.hibernate.Query");
+                    unwrapCache.put(clazz, unwrapQuery);
+                    mtd = unwrapQuery.getMethod(GET_QUERY_STRING_MTD);
+                } catch (Exception e2) {
+                    try { // fallback
+                        mtd = getClass().getMethod(GET_QUERY_STRING_MTD);
+                    } catch (NoSuchMethodException shouldntOccur) {
+                        // ignored
+                    }
                 }
             }
             methodsCache.put(clazz, mtd);
         }
-        logJPQLQuery(mtd);
+        logJPQLQuery(unwrapQuery, mtd);
     }
 
     public String getQueryString() {
         return delegate.getClass().getName() + " doesn't support getQueryString() method: '" + delegate.toString() + "'";
     }
 
-    private void logJPQLQuery(final Method mtd) {
+    private void logJPQLQuery(final Class<?> unwrap, final Method mtd) {
         String query = null;
+        Object realQuery = delegate;
+        if (unwrap != null) {
+            realQuery = delegate.unwrap(unwrap);
+        }
+
         try {
-            query = (String) mtd.invoke(delegate);
+            query = (String) mtd.invoke(realQuery);
         } catch (Exception e) {
             try {
                 query = getQueryString();
