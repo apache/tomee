@@ -95,7 +95,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
 
         ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
         ClassLoader cl;
-        if (oldClassLoader != ThreadSingletonServiceImpl.class.getClassLoader()) {
+        if (oldClassLoader != ThreadSingletonServiceImpl.class.getClassLoader() && ThreadSingletonServiceImpl.class.getClassLoader() != oldClassLoader.getParent()) {
             cl = new MultipleClassLoader(oldClassLoader, ThreadSingletonServiceImpl.class.getClassLoader());
         } else {
             cl = oldClassLoader;

@@ -23,6 +23,7 @@ import org.apache.catalina.Container;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
 import org.apache.catalina.LifecycleListener;
+import org.apache.catalina.LifecycleState;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Pipeline;
 import org.apache.catalina.Service;
@@ -290,6 +291,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 standardContext = new StandardContext();
             }
 
+            if (getContextInfo(webApp.host, webApp.contextRoot) != null) {
+                continue;
+            }
+
             if (standardContext.getPath() != null) {
                 webApp.contextRoot = standardContext.getPath();
             }
@@ -429,12 +434,19 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             if (contextInfo != null) {
                 final StandardContext standardContext = contextInfo.standardContext;
 
-                if (undeploy(standardContext, contextInfo)) {
-                    deleteDir(new File(standardContext.getServletContext().getRealPath("")));
+                undeploy(standardContext, contextInfo);
+                final File extracted = new File(standardContext.getServletContext().getRealPath(""));
+                if (isExtracted(extracted)) {
+                    deleteDir(extracted);
                 }
                 removeContextInfo(standardContext);
             }
         }
+    }
+
+    private boolean isExtracted(final File extracted) {
+        // do we want to delete it?
+        return false;
     }
 
     /**
@@ -762,8 +774,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             contextInfo.deployer.unmanageApp(standardContext.getName());
             return true;
         } else if (contextInfo.host != null) {
-            contextInfo.host.removeChild(standardContext);
-            return true;
+            return undeploy(standardContext, contextInfo.host);
         } else {
             Container container = contextInfo.standardContext;
             while (container != null) {
@@ -773,10 +784,19 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 container = container.getParent();
             }
             if (container != null) {
-                container.removeChild(standardContext);
+                return undeploy(standardContext, container);
             }
             return false;
         }
+    }
+
+    private static boolean undeploy(final StandardContext standardContext, final Container host) {
+        final Container child = host.findChild(standardContext.getName());
+        if (child != null) {
+            host.removeChild(standardContext);
+            return true;
+        }
+        return false;
     }
 
     private JndiEncBuilder getJndiBuilder(final ClassLoader classLoader, final WebAppInfo webAppInfo, final Set<Injection> injections) throws OpenEJBException {
