@@ -99,7 +99,8 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory {
     }
 
     private boolean logCriteriaQueryJpql(final Properties prop) {
-        return SystemInstance.get().getOptions().get(OPENEJB_JPA_CRITERIA_LOG_JPQL, Boolean.parseBoolean(prop.getProperty(OPENEJB_JPA_CRITERIA_LOG_JPQL, "false")));
+        return SystemInstance.get().getOptions().get(OPENEJB_JPA_CRITERIA_LOG_JPQL, Boolean.parseBoolean(prop.getProperty(OPENEJB_JPA_CRITERIA_LOG_JPQL, "false")))
+                || SystemInstance.get().getOptions().get(OPENEJB_JPA_CRITERIA_LOG_JPQL_LEVEL, prop.getProperty(OPENEJB_JPA_CRITERIA_LOG_JPQL_LEVEL, null)) != null;
     }
 
     @Override public EntityManager createEntityManager() {
