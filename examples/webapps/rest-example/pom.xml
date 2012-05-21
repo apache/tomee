@@ -48,6 +48,7 @@
     </pluginRepository>
   </pluginRepositories>
   <build>
+    <finalName>${project.artifactId}</finalName>
     <defaultGoal>package</defaultGoal>
     <plugins>
       <plugin>
