@@ -17,6 +17,7 @@
  */
 package org.apache.tomee.catalina;
 
+import javax.naming.NameAlreadyBoundException;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
@@ -260,12 +261,19 @@ public class OpenEJBNamingContextListener implements LifecycleListener, Property
     }
 
     private void bindResource(String name, Object value, String type) {
+        Assembler assembler = (Assembler) SystemInstance.get().getComponent(org.apache.openejb.spi.Assembler.class);
+        try {
+            assembler.getContainerSystem().getJNDIContext().lookup(Assembler.OPENEJB_RESOURCE_JNDI_PREFIX + name);
+            return;
+        } catch (NamingException ne) {
+            // no-op: OK
+        }
+
         ResourceInfo resourceInfo = new ResourceInfo();
         resourceInfo.id = name;
         resourceInfo.service = "Resource";
         resourceInfo.types.add(type);
         PassthroughFactory.add(resourceInfo, value);
-        Assembler assembler = (Assembler) SystemInstance.get().getComponent(org.apache.openejb.spi.Assembler.class);
 
         logger.info("Importing a Tomcat Resource with id '" + resourceInfo.id + "' of type '" + type + "'.");
         try {

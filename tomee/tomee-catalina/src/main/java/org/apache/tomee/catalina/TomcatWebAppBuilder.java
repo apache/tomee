@@ -429,9 +429,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             if (contextInfo != null) {
                 final StandardContext standardContext = contextInfo.standardContext;
 
-                undeploy(standardContext, contextInfo);
-
-                deleteDir(new File(standardContext.getServletContext().getRealPath("")));
+                if (undeploy(standardContext, contextInfo)) {
+                    deleteDir(new File(standardContext.getServletContext().getRealPath("")));
+                }
                 removeContextInfo(standardContext);
             }
         }
@@ -756,11 +756,14 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         }
     }
 
-    private static void undeploy(final StandardContext standardContext, final ContextInfo contextInfo) {
+    // return true if the dir can be deleted. TODO: revisit this heuristic
+    private static boolean undeploy(final StandardContext standardContext, final ContextInfo contextInfo) {
         if (isReady(contextInfo.deployer)) {
             contextInfo.deployer.unmanageApp(standardContext.getName());
+            return true;
         } else if (contextInfo.host != null) {
             contextInfo.host.removeChild(standardContext);
+            return true;
         } else {
             Container container = contextInfo.standardContext;
             while (container != null) {
@@ -772,6 +775,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             if (container != null) {
                 container.removeChild(standardContext);
             }
+            return false;
         }
     }
 
