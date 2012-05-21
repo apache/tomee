@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Remove;
 import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.Typed;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.SessionBeanType;
@@ -111,7 +112,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
     }
 
     public boolean needsBeanLocalViewAddedToTypes() {
-        return beanContext.isLocalbean();
+        return beanContext.isLocalbean() && beanContext.getBeanClass().getAnnotation(Typed.class) == null;
     }
 
     @Override
@@ -120,11 +121,11 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
         List<Class<?>> clazzes = new ArrayList<Class<?>>();
 
         if (beanContext.isLocalbean()) {
-            clazzes.add(beanContext.getBeanClass());
+            addApiTypes(clazzes, beanContext.getBeanClass());
         } else if (beanContext.getProxyClass() != null) {
-            clazzes.add(beanContext.getProxyClass());
+            addApiTypes(clazzes, beanContext.getProxyClass());
         } else {
-            List<Class> cl = this.beanContext.getBusinessLocalInterfaces();
+            List<Class> cl = beanContext.getBusinessLocalInterfaces();
 
             if (cl != null && !cl.isEmpty()) {
                 for (Class<?> c : cl) {
@@ -134,6 +135,17 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
         }
 
         return clazzes;
+    }
+
+    private static void addApiTypes(final List<Class<?>> clazzes, final Class<?> beanClass) {
+        final Typed typed = beanClass.getAnnotation(Typed.class);
+        if (typed == null || typed.value().length == 0) {
+            clazzes.add(beanClass);
+        } else {
+            for (Class<?> clazz : typed.value()) {
+                clazzes.add(clazz);
+            }
+        }
     }
 
     @Override
