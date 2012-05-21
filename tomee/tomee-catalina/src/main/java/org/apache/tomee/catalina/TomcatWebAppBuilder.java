@@ -426,15 +426,11 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         for (final WebAppInfo webApp : appInfo.webApps) {
             final ContextInfo contextInfo = getContextInfo(webApp.host, webApp.contextRoot);
 
-            if (contextInfo != null && contextInfo.deployer != null) {
+            if (contextInfo != null) {
                 final StandardContext standardContext = contextInfo.standardContext;
-                final HostConfig deployer = contextInfo.deployer;
 
-                if (deployer != null) {
-                    deployer.unmanageApp(standardContext.getPath());
-                } else if (contextInfo.host != null) {
-                    contextInfo.host.removeChild(standardContext);
-                }
+                undeploy(standardContext, contextInfo);
+
                 deleteDir(new File(standardContext.getServletContext().getRealPath("")));
                 removeContextInfo(standardContext);
             }
@@ -765,6 +761,17 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             contextInfo.deployer.unmanageApp(standardContext.getName());
         } else if (contextInfo.host != null) {
             contextInfo.host.removeChild(standardContext);
+        } else {
+            Container container = contextInfo.standardContext;
+            while (container != null) {
+                if (container instanceof Host) {
+                    break;
+                }
+                container = container.getParent();
+            }
+            if (container != null) {
+                container.removeChild(standardContext);
+            }
         }
     }
 
