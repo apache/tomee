@@ -18,9 +18,17 @@
 package org.apache.tomee.catalina;
 
 import java.net.URLClassLoader;
+import javax.management.ObjectName;
+import javax.servlet.ServletContext;
+import org.apache.catalina.Context;
+import org.apache.catalina.Globals;
+import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
+import org.apache.catalina.LifecycleState;
+import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.loader.WebappClassLoader;
 import org.apache.catalina.loader.WebappLoader;
+import org.apache.catalina.mbeans.MBeanUtils;
 import org.apache.naming.resources.DirContextURLStreamHandler;
 import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.util.ArrayEnumeration;
@@ -37,31 +45,78 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.tomcat.util.modeler.Registry;
 
 public class TomEEWebappLoader extends WebappLoader {
     private ClassLoader appClassLoader;
-    private ClassLoader tomEEClassLoader;
+    private TomEEClassLoader tomEEClassLoader;
     private String appPath;
 
     public TomEEWebappLoader(final String appId, final ClassLoader classLoader) {
-    	this.appPath = appId;
+        this.appPath = appId;
         appClassLoader = classLoader;
     }
 
-    @Override public ClassLoader getClassLoader() {
+    @Override
+    public ClassLoader getClassLoader() {
         return tomEEClassLoader;
     }
 
-    @Override protected void startInternal() throws LifecycleException {
+    @Override
+    protected void startInternal() throws LifecycleException {
         super.startInternal();
         final WebappClassLoader webappCl = (WebappClassLoader) super.getClassLoader();
         tomEEClassLoader = new TomEEClassLoader(appPath, appClassLoader, webappCl);
         try {
-             DirContextURLStreamHandler.bind(tomEEClassLoader, getContainer().getResources());
+            DirContextURLStreamHandler.bind(tomEEClassLoader, getContainer().getResources());
         } catch (Throwable t) {
             ExceptionUtils.handleThrowable(t);
             throw new LifecycleException("start: ", t);
         }
+    }
+
+    @Override
+    protected void stopInternal() throws LifecycleException {
+        setState(LifecycleState.STOPPING);
+
+        // Remove context attributes as appropriate
+        if (getContainer() instanceof Context) {
+            ServletContext servletContext =
+                    ((Context) getContainer()).getServletContext();
+            servletContext.removeAttribute(Globals.CLASS_PATH_ATTR);
+        }
+
+        // Throw away our current class loader
+        final ClassLoader parent = tomEEClassLoader.webapp.getParent();
+        if (parent instanceof WebappClassLoader && !((WebappClassLoader) parent).isStarted()) {
+            tomEEClassLoader.webapp.setDelegate(false);
+        }
+
+        if (tomEEClassLoader.webapp.isStarted()) {
+            tomEEClassLoader.webapp.stop();
+        }
+
+        if (appClassLoader instanceof WebappClassLoader && ((WebappClassLoader) appClassLoader).isStarted()) {
+            ((WebappClassLoader) appClassLoader).stop();
+        }
+
+        DirContextURLStreamHandler.unbind(tomEEClassLoader);
+
+        try {
+            StandardContext ctx = (StandardContext) getContainer();
+            String contextName = ctx.getName();
+            if (!contextName.startsWith("/")) {
+                contextName = "/" + contextName;
+            }
+            ObjectName cloname = new ObjectName
+                    (MBeanUtils.getDomain(ctx) + ":type=WebappClassLoader,context="
+                            + contextName + ",host=" + ctx.getParent().getName());
+            Registry.getRegistry(null, null).unregisterComponent(cloname);
+        } catch (Exception e) {
+            e.printStackTrace(); // TODO
+        }
+
+        tomEEClassLoader = null;
     }
 
     public static class TomEEClassLoader extends URLClassLoader {
@@ -83,7 +138,8 @@ public class TomEEWebappLoader extends WebappLoader {
          * @return
          * @throws IOException
          */
-        @Override public Enumeration<URL> getResources(final String name) throws IOException {
+        @Override
+        public Enumeration<URL> getResources(final String name) throws IOException {
             // DMB: On inspection I was seeing three copies of the same resource
             // due to the app.getResources and webapp.getResources call.
             // Switching from a list to a form of set trims the duplicates
@@ -99,45 +155,45 @@ public class TomEEWebappLoader extends WebappLoader {
         }
 
         private List<URL> clear(Iterable<URL> urls) { // take care of antiJarLocking
-        	final List<URL> clean = new ArrayList<URL>();
-        	for (URL url : urls) {
-	            final String urlStr = url.toExternalForm();
-	            URL jarUrl = null;
-	            if (urlStr.contains("!")) {
-	            	try {
-						jarUrl = new URL(urlStr.substring(0, urlStr.lastIndexOf('!'))  + "!/");
-					} catch (MalformedURLException e) {
-						// ignored
-					}
-	            }
-	
-	            if (jarUrl != null) {
-	            	final URL cachedFile = ClassLoaderUtil.getUrlKeyCached(appPath, file(jarUrl));
-	            	if (cachedFile != null) {
-	                	URL resource = null;
-						try {
-							resource = new URL("jar:file:" + cachedFile.getFile() + urlStr.substring(urlStr.lastIndexOf('!')));
-						} catch (MalformedURLException e) {
-							// ignored
-						}
-	                	if (resource != null && !clean.contains(resource)) {
-							clean.add(resource);
-	                	}
-	            	} else {
+            final List<URL> clean = new ArrayList<URL>();
+            for (URL url : urls) {
+                final String urlStr = url.toExternalForm();
+                URL jarUrl = null;
+                if (urlStr.contains("!")) {
+                    try {
+                        jarUrl = new URL(urlStr.substring(0, urlStr.lastIndexOf('!')) + "!/");
+                    } catch (MalformedURLException e) {
+                        // ignored
+                    }
+                }
+
+                if (jarUrl != null) {
+                    final URL cachedFile = ClassLoaderUtil.getUrlKeyCached(appPath, file(jarUrl));
+                    if (cachedFile != null) {
+                        URL resource = null;
+                        try {
+                            resource = new URL("jar:file:" + cachedFile.getFile() + urlStr.substring(urlStr.lastIndexOf('!')));
+                        } catch (MalformedURLException e) {
+                            // ignored
+                        }
+                        if (resource != null && !clean.contains(resource)) {
+                            clean.add(resource);
+                        }
+                    } else {
                         // DMB: Unsure if this is the correct hanlding of the else case,
                         // but in OSX the getUrlKeyCached returns null so the url was
                         // being ignored
                         clean.add(url);
                     }
 
-	            } else if (!clean.contains(url)) {
-	                clean.add(url);
-	            }
-        	}
-			return clean;
-		}
+                } else if (!clean.contains(url)) {
+                    clean.add(url);
+                }
+            }
+            return clean;
+        }
 
-		private void add(Map<String, URL> urls, Enumeration<URL> enumUrls) {
+        private void add(Map<String, URL> urls, Enumeration<URL> enumUrls) {
             try {
                 while (enumUrls.hasMoreElements()) {
                     final URL url = enumUrls.nextElement();
@@ -148,13 +204,20 @@ public class TomEEWebappLoader extends WebappLoader {
             }
         }
 
-		private static File file(URL jarUrl) {
+        private static File file(URL jarUrl) {
             return URLs.toFile(jarUrl);
-		}
+        }
+
+        // act as app classloader, don't change it without testing against a BeanManagerHolder implementation
 
         @Override
         public boolean equals(Object other) {
-            return other == this || webapp.equals(other);
+            return other == this || app.equals(other);
+        }
+
+        @Override
+        public int hashCode() {
+            return app.hashCode();
         }
     }
 }

@@ -54,4 +54,14 @@ public class MultipleClassLoader extends ClassLoader {
     public Class<?> loadClassSecond(String name) throws ClassNotFoundException {
         return second.loadClass(name);
     }
+
+    @Override
+    public boolean equals(final Object other) {
+        return this == other || getParent().equals(other);
+    }
+
+    @Override
+    public int hashCode() {
+        return getParent().hashCode();
+    }
 }
