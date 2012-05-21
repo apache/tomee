@@ -212,7 +212,7 @@ public class TomEEWebappLoader extends WebappLoader {
 
         @Override
         public boolean equals(Object other) {
-            return other == this || app.equals(other);
+            return other == this; // don't add: || app.equals(other);
         }
 
         @Override
