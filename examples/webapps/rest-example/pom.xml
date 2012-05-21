@@ -116,7 +116,7 @@
           </dependency>
           <dependency> <!-- to get the jee6 profile without configuration -->
             <groupId>org.apache.openejb</groupId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>4.0.0-beta-3-SNAPSHOT</version>
             <artifactId>spi-helper-jee6-profile</artifactId>
           </dependency>
         </dependencies>
