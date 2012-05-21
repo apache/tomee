@@ -251,7 +251,9 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory {
             newProvider = "org.hibernate.ejb.HibernatePersistence";
         } else if ("openjpa".equals(provider)) {
             newProvider = "org.apache.openjpa.persistence.PersistenceProviderImpl";
-        } else if ("eclipse".equals(provider)) {
+        } else if ("eclipselink".equals(provider)) {
+            newProvider = "org.eclipse.persistence.jpa.PersistenceProvider";
+        } else if ("toplink".equals(provider)) {
             newProvider = "oracle.toplink.essentials.PersistenceProvider";
         } else {
             newProvider = provider;
