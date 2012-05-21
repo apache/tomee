@@ -1,10 +1,9 @@
 package org.apache.openejb.arquillian.openejb;
 
-import java.util.List;
+import java.util.Enumeration;
 import java.util.logging.Handler;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
-import org.apache.commons.collections.EnumerationUtils;
 import org.apache.openejb.util.JuliLogStreamFactory;
 import org.apache.openejb.util.LogCategory;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
@@ -15,8 +14,9 @@ import org.jboss.arquillian.test.spi.TestEnricher;
 public class OpenEJBExtension implements LoadableExtension {
     static { // logging conf
         if (System.getProperty("java.util.logging.config.class") == null || System.getProperty("java.util.logging.config.file") == null) {
-            for (String name : (List<String>) EnumerationUtils.toList(LogManager.getLogManager().getLoggerNames())) {
-                initLogger(name);
+            final Enumeration<String> list = LogManager.getLogManager().getLoggerNames();
+            while (list.hasMoreElements()) {
+                initLogger(list.nextElement());
             }
             initLogger(LogCategory.OPENEJB.getName());
         }
