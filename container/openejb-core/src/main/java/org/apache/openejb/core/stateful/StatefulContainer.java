@@ -784,7 +784,7 @@ public class StatefulContainer implements RpcContainer {
         }
 
         Instance instance = checkedOutInstances.remove(primaryKey);
-        if (!containsExtendedPersistenceContext(instance.beanContext)) {
+        if (instance != null && !containsExtendedPersistenceContext(instance.beanContext)) {
             cache.remove(primaryKey);
         }
 
