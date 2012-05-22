@@ -1,6 +1,9 @@
 package org.apache.openejb.arquillian.openejb;
 
 import java.lang.reflect.Method;
+import java.util.Set;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.InjectionProcessor;
@@ -9,6 +12,7 @@ import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.webbeans.inject.OWBInjector;
+import org.apache.webbeans.util.InjectionExceptionUtils;
 import org.jboss.arquillian.container.spi.context.annotation.ContainerScoped;
 import org.jboss.arquillian.container.spi.context.annotation.DeploymentScoped;
 import org.jboss.arquillian.core.api.Instance;
@@ -26,9 +30,13 @@ public class OpenEJBInjectionEnricher implements TestEnricher {
 
     @Override
     public void enrich(final Object testInstance) {
+        final AppContext ctx = appContext.get();
+        final BeanManager bm = ctx.getWebBeansContext().getBeanManagerImpl();
         try {
-            OWBInjector beanInjector = new OWBInjector(appContext.get().getWebBeansContext());
-            beanInjector.inject(testInstance);
+            final Set<Bean<?>> beans = bm.getBeans(testInstance.getClass());
+            final Bean<?> bean = bm.resolve(beans);
+            final OWBInjector beanInjector = new OWBInjector(ctx.getWebBeansContext());
+            beanInjector.inject(testInstance, bm.createCreationalContext(bean));
         } catch (Throwable t) {
             // ignored
         }

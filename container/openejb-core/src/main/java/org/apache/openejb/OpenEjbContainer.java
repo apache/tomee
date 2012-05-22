@@ -16,8 +16,11 @@
  */
 package org.apache.openejb;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.cdi.ScopeHelper;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.ConnectorModule;
@@ -49,6 +52,8 @@ import org.apache.openejb.util.OptionsLog;
 import org.apache.openejb.util.ServiceManagerProxy;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.inject.OWBInjector;
+import org.apache.webbeans.web.lifecycle.test.MockHttpSession;
+import org.apache.webbeans.web.lifecycle.test.MockServletContext;
 import org.apache.xbean.naming.context.ContextFlyweight;
 
 import javax.ejb.EJBException;
@@ -74,6 +79,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import static org.apache.openejb.cdi.ScopeHelper.startContexts;
+import static org.apache.openejb.cdi.ScopeHelper.stopContexts;
+
 /**
  * @version $Rev$ $Date$
  */
@@ -93,6 +101,8 @@ public class OpenEjbContainer extends EJBContainer {
     private OpenEjbContainer.GlobalContext globalJndiContext;
     private WebBeansContext webBeanContext;
     private CreationalContext<Object> creationalContext = null;
+    private ServletContext servletContext;
+    private HttpSession session;
 
     private OpenEjbContainer(Map<?, ?> map, AppContext appContext) {
         webBeanContext = appContext.getWebBeansContext();
@@ -104,6 +114,14 @@ public class OpenEjbContainer extends EJBContainer {
         options = new Options(properties);
 
         startNetworkServices();
+
+        servletContext = new MockServletContext();
+        session = new MockHttpSession();
+        try {
+            startContexts(webBeanContext.getContextFactory(), servletContext, session);
+        } catch (Exception e) {
+            logger.warning("can't start all CDI contexts", e);
+        }
     }
 
     @Override
@@ -115,6 +133,11 @@ public class OpenEjbContainer extends EJBContainer {
             globalJndiContext.close();
         } catch (NamingException e) {
             throw new IllegalStateException(e);
+        }
+        try {
+            stopContexts(webBeanContext.getContextFactory(), servletContext, session);
+        } catch (Exception e) {
+            logger.warning("can't stop all CDI contexts", e);
         }
         OpenEJB.destroy();
         instance = null;
