@@ -169,9 +169,7 @@ public class TomcatWsRegistry implements WsRegistry {
         // build contexts
         // - old way (/*)
         if (WEBSERVICE_OLDCONTEXT_ACTIVE) {
-            Context context = createNewContext(path, classLoader, authMethod, transportGuarantee, realmName);
-            host.addChild(context);
-            addServlet(host, context, "/*", httpListener, path, addresses);
+            deployInFakeWebapp(path, classLoader, authMethod, transportGuarantee, realmName, host, httpListener, addresses);
         }
 
         // - new way (/<webappcontext>/webservices/<name>) if webcontext is specified
@@ -181,16 +179,26 @@ public class TomcatWsRegistry implements WsRegistry {
                 root = '/' + root;
             }
             Context webAppContext = (Context) host.findChild(root);
-            // sub context = '/' means the service address is provided by webservices
-            if (WEBSERVICE_SUB_CONTEXT.equals("/") && path.startsWith("/")) {
-                addServlet(host, webAppContext, path, httpListener, path, addresses);
-            } else if (WEBSERVICE_SUB_CONTEXT.equals("/") && !path.startsWith("/")) {
-                addServlet(host, webAppContext, '/' + path, httpListener, path, addresses);
-            } else {
-                addServlet(host, webAppContext, WEBSERVICE_SUB_CONTEXT + path, httpListener, path, addresses);
+            if (webAppContext != null) {
+                // sub context = '/' means the service address is provided by webservices
+                if (WEBSERVICE_SUB_CONTEXT.equals("/") && path.startsWith("/")) {
+                    addServlet(host, webAppContext, path, httpListener, path, addresses, false);
+                } else if (WEBSERVICE_SUB_CONTEXT.equals("/") && !path.startsWith("/")) {
+                    addServlet(host, webAppContext, '/' + path, httpListener, path, addresses, false);
+                } else {
+                    addServlet(host, webAppContext, WEBSERVICE_SUB_CONTEXT + path, httpListener, path, addresses, false);
+                }
+            } else if (!WEBSERVICE_OLDCONTEXT_ACTIVE) { // deploying in a jar
+                deployInFakeWebapp(path, classLoader, authMethod, transportGuarantee, realmName, host, httpListener, addresses);
             }
         }
         return addresses;
+    }
+
+    private void deployInFakeWebapp(String path, ClassLoader classLoader, String authMethod, String transportGuarantee, String realmName, Container host, HttpListener httpListener, List<String> addresses) {
+        final Context context = createNewContext(path, classLoader, authMethod, transportGuarantee, realmName);
+        host.addChild(context);
+        addServlet(host, context, "/*", httpListener, path, addresses, true);
     }
 
     private static Context createNewContext(String path, ClassLoader classLoader, String authMethod, String transportGuarantee, String realmName) {
@@ -269,7 +277,7 @@ public class TomcatWsRegistry implements WsRegistry {
         return context;
     }
 
-    private void addServlet(Container host, Context context, String mapping, HttpListener httpListener, String path, List<String> addresses) {
+    private void addServlet(Container host, Context context, String mapping, HttpListener httpListener, String path, List<String> addresses, boolean fakeDeployment) {
         // build the servlet
         Wrapper wrapper = context.createWrapper();
         wrapper.setName("webservice" + path.substring(1));
@@ -290,7 +298,7 @@ public class TomcatWsRegistry implements WsRegistry {
         // register wsdl locations for service-ref resolution
         for (Connector connector : connectors) {
             final StringBuilder fullContextpath;
-            if (!WEBSERVICE_OLDCONTEXT_ACTIVE) {
+            if (!WEBSERVICE_OLDCONTEXT_ACTIVE && !fakeDeployment) {
                 String contextPath = context.getName();
                 if (contextPath != null && !contextPath.startsWith("/")) {
                     contextPath = "/" + contextPath;
