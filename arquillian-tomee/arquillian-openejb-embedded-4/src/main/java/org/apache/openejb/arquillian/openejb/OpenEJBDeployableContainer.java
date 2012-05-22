@@ -6,6 +6,8 @@ import java.util.Properties;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBRuntimeException;
@@ -20,6 +22,8 @@ import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
+import org.apache.webbeans.web.lifecycle.test.MockHttpSession;
+import org.apache.webbeans.web.lifecycle.test.MockServletContext;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.container.DeploymentException;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
@@ -33,6 +37,9 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
+
+import static org.apache.openejb.cdi.ScopeHelper.startContexts;
+import static org.apache.openejb.cdi.ScopeHelper.stopContexts;
 
 public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBConfiguration> {
     private static final Properties PROPERTIES = new Properties();
@@ -60,11 +67,21 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
     private ConfigurationFactory configurationFactory;
 
     // suite
-    private AppInfo appInfo;
+    @Inject
+    @DeploymentScoped
+    private InstanceProducer<AppInfo> appInfoProducer;
 
     @Inject
     @DeploymentScoped
     private InstanceProducer<AppContext> appContextProducer;
+
+    @Inject
+    @DeploymentScoped
+    private InstanceProducer<ServletContext> servletContextProducer;
+
+    @Inject
+    @DeploymentScoped
+    private InstanceProducer<HttpSession> sessionProducer;
 
     @Inject
     @ContainerScoped
@@ -73,6 +90,22 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
     @Inject
     @SuiteScoped
     private Instance<AppModule> module;
+
+    @Inject
+    @DeploymentScoped
+    private Instance<ServletContext> servletContext;
+
+    @Inject
+    @DeploymentScoped
+    private Instance<HttpSession> session;
+
+    @Inject
+    @DeploymentScoped
+    private Instance<AppInfo> info;
+
+    @Inject
+    @DeploymentScoped
+    private Instance<AppContext> appContext;
 
     @Override
     public Class<OpenEJBConfiguration> getConfigurationClass() {
@@ -110,8 +143,18 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
     @Override
     public ProtocolMetaData deploy(final Archive<?> archive) throws DeploymentException {
         try {
-            appInfo = configurationFactory.configureApplication(module.get());
+            final AppInfo appInfo = configurationFactory.configureApplication(module.get());
             final AppContext appCtx = assembler.createApplication(appInfo);
+
+            final ServletContext appServletContext = new MockServletContext();
+            final HttpSession appSession = new MockHttpSession();
+
+            startContexts(appCtx.getWebBeansContext().getContextFactory(), appServletContext, appSession);
+
+            servletContextProducer.set(appServletContext);
+            sessionProducer.set(appSession);
+
+            appInfoProducer.set(appInfo);
             appContextProducer.set(appCtx);
         } catch (Exception e) {
             throw new DeploymentException("can't deploy " + archive.getName(), e);
@@ -122,7 +165,8 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
     @Override
     public void undeploy(final Archive<?> archive) throws DeploymentException {
         try {
-            assembler.destroyApplication(appInfo.path);
+            assembler.destroyApplication(info.get().path);
+            stopContexts(appContext.get().getWebBeansContext().getContextFactory(), servletContext.get(), session.get());
         } catch (Exception e) {
             throw new DeploymentException("can't undeploy " + archive.getName(), e);
         }
