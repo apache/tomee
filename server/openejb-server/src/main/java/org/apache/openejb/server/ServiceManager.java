@@ -40,6 +40,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import static org.apache.openejb.util.PropertyPlaceHolderHelper.holds;
+import static org.apache.openejb.util.PropertyPlaceHolderHelper.holdsWithUpdate;
+
 /**
  * @version $Rev$ $Date$
  * @org.apache.xbean.XBean element="serviceManager"
@@ -225,6 +228,8 @@ public abstract class ServiceManager {
                 }
             }
         }
+
+        holdsWithUpdate(serviceProperties);
 
         // Override with system properties
         final String prefix = serviceName + ".";
