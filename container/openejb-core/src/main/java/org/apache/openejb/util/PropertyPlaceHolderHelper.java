@@ -27,8 +27,16 @@ public final class PropertyPlaceHolderHelper {
     public static Properties holds(final Properties properties) {
         final Properties updated = new Properties();
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-            updated.setProperty(entry.getKey().toString(), value(entry.getValue().toString()));
+            final Object rawValue = entry.getValue();
+            if (rawValue instanceof String) {
+                updated.put(entry.getKey(), value(rawValue.toString()));
+            }
         }
         return updated;
+    }
+
+    public static void holdsWithUpdate(final Properties props) {
+        final Properties toUpdate = holds(props);
+        props.putAll(toUpdate);
     }
 }
