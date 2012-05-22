@@ -34,10 +34,7 @@ public class RequestScopeArquillianStandaloneTest {
     @Test
     public void checkInjections() {
         assertNotNull(bean);
-
-        // a bit dirty but the easier way to check it
         assertTrue(JavassistProxyFactory.isProxyInstance(bean));
-        assertThat(((ProxyObject) bean).getHandler(), instanceOf(RequestScopedBeanInterceptorHandler.class));
     }
 
     @RequestScoped
