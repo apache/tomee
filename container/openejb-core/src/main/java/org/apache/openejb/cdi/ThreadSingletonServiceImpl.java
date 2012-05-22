@@ -54,9 +54,10 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, ThreadSingletonServiceImpl.class);
     //this needs to be static because OWB won't tell us what the existing SingletonService is and you can't set it twice.
     private static final ThreadLocal<WebBeansContext> contexts = new ThreadLocal<WebBeansContext>();
+    private static final String WEBBEANS_FAILOVER_ISSUPPORTFAILOVER = "org.apache.webbeans.web.failover.issupportfailover";
 
     public ThreadSingletonServiceImpl() {
-
+        // no-op
     }
 
 
@@ -78,6 +79,10 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         properties.setProperty(OpenWebBeansConfiguration.CONVERSATION_PERIODIC_DELAY, "1800000");
         properties.setProperty(OpenWebBeansConfiguration.APPLICATION_SUPPORTS_CONVERSATION, "true");
         properties.setProperty(OpenWebBeansConfiguration.IGNORED_INTERFACES, "org.apache.aries.proxy.weaving.WovenProxy");
+
+        if (SystemInstance.get().getOptions().get(WEBBEANS_FAILOVER_ISSUPPORTFAILOVER, false)) {
+            properties.setProperty(WEBBEANS_FAILOVER_ISSUPPORTFAILOVER, "true");
+        }
 
         services.put(AppContext.class, appContext);
         services.put(TransactionService.class, new OpenEJBTransactionService());
