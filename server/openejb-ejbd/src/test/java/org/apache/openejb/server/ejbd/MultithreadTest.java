@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.server.ejbd;
 
+import java.util.concurrent.atomic.AtomicReference;
 import junit.framework.TestCase;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
@@ -37,11 +38,18 @@ import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * @version $Rev$ $Date$
  */
-public class MultithreadTest extends TestCase {
+public class MultithreadTest {
 
     private ServiceDaemon serviceDaemon;
     private Counter counter;
@@ -50,6 +58,7 @@ public class MultithreadTest extends TestCase {
     private static CountDownLatch startingLine;
     private static CountDownLatch invocations;
 
+    @Test
     public void testStatelessBeanPooling() throws Exception {
 
         startPistol = new CountDownLatch(1);
@@ -91,6 +100,7 @@ public class MultithreadTest extends TestCase {
 
     }
 
+    @Test
     public void testStatelessBeanRelease() throws Exception {
 
     	invocations = new CountDownLatch(30);
@@ -122,7 +132,7 @@ public class MultithreadTest extends TestCase {
 
     }
 
-
+    @Test
     public void testStatelessBeanTimeout() throws Exception {
 
         final CountDownLatch timeouts = new CountDownLatch(10);
@@ -130,6 +140,7 @@ public class MultithreadTest extends TestCase {
         startingLine = new CountDownLatch(10);
 
         // Do a business method...
+        final AtomicReference<Throwable> error = new AtomicReference<Throwable>();
         Runnable r = new Runnable(){
         	public void run(){
         		try{
@@ -139,7 +150,8 @@ public class MultithreadTest extends TestCase {
                     timeouts.countDown();
                     assertEquals("An invocation of the Stateless Session Bean CounterBean has timed-out", ex.getMessage());
         		} catch (Throwable t) {
-                    fail("Unexpected exception" + t.getClass().getName() + " " + t.getMessage());
+                    error.set(t);
+                    fail("Unexpected exception" + t.getClass().getName() + " " + t.getMessage()); // useless in another thread
                 }
         	}
         };
@@ -160,6 +172,11 @@ public class MultithreadTest extends TestCase {
         // Wait for the other beans timeout
         assertTrue("expected 10 timeouts", timeouts.await(300000, TimeUnit.MILLISECONDS));
 
+        if (error.get() != null) {
+            error.get().printStackTrace();
+            fail(error.get().getMessage());
+        }
+
         assertEquals(10, CounterBean.instances.get());
 
         comment("Go!");
@@ -167,16 +184,14 @@ public class MultithreadTest extends TestCase {
         startPistol.countDown(); // go
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
+    @After
+    public void tearDown() throws Exception {
         serviceDaemon.stop();
         OpenEJB.destroy();
     }
 
-    protected void setUp() throws Exception {
-        super.setUp();
-
+    @Before
+    public void setUp() throws Exception {
         int poolSize = 10;
 
         System.setProperty("openejb.client.connectionpool.size", "" + (poolSize*2));
