@@ -30,6 +30,7 @@ import org.apache.openejb.util.classloader.MultipleClassLoader;
 import org.apache.webbeans.config.OpenWebBeansConfiguration;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.intercept.ApplicationScopedBeanInterceptorHandler;
+import org.apache.webbeans.intercept.NormalScopedBeanInterceptorHandler;
 import org.apache.webbeans.spi.ContainerLifecycle;
 import org.apache.webbeans.spi.ContextsService;
 import org.apache.webbeans.spi.ConversationService;
@@ -83,7 +84,11 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         properties.setProperty(OpenWebBeansConfiguration.IGNORED_INTERFACES, "org.apache.aries.proxy.weaving.WovenProxy");
 
         properties.setProperty("org.apache.webbeans.proxy.mapping.javax.enterprise.context.ApplicationScoped", ApplicationScopedBeanInterceptorHandler.class.getName());
-        properties.setProperty("org.apache.webbeans.proxy.mapping.javax.enterprise.context.RequestScoped", RequestScopedBeanInterceptorHandler.class.getName());
+        if (SystemInstance.get().getProperty("openejb.loader", "foo").startsWith("tomcat")) {
+            properties.setProperty("org.apache.webbeans.proxy.mapping.javax.enterprise.context.RequestScoped", RequestScopedBeanInterceptorHandler.class.getName());
+        } else {
+            properties.setProperty("org.apache.webbeans.proxy.mapping.javax.enterprise.context.RequestScoped", NormalScopedBeanInterceptorHandler.class.getName());
+        }
 
         if (SystemInstance.get().getOptions().get(WEBBEANS_FAILOVER_ISSUPPORTFAILOVER, false)) {
             properties.setProperty(WEBBEANS_FAILOVER_ISSUPPORTFAILOVER, "true");
