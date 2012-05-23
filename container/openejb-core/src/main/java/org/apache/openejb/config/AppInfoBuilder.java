@@ -749,6 +749,10 @@ class AppInfoBuilder {
                 final String property = (String) (prefix.equalsIgnoreCase(info.name) ? entry.getKey() : prefix + "." + entry.getKey());
                 final String value = (String) entry.getValue();
 
+                if ("openjpa.Log".equals(property) && info.properties.containsKey("openjpa.Log")) { // we set a default
+                    continue;
+                }
+
                 if (info.properties.containsKey(property)){
                     logger.debug("Overriding persistence-unit "+info.name +" property " + property + "="+value);
                 } else {
