@@ -16,6 +16,13 @@
  */
 package org.apache.openejb.config.sys;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.config.Service;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -117,6 +124,7 @@ class SaxOpenejb extends DefaultHandler {
             else if (localName.equals("Resource")) push(new ResourceElement());
             else if (localName.equals("Connector")) push(new ResourceElement());
             else if (localName.equals("Deployments")) push(new DeploymentsElement());
+            else if (localName.equals("Import")) push(new ImportElement());
             else throw new IllegalStateException("Unsupported Element: " + localName);
             get().startElement(uri, localName, qName, attributes);
         }
@@ -279,4 +287,74 @@ class SaxOpenejb extends DefaultHandler {
         }
     }
 
+    private class ImportElement extends DefaultHandler {
+        private String path = null;
+        @Override
+        public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+            path = attributes.getValue("path");
+        }
+
+        @Override
+        public void endElement(String uri, String localName, String qName) throws SAXException {
+            if (path != null) {
+                InputStream is = null;
+                try {
+                    final URL url = new URL(path);
+                    is = url.openStream();
+                } catch (MalformedURLException e) {
+                    final File file = new File(path);
+                    try {
+                        is = new FileInputStream(file);
+                    } catch (FileNotFoundException e1) {
+                        throw new SAXException("specified path '" + path + "' is neither an url nor a file path", e);
+                    }
+                } catch (IOException e) {
+                    throw new SAXException(e);
+                }
+
+                try {
+                    final Openejb importedOpenEJB = parse(new InputSource(is));
+                    merge(openejb, importedOpenEJB);
+                } catch (ParserConfigurationException e) {
+                    throw new SAXException(e);
+                } catch (IOException e) {
+                    throw new SAXException(e);
+                }
+            }
+        }
+
+        private void merge(final Openejb openejb, final Openejb importedOpenEJB) {
+            if (importedOpenEJB.container != null) {
+                for (Container container : importedOpenEJB.container) {
+                    openejb.add(container);
+                }
+            }
+            if (importedOpenEJB.jndiProvider != null) {
+                for (JndiProvider jndiProvider : importedOpenEJB.jndiProvider) {
+                    openejb.add(jndiProvider);
+                }
+            }
+            if (importedOpenEJB.securityService != null
+                    || importedOpenEJB.transactionManager != null
+                    || importedOpenEJB.connectionManager != null
+                    || importedOpenEJB.proxyFactory != null) {
+                // do nothing, these are unique so i don't think importing it is a good idea
+            }
+            if (importedOpenEJB.connector != null) {
+                for (Connector connector : importedOpenEJB.connector) {
+                    openejb.add(connector);
+                }
+            }
+            if (importedOpenEJB.resource != null) {
+                for (Resource resource : importedOpenEJB.resource) {
+                    openejb.add(resource);
+                }
+            }
+            if (importedOpenEJB.deployments != null) {
+                for (Deployments deployment : importedOpenEJB.deployments) {
+                    openejb.add(deployment);
+                }
+            }
+        }
+    }
 }
