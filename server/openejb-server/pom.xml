@@ -223,6 +223,7 @@
       org.apache.openejb.spi;version="[4.0,5)",
       org.apache.openejb.util;version="[4.0,5)",
       org.apache.openejb.loader;version="[4.0,5)",
+      org.apache.openejb.monitoring;version="[4.0,5)",
       org.apache.openejb.assembler.classic;version="[4.0,5)",
       org.apache.openjpa.event;version="[2.1,3)";resolution:=optional,
       org.apache.openjpa.persistence;version="[2.1,3)";resolution:=optional,
