@@ -14,34 +14,46 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.util;
+package org.apache.openejb.log;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
+import org.fusesource.jansi.Ansi;
 
 public class SingleLineFormatter extends Formatter {
-    private String lineSeparator = (String) java.security.AccessController.doPrivileged(
-            new sun.security.action.GetPropertyAction("line.separator"));
-
     @Override public synchronized String format(LogRecord record) {
-        final StringBuilder sbuf = new StringBuilder();
-        sbuf.append(record.getLevel().getLocalizedName());
-        sbuf.append(" - ");
-        sbuf.append(formatMessage(record));
-        sbuf.append(lineSeparator);
-        if (record.getThrown() != null) {
+        final boolean exception = record.getThrown() != null;
+        final Ansi sbuf = prefix(record);
+        sbuf.a(record.getLevel().getLocalizedName());
+        sbuf.a(" - ");
+        sbuf.a(formatMessage(record));
+        if (!exception) {
+            suffix(sbuf, record);
+        }
+        sbuf.newline();
+        if (exception) {
             try {
                 final StringWriter sw = new StringWriter();
                 final PrintWriter pw = new PrintWriter(sw);
                 record.getThrown().printStackTrace(pw);
                 pw.close();
-                sbuf.append(sw.toString());
+                sbuf.a(sw.toString());
             } catch (Exception ex) {
                  // no-op
+            } finally {
+                suffix(sbuf, record);
             }
         }
         return sbuf.toString();
+    }
+
+    protected Ansi prefix(final LogRecord record) {
+        return Ansi.ansi();
+    }
+
+    protected Ansi suffix(final Ansi ansi, final LogRecord record) {
+        return ansi;
     }
 }

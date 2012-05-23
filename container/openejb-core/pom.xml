@@ -605,6 +605,12 @@
       <groupId>org.apache.bval</groupId>
       <artifactId>bval-jsr303</artifactId>
     </dependency>
+
+    <dependency> <!-- licence apache, only 110ko -->
+      <groupId>org.fusesource.jansi</groupId>
+      <artifactId>jansi</artifactId>
+      <version>1.8</version>
+    </dependency>
   </dependencies>
   <profiles>
     <profile>
