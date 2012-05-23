@@ -20,12 +20,18 @@ import org.apache.openejb.loader.SystemInstance;
 
 import java.util.logging.ConsoleHandler;
 import java.util.logging.LogManager;
+import org.apache.openejb.log.ConsoleColorHandler;
+import org.apache.openejb.log.SingleLineFormatter;
 
 /**
  * default conf = jre conf
  * user conf used transparently
  */
 public class JuliLogStreamFactory implements LogStreamFactory {
+    public static final String OPENEJB_LOG_COLOR_PROP = "openejb.log.color";
+
+    private static String consoleHandlerClazz;
+
     public LogStream createLogStream(LogCategory logCategory) {
         return new JuliLogStream(logCategory);
     }
@@ -37,6 +43,11 @@ public class JuliLogStreamFactory implements LogStreamFactory {
         // if embedded case enhance a bit logging if not set
         if ((!tomee || embedded) && System.getProperty("java.util.logging.manager") == null) {
             System.setProperty("java.util.logging.manager", OpenEJBLogManager.class.getName());
+            if (SystemInstance.get().getOptions().get(OPENEJB_LOG_COLOR_PROP, false) && isNotIDE()) {
+                consoleHandlerClazz = ConsoleColorHandler.class.getName();
+            } else {
+                consoleHandlerClazz = OpenEJBSimpleLayoutHandler.class.getName();
+            }
         }
 
         try {
@@ -47,6 +58,10 @@ public class JuliLogStreamFactory implements LogStreamFactory {
         } catch (Exception ignored) {
             // no-op: openjpa is not at the classpath so don't trigger it loading with our logger
         }
+    }
+
+    public static boolean isNotIDE() {
+        return !System.getProperty("java.class.path").contains("idea_rt"); // TODO: eclipse, netbeans
     }
 
     public static class OpenEJBLogManager extends LogManager {
@@ -68,7 +83,7 @@ public class JuliLogStreamFactory implements LogStreamFactory {
                     && isOverridableLogger(name) // managed loggers
                     && parentValue == null) { // not already defined
                 if (name.endsWith(".handlers")) {
-                    return OpenEJBSimpleLayoutHandler.class.getName();
+                    return consoleHandlerClazz;
                 } else if (name.endsWith(".useParentHandlers")) {
                     return "false";
                 }
@@ -99,6 +114,7 @@ public class JuliLogStreamFactory implements LogStreamFactory {
     public static class OpenEJBSimpleLayoutHandler extends ConsoleHandler {
         public OpenEJBSimpleLayoutHandler() {
             setFormatter(new SingleLineFormatter());
+            setOutputStream(System.out);
         }
     }
 
