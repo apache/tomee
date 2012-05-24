@@ -72,7 +72,7 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
     private Assembler assembler;
     private CoreContainerSystem containerSystem;
     private RsRegistry rsRegistry;
-    private List<String> services = new ArrayList<String>();
+    private List<DeployedService> services = new ArrayList<DeployedService>();
     private String virtualHost;
 
     public void afterApplicationCreated(final AppInfo appInfo, final WebAppInfo webApp) {
@@ -243,7 +243,7 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
         final RsHttpListener listener = createHttpListener();
         final RsRegistry.AddressInfo address = rsRegistry.createRsHttpListener(contextRoot, listener, classLoader, nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost);
 
-        services.add(address.complete);
+        services.add(new DeployedService(address.complete, contextRoot));
         listener.deploySingleton(getFullContext(address.base, contextRoot), o, appInstance);
 
         LOGGER.info("deployed REST singleton: " + o);
@@ -266,7 +266,7 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
         final RsHttpListener listener = createHttpListener();
         final RsRegistry.AddressInfo address = rsRegistry.createRsHttpListener(contextRoot, listener, classLoader, nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost);
 
-        services.add(address.complete);
+        services.add(new DeployedService(address.complete, contextRoot));
         listener.deployPojo(getFullContext(address.base, contextRoot), loadedClazz, app, injections, context, owbCtx);
 
         LOGGER.info("REST Service: " + address.complete + "  -> Pojo " + loadedClazz.getName());
@@ -277,7 +277,7 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
         final RsHttpListener listener = createHttpListener();
         final RsRegistry.AddressInfo address = rsRegistry.createRsHttpListener(context, listener, beanContext.getClassLoader(), nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost);
 
-        services.add(address.complete);
+        services.add(new DeployedService(address.complete, context));
         listener.deployEJB(getFullContext(address.base, context), beanContext);
 
         LOGGER.info("REST Service: " + address.complete + "  -> EJB " + beanContext.getEjbName());
@@ -351,14 +351,18 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
         return cl;
     }
 
-    @Override public void beforeApplicationDestroyed(AppInfo appInfo) {
+    @Override
+    public void beforeApplicationDestroyed(AppInfo appInfo) {
         if (deployedApplications.contains(appInfo)) {
             for (WebAppInfo webApp : appInfo.webApps) {
-                for (String address : services) {
-                    if (address.endsWith(webApp.contextRoot)) {
-                        undeployRestObject(address);
+                final List<DeployedService> toRemove = new ArrayList<DeployedService>();
+                for (DeployedService service : services) {
+                    if (service.isInWebApp(webApp)) {
+                        undeployRestObject(service.address);
+                        toRemove.add(service);
                     }
                 }
+                services.removeAll(toRemove);
                 deployedWebApps.remove(webApp);
             }
         }
@@ -387,15 +391,15 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
     }
 
     @Override public void stop() throws ServiceException {
-        for (String address : services) {
-            undeployRestObject(address);
-        }
-
         if (assembler != null) {
             assembler.removeDeploymentListener(this);
             for (AppInfo appInfo : new ArrayList<AppInfo>(deployedApplications)) {
                 beforeApplicationDestroyed(appInfo);
             }
+        }
+
+        for (DeployedService service : services) {
+            undeployRestObject(service.address);
         }
     }
 
@@ -438,6 +442,20 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
 
             this.path = path;
             this.context = context;
+        }
+    }
+
+    public static class DeployedService {
+        public String address;
+        public String webapp;
+
+        public DeployedService(String address, String webapp) {
+            this.address = address;
+            this.webapp = webapp;
+        }
+
+        public boolean isInWebApp(final WebAppInfo webApp) {
+            return webApp.contextRoot == webapp || (webapp != null && webapp.startsWith(webApp.contextRoot));
         }
     }
 }
