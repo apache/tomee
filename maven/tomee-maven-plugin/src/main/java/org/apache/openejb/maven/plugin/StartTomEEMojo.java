@@ -26,4 +26,10 @@ public class StartTomEEMojo extends AbstractTomEEMojo {
     public String getCmd() {
         return "start";
     }
+
+    @Override
+    public void run() {
+        System.setProperty("server.windows.fork", "true");
+        super.run();
+    }
 }
