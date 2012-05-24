@@ -29,10 +29,6 @@ public class JULOpenJPALog  implements Log {
 
     public JULOpenJPALog(final String channel) {
         logger = Logger.getLogger(channel);
-        if (logger.getHandlers().length == 0) {
-            logger.addHandler(new JuliLogStreamFactory.OpenEJBSimpleLayoutHandler());
-            logger.setUseParentHandlers(false);
-        }
     }
 
     @Override
