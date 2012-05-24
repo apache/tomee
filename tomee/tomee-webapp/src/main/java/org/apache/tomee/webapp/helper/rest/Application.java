@@ -5,13 +5,13 @@ import java.util.List;
 
 public class Application {
     private String name;
-    private List<RestService> services = new ArrayList<RestService>();
+    private List<Service> services = new ArrayList<Service>();
 
-    public List<RestService> getServices() {
+    public List<Service> getServices() {
         return services;
     }
 
-    public void setServices(List<RestService> services) {
+    public void setServices(List<Service> services) {
         this.services = services;
     }
 

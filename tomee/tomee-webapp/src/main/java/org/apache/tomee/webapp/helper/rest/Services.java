@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @XmlRootElement
-public class RestServices {
+public class Services {
     private List<Application> applications = new ArrayList<Application>();
 
     public List<Application> getApplications() {
@@ -25,6 +25,7 @@ public class RestServices {
 
         final Application app = new Application();
         app.setName(name);
+        applications.add(app);
         return app;
     }
 }

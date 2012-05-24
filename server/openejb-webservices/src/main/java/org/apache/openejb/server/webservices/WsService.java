@@ -17,6 +17,7 @@
  */
 package org.apache.openejb.server.webservices;
 
+import javax.xml.namespace.QName;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.Injection;
 import org.apache.openejb.assembler.classic.AppInfo;
@@ -85,6 +86,7 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
     private final Map<String,String> ejbLocations = new TreeMap<String,String>();
     private final Map<String,String> ejbAddresses = new TreeMap<String,String>();
     private final Map<String,String> servletAddresses = new TreeMap<String,String>();
+    private final Map<String, List<EndpointInfo>> addressesByApplication = new TreeMap<String, List<EndpointInfo>>();
 
     public WsService() {
         String format = SystemInstance.get().getOptions().get(WS_ADDRESS_FORMAT, "/{ejbDeploymentId}");
@@ -278,6 +280,7 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
                                     portAddressRegistry.addPort(portInfo.serviceId, portInfo.wsdlService, portInfo.portId, portInfo.wsdlPort, portInfo.seiInterfaceName, address);
                                     logger.info("Webservice(wsdl=" + address + ", qname=" + port.getWsdlService() + ") --> Ejb(id=" + portInfo.portId + ")");
                                     ejbAddresses.put(bean.ejbDeploymentId, address);
+                                    addressesForApp(appInfo.appId).add(new EndpointInfo(address, port.getWsdlService(), beanContext.getBeanClass().getName()));
                                 }
                             }
                         } catch (Throwable e) {
@@ -291,6 +294,14 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
             }
         }
     }
+
+    private List<EndpointInfo> addressesForApp(String appId) {
+        if (!addressesByApplication.containsKey(appId)) {
+            addressesByApplication.put(appId, new ArrayList<EndpointInfo>());
+        }
+        return addressesByApplication.get(appId);
+    }
+
 
     public void afterApplicationCreated(WebAppInfo webApp) {
         WebContext webContext = containerSystem.getWebContext(webApp.moduleId);
@@ -336,6 +347,7 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
                     portAddressRegistry.addPort(portInfo.serviceId, portInfo.wsdlService, portInfo.portId, portInfo.wsdlPort, portInfo.seiInterfaceName, address);
                     logger.info("Webservice(wsdl=" + address + ", qname=" + port.getWsdlService() + ") --> Pojo(id=" + portInfo.portId + ")");
                     servletAddresses.put(webApp.moduleId + "." + servlet.servletName, address);
+                    addressesForApp(webApp.moduleId).add(new EndpointInfo(address, port.getWsdlService(), target.getName()));
                 }
             } catch (Throwable e) {
                 logger.error("Error deploying CXF webservice for servlet " + portInfo.serviceLink, e);
@@ -359,6 +371,7 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
 
                         // remove wsdl addresses from global registry
                         String address = ejbAddresses.remove(enterpriseBean.ejbDeploymentId);
+                        addressesForApp(appInfo.appId).remove(address);
                         if (address != null) {
                             portAddressRegistry.removePort(portInfo.serviceId, portInfo.wsdlService, portInfo.portId);
                         }
@@ -388,6 +401,7 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
 
                     // remove wsdl addresses from global registry
                     String address = servletAddresses.remove(webApp.moduleId + "." + servlet.servletName);
+                    addressesForApp(webApp.moduleId).remove(address);
                     if (address != null) {
                         portAddressRegistry.removePort(portInfo.serviceId, portInfo.wsdlService, portInfo.portId);
                     }
@@ -443,5 +457,25 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
 
     public void service(Socket socket) throws ServiceException, IOException {
         throw new UnsupportedOperationException("CxfService cannot be invoked directly");
+    }
+
+    public Map<String, List<EndpointInfo>> getAddressesByApplication() {
+        return addressesByApplication;
+    }
+
+    public static class EndpointInfo {
+        public String address;
+        public String portName;
+        public String classname;
+
+        public EndpointInfo(String address, QName portName, String name) {
+            this.address = address;
+            this.classname = name;
+            if (portName != null) {
+                this.portName = portName.toString();
+            } else {
+                this.portName = "null";
+            }
+        }
     }
 }
