@@ -52,7 +52,6 @@ public class TomcatRsRegistry implements RsRegistry {
 
     private Engine engine;
     private List<Connector> connectors;
-    private final Map<String, Context> contexts = new TreeMap<String, Context>();
     private final Map<String, HttpListener> listeners = new TreeMap<String, HttpListener>();
 
     public TomcatRsRegistry() {
@@ -115,19 +114,6 @@ public class TomcatRsRegistry implements RsRegistry {
             throw new IllegalStateException("Invalid context '" + realRoot + "'.  Cannot find context in host " + host.getName());
         }
 
-        context.addLifecycleListener(new LifecycleListener() {
-            public void lifecycleEvent(LifecycleEvent event) {
-                Context context = (Context) event.getLifecycle();
-                if (event.getType().equals(Lifecycle.BEFORE_START_EVENT)) {
-                    context.getServletContext().setAttribute(TomcatWebAppBuilder.IGNORE_CONTEXT, "true");
-                }
-                if (event.getType().equals(Lifecycle.START_EVENT) || event.getType().equals(Lifecycle.BEFORE_START_EVENT) || event.getType().equals("configure_start")) {
-                    context.setConfigured(true);
-                }
-            }
-        });
-
-
         Wrapper wrapper = context.createWrapper();
         final String name = "rest_" + listener.hashCode();
         wrapper.setName(name);
@@ -144,7 +130,6 @@ public class TomcatRsRegistry implements RsRegistry {
 
         path = address(connectors, host.getName(), realRoot);
         final String key = address(connectors, host.getName(), completePath);
-        contexts.put(key, context);
         listeners.put(key, listener);
 
         return new AddressInfo(path, key);
@@ -177,20 +162,10 @@ public class TomcatRsRegistry implements RsRegistry {
             path = "/" + path;
         }
 
-        if (TomcatHelper.isTomcat7() && TomcatHelper.isStopping() && listeners.containsKey(path)) {
-            return listeners.get(path);
+        // if (TomcatHelper.isTomcat7() && TomcatHelper.isStopping() && listeners.containsKey(path)) {
+        if (listeners.containsKey(path)) {
+            return listeners.remove(path);
         }
-
-        Context context = contexts.remove(path);
-        try {
-            context.stop();
-            context.destroy();
-        } catch (Exception e) {
-            throw new TomEERuntimeException(e);
-        }
-        Host host = (Host) context.getParent();
-        host.removeChild(context);
-
-        return listeners.remove(completePath);
+        return null;
     }
 }
