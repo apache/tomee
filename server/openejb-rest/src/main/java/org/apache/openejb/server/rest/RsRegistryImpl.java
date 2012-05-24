@@ -38,8 +38,9 @@ public class RsRegistryImpl extends OpenEJBHttpRegistry implements RsRegistry {
         String regex = addresses.get(context);
         if (regex != null) {
             HttpListener listener = registry.removeHttpListener(regex);
-            if (listener instanceof ClassLoaderHttpListener)
-            return ((ClassLoaderHttpListener) listener).getDelegate();
+            if (listener instanceof ClassLoaderHttpListener) {
+                return ((ClassLoaderHttpListener) listener).getDelegate();
+            }
         }
         return null;
     }
