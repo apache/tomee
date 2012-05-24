@@ -40,7 +40,7 @@ public class WebServiceHelperImpl {
         }
 
         for (ServerService ss : serverServices) {
-            if ("org.apache.openejb.server.rest.RESTService".equals(ss.getClass().getName())) {
+            if ("org.apache.openejb.server.cxf.rs.CxfRSService".equals(ss.getClass().getName())) {
                 try {
                     final List<Object> services = (List<Object>) ss.getClass().getMethod("getServices").invoke(ss);
                     if (services.isEmpty()) {
