@@ -152,7 +152,6 @@
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-server</artifactId>
       <version>${openejb.version}</version>
-      <scope>runtime</scope>
       <exclusions>
         <exclusion>
           <groupId>org.apache.openejb</groupId>

@@ -243,7 +243,7 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
         final RsHttpListener listener = createHttpListener();
         final RsRegistry.AddressInfo address = rsRegistry.createRsHttpListener(contextRoot, listener, classLoader, nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost);
 
-        services.add(new DeployedService(address.complete, contextRoot));
+        services.add(new DeployedService(address.complete, contextRoot, o.getClass().getName()));
         listener.deploySingleton(getFullContext(address.base, contextRoot), o, appInstance);
 
         LOGGER.info("deployed REST singleton: " + o);
@@ -266,7 +266,7 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
         final RsHttpListener listener = createHttpListener();
         final RsRegistry.AddressInfo address = rsRegistry.createRsHttpListener(contextRoot, listener, classLoader, nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost);
 
-        services.add(new DeployedService(address.complete, contextRoot));
+        services.add(new DeployedService(address.complete, contextRoot, loadedClazz.getName()));
         listener.deployPojo(getFullContext(address.base, contextRoot), loadedClazz, app, injections, context, owbCtx);
 
         LOGGER.info("REST Service: " + address.complete + "  -> Pojo " + loadedClazz.getName());
@@ -277,7 +277,7 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
         final RsHttpListener listener = createHttpListener();
         final RsRegistry.AddressInfo address = rsRegistry.createRsHttpListener(context, listener, beanContext.getClassLoader(), nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost);
 
-        services.add(new DeployedService(address.complete, context));
+        services.add(new DeployedService(address.complete, context, beanContext.getBeanClass().getName()));
         listener.deployEJB(getFullContext(address.base, context), beanContext);
 
         LOGGER.info("REST Service: " + address.complete + "  -> EJB " + beanContext.getEjbName());
@@ -445,17 +445,24 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
         }
     }
 
+    // look WebServiceHelperImpl before updating it
     public static class DeployedService {
         public String address;
         public String webapp;
+        public String origin;
 
-        public DeployedService(String address, String webapp) {
+        public DeployedService(final String address, final String webapp, final String origin) {
             this.address = address;
             this.webapp = webapp;
+            this.origin = origin;
         }
 
         public boolean isInWebApp(final WebAppInfo webApp) {
             return webApp.contextRoot == webapp || (webapp != null && webapp.startsWith(webApp.contextRoot));
         }
+    }
+
+    public List<DeployedService> getServices() {
+        return services;
     }
 }

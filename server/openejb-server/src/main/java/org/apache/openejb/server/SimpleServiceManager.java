@@ -266,4 +266,8 @@ public class SimpleServiceManager extends ServiceManager {
 
         LOGGER.info(sb.toString());
     }
+
+    public ServerService[] getDaemons() {
+        return daemons;
+    }
 }
