@@ -1438,7 +1438,9 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             // ejb can be rest bean and only then in standalone so scan providers here too
             // adding them to app since they should be in the app classloader
-            addJaxRsProviders(finder, ejbModule.getAppModule().getJaxRsProviders(), Provider.class);
+            if (ejbModule.getAppModule() != null) {
+                addJaxRsProviders(finder, ejbModule.getAppModule().getJaxRsProviders(), Provider.class);
+            }
 
             return ejbModule;
         }
