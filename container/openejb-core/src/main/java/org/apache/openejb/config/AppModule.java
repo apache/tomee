@@ -55,6 +55,7 @@ public class AppModule implements DeploymentModule {
     private final Set<String> watchedResources = new TreeSet<String>();
     private final boolean standaloneModule;
     private final Set<String> additionalLibMbeans = new TreeSet<String>();
+    private Collection<String> jaxRsProviders = new TreeSet<String>();
 
     private ID id;
     private boolean webapp = false;
@@ -285,5 +286,9 @@ public class AppModule implements DeploymentModule {
 
     public boolean isWebapp() {
         return webapp;
+    }
+
+    public Collection<String> getJaxRsProviders() {
+        return jaxRsProviders;
     }
 }

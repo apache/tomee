@@ -36,24 +36,24 @@ import org.apache.wink.server.internal.DeploymentConfiguration;
 import org.apache.wink.server.internal.RequestProcessor;
 import org.apache.wink.server.utils.RegistrationUtils;
 
-// TODO: lifecycle (se cxf-rs invokers)
+// TODO: lifecycle, providers (se cxf-rs invokers)
 // TODO: see if using RestServlet is not more relevant = breaking our RsHttpListener
 public class WinkHttpListener implements RsHttpListener {
     private RequestProcessor processor;
     private ServletContext servletContext;
 
     @Override
-    public void deployEJB(final String fullContext, final BeanContext beanContext) {
-        deployPojo(fullContext, beanContext.getBeanClass(), null, null, null, null); // TODO
+    public void deployEJB(final String fullContext, final BeanContext beanContext, Collection<Class<?>> additionalProviders) {
+        deployPojo(fullContext, beanContext.getBeanClass(), null, null, null, null, additionalProviders); // TODO
     }
 
     @Override
-    public void deploySingleton(final String fullContext, final Object o, final Application appInstance) {
+    public void deploySingleton(final String fullContext, final Object o, final Application appInstance, Collection<Class<?>> additionalProviders) {
         RegistrationUtils.registerInstances(contexts(o.getClass().getClassLoader()), o);
     }
 
     @Override
-    public void deployPojo(final String fullContext, final Class<?> loadedClazz, final Application app, final Collection<Injection> injections, final Context context, final WebBeansContext owbCtx) {
+    public void deployPojo(final String fullContext, final Class<?> loadedClazz, final Application app, final Collection<Injection> injections, final Context context, final WebBeansContext owbCtx, Collection<Class<?>> additionalProviders) {
         RegistrationUtils.registerClasses(contexts(loadedClazz.getClassLoader()), loadedClazz);
     }
 

@@ -49,6 +49,7 @@ public class WebModule extends Module implements WsModule, RESTModule {
     private final Set<String> restClasses = new TreeSet<String>();
     private final Set<String> ejbWebServices = new TreeSet<String>();
     private final Set<String> ejbRestServices = new TreeSet<String>();
+    private final Set<String> jaxrsProviders = new TreeSet<String>();
     private final Set<String> restApplications = new TreeSet<String>();
     private final Map<String, Set<String>> jsfAnnotatedClasses = new HashMap<String, Set<String>>();
     private final Set<String> webAnnotatedClasses = new TreeSet<String>();
@@ -203,5 +204,9 @@ public class WebModule extends Module implements WsModule, RESTModule {
 
     public Set<String> getWebAnnotatedClasses() {
         return webAnnotatedClasses;
+    }
+
+    public Set<String> getJaxrsProviders() {
+        return jaxrsProviders;
     }
 }

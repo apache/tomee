@@ -17,6 +17,7 @@
 package org.apache.openejb.config;
 
 import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.ext.Provider;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.api.LocalClient;
@@ -1044,6 +1045,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             */
             // get by annotations
             webModule.getRestClasses().addAll(findRestClasses(webModule, finder));
+            addJaxRsProviders(finder, webModule.getJaxrsProviders(), Provider.class);
 
             // Applications with a default constructor
             // findSubclasses will not work by default to gain a lot of time
@@ -1104,6 +1106,12 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             return webModule;
+        }
+
+        private void addJaxRsProviders(final IAnnotationFinder finder, final Collection<String> set, final Class<? extends Annotation> annotation) {
+            for (Annotated<Class<?>> provider : finder.findMetaAnnotatedClasses(annotation)) {
+                set.add(provider.get().getName());
+            }
         }
 
         private static void addRestApplicationIfPossible(final WebModule webModule, final Class<? extends Application> app) {
@@ -1427,6 +1435,10 @@ public class AnnotationDeployer implements DynamicDeployer {
                     mergeApplicationExceptionAnnotation(assemblyDescriptor, exceptionClass, annotation);
                 }
             }
+
+            // ejb can be rest bean and only then in standalone so scan providers here too
+            // adding them to app since they should be in the app classloader
+            addJaxRsProviders(finder, ejbModule.getAppModule().getJaxRsProviders(), Provider.class);
 
             return ejbModule;
         }
