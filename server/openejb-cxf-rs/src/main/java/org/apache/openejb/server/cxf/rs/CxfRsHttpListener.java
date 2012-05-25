@@ -217,7 +217,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         }
 
         final Map<String, Object> properties = new HashMap<String, Object>();
-        for (String str : property.split("|")) {
+        for (String str : property.split(",| ")) {
             final String[] kv = str.split("=");
             if (kv.length == 2) {
                 properties.put(kv[0], kv[1]);
