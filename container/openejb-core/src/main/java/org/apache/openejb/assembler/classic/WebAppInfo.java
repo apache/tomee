@@ -40,4 +40,5 @@ public class WebAppInfo extends CommonInfoObject {
     public final JndiEncInfo jndiEnc = new JndiEncInfo();
     public final List<ServletInfo> servlets = new ArrayList<ServletInfo>();
     public final List<ClassListInfo> jsfAnnotatedClasses = new ArrayList<ClassListInfo>();
+    public final Set<String> jaxRsProviders = new TreeSet<String>();
 }

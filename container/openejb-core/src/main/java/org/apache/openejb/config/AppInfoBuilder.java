@@ -104,6 +104,7 @@ class AppInfoBuilder {
         appInfo.standaloneModule = appModule.isStandaloneModule();
         appInfo.watchedResources.addAll(appModule.getWatchedResources());
         appInfo.mbeans.addAll(appModule.getAdditionalLibMbeans());
+        appInfo.jaxRsProviders.addAll(appModule.getJaxRsProviders());
 
         if (appInfo.appId == null) throw new IllegalArgumentException("AppInfo.appId cannot be null");
         if (appInfo.path == null) appInfo.path = appInfo.appId;
@@ -324,6 +325,7 @@ class AppInfoBuilder {
             webAppInfo.ejbWebServices.addAll(webModule.getEjbWebServices());
             webAppInfo.ejbRestServices.addAll(webModule.getEjbRestServices());
             webAppInfo.webAnnotatedClasses.addAll(webModule.getWebAnnotatedClasses());
+            webAppInfo.jaxRsProviders.addAll(webModule.getJaxrsProviders());
 
             for (Map.Entry<String, Set<String>> entry : webModule.getJsfAnnotatedClasses().entrySet()) {
                 final ClassListInfo info = new ClassListInfo();
