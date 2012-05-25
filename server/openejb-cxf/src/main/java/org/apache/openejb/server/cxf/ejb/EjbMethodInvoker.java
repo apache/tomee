@@ -133,7 +133,7 @@ public class EjbMethodInvoker extends AbstractJAXWSMethodInvoker {
             // web fault if it contains the @WebFault exception
             Throwable t = e.getCause();
             if (t != null) {
-                if (t.getClass().isAssignableFrom(RuntimeException.class)
+                if (RuntimeException.class.isAssignableFrom(t.getClass())
                         && t.getClass().isAnnotationPresent(
                                 javax.ejb.ApplicationException.class)) {
                     // it's not a checked exception so it can not be a WebFault
