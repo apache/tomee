@@ -17,6 +17,26 @@
 
 package org.apache.openejb.server.rest;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.Socket;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import javax.naming.Context;
+import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.Application;
+import javax.ws.rs.core.UriBuilder;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.Injection;
 import org.apache.openejb.assembler.classic.AppInfo;
@@ -36,27 +56,6 @@ import org.apache.openejb.server.httpd.HttpListenerRegistry;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-
-import javax.naming.Context;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.UriBuilder;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.Socket;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
 import org.apache.webbeans.config.WebBeansContext;
 
 public abstract class RESTService implements ServerService, SelfManaging, DeploymentListener {
@@ -74,6 +73,7 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
     private RsRegistry rsRegistry;
     private List<DeployedService> services = new ArrayList<DeployedService>();
     private String virtualHost;
+    private String wildcard = SystemInstance.get().getProperty("openejb.rest.wildcard", ".*");
 
     public void afterApplicationCreated(final AppInfo appInfo, final WebAppInfo webApp) {
         final Map<String, EJBRestServiceInfo> restEjbs = getRestEjbs(appInfo);
@@ -239,7 +239,7 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
     }
 
     private void deploySingleton(String contextRoot, Object o, Application appInstance, ClassLoader classLoader) {
-        final String nopath = getAddress(contextRoot, o.getClass()) + "/.*";
+        final String nopath = getAddress(contextRoot, o.getClass());
         final RsHttpListener listener = createHttpListener();
         final RsRegistry.AddressInfo address = rsRegistry.createRsHttpListener(contextRoot, listener, classLoader, nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost);
 
@@ -262,7 +262,7 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
             return;
         }
 
-        final String nopath = getAddress(contextRoot, loadedClazz) + "/.*";
+        final String nopath = getAddress(contextRoot, loadedClazz);
         final RsHttpListener listener = createHttpListener();
         final RsRegistry.AddressInfo address = rsRegistry.createRsHttpListener(contextRoot, listener, classLoader, nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost);
 
@@ -273,7 +273,7 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
     }
 
     private void deployEJB(String context, BeanContext beanContext) {
-        final String nopath = getAddress(context, beanContext.getBeanClass()) + "/.*";
+        final String nopath = getAddress(context, beanContext.getBeanClass());
         final RsHttpListener listener = createHttpListener();
         final RsRegistry.AddressInfo address = rsRegistry.createRsHttpListener(context, listener, beanContext.getClassLoader(), nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost);
 
@@ -324,13 +324,48 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
             throw new IllegalArgumentException("no @Path annotation on " + clazz.getName());
         }
 
+        String builtUrl = null;
         try {
-            return UriBuilder.fromUri(new URI(root)).path(usedClass).build().toURL().toString();
+            builtUrl = UriBuilder.fromUri(new URI(root)).path(usedClass).build().toURL().toString();
+            return replaceParams(builtUrl); // pathparam at class level
+        } catch (IllegalArgumentException iae) {
+            if (builtUrl != null) {
+                return builtUrl;
+            }
+
+            // try to do it manually with @Path on the class
+            Class<?> current = usedClass;
+            while (current != null && !Object.class.equals(current)) {
+                Path path = current.getAnnotation(Path.class);
+                if (path != null) {
+                    String classPath = path.value();
+                    if (classPath.startsWith("/")) {
+                        classPath = classPath.replaceFirst("/", "");
+                    }
+                    if (!root.endsWith("/")) {
+                        root = root + "/";
+                    }
+                    return replaceParams(root + classPath);
+                }
+                current = current.getSuperclass();
+            }
+
+            throw new OpenEJBRestRuntimeException("can't built the service mapping for service '" + usedClass.getName() + "'", iae);
         } catch (MalformedURLException e) {
             throw new OpenEJBRestRuntimeException("url is malformed", e);
         } catch (URISyntaxException e) {
             throw new OpenEJBRestRuntimeException("uri syntax is not correct", e);
         }
+    }
+
+    // this mean not really conflicting mappings (rest/servlet and so on) can be conflicting
+    // a good solution is to handle a unique rest servlet managing the routing
+    private String replaceParams(final String url) {
+        final String managedUrl = url.replaceAll("\\{[^}]*\\}.*", wildcard);
+        if (managedUrl.endsWith(wildcard)) {
+            return managedUrl;
+        }
+        return managedUrl + "/" + wildcard;
     }
 
     private void undeployRestObject(String context) {

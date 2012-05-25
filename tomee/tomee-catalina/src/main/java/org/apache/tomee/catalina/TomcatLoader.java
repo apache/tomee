@@ -206,7 +206,10 @@ public class TomcatLoader implements Loader {
         // Web Services will be installed into the WebDeploymentListeners list
         SystemInstance.get().setComponent(WebDeploymentListeners.class, new WebDeploymentListeners());
 
-        optionalService(properties, "org.apache.tomee.webservices.TomeeJaxRsService");
+        if (optionalService(properties, "org.apache.tomee.webservices.TomeeJaxRsService")) {
+            // in embedded mode we use regex, in tomcat we use tomcat servlet mapping
+            SystemInstance.get().setProperty("openejb.rest.wildcard", "*");
+        }
         optionalService(properties, "org.apache.tomee.webservices.TomeeJaxWsService");
 
         // Start OpenEJB
@@ -298,15 +301,17 @@ public class TomcatLoader implements Loader {
         }
     }
 
-    private void optionalService(Properties properties, String className) {
+    private boolean optionalService(Properties properties, String className) {
         try {
             Service service = (Service) getClass().getClassLoader().loadClass(className).newInstance();
             service.init(properties);
+            return true;
         } catch (ClassNotFoundException e) {
             logger.info("Optional service not installed: " + className);
         } catch (Exception e) {
             logger.error("Failed to start: " + className, e);
         }
+        return false;
     }
 
     private void setIfNull(Properties properties, String key, String value) {
