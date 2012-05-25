@@ -72,7 +72,7 @@ TOMEE.ApplicationController = function () {
         var key = params.key;
         if (key === 'jndi') {
             jndiPanelModel.load();
-        } else if(key === 'test') {
+        } else if (key === 'test') {
             testPanelModel.load();
         }
 

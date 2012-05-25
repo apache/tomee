@@ -162,7 +162,6 @@ public class TomcatRsRegistry implements RsRegistry {
             path = "/" + path;
         }
 
-        // if (TomcatHelper.isTomcat7() && TomcatHelper.isStopping() && listeners.containsKey(path)) {
         if (listeners.containsKey(path)) {
             return listeners.remove(path);
         }
