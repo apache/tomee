@@ -16,12 +16,15 @@
  */
 package org.apache.openejb.server.cxf.rs;
 
+import java.rmi.RemoteException;
+import javax.xml.ws.WebFault;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.jaxrs.JAXRSInvoker;
 import org.apache.cxf.jaxrs.model.ClassResourceInfo;
 import org.apache.cxf.jaxrs.model.OperationResourceInfo;
 import org.apache.cxf.jaxrs.utils.JAXRSUtils;
 import org.apache.cxf.message.Exchange;
+import org.apache.cxf.message.FaultMode;
 import org.apache.cxf.message.MessageContentsList;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBException;
@@ -93,7 +96,15 @@ public class OpenEJBEJBInvoker extends JAXRSInvoker {
                 method.getDeclaringClass(), method, parameters, null);
             return new MessageContentsList(result);
         } catch (OpenEJBException e) {
-            Response excResponse = JAXRSUtils.convertFaultToResponse(e, exchange.getInMessage());
+            Throwable cause = e.getCause();
+            if (cause == null) {
+                cause = e;
+            }
+            if (cause instanceof RemoteException && cause.getCause() != null) {
+                cause = cause.getCause();
+            }
+
+            final Response excResponse = JAXRSUtils.convertFaultToResponse(cause, exchange.getInMessage());
             return new MessageContentsList(excResponse);
         } finally {
             ThreadLocalContextManager.reset();
