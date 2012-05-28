@@ -133,25 +133,18 @@ public class IO {
         }
     }
 
-    public static String slurp(String fileName) throws IOException {
-        return slurp(new File(fileName));
+    public static String slurp(File file) throws IOException {
+        return slurp(read(file));
     }
 
-    public static String slurp(File file) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        copy(file, out);
-        return new String(out.toByteArray());
+
+    public static String slurp(URL url) throws IOException {
+        return slurp(url.openStream());
     }
 
     public static String slurp(InputStream in) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         copy(in, out);
-        return new String(out.toByteArray(), "UTF-8");
-    }
-
-    public static String slurp(URL url) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        copy(read(url), out);
         return new String(out.toByteArray());
     }
 
@@ -262,15 +255,6 @@ public class IO {
         }
     }
 
-    public static void copy(byte[] from, File to) throws IOException {
-        final OutputStream write = write(to);
-        try {
-            write.write(from);
-        } finally {
-            close(write);
-        }
-    }
-
     public static void copy(InputStream from, File to, boolean append) throws IOException {
         final OutputStream write = write(to, append);
         try {
@@ -287,6 +271,14 @@ public class IO {
             to.write(buffer, 0, length);
         }
         to.flush();
+    }
+
+    public static void copy(byte[] from, File to) throws IOException {
+        copy(new ByteArrayInputStream(from), to);
+    }
+
+    public static void copy(byte[] from, OutputStream to) throws IOException {
+        copy(new ByteArrayInputStream(from), to);
     }
 
     public static ZipOutputStream zip(File file) throws IOException {
