@@ -18,10 +18,12 @@
 
 package org.apache.openejb.cdi;
 
+import java.util.concurrent.ConcurrentHashMap;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
+import org.apache.openejb.core.WebContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
@@ -57,13 +59,12 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, ThreadSingletonServiceImpl.class);
     //this needs to be static because OWB won't tell us what the existing SingletonService is and you can't set it twice.
     private static final ThreadLocal<WebBeansContext> contexts = new ThreadLocal<WebBeansContext>();
+    private static final Map<ClassLoader, WebBeansContext> contextByClassLoader = new ConcurrentHashMap<ClassLoader, WebBeansContext>();
     private static final String WEBBEANS_FAILOVER_ISSUPPORTFAILOVER = "org.apache.webbeans.web.failover.issupportfailover";
 
     public ThreadSingletonServiceImpl() {
         // no-op
     }
-
-
 
     @Override
     public void initialize(StartupObject startupObject) {
@@ -189,6 +190,9 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
     }
 
     private static void contextMessage(WebBeansContext newOWBContext, String prefix) {
+        if (logger.isDebugEnabled()) {
+            logger.debug(prefix + "'" + newOWBContext + "'");
+        }
     }
 
     @Override
@@ -201,24 +205,65 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         contexts.set((WebBeansContext) oldContext);
     }
 
-    private WebBeansContext getContext() {
-        return get();
+    private WebBeansContext getContext(final ClassLoader cl) {
+        return get(cl);
     }
 
-    public static WebBeansContext get()
-    {
-        WebBeansContext context = contexts.get();
-        if (context == null) {
-            // Fallback strategy is to just grab the first AppContext and assume it is the right one
-            // This kind of algorithm could be greatly improved
-            final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-
-            final List<AppContext> appContexts = containerSystem.getAppContexts();
-
-            if (appContexts.size() > 0) return getWebBeansContext(appContexts);
-
-            throw new IllegalStateException("On a thread without an initialized context");
+    /**
+     * Generally contexts.get() is enough since we set the current context from a request (see webbeanslistener)
+     * but sometimes matching the classloader is better (manager webapps of tomcat deploys for instance)
+     * so here the algorithm:
+     * 1) try to match with the classloader
+     * 2) if not matched try to use the threadlocal
+     * 3) (shouldn't happen) simply return the biggest webbeancontext
+     *
+     * @param cl the key (generally TCCL)
+     * @return the webbeancontext matching the current context
+     */
+    public static WebBeansContext get(final ClassLoader cl) {
+        WebBeansContext context = contextByClassLoader.get(cl);
+        if (context != null) {
+            return context;
         }
+
+        final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+        for (AppContext appContext : containerSystem.getAppContexts()) {
+            if (appContext.getClassLoader().equals(cl)) {
+                context = appContext.getWebBeansContext();
+                break;
+            }
+            for (WebContext web : appContext.getWebContexts()) {
+                if (web.getClassLoader().equals(cl)) {
+                    if (web.getWebbeansContext() != null) { // ear
+                        context = web.getWebbeansContext();
+                        break;
+                    } else { // war
+                        context = appContext.getWebBeansContext();
+                        break;
+                    }
+                }
+            }
+            if (context != null) {
+                break;
+            }
+        }
+
+        if (context == null) {
+            context = contexts.get();
+            if (context == null) {
+                // Fallback strategy is to just grab the first AppContext and assume it is the right one
+                // This kind of algorithm could be greatly improved
+                final List<AppContext> appContexts = containerSystem.getAppContexts();
+                if (appContexts.size() > 0) {
+                    return getWebBeansContext(appContexts);
+                }
+
+                throw new IllegalStateException("On a thread without an initialized context nor a classloader mapping a deployed app");
+            }
+        } else { // some cache to avoid to browse each app each time
+            contextByClassLoader.put(cl, context);
+        }
+
         return context;
     }
 
@@ -234,13 +279,15 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
 
     @Override
     public WebBeansContext get(Object key) {
-        return getContext();
+        return getContext((ClassLoader) key);
     }
 
     @Override
     public void clear(Object key) {
-        contextMessage(getContext(), "clearing ");
-        getContext().clear();
+        final WebBeansContext ctx = getContext((ClassLoader) key);
+        contextMessage(ctx, "clearing ");
+        contextByClassLoader.remove(key);
+        ctx.clear();
     }
 
 }
