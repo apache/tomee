@@ -161,182 +161,190 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         }
 
         StartupObject stuff = (StartupObject) startupObject;
+        final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
+
         // Initalize Application Context
         logger.info(OWBLogConst.INFO_0005);
 
         long begin = System.currentTimeMillis();
 
-        //Before Start
-        beforeStartApplication(startupObject);
-    	
-
-        //Load all plugins
-        webBeansContext.getPluginLoader().startUp();
-
-        //Get Plugin
-        CdiPlugin cdiPlugin = (CdiPlugin) webBeansContext.getPluginLoader().getEjbPlugin();
-
-        final AppContext appContext = stuff.getAppContext();
-        if (stuff.getWebContext() == null) {
-            appContext.setWebBeansContext(webBeansContext);
-        }
-
-        cdiPlugin.setClassLoader(stuff.getClassLoader());
-        cdiPlugin.setWebBeansContext(webBeansContext);
-        cdiPlugin.startup();
-
-        //Configure EJB Deployments
-        cdiPlugin.configureDeployments(stuff.getBeanContexts());
-
-        //Resournce Injection Service
-        CdiResourceInjectionService injectionService = (CdiResourceInjectionService) webBeansContext.getService(ResourceInjectionService.class);
-        injectionService.setAppContext(stuff.getAppContext());
-
-        //Deploy the beans
         try {
-            //Load Extensions
-            loadExtensions(appContext);
+            Thread.currentThread().setContextClassLoader(stuff.getClassLoader());
 
-            //Initialize contexts
-            this.contextsService.init(startupObject);
+            //Before Start
+            beforeStartApplication(startupObject);
 
-            //Configure Default Beans
-            // need to be done before fireBeforeBeanDiscoveryEvent
-            deployer.configureDefaultBeans();
 
-            //Fire Event
-            deployer.fireBeforeBeanDiscoveryEvent();
+            //Load all plugins
+            webBeansContext.getPluginLoader().startUp();
 
-            //Scanning process
-            logger.debug("Scanning classpaths for beans artifacts.");
+            //Get Plugin
+            CdiPlugin cdiPlugin = (CdiPlugin) webBeansContext.getPluginLoader().getEjbPlugin();
 
-            if (scannerService instanceof CdiScanner) {
-                final CdiScanner service = (CdiScanner) scannerService;
-                service.init(startupObject);
-            } else {
-                new CdiScanner().init(startupObject);
+            final AppContext appContext = stuff.getAppContext();
+            if (stuff.getWebContext() == null) {
+                appContext.setWebBeansContext(webBeansContext);
             }
 
-            //Scan
-            this.scannerService.scan();
+            cdiPlugin.setClassLoader(stuff.getClassLoader());
+            cdiPlugin.setWebBeansContext(webBeansContext);
+            cdiPlugin.startup();
 
-            //Deploy bean from XML. Also configures deployments, interceptors, decorators.
-            deployer.deployFromXML(scannerService);
+            //Configure EJB Deployments
+            cdiPlugin.configureDeployments(stuff.getBeanContexts());
 
-            //Checking stereotype conditions
-            deployer.checkStereoTypes(scannerService);
+            //Resournce Injection Service
+            CdiResourceInjectionService injectionService = (CdiResourceInjectionService) webBeansContext.getService(ResourceInjectionService.class);
+            injectionService.setAppContext(stuff.getAppContext());
 
-            //Discover classpath classes
-            deployManagedBeans(scannerService.getBeanClasses(), stuff.getBeanContexts());
+            //Deploy the beans
+            try {
+                //Load Extensions
+                loadExtensions(appContext);
 
-            boolean deployEjb = stuff.getWebContext() == null;
+                //Initialize contexts
+                this.contextsService.init(startupObject);
 
-            if (deployEjb) {
-                for (BeanContext beanContext : stuff.getBeanContexts()) {
-                    if (!beanContext.getComponentType().isCdiCompatible()) continue;
+                //Configure Default Beans
+                // need to be done before fireBeforeBeanDiscoveryEvent
+                deployer.configureDefaultBeans();
 
-                    final Class implClass = beanContext.getManagedClass();
+                //Fire Event
+                deployer.fireBeforeBeanDiscoveryEvent();
 
-                    //Define annotation type
-                    AnnotatedType<?> annotatedType = webBeansContext.getAnnotatedElementFactory().newAnnotatedType(implClass);
+                //Scanning process
+                logger.debug("Scanning classpaths for beans artifacts.");
 
-                    //Fires ProcessAnnotatedType
-                    ProcessAnnotatedTypeImpl<?> processAnnotatedEvent = webBeansContext.getWebBeansUtil().fireProcessAnnotatedTypeEvent(annotatedType);
-
-                    // TODO Can you really veto an EJB?
-                    //if veto() is called
-                    if (processAnnotatedEvent.isVeto()) {
-                        continue;
-                    }
-
-                    CdiEjbBean<Object> bean = new CdiEjbBean<Object>(beanContext, webBeansContext);
-
-                    beanContext.set(CdiEjbBean.class, bean);
-                    beanContext.set(CurrentCreationalContext.class, new CurrentCreationalContext());
-                    beanContext.addSystemInterceptor(new CdiInterceptor(bean, beanManager, cdiPlugin.getContexsServices()));
-
-                    EjbUtility.fireEvents((Class<Object>) implClass, bean, (ProcessAnnotatedTypeImpl<Object>) processAnnotatedEvent);
-
-                    webBeansContext.getWebBeansUtil().setInjectionTargetBeanEnableFlag(bean);
-
-                    Class clazz = beanContext.getBeanClass();
-                    while (clazz.isAnnotationPresent(Specializes.class)) {
-                        clazz = clazz.getSuperclass();
-
-                        if (clazz == null || Object.class.equals(clazz)) break;
-
-                        final CdiEjbBean<Object> superBean = new CdiEjbBean<Object>(beanContext, webBeansContext, clazz);
-
-                        EjbBeanCreatorImpl<?> ejbBeanCreator = new EjbBeanCreatorImpl(superBean);
-
-                        //Define meta-data
-                        ejbBeanCreator.defineSerializable();
-                        ejbBeanCreator.defineStereoTypes();
-                        ejbBeanCreator.defineScopeType("Session Bean implementation class : " + clazz.getName() + " stereotypes must declare same @ScopeType annotations", false);
-                        ejbBeanCreator.defineQualifier();
-                        ejbBeanCreator.defineName(WebBeansUtil.getManagedBeanDefaultName(clazz.getSimpleName()));
-
-                        bean.specialize(superBean);
-
-                        EjbUtility.defineSpecializedData(clazz, bean);
-                    }
+                if (scannerService instanceof CdiScanner) {
+                    final CdiScanner service = (CdiScanner) scannerService;
+                    service.init(startupObject);
+                } else {
+                    new CdiScanner().init(startupObject);
                 }
-            }
 
-            //Check Specialization
-            deployer.checkSpecializations(scannerService);
+                //Scan
+                this.scannerService.scan();
 
-            //Fire Event
-            deployer.fireAfterBeanDiscoveryEvent();
+                //Deploy bean from XML. Also configures deployments, interceptors, decorators.
+                deployer.deployFromXML(scannerService);
 
-            //Validate injection Points
-            deployer.validateInjectionPoints();
+                //Checking stereotype conditions
+                deployer.checkStereoTypes(scannerService);
 
-            if (deployEjb) {
-                for (BeanContext beanContext : stuff.getBeanContexts()) {
-                    if (!beanContext.getComponentType().isSession() || beanContext.isDynamicallyImplemented()) continue;
-                    final CdiEjbBean bean = beanContext.get(CdiEjbBean.class);
+                //Discover classpath classes
+                deployManagedBeans(scannerService.getBeanClasses(), stuff.getBeanContexts());
 
-                    // The interceptor stack is empty until validateInjectionPoints is called as it does more than validate.
-                    final List<InterceptorData> datas = bean.getInterceptorStack();
+                boolean deployEjb = stuff.getWebContext() == null;
 
-                    final List<org.apache.openejb.core.interceptor.InterceptorData> converted = new ArrayList<org.apache.openejb.core.interceptor.InterceptorData>();
-                    for (InterceptorData data : datas) {
-                        // todo this needs to use the code in InterceptorBindingBuilder that respects override rules and private methods
-                        final org.apache.openejb.core.interceptor.InterceptorData openejbData = org.apache.openejb.core.interceptor.InterceptorData.scan(data.getInterceptorClass());
-                        if (data.isDefinedInMethod()) {
-                            final Method method = data.getInterceptorBindingMethod();
-                            beanContext.addCdiMethodInterceptor(method, openejbData);
-                        } else {
-                            converted.add(openejbData);
+                if (deployEjb) {
+                    for (BeanContext beanContext : stuff.getBeanContexts()) {
+                        if (!beanContext.getComponentType().isCdiCompatible()) continue;
+
+                        final Class implClass = beanContext.getManagedClass();
+
+                        //Define annotation type
+                        AnnotatedType<?> annotatedType = webBeansContext.getAnnotatedElementFactory().newAnnotatedType(implClass);
+
+                        //Fires ProcessAnnotatedType
+                        ProcessAnnotatedTypeImpl<?> processAnnotatedEvent = webBeansContext.getWebBeansUtil().fireProcessAnnotatedTypeEvent(annotatedType);
+
+                        // TODO Can you really veto an EJB?
+                        //if veto() is called
+                        if (processAnnotatedEvent.isVeto()) {
+                            continue;
+                        }
+
+                        CdiEjbBean<Object> bean = new CdiEjbBean<Object>(beanContext, webBeansContext);
+
+                        beanContext.set(CdiEjbBean.class, bean);
+                        beanContext.set(CurrentCreationalContext.class, new CurrentCreationalContext());
+                        beanContext.addSystemInterceptor(new CdiInterceptor(bean, beanManager, cdiPlugin.getContexsServices()));
+
+                        EjbUtility.fireEvents((Class<Object>) implClass, bean, (ProcessAnnotatedTypeImpl<Object>) processAnnotatedEvent);
+
+                        webBeansContext.getWebBeansUtil().setInjectionTargetBeanEnableFlag(bean);
+
+                        Class clazz = beanContext.getBeanClass();
+                        while (clazz.isAnnotationPresent(Specializes.class)) {
+                            clazz = clazz.getSuperclass();
+
+                            if (clazz == null || Object.class.equals(clazz)) break;
+
+                            final CdiEjbBean<Object> superBean = new CdiEjbBean<Object>(beanContext, webBeansContext, clazz);
+
+                            EjbBeanCreatorImpl<?> ejbBeanCreator = new EjbBeanCreatorImpl(superBean);
+
+                            //Define meta-data
+                            ejbBeanCreator.defineSerializable();
+                            ejbBeanCreator.defineStereoTypes();
+                            ejbBeanCreator.defineScopeType("Session Bean implementation class : " + clazz.getName() + " stereotypes must declare same @ScopeType annotations", false);
+                            ejbBeanCreator.defineQualifier();
+                            ejbBeanCreator.defineName(WebBeansUtil.getManagedBeanDefaultName(clazz.getSimpleName()));
+
+                            bean.specialize(superBean);
+
+                            EjbUtility.defineSpecializedData(clazz, bean);
                         }
                     }
-
-                    beanContext.setCdiInterceptors(converted);
                 }
-            }
 
-            //Fire Event
-            deployer.fireAfterDeploymentValidationEvent();
+                //Check Specialization
+                deployer.checkSpecializations(scannerService);
 
-            if (deployEjb) {
-                for (BeanContext beanContext : stuff.getBeanContexts()) {
+                //Fire Event
+                deployer.fireAfterBeanDiscoveryEvent();
 
-                    final CdiEjbBean<Object> bean = beanContext.get(CdiEjbBean.class);;
+                //Validate injection Points
+                deployer.validateInjectionPoints();
 
-                    if (bean == null) continue;
+                if (deployEjb) {
+                    for (BeanContext beanContext : stuff.getBeanContexts()) {
+                        if (!beanContext.getComponentType().isSession() || beanContext.isDynamicallyImplemented()) continue;
+                        final CdiEjbBean bean = beanContext.get(CdiEjbBean.class);
 
-                    final BeanManagerImpl manager = webBeansContext.getBeanManagerImpl();
-                    manager.addBean(new NewCdiEjbBean<Object>(bean));
+                        // The interceptor stack is empty until validateInjectionPoints is called as it does more than validate.
+                        final List<InterceptorData> datas = bean.getInterceptorStack();
+
+                        final List<org.apache.openejb.core.interceptor.InterceptorData> converted = new ArrayList<org.apache.openejb.core.interceptor.InterceptorData>();
+                        for (InterceptorData data : datas) {
+                            // todo this needs to use the code in InterceptorBindingBuilder that respects override rules and private methods
+                            final org.apache.openejb.core.interceptor.InterceptorData openejbData = org.apache.openejb.core.interceptor.InterceptorData.scan(data.getInterceptorClass());
+                            if (data.isDefinedInMethod()) {
+                                final Method method = data.getInterceptorBindingMethod();
+                                beanContext.addCdiMethodInterceptor(method, openejbData);
+                            } else {
+                                converted.add(openejbData);
+                            }
+                        }
+
+                        beanContext.setCdiInterceptors(converted);
+                    }
                 }
-            }
 
-        } catch (Exception e1) {
-            Assembler.logger.error("CDI Beans module deployment failed", e1);
-            throw new OpenEJBRuntimeException(e1);
+                //Fire Event
+                deployer.fireAfterDeploymentValidationEvent();
+
+                if (deployEjb) {
+                    for (BeanContext beanContext : stuff.getBeanContexts()) {
+
+                        final CdiEjbBean<Object> bean = beanContext.get(CdiEjbBean.class);;
+
+                        if (bean == null) continue;
+
+                        final BeanManagerImpl manager = webBeansContext.getBeanManagerImpl();
+                        manager.addBean(new NewCdiEjbBean<Object>(bean));
+                    }
+                }
+
+            } catch (Exception e1) {
+                Assembler.logger.error("CDI Beans module deployment failed", e1);
+                throw new OpenEJBRuntimeException(e1);
+            }
+            //Start actual starting on sub-classes
+            afterStartApplication(startupObject);
+        } finally {
+            Thread.currentThread().setContextClassLoader(oldCl);
         }
-        //Start actual starting on sub-classes
-        afterStartApplication(startupObject);
 
         logger.info(OWBLogConst.INFO_0001, Long.toString(System.currentTimeMillis() - begin));
     }
