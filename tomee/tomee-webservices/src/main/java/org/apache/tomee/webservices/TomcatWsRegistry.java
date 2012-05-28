@@ -290,7 +290,6 @@ public class TomcatWsRegistry implements WsRegistry {
         String webServicecontainerID = wrapper.getName() + WsServlet.WEBSERVICE_CONTAINER + httpListener.hashCode();
         wrapper.addInitParameter(WsServlet.WEBSERVICE_CONTAINER, webServicecontainerID);
 
-        context.getServletContext().setAttribute(IGNORE_CONTEXT, "true");
         setWsContainer(context, wrapper, httpListener);
 
         webserviceContexts.put(path, context);
