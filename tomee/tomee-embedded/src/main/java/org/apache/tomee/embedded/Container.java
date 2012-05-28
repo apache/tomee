@@ -16,6 +16,16 @@
  */
 package org.apache.tomee.embedded;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Writer;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import javax.naming.Context;
+import javax.naming.NamingException;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Server;
 import org.apache.catalina.Service;
@@ -28,7 +38,6 @@ import org.apache.catalina.startup.Tomcat;
 import org.apache.coyote.http11.Http11Protocol;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
-import org.apache.openejb.Core;
 import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
@@ -39,15 +48,8 @@ import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.config.sys.JaxbOpenejb;
-import org.apache.openejb.config.sys.Openejb;
-import org.apache.openejb.jee.JaxbJavaee;
-import org.apache.openejb.jee.TldTaglib;
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.util.DaemonThreadFactory;
 import org.apache.openejb.util.Logger;
 import org.apache.tomee.catalina.TomEERuntimeException;
 import org.apache.tomee.catalina.TomcatLoader;
@@ -56,20 +58,6 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.runtime.log.NullLogChute;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
-
-import javax.naming.Context;
-import javax.naming.NamingException;
-import javax.xml.bind.JAXBException;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Writer;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * @version $Rev$ $Date$
@@ -259,16 +247,18 @@ public class Container {
         }
 
         AppContext context = assembler.createApplication(appInfo);
-        appContexts.put(name, context);
         moduleIds.put(name, appInfo.path);
+        appContexts.put(name, context);
+
         return context;
     }
 
     public void undeploy(String name) throws UndeployException, NoSuchApplicationException {
-        String moduleId = moduleIds.get(name);
-        assembler.destroyApplication(moduleId);
-        moduleIds.remove(name);
-        appContexts.remove(name);
+        final String moduleId = moduleIds.remove(name);
+        if (moduleId != null) {
+            assembler.destroyApplication(moduleId);
+            appContexts.remove(name);
+        }
     }
 
     public Context getJndiContext() {
