@@ -38,7 +38,7 @@ public class RemoteTomEEObserver {
     private InstanceProducer<Context> context;
 
     public void beforeSuite(@Observes BeforeSuite event) {
-        beanManager.set(ThreadSingletonServiceImpl.get().getBeanManagerImpl());
+        beanManager.set(ThreadSingletonServiceImpl.get(Thread.currentThread().getContextClassLoader()).getBeanManagerImpl());
         try {
             context.set(new InitialContext());
         } catch (NamingException e) {
