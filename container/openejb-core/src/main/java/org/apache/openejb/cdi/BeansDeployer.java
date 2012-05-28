@@ -127,7 +127,13 @@ public class BeansDeployer {
     {
         Bean<?> bean = null;
 
-        Class<?> beanClass = ClassUtil.getClassFromName(className);
+        Class<?> beanClass;
+        try {
+            beanClass = ClassUtil.getClassFromName(className);
+        } catch (LinkageError le) {
+            beanClass = ClassUtil.getClassFromName(className);
+        }
+
         if (beanClass != null) {
             bean = (Bean) ClassUtil.newInstance(webBeansContext, beanClass);
         }
