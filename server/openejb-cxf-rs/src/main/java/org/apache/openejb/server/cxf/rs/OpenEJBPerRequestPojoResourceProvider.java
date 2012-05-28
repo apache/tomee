@@ -25,6 +25,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.ws.rs.WebApplicationException;
 import org.apache.cxf.jaxrs.lifecycle.PerRequestResourceProvider;
+import org.apache.cxf.jaxrs.utils.InjectionUtils;
 import org.apache.cxf.message.Message;
 import org.apache.openejb.Injection;
 import org.apache.openejb.InjectionProcessor;
@@ -35,6 +36,8 @@ public class OpenEJBPerRequestPojoResourceProvider extends PerRequestResourcePro
     protected Collection<Injection> injections;
     protected Context context;
     protected WebBeansContext webbeansContext;
+    protected InjectionProcessor<Object> injector;
+    protected OWBInjector beanInjector;
 
     public OpenEJBPerRequestPojoResourceProvider(final Class<?> clazz, final Collection<Injection> injectionCollection, final Context initialContext, final WebBeansContext owbCtx) {
         super(clazz);
@@ -43,13 +46,14 @@ public class OpenEJBPerRequestPojoResourceProvider extends PerRequestResourcePro
         context = (Context) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[]{Context.class}, new InitialContextWrapper(initialContext));
     }
 
+    @Override
     protected Object createInstance(Message m) {
         Object o = super.createInstance(m);
         try {
-            final InjectionProcessor<?> injector = new InjectionProcessor<Object>(o, new ArrayList<Injection>(injections), InjectionProcessor.unwrap(context));
+            injector = new InjectionProcessor<Object>(o, new ArrayList<Injection>(injections), InjectionProcessor.unwrap(context));
             injector.createInstance();
             try {
-                final OWBInjector beanInjector = new OWBInjector(webbeansContext);
+                beanInjector = new OWBInjector(webbeansContext);
                 beanInjector.inject(injector.getInstance());
             } catch (Throwable t) {
                 // ignored
@@ -58,6 +62,20 @@ public class OpenEJBPerRequestPojoResourceProvider extends PerRequestResourcePro
             return injector.getInstance();
         } catch (Exception e) {
             throw new WebApplicationException(e);
+        }
+    }
+
+    @Override
+    public void releaseInstance(Message m, Object o) {
+        try {
+            if (beanInjector != null) {
+                beanInjector.destroy();
+            }
+        } catch (Throwable t) {
+            // ignored
+        }
+        if (injector != null) {
+            injector.preDestroy();
         }
     }
 
