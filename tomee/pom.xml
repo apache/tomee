@@ -26,6 +26,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>tomee</artifactId>
+  <version>1.0.0-beta-3-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>OpenEJB :: TomEE</name>
 
@@ -106,7 +107,7 @@
       </activation>
       <dependencies>
         <dependency> <!-- to avoid to force exclusions everywhere -->
-          <groupId>${project.groupId}</groupId>
+          <groupId>org.apache.openejb</groupId>
           <artifactId>openejb-core</artifactId>
           <version>${openejb.version}</version>
           <exclusions>
@@ -149,7 +150,7 @@
           </exclusions>
         </dependency>
         <dependency>
-          <groupId>${project.groupId}</groupId>
+          <groupId>org.apache.openejb</groupId>
           <artifactId>openejb-core-hibernate</artifactId>
           <type>pom</type>
           <version>${openejb.version}</version>

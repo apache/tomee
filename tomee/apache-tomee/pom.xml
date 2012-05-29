@@ -22,13 +22,12 @@
   <parent>
     <artifactId>tomee</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.0.0-beta-3-SNAPSHOT</version>
+    <version>1.0.0-beta-3-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>apache-tomee</artifactId>
   <packaging>pom</packaging>
   <name>OpenEJB :: TomEE :: Apache TomEE</name>
-  <version>1.0.0-beta-3-SNAPSHOT</version>
 
   <dependencies>
     <dependency>
@@ -46,14 +45,14 @@
       <groupId>org.apache.commons</groupId>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
       <version>${openejb.version}</version>
       <type>jar</type>
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>org.apache.openejb</groupId>
       <artifactId>apache-tomcat</artifactId>
       <version>${tomcat.bundle.version}</version>
       <type>zip</type>
@@ -67,23 +66,23 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-common</artifactId>
-      <version>${openejb.version}</version>
+      <version>${tomee.version}</version>
       <type>jar</type>
       <scope>compile</scope>
     </dependency>
     <dependency> <!-- to be sure to have it -->
-      <groupId>${project.groupId}</groupId>
+      <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-plus-webapp</artifactId>
-      <version>${openejb.version}</version>
+      <version>${tomee.version}</version>
       <type>war</type>
       <scope>provided</scope>
     </dependency>
     <dependency> <!-- to be sure to have it -->
-      <groupId>${project.groupId}</groupId>
+      <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-jaxrs-webapp</artifactId>
-      <version>${openejb.version}</version>
+      <version>${tomee.version}</version>
       <type>war</type>
       <scope>provided</scope>
     </dependency>

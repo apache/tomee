@@ -83,6 +83,10 @@ class SetupCommand {
 		def tomcatVersion = require('tomcat.version')
 		def tomcatBundleVersion = require('tomcat.bundle.version')
 		System.setProperty('tomcat.version', tomcatVersion)
+
+        def tomeeVersion = require('tomee.version')
+		System.setProperty('tomee.version', tomeeVersion)
+
 		def openejbVersion = require('openejb.version')
 		System.setProperty('openejb.version', openejbVersion)
 		def localRepo = require('localRepository')
@@ -112,7 +116,7 @@ class SetupCommand {
 		ant.unzip(src: dest, dest: "${workDir}")
 
 		log.info("Deploying the tomee war")
-		ant.unzip(src: "${localRepo}/org/apache/openejb/${webapp}/${openejbVersion}/${webapp}-${openejbVersion}.war",
+		ant.unzip(src: "${localRepo}/org/apache/openejb/${webapp}/${tomeeVersion}/${webapp}-${tomeeVersion}.war",
 				dest: "${workDir}/apache-tomcat-${tomcatVersion}/webapps/tomee")
 
 		log.info("Installing to: ${catalinaHome}")
