@@ -74,6 +74,7 @@ public class Container {
     private File base;
     private Map<String, String> moduleIds = new HashMap<String, String>(); // TODO: manage multimap
     private Map<String, AppContext> appContexts = new HashMap<String, AppContext>(); // TODO: manage multimap
+    private Map<String, AppInfo> infos = new HashMap<String, AppInfo>(); // TODO: manage multimap
     private ConfigurationFactory configurationFactory;
     private Assembler assembler;
     private final Tomcat tomcat;
@@ -248,16 +249,22 @@ public class Container {
 
         AppContext context = assembler.createApplication(appInfo);
         moduleIds.put(name, appInfo.path);
+        infos.put(name, appInfo);
         appContexts.put(name, context);
 
         return context;
     }
 
+    public AppInfo getInfo(final String name) {
+        return infos.get(name);
+    }
+
     public void undeploy(String name) throws UndeployException, NoSuchApplicationException {
         final String moduleId = moduleIds.remove(name);
+        infos.remove(name);
+        appContexts.remove(name);
         if (moduleId != null) {
             assembler.destroyApplication(moduleId);
-            appContexts.remove(name);
         }
     }
 

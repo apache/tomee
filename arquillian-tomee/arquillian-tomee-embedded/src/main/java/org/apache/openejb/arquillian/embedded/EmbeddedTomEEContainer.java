@@ -19,6 +19,7 @@ package org.apache.openejb.arquillian.embedded;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.arquillian.common.Files;
 import org.apache.openejb.arquillian.common.TomEEContainer;
+import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.tomee.embedded.Configuration;
 import org.apache.tomee.embedded.Container;
 import org.jboss.arquillian.container.spi.client.container.DeploymentException;
@@ -38,13 +39,10 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.naming.Context;
 import java.io.File;
 import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfiguration> {
 
-    public static final String TOMEE_ARQUILLIAN_HTTP_PORT = "tomee.arquillian.http";
-    public static final String TOMEE_ARQUILLIAN_STOP_PORT = "tomee.arquillian.stop";
     private static final String LOCALHOST = "localhost";
 
     @Inject
@@ -105,18 +103,20 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
     
     public ProtocolMetaData deploy(Archive<?> archive) throws DeploymentException {
     	try {
-
             final File tempDir = Files.createTempDir();
             final String name = archive.getName();
             final File file = new File(tempDir, name);
             ARCHIVES.put(archive, file);
         	archive.as(ZipExporter.class).exportTo(file, true);
 
+            final AppContext appContext = container.deploy(name, file);
+            final AppInfo info = container.getInfo(name);
+            final String context = getArchiveNameWithoutExtension(archive);
 
-            AppContext appContext = container.deploy(name, file);
+            final HTTPContext httpContext = new HTTPContext(LOCALHOST, configuration.getHttpPort());
+            httpContext.add(new Servlet("ArquillianServletRunner", "/" + context));
+            addServlets(httpContext, info);
 
-            HTTPContext httpContext = new HTTPContext(LOCALHOST, configuration.getHttpPort());
-            httpContext.add(new Servlet("ArquillianServletRunner", "/" + getArchiveNameWithoutExtension(archive)));
             beanManagerInstance.set(appContext.getBeanManager());
             return new ProtocolMetaData().addContext(httpContext);
         } catch (Exception e) {

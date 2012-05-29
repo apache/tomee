@@ -28,12 +28,11 @@ import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.deploy.ResourceBase;
 
 public class OpenEJBNamingResource extends NamingResources {
+    private static final String JAVA_PREFIX = "java:";
 
     @Override
     public void addEnvironment(ContextEnvironment environment) {
-        if (environment.getType() == null) {
-            normalize(environment);
-        }
+        normalize(environment);
         super.addEnvironment(environment);
     }
 
@@ -82,11 +81,15 @@ public class OpenEJBNamingResource extends NamingResources {
     /**
      * tomcat uses a hastable to store entry type, null values are not allowed
      * <p/>
-     * These occur when the reference is decalred using a 'lookup' attribute These do not have a type associated
+     * These occur when the reference is declared using a 'lookup' attribute These do not have a type associated
      *
      * @param ref
      */
     private void normalize(ResourceBase ref) {
+        final String name = ref.getName();
+        if (name.startsWith(JAVA_PREFIX)) { // tomcat adds mbeans and a ":" in a mbean is not very cool for the objectname
+            ref.setName(name.substring(JAVA_PREFIX.length()));
+        }
         if (ref.getType() == null) {
             ref.setType("");
         }

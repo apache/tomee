@@ -34,6 +34,7 @@ import org.apache.catalina.core.NamingContextListener;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.core.StandardServer;
+import org.apache.catalina.core.StandardWrapper;
 import org.apache.catalina.deploy.ApplicationParameter;
 import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextResource;
@@ -818,6 +819,15 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             return;
         }
 
+        WebAppInfo currentWebAppInfo = null;
+        for (final WebAppInfo webAppInfo : contextInfo.appInfo.webApps) {
+            final boolean isRoot = isRootApplication(standardContext);
+            if (("/" + webAppInfo.contextRoot).equals(standardContext.getPath()) || isRoot) {
+                currentWebAppInfo = webAppInfo;
+                break;
+            }
+        }
+
         // bind extra stuff at the java:comp level which can only be
         // bound after the context is created
         final NamingContextListener ncl = getNamingContextListener(standardContext);
@@ -850,22 +860,17 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             safeBind(root, "openejb", openejbContext);
 
             // add context to WebDeploymentInfo
-            for (final WebAppInfo webAppInfo : contextInfo.appInfo.webApps) {
-                final boolean isRoot = isRootApplication(standardContext);
-                if (("/" + webAppInfo.contextRoot).equals(standardContext.getPath()) || isRoot) {
-                    final WebContext webContext = getContainerSystem().getWebContext(webAppInfo.moduleId);
-                    if (webContext != null) {
-                        webContext.setJndiEnc(comp);
-                    }
+            if (currentWebAppInfo != null) {
+                final WebContext webContext = getContainerSystem().getWebContext(currentWebAppInfo.moduleId);
+                if (webContext != null) {
+                    webContext.setJndiEnc(comp);
+                }
 
-                    try {
-                        // Bean Validation
-                        standardContext.getServletContext().setAttribute("javax.faces.validator.beanValidator.ValidatorFactory", openejbContext.lookup(Assembler.VALIDATOR_FACTORY_NAMING_CONTEXT.replaceFirst("openejb", "") + webAppInfo.uniqueId));
-                    } catch (NamingException ne) {
-                        logger.warning("no validator factory found for webapp " + webAppInfo.moduleId);
-                    }
-
-                    break;
+                try {
+                    // Bean Validation
+                    standardContext.getServletContext().setAttribute("javax.faces.validator.beanValidator.ValidatorFactory", openejbContext.lookup(Assembler.VALIDATOR_FACTORY_NAMING_CONTEXT.replaceFirst("openejb", "") + currentWebAppInfo.uniqueId));
+                } catch (NamingException ne) {
+                    logger.warning("no validator factory found for webapp " + currentWebAppInfo.moduleId);
                 }
             }
 
@@ -935,6 +940,24 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+            }
+        }
+
+        // add servlets to webappinfo
+        if (currentWebAppInfo != null) {
+            for (String mapping : standardContext.findServletMappings()) {
+                final ServletInfo info = new ServletInfo();
+                info.servletName = standardContext.findServletMapping(mapping);
+                info.mappings.add(mapping);
+
+                final Container container = standardContext.findChild(info.servletName);
+                if (container instanceof StandardWrapper) {
+                    info.servletClass = ((StandardWrapper) container).getServletClass();
+                } else {
+                    info.servletClass = mapping;
+                }
+
+                currentWebAppInfo.servlets.add(info);
             }
         }
     }

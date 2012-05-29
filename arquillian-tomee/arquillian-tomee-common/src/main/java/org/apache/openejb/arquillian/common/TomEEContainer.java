@@ -30,6 +30,8 @@ import javax.naming.NamingException;
 import org.apache.openejb.assembler.Deployer;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Info;
+import org.apache.openejb.assembler.classic.ServletInfo;
+import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.util.NetworkUtil;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
@@ -165,6 +167,21 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         return new ProtocolDescription("Servlet 2.5");
     }
 
+    public void addServlets(final HTTPContext httpContext, final AppInfo appInfo) {
+        for (WebAppInfo webApps : appInfo.webApps) {
+            for (ServletInfo servlet : webApps.servlets) {
+                // weird but arquillianurl doesn't match the servlet url but its context
+                httpContext.add(new Servlet(servlet.servletClass, webApps.contextRoot));
+                /*
+                for (String mapping : servlet.mappings) {
+                    httpContext.add(new Servlet(servlet.servletClass, startWithSlash(uniqueSlash(webApps.contextRoot, mapping))));
+
+                }
+                */
+            }
+        }
+    }
+
     public ProtocolMetaData deploy(Archive<?> archive) throws DeploymentException {
         try {
             String tmpDir = configuration.getAppWorkingDir();
@@ -202,6 +219,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
             }
 
             HTTPContext httpContext = new HTTPContext(LOCALHOST, configuration.getHttpPort());
+
             String arquillianServlet;
             // Avoids "inconvertible types" error in windows build
             final Object object = archive;
@@ -211,6 +229,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
                 arquillianServlet = "/arquillian-protocol";
             }
             httpContext.add(new Servlet("ArquillianServletRunner", arquillianServlet));
+            addServlets(httpContext, appInfo);
 
             // we should probably get all servlets and add them to the context
             return new ProtocolMetaData().addContext(httpContext);
@@ -253,5 +272,27 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
 
     public void undeploy(Descriptor descriptor) throws DeploymentException {
         throw new UnsupportedOperationException("Not implemented");
+    }
+
+    private static String startWithSlash(final String s) {
+        if (s == null) {
+            return "/";
+        }
+        if (s.startsWith("/")) {
+            return s;
+        }
+        return "/" + s;
+    }
+
+    private static String uniqueSlash(final String contextRoot, final String mapping) {
+        boolean ctxSlash = contextRoot.endsWith("/");
+        boolean mappingSlash = mapping.startsWith("/");
+        if (ctxSlash && mappingSlash) {
+            return contextRoot.substring(0, contextRoot.length() - 1) + mapping;
+        }
+        if ((!ctxSlash && mappingSlash) || (ctxSlash && !mappingSlash)) {
+            return contextRoot + mapping;
+        }
+        return contextRoot + "/" + mapping;
     }
 }
