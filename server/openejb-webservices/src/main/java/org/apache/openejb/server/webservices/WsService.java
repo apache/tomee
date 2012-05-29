@@ -323,8 +323,14 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
         }
 
         for (ServletInfo servlet : webApp.servlets) {
+            if (servlet.servletName == null) {
+                continue;
+            }
+
             PortInfo portInfo = ports.get(servlet.servletName);
-            if (portInfo == null) continue;
+            if (portInfo == null) {
+                continue;
+            }
 
             try {
                 ClassLoader classLoader = webContext.getClassLoader();
@@ -396,8 +402,14 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
                 }
 
                 for (ServletInfo servlet : webApp.servlets) {
+                    if (servlet.servletClass == null) {
+                        continue;
+                    }
+
                     PortInfo portInfo = ports.get(servlet.servletClass);
-                    if (portInfo == null) continue;
+                    if (portInfo == null) {
+                        continue;
+                    }
 
                     // remove wsdl addresses from global registry
                     String address = servletAddresses.remove(webApp.moduleId + "." + servlet.servletName);
