@@ -17,6 +17,7 @@
  */
 package org.apache.openejb.jee;
 
+import java.util.Collections;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -622,5 +623,17 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
             }
         }
         return map;
+    }
+
+    public List<String> getServletMappings(final String servletName) {
+        if (servletMapping == null || servletName == null) {
+            return Collections.emptyList();
+        }
+        for (ServletMapping mapping : servletMapping) {
+            if (servletName.equals(mapping.getServletName())) {
+                return mapping.getUrlPattern();
+            }
+        }
+        return Collections.emptyList();
     }
 }

@@ -346,6 +346,7 @@ class AppInfoBuilder {
                 ServletInfo servletInfo = new ServletInfo();
                 servletInfo.servletName = servlet.getServletName();
                 servletInfo.servletClass = servlet.getServletClass();
+                servletInfo.mappings = webModule.getWebApp().getServletMappings(servletInfo.servletName);
                 webAppInfo.servlets.add(servletInfo);
             }
 
