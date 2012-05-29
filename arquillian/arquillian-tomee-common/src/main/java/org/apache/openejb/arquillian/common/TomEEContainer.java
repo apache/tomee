@@ -171,7 +171,15 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         for (WebAppInfo webApps : appInfo.webApps) {
             for (ServletInfo servlet : webApps.servlets) {
                 // weird but arquillianurl doesn't match the servlet url but its context
-                httpContext.add(new Servlet(servlet.servletClass, webApps.contextRoot));
+                String clazz = servlet.servletClass;
+                if (clazz == null) {
+                    clazz = servlet.servletName;
+                    if (clazz == null) {
+                        continue;
+                    }
+                }
+
+                httpContext.add(new Servlet(clazz, webApps.contextRoot));
                 /*
                 for (String mapping : servlet.mappings) {
                     httpContext.add(new Servlet(servlet.servletClass, startWithSlash(uniqueSlash(webApps.contextRoot, mapping))));
@@ -231,9 +239,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
             httpContext.add(new Servlet("ArquillianServletRunner", arquillianServlet));
             addServlets(httpContext, appInfo);
 
-            // we should probably get all servlets and add them to the context
-            final ProtocolMetaData metadata = new ProtocolMetaData().addContext(httpContext);
-            return metadata;
+            return new ProtocolMetaData().addContext(httpContext);
         } catch (Exception e) {
             e.printStackTrace();
             throw new DeploymentException("Unable to deploy", e);
