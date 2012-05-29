@@ -232,7 +232,8 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
             addServlets(httpContext, appInfo);
 
             // we should probably get all servlets and add them to the context
-            return new ProtocolMetaData().addContext(httpContext);
+            final ProtocolMetaData metadata = new ProtocolMetaData().addContext(httpContext);
+            return metadata;
         } catch (Exception e) {
             e.printStackTrace();
             throw new DeploymentException("Unable to deploy", e);

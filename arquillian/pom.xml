@@ -26,10 +26,10 @@
     <version>4.1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>arquillian-tomee</artifactId>
+  <artifactId>arquillian</artifactId>
   <version>1.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>OpenEJB :: TomEE Arquillian Adaptor</name>
+  <name>OpenEJB :: Arquillian Adaptors Parent</name>
 
   <properties>
     <version.arquillian>1.0.0.Final</version.arquillian>
@@ -48,5 +48,6 @@
     <module>arquillian-tomee-moviefun-example</module>
     <module>arquillian-openejb-embedded-4</module>
     <module>ziplock</module>
+    <module>arquillian-tomee-extensions</module>
   </modules>
 </project>
