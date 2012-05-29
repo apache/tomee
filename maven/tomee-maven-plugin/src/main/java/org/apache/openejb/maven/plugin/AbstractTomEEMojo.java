@@ -289,7 +289,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             } catch (IOException e) {
                 throw new TomEEException(e.getMessage(), e);
             }
-        } else {
+        } else if (warFile.exists()) {
             InputStream is = null;
             OutputStream os = null;
             try {
@@ -302,6 +302,8 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                 close(is);
                 close(os);
             }
+        } else {
+            getLog().warn("'" + warFile + "' doesn't exist, ignoring (maybe run mvn package before this plugin)");
         }
     }
 
