@@ -90,6 +90,9 @@
 
   <properties>
 
+    <openejb.version>4.0.0-beta-3-SNAPSHOT</openejb.version>
+    <tomee.version>1.0.0-beta-3-SNAPSHOT</tomee.version>
+
     <!-- Maven module versions -->
     <maven-bundle-plugin.version>2.3.7</maven-bundle-plugin.version>
 

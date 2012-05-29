@@ -18,23 +18,24 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.apache.openejb</groupId>
-  <artifactId>webdeployer</artifactId>
-  <version>4.0.0-beta-3-SNAPSHOT</version>
-  <name>OpenEJB :: Utils :: TomEE Webapps-based Deployer EJB</name>
   <parent>
     <artifactId>utils</artifactId>
     <groupId>org.apache.openejb</groupId>
     <version>4.0.0-beta-3-SNAPSHOT</version>
   </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.apache.openejb</groupId>
+  <artifactId>webdeployer</artifactId>
+  <name>OpenEJB :: Utils :: TomEE Webapps-based Deployer EJB</name>
   <packaging>jar</packaging>
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-catalina</artifactId>
-      <version>4.0.0-beta-3-SNAPSHOT</version>
+      <version>${tomee.version}</version>
       <type>jar</type>
       <scope>provided</scope>
     </dependency>

@@ -37,17 +37,17 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>${project.version}</version>
+      <version>${openejb.version}</version>
     </dependency>
     <dependency> <!-- for TomEERuntimeException -->
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-catalina</artifactId>
-      <version>${project.version}</version>
+      <version>${tomee.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>webdeployer</artifactId>
-      <version>${project.version}</version>
+      <version>${openejb.version}</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -70,7 +70,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tck-common</artifactId>
-      <version>${project.version}</version>
+      <version>${openejb.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.jsr299.tck</groupId>
