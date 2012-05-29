@@ -333,7 +333,7 @@
         <module>server</module>
         <module>examples</module>
         <module>assembly</module>
-        <module>arquillian-tomee</module>
+        <module>arquillian</module>
         <module>utils</module>
         <module>tomee</module>
         <module>osgi</module>
@@ -348,7 +348,7 @@
         <module>container</module>
         <module>server</module>
         <module>assembly</module>
-        <module>arquillian-tomee</module>
+        <module>arquillian</module>
         <module>utils</module>
         <module>tomee</module>
       </modules>
@@ -362,7 +362,7 @@
         <module>container</module>
         <module>server</module>
         <module>examples</module>
-        <module>arquillian-tomee</module>
+        <module>arquillian</module>
         <module>assembly</module>
         <module>utils</module>
         <module>tomee</module>
