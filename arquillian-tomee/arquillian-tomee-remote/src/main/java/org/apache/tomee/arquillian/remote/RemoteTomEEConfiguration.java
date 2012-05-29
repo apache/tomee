@@ -27,7 +27,7 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
 
     private String groupId = "org.apache.openejb";
     private String artifactId = "apache-tomee";
-    private String version = "1.0.0-beta-3-SNAPSHOT";
+    private String version = "1.1.0-SNAPSHOT";
     private String classifier = "webprofile";
     private String type = "zip";
     private boolean removeUnusedWebapps = true;

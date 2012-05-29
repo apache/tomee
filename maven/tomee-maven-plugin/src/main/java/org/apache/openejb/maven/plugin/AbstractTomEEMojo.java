@@ -82,7 +82,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     protected List<ArtifactRepository> remoteRepos;
 
     /**
-     * @parameter expression="${tomee-plugin.version}" default-value="1.0.0-beta-3-SNAPSHOT"
+     * @parameter expression="${tomee-plugin.version}" default-value="1.1.0-SNAPSHOT"
      */
     protected String tomeeVersion;
 
