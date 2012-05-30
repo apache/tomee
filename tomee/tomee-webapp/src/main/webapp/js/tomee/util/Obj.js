@@ -37,13 +37,12 @@ TOMEE.utils = {
         return obj;
     },
 
-    stringFormat: function() {
-        var s = arguments[0];
-        for (var i = 0; i < arguments.length - 1; i++) {
-            var reg = new RegExp("\\{" + i + "\\}", "gm");
-            s = s.replace(reg, arguments[i + 1]);
+    stringFormat: function(str, values) {
+        var result = str;
+        for (var key in values) {
+            var reg = new RegExp("\\{" + key + "\\}", "gm");
+            result = result.replace(reg, values[key]);
         }
-
-        return s;
+        return result;
     }
 };

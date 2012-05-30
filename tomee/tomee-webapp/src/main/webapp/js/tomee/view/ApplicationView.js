@@ -26,10 +26,10 @@ TOMEE.ApplicationView = function (cfg) {
         url:'js/tomee/view/body.html',
         dataType: 'text'
     }).success(function (data, textStatus, jqXHR) {
-            var html = TOMEE.utils.stringFormat(data,
-                TOMEE.I18N.get('application.name'),
-                TOMEE.I18N.get('application.footer')
-            );
+            var html = TOMEE.utils.stringFormat(data, {
+                'app_name': TOMEE.I18N.get('application.name'),
+                'footer': TOMEE.I18N.get('application.footer')
+            });
             $('body').append(html);
     });
 
