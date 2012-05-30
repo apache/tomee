@@ -27,7 +27,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
-import org.apache.cxf.jaxrs.lifecycle.PerRequestResourceProvider;
+import org.apache.cxf.jaxrs.lifecycle.ResourceProvider;
 import org.apache.cxf.jaxrs.utils.InjectionUtils;
 import org.apache.cxf.jaxrs.utils.ResourceUtils;
 import org.apache.cxf.message.Message;
@@ -37,18 +37,20 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.inject.OWBInjector;
 
-// the constructor part is mainly copied from the parent since all is private
+// the constructor part is mainly copied from the PerrequestResourceProvider since all is private
 // and we want to invoke postconstrut ourself
-public class OpenEJBPerRequestPojoResourceProvider extends PerRequestResourceProvider {
+public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
     protected Collection<Injection> injections;
     protected Context context;
     protected WebBeansContext webbeansContext;
     protected InjectionProcessor<Object> injector;
     protected OWBInjector beanInjector;
     protected Constructor<?> constructor;
+    protected Method postConstructMethod;
+    protected Method preDestroyMethod;
+
 
     public OpenEJBPerRequestPojoResourceProvider(final Class<?> clazz, final Collection<Injection> injectionCollection, final Context initialContext, final WebBeansContext owbCtx) {
-        super(clazz);
         injections = injectionCollection;
         webbeansContext = owbCtx;
         context = (Context) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[]{Context.class}, new InitialContextWrapper(initialContext));
@@ -58,10 +60,12 @@ public class OpenEJBPerRequestPojoResourceProvider extends PerRequestResourcePro
             throw new RuntimeException("Resource class " + clazz
                     + " has no valid constructor");
         }
+        postConstructMethod = ResourceUtils.findPostConstructMethod(clazz);
+        preDestroyMethod = ResourceUtils.findPreDestroyMethod(clazz);
     }
 
     @Override
-    protected Object createInstance(Message m) {
+    public Object getInstance(Message m) {
         Object[] values = ResourceUtils.createConstructorArguments(constructor, m);
         try {
             final Object instance = values.length > 0 ? constructor.newInstance(values) : constructor.newInstance(new Object[]{});
@@ -73,7 +77,8 @@ public class OpenEJBPerRequestPojoResourceProvider extends PerRequestResourcePro
             } catch (Throwable t) {
                 // ignored
             }
-            injector.postConstruct();
+            // injector.postConstruct(); // he doesn't know it
+            InjectionUtils.invokeLifeCycleMethod(instance, postConstructMethod);
             return injector.getInstance();
         } catch (InstantiationException ex) {
             final String msg = "Resource class " + constructor.getDeclaringClass().getName() + " can not be instantiated";
@@ -95,16 +100,31 @@ public class OpenEJBPerRequestPojoResourceProvider extends PerRequestResourcePro
 
     @Override
     public void releaseInstance(Message m, Object o) {
+        // we can't give it to the injector so let's do it manually
         try {
-            if (beanInjector != null) {
-                beanInjector.destroy();
+            InjectionUtils.invokeLifeCycleMethod(o, preDestroyMethod);
+        } finally {
+            try {
+                if (beanInjector != null) {
+                    beanInjector.destroy();
+                }
+            } catch (Throwable t) {
+                // ignored
             }
-        } catch (Throwable t) {
-            // ignored
+            if (injector != null) {
+                injector.preDestroy();
+            }
         }
-        if (injector != null) {
-            injector.preDestroy();
-        }
+    }
+
+    @Override
+    public Class<?> getResourceClass() {
+        return constructor.getDeclaringClass();
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return false;
     }
 
     private static class InitialContextWrapper implements InvocationHandler {
