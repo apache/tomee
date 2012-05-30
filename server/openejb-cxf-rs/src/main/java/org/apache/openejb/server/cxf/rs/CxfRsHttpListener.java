@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.server.cxf.rs;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -36,6 +38,7 @@ import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.Injection;
+import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.httpd.HttpRequest;
 import org.apache.openejb.server.httpd.HttpRequestImpl;
@@ -45,6 +48,7 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.ObjectRecipeHelper;
 import org.apache.webbeans.config.WebBeansContext;
+import org.apache.xbean.recipe.ObjectRecipe;
 
 /**
  * System property:
@@ -53,6 +57,9 @@ import org.apache.webbeans.config.WebBeansContext;
  * </ul>
  * Note: default means jaxb and json
  *
+ * Providers are created from system properties so config is done:
+ * [<service class name>.providers.</service>|openejb.cxf.jax-rs.providers].<provider class>.<property name>=<value>
+ *
  */
 public class CxfRsHttpListener implements RsHttpListener {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.CXF, CxfRsHttpListener.class);
@@ -60,7 +67,7 @@ public class CxfRsHttpListener implements RsHttpListener {
     public static final String OPENEJB_CXF_JAXRS_PROVIDERS_KEY = "openejb.cxf.jax-rs.providers";
     public static final String OPENEJB_CXF_JAXRS_PROVIDERS_SUFFIX = ".providers";
     public static final String DEFAULT_CXF_JAXRS_PROVIDERS_KEY = "default";
-    public static final String OPENEJB_CXF_PROPERTIES = "openejb.cxf.rs.properties";
+    public static final String OPENEJB_CXF_PROPERTIES = "openejb.cxf.rs.jaxb.properties";
 
     private static final List<Object> PROVIDERS = createConfiguredProviderList("", CxfRsHttpListener.class.getClassLoader());
     private static final Map<String, Object> cxfProperties = toMap(SystemInstance.get().getProperty(OPENEJB_CXF_PROPERTIES));
@@ -180,13 +187,14 @@ public class CxfRsHttpListener implements RsHttpListener {
             return PROVIDERS;
         }
 
-        JAXBElementProvider jaxb = new JAXBElementProvider();
-        Map<String, Object> jaxbProperties = new HashMap<String, Object> ();
+        final JAXBElementProvider jaxb = new JAXBElementProvider();
+        final Map<String, Object> jaxbProperties = new HashMap<String, Object> ();
         jaxbProperties.put(Marshaller.JAXB_FRAGMENT, true);
         jaxb.setMarshallerProperties(jaxbProperties);
 
-        JSONProvider json = new JSONProvider();
-        json.setSerializeAsArray(true);
+        final JSONProvider json = buildProvider(JSONProvider.class, loader,
+                OPENEJB_CXF_JAXRS_PROVIDERS_KEY + "." + JSONProvider.class.getName() + ".",
+                systPropPrefix + JSONProvider.class.getName() + ".");
 
         List<Object> providerList = new ArrayList<Object>();
         if (providersProperty != null && !providersProperty.trim().isEmpty()) {
@@ -197,7 +205,7 @@ public class CxfRsHttpListener implements RsHttpListener {
                     providerList.add(jaxb);
                 } else {
                     try {
-                        providerList.add(ObjectRecipeHelper.createMeFromSystemProps(systPropPrefix, null, loader.loadClass(provider)));
+                        providerList.add(ObjectRecipeHelper.createMeFromSystemProps(systPropPrefix + provider + ".", null, loader.loadClass(provider)));
                     } catch (Exception e) {
                         LOGGER.error("can't add jax-rs provider " + provider + " in the current webapp"); // don't print this exception
                     }
@@ -209,6 +217,29 @@ public class CxfRsHttpListener implements RsHttpListener {
         providerList.add(jaxb);
         providerList.add(json);
         return providerList;
+    }
+
+    // generally faster than looping all system properties
+    // Note: should respect general format of custom provider config
+    private static <T> T buildProvider(final Class<T> clazz, final ClassLoader classloader, final String globalPrefix, final String prefix) {
+        // quick look in clazz (and not parent) if we can look for some property
+        final Map<String, Object> properties = new HashMap<String, Object>();
+        final Options options = SystemInstance.get().getOptions();
+        for (Field field : clazz.getDeclaredFields()) {
+            if (Modifier.isStatic(field.getModifiers())) {
+                continue;
+            }
+
+            if (prefix != null) {
+                final String key = prefix + field.getName();
+                if (options.has(key)) {
+                    properties.put(field.getName(), options.getProperties().get(key));
+                } else if (options.has(globalPrefix + field.getName())) {
+                    properties.put(field.getName(), options.getProperties().get(globalPrefix + field.getName()));
+                }
+            }
+        }
+        return clazz.cast(new ObjectRecipe(clazz, properties).create(classloader));
     }
 
     private static Map<String, Object> toMap(String property) {
