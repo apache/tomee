@@ -17,6 +17,7 @@
 
 package org.apache.openejb.server.cxf.rs;
 
+import javax.annotation.PostConstruct;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.server.cxf.rs.beans.SimpleEJB;

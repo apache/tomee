@@ -16,7 +16,9 @@
  */
 package org.apache.openejb.server.cxf.rs;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
@@ -24,33 +26,46 @@ import java.util.Collection;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 import org.apache.cxf.jaxrs.lifecycle.PerRequestResourceProvider;
 import org.apache.cxf.jaxrs.utils.InjectionUtils;
+import org.apache.cxf.jaxrs.utils.ResourceUtils;
 import org.apache.cxf.message.Message;
 import org.apache.openejb.Injection;
 import org.apache.openejb.InjectionProcessor;
+import org.apache.openejb.OpenEJBException;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.inject.OWBInjector;
 
+// the constructor part is mainly copied from the parent since all is private
+// and we want to invoke postconstrut ourself
 public class OpenEJBPerRequestPojoResourceProvider extends PerRequestResourceProvider {
     protected Collection<Injection> injections;
     protected Context context;
     protected WebBeansContext webbeansContext;
     protected InjectionProcessor<Object> injector;
     protected OWBInjector beanInjector;
+    protected Constructor<?> constructor;
 
     public OpenEJBPerRequestPojoResourceProvider(final Class<?> clazz, final Collection<Injection> injectionCollection, final Context initialContext, final WebBeansContext owbCtx) {
         super(clazz);
         injections = injectionCollection;
         webbeansContext = owbCtx;
         context = (Context) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[]{Context.class}, new InitialContextWrapper(initialContext));
+
+        constructor = ResourceUtils.findResourceConstructor(clazz, true);
+        if (constructor == null) {
+            throw new RuntimeException("Resource class " + clazz
+                    + " has no valid constructor");
+        }
     }
 
     @Override
     protected Object createInstance(Message m) {
-        Object o = super.createInstance(m);
+        Object[] values = ResourceUtils.createConstructorArguments(constructor, m);
         try {
-            injector = new InjectionProcessor<Object>(o, new ArrayList<Injection>(injections), InjectionProcessor.unwrap(context));
+            final Object instance = values.length > 0 ? constructor.newInstance(values) : constructor.newInstance(new Object[]{});
+            injector = new InjectionProcessor<Object>(instance, new ArrayList<Injection>(injections), InjectionProcessor.unwrap(context));
             injector.createInstance();
             try {
                 beanInjector = new OWBInjector(webbeansContext);
@@ -60,8 +75,21 @@ public class OpenEJBPerRequestPojoResourceProvider extends PerRequestResourcePro
             }
             injector.postConstruct();
             return injector.getInstance();
-        } catch (Exception e) {
-            throw new WebApplicationException(e);
+        } catch (InstantiationException ex) {
+            final String msg = "Resource class " + constructor.getDeclaringClass().getName() + " can not be instantiated";
+            throw new WebApplicationException(Response.serverError().entity(msg).build());
+        } catch (IllegalAccessException ex) {
+            final String msg = "Resource class " + constructor.getDeclaringClass().getName() + " can not be instantiated"
+                    + " due to IllegalAccessException";
+            throw new WebApplicationException(Response.serverError().entity(msg).build());
+        } catch (InvocationTargetException ex) {
+            final String msg = "Resource class "
+                    + constructor.getDeclaringClass().getName() + " can not be instantiated"
+                    + " due to InvocationTargetException";
+            throw new WebApplicationException(Response.serverError().entity(msg).build());
+        } catch (OpenEJBException e) {
+            final String msg = "An error occured injecting in class " + constructor.getDeclaringClass().getName();
+            throw new WebApplicationException(Response.serverError().entity(msg).build());
         }
     }
 
