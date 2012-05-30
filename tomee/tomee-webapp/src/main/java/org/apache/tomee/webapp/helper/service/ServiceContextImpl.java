@@ -15,17 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.tomee.loader.service;
-
-import org.apache.tomee.loader.service.helper.JndiHelper;
-import org.apache.tomee.loader.service.helper.JndiHelperImpl;
-import org.apache.tomee.loader.service.helper.OpenEJBHelper;
-import org.apache.tomee.loader.service.helper.OpenEJBHelperImpl;
-import org.apache.tomee.loader.service.helper.TestHelper;
-import org.apache.tomee.loader.service.helper.TestHelperImpl;
-
-import java.util.List;
-import java.util.Map;
+package org.apache.tomee.webapp.helper.service;
 
 public class ServiceContextImpl implements ServiceContext {
     private final OpenEJBHelper openEJBHelper;

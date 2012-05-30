@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 
-package org.apache.tomee.loader.servlet;
+package org.apache.tomee.webapp.servlet;
 
 import com.google.gson.Gson;
-import org.apache.tomee.loader.listener.UserSessionListener;
+import org.apache.tomee.webapp.listener.UserSessionListener;
 
 import javax.naming.NamingException;
 import javax.servlet.ServletException;
