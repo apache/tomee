@@ -27,10 +27,11 @@ public class CustomProviderWithConfigTest {
 
     @BeforeClass
     public static void start() throws Exception {
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
         properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
         properties.setProperty(CxfRsHttpListener.OPENEJB_CXF_JAXRS_PROVIDERS_KEY, ConfigurableProvider.class.getName());
-        properties.setProperty(CxfRsHttpListener.OPENEJB_CXF_JAXRS_PROVIDERS_KEY + ".str", "done!");
+        properties.setProperty("openejb.cxf.rs.jaxb.properties", "faultStackTraceEnabled=true");
+        properties.setProperty(CxfRsHttpListener.OPENEJB_CXF_JAXRS_PROVIDERS_KEY + "." + ConfigurableProvider.class.getName() + ".str", "done!");
         container = EJBContainer.createEJBContainer(properties);
     }
 
