@@ -17,15 +17,17 @@
 package org.apache.openejb.server.cxf.rs.beans;
 
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
 @Path("/hooked")
 public class HookedRest {
     private boolean post = false;
+    @Inject private SimpleEJB ejb;
 
     @PostConstruct public void post() {
-        post  = true;
+        post  = true && ejb != null;
     }
 
     @Path("/post") @GET public boolean wasPosted() {
