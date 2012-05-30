@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 
-package org.apache.tomee.loader.listener;
+package org.apache.tomee.webapp.listener;
 
-import org.apache.tomee.loader.service.ServiceContext;
-import org.apache.tomee.loader.service.ServiceContextImpl;
+import org.apache.tomee.webapp.helper.service.ServiceContext;
+import org.apache.tomee.webapp.helper.service.ServiceContextImpl;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;

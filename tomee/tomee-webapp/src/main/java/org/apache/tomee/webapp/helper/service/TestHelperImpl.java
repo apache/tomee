@@ -15,9 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.tomee.loader.service.helper;
-
-import org.apache.tomee.loader.service.ServiceContext;
+package org.apache.tomee.webapp.helper.service;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -47,14 +45,7 @@ public class TestHelperImpl implements TestHelper {
 
             result.add(createDTO("homeDirectory", openejbHome.isDirectory()));
 
-            final File openejbHomeLib;
-            if (org.apache.tomee.common.TomcatVersion.v6.isTheVersion()
-                    || org.apache.tomee.common.TomcatVersion.v7.isTheVersion()) {
-                openejbHomeLib = new File(openejbHome, "lib");
-            } else {
-                final File common = new File(openejbHome, "common");
-                openejbHomeLib = new File(common, "lib");
-            }
+            final File openejbHomeLib = new File(openejbHome, "lib");
             result.add(createDTO("libDirectory", openejbHomeLib.exists()));
         }
 

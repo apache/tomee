@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.tomee.loader.service.helper;
+package org.apache.tomee.webapp.helper.service;
 
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;

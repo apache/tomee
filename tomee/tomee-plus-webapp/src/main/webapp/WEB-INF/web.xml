@@ -25,7 +25,7 @@
     <display-name>OpenEJB Loader Application</display-name>
 
     <listener>
-        <listener-class>org.apache.tomee.loader.listener.UserSessionListener</listener-class>
+        <listener-class>org.apache.tomee.webapp.listener.UserSessionListener</listener-class>
     </listener>
 
     <servlet>
@@ -46,17 +46,17 @@
 
     <servlet>
         <servlet-name>WsConsole</servlet-name>
-        <servlet-class>org.apache.tomee.loader.servlet.ConsoleServlet</servlet-class>
+        <servlet-class>org.apache.tomee.webapp.servlet.ConsoleServlet</servlet-class>
     </servlet>
 
     <servlet>
         <servlet-name>WsJndi</servlet-name>
-        <servlet-class>org.apache.tomee.loader.servlet.JndiServlet</servlet-class>
+        <servlet-class>org.apache.tomee.webapp.servlet.JndiServlet</servlet-class>
     </servlet>
 
     <servlet>
         <servlet-name>WsTest</servlet-name>
-        <servlet-class>org.apache.tomee.loader.servlet.TestServlet</servlet-class>
+        <servlet-class>org.apache.tomee.webapp.servlet.TestServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.tomee.loader.service.helper;
+package org.apache.tomee.webapp.helper.service;
 
 import javax.naming.Binding;
 import javax.naming.Context;

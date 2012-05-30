@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,18 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.tomee.loader.test;
 
-import javax.ejb.Stateless;
+package org.apache.tomee.webapp.helper.service;
 
-@Stateless
-public class DummyEjb {
+import javax.naming.Context;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Map;
 
-    public String sayHi(String name) {
-        return "Hi " + name + "!";
-    }
+public interface JndiHelper {
 
-    public String sayWhassup() {
-        return "Whassuuuuuup??!";
-    }
+    Map<String, Object> getJndi();
+
+    List<Method> getJndiMethods(String path);
+
+    Context getContext(String user, String password);
+
+    Object invokeJndiMethod(Context context, String path, String methodName, TypeAndValueEntry... params);
+
 }

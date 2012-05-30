@@ -15,18 +15,15 @@
  * limitations under the License.
  */
 
-package org.apache.tomee.loader.service;
+package org.apache.tomee.webapp.helper.service;
 
-import org.apache.tomee.loader.service.helper.JndiHelper;
-import org.apache.tomee.loader.service.helper.OpenEJBHelper;
-import org.apache.tomee.loader.service.helper.TestHelper;
+public class TypeAndValueEntry {
+    public final Class<?> type;
+    public final Object value;
 
-public interface ServiceContext {
 
-    OpenEJBHelper getOpenEJBHelper();
-
-    JndiHelper getJndiHelper();
-
-    TestHelper getTestHelper();
-
+    public TypeAndValueEntry(Class<?> type, Object value) {
+        this.type = type;
+        this.value = value;
+    }
 }

@@ -15,21 +15,13 @@
  * limitations under the License.
  */
 
-package org.apache.tomee.loader.service.helper;
+package org.apache.tomee.webapp.helper.service;
 
-import javax.naming.Context;
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
-public interface JndiHelper {
+public interface TestHelper {
 
-    Map<String, Object> getJndi();
-
-    List<Method> getJndiMethods(String path);
-
-    Context getContext(String user, String password);
-
-    Object invokeJndiMethod(Context context, String path, String methodName, TypeAndValueEntry... params);
+    List<Map<String, Object>> getTestResults();
 
 }

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.tomee.loader.service;
+package org.apache.tomee.webapp.helper.service;
 
 public class ServiceException extends RuntimeException {
 

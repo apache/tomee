@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.tomee.loader.servlet;
+package org.apache.tomee.webapp.servlet;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;

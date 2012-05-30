@@ -15,13 +15,14 @@
  * limitations under the License.
  */
 
-package org.apache.tomee.loader.service.helper;
+package org.apache.tomee.webapp.helper.service;
 
-import java.util.List;
-import java.util.Map;
+public interface ServiceContext {
 
-public interface TestHelper {
+    OpenEJBHelper getOpenEJBHelper();
 
-    List<Map<String, Object>> getTestResults();
+    JndiHelper getJndiHelper();
+
+    TestHelper getTestHelper();
 
 }
