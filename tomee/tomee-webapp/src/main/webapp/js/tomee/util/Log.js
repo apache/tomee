@@ -14,29 +14,20 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
+    "use strict";
  */
 
-TOMEE.ApplicationHomePanel = function (cfg) {
-    "use strict";
-
-    var channel = cfg.channel;
-    var model = cfg.jndiModel;
-
-    var elements = (function () {
-        var tpl = [
-
-        ];
-
-        //create the element
-        var all = $(tpl.join(''));
-        return {
-            all: all
-        };
-    })();
-
-    return {
-        getEl: function () {
-            return elements.all;
+TOMEE.log = {
+    info: function (msg) {
+        //it is really needed to access console via window in ie8 or we get a "console is undefined" error
+        if (window.console && window.console.info) {
+            window.console.info(msg);
         }
-    };
+    },
+    error: function (msg) {
+        //it is really needed to access console via window in ie8 or we get a "console is undefined" error
+        if (window.console && window.console.error) {
+            window.console.error(msg);
+        }
+    }
 };

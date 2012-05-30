@@ -14,33 +14,36 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
+    "use strict";
  */
 
-TOMEE.ApplicationHelpPanel = function (cfg) {
-    "use strict";
-
-    var channel = cfg.channel;
-
-    var elements = (function () {
-        var divBodyUid = TOMEE.Sequence.next();
-        var tpl = [
-            '<div class="container-fluid">',
-            '<div id="' + divBodyUid + '" class="row-fluid"/>',
-            '</div>'
-        ];
-
-        //create the element
-        var all = $(tpl.join(''));
-        var body = all.find("#" + divBodyUid);
-        return {
-            all: all,
-            body: body
-        };
-    })();
-
-    return {
-        getEl: function () {
-            return elements.all;
+TOMEE.utils = {
+    getArray: function (obj) {
+        if (!obj) {
+            return [];
         }
-    };
+
+        if (obj instanceof Array) {
+            return obj;
+        }
+
+        return [obj];
+    },
+
+    getObject: function (obj) {
+        if (!obj) {
+            return {};
+        }
+        return obj;
+    },
+
+    stringFormat: function() {
+        var s = arguments[0];
+        for (var i = 0; i < arguments.length - 1; i++) {
+            var reg = new RegExp("\\{" + i + "\\}", "gm");
+            s = s.replace(reg, arguments[i + 1]);
+        }
+
+        return s;
+    }
 };
