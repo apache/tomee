@@ -25,30 +25,61 @@ TOMEE.ApplicationView = function (cfg) {
         url:'js/tomee/view/body.html',
         dataType:'text'
     }).success(function (data, textStatus, jqXHR) {
-            var navItemUlId = TOMEE.Sequence.next();
-            var navBarId = TOMEE.Sequence.next();
-            var footerDivId = TOMEE.Sequence.next();
-            var bodyDivId = TOMEE.Sequence.next();
+            var jndi_tree_div_id = TOMEE.Sequence.next();
 
-            var html = TOMEE.utils.stringFormat(data, {
+            $('body').append(TOMEE.utils.stringFormat(data, {
                 'app_name':TOMEE.I18N.get('application.name'),
                 'footer':TOMEE.I18N.get('application.footer'),
-                'nav_items_ul_id':navItemUlId,
-                'navbar navbar-fixed-top id':navBarId,
-                'footer_id':footerDivId,
-                'body div id': bodyDivId
+                'jndi_tree_div_id': jndi_tree_div_id
+            }));
+
+            var tree = TOMEE.components.Tree({
+                channel: channel
             });
 
-            //add html to the body
-            $('body').append(html);
+            var treeEl = tree.getEl();
+            $('#' + jndi_tree_div_id).append(treeEl);
 
-//TODO: implement me!
-//            var bodyDivHeight = $(window).height() - 100;
-//
-//
-//            $('#' + bodyDivId).height(bodyDivHeight);
-//
-//            var navItemUl = $('#' + navItemUlId);
+            tree.load([
+                { text: TOMEE.Sequence.next(), children: [] },
+                { text: TOMEE.Sequence.next() },
+                { text: TOMEE.Sequence.next(), children: [] },
+                { text: TOMEE.Sequence.next() },
+                { text: TOMEE.Sequence.next(), children: [] },
+                { text: TOMEE.Sequence.next() },
+                { text: TOMEE.Sequence.next(), children: [] },
+                { text: TOMEE.Sequence.next() },
+                { text: TOMEE.Sequence.next(), children: [] },
+                { text: TOMEE.Sequence.next() },
+                { text: TOMEE.Sequence.next(), children: [] },
+                { text: TOMEE.Sequence.next() },
+                { text: TOMEE.Sequence.next(), children: [] },
+                { text: TOMEE.Sequence.next() },
+                { text: TOMEE.Sequence.next(), children: [] },
+                { text: TOMEE.Sequence.next() },
+                { text: TOMEE.Sequence.next(), children: [] },
+                { text: TOMEE.Sequence.next() },
+                { text: TOMEE.Sequence.next(), children: [] },
+                { text: TOMEE.Sequence.next() },
+                { text: TOMEE.Sequence.next(), children: [] },
+                { text: TOMEE.Sequence.next() },
+                { text: TOMEE.Sequence.next(), children: [] },
+                { text: TOMEE.Sequence.next() },
+                { text: TOMEE.Sequence.next(), children: [] },
+                { text: TOMEE.Sequence.next() },
+                { text: TOMEE.Sequence.next(), children: [] },
+                { text: TOMEE.Sequence.next() },
+                { text: TOMEE.Sequence.next(), children: [] },
+                { text: TOMEE.Sequence.next() }
+            ], function(data) {
+                return data.text;
+            }, function(data) {
+                return data.children;
+            });
+
+            var a = 0;
+
+
 
         });
 
