@@ -131,6 +131,11 @@ public class RemoteServer {
                 //File openejbJar = new File(lib, "openejb-core-" + version + ".jar");
 
                 String java = new File(System.getProperty("java.home"), "bin/java").getAbsolutePath();
+                final boolean isWindows = System.getProperty("os.name", "unknown").toLowerCase().startsWith("windows");
+                if (isWindows && "start".equals(cmd) && options.get("server.windows.fork", false)) {
+                    // to fork
+                    java = new File(System.getProperty("java.home"), "bin/javaw").getAbsolutePath();
+                }
 
                 //DMB: If you don't use an array, you get problems with jar paths containing spaces
                 // the command won't parse correctly
@@ -276,15 +281,6 @@ public class RemoteServer {
                     System.out.println(Join.join("\n", args));
                 }
 
-                final boolean isWindows = System.getProperty("os.name", "unknown").toLowerCase().startsWith("windows");
-                if (isWindows && "start".equals(cmd) && options.get("server.windows.fork", false)) {
-                    // to fork
-                    final List<String> winList = new ArrayList<String>();
-                    winList.add("cmd");
-                    winList.add("/c");
-                    winList.addAll(Arrays.asList(args));
-                    args = winList.toArray(new String[winList.size()]);
-                }
                 server = Runtime.getRuntime().exec(args);
 
                 Pipe.pipe(server);
