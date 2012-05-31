@@ -26,7 +26,6 @@ body {
 
 ul.tree, ul.tree ul {
     list-style-type: none;
-    background: url("../img/vline.png") repeat-y;
     margin: 0;
     padding: 0;
 }
@@ -37,13 +36,24 @@ ul.tree ul {
 
 ul.tree li {
     margin: 0;
-    padding: 0 12px;
+    padding: 0 20px;
     line-height: 20px;
-    background: url("../img/node.png") no-repeat;
     color: #369;
     font-weight: bold;
 }
 
-ul.tree li.last {
-    background: #fff url("../img/lastnode.png") no-repeat;
+ul.tree li.leaf {
+    background: url("../img/page.png") no-repeat;
+}
+
+ul.tree li.opened {
+    background: url("../img/folder_delete.png") no-repeat;
+}
+
+ul.tree li.closed {
+    background: url("../img/folder_add.png") no-repeat;
+}
+
+ul.tree li.empty {
+    background: url("../img/folder.png") no-repeat;
 }
