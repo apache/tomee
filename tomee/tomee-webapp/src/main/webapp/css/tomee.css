@@ -57,3 +57,12 @@ ul.tree li.closed {
 ul.tree li.empty {
     background: url("../img/folder.png") no-repeat;
 }
+
+div.t-panel {
+    padding: 0px;
+    background-color: #ffffff;
+    padding-left: 0px;
+    padding-right: 0px;
+    border: 2px solid #d3d3d3;
+    margin-bottom: 5px;
+}
