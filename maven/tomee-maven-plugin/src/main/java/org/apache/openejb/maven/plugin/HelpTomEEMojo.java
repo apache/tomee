@@ -35,6 +35,7 @@ public class HelpTomEEMojo extends AbstractMojo {
         getLog().info("\t- tomee:deploy <path>: deploy path archive");
         getLog().info("\t- tomee:undeploy <path>: undeploy path archive. Note it should be the same path than the one used in deploy command");
         getLog().info("\t- tomee:list: list ejbs deployed");
+        getLog().info("\t- tomee:build: build tomee but does not start it");
         getLog().info("\t- tomee:help: this");
     }
 }
