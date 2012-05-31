@@ -17,6 +17,9 @@
 
 package org.apache.openejb.maven.plugin;
 
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+
 /**
  * @goal stop
  * @requiresDependencyResolution runtime
@@ -25,5 +28,10 @@ public class StopTomEEMojo extends AbstractTomEEMojo {
     @Override
     public String getCmd() {
         return "stop";
+    }
+
+    @Override
+    public void execute() throws MojoExecutionException, MojoFailureException {
+        run(); // skip other processings which are useless for a stop
     }
 }

@@ -246,6 +246,8 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                 }
             }
         }
+
+        getLog().info("Removed not mandatory default webapps");
     }
 
     private void copyLibs(final List<String> files, final File destParent, final String defaultType) {
@@ -286,9 +288,12 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             final Artifact artifact = factory.createDependencyArtifact(infos[0], infos[1], createFromVersion(infos[2]), type, classifier, SCOPE_COMPILE);
             resolver.resolve(artifact, remoteRepos, local);
             final File file = artifact.getFile();
+            final File dest = new File(destParent, file.getName());
             is = new BufferedInputStream(new FileInputStream(file));
-            os = new BufferedOutputStream(new FileOutputStream(new File(destParent, file.getName())));
+            os = new BufferedOutputStream(new FileOutputStream(dest));
             copy(is, os);
+
+            getLog().info("Copied '" + lib + "' in '" + dest.getAbsolutePath());
         } catch (Exception e) {
             getLog().error(e.getMessage(), e);
             throw new TomEEException(e.getMessage(), e);
@@ -340,6 +345,8 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                 is = new FileInputStream(warFile);
                 os = new FileOutputStream(out);
                 copy(is, os);
+
+                getLog().info("Installed '" + warFile.getAbsolutePath() + "' in " + out.getAbsolutePath());
             } catch (Exception e) {
                 throw new TomEEException(e.getMessage(), e);
             } finally {
@@ -401,12 +408,16 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                     continue;
                 }
 
+                final String file = dir.getName() + "/" + f.getName();
+
                 InputStream in = null;
                 OutputStream out = null;
                 try {
                     in = new FileInputStream(f);
-                    out = new FileOutputStream(new File(catalinaBase, dir.getName() + "/" + f.getName()));
+                    out = new FileOutputStream(new File(catalinaBase, file));
                     copy(in, out);
+
+                    getLog().info("Override '" + file + "'");
                 } catch (Exception e) {
                     throw new TomEEException(e.getMessage(), e);
                 } finally {
@@ -449,6 +460,8 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                 }
             });
         }
+
+        getLog().info("Running '" + getCmd() + "' on TomEE on " + tomeeHost + ":" + tomeeHttpPort + " (shutdown port is " + tomeeShutdownPort + ")");
 
         server.start(strings, getCmd(), false);
 
@@ -513,7 +526,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         }
     }
 
-    private static void unzip(File mvnTomEE, File catalinaBase) {
+    private void unzip(File mvnTomEE, File catalinaBase) {
         ZipFile in = null;
         try {
             in = new ZipFile(mvnTomEE);
@@ -556,6 +569,8 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                     }
                 }
             }
+
+            getLog().info("TomEE was unzipped in '" + catalinaBase.getAbsolutePath() + "'");
         } catch (Exception e) {
             throw new TomEEException(e.getMessage(), e);
         } finally {
