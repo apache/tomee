@@ -44,6 +44,8 @@ import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.openejb.config.RemoteServer;
+import org.apache.openejb.loader.FileUtils;
+import org.apache.openejb.loader.IO;
 
 import static org.apache.maven.artifact.Artifact.SCOPE_COMPILE;
 import static org.apache.maven.artifact.repository.ArtifactRepositoryPolicy.CHECKSUM_POLICY_WARN;
@@ -148,6 +150,13 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     /**
      * relative to tomee.base.
      *
+     * @parameter default-value="apps"
+     */
+    protected String appDir;
+
+    /**
+     * relative to tomee.base.
+     *
      * @parameter default-value="lib"
      */
     protected String libDir;
@@ -186,6 +195,11 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     protected List<String> webapps;
 
     /**
+     * @parameter
+     */
+    protected List<String> apps;
+
+    /**
      * @parameter default-value="${project.build.directory}/${project.build.finalName}.${project.packaging}"
      * @readonly
      */
@@ -194,13 +208,19 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     /**
      * @parameter expression="${tomee-plugin.remove-default-webapps}" default-value="true"
      */
-    private boolean removeDefaultWebapps;
+    protected boolean removeDefaultWebapps;
+
+    /**
+     * @parameter expression="${project.packaging}"
+     */
+    protected String packaging;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         unzip(resolve(), catalinaBase);
         copyLibs(libs, new File(catalinaBase, libDir), "jar");
         copyLibs(webapps, new File(catalinaBase, webappDir), "war");
+        copyLibs(apps, new File(catalinaBase, appDir), "war");
         overrideConf(config);
         overrideConf(bin);
         overrideConf(lib);
@@ -231,6 +251,10 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     private void copyLibs(final List<String> files, final File destParent, final String defaultType) {
         if (files == null || files.isEmpty()) {
             return;
+        }
+
+        if (!destParent.exists() && !destParent.mkdirs()) {
+            getLog().warn("can't create '" + destParent.getPath() + "'");
         }
 
         for (String file : files) {
@@ -275,15 +299,35 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     }
 
     private void copyWar() {
+        if ("pom".equals(packaging)) {
+            return;
+        }
+
+        final boolean war = "war".equals(packaging);
         final String name = warFile.getName();
-        final File out = new File(catalinaBase, webappDir + "/" + name);
+        final File out;
+        if (war) {
+            out = new File(catalinaBase, webappDir + "/" + name);
+        } else {
+            final File parent = new File(catalinaBase, appDir);
+            if (!parent.exists() && !parent.mkdirs()) {
+                getLog().warn("can't create '" + parent.getPath() + "'");
+            }
+            out = new File(parent, name);
+        }
         delete(out);
         if (!out.isDirectory()) {
-            final File unpacked = new File(catalinaBase, webappDir + "/" + name.substring(0, name.lastIndexOf('.')));
+            final String dir = name.substring(0, name.lastIndexOf('.'));
+            final File unpacked;
+            if (war) {
+                unpacked = new File(catalinaBase, webappDir + "/" + dir);
+            } else {
+                unpacked = new File(catalinaBase, appDir + "/" + dir);
+            }
             delete(unpacked);
         }
 
-        if (warFile.isDirectory()) {
+        if (warFile.exists() && warFile.isDirectory()) {
             try {
                 copyDirectory(warFile, out);
             } catch (IOException e) {
