@@ -130,11 +130,13 @@ public class RemoteServer {
 
                 //File openejbJar = new File(lib, "openejb-core-" + version + ".jar");
 
-                String java = new File(System.getProperty("java.home"), "bin/java").getAbsolutePath();
+                final String java;
                 final boolean isWindows = System.getProperty("os.name", "unknown").toLowerCase().startsWith("windows");
                 if (isWindows && "start".equals(cmd) && options.get("server.windows.fork", false)) {
-                    // to fork
+                    // run and forget
                     java = new File(System.getProperty("java.home"), "bin/javaw").getAbsolutePath();
+                } else {
+                    java = new File(System.getProperty("java.home"), "bin/java").getAbsolutePath();
                 }
 
                 //DMB: If you don't use an array, you get problems with jar paths containing spaces
