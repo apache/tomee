@@ -59,6 +59,8 @@ import static org.codehaus.plexus.util.IOUtil.close;
 import static org.codehaus.plexus.util.IOUtil.copy;
 
 public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
+    private static final String NAME_STR = "?name=";
+
     /**
      * @component
      */
@@ -219,7 +221,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
         unzip(resolve(), catalinaBase);
         copyLibs(libs, new File(catalinaBase, libDir), "jar");
-        copyLibs(webapps, new File(catalinaBase, webappDir), "war");
+        copyLibs(webapps, new File(catalinaBase, webappDir), "war"); // TODO: manage custom context ?context=foo
         copyLibs(apps, new File(catalinaBase, appDir), "jar");
         overrideConf(config);
         overrideConf(bin);
@@ -264,9 +266,21 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         }
     }
 
-    private void copyLib(final String lib, final File destParent, final String defaultType) {
+    private void copyLib(final String rawLib, final File destParent, final String defaultType) {
         InputStream is = null;
         OutputStream os = null;
+
+        // special hook to get more info
+        String lib = rawLib;
+        String extractedName = null;
+        if (lib.contains(NAME_STR)) {
+            lib = lib.substring(0, rawLib.indexOf(NAME_STR));
+            extractedName = rawLib.substring(rawLib.indexOf(NAME_STR) + NAME_STR.length(), rawLib.length());
+            if (!extractedName.endsWith(packaging)) {
+                extractedName = extractedName + "." + packaging;
+            }
+        }
+
         final String[] infos = lib.split(":");
         final String classifier;
         final String type;
@@ -288,7 +302,13 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             final Artifact artifact = factory.createDependencyArtifact(infos[0], infos[1], createFromVersion(infos[2]), type, classifier, SCOPE_COMPILE);
             resolver.resolve(artifact, remoteRepos, local);
             final File file = artifact.getFile();
-            final File dest = new File(destParent, file.getName());
+            final File dest;
+            if (extractedName == null) {
+                dest = new File(destParent, file.getName());
+            } else {
+                dest = new File(destParent, extractedName);
+            }
+
             is = new BufferedInputStream(new FileInputStream(file));
             os = new BufferedOutputStream(new FileOutputStream(dest));
             copy(is, os);
