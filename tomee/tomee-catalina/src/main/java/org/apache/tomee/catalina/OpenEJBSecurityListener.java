@@ -23,6 +23,8 @@ import javax.servlet.AsyncListener;
 import java.io.IOException;
 
 public class OpenEJBSecurityListener implements AsyncListener {
+    static final ThreadLocal<Request> requests = new ThreadLocal<Request>();
+
     private TomcatSecurityService securityService;
     private Object oldState = null;
     private Request request;
@@ -50,13 +52,18 @@ public class OpenEJBSecurityListener implements AsyncListener {
 
     public void enter() {
         if (securityService != null && request.getWrapper() != null) {
+            requests.set(request);
             oldState = securityService.enterWebApp(request.getWrapper().getRealm(), request.getPrincipal(), request.getWrapper().getRunAs());
         }
     }
 
     public void exit() {
         if (securityService != null) {
-            securityService.exitWebApp(oldState);
+            try {
+                securityService.exitWebApp(oldState);
+            } finally {
+                requests.remove();
+            }
         }
     }
 }
