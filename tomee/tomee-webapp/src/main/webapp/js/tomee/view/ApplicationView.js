@@ -21,17 +21,36 @@ TOMEE.ApplicationView = function (cfg) {
 
     var channel = cfg.channel;
 
-    var html = null;
     $.ajax({
         url:'js/tomee/view/body.html',
-        dataType: 'text'
+        dataType:'text'
     }).success(function (data, textStatus, jqXHR) {
+            var navItemUlId = TOMEE.Sequence.next();
+            var navBarId = TOMEE.Sequence.next();
+            var footerDivId = TOMEE.Sequence.next();
+            var bodyDivId = TOMEE.Sequence.next();
+
             var html = TOMEE.utils.stringFormat(data, {
-                'app_name': TOMEE.I18N.get('application.name'),
-                'footer': TOMEE.I18N.get('application.footer')
+                'app_name':TOMEE.I18N.get('application.name'),
+                'footer':TOMEE.I18N.get('application.footer'),
+                'nav_items_ul_id':navItemUlId,
+                'navbar navbar-fixed-top id':navBarId,
+                'footer_id':footerDivId,
+                'body div id': bodyDivId
             });
+
+            //add html to the body
             $('body').append(html);
-    });
+
+//TODO: implement me!
+//            var bodyDivHeight = $(window).height() - 100;
+//
+//
+//            $('#' + bodyDivId).height(bodyDivHeight);
+//
+//            var navItemUl = $('#' + navItemUlId);
+
+        });
 
     return {
 

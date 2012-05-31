@@ -19,6 +19,31 @@ body {
     padding-top: 40px;
     padding-bottom: 0px;
 }
+
 .sidebar-nav {
     padding: 9px 0;
+}
+
+ul.tree, ul.tree ul {
+    list-style-type: none;
+    background: url("../img/vline.png") repeat-y;
+    margin: 0;
+    padding: 0;
+}
+
+ul.tree ul {
+    margin-left: 10px;
+}
+
+ul.tree li {
+    margin: 0;
+    padding: 0 12px;
+    line-height: 20px;
+    background: url("../img/node.png") no-repeat;
+    color: #369;
+    font-weight: bold;
+}
+
+ul.tree li.last {
+    background: #fff url("../img/lastnode.png") no-repeat;
 }

@@ -5,7 +5,7 @@
 <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
 
-<div class="navbar navbar-fixed-top">
+<div id="{navbar navbar-fixed-top id}" class="navbar navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container-fluid">
             <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
@@ -14,6 +14,7 @@
                 <span class="icon-bar"></span>
             </a>
             <a class="brand" href="#">{app_name}</a>
+
             <div class="btn-group pull-right">
                 <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
                     <i class="icon-user"></i> Username
@@ -24,60 +25,88 @@
                 </ul>
             </div>
             <div class="nav-collapse">
-                <ul class="nav">
+                <ul id="{nav_items_ul_id}" class="nav">
                     <li class="active"><a href="#">Home</a></li>
                     <li><a href="#about">Log</a></li>
                 </ul>
-            </div><!--/.nav-collapse -->
+            </div>
+            <!--/.nav-collapse -->
         </div>
     </div>
 </div>
 
 
-<div class="container-fluid" style="padding: 5px;">
+<div id="{body div id}" class="container-fluid" style="padding: 5px;">
     <div class="row-fluid">
         <div class="span12">
             <div style="float:left; width:33%; min-width:170px;">
                 <div>
-                    <div class="well" style="padding-top: 0px;background-color: #ffffff;padding-left: 0px;padding-right: 0px; border: 2px solid #d3d3d3;margin-bottom: 5px;">
+                    <div class="well"
+                         style="padding-top: 0px;background-color: #ffffff;padding-left: 0px;padding-right: 0px; border: 2px solid #d3d3d3;margin-bottom: 5px;">
                         <h3 style="position: relative; background-color: #d3d3d3; padding-left: 5px">Jndi</h3>
-                        <div style="height: 250px">grid here</div>
+
+                        <div style="height: 250px">
+                            <ul class="tree">
+                                <li class="last">Animals
+                                    <ul>
+                                        <li>Birds</li>
+                                        <li>Mammals
+                                            <ul>
+                                                <li>Elephant</li>
+                                                <li class="last">Mouse</li>
+                                            </ul>
+                                        </li>
+                                        <li class="last">Reptiles</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
                 <div>
-                    <div class="well" style="padding-top: 0px;background-color: #ffffff;padding-left: 0px;padding-right: 0px; border: 2px solid #d3d3d3;margin-bottom: 5px;">
+                    <div class="well"
+                         style="padding-top: 0px;background-color: #ffffff;padding-left: 0px;padding-right: 0px; border: 2px solid #d3d3d3;margin-bottom: 5px;">
                         <h3 style="position: relative; background-color: #d3d3d3; padding-left: 5px">Saved Objects</h3>
+
                         <div style="height: 250px">grid here</div>
                     </div>
                 </div>
             </div>
             <div style="float:left; width:33%; min-width:170px; margin-left: 5px; margin-right: 5px;">
                 <div>
-                    <div class="well" style="padding-top: 0px;background-color: #ffffff;padding-left: 0px;padding-right: 0px; border: 2px solid #d3d3d3;margin-bottom: 5px;">
+                    <div class="well"
+                         style="padding-top: 0px;background-color: #ffffff;padding-left: 0px;padding-right: 0px; border: 2px solid #d3d3d3;margin-bottom: 5px;">
                         <h3 style="position: relative; background-color: #d3d3d3; padding-left: 5px">Console</h3>
+
                         <div style="height: 500px">grid here</div>
                     </div>
                 </div>
             </div>
             <div style="float:left; width:33%; min-width:170px;">
                 <div>
-                    <div class="well" style="padding-top: 0px;background-color: #ffffff;padding-left: 0px;padding-right: 0px; border: 2px solid #d3d3d3;margin-bottom: 5px;">
+                    <div class="well"
+                         style="padding-top: 0px;background-color: #ffffff;padding-left: 0px;padding-right: 0px; border: 2px solid #d3d3d3;margin-bottom: 5px;">
                         <h3 style="position: relative; background-color: #d3d3d3; padding-left: 5px">MDBs</h3>
+
                         <div style="height: 250px">grid here</div>
                     </div>
                 </div>
                 <div>
-                    <div class="well" style="padding-top: 0px;background-color: #ffffff;padding-left: 0px;padding-right: 0px; border: 2px solid #d3d3d3;margin-bottom: 5px;">
+                    <div class="well"
+                         style="padding-top: 0px;background-color: #ffffff;padding-left: 0px;padding-right: 0px; border: 2px solid #d3d3d3;margin-bottom: 5px;">
                         <h3 style="position: relative; background-color: #d3d3d3; padding-left: 5px">WebServices</h3>
+
                         <div style="height: 250px">grid here</div>
                     </div>
                 </div>
             </div>
-        </div><!--/span-->
-    </div><!--/row-->
+        </div>
+        <!--/span-->
+    </div>
+    <!--/row-->
 </div>
 
-<div class="container-fluid" style="padding: 5px;">
+<div id="{footer_id}" class="container-fluid" style="padding: 5px;">
     <hr style="margin-top: 0px; margin-bottom: 0px;">
 
     <footer>
