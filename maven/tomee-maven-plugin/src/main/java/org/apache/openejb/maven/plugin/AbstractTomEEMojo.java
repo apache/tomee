@@ -220,7 +220,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         unzip(resolve(), catalinaBase);
         copyLibs(libs, new File(catalinaBase, libDir), "jar");
         copyLibs(webapps, new File(catalinaBase, webappDir), "war");
-        copyLibs(apps, new File(catalinaBase, appDir), "war");
+        copyLibs(apps, new File(catalinaBase, appDir), "jar");
         overrideConf(config);
         overrideConf(bin);
         overrideConf(lib);
