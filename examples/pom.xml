@@ -101,6 +101,7 @@
     <module>testing-security-meta</module>
     <module>testing-security</module>
     <module>testing-transactions</module>
+    <module>tomee-jersey-eclipselink</module>
     <module>transaction-rollback</module>
     <module>troubleshooting</module>
     <module>webapps</module>
