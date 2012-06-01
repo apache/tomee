@@ -38,6 +38,7 @@ public class OpenEJBValve extends ValveBase {
 
     public void invoke(Request request, Response response) throws IOException, ServletException {
         OpenEJBSecurityListener listener = new OpenEJBSecurityListener(securityService, request);
+
         if (!request.isAsync()) {
             listener.enter();
             try {
