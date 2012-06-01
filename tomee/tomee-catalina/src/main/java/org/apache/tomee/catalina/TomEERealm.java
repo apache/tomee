@@ -3,6 +3,7 @@ package org.apache.tomee.catalina;
 import java.security.Principal;
 import java.security.cert.X509Certificate;
 import javax.security.auth.callback.CallbackHandler;
+import org.apache.catalina.connector.Request;
 import org.apache.catalina.realm.CombinedRealm;
 import org.apache.catalina.realm.JAASRealm;
 import org.apache.openejb.loader.SystemInstance;
@@ -10,6 +11,8 @@ import org.apache.openejb.spi.SecurityService;
 import org.ietf.jgss.GSSContext;
 
 public class TomEERealm extends CombinedRealm {
+    private final ThreadLocal<Request> requests = new ThreadLocal<Request>();
+
     @Override
     public Principal authenticate(String username, String password) {
         return logInTomEE(super.authenticate(username, password));
@@ -42,12 +45,20 @@ public class TomEERealm extends CombinedRealm {
             // normally we don't care about oldstate because the listener already contains one
             // which is the previous one
             // so no need to clean twice here
-            if (OpenEJBSecurityListener.requests.get() != null) {
-                ss.enterWebApp(this, pcp, OpenEJBSecurityListener.requests.get().getWrapper().getRunAs());
+            if (requests.get() != null) {
+                ss.enterWebApp(this, pcp, requests.get().getWrapper().getRunAs());
             } else {
                 ss.enterWebApp(this, pcp, null);
             }
         }
         return pcp;
+    }
+
+    public void enter(final Request request) {
+        requests.set(request);
+    }
+
+    public void exit() {
+        requests.remove();
     }
 }
