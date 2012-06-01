@@ -39,6 +39,7 @@
     <module>bean-validation-design-by-contract</module>
     <module>cdi-alternative-and-stereotypes</module>
     <module>cdi-basic</module>
+    <module>cdi-ejbcontext-jaas</module>
     <module>cdi-events</module>
     <module>cdi-interceptors</module>
     <module>cdi-request-scope</module>
@@ -70,9 +71,11 @@
     <module>mbean-auto-registration</module>
     <module>movies-complete-meta</module>
     <module>movies-complete</module>
+    <module>multiple-tomee-arquillian</module>
     <module>persistence-fragment</module>
     <module>polling-parent</module>
     <module>quartz-app</module>
+    <module>realm-in-tomee</module>
     <module>reload-persistence-unit-properties</module>
     <module>rest-on-ejb</module>
     <module>schedule-expression</module>
@@ -107,8 +110,6 @@
     <module>webservice-ws-security</module>
     <module>webservice-handlerchain</module>
     <module>webservice-holder</module>
-    <module>multiple-tomee-arquillian</module>
-    <module>realm-in-tomee</module>
   </modules>
   <profiles>
     <profile>
