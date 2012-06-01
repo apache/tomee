@@ -1138,6 +1138,35 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         destroyApplication(appInfo);
     }
 
+    public synchronized void preDestroyApplication(AppInfo appInfo, UndeployException ue) throws UndeployException {
+        UndeployException undeployException = ue;
+        if (undeployException == null) {
+            undeployException = new UndeployException("can't unregister persistence units");
+        }
+
+        final Context globalContext = containerSystem.getJNDIContext();
+        for (PersistenceUnitInfo unitInfo : appInfo.persistenceUnits) {
+            try {
+                Object object = globalContext.lookup(PERSISTENCE_UNIT_NAMING_CONTEXT + unitInfo.id);
+                globalContext.unbind(PERSISTENCE_UNIT_NAMING_CONTEXT + unitInfo.id);
+
+                // close EMF so all resources are released
+                ReloadableEntityManagerFactory remf = ((ReloadableEntityManagerFactory) object);
+                remf.close();
+                persistenceClassLoaderHandler.destroy(unitInfo.id);
+                remf.unregister();
+            } catch (Throwable t) {
+                undeployException.getCauses().add(new Exception("persistence-unit: " + unitInfo.id + ": " + t.getMessage(), t));
+            }
+        }
+
+        appInfo.persistenceUnits.clear();
+
+        if (undeployException.getCauses().size() > 0) {
+            throw undeployException;
+        }
+    }
+
     public synchronized void destroyApplication(AppInfo appInfo) throws UndeployException {
         deployedApplications.remove(appInfo.path);
         logger.info("destroyApplication.start", appInfo.path);
@@ -1176,6 +1205,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         Context globalContext = containerSystem.getJNDIContext();
         UndeployException undeployException = new UndeployException(messages.format("destroyApplication.failed", appInfo.path));
+
+        preDestroyApplication(appInfo, undeployException);
 
         WebAppBuilder webAppBuilder = SystemInstance.get().getComponent(WebAppBuilder.class);
         if (webAppBuilder != null) {
@@ -1270,21 +1301,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 } catch (Throwable t) {
                     undeployException.getCauses().add(new Exception("bean: " + deploymentID + ": " + t.getMessage(), t));
                 }
-            }
-        }
-
-        for (PersistenceUnitInfo unitInfo : appInfo.persistenceUnits) {
-            try {
-                Object object = globalContext.lookup(PERSISTENCE_UNIT_NAMING_CONTEXT + unitInfo.id);
-                globalContext.unbind(PERSISTENCE_UNIT_NAMING_CONTEXT + unitInfo.id);
-
-                // close EMF so all resources are released
-                ReloadableEntityManagerFactory remf = ((ReloadableEntityManagerFactory) object);
-                remf.close();
-                persistenceClassLoaderHandler.destroy(unitInfo.id);
-                remf.unregister();
-            } catch (Throwable t) {
-                undeployException.getCauses().add(new Exception("persistence-unit: " + unitInfo.id + ": " + t.getMessage(), t));
             }
         }
 

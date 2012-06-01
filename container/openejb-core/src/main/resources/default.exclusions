@@ -39,6 +39,7 @@ derbyclient-
 derbynet-
 dom4j-
 ecj-
+eclipselink-
 geronimo-
 google-
 gragent.jar
@@ -67,6 +68,7 @@ jbosscx-
 jbossjts-
 jbosssx-
 jcommander-
+jersey-
 jettison-
 jetty-
 jline
