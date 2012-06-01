@@ -52,6 +52,7 @@ import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.UndeployException;
 import org.apache.openejb.assembler.classic.*;
 import org.apache.openejb.cdi.CdiBuilder;
 import org.apache.openejb.config.AppModule;
@@ -632,7 +633,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
      */
 //    @Override
     private void startInternal(final StandardContext standardContext) {
-        System.out.println("TomcatWebAppBuilder.start " + standardContext.getPath());
+        logger.info("TomcatWebAppBuilder.start " + standardContext.getPath());
         if (isIgnored(standardContext)) return;
 
         final CoreContainerSystem cs = getContainerSystem();
@@ -969,7 +970,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                     pipeline.addValve(valve);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error("can't add the valve " + className, e);
             }
         }
 
@@ -1051,7 +1052,19 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
      */
     @Override
     public void beforeStop(final StandardContext standardContext) {
-        //No operation
+        final ContextInfo contextInfo = getContextInfo(standardContext);
+        if (isUnDeployable(contextInfo)) {
+            try {
+                assembler.preDestroyApplication(contextInfo.appInfo, null);
+            } catch (UndeployException e) {
+                logger.error("can't pre deploy the app " + standardContext.getName(), e);
+            }
+        }
+    }
+
+    private boolean isUnDeployable(final ContextInfo contextInfo) {
+        return contextInfo != null && contextInfo.appInfo != null && contextInfo.deployer == null
+                && getAssembler().getDeployedApplications().contains(contextInfo.appInfo);
     }
 
     /**
@@ -1070,8 +1083,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         if (isIgnored(standardContext)) return;
 
         final ContextInfo contextInfo = getContextInfo(standardContext);
-        if (contextInfo != null && contextInfo.appInfo != null && contextInfo.deployer == null
-                && getAssembler().getDeployedApplications().contains(contextInfo.appInfo)) {
+        if (isUnDeployable(contextInfo)) {
             try {
                 getAssembler().destroyApplication(contextInfo.appInfo.path);
             } catch (Exception e) {
