@@ -642,8 +642,17 @@ class AppInfoBuilder {
                         key = HIBERNATE_TRANSACTION_MANAGER_LOOKUP_CLASS;
                         value = MakeTxLookup.HIBERNATE_FACTORY;
                     }
-                    info.properties.setProperty(key, value);
-                    logger.debug("Adjusting PersistenceUnit(name=" + info.name + ") property to " + key + "=" + value);
+
+                    try {
+                        AppInfoBuilder.class.getClassLoader().loadClass(value);
+                        info.properties.setProperty(key, value);
+                        logger.debug("Adjusting PersistenceUnit(name=" + info.name + ") property to " + key + "=" + value);
+                    } catch (Exception e) {
+                        logger.debug("can't adjust hibernate jta bridge to openejb one");
+                    } catch (NoClassDefFoundError error) {
+                        // ignored
+                    }
+
                 }
             } else if ("oracle.toplink.essentials.PersistenceProvider".equals(info.provider) ||
                     "oracle.toplink.essentials.ejb.cmp3.EntityManagerFactoryProvider".equals(info.provider) ){
@@ -671,8 +680,15 @@ class AppInfoBuilder {
                 String className = info.properties.getProperty(lookupProperty);
 
                 if (className == null || className.startsWith("org.eclipse.persistence.transaction")){
-                    info.properties.setProperty(lookupProperty, openejbLookupClass);
-                    logger.debug("Adjusting PersistenceUnit(name="+info.name+") property to "+lookupProperty+"="+openejbLookupClass);
+                    try {
+                        Thread.currentThread().getContextClassLoader().loadClass(openejbLookupClass);
+                        info.properties.setProperty(lookupProperty, openejbLookupClass);
+                        logger.debug("Adjusting PersistenceUnit(name="+info.name+") property to "+lookupProperty+"="+openejbLookupClass);
+                    } catch (Exception e) {
+                        logger.debug("Can't adjusting PersistenceUnit(name="+info.name+") property to " + lookupProperty + "=" + openejbLookupClass + ", using default one");
+                    } catch (NoClassDefFoundError error) {
+                        // ignored
+                    }
                 }
             }  else if (info.provider == null || "org.apache.openjpa.persistence.PersistenceProviderImpl".equals(info.provider)){
 
