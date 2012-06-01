@@ -23,9 +23,9 @@ import org.apache.catalina.Container;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
 import org.apache.catalina.LifecycleListener;
-import org.apache.catalina.LifecycleState;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Pipeline;
+import org.apache.catalina.Realm;
 import org.apache.catalina.Service;
 import org.apache.catalina.Valve;
 import org.apache.catalina.Wrapper;
@@ -41,7 +41,6 @@ import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.ContextTransaction;
 import org.apache.catalina.deploy.NamingResources;
-import org.apache.catalina.loader.StandardClassLoader;
 import org.apache.catalina.loader.WebappClassLoader;
 import org.apache.catalina.startup.Constants;
 import org.apache.catalina.startup.ContextConfig;
@@ -86,7 +85,6 @@ import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.servlet.ServletContext;
 import javax.servlet.SessionTrackingMode;
-import javax.servlet.descriptor.JspPropertyGroupDescriptor;
 import javax.servlet.jsp.JspApplicationContext;
 import javax.servlet.jsp.JspFactory;
 import javax.transaction.TransactionManager;
@@ -98,7 +96,6 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -191,9 +188,11 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         for (final Service service : standardServer.findServices()) {
             if (service.getContainer() instanceof Engine) {
                 final Engine engine = (Engine) service.getContainer();
+                addTomEERealm(engine);
                 for (final Container engineChild : engine.findChildren()) {
                     if (engineChild instanceof StandardHost) {
                         final StandardHost host = (StandardHost) engineChild;
+                        addTomEERealm(host);
                         hosts.put(host.getName(), host);
                         for (final LifecycleListener listener : host.findLifecycleListeners()) {
                             if (listener instanceof HostConfig) {
@@ -208,6 +207,30 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
 
         configurationFactory = new ConfigurationFactory();
         deploymentLoader = new DeploymentLoader();
+    }
+
+    private void addTomEERealm(final Engine engine) {
+        final Realm realm = engine.getRealm();
+        if (realm != null && !(realm instanceof TomEERealm)
+            && (engine.getParent() == null
+                    || (engine.getParent() != null && !realm.equals(engine.getParent().getRealm())))) {
+            engine.setRealm(tomeeRealm(realm));
+        }
+    }
+
+    private void addTomEERealm(final Host host) {
+        final Realm realm = host.getRealm();
+        if (realm != null && !(realm instanceof TomEERealm)
+                && (host.getParent() == null
+                || (host.getParent() != null && !realm.equals(host.getParent().getRealm())))) {
+            host.setRealm(tomeeRealm(realm));
+        }
+    }
+
+    protected Realm tomeeRealm(final Realm realm) {
+        final TomEERealm trealm = new TomEERealm();
+        trealm.addRealm(realm);
+        return trealm;
     }
 
     /**
@@ -810,6 +833,13 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     @Override
     public void afterStart(final StandardContext standardContext) {
         if (isIgnored(standardContext)) return;
+
+        final Realm realm = standardContext.getRealm();
+        if (realm != null && !(realm instanceof TomEERealm)
+                && (standardContext.getParent() == null
+                || (standardContext.getParent() != null && !realm.equals(standardContext.getParent().getRealm())))) {
+            standardContext.setRealm(tomeeRealm(realm));
+        }
 
         // if appInfo is null this is a failed deployment... just ignore
         final ContextInfo contextInfo = getContextInfo(standardContext);
