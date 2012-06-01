@@ -104,7 +104,13 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory {
     }
 
     @Override public EntityManager createEntityManager() {
-        final EntityManager em = delegate.createEntityManager();
+        EntityManager em;
+        try {
+            em = delegate.createEntityManager();
+        } catch (LinkageError le) {
+            em = delegate.createEntityManager();
+        }
+
         if (logCriteriaJpql) {
             return new QueryLogEntityManager(em, logCriteriaJpqlLevel);
         }
@@ -113,7 +119,13 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory {
 
     @Override
     public EntityManager createEntityManager(Map map) {
-        final EntityManager em = delegate.createEntityManager(map);
+        EntityManager em;
+        try {
+            em = delegate.createEntityManager(map);
+        } catch (LinkageError le) {
+            em = delegate.createEntityManager(map);
+        }
+
         if (logCriteriaJpql) {
             return new QueryLogEntityManager(em, logCriteriaJpqlLevel);
         }

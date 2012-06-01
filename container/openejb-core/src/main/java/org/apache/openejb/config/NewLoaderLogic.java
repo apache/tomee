@@ -259,6 +259,10 @@ public class NewLoaderLogic {
 
             while ((line = reader.readLine()) != null) {
                 final String value = line.trim();
+                if (line.startsWith("#")) {
+                    continue;
+                }
+
                 if (DEFAULT_EXCLUSIONS_ALIAS.equals(value)) {
                     for (String v : readDefaultExclusions()) {
                         list.add(v);
