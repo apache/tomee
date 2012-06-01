@@ -10,11 +10,9 @@
     <Connector port="8009" protocol="AJP/1.3" redirectPort="8443" />
     <Engine name="Catalina" defaultHost="localhost">
 
-      <Realm className="org.apache.tomee.catalina.TomEERealm">
-        <Realm className="org.apache.catalina.realm.JAASRealm" appName="PropertiesLoginModule"
-               userClassNames="org.apache.openejb.core.security.AbstractSecurityService$User"
-               roleClassNames="org.apache.openejb.core.security.AbstractSecurityService$Group">
-        </Realm>
+      <Realm className="org.apache.catalina.realm.JAASRealm" appName="PropertiesLoginModule"
+             userClassNames="org.apache.openejb.core.security.AbstractSecurityService$User"
+             roleClassNames="org.apache.openejb.core.security.AbstractSecurityService$Group">
       </Realm>
 
       <Host name="localhost"  appBase="webapps"
