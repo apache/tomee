@@ -22,7 +22,9 @@ import java.util.List;
 import org.apache.catalina.Container;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
+import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
+import org.apache.catalina.Loader;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Pipeline;
 import org.apache.catalina.Realm;
@@ -42,6 +44,7 @@ import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.ContextTransaction;
 import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.loader.WebappClassLoader;
+import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.startup.Constants;
 import org.apache.catalina.startup.ContextConfig;
 import org.apache.catalina.startup.HostConfig;
@@ -52,7 +55,6 @@ import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.UndeployException;
 import org.apache.openejb.assembler.classic.*;
 import org.apache.openejb.cdi.CdiBuilder;
 import org.apache.openejb.config.AppModule;
@@ -599,6 +601,14 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 sc.setSessionTrackingModes(newModes);
             }
         }
+
+        // we just want to wrap it to lazy stop it (afterstop)
+        // to avoid classnotfound in @PreDestoy or destroyApplication()
+        final WebappLoader loader = new WebappLoader(standardContext.getParentClassLoader());
+        loader.setDelegate(standardContext.getDelegate());
+        loader.setLoaderClass(LazyStopWebappClassLoader.class.getName());
+        final Loader lazyStopLoader = new LazyStopLoader(loader);
+        standardContext.setLoader(lazyStopLoader);
     }
 
     @Override
@@ -1052,14 +1062,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
      */
     @Override
     public void beforeStop(final StandardContext standardContext) {
-        final ContextInfo contextInfo = getContextInfo(standardContext);
-        if (isUnDeployable(contextInfo)) {
-            try {
-                assembler.preDestroyApplication(contextInfo.appInfo, null);
-            } catch (UndeployException e) {
-                logger.error("can't pre deploy the app " + standardContext.getName(), e);
-            }
-        }
+        //no-op
     }
 
     private boolean isUnDeployable(final ContextInfo contextInfo) {
@@ -1080,7 +1083,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
      */
     @Override
     public void afterStop(final StandardContext standardContext) {
-        if (isIgnored(standardContext)) return;
+        if (isIgnored(standardContext)) {
+            return;
+        }
 
         final ContextInfo contextInfo = getContextInfo(standardContext);
         if (isUnDeployable(contextInfo)) {
@@ -1088,6 +1093,18 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 getAssembler().destroyApplication(contextInfo.appInfo.path);
             } catch (Exception e) {
                 logger.error("Unable to stop web application " + standardContext.getPath() + ": Exception: " + e.getMessage(), e);
+            }
+        }
+
+        final Loader loader = standardContext.getLoader();
+        if (loader != null && loader instanceof LazyStopLoader) {
+            final ClassLoader old = ((LazyStopLoader) loader).getStopClassLoader();
+            if (old != null && old instanceof LazyStopWebappClassLoader) {
+                try {
+                    ((LazyStopWebappClassLoader) old).internalStop();
+                } catch (LifecycleException e) {
+                    logger.error("error stopping classloader of webapp " + standardContext.getName(), e);
+                }
             }
         }
         removeContextInfo(standardContext);
