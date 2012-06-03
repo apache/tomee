@@ -201,6 +201,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 
+=========================================================================
+  - JAnsi (http://http://jansi.fusesource.org/) org.fusesource.jansi:jansi:jar:1.8
+    License: Apache V2
+-------------------------------------------------------------------------
+
+see previous one
 
 =========================================================================
 
@@ -1537,4 +1543,3 @@ and You agree to work with Initial Developer and Contributors to
 distribute such responsibility on an equitable basis. Nothing
 herein is intended or shall be deemed to constitute any admission
 of liability.
-
