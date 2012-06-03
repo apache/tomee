@@ -148,6 +148,16 @@
       <artifactId>arquillian-drone-selenium</artifactId>
       <version>1.0.0.Final</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jboss.arquillian.core</groupId>
+          <artifactId>arquillian-core-spi</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jboss.arquillian.config</groupId>
+          <artifactId>arquillian-config-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
@@ -171,20 +181,37 @@
     <dependency>
       <groupId>org.jboss.arquillian.extension</groupId>
       <artifactId>arquillian-drone-impl</artifactId>
-      <version>1.0.0.CR2</version>
+      <version>1.0.0.Final</version>
       <type>jar</type>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jboss.shrinkwrap.descriptors</groupId>
+          <artifactId>shrinkwrap-descriptors-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jboss.arquillian.extension</groupId>
       <artifactId>arquillian-drone-selenium-server</artifactId>
-      <version>1.0.0.CR2</version>
+      <version>1.0.0.Final</version>
       <type>jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.core</groupId>
+      <artifactId>arquillian-core-impl-base</artifactId>
+      <version>${version.arquillian}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.shrinkwrap.descriptors</groupId>
       <artifactId>shrinkwrap-descriptors-impl-javaee</artifactId>
+      <version>${version.shrinkwrap.descriptor}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.shrinkwrap.descriptors</groupId>
+      <artifactId>shrinkwrap-descriptors-api-base</artifactId>
       <version>${version.shrinkwrap.descriptor}</version>
     </dependency>
     <dependency>
