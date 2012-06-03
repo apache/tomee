@@ -25,7 +25,7 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
-import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -61,9 +61,14 @@ public class ServletListenerEjbRemoteTest {
     public static WebArchive createDeployment() {
         WebAppDescriptor descriptor = Descriptors.create(WebAppDescriptor.class)
                 .version("3.0")
-                .listener(RemoteServletContextListener.class)
-                .listener(RemoteServletSessionListener.class)
-                .servlet(ServletToCheckListener.class, "/" + TEST_NAME);
+                .createListener()
+                    .listenerClass(RemoteServletContextListener.class.getName()).up()
+                .createListener()
+                    .listenerClass(RemoteServletSessionListener.class.getName()).up()
+                .createServlet()
+                    .servletName("check").servletClass(ServletToCheckListener.class.getName()).up()
+                .createServletMapping()
+                    .servletName("check").urlPattern("/" + TEST_NAME).up();
 
         WebArchive archive = ShrinkWrap.create(WebArchive.class, TEST_NAME + ".war")
                 .addClass(RemoteServletContextListener.class)

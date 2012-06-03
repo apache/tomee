@@ -21,7 +21,7 @@ import org.apache.openejb.arquillian.tests.TestSetup;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -40,7 +40,11 @@ public class ServletFilterEjbRemoteInjectionTest extends TestSetup {
     }
 
     protected void decorateDescriptor(WebAppDescriptor descriptor) {
-        descriptor.filter(RemoteServletFilter.class, "/" + getTestContextName());
+        descriptor
+                .createFilter()
+                    .filterName("filter").filterClass(RemoteServletFilter.class.getName()).up()
+                .createFilterMapping()
+                    .filterName("filter").urlPattern("/" + getTestContextName());
     }
 
 }

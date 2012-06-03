@@ -29,7 +29,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
-import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
 import org.jboss.shrinkwrap.descriptor.spi.node.Node;
 import org.jboss.shrinkwrap.descriptor.spi.node.NodeDescriptor;
 import org.junit.Test;
@@ -54,8 +54,8 @@ public class StratocasterTest {
     @Deployment(testable = false)
     public static WebArchive createDeployment() {
         WebAppDescriptor descriptor = Descriptors.create(WebAppDescriptor.class)
-                .version("3.0")
-                .servlet(Stratocaster.class, "/" + TEST_NAME);
+                .createServlet().servletName("servlet").servletClass(Stratocaster.class.getName()).up()
+                .createServletMapping().servletName("servlet").urlPattern("/" + TEST_NAME).up();
 
         addEnvEntry(descriptor, "guitarStringGuages", "java.lang.String", "E1=0.052\nA=0.042\nD=0.030\nG=0.017\nB=0.013\nE=0.010");
         addEnvEntry(descriptor, "certificateOfAuthenticity", "java.lang.String", "/tmp/strat-certificate.txt");

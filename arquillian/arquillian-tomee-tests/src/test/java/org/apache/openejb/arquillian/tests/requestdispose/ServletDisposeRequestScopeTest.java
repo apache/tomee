@@ -25,7 +25,7 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
-import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -55,8 +55,7 @@ public class ServletDisposeRequestScopeTest {
     public static WebArchive createDeployment() {
         return new WebModule(ServletDisposeRequestScopeTest.class, ServletDisposeRequestScopeTest.class)
                 .getArchive()
-                .setWebXML(new StringAsset(Descriptors.create(WebAppDescriptor.class)
-                        .version("3.0").exportAsString()))
+                .setWebXML(new StringAsset(Descriptors.create(WebAppDescriptor.class).exportAsString()))
                 .addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
     }
 

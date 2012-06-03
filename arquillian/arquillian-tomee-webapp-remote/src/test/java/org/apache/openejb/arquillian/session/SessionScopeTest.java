@@ -28,7 +28,7 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
-import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,7 +44,12 @@ public class SessionScopeTest {
 
     @Deployment
     public static WebArchive createDeployment() {
-        return ShrinkWrap.create(WebArchive.class, "test.war").addClass(PojoSessionScoped.class).addClass(PojoSessionScopedServletWrapper.class).addAsLibraries(new File("target/test-libs/commons-httpclient.jar")).addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml")).setWebXML(new StringAsset(Descriptors.create(WebAppDescriptor.class).version("3.0").servlet(PojoSessionScopedServletWrapper.class, "/session").exportAsString()));
+        return ShrinkWrap.create(WebArchive.class, "test.war").addClass(PojoSessionScoped.class).addClass(PojoSessionScopedServletWrapper.class).addAsLibraries(new File("target/test-libs/commons-httpclient.jar")).addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
+                    .setWebXML(new StringAsset(
+                        Descriptors.create(WebAppDescriptor.class).version("3.0")
+                            .createServlet().servletName("servlet").servletClass(PojoSessionScopedServletWrapper.class.getName()).up()
+                            .createServletMapping().servletName("servlet").urlPattern("/session").up()
+                        .exportAsString()));
     }
 
     @Test
