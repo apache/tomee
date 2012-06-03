@@ -7,60 +7,80 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.LifecycleState;
 import org.apache.catalina.Loader;
-import org.apache.catalina.loader.WebappLoader;
 
 public class LazyStopLoader implements Loader, Lifecycle {
-    private final WebappLoader delegate;
+    private final Loader delegate;
     private ClassLoader classLoader;
 
-    public LazyStopLoader(WebappLoader loader) {
+    public LazyStopLoader(Loader loader) {
         delegate = loader;
     }
 
     @Override
     public void addLifecycleListener(LifecycleListener listener) {
-        delegate.addLifecycleListener(listener);
+        if (delegate instanceof Lifecycle) {
+            ((Lifecycle) delegate).addLifecycleListener(listener);
+        }
     }
 
     @Override
     public LifecycleListener[] findLifecycleListeners() {
-        return delegate.findLifecycleListeners();
+        if (delegate instanceof Lifecycle) {
+            return ((Lifecycle) delegate).findLifecycleListeners();
+        }
+        return new LifecycleListener[0];
     }
 
     @Override
     public void removeLifecycleListener(LifecycleListener listener) {
-        delegate.removeLifecycleListener(listener);
+        if (delegate instanceof Lifecycle) {
+            ((Lifecycle) delegate).removeLifecycleListener(listener);
+        }
     }
 
     @Override
     public void init() throws LifecycleException {
-        delegate.init();
+        if (delegate instanceof Lifecycle) {
+            ((Lifecycle) delegate).init();
+        }
     }
 
     @Override
     public void start() throws LifecycleException {
-        delegate.start();
+        if (delegate instanceof Lifecycle) {
+            ((Lifecycle) delegate).start();
+        }
     }
 
     @Override
     public void stop() throws LifecycleException {
         classLoader = delegate.getClassLoader();
-        delegate.stop();
+        if (delegate instanceof Lifecycle) {
+            ((Lifecycle) delegate).stop();
+        }
     }
 
     @Override
     public void destroy() throws LifecycleException {
-        delegate.destroy();
+        if (delegate instanceof Lifecycle) {
+            ((Lifecycle) delegate).destroy();
+        }
     }
 
     @Override
     public LifecycleState getState() {
-        return delegate.getState();
+        if (delegate instanceof Lifecycle) {
+            return ((Lifecycle) delegate).getState();
+        }
+        return null;
     }
 
     @Override
     public String getStateName() {
-        return delegate.getStateName();
+        if (delegate instanceof Lifecycle) {
+            return ((Lifecycle) delegate).getStateName();
+        }
+        return null;
     }
 
     @Override
