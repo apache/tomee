@@ -22,7 +22,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.exporter.ExplodedExporter;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
 import org.jboss.shrinkwrap.descriptor.spi.node.Node;
 import org.jboss.shrinkwrap.descriptor.spi.node.NodeDescriptor;
 import org.junit.Test;
@@ -60,7 +60,12 @@ public class SharedEnvironmentTest extends TestSetup {
     }
 
     protected void decorateDescriptor(WebAppDescriptor descriptor) {
-        descriptor.filter(PojoServletFilter.class, "/" + getTestContextName());
+        descriptor
+                .createFilter()
+                    .filterName("filter").filterClass(PojoServletFilter.class.getName()).up()
+                .createFilterMapping()
+                    .filterName("filter").urlPattern("/" + getTestContextName());
+
         addEnvEntry(descriptor, "returnEmail", "java.lang.String", "tomee@apache.org");
         addEnvEntry(descriptor, "connectionPool", "java.lang.Integer", "20");
         addEnvEntry(descriptor, "startCount", "java.lang.Long", "200000");

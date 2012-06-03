@@ -20,6 +20,7 @@ package org.apache.openejb.arquillian.session;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.openejb.arquillian.TestServlet;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ArchivePaths;
@@ -28,7 +29,7 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
-import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -49,7 +50,8 @@ public class SessionScopeTest {
             .addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
             .setWebXML(new StringAsset(Descriptors.create(WebAppDescriptor.class)
                 .version("3.0")
-                .servlet(PojoSessionScopedServletWrapper.class, "/session")
+                    .createServlet().servletName("servlet").servletClass(PojoSessionScopedServletWrapper.class.getName()).up()
+                    .createServletMapping().servletName("servlet").urlPattern("/session").up()
                 .exportAsString()));
     }
 

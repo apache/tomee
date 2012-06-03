@@ -16,6 +16,10 @@
  */
 package org.apache.openejb.arquillian.tests.cdi.inject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import org.apache.openejb.arquillian.tests.TestRun;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -26,14 +30,9 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
-import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
@@ -60,8 +59,8 @@ public class ServletCdiInjectionTest {
     public static WebArchive createDeployment() {
 
         WebAppDescriptor descriptor = Descriptors.create(WebAppDescriptor.class)
-                .version("3.0")
-                .servlet(SimpleServlet.class, "/" + TEST_NAME);
+                .createServlet().servletName("servlet").servletClass(SimpleServlet.class.getName()).up()
+                .createServletMapping().servletName("servlet").urlPattern("/" + TEST_NAME).up();
 
         WebArchive archive = ShrinkWrap.create(WebArchive.class, TEST_NAME + ".war")
                 .addClass(TestRun.class)

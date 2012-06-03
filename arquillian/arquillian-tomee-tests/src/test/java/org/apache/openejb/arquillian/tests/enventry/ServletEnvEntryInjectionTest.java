@@ -23,7 +23,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
-import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
 import org.jboss.shrinkwrap.descriptor.spi.node.Node;
 import org.jboss.shrinkwrap.descriptor.spi.node.NodeDescriptor;
 import org.junit.Test;
@@ -111,8 +111,8 @@ public class ServletEnvEntryInjectionTest {
     @Deployment(testable = false)
     public static WebArchive createDeployment() {
         WebAppDescriptor descriptor = Descriptors.create(WebAppDescriptor.class)
-                .version("3.0")
-                .servlet(PojoServlet.class, "/" + TEST_NAME);
+                .createServlet().servletName("servlet").servletClass(PojoServlet.class.getName()).up()
+                .createServletMapping().servletName("servlet").urlPattern("/" + TEST_NAME).up();
 
         addEnvEntry(descriptor, "returnEmail", "java.lang.String", "tomee@apache.org");
         addEnvEntry(descriptor, "connectionPool", "java.lang.Integer", "20");

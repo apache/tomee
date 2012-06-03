@@ -25,7 +25,7 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
-import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
 import org.jboss.shrinkwrap.descriptor.spi.node.Node;
 import org.jboss.shrinkwrap.descriptor.spi.node.NodeDescriptor;
 import org.junit.Test;
@@ -59,7 +59,7 @@ public class ServletListenerEjbLocalInjectionTest {
         validateTest(expectedOutput);
     }
 
-//    @Test
+    //    @Test
     public void pojoInjectionShouldSucceedInCtxtListener() throws Exception {
         final String expectedOutput = "Context: OpenEJB is on the wheel of a 2011 Lexus IS 350";
         validateTest(expectedOutput);
@@ -77,7 +77,7 @@ public class ServletListenerEjbLocalInjectionTest {
         validateTest(expectedOutput);
     }
 
-//    @Test
+    //    @Test
     public void longTypeEnvEntryInjectionShouldSucceedInCtxtListener() throws Exception {
         final String expectedOutput = "Context: Start Count: 200000";
         validateTest(expectedOutput);
@@ -107,13 +107,13 @@ public class ServletListenerEjbLocalInjectionTest {
         validateTest(expectedOutput);
     }
 
-//    @Test
+    //    @Test
     public void classEnvEntryInjectionShouldSucceedInCtxtListener() throws Exception {
         final String expectedOutput = "Context: java.lang.String";
         validateTest(expectedOutput);
     }
 
-//    @Test
+    //    @Test
     public void enumEnvEntryInjectionShouldSucceedInCtxtListener() throws Exception {
         final String expectedOutput = "Context: DefaultCode: OK";
         validateTest(expectedOutput);
@@ -131,7 +131,7 @@ public class ServletListenerEjbLocalInjectionTest {
         validateTest(expectedOutput);
     }
 
-//    @Test
+    //    @Test
     public void pojoInjectionShouldSucceedInSessionListener() throws Exception {
         final String expectedOutput = "Session: OpenEJB is on the wheel of a 2011 Lexus IS 350";
         validateTest(expectedOutput);
@@ -149,7 +149,7 @@ public class ServletListenerEjbLocalInjectionTest {
         validateTest(expectedOutput);
     }
 
-//    @Test
+    //    @Test
     public void longTypeEnvEntryInjectionShouldSucceedInSessionListener() throws Exception {
         final String expectedOutput = "Session: Start Count: 200000";
         validateTest(expectedOutput);
@@ -179,13 +179,13 @@ public class ServletListenerEjbLocalInjectionTest {
         validateTest(expectedOutput);
     }
 
-//    @Test
+    //    @Test
     public void classEnvEntryInjectionShouldSucceedInSessionListener() throws Exception {
         final String expectedOutput = "Session: java.lang.String";
         validateTest(expectedOutput);
     }
 
-//    @Test
+    //    @Test
     public void enumEnvEntryInjectionShouldSucceedInSessionListener() throws Exception {
         final String expectedOutput = "Session: DefaultCode: OK";
         validateTest(expectedOutput);
@@ -195,9 +195,14 @@ public class ServletListenerEjbLocalInjectionTest {
     public static WebArchive createDeployment() {
         final WebAppDescriptor descriptor = Descriptors.create(WebAppDescriptor.class)
                 .version("3.0")
-                .listener(PojoServletContextListener.class)
-                .listener(PojoServletSessionListener.class)
-                .servlet(ServletToCheckListener.class, "/" + TEST_NAME);
+                .createListener()
+                    .listenerClass(PojoServletContextListener.class.getName()).up()
+                .createListener()
+                    .listenerClass(PojoServletSessionListener.class.getName()).up()
+                .createServlet()
+                    .servletName("check").servletClass(ServletToCheckListener.class.getName()).up()
+                .createServletMapping()
+                    .servletName("check").urlPattern("/" + TEST_NAME).up();
 
         addEnvEntry(descriptor, "returnEmail", "java.lang.String", "tomee@apache.org");
         addEnvEntry(descriptor, "connectionPool", "java.lang.Integer", "20");
@@ -222,7 +227,6 @@ public class ServletListenerEjbLocalInjectionTest {
                 .addClass(ContextAttributeName.class)
                 .setWebXML(new StringAsset(descriptor.exportAsString()))
                 .addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
-
 
 
         return archive;

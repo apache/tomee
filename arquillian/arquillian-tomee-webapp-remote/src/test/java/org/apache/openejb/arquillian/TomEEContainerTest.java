@@ -26,12 +26,11 @@ import junit.framework.Assert;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
-import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -45,7 +44,10 @@ public class TomEEContainerTest {
         		.addClass(TestServlet.class).addClass(TestEjb.class).addClass(TomEEContainerTest.class)
                 .setWebXML(new StringAsset(
                 		Descriptors.create(WebAppDescriptor.class)
-                			.version("3.0").servlet(TestServlet.class, "/ejb").exportAsString()));
+                			.version("3.0")
+                                .createServlet().servletName("servlet-ejb").servletClass(TestServlet.class.getName()).up()
+                                .createServletMapping().servletName("servlet-ejb").urlPattern("/ejb").up()
+                                .exportAsString()));
     }
 
     @EJB
@@ -61,7 +63,7 @@ public class TomEEContainerTest {
         InputStream is = new URL("http://localhost:" + System.getProperty("tomee.httpPort", "10080") + "/test/ejb").openStream();
         ByteArrayOutputStream os = new ByteArrayOutputStream();
 
-        int bytesRead = -1;
+        int bytesRead;
         byte[] buffer = new byte[8192];
         while ((bytesRead = is.read(buffer)) > -1) {
             os.write(buffer, 0, bytesRead);
