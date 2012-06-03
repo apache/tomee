@@ -130,7 +130,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     private static final Digester CONTEXT_DIGESTER = createDigester();
     public static final String OPENEJB_WEBAPP_MODULE_ID = "openejb.webapp.moduleId";
     public static final String TOMEE_EAT_EXCEPTION_PROP = "tomee.eat-exception";
-    public static final String MYFACES_TOMEE_ANNOTATION_FINDER = "org.apache.tomee.myfaces.TomEEAnnotationProvider";
 
     /**
      * Context information for web applications
@@ -604,9 +603,12 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
 
         // we just want to wrap it to lazy stop it (afterstop)
         // to avoid classnotfound in @PreDestoy or destroyApplication()
-        final WebappLoader loader = new WebappLoader(standardContext.getParentClassLoader());
-        loader.setDelegate(standardContext.getDelegate());
-        loader.setLoaderClass(LazyStopWebappClassLoader.class.getName());
+        Loader loader = standardContext.getLoader();
+        if (!(loader instanceof TomEEWebappLoader)) {
+            loader = new WebappLoader(standardContext.getParentClassLoader());
+            loader.setDelegate(standardContext.getDelegate());
+            ((WebappLoader) loader).setLoaderClass(LazyStopWebappClassLoader.class.getName());
+        }
         final Loader lazyStopLoader = new LazyStopLoader(loader);
         standardContext.setLoader(lazyStopLoader);
     }
