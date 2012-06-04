@@ -276,8 +276,8 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         if (lib.contains(NAME_STR)) {
             lib = lib.substring(0, rawLib.indexOf(NAME_STR));
             extractedName = rawLib.substring(rawLib.indexOf(NAME_STR) + NAME_STR.length(), rawLib.length());
-            if (!extractedName.endsWith(packaging)) {
-                extractedName = extractedName + "." + packaging;
+            if (!extractedName.endsWith(defaultType)) {
+                extractedName = extractedName + "." + defaultType;
             }
         }
 
