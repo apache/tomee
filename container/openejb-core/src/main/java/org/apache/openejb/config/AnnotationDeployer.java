@@ -2795,13 +2795,26 @@ public class AnnotationDeployer implements DynamicDeployer {
                         for (Class<?> intrfce : interfaces) {
                             interfaceNames.add(intrfce.getName()+".class");
                         }
-                        if (impliedLocal) validation.fail(ejbName, "ann.local.noAttributes", join(", ", interfaceNames));
-                        if (impliedRemote) validation.fail(ejbName, "ann.remote.noAttributes", join(", ", interfaceNames));
 
-                        /**
-                         * This bean is invalid, so do not bother looking at the other interfaces or the superclass
-                         */
-                        return;
+                        // just warn for @Local since Glassfish supports it even if it is weird
+                        // still fail for @Remote!
+                        if (impliedLocal && local.value().length == 0 && interfaces.size() == 0) {
+                            validation.warn(ejbName, "ann.local.noAttributes", join(", ", interfaceNames));
+                            // we don't go out to let be deployed
+                        } else if (impliedLocal) {
+                            validation.fail(ejbName, "ann.local.noAttributes", join(", ", interfaceNames));
+                            /**
+                             * This bean is invalid, so do not bother looking at the other interfaces or the superclass
+                             */
+                            return;
+                        }
+                        if (impliedRemote) {
+                            validation.fail(ejbName, "ann.remote.noAttributes", join(", ", interfaceNames));
+                            /**
+                             * This bean is invalid, so do not bother looking at the other interfaces or the superclass
+                             */
+                            return;
+                        }
                     } else if (strict && impliedLocal && impliedRemote) {
                         Class<?> interfce = interfaces.remove(0);
                         /**
