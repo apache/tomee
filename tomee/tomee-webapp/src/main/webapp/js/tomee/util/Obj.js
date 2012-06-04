@@ -14,11 +14,18 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
-    "use strict";
+ "use strict";
  */
 
 TOMEE.utils = {
-    getArray: function (obj) {
+    getSafe:function (obj, defaultValue) {
+        if(obj) {
+            return obj;
+        }
+        return defaultValue;
+    },
+
+    getArray:function (obj) {
         if (!obj) {
             return [];
         }
@@ -30,14 +37,14 @@ TOMEE.utils = {
         return [obj];
     },
 
-    getObject: function (obj) {
+    getObject:function (obj) {
         if (!obj) {
             return {};
         }
         return obj;
     },
 
-    stringFormat: function(str, values) {
+    stringFormat:function (str, values) {
         var result = str;
         for (var key in values) {
             var reg = new RegExp("\\{" + key + "\\}", "gm");

@@ -17,34 +17,44 @@
  "use strict";
  */
 
-TOMEE.I18N = (function () {
+TOMEE.el = (function () {
 
-    var messages = {
-        'application.name':'Apache TomEE',
-        'application.footer':'Copyright © 2012 The Apache Software Foundation, Licensed under the Apache License, Version 2.0. Apache and the Apache feather logo are trademarks of The Apache Software Foundation.',
-        'application.logout':'Logout',
-
-        'application.guest':'Guest',
-
-        'application.home':'Home',
-        'application.log':'Log',
-
-        'application.jdni': 'Jndi',
-        'application.saved.objects': 'Saved Objects',
-
-        'dummy':'dummy'
+    var getElMap = function (elCfg) {
+        var elMap = {};
+        mountEl(elCfg, elMap);
+        return elMap;
     };
 
-    var get = function (key) {
-        var result = messages[key];
-        if (!result) {
-            result = '[!' + key + '!]';
-            TOMEE.log.error('Missing i18n message. key: "' + key + '"');
+    var mountEl = function (elCfg, elMap) {
+        var el = $('<' + elCfg.tag + '></' + elCfg.tag + '>');
+
+        var attrs = elCfg.attributes;
+        for(var key in attrs) {
+            el.attr(key, attrs[key]);
         }
-        return result;
+
+        if(elCfg.cls) {
+            el.addClass(elCfg.cls);
+        }
+
+        var children = TOMEE.utils.getArray(elCfg.children);
+        for (var i = 0; i < children.length; i++) {
+            el.append(mountEl(children[i], elMap));
+        }
+
+        if (elCfg.elName) {
+            elMap[elCfg.elName] = el;
+        }
+
+        if (elCfg.html) {
+            el.html(elCfg.html);
+        }
+
+
+        return el;
     };
 
     return {
-        get:get
-    };
+        getElMap:getElMap
+    }
 })();

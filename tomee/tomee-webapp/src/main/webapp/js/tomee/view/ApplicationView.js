@@ -21,107 +21,124 @@ TOMEE.ApplicationView = function (cfg) {
 
     var channel = cfg.channel;
 
-    $.ajax({
-        url:'js/tomee/view/body.html',
-        dataType:'text'
-    }).success(function (data, textStatus, jqXHR) {
-            var jndi_tree_div_id = TOMEE.Sequence.next();
-            var saved_objs_div_id = TOMEE.Sequence.next();
+    var toolbar = TOMEE.ApplicationToolbar({
+        channel: channel
+    });
 
-            $('body').append(TOMEE.utils.stringFormat(data, {
-                'app_name':TOMEE.I18N.get('application.name'),
-                'footer':TOMEE.I18N.get('application.footer'),
-                'jndi_tree_div_id': jndi_tree_div_id,
-                'saved_objs_div_id': saved_objs_div_id
-            }));
+    $('body').append(toolbar.getEl());
 
-            var tree = TOMEE.components.Tree({
-                channel: channel
-            });
+    var elMapContent = TOMEE.el.getElMap({
+        elName: 'main',
+        tag: 'div',
+        attributes: {
+            style:'padding: 5px;'
+        },
+        children: [{
+            elName: 'left',
+            tag: 'div',
+            attributes: {
+                style: 'float:left; width:33%; min-width:170px;'
+            }
+        }, {
+            elName: 'center',
+            tag: 'div',
+            attributes: {
+                style: 'float:left; width:33%; min-width:170px; margin-left: 5px; margin-right: 5px;'
+            }
+        }, {
+            elName: 'right',
+            tag: 'div',
+            attributes: {
+                style: 'float:left; width:33%; min-width:170px;'
+            }
+        }]
+    });
 
-            var treeEl = tree.getEl();
-            $('#' + jndi_tree_div_id).append(treeEl);
-
-            tree.load([
-                { text: TOMEE.Sequence.next(), children: [] },
-                { text: TOMEE.Sequence.next() },
-                { text: TOMEE.Sequence.next() },
-                { text: TOMEE.Sequence.next() },
-                { text: TOMEE.Sequence.next() },
-                { text: TOMEE.Sequence.next(), children: [] },
-                { text: TOMEE.Sequence.next(), children: [] },
-                { text: TOMEE.Sequence.next(), children: [] },
-                { text: TOMEE.Sequence.next() }
-            ], function(data) {
-                return data.text;
-            }, function(data) {
-                return data.children;
-            });
-
-
-            var table = TOMEE.components.Table({
-                channel: channel,
-                columns: ['colA', 'colB']
-            });
-
-            var tableEl = table.getEl();
-            $('#' + saved_objs_div_id).append(tableEl);
-
-            table.load([
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') },
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') },
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') },
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') },
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') },
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') },
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') },
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') },
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') },
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') },
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') },
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') },
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') },
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') },
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') },
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') },
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') },
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') },
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') },
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') },
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') },
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') },
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') },
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') },
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') },
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') },
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') },
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') },
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') },
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') },
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') },
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') },
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') },
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') },
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') },
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') },
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') },
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') },
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') },
-                { name: TOMEE.Sequence.next('name'), value: TOMEE.Sequence.next('value') }
-
-            ], function(bean) {
-                return [bean.name, bean.value];
-            });
-
-
-
-            var a = 0;
-
-
-
+    var jndiPanel = (function() {
+        var jndi = TOMEE.components.Panel({
+            title: TOMEE.I18N.get('application.jdni')
         });
 
+        var tree = TOMEE.components.Tree({
+            channel:channel
+        });
+
+        var treeEl = tree.getEl();
+        jndi.getContentEl().append(treeEl);
+
+        return {
+            getEl: function() {
+                return jndi.getEl();
+            },
+            load: function(data) {
+                tree.load(data, function (data) {
+                    return data.text;
+                }, function (data) {
+                    return data.children;
+                });
+            }
+        };
+    })();
+
+    var savedPanel = (function() {
+        var saved = TOMEE.components.Panel({
+            title: TOMEE.I18N.get('application.saved.objects')
+        });
+
+        var table = TOMEE.components.Table({
+            channel:channel,
+            columns:['colA', 'colB']
+        });
+
+        saved.getContentEl().append(table.getEl());
+
+        return {
+            getEl: function() {
+                return saved.getEl();
+            },
+            load: function(data) {
+                table.load(data, function (bean) {
+                    return [bean.name, bean.value];
+                });
+            }
+        };
+    })();
+
+    elMapContent['left'].append(jndiPanel.getEl());
+    elMapContent['left'].append(savedPanel.getEl());
+
+
+    $('body').append(elMapContent.main);
+
+    var elMapFooter = TOMEE.el.getElMap({
+        elName: 'main',
+        tag: 'div',
+        attributes: {
+            style: 'clear: both;'
+        },
+        children: [{
+            tag: 'hr',
+            attributes: {
+                style: 'margin-top: 0px; margin-bottom: 0px;'
+            },
+            children:[{
+                tag: 'footer',
+                html: '<p style="text-align: center">' + TOMEE.I18N.get('application.footer') + '</p>'
+            }]
+        }]
+    });
+    $('body').append(elMapFooter.main);
+
     return {
+        setLoggedUser:function (name) {
+            toolbar.setLoggedUser(name);
+        } ,
+        loadJndi: function(data) {
+            jndiPanel.load(data);
+        },
+        loadSavedObjects: function(data) {
+            savedPanel.load(data);
+        }
 
     };
 };
