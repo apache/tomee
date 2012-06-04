@@ -2799,7 +2799,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                         // just warn for @Local since Glassfish supports it even if it is weird
                         // still fail for @Remote!
                         if (impliedLocal && local.value().length == 0 && interfaces.size() == 0 && !strict) {
-                            validation.warn(ejbName, "ann.local.noAttributes", join(", ", interfaceNames));
+                            validation.warn(ejbName, "ann.local.forLocalBean", join(", ", interfaceNames));
                             // we don't go out to let be deployed
                         } else if (impliedLocal) {
                             validation.fail(ejbName, "ann.local.noAttributes", join(", ", interfaceNames));
