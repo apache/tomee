@@ -31,7 +31,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.apache.maven.artifact.Artifact;
@@ -481,7 +483,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             });
         }
 
-        getLog().info("Running '" + getCmd() + "' on TomEE on " + tomeeHost + ":" + tomeeHttpPort + " (shutdown port is " + tomeeShutdownPort + ")");
+        getLog().info("Running '" + getClass().getSimpleName().replace("TomEEMojo", "").toLowerCase(Locale.ENGLISH)
+                + "'. Configured TomEE in plugin is " + tomeeHost + ":" + tomeeHttpPort
+                + " (plugin shutdown port is " + tomeeShutdownPort + ")");
 
         server.start(strings, getCmd(), false);
 
