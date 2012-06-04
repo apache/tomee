@@ -31,10 +31,68 @@ TOMEE.ApplicationController = function () {
         channel: channel
     });
 
-    //The user clicked in one of the buttons in the application toolbar
-    channel.bind('toolbar_button_executed', function (params) {
-        var key = params.key;
-        view.showPanel(key);
+    view.loadJndi([
+        { text:TOMEE.Sequence.next(), children:[] },
+        { text:TOMEE.Sequence.next() },
+        { text:TOMEE.Sequence.next() },
+        { text:TOMEE.Sequence.next() },
+        { text:TOMEE.Sequence.next() },
+        { text:TOMEE.Sequence.next(), children:[] },
+        { text:TOMEE.Sequence.next(), children:[] },
+        { text:TOMEE.Sequence.next(), children:[] },
+        { text:TOMEE.Sequence.next() }
+    ]);
+
+    view.loadSavedObjects([
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
+        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') }
+
+    ]);
+
+    channel.bind('application.name.click', function (params) {
+        window.open('http://openejb.apache.org/', 'OpenEJB');
+    });
+
+    channel.bind('application.logout', function (params) {
+        alert('Log out!');
     });
 
     return {
