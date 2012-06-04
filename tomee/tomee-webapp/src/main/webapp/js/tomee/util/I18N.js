@@ -31,6 +31,9 @@ TOMEE.I18N = (function () {
 
         'application.jdni': 'Jndi',
         'application.saved.objects': 'Saved Objects',
+        'application.console': 'Console',
+        'application.mdbs': 'MDBs',
+        'application.ws': 'Webservices',
 
         'dummy':'dummy'
     };

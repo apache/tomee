@@ -46,6 +46,20 @@ TOMEE.components.Panel = function (cfg) {
         }]
     });
 
+
+    var extraStyles = cfg.extraStyles;
+    if(extraStyles) {
+        (function() {
+            var content = map['content'];
+
+            for(var key in extraStyles) {
+                content.css(key, extraStyles[key]);
+            }
+        })();
+    }
+
+
+
     return {
         getEl:function () {
             return map.main;

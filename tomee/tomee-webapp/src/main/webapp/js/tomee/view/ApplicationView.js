@@ -108,6 +108,50 @@ TOMEE.ApplicationView = function (cfg) {
     elMapContent['left'].append(savedPanel.getEl());
 
 
+    var consolePanel = (function() {
+        var console = TOMEE.components.Panel({
+            title: TOMEE.I18N.get('application.console'),
+            extraStyles: {
+                height: '500px'
+            }
+        });
+
+        return {
+            getEl: function() {
+                return console.getEl();
+            }
+        };
+    })();
+
+    elMapContent['center'].append(consolePanel.getEl());
+
+    var mdbsPanel = (function() {
+        var mdbs = TOMEE.components.Panel({
+            title: TOMEE.I18N.get('application.mdbs')
+        });
+
+        return {
+            getEl: function() {
+                return mdbs.getEl();
+            }
+        };
+    })();
+
+    var wsPanel = (function() {
+        var ws = TOMEE.components.Panel({
+            title: TOMEE.I18N.get('application.ws')
+        });
+
+        return {
+            getEl: function() {
+                return ws.getEl();
+            }
+        };
+    })();
+
+    elMapContent['right'].append(mdbsPanel.getEl());
+    elMapContent['right'].append(wsPanel.getEl());
+
     $('body').append(elMapContent.main);
 
     var elMapFooter = TOMEE.el.getElMap({
