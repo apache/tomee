@@ -8,6 +8,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -16,17 +17,22 @@ import java.util.logging.Logger;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.config.AppModule;
+import org.apache.openejb.config.ConfigurableClasspathArchive;
+import org.apache.openejb.config.DeploymentLoader;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.config.ReadDescriptors;
+import org.apache.openejb.config.WebModule;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.ManagedBean;
 import org.apache.openejb.jee.TransactionType;
+import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.IO;
 import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.archive.ClassesArchive;
-import org.jboss.arquillian.container.spi.context.annotation.DeploymentScoped;
+import org.apache.xbean.finder.archive.CompositeArchive;
+import org.apache.xbean.finder.archive.JarArchive;
 import org.jboss.arquillian.container.test.spi.client.deployment.ApplicationArchiveProcessor;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -53,6 +59,7 @@ public class OpenEJBArchiveProcessor implements ApplicationArchiveProcessor {
     private static final String PERSISTENCE_XML = "persistence.xml";
     private static final String OPENEJB_JAR_XML = "openejb-jar.xml";
     private static final String ENV_ENTRIES_PROPERTIES = "env-entries.properties";
+    public static final String WEB_INF_CLASSES = "/WEB-INF/classes/";
 
     @Inject
     @SuiteScoped
@@ -63,9 +70,25 @@ public class OpenEJBArchiveProcessor implements ApplicationArchiveProcessor {
         final Class<?> javaClass = testClass.getJavaClass();
         final AppModule appModule = new AppModule(javaClass.getClassLoader(), javaClass.getName());
 
+        final Collection<URL> additionalPaths = new ArrayList<URL>();
+
         final String prefix;
         if (archive instanceof WebArchive) {
             prefix = WEB_INF;
+
+            final Map<ArchivePath, Node> content = archive.getContent(new IncludeRegExpPaths("/WEB-INF/lib/.*"));
+            for (Map.Entry<ArchivePath, Node> node : content.entrySet()) {
+                final Asset asset = node.getValue().getAsset();
+                if (asset instanceof UrlAsset) {
+                    additionalPaths.add(get(URL.class, "url", asset));
+                } else if (asset instanceof FileAsset) {
+                    try {
+                        additionalPaths.add(get(File.class, "file", asset).toURI().toURL());
+                    } catch (MalformedURLException e) {
+                        LOGGER.log(Level.SEVERE, "can't add a library to the deployment", e);
+                    }
+                }
+            }
         } else {
             prefix = META_INF;
         }
@@ -81,7 +104,7 @@ public class OpenEJBArchiveProcessor implements ApplicationArchiveProcessor {
             appModule.getEjbModules().add(new EjbModule(ejbJar, openejbJar));
         }
 
-        final org.apache.xbean.finder.archive.Archive finderArchive = finderArchive(archive, appModule.getClassLoader());
+        final org.apache.xbean.finder.archive.Archive finderArchive = finderArchive(archive, appModule.getClassLoader(), additionalPaths);
 
         final EjbJar ejbJar;
         final Node ejbJarXml = archive.get(prefix.concat(EJB_JAR_XML));
@@ -172,7 +195,7 @@ public class OpenEJBArchiveProcessor implements ApplicationArchiveProcessor {
         }
     }
 
-    private org.apache.xbean.finder.archive.Archive finderArchive(final Archive<?> archive, final ClassLoader cl) {
+    private org.apache.xbean.finder.archive.Archive finderArchive(final Archive<?> archive, final ClassLoader cl, final Collection<URL> additionalPaths) {
         final List<Class<?>> classes = new ArrayList<Class<?>>();
         final Map<ArchivePath, Node> content = archive.getContent(new IncludeRegExpPaths(".*.class"));
         for (Map.Entry<ArchivePath, Node> node : content.entrySet()) {
@@ -183,11 +206,21 @@ public class OpenEJBArchiveProcessor implements ApplicationArchiveProcessor {
                 e.printStackTrace();
             }
         }
-        return new ClassesArchive(classes);
+
+        final List<org.apache.xbean.finder.archive.Archive> archives = new ArrayList<org.apache.xbean.finder.archive.Archive>();
+        for (URL url : DeploymentLoader.filterWebappUrls(additionalPaths.toArray(new URL[additionalPaths.size()]))) {
+            archives.add(new JarArchive(cl, url));
+        }
+        archives.add(new ClassesArchive(classes));
+        return new CompositeArchive(archives);
     }
 
     private static String name(final String raw) {
-        final String name = raw.replace('/', '.');
+        String name = raw;
+        if (name.startsWith(WEB_INF_CLASSES)) {
+            name = name.substring(WEB_INF_CLASSES.length() - 1);
+        }
+        name = name.replace('/', '.');
         return name.substring(1, name.length() - 6);
     }
 

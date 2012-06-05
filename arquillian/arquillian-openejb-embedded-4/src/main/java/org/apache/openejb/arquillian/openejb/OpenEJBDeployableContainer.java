@@ -14,6 +14,7 @@ import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentFilterable;
@@ -89,6 +90,10 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
 
     @Inject
     @SuiteScoped
+    private InstanceProducer<ClassLoader> classLoader;
+
+    @Inject
+    @SuiteScoped
     private Instance<AppModule> module;
 
     @Inject
@@ -156,9 +161,12 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
 
             appInfoProducer.set(appInfo);
             appContextProducer.set(appCtx);
+            classLoader.set(appCtx.getClassLoader());
         } catch (Exception e) {
             throw new DeploymentException("can't deploy " + archive.getName(), e);
         }
+
+
         return new ProtocolMetaData();
     }
 
