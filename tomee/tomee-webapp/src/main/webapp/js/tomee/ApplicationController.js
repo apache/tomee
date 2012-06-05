@@ -28,7 +28,7 @@ TOMEE.ApplicationController = function () {
     var channel = TOMEE.ApplicationChannel({});
 
     var view = TOMEE.ApplicationView({
-        channel: channel
+        channel:channel
     });
 
     view.loadJndi([
@@ -109,6 +109,11 @@ TOMEE.ApplicationController = function () {
 
     channel.bind('application.logout', function (params) {
         alert('Log out!');
+    });
+
+    channel.bind('jndi_leaf_click', function (params) {
+        alert('name: ' + params.bean.text);
+
     });
 
     return {
