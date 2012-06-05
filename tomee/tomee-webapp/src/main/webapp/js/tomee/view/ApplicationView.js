@@ -20,177 +20,63 @@ TOMEE.ApplicationView = function (cfg) {
     "use strict";
 
     var channel = cfg.channel;
+    var groups = cfg.groups;
 
     var toolbar = TOMEE.ApplicationToolbar({
-        channel: channel
+        channel:channel
+    });
+
+    var currentTab = 'home';
+    channel.bind('toolbar.click', function (params) {
+        if (currentTab === params.tab) {
+            return;
+        }
+        currentTab = params.tab;
+        showTab(currentTab);
     });
 
     $('body').append(toolbar.getEl());
 
     var elMapContent = TOMEE.el.getElMap({
-        elName: 'main',
-        tag: 'div',
-        attributes: {
-            style:'padding: 5px;'
-        },
-        children: [{
-            elName: 'left',
-            tag: 'div',
-            attributes: {
-                style: 'float:left; width:33%; min-width:170px;'
-            }
-        }, {
-            elName: 'center',
-            tag: 'div',
-            attributes: {
-                style: 'float:left; width:33%; min-width:170px; margin-left: 5px; margin-right: 5px;'
-            }
-        }, {
-            elName: 'right',
-            tag: 'div',
-            attributes: {
-                style: 'float:left; width:33%; min-width:170px;'
-            }
-        }]
+        elName:'main',
+        tag:'div'
     });
-
-    var jndiPanel = (function() {
-        var jndi = TOMEE.components.Panel({
-            title: TOMEE.I18N.get('application.jdni')
-        });
-
-        var tree = TOMEE.components.Tree({
-            key: 'jndi',
-            channel:channel,
-            getText: function (data) {
-                return data.text;
-            },
-            getChildren: function (data) {
-                return data.children;
-            }
-        });
-
-        var treeEl = tree.getEl();
-        jndi.getContentEl().append(treeEl);
-
-        return {
-            getEl: function() {
-                return jndi.getEl();
-            },
-            load: function(data) {
-                tree.load(data);
-            }
-        };
-    })();
-
-    var savedPanel = (function() {
-        var saved = TOMEE.components.Panel({
-            title: TOMEE.I18N.get('application.saved.objects')
-        });
-
-        var table = TOMEE.components.Table({
-            channel:channel,
-            columns:['colA', 'colB']
-        });
-
-        saved.getContentEl().append(table.getEl());
-
-        return {
-            getEl: function() {
-                return saved.getEl();
-            },
-            load: function(data) {
-                table.load(data, function (bean) {
-                    return [bean.name, bean.value];
-                });
-            }
-        };
-    })();
-
-    elMapContent['left'].append(jndiPanel.getEl());
-    elMapContent['left'].append(savedPanel.getEl());
-
-
-    var consolePanel = (function() {
-        var console = TOMEE.components.Panel({
-            title: TOMEE.I18N.get('application.console'),
-            extraStyles: {
-                height: '500px'
-            }
-        });
-
-        var el = console.getContentEl();
-        el.append('<textarea style="height: 469px; width: 100%;border: 0px;padding: 0px;margin: 0px;"></textarea>');
-        el.append('<div style="background-color:#EEE; border-top: 1px solid #E5E5E5; height: 30px;"><div class="t-action-btn"></div><div class="t-action-btn"></div></div>');
-
-
-        return {
-            getEl: function() {
-                return console.getEl();
-            }
-        };
-    })();
-
-    elMapContent['center'].append(consolePanel.getEl());
-
-    var mdbsPanel = (function() {
-        var mdbs = TOMEE.components.Panel({
-            title: TOMEE.I18N.get('application.mdbs')
-        });
-
-        return {
-            getEl: function() {
-                return mdbs.getEl();
-            }
-        };
-    })();
-
-    var wsPanel = (function() {
-        var ws = TOMEE.components.Panel({
-            title: TOMEE.I18N.get('application.ws')
-        });
-
-        return {
-            getEl: function() {
-                return ws.getEl();
-            }
-        };
-    })();
-
-    elMapContent['right'].append(mdbsPanel.getEl());
-    elMapContent['right'].append(wsPanel.getEl());
 
     $('body').append(elMapContent.main);
 
     var elMapFooter = TOMEE.el.getElMap({
-        elName: 'main',
-        tag: 'div',
-        attributes: {
-            style: 'clear: both;'
+        elName:'main',
+        tag:'div',
+        attributes:{
+            style:'clear: both;'
         },
-        children: [{
-            tag: 'hr',
-            attributes: {
-                style: 'margin-top: 0px; margin-bottom: 0px;'
-            },
-            children:[{
-                tag: 'footer',
-                html: '<p style="text-align: center">' + TOMEE.I18N.get('application.footer') + '</p>'
-            }]
-        }]
+        children:[
+            {
+                tag:'hr',
+                attributes:{
+                    style:'margin-top: 0px; margin-bottom: 0px;'
+                },
+                children:[
+                    {
+                        tag:'footer',
+                        html:'<p style="text-align: center">' + TOMEE.I18N.get('application.footer') + '</p>'
+                    }
+                ]
+            }
+        ]
     });
     $('body').append(elMapFooter.main);
+
+    var showTab = function(tab) {
+        elMapContent.main.empty();
+        elMapContent.main.append(groups[tab].getEl());
+    };
+
+    showTab(currentTab);
 
     return {
         setLoggedUser:function (name) {
             toolbar.setLoggedUser(name);
-        } ,
-        loadJndi: function(data) {
-            jndiPanel.load(data);
-        },
-        loadSavedObjects: function(data) {
-            savedPanel.load(data);
         }
-
     };
 };

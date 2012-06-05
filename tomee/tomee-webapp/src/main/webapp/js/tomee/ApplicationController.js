@@ -27,11 +27,11 @@ TOMEE.ApplicationController = function () {
     //The views communicate with the controller (or other components) through this object
     var channel = TOMEE.ApplicationChannel({});
 
-    var view = TOMEE.ApplicationView({
+    var homeView = TOMEE.ApplicationViewHome({
         channel:channel
     });
 
-    view.loadJndi([
+    homeView.loadJndi([
         { text:TOMEE.Sequence.next('a'), children:[] },
         { text:TOMEE.Sequence.next('a') },
         { text:TOMEE.Sequence.next('a') },
@@ -59,7 +59,7 @@ TOMEE.ApplicationController = function () {
         ] }
     ]);
 
-    view.loadSavedObjects([
+    homeView.loadSavedObjects([
         { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
         { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
         { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
@@ -113,7 +113,23 @@ TOMEE.ApplicationController = function () {
 
     channel.bind('jndi_leaf_click', function (params) {
         alert('name: ' + params.bean.text);
+    });
 
+    var view = TOMEE.ApplicationView({
+        channel:channel,
+        groups: {
+            'home': homeView,
+            'apps': {
+                getEl: function() {
+                    return $('<div></div>')
+                }
+            },
+            'log': {
+                getEl: function() {
+                    return $('<div></div>')
+                }
+            }
+        }
     });
 
     return {

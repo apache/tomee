@@ -28,10 +28,19 @@ TOMEE.el = (function () {
     var mountEl = function (elCfg, elMap) {
         var el = $('<' + elCfg.tag + '></' + elCfg.tag + '>');
 
-        var attrs = elCfg.attributes;
-        for(var key in attrs) {
-            el.attr(key, attrs[key]);
-        }
+        (function() {
+            var attrs = elCfg.attributes;
+            for(var key in attrs) {
+                el.attr(key, attrs[key]);
+            }
+        })();
+
+        (function() {
+            var listeners = elCfg.listeners;
+            for(var key in listeners) {
+                el.bind(key, listeners[key]);
+            }
+        })();
 
         if(elCfg.cls) {
             el.addClass(elCfg.cls);
