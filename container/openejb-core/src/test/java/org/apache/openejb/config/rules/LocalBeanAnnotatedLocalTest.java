@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.core.stateless;
+package org.apache.openejb.config.rules;
 
 import javax.ejb.Local;
 import javax.ejb.Stateless;
