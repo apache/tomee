@@ -51,6 +51,7 @@
     <module>datasource-ciphered-password</module>
     <module>datasource-definition</module>
     <module>decorators</module>
+    <module>deltaspike-configproperty</module>
     <module>dynamic-dao-implementation</module>
     <module>dynamic-datasource-routing</module>
     <module>dynamic-implementation</module>
