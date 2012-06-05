@@ -67,7 +67,6 @@
     <module>jpa-eclipselink</module>
     <module>jpa-hibernate</module>
     <module>jpa-enumerated</module>
-    <module>local-on-localview-bean</module>
     <module>lookup-of-ejbs</module>
     <module>lookup-of-ejbs-with-descriptor</module>
     <module>mbean-auto-registration</module>
