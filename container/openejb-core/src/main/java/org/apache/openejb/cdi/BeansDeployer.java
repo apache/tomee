@@ -80,6 +80,9 @@ public class BeansDeployer {
     //Logger instance
     private static final WebBeansLogger logger = WebBeansLogger.getLogger(BeansDeployer.class);
 
+    // why creating it several times?
+    public static final Annotation[] EMPTY_ANNOTATION_ARRAY = new Annotation[0];
+
     /**XML Configurator*/
     protected final WebBeansXMLConfigurator xmlConfigurator;
 
@@ -146,7 +149,7 @@ public class BeansDeployer {
     void fireBeforeBeanDiscoveryEvent()
     {
         BeanManager manager = webBeansContext.getBeanManagerImpl();
-        manager.fireEvent(new BeforeBeanDiscoveryImpl(webBeansContext),new Annotation[0]);
+        manager.fireEvent(new BeforeBeanDiscoveryImpl(webBeansContext), EMPTY_ANNOTATION_ARRAY);
     }
 
     /**
@@ -155,7 +158,7 @@ public class BeansDeployer {
     void fireAfterBeanDiscoveryEvent()
     {
         BeanManagerImpl manager = webBeansContext.getBeanManagerImpl();
-        manager.fireEvent(new AfterBeanDiscoveryImpl(webBeansContext),new Annotation[0]);
+        manager.fireEvent(new AfterBeanDiscoveryImpl(webBeansContext),EMPTY_ANNOTATION_ARRAY);
 
         webBeansContext.getWebBeansUtil().inspectErrorStack("There are errors that are added by AfterBeanDiscovery event observers. Look at logs for further details");
     }
@@ -166,7 +169,7 @@ public class BeansDeployer {
     void fireAfterDeploymentValidationEvent()
     {
         BeanManagerImpl manager = webBeansContext.getBeanManagerImpl();
-        manager.fireEvent(new AfterDeploymentValidationImpl(manager),new Annotation[0]);
+        manager.fireEvent(new AfterDeploymentValidationImpl(manager),EMPTY_ANNOTATION_ARRAY);
 
         webBeansContext.getWebBeansUtil().inspectErrorStack("There are errors that are added by AfterDeploymentValidation event observers. Look at logs for further details");
     }
