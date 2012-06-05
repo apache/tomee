@@ -28,6 +28,7 @@ import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Decorator;
 import javax.enterprise.inject.spi.InjectionPoint;
+import javax.enterprise.inject.spi.InjectionTarget;
 import javax.interceptor.Interceptor;
 import org.apache.webbeans.annotation.AnnotationManager;
 import org.apache.webbeans.component.AbstractInjectionTargetBean;
@@ -550,7 +551,12 @@ public class BeansDeployer {
             }
 
             if(processInjectionTargetEvent != null) {
-                webBeansContext.getWebBeansUtil().fireProcessInjectionTargetEvent(processInjectionTargetEvent);
+                final InjectionTarget originalInjectionTarget = processInjectionTargetEvent.getInjectionTarget();
+                final InjectionTarget updatedInjectionTarget = webBeansContext.getWebBeansUtil()
+                                .fireProcessInjectionTargetEvent(processInjectionTargetEvent).getInjectionTarget();
+                if (updatedInjectionTarget!= originalInjectionTarget) {
+                    webBeansContext.getBeanManagerImpl().putInjectionTargetWrapper(managedBean, new InjectionTargetWrapper<T>(updatedInjectionTarget));
+                }
             }
 
             return true;
