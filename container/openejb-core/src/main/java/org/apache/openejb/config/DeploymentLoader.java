@@ -756,7 +756,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         return webModule;
     }
 
-    private static List<URL> filterWebappUrls(final URL[] webUrls) {
+    public static List<URL> filterWebappUrls(final URL[] webUrls) {
         UrlSet urls = new UrlSet(webUrls);
         try {
             urls = applyBuiltinExcludes(urls);
