@@ -115,7 +115,14 @@ TOMEE.ApplicationToolbar = function (cfg) {
                                                         attributes:{
                                                             href:'#'
                                                         },
-                                                        html:TOMEE.I18N.get('application.home')
+                                                        html:TOMEE.I18N.get('application.home'),
+                                                        listeners: {
+                                                            'click': function (event) {
+                                                                channel.send('toolbar.click', {
+                                                                    tab: 'home'
+                                                                });
+                                                            }
+                                                        }
                                                     }
                                                 ]
                                             },
@@ -127,7 +134,33 @@ TOMEE.ApplicationToolbar = function (cfg) {
                                                         attributes:{
                                                             href:'#'
                                                         },
-                                                        html:TOMEE.I18N.get('application.log')
+                                                        html:TOMEE.I18N.get('application.apps'),
+                                                        listeners: {
+                                                            'click': function (event) {
+                                                                channel.send('toolbar.click', {
+                                                                    tab: 'apps'
+                                                                });
+                                                            }
+                                                        }
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                tag:'li',
+                                                children:[
+                                                    {
+                                                        tag:'a',
+                                                        attributes:{
+                                                            href:'#'
+                                                        },
+                                                        html:TOMEE.I18N.get('application.log'),
+                                                        listeners: {
+                                                            'click': function (event) {
+                                                                channel.send('toolbar.click', {
+                                                                    tab: 'log'
+                                                                });
+                                                            }
+                                                        }
                                                     }
                                                 ]
                                             }

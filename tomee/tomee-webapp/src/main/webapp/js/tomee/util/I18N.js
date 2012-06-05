@@ -27,6 +27,7 @@ TOMEE.I18N = (function () {
         'application.guest':'Guest',
 
         'application.home':'Home',
+        'application.apps':'Apps',
         'application.log':'Log',
 
         'application.jdni': 'Jndi',
