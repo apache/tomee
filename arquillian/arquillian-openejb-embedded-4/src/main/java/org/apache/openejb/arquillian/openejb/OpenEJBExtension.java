@@ -38,6 +38,7 @@ public class OpenEJBExtension implements LoadableExtension {
     public void register(final ExtensionBuilder extensionBuilder) {
         extensionBuilder.service(DeployableContainer.class, OpenEJBDeployableContainer.class)
             .service(TestEnricher.class, OpenEJBInjectionEnricher.class)
-            .service(ApplicationArchiveProcessor.class, OpenEJBArchiveProcessor.class);
+            .service(ApplicationArchiveProcessor.class, OpenEJBArchiveProcessor.class)
+            .observer(TestObserver.class);
     }
 }
