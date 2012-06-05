@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
-
 import javax.enterprise.inject.Model;
 import javax.enterprise.inject.Specializes;
 import javax.enterprise.inject.spi.AnnotatedType;
@@ -30,7 +29,6 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Decorator;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.interceptor.Interceptor;
-
 import org.apache.webbeans.annotation.AnnotationManager;
 import org.apache.webbeans.component.AbstractInjectionTargetBean;
 import org.apache.webbeans.component.AbstractProducerBean;
@@ -57,13 +55,11 @@ import org.apache.webbeans.exception.inject.InconsistentSpecializationException;
 import org.apache.webbeans.intercept.webbeans.WebBeansInterceptor;
 import org.apache.webbeans.logger.WebBeansLogger;
 import org.apache.webbeans.portable.events.ProcessAnnotatedTypeImpl;
-import org.apache.webbeans.portable.events.ProcessInjectionTargetImpl;
 import org.apache.webbeans.portable.events.discovery.AfterBeanDiscoveryImpl;
 import org.apache.webbeans.portable.events.discovery.AfterDeploymentValidationImpl;
 import org.apache.webbeans.portable.events.discovery.BeforeBeanDiscoveryImpl;
+import org.apache.webbeans.portable.events.generics.GProcessInjectionTarget;
 import org.apache.webbeans.spi.ScannerService;
-import org.apache.webbeans.spi.plugins.OpenWebBeansJavaEEPlugin;
-import org.apache.webbeans.spi.plugins.OpenWebBeansWebPlugin;
 import org.apache.webbeans.util.AnnotationUtil;
 import org.apache.webbeans.util.ClassUtil;
 import org.apache.webbeans.util.WebBeansUtil;
@@ -480,7 +476,7 @@ public class BeansDeployer {
 
         //Fires ProcessInjectionTarget event for Java EE components instances
         //That supports injections but not managed beans
-        ProcessInjectionTargetImpl<T> processInjectionTargetEvent = null;
+        GProcessInjectionTarget processInjectionTargetEvent = null;
         if (webBeansContext.getWebBeansUtil().supportsJavaEeComponentInjections(clazz)) {
             //Fires ProcessInjectionTarget
             processInjectionTargetEvent = webBeansContext.getWebBeansUtil().fireProcessInjectionTargetEventForJavaEeComponents(clazz);
@@ -516,7 +512,8 @@ public class BeansDeployer {
 
             //If ProcessInjectionTargetEvent is not set, set it
             if (processInjectionTargetEvent == null) {
-                processInjectionTargetEvent = webBeansContext.getWebBeansUtil().fireProcessInjectionTargetEvent(managedBean);
+                // processInjectionTargetEvent = webBeansContext.getWebBeansUtil().fireProcessInjectionTargetEvent(managedBean);
+                processInjectionTargetEvent = webBeansContext.getWebBeansUtil().createProcessInjectionTargetEvent(managedBean);
             }
 
             //Decorator
@@ -550,6 +547,10 @@ public class BeansDeployer {
                     logger.debug("Found Managed Bean with class name : [{0}]", annotatedType.getJavaClass().getName());
                 }
                 webBeansContext.getWebBeansUtil().defineManagedBean(managedBeanCreator, processInjectionTargetEvent, false);
+            }
+
+            if(processInjectionTargetEvent != null) {
+                webBeansContext.getWebBeansUtil().fireProcessInjectionTargetEvent(processInjectionTargetEvent);
             }
 
             return true;
