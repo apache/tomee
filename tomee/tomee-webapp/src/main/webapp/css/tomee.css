@@ -24,6 +24,10 @@ body {
     padding: 9px 0;
 }
 
+.t-tree-link {
+
+}
+
 ul.tree, ul.tree ul {
     list-style-type: none;
     margin: 0;
@@ -38,8 +42,6 @@ ul.tree li {
     margin: 0;
     padding: 0 20px;
     line-height: 20px;
-    color: #369;
-    font-weight: bold;
 }
 
 ul.tree li.leaf {
@@ -72,3 +74,14 @@ h3.t-panel-title {
     background-color: #d3d3d3;
     padding-left: 5px
 }
+
+div.t-action-btn {
+    border-left: 1px solid whiteSmoke;
+    border-right: 1px solid #E5E5E5;
+    background-color: #e6e6e6;
+    float: right;
+    position: relative;
+    width: 30px;
+    height: 30px
+}
+
