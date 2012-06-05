@@ -60,6 +60,7 @@ TOMEE.ApplicationView = function (cfg) {
         });
 
         var tree = TOMEE.components.Tree({
+            key: 'jndi',
             channel:channel,
             getText: function (data) {
                 return data.text;

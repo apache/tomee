@@ -25,6 +25,7 @@ TOMEE.components.Tree = function (cfg) {
 
     var getText = cfg.getText;
     var getChildren = cfg.getChildren;
+    var myKey = cfg.key;
 
     var elements = (function () {
         var container = $('<div></div>');
@@ -85,6 +86,15 @@ TOMEE.components.Tree = function (cfg) {
 
         } else {
             li.addClass('leaf');
+
+            span.bind('click', {
+                bean:data
+            }, function (event) {
+
+                channel.send(myKey + '_leaf_click', {
+                    bean: event.data.bean
+                });
+            });
         }
 
         //add LI to the parent UL
