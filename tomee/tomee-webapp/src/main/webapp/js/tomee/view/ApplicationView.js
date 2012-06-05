@@ -116,6 +116,11 @@ TOMEE.ApplicationView = function (cfg) {
             }
         });
 
+        var el = console.getContentEl();
+        el.append('<textarea style="height: 470px; width: 100%;border: 0px;padding: 0px;margin: 0px;"></textarea>');
+        el.append('<div style="height: 30px; background-color: red;"><div style="float: right; position: relative; background-color: blue; width: 30px; height: 30px"></div><div style="float: right; position: relative; background-color: yellow; width: 30px; height: 30px"></div></div>');
+
+
         return {
             getEl: function() {
                 return console.getEl();
