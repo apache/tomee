@@ -21,7 +21,12 @@ TOMEE.components.Tree = function (cfg) {
 
     var channel = cfg.channel;
 
-    var elements = (function() {
+    var currentData = null;
+
+    var getText = cfg.getText;
+    var getChildren = cfg.getChildren;
+
+    var elements = (function () {
         var container = $('<div></div>');
         var ul = $('<ul></ul>');
         ul.addClass('tree');
@@ -29,32 +34,61 @@ TOMEE.components.Tree = function (cfg) {
         container.append(ul);
 
         return {
-            container: container,
-            ul: ul
+            container:container,
+            ul:ul
         };
     })();
 
 
-    var load = function (parent, data, getText, getChildren) {
-        if($.isArray(data)) {
-            for(var i = 0; i < data.length; i++) {
-                load(parent, data[i], getText, getChildren);
+    var loadTree = function (parent, data) {
+        if ($.isArray(data)) {
+
+            for (var i = 0; i < data.length; i++) {
+                loadTree(parent, data[i]);
             }
 
             return;
         }
 
-        var children = getChildren(data);
+        var span = $('<span class="t-tree-link"></span>');
+        span.append(getText(data));
 
         var li = $('<li></li>');
-        li.append(getText(data));
-        if(children) {
+        li.append(span);
+
+        var children = getChildren(data);
+        if (children) {
             li.addClass('closed');
+
+            span.bind('click', {
+                children:children,
+                li:li
+            }, function (event) {
+                if (event.data.li.hasClass("opened")) {
+                    event.data.li.find('ul').empty();
+
+                    event.data.li.removeClass('opened');
+                    event.data.li.addClass('closed');
+                } else {
+                    event.data.li.removeClass('closed');
+                    event.data.li.addClass('opened');
+
+                    var ul = li.find('ul').first();
+                    if (ul.length === 0) {
+                        ul = $('<ul></ul>');
+                        event.data.li.append(ul);
+                    }
+
+                    loadTree(ul, event.data.children);
+                }
+            });
+
         } else {
             li.addClass('leaf');
         }
+
+        //add LI to the parent UL
         parent.append(li);
-        var a = 0;
     };
 
     return {
@@ -62,14 +96,9 @@ TOMEE.components.Tree = function (cfg) {
             return elements.container;
         },
 
-        load:function(data, getText, getChildren) {
-            var loadData = data;
-            if(!$.isArray(loadData)) {
-                loadData = [loadData];
-            }
-
-            elements.ul.empty();
-            load(elements.ul, loadData, getText, getChildren);
+        load:function (newData) {
+            currentData = TOMEE.utils.getArray(newData);
+            loadTree(elements.ul, currentData);
         }
     };
 };

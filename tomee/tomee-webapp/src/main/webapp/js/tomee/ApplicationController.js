@@ -32,15 +32,31 @@ TOMEE.ApplicationController = function () {
     });
 
     view.loadJndi([
-        { text:TOMEE.Sequence.next(), children:[] },
-        { text:TOMEE.Sequence.next() },
-        { text:TOMEE.Sequence.next() },
-        { text:TOMEE.Sequence.next() },
-        { text:TOMEE.Sequence.next() },
-        { text:TOMEE.Sequence.next(), children:[] },
-        { text:TOMEE.Sequence.next(), children:[] },
-        { text:TOMEE.Sequence.next(), children:[] },
-        { text:TOMEE.Sequence.next() }
+        { text:TOMEE.Sequence.next('a'), children:[] },
+        { text:TOMEE.Sequence.next('a') },
+        { text:TOMEE.Sequence.next('a') },
+        { text:TOMEE.Sequence.next('a') },
+        { text:TOMEE.Sequence.next('a') },
+        { text:TOMEE.Sequence.next('a'), children:[
+            { text:TOMEE.Sequence.next('a') },
+            { text:TOMEE.Sequence.next('a'), children:[
+                { text:TOMEE.Sequence.next('a') },
+                { text:TOMEE.Sequence.next('a'), children:[
+                    { text:TOMEE.Sequence.next('a') }
+                ] }
+            ] }
+        ] },
+        { text:TOMEE.Sequence.next('a'), children:[] },
+        { text:TOMEE.Sequence.next('a'), children:[] },
+        { text:TOMEE.Sequence.next('a'), children:[
+            { text:TOMEE.Sequence.next('a') },
+            { text:TOMEE.Sequence.next('a'), children:[
+                { text:TOMEE.Sequence.next('a') },
+                { text:TOMEE.Sequence.next('a'), children:[
+                    { text:TOMEE.Sequence.next('a') }
+                ] }
+            ] }
+        ] }
     ]);
 
     view.loadSavedObjects([
