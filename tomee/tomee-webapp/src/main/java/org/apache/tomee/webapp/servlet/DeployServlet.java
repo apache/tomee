@@ -18,6 +18,11 @@
 package org.apache.tomee.webapp.servlet;
 
 import com.google.gson.Gson;
+import javax.inject.Inject;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.assembler.Deployer;
+import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -34,17 +39,27 @@ import java.util.Map;
 public class DeployServlet extends HttpServlet {
     public static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, DeployServlet.class);
 
+    @Inject
+    private Deployer deployer;
+
     @Override
     protected void doPost(HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-        final String path = req.getParameter("path");
+        final String path;
+        try {
+            final AppInfo info = deployer.deploy(req.getParameter("path"));
+
+            // the path is translated from the parameter to a file path
+            // the input can be "mvn:org.superbiz/rest-example.1.0/war" for instance or an http url
+            path = info.path;
+        } catch (OpenEJBException e) {
+            throw new OpenEJBRuntimeException(e); // TODO: show back to the user the exception
+        }
+
         final File file = new File(path);
-
-        //TODO: deploy the file as David said (DeployerEjb)
-        //TODO: avoid sending the full file path. I dont think this is safe
-
         final Map<String, Object> result = new HashMap<String, Object>();
-        result.put("file", file.getAbsolutePath());
         result.put("deployed", Boolean.TRUE);
+        // TODO: is it needed or do we use the input path since it is more explicit for the user?
+        result.put("file", file.getAbsolutePath());
 
         resp.setContentType("text/plain");
         resp.setCharacterEncoding("UTF-8");
