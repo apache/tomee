@@ -18,42 +18,46 @@
 package org.apache.tomee.webapp.servlet;
 
 import com.google.gson.Gson;
-import org.apache.openejb.assembler.Deployer;
-import org.apache.openejb.assembler.classic.AppInfo;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
-import org.apache.tomee.webapp.TomeeException;
 
-import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
 
-public class DeployServlet extends HttpServlet {
-    public static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, DeployServlet.class);
-
-    @EJB
-    private Deployer deployer;
+public class ErrorServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
+        writeJson(req, resp);
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        writeJson(req, resp);
+    }
+
+    private void writeJson(final HttpServletRequest req, final HttpServletResponse resp) throws IOException {
         final Map<String, Object> result = new HashMap<String, Object>();
 
-        try {
-            final AppInfo info = deployer.deploy(req.getParameter("path"));
+        result.put("status_code", String.valueOf(req.getAttribute("javax.servlet.error.status_code")));
+        result.put("message", String.valueOf(req.getAttribute("javax.servlet.error.message")));
 
-            // the path is translated from the parameter to a file path
-            // the input can be "mvn:org.superbiz/rest-example.1.0/war" for instance or an http url
-            result.put("info", info.path);
-            result.put("appId", info.appId);
+        {
+            final Throwable throwable = (Throwable) req.getAttribute("javax.servlet.error.exception");
 
-        } catch (Exception e) {
-            throw new TomeeException(e);
+            final Writer writer = new StringWriter();
+            final PrintWriter printWriter = new PrintWriter(writer);
+            throwable.printStackTrace(printWriter);
+
+            result.put("stackTrace", writer.toString());
+            result.put("exception_type", throwable.getClass().getName());
         }
 
         resp.setContentType("text/plain");

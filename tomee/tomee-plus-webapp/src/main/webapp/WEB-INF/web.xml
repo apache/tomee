@@ -21,8 +21,16 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
          version="3.0" metadata-complete="true">
 
+    <display-name>Tomee Application</display-name>
 
-    <display-name>OpenEJB Loader Application</display-name>
+    <error-page>
+        <exception-type>
+            org.apache.tomee.webapp.TomeeException
+        </exception-type>
+        <location>
+            /error
+        </location>
+    </error-page>
 
     <listener>
         <listener-class>org.apache.tomee.webapp.listener.UserSessionListener</listener-class>
@@ -60,6 +68,11 @@
     </servlet>
 
     <servlet>
+        <servlet-name>ErrorServlet</servlet-name>
+        <servlet-class>org.apache.tomee.webapp.servlet.ErrorServlet</servlet-class>
+    </servlet>
+
+    <servlet>
         <servlet-name>WsConsole</servlet-name>
         <servlet-class>org.apache.tomee.webapp.servlet.ConsoleServlet</servlet-class>
     </servlet>
@@ -87,6 +100,11 @@
     <servlet-mapping>
         <servlet-name>FileUploadServlet</servlet-name>
         <url-pattern>/upload/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ErrorServlet</servlet-name>
+        <url-pattern>/error/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
