@@ -21,18 +21,17 @@ TOMEE.ApplicationView = function (cfg) {
 
     var channel = cfg.channel;
     var groups = cfg.groups;
+    var currentTab = TOMEE.utils.getSafe(cfg.initTab, 'home');
 
     var toolbar = TOMEE.ApplicationToolbar({
         channel:channel
     });
 
-    var currentTab = 'home';
     channel.bind('toolbar.click', function (params) {
         if (currentTab === params.tab) {
             return;
         }
-        currentTab = params.tab;
-        showTab(currentTab);
+        showTab(params.tab);
     });
 
     $('body').append(toolbar.getEl());
@@ -68,11 +67,17 @@ TOMEE.ApplicationView = function (cfg) {
     $('body').append(elMapFooter.main);
 
     var showTab = function(tab) {
-        elMapContent.main.empty();
-        elMapContent.main.append(groups[tab].getEl());
+        var showingTab = groups[currentTab].getEl();
+        showingTab.detach();
+
+        var newTab = groups[tab].getEl();
+        elMapContent.main.append(newTab);
+
+        currentTab = tab;
     };
 
-    showTab(currentTab);
+    //show current tab
+    elMapContent.main.append(groups[currentTab].getEl());
 
     return {
         setLoggedUser:function (name) {

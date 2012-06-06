@@ -171,6 +171,5 @@ TOMEE.ApplicationViewHome = function (cfg) {
         getEl: function() {
             return elMapContent.main;
         }
-
     };
 };
