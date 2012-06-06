@@ -72,6 +72,14 @@ TOMEE.ApplicationViewApps = function (cfg) {
         content.append(map.main);
 
         (function() {
+            var fileUploadedHandler = function(event) {
+                fileForm.myFrame.unbind('load', fileUploadedHandler);
+                var text = TOMEE.utils.getSafe(function() {
+                    return fileForm.myFrame.contents().first()[0].body.innerText;
+                }, '')
+                alert(text);
+            };
+
             var frameId = TOMEE.Sequence.next('uploadFrame');
             var fileForm= TOMEE.el.getElMap({
                 elName:'main',
@@ -102,6 +110,7 @@ TOMEE.ApplicationViewApps = function (cfg) {
                         },
                         listeners:{
                             'change':function (event) {
+                                fileForm.myFrame.bind('load', fileUploadedHandler);
                                 fileForm.main.submit();
                             }
                         }
@@ -110,9 +119,7 @@ TOMEE.ApplicationViewApps = function (cfg) {
 
             });
 
-            fileForm.myFrame.bind('load', function(event) {
-                alert('Done');
-            });
+
 
             content.append(fileForm.main);
         })();

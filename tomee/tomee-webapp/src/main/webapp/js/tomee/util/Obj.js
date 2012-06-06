@@ -19,6 +19,15 @@
 
 TOMEE.utils = {
     getSafe:function (obj, defaultValue) {
+        if(obj instanceof Function) {
+            try {
+                return obj();
+
+            } catch(ex) {
+                return defaultValue;
+            }
+        }
+
         if(obj) {
             return obj;
         }
