@@ -84,11 +84,26 @@ public class ServicePool extends ServerServiceFilter {
                     if (stop.get()) return;
                     ServicePool.super.service(socket);
                 } catch (SecurityException e) {
-                    log.error("Security error: " + e.getMessage(), e);
+                    final String msg = "ServicePool: Security error: " + e.getMessage();
+                    if (log.isDebugEnabled()) {
+                        log.error(msg, e);
+                    } else {
+                        log.error(msg + " - Debug for StackTrace");
+                    }
                 } catch (IOException e) {
-                    log.debug("Unexpected IO error", e);
+                    final String msg = "ServicePool: Unexpected IO error: " + e.getMessage();
+                    if (log.isDebugEnabled()) {
+                        log.debug(msg, e);
+                    } else {
+                        log.warning(msg + " - Debug for StackTrace");
+                    }
                 } catch (Throwable e) {
-                    log.error("Unexpected error", e);
+                    final String msg = "ServicePool: Unexpected error: " + e.getMessage();
+                    if (log.isDebugEnabled()) {
+                        log.error(msg, e);
+                    } else {
+                        log.error(msg + " - Debug for StackTrace");
+                    }
                 } finally {
                     try {
                         // Once the thread is done with the socket, clean it up
@@ -101,7 +116,12 @@ public class ServicePool extends ServerServiceFilter {
                             socket.close();
                         }
                     } catch (Throwable t) {
-                        log.warning("Error while closing connection with client", t);
+                        final String msg = "ServicePool: Error closing socket";
+                        if (log.isDebugEnabled()) {
+                            log.debug(msg, t);
+                        } else {
+                            log.warning(msg);
+                        }
                     }
                 }
             }

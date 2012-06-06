@@ -30,6 +30,8 @@ import java.util.Set;
  * @version $Rev$ $Date$
  */
 public abstract class AbstractConnectionStrategy implements ConnectionStrategy {
+
+    @Override
     public Connection connect(ClusterMetaData cluster, ServerMetaData server) throws IOException {
         final Set<URI> failed = Client.getFailed();
         final Set<URI> remaining = new HashSet<URI>();
