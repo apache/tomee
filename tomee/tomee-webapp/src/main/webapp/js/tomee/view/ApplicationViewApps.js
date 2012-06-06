@@ -48,7 +48,7 @@ TOMEE.ApplicationViewApps = function (cfg) {
     var deployments = (function () {
         var panel = TOMEE.components.Panel({
             title:TOMEE.I18N.get('application.deployments'),
-            avoidOverflow: true
+            avoidOverflow:true
         });
 
 
@@ -70,23 +70,59 @@ TOMEE.ApplicationViewApps = function (cfg) {
 
         var content = panel.getContentEl();
         content.append(map.main);
-        content.append(TOMEE.el.getElMap({
-            elName:'main',
-            tag:'form',
-            attributes:{
-                style:'background-color:#EEE; border-top: 1px solid #E5E5E5; height: 30px;margin-bottom: 0px;'
-            },
-            children:[
-                {
-                    tag:'input',
-                    attributes:{
-                        style: 'padding-left: 5px; float: left; position: relative;',
-                        type:"file"
-                    }
-                }
-            ]
 
-        }).main);
+        (function() {
+            var form = TOMEE.el.getElMap({
+                elName:'main',
+                tag:'div',
+                attributes:{
+                    style:'background-color:#EEE; border-top: 1px solid #E5E5E5; height: 30px;margin-bottom: 0px;'
+                },
+                children:[
+                    {
+                        elName: 'myForm',
+                        tag:'form',
+                        attributes:{
+                            style:'display: none'
+                        }
+                    },
+                    {
+                        elName: 'fileField',
+                        tag:'input',
+                        attributes:{
+                            style:'padding-left: 5px; float: left; position: relative;',
+                            type:"file"
+                        },
+                        listeners:{
+                            'change':function (event) {
+                                submit();
+                            }
+                        }
+                    }
+                ]
+
+            });
+
+            var submit = function() {
+                var frameId = TOMEE.Sequence.next('iframe_upload');
+                var iframe = $(TOMEE.utils.stringFormat('<iframe id="{id}" style="display: none" />', {
+                    id: frameId
+                }));
+                $("body").append(iframe);
+
+
+                form.myForm.attr("action", TOMEE.baseURL + "deploy/file");
+                form.myForm.attr("method", "post");
+                form.myForm.attr("enctype", "multipart/form-data");
+                form.myForm.attr("encoding", "multipart/form-data");
+                form.myForm.attr("target", frameId);
+                form.myForm.attr("file", form.fileField.val());
+                form.myForm.submit();
+            };
+
+            content.append(form.main);
+        })();
+
 
         return {
             getEl:function () {
