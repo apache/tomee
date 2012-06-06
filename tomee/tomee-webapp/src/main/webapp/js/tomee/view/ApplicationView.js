@@ -23,6 +23,8 @@ TOMEE.ApplicationView = function (cfg) {
     var groups = cfg.groups;
     var currentTab = TOMEE.utils.getSafe(cfg.initTab, 'home');
 
+    var windowEl = $(window);
+
     var toolbar = TOMEE.ApplicationToolbar({
         channel:channel
     });
@@ -38,7 +40,10 @@ TOMEE.ApplicationView = function (cfg) {
 
     var elMapContent = TOMEE.el.getElMap({
         elName:'main',
-        tag:'div'
+        tag:'div',
+        attributes:{
+            style:'float:left; width:100%;'
+        }
     });
 
     $('body').append(elMapContent.main);
@@ -58,7 +63,7 @@ TOMEE.ApplicationView = function (cfg) {
                 children:[
                     {
                         tag:'footer',
-                        html:'<p style="text-align: center">' + TOMEE.I18N.get('application.footer') + '</p>'
+                        html:'<p style="text-align: center;margin-bottom: 0px;">' + TOMEE.I18N.get('application.footer') + '</p>'
                     }
                 ]
             }
@@ -66,7 +71,23 @@ TOMEE.ApplicationView = function (cfg) {
     });
     $('body').append(elMapFooter.main);
 
-    var showTab = function(tab) {
+    var calculateContentSize = function () {
+        var myDiv = elMapContent.main;
+
+        var getBorderSize = function (el) {
+            return el.outerHeight(true) - el.height();
+        };
+
+        var availableSpace = (function () {
+            var windowSize = windowEl.height();
+            var footerSize = elMapFooter.main.height();
+            return windowSize - footerSize - getBorderSize(myDiv) - getBorderSize($('body'));
+        })();
+
+        myDiv.height(availableSpace);
+    };
+
+    var showTab = function (tab) {
         var showingTab = groups[currentTab].getEl();
         showingTab.detach();
 
@@ -77,8 +98,13 @@ TOMEE.ApplicationView = function (cfg) {
     };
 
     //show current tab
-    elMapContent.main.append(groups[currentTab].getEl());
+    showTab(currentTab);
     toolbar.setActive(currentTab);
+
+    windowEl.resize(function () {
+        calculateContentSize();
+    });
+    calculateContentSize();
 
     return {
         setLoggedUser:function (name) {
