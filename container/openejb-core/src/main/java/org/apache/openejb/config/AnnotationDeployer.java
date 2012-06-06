@@ -3560,6 +3560,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 // dynamic proxy implementation
                 if (clazz.get().isInterface()) {
                     Member member = new FilledMember("em", EntityManager.class, clazz.get());
+
                     buildPersistenceContext(consumer, pcFactory.create(persistenceContext, member), member);
                 }
             }
@@ -4137,6 +4138,31 @@ public class AnnotationDeployer implements DynamicDeployer {
          * @throws OpenEJBException
          */
         private void buildPersistenceContext(JndiConsumer consumer, PersistenceContextAnn persistenceContext, Member member) throws OpenEJBException {
+            AppModule module = null;
+            if (currentModule.get() instanceof AppModule) {
+                module = (AppModule) currentModule.get();
+            } else if (currentModule.get() instanceof Module) {
+                module = ((Module) currentModule.get()).getAppModule();
+            }
+            if (module != null
+                    && org.apache.openejb.jee.jpa.unit.TransactionType.RESOURCE_LOCAL.equals(module.getTransactionType(persistenceContext.unitName()))) {
+                // should it be in warn level?
+                // IMO no since with CDI it is tempting to do so
+                String name = persistenceContext.unitName();
+                if (name == null || name.isEmpty()) { // search for it
+                    try { // get the first one
+                        name = module.getPersistenceModules().iterator().next()
+                                .getPersistence()
+                                    .getPersistenceUnit().iterator().next().getName();
+                    } catch (Exception e) {
+                        name = "?";
+                    }
+                }
+                logger.info("PersistenceUnit '" + name + "' is a RESOURCE_LOCAL one, " +
+                                        "you'll have to manage @PersistenceContext yourself.");
+                return;
+            }
+
             String refName = persistenceContext.name();
 
             if (refName.length() ==0) {

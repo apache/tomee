@@ -350,7 +350,7 @@ public class EntityManagerPropogationTest extends TestCase {
         unit.getProperties().setProperty("openjpa.RuntimeUnenhancedClasses", "supported");
 
         // Add the persistence.xml to the "ear"
-        appModule.getPersistenceModules().add(new PersistenceModule("root", new Persistence(unit)));
+        appModule.addPersistenceModule(new PersistenceModule("root", new Persistence(unit)));
 
         // Configure and assemble the ear -- aka. deploy it
         AppInfo info = config.configureApplication(appModule);

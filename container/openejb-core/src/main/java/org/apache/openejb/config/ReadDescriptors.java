@@ -153,7 +153,7 @@ public class ReadDescriptors implements DynamicDeployer {
                     if (url && "file".equals(((URL) persistenceUrl).getProtocol())) {
                         persistenceModule.getWatchedResources().add(path);
                     }
-                    appModule.getPersistenceModules().add(persistenceModule);
+                    appModule.addPersistenceModule(persistenceModule);
                 } catch (Exception e1) {
                     DeploymentLoader.logger.error("Unable to load Persistence Unit from EAR: " + appModule.getJarLocation() + ", module: " + moduleName + ". Exception: " + e1.getMessage(), e1);
                 }

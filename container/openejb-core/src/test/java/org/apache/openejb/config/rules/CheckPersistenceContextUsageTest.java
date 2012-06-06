@@ -53,7 +53,7 @@ public class CheckPersistenceContextUsageTest {
         PersistenceUnit pu2 = new PersistenceUnit("fooUnit");
         org.apache.openejb.jee.jpa.unit.Persistence p = new org.apache.openejb.jee.jpa.unit.Persistence(pu, pu1, pu2);
         PersistenceModule pm = new PersistenceModule("foo", p);
-        appModule.getPersistenceModules().add(pm);
+        appModule.addPersistenceModule(pm);
         return appModule;
     }
 
@@ -71,7 +71,7 @@ public class CheckPersistenceContextUsageTest {
         PersistenceUnit pu1 = new PersistenceUnit("fooUnit");
         org.apache.openejb.jee.jpa.unit.Persistence p1 = new org.apache.openejb.jee.jpa.unit.Persistence(pu1);
         PersistenceModule pm1 = new PersistenceModule("foo1", p1);
-        appModule.getPersistenceModules().add(pm1);
+        appModule.addPersistenceModule(pm1);
         return appModule;
     }
 

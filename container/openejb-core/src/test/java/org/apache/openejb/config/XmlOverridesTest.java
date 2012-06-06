@@ -98,7 +98,7 @@ public class XmlOverridesTest extends TestCase {
 
         AppModule app = new AppModule(this.getClass().getClassLoader(), "app");
         app.getEjbModules().add(new EjbModule(ejbJar));
-        app.getPersistenceModules().add(new PersistenceModule("root", new Persistence(persistenceUnit)));
+        app.addPersistenceModule(new PersistenceModule("root", new Persistence(persistenceUnit)));
 
         AppInfo appInfo = config.configureApplication(app);
 

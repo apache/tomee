@@ -32,6 +32,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
+import org.apache.openejb.jee.jpa.unit.Persistence;
+import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
+import org.apache.openejb.jee.jpa.unit.TransactionType;
 
 /**
  * @version $Rev$ $Date$
@@ -47,6 +50,7 @@ public class AppModule implements DeploymentModule {
     private final List<ClientModule> clientModules = new ArrayList<ClientModule>();
     private final List<EjbModule> ejbModules = new ArrayList<EjbModule>();
     private final List<PersistenceModule> persistenceModules = new ArrayList<PersistenceModule>();
+    private final Map<String, TransactionType> txTypeByUnit = new HashMap<String, TransactionType>();
     // TODO We could turn this into the Resources JAXB object and support containers and other things as well
     private final Collection<Resource> resources = new HashSet<Resource>();
     private final ClassLoader classLoader;
@@ -83,7 +87,7 @@ public class AppModule implements DeploymentModule {
         } else if (type == WebModule.class) {
             getWebModules().add((WebModule) module);
         } else if (type == PersistenceModule.class) {
-            getPersistenceModules().add((PersistenceModule) module);
+            addPersistenceModule((PersistenceModule) module);
         } else {
             throw new IllegalArgumentException("Unknown module type: " + type.getName());
         }
@@ -290,5 +294,34 @@ public class AppModule implements DeploymentModule {
 
     public Collection<String> getJaxRsProviders() {
         return jaxRsProviders;
+    }
+
+    public void addPersistenceModule(final PersistenceModule root) {
+        persistenceModules.add(root);
+
+        final Persistence persistence = root.getPersistence();
+        for (PersistenceUnit unit : persistence.getPersistenceUnit()) {
+            txTypeByUnit.put(unit.getName(), unit.getTransactionType());
+        }
+    }
+
+    public void addPersistenceModules(final Collection<PersistenceModule> roots) {
+        for (PersistenceModule root : roots) {
+            addPersistenceModule(root);
+        }
+    }
+
+    public TransactionType getTransactionType(final String unit) {
+        if (unit == null || unit.isEmpty()) {
+            if (txTypeByUnit.size() == 1) {
+                return txTypeByUnit.values().iterator().next();
+            }
+        }
+
+        TransactionType type = txTypeByUnit.get(unit);
+        if (type == null) { // default, shouldn't occur
+            type = TransactionType.JTA;
+        }
+        return type;
     }
 }

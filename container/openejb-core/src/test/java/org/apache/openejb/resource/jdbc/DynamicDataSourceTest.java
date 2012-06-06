@@ -114,14 +114,14 @@ public class DynamicDataSourceTest {
         unit.getProperties().put("openjpa.jdbc.SynchronizeMappings", "buildSchema");
         unit.setTransactionType(TransactionType.JTA);
         unit.setJtaDataSource("Routed Datasource");
-        appModule.getPersistenceModules().add(new PersistenceModule("root", new Persistence(unit)));
+        appModule.addPersistenceModule(new PersistenceModule("root", new Persistence(unit)));
         for (int i = 1; i <= 3; i++) {
             PersistenceUnit u = new PersistenceUnit("db" + i);
             u.addClass(Person.class);
             u.getProperties().put("openjpa.jdbc.SynchronizeMappings", "buildSchema");
             u.setTransactionType(TransactionType.JTA);
             u.setJtaDataSource("database" + i);
-            appModule.getPersistenceModules().add(new PersistenceModule("root", new Persistence(u)));
+            appModule.addPersistenceModule(new PersistenceModule("root", new Persistence(u)));
         }
 
         assembler.createApplication(config.configureApplication(appModule));

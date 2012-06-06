@@ -215,12 +215,12 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                 } else if (obj instanceof Persistence) {
 
                     final Persistence persistence = (Persistence) obj;
-                    appModule.getPersistenceModules().add(new PersistenceModule("", persistence));
+                    appModule.addPersistenceModule(new PersistenceModule("", persistence));
 
                 } else if (obj instanceof PersistenceUnit) {
 
                     final PersistenceUnit unit = (PersistenceUnit) obj;
-                    appModule.getPersistenceModules().add(new PersistenceModule("", new Persistence(unit)));
+                    appModule.addPersistenceModule(new PersistenceModule("", new Persistence(unit)));
 
                 } else if (obj instanceof Beans) {
 
@@ -250,7 +250,7 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
             if (application != null) {
                 final AppModule newModule = new AppModule(appModule.getClassLoader(), appModule.getModuleId(), application, false);
                 newModule.getClientModules().addAll(appModule.getClientModules());
-                newModule.getPersistenceModules().addAll(appModule.getPersistenceModules());
+                newModule.addPersistenceModules(appModule.getPersistenceModules());
                 newModule.getEjbModules().addAll(appModule.getEjbModules());
                 newModule.getConnectorModules().addAll(appModule.getConnectorModules());
                 appModule = newModule;
