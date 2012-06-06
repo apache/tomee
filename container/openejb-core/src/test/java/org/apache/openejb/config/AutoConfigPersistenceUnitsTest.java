@@ -141,7 +141,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         unit2.setNonJtaDataSource("LimeUnmanaged");
 
         AppModule app = new AppModule(this.getClass().getClassLoader(), "test-app");
-        app.getPersistenceModules().add(new PersistenceModule("root", new Persistence(unit1, unit2)));
+        app.addPersistenceModule(new PersistenceModule("root", new Persistence(unit1, unit2)));
 
         // Create app
 
@@ -265,7 +265,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
         ClassLoader cl = this.getClass().getClassLoader();
         AppModule app = new AppModule(cl, "orange-app");
-        app.getPersistenceModules().add(new PersistenceModule("root", new Persistence(persistenceUnit)));
+        app.addPersistenceModule(new PersistenceModule("root", new Persistence(persistenceUnit)));
         WebApp webApp = new WebApp();
         webApp.setMetadataComplete(true);
         app.getWebModules().add(new WebModule(webApp, "orange-web", cl, null, "orange-id"));
@@ -302,7 +302,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
         ClassLoader cl = this.getClass().getClassLoader();
         AppModule app = new AppModule(cl, "orange-app");
-        app.getPersistenceModules().add(new PersistenceModule("root", new Persistence(persistenceUnit)));
+        app.addPersistenceModule(new PersistenceModule("root", new Persistence(persistenceUnit)));
         WebApp webApp = new WebApp();
         webApp.setMetadataComplete(true);
         app.getWebModules().add(new WebModule(webApp, "orange-web", cl, "war", "orange-id"));
@@ -343,7 +343,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
         ClassLoader cl = this.getClass().getClassLoader();
         AppModule app = new AppModule(cl, "orange-app");
-        app.getPersistenceModules().add(new PersistenceModule("root", new Persistence(persistenceUnit)));
+        app.addPersistenceModule(new PersistenceModule("root", new Persistence(persistenceUnit)));
         WebApp webApp = new WebApp();
         webApp.setMetadataComplete(true);
         app.getWebModules().add(new WebModule(webApp, "orange-web", cl, "war", "orange-id"));
@@ -384,7 +384,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
         ClassLoader cl = this.getClass().getClassLoader();
         AppModule app = new AppModule(cl, "orange-app");
-        app.getPersistenceModules().add(new PersistenceModule("root", new Persistence(persistenceUnit)));
+        app.addPersistenceModule(new PersistenceModule("root", new Persistence(persistenceUnit)));
         WebApp webApp = new WebApp();
         webApp.setMetadataComplete(true);
         app.getWebModules().add(new WebModule(webApp, "orange-web", cl, "war", "orange-web"));
@@ -421,7 +421,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
         ClassLoader cl = this.getClass().getClassLoader();
         AppModule app = new AppModule(cl, "orange-app");
-        app.getPersistenceModules().add(new PersistenceModule("root", new Persistence(persistenceUnit)));
+        app.addPersistenceModule(new PersistenceModule("root", new Persistence(persistenceUnit)));
         WebApp webApp = new WebApp();
         webApp.setMetadataComplete(true);
         app.getWebModules().add(new WebModule(webApp, "orange-web", cl, "war", "orange-web"));
@@ -462,7 +462,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
         ClassLoader cl = this.getClass().getClassLoader();
         AppModule app = new AppModule(cl, "orange-app");
-        app.getPersistenceModules().add(new PersistenceModule("root", new Persistence(persistenceUnit)));
+        app.addPersistenceModule(new PersistenceModule("root", new Persistence(persistenceUnit)));
         WebApp webApp = new WebApp();
         webApp.setMetadataComplete(true);
         app.getWebModules().add(new WebModule(webApp, "orange-web", cl, "war", "orange-web"));
@@ -1395,7 +1395,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         unit.setNonJtaDataSource(nonJtaDataSource);
 
         AppModule app = new AppModule(this.getClass().getClassLoader(), unitName + "-app");
-        app.getPersistenceModules().add(new PersistenceModule("root", new Persistence(unit)));
+        app.addPersistenceModule(new PersistenceModule("root", new Persistence(unit)));
 
         // Create app
 

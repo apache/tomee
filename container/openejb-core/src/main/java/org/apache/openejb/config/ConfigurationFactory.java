@@ -723,7 +723,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 collection.getAdditionalLibraries().addAll(module.getAdditionalLibraries());
                 collection.getClientModules().addAll(module.getClientModules());
                 collection.getEjbModules().addAll(module.getEjbModules());
-                collection.getPersistenceModules().addAll(module.getPersistenceModules());
+                collection.addPersistenceModules(module.getPersistenceModules());
                 collection.getConnectorModules().addAll(module.getConnectorModules());
                 collection.getWebModules().addAll(module.getWebModules());
                 collection.getWatchedResources().addAll(module.getWatchedResources());

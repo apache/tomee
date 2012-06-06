@@ -507,12 +507,12 @@ public class OpenEjbContainer extends EJBContainer {
                     } else if (modules instanceof Persistence) {
 
                         final Persistence persistence = (Persistence) modules;
-                        appModule.getPersistenceModules().add(new PersistenceModule("", persistence));
+                        appModule.addPersistenceModule(new PersistenceModule("", persistence));
 
                     } else if (modules instanceof PersistenceUnit) {
 
                         final PersistenceUnit unit = (PersistenceUnit) modules;
-                        appModule.getPersistenceModules().add(new PersistenceModule("", new Persistence(unit)));
+                        appModule.addPersistenceModule(new PersistenceModule("", new Persistence(unit)));
 
                     } else if (modules instanceof Beans) {
 
@@ -527,7 +527,7 @@ public class OpenEjbContainer extends EJBContainer {
                 if (application != null) {
                     final AppModule newModule = new AppModule(appModule.getClassLoader(), appModule.getModuleId(), application, false);
                     newModule.getClientModules().addAll(appModule.getClientModules());
-                    newModule.getPersistenceModules().addAll(appModule.getPersistenceModules());
+                    newModule.addPersistenceModules(appModule.getPersistenceModules());
                     newModule.getEjbModules().addAll(appModule.getEjbModules());
                     newModule.getConnectorModules().addAll(appModule.getConnectorModules());
                     appModule = newModule;

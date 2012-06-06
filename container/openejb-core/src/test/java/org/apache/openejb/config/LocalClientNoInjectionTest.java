@@ -47,7 +47,7 @@ public class LocalClientNoInjectionTest extends TestCase {
         AppModule app = new AppModule(this.getClass().getClassLoader(), "test-app");
 
         Persistence persistence = new Persistence(new org.apache.openejb.jee.jpa.unit.PersistenceUnit("foo-unit"));
-        app.getPersistenceModules().add(new PersistenceModule("root", persistence));
+        app.addPersistenceModule(new PersistenceModule("root", persistence));
 
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(SuperBean.class));
