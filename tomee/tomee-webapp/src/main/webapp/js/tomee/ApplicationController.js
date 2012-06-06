@@ -117,19 +117,26 @@ TOMEE.ApplicationController = function () {
 
     var view = TOMEE.ApplicationView({
         channel:channel,
-        groups: {
-            'home': homeView,
-            'apps': {
-                getEl: function() {
-                    return $('<div></div>')
+        groups:{
+            'home':homeView,
+            'apps':(function () {
+                var myEl = $('<div></div>');
+                return {
+                    getEl:function () {
+                        return myEl;
+                    }
                 }
-            },
-            'log': {
-                getEl: function() {
-                    return $('<div></div>')
+            })(),
+            'log':(function () {
+                var myEl = $('<div></div>');
+                return {
+                    getEl:function () {
+                        return myEl;
+                    }
                 }
-            }
-        }
+            })()
+        },
+        initTab:'home'
     });
 
     return {
