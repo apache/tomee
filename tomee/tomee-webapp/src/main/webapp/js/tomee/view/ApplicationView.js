@@ -101,8 +101,13 @@ TOMEE.ApplicationView = function (cfg) {
     showTab(currentTab);
     toolbar.setActive(currentTab);
 
+    var delayResize = TOMEE.DelayedTask({
+        callback: function() {
+            calculateContentSize();
+        }
+    });
     windowEl.resize(function () {
-        calculateContentSize();
+        delayResize.delay(100);
     });
     calculateContentSize();
 
