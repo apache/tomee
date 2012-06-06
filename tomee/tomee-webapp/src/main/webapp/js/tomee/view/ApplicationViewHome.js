@@ -119,7 +119,7 @@ TOMEE.ApplicationViewHome = function (cfg) {
 
         var el = console.getContentEl();
         el.append('<textarea style="height: 469px; width: 100%;border: 0px;padding: 0px;margin: 0px;"></textarea>');
-        el.append('<div style="background-color:#EEE; border-top: 1px solid #E5E5E5; height: 30px;"><div class="t-action-btn"></div><div class="t-action-btn"></div></div>');
+        el.append('<div style="background-color:#EEE; border-top: 1px solid #E5E5E5; height: 30px;"><select id="select01"><option>Javascript</option><option>Grails</option></select><a class="btn">execute</a></div>');
 
 
         return {
