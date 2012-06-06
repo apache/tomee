@@ -19,7 +19,6 @@ package org.apache.openejb.server;
 import org.apache.openejb.monitoring.Managed;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.Messages;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,23 +35,28 @@ import java.util.Properties;
 public class ServiceLogger extends ServerServiceFilter {
 
     private Logger logger;
+    private boolean debug = false;
 
     public ServiceLogger(ServerService next) {
         super(next);
     }
 
+    @Override
     public void init(Properties props) throws Exception {
 
-        logger = Logger.getInstance(LogCategory.OPENEJB_SERVER.createChild("service."+getName()), "org.apache.openejb.server.util.resources");
+        this.logger = Logger.getInstance(LogCategory.OPENEJB_SERVER.createChild("service." + getName()), "org.apache.openejb.server.util.resources");
+        this.debug = this.logger.isDebugEnabled();
 
         super.init(props);
     }
 
+    @Override
     public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
         throw new UnsupportedOperationException("service(in,out)");
     }
 
     private static Method MDBput = null;
+
     static {
         try {
             final Class<?> MDC = ServiceLogger.class.getClassLoader().loadClass("org.apache.log4j.MDC");
@@ -62,6 +66,7 @@ public class ServiceLogger extends ServerServiceFilter {
                     .info("can't find log4j MDC class");
         }
     }
+
     public static void MDCput(final String key, final String value) {
         if (MDBput != null) {
             try {
@@ -71,19 +76,31 @@ public class ServiceLogger extends ServerServiceFilter {
             }
         }
     }
-    
+
+    @Override
     public void service(Socket socket) throws ServiceException, IOException {
+
         InetAddress client = socket.getInetAddress();
+        final String address = client.getHostAddress();
+        final String name = this.getName();
 
-        MDCput("HOST", client.getHostAddress());
-        MDCput("SERVER", getName());
+        MDCput("HOST", address);
+        MDCput("SERVER", name);
 
-        final long start = System.nanoTime();
         try {
+            final long start = System.nanoTime();
             super.service(socket);
-            logger.debug("[request] " + getName() + " " + socket.getPort() + " - " + client.getHostName() + " - " + (System.nanoTime() - start) + "ns");
+
+            if (this.debug) {
+                this.logger.debug("[request] for '" + name + "' by '" + address + "' took " + (System.nanoTime() - start) + "ns");
+            }
         } catch (Exception e) {
-            logger.error("[failure] " + socket.getPort() + " - " + client.getHostAddress() + ": " + e.getMessage(), e);
+            final String msg = "[Request failed] for '" + name + "' by '" + address + "' : " + e.getMessage();
+            if (this.debug) {
+                this.logger.error(msg, e);
+            } else {
+                this.logger.error(msg + " - Debug for StackTrace");
+            }
         }
     }
 }

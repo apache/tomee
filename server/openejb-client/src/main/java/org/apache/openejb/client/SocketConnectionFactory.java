@@ -185,6 +185,44 @@ public class SocketConnectionFactory implements ConnectionFactory {
             this.pool = pool;
         }
 
+        @Override
+        protected void finalize() throws Throwable {
+
+            try {
+
+                cleanUp();
+
+            } finally {
+                super.finalize();
+            }
+        }
+
+        private void cleanUp() {
+            if (null != in) {
+                try {
+                    in.close();
+                } catch (Throwable e) {
+                    //Ignore
+                }
+            }
+
+            if (null != out) {
+                try {
+                    out.close();
+                } catch (Throwable e) {
+                    //Ignore
+                }
+            }
+
+            if (null != socket) {
+                try {
+                    socket.close();
+                } catch (Throwable e) {
+                    //Ignore
+                }
+            }
+        }
+
         protected void open(final URI uri) throws IOException {
 
             /*-----------------------*/
@@ -206,30 +244,36 @@ public class SocketConnectionFactory implements ConnectionFactory {
 
                 socket.setTcpNoDelay(true);
                 Client.fireEvent(new ConnectionOpened(uri));
+
             } catch (ConnectException e) {
-                throw new IOException("Cannot connect to server '" + uri.toString() + "'.  Check that the server is started and that the specified serverURL is correct.", e);
+                throw this.failure("Cannot connect to server '" + uri.toString() + "'.  Check that the server is started and that the specified serverURL is correct.", e);
 
             } catch (IOException e) {
-                throw new IOException("Cannot connect to server: '" + uri.toString() + "'.  Exception: " + e.getClass().getName() + " : " + e.getMessage(), e);
+                throw this.failure("Cannot connect to server: '" + uri.toString() + "'.  Exception: " + e.getClass().getName() + " : " + e.getMessage(), e);
 
             } catch (SecurityException e) {
-                throw new IOException("Cannot access server: '" + uri.toString() + "' due to security restrictions in the current VM: " + e.getClass().getName() + " : " + e.getMessage(), e);
+                throw this.failure("Cannot access server: '" + uri.toString() + "' due to security restrictions in the current VM: " + e.getClass().getName() + " : " + e.getMessage(), e);
 
             } catch (Throwable e) {
-                throw new IOException("Cannot  connect to server: '" + uri.toString() + "' due to an unkown exception in the OpenEJB client: " + e.getClass().getName() + " : " + e.getMessage(), e);
+                throw this.failure("Cannot  connect to server: '" + uri.toString() + "' due to an unknown exception in the OpenEJB client: " + e.getClass().getName() + " : " + e.getMessage(), e);
             }
 
         }
 
+        private IOException failure(final String err, final Throwable e) {
+            this.discard();
+            return new IOException(err, e);
+        }
+
         @Override
         public void discard() {
-            pool.put(null);
-            discarded = true;
             try {
-                socket.close();
-            } catch (Throwable e) {
-                //Ignore
+                pool.put(null);
+            } finally {
+                discarded = true;
+                cleanUp();
             }
+
             // don't bother unlocking it
             // it should never get used again
         }
@@ -258,35 +302,36 @@ public class SocketConnectionFactory implements ConnectionFactory {
                 }
 
                 return new Input(in);
+
             } catch (StreamCorruptedException e) {
-                throw new IOException("Cannot open input stream to server, the stream has been corrupted: " + e.getClass().getName() + " : " + e.getMessage());
+                throw this.failure("Cannot open input stream to server, the stream has been corrupted: " + e.getClass().getName(), e);
 
             } catch (IOException e) {
-                throw new IOException("Cannot open input stream to server: " + e.getClass().getName() + " : " + e.getMessage());
+                throw this.failure("Cannot open input stream to server: " + e.getClass().getName(), e);
 
             } catch (Throwable e) {
-                throw new IOException("Cannot open output stream to server: " + e.getClass().getName() + " : " + e.getMessage());
+                throw this.failure("Cannot open output stream to server: " + e.getClass().getName(), e);
             }
         }
 
         @Override
         public OutputStream getOuputStream() throws IOException {
-            /*----------------------------------*/
-            /* Openning output streams */
-            /*----------------------------------*/
+
             try {
+
                 if (out == null) {
                     out = new BufferedOutputStream(socket.getOutputStream());
                 }
+
                 return new Output(out);
+
             } catch (IOException e) {
-                throw new IOException("Cannot open output stream to server: " + e.getClass().getName() + " : " + e.getMessage());
+                throw this.failure("Cannot open output stream to server: " + e.getClass().getName(), e);
 
             } catch (Throwable e) {
-                throw new IOException("Cannot open output stream to server: " + e.getClass().getName() + " : " + e.getMessage());
+                throw this.failure("Cannot open output stream to server: " + e.getClass().getName(), e);
             }
         }
-
     }
 
     public class Input extends java.io.FilterInputStream {
