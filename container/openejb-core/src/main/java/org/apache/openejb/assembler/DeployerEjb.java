@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.assembler;
 
+import javax.enterprise.inject.Alternative;
 import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.OpenEJBException;
@@ -57,6 +58,7 @@ import static org.apache.openejb.loader.ProvisioningUtil.realLocation;
 @Stateless(name = "openejb/Deployer")
 @Remote(Deployer.class)
 @TransactionManagement(BEAN)
+@Alternative
 public class DeployerEjb implements Deployer {
     public static final String OPENEJB_DEPLOYER_FORCED_APP_ID_PROP = "openejb.deployer.forced.appId";
     public static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, DeployerEjb.class);
