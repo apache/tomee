@@ -59,6 +59,9 @@ TOMEE.el = (function () {
             el.html(elCfg.html);
         }
 
+        if(elCfg.createCallback) {
+            elCfg.createCallback(el);
+        }
 
         return el;
     };
