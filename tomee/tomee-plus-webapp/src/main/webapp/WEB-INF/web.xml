@@ -55,6 +55,11 @@
     </servlet>
 
     <servlet>
+        <servlet-name>DeployServlet</servlet-name>
+        <servlet-class>org.apache.tomee.webapp.servlet.DeployServlet</servlet-class>
+    </servlet>
+
+    <servlet>
         <servlet-name>WsConsole</servlet-name>
         <servlet-class>org.apache.tomee.webapp.servlet.ConsoleServlet</servlet-class>
     </servlet>
@@ -82,6 +87,11 @@
     <servlet-mapping>
         <servlet-name>FileUploadServlet</servlet-name>
         <url-pattern>/upload/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>DeployServlet</servlet-name>
+        <url-pattern>/deploy/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

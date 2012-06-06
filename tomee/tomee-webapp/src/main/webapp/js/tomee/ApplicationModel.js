@@ -26,77 +26,30 @@ TOMEE.ApplicationModel = function (cfg) {
 
     var channel = cfg.channel;
 
-    /**
-     * Prepare internal values.
-     *
-     * @param data request json value
-     */
-    var prepareDataMethod = cfg.prepareDataMethod;
-    if(!prepareDataMethod) {
-        throw "You need to give me the prepareDataMethod";
-    }
-
-    var methodType = cfg.methodType;
-    if(!methodType) {
-        throw "You need to give me the methodType (GET, POST, PUT etc)";
-    }
-
-    var url = cfg.url;
-    if(!url) {
-        throw "You need to give me the url";
-    }
-
-    //holder for all the request parameters.
-    var requestParameters = {};
-
-    //keep tracking of the current request
-    //so we can cancel it if necessary
-    var currentRequest = null;
-
-
-    /**
-     * Delayed task for the remote request.
-     */
-    var load = new TOMEE.DelayedTask({
-        callback: function () {
-            //if we already have a running request, cancel it.
-            if (currentRequest) {
-                currentRequest.abort();
+    var request = function (params) {
+        $.ajax({
+                url:params.url,
+                type:params.method,
+                data:params.data,
+                dataType:'json',
+                success:params.success,
+                error:params.error
             }
-
-            //start a new request
-            currentRequest = $.ajax({
-                type: methodType,
-                dataType: 'json',
-                data: requestParameters,
-                url: url,
-                success: function (data) {
-                    prepareDataMethod(data);
-                    channel.send('connection_new_data', {});
-                },
-                error: function (data) {
-                    channel.send('connection_exception', {});
-                }
-            });
-        }
-    });
-
-    var getRequestParameter = function (key) {
-        return requestParameters[key];
-    };
-
-    var setRequestParameter = function (key, value) {
-        requestParameters[key] = value;
+        );
     };
 
     return {
-        setRequestParameter: setRequestParameter,
-        getRequestParameter: getRequestParameter,
-        load: function () {
-            //wait 1 second before triggering this request
-            //the user may be still selecting his parameters
-            //the last calling thread will trigger the request
-            load.delay(1000);
+        deployApp:function (path) {
+            request({
+                method:'POST',
+                url:TOMEE.baseURL('deploy'),
+                data:{
+                    path:path
+                },
+                success:function (data) {
+                    channel.send('app.deployment.result', data);
+                }
+            });
         }
     };
 };

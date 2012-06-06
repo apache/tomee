@@ -27,4 +27,6 @@ $(document).ready(function () {
     TOMEE.ApplicationController();
 });
 
-TOMEE.baseURL = '/tomee/';
+TOMEE.baseURL = function(url) {
+    return '/tomee/' + url;
+};
