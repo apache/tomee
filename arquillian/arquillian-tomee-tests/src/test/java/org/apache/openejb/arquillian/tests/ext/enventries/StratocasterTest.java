@@ -30,6 +30,7 @@ import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.webcommon30.WebAppVersionType;
 import org.jboss.shrinkwrap.descriptor.spi.node.Node;
 import org.jboss.shrinkwrap.descriptor.spi.node.NodeDescriptor;
 import org.junit.Test;
@@ -54,6 +55,7 @@ public class StratocasterTest {
     @Deployment(testable = false)
     public static WebArchive createDeployment() {
         WebAppDescriptor descriptor = Descriptors.create(WebAppDescriptor.class)
+                .version(WebAppVersionType._3_0)
                 .createServlet().servletName("servlet").servletClass(Stratocaster.class.getName()).up()
                 .createServletMapping().servletName("servlet").urlPattern("/" + TEST_NAME).up();
 

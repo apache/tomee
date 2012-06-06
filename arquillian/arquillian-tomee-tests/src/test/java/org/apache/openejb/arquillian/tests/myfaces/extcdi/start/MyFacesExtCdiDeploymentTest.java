@@ -28,6 +28,7 @@ import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.webcommon30.WebAppVersionType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -43,7 +44,7 @@ public class MyFacesExtCdiDeploymentTest {
 
     @Deployment(testable = true)
     public static WebArchive getArchive() {
-        final WebAppDescriptor descriptor = Descriptors.create(WebAppDescriptor.class);
+        final WebAppDescriptor descriptor = Descriptors.create(WebAppDescriptor.class).version(WebAppVersionType._3_0);
         // web.xml params is not supported by default
         // descriptor.contextParam(ProjectStage.PROJECT_STAGE_PARAM_NAME, ProjectStage.SystemTest.name());
 

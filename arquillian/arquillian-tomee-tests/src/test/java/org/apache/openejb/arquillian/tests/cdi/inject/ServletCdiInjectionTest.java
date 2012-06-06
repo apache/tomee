@@ -31,6 +31,7 @@ import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.webcommon30.WebAppVersionType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -59,6 +60,7 @@ public class ServletCdiInjectionTest {
     public static WebArchive createDeployment() {
 
         WebAppDescriptor descriptor = Descriptors.create(WebAppDescriptor.class)
+                .version(WebAppVersionType._3_0)
                 .createServlet().servletName("servlet").servletClass(SimpleServlet.class.getName()).up()
                 .createServletMapping().servletName("servlet").urlPattern("/" + TEST_NAME).up();
 
