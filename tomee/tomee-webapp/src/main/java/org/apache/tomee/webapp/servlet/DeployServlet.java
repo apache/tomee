@@ -18,7 +18,7 @@
 package org.apache.tomee.webapp.servlet;
 
 import com.google.gson.Gson;
-import javax.inject.Inject;
+import javax.ejb.EJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.Deployer;
@@ -39,7 +39,7 @@ import java.util.Map;
 public class DeployServlet extends HttpServlet {
     public static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, DeployServlet.class);
 
-    @Inject
+    @EJB
     private Deployer deployer;
 
     @Override
