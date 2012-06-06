@@ -72,17 +72,23 @@ TOMEE.ApplicationViewApps = function (cfg) {
         content.append(map.main);
 
         (function() {
-            var form = TOMEE.el.getElMap({
+            var frameId = TOMEE.Sequence.next('uploadFrame');
+            var fileForm= TOMEE.el.getElMap({
                 elName:'main',
-                tag:'div',
+                tag:'form',
                 attributes:{
-                    style:'background-color:#EEE; border-top: 1px solid #E5E5E5; height: 30px;margin-bottom: 0px;'
+                    style:'background-color:#EEE; border-top: 1px solid #E5E5E5; height: 30px;margin-bottom: 0px;',
+                    method: 'post',
+                    enctype: 'multipart/form-data',
+                    action: TOMEE.baseURL + 'upload',
+                    target: frameId
                 },
                 children:[
                     {
-                        elName: 'myForm',
-                        tag:'form',
+                        elName:'myFrame',
+                        tag: 'iframe',
                         attributes:{
+                            id: frameId,
                             style:'display: none'
                         }
                     },
@@ -91,11 +97,12 @@ TOMEE.ApplicationViewApps = function (cfg) {
                         tag:'input',
                         attributes:{
                             style:'padding-left: 5px; float: left; position: relative;',
-                            type:"file"
+                            type:'file',
+                            name:'file'
                         },
                         listeners:{
                             'change':function (event) {
-                                submit();
+                                fileForm.main.submit();
                             }
                         }
                     }
@@ -103,26 +110,12 @@ TOMEE.ApplicationViewApps = function (cfg) {
 
             });
 
-            var submit = function() {
-                var frameId = TOMEE.Sequence.next('iframe_upload');
-                var iframe = $(TOMEE.utils.stringFormat('<iframe id="{id}" style="display: none" />', {
-                    id: frameId
-                }));
-                $("body").append(iframe);
+            fileForm.myFrame.bind('load', function(event) {
+                alert('Done');
+            });
 
-
-                form.myForm.attr("action", TOMEE.baseURL + "deploy/file");
-                form.myForm.attr("method", "post");
-                form.myForm.attr("enctype", "multipart/form-data");
-                form.myForm.attr("encoding", "multipart/form-data");
-                form.myForm.attr("target", frameId);
-                form.myForm.attr("file", form.fileField.val());
-                form.myForm.submit();
-            };
-
-            content.append(form.main);
+            content.append(fileForm.main);
         })();
-
 
         return {
             getEl:function () {
