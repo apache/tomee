@@ -20,6 +20,7 @@ TOMEE.components.Panel = function (cfg) {
     "use strict";
 
     var channel = cfg.channel;
+    var avoidOverflow = TOMEE.utils.getSafe(cfg.avoidOverflow, false);
 
     var map = TOMEE.el.getElMap({
         elName: 'main',
@@ -40,6 +41,11 @@ TOMEE.components.Panel = function (cfg) {
                     tag: 'div',
                     attributes:{
                         style: 'height: 250px; position: relative; overflow: auto;'
+                    },
+                    createCallback: function(el) {
+                        if(avoidOverflow) {
+                            el.css('overflow', '');
+                        }
                     }
                 }]
             }]

@@ -47,14 +47,46 @@ TOMEE.ApplicationViewApps = function (cfg) {
 
     var deployments = (function () {
         var panel = TOMEE.components.Panel({
-            title:TOMEE.I18N.get('application.deployments')
+            title:TOMEE.I18N.get('application.deployments'),
+            avoidOverflow: true
         });
+
 
         var table = TOMEE.components.Table({
-            channel:channel
+            channel:channel,
+            columns:['appName']
         });
 
-        panel.getContentEl().append(table.getEl());
+        var map = TOMEE.el.getElMap({
+            elName:'main',
+            tag:'div',
+            attributes:{
+                style:'height: 220px;'
+            },
+            children:[
+                table
+            ]
+        });
+
+        var content = panel.getContentEl();
+        content.append(map.main);
+        content.append(TOMEE.el.getElMap({
+            elName:'main',
+            tag:'form',
+            attributes:{
+                style:'background-color:#EEE; border-top: 1px solid #E5E5E5; height: 30px;margin-bottom: 0px;'
+            },
+            children:[
+                {
+                    tag:'input',
+                    attributes:{
+                        style: 'padding-left: 5px; float: left; position: relative;',
+                        type:"file"
+                    }
+                }
+            ]
+
+        }).main);
 
         return {
             getEl:function () {
@@ -87,7 +119,7 @@ TOMEE.ApplicationViewApps = function (cfg) {
 
 
     return {
-        getEl: function() {
+        getEl:function () {
             return elMapContent.main;
         }
     };
