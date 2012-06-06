@@ -21,6 +21,14 @@ TOMEE.ApplicationToolbar = function (cfg) {
 
     var channel = cfg.channel;
 
+    var btnClickHandler = function(event) {
+        var el = $(event.currentTarget);
+        var btnkey = el.attr('btnkey');
+        channel.send('toolbar.click', {
+            tab: btnkey
+        });
+    };
+
     var elMapToolbar = TOMEE.el.getElMap({
         elName:'main',
         tag:'div',
@@ -108,20 +116,16 @@ TOMEE.ApplicationToolbar = function (cfg) {
                                         children:[
                                             {
                                                 tag:'li',
-                                                cls:'active',
                                                 children:[
                                                     {
                                                         tag:'a',
                                                         attributes:{
+                                                            btnkey: 'home',
                                                             href:'#'
                                                         },
                                                         html:TOMEE.I18N.get('application.home'),
                                                         listeners: {
-                                                            'click': function (event) {
-                                                                channel.send('toolbar.click', {
-                                                                    tab: 'home'
-                                                                });
-                                                            }
+                                                            'click': btnClickHandler
                                                         }
                                                     }
                                                 ]
@@ -132,15 +136,12 @@ TOMEE.ApplicationToolbar = function (cfg) {
                                                     {
                                                         tag:'a',
                                                         attributes:{
+                                                            btnkey: 'apps',
                                                             href:'#'
                                                         },
                                                         html:TOMEE.I18N.get('application.apps'),
                                                         listeners: {
-                                                            'click': function (event) {
-                                                                channel.send('toolbar.click', {
-                                                                    tab: 'apps'
-                                                                });
-                                                            }
+                                                            'click': btnClickHandler
                                                         }
                                                     }
                                                 ]
@@ -151,15 +152,12 @@ TOMEE.ApplicationToolbar = function (cfg) {
                                                     {
                                                         tag:'a',
                                                         attributes:{
+                                                            btnkey: 'log',
                                                             href:'#'
                                                         },
                                                         html:TOMEE.I18N.get('application.log'),
                                                         listeners: {
-                                                            'click': function (event) {
-                                                                channel.send('toolbar.click', {
-                                                                    tab: 'log'
-                                                                });
-                                                            }
+                                                            'click': btnClickHandler
                                                         }
                                                     }
                                                 ]
@@ -187,6 +185,24 @@ TOMEE.ApplicationToolbar = function (cfg) {
         channel.send('application.logout', {});
     });
 
+    var setActive = function(tab) {
+        var parent = elMapToolbar.tabs.children();
+        parent.each(function(index, element) {
+            var el = $(element);
+            el.removeClass('active');
+
+            var btnkey = el.children().first().attr('btnkey');
+            if(!btnkey) {
+                return;
+            }
+
+            if(btnkey === tab) {
+                el.addClass('active');
+            }
+        });
+
+    };
+
     elMapToolbar.tabs.delegate('a', 'click', function(event) {
         elMapToolbar.tabs.find('li').removeClass('active');
         var parent = $(event.currentTarget.parentElement);
@@ -199,7 +215,8 @@ TOMEE.ApplicationToolbar = function (cfg) {
         },
         setLoggedUser:function (name) {
             elMapToolbar.userNameSpan.text(name);
-        }
+        },
+        setActive: setActive
 
     };
 };

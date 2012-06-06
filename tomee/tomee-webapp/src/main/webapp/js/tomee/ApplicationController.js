@@ -27,6 +27,10 @@ TOMEE.ApplicationController = function () {
     //The views communicate with the controller (or other components) through this object
     var channel = TOMEE.ApplicationChannel({});
 
+    var appsView = TOMEE.ApplicationViewApps({
+        channel:channel
+    });
+
     var homeView = TOMEE.ApplicationViewHome({
         channel:channel
     });
@@ -119,14 +123,7 @@ TOMEE.ApplicationController = function () {
         channel:channel,
         groups:{
             'home':homeView,
-            'apps':(function () {
-                var myEl = $('<div></div>');
-                return {
-                    getEl:function () {
-                        return myEl;
-                    }
-                }
-            })(),
+            'apps':appsView,
             'log':(function () {
                 var myEl = $('<div></div>');
                 return {
@@ -136,7 +133,7 @@ TOMEE.ApplicationController = function () {
                 }
             })()
         },
-        initTab:'home'
+        initTab:'apps'
     });
 
     return {
