@@ -78,6 +78,7 @@ TOMEE.ApplicationView = function (cfg) {
 
     //show current tab
     elMapContent.main.append(groups[currentTab].getEl());
+    toolbar.setActive(currentTab);
 
     return {
         setLoggedUser:function (name) {

@@ -30,6 +30,8 @@ TOMEE.I18N = (function () {
         'application.apps':'Apps',
         'application.log':'Log',
 
+        'application.deployments': 'Deployments',
+
         'application.jdni': 'Jndi',
         'application.saved.objects': 'Saved Objects',
         'application.console': 'Console',
