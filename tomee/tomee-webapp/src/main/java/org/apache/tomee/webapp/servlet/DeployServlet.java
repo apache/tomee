@@ -25,40 +25,29 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 
-public class FileUploadServlet extends HttpServlet {
-    public static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, FileUploadServlet.class);
+public class DeployServlet extends HttpServlet {
+    public static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, DeployServlet.class);
 
     @Override
     protected void doPost(HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-        final File tempDir = (File) getServletContext().getAttribute("javax.servlet.context.tempdir");
+        final String path = req.getParameter("path");
+        final File file = new File(path);
 
-        final Part filePart = req.getPart("file");
-        final String filename = getFileName(filePart);
-        final File file = new File(tempDir, filename);
-        filePart.write(file.getAbsolutePath());
+        //TODO: deploy the file as David said (DeployerEjb)
+        //TODO: avoid sending the full file path. I dont think this is safe
 
         final Map<String, Object> result = new HashMap<String, Object>();
         result.put("file", file.getAbsolutePath());
+        result.put("deployed", Boolean.TRUE);
 
         resp.setContentType("text/plain");
         resp.setCharacterEncoding("UTF-8");
         resp.getWriter().write(new Gson().toJson(result));
-    }
-
-    private String getFileName(Part part) {
-        String partHeader = part.getHeader("content-disposition");
-        for (String cd : partHeader.split(";")) {
-            if (cd.trim().startsWith("filename")) {
-                return cd.substring(cd.indexOf('=') + 1).trim().replace("\"", "");
-            }
-        }
-        return null;
     }
 }

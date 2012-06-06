@@ -76,8 +76,11 @@ TOMEE.ApplicationViewApps = function (cfg) {
                 fileForm.myFrame.unbind('load', fileUploadedHandler);
                 var text = TOMEE.utils.getSafe(function() {
                     return fileForm.myFrame.contents().first()[0].body.innerText;
-                }, '')
-                alert(text);
+                }, '');
+
+                var json = jQuery.parseJSON(text);
+
+                channel.send('deploy.file.uploaded', json);
             };
 
             var frameId = TOMEE.Sequence.next('uploadFrame');
@@ -88,7 +91,7 @@ TOMEE.ApplicationViewApps = function (cfg) {
                     style:'background-color:#EEE; border-top: 1px solid #E5E5E5; height: 30px;margin-bottom: 0px;',
                     method: 'post',
                     enctype: 'multipart/form-data',
-                    action: TOMEE.baseURL + 'upload',
+                    action: TOMEE.baseURL('upload'),
                     target: frameId
                 },
                 children:[
@@ -116,10 +119,7 @@ TOMEE.ApplicationViewApps = function (cfg) {
                         }
                     }
                 ]
-
             });
-
-
 
             content.append(fileForm.main);
         })();

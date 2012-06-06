@@ -27,6 +27,10 @@ TOMEE.ApplicationController = function () {
     //The views communicate with the controller (or other components) through this object
     var channel = TOMEE.ApplicationChannel({});
 
+    var model = TOMEE.ApplicationModel({
+        channel:channel
+    });
+
     var appsView = TOMEE.ApplicationViewApps({
         channel:channel
     });
@@ -117,6 +121,14 @@ TOMEE.ApplicationController = function () {
 
     channel.bind('jndi_leaf_click', function (params) {
         alert('name: ' + params.bean.text);
+    });
+
+    channel.bind('deploy.file.uploaded', function (params) {
+        model.deployApp(params.file);
+    });
+
+    channel.bind('app.deployment.result', function (params) {
+        alert('file: ' + params.file + '; deployed: ' + params.deployed + ';');
     });
 
     var view = TOMEE.ApplicationView({
