@@ -17,29 +17,84 @@
 package org.apache.tomee.embedded;
 
 import java.io.File;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.PosixParser;
+import org.apache.openejb.loader.ProvisioningUtil;
 
 public class Main {
+    public static final String PORT = "port";
+    public static final String SHUTDOWN = "shutdown";
+    public static final String PATH = "path";
+    public static final String DIRECTORY = "directory";
 
-	public static void main(String[] args) {
+    public static void main(final String[] args) {
+        final CommandLineParser parser = new PosixParser();
+        final Options options = createOptions();
+
+        // parse command line
+        CommandLine line;
+        try {
+            line = parser.parse(options, args, true);
+        } catch (ParseException exp) {
+            new HelpFormatter().printHelp("java -jar tomee-embedded-user.jar", options);
+            return;
+        }
+
+        // run TomEE
 		try {
-			Container container = new Container();
+			final Container container = new Container();
+            container.setup(createConfiguration(line));
 			container.start();
-			
-			for (String filename : args) {
-				File file = new File(filename);
-				if (! file.exists()) {
-					System.out.println(file.getAbsolutePath() + " does not exist, skipping");
-					continue;
-				}
-				
-				String filenameWithoutExtension = file.getName().replaceAll("\\.[A-Za-z]+$", "");
-				container.deploy(filenameWithoutExtension, file);
-			}
-			
+
+            if (line.hasOption(PATH)) {
+                for (String path : line.getOptionValues(PATH)) {
+                    final File file = new File(ProvisioningUtil.realLocation(path));
+                    if (!file.exists()) {
+                        System.out.println(file.getAbsolutePath() + " does not exist, skipping");
+                        continue;
+                    }
+
+                    final String filenameWithoutExtension = file.getName().replaceAll("\\.[A-Za-z]+$", "");
+                    container.deploy(filenameWithoutExtension, file);
+                }
+            }
+
+            Runtime.getRuntime().addShutdownHook(new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        container.stop();
+                    } catch (Exception e) {
+                        e.printStackTrace(); // just log the exception
+                    }
+                }
+            });
 			container.await();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+
+    private static Options createOptions() {
+        final Options options = new Options();
+        options.addOption(null, PATH, true, "");
+        options.addOption("p", PORT, true, "TomEE http port");
+        options.addOption("s", SHUTDOWN, true, "TomEE shutdown port");
+        options.addOption("d", DIRECTORY, true, "TomEE shutdown port");
+        return options;
+    }
+
+    private static Configuration createConfiguration(final CommandLine args) {
+        final Configuration config = new Configuration();
+        config.setDir(System.getProperty("java.io.tmpdir"));
+        config.setHttpPort(Integer.parseInt(args.getOptionValue(PORT, "8080")));
+        config.setStopPort(Integer.parseInt(args.getOptionValue(SHUTDOWN, "8005")));
+        config.setDir(args.getOptionValue(DIRECTORY, new File(new File("."), "apache-tomee").getAbsolutePath()));
+        return config;
+    }
 
 }
