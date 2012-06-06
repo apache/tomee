@@ -42,6 +42,7 @@
         <configuration>
           <archive>
             <manifest>
+              <Main-Class>org.apache.tomee.embedded.Main</Main-Class>
               <addClasspath>true</addClasspath>
             </manifest>
           </archive>
