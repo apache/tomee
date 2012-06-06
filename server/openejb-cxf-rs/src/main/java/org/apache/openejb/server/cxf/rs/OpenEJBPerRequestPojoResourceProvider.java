@@ -23,6 +23,11 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Set;
+import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.InjectionException;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.ws.rs.WebApplicationException;
@@ -35,20 +40,19 @@ import org.apache.openejb.Injection;
 import org.apache.openejb.InjectionProcessor;
 import org.apache.openejb.OpenEJBException;
 import org.apache.webbeans.config.WebBeansContext;
+import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.inject.OWBInjector;
 
-// the constructor part is mainly copied from the PerrequestResourceProvider since all is private
-// and we want to invoke postconstrut ourself
 public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
     protected Collection<Injection> injections;
     protected Context context;
     protected WebBeansContext webbeansContext;
-    protected InjectionProcessor<Object> injector;
-    protected OWBInjector beanInjector;
+
     protected Constructor<?> constructor;
     protected Method postConstructMethod;
     protected Method preDestroyMethod;
 
+    private BeanCreator creator;
 
     public OpenEJBPerRequestPojoResourceProvider(final Class<?> clazz, final Collection<Injection> injectionCollection, final Context initialContext, final WebBeansContext owbCtx) {
         injections = injectionCollection;
@@ -57,8 +61,7 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
 
         constructor = ResourceUtils.findResourceConstructor(clazz, true);
         if (constructor == null) {
-            throw new RuntimeException("Resource class " + clazz
-                    + " has no valid constructor");
+            throw new RuntimeException("Resource class " + clazz + " has no valid constructor");
         }
         postConstructMethod = ResourceUtils.findPostConstructMethod(clazz);
         preDestroyMethod = ResourceUtils.findPreDestroyMethod(clazz);
@@ -66,54 +69,25 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
 
     @Override
     public Object getInstance(Message m) {
-        Object[] values = ResourceUtils.createConstructorArguments(constructor, m);
+        final BeanManagerImpl bm = webbeansContext.getBeanManagerImpl();
+        if (bm.isInUse()) {
+            creator = new CdiBeanCreator(bm);
+        } else { // do it manually
+            creator = new DefaultBeanCreator(m);
+        }
+
         try {
-            final Object instance = values.length > 0 ? constructor.newInstance(values) : constructor.newInstance(new Object[]{});
-            injector = new InjectionProcessor<Object>(instance, new ArrayList<Injection>(injections), InjectionProcessor.unwrap(context));
-            injector.createInstance();
-            try {
-                beanInjector = new OWBInjector(webbeansContext);
-                beanInjector.inject(injector.getInstance());
-            } catch (Throwable t) {
-                // ignored
-            }
-            // injector.postConstruct(); // he doesn't know it
-            InjectionUtils.invokeLifeCycleMethod(instance, postConstructMethod);
-            return injector.getInstance();
-        } catch (InstantiationException ex) {
-            final String msg = "Resource class " + constructor.getDeclaringClass().getName() + " can not be instantiated";
-            throw new WebApplicationException(Response.serverError().entity(msg).build());
-        } catch (IllegalAccessException ex) {
-            final String msg = "Resource class " + constructor.getDeclaringClass().getName() + " can not be instantiated"
-                    + " due to IllegalAccessException";
-            throw new WebApplicationException(Response.serverError().entity(msg).build());
-        } catch (InvocationTargetException ex) {
-            final String msg = "Resource class "
-                    + constructor.getDeclaringClass().getName() + " can not be instantiated"
-                    + " due to InvocationTargetException";
-            throw new WebApplicationException(Response.serverError().entity(msg).build());
-        } catch (OpenEJBException e) {
-            final String msg = "An error occured injecting in class " + constructor.getDeclaringClass().getName();
-            throw new WebApplicationException(Response.serverError().entity(msg).build());
+            return creator.create();
+        } catch (NoBeanFoundException nbfe) {
+            creator = new DefaultBeanCreator(m);
+            return creator.create();
         }
     }
 
     @Override
-    public void releaseInstance(Message m, Object o) {
-        // we can't give it to the injector so let's do it manually
-        try {
-            InjectionUtils.invokeLifeCycleMethod(o, preDestroyMethod);
-        } finally {
-            try {
-                if (beanInjector != null) {
-                    beanInjector.destroy();
-                }
-            } catch (Throwable t) {
-                // ignored
-            }
-            if (injector != null) {
-                injector.preDestroy();
-            }
+    public void releaseInstance(final Message m, final Object o) {
+        if (creator != null) {
+            creator.release();
         }
     }
 
@@ -167,5 +141,109 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
             }
             return method.invoke(ctx, args);
         }
+    }
+
+    private static interface BeanCreator {
+        Object create();
+        void release();
+    }
+
+    private class CdiBeanCreator implements BeanCreator {
+        private BeanManager bm;
+        private CreationalContext<?> creationalContext;
+
+        public CdiBeanCreator(BeanManager bm) {
+            this.bm = bm;
+        }
+
+        @Override
+        public Object create() {
+            final Class<?> clazz = constructor.getDeclaringClass();
+            try {
+                final Set<Bean<?>> beans = bm.getBeans(clazz);
+                final Bean<?> bean = bm.resolve(beans);
+                if (bean == null) {
+                    throw new NoBeanFoundException();
+                }
+                creationalContext = bm.createCreationalContext(bean);
+                return bm.getReference(bean, clazz, creationalContext);
+            } catch (InjectionException ie) {
+                final String msg = "Resource class " + constructor.getDeclaringClass().getName() + " can not be instantiated";
+                throw new WebApplicationException(Response.serverError().entity(msg).build());
+            }
+        }
+
+        @Override
+        public void release() {
+            if (creationalContext != null) {
+                creationalContext.release();
+            }
+        }
+    }
+
+    private class DefaultBeanCreator implements BeanCreator {
+        private Message m;
+        private InjectionProcessor<?> injector;
+        private OWBInjector cdiInjector;
+        private Object instance;
+
+        public DefaultBeanCreator(Message m) {
+            this.m = m;
+        }
+
+        @Override
+        public Object create() {
+            final Object[] values = ResourceUtils.createConstructorArguments(constructor, m);
+            try {
+                instance = constructor.newInstance(values);
+
+                injector = new InjectionProcessor<Object>(instance, new ArrayList<Injection>(injections), InjectionProcessor.unwrap(context));
+                instance = injector.createInstance();
+
+                try {
+                    cdiInjector = new OWBInjector(webbeansContext);
+                    cdiInjector.inject(instance);
+                } catch (Exception e) {
+                    // ignored
+                }
+
+                // injector.postConstruct(); // it doesn't know it
+                InjectionUtils.invokeLifeCycleMethod(instance, postConstructMethod);
+                return instance;
+            } catch (InstantiationException ex) {
+                final String msg = "Resource class " + constructor.getDeclaringClass().getName() + " can not be instantiated";
+                throw new WebApplicationException(Response.serverError().entity(msg).build());
+            } catch (IllegalAccessException ex) {
+                final String msg = "Resource class " + constructor.getDeclaringClass().getName() + " can not be instantiated"
+                        + " due to IllegalAccessException";
+                throw new WebApplicationException(Response.serverError().entity(msg).build());
+            } catch (InvocationTargetException ex) {
+                final String msg = "Resource class "
+                        + constructor.getDeclaringClass().getName() + " can not be instantiated"
+                        + " due to InvocationTargetException";
+                throw new WebApplicationException(Response.serverError().entity(msg).build());
+            } catch (OpenEJBException e) {
+                final String msg = "An error occured injecting in class " + constructor.getDeclaringClass().getName();
+                throw new WebApplicationException(Response.serverError().entity(msg).build());
+            }
+        }
+
+        @Override
+        public void release() {
+            // we can't give it to the injector so let's do it manually
+            try {
+                InjectionUtils.invokeLifeCycleMethod(instance, preDestroyMethod);
+            } finally {
+                if (injector != null) {
+                    injector.preDestroy();
+                }
+                if (cdiInjector != null) {
+                    cdiInjector.destroy();
+                }
+            }
+        }
+    }
+
+    private static class NoBeanFoundException extends RuntimeException {
     }
 }
