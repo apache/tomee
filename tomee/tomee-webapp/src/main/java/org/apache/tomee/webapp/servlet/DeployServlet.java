@@ -18,7 +18,9 @@
 package org.apache.tomee.webapp.servlet;
 
 import com.google.gson.Gson;
+import javax.annotation.PostConstruct;
 import org.apache.openejb.assembler.Deployer;
+import org.apache.openejb.assembler.DeployerEjb;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -37,8 +39,12 @@ import java.util.Map;
 public class DeployServlet extends HttpServlet {
     public static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, DeployServlet.class);
 
-    @EJB
     private Deployer deployer;
+
+    @PostConstruct
+    public void initDeployer() {
+        deployer = new DeployerEjb();
+    }
 
     @Override
     protected void doPost(HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
