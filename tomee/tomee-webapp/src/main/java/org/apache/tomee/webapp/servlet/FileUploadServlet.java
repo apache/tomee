@@ -17,18 +17,14 @@
 
 package org.apache.tomee.webapp.servlet;
 
-import com.google.gson.Gson;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.tomee.webapp.JsonExecutor;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
+import javax.servlet.http.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 
@@ -36,20 +32,20 @@ public class FileUploadServlet extends HttpServlet {
     public static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, FileUploadServlet.class);
 
     @Override
-    protected void doPost(HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-        final File tempDir = (File) getServletContext().getAttribute("javax.servlet.context.tempdir");
+    protected void doPost(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
+        JsonExecutor.execute(resp, new JsonExecutor.Executor() {
+            @Override
+            public void call(Map<String, Object> json) throws Exception {
+                final File tempDir = (File) getServletContext().getAttribute("javax.servlet.context.tempdir");
 
-        final Part filePart = req.getPart("file");
-        final String filename = getFileName(filePart);
-        final File file = new File(tempDir, filename);
-        filePart.write(file.getAbsolutePath());
+                final Part filePart = req.getPart("file");
+                final String filename = getFileName(filePart);
+                final File file = new File(tempDir, filename);
+                filePart.write(file.getAbsolutePath());
 
-        final Map<String, Object> result = new HashMap<String, Object>();
-        result.put("file", file.getAbsolutePath());
-
-        resp.setContentType("text/plain");
-        resp.setCharacterEncoding("UTF-8");
-        resp.getWriter().write(new Gson().toJson(result));
+                json.put("file", file.getAbsolutePath());
+            }
+        });
     }
 
     private String getFileName(Part part) {

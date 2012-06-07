@@ -214,7 +214,12 @@ TOMEE.ApplicationToolbar = function (cfg) {
             return elMapToolbar.main;
         },
         setLoggedUser:function (name) {
-            elMapToolbar.userNameSpan.text(name);
+            if(name) {
+                elMapToolbar.userNameSpan.text(name);
+            } else {
+                elMapToolbar.userNameSpan.text(TOMEE.I18N.get('application.guest'));
+            }
+
         },
         setActive: setActive
 

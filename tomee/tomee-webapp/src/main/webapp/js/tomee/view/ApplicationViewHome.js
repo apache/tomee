@@ -159,9 +159,6 @@ TOMEE.ApplicationViewHome = function (cfg) {
     elMapContent['right'].append(wsPanel.getEl());
 
     return {
-        setLoggedUser:function (name) {
-            toolbar.setLoggedUser(name);
-        },
         loadJndi:function (data) {
             jndiPanel.load(data);
         },

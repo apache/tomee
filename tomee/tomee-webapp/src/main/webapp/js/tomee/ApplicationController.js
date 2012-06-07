@@ -135,6 +135,10 @@ TOMEE.ApplicationController = function () {
         window.location.reload();
     });
 
+    channel.bind('app.system.info', function (params) {
+        view.setLoggedUser(params.user);
+    });
+
     var view = TOMEE.ApplicationView({
         channel:channel,
         groups:{
@@ -151,6 +155,8 @@ TOMEE.ApplicationController = function () {
         },
         initTab:'apps'
     });
+
+    model.loadSystemInfo();
 
     return {
 

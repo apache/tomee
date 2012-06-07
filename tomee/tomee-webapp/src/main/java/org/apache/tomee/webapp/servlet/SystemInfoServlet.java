@@ -17,42 +17,41 @@
 
 package org.apache.tomee.webapp.servlet;
 
-import org.apache.openejb.assembler.Deployer;
-import org.apache.openejb.assembler.DeployerEjb;
-import org.apache.openejb.assembler.classic.AppInfo;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
 import org.apache.tomee.webapp.JsonExecutor;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.Principal;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
-public class DeployServlet extends HttpServlet {
-    public static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, DeployServlet.class);
 
-    private Deployer deployer;
-
-    @PostConstruct
-    public void initDeployer() {
-        deployer = new DeployerEjb();
-    }
+public class SystemInfoServlet extends HttpServlet {
 
     @Override
-    protected void doPost(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
         JsonExecutor.execute(resp, new JsonExecutor.Executor() {
             @Override
             public void call(Map<String, Object> json) throws Exception {
-                final AppInfo info = deployer.deploy(req.getParameter("path"));
 
-                // the path is translated from the parameter to a file path
-                // the input can be "mvn:org.superbiz/rest-example.1.0/war" for instance or an http url
-                json.put("path", info.path);
-                json.put("appId", info.appId);
+                final Map<String, Object> systemProperties = new HashMap<String, Object>();
+                json.put("systemProperties", systemProperties);
+
+                final Set<String> props = System.getProperties().stringPropertyNames();
+                for(String propName: props) {
+                    systemProperties.put(propName, System.getProperty(propName));
+                }
+
+                json.put("env", System.getenv());
+
+                final Principal principal = req.getUserPrincipal();
+                if (principal != null) {
+                    json.put("user", principal.getName());
+                }
             }
         });
     }
