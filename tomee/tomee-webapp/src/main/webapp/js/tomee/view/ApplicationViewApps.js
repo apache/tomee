@@ -71,10 +71,10 @@ TOMEE.ApplicationViewApps = function (cfg) {
         var content = panel.getContentEl();
         content.append(map.main);
 
-        (function() {
-            var fileUploadedHandler = function(event) {
+        (function () {
+            var fileUploadedHandler = function (event) {
                 fileForm.myFrame.unbind('load', fileUploadedHandler);
-                var text = TOMEE.utils.getSafe(function() {
+                var text = TOMEE.utils.getSafe(function () {
                     return fileForm.myFrame.contents().first()[0].body.innerText;
                 }, '');
 
@@ -84,27 +84,27 @@ TOMEE.ApplicationViewApps = function (cfg) {
             };
 
             var frameId = TOMEE.Sequence.next('uploadFrame');
-            var fileForm= TOMEE.el.getElMap({
+            var fileForm = TOMEE.el.getElMap({
                 elName:'main',
                 tag:'form',
                 attributes:{
                     style:'background-color:#EEE; border-top: 1px solid #E5E5E5; height: 30px;margin-bottom: 0px;',
-                    method: 'post',
-                    enctype: 'multipart/form-data',
-                    action: TOMEE.baseURL('upload'),
-                    target: frameId
+                    method:'post',
+                    enctype:'multipart/form-data',
+                    action:TOMEE.baseURL('upload'),
+                    target:frameId
                 },
                 children:[
                     {
                         elName:'myFrame',
-                        tag: 'iframe',
+                        tag:'iframe',
                         attributes:{
-                            id: frameId,
+                            id:frameId,
                             style:'display: none'
                         }
                     },
                     {
-                        elName: 'fileField',
+                        elName:'fileField',
                         tag:'input',
                         attributes:{
                             style:'padding-left: 5px; float: left; position: relative;',
@@ -153,10 +153,14 @@ TOMEE.ApplicationViewApps = function (cfg) {
     elMapContent['left'].append(deployments.getEl());
     elMapContent['center'].append(log.getEl());
 
+    var setHeight = function (height) {
+
+    };
 
     return {
         getEl:function () {
             return elMapContent.main;
-        }
+        },
+        setHeight:setHeight
     };
 };

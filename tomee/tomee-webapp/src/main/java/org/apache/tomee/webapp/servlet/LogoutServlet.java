@@ -15,31 +15,27 @@
  * limitations under the License.
  */
 
-package org.apache.tomee.webapp.helper.service;
+package org.apache.tomee.webapp.servlet;
 
-public class ServiceContextImpl implements ServiceContext {
-    private final OpenEJBHelper openEJBHelper;
-    private final JndiHelper jndiHelper;
-    private final TestHelper testHelper;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
 
-    public ServiceContextImpl() {
-        this.openEJBHelper = new OpenEJBHelperImpl();
-        this.jndiHelper = new JndiHelperImpl(this);
-        this.testHelper = new TestHelperImpl(this);
-    }
 
-    @Override
-    public OpenEJBHelper getOpenEJBHelper() {
-        return openEJBHelper;
-    }
+public class LogoutServlet extends HttpServlet {
 
     @Override
-    public JndiHelper getJndiHelper() {
-        return jndiHelper;
-    }
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        final HttpSession session = req.getSession(false);
+        if (session == null) {
+            return;
+        }
 
-    @Override
-    public TestHelper getTestHelper() {
-        return testHelper;
+        synchronized (session) {
+            session.invalidate();
+        }
     }
 }

@@ -85,6 +85,14 @@ TOMEE.ApplicationView = function (cfg) {
         })();
 
         myDiv.height(availableSpace);
+
+        var group = null;
+        for(var key in groups) {
+            group = groups[key];
+            if(group.setHeight) {
+                group.setHeight(availableSpace);
+            }
+        }
     };
 
     var showTab = function (tab) {
