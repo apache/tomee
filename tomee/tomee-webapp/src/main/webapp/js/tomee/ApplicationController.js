@@ -152,6 +152,14 @@ TOMEE.ApplicationController = function () {
         throw "app.console.executed not implemented";
     });
 
+    channel.bind('app.new.log.data', function (params) {
+        logView.loadData(params);
+    });
+
+    channel.bind('trigger.log.load', function (params) {
+        model.loadLog(params.file, params.tail);
+    });
+
     var view = TOMEE.ApplicationView({
         channel:channel,
         groups:{
@@ -159,10 +167,11 @@ TOMEE.ApplicationController = function () {
             'apps':appsView,
             'log':logView
         },
-        initTab:'home'
+        initTab:'log'
     });
 
     model.loadSystemInfo();
+    model.loadLog(null, null);
 
     return {
 

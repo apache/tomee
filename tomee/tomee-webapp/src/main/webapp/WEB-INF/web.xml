@@ -53,6 +53,11 @@
     </servlet>
 
     <servlet>
+        <servlet-name>LogServlet</servlet-name>
+        <servlet-class>org.apache.tomee.webapp.servlet.LogServlet</servlet-class>
+    </servlet>
+
+    <servlet>
         <servlet-name>LogoutServlet</servlet-name>
         <servlet-class>org.apache.tomee.webapp.servlet.LogoutServlet</servlet-class>
     </servlet>
@@ -100,6 +105,11 @@
     <servlet-mapping>
         <servlet-name>SystemInfoServlet</servlet-name>
         <url-pattern>/system/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>LogServlet</servlet-name>
+        <url-pattern>/log/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

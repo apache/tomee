@@ -27,6 +27,7 @@ TOMEE.ApplicationModel = function (cfg) {
     var channel = cfg.channel;
 
     var systemInfo = {};
+    var logInfo = {};
 
     var request = function (params) {
         $.ajax({
@@ -75,13 +76,13 @@ TOMEE.ApplicationModel = function (cfg) {
         getSystemInfo:function () {
             return systemInfo;
         },
-        execute: function(codeType, codeText) {
+        execute:function (codeType, codeText) {
             request({
                 method:'POST',
                 url:TOMEE.baseURL('console'),
-                data: {
-                    engineName: codeType,
-                    scriptCode: codeText
+                data:{
+                    engineName:codeType,
+                    scriptCode:codeText
                 },
                 success:function (data) {
                     systemInfo = data;
@@ -89,6 +90,32 @@ TOMEE.ApplicationModel = function (cfg) {
                 }
             });
 
+        },
+        loadLog:function (file, tail) {
+            var data = {
+                escapeHtml:true
+            };
+
+            if (file) {
+                data.file = file;
+            }
+
+            if (tail) {
+                data.tail = tail;
+            }
+
+            request({
+                method:'GET',
+                url:TOMEE.baseURL('log'),
+                data:data,
+                success:function (data) {
+                    logInfo = data;
+                    channel.send('app.new.log.data', data);
+                }
+            });
+        },
+        getLogInfo:function () {
+            return logInfo;
         }
     };
 }
