@@ -116,7 +116,7 @@ TOMEE.ApplicationController = function () {
     });
 
     channel.bind('application.logout', function (params) {
-        alert('Log out!');
+        model.logout();
     });
 
     channel.bind('jndi_leaf_click', function (params) {
@@ -128,7 +128,11 @@ TOMEE.ApplicationController = function () {
     });
 
     channel.bind('app.deployment.result', function (params) {
-        alert('file: ' + params.file + '; deployed: ' + params.deployed + ';');
+        alert('appId: ' + params.appId + '; path: ' + params.path + ';');
+    });
+
+    channel.bind('app.logout.bye', function (params) {
+        window.location.reload();
     });
 
     var view = TOMEE.ApplicationView({

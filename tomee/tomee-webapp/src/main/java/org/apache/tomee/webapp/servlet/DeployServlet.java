@@ -55,7 +55,7 @@ public class DeployServlet extends HttpServlet {
 
             // the path is translated from the parameter to a file path
             // the input can be "mvn:org.superbiz/rest-example.1.0/war" for instance or an http url
-            result.put("info", info.path);
+            result.put("path", info.path);
             result.put("appId", info.appId);
 
         } catch (Exception e) {

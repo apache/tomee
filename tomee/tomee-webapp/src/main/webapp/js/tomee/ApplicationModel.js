@@ -39,6 +39,15 @@ TOMEE.ApplicationModel = function (cfg) {
     };
 
     return {
+        logout:function () {
+            request({
+                method:'GET',
+                url:TOMEE.baseURL('logout'),
+                success:function () {
+                    channel.send('app.logout.bye', {});
+                }
+            });
+        },
         deployApp:function (path) {
             request({
                 method:'POST',

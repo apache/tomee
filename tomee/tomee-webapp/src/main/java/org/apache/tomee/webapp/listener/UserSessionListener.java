@@ -17,8 +17,7 @@
 
 package org.apache.tomee.webapp.listener;
 
-import org.apache.tomee.webapp.helper.service.ServiceContext;
-import org.apache.tomee.webapp.helper.service.ServiceContextImpl;
+import org.apache.tomee.webapp.SessionData;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
@@ -30,8 +29,10 @@ public class UserSessionListener implements HttpSessionListener {
 
     @Override
     public void sessionCreated(HttpSessionEvent httpSessionEvent) {
-        final ServiceContext cxt = new ServiceContextImpl();
-        httpSessionEvent.getSession().setAttribute(USER_CONTEXT, cxt);
+        httpSessionEvent.getSession().setAttribute(USER_CONTEXT, new SessionData());
+
+        //this i used by the old tomee gui
+        //TODO: remove me once the new gui is ready
         httpSessionEvent.getSession().setAttribute("objects", new HashMap<String, Object>());
     }
 
@@ -40,8 +41,7 @@ public class UserSessionListener implements HttpSessionListener {
         //do nothing
     }
 
-    public static ServiceContext getServiceContext(HttpSession session) {
-        final ServiceContext cxt = (ServiceContext) session.getAttribute(USER_CONTEXT);
-        return cxt;
+    public static SessionData getServiceContext(HttpSession session) {
+        return (SessionData) session.getAttribute(USER_CONTEXT);
     }
 }
