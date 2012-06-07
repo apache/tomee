@@ -726,6 +726,10 @@
     # original logical connection wrapper.
 
     AccessToUnderlyingConnectionAllowed	false
+
+    # use only all set values in this config
+    # will need a lot of properties but allow to not set some values
+    IgnoreDefaultValues = false
   </ServiceProvider>
 
   <ServiceProvider
