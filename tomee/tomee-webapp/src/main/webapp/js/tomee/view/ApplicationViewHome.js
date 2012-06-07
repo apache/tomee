@@ -51,37 +51,6 @@ TOMEE.ApplicationViewHome = function (cfg) {
             }
         ]
     });
-    //position:absolute; top:50%;
-
-    var elBottomBar = TOMEE.el.getElMap({
-        elName:'main',
-        tag:'form',
-        cls: 'well form-inline',
-        attributes:{
-            style:'height: 27px;margin-bottom: 0px;padding-top: 1px;padding-left: 1px;padding-bottom: 1px;padding-right: 1px;'
-        },
-        children: [
-            {
-                tag:'select',
-                children: [
-                    {
-                        tag:'option',
-                        html: 'Javascript'
-                    },
-                    {
-                        tag:'option',
-                        html: 'Groovy'
-                    }
-                ]
-            },
-            {
-                elName:'executeBtn',
-                tag:'button',
-                cls:'btn',
-                html: 'execute'
-            }
-        ]
-    });
 
     var jndiPanel = (function () {
         var jndi = TOMEE.components.Panel({
@@ -148,8 +117,46 @@ TOMEE.ApplicationViewHome = function (cfg) {
             }
         });
 
+        var elText = TOMEE.el.getElMap({
+            elName:'main',
+            tag:'textarea',
+            attributes:{
+                style:'height: 469px; width: 100%;border: 0px;padding: 0px;margin: 0px;'
+            }
+        });
+
+        var elBottomBar = TOMEE.el.getElMap({
+            elName:'main',
+            tag:'form',
+            cls: 'well form-inline',
+            attributes:{
+                style:'height: 27px;margin-bottom: 0px;padding-top: 1px;padding-left: 1px;padding-bottom: 1px;padding-right: 1px;'
+            },
+            children: [
+                {
+                    tag:'select',
+                    children: [
+                        {
+                            tag:'option',
+                            html: 'Javascript'
+                        },
+                        {
+                            tag:'option',
+                            html: 'Groovy'
+                        }
+                    ]
+                },
+                {
+                    elName:'executeBtn',
+                    tag:'button',
+                    cls:'btn',
+                    html: 'execute'
+                }
+            ]
+        });
+
         var el = console.getContentEl();
-        el.append('<textarea style="height: 469px; width: 100%;border: 0px;padding: 0px;margin: 0px;"></textarea>');
+        el.append(elText.main);
         el.append(elBottomBar.main);
 
 
