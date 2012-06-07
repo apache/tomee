@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.tomee.webapp.servlet;
+package org.apache.tomee.webapp;
 
 import com.google.gson.Gson;
 

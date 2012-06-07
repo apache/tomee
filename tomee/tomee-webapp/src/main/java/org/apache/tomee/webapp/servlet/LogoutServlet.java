@@ -17,25 +17,36 @@
 
 package org.apache.tomee.webapp.servlet;
 
+import org.apache.tomee.webapp.JsonExecutor;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Map;
 
 
 public class LogoutServlet extends HttpServlet {
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        final HttpSession session = req.getSession(false);
-        if (session == null) {
-            return;
-        }
+    protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
+        JsonExecutor.execute(resp, new JsonExecutor.Executor() {
+            @Override
+            public void call(Map<String, Object> json) {
+                final HttpSession session = req.getSession(false);
+                if (session == null) {
+                    return;
+                }
 
-        synchronized (session) {
-            session.invalidate();
-        }
+                synchronized (session) {
+                    session.invalidate();
+                }
+
+                json.put("done", Boolean.TRUE);
+            }
+        });
+
     }
 }

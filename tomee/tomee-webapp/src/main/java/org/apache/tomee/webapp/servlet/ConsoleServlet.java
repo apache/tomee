@@ -17,9 +17,10 @@
 
 package org.apache.tomee.webapp.servlet;
 
+import org.apache.tomee.webapp.JsonExecutor;
+
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -31,47 +32,49 @@ import java.util.Map;
 public class ConsoleServlet extends HttpServlet {
 
     @Override
-    protected void doPost(HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-        final ScriptEngineManager manager = new ScriptEngineManager();
-        final HttpSession session = req.getSession();
-
-        String engineName = req.getParameter("engineName");
-        if (engineName == null || "".equals(engineName.trim())) {
-            engineName = "JavaScript";
-        }
-        final ScriptEngine engine = manager.getEngineByName(engineName);
-
-        engine.put("req", req);
-        engine.put("resp", resp);
-
-        engine.put("util", new Utility() {
-
-
+    protected void doPost(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
+        JsonExecutor.execute(resp, new JsonExecutor.Executor() {
             @Override
-            public void write(Object obj) throws Exception {
-                resp.getWriter().write(String.valueOf(obj));
-            }
+            public void call(Map<String, Object> json) throws Exception {
+                final ScriptEngineManager manager = new ScriptEngineManager();
+                final HttpSession session = req.getSession();
 
-            @Override
-            public void save(String key, Object obj) {
-                Map<String, Object> objects = (Map<String, Object>) session.getAttribute("objects");
-                objects.put(key, obj);
+                String engineName = req.getParameter("engineName");
+                if (engineName == null || "".equals(engineName.trim())) {
+                    engineName = "JavaScript";
+                }
+                final ScriptEngine engine = manager.getEngineByName(engineName);
+
+                engine.put("req", req);
+                engine.put("resp", resp);
+
+                engine.put("util", new Utility() {
+
+
+                    @Override
+                    public void write(Object obj) throws Exception {
+                        resp.getWriter().write(String.valueOf(obj));
+                    }
+
+                    @Override
+                    public void save(String key, Object obj) {
+                        Map<String, Object> objects = (Map<String, Object>) session.getAttribute("objects");
+                        objects.put(key, obj);
+                    }
+                });
+
+                String scriptCode = req.getParameter("scriptCode");
+                if (scriptCode == null || "".equals(scriptCode.trim())) {
+                    scriptCode = "var a = 0;";
+                }
+                engine.eval(scriptCode);
             }
         });
-
-        String scriptCode = req.getParameter("scriptCode");
-        if (scriptCode == null || "".equals(scriptCode.trim())) {
-            scriptCode = "var a = 0;";
-        }
-        try {
-            engine.eval(scriptCode);
-        } catch (ScriptException e) {
-            throw new ServletException(e);
-        }
     }
 
     private interface Utility {
         void write(Object obj) throws Exception;
+
         void save(String key, Object obj);
     }
 }

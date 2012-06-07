@@ -26,6 +26,8 @@ TOMEE.ApplicationModel = function (cfg) {
 
     var channel = cfg.channel;
 
+    var systemInfo = {};
+
     var request = function (params) {
         $.ajax({
                 url:params.url,
@@ -59,6 +61,19 @@ TOMEE.ApplicationModel = function (cfg) {
                     channel.send('app.deployment.result', data);
                 }
             });
+        },
+        loadSystemInfo:function () {
+            request({
+                method:'GET',
+                url:TOMEE.baseURL('system'),
+                success:function (data) {
+                    systemInfo = data;
+                    channel.send('app.system.info', data);
+                }
+            });
+        },
+        getSystemInfo:function () {
+            return systemInfo;
         }
     };
-};
+}

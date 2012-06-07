@@ -68,13 +68,18 @@
     </servlet>
 
     <servlet>
+        <servlet-name>SystemInfoServlet</servlet-name>
+        <servlet-class>org.apache.tomee.webapp.servlet.SystemInfoServlet</servlet-class>
+    </servlet>
+
+    <servlet>
         <servlet-name>DeployServlet</servlet-name>
         <servlet-class>org.apache.tomee.webapp.servlet.DeployServlet</servlet-class>
     </servlet>
 
     <servlet>
         <servlet-name>ErrorServlet</servlet-name>
-        <servlet-class>org.apache.tomee.webapp.servlet.ErrorServlet</servlet-class>
+        <servlet-class>org.apache.tomee.webapp.ErrorServlet</servlet-class>
     </servlet>
 
     <servlet>
@@ -90,6 +95,11 @@
     <servlet-mapping>
         <servlet-name>InstallerServlet</servlet-name>
         <url-pattern>/installer</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>SystemInfoServlet</servlet-name>
+        <url-pattern>/system/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
