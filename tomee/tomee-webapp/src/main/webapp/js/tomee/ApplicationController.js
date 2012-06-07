@@ -153,7 +153,7 @@ TOMEE.ApplicationController = function () {
                 }
             })()
         },
-        initTab:'apps'
+        initTab:'home'
     });
 
     model.loadSystemInfo();
