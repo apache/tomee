@@ -74,14 +74,10 @@ TOMEE.ApplicationView = function (cfg) {
     var calculateContentSize = function () {
         var myDiv = elMapContent.main;
 
-        var getBorderSize = function (el) {
-            return el.outerHeight(true) - el.height();
-        };
-
         var availableSpace = (function () {
             var windowSize = windowEl.height();
             var footerSize = elMapFooter.main.height();
-            return windowSize - footerSize - getBorderSize(myDiv) - getBorderSize($('body'));
+            return windowSize - footerSize - TOMEE.el.getBorderSize(myDiv) - TOMEE.el.getBorderSize($('body'));
         })();
 
         myDiv.height(availableSpace);

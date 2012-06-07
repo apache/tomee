@@ -31,6 +31,10 @@ TOMEE.ApplicationController = function () {
         channel:channel
     });
 
+    var logView = TOMEE.ApplicationViewLog({
+        channel:channel
+    });
+
     var appsView = TOMEE.ApplicationViewApps({
         channel:channel
     });
@@ -153,14 +157,7 @@ TOMEE.ApplicationController = function () {
         groups:{
             'home':homeView,
             'apps':appsView,
-            'log':(function () {
-                var myEl = $('<div></div>');
-                return {
-                    getEl:function () {
-                        return myEl;
-                    }
-                }
-            })()
+            'log':logView
         },
         initTab:'home'
     });

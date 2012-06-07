@@ -18,6 +18,9 @@
  */
 
 TOMEE.el = (function () {
+    var getBorderSize = function (el) {
+        return el.outerHeight(true) - el.height();
+    };
 
     var getElMap = function (elCfg) {
         var elMap = {};
@@ -28,21 +31,21 @@ TOMEE.el = (function () {
     var mountEl = function (elCfg, elMap) {
         var el = $('<' + elCfg.tag + '></' + elCfg.tag + '>');
 
-        (function() {
+        (function () {
             var attrs = elCfg.attributes;
-            for(var key in attrs) {
+            for (var key in attrs) {
                 el.attr(key, attrs[key]);
             }
         })();
 
-        (function() {
+        (function () {
             var listeners = elCfg.listeners;
-            for(var key in listeners) {
+            for (var key in listeners) {
                 el.bind(key, listeners[key]);
             }
         })();
 
-        if(elCfg.cls) {
+        if (elCfg.cls) {
             el.addClass(elCfg.cls);
         }
 
@@ -59,7 +62,7 @@ TOMEE.el = (function () {
             el.html(elCfg.html);
         }
 
-        if(elCfg.createCallback) {
+        if (elCfg.createCallback) {
             elCfg.createCallback(el);
         }
 
@@ -67,6 +70,7 @@ TOMEE.el = (function () {
     };
 
     return {
-        getElMap:getElMap
+        getElMap:getElMap,
+        getBorderSize:getBorderSize
     }
 })();
