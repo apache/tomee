@@ -30,17 +30,19 @@ TOMEE.I18N = (function () {
         'application.apps':'Apps',
         'application.log':'Log',
 
-        'application.deployments': 'Deployments',
+        'application.deployments':'Deployments',
 
-        'application.jdni': 'Jndi',
-        'application.saved.objects': 'Saved Objects',
-        'application.console': 'Console',
-        'application.mdbs': 'MDBs',
-        'application.ws': 'Webservices',
+        'application.jdni':'Jndi',
+        'application.saved.objects':'Saved Objects',
+        'application.console':'Console',
+        'application.mdbs':'MDBs',
+        'application.ws':'Webservices',
 
-        'application.console.execute': 'Execute',
-        'application.console.Javascript': 'Javascript',
-        'application.console.Groovy': 'Groovy',
+        'application.console.execute':'Execute',
+        'application.console.Javascript':'Javascript',
+        'application.console.Groovy':'Groovy',
+
+        'application.log.load':'Load',
 
         'dummy':'dummy'
     };

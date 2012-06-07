@@ -134,30 +134,36 @@ TOMEE.ApplicationViewHome = function (cfg) {
             },
             children: [
                 {
-                    elName:'scriptSelector',
-                    tag:'select',
+                    tag:'div',
+                    cls:'pull-right',
                     children: [
                         {
-                            tag:'option',
-                            html: TOMEE.I18N.get('application.console.Javascript'),
-                            attributes: {
-                                value: 'JavaScript'
-                            }
+                            elName:'scriptSelector',
+                            tag:'select',
+                            children: [
+                                {
+                                    tag:'option',
+                                    html: TOMEE.I18N.get('application.console.Javascript'),
+                                    attributes: {
+                                        value: 'JavaScript'
+                                    }
+                                },
+                                {
+                                    tag:'option',
+                                    html: TOMEE.I18N.get('application.console.Groovy'),
+                                    attributes: {
+                                        value: 'Groovy'
+                                    }
+                                }
+                            ]
                         },
                         {
-                            tag:'option',
-                            html: TOMEE.I18N.get('application.console.Groovy'),
-                            attributes: {
-                                value: 'Groovy'
-                            }
+                            elName:'executeBtn',
+                            tag:'button',
+                            cls:'btn',
+                            html: TOMEE.I18N.get('application.console.execute')
                         }
                     ]
-                },
-                {
-                    elName:'executeBtn',
-                    tag:'button',
-                    cls:'btn',
-                    html: TOMEE.I18N.get('application.console.execute')
                 }
             ]
         });
