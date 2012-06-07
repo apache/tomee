@@ -114,6 +114,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, ConfigurationFactory.class);
     private static final Messages messages = new Messages(ConfigurationFactory.class);
 
+    private static final String IGNORE_DEFAULT_VALUES_PROP = "IgnoreDefaultValues";
+
     private String configLocation;
     private OpenEjbConfiguration sys;
     private Openejb openejb;
@@ -956,9 +958,16 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             }
 
             final Properties props = new SuperProperties();
-            props.putAll(provider.getProperties());
+
+            // weird hack but sometimes we don't want default values when we want null for instance
+            if (service.getProperties() == null || "false".equals(service.getProperties().getProperty(IGNORE_DEFAULT_VALUES_PROP, "false"))) {
+                props.putAll(provider.getProperties());
+            }
+
             props.putAll(service.getProperties());
             props.putAll(overrides);
+
+            props.remove(IGNORE_DEFAULT_VALUES_PROP);
 
             if (providerType != null && !provider.getService().equals(providerType)) {
                 throw new OpenEJBException(messages.format("configureService.wrongProviderType", service.getId(), providerType));
