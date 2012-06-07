@@ -25,7 +25,7 @@ TOMEE.ApplicationViewHome = function (cfg) {
         elName:'main',
         tag:'div',
         attributes:{
-            style:'padding: 5px;'
+            style:'position:relative; padding: 5px;'
         },
         children:[
             {
@@ -48,6 +48,37 @@ TOMEE.ApplicationViewHome = function (cfg) {
                 attributes:{
                     style:'float:left; width:33%; min-width:170px;'
                 }
+            }
+        ]
+    });
+    //position:absolute; top:50%;
+
+    var elBottomBar = TOMEE.el.getElMap({
+        elName:'main',
+        tag:'form',
+        cls: 'well form-inline',
+        attributes:{
+            style:'height: 27px;margin-bottom: 0px;padding-top: 1px;padding-left: 1px;padding-bottom: 1px;padding-right: 1px;'
+        },
+        children: [
+            {
+                tag:'select',
+                children: [
+                    {
+                        tag:'option',
+                        html: 'Javascript'
+                    },
+                    {
+                        tag:'option',
+                        html: 'Groovy'
+                    }
+                ]
+            },
+            {
+                elName:'executeBtn',
+                tag:'button',
+                cls:'btn',
+                html: 'execute'
             }
         ]
     });
@@ -119,7 +150,7 @@ TOMEE.ApplicationViewHome = function (cfg) {
 
         var el = console.getContentEl();
         el.append('<textarea style="height: 469px; width: 100%;border: 0px;padding: 0px;margin: 0px;"></textarea>');
-        el.append('<div style="background-color:#EEE; border-top: 1px solid #E5E5E5; height: 30px;"><select id="select01"><option>Javascript</option><option>Grails</option></select><a class="btn">execute</a></div>');
+        el.append(elBottomBar.main);
 
 
         return {
