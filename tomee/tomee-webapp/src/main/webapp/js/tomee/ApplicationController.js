@@ -139,6 +139,15 @@ TOMEE.ApplicationController = function () {
         view.setLoggedUser(params.user);
     });
 
+    channel.bind('trigger.console.exec', function (params) {
+        model.execute(params.codeType, params.codeText);
+    });
+
+    channel.bind('app.console.executed', function (params) {
+        //TODO Implement me
+        throw "app.console.executed not implemented";
+    });
+
     var view = TOMEE.ApplicationView({
         channel:channel,
         groups:{

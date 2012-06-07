@@ -83,7 +83,7 @@
     </servlet>
 
     <servlet>
-        <servlet-name>WsConsole</servlet-name>
+        <servlet-name>ConsoleServlet</servlet-name>
         <servlet-class>org.apache.tomee.webapp.servlet.ConsoleServlet</servlet-class>
     </servlet>
 
@@ -123,8 +123,8 @@
     </servlet-mapping>
 
     <servlet-mapping>
-        <servlet-name>WsConsole</servlet-name>
-        <url-pattern>/ws/console/*</url-pattern>
+        <servlet-name>ConsoleServlet</servlet-name>
+        <url-pattern>/console/*</url-pattern>
     </servlet-mapping>
 
     <!-- basic security to replace context.xml and allow remote accesses -->

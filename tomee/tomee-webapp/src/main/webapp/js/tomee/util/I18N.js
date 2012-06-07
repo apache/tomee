@@ -38,6 +38,10 @@ TOMEE.I18N = (function () {
         'application.mdbs': 'MDBs',
         'application.ws': 'Webservices',
 
+        'application.console.execute': 'Execute',
+        'application.console.Javascript': 'Javascript',
+        'application.console.Groovy': 'Groovy',
+
         'dummy':'dummy'
     };
 
