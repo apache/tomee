@@ -74,6 +74,21 @@ TOMEE.ApplicationModel = function (cfg) {
         },
         getSystemInfo:function () {
             return systemInfo;
+        },
+        execute: function(codeType, codeText) {
+            request({
+                method:'POST',
+                url:TOMEE.baseURL('console'),
+                data: {
+                    engineName: codeType,
+                    scriptCode: codeText
+                },
+                success:function (data) {
+                    systemInfo = data;
+                    channel.send('app.console.executed', data);
+                }
+            });
+
         }
     };
 }

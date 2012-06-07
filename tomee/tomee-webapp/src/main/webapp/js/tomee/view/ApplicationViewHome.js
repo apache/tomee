@@ -134,15 +134,22 @@ TOMEE.ApplicationViewHome = function (cfg) {
             },
             children: [
                 {
+                    elName:'scriptSelector',
                     tag:'select',
                     children: [
                         {
                             tag:'option',
-                            html: 'Javascript'
+                            html: TOMEE.I18N.get('application.console.Javascript'),
+                            attributes: {
+                                value: 'JavaScript'
+                            }
                         },
                         {
                             tag:'option',
-                            html: 'Groovy'
+                            html: TOMEE.I18N.get('application.console.Groovy'),
+                            attributes: {
+                                value: 'Groovy'
+                            }
                         }
                     ]
                 },
@@ -150,7 +157,7 @@ TOMEE.ApplicationViewHome = function (cfg) {
                     elName:'executeBtn',
                     tag:'button',
                     cls:'btn',
-                    html: 'execute'
+                    html: TOMEE.I18N.get('application.console.execute')
                 }
             ]
         });
@@ -159,6 +166,14 @@ TOMEE.ApplicationViewHome = function (cfg) {
         el.append(elText.main);
         el.append(elBottomBar.main);
 
+        elBottomBar.main.bind('click', function() {
+            var text = elText.main.val();
+            var script = elBottomBar.scriptSelector.val();
+            channel.send('trigger.console.exec', {
+                codeType: script,
+                codeText: text
+            });
+        });
 
         return {
             getEl:function () {
