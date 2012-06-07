@@ -45,9 +45,10 @@ public class ImportSqlScriptTest {
     @Configuration
     public Properties config() {
         final Properties p = new Properties();
-        p.put("ImportSqlScriptTest", "new://Resource?type=DataSource");
-        p.put("ImportSqlScriptTest.JdbcDriver", "org.hsqldb.jdbcDriver");
-        p.put("ImportSqlScriptTest.JdbcUrl", "jdbc:hsqldb:mem:bval");
+        p.put("ImportSqlScriptTestDb", "new://Resource?type=DataSource");
+        p.put("ImportSqlScriptTestDb.JdbcDriver", "org.hsqldb.jdbcDriver");
+        p.put("ImportSqlScriptTestDb.JdbcUrl", "jdbc:hsqldb:mem:import-sql");
+        //p.put("ImportSqlScriptTest.initConnectionSqls", "insert into \"ImportSqlScriptTest$Something\" (id) values(1);");
         return p;
     }
 
