@@ -24,8 +24,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 import java.security.Principal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -42,11 +45,18 @@ public class SystemInfoServlet extends HttpServlet {
                 json.put("systemProperties", systemProperties);
 
                 final Set<String> props = System.getProperties().stringPropertyNames();
-                for(String propName: props) {
+                for (String propName : props) {
                     systemProperties.put(propName, System.getProperty(propName));
                 }
 
                 json.put("env", System.getenv());
+
+                {
+                    final RuntimeMXBean runtimemxBean = ManagementFactory.getRuntimeMXBean();
+                    final List<String> arguments = runtimemxBean.getInputArguments();
+
+                    json.put("jvmArguments", arguments);
+                }
 
                 final Principal principal = req.getUserPrincipal();
                 if (principal != null) {
