@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.util.proxy;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -36,7 +37,7 @@ import org.apache.xbean.asm.Opcodes;
 import org.apache.xbean.asm.Type;
 
 public class LocalBeanProxyGeneratorImpl implements LocalBeanProxyGenerator, Opcodes {
-    private static final String[] SERIALIZABLE = new String[] { "Ljava/io/Serializable;" };
+    private static final String[] SERIALIZABLE = new String[] { Serializable.class.getName().replace('.', '/') };
 
     static final String BUSSINESS_HANDLER_NAME = "businessHandler";    
     static final String NON_BUSINESS_HANDLER_NAME = "nonBusinessHandler";
