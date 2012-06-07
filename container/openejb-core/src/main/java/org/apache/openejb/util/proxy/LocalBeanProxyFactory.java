@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.util.proxy;
 
+import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -61,7 +62,7 @@ public class LocalBeanProxyFactory {
         }
     }
     
-    private static class NonBusinessHandler implements java.lang.reflect.InvocationHandler {
+    private static class NonBusinessHandler implements java.lang.reflect.InvocationHandler, Serializable {
 
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             throw new EJBException("Calling non-public methods of a local bean without any interfaces is not allowed");
