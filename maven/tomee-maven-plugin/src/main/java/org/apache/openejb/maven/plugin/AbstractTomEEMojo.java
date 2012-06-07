@@ -45,6 +45,7 @@ import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.settings.Settings;
 import org.apache.openejb.config.RemoteServer;
 import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.IO;
@@ -218,6 +219,15 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
      * @parameter expression="${project.packaging}"
      */
     protected String packaging;
+
+    /**
+     * The current user system settings for use in Maven.
+     *
+     * @parameter expression="${settings}"
+     * @required
+     * @readonly
+     */
+    protected Settings settings;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -523,21 +533,25 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     }
 
     private File resolve() {
-        if ("snapshots".equals(apacheRepos) || "true".equals(apacheRepos)) {
-            remoteRepos.add(new DefaultArtifactRepository("apache", "https://repository.apache.org/content/repositories/snapshots/",
-                    new DefaultRepositoryLayout(),
-                    new ArtifactRepositoryPolicy(true, UPDATE_POLICY_DAILY, CHECKSUM_POLICY_WARN),
-                    new ArtifactRepositoryPolicy(false, UPDATE_POLICY_NEVER, CHECKSUM_POLICY_WARN)));
-        } else {
-            try {
-                new URI(apacheRepos); // to check it is a uri
-                remoteRepos.add(new DefaultArtifactRepository("additional-repo-tomee-mvn-plugin", apacheRepos,
+        if (!settings.isOffline()) {
+            if ("snapshots".equals(apacheRepos) || "true".equals(apacheRepos)) {
+                remoteRepos.add(new DefaultArtifactRepository("apache", "https://repository.apache.org/content/repositories/snapshots/",
                         new DefaultRepositoryLayout(),
                         new ArtifactRepositoryPolicy(true, UPDATE_POLICY_DAILY, CHECKSUM_POLICY_WARN),
-                        new ArtifactRepositoryPolicy(true, UPDATE_POLICY_NEVER, CHECKSUM_POLICY_WARN)));
-            } catch (URISyntaxException e) {
-                // ignored, use classical repos
+                        new ArtifactRepositoryPolicy(false, UPDATE_POLICY_NEVER, CHECKSUM_POLICY_WARN)));
+            } else {
+                try {
+                    new URI(apacheRepos); // to check it is a uri
+                    remoteRepos.add(new DefaultArtifactRepository("additional-repo-tomee-mvn-plugin", apacheRepos,
+                            new DefaultRepositoryLayout(),
+                            new ArtifactRepositoryPolicy(true, UPDATE_POLICY_DAILY, CHECKSUM_POLICY_WARN),
+                            new ArtifactRepositoryPolicy(true, UPDATE_POLICY_NEVER, CHECKSUM_POLICY_WARN)));
+                } catch (URISyntaxException e) {
+                    // ignored, use classical repos
+                }
             }
+        } else if (remoteRepos != null && remoteRepos.isEmpty()) {
+            remoteRepos = new ArrayList<ArtifactRepository>();
         }
 
         try {
