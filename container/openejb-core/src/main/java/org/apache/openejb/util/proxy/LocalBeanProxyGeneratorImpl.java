@@ -36,6 +36,7 @@ import org.apache.xbean.asm.Opcodes;
 import org.apache.xbean.asm.Type;
 
 public class LocalBeanProxyGeneratorImpl implements LocalBeanProxyGenerator, Opcodes {
+    private static final String[] SERIALIZABLE = new String[] { "Ljava/io/Serializable;" };
 
     static final String BUSSINESS_HANDLER_NAME = "businessHandler";    
     static final String NON_BUSINESS_HANDLER_NAME = "nonBusinessHandler";
@@ -129,7 +130,7 @@ public class LocalBeanProxyGeneratorImpl implements LocalBeanProxyGenerator, Opc
         String proxyClassName = proxyName.replaceAll("\\.", "/");
 
         // push class signature
-        cw.visit(V1_5, ACC_PUBLIC + ACC_SUPER, proxyClassName, null, clsToOverride, null);
+        cw.visit(V1_5, ACC_PUBLIC + ACC_SUPER, proxyClassName, null, clsToOverride, SERIALIZABLE);
 		cw.visitSource(clsToOverride + ".java", null);
 
 		// push InvocationHandler fields
