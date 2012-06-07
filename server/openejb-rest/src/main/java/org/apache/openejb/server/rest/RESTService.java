@@ -348,7 +348,7 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
         while (usedClass.getAnnotation(Path.class) == null && usedClass.getSuperclass() != null) {
             usedClass = usedClass.getSuperclass();
         }
-        if (usedClass == null) {
+        if (usedClass == null || usedClass.getAnnotation(Path.class) == null) {
             throw new IllegalArgumentException("no @Path annotation on " + clazz.getName());
         }
 
