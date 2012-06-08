@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.server.cli.command;
 
-import org.apache.openejb.server.cli.OpenEJBScripter;
+import org.apache.openejb.util.OpenEJBScripter;
 
 @Command(name = "script", usage = "script <code>", description = "execute script code in the specified language. ejb can be accessed through their ejb name in the script.")
 public class ScriptCommand extends AbstractCommand {

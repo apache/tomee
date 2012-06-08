@@ -17,13 +17,11 @@
 
 package org.apache.tomee.webapp.servlet;
 
-import javax.script.Bindings;
-import javax.script.SimpleBindings;
 import org.apache.openejb.util.OpenEJBScripter;
 import org.apache.tomee.webapp.JsonExecutor;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
+import javax.script.Bindings;
+import javax.script.SimpleBindings;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
