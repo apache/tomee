@@ -22,55 +22,152 @@ TOMEE.components.Panel = function (cfg) {
     var channel = cfg.channel;
     var avoidOverflow = TOMEE.utils.getSafe(cfg.avoidOverflow, false);
 
-    var map = TOMEE.el.getElMap({
-        elName: 'main',
-        tag: 'div',
-        children: [{
-            tag: 'div',
-            children:[{
-                tag: 'div',
-                cls: 'well t-panel',
-                children:[{
-                    tag: 'h3',
-                    attributes:{
-                        style: 'position: relative; background-color: #d3d3d3; padding-left: 5px'
-                    },
-                    html: TOMEE.utils.getSafe(cfg.title, '-')
-                }, {
-                    elName: 'content',
-                    tag: 'div',
-                    attributes:{
-                        style: 'height: 250px; position: relative; overflow: auto;'
-                    },
-                    createCallback: function(el) {
-                        if(avoidOverflow) {
-                            el.css('overflow', '');
-                        }
+    var elMapToolbar = TOMEE.el.getElMap({
+        elName:'main',
+        tag:'div',
+        cls:'navbar',
+        attributes:{
+            style:'margin-bottom: 0px;'
+        },
+        children:[
+            {
+                tag:'div',
+                cls:'navbar-inner t-navbar',
+                attributes:{
+                    style:'padding-left: 0px; padding-right: 0px;'
+                },
+                children:[
+                    {
+                        tag:'div',
+                        children:[
+                            {
+                                elName:'appName',
+                                tag:'a',
+                                cls:'brand',
+                                attributes:{
+                                    href:'#',
+                                    style:'padding-left: 10px; margin-left: 0px;'
+                                },
+                                html:TOMEE.utils.getSafe(cfg.title, '-')
+                            },
+                            {
+                                tag:'div',
+                                cls:'btn-group pull-right',
+                                children:[
+                                    {
+                                        tag:'a',
+                                        cls:'btn dropdown-toggle',
+                                        attributes:{
+                                            'data-toggle':'dropdown',
+                                            href:'#'
+                                        },
+                                        children:[
+                                            {
+                                                tag:'i',
+                                                cls:'icon-cog'
+                                            },
+                                            {
+                                                tag:'span',
+                                                elName:'userNameSpan',
+                                                attributes:{
+                                                    style:'padding-left: 5px; padding-right: 5px;'
+                                                }
+                                            },
+                                            {
+                                                tag:'span',
+                                                cls:'caret'
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        tag:'ul',
+                                        cls:'dropdown-menu',
+                                        attributes:{
+                                            style:'right: 5px;'
+                                        },
+                                        children:[
+                                            {
+                                                tag:'li',
+                                                children:[
+                                                    {
+                                                        elName:'actionLink',
+                                                        tag:'a',
+                                                        attributes:{
+                                                            href:'#'
+                                                        },
+                                                        html:'-'
+                                                    }
+                                                ]
+                                            }
+                                        ]
+
+                                    }
+                                ]
+                            }
+                        ]
                     }
-                }]
-            }]
-        }]
+                ]
+            }
+        ]
     });
+
+    var map = TOMEE.el.getElMap({
+        elName:'main',
+        tag:'div',
+        children:[
+            {
+                tag:'div',
+                children:[
+                    {
+                        tag:'div',
+                        cls:'well t-panel',
+                        children:[
+                            {
+                                elName: 'toolbar',
+                                tag:'div',
+                                attributes:{
+                                    style:'position: relative;'
+                                }
+                            },
+                            {
+                                elName:'content',
+                                tag:'div',
+                                attributes:{
+                                    style:'height: 250px; position: relative; overflow: auto;'
+                                },
+                                createCallback:function (el) {
+                                    if (avoidOverflow) {
+                                        el.css('overflow', '');
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    });
+
+    map.toolbar.append(elMapToolbar.main);
 
 
     var extraStyles = cfg.extraStyles;
-    if(extraStyles) {
-        (function() {
+    if (extraStyles) {
+        (function () {
             var content = map['content'];
 
-            for(var key in extraStyles) {
+            for (var key in extraStyles) {
                 content.css(key, extraStyles[key]);
             }
         })();
     }
 
 
-
     return {
         getEl:function () {
             return map.main;
         },
-        getContentEl: function() {
+        getContentEl:function () {
             return map.content;
         }
     };
