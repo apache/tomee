@@ -16,15 +16,13 @@
  */
 package org.apache.openejb.server.groovy;
 
-import org.apache.openejb.server.cli.OpenEJBScripter;
+import java.util.Properties;
+import javax.ejb.embeddable.EJBContainer;
+import javax.script.ScriptException;
+import org.apache.openejb.util.OpenEJBScripter;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import javax.ejb.embeddable.EJBContainer;
-import javax.script.ScriptException;
-
-import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 
