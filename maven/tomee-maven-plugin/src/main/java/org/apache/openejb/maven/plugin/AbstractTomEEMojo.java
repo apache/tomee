@@ -89,6 +89,11 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     protected List<ArtifactRepository> remoteRepos;
 
     /**
+     * @parameter expression="${tomee-plugin.skipCurrentProject}" default-value="false"
+     */
+    protected boolean skipCurrentProject;
+
+    /**
      * @parameter expression="${tomee-plugin.version}" default-value="1.1.0-SNAPSHOT"
      */
     protected String tomeeVersion;
@@ -137,7 +142,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     /**
      * @parameter expression="${tomee-plugin.debugPort}" default-value="5005"
      */
-    private int debugPort;
+    protected int debugPort;
 
     /**
      * @parameter default-value="${project.build.directory}/apache-tomee"
@@ -242,7 +247,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         if (removeDefaultWebapps) {
             removeDefaultWebapps();
         }
-        copyWar();
+        if (!skipCurrentProject) {
+            copyWar();
+        }
         run();
     }
 
