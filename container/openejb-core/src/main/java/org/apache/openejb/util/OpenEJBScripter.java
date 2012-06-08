@@ -57,6 +57,10 @@ public class OpenEJBScripter {
         }
     }
 
+    public Set<String> getSupportedLanguages() {
+        return ENGINE_FACTORIES.keySet();
+    }
+
     public Object evaluate(final String language, final String script) throws ScriptException {
         return evaluate(language, script, new SimpleBindings());
     }
