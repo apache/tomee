@@ -17,7 +17,7 @@
 
 package org.apache.tomee.webapp.servlet;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.tomee.webapp.JsonExecutor;
 
 import javax.servlet.ServletException;
@@ -43,9 +43,11 @@ public class LogServlet extends HttpServlet {
 
                 final File[] files = logFolder.listFiles();
                 final Set<String> names = new TreeSet<String>();
-                for (File file : files) {
-                    if (file.length() > 0) {
-                        names.add(file.getName());
+                if (files != null) {
+                    for (File file : files) {
+                        if (file.length() > 0) {
+                            names.add(file.getName());
+                        }
                     }
                 }
 
@@ -85,7 +87,7 @@ public class LogServlet extends HttpServlet {
 
         if (escapeHtml) {
             while ((line = br.readLine()) != null) {
-                addLine.add(StringEscapeUtils.escapeHtml(line));
+                addLine.add(StringEscapeUtils.escapeHtml4(line));
             }
         } else {
             while ((line = br.readLine()) != null) {
