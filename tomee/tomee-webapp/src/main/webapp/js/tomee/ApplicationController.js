@@ -168,7 +168,7 @@ TOMEE.ApplicationController = function () {
             'apps':appsView,
             'log':logView
         },
-        initTab:'log'
+        initTab:'home'
     });
 
     model.loadSystemInfo();
