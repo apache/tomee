@@ -52,7 +52,15 @@ public class SystemInfoServlet extends HttpServlet {
                 }
 
                 json.put("env", System.getenv());
-                json.put("version", VERSION.getName());
+
+                {
+                    Map<String,Object> serverVersion = new HashMap<String, Object>();
+                    json.put("tomee", serverVersion);
+
+                    serverVersion.put("name", VERSION.getName());
+                    serverVersion.put("hasMdbs", VERSION.hasMdbs());
+                    serverVersion.put("hasWebservices", VERSION.hasWebservices());
+                }
 
                 {
                     final RuntimeMXBean runtimemxBean = ManagementFactory.getRuntimeMXBean();

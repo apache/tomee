@@ -171,7 +171,12 @@ TOMEE.ApplicationController = function () {
         initTab:'home'
     });
 
-    model.loadSystemInfo();
+    model.loadSystemInfo(function (data) {
+        view.setTomeeVersion(data.tomee);
+        homeView.setTomeeVersion(data.tomee);
+        view.render();
+    });
+
     model.loadLog(null, null);
 
     return {

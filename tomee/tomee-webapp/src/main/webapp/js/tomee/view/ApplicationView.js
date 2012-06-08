@@ -36,8 +36,6 @@ TOMEE.ApplicationView = function (cfg) {
         showTab(params.tab);
     });
 
-    $('body').append(toolbar.getEl());
-
     var elMapContent = TOMEE.el.getElMap({
         elName:'main',
         tag:'div',
@@ -45,8 +43,6 @@ TOMEE.ApplicationView = function (cfg) {
             style:'float:left; width:100%;'
         }
     });
-
-    $('body').append(elMapContent.main);
 
     var elMapFooter = TOMEE.el.getElMap({
         elName:'main',
@@ -69,7 +65,6 @@ TOMEE.ApplicationView = function (cfg) {
             }
         ]
     });
-    $('body').append(elMapFooter.main);
 
     var calculateContentSize = function () {
         var myDiv = elMapContent.main;
@@ -83,9 +78,9 @@ TOMEE.ApplicationView = function (cfg) {
         myDiv.height(availableSpace);
 
         var group = null;
-        for(var key in groups) {
+        for (var key in groups) {
             group = groups[key];
-            if(group.setHeight) {
+            if (group.setHeight) {
                 group.setHeight(availableSpace);
             }
         }
@@ -106,7 +101,7 @@ TOMEE.ApplicationView = function (cfg) {
     toolbar.setActive(currentTab);
 
     var delayResize = TOMEE.DelayedTask({
-        callback: function() {
+        callback:function () {
             calculateContentSize();
         }
     });
@@ -118,6 +113,15 @@ TOMEE.ApplicationView = function (cfg) {
     return {
         setLoggedUser:function (name) {
             toolbar.setLoggedUser(name);
+        },
+        render:function () {
+            var myBody = $('body');
+            myBody.append(toolbar.getEl());
+            myBody.append(elMapContent.main);
+            myBody.append(elMapFooter.main);
+        },
+        setTomeeVersion:function (myTomee) {
+            toolbar.setAppType(myTomee.name);
         }
     };
 };
