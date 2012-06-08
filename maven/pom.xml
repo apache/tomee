@@ -74,7 +74,7 @@
         <artifactId>openejb-core</artifactId>
         <version>${openejb.version}</version>
       </dependency>
-        <dependency>
+      <dependency>
         <groupId>org.apache.openejb</groupId>
         <artifactId>openejb-client</artifactId>
         <version>${openejb.version}</version>
@@ -98,4 +98,14 @@
       </plugin>
     </plugins>
   </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-plugin-plugin</artifactId>
+        <version>3.0</version>
+      </plugin>
+    </plugins>
+  </reporting>
 </project>
