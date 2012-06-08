@@ -44,6 +44,7 @@ public class JsonExecutor {
             resp.getWriter().write(new Gson().toJson(result));
 
         } catch (Exception e) {
+            //this will redirect the result to the ErrorServlet
             throw new TomeeException(e);
         }
     }
