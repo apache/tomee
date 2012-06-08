@@ -94,6 +94,9 @@ TOMEE.ApplicationView = function (cfg) {
         elMapContent.main.append(newTab);
 
         currentTab = tab;
+
+        //adjust the size
+        calculateContentSize();
     };
 
     //show current tab
