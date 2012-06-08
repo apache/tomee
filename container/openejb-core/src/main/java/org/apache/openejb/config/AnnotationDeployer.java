@@ -5106,7 +5106,8 @@ public class AnnotationDeployer implements DynamicDeployer {
     private static boolean isEJB(Class<?> clazz) {
         return clazz.isAnnotationPresent(Stateless.class)
             || clazz.isAnnotationPresent(Singleton.class)
-            || clazz.isAnnotationPresent(Stateful.class); // what a weird idea!
+            || clazz.isAnnotationPresent(ManagedBean.class)  // what a weird idea!
+            || clazz.isAnnotationPresent(Stateful.class); // what another weird idea!
     }
 
     private static String realClassName(String rawClassName) {
