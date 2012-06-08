@@ -17,6 +17,9 @@
 
 package org.apache.tomee.webapp.servlet;
 
+import javax.script.Bindings;
+import javax.script.SimpleBindings;
+import org.apache.openejb.util.OpenEJBScripter;
 import org.apache.tomee.webapp.JsonExecutor;
 
 import javax.script.ScriptEngine;
@@ -30,27 +33,25 @@ import java.io.IOException;
 import java.util.Map;
 
 public class ConsoleServlet extends HttpServlet {
+    private static final OpenEJBScripter SCRIPTER = new OpenEJBScripter();
 
     @Override
     protected void doPost(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
         JsonExecutor.execute(resp, new JsonExecutor.Executor() {
             @Override
             public void call(Map<String, Object> json) throws Exception {
-                final ScriptEngineManager manager = new ScriptEngineManager();
                 final HttpSession session = req.getSession();
 
                 String engineName = req.getParameter("engineName");
                 if (engineName == null || "".equals(engineName.trim())) {
-                    engineName = "JavaScript";
+                    engineName = "js";
                 }
-                final ScriptEngine engine = manager.getEngineByName(engineName);
 
-                engine.put("req", req);
-                engine.put("resp", resp);
+                final Bindings bindings = new SimpleBindings();
+                bindings.put("req", req);
+                bindings.put("resp", resp);
 
-                engine.put("util", new Utility() {
-
-
+                bindings.put("util", new Utility() {
                     @Override
                     public void write(Object obj) throws Exception {
                         resp.getWriter().write(String.valueOf(obj));
@@ -67,7 +68,7 @@ public class ConsoleServlet extends HttpServlet {
                 if (scriptCode == null || "".equals(scriptCode.trim())) {
                     scriptCode = "var a = 0;";
                 }
-                engine.eval(scriptCode);
+                SCRIPTER.evaluate(engineName, scriptCode, bindings);
             }
         });
     }

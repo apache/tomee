@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.server.cli;
+package org.apache.openejb.util;
 
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
@@ -58,20 +58,27 @@ public class OpenEJBScripter {
     }
 
     public Object evaluate(final String language, final String script) throws ScriptException {
+        return evaluate(language, script, new SimpleBindings());
+    }
+
+    public Object evaluate(final String language, final String script, final Bindings bindings) throws ScriptException {
         if (!ENGINE_FACTORIES.containsKey(language)) {
             throw new IllegalArgumentException("can't find factory for language " + language + ". You probably need to add the jar to openejb libs.");
         }
 
-        final ScriptEngine engine = engine(language);
-        return engine.eval(script);
+        Bindings usedBindings = bindings;
+        if (usedBindings == null) {
+            usedBindings = new SimpleBindings();
+        }
+        return engine(language, usedBindings).eval(script);
     }
 
-    private static ScriptEngine engine(String language) {
+    private static ScriptEngine engine(final String language, final Bindings bindings) {
         ScriptEngine engine = ENGINES.get().get(language);
         if (engine == null) {
             final ScriptEngineFactory factory = ENGINE_FACTORIES.get(language);
             engine = factory.getScriptEngine();
-            engine.setBindings(binding(), ScriptContext.ENGINE_SCOPE);
+            engine.setBindings(binding(bindings), ScriptContext.ENGINE_SCOPE);
             ENGINES.get().put(language, engine);
         }
         return engine;
@@ -81,8 +88,7 @@ public class OpenEJBScripter {
         ENGINES.get().clear();
     }
 
-    private static Bindings binding() {
-        final Bindings bindings = new SimpleBindings();
+    private static Bindings binding(final Bindings bindings) {
         bindings.put("bm", new BeanManagerHelper());
 
         final ContainerSystem cs = SystemInstance.get().getComponent(ContainerSystem.class);
@@ -147,3 +153,4 @@ public class OpenEJBScripter {
         }
     }
 }
+

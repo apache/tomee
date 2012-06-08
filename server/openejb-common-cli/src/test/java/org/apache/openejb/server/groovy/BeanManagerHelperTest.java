@@ -19,7 +19,7 @@ package org.apache.openejb.server.groovy;
 import org.apache.openejb.jee.Beans;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.junit.Module;
-import org.apache.openejb.server.cli.OpenEJBScripter;
+import org.apache.openejb.util.OpenEJBScripter;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
