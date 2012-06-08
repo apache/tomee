@@ -18,7 +18,11 @@
 
 package org.apache.openejb.cdi;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.core.ThreadContext;
 import org.apache.webbeans.spi.ValidatorService;
 
 import javax.naming.InitialContext;
@@ -35,7 +39,7 @@ public class OpenEJBValidatorService implements ValidatorService {
         try {
             return (ValidatorFactory) new InitialContext().lookup("java:comp/ValidatorFactory");
         } catch (NamingException e) {
-            throw new OpenEJBRuntimeException(e);
+            return proxy(ValidatorFactory.class, "java:comp/ValidatorFactory");
         }
     }
 
@@ -44,7 +48,33 @@ public class OpenEJBValidatorService implements ValidatorService {
         try {
             return (Validator) new InitialContext().lookup("java:comp/Validator");
         } catch (NamingException e) {
-            throw new OpenEJBRuntimeException(e);
+            return proxy(Validator.class, "java:comp/Validator");
         }
+    }
+
+    // proxy because depending on when injection/threadcontext is set
+    // it is better to do it lazily
+    // this is mainly done for tests since the first lookup will work in TomEE
+    private <T> T proxy(final Class<T> t, final String jndi) {
+        return (T) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[] { t },
+                new InvocationHandler() {
+                    @Override
+                    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                        if (Object.class.equals(method.getDeclaringClass())) {
+                            return method.invoke(this);
+                        }
+
+                        final ThreadContext ctx = ThreadContext.getThreadContext();
+                        if (ctx != null) {
+                            return method.invoke((T) ctx.getBeanContext().getJndiContext().lookup(jndi), args);
+                        }
+                        return null;
+                    }
+
+                    @Override
+                    public String toString() {
+                        return "Proxy::" + t.getName();
+                    }
+                });
     }
 }
