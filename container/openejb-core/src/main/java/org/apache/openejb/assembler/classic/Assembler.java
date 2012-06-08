@@ -549,7 +549,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         injections.addAll(injectionBuilder.buildInjections(appInfo.globalJndiEnc));
         injections.addAll(injectionBuilder.buildInjections(appInfo.appJndiEnc));
 
-        final JndiEncBuilder globalBuilder = new JndiEncBuilder(appInfo.globalJndiEnc, injections, null, null, GLOBAL_UNIQUE_ID, classLoader);
+        final JndiEncBuilder globalBuilder = new JndiEncBuilder(appInfo.globalJndiEnc, injections, appInfo.appId, null, GLOBAL_UNIQUE_ID, classLoader);
         final Map<String, Object> globalBindings = globalBuilder.buildBindings(JndiEncBuilder.JndiScope.global);
         final Context globalJndiContext = globalBuilder.build(globalBindings);
 

@@ -154,7 +154,7 @@ public class JndiEncBuilder {
     }
 
     public Map<String, Object> buildBindings(JndiScope type) throws OpenEJBException {
-        Map<String, Object> bindings = buildMap();
+        Map<String, Object> bindings = buildMap(type);
         switch (type) {
             case comp:
                 addSpecialCompBindings(bindings);
@@ -172,7 +172,7 @@ public class JndiEncBuilder {
         return bindings;
     }
 
-    public Map<String, Object> buildMap() throws OpenEJBException {
+    public Map<String, Object> buildMap(final JndiScope scope) throws OpenEJBException {
         Map<String, Object> bindings = new TreeMap<String, Object>(); // let it be sorted for real binding
 
         // get JtaEntityManagerRegistry
@@ -472,7 +472,7 @@ public class JndiEncBuilder {
 
             for (ResourceInfo resource : config.facilities.resources) {
                 String jndiName = resource.jndiName;
-                if (jndiName != null && !jndiName.isEmpty()) {
+                if (jndiName != null && !jndiName.isEmpty() && isNotGobalOrIsHoldByThisApp(resource, scope)) {
                     String refName = "openejb/Resource/" + resource.id;
                     Object reference = new IntraVmJndiReference(refName);
                     String boundName = normalize(jndiName);
@@ -482,6 +482,13 @@ public class JndiEncBuilder {
 
         }
         return bindings;
+    }
+
+    // we don't want to bind globally a global resource multiple times in the Assembler
+    // if the datasource if defined globally in the currently deployed app originAppname hould not be null
+    private boolean isNotGobalOrIsHoldByThisApp(final ResourceInfo info, final JndiScope scope) {
+        return !info.jndiName.startsWith("global/")
+                || (info.originAppName != null && info.originAppName.equals(moduleId) && JndiScope.global.equals(scope));
     }
 
     private void addSpecialCompBindings(Map<String, Object> bindings) {

@@ -874,6 +874,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             }
 
             ResourceInfo resourceInfo = configFactory.configureService(resource, ResourceInfo.class);
+            resourceInfo.originAppName = module.getModuleId();
             final ResourceRef resourceRef = new ResourceRef();
             resourceRef.setResType(resource.getType());
 
@@ -1341,6 +1342,9 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
                     ResourceInfo jtaResourceInfo = configFactory.configureService(jtaResource, ResourceInfo.class);
                     ResourceInfo nonJtaResourceInfo = configFactory.configureService(nonJtaResource, ResourceInfo.class);
+                    if (jtaDataSourceId != null && nonJtaDataSourceId == null) {
+                        nonJtaResourceInfo.originAppName = jtaResourceInfo.originAppName;
+                    }
 
                     logAutoCreateResource(jtaResourceInfo, "DataSource", unit.getName());
                     jtaDataSourceId = installResource(unit.getName(), jtaResourceInfo);
@@ -1457,6 +1461,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                     if (nonJtaDataSourceId == null) {
                         ResourceInfo nonJtaResourceInfo = copy(jtaResourceInfo);
                         nonJtaResourceInfo.id = jtaResourceInfo.id + "NonJta";
+                        nonJtaResourceInfo.originAppName = jtaResourceInfo.originAppName;
 
                         Properties overrides = ConfigurationFactory.getSystemProperties(nonJtaResourceInfo.id, nonJtaResourceInfo.service);
                         nonJtaResourceInfo.properties.putAll(overrides);
@@ -1602,6 +1607,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         b.description = a.description;
         b.factoryMethod = a.factoryMethod;
         b.constructorArgs.addAll(a.constructorArgs);
+        b.originAppName = a.originAppName;
         b.types.addAll(a.types);
         b.properties = new SuperProperties();
         b.properties.putAll(a.properties);

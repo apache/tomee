@@ -18,4 +18,5 @@ package org.apache.openejb.assembler.classic;
 
 public class ResourceInfo extends ServiceInfo {
     public String jndiName = "";
+    public String originAppName = null; // if define by an app
 }
