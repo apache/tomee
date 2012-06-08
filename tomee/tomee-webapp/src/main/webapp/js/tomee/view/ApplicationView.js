@@ -77,7 +77,7 @@ TOMEE.ApplicationView = function (cfg) {
         var availableSpace = (function () {
             var windowSize = windowEl.height();
             var footerSize = elMapFooter.main.height();
-            return windowSize - footerSize - TOMEE.el.getBorderSize(myDiv) - TOMEE.el.getBorderSize($('body'));
+            return windowSize - footerSize - toolbar.getEl().outerHeight(true) - TOMEE.el.getBorderSize(myDiv) - TOMEE.el.getBorderSize($('body'));
         })();
 
         myDiv.height(availableSpace);

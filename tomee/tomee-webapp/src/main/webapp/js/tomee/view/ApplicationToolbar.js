@@ -21,144 +21,157 @@ TOMEE.ApplicationToolbar = function (cfg) {
 
     var channel = cfg.channel;
 
-    var btnClickHandler = function(event) {
+    var btnClickHandler = function (event) {
         var el = $(event.currentTarget);
         var btnkey = el.attr('btnkey');
         channel.send('toolbar.click', {
-            tab: btnkey
+            tab:btnkey
         });
     };
 
     var elMapToolbar = TOMEE.el.getElMap({
         elName:'main',
         tag:'div',
-        cls:'navbar navbar-fixed-top',
+        attributes:{
+            style:'background-color: #2C2C2C;'
+        },
         children:[
             {
                 tag:'div',
-                cls:'navbar-inner',
+                cls:'navbar',
+                attributes:{
+                    style:'margin-bottom: 0px;'
+                },
                 children:[
                     {
                         tag:'div',
+                        cls:'navbar-inner',
+                        attributes:{
+                            style:'padding-left: 0px; padding-right: 0px;'
+                        },
                         children:[
                             {
-                                elName: 'appName',
-                                tag:'a',
-                                cls:'brand',
-                                attributes:{
-                                    href:'#',
-                                    style:'padding-left: 20px; margin-left: 0px;'
-                                },
-                                html:TOMEE.I18N.get('application.name')
-                            },
-                            {
                                 tag:'div',
-                                cls:'btn-group pull-right',
                                 children:[
                                     {
+                                        elName:'appName',
                                         tag:'a',
-                                        cls:'btn dropdown-toggle',
+                                        cls:'brand',
                                         attributes:{
-                                            'data-toggle':'dropdown',
-                                            href:'#'
+                                            href:'#',
+                                            style:'padding-left: 10px; margin-left: 0px;'
                                         },
+                                        html:TOMEE.I18N.get('application.name')
+                                    },
+                                    {
+                                        tag:'div',
+                                        cls:'btn-group pull-right',
                                         children:[
                                             {
-                                                tag:'i',
-                                                cls:'icon-user'
-                                            },
-                                            {
-                                                tag:'span',
-                                                elName:'userNameSpan',
+                                                tag:'a',
+                                                cls:'btn dropdown-toggle',
                                                 attributes:{
-                                                    style:'padding-left: 5px; padding-right: 5px;'
-                                                }
+                                                    'data-toggle':'dropdown',
+                                                    href:'#'
+                                                },
+                                                children:[
+                                                    {
+                                                        tag:'i',
+                                                        cls:'icon-user'
+                                                    },
+                                                    {
+                                                        tag:'span',
+                                                        elName:'userNameSpan',
+                                                        attributes:{
+                                                            style:'padding-left: 5px; padding-right: 5px;'
+                                                        }
+                                                    },
+                                                    {
+                                                        tag:'span',
+                                                        cls:'caret'
+                                                    }
+                                                ]
                                             },
                                             {
-                                                tag:'span',
-                                                cls:'caret'
+                                                tag:'ul',
+                                                cls:'dropdown-menu',
+                                                attributes:{
+                                                    style:'right: 5px;'
+                                                },
+                                                children:[
+                                                    {
+                                                        tag:'li',
+                                                        children:[
+                                                            {
+                                                                elName:'signoutLink',
+                                                                tag:'a',
+                                                                attributes:{
+                                                                    href:'#'
+                                                                },
+                                                                html:TOMEE.I18N.get('application.logout')
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
+
                                             }
                                         ]
                                     },
                                     {
-                                        tag:'ul',
-                                        cls:'dropdown-menu',
-                                        attributes:{
-                                            style:'right: 5px;'
-                                        },
+                                        tag:'div',
                                         children:[
                                             {
-                                                tag:'li',
+                                                elName:'tabs',
+                                                tag:'ul',
+                                                cls:'nav',
                                                 children:[
                                                     {
-                                                        elName:'signoutLink',
-                                                        tag:'a',
-                                                        attributes:{
-                                                            href:'#'
-                                                        },
-                                                        html:TOMEE.I18N.get('application.logout')
-                                                    }
-                                                ]
-                                            }
-                                        ]
-
-                                    }
-                                ]
-                            },
-                            {
-                                tag:'div',
-                                cls:'nav-collapse',
-                                children:[
-                                    {
-                                        elName: 'tabs',
-                                        tag:'ul',
-                                        cls:'nav',
-                                        children:[
-                                            {
-                                                tag:'li',
-                                                children:[
+                                                        tag:'li',
+                                                        children:[
+                                                            {
+                                                                tag:'a',
+                                                                attributes:{
+                                                                    btnkey:'home',
+                                                                    href:'#'
+                                                                },
+                                                                html:TOMEE.I18N.get('application.home'),
+                                                                listeners:{
+                                                                    'click':btnClickHandler
+                                                                }
+                                                            }
+                                                        ]
+                                                    },
                                                     {
-                                                        tag:'a',
-                                                        attributes:{
-                                                            btnkey: 'home',
-                                                            href:'#'
-                                                        },
-                                                        html:TOMEE.I18N.get('application.home'),
-                                                        listeners: {
-                                                            'click': btnClickHandler
-                                                        }
-                                                    }
-                                                ]
-                                            },
-                                            {
-                                                tag:'li',
-                                                children:[
+                                                        tag:'li',
+                                                        children:[
+                                                            {
+                                                                tag:'a',
+                                                                attributes:{
+                                                                    btnkey:'apps',
+                                                                    href:'#'
+                                                                },
+                                                                html:TOMEE.I18N.get('application.apps'),
+                                                                listeners:{
+                                                                    'click':btnClickHandler
+                                                                }
+                                                            }
+                                                        ]
+                                                    },
                                                     {
-                                                        tag:'a',
-                                                        attributes:{
-                                                            btnkey: 'apps',
-                                                            href:'#'
-                                                        },
-                                                        html:TOMEE.I18N.get('application.apps'),
-                                                        listeners: {
-                                                            'click': btnClickHandler
-                                                        }
-                                                    }
-                                                ]
-                                            },
-                                            {
-                                                tag:'li',
-                                                children:[
-                                                    {
-                                                        tag:'a',
-                                                        attributes:{
-                                                            btnkey: 'log',
-                                                            href:'#'
-                                                        },
-                                                        html:TOMEE.I18N.get('application.log'),
-                                                        listeners: {
-                                                            'click': btnClickHandler
-                                                        }
+                                                        tag:'li',
+                                                        children:[
+                                                            {
+                                                                tag:'a',
+                                                                attributes:{
+                                                                    btnkey:'log',
+                                                                    href:'#'
+                                                                },
+                                                                html:TOMEE.I18N.get('application.log'),
+                                                                listeners:{
+                                                                    'click':btnClickHandler
+                                                                }
+                                                            }
+                                                        ]
                                                     }
                                                 ]
                                             }
@@ -185,43 +198,43 @@ TOMEE.ApplicationToolbar = function (cfg) {
         channel.send('application.logout', {});
     });
 
-    var setActive = function(tab) {
+    var setActive = function (tab) {
         var parent = elMapToolbar.tabs.children();
-        parent.each(function(index, element) {
+        parent.each(function (index, element) {
             var el = $(element);
             el.removeClass('active');
 
             var btnkey = el.children().first().attr('btnkey');
-            if(!btnkey) {
+            if (!btnkey) {
                 return;
             }
 
-            if(btnkey === tab) {
+            if (btnkey === tab) {
                 el.addClass('active');
             }
         });
 
     };
 
-    elMapToolbar.tabs.delegate('a', 'click', function(event) {
+    elMapToolbar.tabs.delegate('a', 'click', function (event) {
         elMapToolbar.tabs.find('li').removeClass('active');
         var parent = $(event.currentTarget.parentElement);
         parent.addClass('active');
     });
 
     return {
-        getEl: function() {
+        getEl:function () {
             return elMapToolbar.main;
         },
         setLoggedUser:function (name) {
-            if(name) {
+            if (name) {
                 elMapToolbar.userNameSpan.text(name);
             } else {
                 elMapToolbar.userNameSpan.text(TOMEE.I18N.get('application.guest'));
             }
 
         },
-        setActive: setActive
+        setActive:setActive
 
     };
 };
