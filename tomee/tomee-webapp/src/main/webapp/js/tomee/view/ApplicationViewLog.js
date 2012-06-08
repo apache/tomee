@@ -37,12 +37,16 @@ TOMEE.ApplicationViewLog = function (cfg) {
                 innerPanel.empty();
 
                 var newData = $('<div></div>');
-                for(var i = 0; i < data.length; i++) {
+                for (var i = 0; i < data.length; i++) {
                     newData.append(data[i]);
                     newData.append('<br/>');
                 }
 
                 innerPanel.append(newData);
+                //innerPanel.scrollTop(newData.height());
+                innerPanel.animate({
+                    scrollTop: newData.height()
+                }, 500);
             }
         }
     })();
@@ -61,7 +65,10 @@ TOMEE.ApplicationViewLog = function (cfg) {
                 children:[
                     {
                         elName:'fileSelector',
-                        tag:'select'
+                        tag:'select',
+                        attributes:{
+                            style:'margin-right: 2px;'
+                        }
                     },
                     {
                         elName:'loadBtn',
@@ -113,15 +120,16 @@ TOMEE.ApplicationViewLog = function (cfg) {
     };
 
     var loadLogTable = function (data) {
-        lines.load(data);
+        if (!data) {
+            return;
+        }
+        lines.load(data.lines);
+        elBottomBar.fileSelector.val(data.name);
     };
 
     var loadData = function (data) {
         loadFilesField(data.files);
-
-        if (data.log) {
-            loadLogTable(data.log.lines);
-        }
+        loadLogTable(data.log);
     };
 
     return {
