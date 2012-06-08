@@ -63,13 +63,17 @@ TOMEE.ApplicationModel = function (cfg) {
                 }
             });
         },
-        loadSystemInfo:function () {
+        loadSystemInfo:function (callback) {
             request({
                 method:'GET',
                 url:TOMEE.baseURL('system'),
                 success:function (data) {
                     systemInfo = data;
                     channel.send('app.system.info', data);
+
+                    if(callback) {
+                        callback(data);
+                    }
                 }
             });
         },

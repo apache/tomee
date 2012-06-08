@@ -169,7 +169,7 @@ TOMEE.ApplicationViewHome = function (cfg) {
             getEl:function () {
                 return console.getEl();
             },
-            scriptSelector: elBottomBar.scriptSelector
+            scriptSelector:elBottomBar.scriptSelector
         };
     })();
 
@@ -230,6 +230,22 @@ TOMEE.ApplicationViewHome = function (cfg) {
         getEl:function () {
             return elMapContent.main;
         },
-        setSupportedScriptLanguages:loadScriptsField
+        setSupportedScriptLanguages:loadScriptsField,
+        setTomeeVersion:function (myTomee) {
+
+            if (!myTomee.hasMdbs && !myTomee.hasWebservices) {
+                elMapContent['right'].detach();
+                elMapContent['center'].css('width', '66%');
+
+            } else {
+                if (!myTomee.hasMdbs) {
+                    mdbsPanel.getEl().detach();
+                }
+
+                if (!myTomee.hasWebservices) {
+                    wsPanel.getEl().detach();
+                }
+            }
+        }
     };
 };

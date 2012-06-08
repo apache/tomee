@@ -61,7 +61,7 @@ TOMEE.ApplicationToolbar = function (cfg) {
                                             href:'#',
                                             style:'padding-left: 10px; margin-left: 0px;'
                                         },
-                                        html:TOMEE.I18N.get('application.name')
+                                        html:'-'
                                     },
                                     {
                                         tag:'div',
@@ -234,7 +234,15 @@ TOMEE.ApplicationToolbar = function (cfg) {
             }
 
         },
-        setActive:setActive
+        setActive:setActive,
+        setAppType:function (name) {
+            if (name === '+') {
+                elMapToolbar.appName.html(TOMEE.I18N.get('application.name') + '+');
+            } else {
+                elMapToolbar.appName.html(TOMEE.I18N.get('application.name') + ' ' + name);
+            }
+
+        }
 
     };
 };
