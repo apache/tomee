@@ -40,7 +40,16 @@ public class LogServlet extends HttpServlet {
             @Override
             public void call(Map<String, Object> json) throws Exception {
                 final File logFolder = new File(System.getProperty("catalina.base"), "logs");
-                json.put("files", logFolder.list());
+
+                final File[] files = logFolder.listFiles();
+                final Set<String> names = new TreeSet<String>();
+                for (File file : files) {
+                    if (file.length() > 0) {
+                        names.add(file.getName());
+                    }
+                }
+
+                json.put("files", names);
 
                 final String loadFileName = req.getParameter("file");
                 if (loadFileName != null) {
