@@ -128,40 +128,24 @@ TOMEE.ApplicationViewHome = function (cfg) {
         var elBottomBar = TOMEE.el.getElMap({
             elName:'main',
             tag:'form',
-            cls: 'well form-inline',
+            cls:'well form-inline',
             attributes:{
                 style:'height: 27px;margin-bottom: 0px;padding-top: 1px;padding-left: 1px;padding-bottom: 1px;padding-right: 1px;'
             },
-            children: [
+            children:[
                 {
                     tag:'div',
                     cls:'pull-right',
-                    children: [
+                    children:[
                         {
                             elName:'scriptSelector',
-                            tag:'select',
-                            children: [
-                                {
-                                    tag:'option',
-                                    html: TOMEE.I18N.get('application.console.Javascript'),
-                                    attributes: {
-                                        value: 'JavaScript'
-                                    }
-                                },
-                                {
-                                    tag:'option',
-                                    html: TOMEE.I18N.get('application.console.Groovy'),
-                                    attributes: {
-                                        value: 'Groovy'
-                                    }
-                                }
-                            ]
+                            tag:'select'
                         },
                         {
                             elName:'executeBtn',
                             tag:'button',
                             cls:'btn',
-                            html: TOMEE.I18N.get('application.console.execute')
+                            html:TOMEE.I18N.get('application.console.execute')
                         }
                     ]
                 }
@@ -172,19 +156,20 @@ TOMEE.ApplicationViewHome = function (cfg) {
         el.append(elText.main);
         el.append(elBottomBar.main);
 
-        elBottomBar.main.bind('click', function() {
+        elBottomBar.main.bind('click', function () {
             var text = elText.main.val();
             var script = elBottomBar.scriptSelector.val();
             channel.send('trigger.console.exec', {
-                codeType: script,
-                codeText: text
+                codeType:script,
+                codeText:text
             });
         });
 
         return {
             getEl:function () {
                 return console.getEl();
-            }
+            },
+            scriptSelector: elBottomBar.scriptSelector
         };
     })();
 
@@ -217,6 +202,24 @@ TOMEE.ApplicationViewHome = function (cfg) {
     elMapContent['right'].append(mdbsPanel.getEl());
     elMapContent['right'].append(wsPanel.getEl());
 
+    var loadScriptsField = function (languages) {
+        var getOption = function (lang) {
+            var option = $('<option></option>');
+            option.attr('value', lang);
+            option.append(lang);
+            return option;
+        };
+
+        var selector = consolePanel.scriptSelector;
+        selector.empty();
+        if (!languages) {
+            return;
+        }
+        for (var i = 0; i < languages.length; i++) {
+            selector.append(getOption(languages[i]));
+        }
+    };
+
     return {
         loadJndi:function (data) {
             jndiPanel.load(data);
@@ -224,8 +227,9 @@ TOMEE.ApplicationViewHome = function (cfg) {
         loadSavedObjects:function (data) {
             savedPanel.load(data);
         },
-        getEl: function() {
+        getEl:function () {
             return elMapContent.main;
-        }
+        },
+        setSupportedScriptLanguages:loadScriptsField
     };
 };

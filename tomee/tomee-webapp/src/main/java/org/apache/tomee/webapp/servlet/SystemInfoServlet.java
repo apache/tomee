@@ -62,6 +62,8 @@ public class SystemInfoServlet extends HttpServlet {
                 if (principal != null) {
                     json.put("user", principal.getName());
                 }
+
+                json.put("supportedScriptLanguages", ConsoleServlet.SCRIPTER.getSupportedLanguages());
             }
         });
     }

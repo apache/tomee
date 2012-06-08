@@ -39,8 +39,6 @@ TOMEE.I18N = (function () {
         'application.ws':'Webservices',
 
         'application.console.execute':'Execute',
-        'application.console.Javascript':'Javascript',
-        'application.console.Groovy':'Groovy',
 
         'application.log.load':'Load',
 
