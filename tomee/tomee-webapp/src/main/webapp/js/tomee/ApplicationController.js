@@ -141,6 +141,7 @@ TOMEE.ApplicationController = function () {
 
     channel.bind('app.system.info', function (params) {
         view.setLoggedUser(params.user);
+        homeView.setSupportedScriptLanguages(params.supportedScriptLanguages);
     });
 
     channel.bind('trigger.console.exec', function (params) {

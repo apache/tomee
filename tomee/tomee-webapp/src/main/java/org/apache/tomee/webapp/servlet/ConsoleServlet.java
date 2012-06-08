@@ -31,13 +31,18 @@ import java.io.IOException;
 import java.util.Map;
 
 public class ConsoleServlet extends HttpServlet {
-    private static final OpenEJBScripter SCRIPTER = new OpenEJBScripter();
+    public static final OpenEJBScripter SCRIPTER = new OpenEJBScripter();
 
     @Override
     protected void doPost(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
         JsonExecutor.execute(resp, new JsonExecutor.Executor() {
             @Override
             public void call(Map<String, Object> json) throws Exception {
+                final String scriptCode = req.getParameter("scriptCode");
+                if (scriptCode == null || "".equals(scriptCode.trim())) {
+                    return; //nothing to do
+                }
+
                 final HttpSession session = req.getSession();
 
                 String engineName = req.getParameter("engineName");
@@ -62,10 +67,6 @@ public class ConsoleServlet extends HttpServlet {
                     }
                 });
 
-                String scriptCode = req.getParameter("scriptCode");
-                if (scriptCode == null || "".equals(scriptCode.trim())) {
-                    scriptCode = "var a = 0;";
-                }
                 SCRIPTER.evaluate(engineName, scriptCode, bindings);
             }
         });
