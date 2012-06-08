@@ -57,7 +57,7 @@ public class OpenEJBScripter {
         }
     }
 
-    public Set<String> getSupportedLanguages() {
+    public static Set<String> getSupportedLanguages() {
         return ENGINE_FACTORIES.keySet();
     }
 

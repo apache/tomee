@@ -17,6 +17,7 @@
 
 package org.apache.tomee.webapp.servlet;
 
+import org.apache.openejb.util.OpenEJBScripter;
 import org.apache.tomee.webapp.JsonExecutor;
 
 import javax.servlet.ServletException;
@@ -34,6 +35,7 @@ import java.util.Set;
 
 
 public class SystemInfoServlet extends HttpServlet {
+    private static final TomEEVersion VERSION;
 
     @Override
     protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
@@ -50,6 +52,7 @@ public class SystemInfoServlet extends HttpServlet {
                 }
 
                 json.put("env", System.getenv());
+                json.put("version", VERSION.getName());
 
                 {
                     final RuntimeMXBean runtimemxBean = ManagementFactory.getRuntimeMXBean();
@@ -63,8 +66,61 @@ public class SystemInfoServlet extends HttpServlet {
                     json.put("user", principal.getName());
                 }
 
-                json.put("supportedScriptLanguages", ConsoleServlet.SCRIPTER.getSupportedLanguages());
+                json.put("supportedScriptLanguages", OpenEJBScripter.getSupportedLanguages());
             }
         });
+    }
+
+    public enum TomEEVersion {
+        WEBPROFILE(false, false, "Web Profile"), JAXRS(true, false, "JAX-RS"), PLUS(true, true, "+");
+
+        private final boolean webservices;
+        private final boolean mdbs;
+        private final String name;
+
+        private TomEEVersion(final boolean webservices, final boolean mdbs, final String name) {
+            this.webservices = webservices;
+            this.mdbs = mdbs;
+            this.name = name;
+        }
+
+        public boolean hasWebservices() {
+            return webservices;
+        }
+
+        public boolean hasMdbs() {
+            return mdbs;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
+
+    static {
+        final ClassLoader cl = SystemInfoServlet.class.getClassLoader();
+        boolean mdbs;
+        try {
+            cl.loadClass("org.apache.activemq.ra.ActiveMQActivationSpec");
+            mdbs = true;
+        } catch (ClassNotFoundException e) {
+            mdbs = false;
+        }
+
+        boolean webservices;
+        try {
+            cl.loadClass("org.apache.openejb.server.rest.RESTService");
+            webservices = true;
+        } catch (ClassNotFoundException e) {
+            webservices = false;
+        }
+
+        if (webservices && mdbs) {
+            VERSION = TomEEVersion.PLUS;
+        } else if (webservices) {
+            VERSION = TomEEVersion.JAXRS;
+        } else {
+            VERSION = TomEEVersion.WEBPROFILE;
+        }
     }
 }
