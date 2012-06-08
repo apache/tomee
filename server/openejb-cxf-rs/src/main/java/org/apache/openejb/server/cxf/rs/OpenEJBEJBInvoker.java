@@ -16,34 +16,27 @@
  */
 package org.apache.openejb.server.cxf.rs;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.rmi.RemoteException;
-import javax.ejb.EJBLocalHome;
-import javax.xml.ws.WebFault;
-import org.apache.cxf.helpers.CastUtils;
-import org.apache.cxf.jaxrs.JAXRSInvoker;
-import org.apache.cxf.jaxrs.model.ClassResourceInfo;
-import org.apache.cxf.jaxrs.model.OperationResourceInfo;
-import org.apache.cxf.jaxrs.utils.JAXRSUtils;
-import org.apache.cxf.message.Exchange;
-import org.apache.cxf.message.FaultMode;
-import org.apache.cxf.message.MessageContentsList;
-import org.apache.openejb.BeanContext;
-import org.apache.openejb.InterfaceType;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.ProxyInfo;
-import org.apache.openejb.RpcContainer;
-import org.apache.openejb.core.managed.ManagedContainer;
-import org.apache.openejb.rest.ThreadLocalContextManager;
-
+import java.util.List;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.ContextResolver;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.List;
+import org.apache.cxf.helpers.CastUtils;
+import org.apache.cxf.jaxrs.JAXRSInvoker;
+import org.apache.cxf.jaxrs.model.ClassResourceInfo;
+import org.apache.cxf.jaxrs.model.OperationResourceInfo;
+import org.apache.cxf.jaxrs.utils.JAXRSUtils;
+import org.apache.cxf.message.Exchange;
+import org.apache.cxf.message.MessageContentsList;
+import org.apache.openejb.BeanContext;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.RpcContainer;
+import org.apache.openejb.rest.ThreadLocalContextManager;
 
 public class OpenEJBEJBInvoker extends JAXRSInvoker {
     private BeanContext context;
@@ -94,33 +87,10 @@ public class OpenEJBEJBInvoker extends JAXRSInvoker {
         }
 
         // invoking the EJB
-        final boolean  createAndDestroy = container instanceof ManagedContainer;
-        Object primKey = null;
         try {
-            if (createAndDestroy) {
-                Method create = null;
-                try {
-                    create = BeanContext.BusinessLocalBeanHome.class.getMethod("create");
-                } catch (NoSuchMethodException e) {
-                    // shouldn't occur
-                }
-
-                primKey = ((ProxyInfo) container.invoke(context.getDeploymentID(),
-                        InterfaceType.BUSINESS_LOCALBEAN_HOME,
-                        create.getDeclaringClass(), create, null, null)).getPrimaryKey();
-            }
-
             Object result = container.invoke(context.getDeploymentID(),
                 context.getInterfaceType(method.getDeclaringClass()),
-                method.getDeclaringClass(), method, parameters, primKey);
-
-            if (createAndDestroy && !context.getRemoveMethods().isEmpty()) {
-                // should we cache such information?
-                final Method remove = context.getRemoveMethods().iterator().next();
-                container.invoke(context.getDeploymentID(),
-                        context.getInterfaceType(remove.getDeclaringClass()),
-                        remove.getDeclaringClass(), remove, null, primKey);
-            }
+                method.getDeclaringClass(), method, parameters, null);
 
             return new MessageContentsList(result);
         } catch (OpenEJBException e) {

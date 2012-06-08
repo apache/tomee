@@ -38,6 +38,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.UriBuilder;
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.BeanType;
 import org.apache.openejb.Injection;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
@@ -153,8 +154,8 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
                     continue;
                 }
 
-                if (restEjbs.containsKey(o.getClass().getName())) {
-                    // no more a singleton if the ejb i not a singleton...but it is a weird case
+                if (hasEjbAndIsNotAManagedBean(restEjbs, o.getClass())) {
+                    // no more a singleton if the ejb is not a singleton...but it is a weird case
                     deployEJB(appPrefix, restEjbs.get(o.getClass().getName()).context, additionalProviders);
                 } else {
                     deploySingleton(appPrefix, o, appInstance, classLoader, additionalProviders);
@@ -162,7 +163,7 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
             }
             Set<Class<?>> classes = appInstance.getClasses();
             for (Class<?> clazz : classes) {
-                if (restEjbs.containsKey(clazz.getName())) {
+                if (hasEjbAndIsNotAManagedBean(restEjbs, clazz)) {
                     deployEJB(appPrefix, restEjbs.get(clazz.getName()).context, additionalProviders);
                 } else {
                     deployPojo(appPrefix, clazz, appInstance, classLoader, injections, context, owbCtx, additionalProviders);
@@ -179,7 +180,12 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
 
             for (String clazz : restClasses) {
                 if (restEjbs.containsKey(clazz)) {
-                    deployEJB(appPrefix, restEjbs.get(clazz).context, additionalProviders);
+                    final BeanContext ctx = restEjbs.get(clazz).context;
+                    if (BeanType.MANAGED.equals(ctx.getComponentType())) {
+                        deployPojo(appPrefix, ctx.getBeanClass(), null, ctx.getClassLoader(), ctx.getInjections(), context, owbCtx, additionalProviders);
+                    } else {
+                        deployEJB(appPrefix, restEjbs.get(clazz).context, additionalProviders);
+                    }
                 } else {
                     try {
                         Class<?> loadedClazz = classLoader.loadClass(clazz);
@@ -192,6 +198,10 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
         }
 
         restEjbs.clear();
+    }
+
+    private boolean hasEjbAndIsNotAManagedBean(final Map<String, EJBRestServiceInfo> restEjbs, final Class<?> clazz) {
+        return restEjbs.containsKey(clazz.getName()) && !BeanType.MANAGED.equals(restEjbs.get(clazz.getName()).context.getComponentType());
     }
 
     private boolean useDiscoveredProviders() {
@@ -222,7 +232,15 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
                 }
 
                 for (Map.Entry<String, EJBRestServiceInfo> ejb : restEjbs.entrySet()) {
-                    deployEJB(ejb.getValue().path, ejb.getValue().context, providers);
+                    final BeanContext ctx = ejb.getValue().context;
+                    if (BeanType.MANAGED.equals(ctx.getComponentType())) {
+                        deployPojo(ejb.getValue().path, ctx.getBeanClass(), null, ctx.getClassLoader(), ctx.getInjections(),
+                                ctx.getJndiContext(),
+                                containerSystem.getAppContext(appInfo.appId).getWebBeansContext(),
+                                providers);
+                    } else {
+                        deployEJB(ejb.getValue().path, ctx, providers);
+                    }
                 }
                 restEjbs.clear();
             } else {

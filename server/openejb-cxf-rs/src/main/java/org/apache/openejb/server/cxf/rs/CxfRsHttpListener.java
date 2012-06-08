@@ -37,6 +37,7 @@ import org.apache.cxf.service.invoker.Invoker;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.BeanType;
 import org.apache.openejb.Injection;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
