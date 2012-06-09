@@ -74,7 +74,7 @@ TOMEE.ApplicationViewHome = function (cfg) {
                 return jndi.getEl();
             },
             load:function (data) {
-                tree.load(data);
+                tree.load(data.parentEl, data.names);
             }
         };
     })();
@@ -237,9 +237,7 @@ TOMEE.ApplicationViewHome = function (cfg) {
 
     return {
         loadJndi:function (data) {
-            if (data) {
-                jndiPanel.load(data.names);
-            }
+            jndiPanel.load(data);
         },
         loadSavedObjects:function (data) {
             savedPanel.load(data);
