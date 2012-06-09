@@ -43,34 +43,6 @@ TOMEE.ApplicationController = function () {
         channel:channel
     });
 
-    homeView.loadJndi([
-        { text:TOMEE.Sequence.next('a'), children:[] },
-        { text:TOMEE.Sequence.next('a') },
-        { text:TOMEE.Sequence.next('a') },
-        { text:TOMEE.Sequence.next('a') },
-        { text:TOMEE.Sequence.next('a') },
-        { text:TOMEE.Sequence.next('a'), children:[
-            { text:TOMEE.Sequence.next('a') },
-            { text:TOMEE.Sequence.next('a'), children:[
-                { text:TOMEE.Sequence.next('a') },
-                { text:TOMEE.Sequence.next('a'), children:[
-                    { text:TOMEE.Sequence.next('a') }
-                ] }
-            ] }
-        ] },
-        { text:TOMEE.Sequence.next('a'), children:[] },
-        { text:TOMEE.Sequence.next('a'), children:[] },
-        { text:TOMEE.Sequence.next('a'), children:[
-            { text:TOMEE.Sequence.next('a') },
-            { text:TOMEE.Sequence.next('a'), children:[
-                { text:TOMEE.Sequence.next('a') },
-                { text:TOMEE.Sequence.next('a'), children:[
-                    { text:TOMEE.Sequence.next('a') }
-                ] }
-            ] }
-        ] }
-    ]);
-
     channel.bind('application.name.click', function (params) {
         window.open('http://openejb.apache.org/', 'OpenEJB');
     });
@@ -79,8 +51,18 @@ TOMEE.ApplicationController = function () {
         model.logout();
     });
 
-    channel.bind('jndi_leaf_click', function (params) {
-        alert('name: ' + params.bean.text);
+    channel.bind('tree_leaf_click', function (params) {
+        //params.panelKey, params.bean
+        if (params.panelKey === 'jndi') {
+
+        }
+    });
+
+    channel.bind('tree_load_children', function (params) {
+        //params.panelKey, params.bean, params.parentEl
+        if (params.panelKey === 'jndi') {
+
+        }
     });
 
     channel.bind('deploy.file.uploaded', function (params) {
@@ -121,6 +103,10 @@ TOMEE.ApplicationController = function () {
         homeView.loadSavedObjects(params);
     });
 
+    channel.bind('app.new.jndi.data', function (params) {
+        homeView.loadJndi(params);
+    });
+
     channel.bind('application.saved.objects.load', function (params) {
         model.loadSessionData();
     });
@@ -142,6 +128,7 @@ TOMEE.ApplicationController = function () {
     });
 
     model.loadLog(null, null);
+    model.loadJndi("");
 
     return {
 

@@ -69,10 +69,11 @@ public class JndiServlet extends HttpServlet {
                 p.put("openejb.loader", "embed");
 
                 final Context ctx = new InitialContext(p);
-                final NamingEnumeration<NameClassPair> namingEnumeration = ctx.list("");
-
-                while (namingEnumeration.hasMoreElements()) {
-                    objs.add(buildNode(namingEnumeration.next(), ctx));
+                final NamingEnumeration<NameClassPair> namingEnumeration = ctx.list(req.getParameter("root"));
+                if (namingEnumeration != null) {
+                    while (namingEnumeration.hasMoreElements()) {
+                        objs.add(buildNode(namingEnumeration.next(), ctx));
+                    }
                 }
             }
         });
