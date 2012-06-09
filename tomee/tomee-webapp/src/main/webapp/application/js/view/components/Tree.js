@@ -24,22 +24,20 @@ TOMEE.components.Tree = function (cfg) {
     var currentData = null;
 
     var getText = cfg.getText;
-    var getChildren = cfg.getChildren;
+    var childrenPropertyName = cfg.childrenPropertyName;
     var myKey = cfg.key;
 
-    var elements = (function () {
-        var container = $('<div></div>');
-        var ul = $('<ul></ul>');
-        ul.addClass('tree');
-
-        container.append(ul);
-
-        return {
-            container:container,
-            ul:ul
-        };
-    })();
-
+    var elements = TOMEE.el.getElMap({
+        elName:'container',
+        tag:'div',
+        children:[
+            {
+                elName:'ul',
+                tag:'ul',
+                cls:'tree'
+            }
+        ]
+    });
 
     var loadTree = function (parent, data) {
         if ($.isArray(data)) {
@@ -60,13 +58,26 @@ TOMEE.components.Tree = function (cfg) {
         var li = $('<li style="padding-left: 0px;"></li>');
         li.append(span);
 
-        var children = getChildren(data);
-        if (children) {
+        if (data[childrenPropertyName] === undefined) {
+            myI.addClass('icon-leaf');
+
+            span.bind('click', {
+                bean:data
+            }, function (event) {
+
+                channel.send('tree_leaf_click', {
+                    panelKey: myKey,
+                    bean:event.data.bean
+                });
+            });
+
+        } else {
             myI.addClass('icon-folder-close');
 
             span.bind('click', {
-                children:children,
-                li:li
+                li:li,
+                bean:data
+
             }, function (event) {
                 var i = event.data.li.find('i');
                 if (i.hasClass("icon-folder-open")) {
@@ -84,20 +95,12 @@ TOMEE.components.Tree = function (cfg) {
                         event.data.li.append(ul);
                     }
 
-                    loadTree(ul, event.data.children);
+                    channel.send('tree_load_children', {
+                        panelKey: myKey,
+                        bean:event.data.bean,
+                        parentEl:ul
+                    });
                 }
-            });
-
-        } else {
-            myI.addClass('icon-leaf');
-
-            span.bind('click', {
-                bean:data
-            }, function (event) {
-
-                channel.send(myKey + '_leaf_click', {
-                    bean: event.data.bean
-                });
             });
         }
 

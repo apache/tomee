@@ -131,6 +131,18 @@ TOMEE.ApplicationModel = function (cfg) {
                     channel.send('app.new.session.data', data);
                 }
             });
+        },
+        loadJndi:function (root) {
+            request({
+                method:'GET',
+                url:TOMEE.baseURL('jndi'),
+                data:{
+                    root:root
+                },
+                success:function (data) {
+                    channel.send('app.new.jndi.data', data);
+                }
+            });
         }
     };
 }
