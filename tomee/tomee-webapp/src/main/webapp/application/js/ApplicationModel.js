@@ -132,15 +132,22 @@ TOMEE.ApplicationModel = function (cfg) {
                 }
             });
         },
-        loadJndi:function (root) {
+        loadJndi:function (params) {
+            //params.path, params.bean, params.parentEl
             request({
                 method:'GET',
                 url:TOMEE.baseURL('jndi'),
                 data:{
-                    root:root
+                    test:params.test,
+                    path:TOMEE.utils.getSafe(params.path, []).join(',')
                 },
                 success:function (data) {
-                    channel.send('app.new.jndi.data', data);
+                    channel.send('app.new.jndi.data', {
+                        names:data.names,
+                        path:params.path,
+                        bean:params.bean,
+                        parentEl:params.parentEl
+                    });
                 }
             });
         }

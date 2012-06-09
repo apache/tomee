@@ -43,73 +43,109 @@ TOMEE.ApplicationController = function () {
         channel:channel
     });
 
-    channel.bind('application.name.click', function (params) {
-        window.open('http://openejb.apache.org/', 'OpenEJB');
-    });
 
-    channel.bind('application.logout', function (params) {
-        model.logout();
-    });
+    (function () {
+        channel.bind('application.name.click', function (params) {
+            window.open('http://openejb.apache.org/', 'OpenEJB');
+        });
 
-    channel.bind('tree_leaf_click', function (params) {
-        //params.panelKey, params.bean
-        if (params.panelKey === 'jndi') {
+        channel.bind('application.logout', function (params) {
+            model.logout();
+        });
 
-        }
-    });
+        channel.bind('app.logout.bye', function (params) {
+            window.location.reload();
+        });
+    })();
 
-    channel.bind('tree_load_children', function (params) {
-        //params.panelKey, params.bean, params.parentEl
-        if (params.panelKey === 'jndi') {
+    //JNDI tree
+    (function () {
+        channel.bind('tree_leaf_click', function (params) {
+            //params.panelKey, params.bean
+            if (params.panelKey === 'jndi') {
 
-        }
-    });
+            }
+        });
 
-    channel.bind('deploy.file.uploaded', function (params) {
-        model.deployApp(params.file);
-    });
+        channel.bind('tree_load_children', function (params) {
+            var path = [];
+            var buildPathArray = function (bean) {
+                if (bean.parent) {
+                    path.push(bean.parent);
 
-    channel.bind('app.deployment.result', function (params) {
-        alert('appId: ' + params.appId + '; path: ' + params.path + ';');
-    });
+                }
+                path.push(bean.name);
+            };
+            buildPathArray(params.bean);
 
-    channel.bind('app.logout.bye', function (params) {
-        window.location.reload();
-    });
+            //params.panelKey, params.bean, params.parentEl
+            if (params.panelKey === 'jndi') {
+                model.loadJndi({
+                    path:path,
+                    bean:params.bean,
+                    parentEl:params.parentEl
+                });
+            }
+        });
+
+        channel.bind('app.new.jndi.data', function (params) {
+            //params.path, params.bean, params.parentEl
+            homeView.loadJndi(params);
+        });
+    })();
+
+
+    (function () {
+        channel.bind('deploy.file.uploaded', function (params) {
+            model.deployApp(params.file);
+        });
+
+        channel.bind('app.deployment.result', function (params) {
+            //TODO Implement me
+            throw "app.deployment.result not implemented";
+        });
+    })();
+
 
     channel.bind('app.system.info', function (params) {
         view.setLoggedUser(params.user);
         homeView.setSupportedScriptLanguages(params.supportedScriptLanguages);
     });
 
-    channel.bind('trigger.console.exec', function (params) {
-        model.execute(params.codeType, params.codeText);
-    });
 
-    channel.bind('app.console.executed', function (params) {
-        //TODO Implement me
-        throw "app.console.executed not implemented";
-    });
+    (function () {
+        channel.bind('trigger.console.exec', function (params) {
+            model.execute(params.codeType, params.codeText);
+        });
 
-    channel.bind('app.new.log.data', function (params) {
-        logView.loadData(params);
-    });
+        channel.bind('app.console.executed', function (params) {
+            //TODO Implement me
+            throw "app.console.executed not implemented";
+        });
+    })();
 
-    channel.bind('trigger.log.load', function (params) {
-        model.loadLog(params.file, params.tail);
-    });
 
-    channel.bind('app.new.session.data', function (params) {
-        homeView.loadSavedObjects(params);
-    });
+    (function () {
+        channel.bind('app.new.log.data', function (params) {
+            logView.loadData(params);
+        });
 
-    channel.bind('app.new.jndi.data', function (params) {
-        homeView.loadJndi(params);
-    });
+        channel.bind('trigger.log.load', function (params) {
+            model.loadLog(params.file, params.tail);
+        });
+    })();
 
-    channel.bind('application.saved.objects.load', function (params) {
-        model.loadSessionData();
-    });
+
+    (function () {
+        channel.bind('app.new.session.data', function (params) {
+            homeView.loadSavedObjects(params);
+        });
+
+        channel.bind('application.saved.objects.load', function (params) {
+            model.loadSessionData();
+        });
+    })();
+
 
     var view = TOMEE.ApplicationView({
         channel:channel,
@@ -128,7 +164,9 @@ TOMEE.ApplicationController = function () {
     });
 
     model.loadLog(null, null);
-    model.loadJndi("");
+    model.loadJndi({
+        path:['']
+    });
 
     return {
 
