@@ -32,9 +32,13 @@
         </location>
     </error-page>
 
+    <!-- ************************************************************************************** -->
+
     <listener>
         <listener-class>org.apache.tomee.webapp.listener.UserSessionListener</listener-class>
     </listener>
+
+    <!-- ************************************************************************************** -->
 
     <servlet>
         <servlet-name>LoaderServlet</servlet-name>
@@ -42,25 +46,55 @@
         <load-on-startup>0</load-on-startup>
     </servlet>
 
+    <!-- ************************************************************************************** -->
+
     <servlet>
         <servlet-name>ServerServlet</servlet-name>
         <servlet-class>org.apache.openejb.server.httpd.ServerServlet</servlet-class>
     </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ServerServlet</servlet-name>
+        <url-pattern>/ejb/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- ************************************************************************************** -->
 
     <servlet>
         <servlet-name>InstallerServlet</servlet-name>
         <servlet-class>org.apache.tomee.installer.InstallerServlet</servlet-class>
     </servlet>
 
+    <servlet-mapping>
+        <servlet-name>InstallerServlet</servlet-name>
+        <url-pattern>/installer</url-pattern>
+    </servlet-mapping>
+
+    <!-- ************************************************************************************** -->
+
     <servlet>
         <servlet-name>LogServlet</servlet-name>
         <servlet-class>org.apache.tomee.webapp.servlet.LogServlet</servlet-class>
     </servlet>
 
+    <servlet-mapping>
+        <servlet-name>LogServlet</servlet-name>
+        <url-pattern>/log/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- ************************************************************************************** -->
+
     <servlet>
         <servlet-name>LogoutServlet</servlet-name>
         <servlet-class>org.apache.tomee.webapp.servlet.LogoutServlet</servlet-class>
     </servlet>
+
+    <servlet-mapping>
+        <servlet-name>LogoutServlet</servlet-name>
+        <url-pattern>/logout/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- ************************************************************************************** -->
 
     <servlet>
         <servlet-name>FileUploadServlet</servlet-name>
@@ -72,25 +106,61 @@
         </multipart-config>
     </servlet>
 
+    <servlet-mapping>
+        <servlet-name>FileUploadServlet</servlet-name>
+        <url-pattern>/upload/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- ************************************************************************************** -->
+
     <servlet>
         <servlet-name>SystemInfoServlet</servlet-name>
         <servlet-class>org.apache.tomee.webapp.servlet.SystemInfoServlet</servlet-class>
     </servlet>
+
+
+    <servlet-mapping>
+        <servlet-name>SystemInfoServlet</servlet-name>
+        <url-pattern>/system/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- ************************************************************************************** -->
 
     <servlet>
         <servlet-name>DeployServlet</servlet-name>
         <servlet-class>org.apache.tomee.webapp.servlet.DeployServlet</servlet-class>
     </servlet>
 
+    <servlet-mapping>
+        <servlet-name>DeployServlet</servlet-name>
+        <url-pattern>/deploy/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- ************************************************************************************** -->
+
     <servlet>
         <servlet-name>ErrorServlet</servlet-name>
         <servlet-class>org.apache.tomee.webapp.ErrorServlet</servlet-class>
     </servlet>
 
+    <servlet-mapping>
+        <servlet-name>ErrorServlet</servlet-name>
+        <url-pattern>/error/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- ************************************************************************************** -->
+
     <servlet>
         <servlet-name>ConsoleServlet</servlet-name>
         <servlet-class>org.apache.tomee.webapp.servlet.ConsoleServlet</servlet-class>
     </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ConsoleServlet</servlet-name>
+        <url-pattern>/console/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- ************************************************************************************** -->
 
     <servlet>
         <servlet-name>SessionDataServlet</servlet-name>
@@ -102,50 +172,7 @@
         <url-pattern>/data/*</url-pattern>
     </servlet-mapping>
 
-    <servlet-mapping>
-        <servlet-name>ServerServlet</servlet-name>
-        <url-pattern>/ejb/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>InstallerServlet</servlet-name>
-        <url-pattern>/installer</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>SystemInfoServlet</servlet-name>
-        <url-pattern>/system/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>LogServlet</servlet-name>
-        <url-pattern>/log/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>LogoutServlet</servlet-name>
-        <url-pattern>/logout/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>FileUploadServlet</servlet-name>
-        <url-pattern>/upload/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>ErrorServlet</servlet-name>
-        <url-pattern>/error/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>DeployServlet</servlet-name>
-        <url-pattern>/deploy/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>ConsoleServlet</servlet-name>
-        <url-pattern>/console/*</url-pattern>
-    </servlet-mapping>
+    <!-- ************************************************************************************** -->
 
     <!-- basic security to replace context.xml and allow remote accesses -->
     <security-constraint>
