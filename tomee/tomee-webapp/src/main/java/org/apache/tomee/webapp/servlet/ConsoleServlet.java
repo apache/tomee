@@ -19,6 +19,7 @@ package org.apache.tomee.webapp.servlet;
 
 import org.apache.openejb.util.OpenEJBScripter;
 import org.apache.tomee.webapp.JsonExecutor;
+import org.apache.tomee.webapp.listener.UserSessionListener;
 
 import javax.script.Bindings;
 import javax.script.SimpleBindings;
@@ -62,8 +63,7 @@ public class ConsoleServlet extends HttpServlet {
 
                     @Override
                     public void save(String key, Object obj) {
-                        Map<String, Object> objects = (Map<String, Object>) session.getAttribute("objects");
-                        objects.put(key, obj);
+                        UserSessionListener.getServiceContext(req.getSession()).getSaved().put(key, obj);
                     }
                 });
 
