@@ -55,6 +55,22 @@ public class JndiServlet extends HttpServlet {
         return node;
     }
 
+    private Context getContext(Context ctx, List<String> path) throws NamingException {
+        if (path.isEmpty()) {
+            return ctx;
+        }
+
+        String name = path.remove(0);
+        final Object obj = ctx.lookup(name);
+
+        if (obj instanceof Context) {
+            return getContext((Context) obj, path);
+
+        } else {
+            throw new IllegalStateException("obj should be an instance of Context");
+        }
+    }
+
     @Override
     protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
         JsonExecutor.execute(resp, new JsonExecutor.Executor() {
@@ -67,9 +83,19 @@ public class JndiServlet extends HttpServlet {
                 final Properties p = new Properties();
                 p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
                 p.put("openejb.loader", "embed");
+                final Context initCtx = new InitialContext(p);
 
-                final Context ctx = new InitialContext(p);
-                final NamingEnumeration<NameClassPair> namingEnumeration = ctx.list(req.getParameter("root"));
+                final Context ctx;
+                final String strPath = req.getParameter("path");
+                if (strPath == null || "".equals(strPath.trim())) {
+                    ctx = initCtx;
+                } else {
+                    final List<String> path = new ArrayList<String>();
+                    path.addAll(Arrays.asList(req.getParameter("path").split(",")));
+                    ctx = getContext(initCtx, path);
+                }
+
+                final NamingEnumeration<NameClassPair> namingEnumeration = ctx.list("");
                 if (namingEnumeration != null) {
                     while (namingEnumeration.hasMoreElements()) {
                         objs.add(buildNode(namingEnumeration.next(), ctx));
