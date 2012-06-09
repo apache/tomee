@@ -22,7 +22,7 @@
          version="3.0" metadata-complete="true">
 
     <display-name>Tomee Application</display-name>
-    
+
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
@@ -72,6 +72,18 @@
     <servlet-mapping>
         <servlet-name>InstallerServlet</servlet-name>
         <url-pattern>/installer</url-pattern>
+    </servlet-mapping>
+
+    <!-- ************************************************************************************** -->
+
+    <servlet>
+        <servlet-name>JndiServlet</servlet-name>
+        <servlet-class>org.apache.tomee.webapp.servlet.JndiServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>JndiServlet</servlet-name>
+        <url-pattern>/jndi/*</url-pattern>
     </servlet-mapping>
 
     <!-- ************************************************************************************** -->

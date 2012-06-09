@@ -17,16 +17,43 @@
 
 package org.apache.tomee.webapp.servlet;
 
+import org.apache.openejb.util.proxy.LocalBeanProxyGeneratorImpl;
 import org.apache.tomee.webapp.JsonExecutor;
 
+import javax.naming.*;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Map;
+import java.util.*;
 
 public class JndiServlet extends HttpServlet {
+
+    private Map<String, Object> buildNode(NameClassPair pair, Context ctx) throws NamingException {
+        final String name = pair.getName();
+        final Object obj = ctx.lookup(name);
+
+        final String beanType;
+        if (obj instanceof Context) {
+            beanType = "CONTEXT";
+
+        } else if (obj instanceof java.rmi.Remote
+                || obj instanceof org.apache.openejb.core.ivm.IntraVmProxy
+                || (obj != null && LocalBeanProxyGeneratorImpl.isLocalBean(obj.getClass()))) {
+            beanType = "BEAN";
+        } else {
+            beanType = "OTHER";
+        }
+
+        final Map<String, Object> node = new HashMap<String, Object>();
+        node.put("name", name);
+        node.put("type", beanType);
+        if ("CONTEXT".equals(beanType)) {
+            node.put("children", Collections.emptyList());
+        }
+        return node;
+    }
 
     @Override
     protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
@@ -34,7 +61,19 @@ public class JndiServlet extends HttpServlet {
 
             @Override
             public void call(Map<String, Object> json) throws Exception {
+                final List<Map<String, Object>> objs = new ArrayList<Map<String, Object>>();
+                json.put("objs", objs);
 
+                final Properties p = new Properties();
+                p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
+                p.put("openejb.loader", "embed");
+
+                final Context ctx = new InitialContext(p);
+                final NamingEnumeration<NameClassPair> namingEnumeration = ctx.list("");
+
+                while (namingEnumeration.hasMoreElements()) {
+                    objs.add(buildNode(namingEnumeration.next(), ctx));
+                }
             }
         });
 
