@@ -83,7 +83,18 @@ TOMEE.ApplicationViewHome = function (cfg) {
 
     var savedPanel = (function () {
         var saved = TOMEE.components.Panel({
-            title:TOMEE.I18N.get('application.saved.objects')
+            title:TOMEE.I18N.get('application.saved.objects'),
+            actions:[
+                {
+                    text:TOMEE.I18N.get('application.saved.objects.load'),
+                    listeners:{
+                        'click':function () {
+                            channel.send('application.saved.objects.load', {});
+                        }
+                    }
+
+                }
+            ]
         });
 
         var table = TOMEE.components.Table({
@@ -97,10 +108,10 @@ TOMEE.ApplicationViewHome = function (cfg) {
                 return saved.getEl();
             },
             load:function (data) {
-                var arr = TOMEE.utils.toArray(data, function(key, obj) {
+                var arr = TOMEE.utils.toArray(data, function (key, obj) {
                     return {
-                        name: key,
-                        value: obj
+                        name:key,
+                        value:obj
                     };
                 });
 
@@ -242,6 +253,7 @@ TOMEE.ApplicationViewHome = function (cfg) {
             if (!myTomee.hasMdbs && !myTomee.hasWebservices) {
                 elMapContent['right'].detach();
                 elMapContent['center'].css('width', '66%');
+                elMapContent['center'].css('margin-right', '0px');
 
             } else {
                 if (!myTomee.hasMdbs) {

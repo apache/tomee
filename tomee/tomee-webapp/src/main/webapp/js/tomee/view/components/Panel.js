@@ -38,6 +38,7 @@ TOMEE.components.Panel = function (cfg) {
                 },
                 children:[
                     {
+                        elName: 'menuItems',
                         tag:'div',
                         children:[
                             {
@@ -49,60 +50,6 @@ TOMEE.components.Panel = function (cfg) {
                                     style:'padding-left: 10px; margin-left: 0px;'
                                 },
                                 html:TOMEE.utils.getSafe(cfg.title, '-')
-                            },
-                            {
-                                tag:'div',
-                                cls:'btn-group pull-right',
-                                children:[
-                                    {
-                                        tag:'a',
-                                        cls:'btn dropdown-toggle',
-                                        attributes:{
-                                            'data-toggle':'dropdown',
-                                            href:'#'
-                                        },
-                                        children:[
-                                            {
-                                                tag:'i',
-                                                cls:'icon-cog'
-                                            },
-                                            {
-                                                tag:'span',
-                                                elName:'userNameSpan',
-                                                attributes:{
-                                                    style:'padding-left: 5px; padding-right: 5px;'
-                                                }
-                                            },
-                                            {
-                                                tag:'span',
-                                                cls:'caret'
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        tag:'ul',
-                                        cls:'dropdown-menu',
-                                        attributes:{
-                                            style:'right: 5px;'
-                                        },
-                                        children:[
-                                            {
-                                                tag:'li',
-                                                children:[
-                                                    {
-                                                        elName:'actionLink',
-                                                        tag:'a',
-                                                        attributes:{
-                                                            href:'#'
-                                                        },
-                                                        html:'-'
-                                                    }
-                                                ]
-                                            }
-                                        ]
-
-                                    }
-                                ]
                             }
                         ]
                     }
@@ -110,6 +57,69 @@ TOMEE.components.Panel = function (cfg) {
             }
         ]
     });
+
+    if (cfg.actions) {
+        var commands = TOMEE.el.getElMap({
+            elName:'actionsMenu',
+            tag:'div',
+            cls:'btn-group pull-right',
+            children:[
+                {
+                    tag:'a',
+                    cls:'btn dropdown-toggle',
+                    attributes:{
+                        'data-toggle':'dropdown',
+                        href:'#'
+                    },
+                    children:[
+                        {
+                            tag:'i',
+                            cls:'icon-cog'
+                        },
+                        {
+                            tag:'span',
+                            attributes:{
+                                style:'padding-left: 5px; padding-right: 5px;'
+                            }
+                        },
+                        {
+                            tag:'span',
+                            cls:'caret'
+                        }
+                    ]
+                }
+            ]
+        });
+        elMapToolbar.menuItems.append(commands.actionsMenu);
+
+        (function () {
+            var actions = TOMEE.el.getElMap({
+                elName: 'main',
+                tag:'ul',
+                cls:'dropdown-menu',
+                attributes:{
+                    style:'right: 5px;'
+                }
+
+            });
+
+            var actionItem = null;
+            for (var i = 0; i < cfg.actions.length; i++) {
+                actionItem = cfg.actions[i];
+                actions.main.append(TOMEE.el.getElMap({
+                    elName: 'actionButton',
+                    tag:'a',
+                    attributes:{
+                        href:'#'
+                    },
+                    html:actionItem.text,
+                    listeners: actionItem.listeners
+                }).actionButton);
+            }
+            commands.actionsMenu.append(actions.main);
+        })();
+
+    }
 
     var map = TOMEE.el.getElMap({
         elName:'main',
@@ -123,7 +133,7 @@ TOMEE.components.Panel = function (cfg) {
                         cls:'well t-panel',
                         children:[
                             {
-                                elName: 'toolbar',
+                                elName:'toolbar',
                                 tag:'div',
                                 attributes:{
                                     style:'position: relative;'

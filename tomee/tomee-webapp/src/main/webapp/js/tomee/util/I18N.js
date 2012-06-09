@@ -42,6 +42,8 @@ TOMEE.I18N = (function () {
 
         'application.log.load':'Load',
 
+        'application.saved.objects.load':'Load',
+
         'dummy':'dummy'
     };
 
