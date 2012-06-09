@@ -121,6 +121,10 @@ TOMEE.ApplicationController = function () {
         homeView.loadSavedObjects(params);
     });
 
+    channel.bind('application.saved.objects.load', function (params) {
+        model.loadSessionData();
+    });
+
     var view = TOMEE.ApplicationView({
         channel:channel,
         groups:{
