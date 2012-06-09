@@ -21,8 +21,6 @@ TOMEE.components.Tree = function (cfg) {
 
     var channel = cfg.channel;
 
-    var currentData = null;
-
     var getText = cfg.getText;
     var childrenPropertyName = cfg.childrenPropertyName;
     var myKey = cfg.key;
@@ -113,9 +111,13 @@ TOMEE.components.Tree = function (cfg) {
             return elements.container;
         },
 
-        load:function (newData) {
-            currentData = TOMEE.utils.getArray(newData);
-            loadTree(elements.ul, currentData);
+        load:function (ul, newData) {
+            if(ul) {
+                loadTree(ul, newData);
+            } else {
+                loadTree(elements.ul, newData);
+            }
+
         }
     };
 };
