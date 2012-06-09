@@ -62,7 +62,7 @@ public class JndiServlet extends HttpServlet {
             @Override
             public void call(Map<String, Object> json) throws Exception {
                 final List<Map<String, Object>> objs = new ArrayList<Map<String, Object>>();
-                json.put("objs", objs);
+                json.put("names", objs);
 
                 final Properties p = new Properties();
                 p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
