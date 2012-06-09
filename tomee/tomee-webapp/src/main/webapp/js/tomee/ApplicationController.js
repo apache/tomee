@@ -71,50 +71,6 @@ TOMEE.ApplicationController = function () {
         ] }
     ]);
 
-    homeView.loadSavedObjects([
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') },
-        { name:TOMEE.Sequence.next('name'), value:TOMEE.Sequence.next('value') }
-
-    ]);
-
     channel.bind('application.name.click', function (params) {
         window.open('http://openejb.apache.org/', 'OpenEJB');
     });
@@ -159,6 +115,10 @@ TOMEE.ApplicationController = function () {
 
     channel.bind('trigger.log.load', function (params) {
         model.loadLog(params.file, params.tail);
+    });
+
+    channel.bind('app.new.session.data', function (params) {
+        homeView.loadSavedObjects(params);
     });
 
     var view = TOMEE.ApplicationView({

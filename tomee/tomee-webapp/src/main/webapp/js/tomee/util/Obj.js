@@ -34,6 +34,23 @@ TOMEE.utils = {
         return defaultValue;
     },
 
+    toArray:function (obj, objBuilder) {
+        if (!obj) {
+            return [];
+        }
+
+        if (obj instanceof Array) {
+            return obj;
+        }
+
+        var result = [];
+        for(var key in obj) {
+            result.push(objBuilder(key, obj[key]));
+        }
+
+        return result;
+    },
+
     getArray:function (obj) {
         if (!obj) {
             return [];

@@ -92,6 +92,16 @@
         <servlet-class>org.apache.tomee.webapp.servlet.ConsoleServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>SessionDataServlet</servlet-name>
+        <servlet-class>org.apache.tomee.webapp.servlet.SessionDataServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>SessionDataServlet</servlet-name>
+        <url-pattern>/data/*</url-pattern>
+    </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>ServerServlet</servlet-name>
         <url-pattern>/ejb/*</url-pattern>

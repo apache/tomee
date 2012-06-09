@@ -28,6 +28,7 @@ TOMEE.ApplicationModel = function (cfg) {
 
     var systemInfo = {};
     var logInfo = {};
+    var sessionData = {};
 
     var request = function (params) {
         $.ajax({
@@ -71,7 +72,7 @@ TOMEE.ApplicationModel = function (cfg) {
                     systemInfo = data;
                     channel.send('app.system.info', data);
 
-                    if(callback) {
+                    if (callback) {
                         callback(data);
                     }
                 }
@@ -120,6 +121,16 @@ TOMEE.ApplicationModel = function (cfg) {
         },
         getLogInfo:function () {
             return logInfo;
+        },
+        loadSessionData:function () {
+            request({
+                method:'GET',
+                url:TOMEE.baseURL('data'),
+                success:function (data) {
+                    sessionData = data;
+                    channel.send('app.new.session.data', data);
+                }
+            });
         }
     };
 }
