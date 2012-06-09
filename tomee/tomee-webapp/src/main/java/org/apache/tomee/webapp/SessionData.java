@@ -17,6 +17,14 @@
 
 package org.apache.tomee.webapp;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class SessionData {
 
+    private final Map<String, Object> saved = new HashMap<String, Object>();
+
+    public Map<String, Object> getSaved() {
+        return saved;
+    }
 }

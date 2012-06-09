@@ -87,8 +87,7 @@ TOMEE.ApplicationViewHome = function (cfg) {
         });
 
         var table = TOMEE.components.Table({
-            channel:channel,
-            columns:['colA', 'colB']
+            channel:channel
         });
 
         saved.getContentEl().append(table.getEl());
@@ -98,7 +97,14 @@ TOMEE.ApplicationViewHome = function (cfg) {
                 return saved.getEl();
             },
             load:function (data) {
-                table.load(data, function (bean) {
+                var arr = TOMEE.utils.toArray(data, function(key, obj) {
+                    return {
+                        name: key,
+                        value: obj
+                    };
+                });
+
+                table.load(arr, function (bean) {
                     return [bean.name, bean.value];
                 });
             }
