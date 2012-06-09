@@ -23,10 +23,6 @@ body {
     padding: 9px 0;
 }
 
-.t-tree-link {
-
-}
-
 .t-navbar {
     background-color: #eeeeee; /* Old browsers */
     background-image: none;
@@ -47,22 +43,6 @@ ul.tree li {
     margin: 0;
     padding: 0 20px;
     line-height: 20px;
-}
-
-ul.tree li.leaf {
-    background: url("../img/page.png") no-repeat;
-}
-
-ul.tree li.opened {
-    background: url("../img/folder_delete.png") no-repeat;
-}
-
-ul.tree li.closed {
-    background: url("../img/folder_add.png") no-repeat;
-}
-
-ul.tree li.empty {
-    background: url("../img/folder.png") no-repeat;
 }
 
 div.t-panel {
