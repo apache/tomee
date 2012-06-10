@@ -69,7 +69,7 @@ else
 fi
 
 CP=""
-for i in $TOMEE_HOME/webapps/tomee/lib/*.jar; do
+for i in $TOMEE_HOME/lib/*.jar; do
   CP="$CP:$i"
 done
 
