@@ -61,8 +61,8 @@
       <directory>${project.build.directory}/${project.artifactId}-${project.version}/</directory>
       <outputDirectory>/</outputDirectory>
       <includes>
+        <include>WEB-INF/web.xml</include>
         <include>**/*.jsp</include>
-        <include>**/*.css</include>
         <include>**/*.css</include>
         <include>**/*.png</include>
         <include>**/*.js</include>
