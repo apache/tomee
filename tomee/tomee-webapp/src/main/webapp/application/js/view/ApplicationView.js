@@ -113,7 +113,7 @@ TOMEE.ApplicationView = function (cfg) {
     });
     calculateContentSize();
 
-    delayResize.delay(100);
+    delayResize.delay(1000);
 
     return {
         setLoggedUser:function (name) {

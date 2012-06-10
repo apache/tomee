@@ -172,6 +172,11 @@ TOMEE.components.Panel = function (cfg) {
         })();
     }
 
+    var setHeight = function(height) {
+        var toolbarSize = elMapToolbar.main.height();
+        var mySize = height - toolbarSize - TOMEE.el.getBorderSize(map.main) - TOMEE.el.getBorderSize(map.content);
+        map.content.height(mySize);
+    };
 
     return {
         getEl:function () {
@@ -179,6 +184,7 @@ TOMEE.components.Panel = function (cfg) {
         },
         getContentEl:function () {
             return map.content;
-        }
+        },
+        setHeight: setHeight
     };
 };
