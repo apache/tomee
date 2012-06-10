@@ -119,7 +119,8 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
 
     @Override
     public void setup(final OpenEJBConfiguration openEJBConfiguration) {
-        properties = new Properties();
+        properties = new Properties(PROPERTIES);
+
         final ByteArrayInputStream bais = new ByteArrayInputStream(openEJBConfiguration.getProperties().getBytes());
         try {
             properties.load(bais);
@@ -128,7 +129,6 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
         } finally {
             IO.close(bais);
         }
-        properties.putAll(PROPERTIES);
     }
 
     @Override
