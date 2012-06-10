@@ -190,150 +190,30 @@
 
     <!-- ************************************************************************************** -->
 
-  <!-- basic security to replace context.xml and allow remote accesses -->
-  <security-constraint>
-    <web-resource-collection>
-      <web-resource-name>Admin Installer</web-resource-name>
-      <url-pattern>/installer</url-pattern>
-    </web-resource-collection>
-    <auth-constraint>
-      <role-name>tomee-admin</role-name>
-    </auth-constraint>
-  </security-constraint>
-  <security-constraint>
-    <web-resource-collection>
-      <web-resource-name>Admin Webservices</web-resource-name>
-      <url-pattern>/ws/*</url-pattern>
-    </web-resource-collection>
-    <auth-constraint>
-      <role-name>tomee-admin</role-name>
-    </auth-constraint>
-  </security-constraint>
-  <security-constraint>
-    <web-resource-collection>
-      <web-resource-name>Admin Jndi</web-resource-name>
-      <url-pattern>/jndi/*</url-pattern>
-    </web-resource-collection>
-    <auth-constraint>
-      <role-name>tomee-admin</role-name>
-    </auth-constraint>
-  </security-constraint>
-  <security-constraint>
-    <web-resource-collection>
-      <web-resource-name>Admin Log</web-resource-name>
-      <url-pattern>/log/*</url-pattern>
-    </web-resource-collection>
-    <auth-constraint>
-      <role-name>tomee-admin</role-name>
-    </auth-constraint>
-  </security-constraint>
-  <security-constraint>
-    <web-resource-collection>
-      <web-resource-name>Admin Logout</web-resource-name>
-      <url-pattern>/logout/*</url-pattern>
-    </web-resource-collection>
-    <auth-constraint>
-      <role-name>tomee-admin</role-name>
-    </auth-constraint>
-  </security-constraint>
-  <security-constraint>
-    <web-resource-collection>
-      <web-resource-name>Admin upload</web-resource-name>
-      <url-pattern>/upload/*</url-pattern>
-    </web-resource-collection>
-    <auth-constraint>
-      <role-name>tomee-admin</role-name>
-    </auth-constraint>
-  </security-constraint>
-  <security-constraint>
-    <web-resource-collection>
-      <web-resource-name>Admin System</web-resource-name>
-      <url-pattern>/system/*</url-pattern>
-    </web-resource-collection>
-    <auth-constraint>
-      <role-name>tomee-admin</role-name>
-    </auth-constraint>
-  </security-constraint>
-  <security-constraint>
-    <web-resource-collection>
-      <web-resource-name>Admin Deploy</web-resource-name>
-      <url-pattern>/deploy/*</url-pattern>
-    </web-resource-collection>
-    <auth-constraint>
-      <role-name>tomee-admin</role-name>
-    </auth-constraint>
-  </security-constraint>
-  <security-constraint>
-    <web-resource-collection>
-      <web-resource-name>Admin Error</web-resource-name>
-      <url-pattern>/error/*</url-pattern>
-    </web-resource-collection>
-    <auth-constraint>
-      <role-name>tomee-admin</role-name>
-    </auth-constraint>
-  </security-constraint>
-  <security-constraint>
-    <web-resource-collection>
-      <web-resource-name>Admin Console</web-resource-name>
-      <url-pattern>/console/*</url-pattern>
-    </web-resource-collection>
-    <auth-constraint>
-      <role-name>tomee-admin</role-name>
-    </auth-constraint>
-  </security-constraint>
-  <security-constraint>
-    <web-resource-collection>
-      <web-resource-name>Admin Data</web-resource-name>
-      <url-pattern>/data/*</url-pattern>
-    </web-resource-collection>
-    <auth-constraint>
-      <role-name>tomee-admin</role-name>
-    </auth-constraint>
-  </security-constraint>
-  <security-constraint>
-    <web-resource-collection>
-      <web-resource-name>Admin Interface</web-resource-name>
-      <url-pattern>*.jsp</url-pattern>
-    </web-resource-collection>
-    <auth-constraint>
-      <role-name>tomee-admin</role-name>
-    </auth-constraint>
-  </security-constraint>
-  <security-constraint>
-    <web-resource-collection>
-      <web-resource-name>Admin Style</web-resource-name>
-      <url-pattern>/css/*</url-pattern>
-    </web-resource-collection>
-    <auth-constraint>
-      <role-name>tomee-admin</role-name>
-    </auth-constraint>
-  </security-constraint>
-  <security-constraint>
-    <web-resource-collection>
-      <web-resource-name>Admin Images</web-resource-name>
-      <url-pattern>/images/*</url-pattern>
-    </web-resource-collection>
-    <auth-constraint>
-      <role-name>tomee-admin</role-name>
-    </auth-constraint>
-  </security-constraint>
-  <!-- if you use it, /ejb/* will be secured too which is nto what we want today
-  <security-constraint>
-    <web-resource-collection>
-      <web-resource-name>Admin</web-resource-name>
-      <url-pattern>/*</url-pattern>
-    </web-resource-collection>
-    <auth-constraint>
-      <role-name>tomee-admin</role-name>
-    </auth-constraint>
-  </security-constraint>
-  -->
+    <!-- basic security to replace context.xml and allow remote accesses -->
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Application</web-resource-name>
+            <url-pattern>/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>tomee-admin</role-name>
+        </auth-constraint>
+    </security-constraint>
 
-  <login-config>
-    <auth-method>BASIC</auth-method>
-    <realm-name>TomEE Webapp</realm-name>
-  </login-config>
-  <security-role>
-    <role-name>tomee-admin</role-name>
-  </security-role>
+    <!-- /ejb/* has no auth-constraint. It is has public access. -->
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Server EJB</web-resource-name>
+            <url-pattern>/ejb/*</url-pattern>
+        </web-resource-collection>
+    </security-constraint>
+
+    <login-config>
+        <auth-method>BASIC</auth-method>
+        <realm-name>TomEE Webapp</realm-name>
+    </login-config>
+    <security-role>
+        <role-name>tomee-admin</role-name>
+    </security-role>
 </web-app>
