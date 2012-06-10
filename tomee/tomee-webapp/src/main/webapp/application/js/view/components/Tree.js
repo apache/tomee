@@ -74,15 +74,18 @@ TOMEE.components.Tree = function (cfg) {
 
             span.bind('click', {
                 li:li,
+                i: myI,
                 bean:data
 
             }, function (event) {
-                var i = event.data.li.find('i');
+                var i = event.data.i;
+
                 if (i.hasClass("icon-folder-open")) {
                     event.data.li.find('ul').empty();
 
                     i.removeClass('icon-folder-open');
                     i.addClass('icon-folder-close');
+
                 } else {
                     i.removeClass('icon-folder-close');
                     i.addClass('icon-folder-open');
