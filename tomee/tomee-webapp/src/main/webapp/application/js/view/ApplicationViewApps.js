@@ -71,6 +71,7 @@ TOMEE.ApplicationViewApps = function (cfg) {
         var content = panel.getContentEl();
         content.append(map.main);
 
+        var fileForm = null;
         (function () {
             var fileUploadedHandler = function (event) {
                 fileForm.myFrame.unbind('load', fileUploadedHandler);
@@ -84,7 +85,7 @@ TOMEE.ApplicationViewApps = function (cfg) {
             };
 
             var frameId = TOMEE.Sequence.next('uploadFrame');
-            var fileForm = TOMEE.el.getElMap({
+            fileForm = TOMEE.el.getElMap({
                 elName:'main',
                 tag:'form',
                 attributes:{
@@ -132,6 +133,12 @@ TOMEE.ApplicationViewApps = function (cfg) {
                 table.load(data, function (bean) {
                     return [bean.name, bean.value];
                 });
+            },
+            setHeight: function(height) {
+                panel.setHeight(height);
+
+                var myHeight = panel.getContentEl().height() - TOMEE.el.getBorderSize(panel.getContentEl()) - (2 * TOMEE.el.getBorderSize(fileForm.main))  - fileForm.fileField.height();
+                map.main.height(myHeight);
             }
         };
     })();
@@ -141,11 +148,16 @@ TOMEE.ApplicationViewApps = function (cfg) {
         var panel = TOMEE.components.Panel({
             title:'-'
         });
-        panel.getContentEl().append('Log here!');
+
+        //Log here!
+        panel.getContentEl().append('');
 
         return {
             getEl:function () {
                 return panel.getEl();
+            },
+            setHeight: function(height) {
+                panel.setHeight(height);
             }
         };
     })();
@@ -154,6 +166,16 @@ TOMEE.ApplicationViewApps = function (cfg) {
     elMapContent['center'].append(log.getEl());
 
     var setHeight = function (height) {
+        var mySize = height - TOMEE.el.getBorderSize(elMapContent.main);
+        elMapContent.main.height(mySize);
+
+        var childrenSize = mySize - TOMEE.el.getBorderSize(elMapContent.left);
+        elMapContent.left.height(childrenSize);
+        elMapContent.center.height(childrenSize);
+
+        deployments.setHeight(childrenSize);
+        log.setHeight(childrenSize);
+
 
     };
 
