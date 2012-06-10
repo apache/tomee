@@ -101,6 +101,8 @@ public class Installer {
 
         addTomEEAdminConfInTomcatUsers();
 
+        addTomEELinkToTomcatHome();
+
         if (!alerts.hasErrors()) {
             status = Status.REBOOT_REQUIRED;
         }
@@ -151,9 +153,31 @@ public class Installer {
 
         addTomEEAdminConfInTomcatUsers();
 
+        addTomEELinkToTomcatHome();
+
         if (!alerts.hasErrors()) {
             status = Status.REBOOT_REQUIRED;
         }
+    }
+
+    private void addTomEELinkToTomcatHome() {
+        final File home = paths.getHome();
+        final String indeJsp = Installers.readAll(home, alerts);
+        if (indeJsp == null) {
+            return;
+        }
+
+        if (!indeJsp.contains("tomcat7Url")) { // check the user didn't replaced the file, can be improved
+            alerts.addWarning("webapps/ROOT/index.jsp was modified");
+            return;
+        }
+
+        final String newIndeJsp = indeJsp.replaceFirst("<div id=\"actions\">",
+                "<div id=\\\"actions\\\">\r\n" +
+                "                    <div class=\"button\">\n" +
+                "                        <a class=\"container shadow\" href=\"/tomee\"><span>TomEE Gui</span></a>\n" +
+                "                    </div>");
+        Installers.writeAll(home, newIndeJsp, alerts);
     }
 
     private void moveLibs() {

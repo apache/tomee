@@ -127,6 +127,11 @@ public class Paths {
         }
         return serverXmlFile;
     }
+
+    public File getHome() {
+        return new File(getCatalinaBaseDir(), "webapps/ROOT/index.jsp");
+    }
+
     /**
      * Sets the server.xml file
      * @param serverXmlFile the absolute path of the server.xml file
