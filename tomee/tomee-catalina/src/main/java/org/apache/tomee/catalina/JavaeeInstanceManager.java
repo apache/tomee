@@ -76,6 +76,7 @@ public class JavaeeInstanceManager implements InstanceManager {
     public void destroyInstance(Object o) throws IllegalAccessException, InvocationTargetException {
         if (o == null) return;
         preDestroy(o, o.getClass());
+        webContext.destroy(o);
     }
 
     /**
