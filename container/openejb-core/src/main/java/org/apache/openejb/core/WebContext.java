@@ -19,6 +19,7 @@ package org.apache.openejb.core;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -39,6 +40,7 @@ public class WebContext {
     private Context jndiEnc;
     private final AppContext appContext;
     private Map<String,Object> bindings;
+    private Map<Object, CreationalContext<?>> creatonalContexts = new ConcurrentHashMap<Object, CreationalContext<?>>();
     private WebBeansContext webbeansContext;
     private String contextRoot;
 
@@ -125,6 +127,7 @@ public class WebContext {
                 }
             }
 
+            creatonalContexts.put(beanInstance, creationalContext);
             return beanInstance;
     }
 
@@ -192,5 +195,12 @@ public class WebContext {
 
     public String getContextRoot() {
         return contextRoot;
+    }
+
+    public void destroy(final Object o) {
+        final CreationalContext<?> ctx = creatonalContexts.remove(o);
+        if (ctx != null) {
+            ctx.release();
+        }
     }
 }
