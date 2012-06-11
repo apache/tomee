@@ -1458,6 +1458,11 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         final Class<? extends DeploymentModule> defaultType = (Class<? extends DeploymentModule>) SystemInstance.get().getOptions().get("openejb.default.deployment-module", (Class<?>) null);
         if (defaultType != null) {
+            // should we do a better filtering? it seems enough for common cases.
+            if (WebModule.class.equals(defaultType) && path.endsWith(".jar")) {
+                throw new UnknownModuleTypeException("Unknown module type: url=" + path + " which can't be a war.");
+            }
+
             logger.info("type for '" + path + "' was not found, defaulting to " + defaultType.getSimpleName());
             return defaultType;
         }
