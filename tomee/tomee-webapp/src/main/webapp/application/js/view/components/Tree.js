@@ -51,20 +51,32 @@ TOMEE.components.Tree = function (cfg) {
         var myI = $('<i style="padding-right: 5px;"></i>');
 
         span.append(myI);
+
         span.append(getText(data));
 
-        var li = $('<li style="padding-left: 0px;"></li>');
+        var li = TOMEE.el.getElMap({
+            elName:'el',
+            tag:'li',
+            attributes:{
+                style:'padding-left: 0px;'
+            },
+            listeners:{
+                'click':function (event) {
+
+                }
+            }
+        }).el;
         li.append(span);
 
         if (data[childrenPropertyName] === undefined) {
             myI.addClass('icon-leaf');
 
-            span.bind('click', {
+            li.bind('click', {
                 bean:data
             }, function (event) {
 
                 channel.send('tree_leaf_click', {
-                    panelKey: myKey,
+                    panelKey:myKey,
                     bean:event.data.bean
                 });
             });
@@ -72,9 +84,9 @@ TOMEE.components.Tree = function (cfg) {
         } else {
             myI.addClass('icon-folder-close');
 
-            span.bind('click', {
+            li.bind('click', {
                 li:li,
-                i: myI,
+                i:myI,
                 bean:data
 
             }, function (event) {
@@ -97,7 +109,7 @@ TOMEE.components.Tree = function (cfg) {
                     }
 
                     channel.send('tree_load_children', {
-                        panelKey: myKey,
+                        panelKey:myKey,
                         bean:event.data.bean,
                         parentEl:ul
                     });
@@ -115,7 +127,7 @@ TOMEE.components.Tree = function (cfg) {
         },
 
         load:function (ul, newData) {
-            if(ul) {
+            if (ul) {
                 loadTree(ul, newData);
             } else {
                 loadTree(elements.ul, newData);
