@@ -36,7 +36,7 @@ public class ConsoleServlet extends HttpServlet {
 
     @Override
     protected void doPost(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-        JsonExecutor.execute(resp, new JsonExecutor.Executor() {
+        JsonExecutor.execute(req, resp, new JsonExecutor.Executor() {
             @Override
             public void call(Map<String, Object> json) throws Exception {
                 final String scriptCode = req.getParameter("scriptCode");

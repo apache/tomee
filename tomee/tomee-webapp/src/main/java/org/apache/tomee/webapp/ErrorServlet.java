@@ -18,6 +18,7 @@
 package org.apache.tomee.webapp;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -62,6 +63,13 @@ public class ErrorServlet extends HttpServlet {
 
         resp.setContentType("text/plain");
         resp.setCharacterEncoding("UTF-8");
-        resp.getWriter().write(new Gson().toJson(result));
+
+        final Gson gson;
+        if(Boolean.valueOf(req.getParameter("pretty"))) {
+            gson = new GsonBuilder().setPrettyPrinting().create();
+        } else {
+            gson = new Gson();
+        }
+        resp.getWriter().write(gson.toJson(result));
     }
 }

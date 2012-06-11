@@ -17,7 +17,12 @@
 
 package org.apache.tomee.webapp.servlet;
 
+import org.apache.openejb.BeanContext;
+import org.apache.openejb.core.ivm.BaseEjbProxyHandler;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.proxy.LocalBeanProxyGeneratorImpl;
+import org.apache.openejb.util.proxy.ProxyManager;
 import org.apache.tomee.webapp.JsonExecutor;
 
 import javax.naming.*;
@@ -26,6 +31,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.*;
 
 public class JndiServlet extends HttpServlet {
@@ -71,14 +77,81 @@ public class JndiServlet extends HttpServlet {
         }
     }
 
+    private void buildNames(Context ctx, Map<String, Object> json) throws NamingException {
+        final List<Map<String, Object>> objs = new ArrayList<Map<String, Object>>();
+        json.put("names", objs);
+
+        final NamingEnumeration<NameClassPair> namingEnumeration = ctx.list("");
+        if (namingEnumeration != null) {
+            while (namingEnumeration.hasMoreElements()) {
+                objs.add(buildNode(namingEnumeration.next(), ctx));
+            }
+        }
+    }
+
+    private void buildClass(Context ctx, String name, Map<String, Object> json) throws NamingException {
+        final Map<String, Object> values = new HashMap<String, Object>();
+        json.put("cls", values);
+
+        final Object obj = ctx.lookup(name);
+
+        final List<String> interfaces = new ArrayList<String>();
+        values.put("interfaces", interfaces);
+
+        Class<?> cls;
+        {
+            try {
+                final BaseEjbProxyHandler handler = (BaseEjbProxyHandler) ProxyManager.getInvocationHandler(obj);
+                final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+                final BeanContext ejb = containerSystem.getBeanContext(handler.deploymentID);
+
+                values.put("componentType", ejb.getComponentType().name());
+
+                cls = ejb.getBeanClass();
+
+            } catch (Exception e) {
+                cls = obj.getClass();
+
+            }
+
+            values.put("beanClass", cls.getCanonicalName());
+            for (Class<?> myInterface : cls.getInterfaces()) {
+                interfaces.add(myInterface.getCanonicalName());
+            }
+        }
+
+        {
+            final List<Map<String, Object>> methods = new ArrayList<Map<String, Object>>();
+            values.put("methods", methods);
+
+            for (Method method : cls.getDeclaredMethods()) {
+                final Map<String, Object> methodMap = new HashMap<String, Object>();
+                methods.add(methodMap);
+
+                final Class<?> returnType = method.getReturnType();
+                if (returnType != null) {
+                    methodMap.put("returns", returnType.getCanonicalName());
+                }
+                methodMap.put("name", method.getName());
+
+                final List<String> parameterTypes = new ArrayList<String>();
+                methodMap.put("parameters", parameterTypes);
+
+                for (Class<?> parameter : method.getParameterTypes()) {
+                    parameterTypes.add(parameter.getCanonicalName());
+
+                }
+            }
+        }
+    }
+
     @Override
     protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-        JsonExecutor.execute(resp, new JsonExecutor.Executor() {
+        JsonExecutor.execute(req, resp, new JsonExecutor.Executor() {
 
             @Override
             public void call(Map<String, Object> json) throws Exception {
-                final List<Map<String, Object>> objs = new ArrayList<Map<String, Object>>();
-                json.put("names", objs);
+
 
                 final Properties p = new Properties();
                 p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
@@ -95,11 +168,12 @@ public class JndiServlet extends HttpServlet {
                     ctx = getContext(initCtx, path);
                 }
 
-                final NamingEnumeration<NameClassPair> namingEnumeration = ctx.list("");
-                if (namingEnumeration != null) {
-                    while (namingEnumeration.hasMoreElements()) {
-                        objs.add(buildNode(namingEnumeration.next(), ctx));
-                    }
+                final String name = req.getParameter("name");
+                if (name == null) {
+                    buildNames(ctx, json);
+
+                } else {
+                    buildClass(ctx, name, json);
                 }
             }
         });

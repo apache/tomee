@@ -18,7 +18,9 @@
 package org.apache.tomee.webapp;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +35,7 @@ public class JsonExecutor {
         void call(Map<String, Object> json) throws Exception;
     }
 
-    public static void execute(final HttpServletResponse resp, final Executor executor) {
+    public static void execute(final HttpServletRequest req, final HttpServletResponse resp, final Executor executor) {
         try {
             final Map<String, Object> result = new HashMap<String, Object>();
 
@@ -41,7 +43,14 @@ public class JsonExecutor {
 
             resp.setContentType("application/json");
             resp.setCharacterEncoding("UTF-8");
-            resp.getWriter().write(new Gson().toJson(result));
+
+            final Gson gson;
+            if(Boolean.valueOf(req.getParameter("pretty"))) {
+                gson = new GsonBuilder().setPrettyPrinting().create();
+            } else {
+                gson = new Gson();
+            }
+            resp.getWriter().write(gson.toJson(result));
 
         } catch (Exception e) {
             //this will redirect the result to the ErrorServlet
