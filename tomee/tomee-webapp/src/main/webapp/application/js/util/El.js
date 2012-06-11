@@ -71,6 +71,13 @@ TOMEE.el = (function () {
 
     return {
         getElMap:getElMap,
-        getBorderSize:getBorderSize
+        getBorderSize:getBorderSize,
+        getLocationValue: function(value) {
+            if($.isNumeric(value)) {
+                return value + 'px';
+            } else {
+                return value;
+            }
+        }
     }
 })();
