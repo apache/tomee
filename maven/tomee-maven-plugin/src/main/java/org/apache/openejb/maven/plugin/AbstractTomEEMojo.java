@@ -47,7 +47,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.settings.Settings;
 import org.apache.openejb.config.RemoteServer;
-import org.apache.openejb.loader.FileUtils;
+import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Zips;
 
@@ -459,25 +459,34 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         final File[] files = dir.listFiles();
         if (files != null) {
             for (final File f : files) {
-                if (f.isDirectory() || f.isHidden()) {
+                if (f.isHidden()) {
                     continue;
                 }
 
                 final String file = dir.getName() + "/" + f.getName();
+                final File destination = new File(catalinaBase, file);
+                if (f.isDirectory()) {
+                    Files.mkdirs(destination);
+                    try {
+                        IO.copyDirectory(f, destination);
+                    } catch (IOException e) {
+                        throw new TomEEException(e.getMessage(), e);
+                    }
+                } else {
+                    InputStream in = null;
+                    OutputStream out = null;
+                    try {
+                        in = new FileInputStream(f);
+                        out = new FileOutputStream(destination);
+                        copy(in, out);
 
-                InputStream in = null;
-                OutputStream out = null;
-                try {
-                    in = new FileInputStream(f);
-                    out = new FileOutputStream(new File(catalinaBase, file));
-                    copy(in, out);
-
-                    getLog().info("Override '" + file + "'");
-                } catch (Exception e) {
-                    throw new TomEEException(e.getMessage(), e);
-                } finally {
-                    close(in);
-                    close(out);
+                        getLog().info("Override '" + file + "'");
+                    } catch (Exception e) {
+                        throw new TomEEException(e.getMessage(), e);
+                    } finally {
+                        close(in);
+                        close(out);
+                    }
                 }
             }
         }
