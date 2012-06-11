@@ -25,6 +25,11 @@ TOMEE.ApplicationView = function (cfg) {
 
     var windowEl = $(window);
 
+    //disable default contextmenu
+    $(document).bind("contextmenu",function(e){
+        return false;
+    });
+
     var toolbar = TOMEE.ApplicationToolbar({
         channel:channel
     });

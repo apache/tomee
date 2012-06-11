@@ -92,6 +92,14 @@ TOMEE.ApplicationController = function () {
             //params.path, params.bean, params.parentEl
             homeView.loadJndi(params);
         });
+
+        channel.bind('element.right.click', function (params) {
+            //params.data, params.left, params.top
+            if (params.panelKey === 'jndi') {
+                homeView.jndiContextMenu(params);
+            }
+        });
+
     })();
 
 
