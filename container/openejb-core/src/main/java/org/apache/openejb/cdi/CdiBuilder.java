@@ -73,7 +73,7 @@ public class CdiBuilder {
         SystemInstance.get().setComponent(ThreadSingletonService.class, singletonService);
         try {
             WebBeansFinder.setSingletonService(singletonService);
-            logger.info("succeeded in installing singleton service");
+            logger.info("Succeeded in installing singleton service");
         } catch (Exception e) {
             //ignore
             // not logging the exception since it is nto an error
