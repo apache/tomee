@@ -167,7 +167,7 @@ public class SystemInstance {
 
     public static synchronized void reset() {
         try {
-            system = new SystemInstance(System.getProperties());
+            system = new SystemInstance(new Properties()); // don't put system properties here, it is already done
             initialized = false;
         } catch (Exception e) {
             throw new LoaderRuntimeException("Failed to create default instance of SystemInstance", e);
