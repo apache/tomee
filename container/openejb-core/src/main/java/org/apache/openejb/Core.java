@@ -93,7 +93,7 @@ public class Core {
         };
         preloadLogger.start();
 
-        final int permits = 2;
+        final int permits = Runtime.getRuntime().availableProcessors() + 1;
         final Semaphore semaphore = new Semaphore(permits);
         final ClassLoader loader = OpenEjbContainer.class.getClassLoader();
 
@@ -106,6 +106,7 @@ public class Core {
                         try {
                             Class.forName(className, true, loader);
                         } catch (Throwable e) {
+                            // no-op
                         } finally {
                             semaphore.release();
                         }
@@ -126,29 +127,5 @@ public class Core {
         }
     }
 
-    public static void warmup(){}
-
-    public static class Parallel {
-
-        public static void exec(Runnable... runnables) {
-            final int permits = 2;
-            final Semaphore semaphore = new Semaphore(permits);
-
-            for (Runnable runnable : runnables) {
-                try {
-                    semaphore.acquire();
-                    final Thread thread = new Thread();
-                    thread.setDaemon(true);
-                    thread.start();
-                } catch (InterruptedException e) {
-                    Thread.interrupted();
-                }
-            }
-            try {
-                semaphore.acquire(permits);
-            } catch (InterruptedException e) {
-                Thread.interrupted();
-            }
-        }
-    }
+    public static void warmup() {}
 }
