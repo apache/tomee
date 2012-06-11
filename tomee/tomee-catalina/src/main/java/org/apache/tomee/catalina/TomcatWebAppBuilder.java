@@ -605,7 +605,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         // to avoid classnotfound in @PreDestoy or destroyApplication()
         Loader loader = standardContext.getLoader();
         if (!(loader instanceof TomEEWebappLoader)) {
-            loader = new WebappLoader(standardContext.getParentClassLoader());
+            loader = new LazyStopWebappLoader(standardContext.getParentClassLoader());
             loader.setDelegate(standardContext.getDelegate());
             ((WebappLoader) loader).setLoaderClass(LazyStopWebappClassLoader.class.getName());
         }
