@@ -21,6 +21,14 @@ TOMEE.components.Menu = function (cfg) {
 
     var channel = cfg.channel;
 
+    var myBody = $('body');
+    myBody.bind('click', function() {
+        map.main.detach();
+        data = {};
+    });
+
+    var data = {};
+
     var map = TOMEE.el.getElMap({
         elName:'main',
         tag:'ul',
@@ -49,7 +57,7 @@ TOMEE.components.Menu = function (cfg) {
                 ],
                 listeners:{
                     'click':function () {
-                        command.callback();
+                        command.callback(data);
                     }
                 }
             }).main);
@@ -66,7 +74,8 @@ TOMEE.components.Menu = function (cfg) {
             main.css('left', config.left + 'px');
             main.css('top', config.top + 'px');
 
-            var myBody = $('body');
+            data = config.data;
+
             myBody.append(main);
         }
     };
