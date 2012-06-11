@@ -22,7 +22,10 @@ TOMEE.components.Panel = function (cfg) {
     var channel = cfg.channel;
     var avoidOverflow = TOMEE.utils.getSafe(cfg.avoidOverflow, false);
 
-    var windowEl = $(window);
+    var parentEl = cfg.parent;
+    if(!parentEl) {
+        parentEl = $(window);
+    }
 
     var elMapToolbar = TOMEE.el.getElMap({
         elName:'main',
@@ -181,8 +184,8 @@ TOMEE.components.Panel = function (cfg) {
     };
 
     var getCenter = function () {
-        var winCenterX = windowEl.height() / 2;
-        var winCenterY = windowEl.width() / 2;
+        var winCenterX = parentEl.height() / 2;
+        var winCenterY = parentEl.width() / 2;
 
         var panelX = map.main.height() / 2;
         var panelY = map.main.width() / 2;

@@ -21,18 +21,7 @@ TOMEE.Jndi = function (cfg) {
 
     var channel = cfg.channel;
 
-    var jndiMenu = TOMEE.components.Menu({
-        commands:[
-            {
-                text:TOMEE.I18N.get('application.jdni.lookup'),
-                callback:function (data) {
-                    TOMEE.JndiClass({
-                        channel:channel
-                    }).show({});
-                }
-            }
-        ]
-    });
+    var parentEl = cfg.parent;
 
     var jndi = TOMEE.components.Panel({
         title:TOMEE.I18N.get('application.jdni')
@@ -49,6 +38,20 @@ TOMEE.Jndi = function (cfg) {
 
     var treeEl = tree.getEl();
     jndi.getContentEl().append(treeEl);
+
+    var jndiMenu = TOMEE.components.Menu({
+        commands:[
+            {
+                text:TOMEE.I18N.get('application.jdni.lookup'),
+                callback:function (data) {
+                    TOMEE.JndiClass({
+                        parent:parentEl,
+                        channel:channel
+                    }).show({});
+                }
+            }
+        ]
+    });
 
     return {
         loadJndi:function (data) {

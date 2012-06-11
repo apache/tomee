@@ -23,6 +23,7 @@ TOMEE.JndiClass = function (cfg) {
 
     var panel = TOMEE.components.Panel({
         title:TOMEE.I18N.get('application.jdni.class'),
+        parent:cfg.parent,
         extraStyles:{
             width:'500px',
             height:'200px'
