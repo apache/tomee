@@ -205,13 +205,17 @@ TOMEE.components.Panel = function (cfg) {
         },
         setHeight:setHeight,
         showAt:function (config) {
+            if (!config) {
+                throw 'missing parameters';
+            }
+
             var main = map.main;
             main.css('position', 'absolute');
 
             var myBody = $('body');
             myBody.append(main);
 
-            if (config) {
+            if (config.left || config.top) {
                 main.css('left', TOMEE.el.getLocationValue(config.left));
                 main.css('top', TOMEE.el.getLocationValue(config.top));
             } else {
@@ -221,7 +225,9 @@ TOMEE.components.Panel = function (cfg) {
                 main.css('top', center.top + 'px');
             }
 
-
+            if (config.modal) {
+                //TODO: add the modal feature
+            }
         }
     };
 };

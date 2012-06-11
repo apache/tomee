@@ -76,7 +76,7 @@ TOMEE.el = (function () {
             if($.isNumeric(value)) {
                 return value + 'px';
             } else {
-                return value;
+                return TOMEE.utils.getSafe(value, '0px');
             }
         }
     }
