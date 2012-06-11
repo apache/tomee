@@ -53,11 +53,11 @@ TOMEE.ApplicationViewHome = function (cfg) {
     });
 
     var jndiPanel = TOMEE.Jndi({
-       channel: cfg.channel
+        channel:cfg.channel
     });
 
     var savedPanel = TOMEE.Saved({
-        channel: cfg.channel
+        channel:cfg.channel
     });
 
     elMapContent['left'].append(jndiPanel.getEl());
@@ -65,7 +65,7 @@ TOMEE.ApplicationViewHome = function (cfg) {
 
 
     var consolePanel = TOMEE.Console({
-        channel: cfg.channel
+        channel:cfg.channel
     });
 
     elMapContent['center'].append(consolePanel.getEl());
