@@ -24,26 +24,13 @@ TOMEE.ApplicationViewHome = function (cfg) {
     var jndiMenu = TOMEE.components.Menu({
         commands:[
             {
-                text:'commandA',
-                callback:function () {
-                }
-            },
-            {
-                text:'commandB',
-                callback:function () {
-                }
-            },
-            {
-                text:'commandC',
-                callback:function () {
+                text:TOMEE.I18N.get('application.jdni.lookup'),
+                callback:function (data) {
                 }
             }
         ]
     });
-//    jndiMenu.showAt({
-//        left:100,
-//        top:100
-//    });
+
 
     var elMapContent = TOMEE.el.getElMap({
         elName:'main',
@@ -286,6 +273,13 @@ TOMEE.ApplicationViewHome = function (cfg) {
                     wsPanel.getEl().detach();
                 }
             }
+        },
+        jndiContextMenu:function (opts) {
+            jndiMenu.showAt({
+                left:opts.left,
+                top:opts.top,
+                data:opts.data
+            });
         }
     };
 };

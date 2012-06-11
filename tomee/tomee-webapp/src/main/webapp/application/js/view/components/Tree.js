@@ -51,8 +51,16 @@ TOMEE.components.Tree = function (cfg) {
         var myI = $('<i style="padding-right: 5px;"></i>');
 
         span.append(myI);
-
         span.append(getText(data));
+
+        span.bind('contextmenu', function (event) {
+            channel.send('element.right.click', {
+                panelKey:myKey,
+                data:data,
+                left: event.clientX,
+                top: event.clientY
+            });
+        });
 
         var li = TOMEE.el.getElMap({
             elName:'el',

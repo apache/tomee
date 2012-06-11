@@ -28,21 +28,23 @@ TOMEE.I18N = (function () {
 
         'application.home':'Home',
         'application.apps':'Apps',
+
         'application.log':'Log',
+        'application.log.load':'Load',
 
         'application.deployments':'Deployments',
 
         'application.jdni':'Jndi',
-        'application.saved.objects':'Saved Objects',
-        'application.console':'Console',
-        'application.mdbs':'MDBs',
-        'application.ws':'Webservices',
+        'application.jdni.lookup':'Lookup',
 
+        'application.saved.objects':'Saved Objects',
+        'application.saved.objects.load':'Load',
+
+        'application.console':'Console',
         'application.console.execute':'Execute',
 
-        'application.log.load':'Load',
-
-        'application.saved.objects.load':'Load',
+        'application.mdbs':'MDBs',
+        'application.ws':'Webservices',
 
         'dummy':'dummy'
     };
