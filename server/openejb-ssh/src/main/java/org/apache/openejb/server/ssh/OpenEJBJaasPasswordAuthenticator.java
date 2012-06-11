@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.server.ssh;
 
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.sshd.server.jaas.JaasPasswordAuthenticator;
 
 import javax.security.auth.Subject;
@@ -28,6 +30,8 @@ import javax.security.auth.login.LoginContext;
 import java.io.IOException;
 
 public class OpenEJBJaasPasswordAuthenticator extends JaasPasswordAuthenticator {
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_SERVER, OpenEJBJaasPasswordAuthenticator.class);
+
     private OpenEJBShellFactory shellFactory;
 
     public OpenEJBJaasPasswordAuthenticator(OpenEJBShellFactory sf) {
@@ -56,6 +60,7 @@ public class OpenEJBJaasPasswordAuthenticator extends JaasPasswordAuthenticator 
             shellFactory.setLoginContext(loginContext);
             return true;
         } catch (Exception e) {
+            LOGGER.debug("can't log using username '" + username + "'", e);
             return false;
         }
     }
