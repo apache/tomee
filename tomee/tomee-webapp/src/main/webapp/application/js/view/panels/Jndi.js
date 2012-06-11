@@ -26,21 +26,13 @@ TOMEE.Jndi = function (cfg) {
             {
                 text:TOMEE.I18N.get('application.jdni.lookup'),
                 callback:function (data) {
-                    var panel = TOMEE.components.Panel({
-                        title:TOMEE.I18N.get('application.jdni.class'),
-                        extraStyles:{
-                            width:'500px',
-                            height:'200px'
-                        }
-                    });
-                    panel.showAt({
-                        modal:true
-                    });
+                    TOMEE.JndiClass({
+                        channel:channel
+                    }).show({});
                 }
             }
         ]
     });
-
 
     var jndi = TOMEE.components.Panel({
         title:TOMEE.I18N.get('application.jdni')
