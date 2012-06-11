@@ -22,18 +22,24 @@ TOMEE.ApplicationViewHome = function (cfg) {
     var channel = cfg.channel;
 
     var jndiMenu = TOMEE.components.Menu({
-        commands:[
-            {
-                text:TOMEE.I18N.get('application.jdni.lookup'),
-                callback:function (data) {
-                    var panel = TOMEE.components.Panel({
-                        title:TOMEE.I18N.get('application.jdni.class')
-                    });
-                    panel.showAt();
+            commands:[
+                {
+                    text:TOMEE.I18N.get('application.jdni.lookup'),
+                    callback:function (data) {
+                        var panel = TOMEE.components.Panel({
+                            title:TOMEE.I18N.get('application.jdni.class'),
+                            extraStyles:{
+                                width:'500px',
+                                height:'200px'
+                            }
+                        });
+                        panel.showAt({
+                            modal: true
+                        });
+                    }
                 }
-            }
-        ]
-    });
+            ]
+        });
 
 
     var elMapContent = TOMEE.el.getElMap({
@@ -186,7 +192,7 @@ TOMEE.ApplicationViewHome = function (cfg) {
         el.append(elText.main);
         el.append(elBottomBar.main);
 
-        elBottomBar.main.bind('click', function () {
+        elBottomBar.main.bind('executeBtn', function () {
             var text = elText.main.val();
             var script = elBottomBar.scriptSelector.val();
             channel.send('trigger.console.exec', {
@@ -286,4 +292,5 @@ TOMEE.ApplicationViewHome = function (cfg) {
             });
         }
     };
-};
+}
+;
