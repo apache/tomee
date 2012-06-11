@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import java.util.logging.Level;
 import org.apache.openejb.jee.bval.PropertyType;
 import org.apache.openejb.jee.bval.ValidationConfigType;
 import org.apache.openejb.loader.SystemInstance;
@@ -36,6 +37,14 @@ import java.util.Map;
 public final class ValidatorBuilder {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, ValidatorBuilder.class);
     public static final String VALIDATION_PROVIDER_KEY = "openejb.bean-validation.provider";
+
+    static {
+        // the only message logged is "ignoreXmlConfiguration == true"
+        // which is false since we parse it ourself
+        // so hidding it
+        java.util.logging.Logger.getLogger("org.apache.bval.jsr303.ConfigurationImpl")
+                .setLevel(Level.OFF);
+    }
 
     private ValidatorBuilder() {
         // no-op
@@ -82,7 +91,6 @@ public final class ValidatorBuilder {
                         + " (" + ve.getMessage() + ")."
                         + " Default factory will be used.");
                 }
-                configuration.ignoreXmlConfiguration();
             }
         } finally {
             Thread.currentThread().setContextClassLoader(oldContextLoader);
