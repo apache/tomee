@@ -49,6 +49,7 @@ import org.apache.maven.settings.Settings;
 import org.apache.openejb.config.RemoteServer;
 import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.loader.Zips;
 
 import static org.apache.maven.artifact.Artifact.SCOPE_COMPILE;
 import static org.apache.maven.artifact.repository.ArtifactRepositoryPolicy.CHECKSUM_POLICY_WARN;
@@ -63,6 +64,8 @@ import static org.codehaus.plexus.util.IOUtil.copy;
 
 public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     private static final String NAME_STR = "?name=";
+    private static final String UNZIP_PREFIX = "unzip:";
+
 
     /**
      * @component
@@ -300,6 +303,12 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             }
         }
 
+        boolean unzip = false;
+        if (lib.startsWith(UNZIP_PREFIX)) {
+            lib = lib.substring(UNZIP_PREFIX.length());
+            unzip = true;
+        }
+
         final String[] infos = lib.split(":");
         final String classifier;
         final String type;
@@ -321,18 +330,25 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             final Artifact artifact = factory.createDependencyArtifact(infos[0], infos[1], createFromVersion(infos[2]), type, classifier, SCOPE_COMPILE);
             resolver.resolve(artifact, remoteRepos, local);
             final File file = artifact.getFile();
-            final File dest;
-            if (extractedName == null) {
-                dest = new File(destParent, file.getName());
+
+            if (!unzip) {
+                final File dest;
+                if (extractedName == null) {
+                    dest = new File(destParent, file.getName());
+                } else {
+                    dest = new File(destParent, extractedName);
+                }
+
+                is = new BufferedInputStream(new FileInputStream(file));
+                os = new BufferedOutputStream(new FileOutputStream(dest));
+                copy(is, os);
+
+                getLog().info("Copied '" + lib + "' in '" + dest.getAbsolutePath());
             } else {
-                dest = new File(destParent, extractedName);
+                Zips.unzip(file, destParent, true);
+
+                getLog().info("Unzipped '" + lib + "' in '" + destParent.getAbsolutePath());
             }
-
-            is = new BufferedInputStream(new FileInputStream(file));
-            os = new BufferedOutputStream(new FileOutputStream(dest));
-            copy(is, os);
-
-            getLog().info("Copied '" + lib + "' in '" + dest.getAbsolutePath());
         } catch (Exception e) {
             getLog().error(e.getMessage(), e);
             throw new TomEEException(e.getMessage(), e);
