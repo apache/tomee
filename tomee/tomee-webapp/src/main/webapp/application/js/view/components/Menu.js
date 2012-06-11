@@ -71,8 +71,8 @@ TOMEE.components.Menu = function (cfg) {
         showAt:function (config) {
             var main = map.main;
 
-            main.css('left', config.left + 'px');
-            main.css('top', config.top + 'px');
+            main.css('left', TOMEE.el.getLocationValue(config.left));
+            main.css('top', TOMEE.el.getLocationValue(config.top));
 
             data = config.data;
 

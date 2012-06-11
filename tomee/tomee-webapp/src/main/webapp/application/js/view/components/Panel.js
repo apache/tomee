@@ -22,6 +22,8 @@ TOMEE.components.Panel = function (cfg) {
     var channel = cfg.channel;
     var avoidOverflow = TOMEE.utils.getSafe(cfg.avoidOverflow, false);
 
+    var windowEl = $(window);
+
     var elMapToolbar = TOMEE.el.getElMap({
         elName:'main',
         tag:'div',
@@ -178,6 +180,22 @@ TOMEE.components.Panel = function (cfg) {
         map.content.height(mySize);
     };
 
+    var getCenter = function () {
+        var winCenterX = windowEl.height() / 2;
+        var winCenterY = windowEl.width() / 2;
+
+        var panelX = map.main.height() / 2;
+        var panelY = map.main.width() / 2;
+
+        var x = winCenterX - panelX;
+        var y = winCenterY - panelY;
+
+        return {
+            left:y,
+            top:x
+        };
+    };
+
     return {
         getEl:function () {
             return map.main;
@@ -188,12 +206,22 @@ TOMEE.components.Panel = function (cfg) {
         setHeight:setHeight,
         showAt:function (config) {
             var main = map.main;
-
-            main.css('left', config.left + 'px');
-            main.css('top', config.top + 'px');
+            main.css('position', 'absolute');
 
             var myBody = $('body');
             myBody.append(main);
+
+            if (config) {
+                main.css('left', TOMEE.el.getLocationValue(config.left));
+                main.css('top', TOMEE.el.getLocationValue(config.top));
+            } else {
+                var center = getCenter();
+
+                main.css('left', center.left + 'px');
+                main.css('top', center.top + 'px');
+            }
+
+
         }
     };
 };

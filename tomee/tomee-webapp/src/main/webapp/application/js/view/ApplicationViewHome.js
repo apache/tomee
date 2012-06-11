@@ -26,6 +26,10 @@ TOMEE.ApplicationViewHome = function (cfg) {
             {
                 text:TOMEE.I18N.get('application.jdni.lookup'),
                 callback:function (data) {
+                    var panel = TOMEE.components.Panel({
+                        title:TOMEE.I18N.get('application.jdni.class')
+                    });
+                    panel.showAt();
                 }
             }
         ]
