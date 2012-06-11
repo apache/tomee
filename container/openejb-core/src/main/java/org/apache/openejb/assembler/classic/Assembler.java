@@ -1831,6 +1831,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     private void logUnusedProperties(Map<String, Object> unsetProperties, ServiceInfo info) {
         for (String property : unsetProperties.keySet()) {
             //TODO: DMB: Make more robust later
+            if (property.equalsIgnoreCase("JndiName")) return;
+            if (property.equalsIgnoreCase("Origin")) return;
+            if (property.equalsIgnoreCase("DatabaseName")) return;
+            if (property.equalsIgnoreCase("connectionAttributes")) return;
+
             if (property.equalsIgnoreCase("properties")) return;
             if (property.equalsIgnoreCase("ApplicationWide")) return;
             if (property.equalsIgnoreCase("transactionManager")) return;
