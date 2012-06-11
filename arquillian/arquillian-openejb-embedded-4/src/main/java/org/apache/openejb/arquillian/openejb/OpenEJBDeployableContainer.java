@@ -2,6 +2,7 @@ package org.apache.openejb.arquillian.openejb;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Properties;
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -119,7 +120,7 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
 
     @Override
     public void setup(final OpenEJBConfiguration openEJBConfiguration) {
-        properties = new Properties(PROPERTIES);
+        properties = new Properties();
 
         final ByteArrayInputStream bais = new ByteArrayInputStream(openEJBConfiguration.getProperties().getBytes());
         try {
@@ -128,6 +129,13 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
             throw new OpenEJBRuntimeException(e);
         } finally {
             IO.close(bais);
+        }
+
+        for (Map.Entry<Object, Object> defaultKey : PROPERTIES.entrySet()) {
+            final String key = defaultKey.getKey().toString();
+            if (!properties.containsKey(key)) {
+                properties.setProperty(key, defaultKey.getValue().toString());
+            }
         }
     }
 
