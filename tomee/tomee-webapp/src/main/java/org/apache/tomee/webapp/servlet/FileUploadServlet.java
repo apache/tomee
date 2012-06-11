@@ -33,7 +33,7 @@ public class FileUploadServlet extends HttpServlet {
 
     @Override
     protected void doPost(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-        JsonExecutor.execute(resp, new JsonExecutor.Executor() {
+        JsonExecutor.execute(req, resp, new JsonExecutor.Executor() {
             @Override
             public void call(Map<String, Object> json) throws Exception {
                 final File tempDir = (File) getServletContext().getAttribute("javax.servlet.context.tempdir");

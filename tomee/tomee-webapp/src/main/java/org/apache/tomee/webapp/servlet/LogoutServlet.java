@@ -32,7 +32,7 @@ public class LogoutServlet extends HttpServlet {
 
     @Override
     protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-        JsonExecutor.execute(resp, new JsonExecutor.Executor() {
+        JsonExecutor.execute(req, resp, new JsonExecutor.Executor() {
             @Override
             public void call(Map<String, Object> json) {
                 final HttpSession session = req.getSession(false);

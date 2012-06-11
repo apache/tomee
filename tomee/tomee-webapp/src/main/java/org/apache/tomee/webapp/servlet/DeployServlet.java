@@ -44,7 +44,7 @@ public class DeployServlet extends HttpServlet {
 
     @Override
     protected void doPost(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-        JsonExecutor.execute(resp, new JsonExecutor.Executor() {
+        JsonExecutor.execute(req, resp, new JsonExecutor.Executor() {
             @Override
             public void call(Map<String, Object> json) throws Exception {
                 final AppInfo info = deployer.deploy(req.getParameter("path"));
