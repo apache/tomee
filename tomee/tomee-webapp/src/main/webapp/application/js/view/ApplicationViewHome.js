@@ -40,10 +40,10 @@ TOMEE.ApplicationViewHome = function (cfg) {
             }
         ]
     });
-    jndiMenu.showAt({
-        left:100,
-        top:100
-    });
+//    jndiMenu.showAt({
+//        left:100,
+//        top:100
+//    });
 
     var elMapContent = TOMEE.el.getElMap({
         elName:'main',
