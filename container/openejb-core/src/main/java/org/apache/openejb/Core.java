@@ -16,8 +16,9 @@
  */
 package org.apache.openejb;
 
-import java.net.URL;
 import java.util.concurrent.Semaphore;
+import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.Messages;
 
 /**
 * @version $Rev$ $Date$
@@ -74,6 +75,24 @@ public class Core {
                 "org.apache.xbean.recipe.ReflectionUtil",
         };
 
+        final Thread preloadMessages = new Thread() {
+            @Override
+            public void run() {
+                new Messages("org.apache.openejb.util.resources");
+                new Messages("org.apache.openejb.config");
+                new Messages("org.apache.openejb.config.resources");
+            }
+        };
+        preloadMessages.start();
+
+        final Thread preloadLogger = new Thread() {
+            @Override
+            public void run() {
+                Logger.configure();
+            }
+        };
+        preloadLogger.start();
+
         final int permits = 2;
         final Semaphore semaphore = new Semaphore(permits);
         final ClassLoader loader = OpenEjbContainer.class.getClassLoader();
@@ -100,6 +119,8 @@ public class Core {
         }
         try {
             semaphore.acquire(permits);
+            preloadMessages.join();
+            preloadLogger.join();
         } catch (InterruptedException e) {
             Thread.interrupted();
         }
