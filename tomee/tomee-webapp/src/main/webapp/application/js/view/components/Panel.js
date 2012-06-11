@@ -38,7 +38,7 @@ TOMEE.components.Panel = function (cfg) {
                 },
                 children:[
                     {
-                        elName: 'menuItems',
+                        elName:'menuItems',
                         tag:'div',
                         children:[
                             {
@@ -94,7 +94,7 @@ TOMEE.components.Panel = function (cfg) {
 
         (function () {
             var actions = TOMEE.el.getElMap({
-                elName: 'main',
+                elName:'main',
                 tag:'ul',
                 cls:'dropdown-menu',
                 attributes:{
@@ -107,13 +107,13 @@ TOMEE.components.Panel = function (cfg) {
             for (var i = 0; i < cfg.actions.length; i++) {
                 actionItem = cfg.actions[i];
                 actions.main.append(TOMEE.el.getElMap({
-                    elName: 'actionButton',
+                    elName:'actionButton',
                     tag:'a',
                     attributes:{
                         href:'#'
                     },
                     html:actionItem.text,
-                    listeners: actionItem.listeners
+                    listeners:actionItem.listeners
                 }).actionButton);
             }
             commands.actionsMenu.append(actions.main);
@@ -172,7 +172,7 @@ TOMEE.components.Panel = function (cfg) {
         })();
     }
 
-    var setHeight = function(height) {
+    var setHeight = function (height) {
         var toolbarSize = elMapToolbar.main.height();
         var mySize = height - toolbarSize - TOMEE.el.getBorderSize(map.main) - TOMEE.el.getBorderSize(map.content);
         map.content.height(mySize);
@@ -185,6 +185,15 @@ TOMEE.components.Panel = function (cfg) {
         getContentEl:function () {
             return map.content;
         },
-        setHeight: setHeight
+        setHeight:setHeight,
+        showAt:function (config) {
+            var main = map.main;
+
+            main.css('left', config.left + 'px');
+            main.css('top', config.top + 'px');
+
+            var myBody = $('body');
+            myBody.append(main);
+        }
     };
 };

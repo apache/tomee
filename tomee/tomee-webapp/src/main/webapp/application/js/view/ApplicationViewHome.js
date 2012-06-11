@@ -21,6 +21,30 @@ TOMEE.ApplicationViewHome = function (cfg) {
 
     var channel = cfg.channel;
 
+    var jndiMenu = TOMEE.components.Menu({
+        commands:[
+            {
+                text:'commandA',
+                callback:function () {
+                }
+            },
+            {
+                text:'commandB',
+                callback:function () {
+                }
+            },
+            {
+                text:'commandC',
+                callback:function () {
+                }
+            }
+        ]
+    });
+    jndiMenu.showAt({
+        left:100,
+        top:100
+    });
+
     var elMapContent = TOMEE.el.getElMap({
         elName:'main',
         tag:'div',
