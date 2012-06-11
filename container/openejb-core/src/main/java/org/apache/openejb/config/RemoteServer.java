@@ -241,9 +241,6 @@ public class RemoteServer {
                     if (!addedArgs.containsKey("-Dcatalina.ext.dirs")) {
                         argsList.add("-Dcatalina.ext.dirs=" + tlib.getAbsolutePath());
                     }
-                    if (!addedArgs.containsKey("-Dopenejb.servicemanager.enabled")) {
-                        argsList.add("-Dopenejb.servicemanager.enabled=" + Boolean.getBoolean("openejb.servicemanager.enabled"));
-                    }
                     if (!addedArgs.containsKey("-Dorg.apache.catalina.STRICT_SERVLET_COMPLIANCE")) {
                         argsList.add("-Dorg.apache.catalina.STRICT_SERVLET_COMPLIANCE=true");
                     }
