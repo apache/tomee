@@ -92,7 +92,7 @@ TOMEE.components.Tree = function (cfg) {
         } else {
             myI.addClass('icon-folder-close');
 
-            li.bind('click', {
+            span.bind('click', {
                 li:li,
                 i:myI,
                 bean:data
