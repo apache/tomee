@@ -129,6 +129,7 @@ TOMEE.ApplicationViewHome = function (cfg) {
             jndiPanel.jndiContextMenu(opts);
         },
         showJndiClassWin:function (opts) {
+            //opts.cls, opts.name, opts.path
             jndiPanel.showClassPanel(opts);
         }
     };

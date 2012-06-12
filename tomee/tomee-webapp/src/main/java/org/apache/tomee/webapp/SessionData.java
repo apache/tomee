@@ -17,15 +17,39 @@
 
 package org.apache.tomee.webapp;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 public class SessionData {
 
     private final Map<String, Object> saved = Collections.synchronizedMap(new HashMap<String, Object>());
+    private final Context initCtx;
+
+    public SessionData() {
+        final Properties p = new Properties();
+        p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
+        p.put("openejb.loader", "embed");
+
+        final Context initCtx;
+        try {
+            initCtx = new InitialContext(p);
+        } catch (NamingException e) {
+            throw new TomeeException(e);
+        }
+        this.initCtx = initCtx;
+    }
 
     public Map<String, Object> getSaved() {
-        return saved;
+        return this.saved;
+    }
+
+    public Context getUserContext() {
+        return this.initCtx;
+
     }
 }

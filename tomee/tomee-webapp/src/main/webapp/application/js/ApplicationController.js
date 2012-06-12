@@ -109,6 +109,7 @@ TOMEE.ApplicationController = function () {
         });
 
         channel.bind('app.new.jndi.class.data', function (params) {
+            //params.cls, params.name, params.path
             homeView.showJndiClassWin(params);
         });
 
@@ -123,7 +124,16 @@ TOMEE.ApplicationController = function () {
             var data = params.data;
             model.loadJndiClass({
                 name:data.name,
+                parent: data.parent,
                 path:pathArrayBuilder.build(data.parent)
+            });
+        });
+
+        channel.bind('lookup.and.save.object', function (params) {
+            model.lookupJndi({
+                name:params.showParams.name,
+                path:pathArrayBuilder.build(params.showParams.parent),
+                saveKey:params.saveKey
             });
         });
 

@@ -171,7 +171,29 @@ TOMEE.ApplicationModel = function (cfg) {
                 },
                 success:function (data) {
                     channel.send('app.new.jndi.class.data', {
-                        cls: data.cls
+                        cls:data.cls,
+                        name:params.name,
+                        parent:params.parent,
+                        path:params.path
+                    });
+                }
+            });
+        },
+        lookupJndi:function (params) {
+            //params.path, params.bean, params.parentEl
+            request({
+                method:'POST',
+                url:TOMEE.baseURL('jndi'),
+                data:{
+                    name:params.name,
+                    path:TOMEE.utils.getSafe(params.path, []).join(','),
+                    saveKey:params.saveKey
+                },
+                success:function (data) {
+                    channel.send('app.new.jndi.bean', {
+                        name:params.name,
+                        path:params.path,
+                        saveKey:params.saveKey
                     });
                 }
             });

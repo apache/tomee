@@ -24,8 +24,12 @@ import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.proxy.LocalBeanProxyGeneratorImpl;
 import org.apache.openejb.util.proxy.ProxyManager;
 import org.apache.tomee.webapp.JsonExecutor;
+import org.apache.tomee.webapp.listener.UserSessionListener;
 
-import javax.naming.*;
+import javax.naming.Context;
+import javax.naming.NameClassPair;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -181,12 +185,7 @@ public class JndiServlet extends HttpServlet {
 
             @Override
             public void call(Map<String, Object> json) throws Exception {
-
-
-                final Properties p = new Properties();
-                p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
-                p.put("openejb.loader", "embed");
-                final Context initCtx = new InitialContext(p);
+                final Context initCtx = UserSessionListener.getServiceContext(req.getSession()).getUserContext();
 
                 final Context ctx;
                 final String strPath = req.getParameter("path");
@@ -207,6 +206,32 @@ public class JndiServlet extends HttpServlet {
                 }
             }
         });
+    }
 
+    @Override
+    protected void doPost(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
+        JsonExecutor.execute(req, resp, new JsonExecutor.Executor() {
+
+            @Override
+            public void call(Map<String, Object> json) throws Exception {
+                final Context initCtx = UserSessionListener.getServiceContext(req.getSession()).getUserContext();
+
+                final Context ctx;
+                final String strPath = req.getParameter("path");
+                if (strPath == null || "".equals(strPath.trim())) {
+                    ctx = initCtx;
+                } else {
+                    final List<String> path = new ArrayList<String>();
+                    path.addAll(Arrays.asList(req.getParameter("path").split(",")));
+                    ctx = getContext(initCtx, path);
+                }
+
+                final String name = req.getParameter("name");
+                final Object obj = ctx.lookup(name);
+
+                UserSessionListener.getServiceContext(req.getSession()).getSaved().put(req.getParameter("saveKey"), obj);
+                json.put("success", Boolean.TRUE);
+            }
+        });
     }
 }

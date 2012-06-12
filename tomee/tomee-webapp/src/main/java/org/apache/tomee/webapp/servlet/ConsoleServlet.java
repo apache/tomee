@@ -65,6 +65,11 @@ public class ConsoleServlet extends HttpServlet {
                     public void save(String key, Object obj) {
                         UserSessionListener.getServiceContext(req.getSession()).getSaved().put(key, obj);
                     }
+
+                    @Override
+                    public Object get(String key) {
+                        return UserSessionListener.getServiceContext(req.getSession()).getSaved().get(key);
+                    }
                 });
 
                 SCRIPTER.evaluate(engineName, scriptCode, bindings);
@@ -76,5 +81,7 @@ public class ConsoleServlet extends HttpServlet {
         void write(Object obj) throws Exception;
 
         void save(String key, Object obj);
+
+        Object get(String key);
     }
 }
