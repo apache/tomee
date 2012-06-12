@@ -68,7 +68,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
         return instance;
     }
 
-    public void init(Properties props) throws Exception {
+    public void init(final Properties props) throws Exception {
         containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
 //        deploymentIndex = new DeploymentIndex(containerSystem.deployments());
 
@@ -85,11 +85,20 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
         }
     }
 
-    public void service(Socket socket) throws IOException {
-        InputStream in = socket.getInputStream();
-        OutputStream out = socket.getOutputStream();
+    public void service(final Socket socket) throws IOException {
+
+        InputStream in = null;
+        OutputStream out = null;
 
         try {
+
+            if (socket.isClosed()) {
+                return;
+            }
+
+            in = socket.getInputStream();
+            out = socket.getOutputStream();
+
             service(in, out);
         } finally {
 
@@ -120,7 +129,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
                 try {
                     socket.close();
                 } catch (Throwable t) {
-                    logger.error("Error closing client connection: " + t.getMessage());
+                    //Ignore
                 }
             }
         }
@@ -187,23 +196,23 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
         } catch (IllegalArgumentException iae) {
             final String msg = "\"" + protocolMetaData.getSpec() + "\" FAIL \"Unknown request type " + requestTypeByte;
             if (logger.isDebugEnabled()) {
-                logger.error(msg, iae);
+                logger.debug(msg, iae);
             } else {
-                logger.error(msg + " - Debug for StackTrace");
+                logger.warning(msg + " - Debug for StackTrace");
             }
         } catch (SecurityException e) {
             final String msg = "\"" + requestType + " " + protocolMetaData.getSpec() + "\" FAIL \"Security error - " + e.getMessage() + "\"";
             if (logger.isDebugEnabled()) {
-                logger.error(msg, e);
+                logger.debug(msg, e);
             } else {
-                logger.error(msg + " - Debug for StackTrace");
+                logger.warning(msg + " - Debug for StackTrace");
             }
         } catch (Throwable e) {
             final String msg = "\"" + requestType + " " + protocolMetaData.getSpec() + "\" FAIL \"Unexpected error - " + e.getMessage() + "\"";
             if (logger.isDebugEnabled()) {
-                logger.error(msg, e);
+                logger.debug(msg, e);
             } else {
-                logger.error(msg + " - Debug for StackTrace");
+                logger.warning(msg + " - Debug for StackTrace");
             }
         } finally {
 

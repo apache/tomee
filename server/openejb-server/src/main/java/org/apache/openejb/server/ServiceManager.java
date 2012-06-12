@@ -35,12 +35,10 @@ import javax.management.ObjectName;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import static org.apache.openejb.util.PropertyPlaceHolderHelper.holds;
 import static org.apache.openejb.util.PropertyPlaceHolderHelper.holdsWithUpdate;
 
 /**
@@ -77,7 +75,7 @@ public abstract class ServiceManager {
     }
 
     protected List<ServerService> initServers(Map<String, Properties> availableServices)
-        throws IOException {
+            throws IOException {
         List<ServerService> enabledServers = new ArrayList<ServerService>();
 
         for (Map.Entry<String, Properties> serviceInfo : availableServices.entrySet()) {
@@ -91,23 +89,23 @@ public abstract class ServiceManager {
                 enabledServers.add(service);
             }
         }
-        
+
         return enabledServers;
     }
-    
-    protected ServerService initServer(String serviceName, Properties serviceProperties) 
-        throws IOException {
+
+    protected ServerService initServer(String serviceName, Properties serviceProperties)
+            throws IOException {
 
         DiscoveryRegistry registry = SystemInstance.get().getComponent(DiscoveryRegistry.class);
-        
+
         OpenEjbConfiguration conf = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
-        
-        logger.debug("Processing ServerService(id="+serviceName+")");
+
+        logger.debug("Processing ServerService(id=" + serviceName + ")");
 
         overrideProperties(serviceName, serviceProperties);
         serviceProperties.setProperty("name", serviceName);
 
-        if (conf != null && conf.facilities != null){
+        if (conf != null && conf.facilities != null) {
             ServiceInfo info = new ServiceInfo();
             info.className = ((Class) serviceProperties.get(ServerService.class)).getName();
             info.service = "ServerService";
@@ -127,9 +125,9 @@ public abstract class ServiceManager {
             logger.info("Creating ServerService(id=" + serviceName + ")");
 
             // log all properties on debug
-            if (logger.isDebugEnabled()){
+            if (logger.isDebugEnabled()) {
                 for (Map.Entry<Object, Object> entry : serviceProperties.entrySet()) {
-                    logger.debug(entry.getKey() +" = "+ entry.getValue());
+                    logger.debug(entry.getKey() + " = " + entry.getValue());
                 }
             }
 
@@ -140,10 +138,11 @@ public abstract class ServiceManager {
                 ObjectRecipe recipe = new ObjectRecipe(serviceClass);
                 try {
                     // Do not import.  This class is not available in xbean-reflect-3.3
-                    if (org.apache.xbean.recipe.ReflectionUtil.findStaticFactory(serviceClass, "createServerService", null, null) != null){
+                    if (org.apache.xbean.recipe.ReflectionUtil.findStaticFactory(serviceClass, "createServerService", null, null) != null) {
                         recipe = new ObjectRecipe(serviceClass, "createServerService");
                     }
                 } catch (Throwable e) {
+                    //Ignore
                 }
 
                 recipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
@@ -156,8 +155,8 @@ public abstract class ServiceManager {
                 }
 
                 service.init(serviceProperties);
-                    
-                if (service instanceof DiscoveryAgent){
+
+                if (service instanceof DiscoveryAgent) {
                     DiscoveryAgent agent = (DiscoveryAgent) service;
                     registry.addDiscoveryAgent(agent);
                 }
@@ -171,7 +170,7 @@ public abstract class ServiceManager {
                 logger.error("service.instantiation.err", t, serviceClass.getName(), t.getClass().getName(), t.getMessage());
             }
         }
-       
+
         return null;
     }
 
@@ -206,7 +205,7 @@ public abstract class ServiceManager {
         if (conf.exists()) {
             File serviceConfig = new File(conf, serviceName + ".properties");
             if (!serviceConfig.exists()) {
-                serviceConfig = new File(conf, "conf.d/" + serviceConfig.getName()); // name was already built so use it
+                serviceConfig = new File(conf, serviceConfig.getName());
             }
             if (serviceConfig.exists()) {
                 IO.readProperties(serviceConfig, serviceProperties);
@@ -235,8 +234,8 @@ public abstract class ServiceManager {
         final String prefix = serviceName + ".";
         final Properties sysProps = new Properties(System.getProperties());
         sysProps.putAll(SystemInstance.get().getProperties());
-        for (Iterator iterator1 = sysProps.entrySet().iterator(); iterator1.hasNext();) {
-            final Map.Entry entry1 = (Map.Entry) iterator1.next();
+        for (final Map.Entry<Object, Object> entry : sysProps.entrySet()) {
+            final Map.Entry entry1 = (Map.Entry) entry;
             final Object value = entry1.getValue();
             String key = (String) entry1.getKey();
             if (value instanceof String && key.startsWith(prefix)) {
@@ -251,15 +250,11 @@ public abstract class ServiceManager {
         // if it should be started, continue
         String disabled = props.getProperty("disabled", "");
 
-        if (disabled.equalsIgnoreCase("yes") || disabled.equalsIgnoreCase("true")) {
-            return false;
-        } else {
-            return true;
-        }
+        return !(disabled.equalsIgnoreCase("yes") || disabled.equalsIgnoreCase("true"));
     }
 
     abstract public void init() throws Exception;
-    
+
     public void start() throws ServiceException {
         start(true);
     }
@@ -267,5 +262,5 @@ public abstract class ServiceManager {
     abstract public void start(boolean block) throws ServiceException;
 
     abstract public void stop() throws ServiceException;
-    
+
 }

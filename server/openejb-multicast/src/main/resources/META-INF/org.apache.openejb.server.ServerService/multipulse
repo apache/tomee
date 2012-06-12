@@ -1,0 +1,4 @@
+server      = org.apache.openejb.server.discovery.MulticastPulseAgent
+bind        = 239.255.2.3
+port        = 6142
+disabled    = true

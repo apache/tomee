@@ -33,9 +33,9 @@ import org.apache.openejb.server.DiscoveryListener;
  */
 public class MulticastDiscoveryAgentTest extends TestCase {
 
-    public void testNothing(){}
+    //public void testNothing(){}
 
-    public void _test() throws Exception {
+    public void test() throws Exception {
         MulticastDiscoveryAgent[] agents = {agent("red"),agent("green"),agent("yellow"),agent("blue")};
 
         MulticastSearch multicast = new MulticastSearch();
@@ -51,24 +51,24 @@ public class MulticastDiscoveryAgentTest extends TestCase {
 
 
         for (MulticastDiscoveryAgent agent : agents) {
-            Thread.sleep(10000);
+            Thread.sleep(2000);
             System.out.println("--");
             agent.stop();
         }
 
         for (MulticastDiscoveryAgent agent : agents) {
-            Thread.sleep(10000);
+            Thread.sleep(2000);
             System.out.println("--");
             agent.start();
         }
 
-        Thread.sleep(10000);
-
+        Thread.sleep(2000);
 
     }
 
     private static class Filter implements MulticastSearch.Filter {
         private final Set<URI> seen = new HashSet<URI>();
+        @Override
         public boolean accept(URI service) {
             if (seen.contains(service)) return false;
             seen.add(service);
@@ -80,7 +80,7 @@ public class MulticastDiscoveryAgentTest extends TestCase {
         MulticastDiscoveryAgent agent = new MulticastDiscoveryAgent();
         agent.init(new Properties());
         agent.setDiscoveryListener(new MyDiscoveryListener(id));
-        agent.registerService(new URI("ejbd://"+id+":4201"));
+        agent.registerService(new URI("ejb:ejbd://"+id+":4201"));
         agent.start();
         return agent;
     }
@@ -94,10 +94,12 @@ public class MulticastDiscoveryAgentTest extends TestCase {
             this.id = id;
         }
 
+        @Override
         public void serviceAdded(URI service) {
             System.out.println(id + "add " + service.toString());
         }
 
+        @Override
         public void serviceRemoved(URI service) {
             System.out.println(id + "remove " + service.toString());
         }

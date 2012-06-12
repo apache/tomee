@@ -29,9 +29,6 @@ import java.util.Properties;
 
 public class ConnectionManager {
 
-    //Do not leave this in production code
-    //private static final Logger logger = Logger.getLogger("OpenEJB.client");
-
     private static Registry<ConnectionFactory> factories = Registry.create(ConnectionFactory.class);
     private static Registry<ConnectionStrategy> strategies = Registry.create(ConnectionStrategy.class);
 
@@ -47,6 +44,7 @@ public class ConnectionManager {
         registerFactory("https", httpFactory);
 
         registerFactory("multicast", new MulticastConnectionFactory());
+        registerFactory("multipulse", new MulticastPulseClient());
         registerFactory("failover", new FailoverConnectionFactory());
 
         registerStrategy("sticky", new StickyConnectionStrategy());
@@ -57,7 +55,6 @@ public class ConnectionManager {
         registerStrategy("round-robin", strategies.get("roundrobin"));
         registerStrategy("default", strategies.get("sticky"));
     }
-
 
     public static Connection getConnection(final ClusterMetaData cluster, final ServerMetaData server, final Request req) throws IOException {
         if (cluster == null) throw new IllegalArgumentException("cluster cannot be null");
@@ -79,9 +76,6 @@ public class ConnectionManager {
         }
 
         try {
-            //Do not leave this in production code
-            //logger.finest("connect: strategy=" + name + ", uri=" + server.getLocation() + ", strategy-impl=" + strategy.getClass().getName());
-
             return strategy.connect(cluster, server);
         } catch (Throwable e) {
             Client.fireEvent(new ConnectionStrategyFailed(strategy, cluster, server, e));
@@ -104,9 +98,6 @@ public class ConnectionManager {
         }
 
         try {
-            //Do not leave this in production code
-            //logger.finest("connect: scheme=" + scheme + ", uri=" + uri + ", factory-impl=" + factory.getClass().getName());
-
             return factory.getConnection(uri);
         } catch (Throwable e) {
             Client.fireEvent(new ConnectionFailed(uri, e));

@@ -21,6 +21,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -34,20 +35,15 @@ import java.util.concurrent.TimeUnit;
  */
 public class MulticastConnectionFactory implements ConnectionFactory {
 
-    private final Set<String> defaultSchemes = new HashSet<String>();
+    private final Set<String> defaultSchemes = new HashSet<String>(Arrays.asList("ejbd", "ejbds", "http", "https"));
 
-    {
-        defaultSchemes.add("ejbd");
-        defaultSchemes.add("ejbds");
-        defaultSchemes.add("http");
-        defaultSchemes.add("https");
+    protected Set<String> getDefaultSchemes() {
+        return defaultSchemes;
     }
 
-    String defaultGroup = "default";
-    private int defaultTimeout = 5000;
-
+    @Override
     public Connection getConnection(URI uri) throws IOException {
-        Map<String, String> params = null;
+        Map<String, String> params;
         try {
             params = URIs.parseParamters(uri);
         } catch (URISyntaxException e) {
@@ -55,8 +51,8 @@ public class MulticastConnectionFactory implements ConnectionFactory {
         }
 
         Set<String> schemes = getSet(params, "schemes", defaultSchemes);
-        String group = getString(params, "group", defaultGroup);
-        long timeout = getLong(params, "timeout", defaultTimeout);
+        String group = getString(params, "group", "default");
+        long timeout = getLong(params, "timeout", 5000);
 
         MulticastSearch search = new MulticastSearch(uri.getHost(), uri.getPort());
 
@@ -100,9 +96,7 @@ public class MulticastConnectionFactory implements ConnectionFactory {
             String value = params.get(param);
             if (value != null) {
                 String[] strings = value.split(",");
-                for (String s : strings) {
-                    set.add(s);
-                }
+                Collections.addAll(set, strings);
             }
         } else {
             set = defaultSet;
@@ -116,14 +110,14 @@ public class MulticastConnectionFactory implements ConnectionFactory {
                 Map<String, String> rc = new LinkedHashMap<String, String>();
                 if (uri != null) {
                     String[] parameters = uri.split("&");
-                    for (int i = 0; i < parameters.length; i++) {
-                        int p = parameters[i].indexOf("=");
+                    for (final String parameter : parameters) {
+                        int p = parameter.indexOf("=");
                         if (p >= 0) {
-                            String name = URLDecoder.decode(parameters[i].substring(0, p), "UTF-8");
-                            String value = URLDecoder.decode(parameters[i].substring(p + 1), "UTF-8");
+                            String name = URLDecoder.decode(parameter.substring(0, p), "UTF-8");
+                            String value = URLDecoder.decode(parameter.substring(p + 1), "UTF-8");
                             rc.put(name, value);
                         } else {
-                            rc.put(parameters[i], null);
+                            rc.put(parameter, null);
                         }
                     }
                 }
@@ -144,11 +138,11 @@ public class MulticastConnectionFactory implements ConnectionFactory {
         }
     }
 
-    private static URI unwrap(URI uri) throws URISyntaxException {
+    protected static URI unwrap(URI uri) throws URISyntaxException {
         return new URI(uri.getSchemeSpecificPart());
     }
 
-    private static class Filter implements MulticastSearch.Filter {
+    protected static class Filter implements MulticastSearch.Filter {
         private final Set<String> schemes;
         private final String group;
 
@@ -157,6 +151,7 @@ public class MulticastConnectionFactory implements ConnectionFactory {
             this.schemes = schemes;
         }
 
+        @Override
         public boolean accept(URI service) {
             try {
                 if (!group.equals(service.getScheme())) return false;
