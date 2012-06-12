@@ -190,12 +190,9 @@ TOMEE.components.Panel = function (cfg) {
         var panelX = map.main.height() / 2;
         var panelY = map.main.width() / 2;
 
-        var x = winCenterX - panelX;
-        var y = winCenterY - panelY;
-
         return {
-            left:y,
-            top:x
+            left:winCenterY - panelY,
+            top:winCenterX - panelX
         };
     };
 
@@ -203,7 +200,7 @@ TOMEE.components.Panel = function (cfg) {
         getEl:function () {
             return map.main;
         },
-        getContentEl:function () {
+        l:function () {
             return map.content;
         },
         setHeight:setHeight,
