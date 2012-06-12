@@ -30,49 +30,141 @@ TOMEE.JndiClass = function (cfg) {
         }
     });
 
-    var buildList = function(parent, obj) {
-        var li = $('<li></li>');
-        for(var prop in obj) {
-            (function(key, value) {
-                if(TOMEE.utils.isPrimitive(value)) {
-                    li.append(key + ': ' + value);
-
-                } else if(value instanceof Array) {
-                    li.append(key);
-                    var ul = $('<ul></ul>');
-
-                    for(var i = 0; i < value.length; i++) {
-                        buildList(ul, value[i]);
-                    }
-
-                    li.append(ul);
-                } else {
-
-                    li.append(key);
-                    var ul = $('<ul></ul>');
-
-                    for(var inner in value) {
-                        buildList(ul, value[inner]);
-                    }
-
-                    li.append(ul);
-                }
-            })(prop, obj[prop]);
-        }
-        parent.append(li);
-    };
-
     return {
         show:function (params) {
             var el = panel.getContentEl();
             el.empty();
 
-            var innerDiv = $('<ul></ul>');
             var cls = params.data.cls;
-            buildList(innerDiv, cls);
 
-            panel.getContentEl().append(innerDiv);
+            /*
+            Data format
+            {
+                cls: {
+                    type: 'String',
+                        //CONTEXT, BEAN, OTHER
+                        componentType: 'String',
+                        //STATEFUL, STATELESS, SINGLETON, BMP_ENTITY, CMP_ENTITY, MESSAGE_DRIVEN, MANAGED
+                        beanClass: 'impl class name',
+                        interfaces: ['InterfaceA', 'InterfaceB'],
+                        methods: [{
+                        name: 'methodName',
+                        returns: 'Class type',
+                        parameters: ['ClassA', 'ClassB']
+                    }, {
+                        name: 'methodName',
+                        returns: 'Class type',
+                        parameters: ['ClassA', 'ClassB']
+                    }]
+                }
+            }
+            */
+            var getFieldCfg = function (bean, getLabel, getValue) {
+                var fieldId = TOMEE.Sequence.next('cls_property');
+                var fieldConfig = {
+                    tag:'div',
+                    cls:'control-group',
+                    children:[
+                        {
+                            tag:'label',
+                            cls:'control-label',
+                            attributes:{
+                                'for':fieldId
+                            },
+                            html:getLabel(bean)
+                        },
+                        {
+                            tag:'div',
+                            cls:'controls',
+                            children:[
+                                {
+                                    tag:'input',
+                                    cls:'input input-xlarge',
+                                    attributes:{
+                                        style: 'margin-bottom: 5px;',
+                                        'type':'text',
+                                        'id':fieldId,
+                                        'value':getValue(bean)
+                                    }
+                                }
+                            ]
 
+                        }
+                    ]
+                };
+                return fieldConfig;
+            };
+
+            var fields = [];
+            fields.push(getFieldCfg(cls, function (bean) {
+                return 'type';
+            }, function (bean) {
+                return bean['type'];
+            }));
+            fields.push(getFieldCfg(cls, function (bean) {
+                return 'componentType';
+            }, function (bean) {
+                return bean['componentType'];
+            }));
+
+            var elBottomBar = TOMEE.el.getElMap({
+                elName:'main',
+                tag:'form',
+                cls:'well form-inline',
+                attributes:{
+                    style:'height: 27px;margin-bottom: 0px;padding-top: 1px;padding-left: 1px;padding-bottom: 1px;padding-right: 1px;'
+                },
+                children:[
+                    {
+                        tag:'div',
+                        cls:'pull-right',
+                        children:[
+                            {
+                                elName:'fileSelector',
+                                tag:'select',
+                                attributes:{
+                                    style:'margin-right: 2px;'
+                                }
+                            },
+                            {
+                                elName:'loadBtn',
+                                tag:'button',
+                                cls:'btn',
+                                html:TOMEE.I18N.get('application.log.load')
+                            }
+                        ]
+                    }
+                ]
+            });
+
+            var elements = TOMEE.el.getElMap({
+                elName:'main',
+                tag:'div',
+
+                children:[
+                    {
+                        tag:'div',
+                        attributes:{
+                            style:'padding: 5px'
+                        },
+                        children:[
+                            {
+                                tag:'form',
+                                cls:'form-horizontal',
+                                children:[
+                                    {
+                                        tag:'fieldset',
+                                        children:fields
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            });
+
+            elements.main.append(elBottomBar.main);
+            panel.getContentEl().append(elements.main);
             panel.showAt({
                 modal:true
             });
