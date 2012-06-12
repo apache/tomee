@@ -44,10 +44,9 @@ TOMEE.Jndi = function (cfg) {
             {
                 text:TOMEE.I18N.get('application.jdni.lookup'),
                 callback:function (data) {
-                    TOMEE.JndiClass({
-                        parent:parentEl,
-                        channel:channel
-                    }).show({});
+                    channel.send('show.class.panel', {
+                        data:data
+                    });
                 }
             }
         ]
@@ -66,6 +65,14 @@ TOMEE.Jndi = function (cfg) {
                 top:opts.top,
                 data:opts.data
             });
+        },
+        showClassPanel:function (opts) {
+            TOMEE.JndiClass({
+                parent:parentEl,
+                channel:channel
+            }).show({
+                    data:opts
+                });
         }
     };
 };

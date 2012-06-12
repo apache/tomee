@@ -30,8 +30,49 @@ TOMEE.JndiClass = function (cfg) {
         }
     });
 
+    var buildList = function(parent, obj) {
+        var li = $('<li></li>');
+        for(var prop in obj) {
+            (function(key, value) {
+                if(TOMEE.utils.isPrimitive(value)) {
+                    li.append(key + ': ' + value);
+
+                } else if(value instanceof Array) {
+                    li.append(key);
+                    var ul = $('<ul></ul>');
+
+                    for(var i = 0; i < value.length; i++) {
+                        buildList(ul, value[i]);
+                    }
+
+                    li.append(ul);
+                } else {
+
+                    li.append(key);
+                    var ul = $('<ul></ul>');
+
+                    for(var inner in value) {
+                        buildList(ul, value[inner]);
+                    }
+
+                    li.append(ul);
+                }
+            })(prop, obj[prop]);
+        }
+        parent.append(li);
+    };
+
     return {
         show:function (params) {
+            var el = panel.getContentEl();
+            el.empty();
+
+            var innerDiv = $('<ul></ul>');
+            var cls = params.data.cls;
+            buildList(innerDiv, cls);
+
+            panel.getContentEl().append(innerDiv);
+
             panel.showAt({
                 modal:true
             });

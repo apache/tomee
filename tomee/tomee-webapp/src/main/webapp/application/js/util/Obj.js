@@ -18,17 +18,33 @@
  */
 
 TOMEE.utils = {
+    isPrimitive:function (value) {
+        if ('number' === (typeof value)) {
+            return true;
+        }
+
+        if ('string' === (typeof value)) {
+            return true;
+        }
+
+        if ('boolean' === (typeof value)) {
+            return true;
+        }
+
+        return false;
+    },
+
     getSafe:function (obj, defaultValue) {
-        if(obj instanceof Function) {
+        if (obj instanceof Function) {
             try {
                 return obj();
 
-            } catch(ex) {
+            } catch (ex) {
                 return defaultValue;
             }
         }
 
-        if(obj) {
+        if (obj) {
             return obj;
         }
         return defaultValue;
@@ -44,7 +60,7 @@ TOMEE.utils = {
         }
 
         var result = [];
-        for(var key in obj) {
+        for (var key in obj) {
             result.push(objBuilder(key, obj[key]));
         }
 
