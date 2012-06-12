@@ -29,7 +29,21 @@ TOMEE.el = (function () {
     };
 
     var mountEl = function (elCfg, elMap) {
+        if (elCfg.el) {
+            elCfg.el.detach();
+
+            if (elCfg.elName) {
+                elMap[elCfg.elName] = elCfg.el;
+            }
+            //we dont need to construct it. it is already done
+            return;
+        }
+
         var el = $('<' + elCfg.tag + '></' + elCfg.tag + '>');
+
+        if (elCfg.elName) {
+            elMap[elCfg.elName] = el;
+        }
 
         (function () {
             var attrs = elCfg.attributes;
@@ -54,10 +68,6 @@ TOMEE.el = (function () {
             el.append(mountEl(children[i], elMap));
         }
 
-        if (elCfg.elName) {
-            elMap[elCfg.elName] = el;
-        }
-
         if (elCfg.html) {
             el.html(elCfg.html);
         }
@@ -72,8 +82,8 @@ TOMEE.el = (function () {
     return {
         getElMap:getElMap,
         getBorderSize:getBorderSize,
-        getLocationValue: function(value) {
-            if($.isNumeric(value)) {
+        getLocationValue:function (value) {
+            if ($.isNumeric(value)) {
                 return value + 'px';
             } else {
                 return TOMEE.utils.getSafe(value, '0px');

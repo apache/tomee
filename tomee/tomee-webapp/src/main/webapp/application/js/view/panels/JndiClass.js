@@ -27,35 +27,20 @@ TOMEE.JndiClass = function (cfg) {
         extraStyles:{
             width:'500px',
             height:'200px'
-        }
-    });
-
-    var elBottomBar = TOMEE.el.getElMap({
-        elName:'main',
-        tag:'form',
-        cls:'well form-inline',
-        attributes:{
-            style:'height: 27px;margin-bottom: 0px;padding-top: 1px;padding-left: 1px;padding-bottom: 1px;padding-right: 1px;'
         },
-        children:[
+        bbar:[
             {
-                tag:'div',
-                cls:'pull-right',
-                children:[
-                    {
-                        tag:'input',
-                        attributes:{
-                            'type': 'text',
-                            style:'margin-right: 2px;'
-                        }
-                    },
-                    {
-                        elName:'loadBtn',
-                        tag:'button',
-                        cls:'btn',
-                        html:TOMEE.I18N.get('application.jdni.lookup')
-                    }
-                ]
+                tag:'input',
+                attributes:{
+                    'type':'text',
+                    style:'margin-right: 2px;'
+                }
+            },
+            {
+                elName:'loadBtn',
+                tag:'button',
+                cls:'btn',
+                html:TOMEE.I18N.get('application.jdni.lookup')
             }
         ]
     });
@@ -75,16 +60,7 @@ TOMEE.JndiClass = function (cfg) {
         ]
     });
 
-    elements.main.append(elBottomBar.main);
     panel.getContentEl().append(elements.main);
-
-    var setHeight = function (height) {
-        var mySize = height - TOMEE.el.getBorderSize(elements.main);
-        var gridSize = mySize - elBottomBar.main.outerHeight(true);
-
-        elements.main.height(mySize);
-        elements.content.height(gridSize);
-    };
 
     var getField = function (bean, getLabel, getValue) {
         var fieldId = TOMEE.Sequence.next('cls_property');
@@ -157,8 +133,6 @@ TOMEE.JndiClass = function (cfg) {
             panel.showAt({
                 modal:true
             });
-
-            setHeight(panel.getContentEl().outerHeight(true));
         }
     };
 };
