@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StreamCorruptedException;
 import java.net.ConnectException;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.URI;
 import java.util.Map;
@@ -44,6 +45,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
 
     private KeepAliveStyle keepAliveStyle = KeepAliveStyle.PING;
 
+    public static final String PROPERTY_SOCKET_TIMEOUT = "openejb.client.connection.socket.timeout";
     public static final String PROPERTY_POOL_TIMEOUT = "openejb.client.connection.pool.timeout";
     private static final String PROPERTY_POOL_TIMEOUT2 = "openejb.client.connectionpool.timeout";
     public static final String PROPERTY_POOL_SIZE = "openejb.client.connection.pool.size";
@@ -52,12 +54,14 @@ public class SocketConnectionFactory implements ConnectionFactory {
 
     private static final Map<URI, Pool> connections = new ConcurrentHashMap<URI, Pool>();
     private int size = 5;
-    private long timeout = 1000;
+    private long timeoutPool = 1000;
+    private int timeoutSocket = 150;
 
     public SocketConnectionFactory() {
 
         this.size = getSize();
-        this.timeout = getTimeout();
+        this.timeoutPool = getTimeoutPool();
+        this.timeoutSocket = getTimeoutSocket();
 
         try {
             String property = System.getProperty(PROPERTY_KEEPALIVE);
@@ -70,11 +74,16 @@ public class SocketConnectionFactory implements ConnectionFactory {
         }
     }
 
-    private long getTimeout() {
+    private long getTimeoutPool() {
         final Properties p = System.getProperties();
-        long timeout = getLong(p, SocketConnectionFactory.PROPERTY_POOL_TIMEOUT, this.timeout);
+        long timeout = getLong(p, SocketConnectionFactory.PROPERTY_POOL_TIMEOUT, this.timeoutPool);
         timeout = getLong(p, SocketConnectionFactory.PROPERTY_POOL_TIMEOUT2, timeout);
         return timeout;
+    }
+
+    private int getTimeoutSocket() {
+        final Properties p = System.getProperties();
+        return getInt(p, SocketConnectionFactory.PROPERTY_SOCKET_TIMEOUT, this.timeoutSocket);
     }
 
     private int getSize() {
@@ -147,6 +156,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
                     break;
                 }
                 case PING_PONG: {
+                    //noinspection ResultOfMethodCallIgnored
                     conn.getInputStream().read();
                     break;
                 }
@@ -162,7 +172,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
     private Pool getPool(final URI uri) {
         Pool pool = connections.get(uri);
         if (pool == null) {
-            pool = new Pool(uri, getSize(), getTimeout());
+            pool = new Pool(uri, getSize(), this.timeoutPool);
             connections.put(uri, pool);
         }
         return pool;
@@ -178,7 +188,6 @@ public class SocketConnectionFactory implements ConnectionFactory {
         private final Lock lock = new ReentrantLock();
         private OutputStream out;
         private BufferedInputStream in;
-        private long checkoutTime;
 
         public SocketConnection(final URI uri, final Pool pool) {
             this.uri = uri;
@@ -228,21 +237,24 @@ public class SocketConnectionFactory implements ConnectionFactory {
             /*-----------------------*/
             /* Open socket to server */
             /*-----------------------*/
+            final InetSocketAddress address = new InetSocketAddress(uri.getHost(), uri.getPort());
+
             try {
                 if (uri.getScheme().equalsIgnoreCase("ejbds")) {
-                    final SSLSocket sslSocket = (SSLSocket) SSLSocketFactory.getDefault().createSocket(uri.getHost(), uri.getPort());
+                    final SSLSocket sslSocket = (SSLSocket) SSLSocketFactory.getDefault().createSocket(address.getAddress(), SocketConnectionFactory.this.timeoutSocket);
                     // use an anonymous cipher suite so that a KeyManager or
                     // TrustManager is not needed
                     // NOTE: this assumes that the cipher suite is known. A check
                     // -should- be done first.
                     final String[] enabledCipherSuites = {"SSL_DH_anon_WITH_RC4_128_MD5"};
                     sslSocket.setEnabledCipherSuites(enabledCipherSuites);
-                    socket = sslSocket;
+                    this.socket = sslSocket;
                 } else {
-                    socket = new Socket(uri.getHost(), uri.getPort());
+                    this.socket = new Socket();
+                    this.socket.connect(address, SocketConnectionFactory.this.timeoutSocket);
                 }
 
-                socket.setTcpNoDelay(true);
+                this.socket.setTcpNoDelay(true);
                 Client.fireEvent(new ConnectionOpened(uri));
 
             } catch (ConnectException e) {

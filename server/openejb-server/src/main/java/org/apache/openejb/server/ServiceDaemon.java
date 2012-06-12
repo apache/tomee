@@ -16,11 +16,11 @@
  */
 package org.apache.openejb.server;
 
+import org.apache.openejb.loader.Options;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.monitoring.Managed;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.loader.Options;
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.StringTemplate;
 
 import javax.net.ServerSocketFactory;
@@ -34,15 +34,15 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
 import java.net.URI;
-import java.util.Properties;
-import java.util.Map;
+import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.concurrent.TimeUnit;
 
 @Managed
 public class ServiceDaemon implements ServerService {
@@ -80,7 +80,7 @@ public class ServiceDaemon implements ServerService {
         this.next = next;
     }
 
-    public static InetAddress getAddress(String host){
+    public static InetAddress getAddress(String host) {
         try {
             return InetAddress.getByName(host);
         } catch (UnknownHostException e) {
@@ -96,12 +96,13 @@ public class ServiceDaemon implements ServerService {
         return inetAddress;
     }
 
+    @Override
     public void init(Properties props) throws Exception {
 
         this.props = props;
-        
+
         String formatString = props.getProperty("discovery");
-        if (formatString != null){
+        if (formatString != null) {
             discoveryUriFormat = new StringTemplate(formatString);
         }
 
@@ -124,6 +125,7 @@ public class ServiceDaemon implements ServerService {
         next.init(props);
     }
 
+    @Override
     public void start() throws ServiceException {
         synchronized (this) {
             // Don't bother if we are already started/starting
@@ -138,7 +140,7 @@ public class ServiceDaemon implements ServerService {
                 if (secure) {
                     ServerSocketFactory factory = SSLServerSocketFactory.getDefault();
                     serverSocket = factory.createServerSocket(port, backlog, inetAddress);
-                    final String[] enabledCipherSuites = { "SSL_DH_anon_WITH_RC4_128_MD5" };
+                    final String[] enabledCipherSuites = {"SSL_DH_anon_WITH_RC4_128_MD5"};
                     ((SSLServerSocket) serverSocket).setEnabledCipherSuites(enabledCipherSuites);
                 } else {
                     serverSocket = new ServerSocket(port, backlog, inetAddress);
@@ -158,7 +160,7 @@ public class ServiceDaemon implements ServerService {
 
             DiscoveryAgent agent = SystemInstance.get().getComponent(DiscoveryAgent.class);
             if (agent != null && discoveryUriFormat != null) {
-                Map<String,String> map = new HashMap<String,String>();
+                Map<String, String> map = new HashMap<String, String>();
 
                 // add all the properties that were used to construct this service
                 for (Map.Entry<Object, Object> entry : props.entrySet()) {
@@ -192,6 +194,7 @@ public class ServiceDaemon implements ServerService {
         }
     }
 
+    @Override
     public void stop() throws ServiceException {
 
         synchronized (this) {
@@ -211,6 +214,7 @@ public class ServiceDaemon implements ServerService {
         }
     }
 
+    @Override
     public String getIP() {
         return ip;
     }
@@ -219,6 +223,7 @@ public class ServiceDaemon implements ServerService {
      * Gets the port number that the
      * daemon is listening on.
      */
+    @Override
     @Managed
     public int getPort() {
         return port;
@@ -229,12 +234,15 @@ public class ServiceDaemon implements ServerService {
         return ip;
     }
 
+    @Override
     public void service(Socket socket) throws ServiceException, IOException {
     }
 
+    @Override
     public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
     }
 
+    @Override
     public String getName() {
         return next.getName();
     }
@@ -252,22 +260,38 @@ public class ServiceDaemon implements ServerService {
 
         public void stop() {
             stop.set(true);
+            boolean b = false;
             try {
-                if (lock.tryLock(10, TimeUnit.SECONDS)){
+                //This lock is here to try and be fair to the serverService on a shutdown
+                b = lock.tryLock(10, TimeUnit.SECONDS);
+            } catch (Throwable e) {
+                //Ignore
+            } finally {
+
+                try {
                     serverSocket.close();
+                } catch (Throwable e) {
+                    //Ignore
+                } finally {
+                    if (b) {
+                        lock.unlock();
+                    }
                 }
-            } catch (InterruptedException e) {
-                Thread.interrupted();
-            } catch (IOException e) {
             }
         }
 
+        @Override
         public void run() {
             while (!stop.get()) {
                 Socket socket = null;
                 try {
                     socket = serverSocket.accept();
                     socket.setTcpNoDelay(true);
+
+                    if (socket.isClosed()) {
+                        continue;
+                    }
+
                     if (!stop.get()) {
                         // the server service is responsible
                         // for closing the socket.
@@ -287,18 +311,20 @@ public class ServiceDaemon implements ServerService {
                     // we don't really care
                     // log.debug("Socket timed-out",e);
                 } catch (SocketException e) {
-                    if (!stop.get()){
-                        log.error("Socket error", e);
+                    if (!stop.get()) {
+                        log.debug("Socket error", e);
                     }
                 } catch (Throwable e) {
-                    log.error("Unexpected error", e);
+                    if (!stop.get()) {
+                        log.debug("Unexpected error", e);
+                    }
                 }
             }
 
             try {
                 serverSocket.close();
-            } catch (IOException ioException) {
-                log.debug("Error cleaning up socked", ioException);
+            } catch (Throwable e) {
+                log.debug("Error cleaning up socked", e);
             }
         }
 
