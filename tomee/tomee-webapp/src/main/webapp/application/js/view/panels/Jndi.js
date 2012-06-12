@@ -70,9 +70,7 @@ TOMEE.Jndi = function (cfg) {
             TOMEE.JndiClass({
                 parent:parentEl,
                 channel:channel
-            }).show({
-                    data:opts
-                });
+            }).show(opts);
         }
     };
 };

@@ -21,6 +21,8 @@ TOMEE.JndiClass = function (cfg) {
 
     var channel = cfg.channel;
 
+    var showParams = null;
+
     var panel = TOMEE.components.Panel({
         title:TOMEE.I18N.get('application.jdni.class'),
         parent:cfg.parent,
@@ -30,6 +32,7 @@ TOMEE.JndiClass = function (cfg) {
         },
         bbar:[
             {
+                elName:'savedObjectName',
                 tag:'input',
                 attributes:{
                     'type':'text',
@@ -44,6 +47,15 @@ TOMEE.JndiClass = function (cfg) {
                 attributes:{
                     'type':'text',
                     style:'margin-right: 2px;'
+                },
+                listeners:{
+                    'click':function () {
+                        channel.send('lookup.and.save.object', {
+                            saveKey: panel.getElement('savedObjectName').val(),
+                            showParams: showParams
+                        });
+                        panel.close(true);
+                    }
                 }
             },
             {
@@ -118,7 +130,9 @@ TOMEE.JndiClass = function (cfg) {
         show:function (params) {
             elements.content.empty();
 
-            var cls = params.data.cls;
+            //params.cls, params.name, params.path
+            showParams = params;
+            var cls = params.cls;
 
             var div = TOMEE.el.getElMap({
                 elName:'main',
@@ -131,11 +145,19 @@ TOMEE.JndiClass = function (cfg) {
                     }
                 ]
             });
+
+            div.fieldset.append(getField(cls, function (bean) {
+                return 'beanClass';
+            }, function (bean) {
+                return bean['beanClass'];
+            }));
+
             div.fieldset.append(getField(cls, function (bean) {
                 return 'type';
             }, function (bean) {
                 return bean['type'];
             }));
+
             div.fieldset.append(getField(cls, function (bean) {
                 return 'componentType';
             }, function (bean) {
