@@ -36,28 +36,32 @@ import java.util.*;
 
 public class JndiServlet extends HttpServlet {
 
-    private Map<String, Object> buildNode(NameClassPair pair, Context ctx) throws NamingException {
-        final String name = pair.getName();
-        final Object obj = ctx.lookup(name);
+    private String getBeanType(Object bean) {
+        if (bean instanceof Context) {
+            return "CONTEXT";
 
-        final String beanType;
-        if (obj instanceof Context) {
-            beanType = "CONTEXT";
-
-        } else if (obj instanceof java.rmi.Remote
-                || obj instanceof org.apache.openejb.core.ivm.IntraVmProxy
-                || (obj != null && LocalBeanProxyGeneratorImpl.isLocalBean(obj.getClass()))) {
-            beanType = "BEAN";
+        } else if (bean instanceof java.rmi.Remote
+                || bean instanceof org.apache.openejb.core.ivm.IntraVmProxy
+                || (bean != null && LocalBeanProxyGeneratorImpl.isLocalBean(bean.getClass()))) {
+            return "BEAN";
         } else {
-            beanType = "OTHER";
+            return "OTHER";
         }
+    }
 
+    private Map<String, Object> buildNode(NameClassPair pair, Context ctx) throws NamingException {
         final Map<String, Object> node = new HashMap<String, Object>();
+
+        final String name = pair.getName();
         node.put("name", name);
+
+        final Object obj = ctx.lookup(name);
+        final String beanType = getBeanType(obj);
         node.put("type", beanType);
         if ("CONTEXT".equals(beanType)) {
             node.put("children", Collections.emptyList());
         }
+
         return node;
     }
 
@@ -89,14 +93,36 @@ public class JndiServlet extends HttpServlet {
         }
     }
 
+    /**
+     * {cls: {
+     *     type: 'String', //CONTEXT, BEAN, OTHER
+     *     componentType: 'String', //STATEFUL, STATELESS, SINGLETON, BMP_ENTITY, CMP_ENTITY, MESSAGE_DRIVEN, MANAGED
+     *     beanClass: 'impl class name',
+     *     interfaces: ['InterfaceA', 'InterfaceB'],
+     *     methods: [
+     *       {
+     *         name: 'methodName',
+     *         returns: 'Class type',
+     *         parameters: ['ClassA', 'ClassB']
+     *       },
+     *       {
+     *         name: 'methodName',
+     *         returns: 'Class type',
+     *         parameters: ['ClassA', 'ClassB']
+     *       }
+     *     ]
+     * }}
+     * @param ctx
+     * @param name
+     * @param json
+     * @throws NamingException
+     */
     private void buildClass(Context ctx, String name, Map<String, Object> json) throws NamingException {
         final Map<String, Object> values = new HashMap<String, Object>();
         json.put("cls", values);
 
         final Object obj = ctx.lookup(name);
-
-        final List<String> interfaces = new ArrayList<String>();
-        values.put("interfaces", interfaces);
+        values.put("type", getBeanType(obj));
 
         Class<?> cls;
         {
@@ -115,6 +141,10 @@ public class JndiServlet extends HttpServlet {
             }
 
             values.put("beanClass", cls.getCanonicalName());
+
+            final List<String> interfaces = new ArrayList<String>();
+            values.put("interfaces", interfaces);
+
             for (Class<?> myInterface : cls.getInterfaces()) {
                 interfaces.add(myInterface.getCanonicalName());
             }
