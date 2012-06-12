@@ -85,14 +85,6 @@ public class Core {
         };
         preloadMessages.start();
 
-        final Thread preloadLogger = new Thread() {
-            @Override
-            public void run() {
-                Logger.configure();
-            }
-        };
-        preloadLogger.start();
-
         final int permits = Runtime.getRuntime().availableProcessors() + 1;
         final Semaphore semaphore = new Semaphore(permits);
         final ClassLoader loader = OpenEjbContainer.class.getClassLoader();
@@ -121,7 +113,6 @@ public class Core {
         try {
             semaphore.acquire(permits);
             preloadMessages.join();
-            preloadLogger.join();
         } catch (InterruptedException e) {
             Thread.interrupted();
         }
