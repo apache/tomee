@@ -200,7 +200,7 @@ TOMEE.components.Panel = function (cfg) {
         getEl:function () {
             return map.main;
         },
-        l:function () {
+        getContentEl:function () {
             return map.content;
         },
         setHeight:setHeight,
