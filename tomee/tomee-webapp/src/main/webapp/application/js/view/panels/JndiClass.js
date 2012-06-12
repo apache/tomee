@@ -43,9 +43,9 @@ TOMEE.JndiClass = function (cfg) {
                 cls:'pull-right',
                 children:[
                     {
-                        elName:'fileSelector',
-                        tag:'select',
+                        tag:'input',
                         attributes:{
+                            'type': 'text',
                             style:'margin-right: 2px;'
                         }
                     },
@@ -53,7 +53,7 @@ TOMEE.JndiClass = function (cfg) {
                         elName:'loadBtn',
                         tag:'button',
                         cls:'btn',
-                        html:TOMEE.I18N.get('application.log.load')
+                        html:TOMEE.I18N.get('application.jdni.lookup')
                     }
                 ]
             }
@@ -89,11 +89,11 @@ TOMEE.JndiClass = function (cfg) {
     var getField = function (bean, getLabel, getValue) {
         var fieldId = TOMEE.Sequence.next('cls_property');
         return TOMEE.el.getElMap({
-            elName: 'main',
+            elName:'main',
             tag:'div',
             cls:'control-group',
-            attributes: {
-                style: 'margin-bottom: 5px;'
+            attributes:{
+                style:'margin-bottom: 5px;'
             },
             children:[
                 {
@@ -130,14 +130,13 @@ TOMEE.JndiClass = function (cfg) {
 
             var cls = params.data.cls;
 
-                      //form-horizontal
             var div = TOMEE.el.getElMap({
-                elName: 'main',
+                elName:'main',
                 tag:'form',
                 cls:'form-horizontal',
                 children:[
                     {
-                        elName: 'fieldset',
+                        elName:'fieldset',
                         tag:'fieldset'
                     }
                 ]
@@ -158,6 +157,8 @@ TOMEE.JndiClass = function (cfg) {
             panel.showAt({
                 modal:true
             });
+
+            setHeight(panel.getContentEl().outerHeight(true));
         }
     };
 };
