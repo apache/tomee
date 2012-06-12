@@ -138,12 +138,7 @@ TOMEE.JndiClass = function (cfg) {
                 children:[
                     {
                         elName: 'fieldset',
-                        tag:'fieldset',
-                        children: [
-                            {
-
-                            }
-                        ]
+                        tag:'fieldset'
                     }
                 ]
             });
