@@ -67,11 +67,6 @@ TOMEE.components.Tree = function (cfg) {
             tag:'li',
             attributes:{
                 style:'padding-left: 0px;'
-            },
-            listeners:{
-                'click':function (event) {
-
-                }
             }
         }).el;
         li.append(span);

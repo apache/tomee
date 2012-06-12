@@ -67,21 +67,36 @@ TOMEE.ApplicationController = function () {
             }
         });
 
-        channel.bind('tree_load_children', function (params) {
+        var pathArrayBuilder = (function () {
             var path = [];
             var buildPathArray = function (bean) {
-                if (bean.parent) {
-                    path.push(bean.parent);
+                if (!bean) {
+                    return;
+                }
 
+                if (bean.parent) {
+                    buildPathArray(bean.parent);
+
+                    path.push(bean.parent.name);
                 }
                 path.push(bean.name);
             };
-            buildPathArray(params.bean);
+
+            return {
+                build:function (bean) {
+                    path = [];
+                    buildPathArray(bean);
+                    return path;
+                }
+            }
+        })();
+
+        channel.bind('tree_load_children', function (params) {
 
             //params.panelKey, params.bean, params.parentEl
             if (params.panelKey === 'jndi') {
                 model.loadJndi({
-                    path:path,
+                    path:pathArrayBuilder.build(params.bean),
                     bean:params.bean,
                     parentEl:params.parentEl
                 });
@@ -93,11 +108,23 @@ TOMEE.ApplicationController = function () {
             homeView.loadJndi(params);
         });
 
+        channel.bind('app.new.jndi.class.data', function (params) {
+            homeView.showJndiClassWin(params);
+        });
+
         channel.bind('element.right.click', function (params) {
             //params.data, params.left, params.top
             if (params.panelKey === 'jndi') {
                 homeView.jndiContextMenu(params);
             }
+        });
+
+        channel.bind('show.class.panel', function (params) {
+            var data = params.data;
+            model.loadJndiClass({
+                name:data.name,
+                path:pathArrayBuilder.build(data.parent)
+            });
         });
 
     })();

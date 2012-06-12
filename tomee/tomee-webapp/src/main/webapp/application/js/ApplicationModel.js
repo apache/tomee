@@ -138,15 +138,40 @@ TOMEE.ApplicationModel = function (cfg) {
                 method:'GET',
                 url:TOMEE.baseURL('jndi'),
                 data:{
-                    test:params.test,
                     path:TOMEE.utils.getSafe(params.path, []).join(',')
                 },
                 success:function (data) {
+                    var namesArr = TOMEE.utils.getArray(data.names);
+
+                    (function () {
+                        var current = null;
+                        for (var i = 0; i < namesArr.length; i++) {
+                            current = namesArr[i];
+                            current.parent = params.bean;
+                        }
+                    })();
+
                     channel.send('app.new.jndi.data', {
                         names:data.names,
                         path:params.path,
                         bean:params.bean,
                         parentEl:params.parentEl
+                    });
+                }
+            });
+        },
+        loadJndiClass:function (params) {
+            //params.path, params.bean, params.parentEl
+            request({
+                method:'GET',
+                url:TOMEE.baseURL('jndi'),
+                data:{
+                    name:params.name,
+                    path:TOMEE.utils.getSafe(params.path, []).join(',')
+                },
+                success:function (data) {
+                    channel.send('app.new.jndi.class.data', {
+                        cls: data.cls
                     });
                 }
             });

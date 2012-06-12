@@ -51,7 +51,10 @@ public class ErrorServlet extends HttpServlet {
         result.put("message", String.valueOf(req.getAttribute("javax.servlet.error.message")));
 
         {
-            final Throwable throwable = (Throwable) req.getAttribute("javax.servlet.error.exception");
+            Throwable throwable = (Throwable) req.getAttribute("javax.servlet.error.exception");
+            if(TomeeException.class.isInstance(throwable)) {
+                throwable =  throwable.getCause();
+            }
 
             final Writer writer = new StringWriter();
             final PrintWriter printWriter = new PrintWriter(writer);
