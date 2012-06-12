@@ -40,7 +40,21 @@ TOMEE.JndiClass = function (cfg) {
                 elName:'loadBtn',
                 tag:'button',
                 cls:'btn',
-                html:TOMEE.I18N.get('application.jdni.lookup')
+                html:TOMEE.I18N.get('application.jdni.lookup'),
+                attributes:{
+                    'type':'text',
+                    style:'margin-right: 2px;'
+                }
+            },
+            {
+                tag:'button',
+                cls:'btn',
+                html:TOMEE.I18N.get('application.jdni.class.close'),
+                listeners:{
+                    'click':function () {
+                        panel.close(true);
+                    }
+                }
             }
         ]
     });

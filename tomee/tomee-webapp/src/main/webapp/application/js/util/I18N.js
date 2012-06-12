@@ -37,6 +37,7 @@ TOMEE.I18N = (function () {
         'application.jdni':'Jndi',
         'application.jdni.lookup':'Lookup',
         'application.jdni.class': 'Jndi Class',
+        'application.jdni.class.close': 'Close',
 
         'application.saved.objects':'Saved Objects',
         'application.saved.objects.load':'Load',
