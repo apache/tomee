@@ -175,43 +175,48 @@ TOMEE.components.Panel = function (cfg) {
 
     }
 
-    var map = TOMEE.el.getElMap({
-        elName:'main',
-        tag:'div',
-        children:[
-            {
-                tag:'div',
-                children:[
-                    {
-                        elName:'elements',
-                        tag:'div',
-                        cls:'well t-panel',
-                        children:[
-                            {
-                                elName:'toolbar',
-                                tag:'div',
-                                attributes:{
-                                    style:'position: relative;'
-                                }
-                            },
-                            {
-                                elName:'content',
-                                tag:'div',
-                                attributes:{
-                                    style:'height: 250px; position: relative; overflow: auto;'
+    var map = null;
+    var createMap = function () {
+        map = null;
+        map = TOMEE.el.getElMap({
+            elName:'main',
+            tag:'div',
+            children:[
+                {
+                    tag:'div',
+                    children:[
+                        {
+                            elName:'elements',
+                            tag:'div',
+                            cls:'well t-panel',
+                            children:[
+                                {
+                                    elName:'toolbar',
+                                    tag:'div',
+                                    attributes:{
+                                        style:'position: relative;'
+                                    }
                                 },
-                                createCallback:function (el) {
-                                    if (avoidOverflow) {
-                                        el.css('overflow', '');
+                                {
+                                    elName:'content',
+                                    tag:'div',
+                                    attributes:{
+                                        style:'height: 250px; position: relative; overflow: auto;'
+                                    },
+                                    createCallback:function (el) {
+                                        if (avoidOverflow) {
+                                            el.css('overflow', '');
+                                        }
                                     }
                                 }
-                            }
-                        ]
-                    }
-                ]
-            }
-        ]
-    });
+                            ]
+                        }
+                    ]
+                }
+            ]
+        });
+    };
+    createMap();
 
     if (elBottomBar) {
         map.elements.append(elBottomBar.main);
@@ -284,6 +289,18 @@ TOMEE.components.Panel = function (cfg) {
 
             if (config.modal) {
                 //TODO: add the modal feature
+            }
+        },
+        close:function (killIt) {
+            if (killIt) {
+                if(map && map.main) {
+                    map.main.remove();
+                }
+                createMap();
+            } else {
+                if(map && map.main) {
+                    map.main.detach();
+                }
             }
         }
     };
