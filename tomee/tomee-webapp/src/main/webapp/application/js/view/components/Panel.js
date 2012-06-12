@@ -22,12 +22,14 @@ TOMEE.components.Panel = function (cfg) {
     var channel = cfg.channel;
     var avoidOverflow = TOMEE.utils.getSafe(cfg.avoidOverflow, false);
 
+    var elementsPointers = {};
+
     var parentEl = cfg.parent;
-    if(!parentEl) {
+    if (!parentEl) {
         parentEl = $(window);
     }
 
-    var elMapToolbar = TOMEE.el.getElMap({
+    var header = TOMEE.el.getElMap({
         elName:'main',
         tag:'div',
         cls:'navbar',
@@ -63,7 +65,54 @@ TOMEE.components.Panel = function (cfg) {
         ]
     });
 
-    if (cfg.actions) {
+    var elBottomBar = null;
+    if (cfg.bbar) {
+        elBottomBar = TOMEE.el.getElMap({
+            elName:'main',
+            tag:'form',
+            cls:'well form-inline',
+            attributes:{
+                style:'height: 27px;margin-bottom: 0px;padding-top: 1px;padding-left: 1px;padding-bottom: 1px;padding-right: 1px;'
+            },
+            children:[
+                {
+                    elName:'childrenDiv',
+                    tag:'div',
+                    cls:'pull-right'
+                }
+            ]
+        });
+
+        (function () {
+            var arr = TOMEE.utils.getArray(cfg.bbar);
+            var childrenDiv = elBottomBar.childrenDiv;
+
+            var tempKey = TOMEE.Sequence.next('temp');
+            var newEl = null;
+            var current = null;
+            for (var i = 0; i < arr.length; i++) {
+                current = arr[i];
+
+                var keepIt = false;
+                if (current.elName) {
+                    keepIt = true;
+
+                } else {
+                    current.elName = tempKey;
+                }
+
+
+                newEl = TOMEE.el.getElMap(current)[current.elName];
+                if (keepIt) {
+                    elementsPointers[current.elName] = newEl;
+                }
+
+                childrenDiv.append(newEl);
+            }
+        })();
+    }
+
+    if (cfg.headerActions) {
         var commands = TOMEE.el.getElMap({
             elName:'actionsMenu',
             tag:'div',
@@ -95,10 +144,10 @@ TOMEE.components.Panel = function (cfg) {
                 }
             ]
         });
-        elMapToolbar.menuItems.append(commands.actionsMenu);
+        header.menuItems.append(commands.actionsMenu);
 
         (function () {
-            var actions = TOMEE.el.getElMap({
+            var actionsEl = TOMEE.el.getElMap({
                 elName:'main',
                 tag:'ul',
                 cls:'dropdown-menu',
@@ -109,9 +158,9 @@ TOMEE.components.Panel = function (cfg) {
             });
 
             var actionItem = null;
-            for (var i = 0; i < cfg.actions.length; i++) {
-                actionItem = cfg.actions[i];
-                actions.main.append(TOMEE.el.getElMap({
+            for (var i = 0; i < cfg.headerActions.length; i++) {
+                actionItem = cfg.headerActions[i];
+                actionsEl.main.append(TOMEE.el.getElMap({
                     elName:'actionButton',
                     tag:'a',
                     attributes:{
@@ -121,7 +170,7 @@ TOMEE.components.Panel = function (cfg) {
                     listeners:actionItem.listeners
                 }).actionButton);
             }
-            commands.actionsMenu.append(actions.main);
+            commands.actionsMenu.append(actionsEl.main);
         })();
 
     }
@@ -134,6 +183,7 @@ TOMEE.components.Panel = function (cfg) {
                 tag:'div',
                 children:[
                     {
+                        elName:'elements',
                         tag:'div',
                         cls:'well t-panel',
                         children:[
@@ -163,7 +213,11 @@ TOMEE.components.Panel = function (cfg) {
         ]
     });
 
-    map.toolbar.append(elMapToolbar.main);
+    if (elBottomBar) {
+        map.elements.append(elBottomBar.main);
+    }
+
+    map.toolbar.append(header.main);
 
 
     var extraStyles = cfg.extraStyles;
@@ -178,7 +232,7 @@ TOMEE.components.Panel = function (cfg) {
     }
 
     var setHeight = function (height) {
-        var toolbarSize = elMapToolbar.main.height();
+        var toolbarSize = header.main.height();
         var mySize = height - toolbarSize - TOMEE.el.getBorderSize(map.main) - TOMEE.el.getBorderSize(map.content);
         map.content.height(mySize);
     };
@@ -197,6 +251,9 @@ TOMEE.components.Panel = function (cfg) {
     };
 
     return {
+        getElement:function (key) {
+            return elementsPointers[key];
+        },
         getEl:function () {
             return map.main;
         },

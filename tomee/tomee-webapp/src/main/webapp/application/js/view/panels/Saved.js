@@ -23,7 +23,7 @@ TOMEE.Saved = function (cfg) {
 
     var saved = TOMEE.components.Panel({
         title:TOMEE.I18N.get('application.saved.objects'),
-        actions:[
+        headerActions:[
             {
                 text:TOMEE.I18N.get('application.saved.objects.load'),
                 listeners:{

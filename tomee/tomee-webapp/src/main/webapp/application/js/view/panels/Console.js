@@ -21,60 +21,44 @@ TOMEE.Console = function (cfg) {
 
     var channel = cfg.channel;
 
-    var console = TOMEE.components.Panel({
-        title:TOMEE.I18N.get('application.console'),
-        extraStyles:{
-            height:'500px'
-        }
-    });
-
     var elText = TOMEE.el.getElMap({
         elName:'main',
         tag:'textarea',
         attributes:{
-            style:'height: 469px; width: 100%;border: 0px;padding: 0px;margin: 0px;'
+            style:'height: 500px; width: 100%;border: 0px;padding: 0px;margin: 0px;'
         }
     });
 
-    var elBottomBar = TOMEE.el.getElMap({
-        elName:'main',
-        tag:'form',
-        cls:'well form-inline',
-        attributes:{
-            style:'height: 27px;margin-bottom: 0px;padding-top: 1px;padding-left: 1px;padding-bottom: 1px;padding-right: 1px;'
+    var console = TOMEE.components.Panel({
+        title:TOMEE.I18N.get('application.console'),
+        extraStyles:{
+            height:'500px'
         },
-        children:[
+        bbar:[
             {
-                tag:'div',
-                cls:'pull-right',
-                children:[
-                    {
-                        elName:'scriptSelector',
-                        tag:'select'
-                    },
-                    {
-                        elName:'executeBtn',
-                        tag:'button',
-                        cls:'btn',
-                        html:TOMEE.I18N.get('application.console.execute')
+                elName:'scriptSelector',
+                tag:'select'
+            },
+            {
+                tag:'button',
+                cls:'btn',
+                html:TOMEE.I18N.get('application.console.execute'),
+                listeners: {
+                    'click': function() {
+                        var text = elText.main.val();
+                        var script = console.getElement('scriptSelector').val();
+                        channel.send('trigger.console.exec', {
+                            codeType:script,
+                            codeText:text
+                        });
                     }
-                ]
+                }
             }
         ]
     });
 
     var el = console.getContentEl();
     el.append(elText.main);
-    el.append(elBottomBar.main);
-
-    elBottomBar.executeBtn.bind('click', function () {
-        var text = elText.main.val();
-        var script = elBottomBar.scriptSelector.val();
-        channel.send('trigger.console.exec', {
-            codeType:script,
-            codeText:text
-        });
-    });
 
     var loadScriptsField = function (languages) {
         var getOption = function (lang) {
@@ -84,7 +68,7 @@ TOMEE.Console = function (cfg) {
             return option;
         };
 
-        var selector = elBottomBar.scriptSelector;
+        var selector = console.getElement('scriptSelector');
         selector.empty();
         if (!languages) {
             return;
