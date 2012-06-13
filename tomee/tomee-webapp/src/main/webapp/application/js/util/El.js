@@ -36,7 +36,7 @@ TOMEE.el = (function () {
                 elMap[elCfg.elName] = elCfg.el;
             }
             //we dont need to construct it. it is already done
-            return;
+            return elCfg.el;
         }
 
         var el = $('<' + elCfg.tag + '></' + elCfg.tag + '>');

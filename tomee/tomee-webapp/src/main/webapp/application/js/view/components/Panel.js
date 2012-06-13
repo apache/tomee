@@ -29,63 +29,57 @@ TOMEE.components.Panel = function (cfg) {
         parentEl = $(window);
     }
 
-    var header = TOMEE.el.getElMap({
+    var myBodyCfg = {
         elName:'main',
         tag:'div',
-        cls:'navbar',
-        attributes:{
-            style:'margin-bottom: 0px;'
+        cls:'t-panel',
+        attributes: {
+            height: '500px'
         },
         children:[
             {
+                elName:'header',
                 tag:'div',
-                cls:'navbar-inner t-navbar',
-                attributes:{
-                    style:'padding-left: 0px; padding-right: 0px;'
-                },
+                cls:'modal-header',
                 children:[
                     {
-                        elName:'menuItems',
-                        tag:'div',
-                        children:[
-                            {
-                                elName:'appName',
-                                tag:'a',
-                                cls:'brand',
-                                attributes:{
-                                    href:'#',
-                                    style:'padding-left: 10px; margin-left: 0px;'
-                                },
-                                html:TOMEE.utils.getSafe(cfg.title, '-')
-                            }
-                        ]
+                        elName:'appName',
+                        tag:'h3',
+                        html:TOMEE.utils.getSafe(cfg.title, '-')
                     }
                 ]
+            },
+            {
+                elName:'myBody',
+                tag:'div',
+                cls:'modal-body',
+                attributes:{
+                    style:'padding: 0px;'
+                }
             }
         ]
-    });
-
-    var elBottomBar = null;
+    };
     if (cfg.bbar) {
-        elBottomBar = TOMEE.el.getElMap({
-            elName:'main',
-            tag:'form',
-            cls:'well form-inline',
-            attributes:{
-                style:'height: 27px;margin-bottom: 0px;padding-top: 1px;padding-left: 1px;padding-bottom: 1px;padding-right: 1px;'
-            },
-            children:[
-                {
-                    elName:'childrenDiv',
-                    tag:'div',
-                    cls:'pull-right'
-                }
-            ]
-        });
-
         (function () {
+            var childrenDiv = [];
+            var footerCfg = {
+                elName:'footer',
+                tag:'div',
+                cls:'modal-footer',
+                children:[
+                    {
+                        tag:'form',
+                        cls:'form-inline',
+                        attributes:{
+                            style:'margin-bottom: 0px;'
+                        },
+                        children:childrenDiv
+                    }
+                ]
+            };
+            myBodyCfg.children.push(footerCfg);
+
             var arr = TOMEE.utils.getArray(cfg.bbar);
-            var childrenDiv = elBottomBar.childrenDiv;
 
             var tempKey = TOMEE.Sequence.next('temp');
             var newEl = null;
@@ -107,128 +101,24 @@ TOMEE.components.Panel = function (cfg) {
                     elementsPointers[current.elName] = newEl;
                 }
 
-                childrenDiv.append(newEl);
+                childrenDiv.push({
+                    el:newEl
+                });
             }
         })();
-    }
-
-    if (cfg.headerActions) {
-        var commands = TOMEE.el.getElMap({
-            elName:'actionsMenu',
-            tag:'div',
-            cls:'btn-group pull-right',
-            children:[
-                {
-                    tag:'a',
-                    cls:'btn dropdown-toggle',
-                    attributes:{
-                        'data-toggle':'dropdown',
-                        href:'#'
-                    },
-                    children:[
-                        {
-                            tag:'i',
-                            cls:'icon-cog'
-                        },
-                        {
-                            tag:'span',
-                            attributes:{
-                                style:'padding-left: 5px; padding-right: 5px;'
-                            }
-                        },
-                        {
-                            tag:'span',
-                            cls:'caret'
-                        }
-                    ]
-                }
-            ]
-        });
-        header.menuItems.append(commands.actionsMenu);
-
-        (function () {
-            var actionsEl = TOMEE.el.getElMap({
-                elName:'main',
-                tag:'ul',
-                cls:'dropdown-menu',
-                attributes:{
-                    style:'right: 5px;'
-                }
-
-            });
-
-            var actionItem = null;
-            for (var i = 0; i < cfg.headerActions.length; i++) {
-                actionItem = cfg.headerActions[i];
-                actionsEl.main.append(TOMEE.el.getElMap({
-                    elName:'actionButton',
-                    tag:'a',
-                    attributes:{
-                        href:'#'
-                    },
-                    html:actionItem.text,
-                    listeners:actionItem.listeners
-                }).actionButton);
-            }
-            commands.actionsMenu.append(actionsEl.main);
-        })();
-
     }
 
     var map = null;
     var createMap = function () {
         map = null;
-        map = TOMEE.el.getElMap({
-            elName:'main',
-            tag:'div',
-            children:[
-                {
-                    tag:'div',
-                    children:[
-                        {
-                            elName:'elements',
-                            tag:'div',
-                            cls:'well t-panel',
-                            children:[
-                                {
-                                    elName:'toolbar',
-                                    tag:'div',
-                                    attributes:{
-                                        style:'position: relative;'
-                                    }
-                                },
-                                {
-                                    elName:'content',
-                                    tag:'div',
-                                    attributes:{
-                                        style:'height: 250px; position: relative; overflow: auto;'
-                                    },
-                                    createCallback:function (el) {
-                                        if (avoidOverflow) {
-                                            el.css('overflow', '');
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ]
-        });
+        map = TOMEE.el.getElMap(myBodyCfg);
     };
     createMap();
-
-    if (elBottomBar) {
-        map.elements.append(elBottomBar.main);
-    }
-
-    map.toolbar.append(header.main);
-
 
     var extraStyles = cfg.extraStyles;
     if (extraStyles) {
         (function () {
-            var content = map['content'];
+            var content = map['myBody'];
 
             for (var key in extraStyles) {
                 content.css(key, extraStyles[key]);
@@ -237,9 +127,15 @@ TOMEE.components.Panel = function (cfg) {
     }
 
     var setHeight = function (height) {
-        var toolbarSize = header.main.height();
-        var mySize = height - toolbarSize - TOMEE.el.getBorderSize(map.main) - TOMEE.el.getBorderSize(map.content);
-        map.content.height(mySize);
+        var toolbarSize = TOMEE.utils.getSafe(function () {
+            return map.header.height();
+        }, 0);
+        var footerSize = TOMEE.utils.getSafe(function () {
+            return  map.footer.height();
+        }, 0);
+
+        var mySize = height - toolbarSize - TOMEE.el.getBorderSize(map.main) - TOMEE.el.getBorderSize(map.myBody);
+        map.myBody.height(mySize);
     };
 
     var getCenter = function () {
@@ -263,7 +159,7 @@ TOMEE.components.Panel = function (cfg) {
             return map.main;
         },
         getContentEl:function () {
-            return map.content;
+            return map.myBody;
         },
         setHeight:setHeight,
         showAt:function (config) {
@@ -293,12 +189,12 @@ TOMEE.components.Panel = function (cfg) {
         },
         close:function (killIt) {
             if (killIt) {
-                if(map && map.main) {
+                if (map && map.main) {
                     map.main.remove();
                 }
                 createMap();
             } else {
-                if(map && map.main) {
+                if (map && map.main) {
                     map.main.detach();
                 }
             }

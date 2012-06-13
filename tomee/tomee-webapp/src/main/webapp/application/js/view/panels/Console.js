@@ -25,7 +25,7 @@ TOMEE.Console = function (cfg) {
         elName:'main',
         tag:'textarea',
         attributes:{
-            style:'height: 500px; width: 100%;border: 0px;padding: 0px;margin: 0px;'
+            style:'height: 400px; width: 100%;border: 0px;padding: 0px;margin: 0px;'
         }
     });
 
