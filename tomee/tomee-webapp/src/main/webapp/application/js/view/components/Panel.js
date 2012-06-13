@@ -135,6 +135,10 @@ TOMEE.components.Panel = function (cfg) {
 
         var mySize = height - toolbarSize - footerSize - TOMEE.el.getBorderSize(map.main) - TOMEE.el.getBorderSize(map.myBody);
         map.myBody.height(mySize);
+
+        if (cfg.onResize) {
+            cfg.onResize(mySize);
+        }
     };
 
     var getCenter = function () {
