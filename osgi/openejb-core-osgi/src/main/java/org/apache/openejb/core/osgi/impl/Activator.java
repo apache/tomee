@@ -18,6 +18,8 @@ package org.apache.openejb.core.osgi.impl;
 
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.cdi.CdiScanner;
+import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.loader.OpenEJBInstance;
 import org.apache.openejb.loader.SystemInstance;
 import org.osgi.framework.BundleActivator;
@@ -57,6 +59,7 @@ public class Activator implements BundleActivator {
         env.setProperty("openejb.deployments.classpath", "false");
         env.setProperty("openejb.nobanner", "true");
         env.setProperty("openejb.modulename.useHash", "true");
+        env.setProperty(CdiScanner.OPENEJB_CDI_FILTER_CLASSLOADER, "false"); // TODO: improve it reactivating it
 
         SystemInstance.init(env);
         // OptionsLog.install();
