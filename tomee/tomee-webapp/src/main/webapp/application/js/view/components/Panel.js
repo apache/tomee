@@ -33,9 +33,6 @@ TOMEE.components.Panel = function (cfg) {
         elName:'main',
         tag:'div',
         cls:'t-panel',
-        attributes: {
-            height: '500px'
-        },
         children:[
             {
                 elName:'header',
@@ -54,7 +51,7 @@ TOMEE.components.Panel = function (cfg) {
                 tag:'div',
                 cls:'modal-body',
                 attributes:{
-                    style:'padding: 0px;'
+                    style:'padding: 0px; max-height: 2000px;'
                 }
             }
         ]
@@ -127,14 +124,16 @@ TOMEE.components.Panel = function (cfg) {
     }
 
     var setHeight = function (height) {
+        map.main.height(height);
+
         var toolbarSize = TOMEE.utils.getSafe(function () {
-            return map.header.height();
+            return map.header.outerHeight();
         }, 0);
         var footerSize = TOMEE.utils.getSafe(function () {
-            return  map.footer.height();
+            return  map.footer.outerHeight();
         }, 0);
 
-        var mySize = height - toolbarSize - TOMEE.el.getBorderSize(map.main) - TOMEE.el.getBorderSize(map.myBody);
+        var mySize = height - toolbarSize - footerSize - TOMEE.el.getBorderSize(map.main) - TOMEE.el.getBorderSize(map.myBody);
         map.myBody.height(mySize);
     };
 
@@ -152,6 +151,9 @@ TOMEE.components.Panel = function (cfg) {
     };
 
     return {
+        setTitle:function (title) {
+            map['appName'].html(title);
+        },
         getElement:function (key) {
             return elementsPointers[key];
         },
