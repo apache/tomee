@@ -60,7 +60,11 @@ TOMEE.ApplicationViewHome = function (cfg) {
         channel:cfg.channel
     });
 
-    elMapContent['left'].append(jndiPanel.getEl());
+    elMapContent['left'].append((function () {
+        var wrapper = $('<div style="padding-bottom: 5px"></div>');
+        wrapper.append(jndiPanel.getEl());
+        return wrapper;
+    })());
     elMapContent['left'].append(savedPanel.getEl());
 
 
@@ -97,7 +101,19 @@ TOMEE.ApplicationViewHome = function (cfg) {
     elMapContent['right'].append(mdbsPanel.getEl());
     elMapContent['right'].append(wsPanel.getEl());
 
+    var setHeight = function (height) {
+        var mySize = height - TOMEE.el.getBorderSize(elMapContent.main);
+        elMapContent.main.height(mySize);
+
+        var childrenSize = mySize - TOMEE.el.getBorderSize(elMapContent.left);
+        elMapContent.left.height(childrenSize);
+        elMapContent.center.height(childrenSize);
+
+        consolePanel.setHeight(childrenSize);
+    };
+
     return {
+        setHeight:setHeight,
         loadJndi:function (data) {
             jndiPanel.loadJndi(data);
         },

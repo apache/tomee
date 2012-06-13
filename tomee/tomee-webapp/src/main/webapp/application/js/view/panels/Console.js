@@ -25,7 +25,7 @@ TOMEE.Console = function (cfg) {
         elName:'main',
         tag:'textarea',
         attributes:{
-            style:'height: 400px; width: 100%;border: 0px;padding: 0px;margin: 0px;'
+            style:'width: 100%;border: 0px;padding: 0px;margin: 0px;'
         }
     });
 
@@ -33,6 +33,9 @@ TOMEE.Console = function (cfg) {
         title:TOMEE.I18N.get('application.console'),
         extraStyles:{
             height:'500px'
+        },
+        onResize: function(height) {
+            elText.main.height(height);
         },
         bbar:[
             {
@@ -79,6 +82,9 @@ TOMEE.Console = function (cfg) {
     };
 
     return {
+        setHeight:function(height) {
+            console.setHeight(height);
+        },
         getEl:function () {
             return console.getEl();
         },
