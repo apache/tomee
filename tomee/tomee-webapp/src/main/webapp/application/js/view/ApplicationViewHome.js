@@ -25,28 +25,28 @@ TOMEE.ApplicationViewHome = function (cfg) {
         elName:'main',
         tag:'div',
         attributes:{
-            style:'position:relative; padding: 5px;'
+            style:'position:relative; padding-top: 5px; padding-bottom: 5px; padding-left: 5px;'
         },
         children:[
             {
                 elName:'left',
                 tag:'div',
                 attributes:{
-                    style:'float:left; width:33%; min-width:170px;'
+                    style:'float:left; width:33%; min-width:170px; margin-right: 5px;'
                 }
             },
             {
                 elName:'center',
                 tag:'div',
                 attributes:{
-                    style:'float:left; width:33%; min-width:170px; margin-left: 5px; margin-right: 5px;'
+                    style:'float:left; width:33%; min-width:170px;'
                 }
             },
             {
                 elName:'right',
                 tag:'div',
                 attributes:{
-                    style:'float:left; width:33%; min-width:170px;'
+                    style:'float:left; width:33%; min-width:170px; margin-left: 5px;'
                 }
             }
         ]
@@ -126,6 +126,14 @@ TOMEE.ApplicationViewHome = function (cfg) {
         setSupportedScriptLanguages:consolePanel.loadScriptsField,
         setTomeeVersion:function (myTomee) {
 
+            mdbsPanel.getEl().detach();
+            wsPanel.getEl().detach();
+            elMapContent['center'].css('width', '66%');
+
+            //TODO mdbsPanel and wsPanel are not implemented yet. Add them when done.
+
+            /*
+
             if (!myTomee.hasMdbs && !myTomee.hasWebservices) {
                 elMapContent['right'].detach();
                 elMapContent['center'].css('width', '66%');
@@ -140,6 +148,8 @@ TOMEE.ApplicationViewHome = function (cfg) {
                     wsPanel.getEl().detach();
                 }
             }
+
+            */
         },
         jndiContextMenu:function (opts) {
             jndiPanel.jndiContextMenu(opts);
