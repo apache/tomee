@@ -23,15 +23,19 @@ TOMEE.Saved = function (cfg) {
 
     var saved = TOMEE.components.Panel({
         title:TOMEE.I18N.get('application.saved.objects'),
-        headerActions:[
+        extraStyles: {
+            height:'200px'
+        },
+        bbar:[
             {
-                text:TOMEE.I18N.get('application.saved.objects.load'),
-                listeners:{
-                    'click':function () {
+                tag:'button',
+                cls:'btn',
+                html:TOMEE.I18N.get('application.saved.objects.load'),
+                listeners: {
+                    'click': function() {
                         channel.send('application.saved.objects.load', {});
                     }
                 }
-
             }
         ]
     });

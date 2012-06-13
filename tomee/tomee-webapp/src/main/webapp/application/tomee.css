@@ -19,6 +19,22 @@ body {
     padding: 0px;
 }
 
+.t-panel {
+    background-color: #ffffff;
+    border: 1px solid #999;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    *border: 1px solid #999;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+    -webkit-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+    -webkit-background-clip: padding-box;
+    -moz-background-clip: padding-box;
+    background-clip: padding-box;
+}
+
 .sidebar-nav {
     padding: 9px 0;
 }
@@ -43,21 +59,6 @@ ul.tree li {
     margin: 0;
     padding: 0 20px;
     line-height: 20px;
-}
-
-div.t-panel {
-    padding: 0px;
-    background-color: #ffffff;
-    padding-left: 0px;
-    padding-right: 0px;
-    border: 2px solid #d3d3d3;
-    margin-bottom: 5px;
-}
-
-h3.t-panel-title {
-    position: relative;
-    background-color: #d3d3d3;
-    padding-left: 5px;
 }
 
 div.t-action-btn {

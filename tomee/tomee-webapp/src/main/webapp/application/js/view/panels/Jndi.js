@@ -24,7 +24,11 @@ TOMEE.Jndi = function (cfg) {
     var parentEl = cfg.parent;
 
     var jndi = TOMEE.components.Panel({
-        title:TOMEE.I18N.get('application.jdni')
+        title:TOMEE.I18N.get('application.jdni'),
+        extraStyles:{
+            height:'200px',
+            padding:'2px'
+        }
     });
 
     var tree = TOMEE.components.Tree({
