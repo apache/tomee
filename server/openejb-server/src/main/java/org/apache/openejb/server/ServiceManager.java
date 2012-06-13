@@ -205,7 +205,7 @@ public abstract class ServiceManager {
         if (conf.exists()) {
             File serviceConfig = new File(conf, serviceName + ".properties");
             if (!serviceConfig.exists()) {
-                serviceConfig = new File(conf, serviceConfig.getName());
+                serviceConfig = new File(conf, "conf.d/" + serviceConfig.getName());
             }
             if (serviceConfig.exists()) {
                 IO.readProperties(serviceConfig, serviceProperties);
