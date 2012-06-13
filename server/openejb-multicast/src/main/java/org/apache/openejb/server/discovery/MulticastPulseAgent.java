@@ -79,7 +79,6 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
         this.port = o.get("port", this.port);
         this.group = o.get("group", this.group);
 
-
         final InetAddress ia = InetAddress.getByName(this.multicast);
         this.address = new InetSocketAddress(ia, this.port);
         this.buildPacket();
@@ -297,6 +296,9 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
             final NetworkInterface ni = NetworkInterface.getByInetAddress(InetAddress.getByName(InetAddress.getLocalHost().getHostName()));
             ms.setNetworkInterface(ni);
             ms.setSoTimeout(0);
+            if (!ms.getBroadcast()) {
+                ms.setBroadcast(true);
+            }
             ms.joinGroup(ia);
 
             log.debug(String.format("Created MulticastSocket for '%1$s:%2$s' on network adapter: %3$s", multicastAddress, port, ni));
