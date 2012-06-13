@@ -71,7 +71,8 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
             }
 
             try {
-                return ConnectionManager.getConnection(URI.create(serviceURI.getSchemeSpecificPart()));
+                //Strip serverhost and group and try to connect
+                return ConnectionManager.getConnection(URI.create(URI.create(serviceURI.getSchemeSpecificPart()).getSchemeSpecificPart()));
             } catch (IOException e) {
                 badUri.add(serviceURI);
             }
@@ -89,40 +90,73 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
 
     /**
      * Get a list of URIs discovered for the provided request.
+     * <p/>
+     * Returned URIs are of the format 'mp-{serverhost}:group:scheme://servicehost:port'.
+     * The serverhost is prefixed with 'mp-' in case the serverhost is an IP-Address, as RFC 2396 defines scheme must begin with a 'letter'
      *
      * @param forGroup Specific case sensitive group name or * for all
      * @param schemes  Acceptable scheme list
      * @param host     Multicast host address
      * @param port     Multicast port
-     * @param timeout  Time to wait for a server response
+     * @param timeout  Time to wait for a server response, at least 50ms
      * @return A URI set, possibly empty
      * @throws Exception On error
      */
-    public static synchronized Set<URI> discoverURIs(final String forGroup, final Set<String> schemes, final String host, final int port, final long timeout) throws Exception {
+    public static synchronized Set<URI> discoverURIs(final String forGroup, final Set<String> schemes, final String host, final int port, long timeout) throws Exception {
+
+        if (timeout < 50) {
+            timeout = 50;
+        }
+
+        final InetAddress ia;
+
+        try {
+            ia = InetAddress.getByName(host);
+        } catch (UnknownHostException e) {
+            throw new Exception(host + " is not a valid address", e);
+        }
+
+        if (null == ia || !ia.isMulticastAddress()) {
+            throw new Exception(host + " is not a valid multicast address");
+        }
+
+        final byte[] bytes = (MulticastPulseClient.CLIENT + forGroup).getBytes(Charset.forName("utf8"));
+        final DatagramPacket request = new DatagramPacket(bytes, bytes.length, new InetSocketAddress(ia, port));
+
+
+        final AtomicBoolean running = new AtomicBoolean(true);
+        final MulticastSocket client = MulticastPulseClient.getSocket(ia, port);
+        final Timer timer = new Timer(true);
 
         final Set<URI> set = new TreeSet<URI>(new Comparator<URI>() {
             @Override
             public int compare(URI u1, URI u2) {
 
+                //Ignore server hostname
+                final String serverHost = u1.getScheme();
                 u1 = URI.create(u1.getSchemeSpecificPart());
                 u2 = URI.create(u2.getSchemeSpecificPart());
 
+                //Ignore scheme (ejb,ejbs,etc.)
+                u1 = URI.create(u1.getSchemeSpecificPart());
+                u2 = URI.create(u2.getSchemeSpecificPart());
+
+                if (u1.getHost().equals(serverHost)) {
+                    //If the service host is the same as the server host
+                    //then keep it at the top of the list
+                    return -1;
+                }
+
+                //Compare URI hosts
                 int i = u1.getHost().compareTo(u2.getHost());
 
-                if(i == 0){
+                if (i == 0) {
                     i = u1.compareTo(u2);
                 }
 
                 return i;
             }
         });
-        final byte[] bytes = (MulticastPulseClient.CLIENT + forGroup).getBytes(Charset.forName("utf8"));
-        final InetAddress ia = InetAddress.getByName(host);
-        final DatagramPacket request = new DatagramPacket(bytes, bytes.length, new InetSocketAddress(ia, port));
-
-        final AtomicBoolean running = new AtomicBoolean(true);
-        final MulticastSocket client = MulticastPulseClient.getSocket(host, port);
-        final Timer timer = new Timer(true);
 
         //Start a thread that listens for multicast packets on our channel.
         //This needs to start 'before' we pulse a request.
@@ -139,7 +173,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
 
                         final SocketAddress sa = response.getSocketAddress();
 
-                        if (null != sa) {
+                        if (null != sa && (sa instanceof InetSocketAddress)) {
 
                             int len = response.getLength();
                             if (len > 2048) {
@@ -165,7 +199,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                                         continue;
                                     }
 
-                                    URI test = null;
+                                    final URI test;
                                     try {
                                         test = URI.create(svc);
                                     } catch (Throwable e) {
@@ -174,7 +208,11 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
 
                                     if (schemes.contains(test.getScheme())) {
 
-                                        svc = (group + ":" + svc);
+                                        //Just because multicast was received on this host is does not mean the service is on the same
+                                        //We can however use this to identify an individual machine and group
+                                        final String serverHost = ((InetSocketAddress) response.getSocketAddress()).getAddress().getHostAddress();
+
+                                        svc = ("mp-" + serverHost + ":" + group + ":" + svc);
 
                                         try {
                                             if (svc.contains("0.0.0.0")) {
@@ -206,20 +244,29 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
         t.setDaemon(true);
         t.start();
 
-        if (running.get()) {
-            //Kill the thread after timeout
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    running.set(false);
-                    client.close();
-                    t.interrupt();
+        //Kill the thread after timeout
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+
+                running.set(false);
+
+                try {
+                    client.leaveGroup(ia);
+                } catch (Throwable e) {
+                    //Ignore
                 }
-            }, timeout);
-        }
+                try {
+                    client.close();
+                } catch (Throwable e) {
+                    //Ignore
+                }
+                t.interrupt();
+            }
+        }, timeout);
 
         //Pulse the server
-        final MulticastSocket ms = MulticastPulseClient.getSocket(host, port);
+        final MulticastSocket ms = MulticastPulseClient.getSocket(ia, port);
         ms.send(request);
 
         //Wait for thread to die
@@ -238,19 +285,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
         }
     }
 
-    public static MulticastSocket getSocket(final String multicastAddress, final int port) throws Exception {
-
-        final InetAddress ia;
-
-        try {
-            ia = InetAddress.getByName(multicastAddress);
-        } catch (UnknownHostException e) {
-            throw new Exception(multicastAddress + " is not a valid address", e);
-        }
-
-        if (null == ia || !ia.isMulticastAddress()) {
-            throw new Exception(multicastAddress + " is not a valid multicast address");
-        }
+    public static MulticastSocket getSocket(final InetAddress ia, final int port) throws Exception {
 
         MulticastSocket ms = null;
 
@@ -259,6 +294,9 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
             final NetworkInterface ni = NetworkInterface.getByInetAddress(InetAddress.getByName(InetAddress.getLocalHost().getHostName()));
             ms.setNetworkInterface(ni);
             ms.setSoTimeout(0);
+            if (!ms.getBroadcast()) {
+                ms.setBroadcast(true);
+            }
             ms.joinGroup(ia);
 
         } catch (Throwable e) {
