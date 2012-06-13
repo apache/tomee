@@ -25,21 +25,21 @@ TOMEE.ApplicationViewApps = function (cfg) {
         elName:'main',
         tag:'div',
         attributes:{
-            style:'padding: 5px;'
+            style:'padding-top: 5px; padding-bottom: 5px; padding-left: 5px;'
         },
         children:[
             {
                 elName:'left',
                 tag:'div',
                 attributes:{
-                    style:'float:left; width:33%; min-width:170px;'
+                    style:'float:left; width:33%; min-width:170px; margin-right: 5px;'
                 }
             },
             {
                 elName:'center',
                 tag:'div',
                 attributes:{
-                    style:'float:left; width:66%; min-width:170px; margin-left: 5px; margin-right: 5px;'
+                    style:'float:left; width:66%; min-width:170px;'
                 }
             }
         ]

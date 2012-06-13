@@ -98,7 +98,7 @@ TOMEE.ApplicationViewLog = function (cfg) {
         loadLogTable(data.log);
     };
 
-    var wrapper = $('<div style="margin: 5px"></div>')
+    var wrapper = $('<div style="padding: 5px;"></div>')
     wrapper.append(panel.getEl());
 
     return {
