@@ -21,85 +21,35 @@ TOMEE.ApplicationViewLog = function (cfg) {
 
     var channel = cfg.channel;
 
-    var elMapContent = TOMEE.el.getElMap({
-        elName:'main',
-        tag:'div'
-    });
-
-    var lines = (function () {
-        var innerPanel = $('<div style="height: 250px; position: relative; overflow: auto;"></div>');
-
-        return {
-            getEl:function () {
-                return innerPanel;
-            },
-            load:function (data) {
-                innerPanel.empty();
-
-                var newData = $('<div></div>');
-                for (var i = 0; i < data.length; i++) {
-                    newData.append(data[i]);
-                    newData.append('<br/>');
-                }
-
-                innerPanel.append(newData);
-                //innerPanel.scrollTop(newData.height());
-                innerPanel.animate({
-                    scrollTop: newData.height()
-                }, 500);
-            }
-        }
-    })();
-
-    var elBottomBar = TOMEE.el.getElMap({
-        elName:'main',
-        tag:'form',
-        cls:'well form-inline',
-        attributes:{
-            style:'height: 27px;margin-bottom: 0px;padding-top: 1px;padding-left: 1px;padding-bottom: 1px;padding-right: 1px;'
-        },
-        children:[
+    var panel = TOMEE.components.Panel({
+        title:'-',
+        bbar:[
             {
-                tag:'div',
-                cls:'pull-right',
-                children:[
-                    {
-                        elName:'fileSelector',
-                        tag:'select',
-                        attributes:{
-                            style:'margin-right: 2px;'
-                        }
-                    },
-                    {
-                        elName:'loadBtn',
-                        tag:'button',
-                        cls:'btn',
-                        html:TOMEE.I18N.get('application.log.load')
+                elName:'fileSelector',
+                tag:'select',
+                attributes:{
+                    style:'margin-right: 2px;'
+                }
+            },
+            {
+                elName:'loadBtn',
+                tag:'button',
+                cls:'btn',
+                html:TOMEE.I18N.get('application.log.load'),
+                listeners:{
+                    'click':function () {
+                        var file = panel.getElement('fileSelector').val();
+                        var tail = 100; //TODO
+                        channel.send('trigger.log.load', {
+                            file:file,
+                            tail:tail
+                        });
+                        panel.setTitle(file);
                     }
-                ]
+                }
             }
         ]
     });
-
-    elBottomBar.loadBtn.bind('click', function () {
-        var file = elBottomBar.fileSelector.val();
-        var tail = 100; //TODO
-        channel.send('trigger.log.load', {
-            file:file,
-            tail:tail
-        });
-    });
-
-    elMapContent.main.append(lines.getEl());
-    elMapContent.main.append(elBottomBar.main);
-
-    var setHeight = function (height) {
-        var mySize = height - TOMEE.el.getBorderSize(elMapContent.main);
-        var gridSize = mySize - elBottomBar.main.outerHeight(true);
-
-        elMapContent.main.height(mySize);
-        lines.getEl().height(gridSize);
-    };
 
     var loadFilesField = function (files) {
         var getOption = function (fileName) {
@@ -109,7 +59,7 @@ TOMEE.ApplicationViewLog = function (cfg) {
             return option;
         };
 
-        var selector = elBottomBar.fileSelector;
+        var selector = panel.getElement('fileSelector');
         selector.empty();
         if (!files) {
             return;
@@ -120,11 +70,27 @@ TOMEE.ApplicationViewLog = function (cfg) {
     };
 
     var loadLogTable = function (data) {
-        if (!data) {
+        if (!data || !data.lines) {
             return;
         }
-        lines.load(data.lines);
-        elBottomBar.fileSelector.val(data.name);
+
+        (function (lines) {
+            panel.getContentEl().empty();
+
+            var newData = $('<div></div>');
+            for (var i = 0; i < lines.length; i++) {
+                newData.append(lines[i]);
+                newData.append('<br/>');
+            }
+
+            panel.getContentEl().append(newData);
+            //innerPanel.scrollTop(newData.height());
+            panel.getContentEl().animate({
+                scrollTop:newData.height()
+            }, 500);
+        })(data.lines);
+
+        panel.getElement('fileSelector').val(data.name);
     };
 
     var loadData = function (data) {
@@ -132,12 +98,19 @@ TOMEE.ApplicationViewLog = function (cfg) {
         loadLogTable(data.log);
     };
 
+    var wrapper = $('<div style="margin: 5px"></div>')
+    wrapper.append(panel.getEl());
+
     return {
 
         getEl:function () {
-            return elMapContent.main;
+            return wrapper;
         },
-        setHeight:setHeight,
+        setHeight:function (height) {
+            wrapper.height(height);
+            var innerSize = height - TOMEE.el.getBorderSize(wrapper);
+            panel.setHeight(innerSize);
+        },
         loadData:loadData
     };
 };
