@@ -45,14 +45,14 @@ public class JsonExecutor {
             resp.setCharacterEncoding("UTF-8");
 
             final Gson gson;
-            if(Boolean.valueOf(req.getParameter("pretty"))) {
+            if (Boolean.valueOf(req.getParameter("pretty"))) {
                 gson = new GsonBuilder().setPrettyPrinting().create();
             } else {
                 gson = new Gson();
             }
             resp.getWriter().write(gson.toJson(result));
 
-        } catch (Exception e) {
+        } catch (Throwable e) {
             //this will redirect the result to the ErrorServlet
             throw new TomeeException(e);
         }
