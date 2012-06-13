@@ -25,11 +25,11 @@ import javax.servlet.http.HttpSessionListener;
 import java.util.HashMap;
 
 public class UserSessionListener implements HttpSessionListener {
-    private static final String USER_CONTEXT = "UserSessionListener_USER_CONTEXT";
+    private static final String CONTEXT_KEY = "UserSessionListener_USER_CONTEXT";
 
     @Override
     public void sessionCreated(HttpSessionEvent httpSessionEvent) {
-        httpSessionEvent.getSession().setAttribute(USER_CONTEXT, new SessionData());
+        httpSessionEvent.getSession().setAttribute(CONTEXT_KEY, new SessionData());
 
         //this i used by the old tomee gui
         //TODO: remove me once the new gui is ready
@@ -42,6 +42,6 @@ public class UserSessionListener implements HttpSessionListener {
     }
 
     public static SessionData getServiceContext(HttpSession session) {
-        return (SessionData) session.getAttribute(USER_CONTEXT);
+        return (SessionData) session.getAttribute(CONTEXT_KEY);
     }
 }

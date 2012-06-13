@@ -37,7 +37,7 @@ public class SessionDataServlet extends HttpServlet {
 
                 final Map<String, Object> savedObjs = UserSessionListener.getServiceContext(req.getSession()).getSaved();
                 for (String key : savedObjs.keySet()) {
-                    json.put(key, savedObjs.get(key));
+                    json.put(key, String.valueOf(savedObjs.get(key)));
                 }
             }
         });
