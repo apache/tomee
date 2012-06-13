@@ -77,16 +77,19 @@ TOMEE.ApplicationViewLog = function (cfg) {
         (function (lines) {
             panel.getContentEl().empty();
 
-            var newData = $('<div></div>');
+            var pre = $('<pre></pre>');
+            pre.css('border', '0px');
+            pre.css('background-color', 'white');
+            pre.css('margin', '0px');
+
             for (var i = 0; i < lines.length; i++) {
-                newData.append(lines[i]);
-                newData.append('<br/>');
+                pre.append(lines[i]);
+                pre.append('<br/>');
             }
 
-            panel.getContentEl().append(newData);
-            //innerPanel.scrollTop(newData.height());
+            panel.getContentEl().append(pre);
             panel.getContentEl().animate({
-                scrollTop:newData.height()
+                scrollTop:pre.height()
             }, 500);
         })(data.lines);
 
