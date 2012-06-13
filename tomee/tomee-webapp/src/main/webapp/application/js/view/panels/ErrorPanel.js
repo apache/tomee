@@ -27,8 +27,8 @@ TOMEE.ErrorPanel = function (cfg) {
         title:'-',
         parent:cfg.parent,
         extraStyles:{
-            width:'500px',
-            height:'200px'
+            width:'700px',
+            height:'300px'
         },
         bbar:[
             {
@@ -51,7 +51,13 @@ TOMEE.ErrorPanel = function (cfg) {
 
             var error = jQuery.parseJSON(params.jqXHR.responseText);
             panel.setTitle(error.exception_type);
-            content.append(error.stackTrace);
+
+            var pre = $('<pre></pre>');
+            pre.append(error.stackTrace);
+            pre.css('border', '0px');
+            pre.css('background-color', 'white');
+            pre.css('margin', '0px');
+            content.append(pre);
 
             panel.showAt({
                 modal:true
