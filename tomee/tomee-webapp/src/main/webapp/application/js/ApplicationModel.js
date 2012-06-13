@@ -31,13 +31,23 @@ TOMEE.ApplicationModel = function (cfg) {
     var sessionData = {};
 
     var request = function (params) {
+        var errorHandler = params.error;
+        if (!errorHandler) {
+            errorHandler = function (jqXHR, textStatus, errorThrown) {
+                channel.send('default.ajax.error.handler.triggered', {
+                    jqXHR:jqXHR,
+                    textStatus:textStatus,
+                    errorThrown:errorThrown
+                });
+            }
+        }
         $.ajax({
                 url:params.url,
                 type:params.method,
                 data:params.data,
                 dataType:'json',
                 success:params.success,
-                error:params.error
+                error:errorHandler
             }
         );
     };
