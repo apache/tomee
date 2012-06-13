@@ -43,6 +43,11 @@ TOMEE.ApplicationController = function () {
         channel:channel
     });
 
+    channel.bind('default.ajax.error.handler.triggered', function (params) {
+        TOMEE.ErrorPanel({
+            channel: channel
+        }).show(params);
+    });
 
     (function () {
         channel.bind('application.name.click', function (params) {
@@ -124,7 +129,7 @@ TOMEE.ApplicationController = function () {
             var data = params.data;
             model.loadJndiClass({
                 name:data.name,
-                parent: data.parent,
+                parent:data.parent,
                 path:pathArrayBuilder.build(data.parent)
             });
         });
