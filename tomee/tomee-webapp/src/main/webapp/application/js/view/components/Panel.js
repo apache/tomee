@@ -29,6 +29,17 @@ TOMEE.components.Panel = function (cfg) {
         parentEl = $(window);
     }
 
+    var dragPanel = false;
+    var isFloatingPanel = false;
+    var panelX = 0;
+    var panelY = 0;
+
+    var map = null;
+    var createMap = function () {
+        map = null;
+        map = TOMEE.el.getElMap(myBodyCfg);
+    };
+
     var myBodyCfg = {
         elName:'main',
         tag:'div',
@@ -44,7 +55,35 @@ TOMEE.components.Panel = function (cfg) {
                         tag:'h3',
                         html:TOMEE.utils.getSafe(cfg.title, '-')
                     }
-                ]
+                ],
+                listeners:{
+                    'mousedown':function () {
+                        dragPanel = true;
+                    },
+                    'mouseup':function () {
+                        dragPanel = false;
+                    },
+                    'mouseout':function () {
+                        dragPanel = false;
+                    },
+                    'mousemove':function (event) {
+                        //TODO fix me
+                        return;
+
+                        if (!isFloatingPanel || !dragPanel) {
+                            //nothing to do
+                            return;
+                        }
+
+                        var main = map.main;
+
+                        panelX = panelX - event.offsetY;
+                        panelY = panelY - event.offsetX;
+
+                        main.css('left', panelX + 'px');
+                        main.css('top', panelY + 'px');
+                    }
+                }
             },
             {
                 elName:'myBody',
@@ -105,11 +144,7 @@ TOMEE.components.Panel = function (cfg) {
         })();
     }
 
-    var map = null;
-    var createMap = function () {
-        map = null;
-        map = TOMEE.el.getElMap(myBodyCfg);
-    };
+    //create the initial map
     createMap();
 
     var extraStyles = cfg.extraStyles;
@@ -173,6 +208,8 @@ TOMEE.components.Panel = function (cfg) {
                 throw 'missing parameters';
             }
 
+            isFloatingPanel = true;
+
             var main = map.main;
             main.css('position', 'absolute');
 
@@ -180,14 +217,17 @@ TOMEE.components.Panel = function (cfg) {
             myBody.append(main);
 
             if (config.left || config.top) {
-                main.css('left', TOMEE.el.getLocationValue(config.left));
-                main.css('top', TOMEE.el.getLocationValue(config.top));
+                panelX = config.left;
+                panelY = config.top;
             } else {
                 var center = getCenter();
 
-                main.css('left', center.left + 'px');
-                main.css('top', center.top + 'px');
+                panelX = center.left;
+                panelY = center.top;
             }
+
+            main.css('left', panelX + 'px');
+            main.css('top', panelY + 'px');
 
             if (config.modal) {
                 //TODO: add the modal feature
