@@ -33,6 +33,7 @@ import org.apache.openejb.assembler.classic.BeansInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.core.WebContext;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.webbeans.annotation.AnnotationManager;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.decorator.DecoratorsManager;
@@ -47,6 +48,7 @@ import org.apache.webbeans.util.AnnotationUtil;
  * @version $Rev:$ $Date:$
  */
 public class CdiScanner implements ScannerService {
+    public static final String OPENEJB_CDI_FILTER_CLASSLOADER = "openejb.cdi.filter.classloader";
 
     // TODO add all annotated class
     private final Set<Class<?>> classes = new HashSet<Class<?>>();
@@ -144,6 +146,7 @@ public class CdiScanner implements ScannerService {
 
             // here for ears we need to skip classes in the parent classloader
             final ClassLoader scl = ClassLoader.getSystemClassLoader();
+            final boolean filterByClassLoader = "true".equals(SystemInstance.get().getProperty(OPENEJB_CDI_FILTER_CLASSLOADER, "true"));
             for (String className : beans.managedClasses) {
                 if (ejbClasses.contains(className)) continue;
                 final Class clazz = load(className, classLoader);
@@ -154,7 +157,8 @@ public class CdiScanner implements ScannerService {
                 final ClassLoader cl = clazz.getClassLoader();
                 // 1. this classloader is the good one
                 // 2. the classloader is the appclassloader one and we are in the ear parent
-                if (classLoader.equals(cl) || (cl.equals(scl) && startupObject.getWebContext() == null)) {
+                if (!filterByClassLoader
+                        || classLoader.equals(cl) || (cl.equals(scl) && startupObject.getWebContext() == null)) {
                     classes.add(clazz);
                 }
             }
