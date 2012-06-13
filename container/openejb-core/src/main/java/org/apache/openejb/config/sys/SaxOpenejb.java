@@ -24,6 +24,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.config.Service;
+import org.apache.openejb.loader.SystemInstance;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -44,6 +45,7 @@ import java.util.List;
  */
 class SaxOpenejb extends DefaultHandler {
 
+    public static final String HOME_VAR = "$home";
     private final Openejb openejb = new Openejb();
 
     private final List<DefaultHandler> handlers = new LinkedList<DefaultHandler>();
@@ -289,6 +291,7 @@ class SaxOpenejb extends DefaultHandler {
 
     private class ImportElement extends DefaultHandler {
         private String path = null;
+
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
             path = attributes.getValue("path");
@@ -297,6 +300,8 @@ class SaxOpenejb extends DefaultHandler {
         @Override
         public void endElement(String uri, String localName, String qName) throws SAXException {
             if (path != null) {
+                updatePath();
+
                 InputStream is = null;
                 try {
                     final URL url = new URL(path);
@@ -320,6 +325,12 @@ class SaxOpenejb extends DefaultHandler {
                 } catch (IOException e) {
                     throw new SAXException(e);
                 }
+            }
+        }
+
+        private void updatePath() {
+            if (path != null && path.startsWith(HOME_VAR)) {
+                path = SystemInstance.get().getHome().getDirectory().getAbsolutePath() + path.substring(HOME_VAR.length());
             }
         }
 
