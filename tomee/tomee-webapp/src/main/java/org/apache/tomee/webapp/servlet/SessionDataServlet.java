@@ -39,6 +39,8 @@ public class SessionDataServlet extends HttpServlet {
                 for (String key : savedObjs.keySet()) {
                     json.put(key, String.valueOf(savedObjs.get(key)));
                 }
+
+                savedObjs.putAll(UserSessionListener.getObjects(req.getSession()));
             }
         });
     }
