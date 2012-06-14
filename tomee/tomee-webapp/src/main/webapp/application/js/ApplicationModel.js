@@ -52,7 +52,20 @@ TOMEE.ApplicationModel = function (cfg) {
         );
     };
 
+    var getUrlVars = function () {
+        var vars = {};
+        var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+
+        var hash = null;
+        for (var i = 0; i < hashes.length; i++) {
+            hash = hashes[i].split('=');
+            vars[hash[0]] = hash[1];
+        }
+        return vars;
+    };
+
     return {
+        getUrlVars:getUrlVars,
         logout:function () {
             request({
                 method:'GET',
@@ -74,7 +87,7 @@ TOMEE.ApplicationModel = function (cfg) {
                 }
             });
         },
-        loadDeployedApps: function() {
+        loadDeployedApps:function () {
             request({
                 method:'GET',
                 url:TOMEE.baseURL('deploy'),
