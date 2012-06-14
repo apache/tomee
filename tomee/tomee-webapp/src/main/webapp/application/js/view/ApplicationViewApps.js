@@ -45,104 +45,9 @@ TOMEE.ApplicationViewApps = function (cfg) {
         ]
     });
 
-    var deployments = (function () {
-        var panel = TOMEE.components.Panel({
-            title:TOMEE.I18N.get('application.deployments'),
-            avoidOverflow:true
-        });
-
-
-        var table = TOMEE.components.Table({
-            channel:channel,
-            columns:['appName']
-        });
-
-        var map = TOMEE.el.getElMap({
-            elName:'main',
-            tag:'div',
-            attributes:{
-                style:'height: 220px;'
-            },
-            children:[
-                table
-            ]
-        });
-
-        var content = panel.getContentEl();
-        content.append(map.main);
-
-        var fileForm = null;
-        (function () {
-            var fileUploadedHandler = function (event) {
-                fileForm.myFrame.unbind('load', fileUploadedHandler);
-                var text = TOMEE.utils.getSafe(function () {
-                    return fileForm.myFrame.contents().first()[0].body.innerText;
-                }, '');
-
-                var json = jQuery.parseJSON(text);
-
-                channel.send('deploy.file.uploaded', json);
-            };
-
-            var frameId = TOMEE.Sequence.next('uploadFrame');
-            fileForm = TOMEE.el.getElMap({
-                elName:'main',
-                tag:'form',
-                attributes:{
-                    style:'background-color:#EEE; border-top: 1px solid #E5E5E5; height: 30px;margin-bottom: 0px;',
-                    method:'post',
-                    enctype:'multipart/form-data',
-                    action:TOMEE.baseURL('upload'),
-                    target:frameId
-                },
-                children:[
-                    {
-                        elName:'myFrame',
-                        tag:'iframe',
-                        attributes:{
-                            id:frameId,
-                            style:'display: none'
-                        }
-                    },
-                    {
-                        elName:'fileField',
-                        tag:'input',
-                        attributes:{
-                            style:'padding-left: 5px; float: left; position: relative;',
-                            type:'file',
-                            name:'file'
-                        },
-                        listeners:{
-                            'change':function (event) {
-                                fileForm.myFrame.bind('load', fileUploadedHandler);
-                                fileForm.main.submit();
-                            }
-                        }
-                    }
-                ]
-            });
-
-            content.append(fileForm.main);
-        })();
-
-        return {
-            getEl:function () {
-                return panel.getEl();
-            },
-            load:function (data) {
-                table.load(data, function (bean) {
-                    return [bean.name, bean.value];
-                });
-            },
-            setHeight: function(height) {
-                panel.setHeight(height);
-
-                var myHeight = panel.getContentEl().height() - TOMEE.el.getBorderSize(panel.getContentEl()) - (2 * TOMEE.el.getBorderSize(fileForm.main))  - fileForm.fileField.height();
-                map.main.height(myHeight);
-            }
-        };
-    })();
-
+    var deployments = TOMEE.Applications({
+        channel:channel
+    });
 
     var log = (function () {
         var panel = TOMEE.components.Panel({
@@ -156,7 +61,7 @@ TOMEE.ApplicationViewApps = function (cfg) {
             getEl:function () {
                 return panel.getEl();
             },
-            setHeight: function(height) {
+            setHeight:function (height) {
                 panel.setHeight(height);
             }
         };
@@ -183,6 +88,9 @@ TOMEE.ApplicationViewApps = function (cfg) {
         getEl:function () {
             return elMapContent.main;
         },
-        setHeight:setHeight
+        setHeight:setHeight,
+        loadDeployeApps:function (data) {
+            deployments.loadDeployeApps(data);
+        }
     };
 };

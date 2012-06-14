@@ -45,7 +45,7 @@ TOMEE.ApplicationController = function () {
 
     channel.bind('default.ajax.error.handler.triggered', function (params) {
         TOMEE.ErrorPanel({
-            channel: channel
+            channel:channel
         }).show(params);
     });
 
@@ -151,8 +151,11 @@ TOMEE.ApplicationController = function () {
         });
 
         channel.bind('app.deployment.result', function (params) {
-            //TODO Implement me
-            throw "app.deployment.result not implemented";
+            model.loadDeployedApps();
+        });
+
+        channel.bind('app.new.deployment.data', function (params) {
+            appsView.loadDeployeApps(params);
         });
     })();
 
@@ -217,6 +220,7 @@ TOMEE.ApplicationController = function () {
     model.loadJndi({
         path:['']
     });
+    model.loadDeployedApps();
 
     return {
 

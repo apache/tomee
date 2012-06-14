@@ -17,9 +17,12 @@
 
 package org.apache.tomee.webapp.servlet;
 
+import org.apache.openejb.AppContext;
 import org.apache.openejb.assembler.Deployer;
 import org.apache.openejb.assembler.DeployerEjb;
 import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.tomee.webapp.JsonExecutor;
@@ -30,6 +33,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class DeployServlet extends HttpServlet {
@@ -53,6 +58,24 @@ public class DeployServlet extends HttpServlet {
                 // the input can be "mvn:org.superbiz/rest-example.1.0/war" for instance or an http url
                 json.put("path", info.path);
                 json.put("appId", info.appId);
+            }
+        });
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        JsonExecutor.execute(req, resp, new JsonExecutor.Executor() {
+            @Override
+            public void call(Map<String, Object> json) throws Exception {
+                final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+                final List<AppContext> apps = containerSystem.getAppContexts();
+
+                final List<String> uids = new ArrayList<String>();
+                json.put("uids", uids);
+
+                for (AppContext appContext : apps) {
+                    uids.add(appContext.getId());
+                }
             }
         });
     }
