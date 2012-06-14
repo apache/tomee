@@ -52,7 +52,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
     protected static final String LOCALHOST = "localhost";
     protected static final String SHUTDOWN_COMMAND = "SHUTDOWN" + Character.toString((char) -1);
     protected Configuration configuration;
-    protected Map<String, File> moduleIds = new HashMap<String, File>();
+    protected Map<String, DeployedApp> moduleIds = new HashMap<String, DeployedApp>();
     private final Options options;
 
     protected TomEEContainer() {
@@ -216,7 +216,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
                 Info.marshal(appInfo);
             }
 
-            moduleIds.put(archive.getName(), file);
+            moduleIds.put(archive.getName(), new DeployedApp(appInfo.path, file));
 
             final String fileName = file.getName();
             if (fileName.endsWith(".war")) {
@@ -264,9 +264,14 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
 
     public void undeploy(Archive<?> archive) throws DeploymentException {
         try {
-            final File file = moduleIds.get(archive.getName());
-            deployer().undeploy(file.getAbsolutePath());
-            Files.delete(file.getParentFile()); // "i" folder
+            final DeployedApp deployed = moduleIds.get(archive.getName());
+            deployer().undeploy(deployed.path);
+            Files.delete(deployed.file); // "i" folder
+
+            final File pathFile = new File(deployed.path);
+            if (!deployed.path.equals(deployed.file.getAbsolutePath()) && pathFile.exists()) {
+                Files.delete(pathFile);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             throw new DeploymentException("Unable to undeploy", e);
@@ -301,5 +306,15 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
             return contextRoot + mapping;
         }
         return contextRoot + "/" + mapping;
+    }
+
+    public static class DeployedApp {
+        public final File file;
+        public final String path;
+
+        public DeployedApp(final String path, final File file) {
+            this.path = path;
+            this.file = file;
+        }
     }
 }
