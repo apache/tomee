@@ -245,7 +245,9 @@ public class DeployerEjb implements Deployer {
             }
 
             if (add) {
-                additionalDeployments.getDeployments().add(deps);
+                if (!additionalDeployments.getDeployments().contains(deps)) {
+                    additionalDeployments.getDeployments().add(deps);
+                }
             } else {
                 Iterator<Deployments> it = additionalDeployments.getDeployments().iterator();
                 while (it.hasNext()) {
