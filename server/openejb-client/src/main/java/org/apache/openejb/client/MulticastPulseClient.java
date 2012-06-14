@@ -385,6 +385,9 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                     if (uriSet != null && uriSet.size() > 0) {
                         for (URI uri : uriSet) {
 
+                            final String serverhost = uri.getScheme();
+                            uri = URI.create(uri.getSchemeSpecificPart());
+
                             final String group = uri.getScheme();
                             uri = URI.create(uri.getSchemeSpecificPart());
 
@@ -405,7 +408,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                                 }
                             }
 
-                            System.out.println(group + " - " + uri.toASCIIString() + " is reachable: " + b);
+                            System.out.println("ServerHost: " + serverhost + " - Group: " + group + " - Service: " + uri.toASCIIString() + " is reachable: " + b);
                         }
                     } else {
                         System.out.println("Did not discover any URIs to test");
