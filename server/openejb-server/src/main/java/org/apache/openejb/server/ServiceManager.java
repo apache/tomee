@@ -33,6 +33,7 @@ import org.apache.xbean.recipe.Option;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -198,21 +199,53 @@ public abstract class ServiceManager {
     }
 
     private void overrideProperties(String serviceName, Properties serviceProperties) throws IOException {
-        final FileUtils base = SystemInstance.get().getBase();
+        final SystemInstance systemInstance = SystemInstance.get();
+        final FileUtils base = systemInstance.getBase();
 
         // Override with file from conf dir
         final File conf = base.getDirectory("conf");
         if (conf.exists()) {
-            File serviceConfig = new File(conf, serviceName + ".properties");
-            if (!serviceConfig.exists()) {
-                serviceConfig = new File(conf, "conf.d/" + serviceConfig.getName());
+
+            final String legacy = System.getProperty("openejb.conf.schema.legacy");
+            boolean legacySchema = Boolean.parseBoolean((null != legacy ? legacy : "false"));
+
+            if (null == legacy) {
+                //Legacy is not configured either way, so make an educated guess.
+                //If we find at least 2 known service.properties files then assume legacy
+                final File[] files = conf.listFiles(new FilenameFilter() {
+                    @Override
+                    public boolean accept(final File dir, String name) {
+                        name = name.toLowerCase();
+                        return name.equals("ejbd.properties")
+                                || name.equals("ejbds.properties")
+                                || name.equals("admin.properties")
+                                || name.equals("httpejbd.properties");
+                    }
+                });
+
+                if (null != files && files.length > 1) {
+                    legacySchema = true;
+                }
             }
+
+            File serviceConfig = new File(conf, serviceName + ".properties");
+
+            if (!serviceConfig.exists()) {
+                serviceConfig = new File(conf, (legacySchema ? "" : "conf.d/") + serviceConfig.getName());
+
+                if (legacySchema) {
+                    logger.info("Using legacy configuration path for new service: " + serviceConfig);
+                }
+            }
+
             if (serviceConfig.exists()) {
                 IO.readProperties(serviceConfig, serviceProperties);
             } else {
+
                 final File confD = serviceConfig.getParentFile();
+
                 if (!confD.exists() && !confD.mkdirs()) {
-                    logger.warning("can't create " + serviceConfig.getPath());
+                    logger.warning("Failed to create " + serviceConfig.getPath());
                 }
 
                 if (confD.exists()) {
@@ -233,7 +266,7 @@ public abstract class ServiceManager {
         // Override with system properties
         final String prefix = serviceName + ".";
         final Properties sysProps = new Properties(System.getProperties());
-        sysProps.putAll(SystemInstance.get().getProperties());
+        sysProps.putAll(systemInstance.getProperties());
         for (final Map.Entry<Object, Object> entry : sysProps.entrySet()) {
             final Map.Entry entry1 = (Map.Entry) entry;
             final Object value = entry1.getValue();
