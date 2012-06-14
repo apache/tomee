@@ -207,7 +207,9 @@ TOMEE.ApplicationController = function () {
             'apps':appsView,
             'log':logView
         },
-        initTab:'home'
+        initTab:TOMEE.utils.getSafe(function() {
+            return model.getUrlVars().initTab;
+        }, 'home')
     });
 
     model.loadSystemInfo(function (data) {
