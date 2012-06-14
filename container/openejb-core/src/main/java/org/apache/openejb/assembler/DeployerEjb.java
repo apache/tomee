@@ -258,6 +258,12 @@ public class DeployerEjb implements Deployer {
                     } else if (deps.getJar() != null && deps.getJar().equals(current.getJar())) {
                         it.remove();
                         break;
+                    } else { // exploded dirs
+                        String jar = deps.getJar();
+                        if (jar != null && jar.length() > 3 && jar.substring(0, jar.length() - 4).equals(deps.getDir())) {
+                            it.remove();
+                            break;
+                        }
                     }
                 }
             }
