@@ -31,6 +31,8 @@ TOMEE.I18N = (function () {
 
         'application.log':'Log',
         'application.log.load':'Load',
+        'application.log.load.everything': 'Everything',
+        'application.log.load.last': 'Last {number} lines',
 
         'application.deployments':'Deployments',
 

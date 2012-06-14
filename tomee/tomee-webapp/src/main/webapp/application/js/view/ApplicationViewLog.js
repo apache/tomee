@@ -25,10 +25,65 @@ TOMEE.ApplicationViewLog = function (cfg) {
         title:'-',
         bbar:[
             {
+                elName:'limitSelector',
+                tag:'select',
+                children: [
+                    {
+                        tag: 'option',
+                        html: TOMEE.I18N.get('application.log.load.everything'),
+                        attributes: {
+                            'value': -1
+                        }
+                    },
+                    {
+                        tag: 'option',
+                        html: TOMEE.utils.stringFormat(TOMEE.I18N.get('application.log.load.last'), {'number': 1000}),
+                        attributes: {
+                            'value': 1000
+                        }
+                    },
+                    {
+                        tag: 'option',
+                        html: TOMEE.utils.stringFormat(TOMEE.I18N.get('application.log.load.last'), {'number': 500}),
+                        attributes: {
+                            'value': 500
+                        }
+                    },
+                    {
+                        tag: 'option',
+                        html: TOMEE.utils.stringFormat(TOMEE.I18N.get('application.log.load.last'), {'number': 250}),
+                        attributes: {
+                            'value': 250
+                        }
+                    },
+                    {
+                        tag: 'option',
+                        html: TOMEE.utils.stringFormat(TOMEE.I18N.get('application.log.load.last'), {'number': 100}),
+                        attributes: {
+                            'value': 100
+                        }
+                    },
+                    {
+                        tag: 'option',
+                        html: TOMEE.utils.stringFormat(TOMEE.I18N.get('application.log.load.last'), {'number': 50}),
+                        attributes: {
+                            'value': 50
+                        }
+                    },
+                    {
+                        tag: 'option',
+                        html: TOMEE.utils.stringFormat(TOMEE.I18N.get('application.log.load.last'), {'number': 10}),
+                        attributes: {
+                            'value': 10
+                        }
+                    }
+                ]
+            },
+            {
                 elName:'fileSelector',
                 tag:'select',
                 attributes:{
-                    style:'margin-right: 2px;'
+                    //style:'margin-right: 2px;'
                 }
             },
             {
@@ -39,7 +94,11 @@ TOMEE.ApplicationViewLog = function (cfg) {
                 listeners:{
                     'click':function () {
                         var file = panel.getElement('fileSelector').val();
-                        var tail = 100; //TODO
+                        var tail = panel.getElement('limitSelector').val();
+                        if(tail < 0) {
+                            tail = null;
+                        }
+
                         channel.send('trigger.log.load', {
                             file:file,
                             tail:tail
@@ -50,6 +109,7 @@ TOMEE.ApplicationViewLog = function (cfg) {
             }
         ]
     });
+    panel.getElement('limitSelector').val(100);
 
     var loadFilesField = function (files) {
         var getOption = function (fileName) {
