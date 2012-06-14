@@ -80,21 +80,30 @@ public class LogServlet extends HttpServlet {
 
     private Collection<String> read(final boolean escapeHtml, final File file, final Integer tail) throws IOException {
         final Queue<String> lines = new LinkedList<String>();
-        final AddLine addLine = new AddLine(lines, tail);
 
-        String line;
-        final BufferedReader br = new BufferedReader(new FileReader(file));
+        BufferedReader br = null;
 
-        if (escapeHtml) {
-            while ((line = br.readLine()) != null) {
-                addLine.add(StringEscapeUtils.escapeHtml4(line));
+        try {
+            br = new BufferedReader(new FileReader(file));
+
+            final AddLine addLine = new AddLine(lines, tail);
+            String line;
+
+            if (escapeHtml) {
+                while ((line = br.readLine()) != null) {
+                    addLine.add(StringEscapeUtils.escapeHtml4(line));
+                }
+            } else {
+                while ((line = br.readLine()) != null) {
+                    addLine.add(line);
+                }
             }
-        } else {
-            while ((line = br.readLine()) != null) {
-                addLine.add(line);
+
+        } finally {
+            if (br != null) {
+                br.close();
             }
         }
-
 
         return lines;
     }
