@@ -97,6 +97,19 @@ TOMEE.components.Panel = function (cfg) {
     };
     if (cfg.bbar) {
         (function () {
+
+            var style = 'margin-bottom: 0px;'
+            var formAttributes = {
+                style:style
+            };
+            if (cfg.bbarFormAttributes) {
+                formAttributes = cfg.bbarFormAttributes;
+                if (!formAttributes.style) {
+                    formAttributes.style = style;
+                }
+            }
+
+
             var childrenDiv = [];
             var footerCfg = {
                 elName:'footer',
@@ -104,11 +117,10 @@ TOMEE.components.Panel = function (cfg) {
                 cls:'modal-footer',
                 children:[
                     {
+                        elName:'bbarForm',
                         tag:'form',
                         cls:'form-inline',
-                        attributes:{
-                            style:'margin-bottom: 0px;'
-                        },
+                        attributes:formAttributes,
                         children:childrenDiv
                     }
                 ]
@@ -190,6 +202,9 @@ TOMEE.components.Panel = function (cfg) {
     };
 
     return {
+        getBbarForm:function () {
+            return map.bbarForm;
+        },
         setTitle:function (title) {
             map['appName'].html(title);
         },

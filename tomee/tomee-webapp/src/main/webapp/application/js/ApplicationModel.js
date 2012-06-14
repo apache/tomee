@@ -74,6 +74,15 @@ TOMEE.ApplicationModel = function (cfg) {
                 }
             });
         },
+        loadDeployedApps: function() {
+            request({
+                method:'GET',
+                url:TOMEE.baseURL('deploy'),
+                success:function (data) {
+                    channel.send('app.new.deployment.data', data);
+                }
+            });
+        },
         loadSystemInfo:function (callback) {
             request({
                 method:'GET',
