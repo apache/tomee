@@ -76,11 +76,11 @@ public class ConsoleServlet extends HttpServlet {
                 });
 
                 //note that "engine" does not know "bindings". It only knows the current context.
-                final Object result = SCRIPTER.evaluate(engineName, req.getParameter("scriptCode"));
-                // TODO: don't throw an exception here
-                // doing it just to print the result but should be done in a 'normal' way
-                // i like the idea of the error popup but in the "result popup" way
-                throw new TomeeException(new RuntimeException(result.toString())); // todo: json
+                //Eventual exceptions are handled by the ErrorServlet
+                final Object result = SCRIPTER.evaluate(engineName, req.getParameter("scriptCode"), newContext);
+
+                //returning results
+                json.put("result", String.valueOf(result));
             }
         });
     }

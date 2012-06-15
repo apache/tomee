@@ -124,6 +124,9 @@ TOMEE.ApplicationModel = function (cfg) {
                 success:function (data) {
                     systemInfo = data;
                     channel.send('app.console.executed', data);
+                },
+                error:function (data) {
+                    channel.send('app.console.executed.error', data);
                 }
             });
 

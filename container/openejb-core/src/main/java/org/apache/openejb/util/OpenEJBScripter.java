@@ -25,13 +25,7 @@ import org.apache.openejb.util.proxy.ProxyEJB;
 
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
-import javax.script.Bindings;
-import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineFactory;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-import javax.script.SimpleBindings;
+import javax.script.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -62,27 +56,35 @@ public class OpenEJBScripter {
     }
 
     public Object evaluate(final String language, final String script) throws ScriptException {
-        return evaluate(language, script, new SimpleBindings());
+        return evaluate(language, script, null);
     }
 
-    public Object evaluate(final String language, final String script, final Bindings bindings) throws ScriptException {
+    public Object evaluate(final String language, final String script, final ScriptContext context) throws ScriptException {
         if (!ENGINE_FACTORIES.containsKey(language)) {
             throw new IllegalArgumentException("can't find factory for language " + language + ". You probably need to add the jar to openejb libs.");
         }
 
-        Bindings usedBindings = bindings;
-        if (usedBindings == null) {
-            usedBindings = new SimpleBindings();
+        ScriptContext executionContext = context;
+        if (executionContext == null) {
+            executionContext = new SimpleScriptContext();
         }
-        return engine(language, usedBindings).eval(script);
+
+        //we bind local variables (per execution) every time we execute a script
+        bindLocal(executionContext);
+
+        final ScriptEngine engine = engine(language);
+        return engine.eval(script, executionContext);
     }
 
-    private static ScriptEngine engine(final String language, final Bindings bindings) {
+    private static ScriptEngine engine(final String language) {
         ScriptEngine engine = ENGINES.get().get(language);
         if (engine == null) {
             final ScriptEngineFactory factory = ENGINE_FACTORIES.get(language);
             engine = factory.getScriptEngine();
-            engine.setBindings(binding(bindings), ScriptContext.ENGINE_SCOPE);
+
+            //we bind system global variables just once
+            bindGlobal(engine);
+
             ENGINES.get().put(language, engine);
         }
         return engine;
@@ -92,8 +94,16 @@ public class OpenEJBScripter {
         ENGINES.get().clear();
     }
 
-    private static Bindings binding(final Bindings bindings) {
-        bindings.put("bm", new BeanManagerHelper());
+    private static void bindGlobal(final ScriptEngine engine) {
+        //"bm" is a global variable during the execution of any script
+        engine.put("bm", new BeanManagerHelper());
+    }
+
+    private static void bindLocal(final ScriptContext context) {
+        final Bindings bindings = context.getBindings(ScriptContext.ENGINE_SCOPE);
+
+        Map<String, Object> beans = new HashMap<String, Object>();
+        bindings.put("beans", beans);
 
         final ContainerSystem cs = SystemInstance.get().getComponent(ContainerSystem.class);
         for (BeanContext beanContext : cs.deployments()) {
@@ -115,7 +125,6 @@ public class OpenEJBScripter {
                 bindings.put(beanContext.getEjbName().replaceAll("[^a-zA-Z0-9]", "_"), service);
             }
         }
-        return bindings;
     }
 
     public static class BeanManagerHelper {

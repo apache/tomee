@@ -183,6 +183,12 @@ TOMEE.ApplicationController = function () {
             //TODO Implement me
             throw "app.console.executed not implemented";
         });
+
+        channel.bind('app.console.executed.error', function (params) {
+            //TODO Implement me
+            //Handle an eventual script execution error
+            throw "app.console.executed.error not implemented";
+        });
     })();
 
 
