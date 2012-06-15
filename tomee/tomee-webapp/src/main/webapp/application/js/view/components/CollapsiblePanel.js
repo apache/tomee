@@ -53,6 +53,10 @@ TOMEE.components.CollapsiblePanel = function (cfg) {
                                 {
                                     tag:'i',
                                     cls:'icon-th'
+                                },
+                                {
+                                    elName:'titleEl',
+                                    tag:'span'
                                 }
                             ]
                         }
@@ -67,7 +71,7 @@ TOMEE.components.CollapsiblePanel = function (cfg) {
                     },
                     children:[
                         {
-                            elName: 'myBody',
+                            elName:'bodyEl',
                             tag:'div',
                             cls:'accordion-inner'
                         }
@@ -77,6 +81,22 @@ TOMEE.components.CollapsiblePanel = function (cfg) {
         });
         return group;
     }
+
+    var children = TOMEE.utils.getArray(cfg.children);
+    (function () {
+        var child = null;
+        var childEl = null;
+        for (var i = 0; i < children.length; i++) {
+            child = children[i];
+
+            childEl = buildAccordionGroup();
+            childEl.titleEl.html(child.getTitle());
+            childEl.bodyEl.append(child.getEl());
+
+            myBody.main.append(childEl.main);
+        }
+    })();
+
 
     return {
         getEl:function () {
