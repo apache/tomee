@@ -40,19 +40,28 @@ TOMEE.components.CollapsiblePanel = function (cfg) {
                 {
                     tag:'div',
                     cls:'accordion-heading',
+                    attributes: {
+                        style: 'padding: 9px 15px; border-bottom: 1px solid #EEE;'
+                    },
                     children:[
                         {
-                            tag:'a',
-                            cls:'accordion-toggle',
-                            attributes:{
-                                href:'#' + grpID,
-                                'data-parent':'#' + panelID,
-                                'data-toggle':'collapse'
-                            },
+                            tag:'h3',
                             children:[
                                 {
-                                    elName:'titleEl',
-                                    tag:'span'
+                                    tag:'a',
+                                    cls:'accordion-toggle',
+                                    attributes:{
+                                        href:'#' + grpID,
+                                        'data-parent':'#' + panelID,
+                                        'data-toggle':'collapse',
+                                        style: 'text-decoration: none!important; color: #222; padding: 0px;'
+                                    },
+                                    children:[
+                                        {
+                                            elName:'titleEl',
+                                            tag:'span'
+                                        }
+                                    ]
                                 }
                             ]
                         }
