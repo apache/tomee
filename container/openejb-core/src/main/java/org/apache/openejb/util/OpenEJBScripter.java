@@ -81,10 +81,6 @@ public class OpenEJBScripter {
         if (engine == null) {
             final ScriptEngineFactory factory = ENGINE_FACTORIES.get(language);
             engine = factory.getScriptEngine();
-
-            //we bind system global variables just once
-            bindGlobal(engine);
-
             ENGINES.get().put(language, engine);
         }
         return engine;
@@ -94,13 +90,10 @@ public class OpenEJBScripter {
         ENGINES.get().clear();
     }
 
-    private static void bindGlobal(final ScriptEngine engine) {
-        //"bm" is a global variable during the execution of any script
-        engine.put("bm", new BeanManagerHelper());
-    }
-
     private static void bindLocal(final ScriptContext context) {
         final Bindings bindings = context.getBindings(ScriptContext.ENGINE_SCOPE);
+
+        bindings.put("bm", new BeanManagerHelper());
 
         Map<String, Object> beans = new HashMap<String, Object>();
         bindings.put("beans", beans);

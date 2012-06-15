@@ -44,7 +44,7 @@ public class OpenEJBGroovyShellTest {
     @Test
     public void call() throws ScriptException {
         final OpenEJBScripter shell = new OpenEJBScripter();
-        final Object out = shell.evaluate("groovy", "Foo.foo()");
+        final Object out = shell.evaluate("groovy", "beans.Foo.foo()");
         assertEquals("foo", out);
     }
 
