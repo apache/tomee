@@ -28,7 +28,19 @@ TOMEE.Jndi = function (cfg) {
         extraStyles:{
             height:'200px',
             padding:'2px'
-        }
+        },
+        bbar:[
+            {
+                tag:'a',
+                cls:'btn',
+                html:TOMEE.I18N.get('application.jdni.load'),
+                listeners: {
+                    'click': function() {
+                        channel.send('application.jdni.load', {});
+                    }
+                }
+            }
+        ]
     });
 
     var tree = TOMEE.components.Tree({
