@@ -45,7 +45,17 @@ TOMEE.ApplicationChannel = function (cfg) {
 
         var myListeners = listeners[messageKey];
         if (!myListeners.has(callback)) {
-            myListeners.add(callback);
+            var callbackWrapper = function (paramsObj) {
+                try {
+                    return callback(paramsObj);
+
+                } catch (e) {
+                    TOMEE.log.error('Cannot execute callback "' + messageKey + '"');
+                }
+
+            };
+
+            myListeners.add(callbackWrapper);
         }
     };
 
@@ -88,8 +98,8 @@ TOMEE.ApplicationChannel = function (cfg) {
     };
 
     return {
-        bind: bind,
-        unbind: unbind,
-        send: send
+        bind:bind,
+        unbind:unbind,
+        send:send
     };
 };
