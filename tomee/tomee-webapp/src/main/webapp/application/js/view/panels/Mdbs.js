@@ -22,10 +22,14 @@ TOMEE.MDBs = function (cfg) {
     var channel = cfg.channel;
 
     var mdbs = TOMEE.components.Panel({
+        isCollapsiblePanel: true,
         title:TOMEE.I18N.get('application.mdbs')
     });
 
     return {
+        getTitle:function () {
+            return TOMEE.I18N.get('application.mdbs');
+        },
         getEl:function () {
             return mdbs.getEl();
         }

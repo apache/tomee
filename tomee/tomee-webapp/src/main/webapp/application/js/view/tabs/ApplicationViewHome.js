@@ -21,12 +21,6 @@ TOMEE.ApplicationViewHome = function (cfg) {
 
     var channel = cfg.channel;
 
-    var jndiPanel = cfg.jndiPanel;
-    var savedPanel = cfg.savedPanel;
-    var mdbsPanel = cfg.mdbsPanel;
-    var wsPanel = cfg.wsPanel;
-    var consolePanel = cfg.consolePanel;
-
     var elMapContent = TOMEE.el.getElMap({
         elName:'main',
         tag:'div',
@@ -45,31 +39,17 @@ TOMEE.ApplicationViewHome = function (cfg) {
                 elName:'center',
                 tag:'div',
                 attributes:{
-                    style:'float:left; width:33%; min-width:170px;'
-                }
-            },
-            {
-                elName:'right',
-                tag:'div',
-                attributes:{
-                    style:'float:left; width:33%; min-width:170px; margin-left: 5px;'
+                    style:'float:left; width:66%; min-width:170px;'
                 }
             }
         ]
     });
 
-    elMapContent['left'].append((function () {
-        var wrapper = $('<div style="padding-bottom: 5px"></div>');
-        wrapper.append(jndiPanel.getEl());
-        return wrapper;
-    })());
-    elMapContent['left'].append(savedPanel.getEl());
+    elMapContent['left'].append(TOMEE.components.CollapsiblePanel({
+              children:cfg.children
+    }).getEl());
 
-
-    elMapContent['center'].append(consolePanel.getEl());
-
-    elMapContent['right'].append(mdbsPanel.getEl());
-    elMapContent['right'].append(wsPanel.getEl());
+    elMapContent['center'].append(cfg.center.getEl());
 
     var setHeight = function (height) {
         var mySize = height - TOMEE.el.getBorderSize(elMapContent.main);
@@ -79,7 +59,7 @@ TOMEE.ApplicationViewHome = function (cfg) {
         elMapContent.left.height(childrenSize);
         elMapContent.center.height(childrenSize);
 
-        consolePanel.setHeight(childrenSize);
+        cfg.center.setHeight(childrenSize);
     };
 
     return {
@@ -89,11 +69,11 @@ TOMEE.ApplicationViewHome = function (cfg) {
         },
         setTomeeVersion:function (myTomee) {
 
-            mdbsPanel.getEl().detach();
-            wsPanel.getEl().detach();
-            elMapContent['center'].css('width', '66%');
+//            mdbsPanel.getEl().detach();
+//            wsPanel.getEl().detach();
+//            elMapContent['center'].css('width', '66%');
 
-            //TODO mdbsPanel and wsPanel are not implemented yet. Add them when done.
+
 
             /*
 

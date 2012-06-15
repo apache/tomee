@@ -22,6 +22,7 @@ TOMEE.Saved = function (cfg) {
     var channel = cfg.channel;
 
     var saved = TOMEE.components.Panel({
+        isCollapsiblePanel: true,
         title:TOMEE.I18N.get('application.saved.objects'),
         extraStyles: {
             height:'200px'
@@ -47,6 +48,9 @@ TOMEE.Saved = function (cfg) {
     saved.getContentEl().append(table.getEl());
 
     return {
+        getTitle:function () {
+            return TOMEE.I18N.get('application.saved.objects');
+        },
         getEl:function () {
             return saved.getEl();
         },
