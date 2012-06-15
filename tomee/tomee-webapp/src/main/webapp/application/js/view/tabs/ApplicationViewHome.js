@@ -21,6 +21,12 @@ TOMEE.ApplicationViewHome = function (cfg) {
 
     var channel = cfg.channel;
 
+    var jndiPanel = cfg.jndiPanel;
+    var savedPanel = cfg.savedPanel;
+    var mdbsPanel = cfg.mdbsPanel;
+    var wsPanel = cfg.wsPanel;
+    var consolePanel = cfg.consolePanel;
+
     var elMapContent = TOMEE.el.getElMap({
         elName:'main',
         tag:'div',
@@ -52,14 +58,6 @@ TOMEE.ApplicationViewHome = function (cfg) {
         ]
     });
 
-    var jndiPanel = TOMEE.Jndi({
-        channel:cfg.channel
-    });
-
-    var savedPanel = TOMEE.Saved({
-        channel:cfg.channel
-    });
-
     elMapContent['left'].append((function () {
         var wrapper = $('<div style="padding-bottom: 5px"></div>');
         wrapper.append(jndiPanel.getEl());
@@ -68,19 +66,7 @@ TOMEE.ApplicationViewHome = function (cfg) {
     elMapContent['left'].append(savedPanel.getEl());
 
 
-    var consolePanel = TOMEE.Console({
-        channel:cfg.channel
-    });
-
     elMapContent['center'].append(consolePanel.getEl());
-
-    var mdbsPanel = TOMEE.MDBs({
-        channel:cfg.channel
-    });
-
-    var wsPanel = TOMEE.WebServices({
-        channel:cfg.channel
-    });
 
     elMapContent['right'].append(mdbsPanel.getEl());
     elMapContent['right'].append(wsPanel.getEl());
@@ -98,16 +84,9 @@ TOMEE.ApplicationViewHome = function (cfg) {
 
     return {
         setHeight:setHeight,
-        loadJndi:function (data) {
-            jndiPanel.loadJndi(data);
-        },
-        loadSavedObjects:function (data) {
-            savedPanel.load(data);
-        },
         getEl:function () {
             return elMapContent.main;
         },
-        setSupportedScriptLanguages:consolePanel.loadScriptsField,
         setTomeeVersion:function (myTomee) {
 
             mdbsPanel.getEl().detach();
@@ -134,13 +113,6 @@ TOMEE.ApplicationViewHome = function (cfg) {
             }
 
             */
-        },
-        jndiContextMenu:function (opts) {
-            jndiPanel.jndiContextMenu(opts);
-        },
-        showJndiClassWin:function (opts) {
-            //opts.cls, opts.name, opts.path
-            jndiPanel.showClassPanel(opts);
         }
     };
 }
