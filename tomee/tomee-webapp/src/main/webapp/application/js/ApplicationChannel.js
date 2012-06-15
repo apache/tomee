@@ -45,6 +45,7 @@ TOMEE.ApplicationChannel = function (cfg) {
 
         var myListeners = listeners[messageKey];
         if (!myListeners.has(callback)) {
+            //wrap the callback method in order to avoid the standard jquery behaviour for callbacks exceptions (http://bugs.jquery.com/ticket/11193)
             var callbackWrapper = function (paramsObj) {
                 try {
                     return callback(paramsObj);
