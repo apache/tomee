@@ -24,6 +24,7 @@ public class Configuration {
     private int httpPort = 8080;
     private int ajpPort = 8009;
     private int stopPort = 8005;
+    private String host = "localhost";
     protected String dir;
 
     public int getHttpPort() {
@@ -56,5 +57,13 @@ public class Configuration {
 
     public void setDir(String dir) {
         this.dir = dir;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
     }
 }

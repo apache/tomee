@@ -49,7 +49,6 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 public abstract class TomEEContainer<Configuration extends TomEEConfiguration> implements DeployableContainer<Configuration> {
     protected static final Logger LOGGER = Logger.getLogger(TomEEContainer.class.getName());
 
-    protected static final String LOCALHOST = "localhost";
     protected static final String SHUTDOWN_COMMAND = "SHUTDOWN" + Character.toString((char) -1);
     protected Configuration configuration;
     protected Map<String, DeployedApp> moduleIds = new HashMap<String, DeployedApp>();
@@ -138,7 +137,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
 
     public void stop() throws LifecycleException {
         try {
-            Socket socket = new Socket(LOCALHOST, configuration.getStopPort());
+            Socket socket = new Socket(configuration.getHost(), configuration.getStopPort());
             OutputStream out = socket.getOutputStream();
             out.write(SHUTDOWN_COMMAND.getBytes());
 
@@ -151,7 +150,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
     protected void waitForShutdown(int tries) {
         try {
 
-            Socket socket = new Socket(LOCALHOST, configuration.getStopPort());
+            Socket socket = new Socket(configuration.getHost(), configuration.getStopPort());
             OutputStream out = socket.getOutputStream();
             out.close();
         } catch (Exception e) {
@@ -226,7 +225,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
                 }
             }
 
-            HTTPContext httpContext = new HTTPContext(LOCALHOST, configuration.getHttpPort());
+            HTTPContext httpContext = new HTTPContext(configuration.getHost(), configuration.getHttpPort());
 
             String arquillianServlet;
             // Avoids "inconvertible types" error in windows build
@@ -249,7 +248,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
     protected Deployer deployer() throws NamingException {
         final Properties properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
-        properties.setProperty(Context.PROVIDER_URL, "http://" + LOCALHOST + ":" + configuration.getHttpPort() + "/tomee/ejb");
+        properties.setProperty(Context.PROVIDER_URL, "http://" + configuration.getHost() + ":" + configuration.getHttpPort() + "/tomee/ejb");
         return (Deployer) new InitialContext(properties).lookup("openejb/DeployerBusinessRemote");
     }
 

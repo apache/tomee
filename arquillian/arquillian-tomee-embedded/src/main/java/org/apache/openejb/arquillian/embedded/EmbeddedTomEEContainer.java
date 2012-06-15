@@ -43,8 +43,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfiguration> {
 
-    private static final String LOCALHOST = "localhost";
-
     @Inject
     @ContainerScoped
     private InstanceProducer<Context> contextInstance;
@@ -76,6 +74,7 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
     	configuration.setDir(tomeeConfiguration.getDir());
     	configuration.setHttpPort(tomeeConfiguration.getHttpPort());
     	configuration.setStopPort(tomeeConfiguration.getStopPort());
+        configuration.setHost(tomeeConfiguration.getHost());
 		return configuration;
 	}
 
@@ -113,7 +112,7 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
             final AppInfo info = container.getInfo(name);
             final String context = getArchiveNameWithoutExtension(archive);
 
-            final HTTPContext httpContext = new HTTPContext(LOCALHOST, configuration.getHttpPort());
+            final HTTPContext httpContext = new HTTPContext(configuration.getHost(), configuration.getHttpPort());
             httpContext.add(new Servlet("ArquillianServletRunner", "/" + context));
             addServlets(httpContext, info);
 

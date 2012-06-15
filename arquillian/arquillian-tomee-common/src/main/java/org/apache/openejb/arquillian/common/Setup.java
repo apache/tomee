@@ -40,7 +40,7 @@ public class Setup {
     public static final int DEFAULT_AJP_PORT = 8009;
 
     public static void exportProperties(final File openejbHome, final TomEEConfiguration c) {
-        System.setProperty("java.naming.provider.url", "http://localhost:" + c.getHttpPort() + "/tomee/ejb");
+        System.setProperty("java.naming.provider.url", "http://" + c.getHost() + ":" + c.getHttpPort() + "/tomee/ejb");
         System.setProperty("connect.tries", "90");
         System.setProperty("server.http.port", String.valueOf(c.getHttpPort()));
         System.setProperty("server.shutdown.port", String.valueOf(c.getStopPort()));
@@ -121,9 +121,9 @@ public class Setup {
         }
     }
 
-    public static boolean isRunning(final int port) {
+    public static boolean isRunning(final String host, final int port) {
         try {
-            final Socket socket = new Socket("localhost", port);
+            final Socket socket = new Socket(host, port);
             final OutputStream out = socket.getOutputStream();
             out.close();
             return true;
