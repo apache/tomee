@@ -59,7 +59,7 @@ TOMEE.ApplicationToolbar = function (cfg) {
                                         cls:'brand',
                                         attributes:{
                                             href:'#',
-                                            style:'padding-left: 10px; margin-left: 0px;'
+                                            style:'padding-left: 10px; margin-left: 0px; color: white;'
                                         },
                                         html:'-'
                                     },
