@@ -29,6 +29,7 @@ TOMEE.ApplicationModel = function (cfg) {
     var systemInfo = {};
     var logInfo = {};
     var sessionData = {};
+    var executions = [];
 
     var request = function (params) {
         var errorHandler = params.error;
@@ -114,6 +115,13 @@ TOMEE.ApplicationModel = function (cfg) {
             return systemInfo;
         },
         execute:function (codeType, codeText) {
+            var executionBean = {
+                codeType:codeType,
+                codeText:codeText,
+                start:(new Date())
+            };
+            executions.push(executionBean);
+
             request({
                 method:'POST',
                 url:TOMEE.baseURL('console'),
@@ -122,11 +130,18 @@ TOMEE.ApplicationModel = function (cfg) {
                     scriptCode:codeText
                 },
                 success:function (data) {
-                    systemInfo = data;
-                    channel.send('app.console.executed', data);
+                    executionBean.success = true;
+                    executionBean.data = data;
+                    executionBean.end = (new Date());
+
+                    channel.send('app.console.executed', executionBean);
                 },
                 error:function (data) {
-                    channel.send('app.console.executed.error', data);
+                    executionBean.success = false;
+                    executionBean.data = data;
+                    executionBean.end = (new Date());
+
+                    channel.send('app.console.executed.error', executionBean);
                 }
             });
 
