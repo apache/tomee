@@ -26,7 +26,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>simple-osgi-local-lookup-client</artifactId>
-  <name>OpenEJB :: Examples :: Simple OSGi Stateless Pojo :: Local Lookup Client</name>
+  <name>OpenEJB :: Examples :: Simple OSGi :: Local Lookup Client</name>
   <packaging>bundle</packaging>
 
   <dependencies>

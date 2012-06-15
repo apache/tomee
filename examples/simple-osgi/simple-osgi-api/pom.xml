@@ -29,7 +29,7 @@
 
   <artifactId>simple-osgi-api</artifactId>
   <packaging>bundle</packaging>
-  <name>OpenEJB :: Examples :: Simple OSGi Stateless Pojo :: API bundle</name>
+  <name>OpenEJB :: Examples :: Simple OSGi :: API bundle</name>
 
   <build>
     <plugins>
