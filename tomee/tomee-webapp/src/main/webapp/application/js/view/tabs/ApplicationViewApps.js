@@ -49,23 +49,9 @@ TOMEE.ApplicationViewApps = function (cfg) {
         channel:channel
     });
 
-    var log = (function () {
-        var panel = TOMEE.components.Panel({
-            title:'-'
-        });
-
-        //Log here!
-        panel.getContentEl().append('');
-
-        return {
-            getEl:function () {
-                return panel.getEl();
-            },
-            setHeight:function (height) {
-                panel.setHeight(height);
-            }
-        };
-    })();
+    var log = TOMEE.ApplicationsLog({
+        channel:channel
+    });
 
     elMapContent['left'].append(deployments.getEl());
     elMapContent['center'].append(log.getEl());
