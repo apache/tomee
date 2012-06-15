@@ -49,8 +49,34 @@ TOMEE.ApplicationController = function () {
         centerPanel:deploymentsLog
     });
 
-    var homeView = TOMEE.ApplicationViewHome({
+
+    var jndiPanel = TOMEE.Jndi({
         channel:channel
+    });
+
+    var savedPanel = TOMEE.Saved({
+        channel:channel
+    });
+
+    var mdbsPanel = TOMEE.MDBs({
+        channel:channel
+    });
+
+    var wsPanel = TOMEE.WebServices({
+        channel:channel
+    });
+
+    var consolePanel = TOMEE.Console({
+        channel:channel
+    });
+
+    var homeView = TOMEE.ApplicationViewHome({
+        channel:channel,
+        jndiPanel:jndiPanel,
+        savedPanel:savedPanel,
+        mdbsPanel:mdbsPanel,
+        wsPanel:wsPanel,
+        consolePanel:consolePanel
     });
 
     channel.bind('default.ajax.error.handler.triggered', function (params) {
@@ -120,18 +146,18 @@ TOMEE.ApplicationController = function () {
 
         channel.bind('app.new.jndi.data', function (params) {
             //params.path, params.bean, params.parentEl
-            homeView.loadJndi(params);
+            jndiPanel.loadJndi(params);
         });
 
         channel.bind('app.new.jndi.class.data', function (params) {
             //params.cls, params.name, params.path
-            homeView.showJndiClassWin(params);
+            jndiPanel.showClassPanel(params);
         });
 
         channel.bind('element.right.click', function (params) {
             //params.data, params.left, params.top
             if (params.panelKey === 'jndi') {
-                homeView.jndiContextMenu(params);
+                jndiPanel.jndiContextMenu(params);
             }
         });
 
@@ -159,7 +185,6 @@ TOMEE.ApplicationController = function () {
         });
 
 
-
     })();
 
 
@@ -180,7 +205,7 @@ TOMEE.ApplicationController = function () {
 
     channel.bind('app.system.info', function (params) {
         view.setLoggedUser(params.user);
-        homeView.setSupportedScriptLanguages(params.supportedScriptLanguages);
+        consolePanel.loadScriptsField(params.supportedScriptLanguages);
     });
 
 
@@ -215,7 +240,7 @@ TOMEE.ApplicationController = function () {
 
     (function () {
         channel.bind('app.new.session.data', function (params) {
-            homeView.loadSavedObjects(params);
+            savedPanel.load(params);
         });
 
         channel.bind('application.saved.objects.load', function (params) {
@@ -231,7 +256,7 @@ TOMEE.ApplicationController = function () {
             'apps':appsView,
             'log':logView
         },
-        initTab:TOMEE.utils.getSafe(function() {
+        initTab:TOMEE.utils.getSafe(function () {
             return model.getUrlVars().initTab;
         }, 'home')
     });
