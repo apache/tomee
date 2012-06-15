@@ -133,6 +133,7 @@ TOMEE.components.Tree = function (cfg) {
             if (ul) {
                 loadTree(ul, newData);
             } else {
+                elements.ul.empty();
                 loadTree(elements.ul, newData);
             }
 

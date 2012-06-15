@@ -142,6 +142,14 @@ TOMEE.ApplicationController = function () {
             });
         });
 
+        channel.bind('application.jdni.load', function (params) {
+            model.loadJndi({
+                path:['']
+            });
+        });
+
+
+
     })();
 
 
