@@ -43,7 +43,7 @@ TOMEE.Console = function (cfg) {
                 tag:'select'
             },
             {
-                tag:'button',
+                tag:'a',
                 cls:'btn',
                 html:TOMEE.I18N.get('application.console.execute'),
                 listeners: {

@@ -28,7 +28,7 @@ TOMEE.Saved = function (cfg) {
         },
         bbar:[
             {
-                tag:'button',
+                tag:'a',
                 cls:'btn',
                 html:TOMEE.I18N.get('application.saved.objects.load'),
                 listeners: {

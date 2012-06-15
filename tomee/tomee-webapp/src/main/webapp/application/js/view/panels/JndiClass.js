@@ -41,7 +41,7 @@ TOMEE.JndiClass = function (cfg) {
             },
             {
                 elName:'loadBtn',
-                tag:'button',
+                tag:'a',
                 cls:'btn',
                 html:TOMEE.I18N.get('application.jdni.lookup'),
                 attributes:{
@@ -59,7 +59,7 @@ TOMEE.JndiClass = function (cfg) {
                 }
             },
             {
-                tag:'button',
+                tag:'a',
                 cls:'btn',
                 html:TOMEE.I18N.get('application.jdni.class.close'),
                 listeners:{
