@@ -122,7 +122,7 @@ public class OpenEJBScripter {
 
             if (service != null) {
                 // replace all non alphanumeric characters in the ejb name by an underscore (to be a groovy variable)
-                bindings.put(beanContext.getEjbName().replaceAll("[^a-zA-Z0-9]", "_"), service);
+                beans.put(beanContext.getEjbName().replaceAll("[^a-zA-Z0-9]", "_"), service);
             }
         }
     }
