@@ -35,8 +35,18 @@ TOMEE.ApplicationController = function () {
         channel:channel
     });
 
-    var appsView = TOMEE.ApplicationViewApps({
+
+    var deployments = TOMEE.Applications({
         channel:channel
+    });
+
+    var deploymentsLog = TOMEE.ApplicationsLog({
+        channel:channel
+    });
+
+    var appsView = TOMEE.ApplicationViewApps({
+        leftPanel:deployments,
+        centerPanel:deploymentsLog
     });
 
     var homeView = TOMEE.ApplicationViewHome({
@@ -163,7 +173,7 @@ TOMEE.ApplicationController = function () {
         });
 
         channel.bind('app.new.deployment.data', function (params) {
-            appsView.loadDeployeApps(params);
+            deployments.loadDeployeApps(params);
         });
     })();
 

@@ -21,6 +21,9 @@ TOMEE.ApplicationViewApps = function (cfg) {
 
     var channel = cfg.channel;
 
+    var left = cfg.leftPanel;
+    var center = cfg.centerPanel;
+
     var elMapContent = TOMEE.el.getElMap({
         elName:'main',
         tag:'div',
@@ -45,16 +48,8 @@ TOMEE.ApplicationViewApps = function (cfg) {
         ]
     });
 
-    var deployments = TOMEE.Applications({
-        channel:channel
-    });
-
-    var log = TOMEE.ApplicationsLog({
-        channel:channel
-    });
-
-    elMapContent['left'].append(deployments.getEl());
-    elMapContent['center'].append(log.getEl());
+    elMapContent['left'].append(left.getEl());
+    elMapContent['center'].append(center.getEl());
 
     var setHeight = function (height) {
         var mySize = height - TOMEE.el.getBorderSize(elMapContent.main);
@@ -64,19 +59,14 @@ TOMEE.ApplicationViewApps = function (cfg) {
         elMapContent.left.height(childrenSize);
         elMapContent.center.height(childrenSize);
 
-        deployments.setHeight(childrenSize);
-        log.setHeight(childrenSize);
-
-
+        left.setHeight(childrenSize);
+        center.setHeight(childrenSize);
     };
 
     return {
         getEl:function () {
             return elMapContent.main;
         },
-        setHeight:setHeight,
-        loadDeployeApps:function (data) {
-            deployments.loadDeployeApps(data);
-        }
+        setHeight:setHeight
     };
 };
