@@ -646,7 +646,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
 //    @Override
     private void startInternal(final StandardContext standardContext) {
         // just adding a carriage return to get logs more readable
-        logger.info("\nTomcatWebAppBuilder.start " + standardContext.getPath());
+        logger.info("-------------------------\nTomcatWebAppBuilder.start " + standardContext.getPath());
         if (isIgnored(standardContext)) return;
 
         final CoreContainerSystem cs = getContainerSystem();
