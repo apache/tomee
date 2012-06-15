@@ -19,6 +19,7 @@ package org.apache.tomee.webapp.servlet;
 
 import org.apache.openejb.util.OpenEJBScripter;
 import org.apache.tomee.webapp.JsonExecutor;
+import org.apache.tomee.webapp.TomeeException;
 import org.apache.tomee.webapp.listener.UserSessionListener;
 
 import javax.script.*;
@@ -43,15 +44,10 @@ public class ConsoleServlet extends HttpServlet {
                     return; //nothing to do
                 }
 
-                final HttpSession session = req.getSession();
-
                 String engineName = req.getParameter("engineName");
                 if (engineName == null || "".equals(engineName.trim())) {
                     engineName = "js";
                 }
-
-                final ScriptEngineManager manager = new ScriptEngineManager();
-                final ScriptEngine engine = manager.getEngineByName(engineName);
 
                 //new context for the execution of this script
                 final ScriptContext newContext = new SimpleScriptContext();
@@ -80,7 +76,11 @@ public class ConsoleServlet extends HttpServlet {
                 });
 
                 //note that "engine" does not know "bindings". It only knows the current context.
-                engine.eval(scriptCode, newContext);
+                final Object result = SCRIPTER.evaluate(engineName, req.getParameter("scriptCode"));
+                // TODO: don't throw an exception here
+                // doing it just to print the result but should be done in a 'normal' way
+                // i like the idea of the error popup but in the "result popup" way
+                throw new TomeeException(new RuntimeException(result.toString())); // todo: json
             }
         });
     }
