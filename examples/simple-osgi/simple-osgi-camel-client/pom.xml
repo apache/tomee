@@ -29,7 +29,7 @@
 
   <artifactId>simple-osgi-camel-client</artifactId>
   <packaging>bundle</packaging>
-  <name>OpenEJB :: Examples :: Simple OSGi Stateless Pojo :: Camel Client</name>
+  <name>OpenEJB :: Examples :: Simple OSGi :: Camel Client</name>
 
   <build>
     <plugins>

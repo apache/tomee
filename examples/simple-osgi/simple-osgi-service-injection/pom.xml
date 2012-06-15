@@ -26,7 +26,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>simple-osgi-service-injection</artifactId>
-  <name>OpenEJB :: Examples :: Simple OSGi Stateless Pojo :: OSGi Service Injection</name>
+  <name>OpenEJB :: Examples :: Simple OSGi :: OSGi Service Injection</name>
   <packaging>bundle</packaging>
 
   <dependencies>
