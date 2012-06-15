@@ -74,29 +74,13 @@ TOMEE.ApplicationViewHome = function (cfg) {
 
     elMapContent['center'].append(consolePanel.getEl());
 
-    var mdbsPanel = (function () {
-        var mdbs = TOMEE.components.Panel({
-            title:TOMEE.I18N.get('application.mdbs')
-        });
+    var mdbsPanel = TOMEE.MDBs({
+        channel:cfg.channel
+    });
 
-        return {
-            getEl:function () {
-                return mdbs.getEl();
-            }
-        };
-    })();
-
-    var wsPanel = (function () {
-        var ws = TOMEE.components.Panel({
-            title:TOMEE.I18N.get('application.ws')
-        });
-
-        return {
-            getEl:function () {
-                return ws.getEl();
-            }
-        };
-    })();
+    var wsPanel = TOMEE.WebServices({
+        channel:cfg.channel
+    });
 
     elMapContent['right'].append(mdbsPanel.getEl());
     elMapContent['right'].append(wsPanel.getEl());
