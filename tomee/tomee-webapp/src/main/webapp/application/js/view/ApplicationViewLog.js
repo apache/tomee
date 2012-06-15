@@ -88,7 +88,7 @@ TOMEE.ApplicationViewLog = function (cfg) {
             },
             {
                 elName:'loadBtn',
-                tag:'button',
+                tag:'a',
                 cls:'btn',
                 html:TOMEE.I18N.get('application.log.load'),
                 listeners:{

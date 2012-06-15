@@ -32,7 +32,7 @@ TOMEE.ErrorPanel = function (cfg) {
         },
         bbar:[
             {
-                tag:'button',
+                tag:'a',
                 cls:'btn',
                 html:TOMEE.I18N.get('application.error.close'),
                 listeners:{

@@ -21,8 +21,7 @@ import org.apache.openejb.util.OpenEJBScripter;
 import org.apache.tomee.webapp.JsonExecutor;
 import org.apache.tomee.webapp.listener.UserSessionListener;
 
-import javax.script.Bindings;
-import javax.script.SimpleBindings;
+import javax.script.*;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -51,7 +50,15 @@ public class ConsoleServlet extends HttpServlet {
                     engineName = "js";
                 }
 
-                final Bindings bindings = new SimpleBindings();
+                final ScriptEngineManager manager = new ScriptEngineManager();
+                final ScriptEngine engine = manager.getEngineByName(engineName);
+
+                //new context for the execution of this script
+                final ScriptContext newContext = new SimpleScriptContext();
+
+                //creating the bidings object for the current execution
+                final Bindings bindings = newContext.getBindings(ScriptContext.ENGINE_SCOPE);
+
                 bindings.put("req", req);
                 bindings.put("resp", resp);
 
@@ -72,7 +79,8 @@ public class ConsoleServlet extends HttpServlet {
                     }
                 });
 
-                SCRIPTER.evaluate(engineName, scriptCode, bindings);
+                //note that "engine" does not know "bindings". It only knows the current context.
+                engine.eval(scriptCode, newContext);
             }
         });
     }
