@@ -205,9 +205,14 @@ TOMEE.components.Panel = function (cfg) {
         getBbarForm:function () {
             return map.bbarForm;
         },
+
         setTitle:function (title) {
             map['appName'].html(title);
         },
+        getTitle:function (title) {
+            return map['appName'].html();
+        },
+
         getElement:function (key) {
             return elementsPointers[key];
         },
