@@ -24,6 +24,7 @@ TOMEE.Jndi = function (cfg) {
     var parentEl = cfg.parent;
 
     var jndi = TOMEE.components.Panel({
+        isCollapsiblePanel: true,
         title:TOMEE.I18N.get('application.jdni'),
         extraStyles:{
             height:'200px',
@@ -34,8 +35,8 @@ TOMEE.Jndi = function (cfg) {
                 tag:'a',
                 cls:'btn',
                 html:TOMEE.I18N.get('application.jdni.load'),
-                listeners: {
-                    'click': function() {
+                listeners:{
+                    'click':function () {
                         channel.send('application.jdni.load', {});
                     }
                 }
@@ -69,6 +70,9 @@ TOMEE.Jndi = function (cfg) {
     });
 
     return {
+        getTitle:function () {
+            return TOMEE.I18N.get('application.jdni');
+        },
         loadJndi:function (data) {
             tree.load(data.parentEl, data.names);
         },

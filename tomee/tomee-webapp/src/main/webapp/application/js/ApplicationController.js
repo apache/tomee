@@ -71,12 +71,13 @@ TOMEE.ApplicationController = function () {
     });
 
     var homeView = TOMEE.ApplicationViewHome({
-        channel:channel,
-        jndiPanel:jndiPanel,
-        savedPanel:savedPanel,
-        mdbsPanel:mdbsPanel,
-        wsPanel:wsPanel,
-        consolePanel:consolePanel
+        center:consolePanel,
+        children:[
+            jndiPanel, savedPanel
+
+            //TODO mdbsPanel and wsPanel are not implemented yet. Add them when done.
+            //, mdbsPanel, wsPanel
+        ]
     });
 
     channel.bind('default.ajax.error.handler.triggered', function (params) {

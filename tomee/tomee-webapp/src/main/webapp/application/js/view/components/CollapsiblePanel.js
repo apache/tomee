@@ -51,10 +51,6 @@ TOMEE.components.CollapsiblePanel = function (cfg) {
                             },
                             children:[
                                 {
-                                    tag:'i',
-                                    cls:'icon-th'
-                                },
-                                {
                                     elName:'titleEl',
                                     tag:'span'
                                 }
@@ -73,7 +69,10 @@ TOMEE.components.CollapsiblePanel = function (cfg) {
                         {
                             elName:'bodyEl',
                             tag:'div',
-                            cls:'accordion-inner'
+                            cls:'accordion-inner',
+                            attributes:{
+                                style:'padding: 0px;'
+                            }
                         }
                     ]
                 }

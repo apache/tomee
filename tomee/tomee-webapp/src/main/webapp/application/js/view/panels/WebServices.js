@@ -22,10 +22,14 @@ TOMEE.WebServices = function (cfg) {
     var channel = cfg.channel;
 
     var ws = TOMEE.components.Panel({
+        isCollapsiblePanel: true,
         title:TOMEE.I18N.get('application.ws')
     });
 
     return {
+        getTitle:function () {
+            return TOMEE.I18N.get('application.ws');
+        },
         getEl:function () {
             return ws.getEl();
         }

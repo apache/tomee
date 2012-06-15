@@ -34,17 +34,17 @@ TOMEE.components.Panel = function (cfg) {
     var panelX = 0;
     var panelY = 0;
 
+    var title = TOMEE.utils.getSafe(cfg.title, '-');
+
     var map = null;
     var createMap = function () {
         map = null;
         map = TOMEE.el.getElMap(myBodyCfg);
     };
 
-    var myBodyCfg = {
-        elName:'main',
-        tag:'div',
-        cls:'t-panel',
-        children:[
+    var myBodyChildren = [];
+    if (!cfg.isCollapsiblePanel) {
+        myBodyChildren.push(
             {
                 elName:'header',
                 tag:'div',
@@ -53,7 +53,7 @@ TOMEE.components.Panel = function (cfg) {
                     {
                         elName:'appName',
                         tag:'h3',
-                        html:TOMEE.utils.getSafe(cfg.title, '-')
+                        html:title
                     }
                 ],
                 listeners:{
@@ -84,16 +84,33 @@ TOMEE.components.Panel = function (cfg) {
                         main.css('top', panelY + 'px');
                     }
                 }
-            },
-            {
-                elName:'myBody',
-                tag:'div',
-                cls:'modal-body',
-                attributes:{
-                    style:'padding: 0px; max-height: 2000px;'
-                }
             }
-        ]
+
+        );
+
+    }
+    myBodyChildren.push({
+        elName:'myBody',
+        tag:'div',
+        cls:'modal-body',
+        attributes:{
+            style:'padding: 0px; max-height: 2000px;'
+        }
+    });
+
+    var myBodyCfg = {
+        elName:'main',
+        tag:'div',
+        cls:'t-panel',
+        children:myBodyChildren,
+        attributes:{
+            style:(function () {
+                if(cfg.isCollapsiblePanel) {
+                    return 'border-top-width: 0px; border-right-width: 0px; border-bottom-width: 0px; border-left-width: 0px;';
+                }
+                return '';
+            })()
+        }
     };
     if (cfg.bbar) {
         (function () {
