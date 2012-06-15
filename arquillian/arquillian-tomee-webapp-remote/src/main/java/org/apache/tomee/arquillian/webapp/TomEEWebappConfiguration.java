@@ -94,4 +94,5 @@ public class TomEEWebappConfiguration extends TomEEConfiguration {
     public void setAjpPort(int ajpPort) {
         this.ajpPort = ajpPort;
     }
+
 }

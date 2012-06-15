@@ -33,6 +33,7 @@ public class TomEEConfiguration implements ContainerConfiguration {
     private int stopPort = 8005;
     private String dir = System.getProperty("java.io.tmpdir") + "/arquillian-apache-tomee";
     private String appWorkingDir = System.getProperty("java.io.tmpdir");
+    private String host = "localhost";
 
     public int getHttpPort() {
         return httpPort;
@@ -75,5 +76,13 @@ public class TomEEConfiguration implements ContainerConfiguration {
 
     public void setExportConfAsSystemProperty(boolean exportConfAsSystemProperty) {
         this.exportConfAsSystemProperty = exportConfAsSystemProperty;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
     }
 }

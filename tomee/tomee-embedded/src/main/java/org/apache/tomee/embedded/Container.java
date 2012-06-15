@@ -32,7 +32,6 @@ import org.apache.catalina.Service;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.session.StandardManager;
-import org.apache.catalina.startup.Bootstrap;
 import org.apache.catalina.startup.CatalinaProperties;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.coyote.http11.Http11Protocol;
@@ -48,6 +47,7 @@ import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Logger;
@@ -69,7 +69,6 @@ public class Container {
         Assembler.installNaming("org.apache.naming", true);
     }
 
-    private Bootstrap bootstrap;
     protected Configuration configuration;
     private File base;
     private Map<String, String> moduleIds = new HashMap<String, String>(); // TODO: manage multimap
@@ -84,7 +83,6 @@ public class Container {
         configuration.setHttpPort(23880);
         configuration.setStopPort(23881);
         setup(configuration);
-        final Class<Bootstrap> bootstrapClass = Bootstrap.class;
         tomcat = new TomcatWithFastSessionIDs();
     }
 
@@ -99,19 +97,18 @@ public class Container {
 
         base = new File(dir);
         if (base.exists()) {
-            base.delete();
+            Files.delete(base);
         }
 
-        base.mkdirs();
-        // TODO: this delete on exit won't actually work
-        base.deleteOnExit();
+        Files.mkdirs(base);
+        Files.deleteOnExit(base);
 
         final File conf = createDirectory(base, "conf");
-        final File lib = createDirectory(base, "lib");
-        final File logs = createDirectory(base, "logs");
         final File webapps = createDirectory(base, "webapps");
-        final File temp = createDirectory(base, "temp");
-        final File work = createDirectory(base, "work");
+        createDirectory(base, "lib");
+        createDirectory(base, "logs");
+        createDirectory(base, "temp");
+        createDirectory(base, "work");
 
         copyFileTo(conf, "catalina.policy");
         copyTemplateTo(conf, "catalina.properties");
@@ -143,6 +140,8 @@ public class Container {
         tomcat.setConnector(connector);
         tomcat.setBaseDir(base.getAbsolutePath());
         tomcat.getHost().setAppBase(webapps.getAbsolutePath());
+        tomcat.setHostname(configuration.getHost());
+        tomcat.getEngine().setDefaultHost(configuration.getHost());
 
         // Bootstrap Tomcat
         System.out.println("Starting TomEE from: " + base.getAbsolutePath());
@@ -191,6 +190,7 @@ public class Container {
                 System.setProperty("tomcat.built", serverBuilt);
             }
         } catch (Throwable e) {
+            // no-op
         }
 
         SystemInstance.init(System.getProperties());
@@ -334,16 +334,6 @@ public class Container {
                 IO.close(is);
             }
         }
-    }
-
-    private void createTomcatDirectories(File directory) {
-        createDirectory(directory, "apps");
-        createDirectory(directory, "conf");
-        createDirectory(directory, "lib");
-        createDirectory(directory, "logs");
-        createDirectory(directory, "webapps");
-        createDirectory(directory, "temp");
-        createDirectory(directory, "work");
     }
 
     private File createDirectory(File parent, String directory) {
