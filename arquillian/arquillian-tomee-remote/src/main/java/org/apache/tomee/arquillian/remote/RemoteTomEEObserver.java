@@ -18,6 +18,9 @@
 package org.apache.tomee.arquillian.remote;
 
 import org.apache.openejb.cdi.ThreadSingletonServiceImpl;
+import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
+import org.jboss.arquillian.container.spi.context.annotation.DeploymentScoped;
+import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
@@ -33,6 +36,7 @@ public class RemoteTomEEObserver {
     @Inject
     @SuiteScoped
     private InstanceProducer<BeanManager> beanManager;
+
     @Inject
     @SuiteScoped
     private InstanceProducer<Context> context;
