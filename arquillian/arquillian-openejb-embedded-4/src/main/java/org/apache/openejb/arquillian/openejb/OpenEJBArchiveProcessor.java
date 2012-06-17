@@ -68,7 +68,7 @@ public class OpenEJBArchiveProcessor implements ApplicationArchiveProcessor {
     @Override
     public void process(final Archive<?> archive, final TestClass testClass) {
         final Class<?> javaClass = testClass.getJavaClass();
-        final AppModule appModule = new AppModule(javaClass.getClassLoader(), javaClass.getName());
+        final AppModule appModule = new AppModule(javaClass.getClassLoader(), archive.getName());
 
         final Collection<URL> additionalPaths = new ArrayList<URL>();
 
