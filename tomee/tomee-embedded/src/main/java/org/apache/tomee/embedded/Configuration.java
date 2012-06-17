@@ -16,6 +16,8 @@
  */
 package org.apache.tomee.embedded;
 
+import java.io.File;
+
 /**
 * @version $Rev$ $Date$
 */
@@ -26,6 +28,7 @@ public class Configuration {
     private int stopPort = 8005;
     private String host = "localhost";
     protected String dir;
+    private File serverXml = null;
 
     public int getHttpPort() {
         return httpPort;
@@ -65,5 +68,20 @@ public class Configuration {
 
     public void setHost(String host) {
         this.host = host;
+    }
+
+    public void setServerXml(String file) {
+        final File sXml = new File(file);
+        if (sXml.exists()) {
+            serverXml = sXml;
+        }
+    }
+
+    public File getServerXmlFile() {
+        return serverXml;
+    }
+
+    public boolean hasServerXml() {
+        return serverXml != null && serverXml.exists();
     }
 }

@@ -16,7 +16,9 @@
  */
 package org.apache.tomee.arquillian.remote;
 
+import java.io.FileOutputStream;
 import org.apache.openejb.arquillian.common.Files;
+import org.apache.openejb.arquillian.common.IO;
 import org.apache.openejb.arquillian.common.Setup;
 import org.apache.openejb.arquillian.common.TomEEContainer;
 import org.apache.openejb.config.RemoteServer;
@@ -91,7 +93,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
         Files.readable(openejbHome);
         Files.writable(openejbHome);
 
-        Setup.updateServerXml(openejbHome, configuration.getHttpPort(), configuration.getStopPort(), configuration.getAjpPort());
+        Setup.configureServerXml(openejbHome, configuration);
 
         Setup.exportProperties(openejbHome, configuration);
 
@@ -100,7 +102,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
         }
 
         if (logger.isLoggable(Level.FINE)) {
-            Map<Object, Object> map = new TreeMap(System.getProperties());
+            final Map<Object, Object> map = new TreeMap<Object, Object>(System.getProperties());
             for (Map.Entry<Object, Object> entry : map.entrySet()) {
                 logger.log(Level.FINE, String.format("%s = %s\n", entry.getKey(), entry.getValue()));
             }

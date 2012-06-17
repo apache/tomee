@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.arquillian.common;
 
+import java.lang.reflect.Method;
 import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.JarExtractor;
@@ -205,6 +206,33 @@ public class Setup {
                     }
                 }
             }
+        }
+    }
+
+    public static void configureServerXml(final File openejbHome, final TomEEConfiguration configuration) throws IOException {
+        if (configuration.getServerXml() != null) {
+            final File sXml = new File(configuration.getServerXml());
+            if (!sXml.exists()) {
+                LOGGER.severe("provided server.xml doesn't exist: '" + sXml.getPath() + "'");
+            } else {
+                final FileOutputStream fos = new FileOutputStream(new File(openejbHome, "conf/server.xml"));
+                try {
+                    IO.copy(sXml, fos);
+                } finally {
+                    IO.close(fos);
+                }
+                return; // in this case we don't want to override the conf
+            }
+        }
+        Setup.updateServerXml(openejbHome, configuration.getHttpPort(), configuration.getStopPort(), ajpPort(configuration));
+    }
+
+    private static int ajpPort(final TomEEConfiguration config) {
+        try {
+            final Method ajbPort = config.getClass().getMethod("getAjpPort");
+            return (Integer) ajbPort.invoke(config);
+        } catch (Exception e) {
+            return DEFAULT_AJP_PORT;
         }
     }
 }
