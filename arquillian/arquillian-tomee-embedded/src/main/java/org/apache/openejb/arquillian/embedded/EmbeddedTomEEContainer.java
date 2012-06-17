@@ -75,6 +75,7 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
     	configuration.setHttpPort(tomeeConfiguration.getHttpPort());
     	configuration.setStopPort(tomeeConfiguration.getStopPort());
         configuration.setHost(tomeeConfiguration.getHost());
+        configuration.setServerXml(tomeeConfiguration.getServerXml());
 		return configuration;
 	}
 

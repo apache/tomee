@@ -17,6 +17,7 @@
 package org.apache.tomee.embedded;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -114,9 +115,18 @@ public class Container {
         copyTemplateTo(conf, "catalina.properties");
         copyFileTo(conf, "context.xml");
         copyFileTo(conf, "openejb.xml");
-        copyFileTo(conf, "server.xml");
         copyFileTo(conf, "tomcat-users.xml");
         copyFileTo(conf, "web.xml");
+        if (configuration.hasServerXml()) {
+            final FileOutputStream fos = new FileOutputStream(new File(conf, "server.xml"));
+            try {
+                IO.copy(configuration.getServerXmlFile(), fos);
+            } finally {
+                IO.close(fos);
+            }
+        } else {
+            copyFileTo(conf, "server.xml");
+        }
 
         // Need to use JULI so log messages from the tests are visible
         // using openejb logging conf in embedded mode
