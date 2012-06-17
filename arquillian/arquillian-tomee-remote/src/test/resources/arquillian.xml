@@ -22,8 +22,8 @@
 	
        <container qualifier="tomee" default="true">
            <configuration>
-               <property name="httpPort">8080</property>
-               <property name="stopPort">8005</property>
+               <property name="httpPort">-1</property>
+               <property name="stopPort">-1</property>
                <property name="ajpPort">-1</property>
                <property name="version">${version.tomee}</property>
                <property name="dir">target/apache-tomee-remote</property>
