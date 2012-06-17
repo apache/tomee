@@ -17,12 +17,14 @@
 
 package org.apache.openejb.arquillian.session;
 
+import java.net.URL;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.openejb.arquillian.TestServlet;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -40,9 +42,10 @@ import static org.junit.Assert.assertNotSame;
 
 @RunWith(Arquillian.class)
 public class SessionScopeTest {
-    public static final String TEST_SESSION_URL = "http://127.0.0.1:" + System.getProperty("tomee.httpPort", "10080") + "/SessionScopeTest/session";
+    @ArquillianResource
+    private URL webappUrl;
 
-    @Deployment
+    @Deployment(testable = false)
     public static WebArchive createDeployment() {
         return ShrinkWrap.create(WebArchive.class, "SessionScopeTest.war")
             .addClass(PojoSessionScoped.class).addClass(PojoSessionScopedServletWrapper.class)
@@ -57,16 +60,18 @@ public class SessionScopeTest {
 
     @Test
     public void testShouldBeAbleToAccessServletAndEjb() throws Exception {
+        final String sessionUrl = webappUrl.toExternalForm() + "session";
+
         String[] sessionResult = new String[2];
         for (int i = 0; i < sessionResult.length; i++) {
             HttpClient client = new HttpClient();
-            HttpMethod get = new GetMethod(TEST_SESSION_URL);
+            HttpMethod get = new GetMethod(sessionUrl);
             String[] contents = new String[2];
             try {
                 for (int j = 0; j < contents.length; j++) {
                     int out = client.executeMethod(get);
                     if (out != 200) {
-                        throw new RuntimeException("get " + TEST_SESSION_URL + " returned " + out);
+                        throw new RuntimeException("get " + sessionUrl + " returned " + out);
                     }
                     contents[j] = get.getResponseBodyAsString();
                 }

@@ -53,6 +53,8 @@ public class TomEEContainerTest {
 
     @Test
     public void testShouldBeAbleToAccessServletAndEjb() throws Exception {
+        // using this hook to get the url since we are deployed in the container and we don't have metadata
+        // to get the url injected...we probably need 2 deployments for such a test
         URL url = new URL("http://127.0.0.1:" + System.getProperty("tomee.httpPort", "10080") + "/test/ejb");
         InputStream is = url.openStream();
         ByteArrayOutputStream os = new ByteArrayOutputStream();
