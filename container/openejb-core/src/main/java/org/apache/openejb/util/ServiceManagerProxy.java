@@ -96,11 +96,5 @@ public class ServiceManagerProxy {
         Method stop = getMethod("stop");
 
         invoke(stop, serviceManager);
-
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            Thread.interrupted();
-        }
     }
 }
