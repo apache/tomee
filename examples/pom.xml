@@ -74,6 +74,7 @@
     <module>mbean-auto-registration</module>
     <module>movies-complete-meta</module>
     <module>movies-complete</module>
+    <module>multiple-arquillian-adapters</module>
     <module>multiple-tomee-arquillian</module>
     <module>persistence-fragment</module>
     <module>polling-parent</module>
