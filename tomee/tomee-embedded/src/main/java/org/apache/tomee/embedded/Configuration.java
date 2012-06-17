@@ -71,9 +71,13 @@ public class Configuration {
     }
 
     public void setServerXml(String file) {
-        final File sXml = new File(file);
-        if (sXml.exists()) {
-            serverXml = sXml;
+        if (file == null) {
+            serverXml = null;
+        } else {
+            final File sXml = new File(file);
+            if (sXml.exists()) {
+                serverXml = sXml;
+            }
         }
     }
 
