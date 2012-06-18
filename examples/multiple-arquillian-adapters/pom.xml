@@ -49,7 +49,7 @@
       <plugin>
         <!--
         Redefining execution to:
-        1. get the right arquillian adapter
+        1. set the right arquillian adapter
         2. set the category to execute (include/exclude works too)
         3. set the arquillian launcher to use
         -->
@@ -68,10 +68,8 @@
               <groups>org.superbiz.embedded.standalone.Embedded</groups>
               <systemPropertyVariables>
                 <arquillian.launch>embedded</arquillian.launch>
+                <openejb.arquillian.adapter>openejb</openejb.arquillian.adapter>
               </systemPropertyVariables>
-              <additionalClasspathElements>
-                <additionalClasspathElement>${settings.localRepository}/org/apache/openejb/arquillian-openejb-embedded-4/${openejb.version}/arquillian-openejb-embedded-4-${openejb.version}.jar</additionalClasspathElement>
-              </additionalClasspathElements>
             </configuration>
           </execution>
           <execution>
@@ -85,10 +83,8 @@
               <groups>org.superbiz.embedded.remote.EmbeddedRemote</groups>
               <systemPropertyVariables>
                 <arquillian.launch>embedded-remote</arquillian.launch>
+                <openejb.arquillian.adapter>openejb</openejb.arquillian.adapter>
               </systemPropertyVariables>
-              <additionalClasspathElements>
-                <additionalClasspathElement>${settings.localRepository}/org/apache/openejb/arquillian-openejb-embedded-4/${openejb.version}/arquillian-openejb-embedded-4-${openejb.version}.jar</additionalClasspathElement>
-              </additionalClasspathElements>
             </configuration>
           </execution>
           <execution>
@@ -102,10 +98,8 @@
               <groups>org.superbiz.tomee.embedded.TomEEEmbedded</groups>
               <systemPropertyVariables>
                 <arquillian.launch>tomee-embedded</arquillian.launch>
+                <openejb.arquillian.adapter>tomee-embedded</openejb.arquillian.adapter>
               </systemPropertyVariables>
-              <additionalClasspathElements>
-                <additionalClasspathElement>${settings.localRepository}/org/apache/openejb/arquillian-tomee-embedded/${tomee.version}/arquillian-tomee-embedded-${tomee.version}.jar</additionalClasspathElement>
-              </additionalClasspathElements>
             </configuration>
           </execution>
           <execution>
@@ -119,10 +113,8 @@
               <groups>org.superbiz.tomee.remote.TomEERemote</groups>
               <systemPropertyVariables>
                 <arquillian.launch>tomee-remote</arquillian.launch>
+                <openejb.arquillian.adapter>tomee-remote</openejb.arquillian.adapter>
               </systemPropertyVariables>
-              <additionalClasspathElements>
-                <additionalClasspathElement>${settings.localRepository}/org/apache/openejb/arquillian-tomee-remote/${tomee.version}/arquillian-tomee-remote-${tomee.version}.jar</additionalClasspathElement>
-              </additionalClasspathElements>
             </configuration>
           </execution>
         </executions>
@@ -164,6 +156,7 @@
       <version>${arquillian.version}</version>
       <scope>test</scope>
     </dependency>
+
     <!-- utility test deps -->
     <dependency>
       <groupId>org.apache.openejb</groupId>
@@ -172,43 +165,31 @@
       <scope>test</scope>
     </dependency>
 
-    <!--
-      here is the weird part
-      we get all adapters deps to avoid to manually manage transitive deps
-    -->
-    <!-- Container part - standalone (openejb-core is enough) + standalone remote (jax-rs here) -->
+    <!-- additional container part for embedded JAX-RS test -->
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-cxf-rs</artifactId>
       <version>${openejb.version}</version>
       <scope>test</scope>
     </dependency>
-    <!-- Container part - tomee embedded but brings main dependencies for tomee remote too -->
+
+    <!-- arquillian adapters -->
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>tomee-embedded</artifactId>
+      <artifactId>arquillian-openejb-embedded-4</artifactId>
+      <version>${openejb.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>arquillian-tomee-embedded</artifactId>
       <version>${tomee.version}</version>
       <scope>test</scope>
     </dependency>
-    <!-- Arquillian part - common part of tomee adapters (others doesn't care) -->
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>arquillian-tomee-common</artifactId>
+      <artifactId>arquillian-tomee-remote</artifactId>
       <version>${tomee.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <!-- Arquillian part - for tomee remote only (others doesn't care) -->
-    <dependency>
-      <groupId>org.jboss.arquillian.protocol</groupId>
-      <artifactId>arquillian-protocol-servlet</artifactId>
-      <version>${arquillian.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <!-- Arquillian part -some enricher(s) for tomee, take care it can depends on "test.war" name for the archive -->
-    <dependency>
-      <groupId>org.jboss.arquillian.testenricher</groupId>
-      <artifactId>arquillian-testenricher-ejb</artifactId>
-      <version>${arquillian.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

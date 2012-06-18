@@ -17,11 +17,16 @@
 
 package org.apache.openejb.arquillian.embedded;
 
+import org.apache.openejb.arquillian.common.ArquillianUtil;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.core.spi.LoadableExtension;
 
 public class EmbeddedTomEEExtension implements LoadableExtension {
+    private static final String ADAPTER = "tomee-embedded";
+
     @Override public void register(ExtensionBuilder builder) {
-        builder.service(DeployableContainer.class, EmbeddedTomEEContainer.class);
+        if (ArquillianUtil.isCurrentAdapter(ADAPTER)) {
+            builder.service(DeployableContainer.class, EmbeddedTomEEContainer.class);
+        }
     }
 }
