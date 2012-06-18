@@ -60,13 +60,11 @@ TOMEE.ApplicationView = function (cfg) {
                 tag:'hr',
                 attributes:{
                     style:'margin-top: 0px; margin-bottom: 0px;'
-                },
-                children:[
-                    {
-                        tag:'footer',
-                        html:'<p style="text-align: center;margin-bottom: 0px;">' + TOMEE.I18N.get('application.footer') + '</p>'
-                    }
-                ]
+                }
+            },
+            {
+                tag:'footer',
+                html:'<p style="text-align: center;margin-bottom: 0px;">' + TOMEE.I18N.get('application.footer') + '</p>'
             }
         ]
     });
