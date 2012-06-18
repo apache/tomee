@@ -28,6 +28,7 @@ import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentLoader;
 import org.apache.openejb.config.DeploymentModule;
+import org.apache.openejb.config.WebModule;
 import org.apache.openejb.config.sys.AdditionalDeployments;
 import org.apache.openejb.config.sys.Deployments;
 import org.apache.openejb.config.sys.JaxbOpenejb;
@@ -145,7 +146,11 @@ public class DeployerEjb implements Deployer {
             for (DeploymentModule module : appModule.getClientModules()) {
                 modules.put(module.getModuleId(), module);
             }
-            for (DeploymentModule module : appModule.getWebModules()) {
+            for (WebModule module : appModule.getWebModules()) {
+                final String contextRoot = properties.getProperty("webapp." + module.getJarLocation() + ".context-root");
+                if (contextRoot != null) {
+                    module.setContextRoot(contextRoot);
+                }
                 modules.put(module.getModuleId(), module);
             }
             for (DeploymentModule module : appModule.getConnectorModules()) {
