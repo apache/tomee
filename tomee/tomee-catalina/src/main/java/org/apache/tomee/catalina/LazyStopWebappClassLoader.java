@@ -27,7 +27,9 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
     }
 
     public void internalStop() throws LifecycleException {
-        super.stop();
+        if (isStarted()) {
+            super.stop();
+        }
     }
 
     public void restarting() {
