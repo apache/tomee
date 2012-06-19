@@ -830,11 +830,31 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
 
     private static boolean undeploy(final StandardContext standardContext, final Container host) {
         final Container child = host.findChild(standardContext.getName());
+        final LazyStopWebappClassLoader lazyStopWebappClassLoader = lazyClassLoader(child);
+
+        if (lazyStopWebappClassLoader != null && lazyStopWebappClassLoader.isRestarting()) { // skip undeployment
+            return true;
+        }
+
         if (child != null) {
             host.removeChild(standardContext);
             return true;
         }
         return false;
+    }
+
+    private static LazyStopWebappClassLoader lazyClassLoader(final Container child) {
+        final Loader loader = child.getLoader();
+        if (loader == null || !(loader instanceof LazyStopLoader)) {
+            return null;
+        }
+
+        final ClassLoader old = ((LazyStopLoader) loader).getStopClassLoader();
+        if (old == null || !(old instanceof LazyStopWebappClassLoader)) {
+            return null;
+        }
+
+        return (LazyStopWebappClassLoader) old;
     }
 
     private JndiEncBuilder getJndiBuilder(final ClassLoader classLoader, final WebAppInfo webAppInfo, final Set<Injection> injections) throws OpenEJBException {
@@ -1099,15 +1119,12 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             }
         }
 
-        final Loader loader = standardContext.getLoader();
-        if (loader != null && loader instanceof LazyStopLoader) {
-            final ClassLoader old = ((LazyStopLoader) loader).getStopClassLoader();
-            if (old != null && old instanceof LazyStopWebappClassLoader) {
-                try {
-                    ((LazyStopWebappClassLoader) old).internalStop();
-                } catch (LifecycleException e) {
-                    logger.error("error stopping classloader of webapp " + standardContext.getName(), e);
-                }
+        final LazyStopWebappClassLoader old = lazyClassLoader(standardContext);
+        if (old != null) {
+            try {
+                old.internalStop();
+            } catch (LifecycleException e) {
+                logger.error("error stopping classloader of webapp " + standardContext.getName(), e);
             }
         }
         removeContextInfo(standardContext);

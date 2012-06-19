@@ -39,4 +39,8 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
     public void restarted() {
         restarting = false;
     }
+
+    public boolean isRestarting() {
+        return restarting;
+    }
 }
