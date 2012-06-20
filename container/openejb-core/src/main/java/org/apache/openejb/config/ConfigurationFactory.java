@@ -19,8 +19,6 @@ package org.apache.openejb.config;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -35,8 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.ejb.embeddable.EJBContainer;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.Vendor;
@@ -74,13 +70,13 @@ import org.apache.openejb.config.sys.AdditionalDeployments;
 import org.apache.openejb.config.sys.ConnectionManager;
 import org.apache.openejb.config.sys.Container;
 import org.apache.openejb.config.sys.Deployments;
-import org.apache.openejb.config.sys.InitHooks;
 import org.apache.openejb.config.sys.JaxbOpenejb;
 import org.apache.openejb.config.sys.JndiProvider;
 import org.apache.openejb.config.sys.Openejb;
 import org.apache.openejb.config.sys.ProxyFactory;
 import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.config.sys.SecurityService;
+import org.apache.openejb.config.sys.ServerObservers;
 import org.apache.openejb.config.sys.ServiceProvider;
 import org.apache.openejb.config.sys.TransactionManager;
 import org.apache.openejb.jee.Application;
@@ -96,6 +92,8 @@ import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.observer.event.ConfigurationReadEvent;
+import org.apache.openejb.observer.ObserverManager;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
@@ -391,7 +389,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         loadPropertiesDeclaredConfiguration(openejb);
 
-        initHook();
+        initObservers();
 
         sys = new OpenEjbConfiguration();
         sys.containerSystem = new ContainerSystemInfo();
@@ -499,26 +497,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         return finished;
     }
 
-    @Override
-    public void destroy() {
-        for (Object o : instantiatedHooks) {
-            if (o instanceof Runnable) {
-                continue;
-            }
-
-            for (Method mtd : o.getClass().getMethods()) {
-                if (mtd.getAnnotation(PreDestroy.class) != null) {
-                    try {
-                        mtd.invoke(o);
-                    } catch (Exception e) {
-                        logger.error("can't call method " + mtd.toGenericString() + ": " + e.getMessage());
-                    }
-                }
-            }
-        }
-    }
-
-    private void initHook() {
+    private void initObservers() {
         if (openejb == null) {
             return;
         }
@@ -528,7 +507,13 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             return;
         }
 
-        for (InitHooks hook : openejb.getHooks()) {
+        ObserverManager mgr = SystemInstance.get().getComponent(ObserverManager.class);
+        if (mgr == null) {
+            mgr = new ObserverManager();
+            SystemInstance.get().setComponent(ObserverManager.class, mgr);
+        }
+
+        for (ServerObservers hook : openejb.getServerObservers()) {
             String name = hook.getName();
             if (KNOWN_HOOKS.containsKey(name)) { // aliases
                 name = KNOWN_HOOKS.get(name);
@@ -538,25 +523,13 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 final Class<?> clazz = loader.loadClass(name);
                 final Object instance = clazz.newInstance();
 
-                instantiatedHooks.add(instance);
-
-                if (instance instanceof Runnable) {
-                    ((Runnable) instance).run();
-                } else {
-                    for (Method mtd : instance.getClass().getMethods()) {
-                        if (!Object.class.equals(mtd.getDeclaringClass()) && mtd.getAnnotation(PostConstruct.class) != null) {
-                            try {
-                                mtd.invoke(instance);
-                            } catch (Exception e) {
-                                logger.error("can't call method " + mtd.toGenericString() + ": " + e.getMessage());
-                            }
-                        }
-                    }
-                }
+                mgr.addObserver(instance);
             } catch (Exception e) {
                 logger.error("can't instantiate hook '" + hook.getName() + "'", e);
             }
         }
+
+        mgr.fireEvent(new ConfigurationReadEvent());
     }
 
     private List<String> getDeclaredApps() {
@@ -709,8 +682,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                     }
                     deployments.setClasspath(new URLClassLoader(urls.toArray(new URL[urls.size()])));
                 }
-            } else if (object instanceof InitHooks) {
-                final InitHooks hook = (InitHooks) object;
+            } else if (object instanceof ServerObservers) {
+                final ServerObservers hook = (ServerObservers) object;
                 hook.setName(map.remove("name"));
             }
 
@@ -1415,5 +1388,4 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             return null;
         }
     }
-
 }

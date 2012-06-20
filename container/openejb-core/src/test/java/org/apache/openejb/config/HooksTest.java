@@ -1,10 +1,13 @@
 package org.apache.openejb.config;
 
 import java.util.Properties;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.observer.ObserverManager;
+import org.apache.openejb.observer.Observes;
+import org.apache.openejb.observer.event.ConfigurationReadEvent;
+import org.apache.openejb.observer.event.DestroyingEvent;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -16,8 +19,7 @@ public class HooksTest {
     @BeforeClass
     public static void init() {
         SystemInstance.get().getProperties().putAll(new Properties() {{
-            setProperty("run", "new://InitHooks?name=" + HookRun.class.getName());
-            setProperty("lifecycle", "new://InitHooks?name=" + HookLifecycle.class.getName());
+            setProperty("lifecycle", "new://ServerObservers?name=" + HookLifecycle.class.getName());
         }});
     }
 
@@ -29,34 +31,22 @@ public class HooksTest {
     @Test
     public void check() throws OpenEJBException {
         final ConfigurationFactory cf = new ConfigurationFactory();
-        cf.getOpenEjbConfiguration();
-        assertTrue(HookRun.ok);
+        cf.getOpenEjbConfiguration(); // load observers
         assertTrue(HookLifecycle.start);
         assertFalse(HookLifecycle.stop);
-        cf.destroy();
+        SystemInstance.get().getComponent(ObserverManager.class).fireEvent(new DestroyingEvent());
         assertTrue(HookLifecycle.stop);
-    }
-
-    public static class HookRun implements Runnable {
-        private static boolean ok = false;
-
-        @Override
-        public void run() {
-            ok = true;
-        }
     }
 
     public static class HookLifecycle {
         private static boolean start = false;
         private static boolean stop = false;
 
-        @PostConstruct
-        public void start() {
+        public void start(@Observes ConfigurationReadEvent notUsed) {
             start = true;
         }
 
-        @PreDestroy
-        public void stop() {
+        public void stop(@Observes DestroyingEvent notUsed) {
             stop = true;
         }
     }

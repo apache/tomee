@@ -17,14 +17,14 @@
 package org.apache.openejb.util;
 
 import java.net.MalformedURLException;
-import java.util.HashMap;
-import java.util.Map;
+import java.net.URL;
+import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.observer.Observes;
+import org.apache.openejb.observer.event.ConfigurationReadEvent;
 
-import java.net.URL;
-
-public class UpdateChecker implements Runnable {
+public class UpdateChecker {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_STARTUP, UpdateChecker.class);
 
     private static final String SKIP_CHECK = "openejb.version.check";
@@ -38,8 +38,7 @@ public class UpdateChecker implements Runnable {
     private static final String UNDEFINED = "undefined";
     private static String LATEST = "undefined";
 
-    @Override
-    public void run() {
+    public void check(@Observes ConfigurationReadEvent event) {
         if (isSkipped()) {
             return;
         }
@@ -163,11 +162,5 @@ public class UpdateChecker implements Runnable {
 
     public static boolean isSkipped() {
         return System.getProperty(SKIP_CHECK) == null;
-    }
-
-    public static void main(String[] args) {
-        UpdateChecker checker = new UpdateChecker();
-        checker.run();
-        System.out.println(UpdateChecker.message());
     }
 }

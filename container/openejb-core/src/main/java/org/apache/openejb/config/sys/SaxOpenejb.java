@@ -22,7 +22,6 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.config.Service;
 import org.apache.openejb.loader.SystemInstance;
 import org.xml.sax.Attributes;
@@ -127,7 +126,7 @@ class SaxOpenejb extends DefaultHandler {
             else if (localName.equals("Connector")) push(new ResourceElement());
             else if (localName.equals("Deployments")) push(new DeploymentsElement());
             else if (localName.equals("Import")) push(new ImportElement());
-            else if (localName.equals("InitHooks")) push(new InitHooksElement());
+            else if (localName.equals("ServerObservers")) push(new ServerObserversElement());
             else throw new IllegalStateException("Unsupported Element: " + localName);
             get().startElement(uri, localName, qName, attributes);
         }
@@ -290,17 +289,17 @@ class SaxOpenejb extends DefaultHandler {
         }
     }
 
-    private class InitHooksElement extends DefaultHandler {
-        private final InitHooks initHooks = new InitHooks();
+    private class ServerObserversElement extends DefaultHandler {
+        private final ServerObservers observer = new ServerObservers();
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-            initHooks.setName(attributes.getValue("name"));
+            observer.setName(attributes.getValue("name"));
         }
 
         @Override
         public void endElement(String uri, String localName, String qName) throws SAXException {
-            openejb.getHooks().add(initHooks);
+            openejb.getServerObservers().add(observer);
         }
     }
 

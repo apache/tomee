@@ -25,8 +25,8 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
-@XmlRootElement(name = "InitHooks")
-public class InitHooks {
+@XmlRootElement(name = "ServerObservers")
+public class ServerObservers {
 
     @XmlAttribute
     protected String name;
