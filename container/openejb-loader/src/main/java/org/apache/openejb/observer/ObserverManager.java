@@ -16,6 +16,10 @@
  */
 package org.apache.openejb.observer;
 
+import org.apache.openejb.observer.event.ObserverAdded;
+import org.apache.openejb.observer.event.ObserverFailed;
+import org.apache.openejb.observer.event.ObserverRemoved;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -24,22 +28,29 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
 
 public class ObserverManager {
-    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_SERVER, ObserverManager.class.getName());
 
     private final List<Observer> observers = new ArrayList<Observer>();
 
     public boolean addObserver(Object observer) {
         if (observer == null) throw new IllegalArgumentException("observer cannot be null");
-        return observers.add(new Observer(observer));
+
+        final boolean added = observers.add(new Observer(observer));
+
+        // Observers can observe they have been added and are active
+        fireEvent(new ObserverAdded(observer));
+
+        return added;
     }
 
-    public boolean removeObserver(Object listener) {
-        if (listener == null) throw new IllegalArgumentException("listener cannot be null");
-        return observers.remove(new Observer(listener));
+    public boolean removeObserver(Object observer) {
+        if (observer == null) throw new IllegalArgumentException("observer cannot be null");
+
+        // Observers can observe they are to be removed
+        fireEvent(new ObserverRemoved(observer));
+
+        return observers.remove(new Observer(observer));
     }
 
     public void fireEvent(Object event) {
@@ -48,20 +59,12 @@ public class ObserverManager {
         for (Observer observer : observers) {
             try {
                 observer.invoke(event);
-            } catch (InvocationTargetException e) {
-                final Throwable t = e.getTargetException() == null ? e : e.getTargetException();
-
-                if (e.getTargetException() != null) {
-                    logger.warning("Observer method invocation failed", t);
+            } catch (Throwable t) {
+                if (!(event instanceof ObserverFailed)) {
+                    fireEvent(new ObserverFailed(observer, event, t));
                 }
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
             }
         }
-    }
-
-    public void clean() {
-        observers.clear();
     }
 
     /**

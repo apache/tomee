@@ -16,6 +16,10 @@
  */
 package org.apache.openejb.loader;
 
+import org.apache.openejb.loader.event.ComponentAdded;
+import org.apache.openejb.loader.event.ComponentRemoved;
+import org.apache.openejb.observer.ObserverManager;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -54,6 +58,7 @@ public class SystemInstance {
     private final ClassLoader classLoader;
     private final HashMap<Class, Object> components;
     private final ClassPath classPath;
+    private final ObserverManager observerManager = new ObserverManager();
 
     // FIXME: Why is Exception thrown at all? It's almost impossible that it'll happen.
     private SystemInstance(final Properties properties) throws Exception {
@@ -63,7 +68,6 @@ public class SystemInstance {
         this.internalProperties.putAll(properties);
 
         this.options = new Options(internalProperties, new Options(System.getProperties()));
-
         this.home = new FileUtils("openejb.home", "user.dir", this.internalProperties);
         this.base = new FileUtils("openejb.base", "openejb.home", this.internalProperties);
         this.classPath = ClassPathFactory.createClassPath(this.internalProperties.getProperty("openejb.loader", "context"));
@@ -72,6 +76,20 @@ public class SystemInstance {
         this.internalProperties.setProperty("openejb.home", home.getDirectory().getCanonicalPath());
         this.internalProperties.setProperty("openejb.base", base.getDirectory().getCanonicalPath());
         System.setProperty("derby.system.home", base.getDirectory().getCanonicalPath());
+
+
+    }
+
+    public void fireEvent(Object event) {
+        observerManager.fireEvent(event);
+    }
+
+    public boolean addObserver(Object observer) {
+        return observerManager.addObserver(observer);
+    }
+
+    public boolean removeObserver(Object observer) {
+        return observerManager.removeObserver(observer);
     }
 
     public long getStartTime() {
@@ -143,14 +161,30 @@ public class SystemInstance {
     }
 
     public <T> T removeComponent(final Class<T> type) {
-        return (T) components.remove(type);
+        final T component = (T) components.remove(type);
+
+        if (component != null) {
+            fireEvent(new ComponentRemoved(type, component));
+        }
+
+        return component;
     }
 
     /**
      * @param type the class type of the component required
      */
     public <T> T setComponent(final Class<T> type, final T value) {
-        return (T) components.put(type, value);
+        final T removed = (T) components.put(type, value);
+
+        if (removed !=null) {
+            fireEvent(new ComponentRemoved(type, value));
+        }
+
+        if (value != null) {
+            fireEvent(new ComponentAdded(type, value));
+        }
+
+        return removed;
     }
 
     private static SystemInstance system;

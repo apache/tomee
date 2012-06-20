@@ -85,6 +85,8 @@ import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.UndeployException;
+import org.apache.openejb.assembler.classic.event.AssemblerCreated;
+import org.apache.openejb.assembler.classic.event.AssemblerDestroyed;
 import org.apache.openejb.cdi.CdiAppContextsService;
 import org.apache.openejb.cdi.CdiBuilder;
 import org.apache.openejb.cdi.CdiResourceInjectionService;
@@ -120,7 +122,6 @@ import org.apache.openejb.assembler.monitoring.JMXContainer;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.observer.ObserverManager;
-import org.apache.openejb.observer.event.DestroyingEvent;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
 import org.apache.openejb.resource.GeronimoConnectionManagerFactory;
@@ -257,6 +258,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         system.setComponent(EjbResolver.class, new EjbResolver(null, EjbResolver.Scope.GLOBAL));
+
+        system.fireEvent(new AssemblerCreated());
     }
 
     private void setConfiguration(OpenEjbConfiguration config) {
@@ -1089,17 +1092,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             destroyResource(binding.getName(), binding.getClassName(), object);
         }
 
-        final ObserverManager mgr = SystemInstance.get().getComponent(ObserverManager.class);
-        if (mgr != null) {
-            mgr.fireEvent(new DestroyingEvent());
-            mgr.clean();
-        }
-
-        SystemInstance.get().removeComponent(ObserverManager.class);
         SystemInstance.get().removeComponent(OpenEjbConfiguration.class);
         SystemInstance.get().removeComponent(JtaEntityManagerRegistry.class);
         SystemInstance.get().removeComponent(TransactionSynchronizationRegistry.class);
         SystemInstance.get().removeComponent(EjbResolver.class);
+        SystemInstance.get().fireEvent(new AssemblerDestroyed());
         SystemInstance.reset();
     }
 

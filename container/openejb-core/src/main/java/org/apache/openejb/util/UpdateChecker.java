@@ -18,11 +18,11 @@ package org.apache.openejb.util;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import org.apache.openejb.config.ConfigurationFactory;
+
+import org.apache.openejb.assembler.classic.event.AssemblerCreated;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.observer.Observes;
-import org.apache.openejb.observer.event.ConfigurationReadEvent;
 
 public class UpdateChecker {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_STARTUP, UpdateChecker.class);
@@ -38,7 +38,7 @@ public class UpdateChecker {
     private static final String UNDEFINED = "undefined";
     private static String LATEST = "undefined";
 
-    public void check(@Observes ConfigurationReadEvent event) {
+    public void check(@Observes AssemblerCreated event) {
         if (isSkipped()) {
             return;
         }
