@@ -19,6 +19,8 @@ package org.apache.openejb.config;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -33,6 +35,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.ejb.embeddable.EJBContainer;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.Vendor;
@@ -120,6 +124,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     }};
 
     private static final String IGNORE_DEFAULT_VALUES_PROP = "IgnoreDefaultValues";
+
+    private final List<Object> instantiatedHooks = new ArrayList<Object>();
 
     private String configLocation;
     private OpenEjbConfiguration sys;
@@ -493,6 +499,25 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         return finished;
     }
 
+    @Override
+    public void destroy() {
+        for (Object o : instantiatedHooks) {
+            if (o instanceof Runnable) {
+                continue;
+            }
+
+            for (Method mtd : o.getClass().getMethods()) {
+                if (mtd.getAnnotation(PreDestroy.class) != null) {
+                    try {
+                        mtd.invoke(o);
+                    } catch (Exception e) {
+                        logger.error("can't call method " + mtd.toGenericString() + ": " + e.getMessage());
+                    }
+                }
+            }
+        }
+    }
+
     private void initHook() {
         if (openejb == null) {
             return;
@@ -511,10 +536,25 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
             try {
                 final Class<?> clazz = loader.loadClass(name);
-                final Runnable instance = (Runnable) clazz.newInstance();
-                instance.run();
+                final Object instance = clazz.newInstance();
+
+                instantiatedHooks.add(instance);
+
+                if (instance instanceof Runnable) {
+                    ((Runnable) instance).run();
+                } else {
+                    for (Method mtd : instance.getClass().getMethods()) {
+                        if (mtd.getAnnotation(PostConstruct.class) != null) {
+                            try {
+                                mtd.invoke(instance);
+                            } catch (Exception e) {
+                                logger.error("can't call method " + mtd.toGenericString() + ": " + e.getMessage());
+                            }
+                        }
+                    }
+                }
             } catch (Exception e) {
-                logger.error("can't run hook '" + hook.getName() + "'", e);
+                logger.error("can't instantiate hook '" + hook.getName() + "'", e);
             }
         }
     }
