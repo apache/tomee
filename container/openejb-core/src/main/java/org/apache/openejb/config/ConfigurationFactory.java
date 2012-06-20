@@ -70,6 +70,7 @@ import org.apache.openejb.config.sys.AdditionalDeployments;
 import org.apache.openejb.config.sys.ConnectionManager;
 import org.apache.openejb.config.sys.Container;
 import org.apache.openejb.config.sys.Deployments;
+import org.apache.openejb.config.sys.InitHooks;
 import org.apache.openejb.config.sys.JaxbOpenejb;
 import org.apache.openejb.config.sys.JndiProvider;
 import org.apache.openejb.config.sys.Openejb;
@@ -113,6 +114,10 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     protected static final String VALIDATION_SKIP_PROPERTY = "openejb.validation.skip";
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, ConfigurationFactory.class);
     private static final Messages messages = new Messages(ConfigurationFactory.class);
+
+    private static final Map<String, String> KNOWN_HOOKS = new HashMap<String, String>() {{
+        put("update-checker", UpdateChecker.class.getName());
+    }};
 
     private static final String IGNORE_DEFAULT_VALUES_PROP = "IgnoreDefaultValues";
 
@@ -372,12 +377,6 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             return sys;
         }
 
-        Thread updateCheckerThreader = null;
-        if (!offline && !UpdateChecker.isSkipped()) {
-            updateCheckerThreader = new Thread(new UpdateChecker());
-            updateCheckerThreader.start();
-        }
-
         if (configLocation != null) {
             openejb = JaxbOpenejb.readConfig(configLocation);
         } else {
@@ -385,6 +384,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
 
         loadPropertiesDeclaredConfiguration(openejb);
+
+        initHook();
 
         sys = new OpenEjbConfiguration();
         sys.containerSystem = new ContainerSystemInfo();
@@ -486,21 +487,36 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             }
         }
 
-        if (!offline && !UpdateChecker.isSkipped()) {
-            try {
-                updateCheckerThreader.join(10000); // 10s is already a lot
-            } catch (InterruptedException ignored) {
-                // no-op
-            }
-            if (!UpdateChecker.usesLatest()) {
-                logger.warning(UpdateChecker.message());
-            }
-        }
-
         final OpenEjbConfiguration finished = sys;
         sys = null;
         openejb = null;
         return finished;
+    }
+
+    private void initHook() {
+        if (openejb == null) {
+            return;
+        }
+
+        final ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        if (loader == null) {
+            return;
+        }
+
+        for (InitHooks hook : openejb.getHooks()) {
+            String name = hook.getName();
+            if (KNOWN_HOOKS.containsKey(name)) { // aliases
+                name = KNOWN_HOOKS.get(name);
+            }
+
+            try {
+                final Class<?> clazz = loader.loadClass(name);
+                final Runnable instance = (Runnable) clazz.newInstance();
+                instance.run();
+            } catch (Exception e) {
+                logger.error("can't run hook '" + hook.getName() + "'", e);
+            }
+        }
     }
 
     private List<String> getDeclaredApps() {
@@ -653,6 +669,9 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                     }
                     deployments.setClasspath(new URLClassLoader(urls.toArray(new URL[urls.size()])));
                 }
+            } else if (object instanceof InitHooks) {
+                final InitHooks hook = (InitHooks) object;
+                hook.setName(map.remove("name"));
             }
 
             return object;

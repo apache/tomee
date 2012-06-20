@@ -73,6 +73,8 @@ public class Openejb {
     protected List<Resource> resource;
     @XmlElement(name = "Deployments")
     protected List<Deployments> deployments;
+    @XmlElement(name = "InitHooks")
+    protected List<InitHooks> hooks;
 
     /**
      * Gets the value of the container property.
@@ -303,6 +305,13 @@ public class Openejb {
         return this.deployments;
     }
 
+    public List<InitHooks> getHooks() {
+        if (hooks == null) {
+            hooks = new ArrayList<InitHooks>();
+        }
+        return this.hooks;
+    }
+
     public void add(Object service) {
         if (service instanceof Container) {
             getContainer().add((Container) service);
@@ -322,6 +331,8 @@ public class Openejb {
             setSecurityService((SecurityService) service);
         } else if (service instanceof Deployments) {
             getDeployments().add((Deployments) service);
+        } else if (service instanceof InitHooks) {
+            getHooks().add((InitHooks) service);
         }
     }
 }

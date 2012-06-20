@@ -127,6 +127,7 @@ class SaxOpenejb extends DefaultHandler {
             else if (localName.equals("Connector")) push(new ResourceElement());
             else if (localName.equals("Deployments")) push(new DeploymentsElement());
             else if (localName.equals("Import")) push(new ImportElement());
+            else if (localName.equals("InitHooks")) push(new InitHooksElement());
             else throw new IllegalStateException("Unsupported Element: " + localName);
             get().startElement(uri, localName, qName, attributes);
         }
@@ -286,6 +287,20 @@ class SaxOpenejb extends DefaultHandler {
         public void endElement(String uri, String localName, String qName) {
             openejb.getResource().add(service);
             super.endElement(uri, localName, qName);
+        }
+    }
+
+    private class InitHooksElement extends DefaultHandler {
+        private final InitHooks initHooks = new InitHooks();
+
+        @Override
+        public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+            initHooks.setName(attributes.getValue("name"));
+        }
+
+        @Override
+        public void endElement(String uri, String localName, String qName) throws SAXException {
+            openejb.getHooks().add(initHooks);
         }
     }
 
