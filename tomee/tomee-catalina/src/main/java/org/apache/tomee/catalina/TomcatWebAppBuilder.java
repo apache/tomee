@@ -666,6 +666,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             if (appModule != null) {
                 try {
                     contextInfo = addContextInfo(standardContext.getHostname(), standardContext);
+                    contextInfo.standardContext = standardContext; // ensure to do it before an exception can be thrown
+
                     final AppInfo appInfo = configurationFactory.configureApplication(appModule);
                     contextInfo.appInfo = appInfo;
 
@@ -684,16 +686,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                     return;
                 }
             }
+        } else {
+            contextInfo.standardContext = standardContext;
         }
 
-        if (appContext == null) {
-            String contextRoot = standardContext.getName();
-            if (contextRoot.startsWith("/")) {
-                contextRoot = contextRoot.replaceAll("^/+", "");
-            }
-        }
-
-        contextInfo.standardContext = standardContext;
 
         WebAppInfo webAppInfo = null;
         // appInfo is null when deployment fails
@@ -844,6 +840,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     }
 
     private static LazyStopWebappClassLoader lazyClassLoader(final Container child) {
+        if (child == null) {
+            return null;
+        }
+
         final Loader loader = child.getLoader();
         if (loader == null || !(loader instanceof LazyStopLoader)) {
             return null;
