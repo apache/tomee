@@ -51,7 +51,7 @@ import java.util.List;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {"container", "jndiProvider", "securityService", "transactionManager", "connectionManager", "proxyFactory", "connector", "resource", "deployments"})
+@XmlType(name = "", propOrder = {"container", "jndiProvider", "securityService", "transactionManager", "connectionManager", "proxyFactory", "connector", "resource", "deployments", "hooks"})
 @XmlRootElement(name = "openejb")
 public class Openejb {
 
