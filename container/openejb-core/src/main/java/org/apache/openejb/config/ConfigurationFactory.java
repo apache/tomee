@@ -544,7 +544,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                     ((Runnable) instance).run();
                 } else {
                     for (Method mtd : instance.getClass().getMethods()) {
-                        if (mtd.getAnnotation(PostConstruct.class) != null) {
+                        if (!Object.class.equals(mtd.getDeclaringClass()) && mtd.getAnnotation(PostConstruct.class) != null) {
                             try {
                                 mtd.invoke(instance);
                             } catch (Exception e) {
