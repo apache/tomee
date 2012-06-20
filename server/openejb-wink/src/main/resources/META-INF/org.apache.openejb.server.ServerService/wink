@@ -1,1 +1,0 @@
-server = org.apache.openejb.server.wink.WinkService
