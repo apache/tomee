@@ -1087,6 +1087,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             destroyResource(binding.getName(), binding.getClassName(), object);
         }
 
+        configFactory.destroy();
+
         SystemInstance.get().removeComponent(OpenEjbConfiguration.class);
         SystemInstance.get().removeComponent(JtaEntityManagerRegistry.class);
         SystemInstance.get().removeComponent(TransactionSynchronizationRegistry.class);
