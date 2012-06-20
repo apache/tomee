@@ -92,15 +92,12 @@ import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.observer.event.ConfigurationReadEvent;
-import org.apache.openejb.observer.ObserverManager;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.SuperProperties;
 import org.apache.openejb.util.URISupport;
 import org.apache.openejb.util.URLs;
-import org.apache.openejb.util.UpdateChecker;
 import org.apache.openejb.util.proxy.QueryProxy;
 import org.apache.xbean.finder.MetaAnnotatedClass;
 
@@ -117,13 +114,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, ConfigurationFactory.class);
     private static final Messages messages = new Messages(ConfigurationFactory.class);
 
-    private static final Map<String, String> KNOWN_HOOKS = new HashMap<String, String>() {{
-        put("update-checker", UpdateChecker.class.getName());
-    }};
-
     private static final String IGNORE_DEFAULT_VALUES_PROP = "IgnoreDefaultValues";
-
-    private final List<Object> instantiatedHooks = new ArrayList<Object>();
 
     private String configLocation;
     private OpenEjbConfiguration sys;
@@ -389,8 +380,6 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         loadPropertiesDeclaredConfiguration(openejb);
 
-        initObservers();
-
         sys = new OpenEjbConfiguration();
         sys.containerSystem = new ContainerSystemInfo();
         sys.facilities = new FacilitiesInfo();
@@ -495,41 +484,6 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         sys = null;
         openejb = null;
         return finished;
-    }
-
-    private void initObservers() {
-        if (openejb == null) {
-            return;
-        }
-
-        final ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        if (loader == null) {
-            return;
-        }
-
-        ObserverManager mgr = SystemInstance.get().getComponent(ObserverManager.class);
-        if (mgr == null) {
-            mgr = new ObserverManager();
-            SystemInstance.get().setComponent(ObserverManager.class, mgr);
-        }
-
-        for (ServerObservers hook : openejb.getServerObservers()) {
-            String name = hook.getName();
-            if (KNOWN_HOOKS.containsKey(name)) { // aliases
-                name = KNOWN_HOOKS.get(name);
-            }
-
-            try {
-                final Class<?> clazz = loader.loadClass(name);
-                final Object instance = clazz.newInstance();
-
-                mgr.addObserver(instance);
-            } catch (Exception e) {
-                logger.error("can't instantiate hook '" + hook.getName() + "'", e);
-            }
-        }
-
-        mgr.fireEvent(new ConfigurationReadEvent());
     }
 
     private List<String> getDeclaredApps() {

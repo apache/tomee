@@ -16,17 +16,17 @@
  */
 package org.apache.openejb.config;
 
-import java.util.Properties;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.event.AssemblerCreated;
+import org.apache.openejb.assembler.classic.event.AssemblerDestroyed;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.observer.ObserverManager;
 import org.apache.openejb.observer.Observes;
-import org.apache.openejb.observer.event.ConfigurationReadEvent;
-import org.apache.openejb.observer.event.DestroyingEvent;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.util.Properties;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -46,11 +46,22 @@ public class HooksTest {
 
     @Test
     public void check() throws OpenEJBException {
-        final ConfigurationFactory cf = new ConfigurationFactory();
-        cf.getOpenEjbConfiguration(); // load observers
+
+        SystemInstance.get().addObserver(new HookLifecycle());
+
+        assertFalse(HookLifecycle.start);
+        assertFalse(HookLifecycle.stop);
+
+        final Assembler assembler = new Assembler();
+
+
         assertTrue(HookLifecycle.start);
         assertFalse(HookLifecycle.stop);
-        SystemInstance.get().getComponent(ObserverManager.class).fireEvent(new DestroyingEvent());
+
+        assembler.destroy();
+
+
+        assertTrue(HookLifecycle.start);
         assertTrue(HookLifecycle.stop);
     }
 
@@ -58,11 +69,11 @@ public class HooksTest {
         private static boolean start = false;
         private static boolean stop = false;
 
-        public void start(@Observes ConfigurationReadEvent notUsed) {
+        public void start(@Observes AssemblerCreated notUsed) {
             start = true;
         }
 
-        public void stop(@Observes DestroyingEvent notUsed) {
+        public void stop(@Observes AssemblerDestroyed notUsed) {
             stop = true;
         }
     }
