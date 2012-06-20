@@ -16,6 +16,9 @@
  */
 package org.apache.openejb.util;
 
+import java.net.MalformedURLException;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 
@@ -23,8 +26,12 @@ import java.net.URL;
 
 public class UpdateChecker implements Runnable {
     private static final String SKIP_CHECK = "openejb.version.check";
-    private static final String REPO_URL = SystemInstance.get().getOptions().get("openejb.version.check.repo.url", "http://repo1.maven.org/maven2/org/apache/openejb/");
-    private static final String URL = SystemInstance.get().getOptions().get("openejb.version.check.url", REPO_URL + "openejb/maven-metadata.xml");
+    private static final String REPO_URL = SystemInstance.get().getOptions().get("openejb.version.check.repo.url", "http://repo1.maven.org/maven2/");
+    private static final String OPENEJB_GROUPID = "org/apache/openejb/";
+    private static final String METADATA = "/maven-metadata.xml";
+    private static String CHECKER_PROXY = SystemInstance.get().getOptions().get("openejb.version.check.proxy", (String) null);
+    private static final String AUTO = "auto";
+    private static final String URL = SystemInstance.get().getOptions().get("openejb.version.check.url", AUTO);
     private static final String TAG = "latest";
     private static final String UNDEFINED = "undefined";
     private static String LATEST = "undefined";
@@ -35,12 +42,76 @@ public class UpdateChecker implements Runnable {
             return;
         }
 
+        String originalProxyHost = null;
+        String originalProxyPort = null;
+        String originalProxyUser = null;
+        String originalProxyPwd = null;
+        String proxyProtocol = null;
+
+
+        if (CHECKER_PROXY != null) {
+            try {
+                final URL proxyUrl = new URL(CHECKER_PROXY);
+                proxyProtocol = proxyUrl.getProtocol();
+
+                originalProxyHost = System.getProperty(proxyProtocol + ".proxyHost");
+                originalProxyPort = System.getProperty(proxyProtocol + ".proxyPort");
+                originalProxyUser = System.getProperty(proxyProtocol + ".proxyUser");
+                originalProxyPwd = System.getProperty(proxyProtocol + ".proxyPassword");
+
+                System.setProperty(proxyProtocol + ".proxyHost", proxyUrl.getHost());
+                System.setProperty(proxyProtocol + ".proxyPort", Integer.toString(proxyUrl.getPort()));
+
+                final String userInfo = proxyUrl.getUserInfo();
+                if (userInfo != null) {
+                    int sep = userInfo.indexOf(":");
+                    if (sep >= 0) {
+                        System.setProperty(proxyProtocol + ".proxyUser", userInfo.substring(0, sep));
+                        System.setProperty(proxyProtocol + ".proxyPassword", userInfo.substring(sep + 1));
+                    } else {
+                        System.setProperty(proxyProtocol + ".proxyUser", userInfo);
+                    }
+                }
+            } catch (MalformedURLException e) {
+                CHECKER_PROXY = null;
+            }
+        }
+
+        String realUrl = URL;
+        if ("auto".equals(realUrl)) {
+            realUrl = REPO_URL + OPENEJB_GROUPID + artifact() + METADATA;
+        }
+
         try {
-            final URL url = new URL(URL);
+            final URL url = new URL(realUrl);
             final String metaData = IO.readFileAsString(url.toURI());
             LATEST = extractLatest(metaData);
         } catch (Exception e) {
             // ignored
+        } finally {
+            if (proxyProtocol != null) {
+                resetSystemProp(proxyProtocol + ".proxyHost", originalProxyHost);
+                resetSystemProp(proxyProtocol + ".proxyPort", originalProxyPort);
+                resetSystemProp(proxyProtocol + ".proxyUser", originalProxyUser);
+                resetSystemProp(proxyProtocol + ".proxyPassword", originalProxyPwd);
+            }
+        }
+    }
+
+    private static String artifact() {
+        try {
+            UpdateChecker.class.getClassLoader().loadClass("org.apache.tomee.catalina.TomcatWebAppBuilder");
+            return "apache-tomee";
+        } catch (ClassNotFoundException e) {
+            return "openejb";
+        }
+    }
+
+    private static void resetSystemProp(final String key, final String value) {
+        if (value == null) {
+            System.clearProperty(key);
+        } else {
+            System.setProperty(key, value);
         }
     }
 
