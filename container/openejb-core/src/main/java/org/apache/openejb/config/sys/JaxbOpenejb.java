@@ -121,8 +121,8 @@ public abstract class JaxbOpenejb {
             return (T) createServicesJar();
         } else if (type.equals("TransactionManager")) {
             return (T) createTransactionManager();
-        } else if (type.equals("InitHooks")) {
-            return (T) createInitHooks();
+        } else if (type.equals("ServerObservers")) {
+            return (T) createServerObservers();
         }
         throw new IllegalArgumentException("Unknown type " + type);
     }
@@ -380,8 +380,8 @@ public abstract class JaxbOpenejb {
         return new Deployments();
     }
 
-    public static InitHooks createInitHooks() {
-        return new InitHooks();
+    public static ServerObservers createServerObservers() {
+        return new ServerObservers();
     }
 
     public static JndiProvider createJndiProvider() {

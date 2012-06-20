@@ -26,8 +26,6 @@ public interface OpenEjbConfigurationFactory {
 
     public OpenEjbConfiguration getOpenEjbConfiguration() throws OpenEJBException;
 
-    void destroy();
-
     /*
      * Not used yet.
      * Will be used in the future to give the ability to load and reload container systems
