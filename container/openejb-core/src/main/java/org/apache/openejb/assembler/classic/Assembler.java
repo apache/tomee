@@ -87,6 +87,7 @@ import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.UndeployException;
 import org.apache.openejb.assembler.classic.event.AssemblerCreated;
 import org.apache.openejb.assembler.classic.event.AssemblerDestroyed;
+import org.apache.openejb.assembler.classic.event.ConfigurationLoaded;
 import org.apache.openejb.cdi.CdiAppContextsService;
 import org.apache.openejb.cdi.CdiBuilder;
 import org.apache.openejb.cdi.CdiResourceInjectionService;
@@ -121,7 +122,6 @@ import org.apache.openejb.monitoring.DynamicMBeanWrapper;
 import org.apache.openejb.assembler.monitoring.JMXContainer;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
-import org.apache.openejb.observer.ObserverManager;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
 import org.apache.openejb.resource.GeronimoConnectionManagerFactory;
@@ -136,6 +136,7 @@ import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.OpenEJBErrorHandler;
 import org.apache.openejb.util.References;
 import org.apache.openejb.util.SafeToolkit;
+import org.apache.openejb.util.UpdateChecker;
 import org.apache.openejb.util.proxy.ProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
 import org.apache.webbeans.config.WebBeansContext;
@@ -161,6 +162,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, Assembler.class);
 
     private static final String GLOBAL_UNIQUE_ID = "global";
+
+    private static final Map<String, String> OBSERVERS_ALIASES = new HashMap<String, String>() {{
+        put("update-checker", UpdateChecker.class.getName());
+    }};
 
     Messages messages = new Messages(Assembler.class.getPackage().getName());
 
@@ -259,6 +264,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         system.setComponent(EjbResolver.class, new EjbResolver(null, EjbResolver.Scope.GLOBAL));
 
+        loadAvailableObservers();
+
         system.fireEvent(new AssemblerCreated());
     }
 
@@ -329,6 +336,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         setContext(new HashMap<String, Object>());
         try {
             OpenEjbConfiguration config = getOpenEjbConfiguration();
+            addObserversFromConfig(config);
+            SystemInstance.get().fireEvent(new ConfigurationLoaded(config));
+
             buildContainerSystem(config);
         } catch (OpenEJBException ae) {
             /* OpenEJBExceptions contain useful information and are debbugable.
@@ -345,6 +355,46 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             throw new OpenEJBException(e);
         } finally {
             context.set(null);
+        }
+    }
+
+    private void loadAvailableObservers() {
+        final ResourceFinder finder = new ResourceFinder("META-INF");
+        try {
+            final Map<String, String> observers = finder.mapAvailableStrings("org.apache.openejb.observer");
+            final ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            for (Entry<String, String> entry : observers.entrySet()) {
+                final String alias = entry.getKey();
+                if (!SystemInstance.get().hasObserver(alias)) {
+                    addObserver(cl, alias, entry.getValue());
+                }
+            }
+        } catch (IOException e) {
+            logger.error("can't scan for observer in META-INF/", e);
+        }
+    }
+
+    private void addObserver(final ClassLoader cl, final String alias, final String name) {
+        String observer = name;
+        if (OBSERVERS_ALIASES.containsKey(observer)) {
+            observer = OBSERVERS_ALIASES.get(observer);
+        }
+
+        final Object instance;
+        try {
+            instance = cl.loadClass(observer).newInstance();
+        } catch (Exception e) {
+            logger.error("can't add observer " + observer);
+            return;
+        }
+
+        SystemInstance.get().addObserver(alias, instance);
+    }
+
+    private void addObserversFromConfig(final OpenEjbConfiguration config) {
+        final ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        for (String rawObserver : config.facilities.serverObservers) {
+            addObserver(cl, rawObserver, rawObserver); // no real alias when found here === "forced by user"
         }
     }
 
@@ -1016,7 +1066,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         // Sort all the singletons to the back of the list.  We want to make sure
         // all non-singletons are created first so that if a singleton refers to them
         // they are available.
-        Collections.sort(deployments, new Comparator<BeanContext>(){
+        Collections.sort(deployments, new Comparator<BeanContext>() {
             public int compare(BeanContext a, BeanContext b) {
                 int aa = (a.getComponentType() == BeanType.SINGLETON) ? 1 : 0;
                 int bb = (b.getComponentType() == BeanType.SINGLETON) ? 1 : 0;

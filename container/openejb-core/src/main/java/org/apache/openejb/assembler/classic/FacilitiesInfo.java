@@ -30,4 +30,5 @@ public class FacilitiesInfo extends InfoObject {
 
     // Don't add anything here unless it's overridable using the -DserviceId.property=value convention
     public final List<ServiceInfo> services = new ArrayList<ServiceInfo>();
+    public final List<String> serverObservers = new ArrayList<String>();
 }
