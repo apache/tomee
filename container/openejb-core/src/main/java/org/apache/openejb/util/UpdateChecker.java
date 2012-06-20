@@ -20,6 +20,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.openejb.assembler.classic.event.AssemblerCreated;
+import org.apache.openejb.assembler.classic.event.ConfigurationLoaded;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.observer.Observes;
@@ -27,7 +28,6 @@ import org.apache.openejb.observer.Observes;
 public class UpdateChecker {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_STARTUP, UpdateChecker.class);
 
-    private static final String SKIP_CHECK = "openejb.version.check";
     private static final String REPO_URL = SystemInstance.get().getOptions().get("openejb.version.check.repo.url", "http://repo1.maven.org/maven2/");
     private static final String OPENEJB_GROUPID = "org/apache/openejb/";
     private static final String METADATA = "/maven-metadata.xml";
@@ -38,11 +38,7 @@ public class UpdateChecker {
     private static final String UNDEFINED = "undefined";
     private static String LATEST = "undefined";
 
-    public void check(@Observes AssemblerCreated event) {
-        if (isSkipped()) {
-            return;
-        }
-
+    public void check(@Observes ConfigurationLoaded event) {
         String originalProxyHost = null;
         String originalProxyPort = null;
         String originalProxyUser = null;
@@ -143,10 +139,6 @@ public class UpdateChecker {
     }
 
     public static String message() {
-        if (isSkipped()) {
-            return "version checking is skipped";
-        }
-
         if (UNDEFINED.equals(LATEST)) {
             return "can't determine the latest version";
         }
@@ -158,9 +150,5 @@ public class UpdateChecker {
         return new StringBuilder("you are using the version ").append(version)
                 .append(", our latest stable version ").append(LATEST)
                 .append(" is available on ").append(REPO_URL).toString();
-    }
-
-    public static boolean isSkipped() {
-        return System.getProperty(SKIP_CHECK) == null;
     }
 }

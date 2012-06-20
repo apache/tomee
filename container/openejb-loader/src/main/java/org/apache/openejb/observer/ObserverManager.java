@@ -31,32 +31,32 @@ import java.util.Map;
 
 public class ObserverManager {
 
-    private final List<Observer> observers = new ArrayList<Observer>();
+    private final Map<String, Observer> observers = new HashMap<String, Observer>();
 
-    public boolean addObserver(Object observer) {
+    public Observer addObserver(String alias, Object observer) {
         if (observer == null) throw new IllegalArgumentException("observer cannot be null");
 
-        final boolean added = observers.add(new Observer(observer));
+        final Observer put = observers.put(alias, new Observer(observer));
 
         // Observers can observe they have been added and are active
         fireEvent(new ObserverAdded(observer));
 
-        return added;
+        return put;
     }
 
-    public boolean removeObserver(Object observer) {
+    public Observer removeObserver(Object observer) {
         if (observer == null) throw new IllegalArgumentException("observer cannot be null");
 
         // Observers can observe they are to be removed
         fireEvent(new ObserverRemoved(observer));
 
-        return observers.remove(new Observer(observer));
+        return observers.remove(observer.getClass().getName());
     }
 
     public void fireEvent(Object event) {
         if (event == null) throw new IllegalArgumentException("event cannot be null");
 
-        for (Observer observer : observers) {
+        for (Observer observer : observers.values()) {
             try {
                 observer.invoke(event);
             } catch (Throwable t) {
@@ -65,6 +65,14 @@ public class ObserverManager {
                 }
             }
         }
+    }
+
+    public boolean hasObserver(final String value) {
+        return observers.containsKey(value);
+    }
+
+    public void clear() {
+        observers.clear();
     }
 
     /**

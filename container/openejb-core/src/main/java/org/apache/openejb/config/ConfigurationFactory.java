@@ -384,6 +384,9 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         sys.containerSystem = new ContainerSystemInfo();
         sys.facilities = new FacilitiesInfo();
 
+        for (ServerObservers observer : openejb.getServerObservers()) {
+            sys.facilities.serverObservers.add(observer.getName());
+        }
 
         for (final JndiProvider provider : openejb.getJndiProvider()) {
             final JndiContextInfo info = configureService(provider, JndiContextInfo.class);
@@ -483,6 +486,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         final OpenEjbConfiguration finished = sys;
         sys = null;
         openejb = null;
+
         return finished;
     }
 
