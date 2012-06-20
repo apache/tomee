@@ -25,6 +25,8 @@ import org.apache.openejb.loader.SystemInstance;
 import java.net.URL;
 
 public class UpdateChecker implements Runnable {
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_STARTUP, UpdateChecker.class);
+
     private static final String SKIP_CHECK = "openejb.version.check";
     private static final String REPO_URL = SystemInstance.get().getOptions().get("openejb.version.check.repo.url", "http://repo1.maven.org/maven2/");
     private static final String OPENEJB_GROUPID = "org/apache/openejb/";
@@ -86,8 +88,11 @@ public class UpdateChecker implements Runnable {
             final URL url = new URL(realUrl);
             final String metaData = IO.readFileAsString(url.toURI());
             LATEST = extractLatest(metaData);
+            if (!usesLatest()) {
+                LOGGER.warning(message());
+            }
         } catch (Exception e) {
-            // ignored
+            LOGGER.warning("can't check the version: " + e.getMessage()); // don't be too verbose here
         } finally {
             if (proxyProtocol != null) {
                 resetSystemProp(proxyProtocol + ".proxyHost", originalProxyHost);
