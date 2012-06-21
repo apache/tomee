@@ -884,17 +884,12 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
             final String providerType = service.getClass().getSimpleName();
 
-            final ServiceProvider provider = resolveServiceProvider(service, infoType);
+            ServiceProvider provider = resolveServiceProvider(service, infoType);
 
+            /* we mock the provider if not found now
             if (provider == null) {
                 final List<ServiceProvider> providers = ServiceUtils.getServiceProvidersByServiceType(providerType);
                 final StringBuilder sb = new StringBuilder();
-//                for (ServiceProvider p : providers) {
-//                    sb.append(System.getProperty("line.separator"));
-//                    sb.append("  <").append(p.getService());
-//                    sb.append(" id=\"").append(service.getId()).append('"');
-//                    sb.append(" provider=\"").append(p.getId()).append("\"/>");
-//                }
 
                 final List<String> types = new ArrayList<String>();
                 for (final ServiceProvider p : providers) {
@@ -909,6 +904,11 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 }
                 final String noProviderMessage = messages.format("configureService.noProviderForService", providerType, service.getId(), service.getType(), service.getProvider(), sb.toString());
                 throw new NoSuchProviderException(noProviderMessage);
+            }
+            */
+
+            if (provider == null) { // mock it, service-jar.xml is just a pain for simple resources with no real default
+                provider = new ServiceProvider(service.getType(), service.getId(), providerType);
             }
 
             if (service.getId() == null) service.setId(provider.getId());

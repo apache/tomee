@@ -126,7 +126,7 @@ class SaxOpenejb extends DefaultHandler {
             else if (localName.equals("Connector")) push(new ResourceElement());
             else if (localName.equals("Deployments")) push(new DeploymentsElement());
             else if (localName.equals("Import")) push(new ImportElement());
-            else if (localName.equals("ServerObservers")) push(new DeclaredServiceElement());
+            else if (localName.equals("Service")) push(new DeclaredServiceElement());
             else throw new IllegalStateException("Unsupported Element: " + localName);
             get().startElement(uri, localName, qName, attributes);
         }
