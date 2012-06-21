@@ -17,6 +17,7 @@
 package org.apache.openejb;
 
 import java.util.concurrent.Semaphore;
+import org.apache.openejb.util.JuliLogStreamFactory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 
@@ -26,7 +27,6 @@ import org.apache.openejb.util.Messages;
 public class Core {
     static {
         final String[] classes = {
-                "org.apache.openejb.util.JuliLogStreamFactory",
                 "org.slf4j.LoggerFactory",
                 "org.slf4j.impl.StaticLoggerBinder",
 
@@ -88,6 +88,14 @@ public class Core {
         final int permits = Runtime.getRuntime().availableProcessors() + 1;
         final Semaphore semaphore = new Semaphore(permits);
         final ClassLoader loader = OpenEjbContainer.class.getClassLoader();
+
+        try { // do it before all other to force juli config
+            Class.forName("org.apache.openejb.util.JuliLogStreamFactory", true, loader);
+        } catch (Throwable e) {
+            // no-op
+        } finally {
+            semaphore.release();
+        }
 
         for (final String className : classes) {
             try {
