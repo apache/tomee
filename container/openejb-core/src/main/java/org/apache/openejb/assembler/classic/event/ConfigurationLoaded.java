@@ -16,17 +16,10 @@
  */
 package org.apache.openejb.assembler.classic.event;
 
-import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.observer.Event;
 
 @Event
 public class ConfigurationLoaded {
-    private final OpenEjbConfiguration configuration;
-
-    public ConfigurationLoaded(final OpenEjbConfiguration config) {
-        configuration = config;
-    }
-
     @Override
     public String toString() {
         return "ConfigurationLoaded{}";
