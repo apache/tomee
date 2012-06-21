@@ -1520,6 +1520,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         ObjectRecipe serviceRecipe = createRecipe(serviceInfo);
 
         Object service = serviceRecipe.create();
+        SystemInstance.get().addObserver(service);
 
         Class serviceClass = service.getClass();
 

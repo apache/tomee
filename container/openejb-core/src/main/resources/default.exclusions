@@ -40,11 +40,14 @@ derbynet-
 dom4j-
 ecj-
 eclipselink-
+fusemq-leveldb-
 geronimo-
 google-
 gragent.jar
 gson
 guice-
+hamcrest-
+hawtdispatch-
 hibernate-
 howl-
 hsqldb-
@@ -54,6 +57,7 @@ httpcore-
 icu4j-
 idb-
 idea_rt.jar
+jackson-mapper-asl-
 jasypt-
 javaee-
 javaee-api
@@ -81,12 +85,14 @@ jsr311-
 juli-
 junit-
 kahadb-
+leveldb
 log4j-
 logkit-
 maven-
 mbean-annotation-api-
 mimepull-
 mina-
+mqtt-client-
 myfaces-api
 myfaces-impl
 neethi-
@@ -125,6 +131,7 @@ serializer-
 serp-
 servlet-api-
 slf4j-
+snappy-java-
 spring-
 sshd-
 stax-api-

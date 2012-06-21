@@ -120,7 +120,7 @@ public abstract class JaxbOpenejb {
             return (T) createServicesJar();
         } else if (type.equals("TransactionManager")) {
             return (T) createTransactionManager();
-        } else if (type.equals("ServerObservers")) {
+        } else if (type.equals("Service")) {
             return (T) createService();
         }
         throw new IllegalArgumentException("Unknown type " + type);

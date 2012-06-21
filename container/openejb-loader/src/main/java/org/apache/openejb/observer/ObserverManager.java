@@ -36,7 +36,14 @@ public class ObserverManager {
     public boolean addObserver(Object observer) {
         if (observer == null) throw new IllegalArgumentException("observer cannot be null");
 
-        final boolean added = observers.add(new Observer(observer));
+        final Observer obs;
+        try {
+            obs = new Observer(observer);
+        } catch (NotAnObserverException naoe) {
+            return false;
+        }
+
+        final boolean added = observers.add(obs);
 
         // Observers can observe they have been added and are active
         fireEvent(new ObserverAdded(observer));
@@ -122,7 +129,7 @@ public class ObserverManager {
             defaultMethod = methods.get(Object.class);
 
             if (methods.size() == 0) {
-                throw new IllegalArgumentException("Object has no @Observes methods. For example: public void observe(@Observes RetryConditionAdded event){...}");
+                throw new NotAnObserverException("Object has no @Observes methods. For example: public void observe(@Observes RetryConditionAdded event){...}");
             }
         }
 
@@ -161,6 +168,13 @@ public class ObserverManager {
         @Override
         public int hashCode() {
             return observer.hashCode();
+        }
+
+    }
+
+    private static class NotAnObserverException extends RuntimeException {
+        public NotAnObserverException(final String s) {
+            super(s);
         }
     }
 }

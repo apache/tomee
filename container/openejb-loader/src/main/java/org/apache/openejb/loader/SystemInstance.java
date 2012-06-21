@@ -259,5 +259,4 @@ public class SystemInstance {
     public boolean hasProperty(final String propName) {
         return this.internalProperties.get(propName) != null;
     }
-
 }
