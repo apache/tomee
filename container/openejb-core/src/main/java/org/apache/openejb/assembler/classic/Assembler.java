@@ -1896,6 +1896,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             if (info.types.contains("javax.mail.Session")) return;
             //---
 
+            if (info.types.isEmpty() && "class".equalsIgnoreCase(property)) continue; // inline service (no sp)
+
             logger.getChildLogger("service").warning("unusedProperty", property, info.id);
         }
     }
