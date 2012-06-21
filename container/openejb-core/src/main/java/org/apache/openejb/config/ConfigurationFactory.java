@@ -908,7 +908,11 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             */
 
             if (provider == null) { // mock it, service-jar.xml is just a pain for simple resources with no real default
-                provider = new ServiceProvider(service.getType(), service.getId(), providerType);
+                String type = service.getProperties().getProperty("class");
+                if (type == null) {
+                    type = service.getType();
+                }
+                provider = new ServiceProvider(type, service.getId(), providerType);
             }
 
             if (service.getId() == null) service.setId(provider.getId());
