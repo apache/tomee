@@ -24,6 +24,7 @@ import org.apache.openejb.assembler.classic.event.ConfigurationLoaded;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.observer.Observes;
+import org.apache.openejb.observer.event.ObserverAdded;
 
 public class UpdateChecker {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_STARTUP, UpdateChecker.class);
@@ -38,7 +39,11 @@ public class UpdateChecker {
     private static final String UNDEFINED = "undefined";
     private static String LATEST = "undefined";
 
-    public void check(@Observes ConfigurationLoaded event) {
+    public void check(@Observes ObserverAdded event) {
+        if (event.getObserver() != this) {
+            return;
+        }
+
         String originalProxyHost = null;
         String originalProxyPort = null;
         String originalProxyUser = null;
