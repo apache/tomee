@@ -74,6 +74,10 @@ public class TomcatHelper {
             TomcatHelper.server = server;
 			return server;
 		}
+
+        if (TomcatHelper.server != null) { // try it before next one otherwise we depend on "Catalina" name which can change
+            return TomcatHelper.server;
+        }
 		
 		// if this fails, we'll try and get a reference from the platform mbean server
 		try {
