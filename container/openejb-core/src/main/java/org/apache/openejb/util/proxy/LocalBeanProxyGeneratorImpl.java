@@ -114,11 +114,18 @@ public class LocalBeanProxyGeneratorImpl implements LocalBeanProxyGenerator, Opc
         } catch (Exception e) {
         }
 
-        try {
-            byte[] proxyBytes = generateProxy(clsToProxy, clsName);
-            return (Class<?>) defineClass.invoke(unsafe, proxyName, proxyBytes, 0, proxyBytes.length, clsToProxy.getClassLoader(), clsToProxy.getProtectionDomain());
-        } catch (Exception e) {
-            throw new InternalError(e.toString());
+        synchronized (LocalBeanProxyGeneratorImpl.class) { // it can be done by concurrent threads
+            try { // try it again
+                return cl.loadClass(proxyName);
+            } catch (Exception e) {
+            }
+
+            try {
+                byte[] proxyBytes = generateProxy(clsToProxy, clsName);
+                return (Class<?>) defineClass.invoke(unsafe, proxyName, proxyBytes, 0, proxyBytes.length, clsToProxy.getClassLoader(), clsToProxy.getProtectionDomain());
+            } catch (Exception e) {
+                throw new InternalError(e.toString());
+            }
         }
     }
 
