@@ -36,5 +36,6 @@
     <module>openejb-jee-accessors</module>
     <module>openejb-junit</module>
     <module>openejb-jsf</module>
+    <module>openejb-jpa-integration</module>
   </modules>
 </project>

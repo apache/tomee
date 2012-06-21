@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.util;
+package org.apache.openejb.jpa.integration;
 
 import org.apache.xbean.asm.ClassWriter;
 import org.apache.xbean.asm.Label;
