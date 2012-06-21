@@ -337,7 +337,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         try {
             OpenEjbConfiguration config = getOpenEjbConfiguration();
             addObserversFromConfig(config);
-            SystemInstance.get().fireEvent(new ConfigurationLoaded(config));
+            SystemInstance.get().fireEvent(new ConfigurationLoaded());
 
             buildContainerSystem(config);
         } catch (OpenEJBException ae) {
