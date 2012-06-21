@@ -66,7 +66,6 @@ import javax.transaction.TransactionSynchronizationRegistry;
 import javax.validation.ValidationException;
 import javax.validation.ValidatorFactory;
 
-import com.sun.xml.internal.fastinfoset.sax.SystemIdResolver;
 import org.apache.geronimo.connector.GeronimoBootstrapContext;
 import org.apache.geronimo.connector.work.GeronimoWorkManager;
 import org.apache.geronimo.connector.work.HintsContextHandler;
