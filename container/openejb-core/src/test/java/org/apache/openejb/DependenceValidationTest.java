@@ -70,10 +70,11 @@ public class DependenceValidationTest extends TestCase {
         assertNotDependentOn("org.apache.openejb.assembler.classic", "org.apache.openejb.config");
 
         // Nothing should be dependent on any one particular container implementation   (except the Dynamic Assembler)
+        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.core.singleton", dynamicAssembler);
+        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.core.stateless", dynamicAssembler);
+        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.core.stateful", dynamicAssembler);
         // TODO: This needs fixing... containers are supposed to be pluggable
-//        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.core.stateless", dynamicAssembler);
-//        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.core.stateful", dynamicAssembler);
-//        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.core.entity", dynamicAssembler);
+        // assertNotDependentOn("org.apache.openejb", "org.apache.openejb.core.entity", dynamicAssembler);
     }
 
     private void assertNotDependentOn(String referringPacakge, String referredPackage, String... exemptionsArray) {
