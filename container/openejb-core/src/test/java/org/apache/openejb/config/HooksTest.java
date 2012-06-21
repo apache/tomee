@@ -35,7 +35,7 @@ public class HooksTest {
     @BeforeClass
     public static void init() {
         SystemInstance.get().getProperties().putAll(new Properties() {{
-            setProperty("lifecycle", "new://ServerObservers?name=" + HookLifecycle.class.getName());
+            setProperty("lifecycle", "new://Service?class=" + HookLifecycle.class.getName());
         }});
     }
 

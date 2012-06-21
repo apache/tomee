@@ -25,17 +25,39 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
-@XmlRootElement(name = "ServerObservers")
-public class ServerObservers {
+@XmlRootElement(name = "Service")
+public class Service extends AbstractService {
 
-    @XmlAttribute
-    protected String name;
+    @XmlAttribute(name = "class")
+    protected String clazz;
 
-    public String getName() {
-        return name;
+    public Service() {
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public Service(String id, String clazz) {
+        super(id);
+        this.clazz = clazz;
+    }
+
+    public Service(String id, String type, String clazz) {
+        super(id, type);
+        this.clazz = clazz;
+    }
+
+    public Service(String id, String type, String provider, String clazz) {
+        super(id, type, provider);
+        this.clazz = clazz;
+    }
+
+    public Service(String clazz) {
+        this.clazz = clazz;
+    }
+
+    public String getClazz() {
+        return clazz;
+    }
+
+    public void setClazz(String clazz) {
+        this.clazz = clazz;
     }
 }
