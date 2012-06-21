@@ -84,20 +84,12 @@ public class SystemInstance {
         observerManager.fireEvent(event);
     }
 
-    public ObserverManager.Observer addObserver(Object observer) {
-        return observerManager.addObserver(observer.getClass().getName(), observer);
+    public boolean addObserver(Object observer) {
+        return observerManager.addObserver(observer);
     }
 
-    public void addObserver(final String alias, final Object instance) {
-        observerManager.addObserver(alias, instance);
-    }
-
-    public ObserverManager.Observer removeObserver(Object observer) {
+    public boolean removeObserver(Object observer) {
         return observerManager.removeObserver(observer);
-    }
-
-    public boolean hasObserver(final String value) {
-        return observerManager.hasObserver(value);
     }
 
     public long getStartTime() {
@@ -209,9 +201,6 @@ public class SystemInstance {
 
     public static synchronized void reset() {
         try {
-            if (system != null) {
-                system.observerManager.clear();
-            }
             system = new SystemInstance(new Properties()); // don't put system properties here, it is already done
             initialized = false;
         } catch (Exception e) {
@@ -270,4 +259,5 @@ public class SystemInstance {
     public boolean hasProperty(final String propName) {
         return this.internalProperties.get(propName) != null;
     }
+
 }

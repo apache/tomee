@@ -73,8 +73,8 @@ public class Openejb {
     protected List<Resource> resource;
     @XmlElement(name = "Deployments")
     protected List<Deployments> deployments;
-    @XmlElement(name = "ServerObservers")
-    protected List<ServerObservers> serverObservers;
+    @XmlElement(name = "Service")
+    protected List<Service> services;
 
     /**
      * Gets the value of the container property.
@@ -305,11 +305,11 @@ public class Openejb {
         return this.deployments;
     }
 
-    public List<ServerObservers> getServerObservers() {
-        if (serverObservers == null) {
-            serverObservers = new ArrayList<ServerObservers>();
+    public List<Service> getServices() {
+        if (services == null) {
+            services = new ArrayList<Service>();
         }
-        return this.serverObservers;
+        return this.services;
     }
 
     public void add(Object service) {
@@ -331,8 +331,8 @@ public class Openejb {
             setSecurityService((SecurityService) service);
         } else if (service instanceof Deployments) {
             getDeployments().add((Deployments) service);
-        } else if (service instanceof ServerObservers) {
-            getServerObservers().add((ServerObservers) service);
+        } else if (service instanceof Service) {
+            getServices().add((Service) service);
         }
     }
 }
