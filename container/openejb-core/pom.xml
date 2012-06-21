@@ -327,13 +327,6 @@
                          token="@DATE-REPLACED-BY-MAVEN@" value="${DSTAMP}"/>
                 <replace file="target/classes/openejb-version.properties"
                          token="@TIME-REPLACED-BY-MAVEN@" value="${TSTAMP}"/>
-                <property name="compile_classpath" refid="maven.compile.classpath"/>
-                <java classname="org.apache.openejb.util.MakeTxLookup">
-                  <arg value="${project.build.directory}"/>
-                  <classpath>
-                    <pathelement path="${compile_classpath}"/>
-                  </classpath>
-                </java>
               </target>
             </configuration>
           </execution>
@@ -379,6 +372,11 @@
       <groupId>org.apache.openejb</groupId>
       <artifactId>mbean-annotation-api</artifactId>
       <version>${openejb.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-jpa-integration</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
