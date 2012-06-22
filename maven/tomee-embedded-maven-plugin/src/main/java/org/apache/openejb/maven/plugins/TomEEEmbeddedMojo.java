@@ -129,7 +129,7 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
                 final Object value = field.get(this);
                 if (value != null) {
                     configField.set(config, value);
-                    getLog().info("using " + field.getName()  + " to " + value);
+                    getLog().info("using " + field.getName()  + " = " + value);
                 }
             } catch (NoSuchFieldException nsfe) {
                 // ignored
