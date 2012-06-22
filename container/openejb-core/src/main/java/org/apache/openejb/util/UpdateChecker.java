@@ -16,11 +16,12 @@
  */
 package org.apache.openejb.util;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.apache.openejb.assembler.classic.event.AssemblerCreated;
-import org.apache.openejb.assembler.classic.event.ConfigurationLoaded;
+import java.util.Properties;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.observer.Observes;
@@ -29,15 +30,21 @@ import org.apache.openejb.observer.event.ObserverAdded;
 public class UpdateChecker {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_STARTUP, UpdateChecker.class);
 
-    private static final String REPO_URL = SystemInstance.get().getOptions().get("openejb.version.check.repo.url", "http://repo1.maven.org/maven2/");
-    private static final String OPENEJB_GROUPID = "org/apache/openejb/";
-    private static final String METADATA = "/maven-metadata.xml";
-    private static String CHECKER_PROXY = SystemInstance.get().getOptions().get("openejb.version.check.proxy", (String) null);
-    private static final String AUTO = "auto";
-    private static final String URL = SystemInstance.get().getOptions().get("openejb.version.check.url", AUTO);
-    private static final String TAG = "latest";
-    private static final String UNDEFINED = "undefined";
-    private static String LATEST = "undefined";
+    private static final String TOMEE_ARTIFACT = "apache-tomee";
+
+    // config
+    private String repoUrl = SystemInstance.get().getOptions().get("openejb.version.check.repo.url", "http://repo1.maven.org/maven2/");
+    private String groupId = "org/apache/openejb/";
+    private String metadata = "/maven-metadata.xml";
+    private String checkerProxy = SystemInstance.get().getOptions().get("openejb.version.check.proxy", (String) null);
+    private String auto = "auto";
+    private String url = SystemInstance.get().getOptions().get("openejb.version.check.url", auto);
+    private String tag = "latest";
+    private String undefined = "undefined";
+    private String latest = "undefined";
+
+    // internal
+    private String current = null;
 
     public void check(@Observes ObserverAdded event) {
         if (event.getObserver() != this) {
@@ -51,9 +58,9 @@ public class UpdateChecker {
         String proxyProtocol = null;
 
 
-        if (CHECKER_PROXY != null) {
+        if (checkerProxy != null) {
             try {
-                final URL proxyUrl = new URL(CHECKER_PROXY);
+                final URL proxyUrl = new URL(checkerProxy);
                 proxyProtocol = proxyUrl.getProtocol();
 
                 originalProxyHost = System.getProperty(proxyProtocol + ".proxyHost");
@@ -75,19 +82,19 @@ public class UpdateChecker {
                     }
                 }
             } catch (MalformedURLException e) {
-                CHECKER_PROXY = null;
+                checkerProxy = null;
             }
         }
 
-        String realUrl = URL;
+        String realUrl = url;
         if ("auto".equals(realUrl)) {
-            realUrl = REPO_URL + OPENEJB_GROUPID + artifact() + METADATA;
+            realUrl = repoUrl + groupId + artifact() + metadata;
         }
 
         try {
             final URL url = new URL(realUrl);
             final String metaData = IO.readFileAsString(url.toURI());
-            LATEST = extractLatest(metaData);
+            latest = extractLatest(metaData);
             if (!usesLatest()) {
                 LOGGER.warning(message());
             }
@@ -106,7 +113,7 @@ public class UpdateChecker {
     private static String artifact() {
         try {
             UpdateChecker.class.getClassLoader().loadClass("org.apache.tomee.catalina.TomcatWebAppBuilder");
-            return "apache-tomee";
+            return TOMEE_ARTIFACT;
         } catch (ClassNotFoundException e) {
             return "openejb";
         }
@@ -120,40 +127,93 @@ public class UpdateChecker {
         }
     }
 
-    private static String extractLatest(final String metaData) {
+    private String extractLatest(final String metaData) {
         if (metaData != null) {
             boolean found = false;
             for (String s : metaData.replace(">", ">\n").split("\n")) {
                 if (found) {
-                    return trim(s).replace("</" + TAG + ">", "");
+                    return trim(s).replace("</" + tag + ">", "");
                 }
-                if (!s.isEmpty() && trim(s).endsWith("<" + TAG + ">")) {
+                if (!s.isEmpty() && trim(s).endsWith("<" + tag + ">")) {
                     found = true;
                 }
             }
         }
-        return UNDEFINED;
+        return undefined;
     }
 
-    private static String trim(final String s) {
+    private String trim(final String s) {
         return s.replace("\t", "").replace(" ", "");
     }
 
-    public static boolean usesLatest() {
-        return OpenEjbVersion.get().getVersion().equals(LATEST);
+    public boolean usesLatest() {
+        if (artifact().contains(TOMEE_ARTIFACT)) {
+            final InputStream is = getClass().getClassLoader().getResourceAsStream("META-INF/maven/org.apache.openejb/tomee-catalina/pom.properties");
+            if (is != null) {
+                final Properties prop = new Properties();
+                try {
+                    prop.load(is);
+                    current = prop.getProperty("version");
+                } catch (IOException e) {
+                    LOGGER.error("can't get tomee version, will use openejb one");
+                }
+            }
+        }
+
+        if (current == null) {
+            current  = OpenEjbVersion.get().getVersion();
+        }
+
+
+        return current.equals(latest);
     }
 
-    public static String message() {
-        if (UNDEFINED.equals(LATEST)) {
+    public String message() {
+        if (undefined.equals(latest)) {
             return "can't determine the latest version";
         }
 
-        final String version = OpenEjbVersion.get().getVersion();
-        if (version.equals(LATEST)) {
+        if (current.equals(latest)) {
             return "running on the latest version";
         }
-        return new StringBuilder("you are using the version ").append(version)
-                .append(", our latest stable version ").append(LATEST)
-                .append(" is available on ").append(REPO_URL).toString();
+        return new StringBuilder("you are using the version ").append(current)
+                .append(", our latest stable version ").append(latest)
+                .append(" is available on ").append(repoUrl).toString();
+    }
+
+    public void setRepoUrl(final String repoUrl) {
+        this.repoUrl = repoUrl;
+    }
+
+    public void setGroupId(final String groupId) {
+        this.groupId = groupId;
+    }
+
+    public void setMetadata(final String metadata) {
+        this.metadata = metadata;
+    }
+
+    public void setCheckerProxy(final String checkerProxy) {
+        this.checkerProxy = checkerProxy;
+    }
+
+    public void setAuto(final String auto) {
+        this.auto = auto;
+    }
+
+    public void setUrl(final String url) {
+        this.url = url;
+    }
+
+    public void setTag(final String tag) {
+        this.tag = tag;
+    }
+
+    public void setUndefined(final String undefined) {
+        this.undefined = undefined;
+    }
+
+    public void setLatest(final String latest) {
+        this.latest = latest;
     }
 }
