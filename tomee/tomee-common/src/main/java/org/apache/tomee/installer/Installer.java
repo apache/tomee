@@ -573,9 +573,6 @@ public class Installer {
                 systemPropertiesWriter.write("# openejb.additional.exclude =\n");
                 systemPropertiesWriter.write("# openejb.additional.include =\n");
                 systemPropertiesWriter.write("# openejb.crosscontext = false\n");
-                systemPropertiesWriter.write("# openejb.version.check = false\n");
-                systemPropertiesWriter.write("# openejb.version.check.repo.url = http://repo1.maven.org/maven2/org/apache/openejb/\n");
-                systemPropertiesWriter.write("# openejb.version.check.url = http://repo1.maven.org/maven2/org/apache/openejb/openejb/maven-metadata.xml\n");
                 systemPropertiesWriter.write("# openejb.jsessionid-support = \n");
                 systemPropertiesWriter.write("# openejb.myfaces.disable-default-values = true\n");
                 systemPropertiesWriter.write("# openejb.web.xml.major = \n");
