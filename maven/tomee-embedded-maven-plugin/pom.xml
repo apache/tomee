@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <artifactId>maven</artifactId>
+    <groupId>org.apache.openejb.maven</groupId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>tomee-embedded-maven-plugin</artifactId>
+  <packaging>maven-plugin</packaging>
+  <name>OpenEJB :: Maven Plugins :: TomEE Embedded Maven Plugin</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-plugin-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-project</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>tomee-embedded</artifactId>
+      <version>${tomee.version}</version>
+    </dependency>
+  </dependencies>
+
+  <properties>
+    <maven-plugin.prefix>tomee-embedded</maven-plugin.prefix>
+  </properties>
+
+</project>
