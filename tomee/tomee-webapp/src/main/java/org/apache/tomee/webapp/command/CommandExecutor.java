@@ -27,15 +27,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class CommandExecutor extends HttpServlet {
+
+    private static final int TIMEOUT = 20;
 
     public interface Executor {
         void call(Map<String, Object> json) throws Exception;
     }
 
-    private List<Command> getCommands(final HttpServletRequest req) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-        final String strCmds = req.getParameter("cmd");
+    private List<Command> getCommands(final HttpServletRequest req, String key) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+        final String strCmds = req.getParameter(key);
         if (strCmds == null || "".equals(strCmds.trim())) {
             return Collections.emptyList();
         }
@@ -63,13 +69,42 @@ public class CommandExecutor extends HttpServlet {
                 gson = new Gson();
             }
 
-            final List<Command> commands = getCommands(req);
-            final Params params = new Params(req, resp);
 
-            final Map<String, Object> result = new HashMap<String, Object>();
-            for (Command command : commands) {
-                result.put(command.getClass().getSimpleName(), command.execute(params));
+            final Params params = new Params(req, resp);
+            final Map<String, Object> result = Collections.synchronizedMap(new HashMap<String, Object>());
+
+            //execute the commands
+            {
+                final List<Command> commands = getCommands(req, "cmd");
+                for (Command command : commands) {
+                    result.put(command.getClass().getSimpleName(), command.execute(params));
+                }
             }
+
+            //execute the async commands
+            {
+                final List<Command> commands = getCommands(req, "asyncCmd");
+                final ExecutorService executor = Executors.newCachedThreadPool();
+                final List<Callable<Void>> commandsToRun = new ArrayList<Callable<Void>>();
+                for (final Command command : commands) {
+                    final Callable<Void> callMe = new Callable<Void>() {
+                        @Override
+                        public Void call() throws Exception {
+                            result.put(command.getClass().getSimpleName(), command.execute(params));
+                            return null;
+                        }
+                    };
+                    commandsToRun.add(callMe);
+                }
+
+                if (params.getInteger("timeout") != null) {
+                    executor.invokeAll(commandsToRun, params.getLong("timeout"), TimeUnit.SECONDS);
+                } else {
+                    executor.invokeAll(commandsToRun, TIMEOUT, TimeUnit.SECONDS);
+                }
+                executor.shutdown();
+            }
+
             resp.getWriter().write(gson.toJson(result));
 
         } catch (Throwable e) {
