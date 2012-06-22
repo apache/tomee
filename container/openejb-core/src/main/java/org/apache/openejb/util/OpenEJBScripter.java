@@ -94,30 +94,6 @@ public class OpenEJBScripter {
         final Bindings bindings = context.getBindings(ScriptContext.ENGINE_SCOPE);
 
         bindings.put("bm", new BeanManagerHelper());
-
-        Map<String, Object> beans = new HashMap<String, Object>();
-        bindings.put("beans", beans);
-
-        final ContainerSystem cs = SystemInstance.get().getComponent(ContainerSystem.class);
-        for (BeanContext beanContext : cs.deployments()) {
-            if (BeanContext.Comp.class.equals(beanContext.getBeanClass())) {
-                continue;
-            }
-
-            Object service = null;
-            if (beanContext.getBusinessLocalInterface() != null) {
-                service = ProxyEJB.proxy(beanContext, beanContext.getBusinessLocalInterfaces().toArray(new Class<?>[beanContext.getBusinessLocalInterfaces().size()]));
-            } else if (beanContext.isLocalbean()) {
-                service = ProxyEJB.proxy(beanContext, new Class<?>[] { beanContext.getBusinessLocalBeanInterface() });
-            } else if (beanContext.getBusinessRemoteInterface() != null) {
-                service = ProxyEJB.proxy(beanContext, beanContext.getBusinessRemoteInterfaces().toArray(new Class<?>[beanContext.getBusinessRemoteInterfaces().size()]));
-            }
-
-            if (service != null) {
-                // replace all non alphanumeric characters in the ejb name by an underscore (to be a groovy variable)
-                beans.put(beanContext.getEjbName().replaceAll("[^a-zA-Z0-9]", "_"), service);
-            }
-        }
     }
 
     public static class BeanManagerHelper {

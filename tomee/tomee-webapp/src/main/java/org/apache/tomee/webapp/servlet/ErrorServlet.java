@@ -15,10 +15,11 @@
  * limitations under the License.
  */
 
-package org.apache.tomee.webapp;
+package org.apache.tomee.webapp.servlet;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.apache.tomee.webapp.TomeeException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

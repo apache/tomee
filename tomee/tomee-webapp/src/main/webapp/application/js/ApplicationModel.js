@@ -27,7 +27,6 @@ TOMEE.ApplicationModel = function (cfg) {
     var channel = cfg.channel;
 
     var systemInfo = {};
-    var logInfo = {};
     var sessionData = {};
     var executions = [];
 
@@ -47,7 +46,13 @@ TOMEE.ApplicationModel = function (cfg) {
                 type:params.method,
                 data:params.data,
                 dataType:'json',
-                success:params.success,
+                success:function (data) {
+                    if (params.success) {
+                        params.success(data);
+                    }
+
+                    channel.send('new.data', data);
+                },
                 error:errorHandler
             }
         );
@@ -70,7 +75,10 @@ TOMEE.ApplicationModel = function (cfg) {
         logout:function () {
             request({
                 method:'GET',
-                url:TOMEE.baseURL('logout'),
+                url:TOMEE.baseURL('command'),
+                data:{
+                    cmd:'Logout'
+                },
                 success:function () {
                     channel.send('app.logout.bye', {});
                 }
@@ -79,40 +87,38 @@ TOMEE.ApplicationModel = function (cfg) {
         deployApp:function (path) {
             request({
                 method:'POST',
-                url:TOMEE.baseURL('deploy'),
+                url:TOMEE.baseURL('command'),
                 data:{
+                    cmd:'DeployApplication,GetDeployedApplications',
                     path:path
-                },
-                success:function (data) {
-                    channel.send('app.deployment.result', data);
                 }
             });
         },
         loadDeployedApps:function () {
             request({
                 method:'GET',
-                url:TOMEE.baseURL('deploy'),
-                success:function (data) {
-                    channel.send('app.new.deployment.data', data);
+                url:TOMEE.baseURL('command'),
+                data:{
+                    cmd:'GetDeployedApplications'
                 }
             });
         },
         loadSystemInfo:function (callback) {
             request({
                 method:'GET',
-                url:TOMEE.baseURL('system'),
+                url:TOMEE.baseURL('command'),
+                data:{
+                    cmd:'GetSystemInfo'
+                },
                 success:function (data) {
                     systemInfo = data;
-                    channel.send('app.system.info', data);
+                    channel.send('app.system.info', data['GetSystemInfo']);
 
                     if (callback) {
                         callback(data);
                     }
                 }
             });
-        },
-        getSystemInfo:function () {
-            return systemInfo;
         },
         execute:function (codeType, codeText) {
             var executionBean = {
@@ -124,30 +130,33 @@ TOMEE.ApplicationModel = function (cfg) {
 
             request({
                 method:'POST',
-                url:TOMEE.baseURL('console'),
+                url:TOMEE.baseURL('command'),
                 data:{
+                    cmd:'RunScript,GetSessionData',
                     engineName:codeType,
                     scriptCode:codeText
                 },
                 success:function (data) {
                     executionBean.success = true;
-                    executionBean.data = data;
+                    executionBean.data = data['GetSystemInfo'];
                     executionBean.end = (new Date());
 
                     channel.send('app.console.executed', executionBean);
-                },
-                error:function (data) {
-                    executionBean.success = false;
-                    executionBean.data = data;
-                    executionBean.end = (new Date());
-
-                    channel.send('app.console.executed.error', executionBean);
                 }
+//                ,
+//                error:function (data) {
+//                    executionBean.success = false;
+//                    executionBean.data = data['GetSystemInfo'];
+//                    executionBean.end = (new Date());
+//
+//                    channel.send('app.console.executed.error', executionBean);
+//                }
             });
 
         },
         loadLog:function (file, tail) {
             var data = {
+                cmd:'GetLog',
                 escapeHtml:true
             };
 
@@ -161,24 +170,19 @@ TOMEE.ApplicationModel = function (cfg) {
 
             request({
                 method:'GET',
-                url:TOMEE.baseURL('log'),
-                data:data,
-                success:function (data) {
-                    logInfo = data;
-                    channel.send('app.new.log.data', data);
-                }
+                url:TOMEE.baseURL('command'),
+                data:data
             });
-        },
-        getLogInfo:function () {
-            return logInfo;
         },
         loadSessionData:function () {
             request({
                 method:'GET',
-                url:TOMEE.baseURL('data'),
+                url:TOMEE.baseURL('command'),
+                data:{
+                    cmd:'GetSessionData'
+                },
                 success:function (data) {
                     sessionData = data;
-                    channel.send('app.new.session.data', data);
                 }
             });
         },
@@ -186,8 +190,9 @@ TOMEE.ApplicationModel = function (cfg) {
             //params.path, params.bean, params.parentEl
             request({
                 method:'GET',
-                url:TOMEE.baseURL('jndi'),
+                url:TOMEE.baseURL('command'),
                 data:{
+                    cmd:'GetJndiTree',
                     path:TOMEE.utils.getSafe(params.path, []).join(',')
                 },
                 success:function (data) {
@@ -202,7 +207,7 @@ TOMEE.ApplicationModel = function (cfg) {
                     })();
 
                     channel.send('app.new.jndi.data', {
-                        names:data.names,
+                        names:data['GetJndiTree'].names,
                         path:params.path,
                         bean:params.bean,
                         parentEl:params.parentEl
@@ -214,14 +219,15 @@ TOMEE.ApplicationModel = function (cfg) {
             //params.path, params.bean, params.parentEl
             request({
                 method:'GET',
-                url:TOMEE.baseURL('jndi'),
+                url:TOMEE.baseURL('command'),
                 data:{
+                    cmd:'GetJndiTree',
                     name:params.name,
                     path:TOMEE.utils.getSafe(params.path, []).join(',')
                 },
                 success:function (data) {
                     channel.send('app.new.jndi.class.data', {
-                        cls:data.cls,
+                        cls:data['GetJndiTree'].cls,
                         name:params.name,
                         parent:params.parent,
                         path:params.path
@@ -233,8 +239,9 @@ TOMEE.ApplicationModel = function (cfg) {
             //params.path, params.bean, params.parentEl
             request({
                 method:'POST',
-                url:TOMEE.baseURL('jndi'),
+                url:TOMEE.baseURL('command'),
                 data:{
+                    cmd:'JndiLookup',
                     name:params.name,
                     path:TOMEE.utils.getSafe(params.path, []).join(','),
                     saveKey:params.saveKey

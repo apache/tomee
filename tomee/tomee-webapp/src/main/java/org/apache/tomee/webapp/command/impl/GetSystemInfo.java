@@ -15,16 +15,12 @@
  * limitations under the License.
  */
 
-package org.apache.tomee.webapp.servlet;
+package org.apache.tomee.webapp.command.impl;
 
 import org.apache.openejb.util.OpenEJBScripter;
-import org.apache.tomee.webapp.JsonExecutor;
+import org.apache.tomee.webapp.command.Command;
+import org.apache.tomee.webapp.command.Params;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.security.Principal;
@@ -34,49 +30,47 @@ import java.util.Map;
 import java.util.Set;
 
 
-public class SystemInfoServlet extends HttpServlet {
+public class GetSystemInfo implements Command {
     private static final TomEEVersion VERSION;
 
     @Override
-    protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-        JsonExecutor.execute(req, resp, new JsonExecutor.Executor() {
-            @Override
-            public void call(Map<String, Object> json) throws Exception {
+    public Object execute(Params params) throws Exception {
+        final Map<String, Object> json = new HashMap<String, Object>();
 
-                final Map<String, Object> systemProperties = new HashMap<String, Object>();
-                json.put("systemProperties", systemProperties);
+        final Map<String, Object> systemProperties = new HashMap<String, Object>();
+        json.put("systemProperties", systemProperties);
 
-                final Set<String> props = System.getProperties().stringPropertyNames();
-                for (String propName : props) {
-                    systemProperties.put(propName, System.getProperty(propName));
-                }
+        final Set<String> props = System.getProperties().stringPropertyNames();
+        for (String propName : props) {
+            systemProperties.put(propName, System.getProperty(propName));
+        }
 
-                json.put("env", System.getenv());
+        json.put("env", System.getenv());
 
-                {
-                    Map<String,Object> serverVersion = new HashMap<String, Object>();
-                    json.put("tomee", serverVersion);
+        {
+            Map<String, Object> serverVersion = new HashMap<String, Object>();
+            json.put("tomee", serverVersion);
 
-                    serverVersion.put("name", VERSION.getName());
-                    serverVersion.put("hasMdbs", VERSION.hasMdbs());
-                    serverVersion.put("hasWebservices", VERSION.hasWebservices());
-                }
+            serverVersion.put("name", VERSION.getName());
+            serverVersion.put("hasMdbs", VERSION.hasMdbs());
+            serverVersion.put("hasWebservices", VERSION.hasWebservices());
+        }
 
-                {
-                    final RuntimeMXBean runtimemxBean = ManagementFactory.getRuntimeMXBean();
-                    final List<String> arguments = runtimemxBean.getInputArguments();
+        {
+            final RuntimeMXBean runtimemxBean = ManagementFactory.getRuntimeMXBean();
+            final List<String> arguments = runtimemxBean.getInputArguments();
 
-                    json.put("jvmArguments", arguments);
-                }
+            json.put("jvmArguments", arguments);
+        }
 
-                final Principal principal = req.getUserPrincipal();
-                if (principal != null) {
-                    json.put("user", principal.getName());
-                }
+        final Principal principal = params.getReq().getUserPrincipal();
+        if (principal != null) {
+            json.put("user", principal.getName());
+        }
 
-                json.put("supportedScriptLanguages", OpenEJBScripter.getSupportedLanguages());
-            }
-        });
+        json.put("supportedScriptLanguages", OpenEJBScripter.getSupportedLanguages());
+
+        return json;
     }
 
     public enum TomEEVersion {
@@ -106,7 +100,7 @@ public class SystemInfoServlet extends HttpServlet {
     }
 
     static {
-        final ClassLoader cl = SystemInfoServlet.class.getClassLoader();
+        final ClassLoader cl = GetSystemInfo.class.getClassLoader();
         boolean mdbs;
         try {
             cl.loadClass("org.apache.activemq.ra.ActiveMQActivationSpec");

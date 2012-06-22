@@ -17,7 +17,7 @@
 
 package org.apache.tomee.webapp.listener;
 
-import org.apache.tomee.webapp.SessionData;
+import org.apache.tomee.webapp.application.SessionData;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;

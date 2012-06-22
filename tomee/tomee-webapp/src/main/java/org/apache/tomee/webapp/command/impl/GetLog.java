@@ -15,15 +15,12 @@
  * limitations under the License.
  */
 
-package org.apache.tomee.webapp.servlet;
+package org.apache.tomee.webapp.command.impl;
 
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.tomee.webapp.JsonExecutor;
+import org.apache.tomee.webapp.command.Command;
+import org.apache.tomee.webapp.command.Params;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -31,52 +28,43 @@ import java.io.IOException;
 import java.util.*;
 
 
-public class LogServlet extends HttpServlet {
+public class GetLog implements Command {
 
     @Override
-    protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-        JsonExecutor.execute(req, resp, new JsonExecutor.Executor() {
+    public Object execute(Params params) throws Exception {
+        final Map<String, Object> json = new HashMap<String, Object>();
 
-            @Override
-            public void call(Map<String, Object> json) throws Exception {
-                final File logFolder = new File(System.getProperty("catalina.base"), "logs");
+        final File logFolder = new File(System.getProperty("catalina.base"), "logs");
 
-                final File[] files = logFolder.listFiles();
-                final Set<String> names = new TreeSet<String>();
-                if (files != null) {
-                    for (File file : files) {
-                        if (file.length() > 0) {
-                            names.add(file.getName());
-                        }
-                    }
-                }
-
-                json.put("files", names);
-
-                final String loadFileName = req.getParameter("file");
-                if (loadFileName != null) {
-                    Map<String, Object> log = new HashMap<String, Object>();
-                    log.put("name", loadFileName);
-
-                    Integer tail;
-                    try {
-                        tail = Integer.valueOf(req.getParameter("tail"));
-                    } catch (Exception e) {
-                        tail = null;
-                    }
-
-                    log.put("lines", read(
-                            Boolean.valueOf(req.getParameter("escapeHtml")),
-                            new File(logFolder, loadFileName),
-                            tail
-                    ));
-
-                    json.put("log", log);
+        final File[] files = logFolder.listFiles();
+        final Set<String> names = new TreeSet<String>();
+        if (files != null) {
+            for (File file : files) {
+                if (file.length() > 0) {
+                    names.add(file.getName());
                 }
             }
-        });
+        }
 
+        json.put("files", names);
+
+        final String loadFileName = params.getString("file");
+        if (loadFileName != null) {
+            Map<String, Object> log = new HashMap<String, Object>();
+            log.put("name", loadFileName);
+
+            log.put("lines", read(
+                    Boolean.valueOf(params.getString("escapeHtml")),
+                    new File(logFolder, loadFileName),
+                    params.getInteger("tail")
+            ));
+
+            json.put("log", log);
+        }
+
+        return json;
     }
+
 
     private Collection<String> read(final boolean escapeHtml, final File file, final Integer tail) throws IOException {
         final Queue<String> lines = new LinkedList<String>();

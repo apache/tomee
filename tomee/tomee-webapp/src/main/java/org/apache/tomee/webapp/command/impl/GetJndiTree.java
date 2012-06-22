@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.tomee.webapp.servlet;
+package org.apache.tomee.webapp.command.impl;
 
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.ivm.BaseEjbProxyHandler;
@@ -23,22 +23,18 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.proxy.LocalBeanProxyGeneratorImpl;
 import org.apache.openejb.util.proxy.ProxyManager;
-import org.apache.tomee.webapp.JsonExecutor;
+import org.apache.tomee.webapp.command.Command;
+import org.apache.tomee.webapp.command.Params;
 import org.apache.tomee.webapp.listener.UserSessionListener;
 
 import javax.naming.Context;
 import javax.naming.NameClassPair;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.*;
 
-public class JndiServlet extends HttpServlet {
+public class GetJndiTree implements Command {
 
     private String getBeanType(Object bean) {
         if (bean instanceof Context) {
@@ -97,30 +93,6 @@ public class JndiServlet extends HttpServlet {
         }
     }
 
-    /**
-     * {cls: {
-     *     type: 'String', //CONTEXT, BEAN, OTHER
-     *     componentType: 'String', //STATEFUL, STATELESS, SINGLETON, BMP_ENTITY, CMP_ENTITY, MESSAGE_DRIVEN, MANAGED
-     *     beanClass: 'impl class name',
-     *     interfaces: ['InterfaceA', 'InterfaceB'],
-     *     methods: [
-     *       {
-     *         name: 'methodName',
-     *         returns: 'Class type',
-     *         parameters: ['ClassA', 'ClassB']
-     *       },
-     *       {
-     *         name: 'methodName',
-     *         returns: 'Class type',
-     *         parameters: ['ClassA', 'ClassB']
-     *       }
-     *     ]
-     * }}
-     * @param ctx
-     * @param name
-     * @param json
-     * @throws NamingException
-     */
     private void buildClass(Context ctx, String name, Map<String, Object> json) throws NamingException {
         final Map<String, Object> values = new HashMap<String, Object>();
         json.put("cls", values);
@@ -180,58 +152,27 @@ public class JndiServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-        JsonExecutor.execute(req, resp, new JsonExecutor.Executor() {
+    public Object execute(Params params) throws Exception {
+        final Context initCtx = UserSessionListener.getServiceContext(params.getReq().getSession()).getUserContext();
 
-            @Override
-            public void call(Map<String, Object> json) throws Exception {
-                final Context initCtx = UserSessionListener.getServiceContext(req.getSession()).getUserContext();
+        final Context ctx;
+        final String strPath = params.getString("path");
+        if (strPath == null) {
+            ctx = initCtx;
+        } else {
+            final List<String> path = new ArrayList<String>();
+            path.addAll(Arrays.asList(params.getString("path").split(",")));
+            ctx = getContext(initCtx, path);
+        }
 
-                final Context ctx;
-                final String strPath = req.getParameter("path");
-                if (strPath == null || "".equals(strPath.trim())) {
-                    ctx = initCtx;
-                } else {
-                    final List<String> path = new ArrayList<String>();
-                    path.addAll(Arrays.asList(req.getParameter("path").split(",")));
-                    ctx = getContext(initCtx, path);
-                }
+        final Map<String, Object> json = new HashMap<String, Object>();
+        final String name = params.getString("name");
+        if (name == null) {
+            buildNames(ctx, json);
 
-                final String name = req.getParameter("name");
-                if (name == null) {
-                    buildNames(ctx, json);
-
-                } else {
-                    buildClass(ctx, name, json);
-                }
-            }
-        });
-    }
-
-    @Override
-    protected void doPost(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-        JsonExecutor.execute(req, resp, new JsonExecutor.Executor() {
-
-            @Override
-            public void call(Map<String, Object> json) throws Exception {
-                final Context initCtx = UserSessionListener.getServiceContext(req.getSession()).getUserContext();
-
-                final Context ctx;
-                final String strPath = req.getParameter("path");
-                if (strPath == null || "".equals(strPath.trim())) {
-                    ctx = initCtx;
-                } else {
-                    final List<String> path = new ArrayList<String>();
-                    path.addAll(Arrays.asList(req.getParameter("path").split(",")));
-                    ctx = getContext(initCtx, path);
-                }
-
-                final String name = req.getParameter("name");
-                final Object obj = ctx.lookup(name);
-
-                UserSessionListener.getServiceContext(req.getSession()).getSaved().put(req.getParameter("saveKey"), obj);
-                json.put("success", Boolean.TRUE);
-            }
-        });
+        } else {
+            buildClass(ctx, name, json);
+        }
+        return json;
     }
 }

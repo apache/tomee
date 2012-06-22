@@ -42,13 +42,6 @@ public class OpenEJBGroovyShellTest {
     }
 
     @Test
-    public void call() throws ScriptException {
-        final OpenEJBScripter shell = new OpenEJBScripter();
-        final Object out = shell.evaluate("groovy", "beans.Foo.foo()");
-        assertEquals("foo", out);
-    }
-
-    @Test
     public void callUsingCDI() throws ScriptException {
         final OpenEJBScripter shell = new OpenEJBScripter();
         final Object out = shell.evaluate("groovy", "bm.beanFromName('OpenEJBGroovyShellTest', 'bar').test()");

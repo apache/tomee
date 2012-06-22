@@ -74,41 +74,6 @@
         <url-pattern>/installer</url-pattern>
     </servlet-mapping>
 
-    <!-- ************************************************************************************** -->
-
-    <servlet>
-        <servlet-name>JndiServlet</servlet-name>
-        <servlet-class>org.apache.tomee.webapp.servlet.JndiServlet</servlet-class>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>JndiServlet</servlet-name>
-        <url-pattern>/jndi/*</url-pattern>
-    </servlet-mapping>
-
-    <!-- ************************************************************************************** -->
-
-    <servlet>
-        <servlet-name>LogServlet</servlet-name>
-        <servlet-class>org.apache.tomee.webapp.servlet.LogServlet</servlet-class>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>LogServlet</servlet-name>
-        <url-pattern>/log/*</url-pattern>
-    </servlet-mapping>
-
-    <!-- ************************************************************************************** -->
-
-    <servlet>
-        <servlet-name>LogoutServlet</servlet-name>
-        <servlet-class>org.apache.tomee.webapp.servlet.LogoutServlet</servlet-class>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>LogoutServlet</servlet-name>
-        <url-pattern>/logout/*</url-pattern>
-    </servlet-mapping>
 
     <!-- ************************************************************************************** -->
 
@@ -130,33 +95,8 @@
     <!-- ************************************************************************************** -->
 
     <servlet>
-        <servlet-name>SystemInfoServlet</servlet-name>
-        <servlet-class>org.apache.tomee.webapp.servlet.SystemInfoServlet</servlet-class>
-    </servlet>
-
-
-    <servlet-mapping>
-        <servlet-name>SystemInfoServlet</servlet-name>
-        <url-pattern>/system/*</url-pattern>
-    </servlet-mapping>
-
-    <!-- ************************************************************************************** -->
-
-    <servlet>
-        <servlet-name>DeployServlet</servlet-name>
-        <servlet-class>org.apache.tomee.webapp.servlet.DeployServlet</servlet-class>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>DeployServlet</servlet-name>
-        <url-pattern>/deploy/*</url-pattern>
-    </servlet-mapping>
-
-    <!-- ************************************************************************************** -->
-
-    <servlet>
         <servlet-name>ErrorServlet</servlet-name>
-        <servlet-class>org.apache.tomee.webapp.ErrorServlet</servlet-class>
+        <servlet-class>org.apache.tomee.webapp.servlet.ErrorServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -167,26 +107,15 @@
     <!-- ************************************************************************************** -->
 
     <servlet>
-        <servlet-name>ConsoleServlet</servlet-name>
-        <servlet-class>org.apache.tomee.webapp.servlet.ConsoleServlet</servlet-class>
+        <servlet-name>CommandExecutor</servlet-name>
+        <servlet-class>org.apache.tomee.webapp.command.CommandExecutor</servlet-class>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>ConsoleServlet</servlet-name>
-        <url-pattern>/console/*</url-pattern>
+        <servlet-name>CommandExecutor</servlet-name>
+        <url-pattern>/command/*</url-pattern>
     </servlet-mapping>
 
-    <!-- ************************************************************************************** -->
-
-    <servlet>
-        <servlet-name>SessionDataServlet</servlet-name>
-        <servlet-class>org.apache.tomee.webapp.servlet.SessionDataServlet</servlet-class>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>SessionDataServlet</servlet-name>
-        <url-pattern>/data/*</url-pattern>
-    </servlet-mapping>
 
     <!-- ************************************************************************************** -->
 
