@@ -80,6 +80,21 @@ TOMEE.ApplicationController = function () {
         ]
     });
 
+    channel.bind('new.data', function (params) {
+
+        if (params['GetDeployedApplications']) {
+            deployments.loadDeployeApps(params['GetDeployedApplications']);
+        }
+
+        if (params['GetSessionData']) {
+            savedPanel.load(params['GetSessionData']);
+        }
+
+        if (params['GetLog']) {
+            logView.loadData(params['GetLog']);
+        }
+    });
+
     channel.bind('default.ajax.error.handler.triggered', function (params) {
         TOMEE.ErrorPanel({
             channel:channel
@@ -193,14 +208,6 @@ TOMEE.ApplicationController = function () {
         channel.bind('deploy.file.uploaded', function (params) {
             model.deployApp(params.file);
         });
-
-        channel.bind('app.deployment.result', function (params) {
-            model.loadDeployedApps();
-        });
-
-        channel.bind('app.new.deployment.data', function (params) {
-            deployments.loadDeployeApps(params);
-        });
     })();
 
 
@@ -220,19 +227,16 @@ TOMEE.ApplicationController = function () {
             throw "app.console.executed not implemented";
         });
 
-        channel.bind('app.console.executed.error', function (params) {
-            //TODO Implement me
-            //Handle an eventual script execution error
-            throw "app.console.executed.error not implemented";
-        });
+//TODO
+//        channel.bind('app.console.executed.error', function (params) {
+//            //TODO Implement me
+//            //Handle an eventual script execution error
+//            throw "app.console.executed.error not implemented";
+//        });
     })();
 
 
     (function () {
-        channel.bind('app.new.log.data', function (params) {
-            logView.loadData(params);
-        });
-
         channel.bind('trigger.log.load', function (params) {
             model.loadLog(params.file, params.tail);
         });
@@ -240,10 +244,6 @@ TOMEE.ApplicationController = function () {
 
 
     (function () {
-        channel.bind('app.new.session.data', function (params) {
-            savedPanel.load(params);
-        });
-
         channel.bind('application.saved.objects.load', function (params) {
             model.loadSessionData();
         });
@@ -263,8 +263,8 @@ TOMEE.ApplicationController = function () {
     });
 
     model.loadSystemInfo(function (data) {
-        view.setTomeeVersion(data.tomee);
-        homeView.setTomeeVersion(data.tomee);
+        view.setTomeeVersion(data['GetSystemInfo'].tomee);
+        homeView.setTomeeVersion(data['GetSystemInfo'].tomee);
         view.render();
     });
 

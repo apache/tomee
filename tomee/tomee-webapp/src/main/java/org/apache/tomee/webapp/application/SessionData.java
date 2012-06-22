@@ -15,7 +15,9 @@
  * limitations under the License.
  */
 
-package org.apache.tomee.webapp;
+package org.apache.tomee.webapp.application;
+
+import org.apache.tomee.webapp.TomeeException;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
