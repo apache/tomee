@@ -70,46 +70,113 @@ TOMEE.ApplicationModel = function (cfg) {
         return vars;
     };
 
+    var executeCommands = function () {
+        var myCommands = [];
+        for (var i = 0; i < arguments.length; i++) {
+            var myArg = TOMEE.utils.getArray(arguments[i]);
+            for (var ii = 0; ii < myArg.length; ii++) {
+                myCommands.push(myArg[ii]);
+            }
+        }
+
+        var cmdNames = [];
+        var asyncCmdNames = [];
+
+        var successCallbacks = [];
+        var errorCallbacks = [];
+
+        var executeCallbacks = function (callbacks, data) {
+            for (var i = 0; i < callbacks.length; i++) {
+                callbacks[i](data);
+            }
+        }
+
+        var myFinalCommand = {
+            method:'GET',
+            url:TOMEE.baseURL('command'),
+            data:{},
+            success:function (data) {
+                executeCallbacks(successCallbacks, data);
+            },
+            error:function (data) {
+                executeCallbacks(errorCallbacks, data);
+            }
+        };
+
+        var cmdConfig = null;
+        var paramsData = null;
+        for (var i = 0; i < myCommands.length; i++) {
+            cmdConfig = myCommands[i];
+            if (cmdConfig.cmd) {
+                if (cmdConfig.async) {
+                    asyncCmdNames.push(cmdConfig.cmd);
+                } else {
+                    cmdNames.push(cmdConfig.cmd);
+                }
+            }
+
+            paramsData = TOMEE.utils.getObject(cmdConfig.data);
+            for (var key in paramsData) {
+                myFinalCommand.data[key] = paramsData[key];
+            }
+
+            if (cmdConfig.success) {
+                successCallbacks.push(cmdConfig.success);
+            }
+
+            if (cmdConfig.error) {
+                errorCallbacks.push(cmdConfig.error);
+            }
+        }
+
+        if (cmdNames.length > 0) {
+            myFinalCommand.data.cmd = cmdNames.join(',');
+        }
+
+        if (asyncCmdNames.length > 0) {
+            myFinalCommand.data.asyncCmd = asyncCmdNames.join(',');
+        }
+
+        if(errorCallbacks.length === 0) {
+            delete myFinalCommand.error;
+        }
+
+        request(myFinalCommand);
+    };
+
     return {
         getUrlVars:getUrlVars,
+        executeCommands:executeCommands,
         logout:function () {
-            request({
-                method:'GET',
-                url:TOMEE.baseURL('command'),
-                data:{
-                    cmd:'Logout'
-                },
+            return {
+                cmd:'Logout',
                 success:function () {
                     channel.send('app.logout.bye', {});
                 }
-            });
+            };
         },
         deployApp:function (path) {
-            request({
-                method:'POST',
-                url:TOMEE.baseURL('command'),
-                data:{
-                    cmd:'DeployApplication,GetDeployedApplications',
-                    path:path
-                }
-            });
-        },
-        loadDeployedApps:function () {
-            request({
-                method:'GET',
-                url:TOMEE.baseURL('command'),
-                data:{
+            return [
+                {
+                    cmd:'DeployApplication',
+                    data:{
+                        path:path
+                    }
+
+                },
+                {
                     cmd:'GetDeployedApplications'
                 }
-            });
+            ];
+        },
+        loadDeployedApps:function () {
+            return {
+                cmd:'GetDeployedApplications'
+            };
         },
         loadSystemInfo:function (callback) {
-            request({
-                method:'GET',
-                url:TOMEE.baseURL('command'),
-                data:{
-                    cmd:'GetSystemInfo'
-                },
+            return {
+                cmd:'GetSystemInfo',
                 success:function (data) {
                     systemInfo = data;
                     channel.send('app.system.info', data['GetSystemInfo']);
@@ -118,7 +185,7 @@ TOMEE.ApplicationModel = function (cfg) {
                         callback(data);
                     }
                 }
-            });
+            };
         },
         execute:function (codeType, codeText) {
             var executionBean = {
@@ -128,35 +195,28 @@ TOMEE.ApplicationModel = function (cfg) {
             };
             executions.push(executionBean);
 
-            request({
-                method:'POST',
-                url:TOMEE.baseURL('command'),
-                data:{
-                    cmd:'RunScript,GetSessionData',
-                    engineName:codeType,
-                    scriptCode:codeText
+            return [
+                {
+                    cmd:'RunScript',
+                    data:{
+                        engineName:codeType,
+                        scriptCode:codeText
+                    },
+                    success:function (data) {
+                        executionBean.success = true;
+                        executionBean.data = data['GetSystemInfo'];
+                        executionBean.end = (new Date());
+
+                        channel.send('app.console.executed', executionBean);
+                    }
                 },
-                success:function (data) {
-                    executionBean.success = true;
-                    executionBean.data = data['GetSystemInfo'];
-                    executionBean.end = (new Date());
-
-                    channel.send('app.console.executed', executionBean);
+                {
+                    cmd:'GetSessionData'
                 }
-//                ,
-//                error:function (data) {
-//                    executionBean.success = false;
-//                    executionBean.data = data['GetSystemInfo'];
-//                    executionBean.end = (new Date());
-//
-//                    channel.send('app.console.executed.error', executionBean);
-//                }
-            });
-
+            ];
         },
         loadLog:function (file, tail) {
             var data = {
-                cmd:'GetLog',
                 escapeHtml:true
             };
 
@@ -168,31 +228,24 @@ TOMEE.ApplicationModel = function (cfg) {
                 data.tail = tail;
             }
 
-            request({
-                method:'GET',
-                url:TOMEE.baseURL('command'),
+            return {
+                cmd:'GetLog',
                 data:data
-            });
+            };
         },
         loadSessionData:function () {
-            request({
-                method:'GET',
-                url:TOMEE.baseURL('command'),
-                data:{
-                    cmd:'GetSessionData'
-                },
+            return {
+                cmd:'GetSessionData',
                 success:function (data) {
                     sessionData = data;
                 }
-            });
+            };
         },
         loadJndi:function (params) {
             //params.path, params.bean, params.parentEl
-            request({
-                method:'GET',
-                url:TOMEE.baseURL('command'),
+            return {
+                cmd:'GetJndiTree',
                 data:{
-                    cmd:'GetJndiTree',
                     path:TOMEE.utils.getSafe(params.path, []).join(',')
                 },
                 success:function (data) {
@@ -213,15 +266,13 @@ TOMEE.ApplicationModel = function (cfg) {
                         parentEl:params.parentEl
                     });
                 }
-            });
+            };
         },
         loadJndiClass:function (params) {
             //params.path, params.bean, params.parentEl
-            request({
-                method:'GET',
-                url:TOMEE.baseURL('command'),
+            return {
+                cmd:'GetJndiTree',
                 data:{
-                    cmd:'GetJndiTree',
                     name:params.name,
                     path:TOMEE.utils.getSafe(params.path, []).join(',')
                 },
@@ -233,15 +284,13 @@ TOMEE.ApplicationModel = function (cfg) {
                         path:params.path
                     });
                 }
-            });
+            };
         },
         lookupJndi:function (params) {
             //params.path, params.bean, params.parentEl
-            request({
-                method:'POST',
-                url:TOMEE.baseURL('command'),
+            return {
+                cmd:'JndiLookup',
                 data:{
-                    cmd:'JndiLookup',
                     name:params.name,
                     path:TOMEE.utils.getSafe(params.path, []).join(','),
                     saveKey:params.saveKey
@@ -253,7 +302,7 @@ TOMEE.ApplicationModel = function (cfg) {
                         saveKey:params.saveKey
                     });
                 }
-            });
+            };
         }
     };
 }

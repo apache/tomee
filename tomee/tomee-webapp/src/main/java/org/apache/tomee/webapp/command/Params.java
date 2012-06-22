@@ -62,6 +62,21 @@ public class Params {
         }
     }
 
+    public Long getLong(String key) {
+        final String value = getString(key);
+
+        try {
+            return Long.valueOf(value);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public boolean getBoolean(String key) {
+        final String value = getString(key);
+        return Boolean.valueOf(value);
+    }
+
     public HttpServletRequest getReq() {
         return req;
     }
