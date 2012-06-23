@@ -25,16 +25,22 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.EventContext;
 import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
+import org.jboss.arquillian.test.spi.event.suite.After;
+import org.jboss.arquillian.test.spi.event.suite.AfterClass;
+import org.jboss.arquillian.test.spi.event.suite.Before;
+import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
+import org.jboss.arquillian.test.spi.event.suite.ClassLifecycleEvent;
 import org.jboss.arquillian.test.spi.event.suite.Test;
+import org.jboss.arquillian.test.spi.event.suite.TestLifecycleEvent;
 
 public class TestObserver {
     @Inject
     @SuiteScoped
     private Instance<ClassLoader> classLoader;
 
-    public void observe(@Observes EventContext<Test> event) {
+    private void setClassLoader(final Class<?> clazz, final Runnable run) {
         final BeanContext context = SystemInstance.get().getComponent(ContainerSystem.class)
-                                        .getBeanContext(event.getEvent().getTestClass().getJavaClass().getName());
+                .getBeanContext(clazz.getName());
         ThreadContext oldCtx = null;
         ClassLoader oldCl = null;
 
@@ -42,11 +48,13 @@ public class TestObserver {
             oldCtx = ThreadContext.enter(new ThreadContext(context, null));
         } else {
             oldCl = Thread.currentThread().getContextClassLoader();
-            setTCCL(classLoader.get());
+            if (classLoader.get() != null) {
+                setTCCL(classLoader.get());
+            }
         }
 
         try {
-            event.proceed();
+            run.run();
         } finally {
             if (context != null) {
                 ThreadContext.exit(oldCtx);
@@ -56,7 +64,66 @@ public class TestObserver {
         }
     }
 
+    public void observe(@Observes final EventContext<Test> event) {
+        setClassLoader(event.getEvent().getTestClass().getJavaClass(), new Runnable() {
+            @Override
+            public void run() {
+                event.proceed();
+            }
+        });
+    }
+
+    public void on(@Observes(precedence = 200) final BeforeClass event) throws Throwable {
+        setClassLoader(event.getTestClass().getJavaClass(), new CLassEventRunnable(event));
+    }
+
+    public void on(@Observes(precedence = 200) AfterClass event) throws Throwable {
+        setClassLoader(event.getTestClass().getJavaClass(), new CLassEventRunnable(event));
+    }
+
+    public void on(@Observes(precedence = 200) Before event) throws Throwable {
+        setClassLoader(event.getTestClass().getJavaClass(), new LifeCycleEventRunnable(event));
+    }
+
+    public void on(@Observes(precedence = 200) After event) throws Throwable {
+        setClassLoader(event.getTestClass().getJavaClass(), new LifeCycleEventRunnable(event));
+    }
+
     private void setTCCL(final ClassLoader cl) {
         Thread.currentThread().setContextClassLoader(cl);
+    }
+
+    private static class LifeCycleEventRunnable implements Runnable {
+        private final TestLifecycleEvent event;
+
+        public LifeCycleEventRunnable(final TestLifecycleEvent e) {
+            event = e;
+        }
+
+        @Override
+        public void run() {
+            try {
+                event.getExecutor().invoke();
+            } catch (Throwable throwable) {
+                throw new RuntimeException(throwable);
+            }
+        }
+    }
+
+    private static class CLassEventRunnable implements Runnable {
+        private final ClassLifecycleEvent event;
+
+        public CLassEventRunnable(final ClassLifecycleEvent e) {
+            event = e;
+        }
+
+        @Override
+        public void run() {
+            try {
+                event.getExecutor().invoke();
+            } catch (Throwable throwable) {
+                throw new RuntimeException(throwable);
+            }
+        }
     }
 }
