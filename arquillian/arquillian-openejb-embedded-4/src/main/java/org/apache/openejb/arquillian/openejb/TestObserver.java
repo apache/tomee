@@ -30,6 +30,7 @@ import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.test.spi.event.suite.ClassLifecycleEvent;
+import org.jboss.arquillian.test.spi.event.suite.LifecycleEvent;
 import org.jboss.arquillian.test.spi.event.suite.Test;
 import org.jboss.arquillian.test.spi.event.suite.TestLifecycleEvent;
 
@@ -73,19 +74,22 @@ public class TestObserver {
         });
     }
 
-    public void on(@Observes(precedence = 200) final BeforeClass event) throws Throwable {
-        setClassLoader(event.getTestClass().getJavaClass(), new CLassEventRunnable(event));
-    }
-
-    public void on(@Observes(precedence = 200) AfterClass event) throws Throwable {
-        setClassLoader(event.getTestClass().getJavaClass(), new CLassEventRunnable(event));
-    }
-
-    public void on(@Observes(precedence = 200) Before event) throws Throwable {
+    // after enrichement
+    public void on(@Observes(precedence = -1) Before event) throws Throwable {
         setClassLoader(event.getTestClass().getJavaClass(), new LifeCycleEventRunnable(event));
     }
 
     public void on(@Observes(precedence = 200) After event) throws Throwable {
+        setClassLoader(event.getTestClass().getJavaClass(), new LifeCycleEventRunnable(event));
+    }
+
+    // shouldn't be needed
+    public void on(@Observes(precedence = 200) final BeforeClass event) throws Throwable {
+        setClassLoader(event.getTestClass().getJavaClass(), new LifeCycleEventRunnable(event));
+    }
+
+    // shouldn't be needed
+    public void on(@Observes(precedence = 200) AfterClass event) throws Throwable {
         setClassLoader(event.getTestClass().getJavaClass(), new LifeCycleEventRunnable(event));
     }
 
@@ -94,26 +98,9 @@ public class TestObserver {
     }
 
     private static class LifeCycleEventRunnable implements Runnable {
-        private final TestLifecycleEvent event;
+        private final LifecycleEvent event;
 
-        public LifeCycleEventRunnable(final TestLifecycleEvent e) {
-            event = e;
-        }
-
-        @Override
-        public void run() {
-            try {
-                event.getExecutor().invoke();
-            } catch (Throwable throwable) {
-                throw new RuntimeException(throwable);
-            }
-        }
-    }
-
-    private static class CLassEventRunnable implements Runnable {
-        private final ClassLifecycleEvent event;
-
-        public CLassEventRunnable(final ClassLifecycleEvent e) {
+        public LifeCycleEventRunnable(final LifecycleEvent e) {
             event = e;
         }
 
