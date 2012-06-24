@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.arquillian.openejb;
 
+import java.lang.reflect.Field;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.SystemInstance;
@@ -24,6 +25,7 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.EventContext;
+import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
 import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.AfterClass;
@@ -110,6 +112,34 @@ public class TestObserver {
                 event.getExecutor().invoke();
             } catch (Throwable throwable) {
                 throw new RuntimeException(throwable);
+            } finally {
+                resetEventExecutor();
+            }
+        }
+
+        private void resetEventExecutor() {
+            Class<?> current = event.getClass();
+            Field field = null;
+            while (field == null && !Object.class.equals(current) && current != null) {
+                try {
+                    field = current.getDeclaredField("executor");
+                } catch (NoSuchFieldException e) {
+                    // ignored
+                }
+                current = current.getSuperclass();
+            }
+            if (field != null) {
+                field.setAccessible(true);
+                try {
+                    field.set(event, new LifecycleMethodExecutor() {
+                        @Override
+                        public void invoke() throws Throwable {
+                            // no-op: already done
+                        }
+                    });
+                } catch (IllegalAccessException e) {
+                    // ignored
+                }
             }
         }
     }
