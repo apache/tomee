@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.cdi;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBRuntimeException;
@@ -53,12 +55,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.jsp.JspApplicationContext;
 import javax.servlet.jsp.JspFactory;
-import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -123,30 +121,6 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
     public BeanManager getBeanManager()
     {
         return this.beanManager;
-    }
-
-    private String readContents(URL resource) throws IOException {
-        InputStream in = resource.openStream();
-        BufferedInputStream reader = null;
-        StringBuilder sb = new StringBuilder();
-
-        try {
-            reader = new BufferedInputStream(in);
-
-            int b = reader.read();
-            while (b != -1) {
-                sb.append((char) b);
-                b = reader.read();
-            }
-
-            return sb.toString().trim();
-        } finally {
-            try {
-                in.close();
-                reader.close();
-            } catch (Exception e) {
-            }
-        }
     }
 
     @Override
@@ -388,20 +362,23 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             }
         }
         // Start from the class
-        for (Class<?> implClass : managedBeans) {
+        final Map<Class<?>, AnnotatedType<?>> annotatedTypes = new LinkedHashMap<Class<?>, AnnotatedType<?>>();
+        for (Class<?> implClass : managedBeans) { // create all annotated types first to be sure extensions can use it during the fire
             //Define annotation type
-            AnnotatedType<?> annotatedType = webBeansContext.getAnnotatedElementFactory().newAnnotatedType(implClass);
-
+            annotatedTypes.put(implClass, webBeansContext.getAnnotatedElementFactory().newAnnotatedType(implClass));
+        }
+        for (Map.Entry<Class<?>, AnnotatedType<?>> implClass : annotatedTypes.entrySet()) {
             //Fires ProcessAnnotatedType
-            ProcessAnnotatedTypeImpl<?> processAnnotatedEvent = webBeansContext.getWebBeansUtil().fireProcessAnnotatedTypeEvent(annotatedType);
+            ProcessAnnotatedTypeImpl<?> processAnnotatedEvent = webBeansContext.getWebBeansUtil().fireProcessAnnotatedTypeEvent(implClass.getValue());
 
             //if veto() is called
             if (processAnnotatedEvent.isVeto()) {
                 continue;
             }
 
-            deployer.defineManagedBean((Class<Object>) implClass, (ProcessAnnotatedTypeImpl<Object>) processAnnotatedEvent);
+            deployer.defineManagedBean((Class<Object>) implClass.getKey(), (ProcessAnnotatedTypeImpl<Object>) processAnnotatedEvent);
         }
+        annotatedTypes.clear();
     }
 
     @Override
@@ -526,6 +503,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
 
     protected void afterStartApplication(final Object startupObject)
     {
+        // no-op
     }
 
     public void startServletContext(final ServletContext servletContext) {
