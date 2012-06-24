@@ -32,12 +32,21 @@ public final class CxfCatalogUtils {
     private static final Logger logger = Logger.getInstance(LogCategory.CXF, CxfCatalogUtils.class);
 
     public static void loadOASISCatalog(Bus bus, URL baseURL, String catalogName) {
+        if (baseURL == null) {
+            logger.debug("baseUrl is not valid for catalog '" + catalogName + "'");
+            return;
+        }
+
         URL catalogURL = null;
         try {
             catalogURL = new URL(baseURL, catalogName);
-            logger.debug("Checking for " + catalogURL + " catalog.");
-            catalogURL.openStream().close();
-            loadOASISCatalog(bus, catalogURL);
+            if (catalogURL != null) { // some catalog are no more provided by cxf
+                logger.debug("Checking for " + catalogURL + " catalog.");
+                catalogURL.openStream().close();
+                loadOASISCatalog(bus, catalogURL);
+            } else {
+                logger.info("catalog '" + catalogName + "' not found");
+            }
         } catch (MalformedURLException e) {
             logger.warning("Error constructing catalog URL: " + baseURL + " " + catalogName);
         } catch (FileNotFoundException e) {
