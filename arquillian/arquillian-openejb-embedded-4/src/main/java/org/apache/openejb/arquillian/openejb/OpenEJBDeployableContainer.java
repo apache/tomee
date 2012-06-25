@@ -109,23 +109,18 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
     private InstanceProducer<ClassLoader> classLoader;
 
     @Inject
-    @SuiteScoped
     private Instance<AppModule> module;
 
     @Inject
-    @DeploymentScoped
     private Instance<ServletContext> servletContext;
 
     @Inject
-    @DeploymentScoped
     private Instance<HttpSession> session;
 
     @Inject
-    @DeploymentScoped
     private Instance<AppInfo> info;
 
     @Inject
-    @DeploymentScoped
     private Instance<AppContext> appContext;
 
     @Override
