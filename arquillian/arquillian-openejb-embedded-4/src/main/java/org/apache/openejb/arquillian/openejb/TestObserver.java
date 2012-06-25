@@ -25,25 +25,32 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.EventContext;
+import org.jboss.arquillian.core.spi.event.Event;
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
+import org.jboss.arquillian.test.spi.TestClass;
+import org.jboss.arquillian.test.spi.annotation.ClassScoped;
 import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
 import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
-import org.jboss.arquillian.test.spi.event.suite.ClassLifecycleEvent;
+import org.jboss.arquillian.test.spi.event.suite.ClassEvent;
 import org.jboss.arquillian.test.spi.event.suite.LifecycleEvent;
 import org.jboss.arquillian.test.spi.event.suite.Test;
-import org.jboss.arquillian.test.spi.event.suite.TestLifecycleEvent;
+import org.jboss.arquillian.test.spi.event.suite.TestEvent;
 
 public class TestObserver {
     @Inject
     @SuiteScoped
     private Instance<ClassLoader> classLoader;
 
-    private void setClassLoader(final Class<?> clazz, final Runnable run) {
+    @Inject
+    @ClassScoped
+    private Instance<TestClass> testClass;
+
+    private void setClassLoader(final EventContext<ClassEvent> event) {
         final BeanContext context = SystemInstance.get().getComponent(ContainerSystem.class)
-                .getBeanContext(clazz.getName());
+                .getBeanContext(testClass.get().getName());
         ThreadContext oldCtx = null;
         ClassLoader oldCl = null;
 
@@ -57,7 +64,7 @@ public class TestObserver {
         }
 
         try {
-            run.run();
+            event.proceed();
         } finally {
             if (context != null) {
                 ThreadContext.exit(oldCtx);
@@ -67,80 +74,11 @@ public class TestObserver {
         }
     }
 
-    public void observe(@Observes final EventContext<Test> event) {
-        setClassLoader(event.getEvent().getTestClass().getJavaClass(), new Runnable() {
-            @Override
-            public void run() {
-                event.proceed();
-            }
-        });
-    }
-
-    // after enrichement
-    public void on(@Observes(precedence = -1) Before event) throws Throwable {
-        setClassLoader(event.getTestClass().getJavaClass(), new LifeCycleEventRunnable(event));
-    }
-
-    public void on(@Observes(precedence = 200) After event) throws Throwable {
-        setClassLoader(event.getTestClass().getJavaClass(), new LifeCycleEventRunnable(event));
-    }
-
-    // shouldn't be needed
-    public void on(@Observes(precedence = 200) final BeforeClass event) throws Throwable {
-        setClassLoader(event.getTestClass().getJavaClass(), new LifeCycleEventRunnable(event));
-    }
-
-    // shouldn't be needed
-    public void on(@Observes(precedence = 200) AfterClass event) throws Throwable {
-        setClassLoader(event.getTestClass().getJavaClass(), new LifeCycleEventRunnable(event));
+    public void observes(@Observes final EventContext<ClassEvent> event) {
+        setClassLoader(event);
     }
 
     private void setTCCL(final ClassLoader cl) {
         Thread.currentThread().setContextClassLoader(cl);
-    }
-
-    private static class LifeCycleEventRunnable implements Runnable {
-        private final LifecycleEvent event;
-
-        public LifeCycleEventRunnable(final LifecycleEvent e) {
-            event = e;
-        }
-
-        @Override
-        public void run() {
-            try {
-                event.getExecutor().invoke();
-            } catch (Throwable throwable) {
-                throw new RuntimeException(throwable);
-            } finally {
-                resetEventExecutor();
-            }
-        }
-
-        private void resetEventExecutor() {
-            Class<?> current = event.getClass();
-            Field field = null;
-            while (field == null && !Object.class.equals(current) && current != null) {
-                try {
-                    field = current.getDeclaredField("executor");
-                } catch (NoSuchFieldException e) {
-                    // ignored
-                }
-                current = current.getSuperclass();
-            }
-            if (field != null) {
-                field.setAccessible(true);
-                try {
-                    field.set(event, new LifecycleMethodExecutor() {
-                        @Override
-                        public void invoke() throws Throwable {
-                            // no-op: already done
-                        }
-                    });
-                } catch (IllegalAccessException e) {
-                    // ignored
-                }
-            }
-        }
     }
 }
