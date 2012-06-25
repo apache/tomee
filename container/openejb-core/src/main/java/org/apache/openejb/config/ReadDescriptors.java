@@ -126,7 +126,12 @@ public class ReadDescriptors implements DynamicDeployer {
                     path = file.getAbsolutePath();
 
                     if (file.getName().endsWith("persistence.xml")) {
-                        file = file.getParentFile().getParentFile();
+                        final String parent = file.getParentFile().getName();
+                        if (parent.equalsIgnoreCase("WEB-INF") || parent.equalsIgnoreCase("META-INF")) {
+                            file = file.getParentFile().getParentFile();
+                        } else { // we don't really know so simply go back (users will often put persistence.xml in root resource folder with arquillian)
+                            file = file.getParentFile();
+                        }
                     }
                     moduleName = file.toURI().toString();
 

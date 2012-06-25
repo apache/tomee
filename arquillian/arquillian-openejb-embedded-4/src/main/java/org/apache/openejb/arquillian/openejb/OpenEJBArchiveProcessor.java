@@ -55,6 +55,7 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePath;
 import org.jboss.shrinkwrap.api.Node;
 import org.jboss.shrinkwrap.api.asset.Asset;
+import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
 import org.jboss.shrinkwrap.api.asset.FileAsset;
 import org.jboss.shrinkwrap.api.asset.UrlAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -143,7 +144,10 @@ public class OpenEJBArchiveProcessor implements ApplicationArchiveProcessor {
         }
 
         {
-            final Node persistenceXml = archive.get(prefix.concat(PERSISTENCE_XML));
+            Node persistenceXml = archive.get(prefix.concat(PERSISTENCE_XML));
+            if (persistenceXml == null && prefix.startsWith("WEB-INF")) { // particular case
+                persistenceXml = archive.get(prefix.concat("classes/META-INF/").concat(PERSISTENCE_XML));
+            }
             if (persistenceXml != null) {
                 final Asset asset = persistenceXml.getAsset();
                 if (asset instanceof UrlAsset) {
@@ -152,6 +156,13 @@ public class OpenEJBArchiveProcessor implements ApplicationArchiveProcessor {
                     try {
                         appModule.getAltDDs().put(PERSISTENCE_XML, Arrays.asList(get(File.class, "file", asset).toURI().toURL()));
                     } catch (MalformedURLException e) {
+                        appModule.getAltDDs().put(PERSISTENCE_XML, Arrays.asList(new AssetSource(persistenceXml.getAsset())));
+                    }
+                } else if (asset instanceof ClassLoaderAsset) {
+                    final URL url = get(ClassLoader.class, "classLoader", asset).getResource(get(String.class, "resourceName", asset));
+                    if (url != null) {
+                        appModule.getAltDDs().put(PERSISTENCE_XML, Arrays.asList(url));
+                    } else {
                         appModule.getAltDDs().put(PERSISTENCE_XML, Arrays.asList(new AssetSource(persistenceXml.getAsset())));
                     }
                 } else {
