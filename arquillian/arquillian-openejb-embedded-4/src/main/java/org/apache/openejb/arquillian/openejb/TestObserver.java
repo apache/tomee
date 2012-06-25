@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.arquillian.openejb;
 
-import java.lang.reflect.Field;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.SystemInstance;
@@ -25,19 +24,10 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.EventContext;
-import org.jboss.arquillian.core.spi.event.Event;
-import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.arquillian.test.spi.annotation.ClassScoped;
 import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
-import org.jboss.arquillian.test.spi.event.suite.After;
-import org.jboss.arquillian.test.spi.event.suite.AfterClass;
-import org.jboss.arquillian.test.spi.event.suite.Before;
-import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.test.spi.event.suite.ClassEvent;
-import org.jboss.arquillian.test.spi.event.suite.LifecycleEvent;
-import org.jboss.arquillian.test.spi.event.suite.Test;
-import org.jboss.arquillian.test.spi.event.suite.TestEvent;
 
 public class TestObserver {
     @Inject
