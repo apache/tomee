@@ -38,7 +38,7 @@ public class TestObserver {
     @ClassScoped
     private Instance<TestClass> testClass;
 
-    private void setClassLoader(final EventContext<ClassEvent> event) {
+    public void observes(@Observes final EventContext<ClassEvent> event) {
         final BeanContext context = SystemInstance.get().getComponent(ContainerSystem.class)
                 .getBeanContext(testClass.get().getName());
         ThreadContext oldCtx = null;
@@ -62,10 +62,6 @@ public class TestObserver {
                 setTCCL(oldCl);
             }
         }
-    }
-
-    public void observes(@Observes final EventContext<ClassEvent> event) {
-        setClassLoader(event);
     }
 
     private void setTCCL(final ClassLoader cl) {
