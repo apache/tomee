@@ -28,19 +28,15 @@ import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.webbeans.inject.OWBInjector;
-import org.jboss.arquillian.container.spi.context.annotation.ContainerScoped;
-import org.jboss.arquillian.container.spi.context.annotation.DeploymentScoped;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.test.spi.TestEnricher;
 
 public class OpenEJBInjectionEnricher implements TestEnricher {
     @Inject
-    @DeploymentScoped
     private Instance<AppContext> appContext;
 
     @Inject
-    @ContainerScoped
     private Instance<ContainerSystem> containerSystem;
 
     @Override
