@@ -28,15 +28,11 @@ import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.webbeans.inject.OWBInjector;
-import org.apache.webbeans.util.InjectionExceptionUtils;
 import org.jboss.arquillian.container.spi.context.annotation.ContainerScoped;
 import org.jboss.arquillian.container.spi.context.annotation.DeploymentScoped;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
-import org.jboss.arquillian.core.api.annotation.Observes;
-import org.jboss.arquillian.core.spi.EventContext;
 import org.jboss.arquillian.test.spi.TestEnricher;
-import org.jboss.arquillian.test.spi.event.suite.SuiteEvent;
 
 public class OpenEJBInjectionEnricher implements TestEnricher {
     @Inject
@@ -46,10 +42,6 @@ public class OpenEJBInjectionEnricher implements TestEnricher {
     @Inject
     @ContainerScoped
     private Instance<ContainerSystem> containerSystem;
-
-    public void createSuiteContext(@Observes(precedence=100) EventContext<SuiteEvent> context) {
-
-    }
 
     @Override
     public void enrich(final Object testInstance) {
