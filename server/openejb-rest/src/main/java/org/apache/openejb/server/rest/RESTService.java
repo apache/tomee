@@ -42,13 +42,15 @@ import org.apache.openejb.BeanType;
 import org.apache.openejb.Injection;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.DeploymentListener;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
+import org.apache.openejb.assembler.classic.event.AssemblerAfterApplicationCreated;
+import org.apache.openejb.assembler.classic.event.AssemblerBeforeApplicationDestroyed;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.WebContext;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.observer.Observes;
 import org.apache.openejb.server.SelfManaging;
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
@@ -59,7 +61,7 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.WebBeansContext;
 
-public abstract class RESTService implements ServerService, SelfManaging, DeploymentListener {
+public abstract class RESTService implements ServerService, SelfManaging {
     public static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_RS, RESTService.class);
     private static final boolean OLD_WEBSERVICE_DEPLOYMENT = SystemInstance.get().getOptions().get("openejb.webservice.old-deployment", false);
     public static final String OPENEJB_JAXRS_PROVIDERS_AUTO_PROP = "openejb.jaxrs.providers.auto";
@@ -220,7 +222,8 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
         return additionalProviders;
     }
 
-    @Override public void afterApplicationCreated(final AppInfo appInfo) {
+    public void afterApplicationCreated(@Observes final AssemblerAfterApplicationCreated event) {
+        final AppInfo appInfo = event.getApp();
         if (deployedApplications.add(appInfo)) {
             if (appInfo.webApps.size() == 0) {
                 final Map<String, EJBRestServiceInfo> restEjbs = getRestEjbs(appInfo);
@@ -432,10 +435,10 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
         return cl;
     }
 
-    @Override
-    public void beforeApplicationDestroyed(AppInfo appInfo) {
-        if (deployedApplications.contains(appInfo)) {
-            for (WebAppInfo webApp : appInfo.webApps) {
+    public void beforeApplicationDestroyed(@Observes AssemblerBeforeApplicationDestroyed event) {
+        final AppInfo app = event.getApp();
+        if (deployedApplications.contains(app)) {
+            for (WebAppInfo webApp : app.webApps) {
                 final List<DeployedService> toRemove = new ArrayList<DeployedService>();
                 for (DeployedService service : services) {
                     if (service.isInWebApp(webApp)) {
@@ -457,9 +460,9 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
         containerSystem = (CoreContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
         assembler = SystemInstance.get().getComponent(Assembler.class);
         if (assembler != null) {
-            assembler.addDeploymentListener(this);
+            SystemInstance.get().addObserver(this);
             for (AppInfo appInfo : assembler.getDeployedApplications()) {
-                afterApplicationCreated(appInfo);
+                afterApplicationCreated(new AssemblerAfterApplicationCreated(appInfo));
             }
         }
     }
@@ -473,9 +476,9 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
 
     @Override public void stop() throws ServiceException {
         if (assembler != null) {
-            assembler.removeDeploymentListener(this);
+            SystemInstance.get().removeObserver(this);
             for (AppInfo appInfo : new ArrayList<AppInfo>(deployedApplications)) {
-                beforeApplicationDestroyed(appInfo);
+                beforeApplicationDestroyed(new AssemblerBeforeApplicationDestroyed(appInfo));
             }
         }
 

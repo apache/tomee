@@ -86,9 +86,10 @@ import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.UndeployException;
+import org.apache.openejb.assembler.classic.event.AssemblerAfterApplicationCreated;
+import org.apache.openejb.assembler.classic.event.AssemblerBeforeApplicationDestroyed;
 import org.apache.openejb.assembler.classic.event.AssemblerCreated;
 import org.apache.openejb.assembler.classic.event.AssemblerDestroyed;
-import org.apache.openejb.assembler.classic.event.ConfigurationLoaded;
 import org.apache.openejb.cdi.CdiAppContextsService;
 import org.apache.openejb.cdi.CdiBuilder;
 import org.apache.openejb.cdi.CdiResourceInjectionService;
@@ -123,7 +124,7 @@ import org.apache.openejb.monitoring.DynamicMBeanWrapper;
 import org.apache.openejb.assembler.monitoring.JMXContainer;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
-import org.apache.openejb.observer.ObserverManager;
+import org.apache.openejb.observer.Observes;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
 import org.apache.openejb.resource.GeronimoConnectionManagerFactory;
@@ -173,7 +174,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     private SecurityService securityService;
     protected OpenEjbConfigurationFactory configFactory;
     private final Map<String, AppInfo> deployedApplications = new HashMap<String, AppInfo> ();
-    private final List<DeploymentListener> deploymentListeners = new ArrayList<DeploymentListener>();
     private final Set<String> moduleIds = new HashSet<String>();
     private final Set<ObjectName> containersObjectNames = new HashSet<ObjectName>();
 
@@ -191,43 +191,13 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     public synchronized void addDeploymentListener(DeploymentListener deploymentListener) {
-        deploymentListeners.add(deploymentListener);
+        logger.warning("DeploymentListener API is replaced by ");
+        SystemInstance.get().addObserver(new DeploymentListenerObserver(deploymentListener));
     }
 
     public synchronized void removeDeploymentListener(DeploymentListener deploymentListener) {
-        deploymentListeners.remove(deploymentListener);
-    }
-
-    private synchronized void fireAfterApplicationCreated(AppInfo appInfo) {
-        ArrayList<DeploymentListener> listeners;
-        synchronized (this) {
-            listeners = new ArrayList<DeploymentListener>(deploymentListeners);
-        }
-        for (DeploymentListener listener : listeners) {
-            String listenerName = listener.getClass().getSimpleName();
-            try {
-                logger.debug("appCreationEvent.start", listenerName, appInfo.path);
-                listener.afterApplicationCreated(appInfo);
-            } catch (Throwable e) {
-                logger.error("appCreationEvent.failed", e, listenerName, appInfo.path);
-            }
-        }
-    }
-
-    private synchronized void fireBeforeApplicationDestroyed(AppInfo appInfo) {
-        ArrayList<DeploymentListener> listeners;
-        synchronized (this) {
-            listeners = new ArrayList<DeploymentListener>(deploymentListeners);
-        }
-        for (DeploymentListener listener : listeners) {
-            String listenerName = listener.getClass().getSimpleName();
-            try {
-                logger.debug("appDestroyedEvent.start", listenerName, appInfo.path);
-                listener.beforeApplicationDestroyed(appInfo);
-            } catch (Throwable e) {
-                logger.error("appDestroyedEvent.failed", e, listenerName, appInfo.path);
-            }
-        }
+        // the wrapping is done here to get the correct equals/hashcode methods
+        SystemInstance.get().removeObserver(new DeploymentListenerObserver(deploymentListener));
     }
 
     protected SafeToolkit toolkit = SafeToolkit.getToolkit("Assembler");
@@ -929,7 +899,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             logger.info("createApplication.success", appInfo.path);
 
             deployedApplications.put(appInfo.path, appInfo);
-            fireAfterApplicationCreated(appInfo);
+            systemInstance.fireEvent(new AssemblerAfterApplicationCreated(appInfo));
 
             return appContext;
         } catch (ValidationException ve) {
@@ -1175,7 +1145,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         deployedApplications.remove(appInfo.path);
         logger.info("destroyApplication.start", appInfo.path);
 
-        fireBeforeApplicationDestroyed(appInfo);
+        SystemInstance.get().fireEvent(new AssemblerBeforeApplicationDestroyed(appInfo));
 
         final AppContext appContext = containerSystem.getAppContext(appInfo.appId);
 
@@ -1996,6 +1966,41 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             if (!thread.isDaemon()) thread.setDaemon(true);
             if (thread.getPriority() != Thread.NORM_PRIORITY) thread.setPriority(Thread.NORM_PRIORITY);
             return thread;
+        }
+    }
+
+    private static class DeploymentListenerObserver {
+        private final DeploymentListener delegate;
+
+        public DeploymentListenerObserver(final DeploymentListener deploymentListener) {
+            delegate = deploymentListener;
+        }
+
+        public void afterApplicationCreated(@Observes AssemblerAfterApplicationCreated event) {
+            delegate.afterApplicationCreated(event.getApp());
+        }
+
+        public void beforeApplicationDestroyed(@Observes AssemblerBeforeApplicationDestroyed event) {
+            delegate.beforeApplicationDestroyed(event.getApp());
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof DeploymentListenerObserver)) {
+                return false;
+            }
+
+            final DeploymentListenerObserver that = (DeploymentListenerObserver) o;
+
+            return !(delegate != null ? !delegate.equals(that.delegate) : that.delegate != null);
+        }
+
+        @Override
+        public int hashCode() {
+            return delegate != null ? delegate.hashCode() : 0;
         }
     }
 }

@@ -16,21 +16,18 @@
  */
 package org.apache.tomee.webservices;
 
-import org.apache.openejb.assembler.classic.AppInfo;
-import org.apache.openejb.assembler.classic.WebAppInfo;
+import java.util.Properties;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.observer.Observes;
 import org.apache.openejb.server.rest.RESTService;
 import org.apache.openejb.server.rest.RsRegistry;
 import org.apache.openejb.spi.Service;
-import org.apache.tomee.catalina.WebDeploymentListener;
-import org.apache.tomee.catalina.WebDeploymentListeners;
-
-import java.util.Properties;
+import org.apache.tomee.catalina.event.AfterApplicationCreated;
 
 /**
  * @version $Rev$ $Date$
  */
-public class TomeeJaxRsService implements Service, WebDeploymentListener {
+public class TomeeJaxRsService implements Service {
 
     @Override
     public void init(Properties props) throws Exception {
@@ -42,17 +39,16 @@ public class TomeeJaxRsService implements Service, WebDeploymentListener {
             system.setComponent(RsRegistry.class, tomcatRestHandler);
         }
 
-        system.getComponent(WebDeploymentListeners.class).add(this);
+        system.addObserver(this);
     }
 
-    @Override
-    public void afterApplicationCreated(AppInfo appInfo, WebAppInfo webApp) {
+    public void afterApplicationCreated(@Observes final AfterApplicationCreated event) {
         // required for Pojo Web Services because when Assembler creates the application
         // the CoreContainerSystem does not contain the WebContext
         // see also the start method getContainerSystem().addWebDeployment(webContext);
         RESTService component = SystemInstance.get().getComponent(RESTService.class);
         if (component == null) return;
-        component.afterApplicationCreated(appInfo, webApp);
+        component.afterApplicationCreated(event.getApp(), event.getWeb());
     }
 
 }

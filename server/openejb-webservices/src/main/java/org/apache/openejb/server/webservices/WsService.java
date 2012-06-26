@@ -17,38 +17,6 @@
  */
 package org.apache.openejb.server.webservices;
 
-import javax.xml.namespace.QName;
-import org.apache.openejb.BeanContext;
-import org.apache.openejb.Injection;
-import org.apache.openejb.assembler.classic.AppInfo;
-import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.DeploymentListener;
-import org.apache.openejb.assembler.classic.EjbJarInfo;
-import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
-import org.apache.openejb.assembler.classic.PortInfo;
-import org.apache.openejb.assembler.classic.ServletInfo;
-import org.apache.openejb.assembler.classic.SingletonBeanInfo;
-import org.apache.openejb.assembler.classic.StatelessBeanInfo;
-import org.apache.openejb.assembler.classic.WebAppInfo;
-import org.apache.openejb.assembler.classic.WsBuilder;
-import org.apache.openejb.core.CoreContainerSystem;
-import org.apache.openejb.core.WebContext;
-import org.apache.openejb.core.webservices.PortAddressRegistry;
-import org.apache.openejb.core.webservices.PortAddressRegistryImpl;
-import org.apache.openejb.core.webservices.PortData;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.server.SelfManaging;
-import org.apache.openejb.server.ServerService;
-import org.apache.openejb.server.ServiceException;
-import org.apache.openejb.server.httpd.HttpListener;
-import org.apache.openejb.server.httpd.HttpListenerRegistry;
-import org.apache.openejb.server.httpd.util.HttpUtil;
-import org.apache.openejb.spi.ContainerSystem;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.StringTemplate;
-
-import javax.naming.Context;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -65,8 +33,41 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
+import javax.naming.Context;
+import javax.xml.namespace.QName;
+import org.apache.openejb.BeanContext;
+import org.apache.openejb.Injection;
+import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.EjbJarInfo;
+import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
+import org.apache.openejb.assembler.classic.PortInfo;
+import org.apache.openejb.assembler.classic.ServletInfo;
+import org.apache.openejb.assembler.classic.SingletonBeanInfo;
+import org.apache.openejb.assembler.classic.StatelessBeanInfo;
+import org.apache.openejb.assembler.classic.WebAppInfo;
+import org.apache.openejb.assembler.classic.WsBuilder;
+import org.apache.openejb.assembler.classic.event.AssemblerAfterApplicationCreated;
+import org.apache.openejb.assembler.classic.event.AssemblerBeforeApplicationDestroyed;
+import org.apache.openejb.core.CoreContainerSystem;
+import org.apache.openejb.core.WebContext;
+import org.apache.openejb.core.webservices.PortAddressRegistry;
+import org.apache.openejb.core.webservices.PortAddressRegistryImpl;
+import org.apache.openejb.core.webservices.PortData;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.observer.Observes;
+import org.apache.openejb.server.SelfManaging;
+import org.apache.openejb.server.ServerService;
+import org.apache.openejb.server.ServiceException;
+import org.apache.openejb.server.httpd.HttpListener;
+import org.apache.openejb.server.httpd.HttpListenerRegistry;
+import org.apache.openejb.server.httpd.util.HttpUtil;
+import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.StringTemplate;
 
-public abstract class WsService implements ServerService, SelfManaging, DeploymentListener {
+public abstract class WsService implements ServerService, SelfManaging {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_WS, WsService.class);
     public static final String WS_ADDRESS_FORMAT = "openejb.wsAddress.format";
     public static final String WS_FORCE_ADDRESS = "openejb.webservice.deployment.address";
@@ -170,18 +171,18 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
         assembler = SystemInstance.get().getComponent(Assembler.class);
         SystemInstance.get().setComponent(WsService.class, this);
         if (assembler != null) {
-            assembler.addDeploymentListener(this);
+            SystemInstance.get().addObserver(this);
             for (AppInfo appInfo : assembler.getDeployedApplications()) {
-                afterApplicationCreated(appInfo);
+                afterApplicationCreated(new AssemblerAfterApplicationCreated(appInfo));
             }
         }
     }
 
     public void stop() throws ServiceException {
         if (assembler != null) {
-            assembler.removeDeploymentListener(this);
+            SystemInstance.get().removeObserver(this);
             for (AppInfo appInfo : new ArrayList<AppInfo>(deployedApplications)) {
-                beforeApplicationDestroyed(appInfo);
+                beforeApplicationDestroyed(new AssemblerBeforeApplicationDestroyed(appInfo));
             }
             assembler = null;
             if (SystemInstance.get().getComponent(WsService.class) == this) {
@@ -198,7 +199,8 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
 
     protected abstract void destroyPojoWsContainer(String serviceId);
 
-    public void afterApplicationCreated(AppInfo appInfo) {
+    public void afterApplicationCreated(@Observes AssemblerAfterApplicationCreated event) {
+        final AppInfo appInfo = event.getApp();
         if (deployedApplications.add(appInfo)) {
             Map<String, String> webContextByEjb = new HashMap<String, String>();
             for (WebAppInfo webApp : appInfo.webApps) {
@@ -361,7 +363,8 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
         }
     }
 
-    public void beforeApplicationDestroyed(AppInfo appInfo) {
+    public void beforeApplicationDestroyed(@Observes AssemblerBeforeApplicationDestroyed event) {
+        final AppInfo appInfo = event.getApp();
         if (deployedApplications.remove(appInfo)) {
             for (EjbJarInfo ejbJar : appInfo.ejbJars) {
                 Map<String,PortInfo> ports = new TreeMap<String,PortInfo>();
