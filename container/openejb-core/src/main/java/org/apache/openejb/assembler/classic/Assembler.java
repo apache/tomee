@@ -191,7 +191,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     public synchronized void addDeploymentListener(DeploymentListener deploymentListener) {
-        logger.warning("DeploymentListener API is replaced by ");
+        logger.warning("DeploymentListener API is replaced by @Observes event");
         SystemInstance.get().addObserver(new DeploymentListenerObserver(deploymentListener));
     }
 
