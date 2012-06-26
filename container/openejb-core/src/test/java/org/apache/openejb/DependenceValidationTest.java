@@ -53,9 +53,9 @@ public class DependenceValidationTest extends TestCase {
 
         depsOfPackages = dependencyVisitor.groups;
 
-        // Nothing may depend on the Assembler except the config code
+        // Nothing may depend on the Assembler except the config code and events
         String dynamicAssembler = "org.apache.openejb.assembler.dynamic";
-        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.assembler.classic", "org.apache.openejb.assembler", "org.apache.openejb.config", "org.apache.openejb.assembler.dynamic", "org.apache.openejb.assembler.classic.cmd", "org.apache.openejb.assembler.monitoring", "org.apache.openejb.cdi", "org.apache.openejb.junit");
+        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.assembler.classic", "org.apache.openejb.assembler", "org.apache.openejb.config", "org.apache.openejb.assembler.dynamic", "org.apache.openejb.assembler.classic.cmd", "org.apache.openejb.assembler.monitoring", "org.apache.openejb.cdi", "org.apache.openejb.junit", "org.apache.openejb.assembler.classic.event");
 
         // Nothing may depend on the Dynamic Assembler
         assertNotDependentOn("org.apache.openejb", dynamicAssembler);

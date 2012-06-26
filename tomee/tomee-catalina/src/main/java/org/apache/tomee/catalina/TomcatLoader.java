@@ -203,7 +203,7 @@ public class TomcatLoader implements Loader {
             SystemInstance.get().setComponent(WebAppBuilder.class, tomcatWebAppBuilder);
         }
 
-        // Web Services will be installed into the WebDeploymentListeners list
+        // for compatibility purpose, no more used normally by our trunk
         SystemInstance.get().setComponent(WebDeploymentListeners.class, new WebDeploymentListeners());
 
         if (optionalService(properties, "org.apache.tomee.webservices.TomeeJaxRsService")) {

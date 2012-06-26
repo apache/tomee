@@ -73,6 +73,7 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.tomcat.InstanceManager;
 import org.apache.tomcat.util.digester.Digester;
+import org.apache.tomee.catalina.event.AfterApplicationCreated;
 import org.apache.tomee.common.LegacyAnnotationProcessor;
 import org.apache.tomee.common.TomcatVersion;
 import org.apache.tomee.common.UserTransactionFactory;
@@ -955,11 +956,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         // required for Pojo Web Services because when Assembler creates the application
         // the CoreContainerSystem does not contain the WebContext
         // see also the start method getContainerSystem().addWebDeployment(webContext);
-        final WebDeploymentListeners listeners = SystemInstance.get().getComponent(WebDeploymentListeners.class);
-        if (listeners != null) {
-            for (final WebAppInfo webApp : contextInfo.appInfo.webApps) {
-                listeners.afterApplicationCreated(contextInfo.appInfo, webApp);
-            }
+        for (final WebAppInfo webApp : contextInfo.appInfo.webApps) {
+            SystemInstance.get().fireEvent(new AfterApplicationCreated(contextInfo.appInfo, webApp));
         }
 
         if (!TomcatVersion.hasAnnotationProcessingSupport()) {

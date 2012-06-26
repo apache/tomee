@@ -21,22 +21,33 @@ import org.apache.openejb.assembler.classic.WebAppInfo;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.observer.Observes;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+import org.apache.tomee.catalina.event.AfterApplicationCreated;
 
 /**
 * @version $Rev$ $Date$
 */
-public class WebDeploymentListeners implements WebDeploymentListener {
-    List<WebDeploymentListener> listeners = new ArrayList<WebDeploymentListener>();
+public class WebDeploymentListeners {
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, WebDeploymentListeners.class);
 
-    public boolean add(WebDeploymentListener webDeploymentListener) {
-        return listeners.add(webDeploymentListener);
+    public boolean add(WebDeploymentListener webDeploymentListener) { // compatibility
+        LOGGER.warning("WebDeploymentListener API is replaced by 'void afterApplicationCreated(@Observes final AfterApplicationCreated event)' API");
+        SystemInstance.get().addObserver(new WebDeploymentListenerObserver(webDeploymentListener));
+        return true;
     }
 
-    @Override
-    public void afterApplicationCreated(AppInfo appInfo, WebAppInfo webApp) {
-        for (WebDeploymentListener listener : listeners) {
-            listener.afterApplicationCreated(appInfo, webApp);
+    private static class WebDeploymentListenerObserver {
+        private final WebDeploymentListener delegate;
+
+        public WebDeploymentListenerObserver(final WebDeploymentListener webDeploymentListener) {
+            delegate = webDeploymentListener;
+        }
+
+        public void afterApplicationCreated(@Observes final AfterApplicationCreated event) {
+            delegate.afterApplicationCreated(event.getApp(), event.getWeb());
         }
     }
-
 }

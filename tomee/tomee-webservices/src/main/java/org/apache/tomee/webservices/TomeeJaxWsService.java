@@ -16,21 +16,18 @@
  */
 package org.apache.tomee.webservices;
 
-import org.apache.openejb.assembler.classic.AppInfo;
-import org.apache.openejb.assembler.classic.WebAppInfo;
+import java.util.Properties;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.observer.Observes;
 import org.apache.openejb.server.webservices.WsRegistry;
 import org.apache.openejb.server.webservices.WsService;
 import org.apache.openejb.spi.Service;
-import org.apache.tomee.catalina.WebDeploymentListener;
-import org.apache.tomee.catalina.WebDeploymentListeners;
-
-import java.util.Properties;
+import org.apache.tomee.catalina.event.AfterApplicationCreated;
 
 /**
  * @version $Rev$ $Date$
  */
-public class TomeeJaxWsService implements Service, WebDeploymentListener {
+public class TomeeJaxWsService implements Service {
 
     @Override
     public void init(Properties props) throws Exception {
@@ -43,16 +40,15 @@ public class TomeeJaxWsService implements Service, WebDeploymentListener {
             system.setComponent(WsRegistry.class, tomcatSoapHandler);
         }
 
-        system.getComponent(WebDeploymentListeners.class).add(this);
+        system.addObserver(this);
     }
 
-    @Override
-    public void afterApplicationCreated(AppInfo appInfo, WebAppInfo webApp) {
+    public void afterApplicationCreated(@Observes final AfterApplicationCreated event) {
         // required for Pojo Web Services because when Assembler creates the application
         // the CoreContainerSystem does not contain the WebContext
         // see also the start method getContainerSystem().addWebDeployment(webContext);
         WsService component = SystemInstance.get().getComponent(WsService.class);
         if (component == null) return;
-        component.afterApplicationCreated(webApp);
+        component.afterApplicationCreated(event.getWeb());
     }
 }
