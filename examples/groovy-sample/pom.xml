@@ -39,7 +39,6 @@
         <version>2.4</version>
         <configuration>
           <compilerId>groovy-eclipse-compiler</compilerId>
-          <verbose>true</verbose>
           <source>1.6</source>
           <target>1.6</target>
         </configuration>
