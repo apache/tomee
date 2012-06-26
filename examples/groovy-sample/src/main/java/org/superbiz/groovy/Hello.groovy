@@ -1,6 +1,6 @@
 package org.superbiz.groovy
 
-public class Hello {
+class Hello {
     def hi() {
         "hi"
     }
