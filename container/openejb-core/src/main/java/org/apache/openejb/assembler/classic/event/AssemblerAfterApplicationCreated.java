@@ -14,4 +14,11 @@ public class AssemblerAfterApplicationCreated {
     public AppInfo getApp() {
         return app;
     }
+
+    @Override
+    public String toString() {
+        return "AssemblerAfterApplicationCreated{" +
+                "app=" + app.appId +
+            '}';
+    }
 }

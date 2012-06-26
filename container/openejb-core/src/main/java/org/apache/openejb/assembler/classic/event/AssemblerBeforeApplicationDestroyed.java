@@ -14,4 +14,11 @@ public class AssemblerBeforeApplicationDestroyed {
     public AppInfo getApp() {
         return app;
     }
+
+    @Override
+    public String toString() {
+        return "AssemblerBeforeApplicationDestroyed{" +
+                "app=" + app.appId +
+            '}';
+    }
 }
