@@ -61,6 +61,7 @@
     <module>ear-testing</module>
     <module>groovy-cdi</module>
     <module>groovy-jpa</module>
+    <module>groovy-spock</module>
     <module>helloworld-weblogic</module>
     <module>injection-of-connectionfactory</module>
     <module>injection-of-datasource</module>
