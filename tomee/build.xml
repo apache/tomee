@@ -16,12 +16,31 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<project name="dev-helper" default="copy_static">
+<project name="dev-helper" default="web">
 
-    <target name="copy_static">
-        <copy verbose="true" todir="apache-tomee/target/apache-tomee-webprofile-1.1.0-SNAPSHOT/webapps/tomee/staging">
-            <fileset dir="tomee-webapp/src/main/webapp/staging" includes="**"/>
+    <target name="web">
+        <copy verbose="true" todir="apache-tomee/target/apache-tomee-webprofile-1.1.0-SNAPSHOT/webapps/tomee">
+            <fileset dir="tomee-webapp/src/main/webapp" includes="**/*.js"/>
+            <fileset dir="tomee-webapp/src/main/webapp" includes="**/*.css"/>
+            <fileset dir="tomee-webapp/src/main/webapp" includes="**/*.html"/>
+        </copy>
+    </target>
+
+    <target name="rs">
+        <copy verbose="true" todir="apache-tomee/target/apache-tomee-jaxrs-1.1.0-SNAPSHOT/webapps/tomee">
+            <fileset dir="tomee-webapp/src/main/webapp" includes="**/*.js"/>
+            <fileset dir="tomee-webapp/src/main/webapp" includes="**/*.css"/>
+            <fileset dir="tomee-webapp/src/main/webapp" includes="**/*.html"/>
+        </copy>
+    </target>
+
+    <target name="plus">
+        <copy verbose="true" todir="apache-tomee/target/apache-tomee-plus-1.1.0-SNAPSHOT/webapps/tomee">
+            <fileset dir="tomee-webapp/src/main/webapp" includes="**/*.js"/>
+            <fileset dir="tomee-webapp/src/main/webapp" includes="**/*.css"/>
+            <fileset dir="tomee-webapp/src/main/webapp" includes="**/*.html"/>
         </copy>
     </target>
 
 </project>
+

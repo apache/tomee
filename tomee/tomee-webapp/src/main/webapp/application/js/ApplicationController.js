@@ -180,16 +180,14 @@ TOMEE.ApplicationController = function () {
         channel.bind('show.class.panel', function (params) {
             var data = params.data;
             model.executeCommands(model.loadJndiClass({
-                name:data.name,
-                parent:data.parent,
-                path:pathArrayBuilder.build(data.parent)
+                data:data
             }));
         });
 
         channel.bind('lookup.and.save.object', function (params) {
             model.executeCommands(model.lookupJndi({
                 name:params.showParams.name,
-                path:pathArrayBuilder.build(params.showParams.parent),
+                path:params.showParams.path,
                 saveKey:params.saveKey
             }));
         });

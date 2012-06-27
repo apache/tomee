@@ -49,8 +49,9 @@ public class GetJndiTree implements Command {
         }
     }
 
-    private Map<String, Object> buildNode(NameClassPair pair, Context ctx) throws NamingException {
+    private Map<String, Object> buildNode(String parentCtxPath, NameClassPair pair, Context ctx) throws NamingException {
         final Map<String, Object> node = new HashMap<String, Object>();
+        node.put("ctxPath", parentCtxPath);
 
         final String name = pair.getName();
         node.put("name", name);
@@ -81,14 +82,14 @@ public class GetJndiTree implements Command {
         }
     }
 
-    private void buildNames(Context ctx, Map<String, Object> json) throws NamingException {
+    private void buildNames(String parentCtxPath, Context ctx, Map<String, Object> json) throws NamingException {
         final List<Map<String, Object>> objs = new ArrayList<Map<String, Object>>();
         json.put("names", objs);
 
         final NamingEnumeration<NameClassPair> namingEnumeration = ctx.list("");
         if (namingEnumeration != null) {
             while (namingEnumeration.hasMoreElements()) {
-                objs.add(buildNode(namingEnumeration.next(), ctx));
+                objs.add(buildNode(parentCtxPath, namingEnumeration.next(), ctx));
             }
         }
     }
@@ -168,7 +169,7 @@ public class GetJndiTree implements Command {
         final Map<String, Object> json = new HashMap<String, Object>();
         final String name = params.getString("name");
         if (name == null) {
-            buildNames(ctx, json);
+            buildNames(strPath, ctx, json);
 
         } else {
             buildClass(ctx, name, json);

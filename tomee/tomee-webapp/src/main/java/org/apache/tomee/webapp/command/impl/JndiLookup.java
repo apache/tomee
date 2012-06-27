@@ -29,16 +29,15 @@ import java.util.List;
 
 public class JndiLookup implements Command {
 
-    private Context getContext(Context ctx, List<String> path) throws NamingException {
-        if (path.isEmpty()) {
+    private Context getContext(Context ctx, String path) throws NamingException {
+        if (path == null || "".equals(path.trim())) {
             return ctx;
         }
 
-        String name = path.remove(0);
-        final Object obj = ctx.lookup(name);
+        final Object obj = ctx.lookup(path);
 
         if (obj instanceof Context) {
-            return getContext((Context) obj, path);
+            return (Context) obj;
 
         } else {
             throw new IllegalStateException("obj should be an instance of Context");
@@ -49,16 +48,7 @@ public class JndiLookup implements Command {
     public Object execute(Params params) throws Exception {
         final Context initCtx = UserSessionListener.getServiceContext(params.getReq().getSession()).getUserContext();
 
-        final Context ctx;
-        final String strPath = params.getString("path");
-        if (strPath == null) {
-            ctx = initCtx;
-        } else {
-            final List<String> path = new ArrayList<String>();
-            path.addAll(Arrays.asList(params.getString("path").split(",")));
-            ctx = getContext(initCtx, path);
-        }
-
+        final Context ctx = getContext(initCtx, params.getString("path"));
         final String name = params.getString("name");
         final Object obj = ctx.lookup(name);
 
