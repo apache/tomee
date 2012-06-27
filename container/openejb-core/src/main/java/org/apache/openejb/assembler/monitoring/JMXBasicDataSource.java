@@ -301,13 +301,13 @@ public class JMXBasicDataSource {
     @ManagedAttribute
     @Description("Set the minimum amount of time an object may sit idle in the pool before it is eligible for eviction"
             + " by the idle object evictor (if any).")
-    public void setMinEvictableIdleTimeMillis(final int time) {
+    public void setMinEvictableIdleTimeMillis(final long time) {
         ds.setMinEvictableIdleTimeMillis(time);
     }
 
     @ManagedAttribute
     @Description("Set the number of milliseconds to sleep between runs of the idle object evictor thread.")
-    public void setTimeBetweenEvictionRunsMillis(final int time) {
+    public void setTimeBetweenEvictionRunsMillis(final long time) {
         ds.setTimeBetweenEvictionRunsMillis(time);
     }
 
@@ -321,7 +321,7 @@ public class JMXBasicDataSource {
     @ManagedAttribute
     @Description("Set the maximum number of milliseconds that the pool will wait (when there are no available connections) "
             + "for a connection to be returned before throwing an exception, or <= 0 to wait indefinitely.")
-    public void setMaxWait(final int max) {
+    public void setMaxWait(final long max) {
         ds.setMaxWait(max);
     }
 
