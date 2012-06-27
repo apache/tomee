@@ -54,7 +54,7 @@ public class JMXBasicDataSource {
     }
 
     @ManagedAttribute
-    @Description("The class loader instance to use to load the JDBC driver.")
+    @Description("The class driver name.")
     public String getDriverClassName() {
         return ds.getDriverClassName();
     }
@@ -232,5 +232,144 @@ public class JMXBasicDataSource {
                 }
             }
         }
+    }
+
+    @ManagedAttribute
+    @Description("Set the class driver.")
+    public void setDriverClassName(final String name) {
+        ds.setDriverClassName(name);
+    }
+
+    @ManagedAttribute
+    @Description("Set the connection URL.")
+    public void getUrl(final String url) {
+        ds.setUrl(url);
+    }
+
+    @ManagedAttribute
+    @Description("Set the SQL validation query.")
+    public void setValidationQuery(final String query) {
+        ds.setValidationQuery(query);
+    }
+
+    @ManagedAttribute
+    @Description("Set the connection username to be passed to our JDBC driver to establish a connection.")
+    public void setUsername(final String user) {
+        ds.setUsername(user);
+    }
+
+    @ManagedAttribute
+    @Description("Set the timeout in seconds before connection validation queries fail.")
+    public void setValidationQueryTimeout(final int timeout) {
+        ds.setValidationQueryTimeout(timeout);
+    }
+
+    @ManagedAttribute
+    @Description("Set the initial number of connections that are created when the pool is started.")
+    public void setInitialSize(final int size) {
+        ds.setInitialSize(size);
+    }
+
+    @ManagedAttribute
+    @Description("Set the maximum number of active connections that can be allocated from this pool at the same time,"
+            + " or negative for no limit.")
+    public void getMaxActive(final int max) {
+        ds.setMaxActive(max);
+    }
+
+    @ManagedAttribute
+    @Description("Set the maximum number of connections that can remain idle in the pool, without extra ones being"
+            + "destroyed, or negative for no limit.")
+    public void setMaxIdle(final int max) {
+        ds.setMaxIdle(max);
+    }
+
+    @ManagedAttribute
+    @Description("Set the minimum number of active connections that can remain idle in the pool, without extra ones"
+            + " being created when the evictor runs, or 0 to create none.")
+    public void setMinIdle(final int min) {
+        ds.setMinIdle(min);
+    }
+
+    @ManagedAttribute
+    @Description("Set the minimum number of active connections that can remain idle in the pool, without extra ones"
+            + " being created when the evictor runs, or 0 to create none.")
+    public void setNumTestsPerEvictionRun(final int num) {
+        ds.setNumTestsPerEvictionRun(num);
+    }
+
+    @ManagedAttribute
+    @Description("Set the minimum amount of time an object may sit idle in the pool before it is eligible for eviction"
+            + " by the idle object evictor (if any).")
+    public void setMinEvictableIdleTimeMillis(final int time) {
+        ds.setMinEvictableIdleTimeMillis(time);
+    }
+
+    @ManagedAttribute
+    @Description("Set the number of milliseconds to sleep between runs of the idle object evictor thread.")
+    public void setTimeBetweenEvictionRunsMillis(final int time) {
+        ds.setTimeBetweenEvictionRunsMillis(time);
+    }
+
+    @ManagedAttribute
+    @Description("Set the maximum number of open statements that can be allocated from the statement pool at the same time,"
+            + " or non-positive for no limit.")
+    public void setMaxOpenPreparedStatements(final int max) {
+        ds.setMaxOpenPreparedStatements(max);
+    }
+
+    @ManagedAttribute
+    @Description("Set the maximum number of milliseconds that the pool will wait (when there are no available connections) "
+            + "for a connection to be returned before throwing an exception, or <= 0 to wait indefinitely.")
+    public void setMaxWait(final int max) {
+        ds.setMaxWait(max);
+    }
+
+    @ManagedAttribute
+    @Description("Set the default auto-commit state of connections created by this pool.")
+    public void setDefaultAutoCommit(final boolean auto) {
+        ds.setDefaultAutoCommit(auto);
+    }
+
+    @ManagedAttribute
+    @Description("Set the prepared statement pooling for this pool.")
+    public void setPoolPreparedStatements(final boolean pool) {
+        ds.setPoolPreparedStatements(pool);
+    }
+
+    @ManagedAttribute
+    @Description("Set the indication of whether objects will be validated before being borrowed from the pool.")
+    public void setTestOnBorrow(final boolean test) {
+        ds.setTestOnBorrow(test);
+    }
+
+    @ManagedAttribute
+    @Description("Set the indication of whether objects will be validated before being returned to the pool.")
+    public void setTestOnReturn(final boolean test) {
+        ds.setTestOnReturn(test);
+    }
+
+    @ManagedAttribute
+    @Description("Set the indication of whether objects will be validated by the idle object evictor (if any).")
+    public void setTestWhileIdle(final boolean test) {
+        ds.setTestWhileIdle(test);
+    }
+
+    @ManagedAttribute
+    @Description("The default \"catalog\" of connections created by this pool.")
+    public void setDefaultCatalog(final String catalog) {
+        ds.setDefaultCatalog(catalog);
+    }
+
+    @ManagedAttribute
+    @Description("Set the default read-only state of connections created by this pool.")
+    public void setDefaultReadOnly(final boolean ro) {
+        ds.setDefaultReadOnly(ro);
+    }
+
+    @ManagedAttribute
+    @Description("Set the default TransactionIsolation state of connections created by this pool ([NONE: 0, READ_COMMITTED: 2, READ_UNCOMMITTED: 4, SERIALIZABLE: 8]).")
+    public void setDefaultTransactionIsolation(final int level) {
+        ds.setDefaultTransactionIsolation(level);
     }
 }
