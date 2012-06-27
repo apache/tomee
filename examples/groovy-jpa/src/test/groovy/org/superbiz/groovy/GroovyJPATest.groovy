@@ -16,36 +16,52 @@
  */
 package org.superbiz.groovy
 
-import org.junit.runner.RunWith
-import org.jboss.arquillian.junit.Arquillian
-import org.jboss.arquillian.container.test.api.Deployment
-import org.jboss.shrinkwrap.api.spec.WebArchive
-import org.jboss.shrinkwrap.api.ShrinkWrap
 import org.apache.ziplock.JarLocation
-import javax.inject.Inject
+import org.jboss.arquillian.container.test.api.Deployment
+import org.jboss.arquillian.junit.Arquillian
+import org.jboss.shrinkwrap.api.ArchivePaths
+import org.jboss.shrinkwrap.api.ShrinkWrap
+import org.jboss.shrinkwrap.api.spec.WebArchive
 import org.junit.Test
+import org.junit.runner.RunWith
 
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertNotNull
-import org.jboss.shrinkwrap.api.asset.EmptyAsset
-import org.jboss.shrinkwrap.api.ArchivePaths
+
+import static org.junit.Assert.assertThat
+import static org.hamcrest.CoreMatchers.is
+import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset
+import javax.persistence.PersistenceUnit
+import javax.persistence.EntityManagerFactory
+
+import static org.junit.Assert.assertNotNull
+import javax.persistence.EntityManager
 
 @RunWith(Arquillian.class)
-class HelloTest {
-    @Inject
-    private Hello hello
+class GroovyJPATest {
+    @PersistenceUnit
+    private EntityManagerFactory emf
 
     @Deployment
     static WebArchive war() {
         ShrinkWrap.create(WebArchive.class)
             .addAsLibraries(JarLocation.jarLocation(GroovyObject.class))
-            .addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
-            .addClasses(Hello.class)
+            .addAsWebInfResource(new ClassLoaderAsset("META-INF/persistence.xml"), ArchivePaths.create("persistence.xml"))
+            .addClasses(Person.class)
     }
 
     @Test
-    void hello() {
-        assertNotNull hello
-        assertEquals "hi", hello.hi()
+    void persist() {
+        assertNotNull emf
+        final EntityManager em = emf.createEntityManager()
+
+        em.transaction.begin()
+        em.persist(new Person(name: 'openejb'))
+        em.transaction.commit()
+
+        def list = em.createQuery("select p from Person p").resultList
+        assertNotNull list
+        assertEquals 1, list.size()
+        assertEquals 'openejb', list.first().name
     }
 }

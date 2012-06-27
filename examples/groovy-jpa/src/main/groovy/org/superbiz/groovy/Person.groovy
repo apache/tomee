@@ -16,8 +16,12 @@
  */
 package org.superbiz.groovy
 
-class Hello {
-    def hi() {
-        "hi"
-    }
+import javax.persistence.Entity
+import javax.persistence.Id
+import javax.persistence.GeneratedValue
+
+@Entity
+class Person {
+    @Id @GeneratedValue long id
+    String name
 }
