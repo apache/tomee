@@ -59,7 +59,7 @@
     <module>dynamic-implementation</module>
     <module>dynamic-proxy-to-access-mbean</module>
     <module>ear-testing</module>
-    <module>groovy-sample</module>
+    <module>groovy-cdi</module>
     <module>helloworld-weblogic</module>
     <module>injection-of-connectionfactory</module>
     <module>injection-of-datasource</module>

@@ -21,7 +21,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.superbiz</groupId>
-  <artifactId>groovy-sample</artifactId>
+  <artifactId>groovy-cdi</artifactId>
   <packaging>jar</packaging>
   <version>1.1-SNAPSHOT</version>
   <name>OpenEJB :: Examples :: Groovy</name>
