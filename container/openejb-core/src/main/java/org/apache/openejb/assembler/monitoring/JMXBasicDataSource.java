@@ -242,7 +242,7 @@ public class JMXBasicDataSource {
 
     @ManagedAttribute
     @Description("Set the connection URL.")
-    public void getUrl(final String url) {
+    public void setUrl(final String url) {
         ds.setUrl(url);
     }
 
@@ -273,7 +273,7 @@ public class JMXBasicDataSource {
     @ManagedAttribute
     @Description("Set the maximum number of active connections that can be allocated from this pool at the same time,"
             + " or negative for no limit.")
-    public void getMaxActive(final int max) {
+    public void setMaxActive(final int max) {
         ds.setMaxActive(max);
     }
 
