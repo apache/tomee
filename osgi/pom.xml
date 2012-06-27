@@ -40,7 +40,7 @@
   </modules>
 
   <properties>
-    <karaf.version>2.2.7</karaf.version>
+    <karaf.version>2.2.8</karaf.version>
     <karafee.version>1.1.0-SNAPSHOT</karafee.version>
   </properties>
 </project>
