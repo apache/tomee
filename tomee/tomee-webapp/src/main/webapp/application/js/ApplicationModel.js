@@ -137,7 +137,7 @@ TOMEE.ApplicationModel = function (cfg) {
             myFinalCommand.data.asyncCmd = asyncCmdNames.join(',');
         }
 
-        if(errorCallbacks.length === 0) {
+        if (errorCallbacks.length === 0) {
             delete myFinalCommand.error;
         }
 
@@ -273,36 +273,40 @@ TOMEE.ApplicationModel = function (cfg) {
             return {
                 cmd:'GetJndiTree',
                 data:{
-                    name:params.name,
-                    path:TOMEE.utils.getSafe(params.path, []).join(',')
+                    name:params.data.name,
+                    path:TOMEE.utils.getSafe(params.data.ctxPath, '')
                 },
                 success:function (data) {
                     channel.send('app.new.jndi.class.data', {
                         cls:data['GetJndiTree'].cls,
-                        name:params.name,
-                        parent:params.parent,
-                        path:params.path
+                        name:params.data.name,
+                        path:TOMEE.utils.getSafe(params.data.ctxPath, '')
                     });
                 }
             };
         },
         lookupJndi:function (params) {
             //params.path, params.bean, params.parentEl
-            return {
-                cmd:'JndiLookup',
-                data:{
-                    name:params.name,
-                    path:TOMEE.utils.getSafe(params.path, []).join(','),
-                    saveKey:params.saveKey
-                },
-                success:function (data) {
-                    channel.send('app.new.jndi.bean', {
+            return [
+                {
+                    cmd:'JndiLookup',
+                    data:{
                         name:params.name,
                         path:params.path,
                         saveKey:params.saveKey
-                    });
+                    },
+                    success:function (data) {
+                        channel.send('app.new.jndi.bean', {
+                            name:params.name,
+                            path:params.path,
+                            saveKey:params.saveKey
+                        });
+                    }
+                },
+                {
+                    cmd:'GetSessionData'
                 }
-            };
+            ];
         }
     };
 }
