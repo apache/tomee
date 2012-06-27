@@ -82,6 +82,9 @@ TOMEE.Console = function (cfg) {
     };
 
     return {
+        setScript: function(script) {
+            elText.main.html(script);
+        },
         setHeight:function(height) {
             console.setHeight(height);
         },
