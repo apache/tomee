@@ -69,6 +69,8 @@ TOMEE.ApplicationController = function () {
     var consolePanel = TOMEE.Console({
         channel:channel
     });
+    consolePanel.setScript(model.getLastScript());
+
 
     var homeView = TOMEE.ApplicationViewHome({
         center:consolePanel,

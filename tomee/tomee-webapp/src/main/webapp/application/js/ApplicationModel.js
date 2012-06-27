@@ -30,6 +30,14 @@ TOMEE.ApplicationModel = function (cfg) {
     var sessionData = {};
     var executions = [];
 
+    var getLastScript = function () {
+        return TOMEE.utils.getSafe(TOMEE.storage.getLocal('lastScript_code'), '');
+    };
+
+    var setLastScript = function (code) {
+        TOMEE.storage.setLocal('lastScript_code', code);
+    };
+
     var request = function (params) {
         var errorHandler = params.error;
         if (!errorHandler) {
@@ -145,6 +153,7 @@ TOMEE.ApplicationModel = function (cfg) {
     };
 
     return {
+        getLastScript:getLastScript,
         getUrlVars:getUrlVars,
         executeCommands:executeCommands,
         logout:function () {
@@ -203,6 +212,8 @@ TOMEE.ApplicationModel = function (cfg) {
                         scriptCode:codeText
                     },
                     success:function (data) {
+                        setLastScript(codeText);
+
                         executionBean.success = true;
                         executionBean.data = data['GetSystemInfo'];
                         executionBean.end = (new Date());
