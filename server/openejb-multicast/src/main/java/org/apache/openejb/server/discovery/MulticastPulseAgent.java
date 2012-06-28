@@ -58,6 +58,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
     private int port = 6142;
     private DatagramPacket response = null;
     private DiscoveryListener listener = null;
+    private boolean loopbackOnly = true;
 
     /**
      * This agent listens for a client pulse on a defined multicast channel.
@@ -85,6 +86,15 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
     }
 
     private void buildPacket() throws SocketException {
+
+        this.loopbackOnly = true;
+        for (final URI uri : uriSet) {
+            if (!isLoopback(uri.getHost())) {
+                this.loopbackOnly = false;
+                break;
+            }
+        }
+
         final String hosts = getHosts();
         final StringBuilder sb = new StringBuilder(SERVER);
         sb.append(this.group);
@@ -155,7 +165,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
 
     private void fireEvent(final URI uri, final boolean add) {
         if (null != this.listener) {
-            this.executor.execute(new Runnable() {
+            executor.execute(new Runnable() {
                 @Override
                 public void run() {
                     if (add) {
@@ -195,12 +205,21 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
 
                                     s = (s.replace(CLIENT, ""));
 
+                                    final String client = sa.toString();
+                                    if (MulticastPulseAgent.this.loopbackOnly) {
+                                        //We only have local services, so make sure the request is from a local source else ignore it
+                                        if (!MulticastPulseAgent.isLocalAddress(client, false)) {
+                                            log.debug(String.format("Ignoring client %1$s pulse request for group: %2$s - No remote services available", client, s));
+                                            return;
+                                        }
+                                    }
+
                                     if (MulticastPulseAgent.this.group.equals(s) || "*".equals(s)) {
 
-                                        log.debug(String.format("Client %1$s requested a pulse for group: %2$s", sa.toString(), s));
+                                        log.debug(String.format("Answering client %1$s pulse request for group: %2$s", client, s));
                                         ms.send(MulticastPulseAgent.this.response);
                                     } else {
-                                        log.debug(String.format("Ignoring client %1$s requested pulse for group: %2$s", sa.toString(), s));
+                                        log.debug(String.format("Ignoring client %1$s pulse request for group: %2$s", client, s));
                                     }
                                 }
                             }
@@ -318,6 +337,47 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
         }
 
         return ms;
+    }
+
+    public static boolean isLoopback(final String host) {
+
+        final InetAddress addr;
+        try {
+            addr = InetAddress.getByName(host);
+        } catch (UnknownHostException e) {
+            return false;
+        }
+
+        return addr.isLoopbackAddress();
+    }
+
+    /**
+     * Is the provided host a local host
+     *
+     * @param host            The host to test
+     * @param wildcardIsLocal Should 0.0.0.0 or [::] be deemed as local
+     * @return True is the host is a local host else false
+     */
+    public static boolean isLocalAddress(final String host, final boolean wildcardIsLocal) {
+
+        final InetAddress addr;
+        try {
+            addr = InetAddress.getByName(host);
+        } catch (UnknownHostException e) {
+            return false;
+        }
+
+        // Check if the address is a valid special local or loop back
+        if ((wildcardIsLocal && addr.isAnyLocalAddress()) || addr.isLoopbackAddress()) {
+            return true;
+        }
+
+        // Check if the address is defined on any interface
+        try {
+            return NetworkInterface.getByInetAddress(addr) != null;
+        } catch (SocketException e) {
+            return false;
+        }
     }
 
     private static String getHosts() {

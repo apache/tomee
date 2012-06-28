@@ -108,6 +108,22 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
             timeout = 50;
         }
 
+        if (null == forGroup || forGroup.isEmpty()) {
+            throw new Exception("Specify a valid group or *");
+        }
+
+        if (null == schemes || schemes.isEmpty()) {
+            throw new Exception("Specify at least one scheme, 'ejbd' for example");
+        }
+
+        if (null == host || host.isEmpty()) {
+            throw new Exception("Specify a valid host name");
+        }
+
+        if (port < 1 || port > 65535) {
+            throw new Exception("Specify a valid port between 1 and 65535");
+        }
+
         final InetAddress ia;
 
         try {
@@ -179,6 +195,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                             if (len > 2048) {
                                 len = 2048;
                             }
+
                             String s = new String(response.getData(), 0, len);
 
                             if (s.startsWith(MulticastPulseClient.SERVER)) {
@@ -187,30 +204,42 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                                 final String group = s.substring(0, s.indexOf(':'));
                                 s = s.substring(group.length() + 1);
 
+                                if (!"*".equals(forGroup) && !forGroup.equals(group)) {
+                                    continue;
+                                }
+
                                 final String services = s.substring(0, s.indexOf('|'));
                                 s = s.substring(services.length() + 1);
 
-                                final String[] service = services.split("\\|");
+                                final String[] serviceList = services.split("\\|");
                                 final String[] hosts = s.split(",");
 
-                                for (String svc : service) {
+                                for (String svc : serviceList) {
 
                                     if (EMPTY.equals(svc)) {
                                         continue;
                                     }
 
-                                    final URI test;
+                                    final URI serviceUri;
                                     try {
-                                        test = URI.create(svc);
+                                        serviceUri = URI.create(svc);
                                     } catch (Throwable e) {
                                         continue;
                                     }
 
-                                    if (schemes.contains(test.getScheme())) {
+                                    if (schemes.contains(serviceUri.getScheme())) {
 
                                         //Just because multicast was received on this host is does not mean the service is on the same
                                         //We can however use this to identify an individual machine and group
                                         final String serverHost = ((InetSocketAddress) response.getSocketAddress()).getAddress().getHostAddress();
+
+                                        final String serviceHost = serviceUri.getHost();
+                                        if (MulticastPulseClient.isLocalAddress(serviceHost, false)) {
+                                            if (!MulticastPulseClient.isLocalAddress(serverHost, false)) {
+                                                //A local service is only available to a local clients
+                                                continue;
+                                            }
+                                        }
 
                                         svc = ("mp-" + serverHost + ":" + group + ":" + svc);
 
@@ -269,10 +298,39 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
         final MulticastSocket ms = MulticastPulseClient.getSocket(ia, port);
         ms.send(request);
 
-        //Wait for thread to die
+        //Wait for thread to complete
         t.join();
 
         return set;
+    }
+
+    /**
+     * Is the provided host a local host
+     *
+     * @param host            The host to test
+     * @param wildcardIsLocal Should 0.0.0.0 or [::] be deemed as local
+     * @return True is the host is a local host else false
+     */
+    public static boolean isLocalAddress(final String host, final boolean wildcardIsLocal) {
+
+        final InetAddress addr;
+        try {
+            addr = InetAddress.getByName(host);
+        } catch (UnknownHostException e) {
+            return false;
+        }
+
+        // Check if the address is a valid special local or loop back
+        if ((wildcardIsLocal && addr.isAnyLocalAddress()) || addr.isLoopbackAddress()) {
+            return true;
+        }
+
+        // Check if the address is defined on any local interface
+        try {
+            return NetworkInterface.getByInetAddress(addr) != null;
+        } catch (SocketException e) {
+            return false;
+        }
     }
 
     private static String ipFormat(final String h) throws UnknownHostException {
@@ -385,7 +443,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                     if (uriSet != null && uriSet.size() > 0) {
                         for (URI uri : uriSet) {
 
-                            final String serverhost = uri.getScheme();
+                            final String server = uri.getScheme().replace("mp-", "");
                             uri = URI.create(uri.getSchemeSpecificPart());
 
                             final String group = uri.getScheme();
@@ -393,6 +451,12 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
 
                             final String host = uri.getHost();
                             final int port = uri.getPort();
+
+                            if (MulticastPulseClient.isLocalAddress(host, false) && !MulticastPulseClient.isLocalAddress(server, false)) {
+                                System.out.println(server + ":" + group + " - " + uri.toASCIIString() + " is not a local service");
+                                continue;
+                            }
+
                             boolean b = false;
                             final Socket s = new Socket();
                             try {
@@ -408,7 +472,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                                 }
                             }
 
-                            System.out.println("ServerHost: " + serverhost + " - Group: " + group + " - Service: " + uri.toASCIIString() + " is reachable: " + b);
+                            System.out.println("ServerHost: " + server + " - Group: " + group + " - Service: " + uri.toASCIIString() + " is reachable: " + b);
                         }
                     } else {
                         System.out.println("Did not discover any URIs to test");

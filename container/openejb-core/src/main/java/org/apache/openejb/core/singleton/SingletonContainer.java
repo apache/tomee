@@ -207,7 +207,7 @@ public class SingletonContainer implements RpcContainer {
         BeanContext beanContext = callContext.getBeanContext();
                
         Duration accessTimeout = getAccessTimeout(beanContext, runMethod);
-        boolean read = beanContext.getConcurrencyAttribute(runMethod) == javax.ejb.LockType.READ;
+        boolean read = javax.ejb.LockType.READ.equals(beanContext.getConcurrencyAttribute(runMethod));
         
         final Lock lock = aquireLock(read, accessTimeout, instance, runMethod);
 
