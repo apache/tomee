@@ -16,12 +16,13 @@
  */
 package org.apache.openejb.server.discovery;
 
-import java.net.URI;
-import java.net.MulticastSocket;
-import java.net.InetAddress;
-import java.net.DatagramPacket;
-import java.util.concurrent.TimeUnit;
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.MulticastSocket;
+import java.net.URI;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @version $Rev$ $Date$
@@ -63,7 +64,7 @@ public class MulticastSearch {
         byte[] buf = new byte[BUFF_SIZE];
         DatagramPacket packet = new DatagramPacket(buf, 0, buf.length);
 
-        while (timeout == 0 || waited < timeout){
+        while (timeout == 0 || waited < timeout) {
             long start = System.currentTimeMillis();
             try {
                 multicast.receive(packet);
@@ -71,6 +72,17 @@ public class MulticastSearch {
                     String str = new String(packet.getData(), packet.getOffset(), packet.getLength());
                     URI service = URI.create(str);
                     if (service != null && filter.accept(service)) {
+
+                        final String callerHost = ((InetSocketAddress) packet.getSocketAddress()).getAddress().getHostAddress();
+                        final String serviceHost = service.getHost();
+
+                        if (MulticastPulseAgent.isLocalAddress(serviceHost, false)) {
+                            if (!MulticastPulseAgent.isLocalAddress(callerHost, false)) {
+                                //A local service is only available to a local client
+                                continue;
+                            }
+                        }
+
                         return service;
                     }
                 }
@@ -88,6 +100,7 @@ public class MulticastSearch {
     }
 
     public static class DefaultFilter implements Filter {
+        @Override
         public boolean accept(URI service) {
             return true;
         }

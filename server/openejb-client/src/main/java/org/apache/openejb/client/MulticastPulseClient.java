@@ -236,7 +236,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                                         final String serviceHost = serviceUri.getHost();
                                         if (MulticastPulseClient.isLocalAddress(serviceHost, false)) {
                                             if (!MulticastPulseClient.isLocalAddress(serverHost, false)) {
-                                                //A local service is only available to a local clients
+                                                //A local service is only available to a local client
                                                 continue;
                                             }
                                         }

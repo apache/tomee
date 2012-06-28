@@ -16,14 +16,14 @@
  */
 package org.apache.openejb.server.discovery;
 
+import org.apache.openejb.loader.Options;
+import org.apache.openejb.server.DiscoveryAgent;
+import org.apache.openejb.server.DiscoveryListener;
 import org.apache.openejb.server.SelfManaging;
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
-import org.apache.openejb.server.DiscoveryAgent;
-import org.apache.openejb.server.DiscoveryListener;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.loader.Options;
 import org.apache.openejb.util.OptionsLog;
 
 import java.io.IOException;
@@ -61,6 +61,7 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
     private Tracker tracker;
     private Multicast multicast;
 
+    @Override
     public void init(Properties props) {
 
         Options options = new Options(props);
@@ -84,30 +85,37 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
         tracker = builder.build();
     }
 
+    @Override
     public String getIP() {
         return host;
     }
 
+    @Override
     public String getName() {
         return "multicast";
     }
 
+    @Override
     public int getPort() {
         return port;
     }
 
+    @Override
     public void setDiscoveryListener(DiscoveryListener listener) {
         this.tracker.setDiscoveryListener(listener);
     }
 
+    @Override
     public void registerService(URI serviceUri) throws IOException {
         tracker.registerService(serviceUri);
     }
 
+    @Override
     public void unregisterService(URI serviceUri) throws IOException {
         tracker.unregisterService(serviceUri);
     }
 
+    @Override
     public void reportFailed(URI serviceUri) {
         tracker.reportFailed(serviceUri);
     }
@@ -120,6 +128,7 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
      *
      * @throws Exception
      */
+    @Override
     public void start() throws ServiceException {
         try {
             if (running.compareAndSet(false, true)) {
@@ -139,22 +148,25 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
      *
      * @throws Exception
      */
+    @Override
     public void stop() throws ServiceException {
         if (running.compareAndSet(true, false)) {
             multicast.close();
         }
     }
 
+    @Override
     public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
     }
 
+    @Override
     public void service(Socket socket) throws ServiceException, IOException {
     }
 
     class Multicast {
 
         private static final int BUFF_SIZE = 8192;
-        
+
         private final Tracker tracker;
         private final MulticastSocket multicast;
         private Timer timer;
@@ -186,6 +198,7 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
         }
 
         class Listener implements Runnable {
+            @Override
             public void run() {
                 byte[] buf = new byte[BUFF_SIZE];
                 DatagramPacket packet = new DatagramPacket(buf, 0, buf.length);
@@ -207,12 +220,13 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
                     }
                 }
             }
-            
+
         }
 
         class Broadcaster extends TimerTask {
             private IOException failed;
 
+            @Override
             public void run() {
                 if (running.get()) {
                     heartbeat();
@@ -234,7 +248,8 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
                             failed = e;
 
                             log.error("Failed to advertise our service: " + uri, e);
-                            if ("Operation not permitted".equals(e.getMessage())) {
+                            final String message = e.getMessage();
+                            if (null != message && message.toLowerCase().contains("operation not permitted")) {
                                 log.error("The 'Operation not permitted' error has been know to be caused by improper firewall/network setup.  "
                                         + "Please make sure that the OS is properly configured to allow multicast traffic over: " + multicast.getLocalAddress());
                             }
@@ -261,6 +276,7 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
     public void setLoopbackMode(boolean loopbackMode) {
         this.loopbackMode = loopbackMode;
     }
+
     public int getTimeToLive() {
         return timeToLive;
     }
