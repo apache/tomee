@@ -22,10 +22,9 @@ var myImports = new JavaImporter(
 
 with (myImports) {
     var p = new Properties();
-    p.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
-    p.put("java.naming.provider.url", "ejbd://localhost:4201");
+    p.put("java.naming.factory.initial", "org.apache.openejb.client.LocalInitialContextFactory");
 
     var ctx = new InitialContext(p);
     var myBean =  ctx.lookup("openejb/DeployerBusinessRemote");
-    myBean.getUniqueFile();
+    util.save('result', myBean.getUniqueFile());
 }
