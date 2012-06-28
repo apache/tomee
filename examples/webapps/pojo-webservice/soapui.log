@@ -1,0 +1,50 @@
+2012-06-28 18:57:03,268 INFO  [DefaultSoapUICore] initialized soapui-settings from [/opt/softs/soapui-4.0.1/soapui-settings.xml]
+2012-06-28 18:57:05,058 INFO  [SoapUI] Used java version: 1.6.0_30
+2012-06-28 18:59:32,641 INFO  [SchemaUtils] Added default schema from file:/opt/softs/soapui-4.0.1/bin/soapui-4.0.1.jar!/com/eviware/soapui/resources/xsds/xop.xsd with targetNamespace http://www.w3.org/2004/08/xop/include
+2012-06-28 18:59:33,004 INFO  [SchemaUtils] Added default schema from file:/opt/softs/soapui-4.0.1/bin/soapui-4.0.1.jar!/com/eviware/soapui/resources/xsds/XMLSchema.xsd with targetNamespace http://www.w3.org/2001/XMLSchema
+2012-06-28 18:59:33,005 INFO  [SchemaUtils] Added default schema from file:/opt/softs/soapui-4.0.1/bin/soapui-4.0.1.jar!/com/eviware/soapui/resources/xsds/xml.xsd with targetNamespace http://www.w3.org/XML/1998/namespace
+2012-06-28 18:59:33,006 INFO  [SchemaUtils] Added default schema from file:/opt/softs/soapui-4.0.1/bin/soapui-4.0.1.jar!/com/eviware/soapui/resources/xsds/swaref.xsd with targetNamespace http://ws-i.org/profiles/basic/1.1/xsd
+2012-06-28 18:59:33,007 INFO  [SchemaUtils] Added default schema from file:/opt/softs/soapui-4.0.1/bin/soapui-4.0.1.jar!/com/eviware/soapui/resources/xsds/xmime200505.xsd with targetNamespace http://www.w3.org/2005/05/xmlmime
+2012-06-28 18:59:33,008 INFO  [SchemaUtils] Added default schema from file:/opt/softs/soapui-4.0.1/bin/soapui-4.0.1.jar!/com/eviware/soapui/resources/xsds/xmime200411.xsd with targetNamespace http://www.w3.org/2004/11/xmlmime
+2012-06-28 18:59:33,010 INFO  [SchemaUtils] Added default schema from file:/opt/softs/soapui-4.0.1/bin/soapui-4.0.1.jar!/com/eviware/soapui/resources/xsds/soapEnvelope.xsd with targetNamespace http://schemas.xmlsoap.org/soap/envelope/
+2012-06-28 18:59:33,027 INFO  [SchemaUtils] Added default schema from file:/opt/softs/soapui-4.0.1/bin/soapui-4.0.1.jar!/com/eviware/soapui/resources/xsds/soapEncoding.xsd with targetNamespace http://schemas.xmlsoap.org/soap/encoding/
+2012-06-28 18:59:33,029 INFO  [SchemaUtils] Added default schema from file:/opt/softs/soapui-4.0.1/bin/soapui-4.0.1.jar!/com/eviware/soapui/resources/xsds/soapEnvelope12.xsd with targetNamespace http://www.w3.org/2003/05/soap-envelope
+2012-06-28 18:59:33,036 INFO  [SchemaUtils] Added default schema from file:/opt/softs/soapui-4.0.1/bin/soapui-4.0.1.jar!/com/eviware/soapui/resources/xsds/soapEncoding12.xsd with targetNamespace http://www.w3.org/2003/05/soap-encoding
+2012-06-28 18:59:46,131 ERROR [WsdlLoader] Failed to load url [http://localhost:8080/pojo-webservice?wsdl]
+2012-06-28 18:59:46,132 ERROR [SoapUI] An error occured [com.eviware.soapui.impl.support.definition.support.InvalidDefinitionException], see error log for details
+2012-06-28 18:59:46,134 ERROR [errorlog] com.eviware.soapui.impl.support.definition.support.InvalidDefinitionException
+com.eviware.soapui.impl.support.definition.support.InvalidDefinitionException
+	at com.eviware.soapui.impl.wsdl.support.wsdl.WsdlLoader.loadXmlObject(WsdlLoader.java:138)
+	at com.eviware.soapui.impl.wsdl.support.xsd.SchemaUtils.getDefinitionParts(SchemaUtils.java:534)
+	at com.eviware.soapui.impl.wsdl.support.xsd.SchemaUtils.getDefinitionParts(SchemaUtils.java:523)
+	at com.eviware.soapui.impl.support.definition.support.AbstractDefinitionCache.update(AbstractDefinitionCache.java:97)
+	at com.eviware.soapui.impl.support.definition.support.AbstractDefinitionContext$Loader.construct(AbstractDefinitionContext.java:226)
+	at com.eviware.soapui.support.swing.SwingWorkerDelegator.construct(SwingWorkerDelegator.java:46)
+	at com.eviware.soapui.support.swing.SwingWorker$2.run(SwingWorker.java:149)
+	at java.lang.Thread.run(Thread.java:662)
+2012-06-28 19:00:22,801 ERROR [WsdlLoader] Failed to load url [http://127.0.01:8080/pojo-webservice?wsdl]
+2012-06-28 19:00:22,801 ERROR [SoapUI] An error occured [com.eviware.soapui.impl.support.definition.support.InvalidDefinitionException], see error log for details
+2012-06-28 19:00:22,801 ERROR [errorlog] com.eviware.soapui.impl.support.definition.support.InvalidDefinitionException
+com.eviware.soapui.impl.support.definition.support.InvalidDefinitionException
+	at com.eviware.soapui.impl.wsdl.support.wsdl.WsdlLoader.loadXmlObject(WsdlLoader.java:138)
+	at com.eviware.soapui.impl.wsdl.support.xsd.SchemaUtils.getDefinitionParts(SchemaUtils.java:534)
+	at com.eviware.soapui.impl.wsdl.support.xsd.SchemaUtils.getDefinitionParts(SchemaUtils.java:523)
+	at com.eviware.soapui.impl.support.definition.support.AbstractDefinitionCache.update(AbstractDefinitionCache.java:97)
+	at com.eviware.soapui.impl.support.definition.support.AbstractDefinitionContext$Loader.construct(AbstractDefinitionContext.java:226)
+	at com.eviware.soapui.support.swing.SwingWorkerDelegator.construct(SwingWorkerDelegator.java:46)
+	at com.eviware.soapui.support.swing.SwingWorker$2.run(SwingWorker.java:149)
+	at java.lang.Thread.run(Thread.java:662)
+2012-06-28 19:01:09,714 ERROR [WsdlLoader] Failed to load url [http://localhost:8080/pojo-webservice/?wsdl]
+2012-06-28 19:01:09,715 ERROR [SoapUI] An error occured [com.eviware.soapui.impl.support.definition.support.InvalidDefinitionException], see error log for details
+2012-06-28 19:01:09,715 ERROR [errorlog] com.eviware.soapui.impl.support.definition.support.InvalidDefinitionException
+com.eviware.soapui.impl.support.definition.support.InvalidDefinitionException
+	at com.eviware.soapui.impl.wsdl.support.wsdl.WsdlLoader.loadXmlObject(WsdlLoader.java:138)
+	at com.eviware.soapui.impl.wsdl.support.xsd.SchemaUtils.getDefinitionParts(SchemaUtils.java:534)
+	at com.eviware.soapui.impl.wsdl.support.xsd.SchemaUtils.getDefinitionParts(SchemaUtils.java:523)
+	at com.eviware.soapui.impl.support.definition.support.AbstractDefinitionCache.update(AbstractDefinitionCache.java:97)
+	at com.eviware.soapui.impl.support.definition.support.AbstractDefinitionContext$Loader.construct(AbstractDefinitionContext.java:226)
+	at com.eviware.soapui.support.swing.SwingWorkerDelegator.construct(SwingWorkerDelegator.java:46)
+	at com.eviware.soapui.support.swing.SwingWorker$2.run(SwingWorker.java:149)
+	at java.lang.Thread.run(Thread.java:662)
+2012-06-28 19:01:24,521 INFO  [DefaultSoapUICore] Settings saved to [/opt/softs/soapui-4.0.1/soapui-settings.xml]
+2012-06-28 19:01:28,074 INFO  [WorkspaceImpl] Saved workspace to [/opt/dev/openejb/openejb-trunk/examples/webapps/pojo-webservice/../../TestPBE-workspace.xml]

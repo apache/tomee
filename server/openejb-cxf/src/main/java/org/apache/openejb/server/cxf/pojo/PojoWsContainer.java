@@ -22,19 +22,23 @@ import org.apache.openejb.core.webservices.PortData;
 import org.apache.openejb.server.cxf.CxfWsContainer;
 
 import javax.naming.Context;
+import java.util.Map;
 
 public class PojoWsContainer extends CxfWsContainer {
     private final Context context;
     private final Class target;
+    private final Map<String, Object> bindings;
 
-    public PojoWsContainer(Bus bus, PortData port, Context context, Class target) {
+
+    public PojoWsContainer(Bus bus, PortData port, Context context, Class target, Map<String, Object> bdgs) {
         super(bus, port);
         if (target == null) throw new NullPointerException("target is null");
         this.context = context;
         this.target = target;
+        this.bindings = bdgs;
     }
 
     protected PojoEndpoint createEndpoint() {
-        return new PojoEndpoint(bus, port, context, target, httpTransportFactory);
+        return new PojoEndpoint(bus, port, context, target, httpTransportFactory, bindings);
     }
 }

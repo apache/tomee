@@ -195,7 +195,7 @@ public abstract class WsService implements ServerService, SelfManaging {
 
     protected abstract void destroyEjbWsContainer(String deploymentId);
 
-    protected abstract HttpListener createPojoWsContainer(URL moduleBaseUrl, PortData port, String serviceId, Class target, Context context, String contextRoot) throws Exception;
+    protected abstract HttpListener createPojoWsContainer(URL moduleBaseUrl, PortData port, String serviceId, Class target, Context context, String contextRoot, Map<String, Object> bindings) throws Exception;
 
     protected abstract void destroyPojoWsContainer(String serviceId);
 
@@ -339,10 +339,11 @@ public abstract class WsService implements ServerService, SelfManaging {
                 Collection<Injection> injections = webContext.getInjections();
                 Context context = webContext.getJndiEnc();
                 Class target = classLoader.loadClass(servlet.servletClass);
+                final Map<String, Object> bindings = webContext.getBindings();
 
                 PortData port = WsBuilder.toPortData(portInfo, injections, moduleBaseUrl, classLoader);
 
-                HttpListener container = createPojoWsContainer(moduleBaseUrl, port, portInfo.serviceLink, target, context, webApp.contextRoot);
+                HttpListener container = createPojoWsContainer(moduleBaseUrl, port, portInfo.serviceLink, target, context, webApp.contextRoot, bindings);
 
                 if (wsRegistry != null) {
                     // give servlet a reference to the webservice container

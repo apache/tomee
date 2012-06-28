@@ -61,12 +61,12 @@ public class CxfService extends WsService {
         }
     }
 
-    protected HttpListener createPojoWsContainer(URL moduleBaseUrl, PortData port, String serviceId, Class target, Context context, String contextRoot) {
+    protected HttpListener createPojoWsContainer(URL moduleBaseUrl, PortData port, String serviceId, Class target, Context context, String contextRoot, Map<String, Object> bdgs) {
         Bus bus = CxfUtil.getBus();
 
         CxfCatalogUtils.loadOASISCatalog(bus, moduleBaseUrl, "META-INF/jax-ws-catalog.xml");
 
-        PojoWsContainer container = new PojoWsContainer(bus, port, context, target);
+        PojoWsContainer container = new PojoWsContainer(bus, port, context, target, bdgs);
         container.start();
         wsContainers.put(serviceId, container);
         return container;

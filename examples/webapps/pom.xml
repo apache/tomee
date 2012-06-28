@@ -33,6 +33,7 @@
     <module>jsf</module>
     <module>struts</module>
     <module>moviefun</module>
+    <module>pojo-webservice</module>
     <module>rest-example</module>
     <module>rest-example-with-application</module>
     <module>resources-declared-in-webapp</module>
