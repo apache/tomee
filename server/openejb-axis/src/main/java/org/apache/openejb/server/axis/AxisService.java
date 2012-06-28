@@ -99,7 +99,7 @@ public class AxisService extends WsService {
         }
     }
 
-    protected HttpListener createPojoWsContainer(URL moduleBaseUrl, PortData port, String serviceId, Class target, Context context, String contextRoot) throws Exception {
+    protected HttpListener createPojoWsContainer(URL moduleBaseUrl, PortData port, String serviceId, Class target, Context context, String contextRoot, Map<String, Object> bdgs) throws Exception {
         ClassLoader classLoader = target.getClassLoader();
 
         // todo build JaxRpcServiceInfo in assembler

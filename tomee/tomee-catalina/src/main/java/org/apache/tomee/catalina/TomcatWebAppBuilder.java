@@ -85,6 +85,7 @@ import org.omg.CORBA.ORB;
 import javax.ejb.spi.HandleDelegate;
 import javax.el.ELResolver;
 import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.servlet.ServletContext;
@@ -745,6 +746,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
 
                 // add WebDeploymentInfo to ContainerSystem
                 final WebContext webContext = new WebContext(appContext);
+                webContext.setJndiEnc(new InitialContext());
                 webContext.setClassLoader(classLoader);
                 webContext.setId(webAppInfo.moduleId);
                 webContext.setContextRoot(webAppInfo.contextRoot);
