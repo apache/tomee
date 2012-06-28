@@ -31,11 +31,24 @@ TOMEE.ApplicationModel = function (cfg) {
     var executions = [];
 
     var getLastScript = function () {
-        return TOMEE.utils.getSafe(TOMEE.storage.getLocal('lastScript_code'), '');
+        return TOMEE.utils.getSafe(TOMEE.storage.getSession('lastScript_code'), (function () {
+            $.ajax({
+                    url:'application/js/SampleScript.js',
+                    method:'GET',
+                    dataType:'text',
+                    success:function (data) {
+                        channel.send('default.script.loaded', data);
+                    }
+                }
+            );
+
+            //for now just return ''
+            return '';
+        })());
     };
 
     var setLastScript = function (code) {
-        TOMEE.storage.setLocal('lastScript_code', code);
+        TOMEE.storage.setSession('lastScript_code', code);
     };
 
     var request = function (params) {
