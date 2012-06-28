@@ -16,15 +16,16 @@
  */
 package org.apache.openejb.client;
 
-import java.net.URI;
-import java.net.MulticastSocket;
-import java.net.InetAddress;
+import java.io.IOException;
 import java.net.DatagramPacket;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.MulticastSocket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.concurrent.TimeUnit;
-import java.io.IOException;
 
 /**
  * @version $Rev$ $Date$
@@ -66,7 +67,7 @@ public class MulticastSearch {
         byte[] buf = new byte[BUFF_SIZE];
         DatagramPacket packet = new DatagramPacket(buf, 0, buf.length);
 
-        while (timeout == 0 || waited < timeout){
+        while (timeout == 0 || waited < timeout) {
             long start = System.currentTimeMillis();
             try {
                 multicast.receive(packet);
@@ -75,6 +76,17 @@ public class MulticastSearch {
                     try {
                         URI service = new URI(str);
                         if (service != null && filter.accept(service)) {
+
+                            final String callerHost = ((InetSocketAddress) packet.getSocketAddress()).getAddress().getHostAddress();
+                            final String serviceHost = service.getHost();
+
+                            if (MulticastPulseClient.isLocalAddress(serviceHost, false)) {
+                                if (!MulticastPulseClient.isLocalAddress(callerHost, false)) {
+                                    //A local service is only available to a local client
+                                    continue;
+                                }
+                            }
+
                             return service;
                         }
                     } catch (URISyntaxException e) {
@@ -82,6 +94,7 @@ public class MulticastSearch {
                     }
                 }
             } catch (SocketTimeoutException e) {
+                //Ignore
             } catch (SocketException e) {
                 System.out.println(e.getClass().getName() + ": " + e.getMessage());
             } finally {
@@ -98,6 +111,7 @@ public class MulticastSearch {
     }
 
     public static class DefaultFilter implements Filter {
+        @Override
         public boolean accept(URI service) {
             return true;
         }

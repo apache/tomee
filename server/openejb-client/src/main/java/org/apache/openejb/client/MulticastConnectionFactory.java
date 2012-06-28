@@ -52,14 +52,14 @@ public class MulticastConnectionFactory implements ConnectionFactory {
 
         Set<String> schemes = getSet(params, "schemes", defaultSchemes);
         String group = getString(params, "group", "default");
-        long timeout = getLong(params, "timeout", 5000);
+        long timeout = getLong(params, "timeout", 1500);
 
         MulticastSearch search = new MulticastSearch(uri.getHost(), uri.getPort());
 
         URI serviceURI = search.search(new Filter(group, schemes), timeout, TimeUnit.MILLISECONDS);
 
         if (serviceURI == null) {
-            throw new IllegalArgumentException("Unable to find an ejb server via the multicast URI: " + uri);
+            throw new IllegalArgumentException("Unable to find a public ejb server via the multicast URI: " + uri);
         }
 
         try {
