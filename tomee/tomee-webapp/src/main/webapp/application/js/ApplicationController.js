@@ -84,6 +84,7 @@ TOMEE.ApplicationController = function () {
 
         if (params['GetDeployedApplications']) {
             deployments.loadDeployeApps(params['GetDeployedApplications']);
+            consolePanel.loadAppsField(params['GetDeployedApplications'].uids);
         }
 
         if (params['GetSessionData']) {
@@ -217,7 +218,7 @@ TOMEE.ApplicationController = function () {
 
     (function () {
         channel.bind('trigger.console.exec', function (params) {
-            model.executeCommands(model.execute(params.codeType, params.codeText));
+            model.executeCommands(model.execute(params));
         });
 
         channel.bind('app.console.executed', function (params) {

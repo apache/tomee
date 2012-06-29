@@ -113,7 +113,7 @@ TOMEE.ApplicationModel = function (cfg) {
         }
 
         var myFinalCommand = {
-            method:'GET',
+            method:'POST',
             url:TOMEE.baseURL('command'),
             data:{},
             success:function (data) {
@@ -209,10 +209,9 @@ TOMEE.ApplicationModel = function (cfg) {
                 }
             };
         },
-        execute:function (codeType, codeText) {
+        execute:function (params) {
             var executionBean = {
-                codeType:codeType,
-                codeText:codeText,
+                params:params,
                 start:(new Date())
             };
             executions.push(executionBean);
@@ -220,12 +219,9 @@ TOMEE.ApplicationModel = function (cfg) {
             return [
                 {
                     cmd:'RunScript',
-                    data:{
-                        engineName:codeType,
-                        scriptCode:codeText
-                    },
+                    data:params,
                     success:function (data) {
-                        setLastScript(codeText);
+                        setLastScript(params.scriptCode);
 
                         executionBean.success = true;
                         executionBean.data = data['GetSystemInfo'];

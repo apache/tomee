@@ -17,17 +17,18 @@
 
 package org.apache.tomee.webapp.command.impl;
 
-import org.apache.openejb.util.OpenEJBScripter;
+import org.apache.openejb.AppContext;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
+import org.apache.tomee.webapp.TomeeException;
 import org.apache.tomee.webapp.command.Command;
 import org.apache.tomee.webapp.command.Params;
 import org.apache.tomee.webapp.command.impl.script.Utility;
 
-import javax.script.Bindings;
-import javax.script.ScriptContext;
-import javax.script.SimpleScriptContext;
+import javax.script.*;
+import java.util.concurrent.CountDownLatch;
 
 public class RunScript implements Command {
-    public static final OpenEJBScripter SCRIPTER = new OpenEJBScripter();
 
     @Override
     public Object execute(final Params params) throws Exception {
@@ -41,17 +42,83 @@ public class RunScript implements Command {
             engineName = "js";
         }
 
-        //new context for the execution of this script
-        final ScriptContext newContext = new SimpleScriptContext();
+        final CountDownLatch latch = new CountDownLatch(1);
 
-        //creating the bidings object for the current execution
-        final Bindings bindings = newContext.getBindings(ScriptContext.ENGINE_SCOPE);
+        //everything should be created inside the new classloader, so run it inside another thread and set the proper classloader
+        final ExecutionThread execution = new ExecutionThread(latch, params, engineName, scriptCode);
+        final Thread thread = new Thread(execution);
+        thread.setContextClassLoader(getClassLoader(params.getString("appName")));
+        thread.start();
 
-        bindings.put("util", new Utility(params));
+        //wait until it is done
+        latch.await();
 
-        //note that "engine" does not know "bindings". It only knows the current context.
-        //Eventual exceptions are handled by the ErrorServlet
-        final Object result = SCRIPTER.evaluate(engineName, scriptCode, newContext);
-        return result;
+        //any exception?
+        if (execution.getException() != null) {
+            //just throw it
+            throw new TomeeException(execution.getException());
+        }
+        return execution.getResult();
+    }
+
+    private ClassLoader getClassLoader(final String appName) {
+        if (appName == null) {
+            return Thread.currentThread().getContextClassLoader();
+        }
+
+        final ContainerSystem cs = SystemInstance.get().getComponent(ContainerSystem.class);
+        final AppContext ctx = cs.getAppContext(appName);
+        if (ctx == null) {
+            return Thread.currentThread().getContextClassLoader();
+        }
+
+        return ctx.getClassLoader();
+    }
+
+    private class ExecutionThread implements Runnable {
+        private final CountDownLatch latch;
+        private final Params params;
+        private final String engineName;
+        private final String scriptCode;
+
+        private Object result;
+        private Exception exception;
+
+        public Object getResult() {
+            return result;
+        }
+
+        public Exception getException() {
+            return exception;
+        }
+
+        private ExecutionThread(final CountDownLatch latch, final Params params, final String engineName, final String scriptCode) {
+            this.latch = latch;
+            this.params = params;
+            this.engineName = engineName;
+            this.scriptCode = scriptCode;
+        }
+
+        @Override
+        public void run() {
+            final ScriptEngineManager manager = new ScriptEngineManager();
+            final ScriptEngine engine = manager.getEngineByName(this.engineName);
+
+            //new context for the execution of this script
+            final ScriptContext newContext = new SimpleScriptContext();
+
+            //creating the bidings object for the current execution
+            final Bindings bindings = newContext.getBindings(ScriptContext.ENGINE_SCOPE);
+
+            bindings.put("util", new Utility(this.params));
+
+            try {
+                this.result = engine.eval(this.scriptCode, newContext);
+            } catch (ScriptException e) {
+                this.exception = e;
+            } finally {
+                latch.countDown();
+            }
+        }
     }
 }
