@@ -34,7 +34,7 @@ All the examples show code, but some are better documented than others.  Example
 {span-one-third
 ### EntityManagers
 
- - [injection-of-entitymanager](injection-of-entitymanager/README.html)
+ - [injection-of-entitymanager](injection-of-entitymanager/README.html) *
  - [jpa-eclipselink](jpa-eclipselink/README.html)
  - [jpa-hibernate](jpa-hibernate/README.html)
  - [jpa-enumerated](jpa-enumerated/README.html) *
