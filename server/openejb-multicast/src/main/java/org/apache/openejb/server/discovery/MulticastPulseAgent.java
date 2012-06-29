@@ -205,16 +205,17 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
 
                                     s = (s.replace(CLIENT, ""));
 
-                                    final String client = sa.toString();
-                                    if (MulticastPulseAgent.this.loopbackOnly) {
-                                        //We only have local services, so make sure the request is from a local source else ignore it
-                                        if (!MulticastPulseAgent.isLocalAddress(client, false)) {
-                                            log.debug(String.format("Ignoring client %1$s pulse request for group: %2$s - No remote services available", client, s));
-                                            return;
-                                        }
-                                    }
+                                    final String client = ((InetSocketAddress) sa).getAddress().getHostAddress();
 
                                     if (MulticastPulseAgent.this.group.equals(s) || "*".equals(s)) {
+
+                                        if (MulticastPulseAgent.this.loopbackOnly) {
+                                            //We only have local services, so make sure the request is from a local source else ignore it
+                                            if (!MulticastPulseAgent.isLocalAddress(client, false)) {
+                                                log.debug(String.format("Ignoring remote client %1$s pulse request for group: %2$s - No remote services available", client, s));
+                                                continue;
+                                            }
+                                        }
 
                                         log.debug(String.format("Answering client %1$s pulse request for group: %2$s", client, s));
                                         ms.send(MulticastPulseAgent.this.response);
