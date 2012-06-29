@@ -46,7 +46,8 @@ public class EmbeddedTomEEContainer extends EJBContainer {
         appId = id;
     }
 
-    @Override public void close() {
+    @Override
+    public void close() {
         try {
             if (tomEEContainer.container.getAppContexts(appId) != null) {
                 tomEEContainer.container.undeploy(appId);
@@ -58,23 +59,25 @@ public class EmbeddedTomEEContainer extends EJBContainer {
         tomEEContainer = null;
     }
 
-    @Override public Context getContext() {
+    @Override
+    public Context getContext() {
         return tomEEContainer.container.getJndiContext();
     }
 
     public static class EmbeddedTomEEContainerProvider implements EJBContainerProvider {
-        @Override public EJBContainer createEJBContainer(Map<?, ?> properties) {
+        @Override
+        public EJBContainer createEJBContainer(Map<?, ?> properties) {
             Object provider = properties.get(EJBContainer.PROVIDER);
             int ejbContainerProviders = 1;
             try {
                 ejbContainerProviders = ProviderLocator.getServices(EJBContainerProvider.class.getName(), EJBContainer.class, Thread.currentThread().getContextClassLoader()).size();
             } catch (Exception e) {
-                 // no-op
+                // no-op
             }
 
             if ((provider == null && ejbContainerProviders > 1)
                     || (!provider.equals(EmbeddedTomEEContainer.class)
-                            && !CONTAINER_NAMES.contains(provider))) {
+                    && !CONTAINER_NAMES.contains(provider))) {
                 return null;
             }
 
