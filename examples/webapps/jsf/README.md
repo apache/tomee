@@ -1,6 +1,6 @@
 Title: JSF
 
-*Help us document this example! Source available in [svn](http://svn.apache.org/repos/asf/openejb/trunk/openejb/examples/jsf) or [git](https://github.com/apache/openejb/tree/trunk/openejb/examples/jsf). Open a [JIRA](https://issues.apache.org/jira/browse/TOMEE) with patch or pull request*
+*Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
 
 A simple web-app showing how to use dependency injection in JSF managed beans using openejb with tomcat
 It contains a Local Stateless session bean (CalculatorImpl) which adds two numbers and returns the result.

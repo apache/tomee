@@ -220,3 +220,4 @@ All the examples show code, but some are better documented than others.  Example
  - [polling-parent](polling-parent/README.html)
 }
 }
+ - [absolute](/foo.html)

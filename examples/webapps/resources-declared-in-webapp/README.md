@@ -1,6 +1,6 @@
 Title: Resources Declared in Webapp
 
-*Help us document this example! Source available in [svn](http://svn.apache.org/repos/asf/openejb/trunk/openejb/examples/resources-declared-in-webapp) or [git](https://github.com/apache/openejb/tree/trunk/openejb/examples/resources-declared-in-webapp). Open a [JIRA](https://issues.apache.org/jira/browse/TOMEE) with patch or pull request*
+*Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
 
 ## Manager
 
