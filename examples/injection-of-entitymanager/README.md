@@ -1,12 +1,16 @@
 Title: Injection Of Entitymanager
 
-*Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
+Shows use of `@PersistenceContext` to have an `EntityManager` with an
+`EXTENDED` persistence context injected into a @Stateful bean.	An EJB 3
+`@Entity` bean is used with the EntityManager to create, persist and merge
+data to a database.
 
-## Movie
+## Creating the JPA Entity
+
+The entity itself is simply a pojo annotated with `@Entity`.  We create one called `Movie` which we can use to hold movie records.
 
     package org.superbiz.injection.jpa;
-    //START SNIPPET: code
-    
+
     import javax.persistence.Entity;
     
     @Entity
@@ -50,12 +54,36 @@ Title: Injection Of Entitymanager
         }
     }
 
-## Movies
+## Configure the EntityManager via a persistence.xml file
+
+The above `Movie` entity can be created, removed, updated or deleted via an `EntityManager` object.  The `EntityManager` itself is
+configured via a `META-INF/persistence.xml` file that is placed in the same jar as the `Movie` entity.
+
+    <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
+
+      <persistence-unit name="movie-unit">
+        <jta-data-source>movieDatabase</jta-data-source>
+        <non-jta-data-source>movieDatabaseUnmanaged</non-jta-data-source>
+        <class>org.superbiz.injection.jpa.Movie</class>
+
+        <properties>
+          <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
+        </properties>
+      </persistence-unit>
+    </persistence>
+
+Notice that the `Movie` entity is listed via a `<class>` element.  This is not required, but can help when testing or when the
+`Movie` class is located in a different jar than the jar containing the `persistence.xml` file.
+
+## Injection via @PersistenceContext
+
+The `EntityManager` itself is created by the container using the information in the `persistence.xml`, so to use it at
+runtime, we simply need to request it be injected into one of our components.  We do this via `@PersistenceContext`
+
+The `@PersistenceContext` annotation can be used on any CDI bean, EJB, Servlet, Servlet Listener, Servlet Filter, or JSF ManagedBean.  If you don't use an EJB you will need to use a `UserTransaction` begin and commit transactions manually.  A transaction is required for any of the create, update or delete methods of the EntityManager to work.
 
     package org.superbiz.injection.jpa;
-    
-    //START SNIPPET: code
-    
+
     import javax.ejb.Stateful;
     import javax.persistence.EntityManager;
     import javax.persistence.PersistenceContext;
@@ -83,24 +111,15 @@ Title: Injection Of Entitymanager
         }
     }
 
-## persistence.xml
+This particular `EntityManager` is injected as an `EXTENDED` persistence context, which simply means that the `EntityManager`
+is created when the `@Stateful` bean is created and destroyed when the `@Stateful` bean is destroyed.  Simply put, the
+data in the `EntityManager` is cached for the lifetime of the `@Stateful` bean.
 
-    <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
-    
-      <persistence-unit name="movie-unit">
-        <jta-data-source>movieDatabase</jta-data-source>
-        <non-jta-data-source>movieDatabaseUnmanaged</non-jta-data-source>
-        <class>org.superbiz.injection.jpa.Movie</class>
-    
-        <properties>
-          <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
-        </properties>
-      </persistence-unit>
-    </persistence>
-        <!-- END SNIPPET: code -->
-    
+The use of `EXTENDED` persistence contexts is **only** available to `@Stateful` beans.  See the [JPA Concepts](../../jpa-concepts.html) page for an high level explanation of what a "persistence context" really is and how it is significant to JPA.
 
 ## MoviesTest
+
+Testing JPA is quite easy, we can simply use the `EJBContainer` API to create a container in our test case.
 
     package org.superbiz.injection.jpa;
     
@@ -142,6 +161,7 @@ Title: Injection Of Entitymanager
 
 # Running
 
+When we run our test case we should see output similar to the following.
     
     -------------------------------------------------------
      T E S T S
