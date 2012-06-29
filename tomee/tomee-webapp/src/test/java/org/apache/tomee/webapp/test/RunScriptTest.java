@@ -34,7 +34,7 @@ public class RunScriptTest {
     @Test
     public void getInstanceTest() throws Exception {
         this.myParameterMap.put("scriptCode", new String[]{
-                readJsFile()
+                readJsFile("/Test.js")
         });
         this.myParameterMap.put("engineName", new String[]{"js"});
 
@@ -44,10 +44,10 @@ public class RunScriptTest {
         assertEquals("myValue", result);
     }
 
-    private String readJsFile() throws IOException {
+    private String readJsFile(String fileName) throws IOException {
         StringBuilder contents = new StringBuilder();
 
-        DataInputStream in = new DataInputStream(RunScriptTest.class.getResourceAsStream("/Test.js"));
+        DataInputStream in = new DataInputStream(RunScriptTest.class.getResourceAsStream(fileName));
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
         String strLine;
         while ((strLine = br.readLine()) != null) {

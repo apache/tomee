@@ -34,10 +34,14 @@ TOMEE.Console = function (cfg) {
         extraStyles:{
             height:'500px'
         },
-        onResize: function(height) {
+        onResize:function (height) {
             elText.main.height(height);
         },
         bbar:[
+            {
+                elName:'appSelector',
+                tag:'select'
+            },
             {
                 elName:'scriptSelector',
                 tag:'select'
@@ -46,13 +50,15 @@ TOMEE.Console = function (cfg) {
                 tag:'a',
                 cls:'btn',
                 html:TOMEE.I18N.get('application.console.execute'),
-                listeners: {
-                    'click': function() {
+                listeners:{
+                    'click':function () {
                         var text = elText.main.val();
                         var script = console.getElement('scriptSelector').val();
+                        var app = console.getElement('appSelector').val();
                         channel.send('trigger.console.exec', {
-                            codeType:script,
-                            codeText:text
+                            engineName:script,
+                            scriptCode:text,
+                            appName:app
                         });
                     }
                 }
@@ -63,34 +69,52 @@ TOMEE.Console = function (cfg) {
     var el = console.getContentEl();
     el.append(elText.main);
 
-    var loadScriptsField = function (languages) {
-        var getOption = function (lang) {
+    var loadSelector = function (values, getValueBean, selector) {
+        var getOption = function (valueBean) {
             var option = $('<option></option>');
-            option.attr('value', lang);
-            option.append(lang);
+            option.attr('value', valueBean.value);
+            option.append(valueBean.text);
             return option;
         };
 
-        var selector = console.getElement('scriptSelector');
         selector.empty();
-        if (!languages) {
+        if (!values) {
             return;
         }
-        for (var i = 0; i < languages.length; i++) {
-            selector.append(getOption(languages[i]));
+        for (var i = 0; i < values.length; i++) {
+            selector.append(getOption(getValueBean(values[i])));
         }
     };
 
+    var loadScriptsField = function (languages) {
+        loadSelector(languages, function (bean) {
+            return {
+                value:bean,
+                text:bean
+            };
+        }, console.getElement('scriptSelector'));
+    };
+
+    var loadAppsField = function (apps) {
+        loadSelector(apps, function (bean) {
+            return {
+                value:bean,
+                text:bean
+            };
+        }, console.getElement('appSelector'));
+    };
+
     return {
-        setScript: function(script) {
+        setScript:function (script) {
             elText.main.html(script);
         },
-        setHeight:function(height) {
+        setHeight:function (height) {
             console.setHeight(height);
         },
         getEl:function () {
             return console.getEl();
         },
-        loadScriptsField:loadScriptsField
+        loadScriptsField:loadScriptsField,
+        loadAppsField:loadAppsField
     };
 };
