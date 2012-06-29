@@ -387,7 +387,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
             opt('p', "port").type(int.class).value(6142)
                     .description("Multicast port");
 
-            opt('t', "timeout").type(int.class).value(150)
+            opt('t', "timeout").type(int.class).value(1000)
                     .description("Pulse back timeout");
         }
 
@@ -417,10 +417,10 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
 
         final Options options = arguments.options();
 
-        final String group = options.get("group", "*");
+        final String discover = options.get("group", "*");
         final String mchost = options.get("host", "239.255.3.2");
         final int mcport = options.get("port", 6142);
-        final int timeout = options.get("timeout", 150);
+        final int timeout = options.get("timeout", 1500);
         final AtomicBoolean running = new AtomicBoolean(true);
 
         final Thread t = new Thread(new Runnable() {
@@ -431,7 +431,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                     Set<URI> uriSet = null;
                     try {
                         uriSet = MulticastPulseClient.discoverURIs(
-                                group,
+                                discover,
                                 new HashSet<String>(Arrays.asList("ejbd", "ejbds", "http", "https")),
                                 mchost,
                                 mcport,
@@ -441,6 +441,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                     }
 
                     if (uriSet != null && uriSet.size() > 0) {
+
                         for (URI uri : uriSet) {
 
                             final String server = uri.getScheme().replace("mp-", "");
@@ -460,7 +461,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                             boolean b = false;
                             final Socket s = new Socket();
                             try {
-                                s.connect(new InetSocketAddress(host, port), 150);
+                                s.connect(new InetSocketAddress(host, port), 1000);
                                 b = true;
                             } catch (Throwable e) {
                                 //Ignore
@@ -472,16 +473,16 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                                 }
                             }
 
-                            System.out.println("ServerHost: " + server + " - Group: " + group + " - Service: " + uri.toASCIIString() + " is reachable: " + b);
+                            System.out.println(server + ":" + group + " - " + uri.toASCIIString() + " is reachable: " + b);
                         }
                     } else {
-                        System.out.println("Did not discover any URIs to test");
+                        System.out.println("### Failed to discover server: " + discover);
                     }
 
                     System.out.println(".");
 
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(500);
                     } catch (InterruptedException e) {
                         //Ignore
                     }
