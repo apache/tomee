@@ -1,8 +1,8 @@
 Title: Injection Of Entitymanager
 
-Shows use of `@PersistenceContext` to have an `EntityManager` with an
-`EXTENDED` persistence context injected into a @Stateful bean.	An EJB 3
-`@Entity` bean is used with the EntityManager to create, persist and merge
+This example shows use of `@PersistenceContext` to have an `EntityManager` with an
+`EXTENDED` persistence context injected into a `@Stateful bean`. A JPA
+`@Entity` bean is used with the `EntityManager` to create, persist and merge
 data to a database.
 
 ## Creating the JPA Entity
