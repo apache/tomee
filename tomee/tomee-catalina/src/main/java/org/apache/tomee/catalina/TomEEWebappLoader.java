@@ -30,6 +30,8 @@ import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.mbeans.MBeanUtils;
 import org.apache.naming.resources.DirContextURLStreamHandler;
 import org.apache.openejb.ClassLoaderUtil;
+import org.apache.openejb.loader.event.ComponentAdded;
+import org.apache.openejb.loader.event.ComponentRemoved;
 import org.apache.openejb.util.ArrayEnumeration;
 import org.apache.openejb.util.URLs;
 import org.apache.tomcat.util.ExceptionUtils;
@@ -121,12 +123,28 @@ public class TomEEWebappLoader extends WebappLoader {
         private ClassLoader app;
         private WebappClassLoader webapp;
         private String appPath;
+        private final HashMap<Class, Object> components = new HashMap<Class, Object>();
 
         public TomEEClassLoader(final String appId, final ClassLoader appCl, final WebappClassLoader webappCl) {
             super(webappCl.getURLs(), webappCl); // in fact this classloader = webappclassloader since we add nothing to this
             this.appPath = appId;
             this.app = appCl; // only used to manage resources since webapp.getParent() should be app
             this.webapp = webappCl;
+        }
+
+        public <T> T getComponent(final Class<T> type) {
+            return (T) components.get(type);
+        }
+
+        public <T> T removeComponent(final Class<T> type) {
+            return (T) components.remove(type);
+        }
+
+        /**
+         * @param type the class type of the component required
+         */
+        public <T> T setComponent(final Class<T> type, final T value) {
+            return (T) components.put(type, value);
         }
 
         /**
