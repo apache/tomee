@@ -36,6 +36,7 @@ import org.apache.openejb.config.rules.CheckInjectionPointUsage;
 import org.apache.openejb.config.rules.CheckInjectionTargets;
 import org.apache.openejb.config.rules.CheckMethods;
 import org.apache.openejb.config.rules.CheckPersistenceRefs;
+import org.apache.openejb.config.rules.CheckRestMethodArePublic;
 import org.apache.openejb.config.rules.CheckUserTransactionRefs;
 import org.apache.openejb.config.rules.CheckAnnotations;
 import org.apache.openejb.config.rules.CheckIncorrectPropertyNames;
@@ -122,7 +123,8 @@ public class AppValidator {
                 new CheckAsynchronous(),
                 new CheckDescriptorLocation(),
                 new CheckAnnotations(),
-                new CheckIncorrectPropertyNames()
+                new CheckIncorrectPropertyNames(),
+                new CheckRestMethodArePublic()
         };
         if (additionalValidators == null || additionalValidators.length == 0) {
             return defaultRules;
