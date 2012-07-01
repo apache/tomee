@@ -17,6 +17,7 @@
 package org.apache.tomee.catalina;
 
 import org.apache.openejb.OpenEJB;
+import org.apache.openejb.loader.JarLocation;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.tomee.installer.Paths;
 
@@ -88,7 +89,7 @@ public final class TomEEClassLoaderHelper {
                     continue;
                 }
 
-                final URL url = clazz.getProtectionDomain().getCodeSource().getLocation();
+                final URL url = JarLocation.jarLocation(clazz).toURI().toURL();
                 if (url == null) {
                     continue;
                 }
