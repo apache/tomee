@@ -302,13 +302,17 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                         final InjectionProcessor processor = new InjectionProcessor(testInstance, context.getInjections(), context.getJndiContext());
 
                         processor.createInstance();
-
+                        load("org.apache.webbeans.component.AbstractOwbBean");
+                        load("sun.security.pkcs11.SunPKCS11");
+                        load("sun.security.pkcs11.SunPKCS11$Descriptor");
+                        load("sun.security.pkcs11.wrapper.PKCS11Exception");
                         try {
                             OWBInjector beanInjector = new OWBInjector(appContext.getWebBeansContext());
                             beanInjector.inject(testInstance);
                         } catch (Throwable t) {
                             // TODO handle this differently
                             // this is temporary till the injector can be rewritten
+                            t.printStackTrace();
                         }
                     } finally {
                         ThreadContext.exit(oldContext);
@@ -330,6 +334,18 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                 }
             } finally {
                 SystemInstance.reset();
+            }
+        }
+
+        private void load(String className) {
+//            className = className.replace('/', '.');
+            try {
+                this.getClass().getClassLoader().loadClass(className);
+            } catch (Throwable t1) {
+                try {
+                    this.getClass().getClassLoader().loadClass(className);
+                } catch (Throwable t2) {
+                }
             }
         }
 
