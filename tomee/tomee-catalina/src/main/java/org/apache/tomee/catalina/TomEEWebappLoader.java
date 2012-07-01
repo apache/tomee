@@ -30,8 +30,6 @@ import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.mbeans.MBeanUtils;
 import org.apache.naming.resources.DirContextURLStreamHandler;
 import org.apache.openejb.ClassLoaderUtil;
-import org.apache.openejb.loader.event.ComponentAdded;
-import org.apache.openejb.loader.event.ComponentRemoved;
 import org.apache.openejb.util.ArrayEnumeration;
 import org.apache.openejb.util.URLs;
 import org.apache.tomcat.util.ExceptionUtils;
@@ -123,7 +121,6 @@ public class TomEEWebappLoader extends WebappLoader {
         private ClassLoader app;
         private WebappClassLoader webapp;
         private String appPath;
-        private final HashMap<Class, Object> components = new HashMap<Class, Object>();
 
         public TomEEClassLoader(final String appId, final ClassLoader appCl, final WebappClassLoader webappCl) {
             super(enrichedUrls(webappCl.getURLs()), webappCl); // in fact this classloader = webappclassloader since we add nothing to this
@@ -133,30 +130,39 @@ public class TomEEWebappLoader extends WebappLoader {
         }
 
         private static URL[] enrichedUrls(final URL[] urLs) {
-            final URL[] additional = TomEEClassLoaderHelper.tomEEWebappIntegrationLibraries();
-            final URL[] urls = new URL[urLs.length + additional.length];
+            final List<Integer> skipped = new ArrayList<Integer>();
+
+            // while we are here validate the urls regading tomee rules
             for (int i = 0; i < urLs.length; i++) {
-                urls[i] = urLs[i];
+                final File file;
+                try {
+                    file = URLs.toFile(urLs[i]);
+                } catch (IllegalStateException ise) {
+                    continue;
+                }
+
+                try {
+                    if (!TomEEClassLoaderHelper.validateJarFile(file)) {
+                        skipped.add(i);
+                    }
+                } catch (IOException e) {
+                    // ignored
+                }
+            }
+
+            final URL[] additional = TomEEClassLoaderHelper.tomEEWebappIntegrationLibraries();
+            final URL[] urls = new URL[urLs.length + additional.length - skipped.size()];
+            for (int i = 0; i < urLs.length; i++) {
+                if (!skipped.contains(i)) {
+                    urls[i] = urLs[i];
+                } else {
+                    i--;
+                }
             }
             for (int i = 0; i < additional.length; i++) {
                 urls[urLs.length + i] = additional[i];
             }
             return urls;
-        }
-
-        public <T> T getComponent(final Class<T> type) {
-            return (T) components.get(type);
-        }
-
-        public <T> T removeComponent(final Class<T> type) {
-            return (T) components.remove(type);
-        }
-
-        /**
-         * @param type the class type of the component required
-         */
-        public <T> T setComponent(final Class<T> type, final T value) {
-            return (T) components.put(type, value);
         }
 
         /**

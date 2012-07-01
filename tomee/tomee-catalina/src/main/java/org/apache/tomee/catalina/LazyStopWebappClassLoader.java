@@ -20,6 +20,8 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.loader.WebappClassLoader;
 import org.apache.openejb.loader.SystemInstance;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 
 public class LazyStopWebappClassLoader extends WebappClassLoader {
@@ -73,5 +75,13 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
             addURL(url);
         }
         super.start();
+    }
+
+    @Override
+    protected boolean validateJarFile(File file) throws IOException {
+        if (!super.validateJarFile(file)) {
+            return false;
+        }
+        return TomEEClassLoaderHelper.validateJarFile(file);
     }
 }

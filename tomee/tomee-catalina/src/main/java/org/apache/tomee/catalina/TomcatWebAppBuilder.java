@@ -511,6 +511,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
      */
     @Override
     public void init(final StandardContext standardContext) {
+        // just adding a carriage return to get logs more readable
+        logger.info("-------------------------\nTomcatWebAppBuilder.init " + standardContext.getPath());
+
         standardContext.setCrossContext(SystemInstance.get().getOptions().get(OPENEJB_CROSSCONTEXT_PROPERTY, false));
         standardContext.setNamingResources(new OpenEJBNamingResource());
 
@@ -650,8 +653,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
      */
 //    @Override
     private void startInternal(final StandardContext standardContext) {
-        // just adding a carriage return to get logs more readable
-        logger.info("-------------------------\nTomcatWebAppBuilder.start " + standardContext.getPath());
         if (isIgnored(standardContext)) return;
 
         final CoreContainerSystem cs = getContainerSystem();
