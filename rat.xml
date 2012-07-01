@@ -58,7 +58,7 @@
           <exclude name="examples/decorators/src/main/resources/META-INF/beans.xml"/>
           <exclude name="examples/webapps/rest-example/TODO"/>
           <exclude name="container/openejb-jee/src/main/xsdlist/xsdlist.txt"/>
-          <exclude name="tomee/tomee-mojarra/src/main/resources/META-INF/services/com.sun.faces.spi.injectionprovider"
+          <exclude name="tomee/tomee-mojarra/src/main/resources/META-INF/services/com.sun.faces.spi.injectionprovider" />
 
           <!-- user-owned config files.  see httpds default.httpd.conf for precident --> 
           <exclude name="**/default.openejb.conf"/> 
