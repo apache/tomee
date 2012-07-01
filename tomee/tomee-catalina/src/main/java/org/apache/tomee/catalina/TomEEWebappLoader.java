@@ -126,10 +126,22 @@ public class TomEEWebappLoader extends WebappLoader {
         private final HashMap<Class, Object> components = new HashMap<Class, Object>();
 
         public TomEEClassLoader(final String appId, final ClassLoader appCl, final WebappClassLoader webappCl) {
-            super(webappCl.getURLs(), webappCl); // in fact this classloader = webappclassloader since we add nothing to this
+            super(enrichedUrls(webappCl.getURLs()), webappCl); // in fact this classloader = webappclassloader since we add nothing to this
             this.appPath = appId;
             this.app = appCl; // only used to manage resources since webapp.getParent() should be app
             this.webapp = webappCl;
+        }
+
+        private static URL[] enrichedUrls(final URL[] urLs) {
+            final URL[] additional = TomEEClassLoaderHelper.tomEEWebappIntegrationLibraries();
+            final URL[] urls = new URL[urLs.length + additional.length];
+            for (int i = 0; i < urLs.length; i++) {
+                urls[i] = urLs[i];
+            }
+            for (int i = 0; i < additional.length; i++) {
+                urls[urLs.length + i] = additional[i];
+            }
+            return urls;
         }
 
         public <T> T getComponent(final Class<T> type) {

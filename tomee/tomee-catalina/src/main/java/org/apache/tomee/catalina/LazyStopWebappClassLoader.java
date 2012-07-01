@@ -20,6 +20,8 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.loader.WebappClassLoader;
 import org.apache.openejb.loader.SystemInstance;
 
+import java.net.URL;
+
 public class LazyStopWebappClassLoader extends WebappClassLoader {
     public static final String TOMEE_WEBAPP_FIRST = "tomee.webapp-first";
 
@@ -58,5 +60,18 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
 
     public boolean isRestarting() {
         return restarting;
+    }
+
+    // embeddeding implementation of sthg (JPA, JSF) can lead to classloading issues if we don't enrich the webapp
+    // with our integration jars
+    // typically the class will try to be loaded by the common classloader
+    // but the interface implemented or the parent class
+    // will be in the webapp
+    @Override
+    public void start() throws LifecycleException {
+        for (URL url : TomEEClassLoaderHelper.tomEEWebappIntegrationLibraries())  {
+            addURL(url);
+        }
+        super.start();
     }
 }
