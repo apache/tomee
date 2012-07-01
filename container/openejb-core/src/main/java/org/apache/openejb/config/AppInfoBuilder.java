@@ -632,11 +632,12 @@ class AppInfoBuilder {
                 // info.persistenceUnitRootUrl = null; // to avoid HHH015010
 
                 if (className == null || className.startsWith("org.hibernate.transaction") || className.startsWith("org.hibernate.service.jta.platform")){
+                    final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
                     String key = HIBERNATE_JTA_PLATFORM;
                     String value = MakeTxLookup.HIBERNATE_NEW_FACTORY;
                     try {
                         // hibernate 4
-                        AppInfoBuilder.class.getClassLoader().loadClass("org.hibernate.service.jta.platform.spi.JtaPlatform");
+                        classLoader.loadClass("org.hibernate.service.jta.platform.spi.JtaPlatform");
                     } catch (Exception e) {
                         // hibernate 3. In the worse case it is set with a hibernate 4 and hibernate will convert it.
                         key = HIBERNATE_TRANSACTION_MANAGER_LOOKUP_CLASS;
@@ -644,7 +645,7 @@ class AppInfoBuilder {
                     }
 
                     try {
-                        AppInfoBuilder.class.getClassLoader().loadClass(value);
+                        classLoader.loadClass(value);
                         info.properties.setProperty(key, value);
                         logger.debug("Adjusting PersistenceUnit(name=" + info.name + ") property to " + key + "=" + value);
                     } catch (Exception e) {
