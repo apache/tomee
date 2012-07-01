@@ -132,7 +132,14 @@ public final class TomEEClassLoaderHelper {
      */
     private static final String[] FORBIDDEN_CLASSES = new String[]{
             "javax.persistence.Entity", // JPA
-            "javax.transaction.Transaction" // JTA
+            "javax.transaction.Transaction", // JTA
+            "javax.jws.WebService", // JAXWS
+            "javax.validation.Validation", // BVal
+            "javax.jms.Queue", // JMS
+            "javax.enterprise.context.ApplicationScoped", // CDI
+            "javax.ws.rs.Path", // JAXRS
+            "javax.ejb.EJB", // EJB
+            "javax.annotation.PostConstruct" // javax.annotation
     };
 
     public static boolean validateJarFile(final File file) throws IOException {
