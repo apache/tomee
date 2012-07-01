@@ -36,11 +36,12 @@
           <exclude name="**/README.md"/>
           <exclude name="**/README.mdtext"/>
 
-          <exclude name="arquillian-tomee/arquillian-tomee-embedded/src/main/resources/META-INF/services/org.jboss.arquillian.core.spi.LoadableExtension"/>
-          <exclude name="arquillian-tomee/arquillian-tomee-remote/src/main/resources/META-INF/services/org.jboss.arquillian.core.spi.LoadableExtension"/>
-          <exclude name="arquillian-tomee/arquillian-tomee-tests/src/test/resources/org/apache/openejb/arquillian/tests/jaxrs/foo"/>
-          <exclude name="arquillian-tomee/arquillian-tomee-tests/src/test/resources/test.getresources"/>
-          <exclude name="arquillian-tomee/arquillian-tomee-webapp-remote/src/main/resources/META-INF/services/org.jboss.arquillian.core.spi.LoadableExtension"/>
+          <exclude name="arquillian/arquillian-tomee-embedded/src/main/resources/META-INF/services/org.jboss.arquillian.core.spi.LoadableExtension"/>
+          <exclude name="arquillian/arquillian-tomee-remote/src/main/resources/META-INF/services/org.jboss.arquillian.core.spi.LoadableExtension"/>
+          <exclude name="arquillian/arquillian-tomee-tests/src/test/resources/org/apache/openejb/arquillian/tests/jaxrs/foo"/>
+          <exclude name="arquillian/arquillian-tomee-tests/src/test/resources/test.getresources"/>
+          <exclude name="arquillian/arquillian-tomee-webapp-remote/src/main/resources/META-INF/services/org.jboss.arquillian.core.spi.LoadableExtension"/>
+          <exclude name="arquillian/arquillian-openejb-embedded-4/src/main/resources/META-INF/services/org.jboss.arquillian.core.spi.LoadableExtension" />
           <exclude name="container/openejb-core/src/main/resources/default.exclusions"/>
           <exclude name="container/openejb-core/src/test/resources/META-INF/services/javax.validation.spi.ValidationProvider"/>
           <exclude name="osgi/openejb-core-osgi/src/main/resources/META-INF/services/javax.enterprise.inject.spi.Extension"/>
@@ -59,6 +60,8 @@
           <exclude name="examples/webapps/rest-example/TODO"/>
           <exclude name="container/openejb-jee/src/main/xsdlist/xsdlist.txt"/>
           <exclude name="tomee/tomee-mojarra/src/main/resources/META-INF/services/com.sun.faces.spi.injectionprovider" />
+          <exclude name="examples/deltaspike-configproperty/src/main/resources/META-INF/services/org.apache.deltaspike.core.spi.config.ConfigSourceProvider" />
+          <exclude name="tomee/tomee-webapp/src/main/webapp/lib/jquery/jquery-1.7.2.min.js" /> <!-- minimize so ignored -->
 
           <!-- user-owned config files.  see httpds default.httpd.conf for precident --> 
           <exclude name="**/default.openejb.conf"/> 
