@@ -558,6 +558,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         standardContext.setNamingContextListener(ncl);
         standardContext.addLifecycleListener(ncl);
         standardContext.addLifecycleListener(new TomcatJavaJndiBinder());
+
+        // listen some events
+        standardContext.addContainerListener(new TomEEContainerListener());
     }
 
     public class StandardContextInfo {

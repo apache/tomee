@@ -18,7 +18,10 @@ package org.apache.tomee.catalina;
 
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.tomee.installer.Paths;
 
+import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,7 +29,9 @@ import java.util.Collection;
 
 public final class TomEEClassLoaderHelper {
     public static final String TOMEE_WEBAPP_CLASSLOADER_ENRICHMENT_SKIP = "tomee.webapp.classloader.enrichment.skip";
-    public static final String TOMEE_WEBAPP_CLASSLOADER_ENRICHMENT = "tomee.webapp.classloader.enrichment";
+
+    public static final String TOMEE_WEBAPP_CLASSLOADER_ENRICHMENT_CLASSES = "tomee.webapp.classloader.enrichment.classes";
+    public static final String TOMEE_WEBAPP_CLASSLOADER_ENRICHMENT_PREFIXES = "tomee.webapp.classloader.enrichment.prefixes";
 
     private static final String[] DEFAULT_JAR_TO_ADD_CLASS_HELPERS = new String[] {
             // openejb-jsf and openwebbeans-jsf to be able to embedded the jsf impl keeping CDI features
@@ -34,23 +39,37 @@ public final class TomEEClassLoaderHelper {
             "org.apache.webbeans.jsf.OwbApplicationFactory",
 
             // JPA integration: mainly JTA integration
-            "org.apache.openejb.jpa.integration.MakeTxLookup"
+            "org.apache.openejb.jpa.integration.MakeTxLookup",
     };
     private static final String[] JAR_TO_ADD_CLASS_HELPERS;
 
+    private static final String[] DEFAULT_PREFIXES_TO_ADD = new String[] {
+            "tomee-mojarra"
+    };
+    private static final String[] PREFIXES_TO_ADD;
+
     static {
         final Collection<String> classes = new ArrayList<String>();
+        final Collection<String> prefixes = new ArrayList<String>();
         if (!SystemInstance.get().getOptions().get(TOMEE_WEBAPP_CLASSLOADER_ENRICHMENT_SKIP, false)) {
+            final String additionalEnrichments = SystemInstance.get().getOptions().get(TOMEE_WEBAPP_CLASSLOADER_ENRICHMENT_CLASSES, "");
             classes.addAll(Arrays.asList(DEFAULT_JAR_TO_ADD_CLASS_HELPERS));
-
-            final String additionalEnrichments = SystemInstance.get().getOptions().get(TOMEE_WEBAPP_CLASSLOADER_ENRICHMENT, "");
             if (additionalEnrichments != null && !additionalEnrichments.isEmpty()) {
                 for (String name : additionalEnrichments.split(",")) {
                     classes.add(name.trim());
                 }
             }
+
+            final String additionalPrefixes = SystemInstance.get().getOptions().get(TOMEE_WEBAPP_CLASSLOADER_ENRICHMENT_PREFIXES, "");
+            prefixes.addAll(Arrays.asList(DEFAULT_PREFIXES_TO_ADD));
+            if (additionalPrefixes != null && !additionalPrefixes.isEmpty()) {
+                for (String name : additionalPrefixes.split(",")) {
+                    prefixes.add(name.trim());
+                }
+            }
         }
         JAR_TO_ADD_CLASS_HELPERS = classes.toArray(new String[classes.size()]);
+        PREFIXES_TO_ADD = prefixes.toArray(new String[prefixes.size()]);
     }
 
     private TomEEClassLoaderHelper() {
@@ -58,8 +77,10 @@ public final class TomEEClassLoaderHelper {
     }
 
     public static URL[] tomEEWebappIntegrationLibraries() {
-        final ClassLoader cl = TomEEClassLoaderHelper.class.getClassLoader(); // reference classloader = standardclassloader
         final Collection<URL> urls = new ArrayList<URL>();
+
+        // from class
+        final ClassLoader cl = TomEEClassLoaderHelper.class.getClassLoader(); // reference classloader = standardclassloader
         for (String name : JAR_TO_ADD_CLASS_HELPERS) {
             try {
                 final Class<?> clazz = cl.loadClass(name);
@@ -77,6 +98,20 @@ public final class TomEEClassLoaderHelper {
                 // ignore
             }
         }
+
+        // from prefix
+        final Paths paths = new Paths(new File(System.getProperty("openejb.home"))); // parameter is useless
+        for (String prefix : PREFIXES_TO_ADD) {
+            final File file = paths.findTomEELibJar(prefix);
+            if (file != null) {
+                try {
+                    urls.add(file.toURI().toURL());
+                } catch (MalformedURLException e) {
+                    // ignored
+                }
+            }
+        }
+
         return urls.toArray(new URL[urls.size()]);
     }
 }
