@@ -79,6 +79,14 @@ public class JavaeeInstanceManager implements InstanceManager {
         webContext.destroy(o);
     }
 
+    public void inject(final Object o) {
+        try {
+            webContext.inject(o);
+        } catch (OpenEJBException e) {
+            throw new InjectionFailedException(e);
+        }
+    }
+
     /**
      * Call postConstruct method on the specified instance recursively from deepest superclass to actual class.
      *
@@ -88,7 +96,7 @@ public class JavaeeInstanceManager implements InstanceManager {
      * @throws java.lang.reflect.InvocationTargetException
      *                                if call fails
      */
-    protected void postConstruct(Object instance, final Class<?> clazz)
+    public void postConstruct(Object instance, final Class<?> clazz)
             throws IllegalAccessException, InvocationTargetException {
         Class<?> superClass = clazz.getSuperclass();
         if (superClass != Object.class) {
