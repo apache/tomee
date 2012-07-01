@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Context>
+
+  <Resource name="jdbc/myDB" auth="Container"
+            type="javax.sql.DataSource" username="sa" password=""
+            driverClassName="org.hsqldb.jdbcDriver"
+            url="jdbc:hsqldb:file:data/hsqldb/hsqldb"
+            maxActive="8"
+      />
+</Context>
