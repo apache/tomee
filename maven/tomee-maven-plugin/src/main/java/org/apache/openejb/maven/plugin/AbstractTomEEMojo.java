@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -33,7 +34,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.apache.maven.artifact.Artifact;
@@ -63,8 +63,11 @@ import static org.codehaus.plexus.util.IOUtil.close;
 import static org.codehaus.plexus.util.IOUtil.copy;
 
 public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
+    // if we get let say > 5 patterns like it we should create a LocationAnalyzer
+    // for < 5 patterns it should be fine
     private static final String NAME_STR = "?name=";
     private static final String UNZIP_PREFIX = "unzip:";
+    private static final String REMOVE_PREFIX = "remove:";
 
 
     /**
@@ -198,6 +201,11 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     protected Map<String, String> systemVariables;
 
     /**
+     * supported formats:
+     * --> groupId:artifactId:version...
+     * --> unzip:groupId:artifactId:version...
+     * --> remove:prefix (often prefix = artifactId)
+     *
      * @parameter
      */
     protected List<String> libs;
@@ -284,11 +292,11 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         }
 
         for (String file : files) {
-            copyLib(file, destParent, defaultType);
+            updateLib(file, destParent, defaultType);
         }
     }
 
-    private void copyLib(final String rawLib, final File destParent, final String defaultType) {
+    private void updateLib(final String rawLib, final File destParent, final String defaultType) {
         InputStream is = null;
         OutputStream os = null;
 
@@ -309,52 +317,70 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             unzip = true;
         }
 
-        final String[] infos = lib.split(":");
-        final String classifier;
-        final String type;
-        if (infos.length < 3) {
-            throw new TomEEException("format for librairies should be <groupId>:<artifactId>:<version>[:<type>[:<classifier>]]");
-        }
-        if (infos.length >= 4) {
-            type = infos[3];
-        } else {
-            type = defaultType;
-        }
-        if (infos.length == 5) {
-            classifier = infos[4];
-        } else {
-            classifier = null;
-        }
-
-        try {
-            final Artifact artifact = factory.createDependencyArtifact(infos[0], infos[1], createFromVersion(infos[2]), type, classifier, SCOPE_COMPILE);
-            resolver.resolve(artifact, remoteRepos, local);
-            final File file = artifact.getFile();
-
-            if (!unzip) {
-                final File dest;
-                if (extractedName == null) {
-                    dest = new File(destParent, file.getName());
-                } else {
-                    dest = new File(destParent, extractedName);
+        if (lib.startsWith(REMOVE_PREFIX)) {
+            final String prefix = lib.substring(REMOVE_PREFIX.length());
+            final File[] files = destParent.listFiles(new FilenameFilter() {
+                @Override
+                public boolean accept(final File dir, final String name) {
+                    return name.startsWith(prefix);
                 }
-
-                is = new BufferedInputStream(new FileInputStream(file));
-                os = new BufferedOutputStream(new FileOutputStream(dest));
-                copy(is, os);
-
-                getLog().info("Copied '" + lib + "' in '" + dest.getAbsolutePath());
-            } else {
-                Zips.unzip(file, destParent, true);
-
-                getLog().info("Unzipped '" + lib + "' in '" + destParent.getAbsolutePath());
+            });
+            if (files != null) {
+                for (File file : files) {
+                    if (!IO.delete(file)) {
+                        file.deleteOnExit();
+                    }
+                    getLog().info("Deleted " + file.getPath());
+                }
             }
-        } catch (Exception e) {
-            getLog().error(e.getMessage(), e);
-            throw new TomEEException(e.getMessage(), e);
-        } finally {
-            close(is);
-            close(os);
+        } else {
+            final String[] infos = lib.split(":");
+            final String classifier;
+            final String type;
+            if (infos.length < 3) {
+                throw new TomEEException("format for librairies should be <groupId>:<artifactId>:<version>[:<type>[:<classifier>]]");
+            }
+            if (infos.length >= 4) {
+                type = infos[3];
+            } else {
+                type = defaultType;
+            }
+            if (infos.length == 5) {
+                classifier = infos[4];
+            } else {
+                classifier = null;
+            }
+
+            try {
+                final Artifact artifact = factory.createDependencyArtifact(infos[0], infos[1], createFromVersion(infos[2]), type, classifier, SCOPE_COMPILE);
+                resolver.resolve(artifact, remoteRepos, local);
+                final File file = artifact.getFile();
+
+                if (!unzip) {
+                    final File dest;
+                    if (extractedName == null) {
+                        dest = new File(destParent, file.getName());
+                    } else {
+                        dest = new File(destParent, extractedName);
+                    }
+
+                    is = new BufferedInputStream(new FileInputStream(file));
+                    os = new BufferedOutputStream(new FileOutputStream(dest));
+                    copy(is, os);
+
+                    getLog().info("Copied '" + lib + "' in '" + dest.getAbsolutePath());
+                } else {
+                    Zips.unzip(file, destParent, true);
+
+                    getLog().info("Unzipped '" + lib + "' in '" + destParent.getAbsolutePath());
+                }
+            } catch (Exception e) {
+                getLog().error(e.getMessage(), e);
+                throw new TomEEException(e.getMessage(), e);
+            } finally {
+                close(is);
+                close(os);
+            }
         }
     }
 
