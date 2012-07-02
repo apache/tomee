@@ -18,15 +18,28 @@ package org.superbiz.injection.jpa;
 //START SNIPPET: code
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 @Entity
 public class Movie {
+
+    @Id @GeneratedValue
+    private long id;
 
     private String director;
     private String title;
     private int year;
 
     public Movie() {
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public Movie(String director, String title, int year) {
