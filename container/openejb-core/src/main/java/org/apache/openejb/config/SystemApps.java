@@ -20,11 +20,15 @@ import org.apache.openejb.assembler.DeployerEjb;
 import org.apache.openejb.assembler.classic.cmd.ConfigurationInfoEjb;
 import org.apache.openejb.assembler.monitoring.JMXDeployer;
 import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.Interceptor;
+import org.apache.openejb.jee.InterceptorBinding;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.mgmt.MEJBBean;
+import org.apache.openejb.security.internal.InternalSecurityInterceptor;
 
 /**
  * Avoids the needs to scan the classpath to load system applications that are used
@@ -41,6 +45,8 @@ public class SystemApps {
         ejbJar.addEnterpriseBean(new StatelessBean(null, DeployerEjb.class));
         ejbJar.addEnterpriseBean(new StatelessBean(null, ConfigurationInfoEjb.class));
         ejbJar.addEnterpriseBean(new StatelessBean(null, MEJBBean.class));
+        ejbJar.addInterceptor(new Interceptor(InternalSecurityInterceptor.class));
+        ejbJar.getAssemblyDescriptor().addInterceptorBinding(new InterceptorBinding("*", InternalSecurityInterceptor.class.getName()));
         module.getMbeans().add(JMXDeployer.class.getName());
 
         final String className = "org.apache.tomee.catalina.deployer.WebappDeployer";
