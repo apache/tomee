@@ -169,10 +169,10 @@ class SaxOpenejb extends DefaultHandler {
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) {
-            service.setType(attributes.getValue("type"));
-            service.setJar(attributes.getValue("jar"));
-            service.setProvider(attributes.getValue("provider"));
-            service.setId(attributes.getValue("id"));
+            if (attributes.getValue("type") != null) service.setType(attributes.getValue("type"));
+            if (attributes.getValue("jar") != null) service.setJar(attributes.getValue("jar"));
+            if (attributes.getValue("provider") != null) service.setProvider(attributes.getValue("provider"));
+            if (attributes.getValue("id") != null) service.setId(attributes.getValue("id"));
         }
 
         @Override
