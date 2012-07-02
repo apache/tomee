@@ -29,4 +29,19 @@ public abstract class AbstractAddressMojo extends AbstractMojo {
      * @parameter expression="${tomee-plugin.host}" default-value="localhost"
      */
     protected String tomeeHost;
+
+    /**
+     * @parameter expression="${tomee-plugin.user}"
+     */
+    protected String user;
+
+    /**
+     * @parameter expression="${tomee-plugin.pwd}"
+     */
+    protected String password;
+
+    /**
+     * @parameter expression="${tomee-plugin.realm}"
+     */
+    protected String realm;
 }

@@ -26,6 +26,16 @@ public abstract class AbstractCommandMojo extends AbstractAddressMojo {
         final Properties props = new Properties();
         props.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
         props.put(Context.PROVIDER_URL, "http://" + tomeeHost + ":" + tomeeHttpPort + "/tomee/ejb");
+        if (user != null) {
+            props.put(Context.SECURITY_PRINCIPAL, user);
+        }
+        if (password != null) {
+            props.put(Context.SECURITY_PRINCIPAL, password);
+        }
+        if (realm != null) {
+            props.put("openejb.authentication.realmName", realm);
+        }
+
         try {
             return new InitialContext(props).lookup(name);
         } catch (Exception e) {
