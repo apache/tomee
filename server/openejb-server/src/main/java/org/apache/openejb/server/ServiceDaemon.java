@@ -68,6 +68,7 @@ public class ServiceDaemon implements ServerService {
     private StringTemplate discoveryUriFormat;
     private URI serviceUri;
     private Properties props;
+	private String[] enabledCipherSuites;
 
     public ServiceDaemon(ServerService next) {
         this.next = next;
@@ -121,6 +122,8 @@ public class ServiceDaemon implements ServerService {
         secure = options.get("secure", false);
 
         timeout = options.get("timeout", timeout);
+        
+        enabledCipherSuites = options.get("enabledCipherSuites", "SSL_DH_anon_WITH_RC4_128_MD5").split(",");
 
         next.init(props);
     }
@@ -140,7 +143,6 @@ public class ServiceDaemon implements ServerService {
                 if (secure) {
                     ServerSocketFactory factory = SSLServerSocketFactory.getDefault();
                     serverSocket = factory.createServerSocket(port, backlog, inetAddress);
-                    final String[] enabledCipherSuites = {"SSL_DH_anon_WITH_RC4_128_MD5"};
                     ((SSLServerSocket) serverSocket).setEnabledCipherSuites(enabledCipherSuites);
                 } else {
                     serverSocket = new ServerSocket(port, backlog, inetAddress);
