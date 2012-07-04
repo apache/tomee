@@ -16,12 +16,6 @@
  */
 package org.apache.openejb.client;
 
-import org.apache.openejb.client.event.ConnectionOpened;
-import org.apache.openejb.client.event.ConnectionPoolCreated;
-import org.apache.openejb.client.event.ConnectionPoolTimeout;
-
-import javax.net.ssl.SSLSocket;
-import javax.net.ssl.SSLSocketFactory;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -41,6 +35,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
+
+import org.apache.openejb.client.event.ConnectionOpened;
+import org.apache.openejb.client.event.ConnectionPoolCreated;
+import org.apache.openejb.client.event.ConnectionPoolTimeout;
+
 public class SocketConnectionFactory implements ConnectionFactory {
 
     private KeepAliveStyle keepAliveStyle = KeepAliveStyle.PING;
@@ -51,18 +52,20 @@ public class SocketConnectionFactory implements ConnectionFactory {
     public static final String PROPERTY_POOL_SIZE = "openejb.client.connection.pool.size";
     private static final String PROPERTY_POOL_SIZE2 = "openejb.client.connectionpool.size";
     public static final String PROPERTY_KEEPALIVE = "openejb.client.keepalive";
+    public static final String ENABLED_CIPHER_SUITES = "openejb.client.enabledCipherSuites";
 
     private static final Map<URI, Pool> connections = new ConcurrentHashMap<URI, Pool>();
     private int size = 5;
     private long timeoutPool = 1000;
     private int timeoutSocket = 150;
+    private String[] enabledCipherSuites;
 
     public SocketConnectionFactory() {
 
         this.size = getSize();
         this.timeoutPool = getTimeoutPool();
         this.timeoutSocket = getTimeoutSocket();
-
+        this.enabledCipherSuites = getEnabledCipherSuites();
         try {
             String property = System.getProperty(PROPERTY_KEEPALIVE);
             if (property != null) {
@@ -71,6 +74,15 @@ public class SocketConnectionFactory implements ConnectionFactory {
             }
         } catch (Throwable e) {
             //Ignore
+        }
+    }
+    
+    private String[] getEnabledCipherSuites(){
+        String property = System.getProperty(ENABLED_CIPHER_SUITES);
+        if (property != null){
+            return property.split(",");
+        } else {
+    	    return new String[]{ "SSL_DH_anon_WITH_RC4_128_MD5"};
         }
     }
 
@@ -242,11 +254,6 @@ public class SocketConnectionFactory implements ConnectionFactory {
             try {
                 if (uri.getScheme().equalsIgnoreCase("ejbds")) {
                     final SSLSocket sslSocket = (SSLSocket) SSLSocketFactory.getDefault().createSocket(address.getAddress(), SocketConnectionFactory.this.timeoutSocket);
-                    // use an anonymous cipher suite so that a KeyManager or
-                    // TrustManager is not needed
-                    // NOTE: this assumes that the cipher suite is known. A check
-                    // -should- be done first.
-                    final String[] enabledCipherSuites = {"SSL_DH_anon_WITH_RC4_128_MD5"};
                     sslSocket.setEnabledCipherSuites(enabledCipherSuites);
                     this.socket = sslSocket;
                 } else {
