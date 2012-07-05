@@ -439,6 +439,10 @@ public class BeanContext extends DeploymentContext {
 
     private void initDefaultLock() {
 
+        if(!BeanType.SINGLETON.equals(this.componentType)){
+            return;
+        }
+
         final ArrayList<Class> classes = new ArrayList<Class>();
 
         for (final Class local : businessRemotes) {
