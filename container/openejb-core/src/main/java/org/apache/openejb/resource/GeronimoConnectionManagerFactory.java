@@ -25,16 +25,9 @@ import org.apache.geronimo.connector.outbound.connectionmanagerconfig.PoolingSup
 import org.apache.geronimo.connector.outbound.connectionmanagerconfig.SinglePool;
 import org.apache.geronimo.connector.outbound.connectionmanagerconfig.TransactionSupport;
 import org.apache.geronimo.connector.outbound.connectionmanagerconfig.XATransactions;
-import org.apache.geronimo.transaction.manager.ExponentialtIntervalRetryScheduler;
-import org.apache.geronimo.transaction.manager.NamedXAResource;
 import org.apache.geronimo.transaction.manager.NamedXAResourceFactory;
-import org.apache.geronimo.transaction.manager.RecoverTask;
 import org.apache.geronimo.transaction.manager.RecoverableTransactionManager;
-import org.apache.geronimo.transaction.manager.Recovery;
-import org.apache.geronimo.transaction.manager.RecoveryImpl;
-import org.apache.geronimo.transaction.manager.RetryScheduler;
-import org.apache.geronimo.transaction.manager.TransactionImpl;
-import org.apache.geronimo.transaction.manager.XidImpl;
+import org.apache.openejb.OpenEJBRuntimeException;
 
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.transaction.HeuristicMixedException;
@@ -45,15 +38,6 @@ import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
-import javax.transaction.xa.XAException;
-import javax.transaction.xa.Xid;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class GeronimoConnectionManagerFactory   {
     private String name;
@@ -180,21 +164,21 @@ public class GeronimoConnectionManagerFactory   {
         if (classLoader == null) Thread.currentThread().getContextClassLoader();
         if (classLoader == null) classLoader = getClass().getClassLoader();
         if (classLoader == null) classLoader = ClassLoader.getSystemClassLoader();
+
+        TransactionSupport txSupport = createTransactionSupport();
+
         RecoverableTransactionManager tm;
         if (transactionManager instanceof RecoverableTransactionManager) {
             tm = (RecoverableTransactionManager) transactionManager;
         } else {
+            if (txSupport.isRecoverable()) {
+                throw new OpenEJBRuntimeException("currently recoverable tx support (xa) needs a geronimo tx manager");
+            }
             tm = new SimpleRecoverableTransactionManager(transactionManager);
         }
-        return new GenericConnectionManager(
-                createTransactionSupport(),
-                poolingSupport,
-                null,
-                new AutoConnectionTracker(),
-                tm,
-                mcf,
-                name,
-                classLoader);
+        return new GenericConnectionManager(txSupport, poolingSupport,
+                        null, new AutoConnectionTracker(), tm,
+                        mcf, name, classLoader);
     }
 
     private TransactionSupport createTransactionSupport() {
@@ -258,63 +242,22 @@ public class GeronimoConnectionManagerFactory   {
 
     private class SimpleRecoverableTransactionManager implements RecoverableTransactionManager {
         private final TransactionManager delegate;
-        private final Recovery recovery;
-        private final List<Exception> recoveryErrors = new ArrayList<Exception>();
-        private final RetryScheduler retryScheduler = new ExponentialtIntervalRetryScheduler();
-        private final Map<String, NamedXAResourceFactory> namedXAResourceFactories = new ConcurrentHashMap<String, NamedXAResourceFactory>();
 
         public SimpleRecoverableTransactionManager(final TransactionManager transactionManager) {
             delegate = transactionManager;
-            recovery = new Recovery() { // TODO
-                @Override
-                public void recoverLog() throws XAException {
-                    // no-op
-                }
-
-                @Override
-                public void recoverResourceManager(final NamedXAResource namedXAResource) throws XAException {
-                    // no-op
-                }
-
-                @Override
-                public boolean hasRecoveryErrors() {
-                    return !recoveryErrors.isEmpty();
-                }
-
-                @Override
-                public List getRecoveryErrors() {
-                    return recoveryErrors;
-                }
-
-                @Override
-                public boolean localRecoveryComplete() {
-                    return true;
-                }
-
-                @Override
-                public int localUnrecoveredCount() {
-                    return 0;
-                }
-
-                @Override
-                public Map<Xid, TransactionImpl> getExternalXids() {
-                    return Collections.emptyMap();
-                }
-            };
         }
 
         @Override
         public void recoveryError(final Exception e) {
-            recoveryErrors.add(e);
+            throw new UnsupportedOperationException();
         }
 
         public void registerNamedXAResourceFactory(final NamedXAResourceFactory namedXAResourceFactory) {
-            namedXAResourceFactories.put(namedXAResourceFactory.getName(), namedXAResourceFactory);
-            new RecoverTask(retryScheduler, namedXAResourceFactory, recovery, this).run();
+            throw new UnsupportedOperationException();
         }
 
         public void unregisterNamedXAResourceFactory(final String namedXAResourceFactoryName) {
-            namedXAResourceFactories.remove(namedXAResourceFactoryName);
+            throw new UnsupportedOperationException();
         }
 
         @Override
