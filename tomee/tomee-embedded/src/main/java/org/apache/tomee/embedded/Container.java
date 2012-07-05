@@ -251,8 +251,9 @@ public class Container {
                 }
             }
             for (WebAppInfo webApp : appInfo.webApps) {
-                if (file.getName().equals(webApp.moduleId)) {
+                if (sameApplication(file, webApp)) {
                     webApp.moduleId = name;
+                    webApp.contextRoot = lastPart(name, webApp.contextRoot);
                 }
             }
         }
@@ -263,6 +264,25 @@ public class Container {
         appContexts.put(name, context);
 
         return context;
+    }
+
+    private static boolean sameApplication(final File file, final WebAppInfo webApp) {
+        String filename = file.getName();
+        if (filename.endsWith(".war")) {
+            filename = filename.substring(0, filename.length() - 4);
+        }
+        return filename.equals(webApp.moduleId);
+    }
+
+    private static String lastPart(final String name, final String defaultValue) {
+        int idx = name.lastIndexOf("/");
+        int space = name.lastIndexOf(" ");
+        if (idx >= 0 && space < idx) {
+            return name.substring(idx);
+        } else if (idx < 0 && space < 0) {
+            return name;
+        }
+        return defaultValue;
     }
 
     public AppInfo getInfo(final String name) {
