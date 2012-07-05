@@ -49,14 +49,14 @@ public final class TomEEClassLoaderHelper {
     public static final String TOMEE_WEBAPP_CLASSLOADER_ENRICHMENT_CLASSES = "tomee.webapp.classloader.enrichment.classes";
     public static final String TOMEE_WEBAPP_CLASSLOADER_ENRICHMENT_PREFIXES = "tomee.webapp.classloader.enrichment.prefixes";
 
-    private static final String[] DEFAULT_JAR_TO_ADD_CLASS_HELPERS = new String[] { // put here only classes which needs classloading check
+    private static final String[] DEFAULT_CLASSES_WHICH_CAN_BE_LOADED_FROM_APP_ONLY = new String[] {
             // openejb-jsf and openwebbeans-jsf to be able to embedded the jsf impl keeping CDI features
             "org.apache.openejb.jsf.CustomApplicationFactory",
             "org.apache.webbeans.jsf.OwbApplicationFactory"
     };
     private static final String[] JAR_TO_ADD_CLASS_HELPERS;
 
-    private static final String[] DEFAULT_PREFIXES_TO_ADD = new String[] { // always added
+    private static final String[] DEFAULT_PREFIXES_TO_ADD = new String[] { // always added since only used with loadClass
             "tomee-mojarra",
             "openejb-jpa-integration"
     };
@@ -67,7 +67,7 @@ public final class TomEEClassLoaderHelper {
         final Collection<String> prefixes = new ArrayList<String>();
         if (!SystemInstance.get().getOptions().get(TOMEE_WEBAPP_CLASSLOADER_ENRICHMENT_SKIP, false)) {
             final String additionalEnrichments = SystemInstance.get().getOptions().get(TOMEE_WEBAPP_CLASSLOADER_ENRICHMENT_CLASSES, "");
-            classes.addAll(Arrays.asList(DEFAULT_JAR_TO_ADD_CLASS_HELPERS));
+            classes.addAll(Arrays.asList(DEFAULT_CLASSES_WHICH_CAN_BE_LOADED_FROM_APP_ONLY));
             if (additionalEnrichments != null && !additionalEnrichments.isEmpty()) {
                 for (String name : additionalEnrichments.split(",")) {
                     classes.add(name.trim());
