@@ -1,33 +1,48 @@
-Title: Simple Cmp2
+Title: EJB 2.1 CMP EntityBeans (CMP2)
 
-*Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
 
-## Movie
 
-    package org.superbiz.cmp2;
-    
-    /**
-     * @version $Revision$ $Date$
-     */
-    public interface Movie extends javax.ejb.EJBLocalObject {
-        java.lang.Integer getId();
-    
-        void setId(java.lang.Integer id);
-    
-        String getDirector();
-    
-        void setDirector(String director);
-    
-        String getTitle();
-    
-        void setTitle(String title);
-    
-        int getYear();
-    
-        void setYear(int year);
-    }
+OpenEJB, the EJB Container for TomEE and Geronimo,  does support all of EJB 1.1 to 3.1, including CMP2.
 
-## MovieBean
+The CMP2 implementation is actually done by adapting the CMP2 bean into a JPA Entity dynamically at deploy time.
+
+Appropriate subclasses, a JPA persistence.xml file and a mapping.xml file are generated at deployment
+time for the CMP2 EntityBeans and all the Entities will be then run on OpenJPA.  This innovative code
+has been used as the sole CMP2 implementation in Geronimo for its J2EE 1.4, JavaEE 5 and JavaEE 6 certifications.
+
+The persistence.xml and mapping.xml files generated at deploy time can be saved to disk and included
+in the application, allowing you to:
+
+ - gain finer control over persistence options
+ - slowly convert individual entities from CMP2 to JPA
+
+Let's see an example.
+
+# Movies application
+
+The following is a basic EJB 2.1 application consisting of one CMP2 Entity.  For those that are reading this example
+out of curiosity and are not familiar with CMP2 or EJB 2.x, each CMP2 Entity is composed of two parts
+
+ - **A Home interface** which has data access methods like "find", "create", and "remove".  This is essentially
+  what people use `@Stateless` beans for today, but with difference that you do not need to supply
+  the implementation of the interface -- the container will generate one for you.  This is partly what inspired
+  the creation of the OpenEJB-specific [Dynamic DAO](../dynamic-dao-implementation/README.html) feature.
+
+ - **An abstract EntityBean class** which declares the persistent "properties" of the entity without actually
+declaring any fields.  It is the container's job to implement the actual methods and create the appropriate
+fields.  OpenEJB will implement this bean as a JPA `@Entity` bean.
+
+As such a CMP2 EntityBean is really just the description of a persistent object and the description of a 
+data-access object.  There is no actual code to write.
+
+The majority of work in CMP2 is done in the xml:
+
+ - **ejb-jar.xml** mapping information, which describes the persistent properties of the entity and the queries
+ for all *Home* find, create and remove methods.  This information will be converted by OpenEJB into
+ a JPA mapping.xml file.  All queries in the cmp2 part of the ejb-jar.xml are converted 
+ into named queries in JPA and generally everything is converted to its JPA equivalent. 
+
+## CMP2 EntityBean, MovieBean
 
     package org.superbiz.cmp2;
     
@@ -63,7 +78,7 @@ Title: Simple Cmp2
     
     }
 
-## Movies
+## CMP2 Home interface, Movies
 
     package org.superbiz.cmp2;
     
@@ -84,7 +99,7 @@ Title: Simple Cmp2
         Collection<Movie> findByDirector(String director) throws FinderException;
     }
 
-## ejb-jar.xml
+## CMP2 mapping in ejb-jar.xml
 
     <ejb-jar>
       <enterprise-beans>
