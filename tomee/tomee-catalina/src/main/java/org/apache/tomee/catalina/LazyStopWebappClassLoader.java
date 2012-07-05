@@ -71,10 +71,10 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
     // will be in the webapp
     @Override
     public void start() throws LifecycleException {
-        for (URL url : TomEEClassLoaderHelper.tomEEWebappIntegrationLibraries())  {
+        super.start(); // do it first otherwise we can't use this as classloader
+        for (URL url : TomEEClassLoaderHelper.tomEEWebappIntegrationLibraries(this))  {
             addURL(url);
         }
-        super.start();
     }
 
     @Override
