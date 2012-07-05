@@ -73,7 +73,7 @@ public class MulticastPulseAgentTest {
 
         final AtomicBoolean running = new AtomicBoolean(true);
         final AtomicBoolean passed = new AtomicBoolean(false);
-        final MulticastSocket client = MulticastPulseAgent.getSocket(host, port);
+        final MulticastSocket client = MulticastPulseAgent.getSockets(host, port)[0];
         final Timer timer = new Timer(true);
         final Set<URI> set = new TreeSet<URI>(new Comparator<URI>() {
             @Override
@@ -190,7 +190,7 @@ public class MulticastPulseAgentTest {
         }
 
         //Pulse the server
-        final MulticastSocket ms = MulticastPulseAgent.getSocket(host, port);
+        final MulticastSocket ms = MulticastPulseAgent.getSockets(host, port)[0];
         ms.send(dp);
 
         //Wait for thread to die
