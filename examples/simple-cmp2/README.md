@@ -245,4 +245,70 @@ The majority of work in CMP2 is done in the xml:
     Results :
     
     Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-    
+
+# CMP2 to JPA
+
+As mentioned OpenEJB will implement the abstract CMP2 `EntityBean` as a JPA `@Entity`, create a `persistence.xml` file and convert all `ejb-jar.xml` mapping and queries to
+a JPA `entity-mappings.xml` file.
+
+Both of these files will be written to disk by setting the system property `openejb.descriptors.output` to `true`.  In the testcase
+above, this can be done via the `InitialContext` parameters via code like this:
+
+    Properties p = new Properties();
+    p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
+
+    // setup the data sources as usual...
+
+    // write the generated descriptors
+    p.put("openejb.descriptors.output", "true");
+
+    Context context = new InitialContext(p);
+
+Below are the generated `persistence.xml` and `mapping.xml` files for our CMP2 `EntityBean`
+
+## CMP2 to JPA generated persistence.xml file
+
+    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+    <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
+        <persistence-unit name="cmp" transaction-type="JTA">
+            <jta-data-source>movieDatabase</jta-data-source>
+            <non-jta-data-source>movieDatabaseUnmanaged</non-jta-data-source>
+            <mapping-file>META-INF/openejb-cmp-generated-orm.xml</mapping-file>
+            <class>openejb.org.superbiz.cmp2.MovieBean</class>
+            <properties>
+                <property name="openjpa.jdbc.SynchronizeMappings"
+                value="buildSchema(ForeignKeys=true, Indexes=false, IgnoreErrors=true)"/>
+                <property name="openjpa.Log" value="DefaultLevel=INFO"/>
+            </properties>
+        </persistence-unit>
+    </persistence>
+
+All of this `persitence.xml` can be changed, however the `persistence-unit` must have the `name` fixed to `cmp`.
+
+## CMP2 to JPA generated mapping file
+
+Note that the `persistence.xml` above refers to this mappings file as `META-INF/openejb-cmp-generated-orm.xml`.  It is possible
+to rename this file to whatever name you prefer, just make sure to update the `<mapping-file>` element of the `cmp` persistence unit
+accordingly.
+
+    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+    <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm" version="1.0">
+        <entity class="openejb.org.superbiz.cmp2.MovieBean" name="MovieBean">
+            <description>simple-cmp2#MovieBean</description>
+            <table/>
+            <named-query name="MovieBean.findByDirector(java.lang.String)">
+                <query>SELECT m FROM MovieBean m WHERE m.director = ?1</query>
+            </named-query>
+            <named-query name="MovieBean.findAll">
+                <query>SELECT m FROM MovieBean as m</query>
+            </named-query>
+            <attributes>
+                <id name="id">
+                    <generated-value strategy="IDENTITY"/>
+                </id>
+                <basic name="director"/>
+                <basic name="year"/>
+                <basic name="title"/>
+            </attributes>
+        </entity>
+    </entity-mappings>
