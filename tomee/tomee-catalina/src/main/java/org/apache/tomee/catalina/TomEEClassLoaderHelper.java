@@ -49,18 +49,16 @@ public final class TomEEClassLoaderHelper {
     public static final String TOMEE_WEBAPP_CLASSLOADER_ENRICHMENT_CLASSES = "tomee.webapp.classloader.enrichment.classes";
     public static final String TOMEE_WEBAPP_CLASSLOADER_ENRICHMENT_PREFIXES = "tomee.webapp.classloader.enrichment.prefixes";
 
-    private static final String[] DEFAULT_JAR_TO_ADD_CLASS_HELPERS = new String[]{
+    private static final String[] DEFAULT_JAR_TO_ADD_CLASS_HELPERS = new String[] { // put here only classes which needs classloading check
             // openejb-jsf and openwebbeans-jsf to be able to embedded the jsf impl keeping CDI features
             "org.apache.openejb.jsf.CustomApplicationFactory",
-            "org.apache.webbeans.jsf.OwbApplicationFactory",
-
-            // JPA integration: mainly JTA integration
-            "org.apache.openejb.jpa.integration.MakeTxLookup",
+            "org.apache.webbeans.jsf.OwbApplicationFactory"
     };
     private static final String[] JAR_TO_ADD_CLASS_HELPERS;
 
-    private static final String[] DEFAULT_PREFIXES_TO_ADD = new String[]{
-            "tomee-mojarra"
+    private static final String[] DEFAULT_PREFIXES_TO_ADD = new String[] { // always added
+            "tomee-mojarra",
+            "openejb-jpa-integration"
     };
     private static final String[] PREFIXES_TO_ADD;
 
@@ -88,26 +86,61 @@ public final class TomEEClassLoaderHelper {
         PREFIXES_TO_ADD = prefixes.toArray(new String[prefixes.size()]);
     }
 
-    public static URL[] tomEEWebappIntegrationLibraries() {
+    public static URL[] tomEEWebappIntegrationLibraries(final ClassLoader appCl) { // TODO: refactor with an interface: isActive(), addJar(List<URL>)
         final Collection<URL> urls = new ArrayList<URL>();
 
         // from class
         final ClassLoader cl = TomEEClassLoaderHelper.class.getClassLoader(); // reference classloader = standardclassloader
-        for (String name : JAR_TO_ADD_CLASS_HELPERS) {
-            try {
-                final Class<?> clazz = cl.loadClass(name);
-                if (!clazz.getClassLoader().equals(OpenEJB.class.getClassLoader())) { // already provided?
-                    continue;
-                }
+        if (cl != appCl && appCl != null) {
+            for (String name : JAR_TO_ADD_CLASS_HELPERS) {
+                try {
+                    final Class<?> clazz = cl.loadClass(name);
+                    if (!clazz.getClassLoader().equals(OpenEJB.class.getClassLoader())) { // already provided?
+                        continue;
+                    }
 
-                final URL url = JarLocation.jarLocation(clazz).toURI().toURL();
-                if (url == null) {
-                    continue;
-                }
+                    // don't create a list here to loop only once to avoid to allocate memory for nothing
 
-                urls.add(url);
-            } catch (Exception e) {
-                // ignore
+                    boolean add = false;
+                    for (Class<?> itf : clazz.getInterfaces()) {
+                        try {
+                            final Class<?> tcclLoaded = appCl.loadClass(itf.getName());
+                            if (!tcclLoaded.getClassLoader().equals(cl)) {
+                                add = true;
+                                break;
+                            }
+                        } catch (Exception e) {
+                            // ignored
+                        }
+                    }
+
+                    Class<?> current = clazz.getSuperclass();
+                    while (current != null && !Object.class.equals(current)) {
+                        try {
+                            final Class<?> tcclLoaded = appCl.loadClass(current.getName());
+                            if (!tcclLoaded.getClassLoader().equals(cl)) {
+                                add = true;
+                                break;
+                            }
+                        } catch (Exception cnfe) {
+                            // ignored
+                        }
+                        current = current.getSuperclass();
+                    }
+
+                    if (!add) {
+                        continue;
+                    }
+
+                    final URL url = JarLocation.jarLocation(clazz).toURI().toURL();
+                    if (url == null) {
+                        continue;
+                    }
+
+                    urls.add(url);
+                } catch (Exception e) {
+                    // ignore
+                }
             }
         }
 

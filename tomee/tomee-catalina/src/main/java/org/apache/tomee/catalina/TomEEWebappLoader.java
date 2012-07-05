@@ -123,13 +123,13 @@ public class TomEEWebappLoader extends WebappLoader {
         private String appPath;
 
         public TomEEClassLoader(final String appId, final ClassLoader appCl, final WebappClassLoader webappCl) {
-            super(enrichedUrls(webappCl.getURLs()), webappCl); // in fact this classloader = webappclassloader since we add nothing to this
+            super(enrichedUrls(webappCl.getURLs(), webappCl), webappCl); // in fact this classloader = webappclassloader since we add nothing to this
             this.appPath = appId;
             this.app = appCl; // only used to manage resources since webapp.getParent() should be app
             this.webapp = webappCl;
         }
 
-        private static URL[] enrichedUrls(final URL[] urLs) {
+        private static URL[] enrichedUrls(final URL[] urLs, final ClassLoader cl) {
             final List<Integer> skipped = new ArrayList<Integer>();
 
             // while we are here validate the urls regading tomee rules
@@ -150,7 +150,7 @@ public class TomEEWebappLoader extends WebappLoader {
                 }
             }
 
-            final URL[] additional = TomEEClassLoaderHelper.tomEEWebappIntegrationLibraries();
+            final URL[] additional = TomEEClassLoaderHelper.tomEEWebappIntegrationLibraries(cl);
             final URL[] urls = new URL[urLs.length + additional.length - skipped.size()];
             for (int i = 0; i < urLs.length; i++) {
                 if (!skipped.contains(i)) {
