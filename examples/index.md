@@ -191,8 +191,8 @@ All the examples show code, but some are better documented than others.  Example
 {span-one-third
 ### EJB Legacy
 
+ - [cmp2-entitybeans](simple-cmp2/README.html) *
  - [component-interfaces](component-interfaces/README.html)
- - [simple-cmp2](simple-cmp2/README.html)
 }
 
 }
