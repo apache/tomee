@@ -15,11 +15,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.*;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -41,7 +44,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfManaging {
 
     private static final Logger log = Logger.getInstance(LogCategory.OPENEJB_SERVER.createChild("discovery").createChild("multipulse"), MulticastPulseAgent.class);
-    private static final Executor executor = Executors.newSingleThreadExecutor();
+    private static final NetworkInterface[] interfaces = getNetworkInterfaces();
+    private static final ExecutorService executor = Executors.newFixedThreadPool(interfaces.length + 1);
+    private static final Charset UTF8 = Charset.forName("UTF-8");
+    private static final int TTL = Integer.parseInt(System.getProperty("org.apache.openejb.multipulse.ttl", "32"));
 
     public static final String SERVER = "OpenEJB.MCP.Server:";
     public static final String CLIENT = "OpenEJB.MCP.Client:";
@@ -49,8 +55,8 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
 
     private final Set<URI> uriSet = new HashSet<URI>();
     private AtomicBoolean running = new AtomicBoolean(false);
-    private Thread listenerThread = null;
-    private MulticastSocket socket = null;
+    final ArrayList<Future> futures = new ArrayList<Future>();
+    private MulticastSocket[] sockets = null;
     private InetSocketAddress address = null;
 
     private String multicast = "239.255.3.2";
@@ -112,7 +118,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
 
         sb.append(hosts);
 
-        final byte[] bytes = (sb.toString()).getBytes(Charset.forName("utf8"));
+        final byte[] bytes = (sb.toString()).getBytes(UTF8);
         this.response = new DatagramPacket(bytes, bytes.length, this.address);
 
         log.debug("MultiPulse packet is: " + sb);
@@ -182,64 +188,68 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
     public void start() throws ServiceException {
         if (!this.running.getAndSet(true)) {
 
-            this.socket = getSocket(this.multicast, this.port);
-            final MulticastSocket ms = this.socket;
+            try {
+                this.sockets = getSockets(this.multicast, this.port);
+            } catch (Exception e) {
+                throw new ServiceException("Failed to get Multicast sockets", e);
+            }
 
-            this.listenerThread = new Thread(new Runnable() {
-                @Override
-                public void run() {
+            for (final MulticastSocket socket : this.sockets) {
 
-                    final DatagramPacket request = new DatagramPacket(new byte[2048], 2048);
+                this.futures.add(executor.submit(new Runnable() {
+                    @Override
+                    public void run() {
 
-                    while (MulticastPulseAgent.this.running.get()) {
+                        final DatagramPacket request = new DatagramPacket(new byte[2048], 2048);
 
-                        try {
-                            ms.receive(request);
-                            final SocketAddress sa = request.getSocketAddress();
+                        while (MulticastPulseAgent.this.running.get()) {
 
-                            if (null != sa) {
+                            try {
+                                socket.receive(request);
+                                final SocketAddress sa = request.getSocketAddress();
 
-                                String s = new String(request.getData(), 0, request.getLength());
+                                if (null != sa) {
 
-                                if (s.startsWith(CLIENT)) {
+                                    String s = new String(request.getData(), 0, request.getLength());
 
-                                    s = (s.replace(CLIENT, ""));
+                                    if (s.startsWith(CLIENT)) {
 
-                                    final String client = ((InetSocketAddress) sa).getAddress().getHostAddress();
+                                        s = (s.replace(CLIENT, ""));
 
-                                    if (MulticastPulseAgent.this.group.equals(s) || "*".equals(s)) {
+                                        final String client = ((InetSocketAddress) sa).getAddress().getHostAddress();
 
-                                        if (MulticastPulseAgent.this.loopbackOnly) {
-                                            //We only have local services, so make sure the request is from a local source else ignore it
-                                            if (!MulticastPulseAgent.isLocalAddress(client, false)) {
-                                                log.debug(String.format("Ignoring remote client %1$s pulse request for group: %2$s - No remote services available", client, s));
-                                                continue;
+                                        if (MulticastPulseAgent.this.group.equals(s) || "*".equals(s)) {
+
+                                            if (MulticastPulseAgent.this.loopbackOnly) {
+                                                //We only have local services, so make sure the request is from a local source else ignore it
+                                                if (!MulticastPulseAgent.isLocalAddress(client, false)) {
+                                                    log.debug(String.format("Ignoring remote client %1$s pulse request for group: %2$s - No remote services available"
+                                                            , client, s));
+                                                    continue;
+                                                }
                                             }
-                                        }
 
-                                        log.debug(String.format("Answering client %1$s pulse request for group: %2$s", client, s));
-                                        ms.send(MulticastPulseAgent.this.response);
-                                    } else {
-                                        log.debug(String.format("Ignoring client %1$s pulse request for group: %2$s", client, s));
+                                            log.debug(String.format("Answering client %1$s pulse request for group: %2$s", client, s));
+                                            socket.send(MulticastPulseAgent.this.response);
+                                        } else {
+                                            log.debug(String.format("Ignoring client %1$s pulse request for group: %2$s", client, s));
+                                        }
                                     }
                                 }
-                            }
 
+                            } catch (Throwable e) {
+                                //Ignore
+                            }
+                        }
+
+                        try {
+                            socket.close();
                         } catch (Throwable e) {
                             //Ignore
                         }
                     }
-
-                    try {
-                        ms.close();
-                    } catch (Throwable e) {
-                        //Ignore
-                    }
-                }
-            }, "MultiPulse Listener");
-
-            this.listenerThread.setDaemon(true);
-            this.listenerThread.start();
+                }));
+            }
         }
     }
 
@@ -247,24 +257,39 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
     public void stop() throws ServiceException {
         if (this.running.getAndSet(false)) {
 
-            if (null != this.listenerThread) {
-
-                this.listenerThread.interrupt();
-
-                try {
-                    listenerThread.join(5000);
-                } catch (InterruptedException e) {
-                    //Ignore
+            try {
+                //Iterrupt threads
+                for (final Future future : this.futures) {
+                    try {
+                        future.cancel(true);
+                    } catch (Throwable e) {
+                        //Ignore
+                    }
                 }
+
+                //Wait for threads to complete
+                for (final Future future : this.futures) {
+                    try {
+                        future.get();
+                    } catch (Throwable e) {
+                        //Ignore
+                    }
+                }
+            } finally {
+                this.futures.clear();
             }
 
-            if (null != this.socket) {
+            if (null != this.sockets) {
                 try {
-                    this.socket.close();
-                } catch (Throwable e) {
-                    //Ignore
+                    for (final MulticastSocket s : sockets) {
+                        try {
+                            s.close();
+                        } catch (Throwable e) {
+                            //Ignore
+                        }
+                    }
                 } finally {
-                    this.socket = null;
+                    this.sockets = null;
                 }
             }
         }
@@ -295,7 +320,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
         return this.port;
     }
 
-    public static MulticastSocket getSocket(final String multicastAddress, final int port) throws ServiceException {
+    public static MulticastSocket[] getSockets(final String multicastAddress, final int port) throws Exception {
 
         final InetAddress ia;
 
@@ -309,35 +334,74 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
             throw new ServiceException(multicastAddress + " is not a valid multicast address");
         }
 
-        MulticastSocket ms = null;
+        return getSockets(ia, port);
+    }
 
-        try {
-            ms = new MulticastSocket(port);
-            final NetworkInterface ni = NetworkInterface.getByInetAddress(InetAddress.getByName(InetAddress.getLocalHost().getHostName()));
-            ms.setNetworkInterface(ni);
-            ms.setSoTimeout(0);
-            if (!ms.getBroadcast()) {
-                ms.setBroadcast(true);
-            }
-            ms.joinGroup(ia);
+    private static MulticastSocket[] getSockets(final InetAddress ia, final int port) throws Exception {
 
-            log.debug(String.format("Created MulticastSocket for '%1$s:%2$s' on network adapter: %3$s", multicastAddress, port, ni));
+        final ArrayList<MulticastSocket> list = new ArrayList<MulticastSocket>();
 
-        } catch (Throwable e) {
-            log.error("getSocket", e);
+        for (final NetworkInterface ni : interfaces) {
 
-            if (null != ms) {
-                try {
-                    ms.close();
-                } catch (Throwable t) {
-                    //Ignore
+            MulticastSocket ms = null;
+
+            try {
+
+                ms = new MulticastSocket(port);
+                ms.setNetworkInterface(ni);
+                ms.setSoTimeout(0);
+                ms.setTimeToLive(TTL);
+                if (!ms.getBroadcast()) {
+                    ms.setBroadcast(true);
                 }
-            }
+                ms.joinGroup(ia);
 
-            throw new ServiceException("Failed to create a multicast socket", e);
+                list.add(ms);
+
+                log.debug(String.format("Created MulticastSocket for '%1$s:%2$s' on network adapter: %3$s", ia.getHostName(), port, ni));
+
+            } catch (Throwable e) {
+
+                if (null != ms) {
+                    try {
+                        ms.close();
+                    } catch (Throwable t) {
+                        //Ignore
+                    }
+                }
+
+            }
         }
 
-        return ms;
+        return list.toArray(new MulticastSocket[list.size()]);
+    }
+
+    private static NetworkInterface[] getNetworkInterfaces() {
+
+        final HashSet<NetworkInterface> list = new HashSet<NetworkInterface>();
+
+        try {
+            final Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+            while (interfaces.hasMoreElements()) {
+                final NetworkInterface next = interfaces.nextElement();
+
+                if (next.supportsMulticast() && next.isUp()) {
+
+                    final Enumeration<InetAddress> addresses = next.getInetAddresses();
+                    while (addresses.hasMoreElements()) {
+                        final InetAddress address = addresses.nextElement();
+                        if (address.isSiteLocalAddress()) {
+                            list.add(next);
+                            break;
+                        }
+                    }
+                }
+            }
+        } catch (SocketException e) {
+            //Ignore
+        }
+
+        return list.toArray(new NetworkInterface[list.size()]);
     }
 
     public static boolean isLoopback(final String host) {
