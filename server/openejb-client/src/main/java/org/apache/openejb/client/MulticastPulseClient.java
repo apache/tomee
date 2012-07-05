@@ -3,15 +3,10 @@ package org.apache.openejb.client;
 import java.io.IOException;
 import java.net.*;
 import java.nio.charset.Charset;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.TreeSet;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -35,8 +30,11 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
     private static final String SERVER = "OpenEJB.MCP.Server:";
     private static final String CLIENT = "OpenEJB.MCP.Client:";
     private static final String EMPTY = "NoService";
-
+    private static final Charset UTF8 = Charset.forName("UTF-8");
+    private static final int TTL = Integer.parseInt(System.getProperty("org.apache.openejb.multipulse.ttl", "32"));
     private static final Set<URI> badUri = new HashSet<URI>();
+    private static final NetworkInterface[] interfaces = getNetworkInterfaces();
+    private static final ExecutorService executor = Executors.newFixedThreadPool(interfaces.length + 1);
 
     /**
      * @param uri Connection URI
@@ -73,7 +71,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
             try {
                 //Strip serverhost and group and try to connect
                 return ConnectionManager.getConnection(URI.create(URI.create(serviceURI.getSchemeSpecificPart()).getSchemeSpecificPart()));
-            } catch (IOException e) {
+            } catch (Throwable e) {
                 badUri.add(serviceURI);
             }
         }
@@ -102,7 +100,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
      * @return A URI set, possibly empty
      * @throws Exception On error
      */
-    public static synchronized Set<URI> discoverURIs(final String forGroup, final Set<String> schemes, final String host, final int port, long timeout) throws Exception {
+    public static Set<URI> discoverURIs(final String forGroup, final Set<String> schemes, final String host, final int port, long timeout) throws Exception {
 
         if (timeout < 50) {
             timeout = 50;
@@ -136,12 +134,12 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
             throw new Exception(host + " is not a valid multicast address");
         }
 
-        final byte[] bytes = (MulticastPulseClient.CLIENT + forGroup).getBytes(Charset.forName("utf8"));
+        final byte[] bytes = (MulticastPulseClient.CLIENT + forGroup).getBytes(UTF8);
         final DatagramPacket request = new DatagramPacket(bytes, bytes.length, new InetSocketAddress(ia, port));
 
 
         final AtomicBoolean running = new AtomicBoolean(true);
-        final MulticastSocket client = MulticastPulseClient.getSocket(ia, port);
+        final MulticastSocket[] clientSockets = MulticastPulseClient.getSockets(ia, port);
         final Timer timer = new Timer(true);
 
         final Set<URI> set = new TreeSet<URI>(new Comparator<URI>() {
@@ -174,132 +172,152 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
             }
         });
 
-        //Start a thread that listens for multicast packets on our channel.
-        //This needs to start 'before' we pulse a request.
-        final Thread t = new Thread() {
-            @Override
-            public void run() {
+        //Start threads that listen for multicast packets on our channel.
+        //These need to start 'before' we pulse a request.
+        final ArrayList<Future> futures = new ArrayList<Future>();
 
-                final DatagramPacket response = new DatagramPacket(new byte[2048], 2048);
+        for (final MulticastSocket socket : clientSockets) {
 
-                while (running.get()) {
-                    try {
+            futures.add(executor.submit(new Runnable() {
+                @Override
+                public void run() {
 
-                        client.receive(response);
+                    final DatagramPacket response = new DatagramPacket(new byte[2048], 2048);
 
-                        final SocketAddress sa = response.getSocketAddress();
+                    while (running.get()) {
+                        try {
 
-                        if (null != sa && (sa instanceof InetSocketAddress)) {
+                            socket.receive(response);
 
-                            int len = response.getLength();
-                            if (len > 2048) {
-                                len = 2048;
-                            }
+                            final SocketAddress sa = response.getSocketAddress();
 
-                            String s = new String(response.getData(), 0, len);
+                            if (null != sa && (sa instanceof InetSocketAddress)) {
 
-                            if (s.startsWith(MulticastPulseClient.SERVER)) {
-
-                                s = (s.replace(MulticastPulseClient.SERVER, ""));
-                                final String group = s.substring(0, s.indexOf(':'));
-                                s = s.substring(group.length() + 1);
-
-                                if (!"*".equals(forGroup) && !forGroup.equals(group)) {
-                                    continue;
+                                int len = response.getLength();
+                                if (len > 2048) {
+                                    len = 2048;
                                 }
 
-                                final String services = s.substring(0, s.indexOf('|'));
-                                s = s.substring(services.length() + 1);
+                                String s = new String(response.getData(), 0, len);
 
-                                final String[] serviceList = services.split("\\|");
-                                final String[] hosts = s.split(",");
+                                if (s.startsWith(MulticastPulseClient.SERVER)) {
 
-                                for (String svc : serviceList) {
+                                    s = (s.replace(MulticastPulseClient.SERVER, ""));
+                                    final String group = s.substring(0, s.indexOf(':'));
+                                    s = s.substring(group.length() + 1);
 
-                                    if (EMPTY.equals(svc)) {
+                                    if (!"*".equals(forGroup) && !forGroup.equals(group)) {
                                         continue;
                                     }
 
-                                    final URI serviceUri;
-                                    try {
-                                        serviceUri = URI.create(svc);
-                                    } catch (Throwable e) {
-                                        continue;
-                                    }
+                                    final String services = s.substring(0, s.indexOf('|'));
+                                    s = s.substring(services.length() + 1);
 
-                                    if (schemes.contains(serviceUri.getScheme())) {
+                                    final String[] serviceList = services.split("\\|");
+                                    final String[] hosts = s.split(",");
 
-                                        //Just because multicast was received on this host is does not mean the service is on the same
-                                        //We can however use this to identify an individual machine and group
-                                        final String serverHost = ((InetSocketAddress) response.getSocketAddress()).getAddress().getHostAddress();
+                                    for (String svc : serviceList) {
 
-                                        final String serviceHost = serviceUri.getHost();
-                                        if (MulticastPulseClient.isLocalAddress(serviceHost, false)) {
-                                            if (!MulticastPulseClient.isLocalAddress(serverHost, false)) {
-                                                //A local service is only available to a local client
-                                                continue;
-                                            }
+                                        if (EMPTY.equals(svc)) {
+                                            continue;
                                         }
 
-                                        svc = ("mp-" + serverHost + ":" + group + ":" + svc);
-
+                                        final URI serviceUri;
                                         try {
-                                            if (svc.contains("0.0.0.0")) {
-                                                for (final String h : hosts) {
-                                                    set.add(URI.create(svc.replace("0.0.0.0", ipFormat(h))));
-                                                }
-                                            } else if (svc.contains("[::]")) {
-                                                for (final String h : hosts) {
-                                                    set.add(URI.create(svc.replace("[::]", ipFormat(h))));
-                                                }
-                                            } else {
-                                                //Just add as is
-                                                set.add(URI.create(svc));
-                                            }
+                                            serviceUri = URI.create(svc);
                                         } catch (Throwable e) {
-                                            //Ignore
+                                            continue;
+                                        }
+
+                                        if (schemes.contains(serviceUri.getScheme())) {
+
+                                            //Just because multicast was received on this host is does not mean the service is on the same
+                                            //We can however use this to identify an individual machine and group
+                                            final String serverHost = ((InetSocketAddress) response.getSocketAddress()).getAddress().getHostAddress();
+
+                                            final String serviceHost = serviceUri.getHost();
+                                            if (MulticastPulseClient.isLocalAddress(serviceHost, false)) {
+                                                if (!MulticastPulseClient.isLocalAddress(serverHost, false)) {
+                                                    //A local service is only available to a local client
+                                                    continue;
+                                                }
+                                            }
+
+                                            svc = ("mp-" + serverHost + ":" + group + ":" + svc);
+
+                                            try {
+                                                if (svc.contains("0.0.0.0")) {
+                                                    for (final String h : hosts) {
+                                                        set.add(URI.create(svc.replace("0.0.0.0", ipFormat(h))));
+                                                    }
+                                                } else if (svc.contains("[::]")) {
+                                                    for (final String h : hosts) {
+                                                        set.add(URI.create(svc.replace("[::]", ipFormat(h))));
+                                                    }
+                                                } else {
+                                                    //Just add as is
+                                                    set.add(URI.create(svc));
+                                                }
+                                            } catch (Throwable e) {
+                                                //Ignore
+                                            }
                                         }
                                     }
                                 }
                             }
-                        }
 
-                    } catch (Throwable e) {
-                        //Ignore
+                        } catch (Throwable e) {
+                            //Ignore
+                        }
                     }
                 }
-            }
-        };
-        t.setDaemon(true);
-        t.start();
+            }));
+        }
 
-        //Kill the thread after timeout
+        //Pulse the server - It is thread safe to use same sockets as send/receive synchronization is only on the packet
+        for (final MulticastSocket socket : clientSockets) {
+            try {
+                socket.send(request);
+            } catch (Throwable e) {
+                //Ignore
+            }
+        }
+
+        //Kill the threads after timeout
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
 
                 running.set(false);
 
-                try {
-                    client.leaveGroup(ia);
-                } catch (Throwable e) {
-                    //Ignore
+                for (Future future : futures) {
+                    future.cancel(true);
                 }
-                try {
-                    client.close();
-                } catch (Throwable e) {
-                    //Ignore
+
+                for (final MulticastSocket socket : clientSockets) {
+
+                    try {
+                        socket.leaveGroup(ia);
+                    } catch (Throwable e) {
+                        //Ignore
+                    }
+                    try {
+                        socket.close();
+                    } catch (Throwable e) {
+                        //Ignore
+                    }
                 }
-                t.interrupt();
             }
         }, timeout);
 
-        //Pulse the server
-        final MulticastSocket ms = MulticastPulseClient.getSocket(ia, port);
-        ms.send(request);
-
-        //Wait for thread to complete
-        t.join();
+        //Wait for threads to complete
+        for (final Future future : futures) {
+            try {
+                future.get();
+            } catch (Throwable e) {
+                //Ignore
+            }
+        }
 
         return set;
     }
@@ -343,34 +361,69 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
         }
     }
 
-    public static MulticastSocket getSocket(final InetAddress ia, final int port) throws Exception {
+    public static MulticastSocket[] getSockets(final InetAddress ia, final int port) throws Exception {
 
-        MulticastSocket ms = null;
+        final ArrayList<MulticastSocket> list = new ArrayList<MulticastSocket>();
 
-        try {
-            ms = new MulticastSocket(port);
-            final NetworkInterface ni = NetworkInterface.getByInetAddress(InetAddress.getByName(InetAddress.getLocalHost().getHostName()));
-            ms.setNetworkInterface(ni);
-            ms.setSoTimeout(0);
-            if (!ms.getBroadcast()) {
-                ms.setBroadcast(true);
-            }
-            ms.joinGroup(ia);
+        for (final NetworkInterface ni : interfaces) {
 
-        } catch (Throwable e) {
+            MulticastSocket ms = null;
 
-            if (null != ms) {
-                try {
-                    ms.close();
-                } catch (Throwable t) {
-                    //Ignore
+            try {
+
+                ms = new MulticastSocket(port);
+                ms.setNetworkInterface(ni);
+                ms.setSoTimeout(0);
+                ms.setTimeToLive(TTL);
+                if (!ms.getBroadcast()) {
+                    ms.setBroadcast(true);
                 }
-            }
+                ms.joinGroup(ia);
 
-            throw new Exception("Failed to create a MultiPulse socket", e);
+                list.add(ms);
+
+            } catch (Throwable e) {
+
+                if (null != ms) {
+                    try {
+                        ms.close();
+                    } catch (Throwable t) {
+                        //Ignore
+                    }
+                }
+
+            }
         }
 
-        return ms;
+        return list.toArray(new MulticastSocket[list.size()]);
+    }
+
+    private static NetworkInterface[] getNetworkInterfaces() {
+
+        final HashSet<NetworkInterface> list = new HashSet<NetworkInterface>();
+
+        try {
+            final Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+            while (interfaces.hasMoreElements()) {
+                final NetworkInterface next = interfaces.nextElement();
+
+                if (next.supportsMulticast() && next.isUp()) {
+
+                    final Enumeration<InetAddress> addresses = next.getInetAddresses();
+                    while (addresses.hasMoreElements()) {
+                        final InetAddress address = addresses.nextElement();
+                        if (address.isSiteLocalAddress()) {
+                            list.add(next);
+                            break;
+                        }
+                    }
+                }
+            }
+        } catch (SocketException e) {
+            //Ignore
+        }
+
+        return list.toArray(new NetworkInterface[list.size()]);
     }
 
     private static final CommandParser cmd = new CommandParser() {
