@@ -160,7 +160,7 @@ public class RandomConnectionStrategyTest {
             final URI serverURI = server.getContext().get(URI.class);
 
             logger.info("Waiting for updated list");
-            services.assertServices(10, TimeUnit.SECONDS, new CalculatorCallable(bean), 500);
+            services.assertServices(30, TimeUnit.SECONDS, new CalculatorCallable(bean), 500);
 
             logger.info("Asserting balance");
             assertBalance(bean, services.get().size());
@@ -194,7 +194,7 @@ public class RandomConnectionStrategyTest {
             services.add(serverURI);
 
             logger.info("Waiting for updated list");
-            services.assertServices(10, TimeUnit.SECONDS, new CalculatorCallable(bean), 500);
+            services.assertServices(30, TimeUnit.SECONDS, new CalculatorCallable(bean), 500);
 
             logger.info("Asserting balance");
             assertBalance(bean, services.get().size());
