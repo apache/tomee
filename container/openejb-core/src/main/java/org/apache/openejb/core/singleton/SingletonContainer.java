@@ -33,6 +33,8 @@ import org.apache.openejb.core.webservices.AddressingSupport;
 import org.apache.openejb.core.webservices.NoAddressingSupport;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Duration;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.xbean.finder.ClassFinder;
 
 import javax.ejb.ConcurrentAccessTimeoutException;
@@ -49,10 +51,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 
-import static org.apache.openejb.core.transaction.EjbTransactionUtil.afterInvoke;
-import static org.apache.openejb.core.transaction.EjbTransactionUtil.createTransactionPolicy;
-import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleApplicationException;
-import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleSystemException;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.*;
 
 /**
  * @org.apache.xbean.XBean element="statelessContainer"
@@ -78,27 +77,32 @@ public class SingletonContainer implements RpcContainer {
         }
     }
 
-    public void setAccessTimeout(Duration duration){
+    public void setAccessTimeout(Duration duration) {
         this.accessTimeout = duration;
     }
 
+    @Override
     public synchronized BeanContext[] getBeanContexts() {
         return deploymentRegistry.values().toArray(new BeanContext[deploymentRegistry.size()]);
     }
 
+    @Override
     public synchronized BeanContext getBeanContext(Object deploymentID) {
         String id = (String) deploymentID;
         return deploymentRegistry.get(id);
     }
 
+    @Override
     public ContainerType getContainerType() {
         return ContainerType.SINGLETON;
     }
 
+    @Override
     public Object getContainerID() {
         return containerID;
     }
 
+    @Override
     public void deploy(BeanContext beanContext) throws OpenEJBException {
         instanceManager.deploy(beanContext);
         String id = (String) beanContext.getDeploymentID();
@@ -111,32 +115,35 @@ public class SingletonContainer implements RpcContainer {
         if (timerService != null) {
             timerService.start();
         }
-        
+
     }
-    
+
+    @Override
     public void start(BeanContext info) throws OpenEJBException {
         instanceManager.start(info);
     }
-    
+
+    @Override
     public void stop(BeanContext info) throws OpenEJBException {
     }
-    
+
+    @Override
     public void undeploy(BeanContext beanContext) {
         ThreadContext threadContext = new ThreadContext(beanContext, null);
         ThreadContext old = ThreadContext.enter(threadContext);
         try {
             instanceManager.freeInstance(threadContext);
-        } finally{
+        } finally {
             ThreadContext.exit(old);
         }
-        
+
         EjbTimerService timerService = beanContext.getEjbTimerService();
         if (timerService != null) {
             timerService.stop();
         }
-        
+
         instanceManager.undeploy(beanContext);
-        
+
         synchronized (this) {
             String id = (String) beanContext.getDeploymentID();
             beanContext.setContainer(null);
@@ -148,18 +155,22 @@ public class SingletonContainer implements RpcContainer {
     /**
      * @deprecated use invoke signature without 'securityIdentity' argument.
      */
+    @Deprecated
+    @Override
     public Object invoke(Object deployID, Method callMethod, Object[] args, Object primKey, Object securityIdentity) throws OpenEJBException {
         return invoke(deployID, null, callMethod.getDeclaringClass(), callMethod, args, primKey);
     }
 
+    @Override
     public Object invoke(Object deployID, Class callInterface, Method callMethod, Object[] args, Object primKey) throws OpenEJBException {
         return invoke(deployID, null, callInterface, callMethod, args, primKey);
     }
 
+    @Override
     public Object invoke(Object deployID, InterfaceType type, Class callInterface, Method callMethod, Object[] args, Object primKey) throws OpenEJBException {
         BeanContext beanContext = this.getBeanContext(deployID);
 
-        if (beanContext == null) throw new OpenEJBException("Deployment does not exist in this container. Deployment(id='"+deployID+"'), Container(id='"+containerID+"')");
+        if (beanContext == null) throw new OpenEJBException("Deployment does not exist in this container. Deployment(id='" + deployID + "'), Container(id='" + containerID + "')");
 
         // Use the backup way to determine call type if null was supplied.
         if (type == null) type = beanContext.getInterfaceType(callInterface);
@@ -190,9 +201,7 @@ public class SingletonContainer implements RpcContainer {
             callContext.set(Method.class, runMethod);
             callContext.setInvokedInterface(callInterface);
 
-            Object retValue = _invoke(callMethod, runMethod, args, instance, callContext, type);
-
-            return retValue;
+            return _invoke(callMethod, runMethod, args, instance, callContext, type);
 
         } finally {
             ThreadContext.exit(oldCallContext);
@@ -205,14 +214,15 @@ public class SingletonContainer implements RpcContainer {
 
     protected Object _invoke(Method callMethod, Method runMethod, Object[] args, Instance instance, ThreadContext callContext, InterfaceType callType) throws OpenEJBException {
         BeanContext beanContext = callContext.getBeanContext();
-               
+
         Duration accessTimeout = getAccessTimeout(beanContext, runMethod);
         boolean read = javax.ejb.LockType.READ.equals(beanContext.getConcurrencyAttribute(runMethod));
-        
+
         final Lock lock = aquireLock(read, accessTimeout, instance, runMethod);
 
         Object returnValue;
         try {
+
             TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod, callType), callContext);
 
             returnValue = null;
@@ -339,7 +349,7 @@ public class SingletonContainer implements RpcContainer {
             AddressingSupport wsaSupport = NoAddressingSupport.INSTANCE;
             for (int i = 2; i < args.length; i++) {
                 if (args[i] instanceof AddressingSupport) {
-                    wsaSupport = (AddressingSupport)args[i];
+                    wsaSupport = (AddressingSupport) args[i];
                 }
             }
             ThreadContext.getThreadContext().set(AddressingSupport.class, wsaSupport);
