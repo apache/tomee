@@ -137,7 +137,6 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
         final byte[] bytes = (MulticastPulseClient.CLIENT + forGroup).getBytes(UTF8);
         final DatagramPacket request = new DatagramPacket(bytes, bytes.length, new InetSocketAddress(ia, port));
 
-
         final AtomicBoolean running = new AtomicBoolean(true);
         final MulticastSocket[] clientSockets = MulticastPulseClient.getSockets(ia, port);
         final Timer timer = new Timer(true);
@@ -210,7 +209,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                                         continue;
                                     }
 
-                                    final String services = s.substring(0, s.indexOf('|'));
+                                    final String services = s.substring(0, s.lastIndexOf('|'));
                                     s = s.substring(services.length() + 1);
 
                                     final String[] serviceList = services.split("\\|");
@@ -318,6 +317,8 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                 //Ignore
             }
         }
+
+        futures.clear();
 
         return set;
     }
