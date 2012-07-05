@@ -25,10 +25,35 @@ import org.apache.geronimo.connector.outbound.connectionmanagerconfig.PoolingSup
 import org.apache.geronimo.connector.outbound.connectionmanagerconfig.SinglePool;
 import org.apache.geronimo.connector.outbound.connectionmanagerconfig.TransactionSupport;
 import org.apache.geronimo.connector.outbound.connectionmanagerconfig.XATransactions;
+import org.apache.geronimo.transaction.manager.ExponentialtIntervalRetryScheduler;
+import org.apache.geronimo.transaction.manager.NamedXAResource;
+import org.apache.geronimo.transaction.manager.NamedXAResourceFactory;
+import org.apache.geronimo.transaction.manager.RecoverTask;
 import org.apache.geronimo.transaction.manager.RecoverableTransactionManager;
+import org.apache.geronimo.transaction.manager.Recovery;
+import org.apache.geronimo.transaction.manager.RecoveryImpl;
+import org.apache.geronimo.transaction.manager.RetryScheduler;
+import org.apache.geronimo.transaction.manager.TransactionImpl;
+import org.apache.geronimo.transaction.manager.XidImpl;
 
 import javax.resource.spi.ManagedConnectionFactory;
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.InvalidTransactionException;
+import javax.transaction.NotSupportedException;
+import javax.transaction.RollbackException;
+import javax.transaction.SystemException;
+import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
+import javax.transaction.xa.XAException;
+import javax.transaction.xa.Xid;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class GeronimoConnectionManagerFactory   {
     private String name;
@@ -155,16 +180,21 @@ public class GeronimoConnectionManagerFactory   {
         if (classLoader == null) Thread.currentThread().getContextClassLoader();
         if (classLoader == null) classLoader = getClass().getClassLoader();
         if (classLoader == null) classLoader = ClassLoader.getSystemClassLoader();
-        GenericConnectionManager connectionManager = new GenericConnectionManager(
+        RecoverableTransactionManager tm;
+        if (transactionManager instanceof RecoverableTransactionManager) {
+            tm = (RecoverableTransactionManager) transactionManager;
+        } else {
+            tm = new SimpleRecoverableTransactionManager(transactionManager);
+        }
+        return new GenericConnectionManager(
                 createTransactionSupport(),
                 poolingSupport,
                 null,
                 new AutoConnectionTracker(),
-                (RecoverableTransactionManager)transactionManager,
+                tm,
                 mcf,
                 name,
                 classLoader);
-        return connectionManager;
     }
 
     private TransactionSupport createTransactionSupport() {
@@ -223,6 +253,113 @@ public class GeronimoConnectionManagerFactory   {
                     true);
         } else {
             throw new IllegalArgumentException("Unknown partition strategy " + partitionStrategy);
+        }
+    }
+
+    private class SimpleRecoverableTransactionManager implements RecoverableTransactionManager {
+        private final TransactionManager delegate;
+        private final Recovery recovery;
+        private final List<Exception> recoveryErrors = new ArrayList<Exception>();
+        private final RetryScheduler retryScheduler = new ExponentialtIntervalRetryScheduler();
+        private final Map<String, NamedXAResourceFactory> namedXAResourceFactories = new ConcurrentHashMap<String, NamedXAResourceFactory>();
+
+        public SimpleRecoverableTransactionManager(final TransactionManager transactionManager) {
+            delegate = transactionManager;
+            recovery = new Recovery() { // TODO
+                @Override
+                public void recoverLog() throws XAException {
+                    // no-op
+                }
+
+                @Override
+                public void recoverResourceManager(final NamedXAResource namedXAResource) throws XAException {
+                    // no-op
+                }
+
+                @Override
+                public boolean hasRecoveryErrors() {
+                    return !recoveryErrors.isEmpty();
+                }
+
+                @Override
+                public List getRecoveryErrors() {
+                    return recoveryErrors;
+                }
+
+                @Override
+                public boolean localRecoveryComplete() {
+                    return true;
+                }
+
+                @Override
+                public int localUnrecoveredCount() {
+                    return 0;
+                }
+
+                @Override
+                public Map<Xid, TransactionImpl> getExternalXids() {
+                    return Collections.emptyMap();
+                }
+            };
+        }
+
+        @Override
+        public void recoveryError(final Exception e) {
+            recoveryErrors.add(e);
+        }
+
+        public void registerNamedXAResourceFactory(final NamedXAResourceFactory namedXAResourceFactory) {
+            namedXAResourceFactories.put(namedXAResourceFactory.getName(), namedXAResourceFactory);
+            new RecoverTask(retryScheduler, namedXAResourceFactory, recovery, this).run();
+        }
+
+        public void unregisterNamedXAResourceFactory(final String namedXAResourceFactoryName) {
+            namedXAResourceFactories.remove(namedXAResourceFactoryName);
+        }
+
+        @Override
+        public void begin() throws NotSupportedException, SystemException {
+            delegate.begin();
+        }
+
+        @Override
+        public void commit() throws HeuristicMixedException, HeuristicRollbackException, IllegalStateException, RollbackException, SecurityException, SystemException {
+            delegate.commit();
+        }
+
+        @Override
+        public int getStatus() throws SystemException {
+            return delegate.getStatus();
+        }
+
+        @Override
+        public Transaction getTransaction() throws SystemException {
+            return delegate.getTransaction();
+        }
+
+        @Override
+        public void resume(final Transaction transaction) throws IllegalStateException, InvalidTransactionException, SystemException {
+            delegate.resume(transaction);
+        }
+
+        @Override
+        public void rollback() throws IllegalStateException, SecurityException, SystemException {
+            delegate.rollback();
+        }
+
+        @Override
+        public void setRollbackOnly() throws IllegalStateException, SystemException {
+            delegate.setRollbackOnly();
+        }
+
+        @Override
+        public void setTransactionTimeout(int i) throws SystemException {
+            delegate.setTransactionTimeout(i);
+        }
+
+        @Override
+        public Transaction suspend() throws SystemException {
+            return delegate.suspend();
         }
     }
 }
