@@ -368,6 +368,8 @@ public class StatelessPoolStatsTest extends TestCase {
 
         checkout(bean, 5).release();
 
+        Thread.sleep(110);
+
         final Checkout checkout = checkout(bean, 5);
 
         CounterBean.constructed = new CountDownLatch(3);
@@ -403,6 +405,8 @@ public class StatelessPoolStatsTest extends TestCase {
         assertAttribute("MaxAge", 100L);
 
         checkout(bean, 5).release();
+
+        Thread.sleep(110);
 
         final Checkout checkout = checkout(bean, 5);
 
