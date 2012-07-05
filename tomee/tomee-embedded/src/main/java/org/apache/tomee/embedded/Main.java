@@ -29,6 +29,7 @@ public class Main {
     public static final String PORT = "port";
     public static final String SHUTDOWN = "shutdown";
     public static final String PATH = "path";
+    public static final String CONTEXT = "context";
     public static final String DIRECTORY = "directory";
 
     public static void main(final String[] args) {
@@ -51,15 +52,25 @@ public class Main {
 			container.start();
 
             if (line.hasOption(PATH)) {
+                final String[] contexts;
+                if (line.hasOption(CONTEXT)) {
+                    contexts = line.getOptionValues(CONTEXT);
+                } else {
+                    contexts = null;
+                }
+                int i = 0;
                 for (String path : line.getOptionValues(PATH)) {
                     final File file = new File(ProvisioningUtil.realLocation(path));
                     if (!file.exists()) {
-                        System.out.println(file.getAbsolutePath() + " does not exist, skipping");
+                        System.err.println(file.getAbsolutePath() + " does not exist, skipping");
                         continue;
                     }
 
-                    final String filenameWithoutExtension = file.getName().replaceAll("\\.[A-Za-z]+$", "");
-                    container.deploy(filenameWithoutExtension, file);
+                    String name = file.getName().replaceAll("\\.[A-Za-z]+$", "");
+                    if (contexts != null) {
+                        name = contexts[i++];
+                    }
+                    container.deploy(name, file, true);
                 }
             }
 
@@ -82,6 +93,7 @@ public class Main {
     private static Options createOptions() {
         final Options options = new Options();
         options.addOption(null, PATH, true, "");
+        options.addOption(null, CONTEXT, true, "Context name for applications (same order than paths)");
         options.addOption("p", PORT, true, "TomEE http port");
         options.addOption("s", SHUTDOWN, true, "TomEE shutdown port");
         options.addOption("d", DIRECTORY, true, "TomEE shutdown port");
