@@ -8,6 +8,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -277,15 +278,19 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
         }
 
         try {
-            latch.await();
+            //Give threads a reasonable amount of time to start
+            if (latch.await(5, TimeUnit.SECONDS)) {
 
-            //Pulse the server - It is thread safe to use same sockets as send/receive synchronization is only on the packet
-            for (final MulticastSocket socket : clientSockets) {
-                try {
-                    socket.send(request);
-                } catch (Throwable e) {
-                    //Ignore
+                //Pulse the server - It is thread safe to use same sockets as send/receive synchronization is only on the packet
+                for (final MulticastSocket socket : clientSockets) {
+                    try {
+                        socket.send(request);
+                    } catch (Throwable e) {
+                        //Ignore
+                    }
                 }
+            } else {
+                timeout = 1;
             }
 
         } catch (InterruptedException e) {

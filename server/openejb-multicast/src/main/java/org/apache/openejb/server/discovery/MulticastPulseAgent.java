@@ -24,8 +24,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Level;
 
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -257,7 +257,8 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
             }
 
             try {
-                latch.await();
+                //Give threads a reasonable amount of time to start
+                latch.await(5, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
                 this.stop();
             }
@@ -426,6 +427,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
 
     /**
      * Is the provided host a valid loopback address
+     *
      * @param host Host to test
      * @return True or false
      */
