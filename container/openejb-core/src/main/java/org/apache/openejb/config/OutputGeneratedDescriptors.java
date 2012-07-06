@@ -23,6 +23,8 @@ import org.apache.openejb.jee.JAXBContextFactory;
 import org.apache.openejb.jee.JaxbJavaee;
 import org.apache.openejb.jee.jpa.EntityMappings;
 import org.apache.openejb.jee.jpa.JpaJaxbUtil;
+import org.apache.openejb.jee.jpa.unit.Persistence;
+import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.oejb2.GeronimoEjbJarType;
 import org.apache.openejb.jee.oejb2.JaxbOpenejbJar2;
 import org.apache.openejb.jee.oejb3.JaxbOpenejbJar3;
@@ -95,6 +97,7 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
 		    	JAXBContext ctx = JAXBContextFactory.newInstance(Connector.class);
 		    	Marshaller marshaller = ctx.createMarshaller();
 		    	marshaller.marshal(connector, out);
+                logger.info("Dumping Generated ra.xml to: " + tempFile.getAbsolutePath());
 	        } catch (JAXBException e) {
 	        } finally {
 	        	IO.close(out);
@@ -118,17 +121,43 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
     }
 
 	private void writeGenratedCmpMappings(AppModule appModule) {
+
+        for (PersistenceModule persistenceModule : appModule.getPersistenceModules()) {
+            try {
+                final Persistence persistence = persistenceModule.getPersistence();
+                if (hasCmpPersistenceUnit(persistence)) {
+                    final File tempFile = tempFile("persistence-", ".xml");
+                    final OutputStream out = IO.write(tempFile);
+                    try {
+                        JpaJaxbUtil.marshal(Persistence.class, persistence, out);
+                        logger.info("Dumping Generated CMP persistence.xml to: " + tempFile.getAbsolutePath());
+                    } catch (JAXBException e) {
+                    } finally{
+                        IO.close(out);
+                    }
+                }
+            } catch (IOException e) {
+            }
+        }
         try {
             final File tempFile = tempFile("openejb-cmp-generated-orm-", ".xml");
             final OutputStream out = IO.write(tempFile);
             try {
                 JpaJaxbUtil.marshal(EntityMappings.class, appModule.getCmpMappings(), out);
+                logger.info("Dumping Generated CMP mappings.xml to: " + tempFile.getAbsolutePath());
             } catch (JAXBException e) {
             } finally{
                 IO.close(out);
             }
         } catch (IOException e) {
         }
+    }
+
+    private boolean hasCmpPersistenceUnit(Persistence persistence) {
+        for (PersistenceUnit unit : persistence.getPersistenceUnit()) {
+            if (unit.getName().startsWith("cmp")) return true;
+        }
+        return false;
     }
 
     private void writeOpenejbJar(EjbModule ejbModule) {
