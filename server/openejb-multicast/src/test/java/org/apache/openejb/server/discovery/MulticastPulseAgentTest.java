@@ -328,7 +328,6 @@ public class MulticastPulseAgentTest {
             }
         }
 
-        futures.clear();
         System.out.println();
 
         for (final URI uri : set) {

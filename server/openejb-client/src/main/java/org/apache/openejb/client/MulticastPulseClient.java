@@ -334,9 +334,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
             }
         }
 
-        futures.clear();
-
-        return set;
+        return new HashSet<URI>(set);
     }
 
     /**
@@ -531,7 +529,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                             boolean b = false;
                             final Socket s = new Socket();
                             try {
-                                s.connect(new InetSocketAddress(host, port), 1000);
+                                s.connect(new InetSocketAddress(host, port), 500);
                                 b = true;
                             } catch (Throwable e) {
                                 //Ignore
