@@ -17,13 +17,9 @@
  */
 package org.apache.openejb.core.mdb;
 
-import java.io.Serializable;
-import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.ra.ActiveMQActivationSpec;
+
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
@@ -35,24 +31,14 @@ import javax.jms.MessageProducer;
 import javax.jms.ObjectMessage;
 import javax.jms.Session;
 import javax.resource.ResourceException;
-import javax.resource.spi.BootstrapContext;
-import javax.resource.spi.ResourceAdapterInternalException;
 import javax.resource.spi.UnavailableException;
 import javax.resource.spi.endpoint.MessageEndpoint;
 import javax.resource.spi.endpoint.MessageEndpointFactory;
-import javax.resource.spi.work.WorkManager;
 import javax.transaction.xa.XAResource;
-
-import junit.framework.TestCase;
-import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.activemq.ra.ActiveMQActivationSpec;
-import org.apache.geronimo.connector.GeronimoBootstrapContext;
-import org.apache.geronimo.connector.work.GeronimoWorkManager;
-import org.apache.geronimo.connector.work.TransactionContextHandler;
-import org.apache.geronimo.connector.work.WorkContextHandler;
-import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.resource.activemq.ActiveMQResourceAdapter;
+import java.io.Serializable;
+import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class MdbTest extends JmsTest {
 
