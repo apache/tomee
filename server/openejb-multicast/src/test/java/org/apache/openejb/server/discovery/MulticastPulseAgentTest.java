@@ -70,12 +70,14 @@ public class MulticastPulseAgentTest {
 
         agent = new MulticastPulseAgent();
         agent.init(p);
-        agent.setDiscoveryListener(new MyDiscoveryListener("test"));
+        agent.setDiscoveryListener(new MyDiscoveryListener("MulticastPulseAgentTest"));
         agent.registerService(new URI("ejb:ejbd://[::]:4201"));
         agent.registerService(new URI("ejb:ejbd://0.0.0.0:4201"));
         agent.registerService(new URI("ejb:http://127.0.0.1:4201"));
         agent.registerService(new URI("ejb:https://0.0.0.1:4201"));
         agent.start();
+
+        System.out.println();
     }
 
     @AfterClass
@@ -104,7 +106,9 @@ public class MulticastPulseAgentTest {
 
         final AtomicBoolean running = new AtomicBoolean(true);
 
+        //Returns at least one socket per valid network interface
         final MulticastSocket[] clientSockets = MulticastPulseAgent.getSockets(host, port);
+
         final Timer timer = new Timer(true);
 
         final Set<URI> set = new TreeSet<URI>(new Comparator<URI>() {
@@ -147,6 +151,14 @@ public class MulticastPulseAgentTest {
                 @Override
                 public void run() {
 
+                    String name = "Unknown interface";
+                    try {
+                        name = socket.getNetworkInterface().getDisplayName();
+                    } catch (Throwable e) {
+                        //Ignore
+                    }
+                    System.out.println("Enter MulticastPulse client thread on: " + name);
+
                     final DatagramPacket response = new DatagramPacket(new byte[2048], 2048);
 
                     while (running.get()) {
@@ -181,7 +193,7 @@ public class MulticastPulseAgentTest {
                                     final String[] serviceList = services.split("\\|");
                                     final String[] hosts = s.split(",");
 
-                                    System.out.println(String.format("Client received Server pulse:\n\t%1$s\n\t%2$s\n\t%3$s\n", group, services, s));
+                                    System.out.println(String.format("\nClient received Server pulse:\n\tGroup: %1$s\n\tServices: %2$s\n\tServer: %3$s\n", group, services, s));
 
                                     for (String svc : serviceList) {
 
@@ -229,7 +241,7 @@ public class MulticastPulseAgentTest {
                                                 //Ignore
                                             }
                                         } else {
-                                            System.out.println("Reject service: " + serviceUri.toASCIIString());
+                                            System.out.println("Reject service: " + serviceUri.toASCIIString() + " - Not looking for scheme: " + serviceUri.getScheme());
                                         }
                                     }
                                 }
@@ -240,7 +252,7 @@ public class MulticastPulseAgentTest {
                         }
                     }
 
-                    System.out.println("Exit MulticastPulse client thread");
+                    System.out.println("Exit MulticastPulse client thread on: " + name);
                 }
             }));
         }
@@ -283,7 +295,7 @@ public class MulticastPulseAgentTest {
                     }
                 }
             }
-        }, 1500);
+        }, 10000);
 
         //Wait for threads to complete
         for (final Future future : futures) {
@@ -295,10 +307,13 @@ public class MulticastPulseAgentTest {
         }
 
         futures.clear();
+        System.out.println();
 
         for (final URI uri : set) {
-            System.out.println(uri.toASCIIString());
+            System.out.println("MultiPulse discovered: " + uri.toASCIIString());
         }
+
+        System.out.println();
 
         org.junit.Assert.assertTrue(set.size() > 0);
     }
@@ -324,12 +339,12 @@ public class MulticastPulseAgentTest {
 
         @Override
         public void serviceAdded(URI service) {
-            System.out.println(id + "add " + service.toString());
+            System.out.println(id + ": add : " + service.toString());
         }
 
         @Override
         public void serviceRemoved(URI service) {
-            System.out.println(id + "remove " + service.toString());
+            System.out.println(id + ": remove : " + service.toString());
         }
     }
 }

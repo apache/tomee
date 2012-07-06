@@ -320,6 +320,15 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
         return this.port;
     }
 
+    /**
+     * Attempts to return at least one socket per valid network interface.
+     * If no valid interface is found then the array will be empty.
+     *
+     * @param multicastAddress A valid multicast address
+     * @param port             A valid multicast port
+     * @return MulticastSocket[], may be empty if no valid interfaces exist
+     * @throws Exception On invalid parameters
+     */
     public static MulticastSocket[] getSockets(final String multicastAddress, final int port) throws Exception {
 
         final InetAddress ia;
@@ -404,6 +413,11 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
         return list.toArray(new NetworkInterface[list.size()]);
     }
 
+    /**
+     * Is the provided host a valid loopback address
+     * @param host Host to test
+     * @return True or false
+     */
     public static boolean isLoopback(final String host) {
 
         final InetAddress addr;
