@@ -358,23 +358,21 @@ public class StatelessPoolStatsTest extends TestCase {
         final Properties properties = new Properties();
         properties.put("MaxSize", "10");
         properties.put("MinSize", "3");
-        properties.put("MaxAge", "100 ms");
+        properties.put("MaxAge", "300 ms");
         properties.put("ReplaceAged", "false");
         properties.put("MaxAgeOffset", "0");
 
         final CounterBean bean = deploy("testAging", properties);
 
-        assertAttribute("MaxAge", 100L);
+        assertAttribute("MaxAge", 300L);
 
         checkout(bean, 5).release();
-
-        Thread.sleep(110);
 
         final Checkout checkout = checkout(bean, 5);
 
         CounterBean.constructed = new CountDownLatch(3);
 
-        Thread.sleep(110);
+        Thread.sleep(330);
 
         checkout.release();
 
@@ -396,23 +394,21 @@ public class StatelessPoolStatsTest extends TestCase {
         final Properties properties = new Properties();
         properties.put("MaxSize", "10");
         properties.put("MinSize", "3");
-        properties.put("MaxAge", "100 ms");
+        properties.put("MaxAge", "300 ms");
         properties.put("ReplaceAged", "true");
         properties.put("MaxAgeOffset", "0");
 
         final CounterBean bean = deploy("testAgingWithReplacement", properties);
 
-        assertAttribute("MaxAge", 100L);
+        assertAttribute("MaxAge", 300L);
 
         checkout(bean, 5).release();
-
-        Thread.sleep(110);
 
         final Checkout checkout = checkout(bean, 5);
 
         CounterBean.constructed = new CountDownLatch(5);
 
-        Thread.sleep(110);
+        Thread.sleep(330);
 
         checkout.release();
 
