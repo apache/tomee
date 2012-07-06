@@ -20,10 +20,12 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
 
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -194,6 +196,8 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
                 throw new ServiceException("Failed to get Multicast sockets", e);
             }
 
+            final CountDownLatch latch = new CountDownLatch(this.sockets.length);
+
             for (final MulticastSocket socket : this.sockets) {
 
                 this.futures.add(executor.submit(new Runnable() {
@@ -201,6 +205,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
                     public void run() {
 
                         final DatagramPacket request = new DatagramPacket(new byte[2048], 2048);
+                        latch.countDown();
 
                         while (MulticastPulseAgent.this.running.get()) {
 
@@ -249,6 +254,12 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
                         }
                     }
                 }));
+            }
+
+            try {
+                latch.await();
+            } catch (InterruptedException e) {
+                this.stop();
             }
         }
     }
