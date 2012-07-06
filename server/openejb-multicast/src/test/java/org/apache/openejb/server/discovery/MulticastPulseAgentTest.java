@@ -39,6 +39,7 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeSet;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -66,7 +67,7 @@ public class MulticastPulseAgentTest {
 
         final Properties p = new Properties();
         p.setProperty("bind", host);
-        p.setProperty("port", "" + 6142);
+        p.setProperty("port", "" + port);
 
         agent = new MulticastPulseAgent();
         agent.init(p);
@@ -144,6 +145,7 @@ public class MulticastPulseAgentTest {
         //Start threads that listen for multicast packets on our channel.
         //These need to start 'before' we pulse a request.
         final ArrayList<Future> futures = new ArrayList<Future>();
+        final CountDownLatch latch = new CountDownLatch(clientSockets.length);
 
         for (final MulticastSocket socket : clientSockets) {
 
@@ -160,6 +162,8 @@ public class MulticastPulseAgentTest {
                     System.out.println("Enter MulticastPulse client thread on: " + name);
 
                     final DatagramPacket response = new DatagramPacket(new byte[2048], 2048);
+
+                    latch.countDown();
 
                     while (running.get()) {
                         try {
@@ -257,13 +261,25 @@ public class MulticastPulseAgentTest {
             }));
         }
 
-        //Pulse the server - It is thread safe to use same sockets as send/receive synchronization is only on the packet
-        for (final MulticastSocket socket : clientSockets) {
-            try {
-                socket.send(request);
-            } catch (Throwable e) {
-                //Ignore
+        //Allow slow thread starts
+        System.out.println("Wait for threads to start");
+        int timeout = 5000;
+        try {
+
+            latch.await();
+            System.out.println("Threads have started");
+
+            //Pulse the server - It is thread safe to use same sockets as send/receive synchronization is only on the packet
+            for (final MulticastSocket socket : clientSockets) {
+                try {
+                    socket.send(request);
+                } catch (Throwable e) {
+                    //Ignore
+                }
             }
+
+        } catch (InterruptedException e) {
+            timeout = 1;
         }
 
         //Kill the threads after timeout
@@ -295,7 +311,7 @@ public class MulticastPulseAgentTest {
                     }
                 }
             }
-        }, 10000);
+        }, timeout);
 
         //Wait for threads to complete
         for (final Future future : futures) {
@@ -332,8 +348,6 @@ public class MulticastPulseAgentTest {
         private final String id;
 
         public MyDiscoveryListener(String id) {
-            id += "        ";
-            id = id.substring(0, 8);
             this.id = id;
         }
 
