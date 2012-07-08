@@ -45,6 +45,11 @@
       <artifactId>tomee-embedded</artifactId>
       <version>${tomee.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.openejb.maven</groupId>
+      <artifactId>maven-util</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 
   <properties>
