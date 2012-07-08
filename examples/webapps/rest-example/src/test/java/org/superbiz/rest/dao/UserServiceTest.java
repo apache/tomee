@@ -73,7 +73,7 @@ public class UserServiceTest {
         User user = dao.create("foo", "dummy", "foo@dummy.org");
         assertNotNull(dao.find(user.getId()));
 
-        String uri = "http://127.0.0.1:" + System.getProperty(EmbeddedTomEEContainer.TOMEE_EJBCONTAINER_HTTP_PORT) + "/" + webApp.getName();
+        String uri = "http://127.0.0.1:" + System.getProperty(EmbeddedTomEEContainer.TOMEE_EJBCONTAINER_HTTP_PORT) + "/rest-example";
         UserServiceClientAPI client = JAXRSClientFactory.create(uri, UserServiceClientAPI.class);
         User retrievedUser = client.show(user.getId());
         assertNotNull(retrievedUser);
