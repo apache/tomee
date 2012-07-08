@@ -84,6 +84,8 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
 
         final CountDownLatch latch = new CountDownLatch(1);
 
+        System.setProperty("openejb.log.factory", "org.apache.openejb.maven.util.MavenLogStreamFactory");
+
         final Container container = new Container();
         final Configuration config  = getConfig();
         container.setup(config);
@@ -115,6 +117,8 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
             latch.await();
         } catch (Exception e) {
             Thread.interrupted();
+        } finally {
+            System.clearProperty("openejb.log.factory");
         }
     }
 
