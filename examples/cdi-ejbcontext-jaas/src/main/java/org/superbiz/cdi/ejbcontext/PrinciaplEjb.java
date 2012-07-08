@@ -16,23 +16,16 @@
  */
 package org.superbiz.cdi.ejbcontext;
 
-import javax.inject.Inject;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import javax.annotation.Resource;
+import javax.ejb.EJBContext;
+import javax.ejb.Stateless;
 
-@WebServlet(urlPatterns = "/ejbcontext")
-public class CdiServlet extends HttpServlet {
-    @Inject
-    private CdiEjb bean;
+@Stateless
+public class PrinciaplEjb {
+    @Resource
+    private EJBContext context;
 
-    @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.login(req.getParameter("myUser"), req.getParameter("myPass"));
-        // think to persist the information in the session if you need it later
-        resp.getWriter().write("logged user ==> " + bean.info());
+    public String info() {
+        return context.getCallerPrincipal().getName();
     }
 }
