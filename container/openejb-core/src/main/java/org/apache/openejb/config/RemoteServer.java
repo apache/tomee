@@ -216,7 +216,6 @@ public class RemoteServer {
                     }
 
                     argsList.add("-javaagent:" + javaagentJar.getAbsolutePath());
-                    argsList.add("-Dorg.apache.tomcat.util.http.ServerCookie.ALLOW_HTTP_SEPARATORS_IN_V0=true");
                     if (!addedArgs.containsKey("-Dcom.sun.management.jmxremote")) {
                         argsList.add("-Dcom.sun.management.jmxremote");
                     }
