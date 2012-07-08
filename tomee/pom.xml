@@ -35,6 +35,7 @@
     <module>tomee-catalina</module>
     <module>tomee-common</module>
     <module>tomee-myfaces</module>
+    <module>tomee-mojarra</module>
     <module>tomee-webapp</module>
     <module>tomee-plus-webapp</module>
     <module>tomee-webservices</module>
@@ -43,7 +44,6 @@
     <module>tomee-jaxrs-webapp</module>
     <module>apache-tomee</module>
     <module>apache-tomcat</module>
-    <module>tomee-mojarra</module>
   </modules>
 
   <repositories>
