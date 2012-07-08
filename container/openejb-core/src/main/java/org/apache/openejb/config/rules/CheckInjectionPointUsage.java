@@ -32,11 +32,18 @@ public class CheckInjectionPointUsage extends ValidationBase {
     public void validate(EjbModule ejbModule) {
         if (ejbModule.getBeans() == null) return;
 
-        for (Field field : ejbModule.getFinder().findAnnotatedFields(Inject.class)) {
-            if (!field.getType().equals(InjectionPoint.class)) continue;
-            if (!HttpServlet.class.isAssignableFrom(field.getDeclaringClass())) continue;
+        try {
+            for (Field field : ejbModule.getFinder().findAnnotatedFields(Inject.class)) {
+                if (!field.getType().equals(InjectionPoint.class) || !HttpServlet.class.isAssignableFrom(field.getDeclaringClass())) {
+                    continue;
+                }
 
-            fail(field.getDeclaringClass().getSimpleName(), "cdi.injectionPointOnNonBean", field.getDeclaringClass().getName(), field.getName());
+                fail(field.getDeclaringClass().getSimpleName(), "cdi.injectionPointOnNonBean", field.getDeclaringClass().getName(), field.getName());
+            }
+        } catch (NoClassDefFoundError noClassDefFoundError) {
+            // ignored: can't check but maybe it is because of an optional dep so ignore it
+            // not important to skip it since the failure will be reported elsewhere
+            // this validator doesn't check it
         }
     }
 }
