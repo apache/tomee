@@ -1445,6 +1445,10 @@
             <groupId>javassist</groupId>
             <artifactId>javassist</artifactId>
           </exclusion>
+          <exclusion>
+            <groupId>net.sf.scannotation</groupId>
+            <artifactId>scannotation</artifactId>
+          </exclusion>
         </exclusions>
       </dependency>
       <dependency>
