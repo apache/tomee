@@ -10,6 +10,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -173,6 +174,8 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
             }
         });
 
+        final ReentrantLock setLock = new ReentrantLock();
+
         //Start threads that listen for multicast packets on our channel.
         //These need to start 'before' we pulse a request.
         final ArrayList<Future> futures = new ArrayList<Future>();
@@ -248,6 +251,8 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
 
                                             svc = ("mp-" + serverHost + ":" + group + ":" + svc);
 
+                                            setLock.lock();
+
                                             try {
                                                 if (svc.contains("0.0.0.0")) {
                                                     for (final String h : hosts) {
@@ -263,6 +268,8 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                                                 }
                                             } catch (Throwable e) {
                                                 //Ignore
+                                            } finally {
+                                                setLock.unlock();
                                             }
                                         }
                                     }
@@ -334,7 +341,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
             }
         }
 
-        return new HashSet<URI>(set);
+        return set;
     }
 
     /**
@@ -423,15 +430,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                 final NetworkInterface next = interfaces.nextElement();
 
                 if (next.supportsMulticast() && next.isUp()) {
-
-                    final Enumeration<InetAddress> addresses = next.getInetAddresses();
-                    while (addresses.hasMoreElements()) {
-                        final InetAddress address = addresses.nextElement();
-                        if (address.isSiteLocalAddress()) {
-                            list.add(next);
-                            break;
-                        }
-                    }
+                    list.add(next);
                 }
             }
         } catch (SocketException e) {
