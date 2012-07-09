@@ -341,7 +341,12 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
             }
         }
 
-        return set;
+        setLock.lock();
+        try {
+            return new HashSet<URI>(set);
+        } finally {
+            setLock.unlock();
+        }
     }
 
     /**
