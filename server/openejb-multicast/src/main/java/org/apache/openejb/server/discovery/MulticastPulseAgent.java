@@ -407,15 +407,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
                 final NetworkInterface next = interfaces.nextElement();
 
                 if (next.supportsMulticast() && next.isUp()) {
-
-                    final Enumeration<InetAddress> addresses = next.getInetAddresses();
-                    while (addresses.hasMoreElements()) {
-                        final InetAddress address = addresses.nextElement();
-                        if (address.isSiteLocalAddress()) {
-                            list.add(next);
-                            break;
-                        }
-                    }
+                    list.add(next);
                 }
             }
         } catch (SocketException e) {

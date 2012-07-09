@@ -45,6 +45,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Copyright (c) ORPRO Vision GmbH.
@@ -103,14 +104,18 @@ public class MulticastPulseAgentTest {
             throw new Exception(host + " is not a valid multicast address");
         }
 
-        final byte[] bytes = (MulticastPulseAgent.CLIENT + forGroup).getBytes(utf8);
-        final DatagramPacket request = new DatagramPacket(bytes, bytes.length, new InetSocketAddress(ia, port));
-
-        final AtomicBoolean running = new AtomicBoolean(true);
-
         //Returns at least one socket per valid network interface
         final MulticastSocket[] clientSockets = MulticastPulseAgent.getSockets(host, port);
 
+        //No point going on if we don't have sockets...
+        if (clientSockets.length < 1) {
+            System.out.println("Cannnot perform multipulse test without a valid interface");
+            return;
+        }
+
+        final byte[] bytes = (MulticastPulseAgent.CLIENT + forGroup).getBytes(utf8);
+        final DatagramPacket request = new DatagramPacket(bytes, bytes.length, new InetSocketAddress(ia, port));
+        final AtomicBoolean running = new AtomicBoolean(true);
         final Timer timer = new Timer(true);
 
         final Set<URI> set = new TreeSet<URI>(new Comparator<URI>() {
@@ -143,6 +148,8 @@ public class MulticastPulseAgentTest {
             }
         });
 
+        final ReentrantLock setLock = new ReentrantLock();
+
         //Start threads that listen for multicast packets on our channel.
         //These need to start 'before' we pulse a request.
         final ArrayList<Future> futures = new ArrayList<Future>();
@@ -160,7 +167,7 @@ public class MulticastPulseAgentTest {
                     } catch (Throwable e) {
                         //Ignore
                     }
-                    System.out.println("Enter MulticastPulse client thread on: " + name);
+                    System.out.println("Entered MulticastPulse client thread on: " + name);
 
                     final DatagramPacket response = new DatagramPacket(new byte[2048], 2048);
 
@@ -198,7 +205,7 @@ public class MulticastPulseAgentTest {
                                     final String[] serviceList = services.split("\\|");
                                     final String[] hosts = s.split(",");
 
-                                    System.out.println(String.format("\nClient received Server pulse:\n\tGroup: %1$s\n\tServices: %2$s\n\tServer: %3$s\n", group, services, s));
+                                    System.out.println(String.format("\n" + name + " received Server pulse:\n\tGroup: %1$s\n\tServices: %2$s\n\tServer: %3$s\n", group, services, s));
 
                                     for (String svc : serviceList) {
 
@@ -229,6 +236,8 @@ public class MulticastPulseAgentTest {
 
                                             svc = ("mp-" + serverHost + ":" + group + ":" + svc);
 
+                                            setLock.lock();
+
                                             try {
                                                 if (svc.contains("0.0.0.0")) {
                                                     for (final String h : hosts) {
@@ -244,6 +253,8 @@ public class MulticastPulseAgentTest {
                                                 }
                                             } catch (Throwable e) {
                                                 //Ignore
+                                            } finally {
+                                                setLock.unlock();
                                             }
                                         } else {
                                             System.out.println("Reject service: " + serviceUri.toASCIIString() + " - Not looking for scheme: " + serviceUri.getScheme());
