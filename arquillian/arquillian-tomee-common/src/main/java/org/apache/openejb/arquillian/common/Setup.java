@@ -108,7 +108,10 @@ public class Setup {
 
     public static File downloadFile(final String artifactName, final String altUrl) {
         final String cache = SystemInstance.get().getOptions().get(ProvisioningUtil.OPENEJB_DEPLOYER_CACHE_FOLDER, (String) null);
-        System.setProperty(ProvisioningUtil.OPENEJB_DEPLOYER_CACHE_FOLDER, "target");
+        if (cache == null) { // let the user override it
+            System.setProperty(ProvisioningUtil.OPENEJB_DEPLOYER_CACHE_FOLDER, "target");
+        }
+
         try {
             final File artifact = new MavenCache().getArtifact(artifactName, altUrl);
             if (artifact == null) throw new NullPointerException(String.format("No such artifact: %s", artifactName));
@@ -116,8 +119,6 @@ public class Setup {
         } finally {
             if (cache == null) {
                 System.clearProperty(ProvisioningUtil.OPENEJB_DEPLOYER_CACHE_FOLDER);
-            } else {
-                System.setProperty(ProvisioningUtil.OPENEJB_DEPLOYER_CACHE_FOLDER, cache);
             }
         }
     }
