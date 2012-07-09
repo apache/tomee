@@ -22,6 +22,7 @@ import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.webbeans.component.InjectionPointBean;
 import org.apache.webbeans.component.NewBean;
 import org.apache.webbeans.config.OWBLogConst;
@@ -75,10 +76,14 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
     //Logger instance
     protected static WebBeansLogger logger = WebBeansLogger.getLogger(OpenEJBLifecycle.class);
 
+    public static final String OPENEJB_CDI_SKIP_CLASS_NOT_FOUND = "openejb.cdi.skip-class-not-found";
+
     /**Discover bean classes*/
     protected ScannerService scannerService;
 
     protected final ContextsService contextsService;
+
+    private final boolean skipClassNotFoundError;
 
     /**Deploy discovered beans*/
     private final BeansDeployer deployer;
@@ -113,6 +118,8 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         this.beanManager.setXMLConfigurator(this.xmlDeployer);
         this.scannerService = webBeansContext.getScannerService();
         this.contextsService = webBeansContext.getContextsService();
+
+        this.skipClassNotFoundError = SystemInstance.get().getOptions().get(OPENEJB_CDI_SKIP_CLASS_NOT_FOUND, false);
 
         initApplication(null);
     }
@@ -373,7 +380,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             try {
                 processAnnotatedEvent = webBeansContext.getWebBeansUtil().fireProcessAnnotatedTypeEvent(implClass.getValue());
             } catch (RuntimeException cnfe) {
-                if (rootCauseIsClassNotFound(cnfe)) {
+                if (skipClassNotFoundError && rootCauseIsClassNotFound(cnfe)) {
                     logger.error("an error occured firing ProcessAnnotatedEvent for class "
                         + implClass.getValue().getJavaClass().getName() + ". Skipping the bean.");
                     logger.debug("Skipping bean cause", cnfe);
