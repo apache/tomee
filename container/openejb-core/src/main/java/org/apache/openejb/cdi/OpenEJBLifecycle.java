@@ -369,7 +369,19 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         }
         for (Map.Entry<Class<?>, AnnotatedType<?>> implClass : annotatedTypes.entrySet()) {
             //Fires ProcessAnnotatedType
-            ProcessAnnotatedTypeImpl<?> processAnnotatedEvent = webBeansContext.getWebBeansUtil().fireProcessAnnotatedTypeEvent(implClass.getValue());
+            final ProcessAnnotatedTypeImpl<?> processAnnotatedEvent;
+            try {
+                processAnnotatedEvent = webBeansContext.getWebBeansUtil().fireProcessAnnotatedTypeEvent(implClass.getValue());
+            } catch (RuntimeException cnfe) {
+                if (rootCauseIsClassNotFound(cnfe)) {
+                    logger.error("an error occured firing ProcessAnnotatedEvent for class "
+                        + implClass.getValue().getJavaClass().getName() + ". Skipping the bean.");
+                    logger.debug("Skipping bean cause", cnfe);
+                    continue;
+                } else {
+                    throw cnfe;
+                }
+            }
 
             //if veto() is called
             if (processAnnotatedEvent.isVeto()) {
@@ -379,6 +391,18 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             deployer.defineManagedBean((Class<Object>) implClass.getKey(), (ProcessAnnotatedTypeImpl<Object>) processAnnotatedEvent);
         }
         annotatedTypes.clear();
+    }
+
+    private static boolean rootCauseIsClassNotFound(final RuntimeException re) {
+        Throwable e = re;
+        e.getStackTrace();
+        while (e != null) {
+            if (e instanceof ClassNotFoundException) {
+                return true;
+            }
+            e = e.getCause();
+        }
+        return false;
     }
 
     @Override
