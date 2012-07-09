@@ -348,7 +348,7 @@ public class MulticastPulseAgentTest {
         System.out.println("Multipulse complete");
 
         //If timeout == 1 assume either a cancel or the test took too long (Will not fail)
-        //org.junit.Assert.assertTrue(timeout == 1 || set.size() > 0);
+        org.junit.Assert.assertTrue(timeout == 1 || set.size() > 0);
     }
 
     private String ipFormat(final String h) throws UnknownHostException {
