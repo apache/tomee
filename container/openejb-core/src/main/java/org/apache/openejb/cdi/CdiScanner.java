@@ -34,6 +34,8 @@ import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.core.WebContext;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.classloader.ClassLoaderComparator;
+import org.apache.openejb.util.classloader.DefaultClassLoaderComparator;
 import org.apache.webbeans.annotation.AnnotationManager;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.decorator.DecoratorsManager;
@@ -66,6 +68,12 @@ public class CdiScanner implements ScannerService {
         StartupObject startupObject = (StartupObject) object;
         AppInfo appInfo = startupObject.getAppInfo();
         ClassLoader classLoader = startupObject.getClassLoader();
+        final ClassLoaderComparator comparator;
+        if (classLoader instanceof  ClassLoaderComparator) {
+            comparator = (ClassLoaderComparator) classLoader;
+        } else {
+            comparator = new DefaultClassLoaderComparator(classLoader);
+        }
 
         WebBeansContext webBeansContext = startupObject.getAppContext().getWebBeansContext();
         final AlternativesManager alternativesManager = webBeansContext.getAlternativesManager();
@@ -170,7 +178,7 @@ public class CdiScanner implements ScannerService {
                 // 1. this classloader is the good one
                 // 2. the classloader is the appclassloader one and we are in the ear parent
                 if (!filterByClassLoader
-                        || classLoader.equals(cl) || (cl.equals(scl) && startupObject.getWebContext() == null)) {
+                        || comparator.isSame(cl) || (cl.equals(scl) && startupObject.getWebContext() == null)) {
                     classes.add(clazz);
                 }
             }

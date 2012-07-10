@@ -32,6 +32,7 @@ import org.apache.naming.resources.DirContextURLStreamHandler;
 import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.util.ArrayEnumeration;
 import org.apache.openejb.util.URLs;
+import org.apache.openejb.util.classloader.ClassLoaderComparator;
 import org.apache.tomcat.util.ExceptionUtils;
 
 import java.io.File;
@@ -117,7 +118,7 @@ public class TomEEWebappLoader extends WebappLoader {
         tomEEClassLoader = null;
     }
 
-    public static class TomEEClassLoader extends URLClassLoader {
+    public static class TomEEClassLoader extends URLClassLoader implements ClassLoaderComparator {
         private ClassLoader app;
         private WebappClassLoader webapp;
         private String appPath;
@@ -246,12 +247,17 @@ public class TomEEWebappLoader extends WebappLoader {
 
         @Override
         public boolean equals(Object other) {
-            return other == this; // don't add: || app.equals(other);
+            return app.equals(other); // to be consistent with hashcode() used by maps used in BbeanManagerHolders
         }
 
         @Override
         public int hashCode() {
             return app.hashCode();
+        }
+
+        @Override
+        public boolean isSame(final ClassLoader classLoader) {
+            return classLoader == this; // not equals ;)
         }
     }
 }
