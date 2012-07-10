@@ -87,6 +87,20 @@ public class CdiScanner implements ScannerService {
 
             if (beans == null) continue;
 
+            // fail fast
+            final StringBuilder errors = new StringBuilder("You can't define multiple times the same class in beans.xml: ");
+            if (addErrors(errors, "alternative classes", beans.duplicatedAlternativeClasses)
+                    || addErrors(errors, "alternative stereotypes", beans.duplicatedAlternativeStereotypes)
+                    || addErrors(errors, "decorators", beans.duplicatedDecorators)
+                    || addErrors(errors, "interceptors", beans.duplicatedInterceptors)) {
+                throw new WebBeansConfigurationException(errors.toString());
+            }
+            // no more need of errors so clear them
+            beans.duplicatedAlternativeStereotypes.clear();
+            beans.duplicatedAlternativeClasses.clear();
+            beans.duplicatedDecorators.clear();
+            beans.duplicatedInterceptors.clear();
+
             for (String className : beans.interceptors) {
                 Class<?> clazz = load(className, classLoader);
 
@@ -97,12 +111,12 @@ public class CdiScanner implements ScannerService {
                         throw new WebBeansConfigurationException("Interceptor class : " + clazz.getName() + " must have at least one @InterceptorBindingType");
                     }
 
-                    if (interceptorsManager.isInterceptorEnabled(clazz)) {
+                    if (!interceptorsManager.isInterceptorEnabled(clazz)) {
+                        interceptorsManager.addNewInterceptor(clazz);
+                        classes.add(clazz);
+                    } /* else { don't do it, check is done when we know the beans.xml path --> org.apache.openejb.config.DeploymentLoader.addBeansXmls
                         throw new WebBeansConfigurationException("Interceptor class : " + clazz.getName() + " is already defined");
-                    }
-
-                    interceptorsManager.addNewInterceptor(clazz);
-                    classes.add(clazz);
+                    }*/
                 } else {
                     throw new WebBeansConfigurationException("Could not load interceptor class: " + className);
                 }
@@ -112,12 +126,10 @@ public class CdiScanner implements ScannerService {
                 Class<?> clazz = load(className, classLoader);
 
                 if (clazz != null) {
-                    if (decoratorsManager.isDecoratorEnabled(clazz)) {
-                        throw new WebBeansConfigurationException("Decorator class : " + clazz.getName() + " is already defined");
-                    }
-
-                    decoratorsManager.addNewDecorator(clazz);
-                    classes.add(clazz);
+                    if (!decoratorsManager.isDecoratorEnabled(clazz)) {
+                        decoratorsManager.addNewDecorator(clazz);
+                        classes.add(clazz);
+                    } // same than interceptors regarding throw new WebBeansConfigurationException("Decorator class : " + clazz.getName() + " is already defined");
                 } else {
                     throw new WebBeansConfigurationException("Could not load decorator class: " + className);
                 }
@@ -164,6 +176,19 @@ public class CdiScanner implements ScannerService {
             }
         }
 
+    }
+
+    private boolean addErrors(final StringBuilder errors, final String msg, final List<String> list) {
+        if (!list.isEmpty()) {
+            errors.append("[ ").append(msg).append(" --> ");
+            for (String s : list) {
+                errors.append(s).append(" ");
+            }
+            errors.append("]");
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public boolean isBDABeansXmlScanningEnabled() {
