@@ -209,7 +209,7 @@ public class EjbJarInfoBuilder {
 
             ejbJar.beans.duplicatedAlternativeClasses.addAll(jar.getBeans().getDuplicatedAlternatives().getClasses());
             ejbJar.beans.duplicatedAlternativeStereotypes.addAll(jar.getBeans().getDuplicatedAlternatives().getStereotypes());
-            ejbJar.beans.duplicatedInterceptors.addAll(jar.getBeans().getInterceptors());
+            ejbJar.beans.duplicatedInterceptors.addAll(jar.getBeans().getDuplicatedInterceptors());
             ejbJar.beans.duplicatedDecorators.addAll(jar.getBeans().getDuplicatedDecorators());
         }
 
