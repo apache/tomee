@@ -36,48 +36,36 @@ import javax.transaction.UserTransaction;
 /**
  * this is a copy of the class in the owb webbeans-openejb jar which we aren't using.
  */
-public class OpenEJBTransactionService implements TransactionService
-{
+public class OpenEJBTransactionService implements TransactionService {
     private static final WebBeansLogger logger = WebBeansLogger.getLogger(OpenEJBTransactionService.class);
 
-    public OpenEJBTransactionService()
-    {
+    private final ContainerSystem containerSystem;
 
+    public OpenEJBTransactionService() {
+        containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
     }
 
     @Override
-    public Transaction getTransaction()
-    {
+    public Transaction getTransaction() {
         TransactionManager manager = getTransactionManager();
-        if(manager != null)
-        {
-            try
-            {
+        if(manager != null) {
+            try {
                 return manager.getTransaction();
-            }
-            catch (SystemException e)
-            {
+            } catch (SystemException e) {
                 logger.error(e);
             }
         }
-
         return null;
     }
 
     @Override
-    public TransactionManager getTransactionManager()
-    {
+    public TransactionManager getTransactionManager() {
         return SystemInstance.get().getComponent(TransactionManager.class);
     }
 
     @Override
-    public UserTransaction getUserTransaction()
-    {
-        UserTransaction ut = null;
-
-        // TODO Convert to final field
-        ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-
+    public UserTransaction getUserTransaction() {
+        UserTransaction ut;
         try {
             ut = (UserTransaction) containerSystem.getJNDIContext().lookup("comp/UserTransaction");
         } catch (NamingException e) {
@@ -89,9 +77,7 @@ public class OpenEJBTransactionService implements TransactionService
     }
 
     @Override
-    public void registerTransactionSynchronization(TransactionPhase phase, ObserverMethod<? super Object> observer, Object event) throws Exception
-    {
+    public void registerTransactionSynchronization(TransactionPhase phase, ObserverMethod<? super Object> observer, Object event) throws Exception {
         TransactionalEventNotifier.registerTransactionSynchronization(phase, observer, event);
     }
-
 }
