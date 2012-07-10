@@ -52,6 +52,14 @@ import java.util.List;
 })
 @XmlRootElement(name = "beans")
 public class Beans {
+    @XmlTransient
+    protected List<String> duplicatedInterceptors;
+
+    @XmlTransient
+    protected List<String> duplicatedDecorators;
+
+    @XmlTransient
+    protected Alternatives duplicatedAlternatives;
 
     @XmlTransient
     private final List<String> managedClasses = new ArrayList<String>();
@@ -191,5 +199,17 @@ public class Beans {
             }
             return stereotypes;
         }
+    }
+
+    public List<String> getDuplicatedInterceptors() {
+        return duplicatedInterceptors;
+    }
+
+    public List<String> getDuplicatedDecorators() {
+        return duplicatedDecorators;
+    }
+
+    public Alternatives getDuplicatedAlternatives() {
+        return duplicatedAlternatives;
     }
 }
