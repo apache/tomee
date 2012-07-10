@@ -175,7 +175,8 @@ public class StatsInterceptor {
         try{
             return invocationContext.proceed();
         } finally {
-            long time = millis(System.nanoTime() - start);
+            long time = System.nanoTime() - start;
+            time = millis(time); // do it in 2 steps since otherwise the measure is false (more false)
             if (stats != null) stats.record(time);
             invocationTime.addAndGet(time);
         }
