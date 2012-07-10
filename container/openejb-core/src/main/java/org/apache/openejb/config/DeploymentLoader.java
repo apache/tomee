@@ -799,12 +799,27 @@ public class DeploymentLoader implements DeploymentFilterable {
                     complete.getDecorators().addAll(beans.getDecorators());
                     complete.getInterceptors().addAll(beans.getInterceptors());
                 }
+                // check is done here since later we lost the data of the origin
+                checkDuplicatedByBeansXml(beans.getAlternativeClasses(), complete.getDuplicatedAlternatives().getClasses());
+                checkDuplicatedByBeansXml(beans.getAlternativeStereotypes(), complete.getDuplicatedAlternatives().getStereotypes());
+                checkDuplicatedByBeansXml(beans.getDecorators(), complete.getDuplicatedDecorators());
+                checkDuplicatedByBeansXml(beans.getInterceptors(), complete.getDuplicatedInterceptors());
             } catch (OpenEJBException e) {
                 logger.error("Unable to read beans.xml from :" + url.toExternalForm());
             }
         }
 
         webModule.getAltDDs().put("beans.xml", complete);
+    }
+
+    private void checkDuplicatedByBeansXml(final List<String> list, final List<String> duplicated) {
+        final Iterator<String> it = list.iterator();
+        while (it.hasNext()) {
+            final String str = it.next();
+            if (list.indexOf(str) != list.lastIndexOf(str)) {
+                duplicated.add(str);
+            }
+        }
     }
 
     private void addBeansXmls(final AppModule appModule) {

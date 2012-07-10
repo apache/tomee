@@ -33,5 +33,9 @@ public class BeansInfo extends InfoObject {
     public final List<String> alternativeStereotypes = new ArrayList<String>();
 
     public final Set<String> managedClasses = new TreeSet<String>();
-    
+
+    public final List<String> duplicatedInterceptors = new ArrayList<String>();
+    public final List<String> duplicatedDecorators = new ArrayList<String>();
+    public final List<String> duplicatedAlternativeClasses = new ArrayList<String>();
+    public final List<String> duplicatedAlternativeStereotypes = new ArrayList<String>();
 }

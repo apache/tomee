@@ -200,11 +200,17 @@ public class EjbJarInfoBuilder {
 
         if (jar.getBeans() != null) {
             ejbJar.beans = new BeansInfo();
+
             ejbJar.beans.interceptors.addAll(jar.getBeans().getInterceptors());
             ejbJar.beans.decorators.addAll(jar.getBeans().getDecorators());
             ejbJar.beans.alternativeClasses.addAll(jar.getBeans().getAlternativeClasses());
             ejbJar.beans.alternativeStereotypes.addAll(jar.getBeans().getAlternativeStereotypes());
             ejbJar.beans.managedClasses.addAll(jar.getBeans().getManagedClasses());
+
+            ejbJar.beans.duplicatedAlternativeClasses.addAll(jar.getBeans().getDuplicatedAlternatives().getClasses());
+            ejbJar.beans.duplicatedAlternativeStereotypes.addAll(jar.getBeans().getDuplicatedAlternatives().getStereotypes());
+            ejbJar.beans.duplicatedInterceptors.addAll(jar.getBeans().getInterceptors());
+            ejbJar.beans.duplicatedDecorators.addAll(jar.getBeans().getDuplicatedDecorators());
         }
 
         return ejbJar;
