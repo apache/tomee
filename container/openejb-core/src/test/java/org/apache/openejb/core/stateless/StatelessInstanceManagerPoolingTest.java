@@ -123,7 +123,7 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
             t.start();            
         }
 
-        boolean success = invocations.await(10000, TimeUnit.MILLISECONDS);
+        boolean success = invocations.await(20000, TimeUnit.MILLISECONDS);
 
         assertTrue(success);
 
