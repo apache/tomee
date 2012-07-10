@@ -202,14 +202,23 @@ public class Beans {
     }
 
     public List<String> getDuplicatedInterceptors() {
+        if (duplicatedInterceptors == null) {
+            duplicatedInterceptors = new ArrayList<String>();
+        }
         return duplicatedInterceptors;
     }
 
     public List<String> getDuplicatedDecorators() {
+        if (duplicatedDecorators == null) {
+            duplicatedDecorators = new ArrayList<String>();
+        }
         return duplicatedDecorators;
     }
 
     public Alternatives getDuplicatedAlternatives() {
+        if (duplicatedAlternatives == null) {
+            duplicatedAlternatives = new Alternatives();
+        }
         return duplicatedAlternatives;
     }
 }
