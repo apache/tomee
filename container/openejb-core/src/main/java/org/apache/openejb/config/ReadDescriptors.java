@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Iterator;
 import java.util.List;
 import javax.wsdl.Definition;
 import javax.wsdl.factory.WSDLFactory;
@@ -430,6 +431,23 @@ public class ReadDescriptors implements DynamicDeployer {
         }
     }
 
+    private static void checkDuplicatedByBeansXml(final List<String> list, final List<String> duplicated) {
+        final Iterator<String> it = list.iterator();
+        while (it.hasNext()) {
+            final String str = it.next();
+            if (list.indexOf(str) != list.lastIndexOf(str)) {
+                duplicated.add(str);
+            }
+        }
+    }
+
+    public static void checkDuplicatedByBeansXml(final Beans beans, final Beans complete) {
+        checkDuplicatedByBeansXml(beans.getAlternativeClasses(), complete.getDuplicatedAlternatives().getClasses());
+        checkDuplicatedByBeansXml(beans.getAlternativeStereotypes(), complete.getDuplicatedAlternatives().getStereotypes());
+        checkDuplicatedByBeansXml(beans.getDecorators(), complete.getDuplicatedDecorators());
+        checkDuplicatedByBeansXml(beans.getInterceptors(), complete.getDuplicatedInterceptors());
+    }
+
     private void readBeans(EjbModule ejbModule, AppModule appModule) throws OpenEJBException {
         if (ejbModule.getBeans() != null) return;
 
@@ -438,6 +456,7 @@ public class ReadDescriptors implements DynamicDeployer {
         if (data != null) {
             try {
                 Beans beans = readBeans(data.get());
+                checkDuplicatedByBeansXml(beans, beans);
                 ejbModule.setBeans(beans);
             } catch (IOException e) {
                 throw new OpenEJBException(e);

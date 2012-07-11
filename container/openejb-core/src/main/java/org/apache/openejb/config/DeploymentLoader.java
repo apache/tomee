@@ -783,43 +783,36 @@ public class DeploymentLoader implements DeploymentFilterable {
         Beans complete = null;
         for (final URL url : xmls) {
             if (url == null) continue;
-            try {
-                final Beans beans;
-                try {
-                    beans = ReadDescriptors.readBeans(url.openStream());
-                } catch (IOException e) {
-                    continue;
-                }
-
-                if (complete == null) {
-                    complete = beans;
-                } else {
-                    complete.getAlternativeClasses().addAll(beans.getAlternativeClasses());
-                    complete.getAlternativeStereotypes().addAll(beans.getAlternativeStereotypes());
-                    complete.getDecorators().addAll(beans.getDecorators());
-                    complete.getInterceptors().addAll(beans.getInterceptors());
-                }
-                // check is done here since later we lost the data of the origin
-                checkDuplicatedByBeansXml(beans.getAlternativeClasses(), complete.getDuplicatedAlternatives().getClasses());
-                checkDuplicatedByBeansXml(beans.getAlternativeStereotypes(), complete.getDuplicatedAlternatives().getStereotypes());
-                checkDuplicatedByBeansXml(beans.getDecorators(), complete.getDuplicatedDecorators());
-                checkDuplicatedByBeansXml(beans.getInterceptors(), complete.getDuplicatedInterceptors());
-            } catch (OpenEJBException e) {
-                logger.error("Unable to read beans.xml from :" + url.toExternalForm());
-            }
+            complete = mergeBeansXml(complete, url);
         }
 
         webModule.getAltDDs().put("beans.xml", complete);
     }
 
-    private void checkDuplicatedByBeansXml(final List<String> list, final List<String> duplicated) {
-        final Iterator<String> it = list.iterator();
-        while (it.hasNext()) {
-            final String str = it.next();
-            if (list.indexOf(str) != list.lastIndexOf(str)) {
-                duplicated.add(str);
+    private Beans mergeBeansXml(final Beans current, final URL url) {
+        Beans returnValue = current;
+        try {
+            final Beans beans;
+            try {
+                beans = ReadDescriptors.readBeans(url.openStream());
+            } catch (IOException e) {
+                return returnValue;
             }
+
+            if (current == null) {
+                returnValue = beans;
+            } else {
+                current.getAlternativeClasses().addAll(beans.getAlternativeClasses());
+                current.getAlternativeStereotypes().addAll(beans.getAlternativeStereotypes());
+                current.getDecorators().addAll(beans.getDecorators());
+                current.getInterceptors().addAll(beans.getInterceptors());
+            }
+            // check is done here since later we lost the data of the origin
+            ReadDescriptors.checkDuplicatedByBeansXml(beans, current);
+        } catch (OpenEJBException e) {
+            logger.error("Unable to read beans.xml from :" + url.toExternalForm());
         }
+        return returnValue;
     }
 
     private void addBeansXmls(final AppModule appModule) {
@@ -839,28 +832,8 @@ public class DeploymentLoader implements DeploymentFilterable {
         Beans complete = null;
         for (final URL url : xmls) {
             if (url == null) continue;
-            try {
-                final Beans beans;
-                try {
-                    beans = ReadDescriptors.readBeans(url.openStream());
-                } catch (IOException e) {
-                    continue;
-                }
-
-                if (complete == null) {
-                    complete = beans;
-                } else {
-                    complete.getAlternativeClasses().addAll(beans.getAlternativeClasses());
-                    complete.getAlternativeStereotypes().addAll(beans.getAlternativeStereotypes());
-                    complete.getDecorators().addAll(beans.getDecorators());
-                    complete.getInterceptors().addAll(beans.getInterceptors());
-                }
-                jars.add(new JarArchive(appModule.getClassLoader(), url));
-//            } catch (MalformedURLException e) {
-//                logger.error("Unable to resolve jar path of beans.xml:"+ url.toExternalForm(), e);
-            } catch (OpenEJBException e) {
-                logger.error("Unable to read beans.xml from :" + url.toExternalForm(), e);
-            }
+            complete = mergeBeansXml(complete, url);
+            jars.add(new JarArchive(appModule.getClassLoader(), url));
         }
 
         if (complete == null) return;
