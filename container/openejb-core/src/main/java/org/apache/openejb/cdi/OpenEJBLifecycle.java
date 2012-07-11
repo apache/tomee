@@ -375,6 +375,9 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             final AnnotatedType<?> at = webBeansContext.getAnnotatedElementFactory().newAnnotatedType(implClass);
             if (at != null) {
                 annotatedTypes.put(implClass, at);
+            } else {
+                logger.warn("an error occured create AnnotatedType for class "
+                        + implClass.getName() + ". Skipping.");
             }
         }
         for (Map.Entry<Class<?>, AnnotatedType<?>> implClass : annotatedTypes.entrySet()) {
