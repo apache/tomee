@@ -372,7 +372,10 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         final Map<Class<?>, AnnotatedType<?>> annotatedTypes = new LinkedHashMap<Class<?>, AnnotatedType<?>>();
         for (Class<?> implClass : managedBeans) { // create all annotated types first to be sure extensions can use it during the fire
             //Define annotation type
-            annotatedTypes.put(implClass, webBeansContext.getAnnotatedElementFactory().newAnnotatedType(implClass));
+            final AnnotatedType<?> at = webBeansContext.getAnnotatedElementFactory().newAnnotatedType(implClass);
+            if (at != null) {
+                annotatedTypes.put(implClass, at);
+            }
         }
         for (Map.Entry<Class<?>, AnnotatedType<?>> implClass : annotatedTypes.entrySet()) {
             //Fires ProcessAnnotatedType
