@@ -808,7 +808,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 current.getInterceptors().addAll(beans.getInterceptors());
             }
             // check is done here since later we lost the data of the origin
-            ReadDescriptors.checkDuplicatedByBeansXml(beans, current);
+            ReadDescriptors.checkDuplicatedByBeansXml(beans, returnValue);
         } catch (OpenEJBException e) {
             logger.error("Unable to read beans.xml from :" + url.toExternalForm());
         }
