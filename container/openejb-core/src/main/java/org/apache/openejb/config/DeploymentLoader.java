@@ -21,6 +21,7 @@ import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.api.LocalClient;
 import org.apache.openejb.api.RemoteClient;
+import org.apache.openejb.config.event.BeforeDeploymentEvent;
 import org.apache.openejb.core.EmptyResourcesClassLoader;
 import org.apache.openejb.jee.Application;
 import org.apache.openejb.jee.ApplicationClient;
@@ -135,12 +136,15 @@ public class DeploymentLoader implements DeploymentFilterable {
 
             //We always load AppModule, as it somewhat likes a wrapper module
             if (AppModule.class.equals(moduleClass)) {
-
                 return createAppModule(jarFile, jarPath);
             }
 
             if (EjbModule.class.equals(moduleClass)) {
-                final ClassLoader classLoader = ClassLoaderUtil.createTempClassLoader(jarPath, new URL[]{baseUrl}, getOpenEJBClassLoader(baseUrl));
+                final URL[] urls = new URL[] { baseUrl };
+
+                SystemInstance.get().fireEvent(new BeforeDeploymentEvent(urls));
+
+                final ClassLoader classLoader = ClassLoaderUtil.createTempClassLoader(jarPath, urls, getOpenEJBClassLoader(baseUrl));
 
                 final AppModule appModule;
                 //final Class<? extends DeploymentModule> o = EjbModule.class;
@@ -415,6 +419,9 @@ public class DeploymentLoader implements DeploymentFilterable {
             classPath.addAll(rarLibs.values());
             classPath.addAll(extraLibs);
             final URL[] urls = classPath.toArray(new URL[classPath.size()]);
+
+            SystemInstance.get().fireEvent(new BeforeDeploymentEvent(urls));
+
             final ClassLoader appClassLoader = ClassLoaderUtil.createTempClassLoader(appId, urls, getOpenEJBClassLoader(appUrl));
 
             //
@@ -729,6 +736,9 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         // determine war class path
         final URL[] webUrls = getWebappUrls(warFile);
+
+        SystemInstance.get().fireEvent(new BeforeDeploymentEvent(webUrls));
+
         final ClassLoader warClassLoader = ClassLoaderUtil.createTempClassLoader(appId, webUrls, parentClassLoader);
 
         // create web module

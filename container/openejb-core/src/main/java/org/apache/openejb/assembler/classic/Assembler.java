@@ -163,6 +163,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, Assembler.class);
 
+    public static final String OPENEJB_JPA_DEPLOY_TIME_ENHANCEMENT_PROP = "openejb.jpa.deploy-time-enhancement";
+
     private static final String GLOBAL_UNIQUE_ID = "global";
 
     Messages messages = new Messages(Assembler.class.getPackage().getName());
@@ -381,6 +383,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
      * @see OpenEjbConfiguration
      */
     public void buildContainerSystem(final OpenEjbConfiguration configInfo) throws Exception {
+        if (SystemInstance.get().getOptions().get(OPENEJB_JPA_DEPLOY_TIME_ENHANCEMENT_PROP, false)) {
+            SystemInstance.get().addObserver(new DeployTimeEnhancer());
+        }
 
         for (ServiceInfo serviceInfo : configInfo.facilities.services) {
             createService(serviceInfo);
