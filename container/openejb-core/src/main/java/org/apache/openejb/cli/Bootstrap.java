@@ -84,6 +84,7 @@ public class Bootstrap {
             final File lib = new File(System.getProperty(OPENEJB_HOME_PROPERTY_NAME) + File.separator + "lib");
             final SystemClassPath systemCP = new SystemClassPath();
             systemCP.addJarsToPath(lib);
+            systemCP.addJarToPath(lib.toURI().toURL()); // add dir too like Tomcat/TomEE
         } catch (Exception e) {
             System.err.println("Error setting up the classpath: " + e.getClass() + ": " + e.getMessage());
             e.printStackTrace();
