@@ -175,6 +175,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
 
     private Class<?> sessionManagerClass = null;
 
+    private String defaultHost = "localhost";
+
     /**
      * Creates a new web application builder
      * instance.
@@ -192,6 +194,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         for (final Service service : standardServer.findServices()) {
             if (service.getContainer() instanceof Engine) {
                 final Engine engine = (Engine) service.getContainer();
+                defaultHost = engine.getDefaultHost();
                 addTomEERealm(engine);
                 for (final Container engineChild : engine.findChildren()) {
                     if (engineChild instanceof StandardHost) {
@@ -378,8 +381,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
 
                 String host = webApp.host;
                 if (host == null) {
-                    host = "localhost";
-                    logger.warning("using default host: " + host);
+                    host = defaultHost;
+                    logger.info("using default host: " + host);
                 }
 
                 // TODO: instead of storing deployers, we could just lookup the right hostconfig for the server.
@@ -1485,7 +1488,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     private ContextInfo getContextInfo(final String webAppHost, final String webAppContextRoot) {
         String host = webAppHost;
         if (host == null) {
-            host = "localhost";
+            host = defaultHost;
         }
         final String contextRoot = webAppContextRoot;
         final String id = host + "/" + contextRoot;

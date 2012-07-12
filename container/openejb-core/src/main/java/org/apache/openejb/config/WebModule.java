@@ -29,6 +29,7 @@ import org.apache.openejb.jee.FacesConfig;
 import org.apache.openejb.jee.TldTaglib;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.Webservices;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.xbean.finder.IAnnotationFinder;
 
 /**
@@ -81,6 +82,8 @@ public class WebModule extends Module implements WsModule, RESTModule {
         setClassLoader(classLoader);
 
         if (webApp != null) webApp.setContextRoot(contextRoot);
+
+        host = SystemInstance.get().getProperty(id.getName() + ".host", (String) null);
     }
 
     public String getJarLocation() {
