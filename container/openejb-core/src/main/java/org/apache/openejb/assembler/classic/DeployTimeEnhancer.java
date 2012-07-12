@@ -50,6 +50,16 @@ public class DeployTimeEnhancer {
             return;
         }
 
+        /*
+        algorithm could be something like:
+        1) browsing all urls (event.getUrls()) to get unpacked persistence.xml and packed persistence.xml (in jar)
+        2) for each url parse it with a small sax parser to get jar-file for each one --> list of jar needed by pu
+        3) for each persistence.xml aggregate file needed (all of jars, include/exclude could be nice)
+        4) for each persistence.xml run enhancer
+        5) for all jar unpacked repack it and replace original one
+        6) clean up unpacked jar (don't delete already unpacked folder like WEB-INF/classes ;))
+         */
+
         final Properties opts = options(event.getUrls());
         final Object optsArg;
         try {
@@ -60,7 +70,7 @@ public class DeployTimeEnhancer {
         }
 
         if (opts.containsKey(PROPERTIES_FILE_PROP)) {
-            LOGGER.info("enhancing urls: " + Arrays.asList(event.getUrls()));
+            LOGGER.info("enhancing url(s): " + Arrays.asList(event.getUrls()));
             // TODO: manage lib folder
             try {
                 enhancerMethod.invoke(null, toFilePaths(event.getUrls()), optsArg);
