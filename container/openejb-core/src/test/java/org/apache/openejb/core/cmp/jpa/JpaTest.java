@@ -161,8 +161,10 @@ public class JpaTest extends TestCase {
         PersistenceClassLoaderHandler persistenceClassLoaderHandler = new PersistenceClassLoaderHandler() {
 
             public void addTransformer(String unitId, ClassLoader classLoader, ClassFileTransformer classFileTransformer) {
+                /*
                 Instrumentation instrumentation = Agent.getInstrumentation();
                 instrumentation.addTransformer(classFileTransformer);
+                */
             }
 
             public void destroy(String unitId) {
@@ -173,6 +175,7 @@ public class JpaTest extends TestCase {
             }
         };
 
+        /*
         Agent.getInstrumentation().addTransformer(new ClassFileTransformer() {
             public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) {
                 if (!className.equals("org/apache/openejb/core/cmp/jpa/Employee")) {
@@ -182,6 +185,7 @@ public class JpaTest extends TestCase {
                 return newBytes;
             }
         });
+        */
 
         PersistenceUnitInfoImpl unitInfo = new PersistenceUnitInfoImpl(persistenceClassLoaderHandler);
         unitInfo.setPersistenceUnitName("CMP");
@@ -194,12 +198,14 @@ public class JpaTest extends TestCase {
         unitInfo.addManagedClassName("org.apache.openejb.core.cmp.jpa.Bill");
         unitInfo.addManagedClassName("org.apache.openejb.core.cmp.jpa.EmbeddedBill");
         unitInfo.addManagedClassName("org.apache.openejb.core.cmp.jpa.Person");
+        unitInfo.addManagedClassName("org.apache.openejb.core.cmp.jpa.EmbeddedBillPk");
         unitInfo.getMappingFileNames().add("META-INF/jpa-test-mappings.xml");
 
         // Handle Properties
         Properties properties = new Properties();
         properties.setProperty("openjpa.jdbc.SynchronizeMappings", "buildSchema(ForeignKeys=true)");
         properties.setProperty("openjpa.Log", "DefaultLevel=WARN");
+        properties.setProperty("openjpa.RuntimeUnenhancedClasses", "supported");
         unitInfo.setProperties(properties);
 
         unitInfo.setTransactionType(transactionType);

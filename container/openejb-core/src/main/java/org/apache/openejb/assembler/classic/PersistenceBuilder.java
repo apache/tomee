@@ -146,8 +146,8 @@ public class PersistenceBuilder {
 
         final long start = System.nanoTime();
         try {
-            final EntityManagerFactoryCallable callable = new EntityManagerFactoryCallable(persistenceProviderClassName, unitInfo);
-            return new ReloadableEntityManagerFactory(classLoader, createEmf(classLoader, callable), callable, unitInfo.getProperties());
+            final EntityManagerFactoryCallable callable = new EntityManagerFactoryCallable(persistenceProviderClassName, unitInfo, classLoader);
+            return new ReloadableEntityManagerFactory(classLoader, callable, unitInfo.getProperties());
         } finally {
             final long time = TimeUnit.MILLISECONDS.convert(System.nanoTime() - start, TimeUnit.NANOSECONDS);
             logger.info("assembler.buildingPersistenceUnit", unitInfo.getPersistenceUnitName(), unitInfo.getPersistenceProviderClassName(), time+"");
@@ -161,11 +161,5 @@ public class PersistenceBuilder {
 
     public static String getOpenEJBJndiName(String unit) {
         return Assembler.PERSISTENCE_UNIT_NAMING_CONTEXT + unit;
-    }
-
-    public static EntityManagerFactory createEmf(ClassLoader classLoader, Callable<EntityManagerFactory> callable) throws ExecutionException, TimeoutException, InterruptedException {
-        final ExecutorService executor = Executors.newSingleThreadExecutor(new EntityManagerFactoryThreadFactory(classLoader));
-        final Future<EntityManagerFactory> future = executor.submit(callable);
-        return future.get(10, TimeUnit.MINUTES);
     }
 }

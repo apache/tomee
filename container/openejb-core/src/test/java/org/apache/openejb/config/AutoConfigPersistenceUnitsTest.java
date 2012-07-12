@@ -17,6 +17,7 @@
 package org.apache.openejb.config;
 
 import junit.framework.TestCase;
+import org.apache.openejb.Core;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
@@ -32,6 +33,7 @@ import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.monitoring.LocalMBeanServer;
+import org.apache.openjpa.persistence.osgi.BundleUtils;
 
 import javax.naming.NamingException;
 import java.io.IOException;
@@ -47,6 +49,10 @@ import java.util.logging.Logger;
  * @version $Revision$ $Date$
  */
 public class AutoConfigPersistenceUnitsTest extends TestCase {
+    static {
+        Core.warmup();
+    }
+
     private ConfigurationFactory config;
     private Assembler assembler;
     private List<ResourceInfo> resources;

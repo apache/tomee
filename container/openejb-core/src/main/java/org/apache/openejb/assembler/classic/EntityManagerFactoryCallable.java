@@ -27,32 +27,39 @@ import java.util.concurrent.Callable;
 public class EntityManagerFactoryCallable implements Callable<EntityManagerFactory> {
     private final String persistenceProviderClassName;
     private final PersistenceUnitInfoImpl unitInfo;
+    private final ClassLoader appClassLoader;
 
-    public EntityManagerFactoryCallable(String persistenceProviderClassName, PersistenceUnitInfoImpl unitInfo) {
+    public EntityManagerFactoryCallable(String persistenceProviderClassName, PersistenceUnitInfoImpl unitInfo, ClassLoader cl) {
         this.persistenceProviderClassName = persistenceProviderClassName;
         this.unitInfo = unitInfo;
+        this.appClassLoader = cl;
     }
 
     @Override
     public EntityManagerFactory call() throws Exception {
-        final ClassLoader appClassLoader = Thread.currentThread().getContextClassLoader();
-        Class clazz = appClassLoader.loadClass(persistenceProviderClassName);
-        PersistenceProvider persistenceProvider = (PersistenceProvider) clazz.newInstance();
+        final ClassLoader old = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(appClassLoader);
+        try {
+            Class clazz = appClassLoader.loadClass(persistenceProviderClassName);
+            PersistenceProvider persistenceProvider = (PersistenceProvider) clazz.newInstance();
 
-        // Create entity manager factories with the validator factory
-        Map<String, Object> properties = new HashMap<String, Object>();
-        properties.put("javax.persistence.validator.ValidatorFactory", new ValidatorFactoryWrapper());
-        EntityManagerFactory emf = persistenceProvider.createContainerEntityManagerFactory(unitInfo, properties);
+            // Create entity manager factories with the validator factory
+            Map<String, Object> properties = new HashMap<String, Object>();
+            properties.put("javax.persistence.validator.ValidatorFactory", new ValidatorFactoryWrapper());
+            EntityManagerFactory emf = persistenceProvider.createContainerEntityManagerFactory(unitInfo, properties);
 
-        if (unitInfo.getNonJtaDataSource() != null) {
-            final ImportSql importer = new ImportSql(appClassLoader, unitInfo.getPersistenceUnitName(), unitInfo.getNonJtaDataSource());
-            if (importer.hasSomethingToImport()) {
-                emf.createEntityManager().close(); // to let OpenJPA create the database if configured this way
-                importer.doImport();
+            if (unitInfo.getNonJtaDataSource() != null) {
+                final ImportSql importer = new ImportSql(appClassLoader, unitInfo.getPersistenceUnitName(), unitInfo.getNonJtaDataSource());
+                if (importer.hasSomethingToImport()) {
+                    emf.createEntityManager().close(); // to let OpenJPA create the database if configured this way
+                    importer.doImport();
+                }
             }
-        }
 
-        return emf;
+            return emf;
+        } finally {
+            Thread.currentThread().setContextClassLoader(old);
+        }
     }
 
     public PersistenceUnitInfoImpl getUnitInfo() {
