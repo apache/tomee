@@ -1,19 +1,26 @@
 package org.apache.openejb.assembler.classic;
 
 import org.apache.openejb.config.event.BeforeDeploymentEvent;
+import org.apache.openejb.loader.Files;
 import org.apache.openejb.observer.Observes;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URLs;
 
+import java.io.File;
+import java.io.FileFilter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 public class DeployTimeEnhancer {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_DEPLOY, DeployTimeEnhancer.class);
+    public static final String CLASS_EXT = ".class";
+    public static final String PROPERTIES_FILE_PROP = "propertiesFile";
 
     private final Method enhancerMethod;
     private final Constructor<?> optionsConstructor;
@@ -36,40 +43,89 @@ public class DeployTimeEnhancer {
         enhancerMethod = mtd;
     }
 
+    // TODO: manage jars: unpack();enhance();repack();
     public void enhance(@Observes BeforeDeploymentEvent event) {
         if (enhancerMethod == null) {
             LOGGER.debug("OpenJPA is not available so no deploy-time enhancement will be done");
             return;
         }
 
-        LOGGER.info(">>> enhancing urls: " + Arrays.asList(event.getUrls()));
-        try { // TODO: manage jars: unpack();enhance();repack();
-            enhancerMethod.invoke(null, toFilePaths(event.getUrls()), options());
+        final Properties opts = options(event.getUrls());
+        final Object optsArg;
+        try {
+            optsArg = optionsConstructor.newInstance(opts);
         } catch (Exception e) {
-            LOGGER.warning("can't enhanced at deploy-time entities", e);
+            LOGGER.debug("can't create options for enhancing");
+            return;
+        }
+
+        if (opts.containsKey(PROPERTIES_FILE_PROP)) {
+            LOGGER.info("enhancing urls: " + Arrays.asList(event.getUrls()));
+            // TODO: manage lib folder
+            try {
+                enhancerMethod.invoke(null, toFilePaths(event.getUrls()), optsArg);
+            } catch (Exception e) {
+                LOGGER.warning("can't enhanced at deploy-time entities", e);
+            }
+        } else {
+            LOGGER.debug("no persistence.xml so no enhancing");
         }
     }
 
-    private Object options() {
+    private Properties options(final URL[] urls) {
         final Properties props = new Properties();
-        try {
-            return optionsConstructor.newInstance(props);
-        } catch (Exception e) {
-            return null;
+        final String pXmls = getWarPersistenceXml(urls);
+        if (!pXmls.isEmpty()) {
+            props.setProperty(PROPERTIES_FILE_PROP, pXmls);
         }
+        return props;
+    }
+
+    private String getWarPersistenceXml(final URL[] urls) { // META-INF/persistence.xml will be managed by jar, not here
+        final StringBuilder files = new StringBuilder();
+        for (URL url : urls) {
+            final File dir = URLs.toFile(url);
+            if (!dir.isDirectory()) {
+                continue;
+            }
+
+            if (dir.getAbsolutePath().endsWith("/WEB-INF/classes")) {
+                final File pXml = new File(dir, "META-INF/persistence.xml");
+                if (pXml.exists()) {
+                    files.append(pXml.getAbsolutePath());
+                }
+
+                final File pXml2 = new File(dir.getParentFile(), "persistence.xml");
+                if (pXml2.exists()) {
+                    if (!files.toString().isEmpty()) {
+                        files.append(",");
+                    }
+                    files.append(pXml2.getAbsolutePath());
+                }
+            }
+        }
+        return files.toString();
     }
 
     private String[] toFilePaths(final URL[] urls) {
-        final String[] str = new String[urls.length];
-        int i = 0;
+        final List<String> files = new ArrayList<String>();
         for (URL url : urls) {
-            str[i] = URLs.toFilePath(url);
-            if (!str[i].endsWith("/")) {
-                str[i] += "/";
+            final File dir = URLs.toFile(url);
+            if (!dir.isDirectory()) {
+                continue;
             }
-            str[i] += "**/*.class";
-            i++;
+
+            for (File f : Files.collect(dir, new ClassFilter())) {
+                files.add(f.getAbsolutePath());
+            }
         }
-        return str;
+        return files.toArray(new String[files.size()]);
+    }
+
+    private static class ClassFilter implements FileFilter {
+        @Override
+        public boolean accept(final File file) {
+            return file.getName().endsWith(CLASS_EXT);
+        }
     }
 }
