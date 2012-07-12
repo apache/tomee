@@ -1,26 +1,44 @@
 package org.apache.openejb.assembler.classic;
 
 import org.apache.openejb.config.event.BeforeDeploymentEvent;
+import org.apache.openejb.config.sys.ListAdapter;
+import org.apache.openejb.config.sys.ServiceProvider;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.observer.Observes;
+import org.apache.openejb.util.JarExtractor;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URLs;
+import org.xml.sax.Attributes;
+import org.xml.sax.HandlerBase;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
+import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
 
 public class DeployTimeEnhancer {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_DEPLOY, DeployTimeEnhancer.class);
-    public static final String CLASS_EXT = ".class";
-    public static final String PROPERTIES_FILE_PROP = "propertiesFile";
+    private static final SAXParserFactory SAX_PARSER_FACTORY = SAXParserFactory.newInstance();
+
+    private static final String CLASS_EXT = ".class";
+    private static final String PROPERTIES_FILE_PROP = "propertiesFile";
+    private static final String META_INF_PERSISTENCE_XML = "META-INF/persistence.xml";
+
+    static {
+        SAX_PARSER_FACTORY.setNamespaceAware(true);
+        SAX_PARSER_FACTORY.setValidating(false);
+    }
 
     private final Method enhancerMethod;
     private final Constructor<?> optionsConstructor;
@@ -43,84 +61,123 @@ public class DeployTimeEnhancer {
         enhancerMethod = mtd;
     }
 
-    // TODO: manage jars: unpack();enhance();repack();
-    public void enhance(@Observes BeforeDeploymentEvent event) {
+    public void enhance(@Observes final BeforeDeploymentEvent event) {
         if (enhancerMethod == null) {
             LOGGER.debug("OpenJPA is not available so no deploy-time enhancement will be done");
             return;
         }
 
-        /*
-        algorithm could be something like:
-        1) browsing all urls (event.getUrls()) to get unpacked persistence.xml and packed persistence.xml (in jar)
-        2) for each url parse it with a small sax parser to get jar-file for each one --> list of jar needed by pu
-        3) for each persistence.xml aggregate file needed (all of jars, include/exclude could be nice)
-        4) for each persistence.xml run enhancer
-        5) for all jar unpacked repack it and replace original one
-        6) clean up unpacked jar (don't delete already unpacked folder like WEB-INF/classes ;))
-         */
-
-        final Properties opts = options(event.getUrls());
-        final Object optsArg;
-        try {
-            optsArg = optionsConstructor.newInstance(opts);
-        } catch (Exception e) {
-            LOGGER.debug("can't create options for enhancing");
-            return;
+        // find persistence.xml
+        final Map<String, List<String>> classesByPXml = new HashMap<String, List<String>>();
+        for (URL url : event.getUrls()) {
+            final File file = URLs.toFile(url);
+            if (file.isDirectory()) {
+                final String pXmls = getWarPersistenceXml(url);
+                if (pXmls != null) {
+                    feed(classesByPXml, pXmls);
+                }
+            } else if (file.getName().endsWith(".jar")) {
+                try {
+                    final JarFile jar = new JarFile(file);
+                    ZipEntry entry = jar.getEntry(META_INF_PERSISTENCE_XML);
+                    if (entry != null) {
+                        final String path = file.getAbsolutePath();
+                        final File unpacked = new File(path.substring(0, path.length() - 4));
+                        JarExtractor.extract(file, unpacked);
+                        feed(classesByPXml, new File(unpacked, META_INF_PERSISTENCE_XML).getAbsolutePath());
+                    }
+                } catch (IOException e) {
+                    // ignored
+                }
+            }
         }
 
-        if (opts.containsKey(PROPERTIES_FILE_PROP)) {
-            LOGGER.info("enhancing url(s): " + Arrays.asList(event.getUrls()));
-            // TODO: manage lib folder
+        // enhancement
+        for (Map.Entry<String, List<String>> entry : classesByPXml.entrySet()) {
+            final Properties opts = new Properties();
+            opts.setProperty(PROPERTIES_FILE_PROP, entry.getKey());
+
+            final Object optsArg;
             try {
-                enhancerMethod.invoke(null, toFilePaths(event.getUrls()), optsArg);
+                optsArg = optionsConstructor.newInstance(opts);
+            } catch (Exception e) {
+                LOGGER.debug("can't create options for enhancing");
+                return;
+            }
+
+            LOGGER.info("enhancing url(s): " + Arrays.asList(event.getUrls()));
+            try {
+                enhancerMethod.invoke(null, toFilePaths(entry.getValue()), optsArg);
             } catch (Exception e) {
                 LOGGER.warning("can't enhanced at deploy-time entities", e);
             }
-        } else {
-            LOGGER.debug("no persistence.xml so no enhancing");
         }
-    }
 
-    private Properties options(final URL[] urls) {
-        final Properties props = new Properties();
-        final String pXmls = getWarPersistenceXml(urls);
-        if (!pXmls.isEmpty()) {
-            props.setProperty(PROPERTIES_FILE_PROP, pXmls);
-        }
-        return props;
-    }
-
-    private String getWarPersistenceXml(final URL[] urls) { // META-INF/persistence.xml will be managed by jar, not here
-        final StringBuilder files = new StringBuilder();
-        for (URL url : urls) {
-            final File dir = URLs.toFile(url);
-            if (!dir.isDirectory()) {
-                continue;
-            }
-
-            if (dir.getAbsolutePath().endsWith("/WEB-INF/classes")) {
-                final File pXml = new File(dir, "META-INF/persistence.xml");
-                if (pXml.exists()) {
-                    files.append(pXml.getAbsolutePath());
-                }
-
-                final File pXml2 = new File(dir.getParentFile(), "persistence.xml");
-                if (pXml2.exists()) {
-                    if (!files.toString().isEmpty()) {
-                        files.append(",");
-                    }
-                    files.append(pXml2.getAbsolutePath());
+        // clean up extracted jars
+        for (Map.Entry<String, List<String>> entry : classesByPXml.entrySet()) {
+            final List<String> values = entry.getValue();
+            for (String path : values) {
+                final File file = new File(path + ".jar");
+                if (file.exists()) {
+                    Files.delete(file);
                 }
             }
+            values.clear();
         }
-        return files.toString();
+
+        classesByPXml.clear();
     }
 
-    private String[] toFilePaths(final URL[] urls) {
+    private void feed(final Map<String, List<String>> classesByPXml, final String pXml) {
+        final List<String> paths = new ArrayList<String>();
+
+        // first add the classes directory where is the persistence.xml
+        if (pXml.endsWith(META_INF_PERSISTENCE_XML)) {
+            paths.add(pXml.substring(0, pXml.length() - META_INF_PERSISTENCE_XML.length()));
+        } else if (pXml.endsWith("/WEB-INF/persistence.xml")) {
+            paths.add(pXml.substring(0, pXml.length() - 24));
+        }
+
+        // then jar-file
+        try {
+            final SAXParser parser = SAX_PARSER_FACTORY.newSAXParser();
+            final JarFileParser handler = new JarFileParser();
+            parser.parse(new File(pXml), handler);
+            for (String path : handler.getPaths()) {
+                paths.add(relative(paths.iterator().next(), path));
+            }
+        } catch (Exception e) {
+            LOGGER.error("can't parse '" + pXml + "'", e);
+        }
+
+        classesByPXml.put(pXml, paths);
+    }
+
+    // relativePath = relative path to the jar file containing the persistence.xml
+    private String relative(final String relativePath, final String pXmlPath) {
+        return new File(new File(pXmlPath).getParent(), relativePath).getAbsolutePath();
+    }
+
+    private String getWarPersistenceXml(final URL url) {
+        final File dir = URLs.toFile(url);
+        if (dir.isDirectory() && dir.getAbsolutePath().endsWith("/WEB-INF/classes")) {
+            final File pXmlStd = new File(dir.getParentFile(), "persistence.xml");
+            if (pXmlStd.exists()) {
+                return  pXmlStd.getAbsolutePath();
+            }
+
+            final File pXml = new File(dir, META_INF_PERSISTENCE_XML);
+            if (pXml.exists()) {
+                return pXml.getAbsolutePath();
+            }
+        }
+        return null;
+    }
+
+    private String[] toFilePaths(final List<String> urls) {
         final List<String> files = new ArrayList<String>();
-        for (URL url : urls) {
-            final File dir = URLs.toFile(url);
+        for (String url : urls) {
+            final File dir = new File(url);
             if (!dir.isDirectory()) {
                 continue;
             }
@@ -136,6 +193,36 @@ public class DeployTimeEnhancer {
         @Override
         public boolean accept(final File file) {
             return file.getName().endsWith(CLASS_EXT);
+        }
+    }
+
+    private static class JarFileParser extends DefaultHandler {
+        private final List<String> paths = new ArrayList<String>();
+        private boolean getIt = false;
+
+        @Override
+        public void startElement(final String uri, final String localName, final String qName, final Attributes att) throws SAXException {
+            if (!localName.endsWith("jar-file")) {
+                return;
+            }
+
+            getIt = true;
+        }
+
+        @Override
+        public void characters(final char ch[], final int start, final int length) throws SAXException {
+            if (getIt) {
+                paths.add(new StringBuilder().append(ch, start, length).toString());
+            }
+        }
+
+        @Override
+        public void endElement(final String uri, final String localName, final String qName) throws SAXException {
+            getIt = false;
+        }
+
+        public List<String> getPaths() {
+            return paths;
         }
     }
 }
