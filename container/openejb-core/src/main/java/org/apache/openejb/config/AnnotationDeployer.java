@@ -893,7 +893,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 			       builtInMap.put("long", Long.class);
 			       builtInMap.put("double", Double.class);
 			       builtInMap.put("float", Float.class);
-			       builtInMap.put("bool", Boolean.class);
+			       builtInMap.put("boolean", Boolean.class);
 			       builtInMap.put("char", Character.class);
 			       builtInMap.put("byte", Byte.class);
 			       builtInMap.put("void", Void.class);
