@@ -19,6 +19,7 @@ package org.apache.openejb.assembler.classic;
 
 import javax.persistence.spi.*;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.api.internal.Internal;
 import org.apache.openejb.jee.JAXBContextFactory;
 import org.apache.openejb.jee.Persistence;
@@ -85,9 +86,13 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory {
     private boolean logCriteriaJpql;
     private String logCriteriaJpqlLevel;
 
-    public ReloadableEntityManagerFactory(final ClassLoader cl, final EntityManagerFactory emf, final EntityManagerFactoryCallable callable, final Properties props) {
+    public ReloadableEntityManagerFactory(final ClassLoader cl, final EntityManagerFactoryCallable callable, final Properties props) {
         classLoader = cl;
-        delegate = emf;
+        try {
+            delegate = callable.call();
+        } catch (Exception e) {
+            throw new OpenEJBRuntimeException(e);
+        }
         entityManagerFactoryCallable = callable;
 
         logCriteriaJpql = logCriteriaQueryJpql(props);
@@ -226,11 +231,8 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory {
     //
     // Note: it uses the old unitInfo but properties can be modified (not managed classes, provider...)
     public synchronized void reload() {
-        if (classLoader == null) {
-            classLoader = Thread.currentThread().getContextClassLoader();
-        }
         try {
-            delegate = PersistenceBuilder.createEmf(classLoader, entityManagerFactoryCallable);
+            delegate = entityManagerFactoryCallable.call();
         } catch (Exception e) {
             LOGGER.error("can't replace EntityManagerFactory " + delegate, e);
         }
