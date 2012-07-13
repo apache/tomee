@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -80,6 +81,7 @@ public class DeployTimeEnhancer {
         // find persistence.xml
         final Map<String, List<String>> classesByPXml = new HashMap<String, List<String>>();
         final Filter filter = new AlreadyEnhancedFilter();
+        final List<URL> usedUrls = new ArrayList<URL>(); // for fake classloader
         for (URL url : event.getUrls()) {
             final File file = URLs.toFile(url);
             if (filter.accept(file.getName())) {
@@ -88,6 +90,8 @@ public class DeployTimeEnhancer {
                     if (pXmls != null) {
                         feed(classesByPXml, pXmls);
                     }
+
+                    usedUrls.add(url);
                 } else if (file.getName().endsWith(".jar")) {
                     try {
                         final JarFile jar = new JarFile(file);
@@ -96,47 +100,64 @@ public class DeployTimeEnhancer {
                             final String path = file.getAbsolutePath();
                             final File unpacked = new File(path.substring(0, path.length() - 4) + TMP_ENHANCEMENT_SUFFIX);
                             JarExtractor.extract(file, unpacked);
+
+                            // replace jar by folder url since otherwise enhancement doesn't work
+                            usedUrls.add(unpacked.toURI().toURL());
+
                             feed(classesByPXml, new File(unpacked, META_INF_PERSISTENCE_XML).getAbsolutePath());
                         }
                     } catch (IOException e) {
                         // ignored
                     }
                 }
+            } else {
+                usedUrls.add(url);
             }
         }
 
         // enhancement
-        for (Map.Entry<String, List<String>> entry : classesByPXml.entrySet()) {
-            final Properties opts = new Properties();
-            opts.setProperty(PROPERTIES_FILE_PROP, entry.getKey());
 
-            final Object optsArg;
-            try {
-                optsArg = optionsConstructor.newInstance(opts);
-            } catch (Exception e) {
-                LOGGER.debug("can't create options for enhancing");
-                return;
-            }
+        final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+        final ClassLoader fakeClassLoader = new URLClassLoader(usedUrls.toArray(new URL[usedUrls.size()]), event.getParentClassLoader());
 
-            LOGGER.info("enhancing url(s): " + Arrays.asList(event.getUrls()));
-            try {
-                enhancerMethod.invoke(null, toFilePaths(entry.getValue()), optsArg);
-            } catch (Exception e) {
-                LOGGER.warning("can't enhanced at deploy-time entities", e);
+        Thread.currentThread().setContextClassLoader(fakeClassLoader);
+        try {
+            for (Map.Entry<String, List<String>> entry : classesByPXml.entrySet()) {
+                final Properties opts = new Properties();
+                opts.setProperty(PROPERTIES_FILE_PROP, entry.getKey());
+
+                final Object optsArg;
+                try {
+                    optsArg = optionsConstructor.newInstance(opts);
+                } catch (Exception e) {
+                    LOGGER.debug("can't create options for enhancing");
+                    return;
+                }
+
+                LOGGER.info("enhancing url(s): " + Arrays.asList(event.getUrls()));
+                try {
+                    enhancerMethod.invoke(null, toFilePaths(entry.getValue()), optsArg);
+                } catch (Exception e) {
+                    LOGGER.warning("can't enhanced at deploy-time entities", e);
+                }
             }
+        } finally {
+            Thread.currentThread().setContextClassLoader(tccl);
+            usedUrls.clear();
         }
 
         // clean up extracted jars
         for (Map.Entry<String, List<String>> entry : classesByPXml.entrySet()) {
             final List<String> values = entry.getValue();
             for (String rawPath : values) {
-                if (rawPath.endsWith(TMP_ENHANCEMENT_SUFFIX)) {
-                    final String path = rawPath.substring(0, rawPath.length() - TMP_ENHANCEMENT_SUFFIX.length());
-                    final File dir = new File(path);
-                    final File file = new File(path + ".jar");
+                if (rawPath.endsWith(TMP_ENHANCEMENT_SUFFIX + "/") || rawPath.endsWith(TMP_ENHANCEMENT_SUFFIX)) {
+                    final File dir = new File(rawPath);
+                    final File file = new File(rawPath.substring(0, rawPath.length() - TMP_ENHANCEMENT_SUFFIX.length() - 1) + ".jar");
                     if (file.exists()) {
+                        String name = dir.getName();
+                        name = name.substring(0, name.length() - TMP_ENHANCEMENT_SUFFIX.length()) + JAR_ENHANCEMENT_SUFFIX + ".jar";
                         try {
-                            JarCreator.jarDir(dir, new File(dir.getParentFile(), dir.getName() + JAR_ENHANCEMENT_SUFFIX + ".jar"));
+                            JarCreator.jarDir(dir, new File(dir.getParentFile(), name));
                             Files.delete(file); // don't delete if any exception is thrown
                         } catch (IOException e) {
                             LOGGER.error("can't repackage enhanced jar file " + file.getName());
@@ -183,7 +204,7 @@ public class DeployTimeEnhancer {
 
     private String getWarPersistenceXml(final URL url) {
         final File dir = URLs.toFile(url);
-        if (dir.isDirectory() && dir.getAbsolutePath().endsWith("/WEB-INF/classes")) {
+        if (dir.isDirectory() && (dir.getAbsolutePath().endsWith("/WEB-INF/classes") || dir.getAbsolutePath().endsWith("/WEB-INF/classes/"))) {
             final File pXmlStd = new File(dir.getParentFile(), "persistence.xml");
             if (pXmlStd.exists()) {
                 return  pXmlStd.getAbsolutePath();
@@ -221,7 +242,7 @@ public class DeployTimeEnhancer {
         @Override
         public boolean accept(final File file) {
             boolean isClass = file.getName().endsWith(CLASS_EXT);
-            if (DEFAULT_EXCLUDE.equals(EXCLUDE_PATTERN) && DEFAULT_INCLUDE.equals(INCLUDE_PATTERN)) {
+            if (DEFAULT_EXCLUDE.equals(EXCLUDE_PATTERN.pattern()) && DEFAULT_INCLUDE.equals(INCLUDE_PATTERN.pattern())) {
                 return isClass;
             }
 

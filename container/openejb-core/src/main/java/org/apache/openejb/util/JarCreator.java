@@ -19,23 +19,29 @@ public final class JarCreator {
     public static void jarDir(final File dir, final File zipName) throws IOException, IllegalArgumentException {
         final String[] entries = dir.list();
         final JarOutputStream out = new JarOutputStream(new FileOutputStream(zipName));
+
+        String prefix = dir.getAbsolutePath();
+        if (!prefix.endsWith(File.separator)) {
+            prefix += File.separator;
+        }
+
         for (String entry : entries) {
             File f = new File(dir, entry);
-            jarFile(out, f);
+            jarFile(out, f, prefix);
         }
         IO.close(out);
     }
 
-    private static void jarFile(final JarOutputStream out, final File f) throws IOException {
+    private static void jarFile(final JarOutputStream out, final File f, final String prefix) throws IOException {
         if (f.isDirectory()) {
             for (File child : f.listFiles()) {
-                jarFile(out, child);
+                jarFile(out, child, prefix);
             }
         } else {
             final byte[] buffer = new byte[BUFFER_SIZE];
             int bytesRead;
 
-            final String path = f.getPath();
+            final String path = f.getPath().replace(prefix, "");
 
             final FileInputStream in = new FileInputStream(f);
             final JarEntry entry = new JarEntry(path);

@@ -61,6 +61,7 @@ import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentLoader;
 import org.apache.openejb.config.WebModule;
+import org.apache.openejb.config.event.BeforeDeploymentEvent;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.WebContext;
 import org.apache.openejb.core.ivm.naming.SystemComponentReference;
@@ -517,6 +518,19 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         // just adding a carriage return to get logs more readable
         logger.info("-------------------------\nTomcatWebAppBuilder.init " + standardContext.getPath());
 
+        File warFile = warPath(standardContext);
+        if (!warFile.isDirectory()) {
+            try {
+                warFile = DeploymentLoader.unpack(warFile);
+            } catch (OpenEJBException e) {
+                logger.error("can't unpack '" + warFile.getAbsolutePath() + "'");
+            }
+        }
+
+        if (warFile.exists()) {
+            SystemInstance.get().fireEvent(new BeforeDeploymentEvent(DeploymentLoader.getWebappUrls(warFile)));
+        }
+
         standardContext.setCrossContext(SystemInstance.get().getOptions().get(OPENEJB_CROSSCONTEXT_PROPERTY, false));
         standardContext.setNamingResources(new OpenEJBNamingResource());
 
@@ -567,6 +581,25 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
 
         // listen some events
         standardContext.addContainerListener(new TomEEContainerListener());
+    }
+
+    private static File warPath(final StandardContext standardContext) {
+        final String doc = standardContext.getDocBase();
+        File war = new File(doc);
+        if (war.exists()) {
+            return war;
+        }
+        final StandardHost host = (StandardHost) standardContext.getParent();
+        final String base = host.getAppBase();
+        war = new File(base, doc);
+        if (war.exists()) {
+            return war;
+        }
+        war = new File(new File(System.getProperty("catalina.home"), base), doc);
+        if (war.exists()) {
+            return war;
+        }
+        return new File(new File(System.getProperty("catalina.base"), base), doc); // shouldn't occur
     }
 
     public class StandardContextInfo {
