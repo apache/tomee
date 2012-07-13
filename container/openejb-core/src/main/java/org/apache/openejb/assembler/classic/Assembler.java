@@ -118,6 +118,8 @@ import org.apache.openejb.core.transaction.SimpleWorkManager;
 import org.apache.openejb.core.transaction.TransactionPolicyFactory;
 import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.javaagent.Agent;
+import org.apache.openejb.jpa.integration.MakeTxLookup;
+import org.apache.openejb.loader.JarLocation;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.monitoring.DynamicMBeanWrapper;
@@ -1391,9 +1393,19 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             jars.add(toUrl(jarPath));
         }
 
+        // add openejb-jpa-integration if the jpa provider is in lib/
+        if (appInfo.libs.size() > 0)  { // the test could be enhanced
+            try {
+                final File jpaIntegrationFile = JarLocation.jarLocation(MakeTxLookup.class);
+                final URL url = jpaIntegrationFile.toURI().toURL();
+                jars.add(url);
+            } catch (RuntimeException re) {
+                logger.warning("can't find open-jpa-integration jar");
+            }
+        }
+
         // Create the class loader
-        ClassLoader classLoader = ClassLoaderUtil.createClassLoader(appInfo.path, jars.toArray(new URL[jars.size()]), OpenEJB.class.getClassLoader());
-        return classLoader;
+        return ClassLoaderUtil.createClassLoader(appInfo.path, jars.toArray(new URL[jars.size()]), OpenEJB.class.getClassLoader());
     }
 
     public void createExternalContext(JndiContextInfo contextInfo) throws OpenEJBException {
