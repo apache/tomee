@@ -737,7 +737,12 @@ public class DeploymentLoader implements DeploymentFilterable {
         // determine war class path
         final URL[] webUrls = getWebappUrls(warFile);
 
-        SystemInstance.get().fireEvent(new BeforeDeploymentEvent(webUrls));
+        // in TomEE this is done in init hook since we don't manage tomee webapp classloader
+        // so here is not the best idea for tomee
+        // if we want to manage it in a generic way
+        // simply add a boolean shared between tomcat and openejb world
+        // to know if we should fire it or not
+        SystemInstance.get().fireEvent(new BeforeDeploymentEvent(webUrls, parentClassLoader));
 
         final ClassLoader warClassLoader = ClassLoaderUtil.createTempClassLoader(appId, webUrls, parentClassLoader);
 
@@ -1515,7 +1520,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         return cls;
     }
 
-    protected static File unpack(final File jarFile) throws OpenEJBException {
+    public static File unpack(final File jarFile) throws OpenEJBException {
         if (jarFile.isDirectory()) {
             return jarFile;
         }
