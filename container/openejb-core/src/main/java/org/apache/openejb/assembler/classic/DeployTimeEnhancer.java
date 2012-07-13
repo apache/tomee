@@ -4,7 +4,12 @@ import org.apache.openejb.config.event.BeforeDeploymentEvent;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.observer.Observes;
-import org.apache.openejb.util.*;
+import org.apache.openejb.util.JarCreator;
+import org.apache.openejb.util.JarExtractor;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.URLs;
+import org.apache.xbean.finder.filter.Filter;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -17,7 +22,12 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -69,25 +79,28 @@ public class DeployTimeEnhancer {
 
         // find persistence.xml
         final Map<String, List<String>> classesByPXml = new HashMap<String, List<String>>();
+        final Filter filter = new AlreadyEnhancedFilter();
         for (URL url : event.getUrls()) {
             final File file = URLs.toFile(url);
-            if (file.isDirectory()) {
-                final String pXmls = getWarPersistenceXml(url);
-                if (pXmls != null) {
-                    feed(classesByPXml, pXmls);
-                }
-            } else if (file.getName().endsWith(".jar")) {
-                try {
-                    final JarFile jar = new JarFile(file);
-                    ZipEntry entry = jar.getEntry(META_INF_PERSISTENCE_XML);
-                    if (entry != null) {
-                        final String path = file.getAbsolutePath();
-                        final File unpacked = new File(path.substring(0, path.length() - 4) + TMP_ENHANCEMENT_SUFFIX);
-                        JarExtractor.extract(file, unpacked);
-                        feed(classesByPXml, new File(unpacked, META_INF_PERSISTENCE_XML).getAbsolutePath());
+            if (filter.accept(file.getName())) {
+                if (file.isDirectory()) {
+                    final String pXmls = getWarPersistenceXml(url);
+                    if (pXmls != null) {
+                        feed(classesByPXml, pXmls);
                     }
-                } catch (IOException e) {
-                    // ignored
+                } else if (file.getName().endsWith(".jar")) {
+                    try {
+                        final JarFile jar = new JarFile(file);
+                        ZipEntry entry = jar.getEntry(META_INF_PERSISTENCE_XML);
+                        if (entry != null) {
+                            final String path = file.getAbsolutePath();
+                            final File unpacked = new File(path.substring(0, path.length() - 4) + TMP_ENHANCEMENT_SUFFIX);
+                            JarExtractor.extract(file, unpacked);
+                            feed(classesByPXml, new File(unpacked, META_INF_PERSISTENCE_XML).getAbsolutePath());
+                        }
+                    } catch (IOException e) {
+                        // ignored
+                    }
                 }
             }
         }
@@ -244,6 +257,15 @@ public class DeployTimeEnhancer {
 
         public List<String> getPaths() {
             return paths;
+        }
+    }
+
+    private static class AlreadyEnhancedFilter implements Filter {
+        public static final String SUFFIX = JAR_ENHANCEMENT_SUFFIX + ".jar";
+
+        @Override
+        public boolean accept(final String s) {
+            return !s.endsWith(SUFFIX);
         }
     }
 }
