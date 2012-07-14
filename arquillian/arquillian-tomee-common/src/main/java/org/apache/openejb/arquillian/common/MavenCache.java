@@ -24,9 +24,14 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.util.logging.Logger;
 
 public class MavenCache {
-	public File getArtifact(String artifactInfo, String altUrl) {
+    private static final Logger LOGGER = Logger.getLogger(MavenCache.class.getName());
+
+	public static File getArtifact(String artifactInfo, String altUrl) {
+        LOGGER.info("Downloading " + artifactInfo + " please wait...");
+
         try {
             return new File(new Resolver().resolve(artifactInfo.startsWith("mvn")? "" : "mvn:" + artifactInfo));
         } catch (Exception e) {
@@ -45,7 +50,7 @@ public class MavenCache {
 		return null;
 	}
 
-	public File download(String source) throws DownloadException {
+	public static File download(String source) throws DownloadException {
 		File file = null;
 		InputStream is = null;
 		OutputStream os = null;
@@ -82,11 +87,5 @@ public class MavenCache {
 		}
 		
 		return file;
-	}
-
-	public static void main(String[] args) {
-		// File file = new MavenCache().getArtifact("org.apache.openejb:tomcat:zip:6.0.33", "http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.27/bin/apache-tomcat-7.0.27.zip").getFile();
-		File file = new MavenCache().getArtifact("org.apache.openejb:apache-tomee:1.0.0-beta-2-SNAPSHOT:zip:plus", "http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.27/bin/apache-tomcat-7.0.27.zip");
-		System.out.println(file.getAbsolutePath());
 	}
 }
