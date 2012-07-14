@@ -463,4 +463,20 @@ public class Paths {
         }
         return tomcatUsersXml;
     }
+
+    public File getSetClasspathSh() {
+        final File binDir = getCatalinaBinDir();
+        if (binDir == null) {
+            return null;
+        }
+        return new File(binDir, "setclasspath.sh");
+    }
+
+    public File getSetClasspathBat() {
+        final File binDir = getCatalinaBinDir();
+        if (binDir == null) {
+            return null;
+        }
+        return new File(binDir, "setclasspath.bat");
+    }
 }

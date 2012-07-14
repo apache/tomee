@@ -205,7 +205,9 @@ public class Installer {
     private void addJavaeeInEndorsed() {
 
         File endorsed = new File(paths.getCatalinaHomeDir(), "endorsed");
-        endorsed.mkdir();
+        if (!endorsed.mkdir()) {
+            alerts.addWarning("can't create endorsed directory");
+        }
 
 
         copyClasses(paths.getJavaEEAPIJar(), new File(endorsed, "annotation-api.jar"), "javax/annotation/.*");
@@ -220,6 +222,46 @@ public class Installer {
                 alerts.addError("can't copy " + paths.getJAXBImpl().getPath() + " to " + endorsed.getPath() + "/jaxb-impl.jar");
             }
         }
+
+        // java 7 doesn't need endorsed folder
+        String setClasspathSh = Installers.readAll(paths.getSetClasspathSh(), alerts);
+        if (setClasspathSh != null && !setClasspathSh.contains("any endorsed lib for java 7")) {
+            if (Installers.backup(paths.getSetClasspathSh(), alerts)) {
+                // add our magic bits to the catalina sh file
+                final String newSetClasspathSh = setClasspathSh.replace("JAVA_ENDORSED_DIRS=\"$CATALINA_HOME\"/endorsed",
+                        "java_version=`java -version 2>&1 | grep version`\n" +
+                        "  if [[ $java_version  =~ 1.7.* ]]; then\n" +
+                        "    # it doesn't exist but not important since we don't need any endorsed lib for java 7\n" +
+                        "    JAVA_ENDORSED_DIRS=\"$CATALINA_HOME\"/endorsed7\n" +
+                        "  else\n" +
+                        "    JAVA_ENDORSED_DIRS=\"$CATALINA_HOME\"/endorsed\n" +
+                        "  fi\n");
+                if (Installers.writeAll(paths.getSetClasspathSh(), newSetClasspathSh, alerts)) {
+                    alerts.addInfo("Endorsed lib set for java 6 and ignored for java 7 (unix)");
+                }
+            }
+        }
+
+        // TODO: same for win
+        /*
+        String setClasspathBat = Installers.readAll(paths.getSetClasspathBat(), alerts);
+        if (setClasspathBat != null && !setClasspathBat.contains("any endorsed lib for java 7")) {
+            if (Installers.backup(paths.getSetClasspathBat(), alerts)) {
+                // add our magic bits to the catalina sh file
+                final String newSetClasspathBat = setClasspathBat.replace("set \"JAVA_ENDORSED_DIRS=%CATALINA_HOME%\\endorsed\"",
+                        "java_version=`java -version 2>&1 | grep version`\n" +
+                                "  if [[ $java_version  =~ 1.7.* ]]; then\n" +
+                                "    # it doesn't exist but not important since we don't need any endorsed lib for java 7\n" +
+                                "    JAVA_ENDORSED_DIRS=\"$CATALINA_HOME\"/endorsed7\n" +
+                                "  else\n" +
+                                "    set \"JAVA_ENDORSED_DIRS=%CATALINA_HOME%\\endorsed\"\n" +
+                                "  fi\n");
+                if (Installers.writeAll(paths.getSetClasspathBat(), newSetClasspathBat, alerts)) {
+                    alerts.addInfo("Endorsed lib set for java 6 and ignored for java 7 (win)");
+                }
+            }
+        }
+        */
     }
 
     private void copyClasses(File sourceJar, File destinationJar, String pattern) {
@@ -615,8 +657,7 @@ public class Installer {
         try {
             Class<?> clazz = loadClass(className, Installer.class.getClassLoader());
             Method method = clazz.getMethod(propertyName);
-            Object result = method.invoke(null, (Object[]) null);
-            return result;
+            return method.invoke(null, (Object[]) null);
         } catch (Throwable e) {
             return null;
         }
@@ -629,9 +670,9 @@ public class Installer {
         }
         for (ClassLoader loader : loaders) {
             try {
-                Class<?> clazz = Class.forName(className, true, loader);
-                return clazz;
+                return Class.forName(className, true, loader);
             } catch (ClassNotFoundException e) {
+                // no-op
             }
         }
         return null;
