@@ -113,7 +113,7 @@ public class Setup {
         }
 
         try {
-            final File artifact = new MavenCache().getArtifact(artifactName, altUrl);
+            final File artifact = MavenCache.getArtifact(artifactName, altUrl);
             if (artifact == null) throw new NullPointerException(String.format("No such artifact: %s", artifactName));
             return artifact.getAbsoluteFile();
         } finally {
