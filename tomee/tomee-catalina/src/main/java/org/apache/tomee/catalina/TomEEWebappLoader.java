@@ -247,7 +247,7 @@ public class TomEEWebappLoader extends WebappLoader {
 
         @Override
         public boolean equals(Object other) {
-            return app.equals(other) || other == this; // to be consistent with hashcode() used by maps used in BbeanManagerHolders
+            return other == this || app.equals(other); // to be consistent with hashcode() used by maps used in BbeanManagerHolders
         }
 
         @Override
