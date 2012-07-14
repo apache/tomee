@@ -114,9 +114,10 @@ public class RemoteServer {
                 }
 
                 File home = getHome();
+                String javaVersion = System.getProperty("java.version");
                 if (verbose) {
                     System.out.println("OPENEJB_HOME = "+ home.getAbsolutePath());
-                    String systemInfo = "Java " + System.getProperty("java.version") + "; " + System.getProperty("os.name") + "/" + System.getProperty("os.version");
+                    String systemInfo = "Java " + javaVersion + "; " + System.getProperty("os.name") + "/" + System.getProperty("os.version");
                     System.out.println("SYSTEM_INFO  = "+systemInfo);
                 }
 
@@ -175,6 +176,9 @@ public class RemoteServer {
 
 
                     File endorsed = new File(home, "endorsed");
+                    if (javaVersion != null && javaVersion.startsWith("1.7.")) { // java 7
+                        endorsed = new File(home, "endorsed7"); // doesn't exist but just to ignore it with j7
+                    }
                     File temp = new File(home, "temp");
 
                     List<String> argsList = new ArrayList<String>() {};
