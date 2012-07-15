@@ -27,14 +27,24 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.SetAccessible;
+import org.quartz.Calendar;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobKey;
+import org.quartz.ListenerManager;
 import org.quartz.Scheduler;
+import org.quartz.SchedulerContext;
 import org.quartz.SchedulerException;
+import org.quartz.SchedulerMetaData;
 import org.quartz.Trigger;
+import org.quartz.TriggerKey;
+import org.quartz.UnableToInterruptJobException;
 import org.quartz.impl.StdSchedulerFactory;
+import org.quartz.impl.matchers.GroupMatcher;
 import org.quartz.impl.triggers.AbstractTrigger;
+import org.quartz.spi.JobFactory;
 
 import javax.ejb.EJBContext;
 import javax.ejb.EJBException;
@@ -50,7 +60,10 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 
 public class EjbTimerServiceImpl implements EjbTimerService {
@@ -60,6 +73,24 @@ public class EjbTimerServiceImpl implements EjbTimerService {
 
     public static final String OPENEJB_TIMEOUT_JOB_NAME = "OPENEJB_TIMEOUT_JOB";
     public static final String OPENEJB_TIMEOUT_JOB_GROUP_NAME = "OPENEJB_TIMEOUT_GROUP";
+
+    private static final String[] CONFIG_PROPERTIES;
+    static {
+        final List<String> values = new ArrayList<String>();
+        for (Field field : StdSchedulerFactory.class.getDeclaredFields()) {
+            int mods = field.getModifiers();
+            if (Modifier.isStatic(mods) && Modifier.isFinal(mods) && Modifier.isPublic(mods)
+                    && String.class.equals(field.getType())) {
+                try {
+                    values.add((String) field.get(null));
+                } catch (IllegalAccessException e) {
+                    // ignored
+                }
+            }
+        }
+        CONFIG_PROPERTIES = values.toArray(new String[values.size()]);
+    }
+
     private final TransactionManager transactionManager;
     final BeanContext deployment;
     private final boolean transacted;
@@ -70,7 +101,7 @@ public class EjbTimerServiceImpl implements EjbTimerService {
     private Scheduler scheduler;
 
     public EjbTimerServiceImpl(BeanContext deployment) {
-        this(deployment, getDefaultTransactionManager(), getDefaultScheduler(), new MemoryTimerStore(getDefaultTransactionManager()), 1);
+        this(deployment, getDefaultTransactionManager(), getDefaultScheduler(deployment), new MemoryTimerStore(getDefaultTransactionManager()), 1);
     }
 
     public static TransactionManager getDefaultTransactionManager() {
@@ -87,29 +118,22 @@ public class EjbTimerServiceImpl implements EjbTimerService {
         this.retryAttempts = retryAttempts;
     }
 
-    public static synchronized Scheduler getDefaultScheduler() {
-        Scheduler scheduler = SystemInstance.get().getComponent(Scheduler.class);
-        if (scheduler == null) {
-            Properties properties = new Properties();
-            properties.put(StdSchedulerFactory.PROP_THREAD_POOL_CLASS, SystemInstance.get().hasProperty(QUARTZ_THREAD_POOL_ADAPTER) ? SystemInstance.get().getOptions().get(QUARTZ_THREAD_POOL_ADAPTER, "")
-                    : DefaultTimerThreadPoolAdapter.class.getName());
-            properties.put(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, "OpenEJB-TimerService-Scheduler");
-            for (Field field : StdSchedulerFactory.class.getDeclaredFields()) {
-                int mods = field.getModifiers();
-                if (Modifier.isStatic(mods) && Modifier.isFinal(mods) && Modifier.isPublic(mods)
-                        && String.class.equals(field.getType())) {
-                    try {
-                        final String key = (String) field.get(null);
-                        final String value = SystemInstance.get().getOptions().get(key, (String) null);
-                        properties.setProperty(key, value);
-                    } catch (IllegalAccessException e) {
-                        // ignored
-                    }
-                }
-            }
+    public static synchronized Scheduler getDefaultScheduler(BeanContext deployment) {
+        final Properties properties = new Properties();
+        properties.put(StdSchedulerFactory.PROP_THREAD_POOL_CLASS, SystemInstance.get().hasProperty(QUARTZ_THREAD_POOL_ADAPTER) ? SystemInstance.get().getOptions().get(QUARTZ_THREAD_POOL_ADAPTER, "")
+                : DefaultTimerThreadPoolAdapter.class.getName());
+        properties.put(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, "OpenEJB-TimerService-Scheduler");
+        updateProperties(properties, null);
+
+        boolean newInstance = updateProperties(properties, deployment.getEjbName())
+                || updateProperties(properties, deployment.getModuleName() + "." + deployment.getEjbName());
+
+        final Scheduler scheduler = SystemInstance.get().getComponent(Scheduler.class);
+        Scheduler thisScheduler;
+        if (scheduler == null || newInstance) {
             try {
-                scheduler = new StdSchedulerFactory(properties).getScheduler();
-                scheduler.start();
+                thisScheduler = new StdSchedulerFactory(properties).getScheduler();
+                thisScheduler.start();
                 //durability is configured with true, which means that the job will be kept in the store even if no trigger is attached to it.
                 //Currently, all the EJB beans share with the same job instance
                 JobDetail job = JobBuilder.newJob(EjbTimeoutJob.class)
@@ -117,13 +141,48 @@ public class EjbTimerServiceImpl implements EjbTimerService {
                         .storeDurably(true)
                         .requestRecovery(false)
                         .build();
-                scheduler.addJob(job, true);
+                thisScheduler.addJob(job, true);
             } catch (SchedulerException e) {
                 throw new OpenEJBRuntimeException("Fail to initialize the default scheduler", e);
             }
-            SystemInstance.get().setComponent(Scheduler.class, scheduler);
+
+            if (!newInstance) {
+                SystemInstance.get().setComponent(Scheduler.class, thisScheduler);
+            }
+        } else {
+            thisScheduler = scheduler;
         }
-        return scheduler;
+        return thisScheduler;
+    }
+
+    private static boolean updateProperties(final Properties properties, final String prefix) {
+        boolean  updated = false;
+        for (String key: CONFIG_PROPERTIES) {
+            final String newKey;
+            if (prefix == null || prefix.isEmpty()) {
+                newKey = key;
+            } else {
+                newKey = prefix + "." + key;
+            }
+
+            final String value = SystemInstance.get().getOptions().get(newKey, (String) null);
+            if (value != null) {
+                properties.setProperty(key, value);
+                updated = true;
+            }
+        }
+        return updated;
+    }
+
+    public void shutdownMe() {
+        // if specific instance
+        if (scheduler != null && scheduler != SystemInstance.get().getComponent(Scheduler.class)) {
+            try {
+                scheduler.shutdown();
+            } catch (SchedulerException e) {
+                throw new OpenEJBRuntimeException("Unable to shutdown scheduler", e);
+            }
+        }
     }
 
     public static void shutdown() {

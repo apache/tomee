@@ -112,6 +112,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
     }
     
     public void stop(BeanContext beanContext) throws OpenEJBException {
+        beanContext.stop();
     }
     
     public void undeploy(BeanContext beanContext) {

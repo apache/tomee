@@ -70,6 +70,7 @@ public class RpcContainerWrapper implements RpcContainer {
     
     public void stop(BeanContext info) throws OpenEJBException {
         container.stop(info);
+        info.stop();
     }
     
     public void undeploy(BeanContext info) throws OpenEJBException {

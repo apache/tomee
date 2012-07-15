@@ -30,6 +30,7 @@ import org.apache.openejb.core.interceptor.InterceptorInstance;
 import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
 import org.apache.openejb.core.timer.EjbTimerService;
+import org.apache.openejb.core.timer.EjbTimerServiceImpl;
 import org.apache.openejb.core.transaction.EjbTransactionUtil;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.core.transaction.TransactionPolicyFactory;
@@ -1565,5 +1566,11 @@ public class BeanContext extends DeploymentContext {
 
     public void setHidden(boolean hidden) {
         this.hidden = hidden;
+    }
+
+    public void stop() {
+        if (ejbTimerService != null && ejbTimerService instanceof EjbTimerServiceImpl) {
+            ((EjbTimerServiceImpl) ejbTimerService).shutdownMe();
+        }
     }
 }

@@ -120,6 +120,7 @@ public class EntityContainer implements RpcContainer {
     }
     
     public void stop(BeanContext info) throws OpenEJBException {
+        info.stop();
     }
     
     public void undeploy(BeanContext info) throws OpenEJBException {

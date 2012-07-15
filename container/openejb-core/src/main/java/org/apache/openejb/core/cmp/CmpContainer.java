@@ -183,6 +183,7 @@ public class CmpContainer implements RpcContainer {
     }
     
     public void stop(BeanContext beanContext) throws OpenEJBException {
+        beanContext.stop();
     }
     
     public void undeploy(BeanContext beanContext) throws OpenEJBException {
