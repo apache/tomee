@@ -125,6 +125,7 @@ public class SingletonContainer implements RpcContainer {
 
     @Override
     public void stop(BeanContext info) throws OpenEJBException {
+        info.stop();
     }
 
     @Override

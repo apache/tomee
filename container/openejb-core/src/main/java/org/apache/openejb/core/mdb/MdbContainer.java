@@ -251,6 +251,7 @@ public class MdbContainer implements RpcContainer {
     }
     
     public void stop(BeanContext info) throws OpenEJBException {
+        info.stop();
     }
     
     public void undeploy(BeanContext beanContext) throws OpenEJBException {

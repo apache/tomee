@@ -251,6 +251,7 @@ public class StatefulContainer implements RpcContainer {
     }
     
     public void stop(BeanContext beanContext) throws OpenEJBException {
+        beanContext.stop();
     }
     
     public synchronized void undeploy(final BeanContext beanContext) throws OpenEJBException {

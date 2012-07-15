@@ -234,6 +234,7 @@ public class ManagedContainer implements RpcContainer {
     }
     
     public void stop(BeanContext beanContext) throws OpenEJBException {
+        beanContext.stop();
     }
 
     public synchronized void undeploy(final BeanContext bean) throws OpenEJBException {
