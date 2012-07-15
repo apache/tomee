@@ -112,9 +112,6 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
             // Delete AnnotateTypeCache
             webBeansContext.getAnnotatedElementFactory().clear();
 
-            // JMs Manager clear
-            webBeansContext.getjMSManager().clear();
-
             // Clear the resource injection service
             CdiResourceInjectionService injectionServices = (CdiResourceInjectionService) webBeansContext.getService(ResourceInjectionService.class);
             injectionServices.clear();
