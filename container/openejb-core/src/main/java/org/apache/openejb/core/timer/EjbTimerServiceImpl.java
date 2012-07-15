@@ -44,7 +44,9 @@ import javax.ejb.TimerConfig;
 import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.TransactionManager;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -92,6 +94,19 @@ public class EjbTimerServiceImpl implements EjbTimerService {
             properties.put(StdSchedulerFactory.PROP_THREAD_POOL_CLASS, SystemInstance.get().hasProperty(QUARTZ_THREAD_POOL_ADAPTER) ? SystemInstance.get().getOptions().get(QUARTZ_THREAD_POOL_ADAPTER, "")
                     : DefaultTimerThreadPoolAdapter.class.getName());
             properties.put(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, "OpenEJB-TimerService-Scheduler");
+            for (Field field : StdSchedulerFactory.class.getDeclaredFields()) {
+                int mods = field.getModifiers();
+                if (Modifier.isStatic(mods) && Modifier.isFinal(mods) && Modifier.isPublic(mods)
+                        && String.class.equals(field.getType())) {
+                    try {
+                        final String key = (String) field.get(null);
+                        final String value = SystemInstance.get().getOptions().get(key, (String) null);
+                        properties.setProperty(key, value);
+                    } catch (IllegalAccessException e) {
+                        // ignored
+                    }
+                }
+            }
             try {
                 scheduler = new StdSchedulerFactory(properties).getScheduler();
                 scheduler.start();
