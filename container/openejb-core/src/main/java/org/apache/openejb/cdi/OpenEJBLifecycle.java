@@ -454,9 +454,6 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             //Delete AnnotateTypeCache
             webBeansContext.getAnnotatedElementFactory().clear();
 
-            //Delete JMS Model Cache
-            webBeansContext.getjMSManager().clear();
-
             //After Stop
             afterStopApplication(endObject);
 
