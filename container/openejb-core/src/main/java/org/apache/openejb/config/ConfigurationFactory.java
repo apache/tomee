@@ -19,6 +19,7 @@ package org.apache.openejb.config;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -788,6 +789,10 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 if (!libs.contains(url)) {
                     EventHelper.installExtensions(new ResourceFinder("META-INF", url));
                 }
+            } catch (IllegalArgumentException iae) {
+                logger.debug("can't look for server event listener for module " + ejb.getModuleUri(), iae);
+            } catch (MalformedURLException mue) {
+                logger.debug("can't look for server event listener for module " + ejb.getModuleUri(), mue);
             } catch (Exception e) {
                 logger.error("can't look for server event listener for module " + ejb.getJarLocation());
             }
