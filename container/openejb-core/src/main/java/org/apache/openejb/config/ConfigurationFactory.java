@@ -92,6 +92,7 @@ import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.EventHelper;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
@@ -100,6 +101,7 @@ import org.apache.openejb.util.URISupport;
 import org.apache.openejb.util.URLs;
 import org.apache.openejb.util.proxy.QueryProxy;
 import org.apache.xbean.finder.MetaAnnotatedClass;
+import org.apache.xbean.finder.ResourceFinder;
 
 import static org.apache.openejb.config.DeploymentsResolver.DEPLOYMENTS_CLASSPATH_PROPERTY;
 import static org.apache.openejb.config.ServiceUtils.implies;
@@ -776,6 +778,26 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     }
 
     public AppInfo configureApplication(final AppModule appModule) throws OpenEJBException {
+        final List<URL> libs = appModule.getAdditionalLibraries();
+        if (libs != null && libs.size() > 0) {
+            EventHelper.installExtensions(new ResourceFinder("META-INF", libs.toArray(new URL[libs.size()])));
+        }
+        for (EjbModule ejb : appModule.getEjbModules()) {
+            try {
+                final URL url = ejb.getModuleUri().toURL();
+                if (!libs.contains(url)) {
+                    EventHelper.installExtensions(new ResourceFinder("META-INF", url));
+                }
+            } catch (Exception e) {
+                logger.error("can't look for server event listener for module " + ejb.getJarLocation());
+            }
+        }
+        for (WebModule web : appModule.getWebModules()) {
+            final List<URL> webLibs = web.getScannableUrls();
+            if (webLibs != null && webLibs.size() > 0) {
+                EventHelper.installExtensions(new ResourceFinder("META-INF", webLibs.toArray(new URL[webLibs.size()])));
+            }
+        }
 
         logger.info("config.configApp", appModule.getJarLocation());
         deployer.deploy(appModule);
