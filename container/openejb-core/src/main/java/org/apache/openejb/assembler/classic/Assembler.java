@@ -135,6 +135,7 @@ import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.AsmParameterNameLoader;
 import org.apache.openejb.util.Contexts;
+import org.apache.openejb.util.EventHelper;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
@@ -241,22 +242,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     private void installExtensions() {
-
-        final ResourceFinder finder = new ResourceFinder("META-INF");
-
-        try {
-            final List<Class<?>> classes = finder.findAvailableClasses("org.apache.openejb.extension");
-            for (Class<?> clazz : classes) {
-                try {
-                    final Object object = clazz.newInstance();
-                    SystemInstance.get().addObserver(object);
-                } catch (Throwable t) {
-                    logger.error("Extension construction failed" + clazz.getName(), t);
-                }
-            }
-        } catch (IOException e) {
-            logger.error("Extension scanning of 'META-INF/org.apache.openejb.extension' files failed", e);
-        }
+        EventHelper.installExtensions(new ResourceFinder("META-INF"));
     }
 
     private void setConfiguration(OpenEjbConfiguration config) {
