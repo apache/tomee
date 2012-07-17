@@ -4,6 +4,7 @@ import org.apache.openejb.arquillian.tests.classloader.HashCdiExtension;
 import org.apache.openejb.arquillian.tests.classloader.HashServlet;
 import org.apache.openejb.loader.IO;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ArchivePaths;
@@ -20,6 +21,7 @@ import java.net.URL;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Arquillian.class)
+@RunAsClient
 public class WebAppClassLoaderTest {
     @ArquillianResource
     private URL url;
