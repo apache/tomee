@@ -17,6 +17,7 @@
 package org.apache.openejb.core.ivm.naming;
 
 import org.apache.openejb.Injection;
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.core.webservices.HandlerChainData;
 import org.apache.openejb.core.webservices.HandlerResolverImpl;
 import org.apache.openejb.core.webservices.PortRefData;
@@ -159,6 +160,9 @@ public class JaxWsServiceReference extends Reference {
     private PortAddressRegistry getPortAddressRegistry() {
         if (portAddressRegistry == null) {
             portAddressRegistry = SystemInstance.get().getComponent(PortAddressRegistry.class);
+            if (portAddressRegistry == null) {
+                throw new OpenEJBRuntimeException("No port address registry, it generally means you either didn't activate cxf or don't use tomee+");
+            }
         }
         return portAddressRegistry;
     }
