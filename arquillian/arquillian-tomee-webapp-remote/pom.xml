@@ -24,9 +24,7 @@
     <groupId>org.apache.openejb</groupId>
     <version>1.1.0-SNAPSHOT</version>
   </parent>
-  <groupId>org.apache.openejb</groupId>
   <artifactId>arquillian-tomee-webapp-remote</artifactId>
-  <version>1.1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>OpenEJB :: Arquillian Adaptors Parent :: Webapp Remote</name>
@@ -103,15 +101,12 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-client</artifactId>
-      <version>${version.openejb}</version>
-      <type>jar</type>
+      <version>${openejb.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>${version.openejb}</version>
-      <type>jar</type>
-      <scope>compile</scope>
+      <version>${openejb.version}</version>
       <exclusions>
         <exclusion>
           <artifactId>mbean-annotation-api</artifactId>
@@ -262,16 +257,12 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>arquillian-tomee-common</artifactId>
-      <version>1.1.0-SNAPSHOT</version>
-      <type>jar</type>
-      <scope>compile</scope>
+      <version>${tomee.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-common</artifactId>
-      <version>${version.tomee}</version>
-      <type>jar</type>
-      <scope>compile</scope>
+      <version>${tomee.version}</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.swizzle</groupId>
@@ -294,7 +285,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>arquillian-common</artifactId>
-      <version>1.1.0-SNAPSHOT</version>
+      <version>${tomee.version}</version>
     </dependency>
   </dependencies>
 

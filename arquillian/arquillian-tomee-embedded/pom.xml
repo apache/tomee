@@ -24,9 +24,7 @@
     <groupId>org.apache.openejb</groupId>
     <version>1.1.0-SNAPSHOT</version>
   </parent>
-  <groupId>org.apache.openejb</groupId>
   <artifactId>arquillian-tomee-embedded</artifactId>
-  <version>1.1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>OpenEJB :: Arquillian Adaptors Parent :: Embedded Adaptor</name>
@@ -36,7 +34,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-embedded</artifactId>
-      <version>${version.tomee}</version>
+      <version>${tomee.version}</version>
     </dependency>
 
     <dependency>
@@ -115,28 +113,25 @@
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
       <version>${javaee-api.version}</version>
-      <type>jar</type>
     </dependency>
 
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>arquillian-tomee-common</artifactId>
       <version>${project.version}</version>
-      <type>jar</type>
-      <scope>compile</scope>
     </dependency>
 
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-webservices</artifactId>
-      <version>${version.tomee}</version>
+      <version>${tomee.version}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>arquillian-common</artifactId>
-      <version>1.1.0-SNAPSHOT</version>
+      <version>${tomee.version}</version>
     </dependency>
   </dependencies>
 
