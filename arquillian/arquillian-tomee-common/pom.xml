@@ -24,9 +24,7 @@
     <groupId>org.apache.openejb</groupId>
     <version>1.1.0-SNAPSHOT</version>
   </parent>
-  <groupId>org.apache.openejb</groupId>
   <artifactId>arquillian-tomee-common</artifactId>
-  <version>1.1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>OpenEJB :: Arquillian Adaptors Parent :: TomEE Common</name>
@@ -55,14 +53,14 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>6.0-1</version>
+      <version>${javaee-api.version}</version>
       <type>jar</type>
     </dependency>
 
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>${version.openejb}</version>
+      <version>${openejb.version}</version>
       <type>jar</type>
       <scope>compile</scope>
       <exclusions>
@@ -204,7 +202,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-provisionning</artifactId>
-      <version>${version.openejb}</version>
+      <version>${openejb.version}</version>
     </dependency>
 
     <dependency>

@@ -18,7 +18,6 @@
     <version>1.1.0-SNAPSHOT</version>
   </parent>
   <artifactId>arquillian-tomee-tests</artifactId>
-  <version>1.1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>OpenEJB :: Arquillian Adaptors Parent :: Tests</name>
@@ -40,7 +39,6 @@
       <groupId>org.apache.openejb</groupId>
       <artifactId>ziplock</artifactId>
       <version>${project.version}</version>
-      <type>jar</type>
     </dependency>
 
     <dependency>
@@ -61,14 +59,12 @@
       <artifactId>commons-lang3</artifactId>
       <groupId>org.apache.commons</groupId>
       <version>${commons-lang3.version}</version>
-      <type>jar</type>
-      <scope>compile</scope>
     </dependency>
 
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>tomee-webservices</artifactId>
-      <version>${version.tomee}</version>
+      <version>${tomee.version}</version>
     </dependency>
 
     <dependency>
@@ -172,7 +168,7 @@
             <configuration>
               <systemPropertyVariables>
                 <tomee.classifier>webprofile</tomee.classifier>
-                <tomee.version>${project.version}</tomee.version>
+                <tomee.version>${tomee.version}</tomee.version>
               </systemPropertyVariables>
               <excludes>
                 <exclude>**/jaxrs/**</exclude>
@@ -191,7 +187,7 @@
         <dependency>
           <groupId>org.apache.openejb</groupId>
           <artifactId>apache-tomee</artifactId>
-          <version>${project.version}</version>
+          <version>${tomee.version}</version>
           <classifier>webprofile</classifier>
           <type>zip</type>
         </dependency>
@@ -199,7 +195,6 @@
           <groupId>org.apache.myfaces.core</groupId>
           <artifactId>myfaces-api</artifactId>
           <version>${myfaces.version}</version>
-          <scope>compile</scope>
         </dependency>
       </dependencies>
     </profile>
@@ -214,7 +209,7 @@
             <configuration>
               <systemPropertyVariables>
                 <tomee.classifier>plus</tomee.classifier>
-                <tomee.version>${project.version}</tomee.version>
+                <tomee.version>${tomee.version}</tomee.version>
               </systemPropertyVariables>
             </configuration>
           </plugin>
@@ -229,7 +224,7 @@
         <dependency>
           <groupId>org.apache.openejb</groupId>
           <artifactId>apache-tomee</artifactId>
-          <version>${project.version}</version>
+          <version>${tomee.version}</version>
           <classifier>plus</classifier>
           <type>zip</type>
         </dependency>
@@ -237,7 +232,6 @@
           <groupId>org.apache.myfaces.core</groupId>
           <artifactId>myfaces-api</artifactId>
           <version>${myfaces.version}</version>
-          <scope>compile</scope>
         </dependency>
       </dependencies>
     </profile>
@@ -252,8 +246,8 @@
             <configuration>
               <systemPropertyVariables>
                 <tomee.artifactId>tomee-webapp</tomee.artifactId>
-                <tomee.version>${openejb.version}</tomee.version>
-                <tomee.tomcatVersion>7.0.27</tomee.tomcatVersion>
+                <tomee.version>${tomee.version}</tomee.version>
+                <tomee.tomcatVersion>${tomcat.version}</tomee.tomcatVersion>
               </systemPropertyVariables>
               <excludes>
                 <exclude>**/jaxrs/**</exclude>
@@ -272,7 +266,7 @@
         <dependency>
           <groupId>org.apache.openejb</groupId>
           <artifactId>tomee-webapp</artifactId>
-          <version>${openejb.version}</version>
+          <version>${tomee.version}</version>
           <type>war</type>
         </dependency>
         <dependency>
@@ -280,13 +274,11 @@
           <artifactId>apache-tomcat</artifactId>
           <version>${tomcat.bundle.version}</version>
           <type>zip</type>
-          <scope>compile</scope>
         </dependency>
         <dependency>
           <groupId>org.apache.myfaces.core</groupId>
           <artifactId>myfaces-api</artifactId>
           <version>${myfaces.version}</version>
-          <scope>compile</scope>
         </dependency>
       </dependencies>
     </profile>
@@ -301,8 +293,8 @@
             <configuration>
               <systemPropertyVariables>
                 <tomee.artifactId>tomee-plus-webapp</tomee.artifactId>
-                <tomee.version>${openejb.version}</tomee.version>
-                <tomee.tomcatVersion>7.0.27</tomee.tomcatVersion>
+                <tomee.version>${tomee.version}</tomee.version>
+                <tomee.tomcatVersion>${tomcat.version}</tomee.tomcatVersion>
               </systemPropertyVariables>
             </configuration>
           </plugin>
@@ -317,7 +309,7 @@
         <dependency>
           <groupId>org.apache.openejb</groupId>
           <artifactId>tomee-plus-webapp</artifactId>
-          <version>${openejb.version}</version>
+          <version>${tomee.version}</version>
           <type>war</type>
         </dependency>
         <dependency>
@@ -325,13 +317,11 @@
           <artifactId>apache-tomcat</artifactId>
           <version>${tomcat.bundle.version}</version>
           <type>zip</type>
-          <scope>compile</scope>
         </dependency>
         <dependency>
           <groupId>org.apache.myfaces.core</groupId>
           <artifactId>myfaces-api</artifactId>
           <version>${myfaces.version}</version>
-          <scope>compile</scope>
         </dependency>
       </dependencies>
     </profile>
