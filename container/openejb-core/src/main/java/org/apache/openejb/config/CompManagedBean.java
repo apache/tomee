@@ -24,8 +24,6 @@ import org.apache.openejb.jee.PersistenceContextRef;
 import org.apache.openejb.jee.PersistenceContextType;
 
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -138,5 +136,9 @@ public class CompManagedBean extends ManagedBean {
                 return delegate.entrySet();
             }
         }
+    }
+
+    public boolean isHidden() {
+        return true;
     }
 }
