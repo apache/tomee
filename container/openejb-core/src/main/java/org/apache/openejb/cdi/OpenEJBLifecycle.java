@@ -27,7 +27,6 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.webbeans.component.InjectionPointBean;
 import org.apache.webbeans.component.NewBean;
-import org.apache.webbeans.config.OWBLogConst;
 import org.apache.webbeans.config.OpenWebBeansConfiguration;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.config.WebBeansFinder;
@@ -146,7 +145,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
 
         // Initalize Application Context
-        logger.info(OWBLogConst.INFO_0005);
+        logger.info("OpenWebBeans Container is starting...");
 
         long begin = System.currentTimeMillis();
 
@@ -328,7 +327,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             Thread.currentThread().setContextClassLoader(oldCl);
         }
 
-        logger.info(OWBLogConst.INFO_0001, Long.toString(System.currentTimeMillis() - begin));
+        logger.info("OpenWebBeans Container has started, it took {0} ms.", Long.toString(System.currentTimeMillis() - begin));
     }
 
     public static class NewEjbBean<T> extends CdiEjbBean<T> implements NewBean<T> {
@@ -467,7 +466,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         }
         catch (Exception e)
         {
-            logger.error(OWBLogConst.ERROR_0021, e);
+            logger.error("An error occured while stopping the container.", e);
         }
 
     }
@@ -610,7 +609,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         if (logger.isInfoEnabled())
         {
             stopObject = getServletContext(stopObject);
-            logger.info(OWBLogConst.INFO_0002, stopObject instanceof ServletContext? ((ServletContext)stopObject).getContextPath() : stopObject);
+            logger.info("OpenWebBeans Container has stopped for context path,", stopObject instanceof ServletContext? ((ServletContext)stopObject).getContextPath() : stopObject);
         }
     }
 
