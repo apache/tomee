@@ -47,7 +47,6 @@ import org.apache.webbeans.component.WebBeansType;
 import org.apache.webbeans.component.creation.BeanCreator.MetaDataProvider;
 import org.apache.webbeans.component.creation.ManagedBeanCreatorImpl;
 import org.apache.webbeans.config.DefinitionUtil;
-import org.apache.webbeans.config.OWBLogConst;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.container.InjectionResolver;
@@ -222,7 +221,7 @@ public class BeansDeployer {
         //Validate Others
         validate(beans);
 
-        logger.info(OWBLogConst.INFO_0003);
+        logger.info("All injection points are validated successfully.");
     }
 
     /**
