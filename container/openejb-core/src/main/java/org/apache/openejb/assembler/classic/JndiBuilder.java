@@ -588,7 +588,6 @@ public class JndiBuilder {
 
                     if (!embeddedEjbContainerApi
                             // filtering internal bean
-                            && !externalName.endsWith(".Comp") && !externalName.endsWith(".Comp!org.apache.openejb.BeanContext$Comp")
                             && !(beanInfo instanceof ManagedBeanInfo && ((ManagedBeanInfo) beanInfo).hidden)) {
                         logger.info("Jndi(name=" + externalName + ") --> Ejb(deployment-id=" + beanInfo.ejbDeploymentId + ")");
                     }
@@ -639,7 +638,6 @@ public class JndiBuilder {
             String globalName = "global/" + appName + moduleName + beanName;
 
             if (embeddedEjbContainerApi
-                    && !globalName.endsWith(".Comp") && !globalName.endsWith(".Comp!org.apache.openejb.BeanContext$Comp")
                     && !(beanInfo instanceof ManagedBeanInfo && ((ManagedBeanInfo) beanInfo).hidden)) {
                 logger.info(String.format("Jndi(name=\"java:%s\")", globalName));
             }
