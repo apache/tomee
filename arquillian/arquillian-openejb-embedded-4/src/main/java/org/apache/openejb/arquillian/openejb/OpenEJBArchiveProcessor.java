@@ -232,7 +232,7 @@ public class OpenEJBArchiveProcessor implements ApplicationArchiveProcessor {
         }
 
         final List<org.apache.xbean.finder.archive.Archive> archives = new ArrayList<org.apache.xbean.finder.archive.Archive>();
-        for (URL url : DeploymentLoader.filterWebappUrls(additionalPaths.toArray(new URL[additionalPaths.size()]))) {
+        for (URL url : DeploymentLoader.filterWebappUrls(additionalPaths.toArray(new URL[additionalPaths.size()]), null)) {
             archives.add(new JarArchive(cl, url));
         }
         archives.add(new ClassesArchive(classes));
