@@ -53,6 +53,8 @@ import org.apache.xbean.finder.UrlSet;
 import org.apache.xbean.finder.archive.Archive;
 import org.apache.xbean.finder.archive.ClassesArchive;
 import org.apache.xbean.finder.archive.JarArchive;
+import org.apache.xbean.finder.filter.Filter;
+import org.apache.xbean.finder.filter.Filters;
 import org.xml.sax.SAXException;
 
 import javax.xml.bind.JAXBException;
@@ -95,7 +97,7 @@ public class DeploymentLoader implements DeploymentFilterable {
     private static final String OPENEJB_ALTDD_PREFIX = "openejb.altdd.prefix";
     private static final String ddDir = "META-INF/";
     private boolean scanManagedBeans = true;
-    private static final Collection<String> KNOWN_DESCRIPTORS = Arrays.asList("web.xml", "ejb-jar.xml", "openejb-jar.xml", "env-entries.properties", "beans.xml", "ra.xml", "application.xml", "application-client.xml", "persistence-fragment.xml", "persistence.xml", "validation.xml");
+    private static final Collection<String> KNOWN_DESCRIPTORS = Arrays.asList("web.xml", "ejb-jar.xml", "openejb-jar.xml", "env-entries.properties", "beans.xml", "ra.xml", "application.xml", "application-client.xml", "persistence-fragment.xml", "persistence.xml", "validation.xml", NewLoaderLogic.EXCLUSION_FILE);
 
     public AppModule load(final File jarFile) throws OpenEJBException {
         // verify we have a valid file
@@ -749,7 +751,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         // create web module
         final WebModule webModule = new WebModule(webApp, contextRoot, warClassLoader, warFile.getAbsolutePath(), moduleName);
         webModule.setUrls(Arrays.asList(webUrls));
-        webModule.setScannableUrls(filterWebappUrls(webUrls));
+        webModule.setScannableUrls(filterWebappUrls(webUrls, descriptors.get(NewLoaderLogic.EXCLUSION_FILE)));
         webModule.getAltDDs().putAll(descriptors);
         webModule.getWatchedResources().add(warPath);
         webModule.getWatchedResources().add(warFile.getAbsolutePath());
@@ -771,10 +773,20 @@ public class DeploymentLoader implements DeploymentFilterable {
         return webModule;
     }
 
-    public static List<URL> filterWebappUrls(final URL[] webUrls) {
+    public static List<URL> filterWebappUrls(final URL[] webUrls, URL exclusions) {
+        Filter excludeFilter = null;
+        if (exclusions != null) {
+            try {
+                final String[] prefixes = NewLoaderLogic.readInputStreamList(exclusions.openStream());
+                excludeFilter = Filters.prefixes(prefixes);
+            } catch (IOException e) {
+                logger.warning("can't read " + exclusions.toExternalForm());
+            }
+        }
+
         UrlSet urls = new UrlSet(webUrls);
         try {
-            urls = applyBuiltinExcludes(urls);
+            urls = applyBuiltinExcludes(urls, null, excludeFilter);
         } catch (MalformedURLException e) {
             return Arrays.asList(webUrls);
         }
