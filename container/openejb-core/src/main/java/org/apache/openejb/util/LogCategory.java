@@ -45,6 +45,7 @@ public final class LogCategory {
 	public static final LogCategory OPENEJB_WS = OPENEJB.createChild("ws");
 	public static final LogCategory OPENEJB_RS = OPENEJB.createChild("rs");
 	public static final LogCategory OPENEJB_JPA = OPENEJB.createChild("jpa");
+    public static final LogCategory OPENEJB_CDI = OPENEJB.createChild("cdi");
 	public static final LogCategory TRANSACTION = new LogCategory( "Transaction");
 	public static final LogCategory ACTIVEMQ = new LogCategory( "org.apache.activemq");
 	public static final LogCategory GERONIMO = new LogCategory( "org.apache.geronimo");
@@ -56,7 +57,8 @@ public final class LogCategory {
 	public static final LogCategory TIMER = new LogCategory( "Timer");
 	public static final LogCategory HTTPSERVER = OPENEJB_SERVER.createChild("http");
 	public static final LogCategory SERVICEPOOL = OPENEJB_SERVER.createChild("pool");
-	private LogCategory(String name){
+
+    private LogCategory(String name){
 		this.name = name;
 	}
 	public String getName() {

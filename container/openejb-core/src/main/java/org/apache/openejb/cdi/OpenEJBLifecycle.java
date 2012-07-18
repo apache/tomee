@@ -23,6 +23,8 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.webbeans.component.InjectionPointBean;
 import org.apache.webbeans.component.NewBean;
 import org.apache.webbeans.config.OWBLogConst;
@@ -34,7 +36,6 @@ import org.apache.webbeans.container.InjectionResolver;
 import org.apache.webbeans.ejb.common.component.EjbBeanCreatorImpl;
 import org.apache.webbeans.ejb.common.util.EjbUtility;
 import org.apache.webbeans.intercept.InterceptorData;
-import org.apache.webbeans.logger.WebBeansLogger;
 import org.apache.webbeans.portable.events.ExtensionLoader;
 import org.apache.webbeans.portable.events.ProcessAnnotatedTypeImpl;
 import org.apache.webbeans.portable.events.discovery.BeforeShutdownImpl;
@@ -74,7 +75,7 @@ import java.util.concurrent.TimeUnit;
 public class OpenEJBLifecycle implements ContainerLifecycle {
 
     //Logger instance
-    protected static WebBeansLogger logger = WebBeansLogger.getLogger(OpenEJBLifecycle.class);
+    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_CDI, OpenEJBLifecycle.class);
 
     public static final String OPENEJB_CDI_SKIP_CLASS_NOT_FOUND = "openejb.cdi.skip-class-not-found";
 
@@ -376,7 +377,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             if (at != null) {
                 annotatedTypes.put(implClass, at);
             } else {
-                logger.warn("an error occured create AnnotatedType for class "
+                logger.warning("an error occured create AnnotatedType for class "
                         + implClass.getName() + ". Skipping.");
             }
         }
@@ -469,14 +470,6 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             logger.error(OWBLogConst.ERROR_0021, e);
         }
 
-    }
-
-    /**
-     * @return the logger
-     */
-    protected WebBeansLogger getLogger()
-    {
-        return logger;
     }
 
     /**
@@ -614,7 +607,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
 
         this.cleanupShutdownThreadLocals();
 
-        if (logger.wblWillLogInfo())
+        if (logger.isInfoEnabled())
         {
             stopObject = getServletContext(stopObject);
             logger.info(OWBLogConst.INFO_0002, stopObject instanceof ServletContext? ((ServletContext)stopObject).getContextPath() : stopObject);
