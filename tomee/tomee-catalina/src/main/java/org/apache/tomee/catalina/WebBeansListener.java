@@ -19,12 +19,13 @@ package org.apache.tomee.catalina;
 import org.apache.openejb.cdi.OpenEJBLifecycle;
 import org.apache.openejb.cdi.ThreadSingletonServiceImpl;
 import org.apache.openejb.cdi.WebappWebBeansContext;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.webbeans.component.InjectionPointBean;
 import org.apache.webbeans.config.OWBLogConst;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.conversation.ConversationManager;
 import org.apache.webbeans.el.ELContextStore;
-import org.apache.webbeans.logger.WebBeansLogger;
 import org.apache.webbeans.spi.FailOverService;
 import org.apache.webbeans.util.WebBeansUtil;
 import org.apache.webbeans.web.context.WebContextsService;
@@ -51,7 +52,7 @@ public class WebBeansListener implements ServletContextListener, ServletRequestL
     /**
      * Logger instance
      */
-    private static final WebBeansLogger logger = WebBeansLogger.getLogger(WebBeansListener.class);
+    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_CDI, WebBeansListener.class);
 
     protected FailOverService failoverService;
 
@@ -74,7 +75,7 @@ public class WebBeansListener implements ServletContextListener, ServletRequestL
      * {@inheritDoc}
      */
     public void requestDestroyed(ServletRequestEvent event) {
-        if (logger.wblWillLogDebug()) {
+        if (logger.isDebugEnabled()) {
             logger.debug("Destroying a request : [{0}]", event.getServletRequest().getRemoteAddr());
         }
 
@@ -129,7 +130,7 @@ public class WebBeansListener implements ServletContextListener, ServletRequestL
         event.getServletRequest().setAttribute(contextKey, oldContext);
 
         try {
-            if (logger.wblWillLogDebug()) {
+            if (logger.isDebugEnabled()) {
                 logger.debug("Starting a new request : [{0}]", event.getServletRequest().getRemoteAddr());
             }
 
@@ -152,7 +153,7 @@ public class WebBeansListener implements ServletContextListener, ServletRequestL
      */
     public void sessionCreated(HttpSessionEvent event) {
         try {
-            if (logger.wblWillLogDebug()) {
+            if (logger.isDebugEnabled()) {
                 logger.debug("Starting a session with session id : [{0}]", event.getSession().getId());
             }
             this.webBeansContext.getContextsService().startContext(SessionScoped.class, event.getSession());
@@ -169,7 +170,7 @@ public class WebBeansListener implements ServletContextListener, ServletRequestL
      * {@inheritDoc}
      */
     public void sessionDestroyed(HttpSessionEvent event) {
-        if (logger.wblWillLogDebug()) {
+        if (logger.isDebugEnabled()) {
             logger.debug("Destroying a session with session id : [{0}]", event.getSession().getId());
         }
 

@@ -21,8 +21,9 @@ package org.apache.openejb.cdi;
 import org.apache.openejb.core.CoreUserTransaction;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.webbeans.ee.event.TransactionalEventNotifier;
-import org.apache.webbeans.logger.WebBeansLogger;
 import org.apache.webbeans.spi.TransactionService;
 
 import javax.enterprise.event.TransactionPhase;
@@ -37,7 +38,7 @@ import javax.transaction.UserTransaction;
  * this is a copy of the class in the owb webbeans-openejb jar which we aren't using.
  */
 public class OpenEJBTransactionService implements TransactionService {
-    private static final WebBeansLogger logger = WebBeansLogger.getLogger(OpenEJBTransactionService.class);
+    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_CDI, OpenEJBTransactionService.class);
 
     private final ContainerSystem containerSystem;
 
@@ -52,7 +53,7 @@ public class OpenEJBTransactionService implements TransactionService {
             try {
                 return manager.getTransaction();
             } catch (SystemException e) {
-                logger.error(e);
+                logger.error(e.getMessage(), e);
             }
         }
         return null;

@@ -25,15 +25,15 @@ import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.WebContext;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.webbeans.config.WebBeansContext;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.WebBeansFinder;
-import org.apache.webbeans.logger.WebBeansLogger;
 
 /**
  * @version $Rev$ $Date$C
  */
 public class CdiBuilder {
-    private static final WebBeansLogger logger = WebBeansLogger.getLogger(CdiBuilder.class);
+    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_CDI, CdiBuilder.class);
 
     public CdiBuilder() {
     }

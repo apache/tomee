@@ -30,6 +30,9 @@ import javax.enterprise.inject.spi.Decorator;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.InjectionTarget;
 import javax.interceptor.Interceptor;
+
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.webbeans.annotation.AnnotationManager;
 import org.apache.webbeans.component.AbstractInjectionTargetBean;
 import org.apache.webbeans.component.AbstractProducerBean;
@@ -54,7 +57,6 @@ import org.apache.webbeans.exception.WebBeansConfigurationException;
 import org.apache.webbeans.exception.WebBeansDeploymentException;
 import org.apache.webbeans.exception.inject.InconsistentSpecializationException;
 import org.apache.webbeans.intercept.webbeans.WebBeansInterceptor;
-import org.apache.webbeans.logger.WebBeansLogger;
 import org.apache.webbeans.portable.events.ProcessAnnotatedTypeImpl;
 import org.apache.webbeans.portable.events.discovery.AfterBeanDiscoveryImpl;
 import org.apache.webbeans.portable.events.discovery.AfterDeploymentValidationImpl;
@@ -78,7 +80,7 @@ import org.apache.webbeans.xml.WebBeansXMLConfigurator;
 //This class written as single threaded.
 public class BeansDeployer {
     //Logger instance
-    private static final WebBeansLogger logger = WebBeansLogger.getLogger(BeansDeployer.class);
+    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_CDI, BeansDeployer.class);
 
     // why creating it several times?
     public static final Annotation[] EMPTY_ANNOTATION_ARRAY = new Annotation[0];
@@ -355,11 +357,11 @@ public class BeansDeployer {
                     if (AnnotationUtil.hasClassAnnotation(specialClass, Specializes.class)) {
                         superClass = specialClass.getSuperclass();
                         if (superClass.equals(Object.class)) {
-                            throw new WebBeansConfigurationException(logger.getTokenString(OWBLogConst.EXCEPT_0003) + specialClass.getName()
-                                    + logger.getTokenString(OWBLogConst.EXCEPT_0004));
+                            throw new WebBeansConfigurationException("Specialized class [" + specialClass.getName()
+                                    + "] must extend another class.");
                         }
                         if (superClassList.contains(superClass)) {
-                            throw new InconsistentSpecializationException(logger.getTokenString(OWBLogConst.EXCEPT_0005) + superClass.getName());
+                            throw new InconsistentSpecializationException("More than one class specialized the same super class : " + superClass.getName());
                         }
                         superClassList.add(superClass);
                         specialClassList.add(specialClass);
@@ -403,8 +405,6 @@ public class BeansDeployer {
                 if (!(beanObj instanceof AbstractProducerBean)) {
                     throw new WebBeansConfigurationException("Passivation scoped defined bean must be passivation capable, " +
                             "but bean : " + beanObj.toString() + " is not passivation capable");
-                } else {
-                    validate = true;
                 }
             }
 
@@ -522,7 +522,7 @@ public class BeansDeployer {
 
             //Decorator
             if (WebBeansUtil.isAnnotatedTypeDecorator(annotatedType)) {
-                if (logger.wblWillLogDebug()) {
+                if (logger.isDebugEnabled()) {
                     logger.debug("Found Managed Bean Decorator with class name : [{0}]", annotatedType.getJavaClass().getName());
                 }
                 if (annotationTypeSet) {
@@ -533,7 +533,7 @@ public class BeansDeployer {
             }
             //Interceptor
             else if (WebBeansUtil.isAnnotatedTypeInterceptor(annotatedType)) {
-                if (logger.wblWillLogDebug()) {
+                if (logger.isDebugEnabled()) {
                     logger.debug("Found Managed Bean Interceptor with class name : [{0}]", annotatedType.getJavaClass().getName());
                 }
                 if (annotationTypeSet) {
@@ -547,7 +547,7 @@ public class BeansDeployer {
                     return false;
                 }
 
-                if (logger.wblWillLogDebug()) {
+                if (logger.isDebugEnabled()) {
                     logger.debug("Found Managed Bean with class name : [{0}]", annotatedType.getJavaClass().getName());
                 }
                 webBeansContext.getWebBeansUtil().defineManagedBean(managedBeanCreator, processInjectionTargetEvent, false);
