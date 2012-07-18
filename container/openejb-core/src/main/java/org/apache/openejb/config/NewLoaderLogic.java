@@ -60,7 +60,7 @@ public class NewLoaderLogic {
     public static final String DEFAULT_EXCLUSIONS_ALIAS = "default-list";
     public static final String ADDITIONAL_EXCLUDES = SystemInstance.get().getOptions().get("openejb.additional.exclude", (String) null);
     public static final String ADDITIONAL_INCLUDE = SystemInstance.get().getOptions().get("openejb.additional.include", (String) null);
-    private static final String EXCLUSION_FILE = "exclusions.list";
+    public static final String EXCLUSION_FILE = "exclusions.list";
     private static String[] exclusions = null;
 
     public static UrlSet filterArchives(final Filter filter, final ClassLoader classLoader, UrlSet urlSet) {
@@ -157,6 +157,10 @@ public class NewLoaderLogic {
     }
 
     public static UrlSet applyBuiltinExcludes(final UrlSet urlSet, final Filter includeFilter) throws MalformedURLException {
+        return applyBuiltinExcludes(urlSet, includeFilter, null);
+    }
+
+    public static UrlSet applyBuiltinExcludes(final UrlSet urlSet, final Filter includeFilter, final Filter excludeFilter) throws MalformedURLException {
         final Filter filter = Filters.prefixes(getExclusions());
 
         //filter = Filters.optimize(filter, new PatternFilter(".*/openejb-.*"));
@@ -167,7 +171,9 @@ public class NewLoaderLogic {
             final File file = URLs.toFile(url);
 
             final String name = filter(file).getName();
-            if (filter.accept(name) && (includeFilter == null || !includeFilter.accept(name))) {
+            if (filter.accept(name)
+                    && (includeFilter == null || !includeFilter.accept(name))
+                    && (excludeFilter == null || excludeFilter.accept(name))) {
                 iterator.remove();
             }
         }
@@ -247,7 +253,7 @@ public class NewLoaderLogic {
         return read;
     }
 
-    private static String[] readInputStreamList(final InputStream is) {
+    public static String[] readInputStreamList(final InputStream is) {
 
         final List<String> list = new ArrayList<String>();
         BufferedReader reader = null;
