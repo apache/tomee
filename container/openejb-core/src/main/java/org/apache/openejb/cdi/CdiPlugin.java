@@ -30,7 +30,6 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBException;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.config.WebBeansFinder;
-import org.apache.webbeans.container.InjectionResolver;
 import org.apache.webbeans.portable.events.discovery.BeforeShutdownImpl;
 import org.apache.webbeans.spi.ResourceInjectionService;
 import org.apache.webbeans.spi.SecurityService;
@@ -43,7 +42,7 @@ import org.apache.webbeans.util.WebBeansUtil;
 
 public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPlugin, OpenWebBeansEjbPlugin {
 
-	private Set<Class<?>> beans;
+    private Set<Class<?>> beans;
 
     private WebBeansContext webBeansContext;
     private CdiAppContextsService contexsServices;
@@ -104,7 +103,7 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
             webBeansContext.getExtensionLoader().clear();
 
             // Delete Resolutions Cache
-            InjectionResolver.getInstance().clearCaches();
+            webBeansContext.getBeanManagerImpl().getInjectionResolver().clearCaches();
 
             // Delte proxies
             webBeansContext.getJavassistProxyFactory().clear();

@@ -16,11 +16,15 @@
  */
 package org.apache.openejb.cdi;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.enterprise.context.spi.Context;
+import javax.inject.Singleton;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import org.apache.webbeans.context.ContextFactory;
-import org.apache.webbeans.context.type.ContextTypes;
 
 // helper for embedded case
 public final class ScopeHelper {
@@ -37,19 +41,19 @@ public final class ScopeHelper {
     }
 
     public static void stopContexts(final ContextFactory contextFactory, final ServletContext servletContext, final HttpSession session) throws Exception {
-        if(isActive(contextFactory.getStandardContext(ContextTypes.SESSION))) {
+        if(isActive(contextFactory.getStandardContext(SessionScoped.class))) {
             contextFactory.destroySessionContext(session);
         }
-        if (isActive(contextFactory.getStandardContext(ContextTypes.CONVERSATION))) {
+        if (isActive(contextFactory.getStandardContext(ConversationScoped.class))) {
             contextFactory.destroyConversationContext();
         }
-        if (isActive(contextFactory.getStandardContext(ContextTypes.REQUEST))) {
+        if (isActive(contextFactory.getStandardContext(RequestScoped.class))) {
             contextFactory.destroyRequestContext(null);
         }
-        if (isActive(contextFactory.getStandardContext(ContextTypes.APPLICATION))) {
+        if (isActive(contextFactory.getStandardContext(ApplicationScoped.class))) {
             contextFactory.destroyApplicationContext(servletContext);
         }
-        if (isActive(contextFactory.getStandardContext(ContextTypes.SINGLETON))) {
+        if (isActive(contextFactory.getStandardContext(Singleton.class))) {
             contextFactory.destroySingletonContext(servletContext);
         }
     }
