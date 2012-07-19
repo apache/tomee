@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.tck.cdi.embedded;
 
+import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.InjectableBeanManager;
 
 import javax.enterprise.inject.spi.BeanManager;
@@ -26,7 +27,7 @@ import javax.enterprise.inject.spi.BeanManager;
 public class ManagersImpl implements org.jboss.jsr299.tck.spi.Managers {
 
     public BeanManager getManager() {
-        return new InjectableBeanManager();
+        return new InjectableBeanManager(WebBeansContext.currentInstance().getBeanManagerImpl());
     }
 
 }
