@@ -194,9 +194,8 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
         bean.setName(superBean.getName());
         bean.setSerializable(superBean.isSerializable());
 
-        this.implScopeType = superBean.implScopeType;
         this.scopeClass = superBean.scopeClass;
-        this.implQualifiers.addAll(superBean.getImplQualifiers());
+        this.implQualifiers.addAll(superBean.getQualifiers());
         this.stereoTypeClasses.addAll(superBean.stereoTypeClasses);
         this.stereoTypes.addAll(superBean.stereoTypes);
     }

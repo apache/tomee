@@ -31,7 +31,6 @@ import org.apache.webbeans.config.OpenWebBeansConfiguration;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.config.WebBeansFinder;
 import org.apache.webbeans.container.BeanManagerImpl;
-import org.apache.webbeans.container.InjectionResolver;
 import org.apache.webbeans.ejb.common.component.EjbBeanCreatorImpl;
 import org.apache.webbeans.ejb.common.util.EjbUtility;
 import org.apache.webbeans.intercept.InterceptorData;
@@ -446,7 +445,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             webBeansContext.getExtensionLoader().clear();
 
             //Delete Resolutions Cache
-            InjectionResolver.getInstance().clearCaches();
+            beanManager.getInjectionResolver().clearCaches();
 
             //Delte proxies
             webBeansContext.getJavassistProxyFactory().clear();

@@ -20,9 +20,6 @@ import org.apache.webbeans.annotation.NewLiteral;
 import org.apache.webbeans.component.NewBean;
 
 import javax.enterprise.context.Dependent;
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.New;
-import javax.enterprise.util.AnnotationLiteral;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Collections;
@@ -36,7 +33,7 @@ public class NewCdiEjbBean<T> extends CdiEjbBean<T> implements NewBean<T> {
     public NewCdiEjbBean(CdiEjbBean<T> that) {
         super(that.getBeanContext(), that.getWebBeansContext());
 
-        this.getImplQualifiers().add(new NewLiteral(getReturnType()));
+        this.addQualifier(new NewLiteral(getReturnType()));
 
         this.apiTypes.clear();
         this.apiTypes.addAll(that.getTypes());
