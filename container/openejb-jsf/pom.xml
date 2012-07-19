@@ -44,8 +44,8 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb.patch</groupId>
-      <artifactId>openejb-openwebbeans-jsf</artifactId>
+      <groupId>org.apache.openwebbeans</groupId>
+      <artifactId>openwebbeans-jsf</artifactId>
       <version>${org.apache.openwebbeans.version}</version>
     </dependency>
     <dependency>

@@ -148,16 +148,14 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-jsf</artifactId>
-      <version>${openejb.version}</version>
-      <scope>runtime</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.openejb</groupId>
-          <artifactId>javaee-api</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>org.apache.openwebbeans</groupId>
+      <artifactId>openwebbeans-jsf</artifactId>
+      <version>${org.apache.openwebbeans.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.myfaces.core</groupId>
+      <artifactId>myfaces-api</artifactId>
+      <version>${myfaces.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
