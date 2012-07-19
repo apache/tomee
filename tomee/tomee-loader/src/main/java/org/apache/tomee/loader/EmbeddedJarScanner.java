@@ -72,7 +72,6 @@ public class EmbeddedJarScanner implements JarScanner {
             // is really slow.
 
 //            excluded = excluded.exclude(".*myfaces-impl-.*");
-//            excluded = excluded.exclude(".*openejb-jsf-.*");
 
             final UrlSet scan = classpath.exclude(excluded);
 

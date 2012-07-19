@@ -50,8 +50,7 @@ public final class TomEEClassLoaderHelper {
     public static final String TOMEE_WEBAPP_CLASSLOADER_ENRICHMENT_PREFIXES = "tomee.webapp.classloader.enrichment.prefixes";
 
     private static final String[] DEFAULT_CLASSES_WHICH_CAN_BE_LOADED_FROM_APP_ONLY = new String[] {
-            // openejb-jsf and openwebbeans-jsf to be able to embedded the jsf impl keeping CDI features
-            "org.apache.openejb.jsf.CustomApplicationFactory",
+            // openwebbeans-jsf to be able to embedded the jsf impl keeping CDI features
             "org.apache.webbeans.jsf.OwbApplicationFactory"
     };
     private static final String[] JAR_TO_ADD_CLASS_HELPERS;
