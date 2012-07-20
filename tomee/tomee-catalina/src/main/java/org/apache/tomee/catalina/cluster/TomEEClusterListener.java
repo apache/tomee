@@ -39,7 +39,7 @@ public class TomEEClusterListener extends ClusterListener {
         if (DeployMessage.class.equals(type)) {
             final DeployMessage msg = (DeployMessage) clusterMessage;
             final String file = msg.getFile();
-            final boolean alreadyDeployed = SystemInstance.get().getComponent(Assembler.class).isDeployed(file);
+            final boolean alreadyDeployed = isDeployed(file);
             final File ioFile = new File(file);
             if (ioFile.exists() && !alreadyDeployed) {
                 SERVICE.submit(new DeployTask(file));
@@ -50,7 +50,7 @@ public class TomEEClusterListener extends ClusterListener {
             }
         } else if (UndeployMessage.class.equals(type)) {
             final String file = ((UndeployMessage) clusterMessage).getFile();
-            if (SystemInstance.get().getComponent(Assembler.class).isDeployed(file)) {
+            if (isDeployed(file)) {
                 SERVICE.submit(new UndeployTask(file));
             } else {
                 LOGGER.info("app '" + file + "' was not deployed");
@@ -60,6 +60,10 @@ public class TomEEClusterListener extends ClusterListener {
         }
     }
 
+    private static boolean isDeployed(final String file) {
+        return SystemInstance.get().getComponent(Assembler.class).isDeployed(file);
+    }
+
     private static Deployer deployer() throws NamingException {
         return (Deployer) new InitialContext(IC_PROPS).lookup("openejb/DeployerBusinessRemote");
     }
@@ -67,7 +71,7 @@ public class TomEEClusterListener extends ClusterListener {
     @Override
     public boolean accept(final ClusterMessage clusterMessage) {
         return clusterMessage != null
-        && (DeployMessage.class.equals(clusterMessage.getClass())
+            && (DeployMessage.class.equals(clusterMessage.getClass())
                 || UndeployMessage.class.equals(clusterMessage.getClass()));
     }
 
