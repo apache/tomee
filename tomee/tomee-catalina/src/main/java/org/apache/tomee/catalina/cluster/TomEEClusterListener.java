@@ -17,10 +17,16 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.io.File;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class TomEEClusterListener extends ClusterListener {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, TomEEClusterListener.class);
     private static final Properties IC_PROPS = new Properties();
+
+    // async processing to avoid to make the cluster hanging
+    private static final ExecutorService SERVICE = Executors.newFixedThreadPool(1);
 
     static {
         IC_PROPS.setProperty(Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
@@ -36,13 +42,7 @@ public class TomEEClusterListener extends ClusterListener {
             final boolean alreadyDeployed = SystemInstance.get().getComponent(Assembler.class).isDeployed(file);
             final File ioFile = new File(file);
             if (ioFile.exists() && !alreadyDeployed) {
-                try {
-                    deployer().deploy(file);
-                } catch (OpenEJBException e) {
-                    LOGGER.warning("can't deploy: " + ioFile.getPath(), e);
-                } catch (NamingException e) {
-                    LOGGER.warning("can't find deployer", e);
-                }
+                SERVICE.submit(new DeployTask(file));
             } else if (!alreadyDeployed) {
                 LOGGER.warning("file is remote, can't deploy it: " + ioFile.getPath());
             } else {
@@ -51,27 +51,72 @@ public class TomEEClusterListener extends ClusterListener {
         } else if (UndeployMessage.class.equals(type)) {
             final String file = ((UndeployMessage) clusterMessage).getFile();
             if (SystemInstance.get().getComponent(Assembler.class).isDeployed(file)) {
-                try {
-                    deployer().undeploy(file);
-                } catch (UndeployException e) {
-                    LOGGER.error("can't undeploy app", e);
-                } catch (NoSuchApplicationException e) {
-                    LOGGER.warning("no app toi deploy", e);
-                } catch (NamingException e) {
-                    LOGGER.warning("can't find deployer", e);
-                }
+                SERVICE.submit(new UndeployTask(file));
+            } else {
+                LOGGER.info("app '" + file + "' was not deployed");
             }
         } else {
             LOGGER.warning("message type not supported: " + type);
         }
     }
 
-    private Deployer deployer() throws NamingException {
+    private static Deployer deployer() throws NamingException {
         return (Deployer) new InitialContext(IC_PROPS).lookup("openejb/DeployerBusinessRemote");
     }
 
     @Override
     public boolean accept(final ClusterMessage clusterMessage) {
-        return DeployMessage.class.equals(clusterMessage.getClass()) || UndeployMessage.class.equals(clusterMessage.getClass());
+        return clusterMessage != null
+        && (DeployMessage.class.equals(clusterMessage.getClass())
+                || UndeployMessage.class.equals(clusterMessage.getClass()));
+    }
+
+    public static void stop() {
+        SERVICE.shutdown();
+        try {
+            SERVICE.awaitTermination(1, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            SERVICE.shutdownNow();
+        }
+    }
+
+    private static class DeployTask implements Runnable {
+        private final String app;
+
+        public DeployTask(final String ioFile) {
+            app = ioFile;
+        }
+
+        @Override
+        public void run() {
+            try {
+                deployer().deploy(app);
+            } catch (OpenEJBException e) {
+                LOGGER.warning("can't deploy: " + app, e);
+            } catch (NamingException e) {
+                LOGGER.warning("can't find deployer", e);
+            }
+        }
+    }
+
+    private static class UndeployTask implements Runnable {
+        private final String app;
+
+        public UndeployTask(final String ioFile) {
+            app = ioFile;
+        }
+
+        @Override
+        public void run() {
+            try {
+                deployer().undeploy(app);
+            } catch (UndeployException e) {
+                LOGGER.error("can't undeploy app", e);
+            } catch (NoSuchApplicationException e) {
+                LOGGER.warning("no app toi deploy", e);
+            } catch (NamingException e) {
+                LOGGER.warning("can't find deployer", e);
+            }
+        }
     }
 }
