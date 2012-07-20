@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.util;
 
+import org.apache.openejb.cdi.logging.Slf4jLoggerFactory;
+
 /**
  * Simple Slf4jLogStream, not much configuration needed, as slf4j is just a facade 
  *
@@ -30,6 +32,8 @@ public class Slf4jLogStreamFactory implements LogStreamFactory {
     public Slf4jLogStreamFactory() {
         System.setProperty("openjpa.Log", "slf4j");
         System.setProperty("org.apache.cxf.Logger", "org.apache.cxf.common.logging.Slf4jLogger");
+        System.setProperty("openwebbeans.logging.factory", Slf4jLoggerFactory.class.getName());
+
         // no need to configure internals:
         // by default we are using JUL
         // if the user set log4j he wants to configure it himself

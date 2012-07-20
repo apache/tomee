@@ -184,6 +184,7 @@ public class DeployerEjb implements Deployer {
                 }
             }
             appInfo = configurationFactory.configureApplication(appModule);
+            appInfo.autoDeploy = Boolean.parseBoolean(properties.getProperty("openejb.app.autodeploy", "false"));
 
             if (properties != null && properties.containsKey(OPENEJB_DEPLOYER_FORCED_APP_ID_PROP)) {
                 appInfo.appId = properties.getProperty(OPENEJB_DEPLOYER_FORCED_APP_ID_PROP);

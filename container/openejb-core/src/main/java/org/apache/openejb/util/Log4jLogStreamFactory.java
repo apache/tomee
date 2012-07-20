@@ -19,6 +19,7 @@ package org.apache.openejb.util;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.SimpleLayout;
+import org.apache.openejb.cdi.logging.Log4jLoggerFactory;
 import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
@@ -52,6 +53,7 @@ public class Log4jLogStreamFactory implements LogStreamFactory {
             // The fall back here is that if log4j.configuration system property is set, then that configuration file will be used.
             e.printStackTrace();
         }
+        System.setProperty("openwebbeans.logging.factory", Log4jLoggerFactory.class.getName());
     }
 
     private void configureInternal() throws IOException {
