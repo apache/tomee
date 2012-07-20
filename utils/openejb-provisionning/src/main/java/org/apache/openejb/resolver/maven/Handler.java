@@ -28,10 +28,6 @@ import java.net.URLStreamHandler;
 public class Handler extends URLStreamHandler  {
     @Override
     protected URLConnection openConnection( final URL url ) throws IOException {
-        final MavenConfigurationImpl config = new MavenConfigurationImpl(
-                new PropertiesPropertyResolver( System.getProperties() ), "org.ops4j.pax.url.mvn");
-
-        config.setSettings( new MavenSettingsImpl( config.getSettingsFileUrl(), config.useFallbackRepositories() ) );
-        return new Connection( url, config );
+        return new Connection( url, ConfigHelper.createConfig() );
     }
 }

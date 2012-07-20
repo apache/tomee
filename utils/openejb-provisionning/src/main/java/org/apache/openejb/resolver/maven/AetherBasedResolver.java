@@ -65,11 +65,11 @@ import org.sonatype.aether.util.repository.DefaultProxySelector;
 import org.sonatype.aether.version.Version;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -213,6 +213,22 @@ public class AetherBasedResolver {
         return IO.read(resolved);
     }
 
+    public VersionRangeResult resolveVersions(String groupId, String artifactId, String classifier, String extension, String version) {
+        final RepositorySystemSession session = newSession();
+        Artifact artifact = new DefaultArtifact(groupId, artifactId, classifier, extension, version);
+        if (artifact.getVersion().equals("LATEST")) {
+            artifact = artifact.setVersion(LATEST_VERSION_RANGE);
+        }
+        final VersionRangeRequest request = new VersionRangeRequest(artifact, m_remoteRepos, null);
+        try {
+            return m_repoSystem.resolveVersionRange(session, request);
+        } catch (VersionRangeResolutionException e) {
+            final VersionRangeResult result = new VersionRangeResult(request);
+            result.setVersions(Arrays.asList((Version) new VersionImpl(version)));
+            return result;
+        }
+    }
+
     private File resolve(RepositorySystemSession session, Artifact artifact)
             throws IOException {
         try {
@@ -305,4 +321,23 @@ public class AetherBasedResolver {
 
         return locator.getService(RepositorySystem.class);
     }
+
+    private static class VersionImpl implements Version {
+        private final String version;
+
+        private VersionImpl(String version) {
+            this.version = version;
+        }
+
+        @Override
+        public String toString() {
+            return version;
+        }
+
+        @Override
+        public int compareTo(final Version v) {
+            return 0;
+        }
+    }
+
 }
