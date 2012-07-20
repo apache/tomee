@@ -1,3 +1,19 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.apache.tomee.catalina.cluster;
 
 import org.apache.catalina.ha.ClusterListener;
@@ -28,7 +44,7 @@ public class TomEEClusterListener extends ClusterListener {
     private static final Properties IC_PROPS = new Properties();
 
     // async processing to avoid to make the cluster hanging
-    private static final ExecutorService SERVICE = Executors.newFixedThreadPool(1);
+    private static final ExecutorService SERVICE = Executors.newSingleThreadExecutor();
 
     static {
         IC_PROPS.setProperty(Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
@@ -118,6 +134,10 @@ public class TomEEClusterListener extends ClusterListener {
 
     private static class DeployTask implements Runnable {
         private final String app;
+        private static final Properties REMOTE_DEPLOY_PROPERTIES = new Properties();
+        static {
+            REMOTE_DEPLOY_PROPERTIES.setProperty("openejb.app.autodeploy", "true"); // avoid to send deployment again
+        }
 
         public DeployTask(final String ioFile) {
             app = ioFile;
@@ -127,7 +147,7 @@ public class TomEEClusterListener extends ClusterListener {
         public void run() {
             if (!isDeployed(app)) {
                 try {
-                    deployer().deploy(app);
+                    deployer().deploy(app, REMOTE_DEPLOY_PROPERTIES);
                 } catch (OpenEJBException e) {
                     LOGGER.warning("can't deploy: " + app, e);
                 } catch (NamingException e) {
