@@ -51,7 +51,7 @@ public class LocalInitialContext extends ContextWrapper {
     }
 
     public static final String OPENEJB_EMBEDDED_REMOTABLE = "openejb.embedded.remotable";
-    static Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, LocalInitialContext.class);
+    static Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP.createChild("local"), LocalInitialContext.class);
 
     private final LocalInitialContextFactory factory;
     private Properties properties;
@@ -63,7 +63,7 @@ public class LocalInitialContext extends ContextWrapper {
     private ServiceManagerProxy serviceManager;
 
     public static enum Close {
-        LOGOUT, DESTROY;
+        LOGOUT, DESTROY
     }
 
     public LocalInitialContext(Hashtable env, LocalInitialContextFactory factory) throws NamingException {
@@ -81,6 +81,7 @@ public class LocalInitialContext extends ContextWrapper {
         startNetworkServices();
     }
 
+    @Override
     public void close() throws NamingException {
         logger.debug("LocalIntialContext.close()");
 
@@ -168,8 +169,7 @@ public class LocalInitialContext extends ContextWrapper {
 
     private static Context getRoot() {
         ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-        Context context = containerSystem.getJNDIContext();
-        return context;
+        return containerSystem.getJNDIContext();
     }
 
     @Override
