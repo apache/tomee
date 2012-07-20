@@ -16,9 +16,7 @@
  */
 package org.apache.tomee.catalina;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import org.apache.catalina.Cluster;
 import org.apache.catalina.Container;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
@@ -43,19 +41,31 @@ import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.ContextTransaction;
 import org.apache.catalina.deploy.NamingResources;
+import org.apache.catalina.ha.CatalinaCluster;
 import org.apache.catalina.loader.WebappClassLoader;
 import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.startup.Constants;
 import org.apache.catalina.startup.ContextConfig;
 import org.apache.catalina.startup.HostConfig;
 import org.apache.catalina.startup.RealmRuleSet;
+import org.apache.catalina.tribes.Member;
 import org.apache.naming.ContextAccessController;
 import org.apache.naming.ContextBindings;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.assembler.classic.*;
+import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.ClassListInfo;
+import org.apache.openejb.assembler.classic.ConnectorInfo;
+import org.apache.openejb.assembler.classic.DeploymentExceptionManager;
+import org.apache.openejb.assembler.classic.EjbJarInfo;
+import org.apache.openejb.assembler.classic.InjectionBuilder;
+import org.apache.openejb.assembler.classic.JndiEncBuilder;
+import org.apache.openejb.assembler.classic.ServletInfo;
+import org.apache.openejb.assembler.classic.WebAppBuilder;
+import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.cdi.CdiBuilder;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
@@ -74,6 +84,8 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.tomcat.InstanceManager;
 import org.apache.tomcat.util.digester.Digester;
+import org.apache.tomee.catalina.cluster.ClusterObserver;
+import org.apache.tomee.catalina.cluster.TomEEClusterListener;
 import org.apache.tomee.catalina.event.AfterApplicationCreated;
 import org.apache.tomee.common.LegacyAnnotationProcessor;
 import org.apache.tomee.common.TomcatVersion;
@@ -99,9 +111,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -178,6 +193,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
 
     private String defaultHost = "localhost";
 
+    private Set<CatalinaCluster> clusters = new HashSet<CatalinaCluster>();
+
     /**
      * Creates a new web application builder
      * instance.
@@ -195,11 +212,13 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         for (final Service service : standardServer.findServices()) {
             if (service.getContainer() instanceof Engine) {
                 final Engine engine = (Engine) service.getContainer();
+                manageCluster(engine.getCluster());
                 defaultHost = engine.getDefaultHost();
                 addTomEERealm(engine);
                 for (final Container engineChild : engine.findChildren()) {
                     if (engineChild instanceof StandardHost) {
                         final StandardHost host = (StandardHost) engineChild;
+                        manageCluster(host.getCluster());
                         addTomEERealm(host);
                         hosts.put(host.getName(), host);
                         for (final LifecycleListener listener : host.findLifecycleListeners()) {
@@ -213,8 +232,22 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             }
         }
 
+        SystemInstance.get().addObserver(new ClusterObserver(clusters));
+
         configurationFactory = new ConfigurationFactory();
         deploymentLoader = new DeploymentLoader();
+    }
+
+    private void manageCluster(final Cluster cluster) {
+        if (cluster == null) {
+            return;
+        }
+
+        if (cluster instanceof CatalinaCluster) {
+            final CatalinaCluster haCluster = (CatalinaCluster) cluster;
+            haCluster.addClusterListener(new TomEEClusterListener());
+            clusters.add(haCluster);
+        }
     }
 
     private void addTomEERealm(final Engine engine) {
@@ -388,6 +421,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
 
                 // TODO: instead of storing deployers, we could just lookup the right hostconfig for the server.
                 final HostConfig deployer = deployers.get(host);
+                appInfo.autoDeploy = false;
                 if (isReady(deployer)) { // if not ready using directly host to avoid a NPE
                     // host isn't set until we call deployer.manageApp, so pass it
                     // ?? host is set through an event and it can be null here :(
