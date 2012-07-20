@@ -93,12 +93,14 @@ public class TomEEClusterListener extends ClusterListener {
 
         @Override
         public void run() {
-            try {
-                deployer().deploy(app);
-            } catch (OpenEJBException e) {
-                LOGGER.warning("can't deploy: " + app, e);
-            } catch (NamingException e) {
-                LOGGER.warning("can't find deployer", e);
+            if (!isDeployed(app)) {
+                try {
+                    deployer().deploy(app);
+                } catch (OpenEJBException e) {
+                    LOGGER.warning("can't deploy: " + app, e);
+                } catch (NamingException e) {
+                    LOGGER.warning("can't find deployer", e);
+                }
             }
         }
     }
@@ -112,14 +114,16 @@ public class TomEEClusterListener extends ClusterListener {
 
         @Override
         public void run() {
-            try {
-                deployer().undeploy(app);
-            } catch (UndeployException e) {
-                LOGGER.error("can't undeploy app", e);
-            } catch (NoSuchApplicationException e) {
-                LOGGER.warning("no app toi deploy", e);
-            } catch (NamingException e) {
-                LOGGER.warning("can't find deployer", e);
+            if (isDeployed(app)) {
+                try {
+                    deployer().undeploy(app);
+                } catch (UndeployException e) {
+                    LOGGER.error("can't undeploy app", e);
+                } catch (NoSuchApplicationException e) {
+                    LOGGER.warning("no app toi deploy", e);
+                } catch (NamingException e) {
+                    LOGGER.warning("can't find deployer", e);
+                }
             }
         }
     }
