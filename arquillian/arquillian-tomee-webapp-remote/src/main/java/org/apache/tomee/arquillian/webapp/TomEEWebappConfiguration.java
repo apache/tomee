@@ -77,7 +77,7 @@ public class TomEEWebappConfiguration extends TomEEConfiguration {
 
     public String getTomcatVersion() {
         if (tomcatVersion == null || "LATEST".equals(tomcatVersion)) {
-            tomcatVersion = VersionResolver.higestVersion(TOMCAT_REFERENCE_ARTIFACT, TOMCAT_VERSION_PREFIX, DEFAULT_TOMCAT_VERSION);
+            tomcatVersion = VersionResolver.highestVersion(TOMCAT_REFERENCE_ARTIFACT, TOMCAT_VERSION_PREFIX, DEFAULT_TOMCAT_VERSION);
         }
         return tomcatVersion;
     }
