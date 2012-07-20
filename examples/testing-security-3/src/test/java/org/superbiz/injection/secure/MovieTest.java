@@ -23,6 +23,7 @@ import javax.ejb.EJBAccessException;
 import javax.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import java.util.List;
 import java.util.Properties;
 
@@ -32,11 +33,17 @@ public class MovieTest extends TestCase {
     @EJB
     private Movies movies;
 
+    private Context getContext(String user, String pass) throws NamingException {
+        Properties p = new Properties();
+        p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
+        p.setProperty("openejb.authentication.realmName", "ServiceProviderLogin");
+        p.put(Context.SECURITY_PRINCIPAL, user);
+        p.put(Context.SECURITY_CREDENTIALS, pass);
+
+        return new InitialContext(p);
+    }
+
     protected void setUp() throws Exception {
-
-        // Uncomment this line to set the login/logout functionality on Debug
-        //System.setProperty("log4j.category.OpenEJB.security", "debug");
-
         Properties p = new Properties();
         p.put("movieDatabase", "new://Resource?type=DataSource");
         p.put("movieDatabase.JdbcDriver", "org.hsqldb.jdbcDriver");
@@ -46,13 +53,7 @@ public class MovieTest extends TestCase {
     }
 
     public void testAsManager() throws Exception {
-        Properties p = new Properties();
-        p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
-        p.setProperty("openejb.authentication.realmName", "ServiceProviderLogin");
-        p.put(Context.SECURITY_PRINCIPAL, "paul");
-        p.put(Context.SECURITY_CREDENTIALS, "");
-
-        InitialContext context = new InitialContext(p);
+        final Context context = getContext("paul", "michelle");
 
         try {
             movies.addMovie(new Movie("Quentin Tarantino", "Reservoir Dogs", 1992));
@@ -73,13 +74,7 @@ public class MovieTest extends TestCase {
     }
 
     public void testAsEmployee() throws Exception {
-        Properties p = new Properties();
-        p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
-        p.setProperty("openejb.authentication.realmName", "ServiceProviderLogin");
-        p.put(Context.SECURITY_PRINCIPAL, "eddie");
-        p.put(Context.SECURITY_CREDENTIALS, "jump");
-
-        InitialContext context = new InitialContext(p);
+        final Context context = getContext("eddie", "jump");
 
         try {
             movies.addMovie(new Movie("Quentin Tarantino", "Reservoir Dogs", 1992));
@@ -129,6 +124,22 @@ public class MovieTest extends TestCase {
             fail("Read access should be allowed");
         }
 
+    }
+
+    public void testLoginFailure() throws NamingException {
+        try {
+            getContext("eddie", "panama");
+            fail("supposed to have a login failure here");
+        } catch (javax.naming.AuthenticationException e) {
+            //expected
+        }
+
+        try {
+            getContext("jimmy", "foxylady");
+            fail("supposed to have a login failure here");
+        } catch (javax.naming.AuthenticationException e) {
+            //expected
+        }
     }
 }
 //END SNIPPET: code

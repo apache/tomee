@@ -91,6 +91,37 @@ Title: Testing Security 3
         }
     }
 
+## MyLoginProvider
+
+    package org.superbiz.injection.secure;
+
+    import org.apache.openejb.core.security.jaas.LoginProvider;
+
+    import javax.security.auth.login.FailedLoginException;
+    import java.util.Arrays;
+    import java.util.List;
+
+    public class MyLoginProvider implements LoginProvider {
+
+
+        @Override
+        public List<String> authenticate(String user, String password) throws FailedLoginException {
+            if ("paul".equals(user) && "michelle".equals(password)) {
+                return Arrays.asList("Manager", "rockstar", "beatle");
+            }
+
+            if ("eddie".equals(user) && "jump".equals(password)) {
+                return Arrays.asList("Employee", "rockstar", "vanhalen");
+            }
+
+            throw new FailedLoginException("Bad user or password!");
+        }
+    }
+
+## org.apache.openejb.core.security.jaas.LoginProvider
+
+    org.superbiz.injection.secure.MyLoginProvider
+
 ## persistence.xml
 
     <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
@@ -117,6 +148,7 @@ Title: Testing Security 3
     import javax.ejb.embeddable.EJBContainer;
     import javax.naming.Context;
     import javax.naming.InitialContext;
+    import javax.naming.NamingException;
     import java.util.List;
     import java.util.Properties;
 
@@ -125,11 +157,17 @@ Title: Testing Security 3
         @EJB
         private Movies movies;
 
+        private Context getContext(String user, String pass) throws NamingException {
+            Properties p = new Properties();
+            p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
+            p.setProperty("openejb.authentication.realmName", "ServiceProviderLogin");
+            p.put(Context.SECURITY_PRINCIPAL, user);
+            p.put(Context.SECURITY_CREDENTIALS, pass);
+
+            return new InitialContext(p);
+        }
+
         protected void setUp() throws Exception {
-
-            // Uncomment this line to set the login/logout functionality on Debug
-            //System.setProperty("log4j.category.OpenEJB.security", "debug");
-
             Properties p = new Properties();
             p.put("movieDatabase", "new://Resource?type=DataSource");
             p.put("movieDatabase.JdbcDriver", "org.hsqldb.jdbcDriver");
@@ -139,13 +177,7 @@ Title: Testing Security 3
         }
 
         public void testAsManager() throws Exception {
-            Properties p = new Properties();
-            p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
-            p.setProperty("openejb.authentication.realmName", "ServiceProviderLogin");
-            p.put(Context.SECURITY_PRINCIPAL, "paul");
-            p.put(Context.SECURITY_CREDENTIALS, "");
-
-            InitialContext context = new InitialContext(p);
+            final Context context = getContext("paul", "michelle");
 
             try {
                 movies.addMovie(new Movie("Quentin Tarantino", "Reservoir Dogs", 1992));
@@ -166,13 +198,7 @@ Title: Testing Security 3
         }
 
         public void testAsEmployee() throws Exception {
-            Properties p = new Properties();
-            p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
-            p.setProperty("openejb.authentication.realmName", "ServiceProviderLogin");
-            p.put(Context.SECURITY_PRINCIPAL, "eddie");
-            p.put(Context.SECURITY_CREDENTIALS, "jump");
-
-            InitialContext context = new InitialContext(p);
+            final Context context = getContext("eddie", "jump");
 
             try {
                 movies.addMovie(new Movie("Quentin Tarantino", "Reservoir Dogs", 1992));
@@ -222,6 +248,22 @@ Title: Testing Security 3
                 fail("Read access should be allowed");
             }
 
+        }
+
+        public void testLoginFailure() throws NamingException {
+            try {
+                getContext("eddie", "panama");
+                fail("supposed to have a login failure here");
+            } catch (javax.naming.AuthenticationException e) {
+                //expected
+            }
+
+            try {
+                getContext("jimmy", "foxylady");
+                fail("supposed to have a login failure here");
+            } catch (javax.naming.AuthenticationException e) {
+                //expected
+            }
         }
     }
 
