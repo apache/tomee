@@ -8,6 +8,8 @@ import org.apache.openejb.UndeployException;
 import org.apache.openejb.assembler.Deployer;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.core.LocalInitialContextFactory;
+import org.apache.openejb.loader.Files;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -38,13 +40,35 @@ public class TomEEClusterListener extends ClusterListener {
 
         if (DeployMessage.class.equals(type)) {
             final DeployMessage msg = (DeployMessage) clusterMessage;
-            final String file = msg.getFile();
+            String file = msg.getFile();
+
             final boolean alreadyDeployed = isDeployed(file);
-            final File ioFile = new File(file);
-            if (ioFile.exists() && !alreadyDeployed) {
-                SERVICE.submit(new DeployTask(file));
-            } else if (!alreadyDeployed) {
-                LOGGER.warning("file is remote, can't deploy it: " + ioFile.getPath());
+            File ioFile = new File(file);
+
+            if (!alreadyDeployed) {
+                if (msg.getArchive() != null) {
+                    final File deployed = deployedDir();
+                    try {
+                        if (!deployed.exists()) {
+                            Files.mkdirs(deployed); // can throw runtime exceptions
+                        }
+
+                        final File dump = new File(deployed, ioFile.getName());
+                        IO.copy(msg.getArchive(), dump);
+                        file = dump.getAbsolutePath();
+                        ioFile = new File(file);
+
+                        LOGGER.info("dumped archive: " + msg.getFile() + " to " + file);
+                    } catch (Exception e) {
+                        LOGGER.error("can't dump archive: "+ file, e);
+                    }
+                }
+
+                if (ioFile.exists()) {
+                    SERVICE.submit(new DeployTask(file));
+                } else {
+                    LOGGER.warning("can't find '" + file);
+                }
             } else {
                 LOGGER.info("application already deployed: " + file);
             }
@@ -53,11 +77,19 @@ public class TomEEClusterListener extends ClusterListener {
             if (isDeployed(file)) {
                 SERVICE.submit(new UndeployTask(file));
             } else {
+                final File alternativeFile = new File(deployedDir(), new File(file).getName());
+                if (isDeployed(alternativeFile.getAbsolutePath())) {
+                    SERVICE.submit(new UndeployTask(alternativeFile.getAbsolutePath()));
+                }
                 LOGGER.info("app '" + file + "' was not deployed");
             }
         } else {
             LOGGER.warning("message type not supported: " + type);
         }
+    }
+
+    private File deployedDir() {
+        return new File(SystemInstance.get().getHome().getDirectory(), "deployed");
     }
 
     private static boolean isDeployed(final String file) {
