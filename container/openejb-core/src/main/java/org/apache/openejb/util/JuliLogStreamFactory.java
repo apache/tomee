@@ -17,11 +17,12 @@
 package org.apache.openejb.util;
 
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.log.ConsoleColorHandler;
+import org.apache.openejb.log.SingleLineFormatter;
+import org.apache.webbeans.logger.JULLoggerFactory;
 
 import java.util.logging.ConsoleHandler;
 import java.util.logging.LogManager;
-import org.apache.openejb.log.ConsoleColorHandler;
-import org.apache.openejb.log.SingleLineFormatter;
 
 /**
  * default conf = jre conf
@@ -58,6 +59,8 @@ public class JuliLogStreamFactory implements LogStreamFactory {
         } catch (Exception ignored) {
             // no-op: openjpa is not at the classpath so don't trigger it loading with our logger
         }
+
+        System.setProperty("openwebbeans.logging.factory", JULLoggerFactory.class.getName());
     }
 
     public static boolean isNotIDE() {
