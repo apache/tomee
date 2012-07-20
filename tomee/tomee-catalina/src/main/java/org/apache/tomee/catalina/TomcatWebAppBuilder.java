@@ -48,7 +48,6 @@ import org.apache.catalina.startup.Constants;
 import org.apache.catalina.startup.ContextConfig;
 import org.apache.catalina.startup.HostConfig;
 import org.apache.catalina.startup.RealmRuleSet;
-import org.apache.catalina.tribes.Member;
 import org.apache.naming.ContextAccessController;
 import org.apache.naming.ContextBindings;
 import org.apache.openejb.AppContext;

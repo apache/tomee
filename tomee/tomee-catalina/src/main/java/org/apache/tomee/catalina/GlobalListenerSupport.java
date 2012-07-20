@@ -27,6 +27,7 @@ import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.core.StandardServer;
+import org.apache.tomee.catalina.cluster.TomEEClusterListener;
 import org.apache.tomee.loader.TomcatHelper;
 
 import java.beans.PropertyChangeEvent;
@@ -128,6 +129,7 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
 
             if (Lifecycle.BEFORE_STOP_EVENT.equals(type)) {
             	TomcatHelper.setStopping(true);
+                TomEEClusterListener.stop();
             }
             
             if (Lifecycle.AFTER_STOP_EVENT.equals(type)) {
