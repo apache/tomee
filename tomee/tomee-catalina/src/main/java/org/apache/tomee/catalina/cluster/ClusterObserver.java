@@ -19,12 +19,12 @@ public class ClusterObserver {
 
     public void deploy(@Observes final AssemblerAfterApplicationCreated app) {
         final AppInfo appInfo = app.getApp();
-        send(new UndeployMessage(appInfo.path), appInfo);
+        send(new DeployMessage(appInfo.path), appInfo);
     }
 
     public void undeploy(@Observes final AssemblerBeforeApplicationDestroyed app) {
         final AppInfo appInfo = app.getApp();
-        send(new DeployMessage(appInfo.path), appInfo);
+        send(new UndeployMessage(appInfo.path), appInfo);
     }
 
     private void send(final ClusterMessage message, final AppInfo app) {
