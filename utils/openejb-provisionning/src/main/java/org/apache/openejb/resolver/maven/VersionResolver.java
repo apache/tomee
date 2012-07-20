@@ -25,7 +25,7 @@ public final class VersionResolver {
         }
     }
 
-    public static String higestVersion(final String info, final String prefix, final String defaultVersion) {
+    public static String highestVersion(final String info, final String prefix, final String defaultVersion) {
         final VersionRangeResult result = VersionResolver.versions(info, defaultVersion);
         if (result == null) {
             return defaultVersion;
