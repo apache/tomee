@@ -91,3 +91,7 @@ javascript core, which is licensed under a modified BSD license or the Academic 
 
 This software also includes code from j4fry (http://www.j4fry.org/),
 which is licensed under ASL 2.0.
+
+=========================================================================
+  - JAnsi (http://http://jansi.fusesource.org/) org.fusesource.jansi:jansi:jar:1.8
+    License: Apache V2
