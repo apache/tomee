@@ -52,24 +52,24 @@ public class CounterCallbacksTest implements ExecutionObserver {
 
             CallbackCounter counterA = (CallbackCounter) context.lookup("java:global/simple-stateful-callbacks/CallbackCounter");
             Assert.assertNotNull(counterA);
-            Assert.assertEquals("postConstruct", received.remove(0));
+            Assert.assertEquals("postConstruct", this.received.remove(0));
 
             Assert.assertEquals(0, counterA.count());
-            Assert.assertEquals("count", received.remove(0));
+            Assert.assertEquals("count", this.received.remove(0));
 
             Assert.assertEquals(1, counterA.increment());
-            Assert.assertEquals("increment", received.remove(0));
+            Assert.assertEquals("increment", this.received.remove(0));
 
             Assert.assertEquals(0, counterA.reset());
-            Assert.assertEquals("reset", received.remove(0));
+            Assert.assertEquals("reset", this.received.remove(0));
 
             Assert.assertEquals(1, counterA.increment());
-            Assert.assertEquals("increment", received.remove(0));
+            Assert.assertEquals("increment", this.received.remove(0));
 
             System.out.println("Waiting 2 seconds...");
             Thread.sleep(2000);
 
-            Assert.assertEquals("preDestroy", received.remove(0));
+            Assert.assertEquals("preDestroy", this.received.remove(0));
 
             try {
                 counterA.increment();
@@ -85,36 +85,36 @@ public class CounterCallbacksTest implements ExecutionObserver {
             final Context context = getContext();
 
             CallbackCounter counterA = (CallbackCounter) context.lookup("java:global/simple-stateful-callbacks/CallbackCounter");
-            Assert.assertEquals("postConstruct", received.remove(0));
+            Assert.assertEquals("postConstruct", this.received.remove(0));
 
             Assert.assertEquals(1, counterA.increment());
-            Assert.assertEquals("increment", received.remove(0));
+            Assert.assertEquals("increment", this.received.remove(0));
 
             ((CallbackCounter) context.lookup("java:global/simple-stateful-callbacks/CallbackCounter")).count();
-            Assert.assertEquals("postConstruct", received.remove(0));
-            Assert.assertEquals("count", received.remove(0));
+            Assert.assertEquals("postConstruct", this.received.remove(0));
+            Assert.assertEquals("count", this.received.remove(0));
 
             ((CallbackCounter) context.lookup("java:global/simple-stateful-callbacks/CallbackCounter")).count();
-            Assert.assertEquals("postConstruct", received.remove(0));
-            Assert.assertEquals("count", received.remove(0));
+            Assert.assertEquals("postConstruct", this.received.remove(0));
+            Assert.assertEquals("count", this.received.remove(0));
 
             System.out.println("Waiting 2 seconds...");
             Thread.sleep(2000);
-            Assert.assertEquals("prePassivate", received.remove(0));
+            Assert.assertEquals("prePassivate", this.received.remove(0));
 
             context.close();
         }
         container.close();
 
-        Assert.assertEquals("preDestroy", received.remove(0));
-        Assert.assertEquals("preDestroy", received.remove(0));
+        Assert.assertEquals("preDestroy", this.received.remove(0));
+        Assert.assertEquals("preDestroy", this.received.remove(0));
 
-        Assert.assertTrue(received.toString(), received.isEmpty());
+        Assert.assertTrue(this.received.toString(), this.received.isEmpty());
     }
 
     @Override
     public void onExecution(Object value) {
         System.out.println("Test step -> " + value);
-        received.add(value);
+        this.received.add(value);
     }
 }
