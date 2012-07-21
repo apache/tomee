@@ -22,6 +22,8 @@ import org.apache.openejb.assembler.classic.ContainerInfo;
 import org.apache.openejb.assembler.classic.ContainerSystemInfo;
 import org.apache.openejb.assembler.classic.FacilitiesInfo;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
+import org.apache.openejb.assembler.classic.SecurityServiceInfo;
+import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.EjbModule;
@@ -36,18 +38,27 @@ import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.Archives;
+import org.apache.xbean.finder.AnnotationFinder;
+import org.apache.xbean.finder.MetaAnnotatedClass;
+import org.apache.xbean.finder.archive.ClassesArchive;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
 import javax.xml.bind.JAXBException;
+import java.io.File;
+import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
+import static org.apache.openejb.config.DeploymentFilterable.DEPLOYMENTS_CLASSPATH_PROPERTY;
 
 /**
  * @version $Rev$ $Date$
@@ -77,7 +88,17 @@ public @interface MetaTest {
         public void evaluate() throws Throwable {
             MetaTest annotation = testMethod.getAnnotation(MetaTest.class);
 
+            if (isSpecificBeanType(annotation)) {
 
+                testOnce(annotation);
+
+            } else {
+
+                testAsAllBeanTypes(annotation);
+            }
+        }
+
+        private void testAsAllBeanTypes(MetaTest annotation) throws Throwable {
             Class<? extends EnterpriseBean>[] classes = annotation.types();
 
             // for some reason these defaults do not work in the annotation
@@ -115,9 +136,97 @@ public @interface MetaTest {
             }
         }
 
+        private void testOnce(MetaTest annotation) throws Throwable {
+
+            try {
+
+                SystemInstance.reset();
+                SystemInstance.get().setProperty(DEPLOYMENTS_CLASSPATH_PROPERTY, "false");
+
+                Assembler assembler = new Assembler();
+                ConfigurationFactory factory = new ConfigurationFactory();
+                assembler.createTransactionManager(factory.configureService(TransactionServiceInfo.class));
+                assembler.createSecurityService(factory.configureService(SecurityServiceInfo.class));
+
+                final ArrayList<File> files = new ArrayList<File>();
+
+                { // expected archive
+                    final HashMap map = new HashMap();
+                    map.put("META-INF/ejb-jar.xml", "<ejb-jar id=\"expected\"/>");
+                    files.add(Archives.jarArchive(map, "expected", annotation.expected()));
+                }
+
+                { // actual archive
+                    final HashMap map = new HashMap();
+                    map.put("META-INF/ejb-jar.xml", "<ejb-jar id=\"actual\"/>");
+                    files.add(Archives.jarArchive(map, "actual", getClasses(annotation)));
+                }
+
+                final AppModule app = factory.loadApplication(this.getClass().getClassLoader(), "test", files);
+
+                OpenEjbConfiguration conf = factory.getOpenEjbConfiguration();
+
+                factory.configureApplication(app);
+
+                EjbJar expected = getDescriptor(app, "expected");
+                EjbJar actual = getDescriptor(app, "actual");
+                final String expectedXml = toString(expected);
+                final String actualXml = toString(actual).replaceAll("Actual", "Expected").replaceAll("actual", "expected");
+                assertEquals(expectedXml, actualXml);
+            } catch (Exception e) {
+                throw new AssertionError().initCause(e);
+            }
+        }
+
+        private Class[] getClasses(MetaTest annotation) {
+            final Class clazz = annotation.actual();
+
+            final List<Class> classes = new ArrayList<Class>();
+
+            getClasses(clazz, classes);
+
+            return classes.toArray(new Class[]{});
+        }
+
+        private void getClasses(Class clazz, List<Class> classes) {
+            if (classes.contains(clazz)) return;
+            classes.add(clazz);
+
+            final Annotation[] annotations = clazz.getAnnotations();
+            for (Annotation ann : annotations) {
+                final Class<? extends Annotation> type = ann.annotationType();
+                final String name = type.getName();
+                if (name.startsWith("javax.")) continue;
+                if (name.startsWith("java.")) continue;
+
+                getClasses(type, classes);
+            }
+        }
+
+        private EjbJar getDescriptor(AppModule app, String name) {
+            for (EjbModule ejbModule : app.getEjbModules()) {
+                if (name.equals(ejbModule.getModuleId())) {
+                    return ejbModule.getEjbJar();
+                }
+            }
+            throw new RuntimeException("Test setup failed, no such module: " + name);
+        }
+
+        private boolean isSpecificBeanType(MetaTest annotation) {
+            Class<? extends Annotation>[] annotations = new Class[]{javax.ejb.Singleton.class, javax.ejb.Stateless.class, javax.ejb.Stateful.class, javax.ejb.MessageDriven.class};
+            for (Class<? extends Annotation> compDef : annotations) {
+                if (annotation.expected().isAnnotationPresent(compDef)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private ConfigurationFactory factory() {
             try {
                 SystemInstance.reset();
+                SystemInstance.get().setProperty(DEPLOYMENTS_CLASSPATH_PROPERTY, "false");
 
                 Assembler assembler = new Assembler();
                 ConfigurationFactory factory = new ConfigurationFactory();
