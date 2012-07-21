@@ -23,6 +23,7 @@ import org.apache.openejb.loader.SystemInstance;
 public final class PropertyPlaceHolderHelper {
     private static final String PREFIX = "${";
     private static final String SUFFIX = "}";
+    private static final Properties CACHE = new Properties();
 
     private PropertyPlaceHolderHelper() {
         // no-op
@@ -33,10 +34,16 @@ public final class PropertyPlaceHolderHelper {
             return key;
         }
 
-        final String value = SystemInstance.get().getOptions().get(key.substring(2, key.length() - 1), key);
-        if (!value.equals(key) && value.startsWith("java:")) {
-            return value.substring(5);
+        String value = CACHE.getProperty(key);
+        if (value != null) {
+            return value;
         }
+
+        value = SystemInstance.get().getOptions().get(key.substring(2, key.length() - 1), key);
+        if (!value.equals(key) && value.startsWith("java:")) {
+            value = value.substring(5);
+        }
+        CACHE.setProperty(key, value);
         return value;
     }
 
