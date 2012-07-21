@@ -26,7 +26,7 @@ import javax.naming.NamingException;
 import java.util.*;
 
 public class CounterCallbacksTest implements ExecutionObserver {
-    private static List<Object> received = new ArrayList<Object>();
+    private List<Object> received = new ArrayList<Object>();
 
     public Context getContext() throws NamingException {
         final Properties p = new Properties();
