@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,7 +18,9 @@ package org.apache.openejb.meta;
 
 import org.junit.runner.RunWith;
 
-import javax.ejb.StatefulTimeout;
+import javax.ejb.MessageDriven;
+import javax.jms.Message;
+import javax.jms.MessageListener;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -27,37 +29,39 @@ import java.lang.annotation.Target;
 /**
  * @version $Rev$ $Date$
  */
+
 @RunWith(MetaRunner.class)
-public class StatefulTimeoutMetaTest {
+public class MessageDrivenMetaTest {
 
     @MetaTest(expected = ExpectedBean.class, actual = ActualBean.class)
     public void test() {
     }
 
 
-    @StatefulTimeout(value = -1)
+    @MessageDriven
     @Metatype
     @Target({ElementType.TYPE})
     @Retention(RetentionPolicy.RUNTIME)
-    public static @interface InfiniteSession {
+    public static @interface MessageConsumer {
     }
 
     /**
      * Standard bean
      */
-    @StatefulTimeout(value = -1)
-    public static class ExpectedBean implements Bean {
+    @MessageDriven
+    public static class ExpectedBean implements MessageListener {
+        @Override
+        public void onMessage(Message message) {
+        }
     }
 
     /**
      * Meta bean
      */
-    @InfiniteSession
-    public static class ActualBean implements Bean {
+    @MessageConsumer
+    public static class ActualBean implements MessageListener {
+        @Override
+        public void onMessage(Message message) {
+        }
     }
-
-
-    public static interface Bean {
-    }
-
 }

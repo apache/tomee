@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.meta;
 
-import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.ejb.Startup;
@@ -46,8 +45,7 @@ public class StartupMetaTest {
     /**
      * Standard bean
      */
-// TODO    
-//    @Startup
+    @Startup
     public static class ExpectedBean implements Bean {
     }
 

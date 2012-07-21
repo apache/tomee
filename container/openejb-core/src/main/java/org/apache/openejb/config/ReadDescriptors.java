@@ -541,7 +541,10 @@ public class ReadDescriptors implements DynamicDeployer {
     public static EjbJar readEjbJar(final InputStream is) throws OpenEJBException {
         try {
             final String content = IO.slurp(is);
-            if (isEmptyEjbJar(new ByteArrayInputStream(content.getBytes()))) return new EjbJar();
+            if (isEmptyEjbJar(new ByteArrayInputStream(content.getBytes()))) {
+                final String id = getId(new ByteArrayInputStream(content.getBytes()));
+                return new EjbJar(id);
+            }
             return (EjbJar) JaxbJavaee.unmarshalJavaee(EjbJar.class, new ByteArrayInputStream(content.getBytes()));
         } catch (SAXException e) {
             throw new OpenEJBException("Cannot parse the ejb-jar.xml"); // file: " + url.toExternalForm(), e);
@@ -601,6 +604,33 @@ public class ReadDescriptors implements DynamicDeployer {
         } catch (SAXException e) {
             return in.getLength() == 0;
         }
+    }
+
+    private static String getId(final InputStream is) {
+        final String[] id = {null};
+
+        try {
+            final LengthInputStream in = new LengthInputStream(is);
+            InputSource inputSource = new InputSource(in);
+
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            factory.setNamespaceAware(true);
+            factory.setValidating(false);
+            SAXParser parser = factory.newSAXParser();
+
+            parser.parse(inputSource, new DefaultHandler() {
+                public void startElement(String uri, String localName, String qName, Attributes att) throws SAXException {
+                    id[0] = att.getValue("id");
+                }
+
+                public InputSource resolveEntity(String publicId, String systemId) throws IOException, SAXException {
+                    return new InputSource(new ByteArrayInputStream(new byte[0]));
+                }
+            });
+        } catch (Exception e) {
+        }
+
+        return id[0];
     }
 
     public static Webservices readWebservices(URL url) throws OpenEJBException {

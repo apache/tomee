@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,7 +18,8 @@ package org.apache.openejb.meta;
 
 import org.junit.runner.RunWith;
 
-import javax.ejb.StatefulTimeout;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -27,32 +28,33 @@ import java.lang.annotation.Target;
 /**
  * @version $Rev$ $Date$
  */
+
 @RunWith(MetaRunner.class)
-public class StatefulTimeoutMetaTest {
+public class SingletonMetaTest {
 
     @MetaTest(expected = ExpectedBean.class, actual = ActualBean.class)
     public void test() {
     }
 
 
-    @StatefulTimeout(value = -1)
+    @Singleton
     @Metatype
     @Target({ElementType.TYPE})
     @Retention(RetentionPolicy.RUNTIME)
-    public static @interface InfiniteSession {
+    public static @interface JustOne {
     }
 
     /**
      * Standard bean
      */
-    @StatefulTimeout(value = -1)
+    @Singleton
     public static class ExpectedBean implements Bean {
     }
 
     /**
      * Meta bean
      */
-    @InfiniteSession
+    @JustOne
     public static class ActualBean implements Bean {
     }
 

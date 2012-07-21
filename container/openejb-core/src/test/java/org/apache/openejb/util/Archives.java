@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.util;
 
+import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 
 import java.io.BufferedInputStream;
@@ -25,7 +26,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -44,12 +48,22 @@ public class Archives {
     }
 
     public static File fileArchive(Map<String, String> entries, Class... classes) throws IOException {
+        return fileArchive(entries, Collections.EMPTY_LIST, classes);
+    }
+
+    public static File fileArchive(Map<String, String> entries, final List<String> parts, Class... classes) throws IOException {
 
         ClassLoader loader = Archives.class.getClassLoader();
 
         File classpath = File.createTempFile("test", "archive");
+        Files.deleteOnExit(classpath);
         assertTrue(classpath.delete());
         assertTrue(classpath.mkdirs());
+
+        for (String part : parts) {
+            classpath = new File(classpath, part);
+        }
+
         System.out.println("Archive file path:" + classpath.getCanonicalPath());
 
         for (Class clazz : classes) {
@@ -92,6 +106,7 @@ public class Archives {
         ClassLoader loader = Archives.class.getClassLoader();
 
         File classpath = File.createTempFile(archiveNamePrefix, ".jar");
+        classpath.deleteOnExit();
 
         // Create the ZIP file
         ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(classpath)));

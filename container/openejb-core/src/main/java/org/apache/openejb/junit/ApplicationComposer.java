@@ -302,10 +302,10 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                         final InjectionProcessor processor = new InjectionProcessor(testInstance, context.getInjections(), context.getJndiContext());
 
                         processor.createInstance();
-                        load("org.apache.webbeans.component.AbstractOwbBean");
-                        load("sun.security.pkcs11.SunPKCS11");
-                        load("sun.security.pkcs11.SunPKCS11$Descriptor");
-                        load("sun.security.pkcs11.wrapper.PKCS11Exception");
+//                        load("org.apache.webbeans.component.AbstractOwbBean");
+//                        load("sun.security.pkcs11.SunPKCS11");
+//                        load("sun.security.pkcs11.SunPKCS11$Descriptor");
+//                        load("sun.security.pkcs11.wrapper.PKCS11Exception");
                         try {
                             OWBInjector beanInjector = new OWBInjector(appContext.getWebBeansContext());
                             beanInjector.inject(testInstance);

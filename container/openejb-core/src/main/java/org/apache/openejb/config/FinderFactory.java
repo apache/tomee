@@ -17,17 +17,21 @@
 package org.apache.openejb.config;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.xbean.finder.Annotated;
 import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.IAnnotationFinder;
+import org.apache.xbean.finder.archive.Archive;
 import org.apache.xbean.finder.archive.ClassesArchive;
 import org.apache.xbean.finder.archive.ClasspathArchive;
 
@@ -54,12 +58,7 @@ public class FinderFactory {
         if (module instanceof WebModule) {
             WebModule webModule = (WebModule) module;
             final AnnotationFinder annotationFinder = new AnnotationFinder(new WebappAggregatedArchive(webModule, webModule.getScannableUrls()));
-            if (annotationFinder.hasMetaAnnotations()) {
-                annotationFinder.enableMetaAnnotations();
-            }
-            if (enableFindSubclasses()) {
-                annotationFinder.enableFindSubclasses();
-            }
+            enableFinderOptions(annotationFinder);
             finder = annotationFinder;
         } else if (module instanceof ConnectorModule) {
             ConnectorModule connectorModule = (ConnectorModule) module;
@@ -81,15 +80,57 @@ public class FinderFactory {
             }
 
             if (module instanceof Module) {
-                finder = new AnnotationFinder(new ConfigurableClasspathArchive((Module) module, url)).link();
+                final AnnotationFinder annotationFinder = new AnnotationFinder(new DebugArchive(new ConfigurableClasspathArchive((Module) module, url)));
+                enableFinderOptions(annotationFinder);
+                finder = annotationFinder.link();
             } else {
-                finder = new AnnotationFinder(new ConfigurableClasspathArchive(module.getClassLoader(), url)).link();
+                final AnnotationFinder annotationFinder = new AnnotationFinder(new DebugArchive(new ConfigurableClasspathArchive(module.getClassLoader(), url)));
+                enableFinderOptions(annotationFinder);
+                finder = annotationFinder.link();
             }
         } else {
             finder = new AnnotationFinder(new ClassesArchive()).link();
         }
 
         return new ModuleLimitedFinder(finder);
+    }
+
+    private static class DebugArchive implements Archive {
+        private final Archive archive;
+
+        private DebugArchive(Archive archive) {
+            this.archive = archive;
+        }
+
+        @Override
+        public Iterator<Entry> iterator() {
+            return archive.iterator();
+        }
+
+        @Override
+        public InputStream getBytecode(String s) throws IOException, ClassNotFoundException {
+            return archive.getBytecode(s);
+        }
+
+        @Override
+        public Class<?> loadClass(String s) throws ClassNotFoundException {
+            try {
+                return archive.loadClass(s);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+                throw e;
+            }
+        }
+    }
+    private AnnotationFinder enableFinderOptions(AnnotationFinder annotationFinder) {
+        annotationFinder.enableMetaAnnotations();
+        if (annotationFinder.hasMetaAnnotations()) {
+        }
+        if (enableFindSubclasses()) {
+            annotationFinder.enableFindSubclasses();
+        }
+
+        return annotationFinder;
     }
 
     private static boolean enableFindSubclasses() {

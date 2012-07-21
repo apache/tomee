@@ -4787,7 +4787,8 @@ public class AnnotationDeployer implements DynamicDeployer {
         private <A extends Annotation> A getInheritableAnnotation(Class clazz, Class<A> annotationClass) {
             if (clazz == null || clazz.equals(Object.class)) return null;
 
-            Annotation annotation = clazz.getAnnotation(annotationClass);
+            final MetaAnnotatedClass meta = new MetaAnnotatedClass(clazz);
+            Annotation annotation = meta.getAnnotation(annotationClass);
             if (annotation != null) {
                 return (A) annotation;
             }
