@@ -99,7 +99,9 @@
     <module>simple-osgi</module>
     <module>simple-singleton</module>
     <module>simple-stateful</module>
+    <module>simple-stateful-callbacks</module>
     <module>simple-stateless</module>
+    <module>simple-stateless-callbacks</module>
     <module>simple-stateless-with-descriptor</module>
     <module>simple-webservice</module>
     <module>spring-integration</module>
@@ -107,10 +109,12 @@
     <module>spring-data-proxy-meta</module>
     <module>telephone-stateful</module>
     <module>testcase-injection</module>
-    <module>testing-security-2</module>
     <module>testing-security-meta</module>
     <module>testing-security</module>
+    <module>testing-security-2</module>
+    <module>testing-security-3</module>
     <module>testing-transactions</module>
+    <module>testing-transactions-bmt</module>
     <module>tomee-jersey-eclipselink</module>
     <module>transaction-rollback</module>
     <module>troubleshooting</module>
