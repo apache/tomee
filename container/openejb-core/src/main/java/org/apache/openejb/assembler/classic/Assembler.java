@@ -119,6 +119,7 @@ import org.apache.openejb.core.transaction.TransactionPolicyFactory;
 import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.javaagent.Agent;
 import org.apache.openejb.jpa.integration.MakeTxLookup;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.JarLocation;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.ProvisioningUtil;
@@ -141,6 +142,7 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.OpenEJBErrorHandler;
+import org.apache.openejb.util.PropertiesHelper;
 import org.apache.openejb.util.References;
 import org.apache.openejb.util.SafeToolkit;
 import org.apache.openejb.util.proxy.ProxyFactory;
@@ -1573,6 +1575,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         serviceRecipe.setProperty("transactionManager", transactionManager);
         serviceRecipe.setProperty("ServiceId", serviceInfo.id);
         serviceRecipe.setProperty("properties", new UnsetPropertiesRecipe());
+        serviceRecipe.setProperty("Definition", PropertiesHelper.propertiesToString(serviceInfo.properties));
 
         replaceResourceAdapterProperty(serviceRecipe);
 

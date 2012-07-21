@@ -41,36 +41,41 @@ import java.util.Properties;
  * @version $Rev$ $Date$
  */
 public class DataSourceFactory {
+    public static final String POOL_PROPERTY = "openejb.datasource.pool";
 
     public static DataSource create(final String name, final boolean managed, final Class impl, final String definition) throws IllegalAccessException, InstantiationException, IOException {
 
-        final org.apache.commons.dbcp.BasicDataSource ds;
+        final DataSource ds;
 
         if (DataSource.class.isAssignableFrom(impl) && !SystemInstance.get().getOptions().get("org.apache.openejb.resource.jdbc.hot.deploy", false)) {
+
+            final Properties properties = asProperties(definition);
 
             final ObjectRecipe recipe = new ObjectRecipe(impl);
             recipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
             recipe.allow(Option.IGNORE_MISSING_PROPERTIES);
             recipe.allow(Option.NAMED_PARAMETERS);
-            recipe.setAllProperties(asProperties(definition));
+            recipe.setAllProperties(properties);
 
             DataSource dataSource = (DataSource) recipe.create();
 
             if (managed) {
                 ds = new DbcpManagedDataSource(name, dataSource);
             } else {
-                ds = new DbcpDataSource(name, dataSource);
+                if ("true".equalsIgnoreCase(properties.getProperty(POOL_PROPERTY, "true"))) {
+                    ds = new DbcpDataSource(name, dataSource);
+                } else {
+                    ds = dataSource;
+                }
             }
         } else {
-            ds = (org.apache.commons.dbcp.BasicDataSource) create(name, managed);
-            // force the driver class to be set
-            ds.setDriverClassName(impl.getName());
+            ds = create(name, managed, impl.getName());
         }
 
         return ds;
     }
 
-    private static Map<?, ?> asProperties(String definition) throws IOException {
+    private static Properties asProperties(String definition) throws IOException {
         final Properties properties = IO.readProperties(IO.read(definition), new Properties());
         trimNotSupportedDataSourceProperties(properties);
         return properties;
@@ -80,7 +85,7 @@ public class DataSourceFactory {
         properties.remove("LoginTimeout");
     }
 
-    public static DataSource create(String name, boolean managed) {
+    public static DataSource create(String name, boolean managed, String driver) {
         org.apache.commons.dbcp.BasicDataSource ds;
         if (managed) {
             XAResourceWrapper xaResourceWrapper = SystemInstance.get().getComponent(XAResourceWrapper.class);
@@ -92,6 +97,8 @@ public class DataSourceFactory {
         } else {
             ds = new BasicDataSource(name);
         }
+        // force the driver class to be set
+        ds.setDriverClassName(driver);
         return ds;
     }
 

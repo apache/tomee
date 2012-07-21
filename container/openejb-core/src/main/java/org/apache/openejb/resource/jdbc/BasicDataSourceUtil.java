@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.resource.jdbc;
 
-import org.apache.commons.dbcp.SQLNestedException;
 import org.apache.xbean.finder.ResourceFinder;
 
 import java.io.BufferedReader;
@@ -55,8 +54,7 @@ public final class BasicDataSourceUtil {
         // create the plugin
         try {
             Class pluginClass = Class.forName(pluginClassName);
-            DataSourcePlugin plugin = (DataSourcePlugin) pluginClass.newInstance();
-            return plugin;
+            return  (DataSourcePlugin) pluginClass.newInstance();
         } catch (ClassNotFoundException e) {
             throw new SQLException("Unable to load data source helper class '" + pluginClassName + "' for database '" + vendor + "'");
         } catch (Exception e) {
@@ -97,7 +95,7 @@ public final class BasicDataSourceUtil {
      */
     public static PasswordCipher getPasswordCipher(String passwordCipherClass) throws SQLException {
         // Load the password cipher class
-        Class<? extends PasswordCipher> pwdCipher = null;
+        Class<? extends PasswordCipher> pwdCipher;
 
         // try looking for implementation in /META-INF/org.apache.openejb.resource.jdbc.PasswordCipher
         ResourceFinder finder = new ResourceFinder("META-INF/");
@@ -109,7 +107,7 @@ public final class BasicDataSourceUtil {
             String message = 
                 "Password cipher '" + passwordCipherClass +
                 "' not found in META-INF/org.apache.openejb.resource.jdbc.PasswordCipher.";
-            throw new SQLNestedException(message, t);
+            throw ((SQLException) new SQLException(message, t).initCause(t));
         }
         pwdCipher = impls.get(passwordCipherClass);
 
@@ -137,18 +135,17 @@ public final class BasicDataSourceUtil {
                 }
             } catch (Throwable t) {
                 String message = "Cannot load password cipher class '" + passwordCipherClass + "'";
-                throw new SQLNestedException(message, t);
+                throw ((SQLException) new SQLException(message, t).initCause(t));
             }
         }
 
         // Create an instance
-        PasswordCipher cipher = null;
+        PasswordCipher cipher;
         try {
             cipher = pwdCipher.newInstance();
-
         } catch (Throwable t) {
             String message = "Cannot create password cipher instance";
-            throw new SQLNestedException(message, t);
+            throw ((SQLException) new SQLException(message, t).initCause(t));
         }
 
         return cipher;
