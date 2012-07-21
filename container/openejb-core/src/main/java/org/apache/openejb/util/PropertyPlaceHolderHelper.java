@@ -46,6 +46,8 @@ public final class PropertyPlaceHolderHelper {
             final Object rawValue = entry.getValue();
             if (rawValue instanceof String) {
                 updated.put(entry.getKey(), value(rawValue.toString()));
+            } else {
+                updated.put(entry.getKey(), rawValue);
             }
         }
         return updated;

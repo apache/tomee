@@ -46,9 +46,9 @@ public class DataSourceFactory {
 
         final DataSource ds;
 
-        if (DataSource.class.isAssignableFrom(impl) && !SystemInstance.get().getOptions().get("org.apache.openejb.resource.jdbc.hot.deploy", false)) {
+        final Properties properties = asProperties(definition);
 
-            final Properties properties = asProperties(definition);
+        if (createDataSourceFromClass(impl)) { // opposed to "by driver"
 
             final ObjectRecipe recipe = new ObjectRecipe(impl);
             recipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
@@ -68,10 +68,14 @@ public class DataSourceFactory {
                 }
             }
         } else {
-            ds = create(name, managed, impl.getName());
+            ds = create(name, managed, impl.getName(), properties);
         }
 
         return ds;
+    }
+
+    private static boolean createDataSourceFromClass(final Class<?> impl) {
+        return DataSource.class.isAssignableFrom(impl) && !SystemInstance.get().getOptions().get("org.apache.openejb.resource.jdbc.hot.deploy", false);
     }
 
     private static boolean useDbcp(final Properties properties) {
@@ -88,7 +92,7 @@ public class DataSourceFactory {
         properties.remove("LoginTimeout");
     }
 
-    public static DataSource create(String name, boolean managed, String driver) {
+    public static DataSource create(String name, boolean managed, String driver, Properties properties) {
         org.apache.commons.dbcp.BasicDataSource ds;
         if (managed) {
             XAResourceWrapper xaResourceWrapper = SystemInstance.get().getComponent(XAResourceWrapper.class);
@@ -100,8 +104,10 @@ public class DataSourceFactory {
         } else {
             ds = new BasicDataSource(name);
         }
+
         // force the driver class to be set
         ds.setDriverClassName(driver);
+
         return ds;
     }
 
