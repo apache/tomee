@@ -34,7 +34,6 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
-import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -59,10 +58,10 @@ public class DataSourceFactory {
 
             DataSource dataSource = (DataSource) recipe.create();
 
-            if (managed) {
+            if (managed) { // TODO: same than for not managed when we'll get a proxy to manage tx for ds
                 ds = new DbcpManagedDataSource(name, dataSource);
             } else {
-                if ("true".equalsIgnoreCase(properties.getProperty(POOL_PROPERTY, "true"))) {
+                if (useDbcp(properties)) {
                     ds = new DbcpDataSource(name, dataSource);
                 } else {
                     ds = dataSource;
@@ -73,6 +72,10 @@ public class DataSourceFactory {
         }
 
         return ds;
+    }
+
+    private static boolean useDbcp(final Properties properties) {
+        return "true".equalsIgnoreCase(properties.getProperty(POOL_PROPERTY, "true"));
     }
 
     private static Properties asProperties(String definition) throws IOException {
