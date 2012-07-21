@@ -130,6 +130,7 @@
                   <version>${tomcat.bundle.version}</version>
                   <type>zip</type>
                   <outputDirectory>${webprofile.work-dir}</outputDirectory>
+                  <destFileName>apache-tomcat-${tomcat.bundle.version}.zip</destFileName>
                 </artifactItem>
               </artifactItems>
             </configuration>
@@ -148,6 +149,7 @@
                   <version>${tomcat.bundle.version}</version>
                   <type>zip</type>
                   <outputDirectory>${jaxrs.work-dir}</outputDirectory>
+                  <destFileName>apache-tomcat-${tomcat.bundle.version}.zip</destFileName>
                 </artifactItem>
               </artifactItems>
             </configuration>
@@ -166,6 +168,7 @@
                   <version>${tomcat.bundle.version}</version>
                   <type>zip</type>
                   <outputDirectory>${plus.work-dir}</outputDirectory>
+                  <destFileName>apache-tomcat-${tomcat.bundle.version}.zip</destFileName>
                 </artifactItem>
               </artifactItems>
             </configuration>
