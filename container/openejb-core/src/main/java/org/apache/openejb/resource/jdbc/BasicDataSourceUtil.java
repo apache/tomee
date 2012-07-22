@@ -110,7 +110,7 @@ public final class BasicDataSourceUtil {
             String message = 
                 "Password cipher '" + passwordCipherClass +
                 "' not found in META-INF/org.apache.openejb.resource.jdbc.cipher.PasswordCipher.";
-            throw ((SQLException) new SQLException(message, t).initCause(t));
+            throw new SQLException(message, t);
         }
         pwdCipher = impls.get(passwordCipherClass);
 
@@ -138,7 +138,7 @@ public final class BasicDataSourceUtil {
                 }
             } catch (Throwable t) {
                 String message = "Cannot load password cipher class '" + passwordCipherClass + "'";
-                throw ((SQLException) new SQLException(message, t).initCause(t));
+                throw new SQLException(message, t);
             }
         }
 
@@ -148,7 +148,7 @@ public final class BasicDataSourceUtil {
             cipher = pwdCipher.newInstance();
         } catch (Throwable t) {
             String message = "Cannot create password cipher instance";
-            throw ((SQLException) new SQLException(message, t).initCause(t));
+            throw new SQLException(message, t);
         }
 
         return cipher;
