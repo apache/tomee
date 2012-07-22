@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.resource.jdbc;
+package org.apache.openejb.resource.jdbc.dbcp;
 
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
@@ -28,6 +28,7 @@ import javax.transaction.TransactionManager;
 import javax.transaction.xa.XAResource;
 
 import org.apache.openejb.resource.XAResourceWrapper;
+import org.apache.openejb.resource.jdbc.dbcp.BasicManagedDataSource;
 
 public class ManagedDataSourceWithRecovery extends BasicManagedDataSource {
     private TransactionManager suppliedTransactionManager;

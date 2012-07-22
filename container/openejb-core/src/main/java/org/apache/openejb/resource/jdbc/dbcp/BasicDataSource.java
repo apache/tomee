@@ -14,20 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.resource.jdbc;
+package org.apache.openejb.resource.jdbc.dbcp;
 
+import org.apache.openejb.loader.SystemInstance;
+
+import javax.sql.DataSource;
 import java.io.File;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
-import javax.sql.DataSource;
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.assembler.monitoring.JMXBasicDataSource;
+import org.apache.openejb.resource.jdbc.BasicDataSourceUtil;
+import org.apache.openejb.resource.jdbc.plugin.DataSourcePlugin;
+import org.apache.openejb.resource.jdbc.IsolationLevels;
+import org.apache.openejb.resource.jdbc.cipher.PasswordCipher;
 
 @SuppressWarnings({"UnusedDeclaration"})
-public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.BasicManagedDataSource {
+public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
 
     private static final ReentrantLock lock = new ReentrantLock();
 
@@ -38,12 +43,12 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
      * ciphered value.
      * <p/>
      * <em>The default is no codec.</em>. In other words, it means password is
-     * not ciphered. The {@link PlainTextPasswordCipher} can also be used.
+     * not ciphered. The {@link org.apache.openejb.resource.jdbc.cipher.PlainTextPasswordCipher} can also be used.
      */
     private String passwordCipher = null;
     private JMXBasicDataSource jmxDs = null;
 
-    public BasicManagedDataSource(final String name) {
+    public BasicDataSource(final String name) {
         registerAsMbean(name);
     }
 
@@ -89,6 +94,7 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
             l.unlock();
         }
     }
+
 
     public String getUserName() {
         final ReentrantLock l = lock;
@@ -197,7 +203,6 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
                 helper.configure(this);
             }
 
-            wrapTransactionManager();
             // create the data source
             if (helper == null || !helper.enableUserDirHack()) {
                 return super.createDataSource();
@@ -218,10 +223,6 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
         } finally {
             l.unlock();
         }
-    }
-
-    protected void wrapTransactionManager() {
-        //TODO?
     }
 
     public void close() throws SQLException {
@@ -263,4 +264,5 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
             l.unlock();
         }
     }
+
 }

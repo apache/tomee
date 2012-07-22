@@ -14,20 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.resource.jdbc;
+package org.apache.openejb.resource.jdbc.plugin;
 
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.commons.dbcp.*;
-import org.apache.commons.dbcp.BasicDataSource;
+public interface DataSourcePlugin {
+    void configure(org.apache.commons.dbcp.BasicDataSource dataSource);
 
-import javax.resource.spi.ManagedConnectionFactory;
-
-public class DerbyDataSourcePlugin implements DataSourcePlugin {
-    public void configure(BasicDataSource dataSource) {
-        System.setProperty("derby.system.home", SystemInstance.get().getBase().getDirectory().getAbsolutePath());
-    }
-
-    public boolean enableUserDirHack() {
-        return true;
-    }
+    boolean enableUserDirHack();
 }

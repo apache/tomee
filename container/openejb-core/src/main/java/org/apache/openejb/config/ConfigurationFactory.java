@@ -93,6 +93,8 @@ import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.resource.jdbc.pool.DataSourceCreator;
+import org.apache.openejb.resource.jdbc.pool.DefaultDataSourceCreator;
 import org.apache.openejb.util.EventHelper;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -142,6 +144,9 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         this.deploymentLoader = new DeploymentLoader();
 
         final Options options = SystemInstance.get().getOptions();
+        if (SystemInstance.get().getComponent(DataSourceCreator.class) == null) {
+            SystemInstance.get().setComponent(DataSourceCreator.class, new DefaultDataSourceCreator());
+        }
 
         final Chain chain = new Chain();
 

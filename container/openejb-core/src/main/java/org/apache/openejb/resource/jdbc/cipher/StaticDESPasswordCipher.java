@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.resource.jdbc;
+package org.apache.openejb.resource.jdbc.cipher;
 
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.util.Base64;
