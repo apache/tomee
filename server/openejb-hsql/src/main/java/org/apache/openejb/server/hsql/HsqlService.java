@@ -19,7 +19,7 @@ package org.apache.openejb.server.hsql;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.resource.jdbc.HsqldbDataSourcePlugin;
+import org.apache.openejb.resource.jdbc.plugin.HsqldbDataSourcePlugin;
 import org.apache.openejb.server.SelfManaging;
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
