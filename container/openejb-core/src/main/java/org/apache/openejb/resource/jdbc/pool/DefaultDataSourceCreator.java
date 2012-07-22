@@ -22,8 +22,10 @@ public class DefaultDataSourceCreator implements DataSourceCreator {
     }
 
     @Override
-    public DataSource pool(final String name, final DataSource ds) {
-        return new DbcpDataSource(name, ds);
+    public DataSource poolManaged(final String name, final String driver, final Properties properties) {
+        final BasicManagedDataSource ds = new BasicManagedDataSource(name);
+        ds.setDriverClassName(driver);
+        return ds;
     }
 
     @Override
@@ -34,10 +36,8 @@ public class DefaultDataSourceCreator implements DataSourceCreator {
     }
 
     @Override
-    public DataSource poolManaged(final String name, final String driver, final Properties properties) {
-        final BasicManagedDataSource ds = new BasicManagedDataSource(name);
-        ds.setDriverClassName(driver);
-        return ds;
+    public DataSource pool(final String name, final DataSource ds) {
+        return new DbcpDataSource(name, ds);
     }
 
     @Override

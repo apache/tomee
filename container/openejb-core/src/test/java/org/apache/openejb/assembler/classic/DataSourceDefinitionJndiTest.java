@@ -39,6 +39,7 @@ import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.junit.Module;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.resource.jdbc.DataSourceFactory;
+import org.apache.openejb.resource.jdbc.dbcp.DbcpManagedDataSource;
 import org.apache.openejb.spi.ContainerSystem;
 import org.hsqldb.jdbc.JDBCConnection;
 import org.hsqldb.jdbc.JDBCDataSource;
@@ -111,8 +112,8 @@ public class DataSourceDefinitionJndiTest {
 
     private void check(final DataSource ds, final String name) throws SQLException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         // the first "cast part" is not important, we just want to check the jdbc url is ok
-        assertThat(ds, instanceOf(DataSourceFactory.DbcpManagedDataSource.class));
-        final DataSourceFactory.DbcpManagedDataSource dbcp = (DataSourceFactory.DbcpManagedDataSource) ds;
+        assertThat(ds, instanceOf(DbcpManagedDataSource.class));
+        final DbcpManagedDataSource dbcp = (DbcpManagedDataSource) ds;
         final Connection connection = dbcp.getConnection();
         assertThat(connection, instanceOf(ManagedConnection.class));
         final ManagedConnection mc = (ManagedConnection) connection;
