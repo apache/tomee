@@ -75,9 +75,9 @@ public class OpenEJBContextConfig extends ContextConfig {
     }
 
     @Override
-    protected void processAnnotationsUrl(URL url, WebXml fragment) {
+    protected void processAnnotationsUrl(URL url, WebXml fragment, boolean handlesTypeOnly) {
         if (SystemInstance.get().getOptions().get("tomee.tomcat.scan", false)) {
-            super.processAnnotationsUrl(url, fragment);
+            super.processAnnotationsUrl(url, fragment, handlesTypeOnly);
             return;
         }
 
@@ -86,7 +86,7 @@ public class OpenEJBContextConfig extends ContextConfig {
 
             if (webAppInfo == null) {
                 logger.warning("WebAppInfo not found. " + info);
-                super.processAnnotationsUrl(url, fragment);
+                super.processAnnotationsUrl(url, fragment, handlesTypeOnly);
                 return;
             }
 
@@ -109,7 +109,7 @@ public class OpenEJBContextConfig extends ContextConfig {
 
                 final InputStream inputStream = classUrl.openStream();
                 try {
-                    processAnnotationsStream(inputStream, fragment);
+                    processAnnotationsStream(inputStream, fragment, handlesTypeOnly);
                     logger.debug("Succeeded " + webAnnotatedClassName);
                 } catch (IOException e) {
                     e.printStackTrace();
