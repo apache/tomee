@@ -73,7 +73,7 @@ public class DataSourceFactory {
                     ds = creator.poolManaged(name, impl.getName(), properties);
                 }
             } else {
-                ds = creator.pool(name, impl.getName());
+                ds = creator.pool(name, impl.getName(), properties);
             }
         }
 

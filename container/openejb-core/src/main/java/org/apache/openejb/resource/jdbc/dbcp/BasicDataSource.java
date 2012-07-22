@@ -48,8 +48,12 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
     private String passwordCipher = null;
     private JMXBasicDataSource jmxDs = null;
 
+    public BasicDataSource() {
+        // no-op
+    }
+
     public BasicDataSource(final String name) {
-        registerAsMbean(name);
+        setName(name);
     }
 
     private void registerAsMbean(final String name) {
@@ -265,4 +269,7 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
         }
     }
 
+    public void setName(final String name) {
+        registerAsMbean(name);
+    }
 }

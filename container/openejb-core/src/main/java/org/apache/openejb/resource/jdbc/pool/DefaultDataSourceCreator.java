@@ -41,19 +41,19 @@ public class DefaultDataSourceCreator implements DataSourceCreator {
     }
 
     @Override
-    public DataSource pool(String name, String driver) {
+    public DataSource pool(final String name, final String driver, final Properties properties) {
         final BasicDataSource ds = new BasicDataSource(name);
         ds.setDriverClassName(driver);
         return ds;
     }
 
     @Override
-    public boolean hasCreated(Object object) {
+    public boolean hasCreated(final Object object) {
         return object instanceof org.apache.commons.dbcp.BasicDataSource;
     }
 
     @Override
-    public void destroy(Object object) throws Throwable {
+    public void destroy(final Object object) throws Throwable {
         ((org.apache.commons.dbcp.BasicDataSource) object).close();
     }
 }
