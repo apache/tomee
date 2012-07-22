@@ -16,7 +16,7 @@
  */
 package org.superbiz.dsdef;
 
-import org.apache.openejb.resource.jdbc.DataSourceFactory;
+import org.apache.openejb.resource.jdbc.dbcp.DbcpManagedDataSource;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -57,9 +57,9 @@ public class DataSourceDefinitionTest {
     public void checkDs() throws SQLException {
         final DataSource ds = persister.getDs();
         assertNotNull(ds);
-        assertThat(ds, instanceOf(DataSourceFactory.DbcpManagedDataSource.class));
+        assertThat(ds, instanceOf(DbcpManagedDataSource.class));
 
-        final DataSourceFactory.DbcpManagedDataSource castedDs = (DataSourceFactory.DbcpManagedDataSource) ds;
+        final DbcpManagedDataSource castedDs = (DbcpManagedDataSource) ds;
 
         final String driver = castedDs.getDriverClassName();
         assertNull(null, driver);
