@@ -46,4 +46,14 @@ public class DefaultDataSourceCreator implements DataSourceCreator {
         ds.setDriverClassName(driver);
         return ds;
     }
+
+    @Override
+    public boolean hasCreated(Object object) {
+        return object instanceof org.apache.commons.dbcp.BasicDataSource;
+    }
+
+    @Override
+    public void destroy(Object object) throws Throwable {
+        ((org.apache.commons.dbcp.BasicDataSource) object).close();
+    }
 }

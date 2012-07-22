@@ -132,6 +132,7 @@ import org.apache.openejb.observer.Observes;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
 import org.apache.openejb.resource.GeronimoConnectionManagerFactory;
+import org.apache.openejb.resource.jdbc.pool.DataSourceCreator;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
@@ -1112,11 +1113,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             } catch (Throwable t) {
                 logger.fatal("ResourceAdapter Shutdown Failed: " + name, t);
             }
-        } else if (object instanceof org.apache.commons.dbcp.BasicDataSource) {
+        } else if (SystemInstance.get().getComponent(DataSourceCreator.class).hasCreated(object)) {
             logger.info("Closing DataSource: " + name);
 
             try {
-                ((org.apache.commons.dbcp.BasicDataSource) object).close();
+                SystemInstance.get().getComponent(DataSourceCreator.class).destroy(object);
             } catch (Throwable t) {
                 //Ignore
             }
