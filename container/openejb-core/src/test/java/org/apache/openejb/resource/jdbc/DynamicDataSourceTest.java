@@ -57,6 +57,7 @@ import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.jpa.unit.TransactionType;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.resource.jdbc.router.Router;
 import org.apache.openejb.spi.ContainerSystem;
 import org.junit.Test;
 

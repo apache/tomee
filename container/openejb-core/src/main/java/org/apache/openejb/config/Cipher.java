@@ -29,13 +29,13 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.apache.openejb.cli.SystemExitException;
 import org.apache.openejb.resource.jdbc.BasicDataSourceUtil;
-import org.apache.openejb.resource.jdbc.PasswordCipher;
+import org.apache.openejb.resource.jdbc.cipher.PasswordCipher;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.Join;
 import org.apache.xbean.finder.ResourceFinder;
 
 /**
- * Command line tool on top of the {@link org.apache.openejb.resource.jdbc.PasswordCipher} interface. Basically,
+ * Command line tool on top of the {@link org.apache.openejb.resource.jdbc.cipher.PasswordCipher} interface. Basically,
  * it allows end user to encrypt/decrypt a string (ie. a password) using a cipher
  * implementation.
  */

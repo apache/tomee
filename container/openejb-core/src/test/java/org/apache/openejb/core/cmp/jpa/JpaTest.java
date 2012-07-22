@@ -18,9 +18,7 @@
 package org.apache.openejb.core.cmp.jpa;
 
 import java.lang.instrument.ClassFileTransformer;
-import java.lang.instrument.Instrumentation;
 import java.lang.reflect.InvocationTargetException;
-import java.security.ProtectionDomain;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -44,12 +42,11 @@ import javax.transaction.TransactionSynchronizationRegistry;
 import junit.framework.TestCase;
 import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
 import org.apache.openejb.core.TempClassLoader;
-import org.apache.openejb.javaagent.Agent;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
 import org.apache.openejb.persistence.PersistenceUnitInfoImpl;
-import org.apache.openejb.resource.jdbc.BasicDataSource;
-import org.apache.openejb.resource.jdbc.BasicManagedDataSource;
+import org.apache.openejb.resource.jdbc.dbcp.BasicDataSource;
+import org.apache.openejb.resource.jdbc.dbcp.BasicManagedDataSource;
 import org.apache.xbean.naming.context.ImmutableContext;
 import org.apache.xbean.asm.ClassAdapter;
 import org.apache.xbean.asm.ClassReader;

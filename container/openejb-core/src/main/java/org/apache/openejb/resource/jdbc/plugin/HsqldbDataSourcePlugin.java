@@ -14,10 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.resource.jdbc;
+package org.apache.openejb.resource.jdbc.plugin;
 
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.commons.dbcp.*;
 import org.apache.commons.dbcp.BasicDataSource;
 
 import java.io.File;

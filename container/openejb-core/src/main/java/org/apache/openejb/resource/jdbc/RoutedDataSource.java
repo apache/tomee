@@ -28,6 +28,7 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.resource.jdbc.router.Router;
 import org.apache.openejb.spi.ContainerSystem;
 
 public class RoutedDataSource implements DataSource {

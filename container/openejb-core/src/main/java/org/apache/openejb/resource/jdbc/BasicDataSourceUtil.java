@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.resource.jdbc;
 
+import org.apache.openejb.resource.jdbc.cipher.PasswordCipher;
+import org.apache.openejb.resource.jdbc.plugin.DataSourcePlugin;
 import org.apache.xbean.finder.ResourceFinder;
 
 import java.io.BufferedReader;
@@ -27,6 +29,7 @@ import java.util.Map;
 
 public final class BasicDataSourceUtil {
     private BasicDataSourceUtil() {
+        // no-op
     }
 
     public static DataSourcePlugin getDataSourcePlugin(String jdbcUrl) throws SQLException {
@@ -84,7 +87,7 @@ public final class BasicDataSourceUtil {
     }
     
     /**
-     * Create a {@link PasswordCipher} instance from the
+     * Create a {@link org.apache.openejb.resource.jdbc.cipher.PasswordCipher} instance from the
      *  passwordCipher class name.
      * 
      * @param passwordCipherClass the password cipher to look for
@@ -97,7 +100,7 @@ public final class BasicDataSourceUtil {
         // Load the password cipher class
         Class<? extends PasswordCipher> pwdCipher;
 
-        // try looking for implementation in /META-INF/org.apache.openejb.resource.jdbc.PasswordCipher
+        // try looking for implementation in /META-INF/org.apache.openejb.resource.jdbc.org.apache.openejb.resource.jdbc.cipher.PasswordCipher
         ResourceFinder finder = new ResourceFinder("META-INF/");
         Map<String, Class<? extends PasswordCipher>> impls;
         try {
@@ -106,14 +109,14 @@ public final class BasicDataSourceUtil {
         } catch (Throwable t) {
             String message = 
                 "Password cipher '" + passwordCipherClass +
-                "' not found in META-INF/org.apache.openejb.resource.jdbc.PasswordCipher.";
+                "' not found in META-INF/org.apache.openejb.resource.jdbc.cipher.PasswordCipher.";
             throw ((SQLException) new SQLException(message, t).initCause(t));
         }
         pwdCipher = impls.get(passwordCipherClass);
 
         //
         final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-        final URL url = tccl.getResource("META-INF/org.apache.openejb.resource.jdbc.PasswordCipher/" + passwordCipherClass);
+        final URL url = tccl.getResource("META-INF/org.apache.openejb.resource.jdbc.cipher.PasswordCipher/" + passwordCipherClass);
         if (url != null) {
             try {
                 final String clazz = new BufferedReader(new InputStreamReader(url.openStream())).readLine().trim();
@@ -123,7 +126,7 @@ public final class BasicDataSourceUtil {
             }
         }
 
-        // if not found in META-INF/org.apache.openejb.resource.jdbc.PasswordCipher
+        // if not found in META-INF/org.apache.openejb.resource.jdbc.org.apache.openejb.resource.jdbc.cipher.PasswordCipher
         // we can try to load the class.
         if (null == pwdCipher) {
             try {

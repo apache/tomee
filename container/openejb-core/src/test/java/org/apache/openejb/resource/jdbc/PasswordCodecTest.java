@@ -20,6 +20,9 @@ package org.apache.openejb.resource.jdbc;
 import java.sql.SQLException;
 
 import junit.framework.TestCase;
+import org.apache.openejb.resource.jdbc.cipher.PasswordCipher;
+import org.apache.openejb.resource.jdbc.cipher.PlainTextPasswordCipher;
+import org.apache.openejb.resource.jdbc.cipher.StaticDESPasswordCipher;
 
 public class PasswordCodecTest extends TestCase {
 	

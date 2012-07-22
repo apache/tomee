@@ -24,8 +24,8 @@ import org.apache.openejb.javaagent.Agent;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
 import org.apache.openejb.persistence.PersistenceUnitInfoImpl;
-import org.apache.openejb.resource.jdbc.BasicDataSource;
-import org.apache.openejb.resource.jdbc.BasicManagedDataSource;
+import org.apache.openejb.resource.jdbc.dbcp.BasicDataSource;
+import org.apache.openejb.resource.jdbc.dbcp.BasicManagedDataSource;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.spi.PersistenceProvider;

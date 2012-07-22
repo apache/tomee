@@ -18,6 +18,10 @@
 package org.apache.openejb.resource.jdbc;
 
 import junit.framework.TestCase;
+import org.apache.openejb.resource.jdbc.plugin.DataSourcePlugin;
+import org.apache.openejb.resource.jdbc.plugin.DerbyDataSourcePlugin;
+import org.apache.openejb.resource.jdbc.plugin.HsqldbDataSourcePlugin;
+import org.apache.openejb.resource.jdbc.plugin.InstantdbDataSourcePlugin;
 
 import java.sql.SQLException;
 
