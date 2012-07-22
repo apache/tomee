@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.resource.jdbc.dbcp;
 
+import org.apache.openejb.resource.XAResourceWrapper;
+
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
 import javax.transaction.InvalidTransactionException;
@@ -26,9 +28,6 @@ import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.xa.XAResource;
-
-import org.apache.openejb.resource.XAResourceWrapper;
-import org.apache.openejb.resource.jdbc.dbcp.BasicManagedDataSource;
 
 public class ManagedDataSourceWithRecovery extends BasicManagedDataSource {
     private TransactionManager suppliedTransactionManager;

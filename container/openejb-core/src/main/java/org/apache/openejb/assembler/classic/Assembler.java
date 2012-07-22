@@ -1577,7 +1577,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         serviceRecipe.setProperty("transactionManager", transactionManager);
         serviceRecipe.setProperty("ServiceId", serviceInfo.id);
         serviceRecipe.setProperty("properties", new UnsetPropertiesRecipe());
-        if (!serviceRecipe.getProperties().containsKey("Definition")) {
+        if (!serviceRecipe.getProperties().containsKey("Definition") || ((String) serviceRecipe.getProperty("Definition")).isEmpty()) {
             serviceRecipe.setProperty("Definition", PropertiesHelper.propertiesToString(PropertyPlaceHolderHelper.holds(serviceInfo.properties)));
         }
 
