@@ -19,12 +19,20 @@ package org.apache.tomee.catalina;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.deploy.WebXml;
 import org.apache.catalina.startup.ContextConfig;
+import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.xml.sax.InputSource;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.net.URLClassLoader;
 
 public class OpenEJBContextConfig extends ContextConfig {
+
+    private static Logger logger = Logger.getInstance(LogCategory.OPENEJB, OpenEJBContextConfig.class);
 
     private TomcatWebAppBuilder.StandardContextInfo info;
 
@@ -66,11 +74,10 @@ public class OpenEJBContextConfig extends ContextConfig {
         super.parseWebXml(source, dest, fragment);
     }
 
-//    @Override
-    protected void DISABLE_processAnnotationsUrl(URL url, WebXml fragment, boolean handlesTypesOnly) {
-        /* between t7.0.28 and t7.0.29 the API changed and since we don't use it simply dont break the build
+    @Override
+    protected void processAnnotationsUrl(URL url, WebXml fragment) {
         if (SystemInstance.get().getOptions().get("tomee.tomcat.scan", false)) {
-            super.processAnnotationsUrl(url, fragment, handlesTypesOnly);
+            super.processAnnotationsUrl(url, fragment);
             return;
         }
 
@@ -79,7 +86,7 @@ public class OpenEJBContextConfig extends ContextConfig {
 
             if (webAppInfo == null) {
                 logger.warning("WebAppInfo not found. " + info);
-                super.processAnnotationsUrl(url, fragment, handlesTypesOnly);
+                super.processAnnotationsUrl(url, fragment);
                 return;
             }
 
@@ -102,7 +109,7 @@ public class OpenEJBContextConfig extends ContextConfig {
 
                 final InputStream inputStream = classUrl.openStream();
                 try {
-                    processAnnotationsStream(inputStream, fragment, handlesTypesOnly);
+                    processAnnotationsStream(inputStream, fragment);
                     logger.debug("Succeeded " + webAnnotatedClassName);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -114,6 +121,5 @@ public class OpenEJBContextConfig extends ContextConfig {
         } catch (Exception e) {
             logger.error("OpenEJBContextConfig.processAnnotationsUrl: failed.", e);
         }
-        */
     }
 }
