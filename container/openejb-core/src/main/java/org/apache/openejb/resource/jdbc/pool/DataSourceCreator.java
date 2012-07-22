@@ -12,4 +12,7 @@ public interface DataSourceCreator {
     DataSource poolManagedWithRecovery(String name, XAResourceWrapper xaResourceWrapper, String driver, Properties properties);
     DataSource poolManaged(String name, String driver, Properties properties);
     DataSource pool(String name, String driver);
+
+    boolean hasCreated(Object object);
+    void destroy(Object object) throws Throwable;
 }
