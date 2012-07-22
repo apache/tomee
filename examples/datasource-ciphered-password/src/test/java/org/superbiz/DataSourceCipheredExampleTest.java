@@ -17,7 +17,7 @@
 package org.superbiz;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.openejb.resource.jdbc.PasswordCipher;
+import org.apache.openejb.resource.jdbc.cipher.PasswordCipher;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
