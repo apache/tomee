@@ -23,8 +23,12 @@ import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.tomcat.util.ExceptionUtils;
+import org.apache.tomcat.util.bcel.classfile.ClassFormatException;
 import org.xml.sax.InputSource;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -37,6 +41,7 @@ public class OpenEJBContextConfig extends ContextConfig {
     private TomcatWebAppBuilder.StandardContextInfo info;
 
     public OpenEJBContextConfig(TomcatWebAppBuilder.StandardContextInfo standardContextInfo) {
+        logger.info("OpenEJBContextConfig("+standardContextInfo.toString());
         info = standardContextInfo;
     }
 
@@ -75,7 +80,55 @@ public class OpenEJBContextConfig extends ContextConfig {
     }
 
     @Override
+    protected void processAnnotationsFile(File file, WebXml fragment,
+            boolean handlesTypesOnly) {
+        logger.info("processAnnotationsFile "+ file.getAbsolutePath() );
+        try {
+            final WebAppInfo webAppInfo = info.get();
+
+            if (webAppInfo == null) {
+                logger.warning("WebAppInfo not found. " + info);
+                super.processAnnotationsFile(file, fragment, handlesTypesOnly);
+                return;
+            }
+
+            logger.info("Optimized Scan of File " + file.getAbsolutePath());
+
+            // TODO We should just remember which jars each class came from
+            // then we wouldn't need to lookup the class from the URL in this
+            // way to guarantee we only add classes from this URL.
+            final URLClassLoader loader = new URLClassLoader(new URL[]{file.toURI().toURL()});
+            for (String webAnnotatedClassName : webAppInfo.webAnnotatedClasses) {
+
+                final String classFile = webAnnotatedClassName.replace('.', '/') + ".class";
+                final URL classUrl = loader.getResource(classFile);
+
+                if (classUrl == null) {
+                    logger.debug("Not present " + webAnnotatedClassName);
+                    continue;
+                }
+
+                logger.debug("Found " + webAnnotatedClassName);
+
+                final InputStream inputStream = classUrl.openStream();
+                try {
+                    processAnnotationsStream(inputStream, fragment, handlesTypesOnly);
+                    logger.debug("Succeeded " + webAnnotatedClassName);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    inputStream.close();
+                }
+
+            }
+        } catch (Exception e) {
+            logger.error("OpenEJBContextConfig.processAnnotationsFile: failed.", e);
+        }
+    }
+
+    @Override
     protected void processAnnotationsUrl(URL url, WebXml fragment, boolean handlesTypeOnly) {
+        logger.info("processAnnotationsUrl " + url);
         if (SystemInstance.get().getOptions().get("tomee.tomcat.scan", false)) {
             super.processAnnotationsUrl(url, fragment, handlesTypeOnly);
             return;
@@ -90,13 +143,14 @@ public class OpenEJBContextConfig extends ContextConfig {
                 return;
             }
 
-            logger.debug("Optimized Scan of URL " + url);
+            logger.info("Optimized Scan of URL " + url);
 
             // TODO We should just remember which jars each class came from
             // then we wouldn't need to lookup the class from the URL in this
             // way to guarantee we only add classes from this URL.
             final URLClassLoader loader = new URLClassLoader(new URL[]{url});
             for (String webAnnotatedClassName : webAppInfo.webAnnotatedClasses) {
+
                 final String classFile = webAnnotatedClassName.replace('.', '/') + ".class";
                 final URL classUrl = loader.getResource(classFile);
 
