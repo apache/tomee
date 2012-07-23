@@ -5,9 +5,10 @@ import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.junit.Configuration;
 import org.apache.openejb.junit.Module;
+import org.apache.openejb.resource.jdbc.managed.ManagedConnection;
 import org.apache.openejb.resource.jdbc.pool.DbcpDataSourceCreator;
+import org.junit.After;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -16,17 +17,19 @@ import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Singleton;
 import javax.sql.DataSource;
+import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Map;
 import java.util.Properties;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-@Ignore("to implement")
 @RunWith(ApplicationComposer.class)
 public class ManagedDataSourceTest {
     private static final String URL = "jdbc:hsqldb:mem:managed";
@@ -63,7 +66,8 @@ public class ManagedDataSourceTest {
         return p;
     }
 
-    @Module public SingletonBean app() throws Exception {
+    @Module
+    public SingletonBean app() throws Exception {
         final SingletonBean bean = new SingletonBean(PersistManager.class);
         bean.setLocalBean(new Empty());
         return bean;
@@ -111,6 +115,14 @@ public class ManagedDataSourceTest {
             System.out.println(ignored);
         }
         assertFalse(exists(2));
+    }
+
+    @After
+    public void checkTxMapIsEmpty() throws Exception {
+        final Field map = ManagedConnection.class.getDeclaredField("CONNECTION_BY_TX");
+        map.setAccessible(true);
+        final Map<?, ?> instance = (Map<?, ?>) map.get(null);
+        assertEquals(0, instance.size());
     }
 
     private static boolean exists(int id) throws SQLException {
