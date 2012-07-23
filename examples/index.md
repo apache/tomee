@@ -47,7 +47,7 @@ All the examples show code, but some are better documented than others.  Example
  - [cdi-basic](cdi-basic/README.html) *
  - [cdi-request-scope](cdi-request-scope/README.html) *
  - [cdi-application-scope](cdi-application-scope/README.html) *
- - [cdi-interceptors](cdi-interceptors/README.html) *
+ - [simple-cdi-interceptor](simple-cdi-interceptor/README.html) *
  - [cdi-produces-disposes](cdi-produces-disposes/README.html)
  - [decorators](decorators/README.html)
  - [cdi-alternative-and-stereotypes](cdi-alternative-and-stereotypes/README.html) *
