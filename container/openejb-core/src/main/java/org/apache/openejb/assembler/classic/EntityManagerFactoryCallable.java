@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.persistence.PersistenceUnitInfoImpl;
 
 import javax.persistence.EntityManagerFactory;
@@ -25,6 +26,8 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 
 public class EntityManagerFactoryCallable implements Callable<EntityManagerFactory> {
+    public static final String OPENEJB_JPA_INIT_ENTITYMANAGER = "openejb.jpa.init-entitymanager";
+
     private final String persistenceProviderClassName;
     private final PersistenceUnitInfoImpl unitInfo;
     private final ClassLoader appClassLoader;
@@ -47,6 +50,12 @@ public class EntityManagerFactoryCallable implements Callable<EntityManagerFacto
             Map<String, Object> properties = new HashMap<String, Object>();
             properties.put("javax.persistence.validator.ValidatorFactory", new ValidatorFactoryWrapper());
             EntityManagerFactory emf = persistenceProvider.createContainerEntityManagerFactory(unitInfo, properties);
+
+            if ((unitInfo.getProperties() != null
+                    && "true".equalsIgnoreCase(unitInfo.getProperties().getProperty(OPENEJB_JPA_INIT_ENTITYMANAGER)))
+                    || SystemInstance.get().getOptions().get(OPENEJB_JPA_INIT_ENTITYMANAGER, false)) {
+                emf.createEntityManager().close();
+            }
 
             if (unitInfo.getNonJtaDataSource() != null) {
                 final ImportSql importer = new ImportSql(appClassLoader, unitInfo.getPersistenceUnitName(), unitInfo.getNonJtaDataSource());
