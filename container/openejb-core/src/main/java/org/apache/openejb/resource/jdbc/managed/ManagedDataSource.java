@@ -1,11 +1,25 @@
 package org.apache.openejb.resource.jdbc.managed;
 
+import org.apache.openejb.OpenEJB;
+import org.apache.openejb.resource.jdbc.managed.local.LocalXAResource;
+import org.apache.openejb.util.reflection.Reflections;
+
 import javax.sql.DataSource;
+import javax.transaction.RollbackException;
+import javax.transaction.SystemException;
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
+import javax.transaction.xa.XAResource;
 import java.io.PrintWriter;
+import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
+import java.util.logging.Logger;
 
 public class ManagedDataSource implements DataSource {
+    private static final Class<?>[] CONNECTION_CLASS = new Class<?>[] { Connection.class };
+
     protected final DataSource delegate;
 
     public ManagedDataSource(final DataSource ds) {
@@ -14,12 +28,35 @@ public class ManagedDataSource implements DataSource {
 
     @Override
     public Connection getConnection() throws SQLException {
-        return new ManagedConnection(delegate.getConnection());
+        final Connection connection = delegate.getConnection();
+        final XAResource xaResource = new LocalXAResource(connection);
+        final TransactionManager transactionManager = OpenEJB.getTransactionManager();
+        final Transaction transaction;
+        try {
+            transaction = transactionManager.getTransaction();
+        } catch (SystemException e) {
+            return managed(connection);
+        }
+        if (transaction != null) {
+            try {
+                transaction.enlistResource(xaResource);
+            } catch (RollbackException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch (SystemException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+        }
+
+        return managed(connection);
     }
 
     @Override
     public Connection getConnection(final String username, final String password) throws SQLException {
-        return new ManagedConnection(delegate.getConnection(username, password));
+        return managed(delegate.getConnection(username, password));
+    }
+
+    private Connection managed(final Connection connection) {
+        return (Connection) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), CONNECTION_CLASS, new ManagedConnection(connection));
     }
 
     @Override
@@ -40,6 +77,11 @@ public class ManagedDataSource implements DataSource {
     @Override
     public int getLoginTimeout() throws SQLException {
         return delegate.getLoginTimeout();
+    }
+
+    // @Override
+    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        return (Logger) Reflections.invokeByReflection(delegate, "getParentLogger", new Class<?>[0], null);
     }
 
     @Override

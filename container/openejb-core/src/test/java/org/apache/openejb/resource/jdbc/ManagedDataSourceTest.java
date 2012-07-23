@@ -26,7 +26,7 @@ import java.util.Properties;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-@Ignore("to implement")
+//@Ignore("to implement")
 @RunWith(ApplicationComposer.class)
 public class ManagedDataSourceTest {
     private static final String URL = "jdbc:hsqldb:mem:managed";

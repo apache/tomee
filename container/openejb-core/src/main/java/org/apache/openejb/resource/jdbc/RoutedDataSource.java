@@ -30,6 +30,7 @@ import javax.sql.DataSource;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.resource.jdbc.router.Router;
 import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.util.reflection.Reflections;
 
 public class RoutedDataSource implements DataSource {
     private static final String OPENEJB_RESOURCE_PREFIX = "openejb:Resource/";
@@ -90,12 +91,11 @@ public class RoutedDataSource implements DataSource {
         return getTargetDataSource().getLoginTimeout();
     }
 
-    @SuppressWarnings("unchecked")
     public <T> T unwrap(Class<T> iface) throws SQLException {
         if (getTargetDataSource() == null) {
             return null;
         }
-        return (T) callByReflection(getTargetDataSource(), "unwrap",
+        return (T) Reflections.invokeByReflection(getTargetDataSource(), "unwrap",
                 new Class<?>[]{Class.class}, new Object[]{iface});
     }
 
@@ -103,14 +103,14 @@ public class RoutedDataSource implements DataSource {
         if (getTargetDataSource() == null) {
             return null;
         }
-        return (Logger) callByReflection(getTargetDataSource(), "getParentLogger", new Class<?>[0], null);
+        return (Logger) Reflections.invokeByReflection(getTargetDataSource(), "getParentLogger", new Class<?>[0], null);
     }
 
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
         if (getTargetDataSource() == null) {
             return false;
         }
-        return (Boolean) callByReflection(getTargetDataSource(), "isWrapperFor",
+        return (Boolean) Reflections.invokeByReflection(getTargetDataSource(), "isWrapperFor",
                 new Class<?>[]{Class.class}, new Object[]{iface});
     }
 
@@ -132,26 +132,5 @@ public class RoutedDataSource implements DataSource {
 
     private DataSource getTargetDataSource() {
         return getDelegate().getDataSource();
-    }
-
-    /**
-     * This method is used to avoir to fork two projects to implement
-     * datasource of the jre5 and jre6
-     *
-     * @param ds         the wrapped datasource
-     * @param mtdName    the method to call
-     * @param paramTypes the parameter type
-     * @param args       the arguments
-     * @return the return value of the method
-     */
-    private Object callByReflection(DataSource ds, String mtdName, Class<?>[] paramTypes, Object[] args) {
-        Method mtd;
-        try {
-            mtd = ds.getClass().getDeclaredMethod(mtdName, paramTypes);
-            return mtd.invoke(ds, args);
-
-        } catch (Exception e) {
-            throw new IllegalArgumentException(e);
-        }
     }
 }
