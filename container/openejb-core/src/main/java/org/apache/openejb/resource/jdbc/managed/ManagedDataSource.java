@@ -28,26 +28,7 @@ public class ManagedDataSource implements DataSource {
 
     @Override
     public Connection getConnection() throws SQLException {
-        final Connection connection = delegate.getConnection();
-        final XAResource xaResource = new LocalXAResource(connection);
-        final TransactionManager transactionManager = OpenEJB.getTransactionManager();
-        final Transaction transaction;
-        try {
-            transaction = transactionManager.getTransaction();
-        } catch (SystemException e) {
-            return managed(connection);
-        }
-        if (transaction != null) {
-            try {
-                transaction.enlistResource(xaResource);
-            } catch (RollbackException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            } catch (SystemException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
-        }
-
-        return managed(connection);
+        return managed(delegate.getConnection());
     }
 
     @Override

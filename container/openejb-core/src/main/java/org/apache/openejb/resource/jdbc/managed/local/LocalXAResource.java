@@ -104,8 +104,12 @@ public class LocalXAResource implements XAResource {
 
     @Override
     public synchronized void rollback(final Xid xid) throws XAException {
-        if (xid == null) throw new NullPointerException("xid is null");
-        if (!this.currentXid.equals(xid)) throw new XAException("Invalid Xid: expected " + this.currentXid + ", but was " + xid);
+        if (xid == null) {
+            throw new NullPointerException("xid is null");
+        }
+        if (!this.currentXid.equals(xid)) {
+            throw new XAException("Invalid Xid: expected " + this.currentXid + ", but was " + xid);
+        }
 
         try {
             connection.rollback();
