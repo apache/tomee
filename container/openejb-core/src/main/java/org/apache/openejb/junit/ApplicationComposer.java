@@ -19,6 +19,9 @@ package org.apache.openejb.junit;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.InjectionProcessor;
+import org.apache.openejb.OpenEJB;
+import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.config.AppModule;
@@ -45,6 +48,7 @@ import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.Join;
+import org.apache.openejb.util.ServiceManagerProxy;
 import org.apache.webbeans.inject.OWBInjector;
 import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.archive.ClassesArchive;
@@ -68,6 +72,7 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
 
     public static final String OPENEJB_APPLICATION_COMPOSER_CONTEXT = "openejb.application.composer.context";
     private final TestClass testClass;
+    private ServiceManagerProxy serviceManager = null;
 
     public ApplicationComposer(Class<?> klass) throws InitializationError {
         super(klass);
@@ -286,6 +291,17 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                 config.init(SystemInstance.get().getProperties());
 
                 Assembler assembler = new Assembler();
+                SystemInstance.get().setComponent(Assembler.class, assembler);
+
+                if ("true".equals(configuration.getProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "false"))) {
+                    try {
+                        serviceManager = new ServiceManagerProxy();
+                        serviceManager.start();
+                    } catch (ServiceManagerProxy.AlreadyStartedException e) {
+                        throw new OpenEJBRuntimeException(e);
+                    }
+                }
+
                 assembler.buildContainerSystem(config.getOpenEjbConfiguration());
 
                 final AppInfo appInfo = config.configureApplication(appModule);
@@ -333,6 +349,14 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                     assembler.destroyApplication(appInfo.path);
                 }
             } finally {
+                if (serviceManager != null) {
+                    try {
+                        serviceManager.stop();
+                    } catch (RuntimeException ignored) {
+                        // no-op
+                    }
+                }
+                OpenEJB.destroy();
                 SystemInstance.reset();
             }
         }

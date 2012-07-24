@@ -26,6 +26,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.ContextResolver;
+import javax.ws.rs.ext.Providers;
+
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.jaxrs.JAXRSInvoker;
 import org.apache.cxf.jaxrs.model.ClassResourceInfo;
@@ -83,6 +85,9 @@ public class OpenEJBEJBInvoker extends JAXRSInvoker {
             } else if (ContextResolver.class.equals(type)) {
                 ContextResolver<?> binding = JAXRSUtils.createContextValue(exchange.getInMessage(), type, ContextResolver.class);
                 ThreadLocalContextManager.CONTEXT_RESOLVER.set(binding);
+            } else if (Providers.class.equals(type)) {
+                Providers providers = JAXRSUtils.createContextValue(exchange.getInMessage(), null, Providers.class);
+                ThreadLocalContextManager.PROVIDERS.set(providers);
             }
         }
 

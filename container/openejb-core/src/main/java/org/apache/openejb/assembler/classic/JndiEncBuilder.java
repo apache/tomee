@@ -67,6 +67,7 @@ import javax.ws.rs.core.Request;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.ContextResolver;
+import javax.ws.rs.ext.Providers;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceContext;
 import java.io.Serializable;
@@ -291,6 +292,8 @@ public class JndiEncBuilder {
                 reference = new ObjectReference(ThreadLocalContextManager.SECURITY_CONTEXT);
             } else if (ContextResolver.class.equals(type)) {
                 reference = new ObjectReference(ThreadLocalContextManager.CONTEXT_RESOLVER);
+            } else if (Providers.class.equals(type)) {
+                reference = new ObjectReference(ThreadLocalContextManager.PROVIDERS);
             } else if (referenceInfo.resourceID != null) {
                 String jndiName = "openejb/Resource/" + referenceInfo.resourceID;
                 reference = new IntraVmJndiReference(jndiName);
