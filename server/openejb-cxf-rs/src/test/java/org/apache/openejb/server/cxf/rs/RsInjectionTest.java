@@ -1,6 +1,7 @@
 package org.apache.openejb.server.cxf.rs;
 
 import org.apache.openejb.OpenEjbContainer;
+import org.apache.openejb.jee.Empty;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.junit.Configuration;
@@ -24,7 +25,9 @@ import static org.junit.Assert.assertEquals;
 public class RsInjectionTest {
     @Module
     public static SingletonBean service() throws Exception {
-        return (SingletonBean) new SingletonBean(RsInjection.class).localBean();
+        final SingletonBean bean = new SingletonBean(RsInjection.class);
+        bean.setLocalBean(new Empty());
+        return bean;
     }
 
     @Configuration
