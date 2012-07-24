@@ -25,6 +25,7 @@ public class ThreadLocalContextManager {
     public static final ThreadLocalHttpHeaders HTTP_HEADERS = new ThreadLocalHttpHeaders();
     public static final ThreadLocalSecurityContext SECURITY_CONTEXT = new ThreadLocalSecurityContext();
     public static final ThreadLocalContextResolver CONTEXT_RESOLVER = new ThreadLocalContextResolver();
+    public static final ThreadLocalProviders PROVIDERS = new ThreadLocalProviders();
     public static final ThreadLocal<Application> APPLICATION = new ThreadLocal<Application>();
 
     public static void reset() {
@@ -33,6 +34,7 @@ public class ThreadLocalContextManager {
         HTTP_HEADERS.remove();
         SECURITY_CONTEXT.remove();
         CONTEXT_RESOLVER.remove();
+        PROVIDERS.remove();
         APPLICATION.remove();
     }
 }

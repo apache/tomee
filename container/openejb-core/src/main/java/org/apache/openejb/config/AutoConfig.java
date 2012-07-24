@@ -74,6 +74,7 @@ import javax.ws.rs.core.Request;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.ContextResolver;
+import javax.ws.rs.ext.Providers;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -131,6 +132,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         ignoredReferenceTypes.add(SecurityContext.class.getName());
         ignoredReferenceTypes.add(ContextResolver.class.getName());
         ignoredReferenceTypes.add(Application.class.getName());
+        ignoredReferenceTypes.add(Providers.class.getName());
     }
 
     private final ConfigurationFactory configFactory;
