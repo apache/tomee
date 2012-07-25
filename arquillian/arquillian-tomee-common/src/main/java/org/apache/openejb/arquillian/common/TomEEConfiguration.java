@@ -17,13 +17,17 @@
 package org.apache.openejb.arquillian.common;
 
 
+import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.loader.*;
 import org.jboss.arquillian.container.spi.ConfigurationException;
 import org.jboss.arquillian.container.spi.client.container.ContainerConfiguration;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.Map;
 import java.util.Properties;
 
 public class TomEEConfiguration implements ContainerConfiguration {
@@ -35,6 +39,7 @@ public class TomEEConfiguration implements ContainerConfiguration {
     private String appWorkingDir = System.getProperty("java.io.tmpdir");
     private String host = "localhost";
     private String serverXml = null;
+    private String properties = "";
 
     public int getHttpPort() {
         return httpPort;
@@ -93,5 +98,34 @@ public class TomEEConfiguration implements ContainerConfiguration {
 
     public void setServerXml(String serverXml) {
         this.serverXml = serverXml;
+    }
+
+    public String getProperties() {
+        return properties;
+    }
+
+    public void setProperties(String properties) {
+        this.properties = properties;
+    }
+
+    public Properties systemProperties() {
+        if (properties == null || properties.isEmpty()) {
+            return new Properties();
+        }
+
+        final Properties properties = new Properties();
+        final ByteArrayInputStream bais = new ByteArrayInputStream(getProperties().getBytes());
+        try {
+            properties.load(bais);
+        } catch (IOException e) {
+            throw new OpenEJBRuntimeException(e);
+        } finally {
+            try {
+                IO.close(bais);
+            } catch (IOException ignored) {
+                // no-op
+            }
+        }
+        return properties;
     }
 }

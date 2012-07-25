@@ -17,6 +17,7 @@
 package org.apache.tomee.embedded;
 
 import java.io.File;
+import java.util.Properties;
 
 /**
 * @version $Rev$ $Date$
@@ -29,6 +30,7 @@ public class Configuration {
     private String host = "localhost";
     protected String dir;
     private File serverXml = null;
+    private Properties properties;
 
     public int getHttpPort() {
         return httpPort;
@@ -87,5 +89,13 @@ public class Configuration {
 
     public boolean hasServerXml() {
         return serverXml != null && serverXml.exists();
+    }
+
+    public void setProperties(final Properties properties) {
+        this.properties = properties;
+    }
+
+    public Properties getProperties() {
+        return properties;
     }
 }

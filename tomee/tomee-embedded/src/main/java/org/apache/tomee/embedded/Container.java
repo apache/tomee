@@ -127,6 +127,15 @@ public class Container {
         } else {
             copyFileTo(conf, "server.xml");
         }
+        final Properties props = configuration.getProperties();
+        if (props != null && !props.isEmpty()) {
+            final FileWriter systemProperties = new FileWriter(new File(conf, "system.properties"));
+            try {
+                props.store(systemProperties, "");
+            } finally {
+                IO.close(systemProperties);
+            }
+        }
 
         // Need to use JULI so log messages from the tests are visible
         // using openejb logging conf in embedded mode
@@ -177,6 +186,7 @@ public class Container {
         properties.setProperty("openejb.home", catalinaBase);
         properties.setProperty("openejb.base", catalinaBase);
         properties.setProperty("openejb.servicemanager.enabled", "false");
+        properties.putAll(configuration.getProperties());
 
         try {
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();

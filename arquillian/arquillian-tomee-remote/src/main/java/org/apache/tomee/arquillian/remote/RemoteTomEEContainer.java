@@ -94,6 +94,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
         Files.writable(openejbHome);
 
         Setup.configureServerXml(openejbHome, configuration);
+        Setup.configureSystemProperties(openejbHome, configuration);
 
         Setup.exportProperties(openejbHome, configuration);
 
