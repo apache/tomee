@@ -102,6 +102,7 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
             Files.writable(openejbHome);
 
             Setup.configureServerXml(openejbHome, configuration);
+            Setup.configureSystemProperties(openejbHome, configuration);
 
             Setup.exportProperties(openejbHome, configuration);
 
