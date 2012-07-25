@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openejb-jar xmlns="http://www.openejb.org/xml/ns/openejb-jar-2.1">
+  <enterprise-beans>
+    <session>
+      <ejb-name>Rot13</ejb-name>
+      <web-service-address>/tool/rot13</web-service-address>
+    </session>
+  </enterprise-beans>
+</openejb-jar>
