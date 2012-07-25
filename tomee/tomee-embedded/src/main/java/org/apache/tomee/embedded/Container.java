@@ -186,7 +186,9 @@ public class Container {
         properties.setProperty("openejb.home", catalinaBase);
         properties.setProperty("openejb.base", catalinaBase);
         properties.setProperty("openejb.servicemanager.enabled", "false");
-        properties.putAll(configuration.getProperties());
+        if (configuration.getProperties() != null) {
+            properties.putAll(configuration.getProperties());
+        }
 
         try {
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
