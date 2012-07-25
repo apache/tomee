@@ -27,6 +27,7 @@
   <packaging>pom</packaging>
   <name>OpenEJB :: Web Examples</name>
   <modules>
+    <module>change-jaxws-url</module>
     <module>ejb-examples</module>
     <!--    <module>applet</module> -->
     <module>ejb-webservice</module>
