@@ -23,6 +23,7 @@ import org.apache.openejb.api.LocalClient;
 import org.apache.openejb.api.RemoteClient;
 import org.apache.openejb.config.event.BeforeDeploymentEvent;
 import org.apache.openejb.core.EmptyResourcesClassLoader;
+import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.jee.Application;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.Beans;
@@ -264,6 +265,10 @@ public class DeploymentLoader implements DeploymentFilterable {
     }
 
     protected ClassLoader getOpenEJBClassLoader(final URL url) {
+        final ParentClassLoaderFinder parentFinder = SystemInstance.get().getComponent(ParentClassLoaderFinder.class);
+        if (parentFinder != null) {
+            return  parentFinder.getParentClassLoader();
+        }
         return OpenEJB.class.getClassLoader();
     }
 
