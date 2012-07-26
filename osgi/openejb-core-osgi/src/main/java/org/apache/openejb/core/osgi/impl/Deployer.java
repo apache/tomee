@@ -399,8 +399,8 @@ public class Deployer implements BundleListener {
         }
 
         @Override
-        protected ClassLoader getOpenEJBClassLoader(final URL url) {
+        protected ClassLoader getOpenEJBClassLoader() {
             return new OSGIClassLoader(bundle, OpenEJBBundleContextHolder.get().getBundle());
         }
     }
-}
+

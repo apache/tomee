@@ -120,7 +120,7 @@ public class DeploymentLoader implements DeploymentFilterable {
             Class<? extends DeploymentModule> moduleClass;
 
             try {
-                doNotUseClassLoader = ClassLoaderUtil.createClassLoader(jarPath, new URL[]{baseUrl}, ParentClassLoaderFinder.Helper.get());
+                doNotUseClassLoader = ClassLoaderUtil.createClassLoader(jarPath, new URL[]{baseUrl}, getOpenEJBClassLoader());
                 moduleClass = discoverModuleType(baseUrl, ClassLoaderUtil.createTempClassLoader(doNotUseClassLoader), true);
             } catch (Exception e) {
                 throw new UnknownModuleTypeException("Unable to determine module type for jar: " + baseUrl.toExternalForm(), e);
@@ -146,7 +146,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
                 SystemInstance.get().fireEvent(new BeforeDeploymentEvent(urls));
 
-                final ClassLoader classLoader = ClassLoaderUtil.createTempClassLoader(jarPath, urls, ParentClassLoaderFinder.Helper.get());
+                final ClassLoader classLoader = ClassLoaderUtil.createTempClassLoader(jarPath, urls, getOpenEJBClassLoader());
 
                 final AppModule appModule;
                 //final Class<? extends DeploymentModule> o = EjbModule.class;
@@ -162,7 +162,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
             if (ClientModule.class.equals(moduleClass)) {
                 final String jarLocation = URLs.toFilePath(baseUrl);
-                final ClientModule clientModule = createClientModule(baseUrl, jarLocation, ParentClassLoaderFinder.Helper.get(), getModuleId(jarFile));
+                final ClientModule clientModule = createClientModule(baseUrl, jarLocation, getOpenEJBClassLoader(), getModuleId(jarFile));
 
                 // Wrap the resource module with an Application Module
                 return new AppModule(clientModule);
@@ -170,7 +170,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
             if (ConnectorModule.class.equals(moduleClass)) {
                 final String jarLocation = URLs.toFilePath(baseUrl);
-                final ConnectorModule connectorModule = createConnectorModule(jarLocation, jarLocation, ParentClassLoaderFinder.Helper.get(), getModuleId(jarFile));
+                final ConnectorModule connectorModule = createConnectorModule(jarLocation, jarLocation, getOpenEJBClassLoader(), getModuleId(jarFile));
 
                 // Wrap the resource module with an Application Module
                 return new AppModule(connectorModule);
@@ -181,8 +181,8 @@ public class DeploymentLoader implements DeploymentFilterable {
 
                 // Standalone Web Module
 
-                final AppModule appModule = new AppModule(ParentClassLoaderFinder.Helper.get(), file.getAbsolutePath(), new Application(), true);
-                addWebModule(appModule, baseUrl, ParentClassLoaderFinder.Helper.get(), getContextRoot(), getModuleName());
+                final AppModule appModule = new AppModule(getOpenEJBClassLoader(), file.getAbsolutePath(), new Application(), true);
+                addWebModule(appModule, baseUrl, getOpenEJBClassLoader(), getContextRoot(), getModuleName());
 
                 final Map<String, Object> otherDD = new HashMap<String, Object>();
                 final WebModule webModule = appModule.getWebModules().iterator().next();
@@ -213,7 +213,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
             if (PersistenceModule.class.equals(moduleClass)) {
                 final String jarLocation = URLs.toFilePath(baseUrl);
-                final ClassLoader classLoader = ClassLoaderUtil.createTempClassLoader(jarPath, new URL[]{baseUrl}, ParentClassLoaderFinder.Helper.get());
+                final ClassLoader classLoader = ClassLoaderUtil.createTempClassLoader(jarPath, new URL[]{baseUrl}, getOpenEJBClassLoader());
 
                 // wrap the EJB Module with an Application Module
                 final AppModule appModule = new AppModule(classLoader, jarLocation);
@@ -237,6 +237,10 @@ public class DeploymentLoader implements DeploymentFilterable {
                 System.gc();
             }
         }
+    }
+
+    protected ClassLoader getOpenEJBClassLoader() {
+        return ParentClassLoaderFinder.Helper.get();
     }
 
     private void addWebPersistenceDD(final String name, final Map<String, Object> otherDD, final AppModule appModule) {
@@ -279,7 +283,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         final URL appUrl = getFileUrl(appDir);
 
         final String appId = appDir.getAbsolutePath();
-        final ClassLoader tmpClassLoader = ClassLoaderUtil.createTempClassLoader(appId, new URL[]{appUrl}, ParentClassLoaderFinder.Helper.get());
+        final ClassLoader tmpClassLoader = ClassLoaderUtil.createTempClassLoader(appId, new URL[]{appUrl}, getOpenEJBClassLoader());
 
         final ResourceFinder finder = new ResourceFinder("", tmpClassLoader, appUrl);
         final Map<String, URL> appDescriptors = getDescriptors(finder);
@@ -420,7 +424,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
             SystemInstance.get().fireEvent(new BeforeDeploymentEvent(urls));
 
-            final ClassLoader appClassLoader = ClassLoaderUtil.createTempClassLoader(appId, urls, ParentClassLoaderFinder.Helper.get());
+            final ClassLoader appClassLoader = ClassLoaderUtil.createTempClassLoader(appId, urls, getOpenEJBClassLoader());
 
             //
             // Create the AppModule and all nested module objects
