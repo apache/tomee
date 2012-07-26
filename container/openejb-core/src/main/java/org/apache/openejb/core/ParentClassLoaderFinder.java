@@ -14,13 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.assembler.classic;
+package org.apache.openejb.core;
 
-import java.util.Map;
-import java.util.Set;
-
-public interface WebAppBuilder {
-    void deployWebApps(AppInfo appInfo, ClassLoader classLoader) throws Exception;
-    void undeployWebApps(AppInfo appInfo) throws Exception;
-    Map<ClassLoader, Map<String, Set<String>>> getJsfClasses();
+public interface ParentClassLoaderFinder {
+    ClassLoader getParentClassLoader();
 }

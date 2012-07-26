@@ -28,11 +28,11 @@ import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.startup.Bootstrap;
 import org.apache.catalina.startup.Catalina;
 import org.apache.openejb.OpenEJB;
-import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.openejb.config.sys.Tomee;
+import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.IO;
@@ -202,6 +202,7 @@ public class TomcatLoader implements Loader {
             tomcatWebAppBuilder.start();
             SystemInstance.get().setComponent(WebAppBuilder.class, tomcatWebAppBuilder);
         }
+        SystemInstance.get().setComponent(ParentClassLoaderFinder.class, tomcatWebAppBuilder);
 
         // for compatibility purpose, no more used normally by our trunk
         SystemInstance.get().setComponent(WebDeploymentListeners.class, new WebDeploymentListeners());

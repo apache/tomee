@@ -102,6 +102,7 @@ import org.apache.openejb.core.ConnectorReference;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.CoreUserTransaction;
 import org.apache.openejb.core.JndiFactory;
+import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.core.SimpleTransactionSynchronizationRegistry;
 import org.apache.openejb.core.TransactionSynchronizationRegistryWrapper;
 import org.apache.openejb.core.WebContext;
@@ -1400,7 +1401,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         // Create the class loader
-        return ClassLoaderUtil.createClassLoader(appInfo.path, jars.toArray(new URL[jars.size()]), OpenEJB.class.getClassLoader());
+        ParentClassLoaderFinder parentFinder = SystemInstance.get().getComponent(ParentClassLoaderFinder.class);
+        ClassLoader parent = OpenEJB.class.getClassLoader();
+        if (parentFinder != null) {
+            parent = parentFinder.getParentClassLoader();
+        }
+        return ClassLoaderUtil.createClassLoader(appInfo.path, jars.toArray(new URL[jars.size()]), parent);
     }
 
     public void createExternalContext(JndiContextInfo contextInfo) throws OpenEJBException {

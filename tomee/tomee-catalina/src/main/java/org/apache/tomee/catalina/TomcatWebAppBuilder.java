@@ -74,6 +74,7 @@ import org.apache.openejb.config.event.BeforeDeploymentEvent;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.WebContext;
 import org.apache.openejb.core.ivm.naming.SystemComponentReference;
+import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.loader.IO;
@@ -129,7 +130,7 @@ import static org.apache.tomee.catalina.BackportUtil.getNamingContextListener;
  *
  * @version $Rev$ $Date$
  */
-public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
+public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, ParentClassLoaderFinder {
     public static final String OPENEJB_CROSSCONTEXT_PROPERTY = "openejb.crosscontext";
     public static final String OPENEJB_SESSION_MANAGER_PROPERTY = "openejb.session.manager";
     public static final String OPENEJB_JSESSION_ID_SUPPORT = "openejb.jsessionid-support";
@@ -194,6 +195,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
 
     private Set<CatalinaCluster> clusters = new HashSet<CatalinaCluster>();
 
+    private ClassLoader parentClassLoader;
+
     /**
      * Creates a new web application builder
      * instance.
@@ -211,9 +214,13 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         for (final Service service : standardServer.findServices()) {
             if (service.getContainer() instanceof Engine) {
                 final Engine engine = (Engine) service.getContainer();
+
+                parentClassLoader = engine.getParentClassLoader();
+
                 manageCluster(engine.getCluster());
                 defaultHost = engine.getDefaultHost();
                 addTomEERealm(engine);
+
                 for (final Container engineChild : engine.findChildren()) {
                     if (engineChild instanceof StandardHost) {
                         final StandardHost host = (StandardHost) engineChild;
@@ -1652,5 +1659,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
 
     public Map<ClassLoader, Map<String, Set<String>>> getJsfClasses() {
         return jsfClasses;
+    }
+
+    public ClassLoader getParentClassLoader() {
+        return parentClassLoader;
     }
 }
