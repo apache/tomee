@@ -18,16 +18,7 @@
 package org.apache.tomee.catalina;
 
 import org.apache.catalina.core.StandardContext;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.assembler.classic.WebAppBuilder;
-import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.DeploymentLoader;
-import org.apache.openejb.config.DeploymentModule;
-import org.apache.openejb.core.ParentClassLoaderFinder;
-import org.apache.openejb.loader.SystemInstance;
-
-import java.net.URL;
-import java.util.Set;
 
 /**
  * @version $Id$

@@ -16,6 +16,19 @@
  */
 package org.apache.openejb.core;
 
+import org.apache.openejb.OpenEJB;
+import org.apache.openejb.loader.SystemInstance;
+
 public interface ParentClassLoaderFinder {
     ClassLoader getParentClassLoader();
+
+    public static class Helper {
+        public static ClassLoader get() {
+            final ParentClassLoaderFinder parentFinder = SystemInstance.get().getComponent(ParentClassLoaderFinder.class);
+            if (parentFinder != null) {
+                return  parentFinder.getParentClassLoader();
+            }
+            return OpenEJB.class.getClassLoader();
+        }
+    }
 }
