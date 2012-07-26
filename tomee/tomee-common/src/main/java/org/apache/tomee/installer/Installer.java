@@ -242,26 +242,29 @@ public class Installer {
             }
         }
 
-        // TODO: same for win
-        /*
         String setClasspathBat = Installers.readAll(paths.getSetClasspathBat(), alerts);
         if (setClasspathBat != null && !setClasspathBat.contains("any endorsed lib for java 7")) {
             if (Installers.backup(paths.getSetClasspathBat(), alerts)) {
-                // add our magic bits to the catalina sh file
+                // add our magic bits to the catalina bat file
+                // note how windows is not adapted to scripting
                 final String newSetClasspathBat = setClasspathBat.replace("set \"JAVA_ENDORSED_DIRS=%CATALINA_HOME%\\endorsed\"",
-                        "java_version=`java -version 2>&1 | grep version`\n" +
-                                "  if [[ $java_version  =~ 1.7.* ]]; then\n" +
-                                "    # it doesn't exist but not important since we don't need any endorsed lib for java 7\n" +
-                                "    JAVA_ENDORSED_DIRS=\"$CATALINA_HOME\"/endorsed7\n" +
-                                "  else\n" +
-                                "    set \"JAVA_ENDORSED_DIRS=%CATALINA_HOME%\\endorsed\"\n" +
-                                "  fi\n");
+                        "\nrem Set the default -Djava.endorsed.dirs argument\n" +
+                        "rem easier way to get java version in bat is to dump the version in a file\n" +
+                        "set JAVA_VERSION_FILE=%CATALINA_HOME%\\tmp_java_version.txt\n" +
+                        "\"%JRE_HOME%\\bin\\java\" -version 2> %JAVA_VERSION_FILE%\n" +
+                        "set /p JAVA_VERSION= < %JAVA_VERSION_FILE%\n" +
+                        "del %JAVA_VERSION_FILE%\n" +
+                        "rem extract minor version\n" +
+                        "set JAVA_VERSION=%JAVA_VERSION:~16,1%\n" +
+                        "\n" +
+                        "rem adjust endorsed lib depending on the java version\n" +
+                        "set JAVA_ENDORSED_DIRS=endorsed\n" +
+                        "if \"%JAVA_VERSION%\" == \"7\" set JAVA_ENDORSED_DIRS=endorsed7\n");
                 if (Installers.writeAll(paths.getSetClasspathBat(), newSetClasspathBat, alerts)) {
                     alerts.addInfo("Endorsed lib set for java 6 and ignored for java 7 (win)");
                 }
             }
         }
-        */
     }
 
     private void copyClasses(File sourceJar, File destinationJar, String pattern) {
