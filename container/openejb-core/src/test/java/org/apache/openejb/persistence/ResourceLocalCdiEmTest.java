@@ -46,7 +46,7 @@ public class ResourceLocalCdiEmTest {
     private PersistManager persistManager;
 
     @Test
-    public void injection2Validator() {
+    public void injection() {
         assertNotNull(persistManager);
         assertTrue(!persistManager.isEmNull());
     }
