@@ -115,12 +115,17 @@
         </patternset>
       </fileset> 
     </rat:report> 
-  </target> 
- 
-  <target name="-taskdef"> 
-    <dirname property="download.dir" file="${java.io.tmpdir}/rat"/>
-    <mkdir dir="${download.dir}"/>
+  </target>
+
+  <condition property="rat.already.downloaded">
+    <not><available file="${java.io.tmpdir}/rat.zip"/></not>
+  </condition>
+
+  <target name="download-rat" if="rat.already.downloaded">
     <get src="http://archive.apache.org/dist/incubator/rat/apache-rat-incubating-current-bin.zip" dest="${java.io.tmpdir}/rat.zip"/>
+  </target>
+
+  <target name="-taskdef" depends="download-rat">
     <unzip src="${java.io.tmpdir}/rat.zip" dest="${java.io.tmpdir}/rat"/>
 
     <typedef resource="org/apache/rat/anttasks/antlib.xml"
