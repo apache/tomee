@@ -21,7 +21,7 @@ package org.apache.openejb.maven.plugin;
  * @goal run
  * @requiresDependencyResolution runtime
  */
-public class RunTomEEMojo extends AbstractTomEEMojo {
+public class RunTomEEMojo extends UpdatableTomEEMojo {
     @Override
     public String getCmd() {
         return "start";
