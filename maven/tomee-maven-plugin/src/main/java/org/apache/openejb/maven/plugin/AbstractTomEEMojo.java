@@ -544,11 +544,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
         final RemoteServer server = new RemoteServer(getConnectAttempts(), false);
         if (!getNoShutdownHook()) {
-            Runtime.getRuntime().addShutdownHook(new Thread() {
-                @Override public void run() {
-                    server.stop();
-                }
-            });
+            addShutdownHooks(server);
         }
 
         getLog().info("Running '" + getClass().getSimpleName().replace("TomEEMojo", "").toLowerCase(Locale.ENGLISH)
@@ -564,6 +560,14 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                 // ignored
             }
         }
+    }
+
+    protected void addShutdownHooks(final RemoteServer server) {
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override public void run() {
+                server.stop();
+            }
+        });
     }
 
     protected  int getConnectAttempts() {
