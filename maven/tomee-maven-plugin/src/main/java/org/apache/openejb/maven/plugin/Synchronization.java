@@ -26,6 +26,7 @@ public class Synchronization {
     private File targetResourcesDir;
     private int updateInterval;
     private List<String> extensions;
+    private String regex;
 
     public File getResourcesDir() {
         return resourcesDir;
@@ -73,5 +74,13 @@ public class Synchronization {
 
     public void setExtensions(List<String> extensions) {
         this.extensions = extensions;
+    }
+
+    public String getRegex() {
+        return regex;
+    }
+
+    public void setRegex(String regex) {
+        this.regex = regex;
     }
 }

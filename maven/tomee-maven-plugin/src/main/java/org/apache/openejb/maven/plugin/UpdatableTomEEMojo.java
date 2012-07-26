@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
     public static final int INITIAL_DELAY = 5000;
@@ -113,7 +114,11 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
         private long lastUpdate = System.currentTimeMillis();
 
         private Synchronizer() {
-            fileFilter = new SuffixesFileFilter(synchronization.getExtensions());
+            if (synchronization.getRegex() != null) {
+                fileFilter = new SuffixesAndRegexFileFilter(synchronization.getExtensions(), Pattern.compile(synchronization.getRegex()));
+            } else {
+                fileFilter = new SuffixesFileFilter(synchronization.getExtensions());
+            }
         }
 
         @Override
@@ -189,6 +194,24 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
             }
 
             return false;
+        }
+    }
+
+    private class SuffixesAndRegexFileFilter extends SuffixesFileFilter {
+        private final Pattern pattern;
+
+        public SuffixesAndRegexFileFilter(final List<String> extensions, final Pattern pattern) {
+            super(extensions);
+            this.pattern = pattern;
+        }
+
+        @Override
+        public boolean accept(final File file) {
+            if (file.isDirectory()) {
+                return true;
+            }
+
+            return super.accept(file) && pattern.matcher(file.getAbsolutePath()).matches();
         }
     }
 }
