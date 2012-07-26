@@ -403,4 +403,5 @@ public class Deployer implements BundleListener {
             return new OSGIClassLoader(bundle, OpenEJBBundleContextHolder.get().getBundle());
         }
     }
+}
 
