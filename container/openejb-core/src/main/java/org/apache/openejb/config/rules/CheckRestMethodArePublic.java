@@ -103,13 +103,28 @@ public class CheckRestMethodArePublic implements ValidationRule {
             return; // managed elsewhere
         }
 
+        int publicMethodNumber = 0;
+        int nonPublicMethods = 0;
         while (!Object.class.equals(clazz) && clazz != null) {
             for (Method mtd : clazz.getDeclaredMethods()) {
-                if (mtd.getAnnotation(Path.class) != null && !Modifier.isPublic(mtd.getModifiers())) {
-                    validation.warn(mtd.toGenericString(), "rest.method.visibility", "JAX-RS methods should be public");
+                boolean isPublic = Modifier.isPublic(mtd.getModifiers());
+                if (mtd.getAnnotation(Path.class) != null && !isPublic) {
+                    final String name = mtd.toGenericString();
+                    validation.warn(name, "rest.method.visibility", name);
+                }
+                if (isPublic) {
+                    publicMethodNumber++;
+                } else {
+                    nonPublicMethods++;
                 }
             }
             clazz = clazz.getSuperclass();
+        }
+
+        if (publicMethodNumber == 0 && nonPublicMethods > 0) {
+            validation.warn(classname, "no.method.in.rest.class", classname);
+        } else if (publicMethodNumber == 0 && nonPublicMethods == 0) {
+            validation.warn(classname, "no.rest.resource.method", classname);
         }
     }
 }
