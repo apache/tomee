@@ -49,9 +49,7 @@ public class WsBuilder {
         portData.setLocation(port.location);
 
         portData.setSecure("WS-SECURITY".equals(port.authMethod));
-        if (portData.isSecure()) {
-	    portData.setSecurityProperties(port.properties);
-	}
+        portData.setProperties(port.properties);
 
         return portData;
     }

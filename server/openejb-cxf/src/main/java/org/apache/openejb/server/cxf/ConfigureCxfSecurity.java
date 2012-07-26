@@ -21,6 +21,7 @@ import org.apache.cxf.binding.soap.saaj.SAAJOutInterceptor;
 import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor;
 import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
+import org.apache.openejb.core.webservices.PortData;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -42,8 +43,9 @@ public class ConfigureCxfSecurity {
             new OpenEJBLoginValidator());
     }};
 
-    public static final void setupWSS4JChain(Endpoint endpoint, Properties inProps) {
+    private static final String OPENEJB_ENDPOINT_CONFIGURATOR = "openejb.endpoint.configurator";
 
+    public static final void setupWSS4JChain(Endpoint endpoint, Properties inProps) {
         final Map<String, Object> in = getPropsFromProperties(inProps, "wss4j.in.");
         final Map<String, Object> out = getPropsFromProperties(inProps, "wss4j.out.");
         if (!in.containsKey(WSS4JInInterceptor.VALIDATOR_MAP)) {
@@ -114,8 +116,24 @@ public class ConfigureCxfSecurity {
 
     }
 
-    public static final void configure(Endpoint endpoint, Properties p) {
-        setupWSS4JChain(endpoint, p);
+    public static final void configure(Endpoint endpoint, PortData port) {
+        final Properties p = port.getProperties();
+        if (p != null && p.containsKey(OPENEJB_ENDPOINT_CONFIGURATOR)) {
+            final String classname = p.getProperty(OPENEJB_ENDPOINT_CONFIGURATOR);
+            try {
+                final EndpointConfigurator configurator = (EndpointConfigurator) Thread.currentThread().getContextClassLoader().loadClass(classname).newInstance();
+                configurator.configure(endpoint, p);
+            } catch (Exception e) {
+                LOGGER.error("can't configure endpoint " + endpoint + " with configurator " + classname + ", using default config", e);
+                if (port.isSecure()) {
+                    setupWSS4JChain(endpoint, p);
+                }
+            }
+        } else {
+            if (port.isSecure()) {
+                setupWSS4JChain(endpoint, p);
+            }
+        }
     }
 
     /**

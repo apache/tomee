@@ -39,7 +39,7 @@ public class PortData implements PortInfo {
     private QName wsdlService;
     private String location;
     private boolean secure;
-    private Properties securityProperties;
+    private Properties properties;
 
     public String getPortId() {
         return portId;
@@ -129,12 +129,12 @@ public class PortData implements PortInfo {
         return secure;
     }
 
-    public Properties getSecurityProperties() {
-        return securityProperties;
+    public Properties getProperties() {
+        return properties;
     }
 
-    public void setSecurityProperties(Properties securityProperties) {
-        this.securityProperties = securityProperties;
+    public void setProperties(Properties properties) {
+        this.properties = properties;
     }
     
     

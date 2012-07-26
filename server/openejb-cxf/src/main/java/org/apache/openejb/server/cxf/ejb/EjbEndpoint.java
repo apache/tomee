@@ -90,9 +90,7 @@ public class EjbEndpoint extends CxfEndpoint {
         }
 
         // Install WSS4J interceptor
-        if (port.isSecure()) {
-            ConfigureCxfSecurity.configure(endpoint, port.getSecurityProperties());
-        }
+        ConfigureCxfSecurity.configure(endpoint, port);
 
     }
 
