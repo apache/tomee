@@ -74,23 +74,6 @@ public class EjbTimerServiceImpl implements EjbTimerService {
     public static final String OPENEJB_TIMEOUT_JOB_NAME = "OPENEJB_TIMEOUT_JOB";
     public static final String OPENEJB_TIMEOUT_JOB_GROUP_NAME = "OPENEJB_TIMEOUT_GROUP";
 
-    private static final String[] CONFIG_PROPERTIES;
-    static {
-        final List<String> values = new ArrayList<String>();
-        for (Field field : StdSchedulerFactory.class.getDeclaredFields()) {
-            int mods = field.getModifiers();
-            if (Modifier.isStatic(mods) && Modifier.isFinal(mods) && Modifier.isPublic(mods)
-                    && String.class.equals(field.getType())) {
-                try {
-                    values.add((String) field.get(null));
-                } catch (IllegalAccessException e) {
-                    // ignored
-                }
-            }
-        }
-        CONFIG_PROPERTIES = values.toArray(new String[values.size()]);
-    }
-
     private final TransactionManager transactionManager;
     final BeanContext deployment;
     private final boolean transacted;
@@ -125,8 +108,8 @@ public class EjbTimerServiceImpl implements EjbTimerService {
         properties.put(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, "OpenEJB-TimerService-Scheduler");
         updateProperties(properties, null);
 
-        boolean newInstance = updateProperties(properties, deployment.getEjbName())
-                || updateProperties(properties, deployment.getModuleName() + "." + deployment.getEjbName());
+        boolean newInstance = updateProperties(properties, deployment.getEjbName() + ".")
+                || updateProperties(properties, deployment.getModuleName() + "." + deployment.getEjbName() + ".");
 
         final Scheduler scheduler = SystemInstance.get().getComponent(Scheduler.class);
         Scheduler thisScheduler;
@@ -157,18 +140,19 @@ public class EjbTimerServiceImpl implements EjbTimerService {
 
     private static boolean updateProperties(final Properties properties, final String prefix) {
         boolean  updated = false;
-        for (String key: CONFIG_PROPERTIES) {
-            final String newKey;
-            if (prefix == null || prefix.isEmpty()) {
-                newKey = key;
-            } else {
-                newKey = prefix + "." + key;
-            }
-
-            final String value = SystemInstance.get().getOptions().get(newKey, (String) null);
-            if (value != null) {
-                properties.setProperty(key, value);
-                updated = true;
+        for (String key: SystemInstance.get().getProperties().stringPropertyNames()) {
+            if (key.startsWith("org.quartz")) { // global config
+                final String value = SystemInstance.get().getOptions().get(key, (String) null);
+                if (value != null) {
+                    properties.setProperty(key, value);
+                    updated = true;
+                }
+            } else if (key.startsWith(prefix + "org.quartz")) {
+                final String value = SystemInstance.get().getOptions().get(key.substring(prefix.length()), (String) null); // specific config
+                if (value != null) {
+                    properties.setProperty(key, value);
+                    updated = true;
+                }
             }
         }
         return updated;
