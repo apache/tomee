@@ -28,7 +28,7 @@
   <description>Aggregates dependencies and runs the JSR-303 TCK in TomEE</description>
 
   <properties>
-    <openejb.home>${project.build.directory}${file.separator}apache-tomee-webprofile-1.1.0-SNAPSHOT</openejb.home>
+    <openejb.home>${project.build.directory}${file.separator}apache-tomee-webprofile-${tomee.version}</openejb.home>
   </properties>
 
   <dependencies>
