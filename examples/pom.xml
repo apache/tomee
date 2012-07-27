@@ -47,6 +47,7 @@
     <module>cdi-produces-disposes</module>
     <module>cdi-produces-field</module>
     <module>cdi-query</module>
+    <module>change-jaxws-url</module>
     <module>component-interfaces</module>
     <module>cucumber-jvm</module>
     <module>custom-injection</module>
@@ -61,6 +62,8 @@
     <module>dynamic-implementation</module>
     <module>dynamic-proxy-to-access-mbean</module>
     <module>ear-testing</module>
+    <module>ejb-examples</module>
+    <module>ejb-webservice</module>
     <module>groovy-cdi</module>
     <module>groovy-jpa</module>
     <module>groovy-spock</module>
@@ -74,19 +77,25 @@
     <module>jpa-eclipselink</module>
     <module>jpa-hibernate</module>
     <module>jpa-enumerated</module>
+    <module>jsf</module>
     <module>lookup-of-ejbs</module>
     <module>lookup-of-ejbs-with-descriptor</module>
     <module>mbean-auto-registration</module>
     <module>movies-complete-meta</module>
     <module>movies-complete</module>
+    <module>moviefun</module>
     <module>multiple-arquillian-adapters</module>
     <module>multiple-tomee-arquillian</module>
     <module>persistence-fragment</module>
+    <module>pojo-webservice</module>
     <module>polling-parent</module>
     <module>quartz-app</module>
     <module>realm-in-tomee</module>
     <module>reload-persistence-unit-properties</module>
+    <module>resources-declared-in-webapp</module>
     <module>rest-on-ejb</module>
+    <module>rest-example</module>
+    <module>rest-example-with-application</module>
     <module>schedule-expression</module>
     <module>schedule-methods-meta</module>
     <module>schedule-methods</module>
@@ -107,6 +116,7 @@
     <module>spring-integration</module>
     <module>spring-data-proxy</module>
     <module>spring-data-proxy-meta</module>
+    <module>struts</module>
     <module>telephone-stateful</module>
     <module>testcase-injection</module>
     <module>testing-security-meta</module>
