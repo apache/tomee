@@ -128,7 +128,6 @@
     <module>tomee-jersey-eclipselink</module>
     <module>transaction-rollback</module>
     <module>troubleshooting</module>
-    <module>webapps</module>
     <module>webservice-attachments</module>
     <module>webservice-inheritance</module>
     <module>webservice-security</module>
