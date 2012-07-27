@@ -27,7 +27,7 @@
   <name>OpenEJB :: TCK :: CDI TomEE</name>
 
   <properties>
-    <openejb.home>${project.build.directory}${file.separator}apache-tomee-webprofile-1.1.0-SNAPSHOT</openejb.home>
+    <openejb.home>${project.build.directory}${file.separator}apache-tomee-webprofile-${tomee.version}</openejb.home>
     <openejb.deployer.jndiname>openejb/DeployerBusinessRemote</openejb.deployer.jndiname>
     <org.jboss.testharness.spi.Containers>org.apache.openejb.tck.impl.ContainersImplTomEE</org.jboss.testharness.spi.Containers>
     <suiteXmlFile>src/test/resources/passing.xml</suiteXmlFile>
