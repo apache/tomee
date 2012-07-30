@@ -161,8 +161,7 @@ public class OpenEjbContainer extends EJBContainer {
         final ThreadContext callContext = new ThreadContext(context, null, Operation.INJECTION);
         final ThreadContext oldContext = ThreadContext.enter(callContext);
         try {
-            final OWBInjector beanInjector = new OWBInjector(webBeanContext);
-            beanInjector.inject(object);
+            OWBInjector.inject(webBeanContext.getBeanManagerImpl(), object, null);
         } catch (Throwable t) {
             logger.warning("an error occured while injecting the class '" + clazz.getName() + "': " + t.getMessage());
             // TODO handle this differently
