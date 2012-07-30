@@ -59,7 +59,6 @@ import org.apache.xbean.naming.context.ContextFlyweight;
 import javax.ejb.EJBException;
 import javax.ejb.embeddable.EJBContainer;
 import javax.ejb.spi.EJBContainerProvider;
-import javax.enterprise.context.spi.CreationalContext;
 import javax.naming.Context;
 import javax.naming.Name;
 import javax.naming.NameNotFoundException;
@@ -100,7 +99,6 @@ public class OpenEjbContainer extends EJBContainer {
     private Options options;
     private OpenEjbContainer.GlobalContext globalJndiContext;
     private WebBeansContext webBeanContext;
-    private CreationalContext<Object> creationalContext = null;
     private ServletContext servletContext;
     private HttpSession session;
 
@@ -151,11 +149,6 @@ public class OpenEjbContainer extends EJBContainer {
     public <T> T inject(T object) {
 
         assert object != null;
-
-        if (creationalContext != null) {
-            creationalContext.release();
-            creationalContext = null;
-        }
 
         final Class<?> clazz = object.getClass();
 
@@ -616,22 +609,14 @@ public class OpenEjbContainer extends EJBContainer {
 
         @Override
         public void unbind(Name name) throws NamingException {
-            if (name.size() == 1 && "inject".equals(name.get(0))) {
-                if (creationalContext != null) {
-                    creationalContext.release();
-                }
-            } else {
+            if (!(name.size() == 1 && "inject".equals(name.get(0)))) {
                 super.unbind(name);
             }
         }
 
         @Override
         public void unbind(String name) throws NamingException {
-            if (name != null && "inject".equals(name)) {
-                if (creationalContext != null) {
-                    creationalContext.release();
-                }
-            } else {
+            if (!(name != null && "inject".equals(name))) {
                 super.unbind(name);
             }
         }
