@@ -46,8 +46,7 @@ public class OpenEJBInjectionEnricher implements TestEnricher {
         try {
             final Set<Bean<?>> beans = bm.getBeans(testInstance.getClass());
             final Bean<?> bean = bm.resolve(beans);
-            final OWBInjector beanInjector = new OWBInjector(ctx.getWebBeansContext());
-            beanInjector.inject(testInstance, bm.createCreationalContext(bean));
+            OWBInjector.inject(bm, testInstance, bm.createCreationalContext(bean));
         } catch (Throwable t) {
             // ignored
         }
