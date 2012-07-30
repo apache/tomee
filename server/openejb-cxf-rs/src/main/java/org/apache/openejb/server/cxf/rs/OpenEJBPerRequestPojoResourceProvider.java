@@ -184,7 +184,7 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
     private class DefaultBeanCreator implements BeanCreator {
         private Message m;
         private InjectionProcessor<?> injector;
-        private OWBInjector cdiInjector;
+        private CreationalContext creationalContext;
         private Object instance;
 
         public DefaultBeanCreator(Message m) {
@@ -200,9 +200,10 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
                 injector = new InjectionProcessor<Object>(instance, new ArrayList<Injection>(injections), InjectionProcessor.unwrap(context));
                 instance = injector.createInstance();
 
+                final BeanManager bm = webbeansContext.getBeanManagerImpl();
+                creationalContext = bm.createCreationalContext(null);
                 try {
-                    cdiInjector = new OWBInjector(webbeansContext);
-                    cdiInjector.inject(instance);
+                    OWBInjector.inject(bm, instance, creationalContext);
                 } catch (Exception e) {
                     // ignored
                 }
@@ -237,8 +238,8 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
                 if (injector != null) {
                     injector.preDestroy();
                 }
-                if (cdiInjector != null) {
-                    cdiInjector.destroy();
+                if (creationalContext != null) {
+                    creationalContext.release();
                 }
             }
         }
