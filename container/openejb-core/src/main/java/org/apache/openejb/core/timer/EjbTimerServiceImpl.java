@@ -24,6 +24,7 @@ import org.apache.openejb.RpcContainer;
 import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.SetAccessible;
@@ -51,6 +52,10 @@ import javax.ejb.EJBException;
 import javax.ejb.ScheduleExpression;
 import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.TransactionManager;
@@ -66,7 +71,7 @@ import java.util.Properties;
 import java.util.Set;
 
 
-public class EjbTimerServiceImpl implements EjbTimerService {
+public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
     private static final Logger log = Logger.getInstance(LogCategory.TIMER, "org.apache.openejb.util.resources");
 
     public static final String QUARTZ_THREAD_POOL_ADAPTER = "openejb.org.quartz.threadPool.class";
@@ -74,14 +79,13 @@ public class EjbTimerServiceImpl implements EjbTimerService {
     public static final String OPENEJB_TIMEOUT_JOB_NAME = "OPENEJB_TIMEOUT_JOB";
     public static final String OPENEJB_TIMEOUT_JOB_GROUP_NAME = "OPENEJB_TIMEOUT_GROUP";
 
-    private final TransactionManager transactionManager;
-    final BeanContext deployment;
-    private final boolean transacted;
-    private final int retryAttempts;
+    private boolean transacted;
+    private int retryAttempts;
 
-    private final TimerStore timerStore;
-
-    private Scheduler scheduler;
+    private transient TransactionManager transactionManager;
+    private transient BeanContext deployment;
+    private transient TimerStore timerStore;
+    private transient Scheduler scheduler;
 
     public EjbTimerServiceImpl(BeanContext deployment) {
         this(deployment, getDefaultTransactionManager(), getDefaultScheduler(deployment), new MemoryTimerStore(getDefaultTransactionManager()), 1);
@@ -99,6 +103,23 @@ public class EjbTimerServiceImpl implements EjbTimerService {
         TransactionType transactionType = deployment.getTransactionType(deployment.getEjbTimeout());
         this.transacted = transactionType == TransactionType.Required || transactionType == TransactionType.RequiresNew;
         this.retryAttempts = retryAttempts;
+    }
+
+	private void writeObject(final ObjectOutputStream out) throws IOException {
+        out.writeUTF(deployment.getDeploymentID().toString());
+        out.writeBoolean(transacted);
+        out.writeInt(retryAttempts);
+    }
+
+    private void readObject(final ObjectInputStream in) throws IOException {
+        final String dId = in.readUTF();
+        transacted = in.readBoolean();
+        retryAttempts = in.readInt();
+
+        deployment = SystemInstance.get().getComponent(ContainerSystem.class).getBeanContext(dId);
+        transactionManager = getDefaultTransactionManager();
+        timerStore = new MemoryTimerStore(transactionManager); // TODO: check it should be serialized or not
+        scheduler = getDefaultScheduler(deployment);
     }
 
     public static synchronized Scheduler getDefaultScheduler(BeanContext deployment) {

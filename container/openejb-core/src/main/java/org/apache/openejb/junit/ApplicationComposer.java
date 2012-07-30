@@ -323,8 +323,7 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
 //                        load("sun.security.pkcs11.SunPKCS11$Descriptor");
 //                        load("sun.security.pkcs11.wrapper.PKCS11Exception");
                         try {
-                            OWBInjector beanInjector = new OWBInjector(appContext.getWebBeansContext());
-                            beanInjector.inject(testInstance);
+                            OWBInjector.inject(appContext.getBeanManager(), testInstance, null);
                         } catch (Throwable t) {
                             // TODO handle this differently
                             // this is temporary till the injector can be rewritten

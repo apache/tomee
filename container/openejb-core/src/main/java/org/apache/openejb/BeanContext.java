@@ -1386,8 +1386,7 @@ public class BeanContext extends DeploymentContext {
 
                     // TODO we likely don't want to create a new one each time -- investigate the destroy() method
                     try {
-                        OWBInjector interceptorCdiInjector = new OWBInjector(webBeansContext);
-                        interceptorCdiInjector.inject(interceptorInstance, creationalContext);
+                        OWBInjector.inject(webBeansContext.getBeanManagerImpl(), interceptorInstance, creationalContext);
                     } catch (Throwable t) {
                         // TODO handle this differently
                         // this is temporary till the injector can be rewritten
