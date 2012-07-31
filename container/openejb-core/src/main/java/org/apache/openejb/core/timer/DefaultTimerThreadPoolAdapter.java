@@ -34,6 +34,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @version $Rev$ $Date$
  */
+@SuppressWarnings("UnusedDeclaration")
 public class DefaultTimerThreadPoolAdapter implements ThreadPool {
 
     private static final Logger logger = Logger.getInstance(LogCategory.TIMER, "org.apache.openejb.util.resources");
@@ -44,6 +45,16 @@ public class DefaultTimerThreadPoolAdapter implements ThreadPool {
 
     private String instanceName;
 
+    /**
+     * Mock support for property: org.quartz.threadPool.threadCount
+     */
+    private int threadCount = 3;
+
+    /**
+     * Mock support for property: org.quartz.threadPool.threadPriority
+     */
+    private int threadPriority = Thread.NORM_PRIORITY;
+
     private final Object threadAvailableLock = new Object();
 
     private final boolean threadPoolExecutorUsed;
@@ -53,12 +64,12 @@ public class DefaultTimerThreadPoolAdapter implements ThreadPool {
 
         if (this.executor == null) {
 
-            int size = Integer.parseInt(SystemInstance.get().getProperty("openejb.timer.pool.size", "2"));
-            if (size < 2) {
-                size = 2;
+            int size = Integer.parseInt(SystemInstance.get().getProperty("openejb.timer.pool.size", "3"));
+            if (size < 3) {
+                size = 3;
             }
 
-            this.executor = new ThreadPoolExecutor(2
+            this.executor = new ThreadPoolExecutor(size
                     , size
                     , 60L
                     , TimeUnit.SECONDS
@@ -158,4 +169,19 @@ public class DefaultTimerThreadPoolAdapter implements ThreadPool {
         //TODO Seems we should never try to shutdown the thread pool, as it is shared in global scope
     }
 
+    public int getThreadCount() {
+        return this.threadCount;
+    }
+
+    public void setThreadCount(final int threadCount) {
+        this.threadCount = threadCount;
+    }
+
+    public int getThreadPriority() {
+        return this.threadPriority;
+    }
+
+    public void setThreadPriority(final int threadPriority) {
+        this.threadPriority = threadPriority;
+    }
 }

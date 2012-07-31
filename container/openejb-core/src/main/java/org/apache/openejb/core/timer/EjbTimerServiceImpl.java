@@ -28,47 +28,33 @@ import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.SetAccessible;
-import org.quartz.Calendar;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobKey;
-import org.quartz.ListenerManager;
 import org.quartz.Scheduler;
-import org.quartz.SchedulerContext;
 import org.quartz.SchedulerException;
-import org.quartz.SchedulerMetaData;
 import org.quartz.Trigger;
-import org.quartz.TriggerKey;
-import org.quartz.UnableToInterruptJobException;
 import org.quartz.impl.StdSchedulerFactory;
-import org.quartz.impl.matchers.GroupMatcher;
 import org.quartz.impl.triggers.AbstractTrigger;
-import org.quartz.spi.JobFactory;
+import org.quartz.simpl.SimpleThreadPool;
 
 import javax.ejb.EJBContext;
 import javax.ejb.EJBException;
 import javax.ejb.ScheduleExpression;
 import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.ObjectInputStream;
-import java.io.Serializable;
 import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.TransactionManager;
-import java.lang.reflect.Field;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 
 public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
@@ -105,7 +91,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         this.retryAttempts = retryAttempts;
     }
 
-	private void writeObject(final ObjectOutputStream out) throws IOException {
+    private void writeObject(final ObjectOutputStream out) throws IOException {
         out.writeUTF(deployment.getDeploymentID().toString());
         out.writeBoolean(transacted);
         out.writeInt(retryAttempts);
@@ -124,15 +110,23 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
 
     public static synchronized Scheduler getDefaultScheduler(BeanContext deployment) {
         final Properties properties = new Properties();
-        properties.put(StdSchedulerFactory.PROP_THREAD_POOL_CLASS, SystemInstance.get().hasProperty(QUARTZ_THREAD_POOL_ADAPTER) ? SystemInstance.get().getOptions().get(QUARTZ_THREAD_POOL_ADAPTER, "")
-                : DefaultTimerThreadPoolAdapter.class.getName());
+        final SystemInstance systemInstance = SystemInstance.get();
+        final String defaultThreadPool = DefaultTimerThreadPoolAdapter.class.getName();
+        properties.put(StdSchedulerFactory.PROP_THREAD_POOL_CLASS, systemInstance.hasProperty(QUARTZ_THREAD_POOL_ADAPTER) ? systemInstance.getOptions().get(QUARTZ_THREAD_POOL_ADAPTER, SimpleThreadPool.class.getName())
+                : defaultThreadPool);
         properties.put(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, "OpenEJB-TimerService-Scheduler");
         updateProperties(properties, null);
 
         boolean newInstance = updateProperties(properties, deployment.getEjbName() + ".")
                 || updateProperties(properties, deployment.getModuleName() + "." + deployment.getEjbName() + ".");
 
-        final Scheduler scheduler = SystemInstance.get().getComponent(Scheduler.class);
+        if (defaultThreadPool.equals(properties.get(StdSchedulerFactory.PROP_THREAD_POOL_CLASS))
+                && properties.containsKey("org.quartz.threadPool.threadCount")
+                & !properties.containsKey("openejb.timer.pool.size")) {
+            log.info("Found property 'org.quartz.threadPool.threadCount' for default thread pool, please use 'openejb.timer.pool.size' instead");
+        }
+
+        final Scheduler scheduler = systemInstance.getComponent(Scheduler.class);
         Scheduler thisScheduler;
         if (scheduler == null || newInstance) {
             try {
@@ -151,7 +145,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
             }
 
             if (!newInstance) {
-                SystemInstance.get().setComponent(Scheduler.class, thisScheduler);
+                systemInstance.setComponent(Scheduler.class, thisScheduler);
             }
         } else {
             thisScheduler = scheduler;
@@ -160,8 +154,8 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
     }
 
     private static boolean updateProperties(final Properties properties, final String prefix) {
-        boolean  updated = false;
-        for (String key: SystemInstance.get().getProperties().stringPropertyNames()) {
+        boolean updated = false;
+        for (String key : SystemInstance.get().getProperties().stringPropertyNames()) {
             if (key.startsWith("org.quartz")) { // global config
                 final String value = SystemInstance.get().getOptions().get(key, (String) null);
                 if (value != null) {
@@ -200,15 +194,18 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         }
 
     }
+
+    @Override
     public void start() throws TimerStoreException {
-         // load saved timers
-        Collection<TimerData> timerDatas = timerStore.loadTimers(this, (String)deployment.getDeploymentID());
+        // load saved timers
+        Collection<TimerData> timerDatas = timerStore.loadTimers(this, (String) deployment.getDeploymentID());
         // schedule the saved timers
         for (TimerData timerData : timerDatas) {
             initializeNewTimer(timerData);
         }
     }
 
+    @Override
     public void stop() {
         // stop all timers
         for (TimerData timerData : timerStore.getTimers((String) deployment.getDeploymentID())) {
@@ -228,13 +225,14 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
 
     /**
      * Called from TimerData and start when a timer should be scheduled with the java.util.Timer.
+     *
      * @param timerData the timer to schedule
      */
     public void schedule(TimerData timerData) {
         if (scheduler == null) throw new IllegalStateException("scheduler is configured properly");
-        
+
         timerData.setScheduler(scheduler);
-        
+
         Trigger trigger = timerData.getTrigger();
         if (trigger instanceof AbstractTrigger) { // is the case
             AbstractTrigger<?> atrigger = (AbstractTrigger<?>) trigger;
@@ -245,7 +243,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         }
         JobDataMap triggerDataMap = trigger.getJobDataMap();
         triggerDataMap.put(EjbTimeoutJob.EJB_TIMERS_SERVICE, this);
-        triggerDataMap.put(EjbTimeoutJob.TIMER_DATA,timerData);
+        triggerDataMap.put(EjbTimeoutJob.TIMER_DATA, timerData);
         try {
             scheduler.scheduleJob(trigger);
         } catch (Exception e) {
@@ -256,6 +254,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
 
     /**
      * Call back from TimerData and ejbTimeout when a timer has been cancelled (or is complete) and should be removed from stores.
+     *
      * @param timerData the timer that was cancelled
      */
     public void cancelled(TimerData timerData) {
@@ -265,18 +264,20 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
 
     /**
      * Returns a timerData to the TimerStore, if a cancel() is rolled back.
+     *
      * @param timerData the timer to be returned to the timer store
      */
     public void addTimerData(TimerData timerData) {
         try {
             timerStore.addTimerData(timerData);
         } catch (Exception e) {
-            log.warning("Could not add timer of type "+ timerData.getType().name() + " due to " + e.getMessage());
+            log.warning("Could not add timer of type " + timerData.getType().name() + " due to " + e.getMessage());
         }
     }
 
+    @Override
     public Timer getTimer(long timerId) {
-        TimerData timerData = timerStore.getTimer((String)deployment.getDeploymentID(), timerId);
+        TimerData timerData = timerStore.getTimer((String) deployment.getDeploymentID(), timerId);
         if (timerData != null) {
             return timerData.getTimer();
         } else {
@@ -284,11 +285,12 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         }
     }
 
+    @Override
     public Collection<Timer> getTimers(Object primaryKey) throws IllegalStateException {
         checkState();
 
         Collection<Timer> timers = new ArrayList<Timer>();
-        for (TimerData timerData : timerStore.getTimers((String)deployment.getDeploymentID())) {
+        for (TimerData timerData : timerStore.getTimers((String) deployment.getDeploymentID())) {
             timers.add(timerData.getTimer());
         }
         return timers;
@@ -359,7 +361,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
 
     @Override
     public Timer createTimer(Object primaryKey, Method timeoutMethod, ScheduleExpression scheduleExpression, TimerConfig timerConfig) {
-        if(scheduleExpression == null) {
+        if (scheduleExpression == null) {
             throw new IllegalArgumentException("scheduleExpression is null");
         }
         //TODO add more schedule expression validation logic ?
@@ -377,14 +379,15 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         return timerStore;
     }
 
-    public Scheduler getScheduler(){
+    public Scheduler getScheduler() {
         return scheduler;
     }
 
-    private void initializeNewTimer(TimerData timerData){
+    private void initializeNewTimer(TimerData timerData) {
         // mark this as a new timer... when the transaction completes it will schedule the timer
         timerData.newTimer();
     }
+
     /**
      * Insure that timer methods can be invoked for the current operation on this Context.
      */
@@ -395,7 +398,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
 
     /**
      * This method calls the ejbTimeout method and starts a transaction if the timeout is transacted.
-     *
+     * <p/>
      * This method will retry failed ejbTimeout calls until retryAttempts is exceeded.
      *
      * @param timerData the timer to call.
@@ -422,7 +425,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                     RpcContainer container = (RpcContainer) deployment.getContainer();
                     Method ejbTimeout = timerData.getTimeoutMethod();
                     SetAccessible.on(ejbTimeout);
-                    container.invoke(deployment.getDeploymentID(), InterfaceType.TIMEOUT, ejbTimeout.getDeclaringClass(), ejbTimeout, new Object[] { timer }, timerData.getPrimaryKey());
+                    container.invoke(deployment.getDeploymentID(), InterfaceType.TIMEOUT, ejbTimeout.getDeclaringClass(), ejbTimeout, new Object[]{timer}, timerData.getPrimaryKey());
                 } catch (RuntimeException e) {
                     retry = true;
                     // exception from a timer does not necessairly mean failure

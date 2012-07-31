@@ -20,15 +20,17 @@ import org.apache.openejb.OpenEJB;
 import org.apache.openejb.loader.SystemInstance;
 
 public interface ParentClassLoaderFinder {
-    ClassLoader getParentClassLoader();
+
+    ClassLoader getParentClassLoader(final ClassLoader fallback);
 
     public static class Helper {
         public static ClassLoader get() {
             final ParentClassLoaderFinder parentFinder = SystemInstance.get().getComponent(ParentClassLoaderFinder.class);
+            final ClassLoader fallback = OpenEJB.class.getClassLoader();
             if (parentFinder != null) {
-                return  parentFinder.getParentClassLoader();
+                return  parentFinder.getParentClassLoader(fallback);
             }
-            return OpenEJB.class.getClassLoader();
+            return fallback;
         }
     }
 }

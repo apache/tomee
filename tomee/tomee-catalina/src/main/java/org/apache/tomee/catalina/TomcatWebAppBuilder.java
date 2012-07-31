@@ -750,8 +750,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     contextInfo = addContextInfo(standardContext.getHostname(), standardContext);
                     contextInfo.standardContext = standardContext; // ensure to do it before an exception can be thrown
 
-                    final AppInfo appInfo = configurationFactory.configureApplication(appModule);
-                    contextInfo.appInfo = appInfo;
+                    contextInfo.appInfo = configurationFactory.configureApplication(appModule);
 
                     appContext = a.createApplication(contextInfo.appInfo, classLoader);
                     // todo add watched resources to context
@@ -809,7 +808,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
                 if (!contextInfo.appInfo.webAppAlone) {
                     updateInjections(injections, classLoader, false);
-                    for (BeanContext bean : appContext.getBeanContexts()) { // TODO: how if the same class in multiple webapps?
+                    for (final BeanContext bean : appContext.getBeanContexts()) { // TODO: how if the same class in multiple webapps?
                         updateInjections(bean.getInjections(), classLoader, true);
                     }
                 }
@@ -860,7 +859,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         }
     }
 
-    private static void updateInjections(Collection<Injection> injections, ClassLoader classLoader, boolean keepInjection) {
+    private static void updateInjections(final Collection<Injection> injections, final ClassLoader classLoader, final boolean keepInjection) {
         final Iterator<Injection> it = injections.iterator();
         final List<Injection> newOnes = new ArrayList<Injection>();
         while (it.hasNext()) {
@@ -1089,7 +1088,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
         // add servlets to webappinfo
         if (currentWebAppInfo != null) {
-            for (String mapping : standardContext.findServletMappings()) {
+            for (final String mapping : standardContext.findServletMappings()) {
                 final ServletInfo info = new ServletInfo();
                 info.servletName = standardContext.findServletMapping(mapping);
                 info.mappings.add(mapping);
@@ -1115,7 +1114,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
         if (webBeansContext == null) return null;
 
-        for (WebContext web : appContext.getWebContexts()) {
+        for (final WebContext web : appContext.getWebContexts()) {
             final String stdName = removeFirstSlashAndWar(contextInfo.standardContext.getName());
             if (stdName == null) {
                 continue;
@@ -1133,7 +1132,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         return new WebBeansListener(webBeansContext);
     }
 
-    private static String removeFirstSlashAndWar(String name) {
+    private static String removeFirstSlashAndWar(final String name) {
         if (name == null || "/".equals(name) || name.isEmpty()) {
             return "";
         }
@@ -1154,10 +1153,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         // useful to disable web applications deployment
         // it can be placed in the context.xml file, server.xml, ...
         // see http://tomcat.apache.org/tomcat-5.5-doc/config/context.html#Context_Parameters
-        if (standardContext.getServletContext().getAttribute(IGNORE_CONTEXT) != null) return true;
-        if (standardContext.getServletContext().getInitParameter(IGNORE_CONTEXT) != null) return true;
-
-        return false;
+        return standardContext.getServletContext().getAttribute(IGNORE_CONTEXT) != null || standardContext.getServletContext().getInitParameter(IGNORE_CONTEXT) != null;
     }
 
     /**
@@ -1387,6 +1383,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         try {
             file = file.getCanonicalFile();
         } catch (IOException e) {
+            logger.debug(e.getMessage(),e);
         }
         return file;
     }
@@ -1420,7 +1417,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      * tomcat context instance.
      *
      * @param standardContext tomcat context instance
-     * @return a openejb web module
      */
     private void loadWebModule(final AppModule appModule, final StandardContext standardContext) {
         final WebModule webModule = appModule.getWebModules().get(0);
@@ -1549,8 +1545,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      */
     private ContextInfo getContextInfo(final StandardContext standardContext) {
         final String id = getId(standardContext);
-        final ContextInfo contextInfo = infos.get(id);
-        return contextInfo;
+        return infos.get(id);
     }
 
     /**
@@ -1563,10 +1558,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         if (host == null) {
             host = defaultHost;
         }
-        final String contextRoot = webAppContextRoot;
-        final String id = host + "/" + contextRoot;
-        final ContextInfo contextInfo = infos.get(id);
-        return contextInfo;
+        final String id = host + "/" + webAppContextRoot;
+        return infos.get(id);
     }
 
     /**
@@ -1657,11 +1650,13 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         }
     }
 
+    @Override
     public Map<ClassLoader, Map<String, Set<String>>> getJsfClasses() {
         return jsfClasses;
     }
 
-    public ClassLoader getParentClassLoader() {
-        return parentClassLoader;
+    @Override
+    public ClassLoader getParentClassLoader(final ClassLoader fallback) {
+        return (null != this.parentClassLoader ? this.parentClassLoader : fallback);
     }
 }

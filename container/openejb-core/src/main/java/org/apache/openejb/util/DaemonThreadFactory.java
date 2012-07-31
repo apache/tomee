@@ -17,6 +17,7 @@
 package org.apache.openejb.util;
 
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.apache.openejb.util.Join.join;
 
@@ -26,7 +27,7 @@ import static org.apache.openejb.util.Join.join;
 public class DaemonThreadFactory implements ThreadFactory {
 
     private final String name;
-    private transient int ids;
+    private AtomicInteger ids = new AtomicInteger(0);
 
     public DaemonThreadFactory(Object... name) {
         this.name = join(" ", name);
@@ -45,8 +46,9 @@ public class DaemonThreadFactory implements ThreadFactory {
         return strings;
     }
 
+    @Override
     public Thread newThread(Runnable runnable) {
-        Thread t = new Thread(runnable, name + " thread " + (ids++));
+        Thread t = new Thread(runnable, (name + "-" + ids.incrementAndGet()));
         t.setDaemon(true);
         return t;
     }

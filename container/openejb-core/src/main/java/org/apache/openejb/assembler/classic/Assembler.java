@@ -1404,7 +1404,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         ParentClassLoaderFinder parentFinder = SystemInstance.get().getComponent(ParentClassLoaderFinder.class);
         ClassLoader parent = OpenEJB.class.getClassLoader();
         if (parentFinder != null) {
-            parent = parentFinder.getParentClassLoader();
+            parent = parentFinder.getParentClassLoader(parent);
         }
         return ClassLoaderUtil.createClassLoader(appInfo.path, jars.toArray(new URL[jars.size()]), parent);
     }
