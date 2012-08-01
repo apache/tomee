@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.resource.jdbc.plugin;
 
-import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.xbean.finder.ResourceFinder;
@@ -26,14 +25,13 @@ import java.io.IOException;
 
 public class InstantdbDataSourcePlugin implements DataSourcePlugin {
 
-    public void configure(BasicDataSource dataSource) {
-        String jdbcUrl = dataSource.getUrl();
-
+    @Override
+    public String updatedUrl(String jdbcUrl) {
         // jdbc:idb:conf/instantdb.properties
         String prefix = "jdbc:idb:";
         int index = jdbcUrl.indexOf(prefix);
         if (index == -1){
-            return;
+            return jdbcUrl;
         }
 
         String confFile = jdbcUrl.substring(index + prefix.length());
@@ -44,13 +42,13 @@ public class InstantdbDataSourcePlugin implements DataSourcePlugin {
 
         if (file.exists()) {
             // The instantdb properties file is there, we're good
-            return;
+            return jdbcUrl;
         }
 
         if (!file.getParentFile().exists()){
             // The directory the instantdb properties file should live in
             // doesn't exist, don't bother
-            return;
+            return jdbcUrl;
         }
 
         try {
@@ -61,6 +59,8 @@ public class InstantdbDataSourcePlugin implements DataSourcePlugin {
             // TODO; Handle this
             e.printStackTrace();
         }
+
+        return jdbcUrl;
     }
 
     public boolean enableUserDirHack() {

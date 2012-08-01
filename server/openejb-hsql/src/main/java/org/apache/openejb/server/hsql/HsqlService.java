@@ -17,7 +17,6 @@
  */
 package org.apache.openejb.server.hsql;
 
-import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.resource.jdbc.plugin.HsqldbDataSourcePlugin;
 import org.apache.openejb.server.SelfManaging;
@@ -27,7 +26,7 @@ import org.apache.openejb.spi.ContainerSystem;
 import org.hsqldb.Database;
 import org.hsqldb.DatabaseManager;
 import org.hsqldb.Server;
-import org.hsqldb.jdbcDriver;
+import org.hsqldb.persist.HsqlDatabaseProperties;
 import org.hsqldb.persist.HsqlProperties;
 import org.hsqldb.server.ServerConfiguration;
 import org.hsqldb.server.ServerConstants;
@@ -35,10 +34,14 @@ import org.hsqldb.server.ServerConstants;
 import javax.naming.Binding;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingEnumeration;
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
@@ -110,9 +113,26 @@ public class HsqlService implements ServerService, SelfManaging {
                 Set<String> dbnames = new TreeSet<String>();
                 for (Binding binding : Collections.list(bindings)) {
                     Object value = binding.getObject();
-                    if (value instanceof BasicDataSource) {
-                        BasicDataSource jdbc = (BasicDataSource) value;
-                        String path = getPath(jdbc);
+                    if (value instanceof DataSource) {
+                        DataSource jdbc = (DataSource) value;
+                        Connection connection = null;
+                        String path = null;
+                        try {
+                            connection = jdbc.getConnection();
+                            DatabaseMetaData meta = connection.getMetaData();
+                            path = getPath(meta.getDriverName(), meta.getURL());
+                        } catch (Throwable t) {
+                            continue;
+                        } finally {
+                            if (connection != null) {
+                                try {
+                                    connection.close();
+                                } catch (SQLException sqlEx) {
+                                    // no-op
+                                }
+                            }
+                        }
+
                         if (path != null) {
                             if (dbnames.size() > 9) {
                                 throw new ServiceException("Hsql Server can only host 10 database instances");
@@ -150,24 +170,20 @@ public class HsqlService implements ServerService, SelfManaging {
         }
     }
 
-    private String getPath(BasicDataSource jdbc) {
+    private String getPath(final String driver, final String url) {
         // is this connectoion using the hsql driver?
-        if (!jdbcDriver.class.getName().equals(jdbc.getDriverClassName())) {
+        if (!HsqlDatabaseProperties.PRODUCT_NAME.equals(driver)) {
             return null;
         }
-
-        String url = jdbc.getUrl();
 
         // is this a hsql url?
         if (url == null || !url.startsWith("jdbc:hsqldb:")) {
             return null;
         }
 
-        // resolve the relative path
-        url = HsqldbDataSourcePlugin.toAbsolutePath(url);
-
+        // resolve the relative path and
         // hack off the jdbc:hsqldb stuff
-        String path = url.substring("jdbc:hsqldb:".length());
+        String path = HsqldbDataSourcePlugin.toAbsolutePath(url).substring("jdbc:hsqldb:".length());
 
         // is this a connection to a local file, mem, or res database?
         if (!path.startsWith("file:") && !path.startsWith("mem:") && path.startsWith("res:")) {

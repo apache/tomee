@@ -16,18 +16,10 @@
  */
 package org.apache.openejb.resource.jdbc.dbcp;
 
+import org.apache.openejb.resource.TransactionManagerWrapper;
 import org.apache.openejb.resource.XAResourceWrapper;
 
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.InvalidTransactionException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.Synchronization;
-import javax.transaction.SystemException;
-import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
-import javax.transaction.xa.XAResource;
 
 public class ManagedDataSourceWithRecovery extends BasicManagedDataSource {
     private TransactionManager suppliedTransactionManager;
@@ -46,112 +38,6 @@ public class ManagedDataSourceWithRecovery extends BasicManagedDataSource {
     protected void wrapTransactionManager() {
         if (suppliedTransactionManager != null) {
             super.setTransactionManager(new TransactionManagerWrapper(suppliedTransactionManager, getUrl(), xaResourceWrapper));
-        }
-    }
-
-    private static class TransactionManagerWrapper implements TransactionManager {
-
-        private final TransactionManager transactionManager;
-        private final String name;
-        private final XAResourceWrapper xaResourceWrapper;
-
-        private TransactionManagerWrapper(TransactionManager transactionManager, String name, XAResourceWrapper xaResourceWrapper) {
-            this.transactionManager = transactionManager;
-            this.name = name;
-            this.xaResourceWrapper = xaResourceWrapper;
-        }
-
-        public void begin() throws NotSupportedException, SystemException {
-            transactionManager.begin();
-        }
-
-        public void commit() throws HeuristicMixedException, HeuristicRollbackException, IllegalStateException, RollbackException, SecurityException, SystemException {
-            transactionManager.commit();
-        }
-
-        public int getStatus() throws SystemException {
-            return transactionManager.getStatus();
-        }
-
-        public Transaction getTransaction() throws SystemException {
-            Transaction tx = transactionManager.getTransaction();
-            return tx == null? null: new TransactionWrapper(transactionManager.getTransaction(), name, xaResourceWrapper);
-        }
-
-        public void resume(Transaction transaction) throws IllegalStateException, InvalidTransactionException, SystemException {
-            transactionManager.resume(((TransactionWrapper)transaction).transaction);
-        }
-
-        public void rollback() throws IllegalStateException, SecurityException, SystemException {
-            transactionManager.rollback();
-        }
-
-        public void setRollbackOnly() throws IllegalStateException, SystemException {
-            transactionManager.setRollbackOnly();
-        }
-
-        public void setTransactionTimeout(int i) throws SystemException {
-            transactionManager.setTransactionTimeout(i);
-        }
-
-        public Transaction suspend() throws SystemException {
-            return new TransactionWrapper(transactionManager.suspend(), name, xaResourceWrapper);
-        }
-    }
-
-    private static class TransactionWrapper implements Transaction {
-
-        private final Transaction transaction;
-        private final String name;
-        private final XAResourceWrapper xaResourceWrapper;
-
-        private TransactionWrapper(Transaction transaction, String name, XAResourceWrapper xaResourceWrapper) {
-            this.transaction = transaction;
-            this.name = name;
-            this.xaResourceWrapper = xaResourceWrapper;
-        }
-
-        public void commit() throws HeuristicMixedException, HeuristicRollbackException, RollbackException, SecurityException, SystemException {
-            transaction.commit();
-        }
-
-        public boolean delistResource(XAResource xaResource, int i) throws IllegalStateException, SystemException {
-            XAResource wrapper = xaResourceWrapper.wrap(xaResource, name);
-            return transaction.delistResource(wrapper, i);
-        }
-
-        public boolean enlistResource(XAResource xaResource) throws IllegalStateException, RollbackException, SystemException {
-            XAResource wrapper = xaResourceWrapper.wrap(xaResource, name);
-            return transaction.enlistResource(wrapper);
-        }
-
-        public int getStatus() throws SystemException {
-            return transaction.getStatus();
-        }
-
-        public void registerSynchronization(Synchronization synchronization) throws IllegalStateException, RollbackException, SystemException {
-            transaction.registerSynchronization(synchronization);
-        }
-
-        public void rollback() throws IllegalStateException, SystemException {
-            transaction.rollback();
-        }
-
-        public void setRollbackOnly() throws IllegalStateException, SystemException {
-            transaction.setRollbackOnly();
-        }
-
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            TransactionWrapper that = (TransactionWrapper) o;
-
-            return transaction.equals(that.transaction);
-        }
-
-        public int hashCode() {
-            return transaction.hashCode();
         }
     }
 }

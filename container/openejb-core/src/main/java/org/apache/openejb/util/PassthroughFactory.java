@@ -21,7 +21,7 @@ import org.apache.openejb.InjectionProcessor;
 
 /**
  * @version $Rev$ $Date$
-*/
+ */
 public class PassthroughFactory {
 
     /**

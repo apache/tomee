@@ -82,7 +82,7 @@ import org.apache.openejb.observer.Observes;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
 import org.apache.openejb.resource.GeronimoConnectionManagerFactory;
-import org.apache.openejb.resource.jdbc.pool.DataSourceCreator;
+import org.apache.openejb.resource.jdbc.DataSourceFactory;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
@@ -1126,11 +1126,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             } catch (Throwable t) {
                 logger.fatal("ResourceAdapter Shutdown Failed: " + name, t);
             }
-        } else if (SystemInstance.get().getComponent(DataSourceCreator.class).hasCreated(object)) {
+        } else if (DataSourceFactory.knows(object)) {
             logger.info("Closing DataSource: " + name);
 
             try {
-                SystemInstance.get().getComponent(DataSourceCreator.class).destroy(object);
+                DataSourceFactory.destroy(object);
             } catch (Throwable t) {
                 //Ignore
             }
@@ -1704,8 +1704,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             // service becomes a ConnectorReference which merges connection manager and mcf
             service = new ConnectorReference(connectionManager, managedConnectionFactory);
-        } else {
-            if (service instanceof DataSource) {
+        } else if (service instanceof DataSource) {
                 ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
                 if (classLoader == null) {
                     classLoader = getClass().getClassLoader();
@@ -1715,8 +1714,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 if (importer.hasSomethingToImport()) {
                     importer.doImport();
                 }
-            }
 
+            logUnusedProperties(DataSourceFactory.forgetRecipe(service, serviceRecipe), serviceInfo);
+        } else {
             logUnusedProperties(serviceRecipe, serviceInfo);
         }
 

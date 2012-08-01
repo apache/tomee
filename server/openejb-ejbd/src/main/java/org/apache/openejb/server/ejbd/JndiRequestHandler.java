@@ -20,6 +20,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -38,6 +41,7 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.xml.namespace.QName;
 
+import org.apache.openejb.resource.jdbc.DataSourceFactory;
 import org.omg.CORBA.ORB;
 import static org.apache.openejb.server.ejbd.ClientObjectFactory.convert;
 
@@ -213,7 +217,7 @@ class JndiRequestHandler {
             } else if (object == null) {
                 throw new NullPointerException("lookup of '" + name + "' returned null");
             } else if (object instanceof DataSource) {
-                if (isDbcpDataSource(object)) {
+                if (DataSourceFactory.knows(object)) {
                     try {
                         DbcpDataSource cf = new DbcpDataSource(object);
                         DataSourceMetaData dataSourceMetaData = new DataSourceMetaData(cf.getDriverClassName(), cf.getUrl(), cf.getUsername(), cf.getPassword());
@@ -455,15 +459,6 @@ class JndiRequestHandler {
 
     }
 
-    private boolean isDbcpDataSource(Object object) {
-
-        for (Class<?> clazz = object.getClass(); clazz != null; clazz = clazz.getSuperclass()) {
-            if (clazz.getName().equals("org.apache.commons.dbcp.BasicDataSource")) return true;
-        }
-
-        return false;
-    }
-
     private void log(EJBMetaDataImpl metaData) {
         if (logger.isDebugEnabled()) {
             final StringBuilder sb = new StringBuilder();
@@ -525,7 +520,11 @@ class JndiRequestHandler {
         }
 
         public java.lang.String getDriverClassName() throws Exception {
+            try {
             return (String) clazz.getMethod("getDriverClassName").invoke(object);
+            } catch (NoSuchMethodException nsme) {
+                return (String) clazz.getMethod("getDriverClass").invoke(object);
+        }
         }
 
         public java.lang.String getPassword() throws Exception {
@@ -533,7 +532,11 @@ class JndiRequestHandler {
         }
 
         public java.lang.String getUrl() throws Exception {
+            try {
             return (String) clazz.getMethod("getUrl").invoke(object);
+            } catch (NoSuchMethodException nsme) {
+                return (String) clazz.getMethod("getJdbcUrl").invoke(object);
+        }
         }
 
         public java.lang.String getUsername() throws Exception {

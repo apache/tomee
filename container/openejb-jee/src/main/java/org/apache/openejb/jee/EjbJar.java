@@ -194,6 +194,11 @@ public class EjbJar implements NamedModule {
         return bean;
     }
 
+    public <T extends EnterpriseBean> EjbJar enterpriseBean(T bean) {
+        addEnterpriseBean(bean);
+        return this;
+    }
+
     public EnterpriseBean removeEnterpriseBean(EnterpriseBean bean){
         return removeEnterpriseBean(bean.getEjbName());
     }
