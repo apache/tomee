@@ -20,6 +20,7 @@ import org.apache.openejb.server.DiscoveryListener;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import sun.net.util.IPAddressUtil;
 
 import java.net.DatagramPacket;
 import java.net.Inet6Address;
@@ -89,6 +90,13 @@ public class MulticastPulseAgentTest {
         executor.shutdownNow();
     }
 
+    /**
+     * Most of this code is identical to org.apache.openejb.client.MulticastPulseClient#discoverURIs
+     * <p/>
+     * The MulticastPulseClient class is not shared or available here so the test has to emulate it.
+     *
+     * @throws Exception On error
+     */
     @Test
     public void test() throws Exception {
 
@@ -120,31 +128,46 @@ public class MulticastPulseAgentTest {
 
         final Set<URI> set = new TreeSet<URI>(new Comparator<URI>() {
             @Override
-            public int compare(URI u1, URI u2) {
+            public int compare(URI uri1, URI uri2) {
 
                 //Ignore server hostname
-                final String serverHost = u1.getScheme();
-                u1 = URI.create(u1.getSchemeSpecificPart());
-                u2 = URI.create(u2.getSchemeSpecificPart());
+                URI u1 = URI.create(uri1.getSchemeSpecificPart());
+                URI u2 = URI.create(uri2.getSchemeSpecificPart());
 
                 //Ignore scheme (ejb,ejbs,etc.)
                 u1 = URI.create(u1.getSchemeSpecificPart());
                 u2 = URI.create(u2.getSchemeSpecificPart());
 
-                if (u1.getHost().equals(serverHost)) {
-                    //If the service host is the same as the server host
-                    //then keep it at the top of the list
-                    return -1;
-                }
-
                 //Compare URI hosts
-                int i = u1.getHost().compareTo(u2.getHost());
-
+                int i = compare(u1.getHost(), u2.getHost());
                 if (i == 0) {
-                    i = u1.compareTo(u2);
+                    i = uri1.compareTo(uri2);
                 }
 
                 return i;
+            }
+
+            private int compare(final String h1, final String h2) {
+
+                //Sort by hostname, IPv4, IPv6
+
+                try {
+                    if (IPAddressUtil.isIPv4LiteralAddress(h1)) {
+                        if (IPAddressUtil.isIPv6LiteralAddress(h2.replace("[", "").replace("]", ""))) {
+                            return -1;
+                        }
+                    } else if (IPAddressUtil.isIPv6LiteralAddress(h1.replace("[", "").replace("]", ""))) {
+                        if (IPAddressUtil.isIPv4LiteralAddress(h2)) {
+                            return 1;
+                        }
+                    } else if (0 != h1.compareTo(h2)) {
+                        return -1;
+                    }
+                } catch (Throwable e) {
+                    //Ignore
+                }
+
+                return h1.compareTo(h2);
             }
         });
 
@@ -241,11 +264,15 @@ public class MulticastPulseAgentTest {
                                             try {
                                                 if (svc.contains("0.0.0.0")) {
                                                     for (final String h : hosts) {
-                                                        set.add(URI.create(svc.replace("0.0.0.0", ipFormat(h))));
+                                                        if (!h.replace("[", "").startsWith("2001:0:")) { //Filter Teredo
+                                                            set.add(URI.create(svc.replace("0.0.0.0", ipFormat(h))));
+                                                        }
                                                     }
                                                 } else if (svc.contains("[::]")) {
                                                     for (final String h : hosts) {
-                                                        set.add(URI.create(svc.replace("[::]", ipFormat(h))));
+                                                        if (!h.replace("[", "").startsWith("2001:0:")) { //Filter Teredo
+                                                            set.add(URI.create(svc.replace("[::]", ipFormat(h))));
+                                                        }
                                                     }
                                                 } else {
                                                     //Just add as is
@@ -269,6 +296,7 @@ public class MulticastPulseAgentTest {
                     }
 
                     System.out.println("Exit MulticastPulse client thread on: " + name);
+                    System.out.flush();
                 }
             }));
         }
@@ -340,9 +368,21 @@ public class MulticastPulseAgentTest {
         }
 
         System.out.println();
+        System.out.flush();
 
-        for (final URI uri : set) {
-            System.out.println("MultiPulse discovered: " + uri.toASCIIString());
+        final ArrayList<String> list = new ArrayList<String>();
+
+        final TreeSet<URI> uris = new TreeSet<URI>(set);
+        for (final URI uri : uris) {
+            final String astr = uri.toASCIIString();
+            System.out.println("MultiPulse discovered: " + astr);
+
+            if (list.contains(astr)) {
+                System.out.println("Duplicate uri: " + uri);
+            }
+
+            org.junit.Assert.assertTrue(!list.contains(astr));
+            list.add(astr);
         }
 
         System.out.println("Multipulse complete");
@@ -353,7 +393,7 @@ public class MulticastPulseAgentTest {
 
     private String ipFormat(final String h) throws UnknownHostException {
 
-        final InetAddress ia = Inet6Address.getByName(h);
+        final InetAddress ia = InetAddress.getByName(h);
         if (ia instanceof Inet6Address) {
             return "[" + ia.getHostAddress() + "]";
         } else {
