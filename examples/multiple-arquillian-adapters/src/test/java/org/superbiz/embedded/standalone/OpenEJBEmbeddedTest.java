@@ -29,7 +29,7 @@ import org.superbiz.SomeEJB;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-@Category(Embedded.class)
+//@Category(Embedded.class)
 @RunWith(Arquillian.class)
 public class OpenEJBEmbeddedTest {
     @EJB

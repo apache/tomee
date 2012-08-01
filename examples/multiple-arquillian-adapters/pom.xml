@@ -65,7 +65,7 @@
             </goals>
             <configuration>
               <skip>false</skip>
-              <groups>org.superbiz.embedded.standalone.Embedded</groups>
+              <!--groups>org.superbiz.embedded.standalone.Embedded</groups-->
               <systemPropertyVariables>
                 <arquillian.launch>embedded</arquillian.launch>
                 <openejb.arquillian.adapter>openejb</openejb.arquillian.adapter>
@@ -80,7 +80,7 @@
             </goals>
             <configuration>
               <skip>false</skip>
-              <groups>org.superbiz.embedded.remote.EmbeddedRemote</groups>
+              <!--groups>org.superbiz.embedded.remote.EmbeddedRemote</groups-->
               <systemPropertyVariables>
                 <arquillian.launch>embedded-remote</arquillian.launch>
                 <openejb.arquillian.adapter>openejb</openejb.arquillian.adapter>
@@ -95,7 +95,7 @@
             </goals>
             <configuration>
               <skip>false</skip>
-              <groups>org.superbiz.tomee.embedded.TomEEEmbedded</groups>
+              <!--groups>org.superbiz.tomee.embedded.TomEEEmbedded</groups-->
               <systemPropertyVariables>
                 <arquillian.launch>tomee-embedded</arquillian.launch>
                 <openejb.arquillian.adapter>tomee-embedded</openejb.arquillian.adapter>
@@ -110,7 +110,7 @@
             </goals>
             <configuration>
               <skip>false</skip>
-              <groups>org.superbiz.tomee.remote.TomEERemote</groups>
+              <!--groups>org.superbiz.tomee.remote.TomEERemote</groups-->
               <systemPropertyVariables>
                 <arquillian.launch>tomee-remote</arquillian.launch>
                 <openejb.arquillian.adapter>tomee-remote</openejb.arquillian.adapter>
