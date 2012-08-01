@@ -9,17 +9,29 @@ import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.OptionsLog;
+import sun.net.util.IPAddressUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.*;
+import java.net.DatagramPacket;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.MulticastSocket;
+import java.net.NetworkInterface;
+import java.net.Socket;
+import java.net.SocketAddress;
+import java.net.SocketException;
+import java.net.URI;
+import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -466,7 +478,32 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
 
     private static String getHosts() {
 
-        final Set<String> hosts = new HashSet<String>();
+        final Set<String> hosts = new TreeSet<String>(new Comparator<String>() {
+
+            @Override
+            public int compare(final String h1, final String h2) {
+
+                //Sort by hostname, IPv4, IPv6
+
+                try {
+                    if (IPAddressUtil.isIPv4LiteralAddress(h1)) {
+                        if (IPAddressUtil.isIPv6LiteralAddress(h2.replace("[", "").replace("]", ""))) {
+                            return -1;
+                        }
+                    } else if (IPAddressUtil.isIPv6LiteralAddress(h1.replace("[", "").replace("]", ""))) {
+                        if (IPAddressUtil.isIPv4LiteralAddress(h2)) {
+                            return 1;
+                        }
+                    } else if (0 != h1.compareTo(h2)) {
+                        return -1;
+                    }
+                } catch (Throwable e) {
+                    //Ignore
+                }
+
+                return h1.compareTo(h2);
+            }
+        });
 
         try {
             final InetAddress localhost = InetAddress.getLocalHost();
@@ -479,7 +516,11 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
                     continue;
                 }
 
-                hosts.add(ip.getHostAddress());
+                final String ha = ip.getHostAddress();
+                if (!ha.replace("[", "").startsWith("2001:0:")) { //Filter Teredo
+                    hosts.add(ha);
+                    hosts.add(ip.getCanonicalHostName());
+                }
             }
         } catch (UnknownHostException e) {
             log.warning("Failed to list machine hosts", e);

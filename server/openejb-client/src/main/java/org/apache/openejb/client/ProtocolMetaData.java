@@ -33,6 +33,7 @@ import java.io.EOFException;
  *
  * @version $Revision$ $Date$
  */
+@SuppressWarnings("UnusedDeclaration")
 public class ProtocolMetaData {
 
     private static final String OEJB = "OEJP";
@@ -43,14 +44,14 @@ public class ProtocolMetaData {
     public ProtocolMetaData() {
     }
 
-    public ProtocolMetaData(String version) {
+    public ProtocolMetaData(final String version) {
         init(OEJB+"/"+version);
     }
 
-    private void init(String spec) {
+    private void init(final String spec) {
         assert spec.matches("^OEJP/[0-9]\\.[0-9]$"): "Protocol version spec must follow format [ \"OEJB\" \"/\" 1*DIGIT \".\" 1*DIGIT ]";
 
-        char[] chars = new char[8];
+        final char[] chars = new char[8];
         spec.getChars(0, chars.length, chars, 0);
 
         this.id = new String(chars, 0, 4);
@@ -78,12 +79,13 @@ public class ProtocolMetaData {
         return id+"/"+major+"."+minor;
     }
 
-    public void writeExternal(OutputStream out) throws IOException {
+    public void writeExternal(final OutputStream out) throws IOException {
         out.write(getSpec().getBytes("UTF-8"));
+        out.flush();
     }
 
-    public void readExternal(InputStream in) throws IOException {
-        byte[] spec = new byte[8];
+    public void readExternal(final InputStream in) throws IOException {
+        final byte[] spec = new byte[8];
         for (int i = 0; i < spec.length; i++) {
             spec[i] = (byte) in.read();
             if (spec[i] == -1){
