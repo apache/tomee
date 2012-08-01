@@ -17,7 +17,7 @@
 package org.apache.openejb.resource.jdbc.plugin;
 
 public interface DataSourcePlugin {
-    void configure(org.apache.commons.dbcp.BasicDataSource dataSource);
+    String updatedUrl(String dataSourceUrl);
 
     boolean enableUserDirHack();
 }

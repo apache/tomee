@@ -75,6 +75,11 @@
       <version>${openejb.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>tomee-jdbc</artifactId>
+      <version>${tomee.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-catalina</artifactId>
       <version>${tomcat.version}</version>

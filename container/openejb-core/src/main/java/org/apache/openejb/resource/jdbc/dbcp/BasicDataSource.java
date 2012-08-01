@@ -17,6 +17,11 @@
 package org.apache.openejb.resource.jdbc.dbcp;
 
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.resource.jdbc.BasicDataSourceUtil;
+import org.apache.openejb.resource.jdbc.IsolationLevels;
+import org.apache.openejb.resource.jdbc.cipher.PasswordCipher;
+import org.apache.openejb.resource.jdbc.plugin.DataSourcePlugin;
+import org.apache.openejb.util.reflection.Reflections;
 
 import javax.sql.DataSource;
 import java.io.File;
@@ -25,11 +30,6 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
-import org.apache.openejb.assembler.monitoring.JMXBasicDataSource;
-import org.apache.openejb.resource.jdbc.BasicDataSourceUtil;
-import org.apache.openejb.resource.jdbc.plugin.DataSourcePlugin;
-import org.apache.openejb.resource.jdbc.IsolationLevels;
-import org.apache.openejb.resource.jdbc.cipher.PasswordCipher;
 
 @SuppressWarnings({"UnusedDeclaration"})
 public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
@@ -204,7 +204,11 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
 
             // configure this
             if (helper != null) {
-                helper.configure(this);
+                final String currentUrl = getUrl();
+                final String newUrl = helper.updatedUrl(currentUrl);
+                if (!currentUrl.equals(newUrl)) {
+                    setUrl(newUrl);
+            }
             }
 
             // create the data source
@@ -258,7 +262,7 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
         try {
 
             if (null == this.logger) {
-                this.logger = (Logger) DataSource.class.getDeclaredMethod("getParentLogger").invoke(dataSource);
+                this.logger = (Logger) Reflections.invokeByReflection(dataSource, "getParentLogger", new Class<?>[0], null);
             }
 
             return this.logger;

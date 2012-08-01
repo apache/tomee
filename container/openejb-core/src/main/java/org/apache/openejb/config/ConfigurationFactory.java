@@ -93,6 +93,7 @@ import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.resource.jdbc.DataSourceFactory;
 import org.apache.openejb.resource.jdbc.pool.DataSourceCreator;
 import org.apache.openejb.resource.jdbc.pool.DefaultDataSourceCreator;
 import org.apache.openejb.util.EventHelper;
@@ -110,6 +111,7 @@ import static org.apache.openejb.config.DeploymentsResolver.DEPLOYMENTS_CLASSPAT
 import static org.apache.openejb.config.ServiceUtils.implies;
 
 public class ConfigurationFactory implements OpenEjbConfigurationFactory {
+    public static final String OPENEJB_JDBC_DATASOURCE_CREATOR = "openejb.jdbc.datasource-creator";
 
     public static final String ADDITIONAL_DEPLOYMENTS = "conf/deployments.xml";
     static final String CONFIGURATION_PROPERTY = "openejb.configuration";
@@ -145,14 +147,12 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         final Options options = SystemInstance.get().getOptions();
         if (SystemInstance.get().getComponent(DataSourceCreator.class) == null) {
-            final String creator = SystemInstance.get().getOptions().get("openejb.jdbc.datasource-creator", (String) null);
+            final String creator = SystemInstance.get().getOptions().get(OPENEJB_JDBC_DATASOURCE_CREATOR, (String) null);
             if (creator == null) {
                 SystemInstance.get().setComponent(DataSourceCreator.class, new DefaultDataSourceCreator());
             } else {
                 try {
-                    SystemInstance.get().setComponent(DataSourceCreator.class,
-                            (DataSourceCreator) Thread.currentThread().getContextClassLoader().loadClass(creator)
-                                    .newInstance());
+                    SystemInstance.get().setComponent(DataSourceCreator.class, DataSourceFactory.creator(creator));
                 } catch (Exception e) {
                     logger.error("can't load " + creator + " will use the default creator", e);
                     SystemInstance.get().setComponent(DataSourceCreator.class, new DefaultDataSourceCreator());

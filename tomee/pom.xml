@@ -36,6 +36,7 @@
     <module>tomee-common</module>
     <module>tomee-myfaces</module>
     <module>tomee-mojarra</module>
+    <module>tomee-jdbc</module>
     <module>tomee-webapp</module>
     <module>tomee-plus-webapp</module>
     <module>tomee-webservices</module>

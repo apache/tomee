@@ -19,21 +19,22 @@ package org.apache.openejb.resource.jdbc.pool;
 import org.apache.openejb.resource.XAResourceWrapper;
 import org.apache.openejb.resource.jdbc.dbcp.BasicDataSource;
 import org.apache.openejb.resource.jdbc.dbcp.BasicManagedDataSource;
-import org.apache.openejb.resource.jdbc.dbcp.ManagedDataSourceWithRecovery;
 import org.apache.openejb.resource.jdbc.dbcp.DbcpDataSource;
 import org.apache.openejb.resource.jdbc.dbcp.DbcpManagedDataSource;
+import org.apache.openejb.resource.jdbc.dbcp.ManagedDataSourceWithRecovery;
+import org.apache.xbean.recipe.ObjectRecipe;
 
 import javax.sql.DataSource;
 import java.util.Properties;
 
 public class DefaultDataSourceCreator implements DataSourceCreator {
-    @Override // TODO: remove dbcp from here
+    @Override
     public DataSource managed(final String name, final DataSource ds) {
         return new DbcpManagedDataSource(name, ds);
     }
 
     @Override
-    public DataSource poolManaged(final String name, final DataSource ds) {
+    public DataSource poolManaged(final String name, final DataSource ds, Properties properties) {
         return new DbcpManagedDataSource(name, ds);
     }
 
@@ -52,7 +53,7 @@ public class DefaultDataSourceCreator implements DataSourceCreator {
     }
 
     @Override
-    public DataSource pool(final String name, final DataSource ds) {
+    public DataSource pool(final String name, final DataSource ds, Properties properties) {
         return new DbcpDataSource(name, ds);
     }
 
@@ -64,12 +65,12 @@ public class DefaultDataSourceCreator implements DataSourceCreator {
     }
 
     @Override
-    public boolean hasCreated(final Object object) {
-        return object instanceof org.apache.commons.dbcp.BasicDataSource;
+    public void destroy(final Object object) throws Throwable {
+        ((org.apache.commons.dbcp.BasicDataSource) object).close();
     }
 
     @Override
-    public void destroy(final Object object) throws Throwable {
-        ((org.apache.commons.dbcp.BasicDataSource) object).close();
+    public ObjectRecipe clearRecipe(final Object object) {
+        return null; // no recipe here
     }
 }

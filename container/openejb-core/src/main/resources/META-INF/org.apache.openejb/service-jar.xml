@@ -624,7 +624,7 @@
     #
     # Note: Most JDBC drivers do not support all isolation levels
 
-    DefaultTransactionIsolation
+    # DefaultTransactionIsolation
 
 
     # The initial number of connections that are created when the
@@ -817,7 +817,7 @@
     #
     # Note: Most JDBC drivers do not support all isolation levels
 
-    DefaultTransactionIsolation
+    # DefaultTransactionIsolation
 
 
     # The initial number of connections that are created when the

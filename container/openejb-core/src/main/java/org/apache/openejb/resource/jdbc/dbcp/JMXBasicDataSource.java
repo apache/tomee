@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.assembler.monitoring;
+package org.apache.openejb.resource.jdbc.dbcp;
 
 import java.sql.Connection;
 import java.sql.SQLException;

@@ -913,4 +913,9 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
     public Collection<String> getParents() {
         return parents;
     }
+
+    public EnterpriseBean localBean() {
+        setLocalBean(new Empty());
+        return this;
+    }
 }

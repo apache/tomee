@@ -20,26 +20,47 @@ import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.resource.XAResourceWrapper;
 import org.apache.openejb.resource.jdbc.pool.DataSourceCreator;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
+import java.util.TreeMap;
 
 /**
  * @version $Rev$ $Date$
  */
 public class DataSourceFactory {
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, DataSourceFactory.class);
+
     public static final String POOL_PROPERTY = "openejb.datasource.pool";
+    public static final String DATA_SOURCE_CREATOR_PROP = "DataSourceCreator";
+
+    private static final Map<DataSource, DataSourceCreator> creatorByDataSource = new HashMap<DataSource, DataSourceCreator>();
+    private static final Map<String, String> KNOWN_CREATORS = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER){{
+        put("dbcp", "org.apache.openejb.resource.jdbc.pool.DefaultDataSourceCreator"); // the original one
+        put("dbcp-alternative", "org.apache.openejb.resource.jdbc.dbcp.DbcpDataSourceCreator"); // dbcp for the ds pool only
+        put("tomcat", "org.apache.tomee.jdbc.TomEEDataSourceCreator"); // tomee
+        put("bonecp", "org.apache.openejb.bonecp.BoneCPDataSourceCreator"); // bonecp
+    }};
 
     public static DataSource create(final String name, final boolean managed, final Class impl, final String definition) throws IllegalAccessException, InstantiationException, IOException {
+        final Properties properties = asProperties(definition);
+
+        // these can be added and are managed by OpenEJB and not the DataSource itself
+        properties.remove("Definition");
+        properties.remove("JtaManaged");
+        properties.remove("ServiceId");
+
+        final DataSourceCreator creator = creator(properties.remove(DATA_SOURCE_CREATOR_PROP));
+
 
         final DataSource ds;
-
-        final Properties properties = asProperties(definition);
-        final DataSourceCreator creator = SystemInstance.get().getComponent(DataSourceCreator.class);
-
         if (createDataSourceFromClass(impl)) { // opposed to "by driver"
             trimNotSupportedDataSourceProperties(properties);
 
@@ -49,24 +70,24 @@ public class DataSourceFactory {
             recipe.allow(Option.NAMED_PARAMETERS);
             recipe.setAllProperties(properties);
 
-            DataSource dataSource = (DataSource) recipe.create();
+            final DataSource dataSource = (DataSource) recipe.create();
 
             if (managed) {
                 if (useDbcp(properties)) {
-                    ds = creator.poolManaged(name, dataSource);
+                    ds = creator.poolManaged(name, dataSource, properties);
                 } else {
                     ds = creator.managed(name, dataSource);
                 }
             } else {
                 if (useDbcp(properties)) {
-                    ds = creator.pool(name, dataSource);
+                    ds = creator.pool(name, dataSource, properties);
                 } else {
                     ds = dataSource;
                 }
             }
-        } else {
+        } else { // by driver
             if (managed) {
-                XAResourceWrapper xaResourceWrapper = SystemInstance.get().getComponent(XAResourceWrapper.class);
+                final XAResourceWrapper xaResourceWrapper = SystemInstance.get().getComponent(XAResourceWrapper.class);
                 if (xaResourceWrapper != null) {
                     ds = creator.poolManagedWithRecovery(name, xaResourceWrapper, impl.getName(), properties);
                 } else {
@@ -77,7 +98,25 @@ public class DataSourceFactory {
             }
         }
 
+        creatorByDataSource.put(ds, creator);
         return ds;
+    }
+
+    public static DataSourceCreator creator(final Object creatorName) {
+        final DataSourceCreator defaultCreator = SystemInstance.get().getComponent(DataSourceCreator.class);
+        if (creatorName != null && creatorName instanceof String
+                && (defaultCreator == null || !creatorName.equals(defaultCreator.getClass().getName()))) {
+            String clazz = KNOWN_CREATORS.get(creatorName);
+            if (clazz == null) {
+                clazz = (String) creatorName;
+            }
+            try {
+                return (DataSourceCreator) Thread.currentThread().getContextClassLoader().loadClass(clazz).newInstance();
+            } catch (Throwable e) {
+                LOGGER.error("can't create '" + creatorName + "', the default one will be used: " + defaultCreator, e);
+            }
+        }
+        return defaultCreator;
     }
 
     private static boolean createDataSourceFromClass(final Class<?> impl) {
@@ -94,5 +133,26 @@ public class DataSourceFactory {
 
     public static void trimNotSupportedDataSourceProperties(Properties properties) {
         properties.remove("LoginTimeout");
+    }
+
+    public static boolean knows(final Object object) {
+        return object instanceof DataSource && creatorByDataSource.containsKey(object);
+    }
+
+    // TODO: should we get a get and a clear method instead of a single one?
+    public static ObjectRecipe forgetRecipe(final Object object, final ObjectRecipe defaultValue) {
+        final DataSourceCreator creator = creatorByDataSource.get(object);
+        ObjectRecipe recipe = null;
+        if (creator != null) {
+            recipe = creator.clearRecipe(object);
+        }
+        if (recipe == null) {
+            return defaultValue;
+        }
+        return recipe;
+    }
+
+    public static void destroy(final Object o) throws Throwable {
+        creatorByDataSource.remove(o).destroy(o);
     }
 }

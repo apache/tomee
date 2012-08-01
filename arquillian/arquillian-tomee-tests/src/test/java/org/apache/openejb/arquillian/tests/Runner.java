@@ -46,6 +46,7 @@ public class Runner {
                     method.invoke(obj);
                     writer.println("true");
                 } catch (Throwable e) {
+                    e.printStackTrace();
                     writer.println("false");
                 }
             }
