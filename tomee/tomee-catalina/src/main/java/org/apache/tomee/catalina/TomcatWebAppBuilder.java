@@ -652,8 +652,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
         public WebAppInfo get() {
             final ContextInfo contextInfo = getContextInfo(standardContext);
-            System.out.println("contextInfo = " + contextInfo);
-            System.out.println("standardContext = " + standardContext);
+            logger.debug("contextInfo = " + contextInfo);
+            logger.debug("standardContext = " + standardContext);
             for (final WebAppInfo webApp : contextInfo.appInfo.webApps) {
                 if (standardContext.getName().equals("/" + webApp.contextRoot)) {
                     return webApp;
@@ -666,7 +666,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         public String toString() {
             return "StandardContextInfo{" +
                     "standardContext=" + standardContext +
-                    '}';
+                '}';
         }
     }
 

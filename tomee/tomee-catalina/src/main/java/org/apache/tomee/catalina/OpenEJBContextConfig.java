@@ -82,7 +82,7 @@ public class OpenEJBContextConfig extends ContextConfig {
     @Override
     protected void processAnnotationsFile(File file, WebXml fragment,
             boolean handlesTypesOnly) {
-        logger.info("processAnnotationsFile "+ file.getAbsolutePath() );
+        logger.debug("processAnnotationsFile "+ file.getAbsolutePath() );
         try {
             final WebAppInfo webAppInfo = info.get();
 
@@ -92,7 +92,7 @@ public class OpenEJBContextConfig extends ContextConfig {
                 return;
             }
 
-            logger.info("Optimized Scan of File " + file.getAbsolutePath());
+            logger.debug("Optimized Scan of File " + file.getAbsolutePath());
 
             // TODO We should just remember which jars each class came from
             // then we wouldn't need to lookup the class from the URL in this
@@ -128,7 +128,7 @@ public class OpenEJBContextConfig extends ContextConfig {
 
     @Override
     protected void processAnnotationsUrl(URL url, WebXml fragment, boolean handlesTypeOnly) {
-        logger.info("processAnnotationsUrl " + url);
+        logger.debug("processAnnotationsUrl " + url);
         if (SystemInstance.get().getOptions().get("tomee.tomcat.scan", false)) {
             super.processAnnotationsUrl(url, fragment, handlesTypeOnly);
             return;
@@ -143,7 +143,7 @@ public class OpenEJBContextConfig extends ContextConfig {
                 return;
             }
 
-            logger.info("Optimized Scan of URL " + url);
+            logger.debug("Optimized Scan of URL " + url);
 
             // TODO We should just remember which jars each class came from
             // then we wouldn't need to lookup the class from the URL in this
