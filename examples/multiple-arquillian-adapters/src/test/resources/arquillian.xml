@@ -24,6 +24,8 @@
         # to ensure we don't start remote container even if it is found at classpath
         openejb.embedded.remotable = false
       </property>
+	  <property name="dir">target/embedded</property>
+      <property name="appWorkingDir">target/work1</property>
     </configuration>
   </container>
   <container qualifier="embedded-remote">
@@ -32,14 +34,16 @@
         # optional if found at classpath
         openejb.embedded.remotable = true
       </property>
+	  <property name="dir">target/remote</property>
+      <property name="appWorkingDir">target/work2</property>
     </configuration>
   </container>
   <container qualifier="tomee-embedded">
     <configuration>
       <property name="httpPort">-1</property>
       <property name="stopPort">-1</property>
-      <property name="dir">target/apache-tomee-embedded</property>
-      <property name="appWorkingDir">target/arquillian-test-working-dir-2</property>
+      <property name="dir">target/tomee-embedded</property>
+      <property name="appWorkingDir">target/work3</property>
     </configuration>
   </container>
   <container qualifier="tomee-remote">
@@ -47,8 +51,8 @@
       <property name="httpPort">-1</property>
       <property name="stopPort">-1</property>
       <property name="ajpPort">-1</property>
-      <property name="dir">target/apache-tomee-remote</property>
-      <property name="appWorkingDir">target/arquillian-test-working-dir-2</property>
+      <property name="dir">target/tomee-remote</property>
+      <property name="appWorkingDir">target/work4</property>
     </configuration>
   </container>
 </arquillian>
