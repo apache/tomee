@@ -144,4 +144,8 @@ public class CoreContainerSystem implements org.apache.openejb.spi.ContainerSyst
     public void removeAppContext(Object id) {
         apps.remove(id);
     }
+
+    public synchronized Object[] getAppContextKeys(){
+        return apps.keySet().toArray();
+    }
 }
