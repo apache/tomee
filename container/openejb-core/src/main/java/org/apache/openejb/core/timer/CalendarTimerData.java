@@ -51,7 +51,7 @@ public class CalendarTimerData extends TimerData {
             return new EJBCronTrigger(scheduleExpression);
         } catch (ParseException e) {
             //TODO how to handle the ParseException
-            throw new IllegalArgumentException("Fail to parse schedule expression " + scheduleExpression);
+            throw new IllegalArgumentException("Fail to parse schedule expression " + scheduleExpression, e);
         }
     }
 
