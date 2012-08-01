@@ -46,7 +46,7 @@ import java.util.Set;
 // Note: this class is a fork from OpenJPA
 public class TempClassLoader extends URLClassLoader {
     // log4j is optional, moreover it will likely not work if not skipped and loaded by a temp classloader
-    private static final boolean SKIP_LOG4J = "true".equals(SystemInstance.get().getProperty("openejb.skip.log4j", "true")) || skipLib("org.apache.log4j.Logger");
+    private static final boolean SKIP_LOG4J = "true".equals(SystemInstance.get().getProperty("openejb.skip.log4j", "true")) && skipLib("org.apache.log4j.Logger");
     // commons-net is only in tomee-plus
     private static final boolean SKIP_COMMONS_NET = skipLib("org.apache.commons.net.pop3.POP3Client");
 
