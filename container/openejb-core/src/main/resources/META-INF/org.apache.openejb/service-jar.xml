@@ -578,7 +578,7 @@
 
     # Url for creating connections
 
-    JdbcUrl jdbc:hsqldb:file:data/hsqldb/hsqldb
+    JdbcUrl jdbc:hsqldb:mem:hsqldb
 
     # Default user name
 
@@ -773,7 +773,7 @@
 
     # Url for creating connections
 
-    JdbcUrl jdbc:hsqldb:file:data/hsqldb/hsqldb
+    JdbcUrl jdbc:hsqldb:mem:hsqldb
 
     # Default user name
 
