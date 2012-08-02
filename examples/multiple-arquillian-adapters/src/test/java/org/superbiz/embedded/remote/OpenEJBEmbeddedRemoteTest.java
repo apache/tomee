@@ -30,7 +30,7 @@ import org.superbiz.SomeRest;
 
 import static org.junit.Assert.assertEquals;
 
-//@Category(EmbeddedRemote.class)
+@Category(EmbeddedRemote.class)
 @RunWith(Arquillian.class)
 public class OpenEJBEmbeddedRemoteTest {
     @Deployment
