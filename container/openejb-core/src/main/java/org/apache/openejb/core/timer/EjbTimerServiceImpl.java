@@ -192,7 +192,6 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         } catch (SchedulerException e) {
             throw new OpenEJBRuntimeException("Unable to shutdown scheduler", e);
         }
-
     }
 
     @Override
@@ -229,21 +228,35 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
      * @param timerData the timer to schedule
      */
     public void schedule(TimerData timerData) {
-        if (scheduler == null) throw new IllegalStateException("scheduler is configured properly");
+        if (scheduler == null) throw new IllegalStateException("Scheduler is not configured properly");
 
         timerData.setScheduler(scheduler);
 
-        Trigger trigger = timerData.getTrigger();
+        final Trigger trigger = timerData.getTrigger();
+
+        if (null == trigger) {
+
+            try {
+                if (!scheduler.isShutdown()) {
+                    log.warning("Failed to schedule: " + timerData.getInfo());
+                }
+            } catch (SchedulerException e) {
+                //Ignore
+            }
+        }
+
         if (trigger instanceof AbstractTrigger) { // is the case
             AbstractTrigger<?> atrigger = (AbstractTrigger<?>) trigger;
             atrigger.setJobName(OPENEJB_TIMEOUT_JOB_NAME);
             atrigger.setJobGroup(OPENEJB_TIMEOUT_JOB_GROUP_NAME);
         } else {
-            throw new OpenEJBRuntimeException("the trigger was not an AbstractTrigger - it shouldn't be possible");
+            throw new OpenEJBRuntimeException("the trigger was not an AbstractTrigger - Should not be possible: " + trigger);
         }
+
         JobDataMap triggerDataMap = trigger.getJobDataMap();
         triggerDataMap.put(EjbTimeoutJob.EJB_TIMERS_SERVICE, this);
         triggerDataMap.put(EjbTimeoutJob.TIMER_DATA, timerData);
+
         try {
             scheduler.scheduleJob(trigger);
         } catch (Exception e) {

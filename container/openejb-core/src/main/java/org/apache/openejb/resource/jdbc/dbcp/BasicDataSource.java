@@ -186,8 +186,8 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
         final ReentrantLock l = lock;
         l.lock();
         try {
-            if (dataSource != null) {
-                return dataSource;
+            if (super.dataSource != null) {
+                return super.dataSource;
             }
 
             // check password codec if available
@@ -207,13 +207,17 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
                 final String currentUrl = getUrl();
                 final String newUrl = helper.updatedUrl(currentUrl);
                 if (!currentUrl.equals(newUrl)) {
-                    setUrl(newUrl);
-            }
+                    super.setUrl(newUrl);
+                }
             }
 
             // create the data source
             if (helper == null || !helper.enableUserDirHack()) {
-                return super.createDataSource();
+                try {
+                    return super.createDataSource();
+                } catch (Throwable e) {
+                    throw new SQLException("Failed to create DataSource", e);
+                }
             } else {
                 // wrap super call with code that sets user.dir to openejb.base and then resets it
                 Properties systemProperties = System.getProperties();
@@ -222,7 +226,11 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
                 try {
                     File base = SystemInstance.get().getBase().getDirectory();
                     systemProperties.setProperty("user.dir", base.getAbsolutePath());
-                    return super.createDataSource();
+                    try {
+                        return super.createDataSource();
+                    } catch (Throwable e) {
+                        throw new SQLException("Failed to create DataSource", e);
+                    }
                 } finally {
                     systemProperties.setProperty("user.dir", userDir);
                 }
@@ -262,7 +270,7 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
         try {
 
             if (null == this.logger) {
-                this.logger = (Logger) Reflections.invokeByReflection(dataSource, "getParentLogger", new Class<?>[0], null);
+                this.logger = (Logger) Reflections.invokeByReflection(super.dataSource, "getParentLogger", new Class<?>[0], null);
             }
 
             return this.logger;
