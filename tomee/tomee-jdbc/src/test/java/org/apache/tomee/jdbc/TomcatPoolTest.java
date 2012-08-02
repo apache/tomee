@@ -65,6 +65,7 @@ public class TomcatPoolTest {
         p.put("managed.UserName", USER);
         p.put("managed.Password", PASSWORD);
         p.put("managed.JtaManaged", "true");
+        p.put("managed.JdbcInterceptors", "StatementCache(prepared=true)");
         return p;
     }
 

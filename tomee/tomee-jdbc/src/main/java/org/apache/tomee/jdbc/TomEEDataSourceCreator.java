@@ -2,8 +2,9 @@ package org.apache.tomee.jdbc;
 
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.resource.jdbc.pool.PoolDataSourceCreator;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.tomcat.jdbc.pool.ConnectionPool;
-import org.apache.tomcat.jdbc.pool.DataSourceFactory;
 import org.apache.tomcat.jdbc.pool.PoolConfiguration;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
 
@@ -18,6 +19,8 @@ import java.util.Map;
 import java.util.Properties;
 
 public class TomEEDataSourceCreator extends PoolDataSourceCreator {
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, TomEEDataSourceCreator.class);
+
     @Override
     public DataSource pool(final String name, final DataSource ds, Properties properties) {
         final Properties converted = new Properties();
@@ -31,7 +34,7 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
         } catch (SQLException e) {
             throw new IllegalStateException(e);
         }
-        return build(TomEEDataSource.class, new TomEEDataSource(pool, name), properties);
+        return build(TomEEDataSource.class, new TomEEDataSource(pool, name), converted);
     }
 
     @Override
@@ -39,7 +42,8 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
         final Properties converted = new Properties();
         converted.setProperty("name", name);
         updateProperties(properties, converted, driver);
-        return new TomEEDataSource(DataSourceFactory.parsePoolProperties(converted), name);
+        final PoolConfiguration config = build(PoolProperties.class, converted);
+        return build(TomEEDataSource.class, new TomEEDataSource(config, name), converted);
     }
 
     private void updateProperties(final Properties properties, final Properties converted, final String driver) {
@@ -47,16 +51,34 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
         if (driver != null) {
             converted.setProperty("driverClassName", driver);
         }
+        if (properties.containsKey("JdbcDriver") && properties.getProperty("JdbcDriver") != null) {
+            converted.setProperty("driverClassName", (String) properties.remove("JdbcDriver"));
+        }
         if (properties.containsKey("JdbcUrl")) {
-            converted.setProperty("url", properties.getProperty("JdbcUrl"));
+            converted.setProperty("url", (String) properties.remove("JdbcUrl"));
         }
         if (properties.containsKey("user")) {
-            converted.setProperty("username", properties.getProperty("user"));
+            converted.setProperty("username", (String) properties.remove("user"));
         }
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+            final String key = entry.getKey().toString();
             final String value = entry.getValue().toString().trim();
             if (!value.isEmpty()) {
-                converted.put(entry.getKey(), entry.getValue());
+                if ("PasswordCipher".equals(key) && "PlainText".equals(value)) { // no need to warn about it
+                    continue;
+                }
+                if ("MaxOpenPreparedStatements".equalsIgnoreCase(key) || "PoolPreparedStatements".equalsIgnoreCase(key)) {
+                    String interceptors = properties.getProperty("jdbcInterceptors");
+                    if (interceptors == null) {
+                        interceptors = properties.getProperty("JdbcInterceptors");
+                    }
+                    if (interceptors == null || !interceptors.contains("StatementCache")) {
+                        LOGGER.warning("Tomcat-jdbc doesn't support '" + key + "' property, please configure the StatementCache jdbc interceptor");
+                    }
+                    continue;
+                }
+
+                converted.put(key, value);
             }
         }
     }
@@ -107,7 +129,7 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
         }
     }
 
-    private static class ContantHashCodeHandler implements InvocationHandler {
+    private static class ContantHashCodeHandler implements InvocationHandler { // will be fixed in tomcat-jdbc in next version
         private final Object delegate;
         private final int hashCode;
 
