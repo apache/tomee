@@ -81,13 +81,15 @@ public class CxfRsHttpListener implements RsHttpListener {
         transportFactory = httpTransportFactory;
     }
 
-    @Override public void onMessage(final HttpRequest httpRequest, final HttpResponse httpResponse) throws Exception {
+    @Override
+    public void onMessage(final HttpRequest httpRequest, final HttpResponse httpResponse) throws Exception {
         destination.invoke(null, httpRequest.getServletContext(), new HttpServletRequestWrapper(httpRequest) {
             // see org.apache.cxf.jaxrs.utils.HttpUtils.getPathToMatch()
             // cxf uses implicitly getRawPath() from the endpoint but not for the request URI
             // so without stripping the address until the context the behavior is weird
             // this is just a workaround waiting for something better
-            @Override public String getRequestURI() {
+            @Override
+            public String getRequestURI() {
                 if (httpRequest instanceof HttpRequestImpl) {
                     return ((HttpRequestImpl) httpRequest).requestRawPath();
                 }
@@ -96,15 +98,18 @@ public class CxfRsHttpListener implements RsHttpListener {
         }, httpResponse);
     }
 
-    @Override public void deploySingleton(String fullContext, Object o, Application appInstance, Collection<Class<?>> additionalProviders) {
+    @Override
+    public void deploySingleton(String fullContext, Object o, Application appInstance, Collection<Class<?>> additionalProviders) {
         deploy(o.getClass(), fullContext, new SingletonResourceProvider(o), o, appInstance, null, additionalProviders);
     }
 
-    @Override public void deployPojo(String fullContext, Class<?> loadedClazz, Application app, Collection<Injection> injections, Context context, WebBeansContext owbCtx, Collection<Class<?>> additionalProviders) {
+    @Override
+    public void deployPojo(String fullContext, Class<?> loadedClazz, Application app, Collection<Injection> injections, Context context, WebBeansContext owbCtx, Collection<Class<?>> additionalProviders) {
         deploy(loadedClazz, fullContext, new OpenEJBPerRequestPojoResourceProvider(loadedClazz, injections, context, owbCtx), null, app, null, additionalProviders);
     }
 
-    @Override public void deployEJB(String fullContext, BeanContext beanContext, Collection<Class<?>> additionalProviders) {
+    @Override
+    public void deployEJB(String fullContext, BeanContext beanContext, Collection<Class<?>> additionalProviders) {
         deploy(beanContext.getBeanClass(), fullContext, null, null, null, new OpenEJBEJBInvoker(beanContext), additionalProviders);
     }
 
@@ -114,19 +119,31 @@ public class CxfRsHttpListener implements RsHttpListener {
             providers.addAll(instantiate(additionalProviders));
         }
 
+        final String impl;
+        if (serviceBean != null) {
+            impl = serviceBean.getClass().getName();
+        } else {
+            impl = clazz.getName();
+        }
+
+        final Map<String, Object> specificProperties = toMap(SystemInstance.get().getProperty(OPENEJB_CXF_PROPERTIES + "." + impl + "."));
+
         final JAXRSServerFactoryBean factory = new JAXRSServerFactoryBean();
         factory.setResourceClasses(clazz);
         factory.setDestinationFactory(transportFactory);
         factory.setBus(transportFactory.getBus());
         factory.setAddress(address);
         factory.setProviders(providers);
-        if (cxfProperties != null) {
-            if (factory.getProperties() == null) {
-                factory.setProperties(cxfProperties);
-            } else {
-                factory.getProperties().putAll(cxfProperties);
-            }
+        if (factory.getProperties() == null) {
+            factory.setProperties(new HashMap<String, Object>());
         }
+
+        if (specificProperties != null) {
+            factory.getProperties().putAll(specificProperties);
+        } else if (cxfProperties != null) {
+            factory.getProperties().putAll(cxfProperties);
+        }
+
         if (rp != null) {
             factory.setResourceProvider(rp);
         }
