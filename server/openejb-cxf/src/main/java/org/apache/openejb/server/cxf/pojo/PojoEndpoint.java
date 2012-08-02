@@ -29,18 +29,23 @@ import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.openejb.InjectionProcessor;
 import org.apache.openejb.core.webservices.JaxWsUtils;
 import org.apache.openejb.core.webservices.PortData;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.cxf.CxfEndpoint;
 import org.apache.openejb.server.cxf.CxfServiceConfiguration;
 import org.apache.openejb.server.cxf.JaxWsImplementorInfoImpl;
 
 import javax.naming.Context;
 import javax.xml.ws.WebServiceException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.apache.openejb.InjectionProcessor.unwrap;
 
 public class PojoEndpoint extends CxfEndpoint {
+    public static final String OPENEJB_JAXWS_READ_POJO_PROPERTIES = "openejb.jaxws.read-pojo-properties"; // boolean to force it (perf reason)
+    public static final String OPENEJB_JAXWS_POJO_CONFIG_PREFIX = "openejb.jaxws.pojo.config."; // prefix to avoid conflicts
+
     private InjectionProcessor<Object> injectionProcessor;
 
     public PojoEndpoint(Bus bus, PortData port, Context context, Class<?> instance, HTTPTransportFactory httpTransportFactory, Map<String, Object> bindings) {
@@ -82,6 +87,22 @@ public class PojoEndpoint extends CxfEndpoint {
         resourceManager.addResourceResolver(new WebServiceContextResourceResolver());
         ResourceInjector injector = new ResourceInjector(resourceManager);
         injector.inject(implementor);
+    }
+
+    @Override
+    protected Map<String, Object> getEndpointProperties() {
+        if (SystemInstance.get().getOptions().get(OPENEJB_JAXWS_READ_POJO_PROPERTIES, false)) {
+            final String prefix = OPENEJB_JAXWS_POJO_CONFIG_PREFIX + getImplementorClass().getName() + ".";
+            final Map<String, Object> map = new HashMap<String, Object>();
+            for (Map.Entry<Object, Object> entry : SystemInstance.get().getProperties().entrySet()) {
+                final String key = entry.getKey().toString();
+                if (key.startsWith(prefix)) {
+                    map.put(key.substring(prefix.length()), entry.getValue());
+                }
+            }
+            return map;
+        }
+        return null;
     }
 
     protected void init() {
