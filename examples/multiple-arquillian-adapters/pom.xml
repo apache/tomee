@@ -64,7 +64,7 @@
               <goal>test</goal>
             </goals>
             <configuration>
-              <skip>false</skip>
+              <skip>${maven.test.skip}</skip>
               <groups>org.superbiz.embedded.standalone.Embedded</groups>
               <systemPropertyVariables>
                 <arquillian.launch>embedded</arquillian.launch>
@@ -79,7 +79,7 @@
               <goal>test</goal>
             </goals>
             <configuration>
-              <skip>false</skip>
+              <skip>${maven.test.skip}</skip>
               <groups>org.superbiz.embedded.remote.EmbeddedRemote</groups>
               <systemPropertyVariables>
                 <arquillian.launch>embedded-remote</arquillian.launch>
@@ -94,7 +94,7 @@
               <goal>test</goal>
             </goals>
             <configuration>
-              <skip>false</skip>
+              <skip>${maven.test.skip}</skip>
               <groups>org.superbiz.tomee.embedded.TomEEEmbedded</groups>
               <systemPropertyVariables>
                 <arquillian.launch>tomee-embedded</arquillian.launch>
@@ -109,7 +109,7 @@
               <goal>test</goal>
             </goals>
             <configuration>
-              <skip>false</skip>
+              <skip>${maven.test.skip}</skip>
               <groups>org.superbiz.tomee.remote.TomEERemote</groups>
               <systemPropertyVariables>
                 <arquillian.launch>tomee-remote</arquillian.launch>

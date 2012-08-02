@@ -24,8 +24,6 @@
         # to ensure we don't start remote container even if it is found at classpath
         openejb.embedded.remotable = false
       </property>
-	  <property name="dir">target/embedded</property>
-      <property name="appWorkingDir">target/work1</property>
     </configuration>
   </container>
   <container qualifier="embedded-remote">
@@ -34,8 +32,6 @@
         # optional if found at classpath
         openejb.embedded.remotable = true
       </property>
-	  <property name="dir">target/remote</property>
-      <property name="appWorkingDir">target/work2</property>
     </configuration>
   </container>
   <container qualifier="tomee-embedded">
