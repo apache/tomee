@@ -25,22 +25,22 @@ import java.sql.SQLException;
 
 public class DbcpDataSource extends BasicDataSource {
 
-    private final DataSource dataSource;
+    protected final DataSource ds;
 
     public DbcpDataSource(final String name, final DataSource dataSource) {
         super(name);
-        this.dataSource = dataSource;
+        this.ds = dataSource;
     }
 
     @Override
     protected ConnectionFactory createConnectionFactory() throws SQLException {
-        return new DataSourceConnectionFactory(dataSource, username, password);
+        return new DataSourceConnectionFactory(this.ds, username, password);
     }
 
     @Override
     public void setJdbcUrl(String url) {
         try {
-            DataSourceHelper.setUrl(this, url);
+            DataSourceHelper.setUrl(this.ds, url);
         } catch (Throwable e1) {
             super.setUrl(url);
         }

@@ -31,17 +31,17 @@ import java.sql.SQLException;
 
 public class DbcpManagedDataSource extends BasicManagedDataSource {
 
-    private final DataSource dataSource;
+    private final DataSource ds;
 
     public DbcpManagedDataSource(final String name, final DataSource dataSource) {
         super(name);
-        this.dataSource = dataSource;
+        this.ds = dataSource;
     }
 
     @Override
     public void setJdbcUrl(String url) {
         try {
-            DataSourceHelper.setUrl(this, url);
+            DataSourceHelper.setUrl(this.ds, url);
         } catch (Throwable e1) {
             super.setUrl(url);
         }
@@ -50,10 +50,10 @@ public class DbcpManagedDataSource extends BasicManagedDataSource {
     @Override
     protected ConnectionFactory createConnectionFactory() throws SQLException {
 
-        if (dataSource instanceof XADataSource) {
+        if (this.ds instanceof XADataSource) {
 
             // Create the XAConectionFactory using the XA data source
-            XADataSource xaDataSourceInstance = (XADataSource) dataSource;
+            XADataSource xaDataSourceInstance = (XADataSource) this.ds;
             XAConnectionFactory xaConnectionFactory = new DataSourceXAConnectionFactory(getTransactionManager(), xaDataSourceInstance, username, password);
             setTransactionRegistry(xaConnectionFactory.getTransactionRegistry());
             return xaConnectionFactory;
@@ -61,7 +61,7 @@ public class DbcpManagedDataSource extends BasicManagedDataSource {
         } else {
 
             // If xa data source is not specified a DriverConnectionFactory is created and wrapped with a LocalXAConnectionFactory
-            ConnectionFactory connectionFactory = new DataSourceConnectionFactory(dataSource, username, password);
+            ConnectionFactory connectionFactory = new DataSourceConnectionFactory(this.ds, username, password);
             XAConnectionFactory xaConnectionFactory = new LocalXAConnectionFactory(getTransactionManager(), connectionFactory);
             setTransactionRegistry(xaConnectionFactory.getTransactionRegistry());
             return xaConnectionFactory;
