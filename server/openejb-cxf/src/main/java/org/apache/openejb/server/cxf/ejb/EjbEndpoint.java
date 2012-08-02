@@ -36,7 +36,9 @@ import org.apache.openejb.server.cxf.CxfServiceConfiguration;
 import org.apache.openejb.server.cxf.JaxWsImplementorInfoImpl;
 
 import javax.xml.ws.WebServiceException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A web service endpoint which invokes an EJB container.
@@ -65,6 +67,15 @@ public class EjbEndpoint extends CxfEndpoint {
         return (Class) this.implementor;
     }
 
+    @Override
+    protected Map<String, Object> getEndpointProperties() {
+        final Map<String, Object> map = new HashMap<String, Object>();
+        for (Map.Entry<Object, Object> entry : port.getProperties().entrySet()) {
+            map.put(entry.getKey().toString(), entry.getValue());
+        }
+        return map;
+    }
+
     protected void init() {
         // configure handlers
         try {
@@ -91,7 +102,6 @@ public class EjbEndpoint extends CxfEndpoint {
 
         // Install WSS4J interceptor
         ConfigureCxfSecurity.configure(endpoint, port);
-
     }
 
     private static void removeHandlerInterceptors(List<? extends Interceptor> interceptors) {
