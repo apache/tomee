@@ -67,8 +67,10 @@ public class DataSourceDefinitionPlaceHolderTest {
             password = "${pwd}",
             url = "${url}"
     )
+
     @Singleton
     public static class DSBean {
+        @SuppressWarnings("SpringJavaAutowiringInspection")
         @Resource(name = "java:comp/env/superDS")
         private DataSource ds;
 
