@@ -1,6 +1,9 @@
 package org.apache.tomee.jdbc;
 
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
 import org.apache.openejb.monitoring.LocalMBeanServer;
+import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.resource.jdbc.pool.PoolDataSourceCreator;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -8,7 +11,6 @@ import org.apache.tomcat.jdbc.pool.ConnectionPool;
 import org.apache.tomcat.jdbc.pool.PoolConfiguration;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
 
-import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.sql.DataSource;
 import java.lang.reflect.InvocationHandler;
@@ -87,28 +89,55 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
     @Override
     public void doDestroy(final DataSource object) throws Throwable {
         org.apache.tomcat.jdbc.pool.DataSource ds = (org.apache.tomcat.jdbc.pool.DataSource) object;
+        if (ds instanceof TomEEDataSource) {
+            ((TomEEDataSource) ds).internalJMXUnregister();
+        }
         ds.close(true);
-        ds.postDeregister();
     }
 
     public static class TomEEDataSource extends org.apache.tomcat.jdbc.pool.DataSource {
+        private static final Log LOGGER = LogFactory.getLog(TomEEDataSource.class);
+
+        private ObjectName internalOn = null;
+
         public TomEEDataSource(final PoolConfiguration properties, final ConnectionPool pool, final String name) {
             super(properties);
             this.pool = pool;
-            try {
-                super.preRegister(LocalMBeanServer.get(), new ObjectName("openejb", "name", name));
-            } catch (Exception ignored) {
-                // ignored
-            }
+            initJmx(name);
         }
 
         public TomEEDataSource(final PoolConfiguration poolConfiguration, final String name) {
             super(poolConfiguration);
             try { // just to force the pool to be created and be able to register the mbean
                 createPool();
-                super.preRegister(LocalMBeanServer.get(), new ObjectName("openejb", "name", name));
+                initJmx(name);
             } catch (Throwable ignored) {
                 // no-op
+            }
+        }
+
+        private void initJmx(final String name) {
+            try {
+                internalOn = ObjectNameBuilder.uniqueName("datasources", name, this);
+                try {
+                    if (pool.getJmxPool()!=null) {
+                        LocalMBeanServer.get().registerMBean(pool.getJmxPool(), internalOn);
+                    }
+                } catch (Exception e) {
+                    LOGGER.error("Unable to register JDBC pool with JMX", e);
+                }
+            } catch (Exception ignored) {
+                // no-op
+            }
+        }
+
+        public void internalJMXUnregister() {
+            if (internalOn != null) {
+                try {
+                    LocalMBeanServer.get().unregisterMBean(internalOn);
+                } catch (Exception e) {
+                    LOGGER.error("Unable to unregister JDBC pool with JMX", e);
+                }
             }
         }
 
