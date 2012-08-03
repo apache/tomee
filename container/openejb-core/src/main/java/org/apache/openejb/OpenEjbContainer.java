@@ -16,11 +16,8 @@
  */
 package org.apache.openejb;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.cdi.ScopeHelper;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.ConnectorModule;
@@ -63,6 +60,8 @@ import javax.naming.Context;
 import javax.naming.Name;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
 import javax.validation.ValidationException;
 import java.io.File;
 import java.lang.reflect.Modifier;
@@ -116,7 +115,7 @@ public class OpenEjbContainer extends EJBContainer {
         servletContext = new MockServletContext();
         session = new MockHttpSession();
         try {
-            startContexts(webBeanContext.getContextFactory(), servletContext, session);
+            startContexts(webBeanContext.getContextsService(), servletContext, session);
         } catch (Exception e) {
             logger.warning("can't start all CDI contexts", e);
         }
@@ -133,7 +132,7 @@ public class OpenEjbContainer extends EJBContainer {
             throw new IllegalStateException(e);
         }
         try {
-            stopContexts(webBeanContext.getContextFactory(), servletContext, session);
+            stopContexts(webBeanContext.getContextsService(), servletContext, session);
         } catch (Exception e) {
             logger.warning("can't stop all CDI contexts", e);
         }

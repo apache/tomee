@@ -16,15 +16,15 @@
  */
 package org.apache.openejb.cdi;
 
+import org.apache.webbeans.spi.ContextsService;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
-import javax.enterprise.context.spi.Context;
 import javax.inject.Singleton;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
-import org.apache.webbeans.context.ContextFactory;
 
 // helper for embedded case
 public final class ScopeHelper {
@@ -32,33 +32,19 @@ public final class ScopeHelper {
         // no-op
     }
 
-    public static void startContexts(final ContextFactory contextFactory, final ServletContext servletContext, final HttpSession session) throws Exception {
-        contextFactory.initSingletonContext(servletContext);
-        contextFactory.initApplicationContext(servletContext);
-        contextFactory.initSessionContext(session);
-        contextFactory.initConversationContext(null);
-        contextFactory.initRequestContext(null);
+    public static void startContexts(final ContextsService contextsService, final ServletContext servletContext, final HttpSession session) throws Exception {
+        contextsService.startContext(Singleton.class, null);
+        contextsService.startContext(ApplicationScoped.class, null);
+        contextsService.startContext(SessionScoped.class, session);
+        contextsService.startContext(RequestScoped.class, null);
+        contextsService.startContext(ConversationScoped.class, null);
     }
 
-    public static void stopContexts(final ContextFactory contextFactory, final ServletContext servletContext, final HttpSession session) throws Exception {
-        if(isActive(contextFactory.getStandardContext(SessionScoped.class))) {
-            contextFactory.destroySessionContext(session);
-        }
-        if (isActive(contextFactory.getStandardContext(ConversationScoped.class))) {
-            contextFactory.destroyConversationContext();
-        }
-        if (isActive(contextFactory.getStandardContext(RequestScoped.class))) {
-            contextFactory.destroyRequestContext(null);
-        }
-        if (isActive(contextFactory.getStandardContext(ApplicationScoped.class))) {
-            contextFactory.destroyApplicationContext(servletContext);
-        }
-        if (isActive(contextFactory.getStandardContext(Singleton.class))) {
-            contextFactory.destroySingletonContext(servletContext);
-        }
-    }
-
-    private static boolean isActive(Context context) {
-        return context != null && context.isActive();
+    public static void stopContexts(final ContextsService contextsService, final ServletContext servletContext, final HttpSession session) throws Exception {
+        contextsService.endContext(Singleton.class, null);
+        contextsService.endContext(ApplicationScoped.class, null);
+        contextsService.endContext(SessionScoped.class, session);
+        contextsService.endContext(RequestScoped.class, null);
+        contextsService.endContext(ConversationScoped.class, null);
     }
 }

@@ -172,7 +172,7 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
             final ServletContext appServletContext = new MockServletContext();
             final HttpSession appSession = new MockHttpSession();
 
-            startContexts(appCtx.getWebBeansContext().getContextFactory(), appServletContext, appSession);
+            startContexts(appCtx.getWebBeansContext().getContextsService(), appServletContext, appSession);
 
             servletContextProducer.set(appServletContext);
             sessionProducer.set(appSession);
@@ -192,7 +192,7 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
     public void undeploy(final Archive<?> archive) throws DeploymentException {
         try {
             assembler.destroyApplication(info.get().path);
-            stopContexts(appContext.get().getWebBeansContext().getContextFactory(), servletContext.get(), session.get());
+            stopContexts(appContext.get().getWebBeansContext().getContextsService(), servletContext.get(), session.get());
         } catch (Exception e) {
             throw new DeploymentException("can't undeploy " + archive.getName(), e);
         }
