@@ -85,7 +85,7 @@ public class DataSourceDefinitionPlaceHolderTest {
         assertEquals("sa", bds.getUsername());
         assertEquals("", bds.getPassword());
 
-        final Field fieldDs = bds.getClass().getDeclaredField("dataSource");
+        final Field fieldDs = bds.getClass().getDeclaredField("ds");
         fieldDs.setAccessible(true);
         final JDBCDataSource realDs = (JDBCDataSource) fieldDs.get(bds);
         assertEquals("jdbc:hsqldb:mem:superDS", realDs.getUrl());
