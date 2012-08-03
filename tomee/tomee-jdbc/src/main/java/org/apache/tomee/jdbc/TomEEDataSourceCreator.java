@@ -8,6 +8,7 @@ import org.apache.tomcat.jdbc.pool.ConnectionPool;
 import org.apache.tomcat.jdbc.pool.PoolConfiguration;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
 
+import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.sql.DataSource;
 import java.lang.reflect.InvocationHandler;
@@ -51,7 +52,7 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
         if (driver != null) {
             converted.setProperty("driverClassName", driver);
         }
-        if (properties.containsKey("JdbcDriver") && properties.getProperty("JdbcDriver") != null) {
+        if (properties.getProperty("JdbcDriver") != null) {
             converted.setProperty("driverClassName", (String) properties.remove("JdbcDriver"));
         }
         if (properties.containsKey("JdbcUrl")) {
@@ -63,7 +64,7 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
             final String key = entry.getKey().toString();
             final String value = entry.getValue().toString().trim();
-            if (!value.isEmpty()) {
+            if (!value.isEmpty() && !converted.containsKey(key)) {
                 if ("PasswordCipher".equals(key) && "PlainText".equals(value)) { // no need to warn about it
                     continue;
                 }
@@ -95,7 +96,7 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
             super(properties);
             this.pool = pool;
             try {
-                preRegister(LocalMBeanServer.get(), new ObjectName("openejb", "name", name));
+                super.preRegister(LocalMBeanServer.get(), new ObjectName("openejb", "name", name));
             } catch (Exception ignored) {
                 // ignored
             }
@@ -105,7 +106,7 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
             super(poolConfiguration);
             try { // just to force the pool to be created and be able to register the mbean
                 createPool();
-                preRegister(LocalMBeanServer.get(), new ObjectName("openejb", "name", name));
+                super.preRegister(LocalMBeanServer.get(), new ObjectName("openejb", "name", name));
             } catch (Throwable ignored) {
                 // no-op
             }

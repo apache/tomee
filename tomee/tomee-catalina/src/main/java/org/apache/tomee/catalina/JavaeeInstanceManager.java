@@ -113,7 +113,12 @@ public class JavaeeInstanceManager implements InstanceManager {
                         || (Modifier.isStatic(method.getModifiers()))
                         || (method.getExceptionTypes().length > 0)
                         || (!method.getReturnType().getName().equals("void"))) {
-                    throw new IllegalArgumentException("Invalid PostConstruct annotation");
+                    throw new IllegalArgumentException("Invalid PostConstruct annotation. @PostConstruct methods "
+                            + "should respect the following constraints:\n"
+                            + "- no parameter (" + (method.getParameterTypes().length == 0) + ")\n"
+                            + "- no exception should be declared (" + (method.getExceptionTypes().length == 0) + ")\n"
+                            + "- should return void (" + method.getReturnType().getName().equals("void") + ")\n"
+                            + "- should not be static (" + !Modifier.isStatic(method.getModifiers()) + ")\n");
                 }
                 postConstruct = method;
             }

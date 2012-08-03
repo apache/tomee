@@ -71,6 +71,7 @@ import org.apache.openejb.core.transaction.TransactionPolicyFactory;
 import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.javaagent.Agent;
 import org.apache.openejb.jpa.integration.MakeTxLookup;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.JarLocation;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.ProvisioningUtil;
@@ -136,8 +137,10 @@ import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 import javax.validation.ValidationException;
 import javax.validation.ValidatorFactory;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Method;
@@ -1603,9 +1606,19 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         serviceRecipe.setProperty("transactionManager", transactionManager);
         serviceRecipe.setProperty("ServiceId", serviceInfo.id);
         serviceRecipe.setProperty("properties", new UnsetPropertiesRecipe());
-        if (!serviceRecipe.getProperties().containsKey("Definition") || ((String) serviceRecipe.getProperty("Definition")).isEmpty()) {
-            serviceRecipe.setProperty("Definition", PropertiesHelper.propertiesToString(PropertyPlaceHolderHelper.holds(serviceInfo.properties)));
+
+        final Properties props = PropertyPlaceHolderHelper.holds(serviceInfo.properties);
+        if (serviceInfo.properties.containsKey("Definition")) {
+            try { // we catch classcast etc..., if it fails it is not important
+                final InputStream is = new ByteArrayInputStream(serviceInfo.properties.getProperty("Definition").getBytes());
+                final Properties p = new Properties();
+                IO.readProperties(is, p);
+                props.putAll(p);
+            } catch (Exception e) {
+                // ignored
+            }
         }
+        serviceRecipe.setProperty("Definition", PropertiesHelper.propertiesToString(props));
 
         replaceResourceAdapterProperty(serviceRecipe);
 
