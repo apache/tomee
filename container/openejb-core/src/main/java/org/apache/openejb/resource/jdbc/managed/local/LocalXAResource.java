@@ -85,15 +85,15 @@ public class LocalXAResource implements XAResource {
     @Override
     public void end(final Xid xid, int flag) throws XAException {
         try {
-        if (xid == null) {
-            throw new NullPointerException("xid is null");
-        }
-        if (!this.currentXid.equals(xid)) {
-            throw new XAException("Invalid Xid: expected " + this.currentXid + ", but was " + xid);
-        }
+            if (xid == null) {
+                throw new NullPointerException("xid is null");
+            }
+            if (!this.currentXid.equals(xid)) {
+                throw new XAException("Invalid Xid: expected " + this.currentXid + ", but was " + xid);
+            }
         } finally {
             lock.unlock();
-    }
+        }
     }
 
     @Override

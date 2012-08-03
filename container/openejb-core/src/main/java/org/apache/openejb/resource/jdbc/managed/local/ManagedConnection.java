@@ -20,18 +20,22 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ManagedConnection implements InvocationHandler {
     private static final Map<Transaction, Connection> CONNECTION_BY_TX = new ConcurrentHashMap<Transaction, Connection>();
 
-    protected Connection delegate;
     private final TransactionManager transactionManager;
+    private final LocalXAResource xaResource;
+    protected Connection delegate;
     private Transaction currentTransaction;
+    private boolean closed;
 
 
     public ManagedConnection(final Connection connection, final TransactionManager txMgr) {
         delegate = connection;
         transactionManager = txMgr;
+        closed = false;
+        xaResource = new LocalXAResource(delegate);
     }
 
     public XAResource getXAResource() throws SQLException {
-        return new LocalXAResource(delegate);
+        return xaResource;
     }
 
     @Override
@@ -105,7 +109,7 @@ public class ManagedConnection implements InvocationHandler {
 
     }
 
-    private static Object invokeUnderTransaction(final Connection delegate, final Method method, final Object[] args) throws Exception {
+    private Object invokeUnderTransaction(final Connection delegate, final Method method, final Object[] args) throws Exception {
         final String mtdName = method.getName();
         if ("setAutoCommit".equals(mtdName)
                 || "commit".equals(mtdName)
@@ -115,15 +119,18 @@ public class ManagedConnection implements InvocationHandler {
             throw forbiddenCall(mtdName);
         }
         if ("close".equals(mtdName)) {
-            // will be done later
-            // we need to delay it in case of rollback
-            return noop();
+            return close();
+        }
+        if ("isClosed".equals(mtdName) && closed) {
+            return true; // if !closed let's delegate to the underlying connection
         }
         return method.invoke(delegate, args);
     }
 
-    // just to give a better semantiv to a trivial operation
-    private static Object noop() {
+    // will be done later
+    // we need to delay it in case of rollback
+    private Object close() {
+        closed = true;
         return null;
     }
 

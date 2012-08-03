@@ -34,7 +34,7 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
         } catch (SQLException e) {
             throw new IllegalStateException(e);
         }
-        return build(TomEEDataSource.class, new TomEEDataSource(pool, name), converted);
+        return build(TomEEDataSource.class, new TomEEDataSource(config, pool, name), converted);
     }
 
     @Override
@@ -91,7 +91,8 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
     }
 
     public static class TomEEDataSource extends org.apache.tomcat.jdbc.pool.DataSource {
-        public TomEEDataSource(final ConnectionPool pool, final String name) {
+        public TomEEDataSource(final PoolConfiguration properties, final ConnectionPool pool, final String name) {
+            super(properties);
             this.pool = pool;
             try {
                 preRegister(LocalMBeanServer.get(), new ObjectName("openejb", "name", name));
@@ -102,15 +103,11 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
 
         public TomEEDataSource(final PoolConfiguration poolConfiguration, final String name) {
             super(poolConfiguration);
-            try { // just to force the pool to be created
-                getConnection().close();
+            try { // just to force the pool to be created and be able to register the mbean
+                createPool();
+                preRegister(LocalMBeanServer.get(), new ObjectName("openejb", "name", name));
             } catch (Throwable ignored) {
                 // no-op
-            }
-            try {
-                preRegister(LocalMBeanServer.get(), new ObjectName("openejb", "name", name));
-            } catch (Exception ignored) {
-                // ignored
             }
         }
 
