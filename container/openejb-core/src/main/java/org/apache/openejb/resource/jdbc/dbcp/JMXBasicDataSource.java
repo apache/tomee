@@ -28,6 +28,7 @@ import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
 
 // @MBean: don't put it since it is not a pojo
+@SuppressWarnings("UnusedDeclaration")
 @Description("describe a datasource pool")
 public class JMXBasicDataSource {
     private transient final org.apache.commons.dbcp.BasicDataSource ds;
