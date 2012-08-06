@@ -31,7 +31,7 @@ import org.apache.webbeans.config.WebBeansContext;
  */
 public class OWBContextThreadListener implements ThreadContextListener {
 
-    ThreadSingletonService singletonService = SystemInstance.get().getComponent(ThreadSingletonService.class);
+    private ThreadSingletonService singletonService = SystemInstance.get().getComponent(ThreadSingletonService.class);
 
     @Override
     public void contextEntered(ThreadContext oldContext, ThreadContext newContext) {

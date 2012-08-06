@@ -16,8 +16,6 @@
  */
 package org.apache.openejb.cdi;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBRuntimeException;
@@ -59,7 +57,9 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.Executors;
@@ -425,13 +425,13 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         try
         {
             //Sub-classes operations
-            beforeStopApplication(endObject);
+            beforeStopApplication(null);
 
             //Fire shut down
             this.beanManager.fireEvent(new BeforeShutdownImpl(), BeansDeployer.EMPTY_ANNOTATION_ARRAY);
 
             //Destroys context
-            this.contextsService.destroy(endObject);
+            this.contextsService.destroy(null);
 
             //Unbind BeanManager
             if (jndiService != null) {
@@ -454,7 +454,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             webBeansContext.getAnnotatedElementFactory().clear();
 
             //After Stop
-            afterStopApplication(endObject);
+            afterStopApplication(null);
 
             // Clear BeanManager
             this.beanManager.clear();
@@ -605,11 +605,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
 
         this.cleanupShutdownThreadLocals();
 
-        if (logger.isInfoEnabled())
-        {
-            stopObject = getServletContext(stopObject);
-            logger.info("OpenWebBeans Container has stopped for context path,", stopObject instanceof ServletContext? ((ServletContext)stopObject).getContextPath() : stopObject);
-        }
+        WebBeansFinder.clearInstances(WebBeansUtil.getCurrentClassLoader());
     }
 
     /**
@@ -619,7 +615,6 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
     private void cleanupShutdownThreadLocals()
     {
         // TODO maybe there are more to cleanup
-
         InjectionPointBean.removeThreadLocal();
     }
 

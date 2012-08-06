@@ -43,6 +43,7 @@ import org.apache.openejb.assembler.classic.event.AssemblerDestroyed;
 import org.apache.openejb.assembler.monitoring.JMXContainer;
 import org.apache.openejb.cdi.CdiAppContextsService;
 import org.apache.openejb.cdi.CdiBuilder;
+import org.apache.openejb.cdi.CdiPlugin;
 import org.apache.openejb.cdi.CdiResourceInjectionService;
 import org.apache.openejb.cdi.CdiScanner;
 import org.apache.openejb.cdi.CustomELAdapter;
@@ -101,6 +102,7 @@ import org.apache.openejb.util.SafeToolkit;
 import org.apache.openejb.util.proxy.ProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
 import org.apache.webbeans.config.WebBeansContext;
+import org.apache.webbeans.spi.ContainerLifecycle;
 import org.apache.webbeans.spi.ContextsService;
 import org.apache.webbeans.spi.LoaderService;
 import org.apache.webbeans.spi.ResourceInjectionService;
@@ -1171,6 +1173,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             logger.warning("Application id '" + appInfo.appId + "' not found in: " + Arrays.toString(containerSystem.getAppContextKeys()));
             return;
         } else {
+
+            final WebBeansContext webBeansContext = appContext.getWebBeansContext();
+            if (webBeansContext != null && webBeansContext.getBeanManagerImpl().isInUse()) {
+                webBeansContext.getService(ContainerLifecycle.class).stopApplication(null);
+            }
 
             final Map<String, Object> cb = appContext.getBindings();
 

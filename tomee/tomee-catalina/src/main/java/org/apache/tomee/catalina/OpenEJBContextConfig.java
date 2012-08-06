@@ -41,7 +41,7 @@ public class OpenEJBContextConfig extends ContextConfig {
     private TomcatWebAppBuilder.StandardContextInfo info;
 
     public OpenEJBContextConfig(TomcatWebAppBuilder.StandardContextInfo standardContextInfo) {
-        logger.info("OpenEJBContextConfig("+standardContextInfo.toString());
+        logger.debug("OpenEJBContextConfig({0})", standardContextInfo.toString());
         info = standardContextInfo;
     }
 
@@ -82,7 +82,7 @@ public class OpenEJBContextConfig extends ContextConfig {
     @Override
     protected void processAnnotationsFile(File file, WebXml fragment,
             boolean handlesTypesOnly) {
-        logger.debug("processAnnotationsFile "+ file.getAbsolutePath() );
+        logger.debug("processAnnotationsFile {0}", file.getAbsolutePath() );
         try {
             final WebAppInfo webAppInfo = info.get();
 
@@ -92,7 +92,7 @@ public class OpenEJBContextConfig extends ContextConfig {
                 return;
             }
 
-            logger.debug("Optimized Scan of File " + file.getAbsolutePath());
+            logger.debug("Optimized Scan of File {0}", file.getAbsolutePath());
 
             // TODO We should just remember which jars each class came from
             // then we wouldn't need to lookup the class from the URL in this
@@ -108,12 +108,12 @@ public class OpenEJBContextConfig extends ContextConfig {
                     continue;
                 }
 
-                logger.debug("Found " + webAnnotatedClassName);
+                logger.debug("Found {0}", webAnnotatedClassName);
 
                 final InputStream inputStream = classUrl.openStream();
                 try {
                     processAnnotationsStream(inputStream, fragment, handlesTypesOnly);
-                    logger.debug("Succeeded " + webAnnotatedClassName);
+                    logger.debug("Succeeded {0}", webAnnotatedClassName);
                 } catch (IOException e) {
                     e.printStackTrace();
                 } finally {
