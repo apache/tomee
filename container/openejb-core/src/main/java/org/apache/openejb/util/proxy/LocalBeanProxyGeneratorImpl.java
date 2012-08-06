@@ -16,8 +16,11 @@
  */
 package org.apache.openejb.util.proxy;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.security.AccessController;
@@ -29,6 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.openejb.loader.IO;
 import org.apache.xbean.asm.ClassWriter;
 import org.apache.xbean.asm.FieldVisitor;
 import org.apache.xbean.asm.Label;
@@ -36,8 +40,11 @@ import org.apache.xbean.asm.MethodVisitor;
 import org.apache.xbean.asm.Opcodes;
 import org.apache.xbean.asm.Type;
 
+import javax.ejb.EJBException;
+
 public class LocalBeanProxyGeneratorImpl implements LocalBeanProxyGenerator, Opcodes {
     private static final String[] SERIALIZABLE = new String[] { Serializable.class.getName().replace('.', '/') };
+    public static final java.lang.reflect.InvocationHandler NON_BUSINESS_HANDLER = new NonBusinessHandler();
 
     static final String BUSSINESS_HANDLER_NAME = "businessHandler";    
     static final String NON_BUSINESS_HANDLER_NAME = "nonBusinessHandler";
@@ -45,6 +52,10 @@ public class LocalBeanProxyGeneratorImpl implements LocalBeanProxyGenerator, Opc
     // sun.misc.Unsafe
     private static final Object unsafe;
     private static final Method defineClass;
+    private static final Method allocateInstance;
+    private static final Method putObject;
+    private static final Method objectFieldOffset;
+
 
     static {
         final Class<?> unsafeClass;
@@ -77,6 +88,39 @@ public class LocalBeanProxyGeneratorImpl implements LocalBeanProxyGenerator, Opc
                 }
             }
         });
+        allocateInstance = AccessController.doPrivileged(new PrivilegedAction<Method>() {
+            public Method run() {
+                try {
+                    Method mtd = unsafeClass.getDeclaredMethod("allocateInstance", Class.class);
+                    mtd.setAccessible(true);
+                    return mtd;
+                } catch (Exception e) {
+                    throw new IllegalStateException("Cannot get sun.misc.Unsafe.allocateInstance", e);
+                }
+            }
+        });
+        objectFieldOffset = AccessController.doPrivileged(new PrivilegedAction<Method>() {
+            public Method run() {
+                try {
+                    Method mtd = unsafeClass.getDeclaredMethod("objectFieldOffset", Field.class);
+                    mtd.setAccessible(true);
+                    return mtd;
+                } catch (Exception e) {
+                    throw new IllegalStateException("Cannot get sun.misc.Unsafe.objectFieldOffset", e);
+                }
+            }
+        });
+        putObject = AccessController.doPrivileged(new PrivilegedAction<Method>() {
+            public Method run() {
+                try {
+                    Method mtd = unsafeClass.getDeclaredMethod("putObject", Object.class, long.class, Object.class);
+                    mtd.setAccessible(true);
+                    return mtd;
+                } catch (Exception e) {
+                    throw new IllegalStateException("Cannot get sun.misc.Unsafe.putObject", e);
+                }
+            }
+        });
         defineClass = AccessController.doPrivileged(new PrivilegedAction<Method>() {
             public Method run() {
                 try {
@@ -88,6 +132,53 @@ public class LocalBeanProxyGeneratorImpl implements LocalBeanProxyGenerator, Opc
                 }
             }
         });
+    }
+
+    public Object constructProxy(Class clazz, java.lang.reflect.InvocationHandler handler) throws IllegalStateException {
+
+        final Object instance = allocateInstance(clazz);
+
+        setValue(getDeclaredField(clazz, BUSSINESS_HANDLER_NAME), instance, handler);
+        setValue(getDeclaredField(clazz, NON_BUSINESS_HANDLER_NAME), instance, NON_BUSINESS_HANDLER);
+
+        return instance;
+    }
+
+    private Field getDeclaredField(Class clazz, final String fieldName) {
+        try {
+            return clazz.getDeclaredField(fieldName);
+        } catch (NoSuchFieldException e) {
+            final String message = String.format("Proxy class does not contain expected field \"%s\": %s", fieldName, clazz.getName());
+            throw new IllegalStateException(message, e);
+        }
+    }
+
+    private Object allocateInstance(Class clazz) {
+        final Object instance;
+        try {
+            instance = allocateInstance.invoke(unsafe, clazz);
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException("Failed to allocateInstance of Proxy class " + clazz.getName(), e);
+        } catch (InvocationTargetException e) {
+            Throwable throwable = e.getTargetException() != null ? e.getTargetException() : e;
+            throw new IllegalStateException("Failed to allocateInstance of Proxy class " + clazz.getName(), throwable);
+        }
+        return instance;
+    }
+
+    private void setValue(Field field, Object object, Object value) {
+        long offset;
+        try {
+            offset = (Long) objectFieldOffset.invoke(unsafe, field);
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed getting offset for: field=" + field.getName() + "  class=" + field.getDeclaringClass().getName(), e);
+        }
+
+        try {
+            putObject.invoke(unsafe, object, offset, value);
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed putting field=" + field.getName() + "  class=" + field.getDeclaringClass().getName(), e);
+        }
     }
 
     public Class createProxy(Class<?> clsToProxy, ClassLoader cl) {
@@ -147,32 +238,6 @@ public class LocalBeanProxyGeneratorImpl implements LocalBeanProxyGenerator, Opc
 		fv = cw.visitField(ACC_FINAL + ACC_PRIVATE, NON_BUSINESS_HANDLER_NAME, "Ljava/lang/reflect/InvocationHandler;", null, null);
 		fv.visitEnd();
 		
-		// push single argument constructor
-		mv = cw.visitMethod(ACC_PUBLIC, "<init>", "(Ljava/lang/reflect/InvocationHandler;)V", null, null);
-		mv.visitCode();
-		mv.visitVarInsn(ALOAD, 0);
-		mv.visitVarInsn(ALOAD, 1);
-		mv.visitVarInsn(ALOAD, 1);
-		mv.visitMethodInsn(INVOKESPECIAL, proxyName, "<init>", "(Ljava/lang/reflect/InvocationHandler;Ljava/lang/reflect/InvocationHandler;)V");
-		mv.visitInsn(RETURN);
-		mv.visitMaxs(0, 0);
-		mv.visitEnd();
-
-		// push double argument constructor
-		mv = cw.visitMethod(ACC_PUBLIC, "<init>", "(Ljava/lang/reflect/InvocationHandler;Ljava/lang/reflect/InvocationHandler;)V", null, null);
-		mv.visitCode();
-		mv.visitVarInsn(ALOAD, 0);
-		mv.visitMethodInsn(INVOKESPECIAL, clsToOverride, "<init>", "()V");
-		mv.visitVarInsn(ALOAD, 0);
-		mv.visitVarInsn(ALOAD, 1);
-		mv.visitFieldInsn(PUTFIELD, proxyName, BUSSINESS_HANDLER_NAME, "Ljava/lang/reflect/InvocationHandler;");
-		mv.visitVarInsn(ALOAD, 0);
-		mv.visitVarInsn(ALOAD, 2);
-		mv.visitFieldInsn(PUTFIELD, proxyName, NON_BUSINESS_HANDLER_NAME, "Ljava/lang/reflect/InvocationHandler;");
-		mv.visitInsn(RETURN);
-		mv.visitMaxs(0, 0);
-		mv.visitEnd();
-
 		Map<String, List<Method>> methodMap = getNonPrivateMethods(new Class[] { clsToProxy });
 
 		for (Map.Entry<String, List<Method>> entry : methodMap.entrySet()) {
@@ -193,7 +258,12 @@ public class LocalBeanProxyGeneratorImpl implements LocalBeanProxyGenerator, Opc
 		}
 		
 		byte[] clsBytes = cw.toByteArray();
-		return clsBytes;
+        try {
+            IO.copy(clsBytes, new File("/tmp/foo.class"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return clsBytes;
 	}
 
 	/*
@@ -687,4 +757,11 @@ public class LocalBeanProxyGeneratorImpl implements LocalBeanProxyGenerator, Opc
 		}
 	}
 
+    static class NonBusinessHandler implements java.lang.reflect.InvocationHandler, Serializable {
+
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            throw new EJBException("Calling non-public methods of a local bean without any interfaces is not allowed");
+        }
+
+    }
 }
