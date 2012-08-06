@@ -16,7 +16,9 @@
  */
 package org.apache.tomee.catalina;
 
+import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
+import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.loader.WebappClassLoader;
 import org.apache.openejb.loader.SystemInstance;
 
@@ -27,7 +29,8 @@ import java.net.URL;
 public class LazyStopWebappClassLoader extends WebappClassLoader {
     public static final String TOMEE_WEBAPP_FIRST = "tomee.webapp-first";
 
-    private boolean restarting;
+    private boolean restarting = false;
+    private volatile Context relatedContext;
 
     public LazyStopWebappClassLoader() {
         setDelegate(!SystemInstance.get().getOptions().get(TOMEE_WEBAPP_FIRST, true));
@@ -41,9 +44,13 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
     public void stop() throws LifecycleException {
         // in our destroyapplication method we need a valid classloader to TomcatWebAppBuilder.afterStop()
         // exception: restarting we really stop it for the moment
-        if (restarting) {
+        if (restarting || isPaused()) {
             internalStop();
         }
+    }
+
+    private boolean isPaused() {
+        return relatedContext != null && relatedContext.getPaused();
     }
 
     public void internalStop() throws LifecycleException {
@@ -83,5 +90,9 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
             return false;
         }
         return TomEEClassLoaderHelper.validateJarFile(file);
+    }
+
+    public void setRelatedContext(final Context standardContext) {
+        relatedContext = standardContext;
     }
 }

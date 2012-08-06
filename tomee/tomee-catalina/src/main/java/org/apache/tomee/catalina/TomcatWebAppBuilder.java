@@ -72,9 +72,9 @@ import org.apache.openejb.config.DeploymentLoader;
 import org.apache.openejb.config.WebModule;
 import org.apache.openejb.config.event.BeforeDeploymentEvent;
 import org.apache.openejb.core.CoreContainerSystem;
+import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.core.WebContext;
 import org.apache.openejb.core.ivm.naming.SystemComponentReference;
-import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.loader.IO;
@@ -689,7 +689,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         // to avoid classnotfound in @PreDestoy or destroyApplication()
         Loader loader = standardContext.getLoader();
         if (!(loader instanceof TomEEWebappLoader)) {
-            loader = new LazyStopWebappLoader(standardContext.getParentClassLoader());
+            loader = new LazyStopWebappLoader(standardContext);
             loader.setDelegate(standardContext.getDelegate());
             ((WebappLoader) loader).setLoaderClass(LazyStopWebappClassLoader.class.getName());
         }
@@ -908,9 +908,15 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
     private static boolean undeploy(final StandardContext standardContext, final Container host) {
         final Container child = host.findChild(standardContext.getName());
-        final LazyStopWebappClassLoader lazyStopWebappClassLoader = lazyClassLoader(child);
 
-        if (lazyStopWebappClassLoader != null && lazyStopWebappClassLoader.isRestarting()) { // skip undeployment
+        // skip undeployment if redeploying (StandardContext.redeploy())
+        if (child instanceof org.apache.catalina.Context && ((org.apache.catalina.Context) child).getPaused()) {
+            return true;
+        }
+
+        // skip undeployment if restarting
+        final LazyStopWebappClassLoader lazyStopWebappClassLoader = lazyClassLoader(child);
+        if (lazyStopWebappClassLoader != null && lazyStopWebappClassLoader.isRestarting()) {
             return true;
         }
 
@@ -1243,7 +1249,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             for (Iterator<Map.Entry<String, DeployedApplication>> iterator = deployedApps.entrySet().iterator(); iterator.hasNext(); ) {
                 final Map.Entry<String, DeployedApplication> entry = iterator.next();
                 final DeployedApplication deployedApplication = entry.getValue();
-                if (deployedApplication.isModified()) {
+                if (deployedApplication.isModified()) { // TODO: for war use StandardContext.redeploy()
                     if (deployedApplication.appInfo != null) { // can happen with badly formed config
                         try {
                             getAssembler().destroyApplication(deployedApplication.appInfo.path);
