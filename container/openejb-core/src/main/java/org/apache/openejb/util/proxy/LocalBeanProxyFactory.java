@@ -27,7 +27,7 @@ import javax.ejb.EJBException;
 public class LocalBeanProxyFactory {
 
     private static final java.lang.reflect.InvocationHandler NON_BUSINESS_HANDLER = new NonBusinessHandler();
-
+    
     public static Object newProxyInstance(ClassLoader cl, Class interfce, java.lang.reflect.InvocationHandler h) throws IllegalArgumentException {
             try {
             Class proxyCls = new LocalBeanProxyGeneratorImpl().createProxy(interfce, cl);

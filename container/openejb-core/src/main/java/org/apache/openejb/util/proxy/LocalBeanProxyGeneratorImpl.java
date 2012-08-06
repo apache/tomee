@@ -192,7 +192,8 @@ public class LocalBeanProxyGeneratorImpl implements LocalBeanProxyGenerator, Opc
 		    }
 		}
 		
-		return cw.toByteArray();
+		byte[] clsBytes = cw.toByteArray();
+		return clsBytes;
 	}
 
 	/*
@@ -211,8 +212,7 @@ public class LocalBeanProxyGeneratorImpl implements LocalBeanProxyGenerator, Opc
 	                int modifiers = method.getModifiers();
 	                if (Modifier.isFinal(modifiers) || 
 	                    Modifier.isPrivate(modifiers) || 
-	                    Modifier.isStatic(modifiers) ||
-                            method.getDeclaringClass().equals(Object.class)) {
+	                    Modifier.isStatic(modifiers)) {
 	                    continue;
 	                }
 	                
