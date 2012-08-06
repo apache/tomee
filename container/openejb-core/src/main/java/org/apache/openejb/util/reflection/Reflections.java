@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.util.reflection;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 public final class Reflections {
@@ -28,6 +29,22 @@ public final class Reflections {
         try {
             mtd = obj.getClass().getDeclaredMethod(mtdName, paramTypes);
             return mtd.invoke(obj, args);
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
+    public static void set(final Object instance, final String field, final Object value) {
+        Field f;
+        try {
+            f = instance.getClass().getDeclaredField(field);
+            boolean acc = f.isAccessible();
+            f.setAccessible(true);
+            try {
+                f.set(instance, value);
+            } finally {
+                f.setAccessible(acc);
+            }
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
         }

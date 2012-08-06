@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.util.reflection.Reflections;
 import org.apache.xbean.asm.ClassWriter;
 import org.apache.xbean.asm.FieldVisitor;
 import org.apache.xbean.asm.Label;

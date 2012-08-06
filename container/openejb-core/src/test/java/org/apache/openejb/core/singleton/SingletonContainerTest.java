@@ -75,7 +75,8 @@ public class SingletonContainerTest extends TestCase {
             assertSame("lifecycle", lifecycle, WidgetBean.lifecycle);
 
            // Check the lifecycle of the bean
-            assertEquals(Lifecycle.CONSTRUCTOR + "\n" + Lifecycle.BUSINESS_METHOD + "\n", join("\n", lifecycle));
+           // assertEquals(Lifecycle.CONSTRUCTOR + "\n" + Lifecycle.BUSINESS_METHOD + "\n", join("\n", lifecycle));
+           assertEquals(Lifecycle.BUSINESS_METHOD + "\n", join("\n", lifecycle));
         }
         {
 

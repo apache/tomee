@@ -17,8 +17,11 @@
 package org.apache.openejb.timer;
 
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.MethodContext;
+import org.apache.openejb.core.timer.CalendarTimerData;
 import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.timer.EjbTimerServiceImpl;
+import org.apache.openejb.core.timer.ScheduleData;
 import org.apache.openejb.jee.Empty;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.junit.ApplicationComposer;
@@ -65,12 +68,44 @@ public class EjbTimerImplSerializableTest {
         assertEqualsByReflection(timer, timerDeserialized, "retryAttempts");
     }
 
-    private void assertEqualsByReflection(final EjbTimerService timer, final EjbTimerService timerDeserialized, final String name) throws Exception {
-        final Field field = EjbTimerServiceImpl.class.getDeclaredField(name);
-        field.setAccessible(true);
+    @Test
+    public void serializationOfCalendarData() throws Exception {
+        final BeanContext context = SystemInstance.get().getComponent(ContainerSystem.class).getBeanContext("EJBWithTimer");
+        final EjbTimerService timer = context.getEjbTimerService();
+        final MethodContext ctx = context.getMethodContext(EJBWithTimer.class.getMethod("doSthg"));
+        final ScheduleData sd = ctx.getSchedules().iterator().next();
+        final CalendarTimerData data = new CalendarTimerData(1, (EjbTimerServiceImpl) timer, context.getDeploymentID().toString(), null, ctx.getBeanMethod(), sd.getConfig(), sd.getExpression());
 
-        final Object v1 = field.get(timer);
-        final Object v2 = field.get(timerDeserialized);
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final ObjectOutputStream oos = new ObjectOutputStream(baos);
+        oos.writeObject(data);
+
+        final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        final ObjectInputStream ois = new ObjectInputStream(bais);
+        final CalendarTimerData dataDeserialized = (CalendarTimerData) ois.readObject();
+        assertThat(dataDeserialized, instanceOf(CalendarTimerData.class));
+
+        assertEqualsByReflection(data, dataDeserialized, "id");
+        assertEqualsByReflection(data, dataDeserialized, "deploymentId");
+        assertEqualsByReflection(data, dataDeserialized, "timeoutMethod");
+        assertEqualsByReflection(data, dataDeserialized, "info");
+    }
+
+    private void assertEqualsByReflection(final Object o1, final Object o2, final String name) throws Exception {
+        Class<?> clazz = o1.getClass();
+        Field field = null;
+        while (!Object.class.equals(clazz) && clazz.getSuperclass() != null && field == null) {
+            try {
+                field = clazz.getDeclaredField(name);
+                field.setAccessible(true);
+            } catch (NoSuchFieldException ignored) {
+                // no-op
+            }
+            clazz = clazz.getSuperclass();
+        }
+
+        final Object v1 = field.get(o1);
+        final Object v2 = field.get(o2);
 
         assertEquals(name, v1, v2);
     }
