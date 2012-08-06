@@ -16,32 +16,24 @@
  */
 package org.apache.openejb.util.proxy;
 
-import javax.ejb.EJBException;
-import java.io.Serializable;
+import org.apache.openejb.util.Debug;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 public class LocalBeanProxyFactory {
 
-    private static final java.lang.reflect.InvocationHandler NON_BUSINESS_HANDLER = new NonBusinessHandler();
-
     public static Object newProxyInstance(ClassLoader cl, Class interfce, java.lang.reflect.InvocationHandler h) throws IllegalArgumentException {
         try {
-            final Class proxyCls = new LocalBeanProxyGeneratorImpl().createProxy(interfce, cl);
-            final Constructor constructor = proxyCls.getConstructor(java.lang.reflect.InvocationHandler.class,
-                    java.lang.reflect.InvocationHandler.class);
-            final Object object = constructor.newInstance(h, NON_BUSINESS_HANDLER);
+            final LocalBeanProxyGeneratorImpl generator = new LocalBeanProxyGeneratorImpl();
+
+            final Class proxyClass = generator.createProxy(interfce, cl);
+            final Object object = generator.constructProxy(proxyClass, h);
+
             return object;
-        } catch (NoSuchMethodException e) {
-            throw new InternalError(e.toString());
-        } catch (InstantiationException e) {
-            throw new InternalError(e.toString());
-        } catch (IllegalAccessException e) {
-            throw new InternalError(e.toString());
-        } catch (InvocationTargetException e) {
-            throw new InternalError(e.toString());
+        } catch (Throwable e) {
+            throw new InternalError(Debug.printStackTrace(e));
         }
     }
 
@@ -61,11 +53,4 @@ public class LocalBeanProxyFactory {
         }
     }
 
-    private static class NonBusinessHandler implements java.lang.reflect.InvocationHandler, Serializable {
-
-        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            throw new EJBException("Calling non-public methods of a local bean without any interfaces is not allowed");
-        }
-
-    }
 }
