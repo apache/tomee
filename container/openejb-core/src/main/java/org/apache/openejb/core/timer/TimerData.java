@@ -17,6 +17,10 @@
 
 package org.apache.openejb.core.timer;
 
+import org.apache.openejb.BeanContext;
+import org.apache.openejb.MethodContext;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.quartz.Scheduler;
@@ -31,22 +35,28 @@ import javax.ejb.TimerConfig;
 import javax.transaction.Status;
 import javax.transaction.Synchronization;
 import javax.transaction.Transaction;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.Map;
 
-public abstract class TimerData {
+public abstract class TimerData implements Serializable {
 
     public static final String OPEN_EJB_TIMEOUT_TRIGGER_NAME_PREFIX = "OPEN_EJB_TIMEOUT_TRIGGER_";
     public static final String OPEN_EJB_TIMEOUT_TRIGGER_GROUP_NAME = "OPEN_EJB_TIMEOUT_TRIGGER_GROUP";
 
     private static final Logger log = Logger.getInstance(LogCategory.TIMER, "org.apache.openejb.util.resources");
-    private final long id;
-    final EjbTimerServiceImpl timerService;
-    private final String deploymentId;
-    private final Object primaryKey;
-    private final Method timeoutMethod;
+    private long id;
+    private EjbTimerServiceImpl timerService;
+    private String deploymentId;
+    private Object primaryKey;
+    private Method timeoutMethod;
 
-    private final Object info;
+    private Object info;
     private boolean persistent;
 
     protected AbstractTrigger<?> trigger;
@@ -58,7 +68,7 @@ public abstract class TimerData {
     }
 
     // EJB Timer object given to user code
-    private final Timer timer;
+    private Timer timer;
 
 
     /**
@@ -96,6 +106,48 @@ public abstract class TimerData {
         this.persistent = timerConfig == null ? true : timerConfig.isPersistent();
         this.timer = new TimerImpl(this);
         this.timeoutMethod = timeoutMethod;
+    }
+
+    private void writeObject(final ObjectOutputStream out) throws IOException {
+        out.writeLong(id);
+        out.writeUTF(deploymentId);
+        out.writeBoolean(persistent);
+        out.writeObject(timer);
+        out.writeObject(primaryKey);
+        out.writeObject(timerService);
+        out.writeObject(info);
+        out.writeUTF(timeoutMethod.getName());
+    }
+
+    private void readObject(final ObjectInputStream in) throws IOException {
+        id = in.readLong();
+        deploymentId = in.readUTF();
+        persistent = in.readBoolean();
+
+        try {
+            timer = (Timer) in.readObject();
+            primaryKey = in.readObject();
+            timerService = (EjbTimerServiceImpl) in.readObject();
+            info = in.readObject();
+        } catch (ClassNotFoundException e) {
+            throw new IOException(e);
+        }
+
+        final String mtd = in.readUTF();
+        final BeanContext beanContext = SystemInstance.get().getComponent(ContainerSystem.class).getBeanContext(deploymentId);
+        for (Iterator<Map.Entry<Method, MethodContext>> it = beanContext.iteratorMethodContext(); it.hasNext(); ) {
+            final MethodContext methodContext = it.next().getValue();
+            if (methodContext.getSchedules().isEmpty()) {
+                continue;
+            }
+
+            final Method method = methodContext.getBeanMethod();
+            if (method.getName().equals(mtd)) {
+                timeoutMethod = method;
+                break;
+            }
+
+        }
     }
 
     public void stop() {

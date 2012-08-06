@@ -61,8 +61,10 @@ public class StatefulContainerTest extends TestCase {
     public void testBusinessLocalBeanInterface() throws Exception {
         List localbeanExpectedLifecycle = new ArrayList();
         localbeanExpectedLifecycle.addAll(expectedLifecycle);
-        // can't avoid the extra constructor call
-        localbeanExpectedLifecycle.add(4, Lifecycle.CONSTRUCTOR);
+
+        // WAS can't avoid the extra constructor call
+        // NOW it was rewritten to avoid it
+        // localbeanExpectedLifecycle.add(4, Lifecycle.CONSTRUCTOR);
 
         testBusinessLocalBeanInterface(localbeanExpectedLifecycle);
     }
@@ -161,8 +163,10 @@ public class StatefulContainerTest extends TestCase {
     public void testBusinessLocalBeanInterfaceInTx() throws Exception {
          List localbeanExpectedLifecycle = new ArrayList();
         localbeanExpectedLifecycle.addAll(inTxExpectedLifecycle);
-        // can't avoid the extra constructor call
-        localbeanExpectedLifecycle.add(3, Lifecycle.CONSTRUCTOR);
+
+        // WAS can't avoid the extra constructor call
+        // NOW it was rewritten to avoid it
+        // localbeanExpectedLifecycle.add(3, Lifecycle.CONSTRUCTOR);
 
         TransactionManager transactionManager = SystemInstance.get().getComponent(TransactionManager.class);
         transactionManager.begin();

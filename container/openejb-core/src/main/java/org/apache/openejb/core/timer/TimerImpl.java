@@ -31,7 +31,7 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.ThreadContext;
 
-public class TimerImpl implements Timer {
+public class TimerImpl implements Timer, Serializable {
     private final TimerData timerData;
 
     public TimerImpl(TimerData timerData) {

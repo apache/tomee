@@ -881,8 +881,9 @@ public class LocalBeanProxyGeneratorImplTest extends TestCase {
         TestInvocationHandler invocationHandler = new TestInvocationHandler(new EnumParams());
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
 
-        Class cls = new LocalBeanProxyGeneratorImpl().createProxy(EnumParams.class, cl);
-        EnumParams proxy = (EnumParams) cls.getConstructor(new Class[] { InvocationHandler.class }).newInstance(invocationHandler);
+        LocalBeanProxyGeneratorImpl generator = new LocalBeanProxyGeneratorImpl();
+        Class cls = generator.createProxy(EnumParams.class, cl);
+        EnumParams proxy = (EnumParams) generator.constructProxy(cls, invocationHandler);
 
         proxy.someStringMethod(Color.GREEN.name());
         proxy.someEnumMethod(Color.RED);
