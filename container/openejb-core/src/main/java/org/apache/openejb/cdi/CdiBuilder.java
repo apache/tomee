@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.cdi;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 import org.apache.openejb.AppContext;
@@ -34,6 +35,7 @@ import org.apache.webbeans.config.WebBeansFinder;
  */
 public class CdiBuilder {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_CDI, CdiBuilder.class);
+    private static final ThreadSingletonService SINGLETON_SERVICE = new ThreadSingletonServiceImpl();
 
     public CdiBuilder() {
     }
@@ -67,21 +69,21 @@ public class CdiBuilder {
         return false;
     }
 
-    public static ThreadSingletonService initializeOWB(ClassLoader classLoader) {
-        ThreadSingletonService singletonService = new ThreadSingletonServiceImpl();
-        logger.info("Created new singletonService " + singletonService);
-        SystemInstance.get().setComponent(ThreadSingletonService.class, singletonService);
+    public static ThreadSingletonService initializeOWB(final ClassLoader classLoader) {
+        logger.info("Created new singletonService " + SINGLETON_SERVICE);
+        SystemInstance.get().setComponent(ThreadSingletonService.class, SINGLETON_SERVICE);
         try {
-            WebBeansFinder.setSingletonService(singletonService);
+            WebBeansFinder.setSingletonService(SINGLETON_SERVICE);
             logger.info("Succeeded in installing singleton service");
         } catch (Exception e) {
             //ignore
             // not logging the exception since it is nto an error
-            logger.info("Could not install our singleton service");
+            logger.debug("Could not install our singleton service");
         }
+
         //TODO there must be a better place to initialize this
         ThreadContext.addThreadContextListener(new OWBContextThreadListener());
-        return singletonService;
+        return SINGLETON_SERVICE;
     }
 
 }

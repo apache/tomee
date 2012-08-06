@@ -25,6 +25,7 @@ import org.apache.webbeans.el.ELContextStore;
 import org.apache.webbeans.spi.ContextsService;
 import org.apache.webbeans.web.context.ServletRequestContext;
 import org.apache.webbeans.web.context.SessionContextManager;
+import org.apache.webbeans.web.intercept.RequestScopedBeanInterceptorHandler;
 
 import javax.enterprise.context.*;
 import javax.enterprise.context.spi.Context;
@@ -77,7 +78,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         startContext(Singleton.class, initializeObject);
     }
 
-    public void destroy(Object destroyObject) {
+    public void destroy(Object destroyObjectUnused) {
 //        //Destroy application context
 //        endContext(ApplicationScoped.class, destroyObject);
 //
@@ -242,6 +243,8 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             conversationContext.set(null);
             conversationContext.remove();
         }
+
+        RequestScopedBeanInterceptorHandler.removeThreadLocals();
     }
 
     /**
