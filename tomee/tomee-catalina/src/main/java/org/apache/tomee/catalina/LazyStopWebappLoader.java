@@ -16,11 +16,16 @@
  */
 package org.apache.tomee.catalina;
 
+import org.apache.catalina.Context;
+import org.apache.catalina.LifecycleException;
 import org.apache.catalina.loader.WebappLoader;
 
 public class LazyStopWebappLoader extends WebappLoader {
-    public LazyStopWebappLoader(final ClassLoader parentClassLoader) {
-        super(parentClassLoader);
+    private Context standardContext = null;
+
+    public LazyStopWebappLoader(final Context ctx) {
+        super(ctx.getParentClassLoader());
+        standardContext = ctx;
     }
 
     public LazyStopWebappLoader() {
@@ -40,6 +45,14 @@ public class LazyStopWebappLoader extends WebappLoader {
             }
         } else {
             super.backgroundProcess();
+        }
+    }
+
+    @Override
+    protected void startInternal() throws LifecycleException {
+        super.startInternal();
+        if (getClassLoader() instanceof LazyStopWebappClassLoader) {
+            ((LazyStopWebappClassLoader) getClassLoader()).setRelatedContext(standardContext);
         }
     }
 }
