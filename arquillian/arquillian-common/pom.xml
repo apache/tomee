@@ -29,4 +29,17 @@
   <packaging>jar</packaging>
 
   <name>OpenEJB :: Arquillian Adaptors Parent :: Common</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.jboss.arquillian.test</groupId>
+      <artifactId>arquillian-test-spi</artifactId>
+      <version>${version.arquillian}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.container</groupId>
+      <artifactId>arquillian-container-spi</artifactId>
+      <version>${version.arquillian}</version>
+    </dependency>
+  </dependencies>
 </project>

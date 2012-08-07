@@ -18,15 +18,20 @@
 package org.apache.openejb.arquillian.embedded;
 
 import org.apache.openejb.arquillian.common.ArquillianUtil;
+import org.apache.openejb.arquillian.common.deployment.DeploymentExceptionObserver;
+import org.apache.openejb.arquillian.common.deployment.DeploymentExceptionProvider;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.core.spi.LoadableExtension;
+import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 
 public class EmbeddedTomEEExtension implements LoadableExtension {
     private static final String ADAPTER = "tomee-embedded";
 
     @Override public void register(ExtensionBuilder builder) {
         if (ArquillianUtil.isCurrentAdapter(ADAPTER)) {
-            builder.service(DeployableContainer.class, EmbeddedTomEEContainer.class);
+            builder.service(DeployableContainer.class, EmbeddedTomEEContainer.class)
+                .observer(DeploymentExceptionObserver.class)
+                .service(ResourceProvider.class, DeploymentExceptionProvider.class);
         }
     }
 }

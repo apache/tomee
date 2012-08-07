@@ -42,6 +42,10 @@ public class OpenEJBInjectionEnricher implements TestEnricher {
     @Override
     public void enrich(final Object testInstance) {
         final AppContext ctx = appContext.get();
+        if (ctx == null) { // deployment exception
+            return;
+        }
+
         final BeanManager bm = ctx.getWebBeansContext().getBeanManagerImpl();
         try {
             final Set<Bean<?>> beans = bm.getBeans(testInstance.getClass());
