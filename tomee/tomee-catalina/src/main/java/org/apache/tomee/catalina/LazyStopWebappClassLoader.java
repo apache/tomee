@@ -44,13 +44,9 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
     public void stop() throws LifecycleException {
         // in our destroyapplication method we need a valid classloader to TomcatWebAppBuilder.afterStop()
         // exception: restarting we really stop it for the moment
-        if (restarting || isPaused()) {
+        if (restarting || TomcatContextUtil.isReloading(relatedContext)) {
             internalStop();
         }
-    }
-
-    private boolean isPaused() {
-        return relatedContext != null && relatedContext.getPaused();
     }
 
     public void internalStop() throws LifecycleException {

@@ -52,6 +52,7 @@ import org.apache.naming.ContextAccessController;
 import org.apache.naming.ContextBindings;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.AppInfo;
@@ -910,7 +911,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         final Container child = host.findChild(standardContext.getName());
 
         // skip undeployment if redeploying (StandardContext.redeploy())
-        if (child instanceof org.apache.catalina.Context && ((org.apache.catalina.Context) child).getPaused()) {
+        if (child instanceof org.apache.catalina.Context && TomcatContextUtil.isReloading((org.apache.catalina.Context) child)) {
             return true;
         }
 
@@ -1208,6 +1209,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             } catch (LifecycleException e) {
                 logger.error("error stopping classloader of webapp " + standardContext.getName(), e);
             }
+            ClassLoaderUtil.cleanOpenJPACache(old);
         }
         removeContextInfo(standardContext);
     }
