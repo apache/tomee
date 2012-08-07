@@ -271,7 +271,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
      * @param timerData the timer that was cancelled
      */
     public void cancelled(TimerData timerData) {
-        // make sure it was removed from the strore
+        // make sure it was removed from the store
         timerStore.removeTimer(timerData.getId());
     }
 

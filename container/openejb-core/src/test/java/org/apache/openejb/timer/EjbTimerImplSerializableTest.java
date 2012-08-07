@@ -19,9 +19,11 @@ package org.apache.openejb.timer;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.MethodContext;
 import org.apache.openejb.core.timer.CalendarTimerData;
+import org.apache.openejb.core.timer.EjbTimeoutJob;
 import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.timer.EjbTimerServiceImpl;
 import org.apache.openejb.core.timer.ScheduleData;
+import org.apache.openejb.core.timer.TimerData;
 import org.apache.openejb.jee.Empty;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.junit.ApplicationComposer;
@@ -30,8 +32,9 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.quartz.JobDataMap;
+import org.quartz.impl.triggers.AbstractTrigger;
 
-import javax.ejb.EJB;
 import javax.ejb.Schedule;
 import javax.ejb.Stateless;
 import java.io.ByteArrayInputStream;
@@ -44,23 +47,20 @@ import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 @RunWith(ApplicationComposer.class)
 public class EjbTimerImplSerializableTest {
     @Test
     public void serializeDeserialize() throws Exception {
-        final BeanContext context = SystemInstance.get().getComponent(ContainerSystem.class).getBeanContext("EJBWithTimer");
-        final EjbTimerService timer = context.getEjbTimerService();
+        final EjbTimerService timer = timerService();
         assertNotNull(timer);
         assertThat(timer, instanceOf(EjbTimerServiceImpl.class));
 
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        final ObjectOutputStream oos = new ObjectOutputStream(baos);
-        oos.writeObject(timer);
+        final byte[] serial = serialize(timer);
+        final EjbTimerService timerDeserialized = (EjbTimerService) deserialize(serial);
 
-        final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        final ObjectInputStream ois = new ObjectInputStream(bais);
-        final EjbTimerService timerDeserialized = (EjbTimerService) ois.readObject();
         assertThat(timerDeserialized, instanceOf(EjbTimerServiceImpl.class));
 
         assertEqualsByReflection(timer, timerDeserialized, "deployment");
@@ -70,19 +70,11 @@ public class EjbTimerImplSerializableTest {
 
     @Test
     public void serializationOfCalendarData() throws Exception {
-        final BeanContext context = SystemInstance.get().getComponent(ContainerSystem.class).getBeanContext("EJBWithTimer");
-        final EjbTimerService timer = context.getEjbTimerService();
-        final MethodContext ctx = context.getMethodContext(EJBWithTimer.class.getMethod("doSthg"));
-        final ScheduleData sd = ctx.getSchedules().iterator().next();
-        final CalendarTimerData data = new CalendarTimerData(1, (EjbTimerServiceImpl) timer, context.getDeploymentID().toString(), null, ctx.getBeanMethod(), sd.getConfig(), sd.getExpression());
+        final CalendarTimerData data = timerData();
 
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        final ObjectOutputStream oos = new ObjectOutputStream(baos);
-        oos.writeObject(data);
+        final byte[] serial = serialize(data);
+        final CalendarTimerData dataDeserialized = (CalendarTimerData) deserialize(serial);
 
-        final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        final ObjectInputStream ois = new ObjectInputStream(bais);
-        final CalendarTimerData dataDeserialized = (CalendarTimerData) ois.readObject();
         assertThat(dataDeserialized, instanceOf(CalendarTimerData.class));
 
         assertEqualsByReflection(data, dataDeserialized, "id");
@@ -91,7 +83,46 @@ public class EjbTimerImplSerializableTest {
         assertEqualsByReflection(data, dataDeserialized, "info");
     }
 
-    private void assertEqualsByReflection(final Object o1, final Object o2, final String name) throws Exception {
+    @Test
+    public void jobDataMapSerial() throws Exception {
+        final CalendarTimerData data = timerData();
+        final EjbTimerServiceImpl timerService = (EjbTimerServiceImpl) timerService();
+
+        data.setScheduler(timerService.getScheduler());
+        // small hack for the test
+        final Field preventSynch = TimerData.class.getDeclaredField("synchronizationRegistered");
+        preventSynch.setAccessible(true);
+        preventSynch.set(data, true);
+        data.newTimer();
+
+        final AbstractTrigger<?> trigger = (AbstractTrigger<?>) data.getTrigger();
+        trigger.setJobName("my-job");
+        trigger.setJobGroup("my-group");
+
+        final JobDataMap triggerDataMap = trigger.getJobDataMap();
+        triggerDataMap.put(EjbTimeoutJob.EJB_TIMERS_SERVICE, timerService);
+        triggerDataMap.put(EjbTimeoutJob.TIMER_DATA, data);
+
+        final byte[] serial = serialize(triggerDataMap);
+        final JobDataMap map = (JobDataMap) deserialize(serial);
+        assertTrue(map.containsKey(EjbTimeoutJob.EJB_TIMERS_SERVICE));
+        assertTrue(map.containsKey(EjbTimeoutJob.TIMER_DATA));
+    }
+
+    private static Object deserialize(final byte[] serial) throws Exception {
+        final ByteArrayInputStream bais = new ByteArrayInputStream(serial);
+        final ObjectInputStream ois = new ObjectInputStream(bais);
+        return ois.readObject();
+    }
+
+    private static byte[] serialize(final Object data) throws Exception {
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final ObjectOutputStream oos = new ObjectOutputStream(baos);
+        oos.writeObject(data);
+        return baos.toByteArray();
+    }
+
+    private static void assertEqualsByReflection(final Object o1, final Object o2, final String name) throws Exception {
         Class<?> clazz = o1.getClass();
         Field field = null;
         while (!Object.class.equals(clazz) && clazz.getSuperclass() != null && field == null) {
@@ -104,14 +135,28 @@ public class EjbTimerImplSerializableTest {
             clazz = clazz.getSuperclass();
         }
 
+        if (field == null) {
+            fail();
+        }
+
         final Object v1 = field.get(o1);
         final Object v2 = field.get(o2);
 
         assertEquals(name, v1, v2);
     }
 
-    @EJB
-    private EJBWithTimer stateless;
+    private static EjbTimerService timerService() {
+        final BeanContext context = SystemInstance.get().getComponent(ContainerSystem.class).getBeanContext("EJBWithTimer");
+        return context.getEjbTimerService();
+    }
+
+    public static CalendarTimerData timerData() throws Exception {
+        final BeanContext context = SystemInstance.get().getComponent(ContainerSystem.class).getBeanContext("EJBWithTimer");
+        final EjbTimerService timer = context.getEjbTimerService();
+        final MethodContext ctx = context.getMethodContext(EJBWithTimer.class.getMethod("doSthg"));
+        final ScheduleData sd = ctx.getSchedules().iterator().next();
+        return new CalendarTimerData(1, (EjbTimerServiceImpl) timer, context.getDeploymentID().toString(), null, ctx.getBeanMethod(), sd.getConfig(), sd.getExpression());
+    }
 
     @Module
     public StatelessBean bean() {
