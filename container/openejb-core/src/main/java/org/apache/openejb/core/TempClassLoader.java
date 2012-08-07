@@ -29,6 +29,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -51,8 +53,16 @@ public class TempClassLoader extends URLClassLoader {
     private static final boolean SKIP_COMMONS_NET = skipLib("org.apache.commons.net.pop3.POP3Client");
 
     // - will not match anything, that's the desired default behavior
-    private static final String FORCED_SKIP = SystemInstance.get().getOptions().get("openejb.classloader.forced-skip", "-");
-    private static final String FORCED_LOAD = SystemInstance.get().getOptions().get("openejb.classloader.forced-load", "-");
+    private static final Collection<String> FORCED_SKIP = list("openejb.classloader.forced-skip");
+    private static final Collection<String> FORCED_LOAD = list("openejb.classloader.forced-load");
+
+    private static Collection<String> list(final String key) {
+        final String s = SystemInstance.get().getOptions().get(key, (String) null);
+        if (s == null || s.trim().isEmpty()) {
+            return null; // no need to iterate over something empty
+        }
+        return Arrays.asList(s.trim().split(","));
+    }
 
     private static boolean skipLib(final String includedClass) {
         try {
@@ -169,11 +179,19 @@ public class TempClassLoader extends URLClassLoader {
         if (skip.contains(Skip.ALL)) {
             return true;
         }
-        if (name.startsWith(FORCED_SKIP)) {
-            return true;
+        if (FORCED_SKIP != null) {
+            for (String prefix : FORCED_SKIP) {
+                if (name.startsWith(prefix)) {
+                    return true;
+                }
+            }
         }
-        if (name.startsWith(FORCED_LOAD)) {
-            return false;
+        if (FORCED_LOAD != null) {
+            for (String prefix : FORCED_LOAD) {
+                if (name.startsWith(prefix)) {
+                    return false;
+                }
+            }
         }
 
         if (name.startsWith("java.")) return true;
