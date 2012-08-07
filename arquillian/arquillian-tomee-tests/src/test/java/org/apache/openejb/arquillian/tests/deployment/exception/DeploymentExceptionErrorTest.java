@@ -30,7 +30,7 @@ public class DeploymentExceptionErrorTest {
     private OpenEJBException oejbException;
 
     @Deployment(testable = false)
-    @ShouldThrowException(DeploymentException.class)
+    @ShouldThrowException(OpenEJBException.class)
     public static WebArchive war() {
         return ShrinkWrap.create(WebArchive.class)
                     .addAsWebInfResource(new StringAsset(Descriptors.create(BeansDescriptor.class)
