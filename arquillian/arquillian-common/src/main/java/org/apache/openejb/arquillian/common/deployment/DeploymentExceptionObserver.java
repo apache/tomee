@@ -18,20 +18,18 @@ public class DeploymentExceptionObserver {
         try {
             dd.proceed();
         } catch (Exception t) {
-            if (t == null) {
-                EXCEPTIONS.put(NullPointerException.class, new NullPointerException());
-            } else {
-                EXCEPTIONS.put(t.getClass(), t);
-                Throwable current = t.getCause();
-                while (current != null) {
-                    if (current instanceof Exception) {
-                        PARENT_EXCEPTIONS.put(current.getClass(), (Exception) current);
-                    }
-                    if (current.getCause() != current) {
-                        current = current.getCause();
-                    }
+            EXCEPTIONS.put(t.getClass(), t);
+
+            Throwable current = t.getCause();
+            while (current != null) {
+                if (current instanceof Exception) {
+                    PARENT_EXCEPTIONS.put(current.getClass(), (Exception) current);
+                }
+                if (current.getCause() != current) {
+                    current = current.getCause();
                 }
             }
+
             throw t;
         }
     }
@@ -50,7 +48,7 @@ public class DeploymentExceptionObserver {
         return set;
     }
 
-    public void cleanUp(@Observes final EventContext<AfterClass> event) throws Exception {
+    public void cleanUp(@Observes final AfterClass event) throws Exception {
         EXCEPTIONS.clear();
         PARENT_EXCEPTIONS.clear();
     }

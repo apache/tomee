@@ -187,12 +187,15 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
             throw new DeploymentException("can't deploy " + archive.getName(), e);
         }
 
-
         return new ProtocolMetaData();
     }
 
     @Override
     public void undeploy(final Archive<?> archive) throws DeploymentException {
+        if (appContext.get() == null) {
+            return;
+        }
+
         try {
             assembler.destroyApplication(info.get().path);
             stopContexts(appContext.get().getWebBeansContext().getContextsService(), servletContext.get(), session.get());
