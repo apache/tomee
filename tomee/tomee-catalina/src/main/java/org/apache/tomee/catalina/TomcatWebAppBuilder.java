@@ -666,7 +666,19 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
             logger.debug("contextInfo = " + contextInfo);
             logger.debug("standardContext = " + standardContext);
+
+            if (contextInfo.appInfo == null) {
+                logger.debug("ContextInfo has no AppInfo for StandardContext " + standardContext.getName());
+                return null;
+            }
+
             for (final WebAppInfo webApp : contextInfo.appInfo.webApps) {
+
+                if (webApp == null) {
+                    logger.debug("ContextInfo.appInfo.webApps entry is null StandardContext " + standardContext.getName());
+                    continue;
+                }
+
                 if (standardContext.getName().equals("/" + webApp.contextRoot)) {
                     return webApp;
                 }
