@@ -16,15 +16,6 @@
  */
 package org.apache.openejb.arquillian.openejb;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.Map;
-import java.util.Properties;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBRuntimeException;
@@ -51,9 +42,20 @@ import org.jboss.arquillian.container.spi.context.annotation.DeploymentScoped;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.Map;
+import java.util.Properties;
 
 import static org.apache.openejb.cdi.ScopeHelper.startContexts;
 import static org.apache.openejb.cdi.ScopeHelper.stopContexts;
@@ -109,9 +111,6 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
     private InstanceProducer<ClassLoader> classLoader;
 
     @Inject
-    private Instance<AppModule> module;
-
-    @Inject
     private Instance<ServletContext> servletContext;
 
     @Inject
@@ -122,6 +121,9 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
 
     @Inject
     private Instance<AppContext> appContext;
+
+    @Inject
+    private Instance<TestClass> testClass;
 
     @Override
     public Class<OpenEJBConfiguration> getConfigurationClass() {
@@ -166,7 +168,8 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
     @Override
     public ProtocolMetaData deploy(final Archive<?> archive) throws DeploymentException {
         try {
-            final AppInfo appInfo = configurationFactory.configureApplication(module.get());
+            final AppModule module = OpenEJBArchiveProcessor.createModule(archive, testClass.get());
+            final AppInfo appInfo = configurationFactory.configureApplication(module);
             final AppContext appCtx = assembler.createApplication(appInfo);
 
             final ServletContext appServletContext = new MockServletContext();

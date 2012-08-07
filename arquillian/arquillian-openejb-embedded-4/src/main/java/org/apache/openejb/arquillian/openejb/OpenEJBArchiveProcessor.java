@@ -16,20 +16,6 @@
  */
 package org.apache.openejb.arquillian.openejb;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.config.AppModule;
@@ -61,7 +47,26 @@ import org.jboss.shrinkwrap.api.asset.UrlAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.impl.base.filter.IncludeRegExpPaths;
 
-public class OpenEJBArchiveProcessor implements ApplicationArchiveProcessor {
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+// doesn't implement ApplicationArchiveProcessor anymore since in some cases
+// (with some observers set for instance)
+// it is not called before the deployment itself
+// so it is like if it was skipped
+public class OpenEJBArchiveProcessor {
     private static final Logger LOGGER = Logger.getLogger(OpenEJBArchiveProcessor.class.getName());
 
     private static final String META_INF = "META-INF/";
@@ -75,12 +80,7 @@ public class OpenEJBArchiveProcessor implements ApplicationArchiveProcessor {
     private static final String ENV_ENTRIES_PROPERTIES = "env-entries.properties";
     public static final String WEB_INF_CLASSES = "/WEB-INF/classes/";
 
-    @Inject
-    @SuiteScoped
-    private InstanceProducer<AppModule> module;
-
-    @Override
-    public void process(final Archive<?> archive, final TestClass testClass) {
+    public static AppModule createModule(final Archive<?> archive, final TestClass testClass) {
         final Class<?> javaClass = testClass.getJavaClass();
         final AppModule appModule = new AppModule(javaClass.getClassLoader(), archive.getName());
 
@@ -205,11 +205,10 @@ public class OpenEJBArchiveProcessor implements ApplicationArchiveProcessor {
             }
         }
 
-        // export it to be usable in the container
-        module.set(appModule);
+        return appModule;
     }
 
-    private <T> T get(Class<T> fileClass, String attr, Asset asset) {
+    private static <T> T get(Class<T> fileClass, String attr, Asset asset) {
         try {
             final Field field = asset.getClass().getDeclaredField(attr);
             field.setAccessible(true);
@@ -219,7 +218,7 @@ public class OpenEJBArchiveProcessor implements ApplicationArchiveProcessor {
         }
     }
 
-    private org.apache.xbean.finder.archive.Archive finderArchive(final Archive<?> archive, final ClassLoader cl, final Collection<URL> additionalPaths) {
+    private static org.apache.xbean.finder.archive.Archive finderArchive(final Archive<?> archive, final ClassLoader cl, final Collection<URL> additionalPaths) {
         final List<Class<?>> classes = new ArrayList<Class<?>>();
         final Map<ArchivePath, Node> content = archive.getContent(new IncludeRegExpPaths(".*.class"));
         for (Map.Entry<ArchivePath, Node> node : content.entrySet()) {
