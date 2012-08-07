@@ -649,9 +649,15 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
         public StandardContextInfo(final StandardContext standardContext) {
             this.standardContext = standardContext;
+            if (standardContext == null) {
+                final Throwable throwable = new Exception("StandardContext is null").fillInStackTrace();
+                logger.warning("StandardContext should not be null", throwable);
+            }
         }
 
         public WebAppInfo get() {
+            if (standardContext == null) return null;
+
             final ContextInfo contextInfo = getContextInfo(standardContext);
             if (contextInfo == null) {
                 logger.debug("No ContextInfo for StandardContext " + standardContext.getName());
@@ -670,6 +676,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
         @Override
         public String toString() {
+            if (standardContext == null) return super.toString();
+
             return "StandardContextInfo{" +
                     "standardContext=" + standardContext +
                 '}';
