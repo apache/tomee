@@ -63,9 +63,9 @@ public class OpenEJBExtension implements LoadableExtension {
         if (ArquillianUtil.isCurrentAdapter(OPENEJB_ADAPTER_NAME)) {
             extensionBuilder.service(DeployableContainer.class, OpenEJBDeployableContainer.class)
                 .service(TestEnricher.class, OpenEJBInjectionEnricher.class)
+                .service(ResourceProvider.class, DeploymentExceptionProvider.class)
                 .observer(TestObserver.class)
-                .observer(DeploymentExceptionObserver.class)
-                .service(ResourceProvider.class, DeploymentExceptionProvider.class);
+                .observer(DeploymentExceptionObserver.class);
         }
     }
 }
