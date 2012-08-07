@@ -1358,6 +1358,22 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
         }
 
+        // destroy PUs before resources since the JPA provider can use datasources
+        for (PersistenceUnitInfo unitInfo : appInfo.persistenceUnits) {
+            try {
+                Object object = globalContext.lookup(PERSISTENCE_UNIT_NAMING_CONTEXT + unitInfo.id);
+                globalContext.unbind(PERSISTENCE_UNIT_NAMING_CONTEXT + unitInfo.id);
+
+                // close EMF so all resources are released
+                ReloadableEntityManagerFactory remf = ((ReloadableEntityManagerFactory) object);
+                remf.close();
+                persistenceClassLoaderHandler.destroy(unitInfo.id);
+                remf.unregister();
+            } catch (Throwable t) {
+                undeployException.getCauses().add(new Exception("persistence-unit: " + unitInfo.id + ": " + t.getMessage(), t));
+            }
+        }
+
         final Context ic = containerSystem.getJNDIContext();
         for (String id : appInfo.resourceIds) {
             final String name = OPENEJB_RESOURCE_JNDI_PREFIX + id;
@@ -1373,21 +1389,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 ic.unbind(name);
             } catch (NamingException e) {
                 logger.warning("can't unbind resource '{0}'", id);
-            }
-        }
-
-        for (PersistenceUnitInfo unitInfo : appInfo.persistenceUnits) {
-            try {
-                Object object = globalContext.lookup(PERSISTENCE_UNIT_NAMING_CONTEXT + unitInfo.id);
-                globalContext.unbind(PERSISTENCE_UNIT_NAMING_CONTEXT + unitInfo.id);
-
-                // close EMF so all resources are released
-                ReloadableEntityManagerFactory remf = ((ReloadableEntityManagerFactory) object);
-                remf.close();
-                persistenceClassLoaderHandler.destroy(unitInfo.id);
-                remf.unregister();
-            } catch (Throwable t) {
-                undeployException.getCauses().add(new Exception("persistence-unit: " + unitInfo.id + ": " + t.getMessage(), t));
             }
         }
 
