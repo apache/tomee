@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.cdi;
 
+import org.apache.webbeans.annotation.DependentScopeLiteral;
 import org.apache.webbeans.component.AbstractInjectionTargetBean;
 import org.apache.webbeans.component.WebBeansType;
 import org.apache.webbeans.config.DefinitionUtil;
@@ -58,6 +59,9 @@ public class ConstructorInjectionBean<T> extends AbstractInjectionTargetBean<T> 
         // these are not used immediately in createInstance()
         try {
             final DefinitionUtil definitionUtil = getWebBeansContext().getDefinitionUtil();
+            if (getScope() == null) { // avoid NPE
+                setImplScopeType(new DependentScopeLiteral());
+            }
             definitionUtil.defineInjectedFields(this);
             definitionUtil.defineInjectedMethods(this);
         } catch (Exception e) {
