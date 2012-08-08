@@ -26,21 +26,18 @@ import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
 
 import javax.faces.webapp.FacesServlet;
 
-public final class JSFs {
-    private JSFs() {
-        // no-op
-    }
-
+public abstract class JSFs {
     public static WebArchive base(final String name) {
         final String webXml = Descriptors.create(WebAppDescriptor.class)
+                .version("3.0")
                 .createServlet()
-                .servletClass(FacesServlet.class.getName())
-                .servletName("jsf")
-                .loadOnStartup(1)
+                    .servletName("jsf")
+                    .servletClass(FacesServlet.class.getName())
+                    .loadOnStartup(1)
                 .up()
                 .createServletMapping()
-                .servletName("jsf")
-                .urlPattern("*.xhtml")
+                    .servletName("jsf")
+                    .urlPattern("*.xhtml")
                 .up()
                 .exportAsString();
 
