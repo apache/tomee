@@ -16,23 +16,26 @@
  */
 package org.apache.tomee.catalina;
 
+import org.apache.catalina.Context;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.deploy.WebXml;
 import org.apache.catalina.startup.ContextConfig;
+import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.tomcat.util.ExceptionUtils;
-import org.apache.tomcat.util.bcel.classfile.ClassFormatException;
 import org.xml.sax.InputSource;
 
+import javax.servlet.ServletContainerInitializer;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class OpenEJBContextConfig extends ContextConfig {
 
@@ -72,6 +75,44 @@ public class OpenEJBContextConfig extends ContextConfig {
             return SystemInstance.get().getOptions().get(prefix + "." + OPENEJB_WEB_XML_MAJOR_VERSION_PROPERTY,
                     SystemInstance.get().getOptions().get(OPENEJB_WEB_XML_MAJOR_VERSION_PROPERTY, super.getMajorVersion()));
         }
+    }
+
+    @Override
+    protected void webConfig() {
+        super.webConfig();
+
+        // add myfaces auto-initializer
+        try {
+            final Class<?> myfacesInitializer = Class.forName("org.apache.myfaces.ee6.MyFacesContainerInitializer", true, context.getLoader().getClassLoader());
+            final ServletContainerInitializer instance = (ServletContainerInitializer) myfacesInitializer.newInstance();
+            context.addServletContainerInitializer(instance, getJsfClasses(context));
+            context.addApplicationListener("org.apache.myfaces.webapp.StartupServletContextListener");
+        } catch (Exception ignored) {
+            // no-op
+        }
+    }
+
+    private Set<Class<?>> getJsfClasses(final Context context) {
+        final WebAppBuilder builder = SystemInstance.get().getComponent(WebAppBuilder.class);
+        final ClassLoader cl = context.getLoader().getClassLoader();
+        final Map<String, Set<String>> scanned = builder.getJsfClasses().get(cl);
+
+        if (scanned == null || scanned.isEmpty()) {
+            return null;
+        }
+
+        final Set<Class<?>> classes = new HashSet<Class<?>>();
+        for (Set<String> entry : scanned.values()) {
+            for (String name : entry) {
+                try {
+                    classes.add(cl.loadClass(name));
+                } catch (ClassNotFoundException ignored) {
+                    logger.warning("class '" + name + "' was found but can't be loaded as a JSF class");
+                }
+            }
+        }
+
+        return classes;
     }
 
     @Override

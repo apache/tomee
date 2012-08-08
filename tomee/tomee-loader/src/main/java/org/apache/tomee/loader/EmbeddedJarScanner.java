@@ -18,10 +18,13 @@ package org.apache.tomee.loader;
 
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
+import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.tomcat.JarScanner;
 import org.apache.tomcat.JarScannerCallback;
 import org.apache.tomcat.util.res.StringManager;
 import org.apache.tomcat.util.scan.Constants;
+import org.apache.xbean.finder.filter.Filter;
+import org.apache.xbean.finder.filter.Filters;
 
 import javax.servlet.ServletContext;
 import java.io.File;
@@ -61,19 +64,9 @@ public class EmbeddedJarScanner implements JarScanner {
     public void scan(ServletContext context, ClassLoader classloader, JarScannerCallback callback, Set<String> jarsToSkip) {
 
         try {
-            final UrlSet classpath = new UrlSet(classloader);
+            final org.apache.xbean.finder.UrlSet scan = NewLoaderLogic.applyBuiltinExcludes(new org.apache.xbean.finder.UrlSet(classloader), null);
 
-            UrlSet excluded = classpath.exclude(".*/WEB-INF/lib/.*");
-
-            // TODO Commenting out these two lines can have an impact on JSF
-            // There's something that gets pulled from the classpath here
-            // lets figure out what it is so we can optimize it as the effect
-            // of adding myfaces here is that the entire jar is scanned, which
-            // is really slow.
-
-//            excluded = excluded.exclude(".*myfaces-impl-.*");
-
-            final UrlSet scan = classpath.exclude(excluded);
+            // scan = scan.exclude(".*/WEB-INF/lib/.*"); // doing it simply prevent ServletContainerInitializer to de discovered
 
             for (URL url : scan) {
                 // Need to scan this JAR

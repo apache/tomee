@@ -17,9 +17,9 @@
 
 package org.apache.openejb.server.cxf.rs;
 
-import javax.annotation.PostConstruct;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.openejb.OpenEjbContainer;
+import org.apache.openejb.config.DeploymentFilterable;
 import org.apache.openejb.server.cxf.rs.beans.SimpleEJB;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -44,6 +44,7 @@ public class EjbDeploymentTest {
 
     @BeforeClass public static void start() throws Exception {
         Properties properties = new Properties();
+        properties.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*openejb-cxf-rs.*");
         properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
         container = EJBContainer.createEJBContainer(properties);
         service = (RESTIsCool) container.getContext().lookup("java:/global/openejb-cxf-rs/RESTIsCool");

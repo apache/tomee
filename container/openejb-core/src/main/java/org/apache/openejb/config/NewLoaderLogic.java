@@ -253,6 +253,15 @@ public class NewLoaderLogic {
         return read;
     }
 
+    public static String sanitize(final String value) {
+        if (value.endsWith("*.jar")) {
+            return value.substring(0, value.length() - 5);
+        } else if (value.endsWith("*")) {
+            return value.substring(0, value.length() - 1);
+        }
+        return value;
+    }
+
     public static String[] readInputStreamList(final InputStream is) {
 
         final List<String> list = new ArrayList<String>();
@@ -265,7 +274,7 @@ public class NewLoaderLogic {
 
             while ((line = reader.readLine()) != null) {
                 final String value = line.trim();
-                if (line.startsWith("#")) {
+                if (line.startsWith("#") || value.isEmpty()) {
                     continue;
                 }
 
@@ -273,8 +282,8 @@ public class NewLoaderLogic {
                     for (String v : readDefaultExclusions()) {
                         list.add(v);
                     }
-                } else if (!value.isEmpty()) {
-                    list.add(value);
+                } else {
+                    list.add(sanitize(value));
                 }
             }
         } catch (Throwable e) {

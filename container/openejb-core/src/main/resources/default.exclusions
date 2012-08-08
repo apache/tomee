@@ -6,6 +6,17 @@ activemq-
 aether-
 antlr-
 aopalliance-
+arquillian-common
+arquillian-config-
+arquillian-core-api-
+arquillian-core-impl-base
+arquillian-core-spi-
+arquillian-container-
+arquillian-junit-
+arquillian-test-api
+arquillian-test-impl-base
+arquillian-test-spi
+arquillian-tomee-
 avalon-framework-
 axis-
 axis2-
@@ -59,6 +70,7 @@ icu4j-
 idb-
 idea_rt.jar
 jackson-mapper-asl-
+jansi-
 jasypt-
 javaee-
 javaee-api
@@ -100,6 +112,8 @@ neethi-
 nekohtml-
 openejb-api
 openejb-client
+openejb-cxf
+openejb-cxf-rs
 openejb-cxf-bundle
 openejb-cxf-transport
 openejb-derby
@@ -108,11 +122,15 @@ openejb-hsql
 openejb-http
 openejb-javaagent
 openejb-jee
+openejb-jpa-integration
 openejb-jsf
 openejb-jstl
 openejb-loader
 openejb-openwebbeans
+openejb-provisionning
+openejb-rest
 openejb-server
+openejb-webservices
 openjpa-
 opensaml-
 openwebbeans-
@@ -121,6 +139,7 @@ ops4j-
 org.eclipse.
 org.junit.
 org.osgi.core-
+oro-
 pax-
 plexus-
 quartz-
@@ -131,6 +150,9 @@ scannotation-
 serializer-
 serp-
 servlet-api-
+sisu-inject
+sisu-guice
+shrinkwrap-
 slf4j-
 snappy-java-
 spring-
@@ -141,6 +163,7 @@ swizzle-
 testng-
 tomcat-
 tomee-
+velocity-
 wagon-
 webbeans-ee
 webbeans-ejb
@@ -160,3 +183,4 @@ xmlschema-
 xmlsec-
 xmltooling-
 xmlunit-
+ziplock-
