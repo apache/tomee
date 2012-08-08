@@ -200,6 +200,11 @@
       <artifactId>tomee-catalina</artifactId>
       <version>${tomee.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>tomee-myfaces</artifactId>
+      <version>${tomee.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>commons-io</groupId>
