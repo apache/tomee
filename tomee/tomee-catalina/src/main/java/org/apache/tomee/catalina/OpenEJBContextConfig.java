@@ -83,7 +83,7 @@ public class OpenEJBContextConfig extends ContextConfig {
 
         // add myfaces auto-initializer
         try {
-            final Class<?> myfacesInitializer = Class.forName("org.apache.myfaces.ee6.MyFacesContainerInitializer", true, context.getLoader().getClassLoader());
+            final Class<?> myfacesInitializer = Class.forName("org.apache.tomee.myfaces.TomEEMyFacesContainerInitializer", true, context.getLoader().getClassLoader());
             final ServletContainerInitializer instance = (ServletContainerInitializer) myfacesInitializer.newInstance();
             context.addServletContainerInitializer(instance, getJsfClasses(context));
             context.addApplicationListener("org.apache.myfaces.webapp.StartupServletContextListener");
