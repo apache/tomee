@@ -679,7 +679,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     continue;
                 }
 
-                if (standardContext.getName().equals("/" + webApp.contextRoot)) {
+                if (standardContext.getName().equals("/" + webApp.contextRoot)
+                        || standardContext.getName().equals("/" + webApp.contextRoot)) { // ROOT for instance
                     return webApp;
                 }
             }
