@@ -16,6 +16,7 @@
  */
 package org.superbiz.moviefun;
 
+import org.apache.openejb.config.DeploymentFilterable;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -24,6 +25,7 @@ import org.junit.Test;
 
 import javax.ejb.embeddable.EJBContainer;
 import java.util.List;
+import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -33,7 +35,9 @@ public class MoviesTest {
 	private static MoviesRemote movies;
 
     @BeforeClass public static void setUp() throws Exception {
-        ejbContainer = EJBContainer.createEJBContainer();
+        final Properties props = new Properties();
+        props.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*arquillian-tomee-moviefun-example.*"); // arquillian-tomee excluded by default
+        ejbContainer = EJBContainer.createEJBContainer(props);
         Object object = ejbContainer.getContext().lookup("java:global/arquillian-tomee-moviefun-example/Movies!org.superbiz.moviefun.MoviesRemote");
 
         assertTrue(object instanceof MoviesRemote);
