@@ -17,6 +17,7 @@
 package org.apache.openejb.server.cxf;
 
 import junit.framework.TestCase;
+import org.apache.openejb.config.DeploymentFilterable;
 import org.apache.openejb.server.cxf.fault.AuthenticatorService;
 import org.apache.openejb.server.cxf.fault.WrongPasswordException;
 import org.apache.openejb.server.cxf.fault.WrongPasswordRuntimeException;
@@ -40,6 +41,7 @@ public class CxfJaxWsProviderTest extends TestCase {
 
     protected void setUp() throws Exception {
         Properties properties = new Properties();
+        properties.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*openejb-cxf.*");
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
         properties.setProperty("openejb.embedded.remotable", "true");
 

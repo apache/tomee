@@ -47,7 +47,7 @@ public class TomEEJarScanner extends StandardJarScanner {
 
     private static final Log log = LogFactory.getLog(StandardJarScanner.class);
 
-    private static final Set<String> defaultJarsToSkip = new HashSet<String>();
+    protected static final Set<String[]> DEFAULT_JARS_TO_SKIP;
 
     /**
      * The string resources for this package.
@@ -55,6 +55,7 @@ public class TomEEJarScanner extends StandardJarScanner {
     private static final StringManager sm = StringManager.getManager(Constants.Package);
 
     static {
+        final Set<String> defaultJarsToSkip = new HashSet<String>();
         String jarList = System.getProperty(Constants.SKIP_JARS_PROPERTY);
         if (jarList != null) {
             StringTokenizer tokenizer = new StringTokenizer(jarList, ",");
@@ -62,6 +63,12 @@ public class TomEEJarScanner extends StandardJarScanner {
                 defaultJarsToSkip.add(tokenizer.nextToken());
             }
         }
+
+        final Set<String[]> ignoredJarsTokens = new HashSet<String[]>();
+        for (String pattern : defaultJarsToSkip) {
+            ignoredJarsTokens.add(Matcher.tokenizePathAsArray(pattern));
+        }
+        DEFAULT_JARS_TO_SKIP = ignoredJarsTokens;
     }
 
     @Override
@@ -71,14 +78,6 @@ public class TomEEJarScanner extends StandardJarScanner {
             embeddedJarScanner.scan(context, classLoader, callback, jarsToIgnore);
         } else if ("TldJarScannerCallback".equals(callback.getClass().getSimpleName())) {
 
-            final Set<String> ignoredJars = defaultJarsToSkip;
-
-            final Set<String[]> ignoredJarsTokens = new HashSet<String[]>();
-
-            for (String pattern : ignoredJars) {
-                ignoredJarsTokens.add(Matcher.tokenizePathAsArray(pattern));
-            }
-
             // Scan WEB-INF/lib
             Set<String> dirList = context.getResourcePaths(Constants.WEB_INF_LIB);
             if (dirList != null) {
@@ -86,7 +85,7 @@ public class TomEEJarScanner extends StandardJarScanner {
                 while (it.hasNext()) {
                     String path = it.next();
                     if (path.endsWith(Constants.JAR_EXT) &&
-                            !Matcher.matchPath(ignoredJarsTokens,
+                            !Matcher.matchPath(DEFAULT_JARS_TO_SKIP,
                                     path.substring(path.lastIndexOf('/') + 1))) {
                         // Need to scan this JAR
                         URL url = null;
@@ -129,7 +128,7 @@ public class TomEEJarScanner extends StandardJarScanner {
 
                         // Skip JARs known not to be interesting and JARs
                         // in WEB-INF/lib we have already scanned
-                        if (jarName != null && !(Matcher.matchPath(ignoredJarsTokens, jarName) || url.toString().contains(Constants.WEB_INF_LIB + jarName))) {
+                        if (jarName != null && !(Matcher.matchPath(DEFAULT_JARS_TO_SKIP, jarName) || url.toString().contains(Constants.WEB_INF_LIB + jarName))) {
 
                             if (log.isDebugEnabled()) {
                                 log.debug(sm.getString("jarScan.classloaderJarScan", url));

@@ -18,6 +18,7 @@
 package org.apache.openejb.server.cxf;
 
 import org.apache.openejb.OpenEjbContainer;
+import org.apache.openejb.config.DeploymentFilterable;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -41,6 +42,7 @@ public class WebServiceWithAnUserInterceptorTest {
 
     @BeforeClass public static void start() {
         final Properties properties = new Properties();
+        properties.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*openejb-cxf.*");
         properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
 
         container = EJBContainer.createEJBContainer(properties);

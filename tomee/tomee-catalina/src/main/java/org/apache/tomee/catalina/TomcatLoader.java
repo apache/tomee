@@ -197,7 +197,7 @@ public class TomcatLoader implements Loader {
             final String jarToSkipProp = catalinaProps.getProperty("tomcat.util.scan.DefaultJarScanner.jarsToSkip");
             if (jarToSkipProp != null) {
                 for (String s : jarToSkipProp.split(",")) {
-                    exclusions.add(s.trim());
+                    exclusions.add(NewLoaderLogic.sanitize(s.trim()));
                 }
             }
         }

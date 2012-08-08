@@ -14,65 +14,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.arquillian.tests.jsf;
+package org.apache.openejb.arquillian.tests.jsf.resource;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import org.apache.ziplock.JarLocation;
+import org.apache.openejb.arquillian.tests.jsf.JSFs;
+import org.apache.openejb.loader.IO;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
-import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.descriptor.api.Descriptors;
-import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.io.IOException;
+import java.net.URL;
 
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
 @RunWith(Arquillian.class)
-public class JSFInjectionTest {
+public class JSFResourceInjectionTest {
     @ArquillianResource
     private URL url;
 
     @Deployment(testable = false)
     public static WebArchive getArchive() {
-        final WebAppDescriptor descriptor = Descriptors.create(WebAppDescriptor.class)
-                .version("3.0");
-
-        return ShrinkWrap.create(WebArchive.class, "jsf-injection-test.war")
+        return JSFs.base("jsf-resource-injection-test.war")
+                .addClass(ResourceManagedBean.class)
                 .addAsWebResource(new ClassLoaderAsset(
-                        JSFInjectionTest.class.getPackage().getName().replace('.', '/').concat("/").concat("dummy.xhtml")), "dummy.xhtml")
-                .addAsLibraries(JarLocation.jarLocation(Test.class)) // junit
-                .setWebXML(new StringAsset(descriptor.exportAsString()));
+                        JSFResourceInjectionTest.class.getPackage()
+                                .getName().replace('.', '/').concat("/resource.xhtml")), "resource.xhtml");
     }
 
     @Test
-    public void testProjectStage() throws Exception {
-        validateTest("foo");
+    public void validResourceInjection() throws Exception {
+        validateTest("DataSource");
     }
 
     private void validateTest(final String expectedOutput) throws IOException {
-        final InputStream is = new URL(url.toExternalForm() + "dummy.xhtml").openStream();
-        final ByteArrayOutputStream os = new ByteArrayOutputStream();
-
-        int bytesRead;
-        byte[] buffer = new byte[8192];
-        while ((bytesRead = is.read(buffer)) > -1) {
-            os.write(buffer, 0, bytesRead);
-        }
-
-        is.close();
-        os.close();
-
-        String output = new String(os.toByteArray(), "UTF-8");
+        final String output = IO.slurp(new URL(url.toExternalForm() + "resource.xhtml"));
         assertNotNull("Response shouldn't be null", output);
-        assertTrue("Output should contain: " + expectedOutput, output.contains(expectedOutput));
+        assertTrue("Output should contain: " + expectedOutput + " and not " + output, output.contains(expectedOutput));
     }
 }

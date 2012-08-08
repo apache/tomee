@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.arquillian.tests.jsf;
+package org.apache.openejb.arquillian.tests.jsf.ejb;
 
 import javax.ejb.Stateless;
 
 @Stateless
 public class DummyEJB {
     public String foo() {
-        return "foo";
+        return "foobar";
     }
 }

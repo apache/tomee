@@ -19,6 +19,7 @@ package org.apache.openejb.server.cxf.rs;
 
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.openejb.OpenEjbContainer;
+import org.apache.openejb.config.DeploymentFilterable;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -47,6 +48,7 @@ public class CustomProviderTest {
     @BeforeClass public static void start() throws Exception {
         providers = System.getProperty(CxfRsHttpListener.OPENEJB_CXF_JAXRS_PROVIDERS_KEY);
         Properties properties = new Properties();
+        properties.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*openejb-cxf-rs.*");
         properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
         properties.setProperty(CxfRsHttpListener.OPENEJB_CXF_JAXRS_PROVIDERS_KEY, ReverseProvider.class.getName());
         properties.setProperty(CustomSpecificService.class.getName() + CxfRsHttpListener.OPENEJB_CXF_JAXRS_PROVIDERS_SUFFIX, ConstantProvider.class.getName());
