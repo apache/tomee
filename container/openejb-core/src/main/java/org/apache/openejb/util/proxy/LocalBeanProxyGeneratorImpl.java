@@ -258,13 +258,7 @@ public class LocalBeanProxyGeneratorImpl implements LocalBeanProxyGenerator, Opc
 		    }
 		}
 		
-		byte[] clsBytes = cw.toByteArray();
-        try {
-            IO.copy(clsBytes, new File("/tmp/foo.class"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return clsBytes;
+		return cw.toByteArray();
 	}
 
 	/*
