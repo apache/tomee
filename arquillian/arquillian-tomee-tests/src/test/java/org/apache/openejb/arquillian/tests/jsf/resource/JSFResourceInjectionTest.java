@@ -33,13 +33,13 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
 @RunWith(Arquillian.class)
-public class JSFResourceInjectionTest {
+public class JSFResourceInjectionTest extends JSFs {
     @ArquillianResource
     private URL url;
 
     @Deployment(testable = false)
     public static WebArchive getArchive() {
-        return JSFs.base("jsf-resource-injection-test.war")
+        return base("jsf-resource-injection-test.war")
                 .addClass(ResourceManagedBean.class)
                 .addAsWebResource(new ClassLoaderAsset(
                         JSFResourceInjectionTest.class.getPackage()

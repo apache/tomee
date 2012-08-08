@@ -16,23 +16,16 @@
  */
 package org.apache.openejb.arquillian.tests.jsf.ejb;
 
-import org.apache.myfaces.extensions.cdi.jsf.impl.projectstage.JsfProjectStageProducer;
 import org.apache.openejb.arquillian.tests.jsf.JSFs;
 import org.apache.openejb.loader.IO;
-import org.apache.ziplock.JarLocation;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
-import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.descriptor.api.Descriptors;
-import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.faces.webapp.FacesServlet;
 import java.io.IOException;
 import java.net.URL;
 
@@ -40,13 +33,13 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
 @RunWith(Arquillian.class)
-public class JSFInjectionTest {
+public class JSFInjectionTest extends JSFs {
     @ArquillianResource
     private URL url;
 
     @Deployment(testable = false)
     public static WebArchive getArchive() {
-        return JSFs.base("jsf-injection-test.war")
+        return base("jsf-injection-test.war")
                 .addPackage(JSFInjectionTest.class.getPackage())
                 .addAsWebResource(new ClassLoaderAsset(
                         JSFInjectionTest.class.getPackage().getName().replace('.', '/').concat("/").concat("dummy.xhtml")), "dummy.xhtml");
