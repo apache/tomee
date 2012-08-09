@@ -77,7 +77,7 @@
     <module>jpa-eclipselink</module>
     <module>jpa-hibernate</module>
     <module>jpa-enumerated</module>
-    <module>jsf</module>
+    <module>jsf-managedBean-and-ejb</module>
     <module>lookup-of-ejbs</module>
     <module>lookup-of-ejbs-with-descriptor</module>
     <module>mbean-auto-registration</module>

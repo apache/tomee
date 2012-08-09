@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 * Licensed to the Apache Software Foundation (ASF) under one
 * or more contributor license agreements. See the NOTICE file
@@ -16,20 +17,22 @@
 * specific language governing permissions and limitations
 * under the License.
 -->
-<%@ taglib uri="http://java.sun.com/jsf/html" prefix="h" %>
-<%@ taglib uri="http://java.sun.com/jsf/core" prefix="f" %>
-<html>
-<head>
-    <title>Calculation Results</title>
-</head>
-<body>
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+<h:body>
 <f:view>
     <h:form id="mainForm">
-        <h2><h:outputText value="Result of adding #{calculator.x} and #{calculator.y} is #{calculator.result }"/></h2>
+        <h2>Result of adding #{calculatorBean.x} and #{calculatorBean.y} is #{calculatorBean.result }</h2>
         <h:commandLink action="back">
             <h:outputText value="Home"/>
         </h:commandLink>
     </h:form>
 </f:view>
-</body>
+</h:body>
 </html>
