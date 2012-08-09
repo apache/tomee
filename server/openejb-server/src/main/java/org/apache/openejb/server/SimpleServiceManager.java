@@ -107,7 +107,7 @@ public class SimpleServiceManager extends ServiceManager {
         }
     }
 
-    private static ObjectName getObjectName() {
+    private static ObjectName getDiscoveryRegistryObjectName() {
         if (null == objectName) {
             final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb");
             jmxName.set("type", "Server");
@@ -131,7 +131,7 @@ public class SimpleServiceManager extends ServiceManager {
 
         // register the mbean
         try {
-            LocalMBeanServer.get().registerMBean(new ManagedMBean(registry), getObjectName());
+            LocalMBeanServer.get().registerMBean(new ManagedMBean(registry), getDiscoveryRegistryObjectName());
         } catch (Throwable e) {
             logger.error("Failed to register 'openejb' MBean", e);
         }
@@ -222,7 +222,17 @@ public class SimpleServiceManager extends ServiceManager {
 
         final ServerService[] services = daemons.clone();
 
+        final MBeanServer server = LocalMBeanServer.get();
         for (int i = 0; i < services.length; i++) {
+            final ObjectName on = getObjectName(services[i].getName());
+            if (server.isRegistered(on)) {
+                try {
+                    server.unregisterMBean(on);
+                } catch (Exception ignored) {
+                    // no-op
+                }
+            }
+
             try {
                 services[i].stop();
             } catch (ServiceException e) {
@@ -232,9 +242,7 @@ public class SimpleServiceManager extends ServiceManager {
 
         // De-register the mbean
         try {
-
-            final MBeanServer server = LocalMBeanServer.get();
-            final ObjectName objectName = getObjectName();
+            final ObjectName objectName = getDiscoveryRegistryObjectName();
 
             if (server.isRegistered(objectName)) {
                 server.unregisterMBean(objectName);

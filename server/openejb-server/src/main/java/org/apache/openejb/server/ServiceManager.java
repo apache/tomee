@@ -175,14 +175,16 @@ public abstract class ServiceManager {
         return null;
     }
 
-    public static void register(String serviceName, ServerService service, MBeanServer server) {
+    protected static ObjectName getObjectName(final String serviceName) {
         final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb");
         jmxName.set("type", "ServerService");
         jmxName.set("name", serviceName);
+        return jmxName.build();
+    }
 
+    public static void register(String serviceName, ServerService service, MBeanServer server) {
         try {
-            final ObjectName objectName = jmxName.build();
-            server.registerMBean(new ManagedMBean(service), objectName);
+            server.registerMBean(new ManagedMBean(service), getObjectName(serviceName));
         } catch (Exception e) {
             logger.error("Unable to register MBean ", e);
         }
