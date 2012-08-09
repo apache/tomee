@@ -92,6 +92,7 @@ The request scoped 'calculatorBean' is available here, and we use EL to display 
         public double add(double x, double y);
     }
 
+@ManagedBean
 ## CalculatorBean
 
     package org.superbiz.jsf;
