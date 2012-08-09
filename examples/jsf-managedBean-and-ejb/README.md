@@ -1,29 +1,31 @@
 Title: JSF
 
-A simple web-app showing how to use dependency injection in JSF managed beans using TomEE.
+## JSF App using managed-bean and ejb
+
+This is a simple web-app showing how to use dependency injection in JSF managed beans using TomEE.
 
 It contains a Local Stateless session bean (CalculatorImpl) which adds two numbers and returns the result.
-
 The application also contains a JSF managed bean (CalculatorBean), which uses the EJB to add two numbers
 and display the results to the user. The EJB is injected in the managed bean using @EJB annotation.
 
+
+## A little note on the setup:
+
 You could run this in the latest Apache TomEE [snapshot](https://repository.apache.org/content/repositories/snapshots/org/apache/openejb/apache-tomee/)
-
-The complete source code is below but lets break down to look at some smaller snippets and see  how it works.
-
-
-A little note on the setup:
 
 As for the libraries, myfaces-api and myfaces-impl are provided in tomee/lib and hence they should not be a part of the
 war. In maven terms, they would be with scope 'provided'
+The complete source code is below but lets break down to look at some smaller snippets and see  how it works.
+
 
 Also note that we use servlet 2.5 declaration in web.xml
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns="http://java.sun.com/xml/ns/javaee"
-  xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
-      http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-  version="2.5">
+    
+    <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+    http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+    version="2.5">
 
 And we use 2.0 version of faces-config
 
@@ -67,17 +69,17 @@ x being a Double, we rightly should see 0.0 displayed.
 When you change the value and submit the form, these entered values are bound using the setters
 in the bean and then the commandButton-action method is invoked.
 
-In this case, CalculatorBean#add() is invoked.
+In this case, `CalculatorBean#add()` is invoked.
 
-Calculator#add() delegates the work to the ejb, gets the result, stores it
+`Calculator#add()` delegates the work to the ejb, gets the result, stores it
 and then instructs what view is to be rendered.
 
 You're right. The return value "success" is checked up in faces-config navigation-rules
 and the respective page is rendered.
 
-In our case, 'result.xhtml' page is rendered.
+In our case, `result.xhtml` page is rendered.
 
-The request scoped 'calculatorBean' is available here, and we use EL to display the values.
+The request scoped `calculatorBean` is available here, and we use EL to display the values.
 
 ## Source
 
