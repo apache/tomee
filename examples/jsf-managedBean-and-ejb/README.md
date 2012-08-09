@@ -1,9 +1,10 @@
 Title: JSF Application that uses managed-bean and ejb
+
 This is a simple web-app showing how to use dependency injection in JSF managed beans using TomEE.
 
-It contains a Local Stateless session bean (CalculatorImpl) which adds two numbers and returns the result.
-The application also contains a JSF managed bean (CalculatorBean), which uses the EJB to add two numbers
-and display the results to the user. The EJB is injected in the managed bean using @EJB annotation.
+It contains a Local Stateless session bean `CalculatorImpl` which adds two numbers and returns the result.
+The application also contains a JSF managed bean `CalculatorBean`, which uses the EJB to add two numbers
+and display the results to the user. The EJB is injected in the managed bean using `@EJB` annotation.
 
 
 ## A little note on the setup:
@@ -12,8 +13,6 @@ You could run this in the latest Apache TomEE [snapshot](https://repository.apac
 
 As for the libraries, myfaces-api and myfaces-impl are provided in tomee/lib and hence they should not be a part of the
 war. In maven terms, they would be with scope 'provided'
-The complete source code is below but lets break down to look at some smaller snippets and see  how it works.
-
 
 Also note that we use servlet 2.5 declaration in web.xml
     
@@ -33,7 +32,9 @@ And we use 2.0 version of faces-config
                version="2.0">
 
 
-We'll first declare the FacesServlet in the web.xml
+The complete source code is provided below but let's break down to look at some smaller snippets and see  how it works.
+
+We'll first declare the `FacesServlet` in the `web.xml`
 
       <servlet>
         <servlet-name>Faces Servlet</servlet-name>
@@ -41,9 +42,9 @@ We'll first declare the FacesServlet in the web.xml
         <load-on-startup>1</load-on-startup>
       </servlet>
 
-FacesServlet acts as the master controller.
+`FacesServlet` acts as the master controller.
 
-We'll then create the calculator.xhtml file.
+We'll then create the `calculator.xhtml` file.
 
            <h:outputText value='Enter first number'/>
            <h:inputText value='#{calculatorBean.x}'/>
