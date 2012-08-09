@@ -19,7 +19,9 @@
 package org.superbiz.jsf;
 
 import javax.ejb.EJB;
+import javax.faces.bean.ManagedBean;
 
+@ManagedBean
 public class CalculatorBean {
     @EJB
     Calculator calculator;

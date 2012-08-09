@@ -20,16 +20,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz.jsf</groupId>
-  <artifactId>jsf</artifactId>
+  <artifactId>jsf-managedBean-and-ejb</artifactId>
   <packaging>war</packaging>
-  <name>OpenEJB :: Web Examples :: JSF with MyFaces</name>
+  <name>OpenEJB :: Web Examples :: JSF - ManangedBean and EJB</name>
   <version>1.1-SNAPSHOT</version>
   <url>http://openejb.apache.org</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <build>
-    <finalName>jsf</finalName>
+    <finalName>jsf-managedBean-and-ejb</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -70,19 +70,19 @@
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-api</artifactId>
-      <version>1.2.2</version>
-      <scope>compile</scope>
+      <version>2.1.8</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-impl</artifactId>
-      <version>1.2.2</version>
-      <scope>compile</scope>
+      <version>2.1.8</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.myfaces.tomahawk</groupId>
-      <artifactId>tomahawk</artifactId>
-      <version>1.1.9</version>
+      <artifactId>tomahawk20</artifactId>
+      <version>1.1.13</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
