@@ -59,7 +59,7 @@ By default it is the simple class name of the managed bean.
 When a request comes in, the bean is instantiated and placed in the appropriate scope.
 By default, the bean is placed in the request scope.
 
-<h:inputText value='#{calculatorBean.x}'/>
+            <h:inputText value='#{calculatorBean.x}'/>
 
 Here, getX() method of calculatorBean is invoked and the resulting value is displayed.
 x being a Double, we rightly should see 0.0 displayed.
@@ -79,7 +79,7 @@ In our case, 'result.xhtml' page is rendered.
 
 The request scoped 'calculatorBean' is available here, and we use EL to display the values.
 
-#Source Code
+## Source
 
 ## Calculator
 
@@ -150,7 +150,7 @@ The request scoped 'calculatorBean' is available here, and we use EL to display 
     }
 
 
-    # web.xml
+# web.xml
 
     <?xml version="1.0"?>
 
@@ -231,7 +231,7 @@ The request scoped 'calculatorBean' is available here, and we use EL to display 
     </h:body>
     </html>
     
- #faces-config.xml
+#faces-config.xml
 
     <?xml version="1.0"?>
     <faces-config xmlns="http://java.sun.com/xml/ns/javaee"
