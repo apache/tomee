@@ -183,8 +183,8 @@ The request scoped 'calculatorBean' is available here, and we use EL to display 
         </welcome-file-list>
         </web-app>
 
-
-#Calculator.xhtml
+    
+##Calculator.xhtml
 
     <?xml version="1.0" encoding="UTF-8"?>
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -209,8 +209,8 @@ The request scoped 'calculatorBean' is available here, and we use EL to display 
     </h:body>
     </html>
 
-
-     # Result.xhtml
+    
+##Result.xhtml
 
     <?xml version="1.0" encoding="UTF-8"?>
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -230,7 +230,7 @@ The request scoped 'calculatorBean' is available here, and we use EL to display 
         </f:view>
     </h:body>
     </html>
-
+    
  #faces-config.xml
 
     <?xml version="1.0"?>
@@ -253,6 +253,6 @@ The request scoped 'calculatorBean' is available here, and we use EL to display 
         <navigation-case>
             <from-outcome>back</from-outcome>
             <to-view-id>/calculator.xhtml</to-view-id>
-           </navigation-case>
+        </navigation-case>
     </navigation-rule>
     </faces-config>
