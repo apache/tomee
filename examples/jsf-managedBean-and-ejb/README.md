@@ -210,7 +210,7 @@ The request scoped 'calculatorBean' is available here, and we use EL to display 
     </html>
 
 
- #Result.xhtml
+ # Result.xhtml
 
     <?xml version="1.0" encoding="UTF-8"?>
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
