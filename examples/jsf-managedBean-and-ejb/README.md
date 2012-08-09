@@ -92,13 +92,15 @@ The request scoped 'calculatorBean' is available here, and we use EL to display 
         public double add(double x, double y);
     }
 
-@ManagedBean
+
 ## CalculatorBean
 
     package org.superbiz.jsf;
     
     import javax.ejb.EJB;
-    
+    import javax.faces.bean.ManagedBean;
+
+    @ManagedBean
     public class CalculatorBean {
         @EJB
         Calculator calculator;
