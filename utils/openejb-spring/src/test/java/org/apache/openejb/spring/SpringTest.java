@@ -20,6 +20,7 @@ package org.apache.openejb.spring;
 import junit.framework.TestCase;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.openejb.Container;
+import org.apache.openejb.config.DeploymentFilterable;
 import org.apache.openejb.core.entity.EntityContainer;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
@@ -34,7 +35,9 @@ import java.util.Map;
 
 public class SpringTest extends TestCase {
     public void test() throws Exception {
-        System.setProperty("openejb.deployments.classpath.include","openejb-spring");
+        System.setProperty("openejb.deployments.classpath.include",".*openejb-spring.*");
+        System.setProperty("openejb.deployments.classpath.exclude",".*openejb-itests.*");
+        System.setProperty("openejb.exclude-include.order", "exclude-include");
         System.setProperty("openejb.exclude-include.order", "exclude-include");
 
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("org/apache/openejb/spring/spring.xml");
