@@ -33,6 +33,7 @@ public class OpenEJBGroovyShellTest {
     public static void start() {
         final Properties properties = new Properties();
         properties.setProperty(EJBContainer.APP_NAME, OpenEJBGroovyShellTest.class.getSimpleName());
+        properties.setProperty("openejb.deployments.classpath.filter.systemapps", "false");
         container = EJBContainer.createEJBContainer(properties);
     }
 
