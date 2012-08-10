@@ -56,12 +56,11 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.RpcContainer;
-import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
-import org.apache.openejb.util.proxy.InvocationHandler;
+import java.lang.reflect.InvocationHandler;
 import org.apache.openejb.util.proxy.ProxyManager;
 
 public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializable {
@@ -214,10 +213,6 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
     public void setIntraVmCopyMode(boolean on) {
         setDoIntraVmCopy(on);
-    }
-
-    public InvocationHandler getInvocationHandler() {
-        return this;
     }
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {

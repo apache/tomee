@@ -27,7 +27,7 @@ import org.apache.xbean.finder.MetaAnnotatedClass;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 
 public class DynamicProxyImplFactory {
     public static boolean isKnownDynamicallyImplemented(Class<?> clazz) {
@@ -72,16 +72,11 @@ public class DynamicProxyImplFactory {
         return null;
     }
 
-    private static class Handler implements InvocationHandler {
+    private static class Handler implements java.lang.reflect.InvocationHandler {
         private java.lang.reflect.InvocationHandler handler;
 
         private Handler(java.lang.reflect.InvocationHandler handler) {
             this.handler = handler;
-        }
-
-        @Override
-        public InvocationHandler getInvocationHandler() {
-            return this;
         }
 
         public java.lang.reflect.InvocationHandler realHandler() {

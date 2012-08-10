@@ -35,12 +35,12 @@ public class LocalBeanProxyFactory {
         }
     }
 
-    public static InvocationHandler getInvocationHandler(Object proxy) {
+    public static java.lang.reflect.InvocationHandler getInvocationHandler(Object proxy) {
         try {
             final Field field = proxy.getClass().getDeclaredField(LocalBeanProxyGeneratorImpl.BUSSINESS_HANDLER_NAME);
             field.setAccessible(true);
             try {
-                return (InvocationHandler) field.get(proxy);
+                return (java.lang.reflect.InvocationHandler) field.get(proxy);
             } finally {
                 field.setAccessible(false);
             }

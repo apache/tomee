@@ -59,7 +59,7 @@ public class ProxyManager {
         return defaultFactoryName;
     }
 
-    public static InvocationHandler getInvocationHandler(Object proxy) {
+    public static java.lang.reflect.InvocationHandler getInvocationHandler(Object proxy) {
         if (proxy.getClass().getName().endsWith("$LocalBeanProxy")) {
             return LocalBeanProxyFactory.getInvocationHandler(proxy);
         }
@@ -76,11 +76,11 @@ public class ProxyManager {
         return defaultFactory.getProxyClass(interfaces);
     }
 
-    public static Object newProxyInstance(Class interfaceType, InvocationHandler h) throws IllegalAccessException {
+    public static Object newProxyInstance(Class interfaceType, java.lang.reflect.InvocationHandler h) throws IllegalAccessException {
         return newProxyInstance(new Class[]{interfaceType}, h);
     }
 
-    public static Object newProxyInstance(Class[] interfaces, InvocationHandler h) throws IllegalAccessException {
+    public static Object newProxyInstance(Class[] interfaces, java.lang.reflect.InvocationHandler h) throws IllegalAccessException {
         checkDefaultFactory();
         return defaultFactory.newProxyInstance(interfaces, h);
     }
