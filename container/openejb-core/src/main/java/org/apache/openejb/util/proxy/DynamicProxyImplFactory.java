@@ -79,7 +79,8 @@ public class DynamicProxyImplFactory {
             this.handler = handler;
         }
 
-        @Override public InvocationHandler getInvocationHandler() {
+        @Override
+        public InvocationHandler getInvocationHandler() {
             return this;
         }
 
