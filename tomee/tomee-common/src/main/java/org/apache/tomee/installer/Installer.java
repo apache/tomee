@@ -229,13 +229,17 @@ public class Installer {
             if (Installers.backup(paths.getSetClasspathSh(), alerts)) {
                 // add our magic bits to the catalina sh file
                 final String newSetClasspathSh = setClasspathSh.replace("JAVA_ENDORSED_DIRS=\"$CATALINA_HOME\"/endorsed",
-                        "java_version=`java -version 2>&1 | grep version`\n" +
-                        "  if [[ $java_version  =~ 1.7.* ]]; then\n" +
-                        "    # it doesn't exist but not important since we don't need any endorsed lib for java 7\n" +
-                        "    JAVA_ENDORSED_DIRS=\"$CATALINA_HOME\"/endorsed7\n" +
-                        "  else\n" +
-                        "    JAVA_ENDORSED_DIRS=\"$CATALINA_HOME\"/endorsed\n" +
-                        "  fi\n");
+                        "# Don't override the endorsed dir if the user has set it previously\n" +
+                        "if [ -z \"$JAVA_ENDORSED_DIRS\" ]; then\n" +
+                        "  # Set the default -Djava.endorsed.dirs argument\n" +
+                        "  JAVA_ENDORSED_DIRS=\"$CATALINA_HOME\"/endorsed\n" +
+                        "  java_version=`$JRE_HOME/bin/java -version 2>&1 | grep version`\n" +
+                        "  case \"$java_version\" in \n" +
+                        "    *1.7*)\n" +
+                        "      JAVA_ENDORSED_DIRS=\"$CATALINA_HOME\"/endorsed7\n" +
+                        "    ;;\n" +
+                        "  esac\n" +
+                        "fi\n");
                 if (Installers.writeAll(paths.getSetClasspathSh(), newSetClasspathSh, alerts)) {
                     alerts.addInfo("Endorsed lib set for java 6 and ignored for java 7 (unix)");
                 }
