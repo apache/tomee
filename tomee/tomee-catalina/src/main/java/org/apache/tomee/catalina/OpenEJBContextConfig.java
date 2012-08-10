@@ -44,6 +44,7 @@ public class OpenEJBContextConfig extends ContextConfig {
 
     private static final String MYFACES_STARTUP_SERVLET_CONTEXT_LISTENER = "org.apache.myfaces.webapp.StartupServletContextListener";
     private static final String MYFACES_TOMEEM_CONTAINER_INITIALIZER = "org.apache.tomee.myfaces.TomEEMyFacesContainerInitializer";
+    private static final String TOMEE_MYFACES_CONTEXT_LISTENER = "org.apache.tomee.myfaces.TomEEMyFacesContextListener";
 
     private TomcatWebAppBuilder.StandardContextInfo info;
 
@@ -93,6 +94,7 @@ public class OpenEJBContextConfig extends ContextConfig {
             if (!Arrays.asList(context.findApplicationListeners()).contains(MYFACES_STARTUP_SERVLET_CONTEXT_LISTENER)) {
                 context.addApplicationListener(MYFACES_STARTUP_SERVLET_CONTEXT_LISTENER);
             }
+            context.addApplicationListener(TOMEE_MYFACES_CONTEXT_LISTENER); // cleanup listener
         } catch (Exception ignored) {
             // no-op
         }
