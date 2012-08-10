@@ -17,6 +17,7 @@
 package org.apache.openejb.server.ssh;
 
 import org.apache.openejb.OpenEjbContainer;
+import org.apache.openejb.config.DeploymentFilterable;
 import org.apache.sshd.ClientChannel;
 import org.apache.sshd.ClientSession;
 import org.apache.sshd.SshClient;
@@ -45,6 +46,7 @@ public class SSHServerTest {
         System.setProperty("openejb.logger.external", "true");
         container = EJBContainer.createEJBContainer(new HashMap<Object, Object>() {{
             put(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
+            put(DeploymentFilterable.CLASSPATH_FILTER_SYSTEMAPPS, "false");
         }});
     }
 
