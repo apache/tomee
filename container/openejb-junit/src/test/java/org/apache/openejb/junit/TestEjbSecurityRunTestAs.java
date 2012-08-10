@@ -29,6 +29,10 @@ import org.junit.runner.RunWith;
 import javax.ejb.EJB;
 import javax.ejb.EJBAccessException;
 
+@ContextConfig(properties = {
+        @Property("openejb.deployments.classpath.include=.*openejb-junit.*"),
+        @Property("java.naming.factory.initial=org.apache.openejb.core.LocalInitialContextFactory")
+})
 @RunWith(OpenEjbRunner.class)
 @RunTestAs("RoleA")
 @LocalClient
