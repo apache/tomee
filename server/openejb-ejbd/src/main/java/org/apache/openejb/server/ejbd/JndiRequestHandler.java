@@ -28,8 +28,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import javax.jms.ConnectionFactory;
+import javax.jms.Topic;
 import javax.naming.Context;
 import javax.naming.NameClassPair;
 import javax.naming.NameNotFoundException;
@@ -208,7 +210,11 @@ class JndiRequestHandler {
                 res.setResult(metaData);
                 return;
             } else {
-                object = rootContext.lookup(prefix + name);
+                try {
+                    object = rootContext.lookup(prefix + name);
+                } catch (NameNotFoundException nnfe) { // fallback to resources
+                    object = rootContext.lookup("openejb/Resource/" + name);
+                }
             }
 
             if (object instanceof Context) {
@@ -248,6 +254,14 @@ class JndiRequestHandler {
             } else if (object instanceof Validator) {
                 res.setResponseCode(ResponseCodes.JNDI_RESOURCE);
                 res.setResult(Validator.class.getName());
+                return;
+            } else if (object instanceof Queue) {
+                res.setResponseCode(ResponseCodes.JNDI_RESOURCE);
+                res.setResult(Queue.class.getName());
+                return;
+            } else if (object instanceof Topic) {
+                res.setResponseCode(ResponseCodes.JNDI_RESOURCE);
+                res.setResult(Topic.class.getName());
                 return;
             }
 
