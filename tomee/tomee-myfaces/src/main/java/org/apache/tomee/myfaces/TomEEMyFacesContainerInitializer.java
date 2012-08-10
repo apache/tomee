@@ -4,6 +4,7 @@ import org.apache.myfaces.context.servlet.StartupServletExternalContextImpl;
 import org.apache.myfaces.ee6.MyFacesContainerInitializer;
 import org.apache.myfaces.spi.FacesConfigResourceProvider;
 import org.apache.myfaces.spi.FacesConfigResourceProviderFactory;
+import org.apache.openejb.loader.SystemInstance;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.webapp.FacesServlet;
@@ -13,10 +14,13 @@ import javax.servlet.ServletException;
 import java.io.File;
 import java.net.URL;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
 public class TomEEMyFacesContainerInitializer implements ServletContainerInitializer {
+    public static final String OPENEJB_JSF_SKIP = "openejb.jsf.skip";
+
     private final MyFacesContainerInitializer delegate;
 
     public TomEEMyFacesContainerInitializer() {
@@ -26,11 +30,24 @@ public class TomEEMyFacesContainerInitializer implements ServletContainerInitial
     @Override
     public void onStartup(final Set<Class<?>> classes, final ServletContext ctx) throws ServletException {
         // try to skip first
-        if ("true".equalsIgnoreCase(ctx.getInitParameter("org.apache.myfaces.INITIALIZE_ALWAYS_STANDALONE"))) {
+        if ("true".equalsIgnoreCase(ctx.getInitParameter("org.apache.myfaces.INITIALIZE_ALWAYS_STANDALONE"))
+                || "true".equals(SystemInstance.get().getProperty(OPENEJB_JSF_SKIP, "false"))) {
             return;
         }
         if ((classes != null && !classes.isEmpty()) || isFacesConfigPresent(ctx)) {
             // we found a faces-config.xml or some classes so let's delegate to myfaces
+
+            // since we don't want to call isFacesConfigPresent again (it scan all jars!!!!)
+            // forcing classes to not be empty
+            Set<Class<?>> passedClasses = classes;
+            if (passedClasses == null) {
+                passedClasses = new HashSet<Class<?>>();
+            }
+            if (passedClasses.isEmpty()) {
+                passedClasses.add(TomEEMyFacesContainerInitializer.class);
+            }
+
+            // finally delegating begin sure we'll not call isFacesConfigPresent
             delegate.onStartup(classes, ctx);
         }
     }
