@@ -59,7 +59,9 @@ groovy-
 gson
 guice-
 hamcrest-
+hawtbuf-
 hawtdispatch-
+hawtjni-runtime
 hibernate-
 howl-
 hsqldb-
@@ -112,6 +114,7 @@ neethi-
 nekohtml-
 openejb-api
 openejb-client
+openejb-core
 openejb-cxf
 openejb-cxf-rs
 openejb-cxf-bundle
