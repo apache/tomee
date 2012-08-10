@@ -18,6 +18,7 @@ package org.apache.openejb.server.groovy;
 
 import org.apache.openejb.jee.Beans;
 import org.apache.openejb.junit.ApplicationComposer;
+import org.apache.openejb.junit.Configuration;
 import org.apache.openejb.junit.Module;
 import org.apache.openejb.util.OpenEJBScripter;
 import org.junit.Before;
@@ -26,11 +27,20 @@ import org.junit.runner.RunWith;
 
 import javax.inject.Named;
 
+import java.util.Properties;
+
 import static org.junit.Assert.assertEquals;
 
 @RunWith(ApplicationComposer.class)
 public class BeanManagerHelperTest {
     private static OpenEJBScripter.BeanManagerHelper helper = new OpenEJBScripter.BeanManagerHelper();
+
+    @Configuration
+    public Properties config() {
+        final Properties p = new Properties();
+        p.setProperty("openejb.deployments.classpath.filter.systemapps", "false");
+        return p;
+    }
 
     @Module
     public Beans ejbJar() {
