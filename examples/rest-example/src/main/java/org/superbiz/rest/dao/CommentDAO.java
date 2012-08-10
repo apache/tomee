@@ -32,7 +32,7 @@ import java.util.List;
 @Typed
 @Singleton
 @Lock(LockType.READ)
-public class CommentDAO extends DAO {
+public class CommentDAO {
     @Inject
     private DAO dao;
 
