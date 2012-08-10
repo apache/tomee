@@ -43,7 +43,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class QueryProxy implements InvocationHandler {
+public class QueryProxy implements java.lang.reflect.InvocationHandler {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, QueryProxy.class);
 
     // keywords
@@ -374,8 +374,4 @@ public class QueryProxy implements InvocationHandler {
         return "OpenEJB :: QueryProxy";
     }
 
-    @Override
-    public InvocationHandler getInvocationHandler() {
-        return this;
-    }
 }

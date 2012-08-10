@@ -24,7 +24,7 @@ public interface ProxyFactory {
 
     public void init(Properties props) throws OpenEJBException;
 
-    public InvocationHandler getInvocationHandler(Object proxy) throws IllegalArgumentException;
+    public java.lang.reflect.InvocationHandler getInvocationHandler(Object proxy) throws IllegalArgumentException;
 
     public Class getProxyClass(Class interfce) throws IllegalArgumentException;
 
@@ -39,13 +39,13 @@ public interface ProxyFactory {
      * Returns an instance of a proxy class for the specified interface that dispatches method invocations to
      * the specified invocation handler.
      */
-    public Object newProxyInstance(Class interfce, InvocationHandler h) throws IllegalArgumentException;
+    public Object newProxyInstance(Class interfce, java.lang.reflect.InvocationHandler h) throws IllegalArgumentException;
 
     /*
      * Returns an instance of a proxy class for the specified interface that dispatches method invocations to
      * the specified invocation handler.
      */
-    public Object newProxyInstance(Class[] interfaces, InvocationHandler h) throws IllegalArgumentException;
+    public Object newProxyInstance(Class[] interfaces, java.lang.reflect.InvocationHandler h) throws IllegalArgumentException;
 
 }
 
