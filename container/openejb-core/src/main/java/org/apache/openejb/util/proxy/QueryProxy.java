@@ -134,11 +134,11 @@ public class QueryProxy implements InvocationHandler {
             switch (type) {
                 case NAMED:
                     query = em.createNamedQuery((String) args[0]);
-                break;
+                    break;
 
                 case NATIVE:
                     query = em.createNativeQuery((String) args[0]);
-                break;
+                    break;
 
                 default:
                     query = em.createQuery((String) args[0]);
@@ -158,7 +158,7 @@ public class QueryProxy implements InvocationHandler {
                     matched++;
                 } else if (args[i].getClass().isArray()) {
                     Object[] array = (Object[]) args[i];
-                    for (int j = 0; j <  array.length; j++) {
+                    for (int j = 0; j < array.length; j++) {
                         query = query.setParameter(j, array[j]);
                     }
                     matched++;
@@ -178,7 +178,7 @@ public class QueryProxy implements InvocationHandler {
                     i++;
                 } else {
                     throw new IllegalArgumentException("not managed parameter " + args[i]
-                                + " of type " + args[i].getClass());
+                            + " of type " + args[i].getClass());
                 }
             }
 
@@ -199,7 +199,7 @@ public class QueryProxy implements InvocationHandler {
         if (RETURN_TYPES.containsKey(methodName)) {
             type = RETURN_TYPES.get(methodName);
         } else {
-            type =  getGenericType(method.getGenericReturnType());
+            type = getGenericType(method.getGenericReturnType());
             RETURN_TYPES.put(methodName, type);
         }
         return type;
@@ -244,7 +244,8 @@ public class QueryProxy implements InvocationHandler {
 
                 Object idValue;
                 try {
-                    idValue = BeanUtils.getProperty(entity, idName);;
+                    idValue = BeanUtils.getProperty(entity, idName);
+                    ;
                 } catch (InvocationTargetException e) {
                     throw new IllegalArgumentException("can't invoke to get entity id");
                 } catch (NoSuchMethodException e) {
@@ -284,7 +285,7 @@ public class QueryProxy implements InvocationHandler {
     private Class<?> getGenericType(Type type) {
         if (type instanceof ParameterizedType) {
             ParameterizedType pt = (ParameterizedType) type;
-            if ( pt.getActualTypeArguments().length == 1) {
+            if (pt.getActualTypeArguments().length == 1) {
                 return (Class<?>) pt.getActualTypeArguments()[0];
             }
         }
@@ -358,7 +359,7 @@ public class QueryProxy implements InvocationHandler {
             if (toParse.startsWith(BY)) {
                 toParse = toParse.substring(2);
                 String[] columns = toParse.split(AND);
-                for (String column: columns) {
+                for (String column : columns) {
                     parsed.add(StringUtils.uncapitalize(column));
                 }
             }
@@ -368,11 +369,13 @@ public class QueryProxy implements InvocationHandler {
         return parsed;
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return "OpenEJB :: QueryProxy";
     }
 
-    @Override public InvocationHandler getInvocationHandler() {
+    @Override
+    public InvocationHandler getInvocationHandler() {
         return this;
     }
 }

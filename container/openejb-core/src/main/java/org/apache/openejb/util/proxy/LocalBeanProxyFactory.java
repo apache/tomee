@@ -18,9 +18,7 @@ package org.apache.openejb.util.proxy;
 
 import org.apache.openejb.util.Debug;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 
 public class LocalBeanProxyFactory {
 
