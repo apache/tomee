@@ -27,10 +27,11 @@ import javax.faces.context.ExternalContext;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
-import java.util.List;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
@@ -40,11 +41,18 @@ public class TomEEFacesConfigResourceProvider extends DefaultFacesConfigResource
     private static final String FACES_CONFIG_SUFFIX = ".faces-config.xml";
     private static final String FACES_CONFIG_IMPLICIT = "META-INF/faces-config.xml";
     private static final Pattern FILE_PATTERN = Pattern.compile("^.*" + Pattern.quote(FACES_CONFIG_SUFFIX) + "$");
+    private static final Map<ClassLoader, Collection<URL>> CACHED_RESOURCES = new HashMap<ClassLoader, Collection<URL>>();
 
     @Override
     public Collection<URL> getMetaInfConfigurationResources(final ExternalContext context) throws IOException {
-        final List<URL> urlSet = new ArrayList<URL>();
         final ClassLoader loader = getClassLoader();
+
+        Collection<URL> urlSet = CACHED_RESOURCES.get(loader);
+        if (urlSet != null) {
+            return urlSet;
+        }
+
+        urlSet  = new HashSet<URL>();
 
         final Enumeration<URL> resources = loader.getResources(FACES_CONFIG_IMPLICIT);
         while (resources.hasMoreElements()) {
@@ -83,6 +91,7 @@ public class TomEEFacesConfigResourceProvider extends DefaultFacesConfigResource
             }
         }
 
+        CACHED_RESOURCES.put(loader, urlSet);
         return urlSet;
     }
 
@@ -92,5 +101,9 @@ public class TomEEFacesConfigResourceProvider extends DefaultFacesConfigResource
             loader = this.getClass().getClassLoader();
         }
         return loader;
+    }
+
+    public static void clear(final ClassLoader loader) {
+        CACHED_RESOURCES.remove(loader);
     }
 }
