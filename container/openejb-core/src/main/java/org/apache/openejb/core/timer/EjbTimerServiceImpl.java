@@ -54,7 +54,9 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
@@ -64,6 +66,8 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
 
     public static final String OPENEJB_TIMEOUT_JOB_NAME = "OPENEJB_TIMEOUT_JOB";
     public static final String OPENEJB_TIMEOUT_JOB_GROUP_NAME = "OPENEJB_TIMEOUT_GROUP";
+
+    private static final Map<Object, Scheduler> SCHEDULER_BY_BEANCONTEXT = new ConcurrentHashMap<Object, Scheduler>();
 
     private boolean transacted;
     private int retryAttempts;
@@ -109,6 +113,11 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
     }
 
     public static synchronized Scheduler getDefaultScheduler(BeanContext deployment) {
+        Scheduler scheduler = SCHEDULER_BY_BEANCONTEXT.get(deployment.getDeploymentID());
+        if (scheduler != null) {
+            return scheduler;
+        }
+
         final Properties properties = new Properties();
         final SystemInstance systemInstance = SystemInstance.get();
         final String defaultThreadPool = DefaultTimerThreadPoolAdapter.class.getName();
@@ -120,13 +129,18 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         boolean newInstance = updateProperties(properties, deployment.getEjbName() + ".")
                 || updateProperties(properties, deployment.getModuleName() + "." + deployment.getEjbName() + ".");
 
+        // adding our custom persister
+        if (properties.containsKey("org.quartz.jobStore.class") && !properties.containsKey("org.quartz.jobStore.driverDelegateInitString")) {
+            properties.put("org.quartz.jobStore.driverDelegateInitString", "triggerPersistenceDelegateClasses=" + EJBCronTriggerPersistenceDelegate.class.getName());
+        }
+
         if (defaultThreadPool.equals(properties.get(StdSchedulerFactory.PROP_THREAD_POOL_CLASS))
                 && properties.containsKey("org.quartz.threadPool.threadCount")
                 & !properties.containsKey("openejb.timer.pool.size")) {
             log.info("Found property 'org.quartz.threadPool.threadCount' for default thread pool, please use 'openejb.timer.pool.size' instead");
         }
 
-        final Scheduler scheduler = systemInstance.getComponent(Scheduler.class);
+        scheduler = systemInstance.getComponent(Scheduler.class);
         Scheduler thisScheduler;
         if (scheduler == null || newInstance) {
             try {
@@ -150,6 +164,9 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         } else {
             thisScheduler = scheduler;
         }
+
+        SCHEDULER_BY_BEANCONTEXT.put(deployment.getDeploymentID(), thisScheduler);
+
         return thisScheduler;
     }
 
@@ -182,6 +199,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                 throw new OpenEJBRuntimeException("Unable to shutdown scheduler", e);
             }
         }
+        SCHEDULER_BY_BEANCONTEXT.remove(deployment);
     }
 
     public static void shutdown() {
@@ -419,8 +437,15 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
     public void ejbTimeout(TimerData timerData) {
         try {
             Timer timer = getTimer(timerData.getId());
-            if (timer == null) {
-                return;
+            // quartz can be backed by some advanced config (jdbc for instance)
+            if (timer == null && timerStore instanceof MemoryTimerStore && timerData.getTimer() != null) {
+                try {
+                    timerStore.addTimerData(timerData);
+                    timer = timerData.getTimer(); // TODO: replace memoryjobstore by the db one?
+                } catch (TimerStoreException e) {
+                    // shouldn't occur
+                }
+                // return;
             }
             for (int tries = 0; tries < (1 + retryAttempts); tries++) {
                 boolean retry = false;
