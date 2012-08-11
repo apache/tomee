@@ -58,14 +58,16 @@ public class EJBCronTrigger extends CronTriggerImpl {
 	private static final Pattern VALID_HOUR = Pattern.compile("(([0-1]?[0-9])|([2][0-3]))|\\*");
 	private static final Pattern VALID_MINUTE = Pattern.compile("([0-5]?[0-9])|\\*");
 	private static final Pattern VALID_SECOND = Pattern.compile("([0-5]?[0-9])|\\*");
-	
+
     private static final Pattern RANGE = Pattern.compile("(-?[A-Za-z0-9]+)-(-?[A-Za-z0-9]+)");
 
+    public static final String DELIMITER = ";";
 
 	private static final String LAST_IDENTIFIER = "LAST";
-    
-    private static final Map<String, Integer> MONTHS_MAP = new HashMap<String, Integer>();
+
     private static final Map<String, Integer> WEEKDAYS_MAP = new HashMap<String, Integer>();
+
+    private static final Map<String, Integer> MONTHS_MAP = new HashMap<String, Integer>();
 
     static {
         int i = 0;
@@ -79,7 +81,7 @@ public class EJBCronTrigger extends CronTriggerImpl {
             WEEKDAYS_MAP.put(weekday.toUpperCase(Locale.US), i++);
         }
     }
-	
+
     private static final int[] ORDERED_CALENDAR_FIELDS = { Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH, Calendar.HOUR_OF_DAY, Calendar.MINUTE, Calendar.SECOND };
 
     private static final Map<Integer, Integer> CALENDAR_FIELD_TYPE_ORDERED_INDEX_MAP = new LinkedHashMap<Integer, Integer>();
@@ -98,8 +100,9 @@ public class EJBCronTrigger extends CronTriggerImpl {
 	private final FieldExpression[] expressions = new FieldExpression[7];
 
 	private TimeZone timezone;
+    private String rawValue;
 
-	public EJBCronTrigger(ScheduleExpression expr) throws ParseException {
+    public EJBCronTrigger(ScheduleExpression expr) throws ParseException {
 	    
 		Map<Integer, String> fieldValues = new LinkedHashMap<Integer, String>();
 		fieldValues.put(Calendar.YEAR, expr.getYear());
@@ -132,9 +135,12 @@ public class EJBCronTrigger extends CronTriggerImpl {
 		if (!errors.isEmpty()) {
 			throw new ParseException(errors);
 		}
-	}
 
-	/**
+        rawValue = expr.getYear() + DELIMITER + expr.getMonth() + DELIMITER + expr.getDayOfMonth() + DELIMITER + expr.getDayOfWeek()
+                    + DELIMITER + expr.getHour() + DELIMITER + expr.getMinute() + DELIMITER + expr.getSecond();
+    }
+
+    /**
 	 * Computes a set of allowed values for the given field of a calendar based
 	 * time expression.
 	 *
@@ -498,6 +504,10 @@ public class EJBCronTrigger extends CronTriggerImpl {
         return -1;
     }
 
+    public String getRawValue() {
+        return rawValue;
+    }
+
     /**
      * reset those sub field values, we need to configure from the end to begin, as getActualMaximun consider other fields' values
      * @param calendar
@@ -516,7 +526,12 @@ public class EJBCronTrigger extends CronTriggerImpl {
         }
     }
 
-	public static class ParseException extends Exception {
+    @Override // we don't want to be a CronTrigger for persistence
+    public boolean hasAdditionalProperties() {
+        return true;
+    }
+
+    public static class ParseException extends Exception {
 
 		private final Map<Integer, ParseException> children;
 		private final Integer field;
