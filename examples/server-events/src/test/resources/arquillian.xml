@@ -22,7 +22,7 @@
   <container qualifier="openejb" default="true">
     <configuration>
       <property name="properties">
-        listener = new://Service?type=org.superbiz.event.MyListener
+        listener = new://Service?class-name=org.superbiz.event.MyListener
         listener.logAllEvent = true
       </property>
     </configuration>
