@@ -20,6 +20,7 @@ import org.apache.openejb.resource.XAResourceWrapper;
 import org.apache.openejb.resource.jdbc.dbcp.BasicDataSource;
 import org.apache.openejb.resource.jdbc.dbcp.BasicManagedDataSource;
 import org.apache.openejb.resource.jdbc.dbcp.DbcpDataSource;
+import org.apache.openejb.resource.jdbc.dbcp.DbcpDataSourceCreator;
 import org.apache.openejb.resource.jdbc.dbcp.DbcpManagedDataSource;
 import org.apache.openejb.resource.jdbc.dbcp.ManagedDataSourceWithRecovery;
 import org.apache.xbean.recipe.ObjectRecipe;
@@ -27,7 +28,8 @@ import org.apache.xbean.recipe.ObjectRecipe;
 import javax.sql.DataSource;
 import java.util.Properties;
 
-public class DefaultDataSourceCreator implements DataSourceCreator {
+// TODO: remove it and replace it with org.apache.openejb.resource.jdbc.dbcp.DbcpDataSourceCreator
+public class DefaultDataSourceCreator extends DbcpDataSourceCreator {
     @Override
     public DataSource managed(final String name, final DataSource ds) {
         return new DbcpManagedDataSource(name, ds);
@@ -67,6 +69,11 @@ public class DefaultDataSourceCreator implements DataSourceCreator {
     @Override
     public void destroy(final Object object) throws Throwable {
         ((org.apache.commons.dbcp.BasicDataSource) object).close();
+    }
+
+    @Override
+    protected void doDestroy(final DataSource dataSource) throws Throwable {
+        ((org.apache.commons.dbcp.BasicDataSource) dataSource).close();
     }
 
     @Override

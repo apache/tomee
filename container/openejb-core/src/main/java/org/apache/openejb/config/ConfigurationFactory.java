@@ -152,7 +152,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 SystemInstance.get().setComponent(DataSourceCreator.class, new DefaultDataSourceCreator());
             } else {
                 try {
-                    SystemInstance.get().setComponent(DataSourceCreator.class, DataSourceFactory.creator(creator));
+                    SystemInstance.get().setComponent(DataSourceCreator.class, DataSourceFactory.creator(creator, false));
                 } catch (Exception e) {
                     logger.error("can't load " + creator + " will use the default creator", e);
                     SystemInstance.get().setComponent(DataSourceCreator.class, new DefaultDataSourceCreator());

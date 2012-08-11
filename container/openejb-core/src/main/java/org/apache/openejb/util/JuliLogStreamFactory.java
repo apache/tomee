@@ -67,7 +67,29 @@ public class JuliLogStreamFactory implements LogStreamFactory {
         return !System.getProperty("java.class.path").contains("idea_rt"); // TODO: eclipse, netbeans
     }
 
+    // TODO: mange conf by classloader? see tomcat log manager
     public static class OpenEJBLogManager extends LogManager {
+        static {
+            final LogManager mgr = LogManager.getLogManager();
+            if (mgr instanceof OpenEJBLogManager) {
+                Runtime.getRuntime().addShutdownHook(new Thread() {
+                    @Override
+                    public void run() {
+                        ((OpenEJBLogManager) mgr).forceReset();
+                    }
+                });
+            }
+        }
+
+        public void forceReset() {
+            super.reset();
+        }
+
+        @Override
+        public void reset() throws SecurityException {
+            // no-op
+        }
+
         @Override
         public String getProperty(final String name) {
             final String parentValue = super.getProperty(name);
