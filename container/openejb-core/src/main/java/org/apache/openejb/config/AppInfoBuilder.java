@@ -589,6 +589,8 @@ class AppInfoBuilder {
         public static final String TABLE_PREFIX = "openejb.jpa.table_prefix";
         public static final String OPENJPA_METADATA_REPOSITORY = "openjpa.MetaDataRepository";
         public static final String PREFIX_METADATA_REPOSITORY = "org.apache.openejb.openjpa.PrefixMappingRepository";
+        public static final String OPENJPA_SEQUENCE = "openjpa.Sequence";
+        public static final String PREFIX_SEQUENCE = "org.apache.openejb.openjpa.PrefixTableJdbcSeq";
 
         public static final String PROVIDER_PROP = "javax.persistence.provider";
         public static final String TRANSACTIONTYPE_PROP = "javax.persistence.transactionType";
@@ -751,6 +753,11 @@ class AppInfoBuilder {
                         throw new OpenEJBRuntimeException("can't honor table prefixes since you provided a custom mapping repository: " + mapping);
                     }
                     info.properties.setProperty(OPENJPA_METADATA_REPOSITORY, PREFIX_METADATA_REPOSITORY + "(prefix=" + prefix + ")");
+                    if (!info.properties.containsKey(OPENJPA_SEQUENCE)) {
+                        info.properties.setProperty(OPENJPA_SEQUENCE, PREFIX_SEQUENCE + "(prefix=" + prefix + ")");
+                    } else {
+                        logger.warning("you configured a custom sequence so the prefix will be ignored");
+                    }
                 }
 
                 final Set<String> keys = new HashSet<String>(info.properties.stringPropertyNames());
