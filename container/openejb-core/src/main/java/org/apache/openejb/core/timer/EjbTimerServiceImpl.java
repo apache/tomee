@@ -114,7 +114,13 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
 
     public static synchronized Scheduler getDefaultScheduler(BeanContext deployment) {
         Scheduler scheduler = SCHEDULER_BY_BEANCONTEXT.get(deployment.getDeploymentID());
-        if (scheduler != null) {
+        boolean valid;
+        try {
+            valid = !scheduler.isShutdown();
+        } catch (Exception ignored) {
+            valid = false;
+        }
+        if (scheduler != null && valid) {
             return scheduler;
         }
 
@@ -199,7 +205,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                 throw new OpenEJBRuntimeException("Unable to shutdown scheduler", e);
             }
         }
-        SCHEDULER_BY_BEANCONTEXT.remove(deployment);
+        SCHEDULER_BY_BEANCONTEXT.remove(deployment.getDeploymentID());
     }
 
     public static void shutdown() {
