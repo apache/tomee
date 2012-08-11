@@ -37,6 +37,18 @@
       <version>${xbeanVersion}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-entitymanager</artifactId>
+      <version>4.1.4.Final</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.persistence</groupId>
+      <artifactId>eclipselink</artifactId>
+      <version>2.3.0</version>
+      <optional>true</optional>
+    </dependency>
   </dependencies>
 
   <build>

@@ -24,6 +24,7 @@ import org.apache.openejb.jee.JAXBContextFactory;
 import org.apache.openejb.jee.Persistence;
 import org.apache.openejb.jee.PersistenceUnitCaching;
 import org.apache.openejb.jee.PersistenceUnitValidationMode;
+import org.apache.openejb.jpa.integration.JPAThreadContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.monitoring.DynamicMBeanWrapper;
 import org.apache.openejb.monitoring.LocalMBeanServer;
@@ -88,15 +89,22 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory {
 
     public ReloadableEntityManagerFactory(final ClassLoader cl, final EntityManagerFactoryCallable callable, final Properties props) {
         classLoader = cl;
-        try {
-            delegate = callable.call();
-        } catch (Exception e) {
-            throw new OpenEJBRuntimeException(e);
-        }
         entityManagerFactoryCallable = callable;
+        createDelegate();
 
         logCriteriaJpql = logCriteriaQueryJpql(props);
         logCriteriaJpqlLevel = logCriteriaQueryJpqlLevel(props);
+    }
+
+    private void createDelegate() {
+        JPAThreadContext.infos.put("properties", entityManagerFactoryCallable.getUnitInfo().getProperties());
+        try {
+            delegate = entityManagerFactoryCallable.call();
+        } catch (Exception e) {
+            throw new OpenEJBRuntimeException(e);
+        } finally {
+            JPAThreadContext.infos.clear();
+        }
     }
 
     private String logCriteriaQueryJpqlLevel(final Properties props) {
@@ -232,7 +240,7 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory {
     // Note: it uses the old unitInfo but properties can be modified (not managed classes, provider...)
     public synchronized void reload() {
         try {
-            delegate = entityManagerFactoryCallable.call();
+            createDelegate();
         } catch (Exception e) {
             LOGGER.error("can't replace EntityManagerFactory " + delegate, e);
         }
