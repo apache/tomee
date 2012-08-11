@@ -404,6 +404,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         sys.containerSystem = new ContainerSystemInfo();
         sys.facilities = new FacilitiesInfo();
 
+        // TODO: This is wrong not all services are JndiContexts
         for (Service service : openejb.getServices()) {
             final JndiContextInfo info = configureService(service, JndiContextInfo.class);
             sys.facilities.services.add(info);
@@ -930,10 +931,15 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
             ServiceProvider provider = resolveServiceProvider(service, infoType);
 
-            /* we mock the provider if not found now
             if (provider == null) {
                 final List<ServiceProvider> providers = ServiceUtils.getServiceProvidersByServiceType(providerType);
                 final StringBuilder sb = new StringBuilder();
+//                for (ServiceProvider p : providers) {
+//                    sb.append(System.getProperty("line.separator"));
+//                    sb.append("  <").append(p.getService());
+//                    sb.append(" id=\"").append(service.getId()).append('"');
+//                    sb.append(" provider=\"").append(p.getId()).append("\"/>");
+//                }
 
                 final List<String> types = new ArrayList<String>();
                 for (final ServiceProvider p : providers) {
@@ -948,15 +954,6 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 }
                 final String noProviderMessage = messages.format("configureService.noProviderForService", providerType, service.getId(), service.getType(), service.getProvider(), sb.toString());
                 throw new NoSuchProviderException(noProviderMessage);
-            }
-            */
-
-            if (provider == null) { // mock it, service-jar.xml is just a pain for simple resources with no real default
-                String type = service.getProperties().getProperty("class");
-                if (type == null) {
-                    type = service.getType();
-                }
-                provider = new ServiceProvider(type, service.getId(), providerType);
             }
 
             if (service.getId() == null) service.setId(provider.getId());
@@ -1064,6 +1061,21 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
     @SuppressWarnings({"unchecked"})
     private ServiceProvider resolveServiceProvider(final org.apache.openejb.config.Service service, final Class infoType) throws OpenEJBException {
+
+        if (service.getClassName() != null) {
+            if (service.getType() == null) {
+                service.setType(service.getClassName());
+            }
+
+            final ServiceProvider provider = new ServiceProvider();
+            provider.setId(service.getId());
+            provider.setService(service.getClass().getSimpleName());
+            provider.getTypes().add(service.getType());
+            provider.setClassName(service.getClassName());
+            provider.setConstructor(service.getConstructor());
+            provider.setFactoryName(service.getFactoryName());
+            return provider;
+        }
 
         if (service.getProvider() != null) {
             return ServiceUtils.getServiceProvider(service.getProvider());

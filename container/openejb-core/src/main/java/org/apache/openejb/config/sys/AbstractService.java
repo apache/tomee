@@ -59,6 +59,24 @@ public abstract class AbstractService implements Service {
     @XmlAttribute
     protected String type;
 
+    /**
+     * Mutually exclusive with 'provider'
+     */
+    @XmlAttribute(name = "class-name")
+    protected String className;
+
+    /**
+     * Mutually exclusive with 'provider'
+     */
+    @XmlAttribute(name = "constructor")
+    protected String constructor;
+
+    /**
+     * Mutually exclusive with 'provider'
+     */
+    @XmlAttribute(name = "factory-name")
+    protected String factoryName;
+
 
     protected AbstractService(String id) {
         this(id, null, null);
@@ -169,6 +187,30 @@ public abstract class AbstractService implements Service {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }
+
+    public String getConstructor() {
+        return constructor;
+    }
+
+    public void setConstructor(String constructor) {
+        this.constructor = constructor;
+    }
+
+    public String getFactoryName() {
+        return factoryName;
+    }
+
+    public void setFactoryName(String factoryName) {
+        this.factoryName = factoryName;
     }
 
     @Override

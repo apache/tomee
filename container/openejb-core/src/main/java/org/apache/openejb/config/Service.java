@@ -54,4 +54,10 @@ public interface Service {
     public String getType();
 
     public void setType(String type);
+
+    public String getClassName();
+
+    public String getConstructor();
+
+    public String getFactoryName();
 }
