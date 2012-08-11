@@ -20,17 +20,12 @@ import org.apache.openejb.jpa.integration.JPAThreadContext;
 import org.eclipse.persistence.config.SessionCustomizer;
 import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.internal.helper.DatabaseTable;
-import org.eclipse.persistence.internal.sequencing.SequencingHome;
-import org.eclipse.persistence.internal.sequencing.SequencingServer;
-import org.eclipse.persistence.internal.sessions.DatabaseSessionImpl;
 import org.eclipse.persistence.mappings.DatabaseMapping;
 import org.eclipse.persistence.mappings.DirectCollectionMapping;
 import org.eclipse.persistence.mappings.ManyToManyMapping;
 import org.eclipse.persistence.sequencing.Sequence;
-import org.eclipse.persistence.sequencing.SequencingControl;
 import org.eclipse.persistence.sequencing.TableSequence;
 import org.eclipse.persistence.sessions.Session;
-import org.eclipse.persistence.sessions.server.ServerSession;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +53,7 @@ public class PrefixSessionCustomizer implements SessionCustomizer {
             final Sequence sequence = session.getDatasourcePlatform().getDefaultSequence();
             if (sequence instanceof TableSequence) {
                 final TableSequence ts = ((TableSequence) sequence);
-                ts.setTableName(prefix + ts.getName());
+                ts.setName(prefix + ts.getName());
             }
         }
     }
