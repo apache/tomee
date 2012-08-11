@@ -17,12 +17,14 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.ClassListInfo;
 import org.apache.openejb.assembler.classic.ClientInfo;
 import org.apache.openejb.assembler.classic.ConnectorInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
+import org.apache.openejb.assembler.classic.EntityManagerFactoryCallable;
 import org.apache.openejb.assembler.classic.HandlerChainInfo;
 import org.apache.openejb.assembler.classic.JndiEncInfo;
 import org.apache.openejb.assembler.classic.MdbContainerInfo;
@@ -583,8 +585,10 @@ class AppInfoBuilder {
         public static final String OPENJPA_RUNTIME_UNENHANCED_CLASSES = "openjpa.RuntimeUnenhancedClasses";
         public static final String DEFAULT_RUNTIME_UNENHANCED_CLASSES = "supported";
         public static final String REMOVE_DEFAULT_RUNTIME_UNENHANCED_CLASSES = "disable";
-        public static final String OPENJPA_MANAGED_RUNTIME = "openjpa.ManagedRuntime";
-        public static final String DEFAULT_MANAGED_RUNTIME = "invocation(TransactionManagerMethod=org.apache.openejb.OpenEJB.getTransactionManager)";
+
+        public static final String TABLE_PREFIX = "openejb.jpa.table_prefix";
+        public static final String OPENJPA_METADATA_REPOSITORY = "openjpa.MetaDataRepository";
+        public static final String PREFIX_METADATA_REPOSITORY = "org.apache.openejb.openjpa.PrefixMappingRepository";
 
         public static final String PROVIDER_PROP = "javax.persistence.provider";
         public static final String TRANSACTIONTYPE_PROP = "javax.persistence.transactionType";
@@ -594,6 +598,11 @@ class AppInfoBuilder {
 
         public static final String HIBERNATE_TRANSACTION_MANAGER_LOOKUP_CLASS = "hibernate.transaction.manager_lookup_class";
         public static final String HIBERNATE_JTA_PLATFORM = "hibernate.transaction.jta.platform";
+        public static final String HIBERNATE_EJB_NAMING_STRATEGY_PROP = "hibernate.ejb.naming_strategy";
+        private static final String HIBERNATE_EJB_NAMING_STRATEGY = "org.apache.openejb.jpa.integration.hibernate.PrefixNamingStrategy";
+
+        private static final String ECLIPSELINK_SESSION_CUSTOMIZER = "eclipselink.session.customizer";
+        private static final String PREFIX_SESSION_CUSTOMIZER = "org.apache.openejb.jpa.integration.eclipselink.PrefixSessionCustomizer";
 
         private static String providerEnv;
         private static String transactionTypeEnv;
@@ -631,6 +640,16 @@ class AppInfoBuilder {
                 }
                 // info.persistenceUnitRootUrl = null; // to avoid HHH015010
 
+                final String prefix = info.properties.getProperty(TABLE_PREFIX);
+                if (prefix != null) {
+                    if (info.properties.containsKey(HIBERNATE_EJB_NAMING_STRATEGY_PROP)) {
+                        logger.warning("can't statisfy table prefix since you provided a " + HIBERNATE_EJB_NAMING_STRATEGY_PROP + " property");
+                    } else {
+                        // to pass the config to the impl
+                        info.properties.setProperty(HIBERNATE_EJB_NAMING_STRATEGY_PROP, HIBERNATE_EJB_NAMING_STRATEGY);
+                    }
+                }
+
                 if (className == null || className.startsWith("org.hibernate.transaction") || className.startsWith("org.hibernate.service.jta.platform")){
                     final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
                     String key = HIBERNATE_JTA_PLATFORM;
@@ -664,6 +683,11 @@ class AppInfoBuilder {
                 String lookupProperty = "toplink.target-server";
                 String openejbLookupClass = MakeTxLookup.TOPLINK_FACTORY;
 
+                final String prefix = info.properties.getProperty(TABLE_PREFIX);
+                if (prefix != null) {
+                    logger.warning("table prefix feature is not supported for toplink");
+                }
+
                 String className = info.properties.getProperty(lookupProperty);
 
                 if (className == null || className.startsWith("oracle.toplink.transaction")){
@@ -691,6 +715,18 @@ class AppInfoBuilder {
                         // ignored
                     }
                 }
+
+                final String prefix = info.properties.getProperty(TABLE_PREFIX);
+                if (prefix != null) {
+                    if (info.properties.containsKey(ECLIPSELINK_SESSION_CUSTOMIZER)) {
+                        logger.warning("can't statisfy table prefix since you provided a " + ECLIPSELINK_SESSION_CUSTOMIZER + " property, add a call to org.apache.openejb.jpa.integration.eclipselink.PrefixSessionCustomizer");
+                    } else {
+                        // force eager loading otherwise we'll not get the prefix in the customizer
+                        info.properties.setProperty(EntityManagerFactoryCallable.OPENEJB_JPA_INIT_ENTITYMANAGER, "true");
+                        // to pass the config to the impl
+                        info.properties.setProperty(ECLIPSELINK_SESSION_CUSTOMIZER, PREFIX_SESSION_CUSTOMIZER);
+                    }
+                }
             }  else if (info.provider == null || "org.apache.openjpa.persistence.PersistenceProviderImpl".equals(info.provider)){
 
                 // Apply the overrides that apply to all persistence units of this provider
@@ -708,15 +744,14 @@ class AppInfoBuilder {
                                                                     + OPENJPA_RUNTIME_UNENHANCED_CLASSES);
                 }
 
-                /**
-                // default OpenJPA values are not good for us OPENEJB-1798
-                String managedRuntime = info.properties.getProperty(OPENJPA_MANAGED_RUNTIME);
-                if (managedRuntime == null){
-                    info.properties.setProperty(OPENJPA_MANAGED_RUNTIME, DEFAULT_MANAGED_RUNTIME);
-                    logger.debug("Adjusting PersistenceUnit(name=" + info.name + ") property to "
-                            + OPENJPA_MANAGED_RUNTIME + "=" + DEFAULT_MANAGED_RUNTIME);
+                final String prefix = info.properties.getProperty(TABLE_PREFIX);
+                if (prefix != null) {
+                    final String mapping = info.properties.getProperty(OPENJPA_METADATA_REPOSITORY);
+                    if (mapping != null && !"org.apache.openjpa.jdbc.meta.MappingRepository".equals(mapping)) {
+                        throw new OpenEJBRuntimeException("can't honor table prefixes since you provided a custom mapping repository: " + mapping);
+                    }
+                    info.properties.setProperty(OPENJPA_METADATA_REPOSITORY, PREFIX_METADATA_REPOSITORY + "(prefix=" + prefix + ")");
                 }
-                */
 
                 final Set<String> keys = new HashSet<String>(info.properties.stringPropertyNames());
                 for (String key : keys) {
