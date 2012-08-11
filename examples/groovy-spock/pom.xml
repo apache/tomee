@@ -69,11 +69,6 @@
       <name>Apache Snapshot Repository</name>
       <url>http://repository.apache.org/snapshots</url>
     </repository>
-    <repository>
-      <id>jboss</id>
-      <name>JBoss</name>
-      <url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
-    </repository>
   </repositories>
 
   <dependencies>
@@ -111,13 +106,13 @@
     <dependency>
       <groupId>org.jboss.arquillian.spock</groupId>
       <artifactId>arquillian-spock-container</artifactId>
-      <version>1.0.0.Alpha1</version>
+      <version>1.0.0.Alpha2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.spockframework</groupId>
       <artifactId>spock-core</artifactId>
-      <version>0.5-groovy-1.8</version>
+      <version>0.6-groovy-1.8</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
