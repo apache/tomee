@@ -648,6 +648,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 service.setId(id);
                 service.setType(map.remove("type"));
                 service.setProvider(map.remove("provider"));
+                service.setClassName(map.remove("class-name"));
                 service.getProperties().putAll(map);
             } else if (object instanceof Deployments) {
                 final Deployments deployments = (Deployments) object;
