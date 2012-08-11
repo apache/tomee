@@ -19,7 +19,10 @@ package org.apache.openejb.resource.jdbc;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.resource.XAResourceWrapper;
+import org.apache.openejb.resource.jdbc.dbcp.DbcpDataSourceCreator;
+import org.apache.openejb.resource.jdbc.logging.LoggingSqlDataSource;
 import org.apache.openejb.resource.jdbc.pool.DataSourceCreator;
+import org.apache.openejb.resource.jdbc.pool.DefaultDataSourceCreator;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.xbean.recipe.ObjectRecipe;
@@ -27,6 +30,8 @@ import org.apache.xbean.recipe.Option;
 
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -38,6 +43,8 @@ import java.util.TreeMap;
 public class DataSourceFactory {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, DataSourceFactory.class);
 
+    public static final String LOG_SQL_PROPERTY = "LogSql";
+    public static final String GLOBAL_LOG_SQL_PROPERTY = "openejb.jdbc.log";
     public static final String POOL_PROPERTY = "openejb.datasource.pool";
     public static final String DATA_SOURCE_CREATOR_PROP = "DataSourceCreator";
 
@@ -62,10 +69,12 @@ public class DataSourceFactory {
             managed = Boolean.parseBoolean((String) properties.remove("transactional")) || managed;
         }
 
-        final DataSourceCreator creator = creator(properties.remove(DATA_SOURCE_CREATOR_PROP));
+        boolean logSql = SystemInstance.get().getOptions().get(GLOBAL_LOG_SQL_PROPERTY,
+                "true".equalsIgnoreCase((String) properties.remove(LOG_SQL_PROPERTY)));
+        final DataSourceCreator creator = creator(properties.remove(DATA_SOURCE_CREATOR_PROP), logSql);
 
 
-        final DataSource ds;
+        DataSource ds;
         if (createDataSourceFromClass(impl)) { // opposed to "by driver"
             trimNotSupportedDataSourceProperties(properties);
 
@@ -78,13 +87,13 @@ public class DataSourceFactory {
             final DataSource dataSource = (DataSource) recipe.create();
 
             if (managed) {
-                if (useDbcp(properties)) {
+                if (usePool(properties)) {
                     ds = creator.poolManaged(name, dataSource, properties);
                 } else {
                     ds = creator.managed(name, dataSource);
                 }
             } else {
-                if (useDbcp(properties)) {
+                if (usePool(properties)) {
                     ds = creator.pool(name, dataSource, properties);
                 } else {
                     ds = dataSource;
@@ -103,20 +112,38 @@ public class DataSourceFactory {
             }
         }
 
+        // ds and creator are associated here, not after the proxying of the next if if active
         creatorByDataSource.put(ds, creator);
+
+        if (logSql) {
+            ds = (DataSource) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
+                    new Class<?>[] { DataSource.class }, new LoggingSqlDataSource(ds));
+        }
+
         return ds;
     }
 
-    public static DataSourceCreator creator(final Object creatorName) {
+    public static DataSourceCreator creator(final Object creatorName, boolean willBeProxied) {
         final DataSourceCreator defaultCreator = SystemInstance.get().getComponent(DataSourceCreator.class);
+        final ClassLoader loader = Thread.currentThread().getContextClassLoader();
         if (creatorName != null && creatorName instanceof String
                 && (defaultCreator == null || !creatorName.equals(defaultCreator.getClass().getName()))) {
             String clazz = KNOWN_CREATORS.get(creatorName);
             if (clazz == null) {
                 clazz = (String) creatorName;
             }
+            if (willBeProxied && clazz.equals(DefaultDataSourceCreator.class.getName())) {
+                clazz = DbcpDataSourceCreator.class.getName();
+            }
             try {
-                return (DataSourceCreator) Thread.currentThread().getContextClassLoader().loadClass(clazz).newInstance();
+                return (DataSourceCreator) loader.loadClass(clazz).newInstance();
+            } catch (Throwable e) {
+                LOGGER.error("can't create '" + creatorName + "', the default one will be used: " + defaultCreator, e);
+            }
+        }
+        if (defaultCreator instanceof DefaultDataSourceCreator && willBeProxied) {
+            try { // this one is proxiable, not the default one (legacy)
+                return (DataSourceCreator) loader.loadClass(DbcpDataSourceCreator.class.getName()).newInstance();
             } catch (Throwable e) {
                 LOGGER.error("can't create '" + creatorName + "', the default one will be used: " + defaultCreator, e);
             }
@@ -128,7 +155,7 @@ public class DataSourceFactory {
         return DataSource.class.isAssignableFrom(impl) && !SystemInstance.get().getOptions().get("org.apache.openejb.resource.jdbc.hot.deploy", false);
     }
 
-    private static boolean useDbcp(final Properties properties) {
+    private static boolean usePool(final Properties properties) {
         return "true".equalsIgnoreCase(properties.getProperty(POOL_PROPERTY, "true"));
     }
 
@@ -145,7 +172,8 @@ public class DataSourceFactory {
     }
 
     // TODO: should we get a get and a clear method instead of a single one?
-    public static ObjectRecipe forgetRecipe(final Object object, final ObjectRecipe defaultValue) {
+    public static ObjectRecipe forgetRecipe(final Object rawObject, final ObjectRecipe defaultValue) {
+        final Object object = realInstance(rawObject);
         final DataSourceCreator creator = creatorByDataSource.get(object);
         ObjectRecipe recipe = null;
         if (creator != null) {
@@ -158,6 +186,23 @@ public class DataSourceFactory {
     }
 
     public static void destroy(final Object o) throws Throwable {
-        creatorByDataSource.remove(o).destroy(o);
+        final Object instance = realInstance(o);
+        creatorByDataSource.remove(instance).destroy(instance);
+    }
+
+    // remove proxy added by us in front of the datasource returned by the creator
+    private static Object realInstance(final Object o) {
+        if (o == null || !(o instanceof DataSource)) {
+            return o;
+        }
+
+        if (Proxy.isProxyClass(o.getClass())) {
+            final InvocationHandler handler = Proxy.getInvocationHandler(o);
+            if (handler instanceof LoggingSqlDataSource) {
+                return ((LoggingSqlDataSource) handler).getDelegate();
+            }
+        }
+
+        return o;
     }
 }

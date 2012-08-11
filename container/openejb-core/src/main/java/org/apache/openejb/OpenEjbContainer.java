@@ -43,6 +43,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.Exceptions;
 import org.apache.openejb.util.Join;
+import org.apache.openejb.util.JuliLogStreamFactory;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.OptionsLog;
@@ -64,6 +65,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.validation.ValidationException;
 import java.io.File;
+import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -76,6 +78,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.logging.LogManager;
 
 import static org.apache.openejb.cdi.ScopeHelper.startContexts;
 import static org.apache.openejb.cdi.ScopeHelper.stopContexts;
@@ -87,6 +90,23 @@ public class OpenEjbContainer extends EJBContainer {
 
     static {
         Core.warmup();
+
+        // if tomee embedded was ran we'll lost log otherwise
+        final String logManger = System.getProperty("java.util.logging.manager");
+        if (logManger != null) {
+            try {
+                Thread.currentThread().getContextClassLoader().loadClass(logManger);
+            } catch (Exception ignored) {
+                final Field field;
+                try {
+                    field = LogManager.class.getDeclaredField("manager");
+                    field.setAccessible(true);
+                    field.set(null, new JuliLogStreamFactory.OpenEJBLogManager());
+                } catch (Exception ignore) {
+                    // ignore
+                }
+            }
+        }
     }
 
     public static final String OPENEJB_EMBEDDED_REMOTABLE = "openejb.embedded.remotable";
