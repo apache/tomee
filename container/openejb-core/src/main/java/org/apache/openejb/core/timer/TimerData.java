@@ -45,6 +45,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 public abstract class TimerData implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     public static final String OPEN_EJB_TIMEOUT_TRIGGER_NAME_PREFIX = "OPEN_EJB_TIMEOUT_TRIGGER_";
     public static final String OPEN_EJB_TIMEOUT_TRIGGER_GROUP_NAME = "OPEN_EJB_TIMEOUT_TRIGGER_GROUP";

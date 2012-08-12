@@ -60,6 +60,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
+    private static final long serialVersionUID = 1L;
     private static final Logger log = Logger.getInstance(LogCategory.TIMER, "org.apache.openejb.util.resources");
 
     public static final String QUARTZ_THREAD_POOL_ADAPTER = "openejb.org.quartz.threadPool.class";

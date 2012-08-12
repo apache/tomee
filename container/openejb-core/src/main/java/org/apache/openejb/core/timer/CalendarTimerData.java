@@ -28,6 +28,7 @@ import java.lang.reflect.Method;
  * @version $Rev$ $Date$
  */
 public class CalendarTimerData extends TimerData {
+    private static final long serialVersionUID = 1L;
 
     private final ScheduleExpression scheduleExpression;
 
