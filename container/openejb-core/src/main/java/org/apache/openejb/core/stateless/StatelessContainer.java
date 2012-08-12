@@ -106,10 +106,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
         instanceManager.deploy(beanContext);
 
         // do it after the instance deployment
-        EjbTimerService timerService = beanContext.getEjbTimerService();
-        if (timerService != null) {
-            timerService.start();
-        }
+
     }
     
     public void stop(BeanContext beanContext) throws OpenEJBException {
