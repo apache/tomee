@@ -110,16 +110,16 @@ public class SingletonContainer implements RpcContainer {
             deploymentRegistry.put(id, beanContext);
             beanContext.setContainer(this);
         }
+
+        EjbTimerService timerService = beanContext.getEjbTimerService();
+        if (timerService != null) {
+            timerService.start();
+        }
     }
 
     @Override
     public void start(BeanContext info) throws OpenEJBException {
         instanceManager.start(info);
-
-        EjbTimerService timerService = info.getEjbTimerService();
-        if (timerService != null) {
-            timerService.start();
-        }
     }
 
     @Override

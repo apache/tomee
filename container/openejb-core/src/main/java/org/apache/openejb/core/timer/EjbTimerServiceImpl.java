@@ -34,6 +34,7 @@ import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
+import org.quartz.TriggerKey;
 import org.quartz.impl.StdSchedulerFactory;
 import org.quartz.impl.triggers.AbstractTrigger;
 import org.quartz.simpl.SimpleThreadPool;
@@ -270,8 +271,9 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
             }
         }
 
+        AbstractTrigger<?> atrigger;
         if (trigger instanceof AbstractTrigger) { // is the case
-            AbstractTrigger<?> atrigger = (AbstractTrigger<?>) trigger;
+            atrigger = (AbstractTrigger<?>) trigger;
             atrigger.setJobName(OPENEJB_TIMEOUT_JOB_NAME);
             atrigger.setJobGroup(OPENEJB_TIMEOUT_JOB_GROUP_NAME);
         } else {
@@ -283,7 +285,9 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         triggerDataMap.put(EjbTimeoutJob.TIMER_DATA, timerData);
 
         try {
-            scheduler.scheduleJob(trigger);
+            if (!scheduler.checkExists(new TriggerKey(atrigger.getName(), atrigger.getGroup()))) {
+                scheduler.scheduleJob(trigger);
+            }
         } catch (Exception e) {
             //TODO Any other actions we could do ?
             log.warning("Could not schedule timer " + timerData, e);
