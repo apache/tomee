@@ -30,6 +30,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -39,7 +40,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
-public class DatabaseTimerStore implements TimerStore {
+public class DatabaseTimerStore implements TimerStore, Serializable {
+    private static final long serialVersionUID = 1L;
     private static final Logger log = Logger.getInstance(LogCategory.TIMER, "org.apache.openejb.util.resources");
 
     private static final String createSequenceSQL = "create sequence timertasks_seq";

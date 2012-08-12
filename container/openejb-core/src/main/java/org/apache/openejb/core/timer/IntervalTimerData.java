@@ -30,6 +30,7 @@ import java.util.Date;
  * @version $Rev$ $Date$
  */
 public class IntervalTimerData extends TimerData {
+    private static final long serialVersionUID = 1L;
 
     private final long intervalDuration;
 

@@ -45,6 +45,7 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 public class MemoryTimerStore implements TimerStore {
+    private static final long serialVersionUID = 1L;
     private static final Logger log = Logger.getInstance(LogCategory.TIMER, "org.apache.openejb.util.resources");
     private final Map<Long,TimerData> taskStore = new ConcurrentHashMap<Long,TimerData>();
     private final Map<Transaction,TimerDataView> tasksByTransaction = new ConcurrentHashMap<Transaction, TimerDataView>();

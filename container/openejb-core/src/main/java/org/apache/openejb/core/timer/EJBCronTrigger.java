@@ -40,6 +40,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class EJBCronTrigger extends CronTriggerImpl {
+    private static final long serialVersionUID = 1L;
     
     private static final Logger log = Logger.getInstance(LogCategory.TIMER, EJBCronTrigger.class);
 
