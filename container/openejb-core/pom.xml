@@ -279,6 +279,7 @@
           <forkMode>pertest</forkMode>
           <testNGArtifactName>none:none</testNGArtifactName>
           <argLine> <!-- "-javaagent:${basedir}/target/openejb-javaagent-${project.version}.jar" -->
+            -Dopenejb.classloader.forced-skip=org.apache.openejb.jee.,org.apache.openejb.api. -Dopenejb.classloader.forced-load=org.apache.openejb
             -enableassertions
             -Dopenejb.descriptors.output.folder=./dump/
             -Xmx256m -Djava.endorsed.dirs=${openejb.build.endorsed}
