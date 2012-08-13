@@ -53,7 +53,7 @@ public class Log4jLogStreamFactory implements LogStreamFactory {
             // The fall back here is that if log4j.configuration system property is set, then that configuration file will be used.
             e.printStackTrace();
         }
-        System.setProperty("openwebbeans.logging.factory", Log4jLoggerFactory.class.getName());
+        System.setProperty("openwebbeans.logging.factory", "org.apache.openejb.cdi.logging.Log4jLoggerFactory");
     }
 
     private void configureInternal() throws IOException {
