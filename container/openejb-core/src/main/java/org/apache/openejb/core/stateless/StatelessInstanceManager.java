@@ -47,7 +47,9 @@ import org.apache.openejb.SystemException;
 import org.apache.openejb.core.InstanceContext;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.interceptor.Interceptor;
 import org.apache.openejb.core.interceptor.InterceptorData;
+import org.apache.openejb.core.interceptor.InterceptorInstance;
 import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.core.timer.TimerServiceWrapper;
 import org.apache.openejb.loader.Options;
@@ -328,15 +330,23 @@ public class StatelessInstanceManager {
         jmxName.set("J2EEApplication", null);
         jmxName.set("EJBModule", beanContext.getModuleID());
         jmxName.set("StatelessSessionBean", beanContext.getEjbName());
-        jmxName.set("j2eeType", "");
         jmxName.set("name", beanContext.getEjbName());
 
         final MBeanServer server = LocalMBeanServer.get();
 
         // Create stats interceptor
         if (StatsInterceptor.isStatsActivated()) {
-            StatsInterceptor stats = new StatsInterceptor(beanContext.getBeanClass());
-            beanContext.addFirstSystemInterceptor(stats);
+
+            StatsInterceptor stats = null;
+            for (InterceptorInstance interceptor : beanContext.getUserAndSystemInterceptors()) {
+                if (interceptor.getInterceptor() instanceof StatsInterceptor) {
+                    stats = (StatsInterceptor) interceptor.getInterceptor();
+                }
+            }
+            if (stats == null) { // normally useless
+                stats = new StatsInterceptor(beanContext.getBeanClass());
+                beanContext.addFirstSystemInterceptor(stats);
+            }
 
             // register the invocation stats interceptor
             try {

@@ -32,6 +32,7 @@ import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 import javax.interceptor.AroundInvoke;
+import javax.management.ObjectName;
 
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.BeanContext;
@@ -49,6 +50,9 @@ import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.core.webservices.AddressingSupport;
 import org.apache.openejb.core.webservices.NoAddressingSupport;
+import org.apache.openejb.monitoring.LocalMBeanServer;
+import org.apache.openejb.monitoring.ManagedMBean;
+import org.apache.openejb.monitoring.StatsInterceptor;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.Pool;
@@ -99,6 +103,12 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
         synchronized (this) {
             deploymentRegistry.put(id, beanContext);
             beanContext.setContainer(this);
+        }
+
+        // add it before starting the timer (@PostCostruct)
+        if (StatsInterceptor.isStatsActivated()) {
+            StatsInterceptor stats = new StatsInterceptor(beanContext.getBeanClass());
+            beanContext.addFirstSystemInterceptor(stats);
         }
 
         // do it after the instance deployment
