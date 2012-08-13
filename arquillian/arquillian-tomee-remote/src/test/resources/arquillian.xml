@@ -28,6 +28,9 @@
                <property name="version">${tomee.version}</property>
                <property name="dir">target/apache-tomee-remote</property>
                <property name="appWorkingDir">target/arquillian-test-working-dir</property>
+               <property name="properties">
+                  openejb.classloader.forced-load=org.apache.openejb
+               </property>
            </configuration>
        </container>
 </arquillian>
