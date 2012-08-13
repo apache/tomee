@@ -27,6 +27,8 @@ import java.util.logging.Logger;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+
+import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.Deployer;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Info;
@@ -221,7 +223,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
             try {
                 appInfo = deployer().deploy(file.getAbsolutePath());
                 moduleIds.put(archive.getName(), new DeployedApp(appInfo.path, file.getParentFile()));
-            } catch (RuntimeException re) { // clean up in undeploy needs it
+            } catch (OpenEJBException re) { // clean up in undeploy needs it
                 moduleIds.put(archive.getName(), new DeployedApp(file.getPath(), file.getParentFile()));
                 throw re;
             }
@@ -274,10 +276,12 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
             e.printStackTrace();
             throw new DeploymentException("Unable to undeploy " + archive.getName(), e);
         } finally {
+            LOGGER.info("cleaning " + deployed.file.getAbsolutePath());
             Files.delete(deployed.file); // "i" folder
 
             final File pathFile = new File(deployed.path);
             if (!deployed.path.equals(deployed.file.getAbsolutePath()) && pathFile.exists()) {
+                LOGGER.info("cleaning " + pathFile);
                 Files.delete(pathFile);
             }
         }

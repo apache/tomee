@@ -19,6 +19,7 @@ package org.apache.openejb.core;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.classloader.URLClassLoaderFirst;
 import org.apache.xbean.asm.ClassReader;
 import org.apache.xbean.asm.Opcodes;
 import org.apache.xbean.asm.commons.EmptyVisitor;
@@ -47,39 +48,11 @@ import java.util.Set;
  */
 // Note: this class is a fork from OpenJPA
 public class TempClassLoader extends URLClassLoader {
-    // log4j is optional, moreover it will likely not work if not skipped and loaded by a temp classloader
-    private static final boolean SKIP_LOG4J = "true".equals(SystemInstance.get().getProperty("openejb.skip.log4j", "true")) && skipLib("org.apache.log4j.Logger");
-    // commons-net is only in tomee-plus
-    private static final boolean SKIP_COMMONS_NET = skipLib("org.apache.commons.net.pop3.POP3Client");
-
-    // - will not match anything, that's the desired default behavior
-    private static final Collection<String> FORCED_SKIP = list("openejb.classloader.forced-skip");
-    private static final Collection<String> FORCED_LOAD = list("openejb.classloader.forced-load");
-
-    private static Collection<String> list(final String key) {
-        final String s = SystemInstance.get().getOptions().get(key, (String) null);
-        if (s == null || s.trim().isEmpty()) {
-            return null; // no need to iterate over something empty
-        }
-        return Arrays.asList(s.trim().split(","));
-    }
-
-    private static boolean skipLib(final String includedClass) {
-        try {
-            TempClassLoader.class.getClassLoader().loadClass(includedClass);
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
-    }
-
     private Set<Skip> skip;
 
     public TempClassLoader(ClassLoader parent) {
         super(new URL[0], parent);
-
-        Options options = SystemInstance.get().getOptions();
-        skip = options.getAll("openejb.tempclassloader.skip", Skip.NONE);
+        skip = SystemInstance.get().getOptions().getAll("openejb.tempclassloader.skip", Skip.NONE);
     }
 
     /*
@@ -179,75 +152,7 @@ public class TempClassLoader extends URLClassLoader {
         if (skip.contains(Skip.ALL)) {
             return true;
         }
-        if (FORCED_SKIP != null) {
-            for (String prefix : FORCED_SKIP) {
-                if (name.startsWith(prefix)) {
-                    return true;
-                }
-            }
-        }
-        if (FORCED_LOAD != null) {
-            for (String prefix : FORCED_LOAD) {
-                if (name.startsWith(prefix)) {
-                    return false;
-                }
-            }
-        }
-
-        if (name.startsWith("java.")) return true;
-        if (name.startsWith("javax.")) return true;
-        if (name.startsWith("sun.")) return true;
-
-        if (name.startsWith("javax.faces.")) return false;
-        if (name.startsWith("javax.servlet.jsp.jstl")) return false;
-        if (name.equals("org.apache.commons.logging.impl.LogFactoryImpl")) return false;
-        if (name.startsWith("org.apache.webbeans.jsf")) return false;
-
-        // don't stop on commons package since we don't bring all commons
-        if (name.startsWith("org.apache.commons.beanutils")) return true;
-        if (name.startsWith("org.apache.commons.cli")) return true;
-        if (name.startsWith("org.apache.commons.codec")) return true;
-        if (name.startsWith("org.apache.commons.collections")) return true;
-        if (name.startsWith("org.apache.commons.dbcp")) return true;
-        if (name.startsWith("org.apache.commons.digester")) return true;
-        if (name.startsWith("org.apache.commons.jocl")) return true;
-        if (name.startsWith("org.apache.commons.lang")) return true;
-        if (name.startsWith("org.apache.commons.lang3")) return true;
-        if (name.startsWith("org.apache.commons.logging")) return true;
-        if (SKIP_COMMONS_NET && name.startsWith("org.apache.commons.net")) return true;
-        if (name.startsWith("org.apache.commons.pool")) return true;
-
-        if (name.startsWith("org.apache.openjpa.")) return true;
-        if (name.startsWith("org.apache.derby.")) return true;
-        if (name.startsWith("org.apache.xbean.")) return true;
-        if (name.startsWith("org.eclipse.jdt.")) return true;
-        if (name.startsWith("org.apache.openejb.jee.")) return true;
-        if (name.startsWith("org.apache.openejb.api.")) return true;
-        if (name.startsWith("javassist")) return true;
-        if (name.startsWith("org.codehaus.swizzle")) return true;
-        if (name.startsWith("org.w3c.dom")) return true;
-        if (name.startsWith("org.apache.geronimo.")) return true;
-        if (name.startsWith("com.sun.org.apache.")) return true;
-        if (name.startsWith("org.apache.coyote")) return true;
-        if (name.startsWith("org.quartz")) return true;
-        if (name.startsWith("serp.bytecode")) return true;
-        if (name.startsWith("org.apache.webbeans.")) return true;
-
-        if (name.startsWith("org.slf4j")) return true;
-
-        if (SKIP_LOG4J && name.startsWith("org.apache.log4j")) return true;
-
-//        if (name.startsWith("org.apache.myfaces.")) return true;
-//        if (name.startsWith("org.apache.taglibs.")) return true;
-//        if (name.startsWith("org.apache.tomcat.")) return true;
-//        if (name.startsWith("org.apache.el.")) return true;
-//        if (name.startsWith("org.apache.jasper.")) return true;
-//        if (name.startsWith("org.apache.catalina")) return true;
-//        if (name.startsWith("org.apache.jsp")) return true;
-//        if (name.startsWith("org.apache.naming")) return true;
-//        if (name.startsWith("org.apache.openejb")) return true;
-
-        return false;
+        return URLClassLoaderFirst.shouldSkip(name);
     }
 
     public static enum Skip {

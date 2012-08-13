@@ -1404,7 +1404,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     public ClassLoader createAppClassLoader(AppInfo appInfo) throws OpenEJBException, IOException {
-        List<URL> jars = new ArrayList<URL>();
+        Set<URL> jars = new HashSet<URL>();
         for (EjbJarInfo info : appInfo.ejbJars) {
             if (info.path != null) jars.add(toUrl(info.path));
         }
@@ -1425,19 +1425,25 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             try {
                 final File jpaIntegrationFile = JarLocation.jarLocation(MakeTxLookup.class);
                 final URL url = jpaIntegrationFile.toURI().toURL();
-                jars.add(url);
+                if (!jars.contains(url)) { // could have been done before (webapp enrichment or manually for instance)
+                    jars.add(url);
+                }
             } catch (RuntimeException re) {
                 logger.warning("can't find open-jpa-integration jar");
             }
         }
 
         // Create the class loader
-        ParentClassLoaderFinder parentFinder = SystemInstance.get().getComponent(ParentClassLoaderFinder.class);
+        final ParentClassLoaderFinder parentFinder = SystemInstance.get().getComponent(ParentClassLoaderFinder.class);
         ClassLoader parent = OpenEJB.class.getClassLoader();
         if (parentFinder != null) {
             parent = parentFinder.getParentClassLoader(parent);
         }
-        return ClassLoaderUtil.createClassLoader(appInfo.path, jars.toArray(new URL[jars.size()]), parent);
+
+        if (appInfo.delegateFirst) {
+            return ClassLoaderUtil.createClassLoader(appInfo.path, jars.toArray(new URL[jars.size()]), parent);
+        }
+        return ClassLoaderUtil.createClassLoaderFirst(appInfo.path, jars.toArray(new URL[jars.size()]), parent);
     }
 
     public void createExternalContext(JndiContextInfo contextInfo) throws OpenEJBException {

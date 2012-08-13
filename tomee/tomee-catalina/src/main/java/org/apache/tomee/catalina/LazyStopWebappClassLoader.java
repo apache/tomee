@@ -18,8 +18,8 @@ package org.apache.tomee.catalina;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
-import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.loader.WebappClassLoader;
+import org.apache.openejb.classloader.WebAppEnricher;
 import org.apache.openejb.loader.SystemInstance;
 
 import java.io.File;
@@ -33,7 +33,7 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
     private volatile Context relatedContext;
 
     public LazyStopWebappClassLoader() {
-        setDelegate(!SystemInstance.get().getOptions().get(TOMEE_WEBAPP_FIRST, true));
+        setDelegate(isDelegate());
     }
 
     public LazyStopWebappClassLoader(final ClassLoader parent) {
@@ -75,7 +75,7 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
     @Override
     public void start() throws LifecycleException {
         super.start(); // do it first otherwise we can't use this as classloader
-        for (URL url : TomEEClassLoaderHelper.tomEEWebappIntegrationLibraries(this))  {
+        for (URL url : SystemInstance.get().getComponent(WebAppEnricher.class).enrichment(this))  {
             addURL(url);
         }
     }
@@ -85,10 +85,14 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
         if (!super.validateJarFile(file)) {
             return false;
         }
-        return TomEEClassLoaderHelper.validateJarFile(file);
+        return TomEEClassLoaderEnricher.validateJarFile(file);
     }
 
     public void setRelatedContext(final Context standardContext) {
         relatedContext = standardContext;
+    }
+
+    public static boolean isDelegate() {
+        return !SystemInstance.get().getOptions().get(TOMEE_WEBAPP_FIRST, true);
     }
 }

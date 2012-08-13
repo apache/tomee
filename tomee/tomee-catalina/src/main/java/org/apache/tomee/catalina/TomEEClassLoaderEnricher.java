@@ -17,6 +17,7 @@
 package org.apache.tomee.catalina;
 
 import org.apache.openejb.OpenEJB;
+import org.apache.openejb.classloader.WebAppEnricher;
 import org.apache.openejb.loader.JarLocation;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
@@ -33,12 +34,8 @@ import java.util.Collection;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-public final class TomEEClassLoaderHelper {
-    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, TomEEClassLoaderHelper.class);
-
-    private TomEEClassLoaderHelper() {
-        // no-op
-    }
+public final class TomEEClassLoaderEnricher implements WebAppEnricher {
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, TomEEClassLoaderEnricher.class);
 
     /**
      * Enrichement part
@@ -85,11 +82,12 @@ public final class TomEEClassLoaderHelper {
         PREFIXES_TO_ADD = prefixes.toArray(new String[prefixes.size()]);
     }
 
-    public static URL[] tomEEWebappIntegrationLibraries(final ClassLoader appCl) { // TODO: refactor with an interface: isActive(), addJar(List<URL>)
+    @Override
+    public URL[] enrichment(final ClassLoader appCl) {
         final Collection<URL> urls = new ArrayList<URL>();
 
         // from class
-        final ClassLoader cl = TomEEClassLoaderHelper.class.getClassLoader(); // reference classloader = standardclassloader
+        final ClassLoader cl = TomEEClassLoaderEnricher.class.getClassLoader(); // reference classloader = standardclassloader
         if (cl != appCl && appCl != null) {
             for (String name : JAR_TO_ADD_CLASS_HELPERS) {
                 try {
@@ -161,6 +159,8 @@ public final class TomEEClassLoaderHelper {
 
     /**
      * Validation part
+     * Keep it up to date with URLClassLoaderFirst in openejb-core
+     * (here we use class, in the other one packages)
      */
     private static final String[] FORBIDDEN_CLASSES = new String[]{
             "javax.persistence.Entity", // JPA
@@ -169,13 +169,14 @@ public final class TomEEClassLoaderHelper {
             "javax.validation.Validation", // BVal
             "javax.jms.Queue", // JMS
             "javax.enterprise.context.ApplicationScoped", // CDI
+            "javax.inject.Inject", // CDI
             "javax.ws.rs.Path", // JAXRS
             "javax.ejb.EJB", // EJB
             "javax.annotation.PostConstruct" // javax.annotation
     };
 
     public static boolean validateJarFile(final File file) throws IOException {
-        final ClassLoader parent = TomEEClassLoaderHelper.class.getClassLoader();
+        final ClassLoader parent = TomEEClassLoaderEnricher.class.getClassLoader();
 
         JarFile jarFile = null;
 

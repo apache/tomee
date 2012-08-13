@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.config;
 
+import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.AppInfo;
@@ -104,6 +105,7 @@ class AppInfoBuilder {
         appInfo.appId = appModule.getModuleId();
         appInfo.path = appModule.getJarLocation();
         appInfo.standaloneModule = appModule.isStandaloneModule();
+        appInfo.delegateFirst = appModule.isDelegateFirst();
         appInfo.watchedResources.addAll(appModule.getWatchedResources());
         appInfo.mbeans.addAll(appModule.getAdditionalLibMbeans());
         appInfo.jaxRsProviders.addAll(appModule.getJaxRsProviders());
@@ -572,7 +574,7 @@ class AppInfoBuilder {
                 // Handle Properties
                 info.properties.putAll(persistenceUnit.getProperties());
 
-                PersistenceProviderProperties.apply(info);
+                PersistenceProviderProperties.apply(appModule.getClassLoader(), info);
 
 
                 // Persistence Unit Root Url
@@ -618,7 +620,11 @@ class AppInfoBuilder {
             nonJtaDataSourceEnv = SystemInstance.get().getOptions().get(NON_JTADATASOURCE_PROP, (String) null);
         }
 
-        private static void apply(PersistenceUnitInfo info) {
+        /**
+         * @param classLoader the temp classloader, take care to only use getResource here
+         * @param info the persistence unit info
+         */
+        private static void apply(final ClassLoader classLoader, final PersistenceUnitInfo info) {
             overrideFromSystemProp(info);
 
             // The result is that OpenEJB-specific configuration can be avoided when
@@ -653,26 +659,21 @@ class AppInfoBuilder {
                 }
 
                 if (className == null || className.startsWith("org.hibernate.transaction") || className.startsWith("org.hibernate.service.jta.platform")){
-                    final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+                    // hibernate 4
                     String key = HIBERNATE_JTA_PLATFORM;
                     String value = MakeTxLookup.HIBERNATE_NEW_FACTORY;
-                    try {
-                        // hibernate 4
-                        classLoader.loadClass("org.hibernate.service.jta.platform.spi.JtaPlatform");
-                    } catch (Exception e) {
+
+                    if (classLoader.getResource(ClassLoaderUtil.resourceName("org.hibernate.service.jta.platform.spi.JtaPlatform")) == null) {
                         // hibernate 3. In the worse case it is set with a hibernate 4 and hibernate will convert it.
                         key = HIBERNATE_TRANSACTION_MANAGER_LOOKUP_CLASS;
                         value = MakeTxLookup.HIBERNATE_FACTORY;
                     }
 
-                    try {
-                        classLoader.loadClass(value);
+                    if (classLoader.getResource(ClassLoaderUtil.resourceName(value)) != null) {
                         info.properties.setProperty(key, value);
                         logger.debug("Adjusting PersistenceUnit(name=" + info.name + ") property to " + key + "=" + value);
-                    } catch (Exception e) {
+                    } else {
                         logger.debug("can't adjust hibernate jta bridge to openejb one");
-                    } catch (NoClassDefFoundError error) {
-                        // ignored
                     }
 
                 }
@@ -707,14 +708,11 @@ class AppInfoBuilder {
                 String className = info.properties.getProperty(lookupProperty);
 
                 if (className == null || className.startsWith("org.eclipse.persistence.transaction")){
-                    try {
-                        Thread.currentThread().getContextClassLoader().loadClass(openejbLookupClass);
+                    if (classLoader.getResource(ClassLoaderUtil.resourceName(openejbLookupClass)) != null) {
                         info.properties.setProperty(lookupProperty, openejbLookupClass);
                         logger.debug("Adjusting PersistenceUnit(name="+info.name+") property to "+lookupProperty+"="+openejbLookupClass);
-                    } catch (Exception e) {
+                    } else {
                         logger.debug("Can't adjusting PersistenceUnit(name="+info.name+") property to " + lookupProperty + "=" + openejbLookupClass + ", using default one");
-                    } catch (NoClassDefFoundError error) {
-                        // ignored
                     }
                 }
 

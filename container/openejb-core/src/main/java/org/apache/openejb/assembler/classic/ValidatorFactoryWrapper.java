@@ -16,11 +16,10 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import org.apache.openejb.bval.ValidatorUtil;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.validation.ConstraintValidatorFactory;
 import javax.validation.MessageInterpolator;
 import javax.validation.TraversableResolver;
@@ -33,12 +32,7 @@ public class ValidatorFactoryWrapper implements ValidatorFactory, Serializable {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, ValidatorFactoryWrapper.class);
 
     private static ValidatorFactory factory() {
-        try {
-            return (ValidatorFactory) new InitialContext().lookup("java:comp/ValidatorFactory");
-        } catch (NamingException e) {
-            logger.warning("validator factory not found for current module ");
-            return null;
-        }
+        return ValidatorUtil.validatorFactory();
     }
 
     @Override

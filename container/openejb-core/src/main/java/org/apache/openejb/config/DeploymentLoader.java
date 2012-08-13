@@ -20,6 +20,7 @@ import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.api.LocalClient;
 import org.apache.openejb.api.RemoteClient;
+import org.apache.openejb.classloader.WebAppEnricher;
 import org.apache.openejb.config.event.BeforeDeploymentEvent;
 import org.apache.openejb.core.EmptyResourcesClassLoader;
 import org.apache.openejb.core.ParentClassLoaderFinder;
@@ -180,12 +181,12 @@ public class DeploymentLoader implements DeploymentFilterable {
                 final File file = toFile(baseUrl);
 
                 // Standalone Web Module
-
-                final AppModule appModule = new AppModule(getOpenEJBClassLoader(), file.getAbsolutePath(), new Application(), true);
-                addWebModule(appModule, baseUrl, getOpenEJBClassLoader(), getContextRoot(), getModuleName());
+                final WebModule webModule = createWebModule(file.getAbsolutePath(), baseUrl, getOpenEJBClassLoader(), getContextRoot(), getModuleName());
+                // important to use the webapp classloader here otherwise each time we'll check something using loadclass it will fail (=== empty classloader)
+                final AppModule appModule = new AppModule(webModule.getClassLoader(), file.getAbsolutePath(), new Application(), true);
+                addWebModule(webModule, appModule);
 
                 final Map<String, Object> otherDD = new HashMap<String, Object>();
-                final WebModule webModule = appModule.getWebModules().iterator().next();
                 final List<URL> urls = webModule.getScannableUrls();
                 final ResourceFinder finder = new ResourceFinder("", urls.toArray(new URL[urls.size()]));
                 otherDD.putAll(getDescriptors(finder, false));
@@ -208,6 +209,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 addWebPersistenceDD("persistence-fragment.xml", otherDD, appModule);
                 addPersistenceUnits(appModule, baseUrl);
                 appModule.setStandloneWebModule();
+                appModule.setDelegateFirst(false);
                 return appModule;
             }
 
@@ -619,10 +621,19 @@ public class DeploymentLoader implements DeploymentFilterable {
         return ejbModule;
     }
 
-    public void addWebModule(final AppModule appModule, final URL warUrl, final ClassLoader parentClassLoader, final String contextRoot, final String moduleName) throws OpenEJBException {
-        // create and add the WebModule
+    private WebModule createWebModule(final String jar, final URL warUrl, final ClassLoader parentClassLoader, final String contextRoot, final String moduleName) throws OpenEJBException {
         final String warPath = URLs.toFilePath(warUrl);
-        final WebModule webModule = createWebModule(appModule.getJarLocation(), warPath, parentClassLoader, contextRoot, moduleName);
+        final WebModule webModule = createWebModule(jar, warPath, parentClassLoader, contextRoot, moduleName);
+        return webModule;
+    }
+
+    public void addWebModule(final AppModule appModule, final URL warUrl, final ClassLoader parentClassLoader, final String contextRoot, final String moduleName) throws OpenEJBException {
+        final WebModule webModule = createWebModule(appModule.getJarLocation(), URLs.toFilePath(warUrl), parentClassLoader, contextRoot, moduleName);
+        addWebModule(webModule, appModule);
+    }
+
+    public void addWebModule(final WebModule webModule, final AppModule appModule) throws OpenEJBException {
+        // create and add the WebModule
         appModule.getWebModules().add(webModule);
         if (appModule.isStandaloneModule()) {
             appModule.getAdditionalLibraries().addAll(webModule.getUrls());
@@ -881,7 +892,7 @@ public class DeploymentLoader implements DeploymentFilterable {
     }
 
     public static URL[] getWebappUrls(final File warFile) {
-        final List<URL> webClassPath = new ArrayList<URL>();
+        final Set<URL> webClassPath = new HashSet<URL>();
         final File webInfDir = new File(warFile, "WEB-INF");
         try {
             webClassPath.add(new File(webInfDir, "classes").toURI().toURL());
@@ -903,6 +914,11 @@ public class DeploymentLoader implements DeploymentFilterable {
                     }
                 }
             }
+        }
+
+        final WebAppEnricher enricher = SystemInstance.get().getComponent(WebAppEnricher.class);
+        if (enricher != null) {
+            webClassPath.addAll(Arrays.asList(enricher.enrichment(null)));
         }
 
         // create the class loader
