@@ -20,6 +20,7 @@ import org.apache.openejb.loader.SystemInstance;
 
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -32,15 +33,25 @@ public class URLClassLoaderFirst extends URLClassLoader {
     private static final boolean SKIP_COMMONS_NET = skipLib("org.apache.commons.net.pop3.POP3Client");
 
     // - will not match anything, that's the desired default behavior
-    private static final Collection<String> FORCED_SKIP = list("openejb.classloader.forced-skip");
-    private static final Collection<String> FORCED_LOAD = list("openejb.classloader.forced-load");
+    private static final Collection<String> FORCED_SKIP = new ArrayList<String>();
+    private static final Collection<String> FORCED_LOAD = new ArrayList<String>();
 
-    private static Collection<String> list(final String key) {
+    static {
+        reloadConfig();
+    }
+
+    public static void reloadConfig() {
+        list(FORCED_SKIP, "openejb.classloader.forced-skip");
+        list(FORCED_LOAD, "openejb.classloader.forced-load");
+    }
+
+    private static void list(final Collection<String> list, final String key) {
+        list.clear();
+
         final String s = SystemInstance.get().getOptions().get(key, (String) null);
-        if (s == null || s.trim().isEmpty()) {
-            return null; // no need to iterate over something empty
+        if (s != null && !s.trim().isEmpty()) {
+            list.addAll(Arrays.asList(s.trim().split(",")));
         }
-        return Arrays.asList(s.trim().split(","));
     }
 
     private static boolean skipLib(final String includedClass) {
@@ -101,10 +112,13 @@ public class URLClassLoaderFirst extends URLClassLoader {
         if (!ok) {
             clazz = loadInternal(name, resolve);
             if (clazz != null) {
+                if (ok) {
+                    System.out.println(">>> " + name);
+                }
                 return clazz;
             }
         }
-
+        System.out.println("CNF>>> " + name);
         throw new ClassNotFoundException(name);
     }
 
