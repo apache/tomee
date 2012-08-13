@@ -58,6 +58,7 @@ public class AppModule implements DeploymentModule {
     private final Map<String,Object> altDDs = new HashMap<String,Object>();
     private final Set<String> watchedResources = new TreeSet<String>();
     private final boolean standaloneModule;
+    private boolean delegateFirst = true;
     private final Set<String> additionalLibMbeans = new TreeSet<String>();
     private Collection<String> jaxRsProviders = new TreeSet<String>();
 
@@ -91,6 +92,14 @@ public class AppModule implements DeploymentModule {
         } else {
             throw new IllegalArgumentException("Unknown module type: " + type.getName());
         }
+    }
+
+    public boolean isDelegateFirst() {
+        return delegateFirst;
+    }
+
+    public void setDelegateFirst(final boolean delegateFirst) {
+        this.delegateFirst = delegateFirst;
     }
 
     public Properties getProperties() {

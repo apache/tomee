@@ -29,6 +29,7 @@ public class AppInfo extends InfoObject {
     public String appId;
     public String path;
     public boolean autoDeploy = true;
+    public boolean delegateFirst = true;
     public boolean standaloneModule;
     public final List<ClientInfo> clients = new ArrayList<ClientInfo>();
     public final List<EjbJarInfo> ejbJars = new ArrayList<EjbJarInfo>();

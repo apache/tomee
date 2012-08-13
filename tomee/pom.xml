@@ -44,7 +44,7 @@
     <module>tomee-jaxrs</module>
     <module>tomee-jaxrs-webapp</module>
     <module>apache-tomee</module>
-    <module>apache-tomcat</module>
+<!--    <module>apache-tomcat</module>-->
   </modules>
 
   <repositories>

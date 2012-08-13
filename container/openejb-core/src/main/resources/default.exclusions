@@ -103,6 +103,8 @@ kahadb-
 leveldb
 log4j-
 logkit-
+lucene-analyzers-
+lucene-core-
 maven-
 mbean-annotation-api-
 mimepull-

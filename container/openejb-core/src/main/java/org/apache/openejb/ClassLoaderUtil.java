@@ -20,6 +20,7 @@ import org.apache.openejb.core.TempClassLoader;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.UrlCache;
+import org.apache.openejb.util.classloader.URLClassLoaderFirst;
 
 import java.beans.Introspector;
 import java.io.File;
@@ -67,10 +68,15 @@ public class ClassLoaderUtil {
     	return localUrlCache.getUrlKeyCached(appId, file);
     }
 
-    public static URLClassLoader createClassLoader(String appId, URL[] urls, ClassLoader parent) {
-        urls = localUrlCache.cacheUrls(appId, urls);
-        URLClassLoader classLoader = new URLClassLoader(urls, parent);
+    public static URLClassLoader createClassLoaderFirst(String appId, URL[] urls, ClassLoader parent) {
+        return cacheClassLoader(appId, new URLClassLoaderFirst(localUrlCache.cacheUrls(appId, urls), parent));
+    }
 
+    public static URLClassLoader createClassLoader(String appId, URL[] urls, ClassLoader parent) {
+       return cacheClassLoader(appId, new URLClassLoader(localUrlCache.cacheUrls(appId, urls), parent));
+    }
+
+    private static URLClassLoader cacheClassLoader(final String appId, final URLClassLoader classLoader) {
         List<ClassLoader> classLoaders = classLoadersByApp.get(appId);
         if (classLoaders == null) {
             classLoaders = new ArrayList<ClassLoader>(2);
@@ -463,5 +469,9 @@ public class ClassLoaderUtil {
         } else {
             return classLoader.getClass().getSimpleName() + "@" + System.identityHashCode(classLoader);
         }
+    }
+
+    public static String resourceName(final String s) {
+        return s.replace(".", "/") + ".class";
     }
 }

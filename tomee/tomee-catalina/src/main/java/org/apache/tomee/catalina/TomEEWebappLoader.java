@@ -17,9 +17,6 @@
 
 package org.apache.tomee.catalina;
 
-import java.net.URLClassLoader;
-import javax.management.ObjectName;
-import javax.servlet.ServletContext;
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
 import org.apache.catalina.LifecycleException;
@@ -30,21 +27,28 @@ import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.mbeans.MBeanUtils;
 import org.apache.naming.resources.DirContextURLStreamHandler;
 import org.apache.openejb.ClassLoaderUtil;
+import org.apache.openejb.classloader.WebAppEnricher;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.ArrayEnumeration;
 import org.apache.openejb.util.URLs;
 import org.apache.openejb.util.classloader.ClassLoaderComparator;
 import org.apache.tomcat.util.ExceptionUtils;
+import org.apache.tomcat.util.modeler.Registry;
 
+import javax.management.ObjectName;
+import javax.servlet.ServletContext;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import org.apache.tomcat.util.modeler.Registry;
+import java.util.Set;
 
 public class TomEEWebappLoader extends WebappLoader {
     private ClassLoader appClassLoader;
@@ -143,7 +147,7 @@ public class TomEEWebappLoader extends WebappLoader {
                 }
 
                 try {
-                    if (!TomEEClassLoaderHelper.validateJarFile(file)) {
+                    if (!TomEEClassLoaderEnricher.validateJarFile(file)) {
                         skipped.add(i);
                     }
                 } catch (IOException e) {
@@ -151,19 +155,17 @@ public class TomEEWebappLoader extends WebappLoader {
                 }
             }
 
-            final URL[] additional = TomEEClassLoaderHelper.tomEEWebappIntegrationLibraries(cl);
-            final URL[] urls = new URL[urLs.length + additional.length - skipped.size()];
+            final URL[] additional = SystemInstance.get().getComponent(WebAppEnricher.class).enrichment(cl);
+            final Set<URL> returnedUrls = new HashSet<URL>();
             for (int i = 0; i < urLs.length; i++) {
                 if (!skipped.contains(i)) {
-                    urls[i] = urLs[i];
-                } else {
-                    i--;
+                    returnedUrls.add(urLs[i]);
                 }
             }
             for (int i = 0; i < additional.length; i++) {
-                urls[urLs.length + i] = additional[i];
+                returnedUrls.add(additional[i]);
             }
-            return urls;
+            return returnedUrls.toArray(new URL[returnedUrls.size()]);
         }
 
         /**
@@ -203,7 +205,7 @@ public class TomEEWebappLoader extends WebappLoader {
                 }
 
                 if (jarUrl != null) {
-                    final URL cachedFile = ClassLoaderUtil.getUrlKeyCached(appPath, file(jarUrl));
+                    final URL cachedFile = ClassLoaderUtil.getUrlKeyCached(appPath, URLs.toFile(jarUrl));
                     if (cachedFile != null) {
                         URL resource = null;
                         try {
@@ -239,14 +241,10 @@ public class TomEEWebappLoader extends WebappLoader {
             }
         }
 
-        private static File file(URL jarUrl) {
-            return URLs.toFile(jarUrl);
-        }
-
         // act as app classloader, don't change it without testing against a BeanManagerHolder implementation
 
         @Override
-        public boolean equals(Object other) {
+        public boolean equals(final Object other) {
             return other == this || app.equals(other); // to be consistent with hashcode() used by maps used in BbeanManagerHolders
         }
 

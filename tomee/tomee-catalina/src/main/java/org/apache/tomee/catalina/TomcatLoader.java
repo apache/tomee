@@ -30,6 +30,7 @@ import org.apache.catalina.startup.Catalina;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
+import org.apache.openejb.classloader.WebAppEnricher;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.openejb.config.sys.Tomee;
@@ -51,7 +52,6 @@ import org.apache.openejb.util.OptionsLog;
 import org.apache.tomcat.util.scan.Constants;
 import org.apache.tomee.installer.Installer;
 import org.apache.tomee.installer.Paths;
-import org.apache.tomee.jdbc.TomEEDataSourceCreator;
 import org.apache.tomee.loader.TomcatHelper;
 
 import java.io.File;
@@ -215,6 +215,9 @@ public class TomcatLoader implements Loader {
 
         // for compatibility purpose, no more used normally by our trunk
         SystemInstance.get().setComponent(WebDeploymentListeners.class, new WebDeploymentListeners());
+
+        // tomee webapp enricher
+        SystemInstance.get().setComponent(WebAppEnricher.class, new TomEEClassLoaderEnricher());
 
         if (optionalService(properties, "org.apache.tomee.webservices.TomeeJaxRsService")) {
             // in embedded mode we use regex, in tomcat we use tomcat servlet mapping
