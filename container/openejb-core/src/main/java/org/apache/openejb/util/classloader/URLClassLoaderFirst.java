@@ -227,26 +227,27 @@ public class URLClassLoaderFirst extends URLClassLoader {
 
         // myfaces-impl
         // a lot of other jar uses org.apache.myfaces as base package
-        if (SKIP_MYFACES) {
-            if (name.startsWith("org.apache.myfaces.shared")) return true;
-            if (name.startsWith("org.apache.myfaces.ee6.")) return true;
-            if (name.startsWith("org.apache.myfaces.lifecycle.")) return true;
-            if (name.startsWith("org.apache.myfaces.renderkit.")) return true;
-            if (name.startsWith("org.apache.myfaces.context.")) return true;
-            if (name.startsWith("org.apache.myfaces.logging.")) return true;
-            if (name.startsWith("org.apache.myfaces.component.")) return true;
-            if (name.startsWith("org.apache.myfaces.application.")) return true;
-            if (name.startsWith("org.apache.myfaces.config.")) return true;
-            if (name.startsWith("org.apache.myfaces.event.")) return true;
-            if (name.startsWith("org.apache.myfaces.taglib.")) return true;
-            if (name.startsWith("org.apache.myfaces.resource.")) return true;
-            if (name.startsWith("org.apache.myfaces.el.")) return true;
-            if (name.startsWith("org.apache.myfaces.webapp.")) return true;
-            if (name.startsWith("org.apache.myfaces.spi.")) return true;
-            if (name.startsWith("org.apache.myfaces.convert.")) return true;
-            if (name.startsWith("org.apache.myfaces.debug.")) return true;
-            if (name.startsWith("org.apache.myfaces.util.")) return true;
-            if (name.startsWith("org.apache.myfaces.view.")) return true;
+        if (SKIP_MYFACES && name.startsWith("org.apache.myfaces.")) {
+            final String sub = name.substring("org.apache.myfaces.".length());
+            if (sub.startsWith("shared")) return true;
+            if (sub.startsWith("ee6.")) return true;
+            if (sub.startsWith("lifecycle.")) return true;
+            if (sub.startsWith("renderkit.")) return true;
+            if (sub.startsWith("context.")) return true;
+            if (sub.startsWith("logging.")) return true;
+            if (sub.startsWith("component.")) return true;
+            if (sub.startsWith("application.")) return true;
+            if (sub.startsWith("config.")) return true;
+            if (sub.startsWith("event.")) return true;
+            if (sub.startsWith("taglib.")) return true;
+            if (sub.startsWith("resource.")) return true;
+            if (sub.startsWith("el.")) return true;
+            if (sub.startsWith("webapp.")) return true;
+            if (sub.startsWith("spi.")) return true;
+            if (sub.startsWith("convert.")) return true;
+            if (sub.startsWith("debug.")) return true;
+            if (sub.startsWith("util.")) return true;
+            if (sub.startsWith("view.")) return true;
         }
 
         if (name.startsWith("org.apache.catalina")) return true;
