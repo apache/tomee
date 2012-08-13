@@ -80,13 +80,11 @@
                   <artifactId>log4j</artifactId>
                   <version>1.2.16</version>
                 </artifactItem>
-                <!-- in javaee-api for now
-                <!artifactItem>
+                <artifactItem>
                    <groupId>org.apache.myfaces.core</groupId>
                    <artifactId>myfaces-api</artifactId>
-                   <version>2.0.3</version>
+                   <version>2.1.8</version>
                 </artifactItem>
-                -->
                 <artifactItem>
                   <groupId>taglibs</groupId>
                   <artifactId>standard</artifactId>
