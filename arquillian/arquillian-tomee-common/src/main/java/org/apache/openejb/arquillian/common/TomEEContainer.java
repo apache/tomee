@@ -262,18 +262,19 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
     }
 
     public void undeploy(Archive<?> archive) throws DeploymentException {
+        final DeployedApp deployed = moduleIds.get(archive.getName());
         try {
-            final DeployedApp deployed = moduleIds.get(archive.getName());
             deployer().undeploy(deployed.path);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new DeploymentException("Unable to undeploy", e);
+        } finally {
             Files.delete(deployed.file); // "i" folder
 
             final File pathFile = new File(deployed.path);
             if (!deployed.path.equals(deployed.file.getAbsolutePath()) && pathFile.exists()) {
                 Files.delete(pathFile);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new DeploymentException("Unable to undeploy", e);
         }
     }
 
