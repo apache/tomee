@@ -24,6 +24,7 @@ import org.apache.openejb.core.InstanceContext;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.interceptor.InterceptorData;
+import org.apache.openejb.core.interceptor.InterceptorInstance;
 import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.core.timer.TimerServiceWrapper;
 import org.apache.openejb.core.transaction.EjbTransactionUtil;
@@ -291,23 +292,30 @@ public class SingletonInstanceManager {
 
         // Create stats interceptor
         if (StatsInterceptor.isStatsActivated()) {
-            StatsInterceptor stats = new StatsInterceptor(beanContext.getBeanClass());
-            beanContext.addFirstSystemInterceptor(stats);
 
-            MBeanServer server = LocalMBeanServer.get();
+            StatsInterceptor stats = null;
+            for (InterceptorInstance interceptor : beanContext.getUserAndSystemInterceptors()) {
+                if (interceptor.getInterceptor() instanceof StatsInterceptor) {
+                    stats = (StatsInterceptor) interceptor.getInterceptor();
+                }
+            }
+            if (stats == null) { // normally useless
+                stats = new StatsInterceptor(beanContext.getBeanClass());
+                beanContext.addFirstSystemInterceptor(stats);
+            }
 
             ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
             jmxName.set("J2EEServer", "openejb");
             jmxName.set("J2EEApplication", null);
             jmxName.set("EJBModule", beanContext.getModuleID());
             jmxName.set("SingletonSessionBean", beanContext.getEjbName());
-            jmxName.set("j2eeType", "");
             jmxName.set("name", beanContext.getEjbName());
+            jmxName.set("j2eeType", "Invocations");
 
             // register the invocation stats interceptor
             try {
-                ObjectName objectName = jmxName.set("j2eeType", "Invocations").build();
-                server.registerMBean(new ManagedMBean(stats), objectName);
+                ObjectName objectName = jmxName.build();
+                LocalMBeanServer.get().registerMBean(new ManagedMBean(stats), objectName);
                 data.add(objectName);
             } catch (Exception e) {
                 logger.error("Unable to register MBean ", e);
