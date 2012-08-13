@@ -64,6 +64,7 @@ public class DiscoveryHostTest {
             final StandaloneServer server = new StandaloneServer(home, home);
             server.killOnExit();
             server.ignoreOut();
+            server.getJvmOpts().add("-Dopenejb.classloader.forced-load=org.apache.openejb");
             server.getProperties().put("name", name);
             server.getProperties().put("openejb.extract.configuration", "false");
 

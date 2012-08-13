@@ -90,6 +90,7 @@ public class RoundRobinConnectionStrategyTest {
 
             root = new StandaloneServer(home, home);
             root.killOnExit();
+            root.getJvmOpts().add("-Dopenejb.classloader.forced-load=org.apache.openejb");
             root.ignoreOut();
             root.setProperty("name", name);
             root.setProperty("openejb.extract.configuration", "false");
@@ -117,6 +118,7 @@ public class RoundRobinConnectionStrategyTest {
             final StandaloneServer server = new StandaloneServer(home, home);
             server.killOnExit();
             server.ignoreOut();
+            server.getJvmOpts().add("-Dopenejb.classloader.forced-load=org.apache.openejb");
             server.setProperty("name", name);
             server.setProperty("openejb.extract.configuration", "false");
 
