@@ -32,7 +32,7 @@ public class Slf4jLogStreamFactory implements LogStreamFactory {
     public Slf4jLogStreamFactory() {
         System.setProperty("openjpa.Log", "slf4j");
         System.setProperty("org.apache.cxf.Logger", "org.apache.cxf.common.logging.Slf4jLogger");
-        System.setProperty("openwebbeans.logging.factory", Slf4jLoggerFactory.class.getName());
+        System.setProperty("openwebbeans.logging.factory", "org.apache.openejb.cdi.logging.Slf4jLoggerFactory");
 
         // no need to configure internals:
         // by default we are using JUL

@@ -60,7 +60,7 @@ public class JuliLogStreamFactory implements LogStreamFactory {
             // no-op: openjpa is not at the classpath so don't trigger it loading with our logger
         }
 
-        System.setProperty("openwebbeans.logging.factory", JULLoggerFactory.class.getName());
+        System.setProperty("openwebbeans.logging.factory", "org.apache.webbeans.logger.JULLoggerFactory");
     }
 
     public static boolean isNotIDE() {
