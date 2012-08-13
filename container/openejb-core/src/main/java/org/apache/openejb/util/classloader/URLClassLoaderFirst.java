@@ -112,13 +112,10 @@ public class URLClassLoaderFirst extends URLClassLoader {
         if (!ok) {
             clazz = loadInternal(name, resolve);
             if (clazz != null) {
-                if (ok) {
-                    System.out.println(">>> " + name);
-                }
                 return clazz;
             }
         }
-        System.out.println("CNF>>> " + name);
+
         throw new ClassNotFoundException(name);
     }
 
