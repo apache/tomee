@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -42,7 +41,7 @@ public class OpenEJBContextConfig extends ContextConfig {
 
     private static Logger logger = Logger.getInstance(LogCategory.OPENEJB, OpenEJBContextConfig.class);
 
-    private static final String MYFACES_STARTUP_SERVLET_CONTEXT_LISTENER = "org.apache.myfaces.webapp.StartupServletContextListener";
+    // private static final String MYFACES_STARTUP_SERVLET_CONTEXT_LISTENER = "org.apache.myfaces.webapp.StartupServletContextListener";
     private static final String MYFACES_TOMEEM_CONTAINER_INITIALIZER = "org.apache.tomee.myfaces.TomEEMyFacesContainerInitializer";
     private static final String TOMEE_MYFACES_CONTEXT_LISTENER = "org.apache.tomee.myfaces.TomEEMyFacesContextListener";
 
@@ -91,9 +90,11 @@ public class OpenEJBContextConfig extends ContextConfig {
             final Class<?> myfacesInitializer = Class.forName(MYFACES_TOMEEM_CONTAINER_INITIALIZER, true, context.getLoader().getClassLoader());
             final ServletContainerInitializer instance = (ServletContainerInitializer) myfacesInitializer.newInstance();
             context.addServletContainerInitializer(instance, getJsfClasses(context));
+            /* done through myfaces tld automatically
             if (!Arrays.asList(context.findApplicationListeners()).contains(MYFACES_STARTUP_SERVLET_CONTEXT_LISTENER)) {
                 context.addApplicationListener(MYFACES_STARTUP_SERVLET_CONTEXT_LISTENER);
             }
+            */
             context.addApplicationListener(TOMEE_MYFACES_CONTEXT_LISTENER); // cleanup listener
         } catch (Exception ignored) {
             // no-op
