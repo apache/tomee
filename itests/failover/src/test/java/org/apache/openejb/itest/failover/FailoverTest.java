@@ -72,6 +72,7 @@ public class FailoverTest {
         server.setProperty("name", name);
         server.setProperty("TestName", this.getClass().getName());
         server.setProperty("openejb.extract.configuration", "false");
+        server.getJvmOpts().add("-Dopenejb.classloader.forced-load=org.apache.openejb");
 
         final StandaloneServer.ServerService multipoint = server.getServerService("multipoint");
         multipoint.setBind("localhost");

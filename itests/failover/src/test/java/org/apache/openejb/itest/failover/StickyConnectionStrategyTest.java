@@ -88,6 +88,7 @@ public class StickyConnectionStrategyTest {
             root1 = new StandaloneServer(home, home);
             root1.killOnExit();
             root1.ignoreOut();
+            root1.getJvmOpts().add("-Dopenejb.classloader.forced-load=org.apache.openejb");
             root1.setProperty("name", name);
             root1.setProperty("openejb.extract.configuration", "false");
 
@@ -112,6 +113,7 @@ public class StickyConnectionStrategyTest {
             final StandaloneServer server = new StandaloneServer(home, home);
             server.killOnExit();
             server.ignoreOut();
+            server.getJvmOpts().add("-Dopenejb.classloader.forced-load=org.apache.openejb");
             server.setProperty("name", name);
             server.setProperty("openejb.extract.configuration", "false");
 

@@ -84,6 +84,7 @@ public class RandomConnectionStrategyTest {
 
             root = new StandaloneServer(home, home);
             root.killOnExit();
+            root.getJvmOpts().add("-Dopenejb.classloader.forced-load=org.apache.openejb");
             root.ignoreOut();
             root.setProperty("name", name);
             root.setProperty("openejb.extract.configuration", "false");
@@ -113,6 +114,7 @@ public class RandomConnectionStrategyTest {
             server.ignoreOut();
             server.setProperty("name", name);
             server.setProperty("openejb.extract.configuration", "false");
+            server.getJvmOpts().add("-Dopenejb.classloader.forced-load=org.apache.openejb");
 
             IO.copy(app, Files.path(home, "apps", "itest.jar"));
             IO.copy(IO.read("<openejb><Deployments dir=\"apps/\"/></openejb>"), Files.path(home, "conf", "openejb.xml"));
