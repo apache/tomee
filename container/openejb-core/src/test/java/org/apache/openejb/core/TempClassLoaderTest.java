@@ -17,10 +17,29 @@
  */
 package org.apache.openejb.core;
 
-import junit.framework.TestCase;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.classloader.URLClassLoaderFirst;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
-public class TempClassLoaderTest extends TestCase {
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
+
+public class TempClassLoaderTest {
+    @BeforeClass
+    public static void init() {
+        SystemInstance.get().setProperty("openejb.classloader.forced-load", "org.apache.openejb.core");
+        URLClassLoaderFirst.reloadConfig();
+    }
+
+    @AfterClass
+    public static void reset() {
+        SystemInstance.get().getProperties().remove("openejb.classloader.forced-load");
+        URLClassLoaderFirst.reloadConfig();
+    }
+
+    @Test
     public void test() throws Exception {
         ClassLoader tempCL = new TempClassLoader(getClass().getClassLoader());
         Class<?> clazz;
@@ -42,7 +61,8 @@ public class TempClassLoaderTest extends TestCase {
         assertSame(tempCL, clazz.getClassLoader());
     }
 
-    public void _testHackEnabled() throws Exception {
+    @Test
+    public void testHackEnabled() throws Exception {
         TempClassLoader tempCL = new TempClassLoader(getClass().getClassLoader());
         tempCL.skip(TempClassLoader.Skip.ANNOTATIONS);
         
