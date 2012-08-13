@@ -176,87 +176,103 @@ public class URLClassLoaderFirst extends URLClassLoader {
 
         // can be provided in the webapp
         if (name.startsWith("javax.servlet.jsp.jstl")) return false;
-        if (name.equals("org.apache.commons.logging.impl.LogFactoryImpl")) return false;
 
-        // the followin block is classes which enrich webapp classloader
-        if (name.startsWith("org.apache.webbeans.jsf")) return false;
-        if (name.startsWith("org.apache.openejb.hibernate.")) return false;
-        if (name.startsWith("org.apache.openejb.jpa.integration.")) return false;
-        if (name.startsWith("org.apache.openejb.toplink.")) return false;
-        if (name.startsWith("org.apache.openejb.eclipselink.")) return false;
-        if (name.startsWith("org.apache.tomee.mojarra.")) return false;
+        if (name.startsWith("org.")) {
+            final String org = name.substring("org.".length());
 
-        // don't stop on commons package since we don't bring all commons
-        if (name.startsWith("org.apache.commons.beanutils")) return true;
-        if (name.startsWith("org.apache.commons.cli")) return true;
-        if (name.startsWith("org.apache.commons.codec")) return true;
-        if (name.startsWith("org.apache.commons.collections")) return true;
-        if (name.startsWith("org.apache.commons.dbcp")) return true;
-        if (name.startsWith("org.apache.commons.digester")) return true;
-        if (name.startsWith("org.apache.commons.jocl")) return true;
-        if (name.startsWith("org.apache.commons.lang")) return true;
-        if (name.startsWith("org.apache.commons.logging")) return true;
-        if (name.startsWith("org.apache.commons.pool")) return true;
-        if (name.startsWith("org.apache.commons.net") && SKIP_COMMONS_NET) return true;
+            if (org.startsWith("apache.")) {
+                final String apache = org.substring("apache.".length());
 
-        // was:
-        /*
-        if (name.startsWith("org.apache.openejb.jee.")) return true;
-        if (name.startsWith("org.apache.openejb.api.")) return true;
-        */
-        if (name.startsWith("org.apache.openejb")) return true;
+                if (apache.equals("commons.logging.impl.LogFactoryImpl")) return false;
 
-        if (name.startsWith("org.apache.bval.")) return true;
-        if (name.startsWith("org.apache.openjpa.")) return true;
-        if (name.startsWith("org.apache.derby.")) return true;
-        if (name.startsWith("org.apache.xbean.")) return true;
-        if (name.startsWith("javassist")) return true;
-        if (name.startsWith("org.codehaus.swizzle")) return true;
-        if (name.startsWith("org.w3c.dom")) return true;
-        if (name.startsWith("org.apache.geronimo.")) return true;
-        if (name.startsWith("com.sun.org.apache.")) return true;
-        if (name.startsWith("org.apache.coyote")) return true;
-        if (name.startsWith("org.quartz")) return true;
-        if (name.startsWith("serp.bytecode")) return true;
-        if (name.startsWith("org.apache.webbeans.")) return true;
-        if (name.startsWith("org.eclipse.jdt.")) return true;
+                // the followin block is classes which enrich webapp classloader
+                if (apache.startsWith("webbeans.jsf")) return false;
+                if (apache.startsWith("tomee.mojarra.")) return false;
 
-        if (name.startsWith("org.slf4j")) return true;
+                if (apache.startsWith("openejb.")) {
+                    final String openejb = apache.substring("openejb.".length());
 
-        if (name.startsWith("org.apache.log4j") && SKIP_LOG4J) return true;
+                    // webapp enrichment classes
+                    if (openejb.startsWith("hibernate.")) return false;
+                    if (openejb.startsWith("jpa.integration.")) return false;
+                    if (openejb.startsWith("toplink.")) return false;
+                    if (openejb.startsWith("eclipselink.")) return false;
 
-        // myfaces-impl
-        // a lot of other jar uses org.apache.myfaces as base package
-        if (SKIP_MYFACES && name.startsWith("org.apache.myfaces.")) {
-            final String sub = name.substring("org.apache.myfaces.".length());
-            if (sub.startsWith("shared")) return true;
-            if (sub.startsWith("ee6.")) return true;
-            if (sub.startsWith("lifecycle.")) return true;
-            if (sub.startsWith("renderkit.")) return true;
-            if (sub.startsWith("context.")) return true;
-            if (sub.startsWith("logging.")) return true;
-            if (sub.startsWith("component.")) return true;
-            if (sub.startsWith("application.")) return true;
-            if (sub.startsWith("config.")) return true;
-            if (sub.startsWith("event.")) return true;
-            if (sub.startsWith("taglib.")) return true;
-            if (sub.startsWith("resource.")) return true;
-            if (sub.startsWith("el.")) return true;
-            if (sub.startsWith("webapp.")) return true;
-            if (sub.startsWith("spi.")) return true;
-            if (sub.startsWith("convert.")) return true;
-            if (sub.startsWith("debug.")) return true;
-            if (sub.startsWith("util.")) return true;
-            if (sub.startsWith("view.")) return true;
+                    // else skip
+                    return true;
+                }
+
+                // here we find server classes
+                if (apache.startsWith("bval.")) return true;
+                if (apache.startsWith("openjpa.")) return true;
+                if (apache.startsWith("derby.")) return true;
+                if (apache.startsWith("xbean.")) return true;
+                if (apache.startsWith("geronimo.")) return true;
+                if (apache.startsWith("coyote")) return true;
+                if (apache.startsWith("webbeans.")) return true;
+                if (apache.startsWith("log4j") && SKIP_LOG4J) return true;
+                if (apache.startsWith("catalina")) return true;
+                if (apache.startsWith("jasper.")) return true;
+                if (apache.startsWith("tomcat.")) return true;
+                if (apache.startsWith("el.")) return true;
+                if (apache.startsWith("jsp")) return true;
+                if (apache.startsWith("naming")) return true;
+                if (apache.startsWith("taglibs.")) return true;
+
+                if (apache.startsWith("commons.")) {
+                    final String commons = apache.substring("commons.".length());
+
+                    // don't stop on commons package since we don't bring all commons
+                    if (commons.startsWith("beanutils")) return true;
+                    if (commons.startsWith("cli")) return true;
+                    if (commons.startsWith("codec")) return true;
+                    if (commons.startsWith("collections")) return true;
+                    if (commons.startsWith("dbcp")) return true;
+                    if (commons.startsWith("digester")) return true;
+                    if (commons.startsWith("jocl")) return true;
+                    if (commons.startsWith("lang")) return true;
+                    if (commons.startsWith("logging")) return true;
+                    if (commons.startsWith("pool")) return true;
+                    if (commons.startsWith("net") && SKIP_COMMONS_NET) return true;
+                }
+
+                if (SKIP_MYFACES && apache.startsWith("myfaces.")) {
+                    // we bring only myfaces-impl (+api but that's javax)
+                    final String myfaces = name.substring("myfaces.".length());
+                    if (myfaces.startsWith("shared")) return true;
+                    if (myfaces.startsWith("ee6.")) return true;
+                    if (myfaces.startsWith("lifecycle.")) return true;
+                    if (myfaces.startsWith("renderkit.")) return true;
+                    if (myfaces.startsWith("context.")) return true;
+                    if (myfaces.startsWith("logging.")) return true;
+                    if (myfaces.startsWith("component.")) return true;
+                    if (myfaces.startsWith("application.")) return true;
+                    if (myfaces.startsWith("config.")) return true;
+                    if (myfaces.startsWith("event.")) return true;
+                    if (myfaces.startsWith("taglib.")) return true;
+                    if (myfaces.startsWith("resource.")) return true;
+                    if (myfaces.startsWith("el.")) return true;
+                    if (myfaces.startsWith("webapp.")) return true;
+                    if (myfaces.startsWith("spi.")) return true;
+                    if (myfaces.startsWith("convert.")) return true;
+                    if (myfaces.startsWith("debug.")) return true;
+                    if (myfaces.startsWith("util.")) return true;
+                    if (myfaces.startsWith("view.")) return true;
+                }
+            }
+
+            // other org packages
+            if (org.startsWith("codehaus.swizzle")) return true;
+            if (org.startsWith("w3c.dom")) return true;
+            if (org.startsWith("quartz")) return true;
+            if (org.startsWith("eclipse.jdt.")) return true;
+            if (org.startsWith("slf4j")) return true;
         }
 
-        if (name.startsWith("org.apache.catalina")) return true;
-        if (name.startsWith("org.apache.jasper.")) return true;
-        if (name.startsWith("org.apache.tomcat.")) return true;
-        if (name.startsWith("org.apache.el.")) return true;
-        if (name.startsWith("org.apache.jsp")) return true;
-        if (name.startsWith("org.apache.naming")) return true;
-        if (name.startsWith("org.apache.taglibs.")) return true;
+        // other packages
+        if (name.startsWith("com.sun.org.apache.")) return true;
+        if (name.startsWith("javassist")) return true;
+        if (name.startsWith("serp.bytecode")) return true;
 
         return false;
     }
