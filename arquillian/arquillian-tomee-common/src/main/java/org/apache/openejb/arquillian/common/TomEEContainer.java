@@ -209,20 +209,25 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
 
             archive.as(ZipExporter.class).exportTo(file, true);
 
-            final AppInfo appInfo = deployer().deploy(file.getAbsolutePath());
-
-            if (options.get("tomee.appinfo.output", false)) {
-                Info.marshal(appInfo);
-            }
-
-            moduleIds.put(archive.getName(), new DeployedApp(appInfo.path, file));
-
             final String fileName = file.getName();
-            if (fileName.endsWith(".war")) {
+            if (fileName.endsWith(".war")) { // ??
                 File extracted = new File(file.getParentFile(), fileName.substring(0, fileName.length() - 4));
                 if (extracted.exists()) {
                     extracted.deleteOnExit();
                 }
+            }
+
+            final AppInfo appInfo;
+            try {
+                appInfo = deployer().deploy(file.getAbsolutePath());
+                moduleIds.put(archive.getName(), new DeployedApp(appInfo.path, file.getParentFile()));
+            } catch (RuntimeException re) { // clean up in undeploy needs it
+                moduleIds.put(archive.getName(), new DeployedApp(file.getPath(), file.getParentFile()));
+                throw re;
+            }
+
+            if (options.get("tomee.appinfo.output", false)) {
+                Info.marshal(appInfo);
             }
 
             HTTPContext httpContext = new HTTPContext(configuration.getHost(), configuration.getHttpPort());
@@ -267,7 +272,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
             deployer().undeploy(deployed.path);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new DeploymentException("Unable to undeploy", e);
+            throw new DeploymentException("Unable to undeploy " + archive.getName(), e);
         } finally {
             Files.delete(deployed.file); // "i" folder
 
