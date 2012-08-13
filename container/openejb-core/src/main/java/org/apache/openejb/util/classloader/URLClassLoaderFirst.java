@@ -170,11 +170,11 @@ public class URLClassLoaderFirst extends URLClassLoader {
         }
 
         if (name.startsWith("java.")) return true;
+        if (name.startsWith("javax.faces.")) return false;
         if (name.startsWith("javax.")) return true;
         if (name.startsWith("sun.")) return true;
 
         // can be provided in the webapp
-        if (name.startsWith("javax.faces.")) return false;
         if (name.startsWith("javax.servlet.jsp.jstl")) return false;
         if (name.equals("org.apache.commons.logging.impl.LogFactoryImpl")) return false;
 
@@ -224,7 +224,30 @@ public class URLClassLoaderFirst extends URLClassLoader {
         if (name.startsWith("org.slf4j")) return true;
 
         if (name.startsWith("org.apache.log4j") && SKIP_LOG4J) return true;
-        if (name.startsWith("org.apache.myfaces.") && SKIP_MYFACES) return true;
+
+        // myfaces-impl
+        // a lot of other jar uses org.apache.myfaces as base package
+        if (SKIP_MYFACES) {
+            if (name.startsWith("org.apache.myfaces.shared")) return true;
+            if (name.startsWith("org.apache.myfaces.ee6.")) return true;
+            if (name.startsWith("org.apache.myfaces.lifecycle.")) return true;
+            if (name.startsWith("org.apache.myfaces.renderkit.")) return true;
+            if (name.startsWith("org.apache.myfaces.context.")) return true;
+            if (name.startsWith("org.apache.myfaces.logging.")) return true;
+            if (name.startsWith("org.apache.myfaces.component.")) return true;
+            if (name.startsWith("org.apache.myfaces.application.")) return true;
+            if (name.startsWith("org.apache.myfaces.config.")) return true;
+            if (name.startsWith("org.apache.myfaces.event.")) return true;
+            if (name.startsWith("org.apache.myfaces.taglib.")) return true;
+            if (name.startsWith("org.apache.myfaces.resource.")) return true;
+            if (name.startsWith("org.apache.myfaces.el.")) return true;
+            if (name.startsWith("org.apache.myfaces.webapp.")) return true;
+            if (name.startsWith("org.apache.myfaces.spi.")) return true;
+            if (name.startsWith("org.apache.myfaces.convert.")) return true;
+            if (name.startsWith("org.apache.myfaces.debug.")) return true;
+            if (name.startsWith("org.apache.myfaces.util.")) return true;
+            if (name.startsWith("org.apache.myfaces.view.")) return true;
+        }
 
         if (name.startsWith("org.apache.catalina")) return true;
         if (name.startsWith("org.apache.jasper.")) return true;
