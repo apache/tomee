@@ -43,11 +43,11 @@ public class EntityManagerFactoryCallable implements Callable<EntityManagerFacto
         final ClassLoader old = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(appClassLoader);
         try {
-            Class clazz = appClassLoader.loadClass(persistenceProviderClassName);
+            final Class<?> clazz = appClassLoader.loadClass(persistenceProviderClassName);
             PersistenceProvider persistenceProvider = (PersistenceProvider) clazz.newInstance();
 
             // Create entity manager factories with the validator factory
-            Map<String, Object> properties = new HashMap<String, Object>();
+            final Map<String, Object> properties = new HashMap<String, Object>();
             properties.put("javax.persistence.validator.ValidatorFactory", new ValidatorFactoryWrapper());
             EntityManagerFactory emf = persistenceProvider.createContainerEntityManagerFactory(unitInfo, properties);
 

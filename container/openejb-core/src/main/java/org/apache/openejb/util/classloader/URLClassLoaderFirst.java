@@ -82,16 +82,18 @@ public class URLClassLoaderFirst extends URLClassLoader {
         }
 
         // JSE classes?
-        try {
-            clazz = system.loadClass(name);
-            if (clazz != null) {
-                if (resolve) {
-                    resolveClass(clazz);
+        if (canBeLoadedFromSystem(name)) {
+            try {
+                clazz = system.loadClass(name);
+                if (clazz != null) {
+                    if (resolve) {
+                        resolveClass(clazz);
+                    }
+                    return clazz;
                 }
-                return clazz;
+            } catch (ClassNotFoundException ignored) {
+                // no-op
             }
-        } catch (ClassNotFoundException ignored) {
-            // no-op
         }
 
         // look for it in this classloader
@@ -153,7 +155,17 @@ public class URLClassLoaderFirst extends URLClassLoader {
         return null;
     }
 
-    public static boolean shouldSkip(final String name) { // TODO: enhance it
+    // we skip webapp enrichment jars since we want to load them from the webapp or lib
+    // Note: this is not a real limitation since it is first fail it will be done later
+    private static boolean canBeLoadedFromSystem(final String name) {
+        if (name.startsWith("org.apache.openejb.")) {
+            return !isWebAppEnrichment(name.substring("org.apache.openejb.".length()));
+        }
+        return true;
+    }
+
+    // making all these call inline if far more costly than factorizing packages
+    public static boolean shouldSkip(final String name) {
         if (FORCED_SKIP != null) {
             for (String prefix : FORCED_SKIP) {
                 if (name.startsWith(prefix)) {
@@ -206,17 +218,8 @@ public class URLClassLoaderFirst extends URLClassLoader {
                 if (apache.startsWith("naming")) return true;
                 if (apache.startsWith("taglibs.")) return true;
 
-                if (apache.startsWith("openejb.")) {
-                    final String openejb = apache.substring("openejb.".length());
-
-                    // webapp enrichment classes
-                    if (openejb.startsWith("hibernate.")) return false;
-                    if (openejb.startsWith("jpa.integration.")) return false;
-                    if (openejb.startsWith("toplink.")) return false;
-                    if (openejb.startsWith("eclipselink.")) return false;
-
-                    // else skip
-                    return true;
+                if (apache.startsWith("openejb.")) { // skip all excepted webapp enrichment artifacts
+                    return !isWebAppEnrichment(apache.substring("openejb.".length()));
                 }
 
                 if (apache.startsWith("commons.")) {
@@ -234,6 +237,8 @@ public class URLClassLoaderFirst extends URLClassLoader {
                     if (commons.startsWith("logging")) return true;
                     if (commons.startsWith("pool")) return true;
                     if (commons.startsWith("net") && SKIP_COMMONS_NET) return true;
+
+                    return false;
                 }
 
                 if (SKIP_MYFACES && apache.startsWith("myfaces.")) {
@@ -265,12 +270,14 @@ public class URLClassLoaderFirst extends URLClassLoader {
                         if (renderkit.startsWith("html.Html")) return true;
                         char firstNextletter = renderkit.charAt(0);
                         if (Character.isUpperCase(firstNextletter)) return true;
+                        return false;
                     }
 
                     if (myfaces.startsWith("taglib.")) {
                         final String taglib = myfaces.substring("taglib.".length());
                         if (taglib.startsWith("html.Html")) return true;
                         if (taglib.startsWith("core.")) return true;
+                        return false;
                     }
 
                     if (myfaces.startsWith("webapp.")) {
@@ -282,8 +289,13 @@ public class URLClassLoaderFirst extends URLClassLoader {
                         if (webapp.equals("MyFacesServlet")) return true;
                         if (webapp.equals("ManagedBeanDestroyerListener")) return true;
                         if (webapp.equals("WebConfigParamsLogger")) return true;
+                        return false;
                     }
+
+                    return false;
                 }
+
+                return false;
             }
 
             // other org packages
@@ -292,6 +304,8 @@ public class URLClassLoaderFirst extends URLClassLoader {
             if (org.startsWith("quartz")) return true;
             if (org.startsWith("eclipse.jdt.")) return true;
             if (org.startsWith("slf4j")) return true;
+
+            return false;
         }
 
         // other packages
@@ -300,5 +314,11 @@ public class URLClassLoaderFirst extends URLClassLoader {
         if (name.startsWith("serp.bytecode")) return true;
 
         return false;
+    }
+
+    // in org.apache.openejb.
+    private static boolean isWebAppEnrichment(final String openejb) {
+        return openejb.startsWith("hibernate.") || openejb.startsWith("jpa.integration.")
+                || openejb.startsWith("toplink.") || openejb.startsWith("eclipselink.");
     }
 }
