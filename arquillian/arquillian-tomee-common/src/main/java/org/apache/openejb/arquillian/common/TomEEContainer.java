@@ -222,7 +222,11 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
             final AppInfo appInfo;
             try {
                 appInfo = deployer().deploy(file.getAbsolutePath());
-                moduleIds.put(archive.getName(), new DeployedApp(appInfo.path, file.getParentFile()));
+                if (appInfo != null) {
+                    moduleIds.put(archive.getName(), new DeployedApp(appInfo.path, file.getParentFile()));
+                } else {
+                    throw new OpenEJBException("can't get appInfo");
+                }
             } catch (OpenEJBException re) { // clean up in undeploy needs it
                 moduleIds.put(archive.getName(), new DeployedApp(file.getPath(), file.getParentFile()));
                 throw re;

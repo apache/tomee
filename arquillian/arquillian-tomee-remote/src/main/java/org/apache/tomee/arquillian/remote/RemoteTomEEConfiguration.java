@@ -32,6 +32,7 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
     private String type = "zip";
     private boolean removeUnusedWebapps = true;
     private int ajpPort = 8009;
+    private String conf;
 
     public String getGroupId() {
         return groupId;
@@ -97,4 +98,11 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
         this.ajpPort = ajpPort;
     }
 
+    public String getConf() {
+        return conf;
+    }
+
+    public void setConf(String conf) {
+        this.conf = conf;
+    }
 }

@@ -17,13 +17,14 @@
 package org.apache.openejb.arquillian.common;
 
 import java.lang.reflect.Method;
-import org.apache.openejb.loader.ProvisioningUtil;
-import org.apache.openejb.loader.SystemInstance;
+
+import org.apache.openejb.loader.*;
 import org.apache.openejb.util.JarExtractor;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -263,6 +264,39 @@ public class Setup {
             } catch (IOException ignored) {
                 // no-op
             }
+        }
+    }
+
+    public static void synchronizeConf(final File openejbHome, final File confSrc) {
+        final File conf = new File(openejbHome, "conf");
+        final Collection<File> files = org.apache.openejb.loader.Files.collect(confSrc, TrueFileFilter.instance());
+        files.remove(confSrc);
+        for (File f : files) {
+            try {
+                org.apache.openejb.loader.IO.copy(f, new File(conf, relativize(f, confSrc)));
+            } catch (Exception e) {
+                LOGGER.log(Level.WARNING, "ignoring copy of " + f.getAbsolutePath(), e);
+            }
+        }
+    }
+
+    private static String relativize(final File f, final File base) {
+        return f.getAbsolutePath().substring(base.getAbsolutePath().length() + 1);
+    }
+
+    private static class TrueFileFilter implements FileFilter {
+        private static TrueFileFilter INSTANCE = null;
+
+        public static TrueFileFilter instance() {
+            if (INSTANCE == null) {
+                INSTANCE = new TrueFileFilter();
+            }
+            return INSTANCE;
+        }
+
+        @Override
+        public boolean accept(final File pathname) {
+            return true;
         }
     }
 }
