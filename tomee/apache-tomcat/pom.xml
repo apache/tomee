@@ -79,7 +79,7 @@
 
   <properties>
     <!-- using a proxy is generally better -->
-    <tomcat.url>http://apache.cs.utah.edu/tomcat/tomcat-7/v${tomcat.version}/bin/apache-tomcat-${tomcat.version}.zip</tomcat.url>
+    <tomcat.url>http://www.apache.org/dist/tomcat/tomcat-7/v${tomcat.version}/bin/apache-tomcat-${tomcat.version}.zip</tomcat.url>
     <tomcat.tmp>${project.build.directory}/apache-tomcat-${tomcat.bundle.version}.zip</tomcat.tmp>
   </properties>
 </project>
