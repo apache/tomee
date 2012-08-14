@@ -197,7 +197,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
 
                 if (apache.equals("commons.logging.impl.LogFactoryImpl")) return false;
 
-                // the followin block is classes which enrich webapp classloader
+                // the following block is classes which enrich webapp classloader
                 if (apache.startsWith("webbeans.jsf")) return false;
                 if (apache.startsWith("tomee.mojarra.")) return false;
 
