@@ -28,15 +28,12 @@ import org.apache.openejb.jee.TransactionType;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.util.classloader.URLClassLoaderFirst;
 import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.archive.ClassesArchive;
 import org.apache.xbean.finder.archive.CompositeArchive;
 import org.apache.xbean.finder.archive.JarArchive;
-import org.jboss.arquillian.container.test.spi.client.deployment.ApplicationArchiveProcessor;
-import org.jboss.arquillian.core.api.InstanceProducer;
-import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.test.spi.TestClass;
-import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePath;
 import org.jboss.shrinkwrap.api.Node;
@@ -53,6 +50,7 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -82,7 +80,6 @@ public class OpenEJBArchiveProcessor {
 
     public static AppModule createModule(final Archive<?> archive, final TestClass testClass) {
         final Class<?> javaClass = testClass.getJavaClass();
-        final AppModule appModule = new AppModule(javaClass.getClassLoader(), archive.getName());
 
         final Collection<URL> additionalPaths = new ArrayList<URL>();
 
@@ -105,6 +102,21 @@ public class OpenEJBArchiveProcessor {
             }
         } else {
             prefix = META_INF;
+        }
+
+        final ClassLoader parent = javaClass.getClassLoader();
+        final URL[] urls = additionalPaths.toArray(new URL[additionalPaths.size()]);
+
+        final ClassLoader loader;
+        if (!WEB_INF.equals(prefix)) {
+            loader = new URLClassLoader(urls, parent);
+        } else {
+            loader = new URLClassLoaderFirst(urls, parent);
+        }
+
+        final AppModule appModule = new AppModule(loader, archive.getName());
+        if (WEB_INF.equals(prefix)) {
+            appModule.setDelegateFirst(false);
         }
 
         // add the test as a managed bean to be able to inject into it easily
@@ -204,6 +216,8 @@ public class OpenEJBArchiveProcessor {
                 }
             }
         }
+
+        appModule.getAdditionalLibraries().addAll(additionalPaths);
 
         return appModule;
     }
