@@ -123,8 +123,8 @@ public class FinderFactory {
         }
     }
     private AnnotationFinder enableFinderOptions(AnnotationFinder annotationFinder) {
-        annotationFinder.enableMetaAnnotations();
         if (annotationFinder.hasMetaAnnotations()) {
+            annotationFinder.enableMetaAnnotations();
         }
         if (enableFindSubclasses()) {
             annotationFinder.enableFindSubclasses();
