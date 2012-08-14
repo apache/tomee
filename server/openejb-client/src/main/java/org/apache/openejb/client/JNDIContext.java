@@ -314,29 +314,36 @@ public class JNDIContext implements InitialContextFactory, Context {
                 String url = uri.getSchemeSpecificPart();
                 return new ClientDataSource(driver, url, null, null);
             } else if (scheme.equals("connectionfactory")) {
-                uri = new URI(uri.getSchemeSpecificPart());
-                String driver = uri.getScheme();
-                String url = uri.getSchemeSpecificPart();
-                ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-                if (classLoader == null) getClass().getClassLoader();
-                if (classLoader == null) ClassLoader.getSystemClassLoader();
-                try {
-                    Class<?> clazz = Class.forName(driver, true, classLoader);
-                    Constructor<?> constructor = clazz.getConstructor(String.class);
-                    Object connectionFactory = constructor.newInstance(url);
-                    return connectionFactory;
-                } catch (Exception e) {
-                    throw new IllegalStateException("Cannot use ConnectionFactory in client VM without the classh: "+driver, e);
-                }
+                return build(uri);
             } else if (scheme.equals("javamail")) {
                 return javax.mail.Session.getDefaultInstance(new Properties());
             } else if (scheme.equals("orb")) {
                 return getDefaultOrb();
+            } else if (scheme.equals("queue")) {
+                return build(uri);
+            } else if (scheme.equals("topic")) {
+                return build(uri);
             } else {
                 throw new UnsupportedOperationException("Unsupported Naming URI scheme '" + scheme + "'");
             }
         } catch (URISyntaxException e) {
             throw (NamingException) new NamingException("Unparsable jndi entry '" + name + "=" + value + "'.  Exception: " + e.getMessage()).initCause(e);
+        }
+    }
+
+    private Object build(final URI inputUri) throws URISyntaxException {
+        final URI uri = new URI(inputUri.getSchemeSpecificPart());
+        String driver = uri.getScheme();
+        String url = uri.getSchemeSpecificPart();
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        if (classLoader == null) getClass().getClassLoader();
+        if (classLoader == null) ClassLoader.getSystemClassLoader();
+        try {
+            final Class<?> clazz = Class.forName(driver, true, classLoader);
+            final Constructor<?> constructor = clazz.getConstructor(String.class);
+            return constructor.newInstance(url);
+        } catch (Exception e) {
+            throw new IllegalStateException("Cannot use " + driver + " with parameter " + url, e);
         }
     }
 
