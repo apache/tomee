@@ -98,7 +98,7 @@ For more information we recommend you to see [injection-of-entitymanager](http:/
 
 This operation is too easy, just set the `provider` to `org.eclipse.persistence.jpa.PersistenceProvider` and add additional properties to the persistence unit. 
 The example has followed a strategy that allows the creation of tables in a HSQL database.
-For a complete list of persistence unit properties see, [http://www.eclipse.org/eclipselink/api/2.4/org/eclipse/persistence/config/PersistenceUnitProperties.html](here)
+For a complete list of persistence unit properties see [here](http://www.eclipse.org/eclipselink/api/2.4/org/eclipse/persistence/config/PersistenceUnitProperties.html)
 
     <persistence version="1.0"
                  xmlns="http://java.sun.com/xml/ns/persistence"
