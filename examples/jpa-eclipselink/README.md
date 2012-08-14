@@ -62,7 +62,7 @@ The entity itself is simply a pojo annotated with `@Entity`.  We create one pojo
 ## Database Operations
 
 This is the bean responsible for database operations; it allows us to persist or delete entities.
-For more information we recommend you to see http://openejb.apache.org/examples-trunk/injection-of-entitymanager/README.html
+For more information we recommend you to see [injection-of-entitymanager](http://openejb.apache.org/examples-trunk/injection-of-entitymanager/README.html)
 
 
     package org.superbiz.eclipselink;
