@@ -16,11 +16,17 @@
  */
 package org.apache.tomee.myfaces;
 
+import org.apache.catalina.Context;
+import org.apache.catalina.core.ApplicationContext;
+import org.apache.catalina.core.ApplicationContextFacade;
 import org.apache.myfaces.context.servlet.StartupServletExternalContextImpl;
 import org.apache.myfaces.ee6.MyFacesContainerInitializer;
 import org.apache.myfaces.spi.FacesConfigResourceProvider;
 import org.apache.myfaces.spi.FacesConfigResourceProviderFactory;
+import org.apache.myfaces.webapp.AbstractFacesInitializer;
+import org.apache.myfaces.webapp.StartupServletContextListener;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.log.RemoveLogMessage;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.webapp.FacesServlet;
@@ -28,11 +34,15 @@ import javax.servlet.ServletContainerInitializer;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import java.io.File;
+import java.lang.reflect.Field;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class TomEEMyFacesContainerInitializer implements ServletContainerInitializer {
     public static final String OPENEJB_JSF_SKIP = "openejb.jsf.skip";
@@ -63,9 +73,33 @@ public class TomEEMyFacesContainerInitializer implements ServletContainerInitial
                 passedClasses.add(TomEEMyFacesContainerInitializer.class);
             }
 
+            if (ctx instanceof ApplicationContextFacade) {
+                try {
+                    final ApplicationContext appCtx = (ApplicationContext) get(ctx);
+                    final Context tomcatCtx = (Context) get(appCtx);
+                    if (!Arrays.asList(tomcatCtx.findApplicationListeners()).contains(StartupServletContextListener.class.getName())) {
+                        addListener(ctx);
+                    }
+                } catch (Exception e) {
+                    // add it, not important we'll simply get a warning saying it is already here
+                    addListener(ctx);
+                }
+            }
+
+            // some message filtering, not a perf killer since this class don't log a lot
+            final Logger abstractInitializerLogger = Logger.getLogger(AbstractFacesInitializer.class.getName());
+            abstractInitializerLogger.setFilter(new RemoveLogMessage(
+                    new RemoveLogMessage(abstractInitializerLogger.getFilter(),
+                            Level.WARNING, "No mappings of FacesServlet found. Abort initializing MyFaces."),
+                            Level.WARNING, "No mappings of FacesServlet found. Abort destroy MyFaces."));
+
             // finally delegating begin sure we'll not call isFacesConfigPresent
             delegate.onStartup(classes, ctx);
         }
+    }
+
+    private void addListener(final ServletContext ctx) {
+        ctx.addListener(StartupServletContextListener.class);
     }
 
     // that's the reason why we fork: we don't want to consider our internal faces-config.xml
@@ -91,6 +125,9 @@ public class TomEEMyFacesContainerInitializer implements ServletContainerInitial
                     getFacesConfigResourceProviderFactory(externalContext);
             final FacesConfigResourceProvider provider = factory.createFacesConfigResourceProvider(externalContext);
             final Collection<URL> metaInfFacesConfigUrls =  provider.getMetaInfConfigurationResources(externalContext);
+            if (metaInfFacesConfigUrls == null) {
+                return false;
+            }
 
             // remove our internal faces-config.xml
             final Iterator<URL> it = metaInfFacesConfigUrls.iterator();
@@ -100,10 +137,20 @@ public class TomEEMyFacesContainerInitializer implements ServletContainerInitial
                 }
             }
 
-            return metaInfFacesConfigUrls != null && !metaInfFacesConfigUrls.isEmpty();
+            return !metaInfFacesConfigUrls.isEmpty();
         } catch (Exception e) {
             return false;
         }
     }
 
+    private static Object get(final Object facade) throws Exception {
+        final Field field = ApplicationContextFacade.class.getDeclaredField("context");
+        boolean acc = field.isAccessible();
+        field.setAccessible(true);
+        try {
+            return field.get(facade);
+        } finally {
+            field.setAccessible(acc);
+        }
+    }
 }
