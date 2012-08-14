@@ -192,6 +192,10 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
 
     @Override
     public void undeploy(final Archive<?> archive) throws DeploymentException {
+        // reset classloader for next text
+        // otherwise if it was closed something can fail
+        classLoader.set(OpenEJBDeployableContainer.class.getClassLoader());
+
         if (appContext.get() == null) {
             return;
         }
