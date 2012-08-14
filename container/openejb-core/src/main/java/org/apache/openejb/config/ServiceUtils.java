@@ -97,6 +97,8 @@ public class ServiceUtils {
             }
         } catch (OpenEJBException ignored) {
             // someone else will load the file and get the exception
+        } catch (IllegalStateException ise) {
+            // can happen if nothing is found, same
         }
         return false;
     }

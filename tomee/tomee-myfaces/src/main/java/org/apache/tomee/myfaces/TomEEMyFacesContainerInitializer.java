@@ -60,6 +60,14 @@ public class TomEEMyFacesContainerInitializer implements ServletContainerInitial
                 || "true".equals(SystemInstance.get().getProperty(OPENEJB_JSF_SKIP, "false"))) {
             return;
         }
+
+        // some message filtering, not a perf killer since this class don't log a lot
+        final Logger abstractInitializerLogger = Logger.getLogger(AbstractFacesInitializer.class.getName());
+        abstractInitializerLogger.setFilter(new RemoveLogMessage(
+                new RemoveLogMessage(abstractInitializerLogger.getFilter(),
+                        Level.WARNING, "No mappings of FacesServlet found. Abort initializing MyFaces."),
+                Level.WARNING, "No mappings of FacesServlet found. Abort destroy MyFaces."));
+
         if ((classes != null && !classes.isEmpty()) || isFacesConfigPresent(ctx)) {
             // we found a faces-config.xml or some classes so let's delegate to myfaces
 
@@ -85,13 +93,6 @@ public class TomEEMyFacesContainerInitializer implements ServletContainerInitial
                     addListener(ctx);
                 }
             }
-
-            // some message filtering, not a perf killer since this class don't log a lot
-            final Logger abstractInitializerLogger = Logger.getLogger(AbstractFacesInitializer.class.getName());
-            abstractInitializerLogger.setFilter(new RemoveLogMessage(
-                    new RemoveLogMessage(abstractInitializerLogger.getFilter(),
-                            Level.WARNING, "No mappings of FacesServlet found. Abort initializing MyFaces."),
-                            Level.WARNING, "No mappings of FacesServlet found. Abort destroy MyFaces."));
 
             // finally delegating begin sure we'll not call isFacesConfigPresent
             delegate.onStartup(classes, ctx);

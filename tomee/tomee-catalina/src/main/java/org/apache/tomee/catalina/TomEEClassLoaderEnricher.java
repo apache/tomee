@@ -18,6 +18,7 @@ package org.apache.tomee.catalina;
 
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.classloader.WebAppEnricher;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.JarLocation;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
@@ -159,8 +160,6 @@ public final class TomEEClassLoaderEnricher implements WebAppEnricher {
 
     /**
      * Validation part
-     * Keep it up to date with URLClassLoaderFirst in openejb-core
-     * (here we use class, in the other one packages)
      */
     private static final String[] FORBIDDEN_CLASSES = new String[]{
             "javax.persistence.Entity", // JPA
@@ -183,12 +182,27 @@ public final class TomEEClassLoaderEnricher implements WebAppEnricher {
         try {
             jarFile = new JarFile(file);
             for (String name : FORBIDDEN_CLASSES) {
-                try { // if we can't load if from our classloader we'll not impose anything on this class
-                    parent.loadClass(name);
-                } catch (Exception e) {
+                // if we can't load if from our classLoader we'll not impose anything on this class
+                boolean found = false;
+                for (int i = 0; i < 2; i++) {
+                    try {
+                        try {
+                            parent.loadClass(name);
+                            found = true;
+                            break;
+                        } catch (Exception e) {
+                            // found = false
+                        }
+                    } catch (LinkageError le) { // would be a pain to fail here
+                        // retry
+                    }
+                }
+
+                if (!found) {
                     continue;
                 }
 
+                // we found it so let's check it is or not in the file (potential conflict)
                 final String entry = name.replace('.', '/') + ".class";
                 final JarEntry jarEntry = jarFile.getJarEntry(entry);
                 if (jarEntry != null) {
@@ -199,7 +213,7 @@ public final class TomEEClassLoaderEnricher implements WebAppEnricher {
             }
             return true;
         } finally {
-            if (jarFile != null) {
+            if (jarFile != null) { // in java 6 JarFile is not Closeable so don't use IO.close()
                 try {
                     jarFile.close();
                 } catch (IOException ioe) {
