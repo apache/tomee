@@ -16,23 +16,30 @@
  */
 package org.superbiz.stateless.basic;
 
-import junit.framework.TestCase;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import javax.ejb.embeddable.EJBContainer;
+import javax.naming.NamingException;
 
-public class CalculatorTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+public class CalculatorTest {
+
+    private static EJBContainer ejbContainer;
 
     private CalculatorBean calculator;
 
-    /**
-     * Bootstrap the Embedded EJB Container
-     *
-     * @throws Exception
-     */
-    protected void setUp() throws Exception {
+    @BeforeClass
+    public static void startTheContainer() {
+        ejbContainer = EJBContainer.createEJBContainer();
+    }
 
-        EJBContainer ejbContainer = EJBContainer.createEJBContainer();
-
+    @Before
+    public void lookupABean() throws NamingException {
         Object object = ejbContainer.getContext().lookup("java:global/simple-stateless/CalculatorBean");
 
         assertTrue(object instanceof CalculatorBean);
@@ -40,9 +47,17 @@ public class CalculatorTest extends TestCase {
         calculator = (CalculatorBean) object;
     }
 
+    @AfterClass
+    public static void stopTheContainer() {
+        if (ejbContainer != null) {
+            ejbContainer.close();
+        }
+    }
+
     /**
      * Test Add method
      */
+    @Test
     public void testAdd() {
 
         assertEquals(10, calculator.add(4, 6));
@@ -52,6 +67,7 @@ public class CalculatorTest extends TestCase {
     /**
      * Test Subtract method
      */
+    @Test
     public void testSubtract() {
 
         assertEquals(-2, calculator.subtract(4, 6));
@@ -61,6 +77,7 @@ public class CalculatorTest extends TestCase {
     /**
      * Test Multiply method
      */
+    @Test
     public void testMultiply() {
 
         assertEquals(24, calculator.multiply(4, 6));
@@ -70,6 +87,7 @@ public class CalculatorTest extends TestCase {
     /**
      * Test Divide method
      */
+    @Test
     public void testDivide() {
 
         assertEquals(2, calculator.divide(12, 6));
@@ -79,6 +97,7 @@ public class CalculatorTest extends TestCase {
     /**
      * Test Remainder method
      */
+    @Test
     public void testRemainder() {
 
         assertEquals(4, calculator.remainder(46, 6));
