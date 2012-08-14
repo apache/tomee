@@ -17,21 +17,15 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.loader.IO;
+import org.apache.openejb.config.provider.ID;
+import org.apache.openejb.config.provider.ProviderManager;
+import org.apache.openejb.config.provider.ServiceJarXmlLoader;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.config.sys.ServiceProvider;
-import org.apache.openejb.config.sys.ServicesJar;
-import org.apache.openejb.config.sys.JaxbOpenejb;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.List;
@@ -61,10 +55,16 @@ public class ServiceUtils {
         DEFAULT_PROVIDER_URL = SystemInstance.get().getOptions().get("openejb.provider.default", defaultValue);
     }
 
-
-    private static Map<String, List<ServiceProvider>> loadedServiceJars = new HashMap<String, List<ServiceProvider>>();
     public static Messages messages = new Messages("org.apache.openejb.util.resources");
     public static Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
+
+    public static ProviderManager getManager() {
+        final ProviderManager manager = SystemInstance.get().getComponent(ProviderManager.class);
+        if (manager!= null) return manager;
+
+        SystemInstance.get().setComponent(ProviderManager.class, new ProviderManager(new ServiceJarXmlLoader()));
+        return getManager();
+    }
 
     public static class ProviderInfo {
         private final String packageName;
@@ -101,17 +101,15 @@ public class ServiceUtils {
         return false;
     }
 
-    public static ServiceProvider getServiceProvider(String id) throws OpenEJBException {
-        ProviderInfo info = getProviderInfo(id);
+    public static ServiceProvider getServiceProvider(String idString) throws OpenEJBException {
+        final ID id = ID.parse(idString, DEFAULT_PROVIDER_URL);
 
-        List<ServiceProvider> services = getServiceProviders(info.getPackageName());
-
-        for (ServiceProvider service : services) {
-            if (service.getId().equals(info.getServiceName())) {
-                return service;
-            }
+        {
+            final ServiceProvider provider = getManager().get(id.getNamespace(), id.getName());
+            if (provider != null) return provider;
         }
-        throw new NoSuchProviderException(messages.format("conf.4901", info.getServiceName(), info.getPackageName()));
+
+        throw new NoSuchProviderException(messages.format("conf.4901", id.getName(), id.getNamespace()));
     }
 
     public static String getServiceProviderId(String type) throws OpenEJBException {
@@ -138,11 +136,6 @@ public class ServiceUtils {
         }
 
         return providers;
-    }
-
-
-    public static ServiceProvider getServiceProviderByType(String type) throws OpenEJBException {
-        return getServiceProviderByType(type, (Properties) null);
     }
 
     public static ServiceProvider getServiceProviderByType(String type, Properties required) throws OpenEJBException {
@@ -201,36 +194,11 @@ public class ServiceUtils {
     }
 
     public static List<ServiceProvider> getServiceProviders(String packageName) throws OpenEJBException {
-        List<ServiceProvider> services = loadedServiceJars.get(packageName);
-        if (services == null) {
-            ServicesJar servicesJar = JaxbOpenejb.readServicesJar(packageName);
-
-            // index services by provider id
-            List<ServiceProvider> serviceProviders = servicesJar.getServiceProvider();
-            services = new ArrayList<ServiceProvider>(serviceProviders);
-
-            loadedServiceJars.put(packageName, services);
-        }
-        return services;
+        return getManager().load(packageName);
     }
 
     public static void registerServiceProvider(String packageName, ServiceProvider provider) {
-        List<ServiceProvider> services = loadedServiceJars.get(packageName);
-        if (services == null) {
-            ServicesJar servicesJar = null;
-            try {
-                servicesJar = JaxbOpenejb.readServicesJar(packageName);
-            } catch (OpenEJBException e) {
-                servicesJar = new ServicesJar();
-            }
-
-            // index services by provider id
-            List<ServiceProvider> serviceProviders = servicesJar.getServiceProvider();
-            services = new ArrayList<ServiceProvider>(serviceProviders);
-
-            loadedServiceJars.put(packageName, services);
-        }
-        services.add(provider);
+        getManager().register(packageName, provider);
     }
 
     private static ProviderInfo getProviderInfo(String id) {
@@ -250,29 +218,4 @@ public class ServiceUtils {
 
         return new ProviderInfo(providerName, serviceName);
     }
-
-    public static Properties loadProperties(String pFile) throws OpenEJBException {
-        return loadProperties(pFile, new Properties());
-    }
-
-    public static Properties loadProperties(String propertiesFile, Properties defaults) throws OpenEJBException {
-        try {
-            /*
-            The desired effect is that
-            the load method will read in the properties and overwrite
-            the values of any properties that may have previously been
-            defined.
-            */
-            IO.readProperties(new File(propertiesFile), defaults);
-
-            return defaults;
-        } catch (FileNotFoundException ex) {
-            throw new OpenEJBException(messages.format("conf.0006", propertiesFile, ex.getLocalizedMessage()), ex);
-        } catch (IOException ex) {
-            throw new OpenEJBException(messages.format("conf.0007", propertiesFile, ex.getLocalizedMessage()), ex);
-        } catch (SecurityException ex) {
-            throw new OpenEJBException(messages.format("conf.0005", propertiesFile, ex.getLocalizedMessage()), ex);
-        }
-    }
-
 }
