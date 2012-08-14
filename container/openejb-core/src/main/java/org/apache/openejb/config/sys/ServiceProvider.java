@@ -78,6 +78,9 @@ public class ServiceProvider {
     // for some reason when this field is type List JaxB gives us a List<List<String>>
     protected List<String> types;
 
+    @XmlAttribute(name = "parent")
+    protected String parent;
+
     public ServiceProvider() {
     }
 
@@ -111,7 +114,9 @@ public class ServiceProvider {
      */
     public Properties getProperties() {
         if (properties == null) {
-            properties = new SuperProperties();
+            final SuperProperties sp = new SuperProperties();
+            sp.setCaseInsensitive(true);
+            properties = sp;
         }
         return properties;
     }
@@ -262,5 +267,21 @@ public class ServiceProvider {
             types = new ArrayList<String>();
         }
         return (List<String>) types;
+    }
+
+    public String getParent() {
+        return parent;
+    }
+
+    public void setParent(String parent) {
+        this.parent = parent;
+    }
+
+    @Override
+    public String toString() {
+        return "ServiceProvider{" +
+                "id='" + id + '\'' +
+                ", service='" + service + '\'' +
+                '}';
     }
 }

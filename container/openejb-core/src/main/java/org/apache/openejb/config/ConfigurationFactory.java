@@ -404,12 +404,6 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         sys.containerSystem = new ContainerSystemInfo();
         sys.facilities = new FacilitiesInfo();
 
-        // TODO: This is wrong not all services are JndiContexts
-        for (Service service : openejb.getServices()) {
-            final JndiContextInfo info = configureService(service, JndiContextInfo.class);
-            sys.facilities.services.add(info);
-        }
-
         for (final JndiProvider provider : openejb.getJndiProvider()) {
             final JndiContextInfo info = configureService(provider, JndiContextInfo.class);
             sys.facilities.remoteJndiContexts.add(info);
@@ -937,13 +931,6 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             if (provider == null) {
                 final List<ServiceProvider> providers = ServiceUtils.getServiceProvidersByServiceType(providerType);
                 final StringBuilder sb = new StringBuilder();
-//                for (ServiceProvider p : providers) {
-//                    sb.append(System.getProperty("line.separator"));
-//                    sb.append("  <").append(p.getService());
-//                    sb.append(" id=\"").append(service.getId()).append('"');
-//                    sb.append(" provider=\"").append(p.getId()).append("\"/>");
-//                }
-
                 final List<String> types = new ArrayList<String>();
                 for (final ServiceProvider p : providers) {
                     for (final String type : p.getTypes()) {

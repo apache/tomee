@@ -20,7 +20,7 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.config.ConfigUtils;
 import org.apache.openejb.jee.JAXBContextFactory;
 import org.apache.openejb.loader.IO;
-import org.apache.xbean.finder.ResourceFinder;
+import org.apache.openejb.util.Join;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -47,6 +47,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -126,34 +130,54 @@ public abstract class JaxbOpenejb {
         throw new IllegalArgumentException("Unknown type " + type);
     }
 
-    public static ServicesJar readServicesJar(String providerName) throws OpenEJBException {
-        InputStream in = null;
-        URL url = null;
-        try {
-            ResourceFinder finder = new ResourceFinder("META-INF/", Thread.currentThread().getContextClassLoader());
-            String resourceName = providerName + "/service-jar.xml";
-            try {
-                url = finder.find(resourceName);
-            } catch (IOException e) {
-                //Make sure the default service-jar shipped with openejb-core could be read
-                finder = new ResourceFinder("META-INF/", JaxbOpenejb.class.getClassLoader());
-                url = finder.find(resourceName);
-            }
-            in = IO.read(url);
-            ServicesJar servicesJar = parseServicesJar(in);
-            return servicesJar;
-        } catch (MalformedURLException e) {
-            throw new OpenEJBException("Unable to resolve service provider " + providerName, e);
-        } catch (Exception e) {
-            throw new OpenEJBException("Unable to read OpenEJB service-jar file for provider " + providerName + " at " + url, e);
-        } finally {
-            if (in != null) {
+    public static ServicesJar readServicesJar(final String providerPath) throws OpenEJBException {
+
+        final ClassLoader loader = Thread.currentThread().getContextClassLoader();
+
+        final List<URL> sources = new ArrayList<URL>();
+
+        { // Find URLs in the classpath
+            final String path1 = "META-INF/" + providerPath + "/service-jar.xml";
+            final String path2 = providerPath.replace('.', '/') + "/service-jar.xml";
+            final List<String> paths = Arrays.asList(path1, path2);
+
+            for (String p : paths) {
                 try {
-                    in.close();
+                    final Enumeration<URL> resources = loader.getResources(p);
+                    if (resources != null){
+                        sources.addAll(Collections.list(resources));
+                    }
                 } catch (IOException e) {
+                    throw new OpenEJBException(String.format("Unable to scan for service-jar.xml file: getResource('%s')", p), e);
+                }
+            }
+
+            if (sources.size() == 0) {
+                throw new OpenEJBException("No service-jar.xml files found: searched " + Join.join(" and ", paths));
+            }
+        }
+
+        final ServicesJar servicesJar = new ServicesJar();
+
+        {
+            for (URL url : sources) {
+                try {
+                    final InputStream read = IO.read(url);
+                    try {
+                        final ServicesJar jar = parseServicesJar(read);
+                        servicesJar.getServiceProvider().addAll(jar.getServiceProvider());
+                    } catch (Exception e) {
+                        throw new OpenEJBException("Unable to parse service-jar.xml file for provider " + providerPath + " at " + url, e);
+                    } finally {
+                        IO.close(read);
+                    }
+                } catch (IOException e) {
+                    throw new OpenEJBException("Unable to read service-jar.xml file for provider " + providerPath + " at " + url, e);
                 }
             }
         }
+
+        return servicesJar;
     }
 
     private static ServicesJar parseServicesJar(InputStream in) throws ParserConfigurationException, SAXException, IOException {
@@ -178,10 +202,11 @@ public abstract class JaxbOpenejb {
 
                 provider = new ServiceProvider();
                 provider.setId(att.getValue("","id"));
-                provider.setService(att.getValue("","service"));
-                provider.setFactoryName(att.getValue("","factory-name"));
-                provider.setConstructor(att.getValue("","constructor"));
-                provider.setClassName(att.getValue("","class-name"));
+                provider.setService(att.getValue("", "service"));
+                provider.setFactoryName(att.getValue("", "factory-name"));
+                provider.setConstructor(att.getValue("", "constructor"));
+                provider.setClassName(att.getValue("", "class-name"));
+                provider.setParent(att.getValue("", "provider"));
                 String typesString = att.getValue("", "types");
                 if (typesString != null){
                     ListAdapter listAdapter = new ListAdapter();
