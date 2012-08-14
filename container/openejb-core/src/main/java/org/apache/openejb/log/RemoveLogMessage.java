@@ -14,23 +14,28 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.tomee.myfaces;
+package org.apache.openejb.log;
 
-import org.apache.myfaces.webapp.StartupServletContextListener;
+import java.util.logging.Filter;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+public class RemoveLogMessage implements Filter {
+    private final Level level;
+    private final String message;
+    private final Filter wrapped;
 
-public class TomEEMyFacesContextListener implements ServletContextListener {
-    private StartupServletContextListener delegate;
-
-    @Override
-    public void contextInitialized(final ServletContextEvent sce) {
-        // no-op
+    public RemoveLogMessage(final Filter filter, final Level lvl, final String msg) {
+        wrapped = filter;
+        level = lvl;
+        message = msg;
     }
 
     @Override
-    public void contextDestroyed(final ServletContextEvent sce) {
-        TomEEFacesConfigResourceProvider.clear(sce.getServletContext().getClassLoader());
+    public boolean isLoggable(final LogRecord record) {
+        if (wrapped != null && !wrapped.isLoggable(record)) {
+            return false;
+        }
+        return !level.equals(record.getLevel()) || !message.equals(record.getMessage());
     }
 }

@@ -189,19 +189,6 @@ public class URLClassLoaderFirst extends URLClassLoader {
                 if (apache.startsWith("webbeans.jsf")) return false;
                 if (apache.startsWith("tomee.mojarra.")) return false;
 
-                if (apache.startsWith("openejb.")) {
-                    final String openejb = apache.substring("openejb.".length());
-
-                    // webapp enrichment classes
-                    if (openejb.startsWith("hibernate.")) return false;
-                    if (openejb.startsWith("jpa.integration.")) return false;
-                    if (openejb.startsWith("toplink.")) return false;
-                    if (openejb.startsWith("eclipselink.")) return false;
-
-                    // else skip
-                    return true;
-                }
-
                 // here we find server classes
                 if (apache.startsWith("bval.")) return true;
                 if (apache.startsWith("openjpa.")) return true;
@@ -218,6 +205,19 @@ public class URLClassLoaderFirst extends URLClassLoader {
                 if (apache.startsWith("jsp")) return true;
                 if (apache.startsWith("naming")) return true;
                 if (apache.startsWith("taglibs.")) return true;
+
+                if (apache.startsWith("openejb.")) {
+                    final String openejb = apache.substring("openejb.".length());
+
+                    // webapp enrichment classes
+                    if (openejb.startsWith("hibernate.")) return false;
+                    if (openejb.startsWith("jpa.integration.")) return false;
+                    if (openejb.startsWith("toplink.")) return false;
+                    if (openejb.startsWith("eclipselink.")) return false;
+
+                    // else skip
+                    return true;
+                }
 
                 if (apache.startsWith("commons.")) {
                     final String commons = apache.substring("commons.".length());
@@ -238,26 +238,51 @@ public class URLClassLoaderFirst extends URLClassLoader {
 
                 if (SKIP_MYFACES && apache.startsWith("myfaces.")) {
                     // we bring only myfaces-impl (+api but that's javax)
+                    // mainly inspired from a comparison with tomahawk packages
                     final String myfaces = name.substring("myfaces.".length());
                     if (myfaces.startsWith("shared")) return true;
                     if (myfaces.startsWith("ee6.")) return true;
                     if (myfaces.startsWith("lifecycle.")) return true;
-                    if (myfaces.startsWith("renderkit.")) return true;
                     if (myfaces.startsWith("context.")) return true;
                     if (myfaces.startsWith("logging.")) return true;
-                    if (myfaces.startsWith("component.")) return true;
+                    // tomahawk uses component.html package
+                    if (myfaces.startsWith("component.visit.") || myfaces.equals("component.ComponentResourceContainer")) return true;
                     if (myfaces.startsWith("application.")) return true;
                     if (myfaces.startsWith("config.")) return true;
                     if (myfaces.startsWith("event.")) return true;
-                    if (myfaces.startsWith("taglib.")) return true;
+
                     if (myfaces.startsWith("resource.")) return true;
                     if (myfaces.startsWith("el.")) return true;
-                    if (myfaces.startsWith("webapp.")) return true;
                     if (myfaces.startsWith("spi.")) return true;
                     if (myfaces.startsWith("convert.")) return true;
                     if (myfaces.startsWith("debug.")) return true;
                     if (myfaces.startsWith("util.")) return true;
                     if (myfaces.startsWith("view.")) return true;
+                    if (myfaces.equals("convert.ConverterUtils")) return true;
+
+                    if (myfaces.startsWith("renderkit.")) {
+                        final String renderkit = myfaces.substring("renderkit.".length());
+                        if (renderkit.startsWith("html.Html")) return true;
+                        char firstNextletter = renderkit.charAt(0);
+                        if (Character.isUpperCase(firstNextletter)) return true;
+                    }
+
+                    if (myfaces.startsWith("taglib.")) {
+                        final String taglib = myfaces.substring("taglib.".length());
+                        if (taglib.startsWith("html.Html")) return true;
+                        if (taglib.startsWith("core.")) return true;
+                    }
+
+                    if (myfaces.startsWith("webapp.")) {
+                        final String webapp = myfaces.substring("webapp.".length());
+                        if (webapp.startsWith("Faces")) return true;
+                        if (webapp.startsWith("Jsp")) return true;
+                        if (webapp.startsWith("Startup")) return true;
+                        if (webapp.equals("AbstractFacesInitializer")) return true;
+                        if (webapp.equals("MyFacesServlet")) return true;
+                        if (webapp.equals("ManagedBeanDestroyerListener")) return true;
+                        if (webapp.equals("WebConfigParamsLogger")) return true;
+                    }
                 }
             }
 

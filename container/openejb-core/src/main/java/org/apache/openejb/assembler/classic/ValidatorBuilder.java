@@ -20,6 +20,7 @@ import java.util.logging.Level;
 import org.apache.openejb.jee.bval.PropertyType;
 import org.apache.openejb.jee.bval.ValidationConfigType;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.log.RemoveLogMessage;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -42,8 +43,8 @@ public final class ValidatorBuilder {
         // the only message logged is "ignoreXmlConfiguration == true"
         // which is false since we parse it ourself
         // so hidding it
-        java.util.logging.Logger.getLogger("org.apache.bval.jsr303.ConfigurationImpl")
-                .setLevel(Level.OFF);
+        final java.util.logging.Logger offLogger = java.util.logging.Logger.getLogger("org.apache.bval.jsr303.ConfigurationImpl");
+        offLogger.setFilter(new RemoveLogMessage(offLogger.getFilter(), Level.INFO, "ignoreXmlConfiguration == true"));
     }
 
     private ValidatorBuilder() {
