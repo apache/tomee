@@ -1,8 +1,10 @@
 Title: JPA Eclipselink
 
-*Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
+This example shows how to configure `persistence.xml` to work with Eclipselink. It uses an `@Entity` class and a `@Stateful` bean to add and delete entities from a database.
 
-## Movie
+## Creating the JPA Entity
+
+The entity itself is simply a pojo annotated with `@Entity`.  We create one pojo called `Movie` which we can use to hold movie records.
 
     package org.superbiz.eclipselink;
     
@@ -57,7 +59,11 @@ Title: JPA Eclipselink
     
     }
 
-## Movies
+## Database Operations
+
+This is the bean responsible for database operations; it allows us to persist or delete entities.
+For more information we recommend you to see http://openejb.apache.org/examples-trunk/injection-of-entitymanager/README.html
+
 
     package org.superbiz.eclipselink;
     
@@ -88,7 +94,11 @@ Title: JPA Eclipselink
         }
     }
 
-## persistence.xml
+## Persistence.xml with EclipseLink configuration
+
+This operation is too easy, just set the `provider` to `org.eclipse.persistence.jpa.PersistenceProvider` and add additional properties to the persistence unit. 
+The example has followed a strategy that allows the creation of tables in a HSQL database.
+For a complete list of persistence unit properties see, http://www.eclipse.org/eclipselink/api/2.4/org/eclipse/persistence/config/PersistenceUnitProperties.html
 
     <persistence version="1.0"
                  xmlns="http://java.sun.com/xml/ns/persistence"
@@ -108,6 +118,8 @@ Title: JPA Eclipselink
     
 
 ## MoviesTest
+
+Testing JPA is quite easy, we can simply use the `EJBContainer` API to create a container in our test case.
 
     package org.superbiz.eclipselink;
     
@@ -150,7 +162,8 @@ Title: JPA Eclipselink
 
 # Running
 
-    
+When we run our test case we should see output similar to the following.    
+
     -------------------------------------------------------
      T E S T S
     -------------------------------------------------------
