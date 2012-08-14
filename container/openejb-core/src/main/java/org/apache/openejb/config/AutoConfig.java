@@ -1652,6 +1652,13 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             return resourceId;
         }
 
+        if (resourceId.startsWith("java:")) { // can be an absolute path
+            final String jndi = resourceId.substring("java:".length());
+            if (hasServiceProvider(jndi)) {
+                return jndi;
+            }
+        }
+
         resourceId = toShortName(resourceId);
         if (hasServiceProvider(resourceId)) {
             return resourceId;

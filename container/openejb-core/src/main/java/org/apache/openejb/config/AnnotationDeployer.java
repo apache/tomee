@@ -2972,8 +2972,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                     } else {
                         // Multiple interfaces?  Illegal
-                        // TODO -- create message
-                        validation.fail(ejbName, "TODO");
+                        validation.fail(ejbName, "too.many.interfaces", ejbName, interfaces.toString().replace("interface ", ""));
                         return;
                     }
                 }
