@@ -47,70 +47,95 @@ checking out or renting a new bean instance on each method call.
 Our `CalculatorBean` can be easily tested using the `EJBContainer` API in EJB 3.1
 
     package org.superbiz.stateless.basic;
-    
-    import junit.framework.TestCase;
-    
+
+    import org.junit.AfterClass;
+    import org.junit.Before;
+    import org.junit.BeforeClass;
+    import org.junit.Test;
+
     import javax.ejb.embeddable.EJBContainer;
-    
-    public class CalculatorTest extends TestCase {
-    
+    import javax.naming.NamingException;
+
+    import static org.junit.Assert.assertEquals;
+    import static org.junit.Assert.assertTrue;
+
+    public class CalculatorTest {
+
+        private static EJBContainer ejbContainer;
+
         private CalculatorBean calculator;
-    
-        /**
-         * Bootstrap the Embedded EJB Container
-         *
-         * @throws Exception
-         */
-        protected void setUp() throws Exception {
-    
-            EJBContainer ejbContainer = EJBContainer.createEJBContainer();
-    
+
+        @BeforeClass
+        public static void startTheContainer() {
+            ejbContainer = EJBContainer.createEJBContainer();
+        }
+
+        @Before
+        public void lookupABean() throws NamingException {
             Object object = ejbContainer.getContext().lookup("java:global/simple-stateless/CalculatorBean");
-    
+
             assertTrue(object instanceof CalculatorBean);
-    
+
             calculator = (CalculatorBean) object;
         }
-    
+
+        @AfterClass
+        public static void stopTheContainer() {
+            if (ejbContainer != null) {
+                ejbContainer.close();
+            }
+        }
+
         /**
          * Test Add method
          */
+        @Test
         public void testAdd() {
-    
+
             assertEquals(10, calculator.add(4, 6));
+
         }
-    
+
         /**
          * Test Subtract method
          */
+        @Test
         public void testSubtract() {
-    
+
             assertEquals(-2, calculator.subtract(4, 6));
+
         }
-    
+
         /**
          * Test Multiply method
          */
+        @Test
         public void testMultiply() {
-    
+
             assertEquals(24, calculator.multiply(4, 6));
+
         }
-    
+
         /**
          * Test Divide method
          */
+        @Test
         public void testDivide() {
-    
+
             assertEquals(2, calculator.divide(12, 6));
+
         }
-    
+
         /**
          * Test Remainder method
          */
+        @Test
         public void testRemainder() {
-    
+
             assertEquals(4, calculator.remainder(46, 6));
+
         }
+
     }
 
 # Running
@@ -123,35 +148,47 @@ Running the example should generate output similar to the following
      T E S T S
     -------------------------------------------------------
     Running org.superbiz.stateless.basic.CalculatorTest
-    Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-    http://openejb.apache.org/
-    INFO - openejb.home = /Users/dblevins/examples/simple-stateless
-    INFO - openejb.base = /Users/dblevins/examples/simple-stateless
-    INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
-    INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
-    INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
-    INFO - Found EjbModule in classpath: /Users/dblevins/examples/simple-stateless/target/classes
-    INFO - Beginning load: /Users/dblevins/examples/simple-stateless/target/classes
-    INFO - Configuring enterprise application: /Users/dblevins/examples/simple-stateless
-    INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
-    INFO - Auto-creating a container for bean CalculatorBean: Container(type=STATELESS, id=Default Stateless Container)
-    INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
-    INFO - Auto-creating a container for bean org.superbiz.stateless.basic.CalculatorTest: Container(type=MANAGED, id=Default Managed Container)
-    INFO - Enterprise application "/Users/dblevins/examples/simple-stateless" loaded.
-    INFO - Assembling app: /Users/dblevins/examples/simple-stateless
-    INFO - Jndi(name="java:global/simple-stateless/CalculatorBean!org.superbiz.stateless.basic.CalculatorBean")
-    INFO - Jndi(name="java:global/simple-stateless/CalculatorBean")
-    INFO - Jndi(name="java:global/EjbModule181871104/org.superbiz.stateless.basic.CalculatorTest!org.superbiz.stateless.basic.CalculatorTest")
-    INFO - Jndi(name="java:global/EjbModule181871104/org.superbiz.stateless.basic.CalculatorTest")
-    INFO - Created Ejb(deployment-id=CalculatorBean, ejb-name=CalculatorBean, container=Default Stateless Container)
-    INFO - Created Ejb(deployment-id=org.superbiz.stateless.basic.CalculatorTest, ejb-name=org.superbiz.stateless.basic.CalculatorTest, container=Default Managed Container)
-    INFO - Started Ejb(deployment-id=CalculatorBean, ejb-name=CalculatorBean, container=Default Stateless Container)
-    INFO - Started Ejb(deployment-id=org.superbiz.stateless.basic.CalculatorTest, ejb-name=org.superbiz.stateless.basic.CalculatorTest, container=Default Managed Container)
-    INFO - Deployed Application(path=/Users/dblevins/examples/simple-stateless)
-    INFO - EJBContainer already initialized.  Call ejbContainer.close() to allow reinitialization
-    INFO - EJBContainer already initialized.  Call ejbContainer.close() to allow reinitialization
-    INFO - EJBContainer already initialized.  Call ejbContainer.close() to allow reinitialization
-    INFO - EJBContainer already initialized.  Call ejbContainer.close() to allow reinitialization
+    Infos - ********************************************************************************
+    Infos - OpenEJB http://openejb.apache.org/
+    Infos - Startup: Tue Aug 14 13:28:12 CEST 2012
+    Infos - Copyright 1999-2012 (C) Apache OpenEJB Project, All Rights Reserved.
+    Infos - Version: 4.1.0-SNAPSHOT
+    Infos - Build date: 20120814
+    Infos - Build time: 01:06
+    Infos - ********************************************************************************
+    Infos - openejb.home = /home/a185558/Development/Apache/openejb-trunk/examples/simple-stateless
+    Infos - openejb.base = /home/a185558/Development/Apache/openejb-trunk/examples/simple-stateless
+    Infos - Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@33bb11
+    Infos - Succeeded in installing singleton service
+    Infos - Using 'javax.ejb.embeddable.EJBContainer=true'
+    Infos - Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
+    Infos - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+    Infos - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+    Infos - Creating TransactionManager(id=Default Transaction Manager)
+    Infos - Creating SecurityService(id=Default Security Service)
+    Infos - Beginning load: /home/a185558/Development/Apache/openejb-trunk/examples/simple-stateless/target/classes
+    Infos - Configuring enterprise application: /home/a185558/Development/Apache/openejb-trunk/examples/simple-stateless
+    Infos - Auto-deploying ejb CalculatorBean: EjbDeployment(deployment-id=CalculatorBean)
+    Infos - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
+    Infos - Auto-creating a container for bean CalculatorBean: Container(type=STATELESS, id=Default Stateless Container)
+    Infos - Creating Container(id=Default Stateless Container)
+    Infos - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+    Infos - Auto-creating a container for bean org.superbiz.stateless.basic.CalculatorTest: Container(type=MANAGED, id=Default Managed Container)
+    Infos - Creating Container(id=Default Managed Container)
+    Infos - Using directory /tmp for stateful session passivation
+    Infos - Enterprise application "/home/a185558/Development/Apache/openejb-trunk/examples/simple-stateless" loaded.
+    Infos - Assembling app: /home/a185558/Development/Apache/openejb-trunk/examples/simple-stateless
+    Infos - Jndi(name="java:global/simple-stateless/CalculatorBean!org.superbiz.stateless.basic.CalculatorBean")
+    Infos - Jndi(name="java:global/simple-stateless/CalculatorBean")
+    Infos - Existing thread singleton service in SystemInstance() org.apache.openejb.cdi.ThreadSingletonServiceImpl@33bb11
+    Infos - OpenWebBeans Container is starting...
+    Infos - Adding OpenWebBeansPlugin : [CdiPlugin]
+    Infos - All injection points are validated successfully.
+    Infos - OpenWebBeans Container has started, it took 135 ms.
+    Infos - Created Ejb(deployment-id=CalculatorBean, ejb-name=CalculatorBean, container=Default Stateless Container)
+    Infos - Started Ejb(deployment-id=CalculatorBean, ejb-name=CalculatorBean, container=Default Stateless Container)
+    Infos - Deployed Application(path=/home/a185558/Development/Apache/openejb-trunk/examples/simple-stateless)
+    Infos - Undeploying app: /home/a185558/Development/Apache/openejb-trunk/examples/simple-stateless
     Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.068 sec
     
     Results :
