@@ -20,18 +20,26 @@ package org.apache.openejb.arquillian.embedded;
 import org.apache.openejb.arquillian.common.ArquillianUtil;
 import org.apache.openejb.arquillian.common.deployment.DeploymentExceptionObserver;
 import org.apache.openejb.arquillian.common.deployment.DeploymentExceptionProvider;
+import org.apache.openejb.arquillian.transaction.OpenEJBTransactionProvider;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
+import org.jboss.arquillian.transaction.impl.client.TransactionExtension;
+import org.jboss.arquillian.transaction.impl.container.TransactionRemoteExtension;
+import org.jboss.arquillian.transaction.spi.provider.TransactionProvider;
 
 public class EmbeddedTomEEExtension implements LoadableExtension {
     private static final String ADAPTER = "tomee-embedded";
 
-    @Override public void register(ExtensionBuilder builder) {
+    @Override
+    public void register(final ExtensionBuilder builder) {
         if (ArquillianUtil.isCurrentAdapter(ADAPTER)) {
             builder.service(DeployableContainer.class, EmbeddedTomEEContainer.class)
                 .observer(DeploymentExceptionObserver.class)
+                .service(TransactionProvider.class, OpenEJBTransactionProvider.class)
                 .service(ResourceProvider.class, DeploymentExceptionProvider.class);
+
+            new TransactionRemoteExtension().register(builder);
         }
     }
 }
