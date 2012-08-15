@@ -44,7 +44,8 @@ public final class ValidatorBuilder {
         // which is false since we parse it ourself
         // so hidding it
         final java.util.logging.Logger offLogger = java.util.logging.Logger.getLogger("org.apache.bval.jsr303.ConfigurationImpl");
-        offLogger.setFilter(new RemoveLogMessage(offLogger.getFilter(), Level.INFO, "ignoreXmlConfiguration == true"));
+        offLogger.setLevel(Level.OFF); // only used to log it so simply hide it
+        // offLogger.setFilter(new RemoveLogMessage(offLogger.getFilter(), Level.INFO, "ignoreXmlConfiguration == true"));
     }
 
     private ValidatorBuilder() {
@@ -81,9 +82,6 @@ public final class ValidatorBuilder {
                 factory = Validation.buildDefaultValidatorFactory();
             } else {
                 Configuration<?> configuration = getConfig(config);
-                if (configuration == null) {
-                    configuration = getConfig(config);
-                }
                 try {
                     factory = configuration.buildValidatorFactory();
                 } catch (ValidationException ve) {
