@@ -18,14 +18,14 @@
 */
 package org.superbiz.jsf;
 
-import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
 
 @RequestScoped
 @Named
 public class CalculatorBean {
-    @EJB
+    @Inject
     Calculator calculator;
     private double x;
     private double y;

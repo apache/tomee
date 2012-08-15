@@ -17,9 +17,14 @@
  */
 package org.superbiz.jsf;
 
-import javax.ejb.Remote;
+import javax.ejb.Stateless;
 
-@Remote
-public interface Calculator {
-    public double add(double x, double y);
+
+@Stateless
+public class Calculator {
+
+    public double add(double x, double y) {
+        return x + y;
+    }
+
 }
