@@ -20,16 +20,17 @@ package org.apache.openejb.server.cxf;
 import org.apache.cxf.Bus;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.endpoint.ServerImpl;
+import org.apache.cxf.feature.AbstractFeature;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 import org.apache.cxf.jaxws.handler.PortInfoImpl;
 import org.apache.cxf.jaxws.support.JaxWsEndpointImpl;
 import org.apache.cxf.jaxws.support.JaxWsImplementorInfo;
 import org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean;
 import org.apache.cxf.service.Service;
-import org.apache.cxf.service.model.BindingInfo;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.openejb.core.webservices.HandlerResolverImpl;
 import org.apache.openejb.core.webservices.PortData;
+import org.apache.openejb.util.ListConfigurator;
 
 import javax.naming.Context;
 import javax.xml.transform.Source;
@@ -39,6 +40,7 @@ import javax.xml.ws.http.HTTPBinding;
 import javax.xml.ws.soap.SOAPBinding;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.Executor;
 
 public abstract class CxfEndpoint {
@@ -149,12 +151,8 @@ public abstract class CxfEndpoint {
 		svrFactory.setStart(false);
 		svrFactory.setServiceBean(implementor);
         svrFactory.setDestinationFactory(httpTransportFactory);
-
-        final Map<String, Object> properties = getEndpointProperties();
-        if (properties != null) {
-            svrFactory.setProperties(properties);
-        }
-
+        svrFactory.setProperties(getEndpointProperties());
+        svrFactory.setFeatures(ListConfigurator.getList(getFeaturesProperties(), getFeaturePropertyKey(), getImplementorClass().getClassLoader(), AbstractFeature.class));
 
 		if (HTTPBinding.HTTP_BINDING.equals(implInfo.getBindingType())) {
 			svrFactory.setTransportId("http://cxf.apache.org/bindings/xformat");
@@ -173,6 +171,10 @@ public abstract class CxfEndpoint {
 
 		server.start();
 	}
+
+    protected abstract Properties getFeaturesProperties();
+
+    protected abstract String getFeaturePropertyKey();
 
     protected Map<String,Object> getEndpointProperties() {
         return null;

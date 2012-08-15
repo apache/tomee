@@ -32,6 +32,7 @@ import org.apache.openejb.core.webservices.JaxWsUtils;
 import org.apache.openejb.core.webservices.PortData;
 import org.apache.openejb.server.cxf.ConfigureCxfSecurity;
 import org.apache.openejb.server.cxf.CxfEndpoint;
+import org.apache.openejb.server.cxf.CxfService;
 import org.apache.openejb.server.cxf.CxfServiceConfiguration;
 import org.apache.openejb.server.cxf.JaxWsImplementorInfoImpl;
 
@@ -39,6 +40,7 @@ import javax.xml.ws.WebServiceException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * A web service endpoint which invokes an EJB container.
@@ -74,6 +76,16 @@ public class EjbEndpoint extends CxfEndpoint {
             map.put(entry.getKey().toString(), entry.getValue());
         }
         return map;
+    }
+
+    @Override
+    protected Properties getFeaturesProperties() {
+        return port.getProperties();
+    }
+
+    @Override
+    protected String getFeaturePropertyKey() {
+        return CxfService.OPENEJB_JAXWS_CXF_FEATURES;
     }
 
     protected void init() {

@@ -31,6 +31,7 @@ import org.apache.openejb.core.webservices.JaxWsUtils;
 import org.apache.openejb.core.webservices.PortData;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.cxf.CxfEndpoint;
+import org.apache.openejb.server.cxf.CxfService;
 import org.apache.openejb.server.cxf.CxfServiceConfiguration;
 import org.apache.openejb.server.cxf.JaxWsImplementorInfoImpl;
 
@@ -39,6 +40,7 @@ import javax.xml.ws.WebServiceException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import static org.apache.openejb.InjectionProcessor.unwrap;
 
@@ -90,6 +92,14 @@ public class PojoEndpoint extends CxfEndpoint {
     }
 
     @Override
+    protected Properties getFeaturesProperties() {
+        if (SystemInstance.get().getOptions().get(OPENEJB_JAXWS_READ_POJO_PROPERTIES, false)) {
+            return null;
+        }
+        return SystemInstance.get().getProperties();
+    }
+
+    @Override
     protected Map<String, Object> getEndpointProperties() {
         if (SystemInstance.get().getOptions().get(OPENEJB_JAXWS_READ_POJO_PROPERTIES, false)) {
             final String prefix = OPENEJB_JAXWS_POJO_CONFIG_PREFIX + getImplementorClass().getName() + ".";
@@ -125,5 +135,10 @@ public class PojoEndpoint extends CxfEndpoint {
 
         // shutdown server
         super.stop();
+    }
+
+    @Override
+    protected String getFeaturePropertyKey() {
+        return getImplementorClass().getName() + "." + CxfService.OPENEJB_JAXWS_CXF_FEATURES;
     }
 }
