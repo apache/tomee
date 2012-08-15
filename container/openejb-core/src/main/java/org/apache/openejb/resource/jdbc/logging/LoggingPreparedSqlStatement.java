@@ -22,14 +22,11 @@ import org.apache.openejb.util.Logger;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
-public class LoggingPreparedSqlStatement implements InvocationHandler {
+public class LoggingPreparedSqlStatement extends AbstractSQLLogger implements InvocationHandler {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_SQL, LoggingPreparedSqlStatement.class);
 
     private final PreparedStatement delegate;
@@ -43,17 +40,18 @@ public class LoggingPreparedSqlStatement implements InvocationHandler {
 
     @Override
     public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-        final Object result = method.invoke(delegate, args);
         final String mtdName = method.getName();
+        final boolean execute = mtdName.startsWith("execute");
+
+        final TimeWatcherExecutor.TimerWatcherResult result = TimeWatcherExecutor.execute(method, delegate, args, execute);
+
         if (mtdName.startsWith("set") && args.length >= 2 && (args[0].getClass().equals(Integer.TYPE) || args[0].getClass().equals(Integer.class))) {
             parameters.add(new Parameter(mtdName.substring(3), (Integer) args[0], args[1]));
-        } else if (mtdName.startsWith("execute")) {
+        } else if (execute) {
             String str = sql;
             if (str.contains("?")) {
                 Collections.sort(parameters);
-                final Iterator<Parameter> it = parameters.iterator();
-                while (it.hasNext()) {
-                    final Parameter param = it.next();
+                for (Parameter param : parameters) {
                     try {
                         str = str.replaceFirst("\\?", param.value.toString());
                     } catch (Exception e) {
@@ -61,9 +59,10 @@ public class LoggingPreparedSqlStatement implements InvocationHandler {
                     }
                 }
             }
-            LOGGER.info(str);
+            LOGGER.info(format(str, result.getDuration()));
         }
-        return result;
+
+        return result.getResult();
     }
 
     protected static class Parameter implements Comparable<Parameter> {

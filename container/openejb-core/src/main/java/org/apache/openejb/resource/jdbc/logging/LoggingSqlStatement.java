@@ -23,7 +23,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.sql.Statement;
 
-public class LoggingSqlStatement implements InvocationHandler {
+public class LoggingSqlStatement extends AbstractSQLLogger implements InvocationHandler {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_SQL, LoggingSqlStatement.class);
 
     private final Statement delegate;
@@ -34,11 +34,14 @@ public class LoggingSqlStatement implements InvocationHandler {
 
     @Override
     public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-        final Object result = method.invoke(delegate, args);
         final String mtdName = method.getName();
-        if (mtdName.startsWith("execute") && args != null && args.length > 0) {
-            LOGGER.info((String) args[0]);
+        final boolean execute = mtdName.startsWith("execute") && args != null && args.length > 0;
+
+        final TimeWatcherExecutor.TimerWatcherResult result = TimeWatcherExecutor.execute(method, delegate, args, execute);
+        if (execute) {
+            LOGGER.info(format((String) args[0], result.getDuration()));
         }
-        return result;
+
+        return result.getResult();
     }
 }
