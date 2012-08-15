@@ -97,8 +97,6 @@ public class ProviderManager {
     private void register(ID id, ServiceProvider provider, Set<ID> seen) {
         if (providers.containsKey(id)) return;
 
-        validate(id, provider);
-
         if (provider.getParent() != null) {
 
             final ID parentId = ID.parse(provider.getParent(), id);
@@ -113,6 +111,8 @@ public class ProviderManager {
             inherit(provider, parent);
         }
 
+        validate(id, provider);
+
         providers.put(id, provider);
     }
 
@@ -120,7 +120,7 @@ public class ProviderManager {
 
         if (n(child.getClassName())) child.setClassName(parent.getClassName());
         if (n(child.getConstructor())) child.setConstructor(parent.getConstructor());
-        if (n(child.getFactoryName())) child.setDisplayName(parent.getFactoryName());
+        if (n(child.getFactoryName())) child.setFactoryName(parent.getFactoryName());
         if (n(child.getDescription())) child.setDescription(parent.getDescription());
         if (n(child.getDisplayName())) child.setDisplayName(parent.getDisplayName());
         if (n(child.getService())) child.setService(parent.getService());
@@ -172,6 +172,9 @@ public class ProviderManager {
     private void validate(ID id, ServiceProvider provider) {
         id.validate();
 
+        if (provider.getService() == null) {
+            throw new InvalidProviderDeclarationException("'service' attribute cannot be null", id, provider);
+        }
         // TODO - validate provider
     }
 
@@ -180,9 +183,4 @@ public class ProviderManager {
     }
 
 
-    public static class MalformedProviderNameException extends IllegalArgumentException {
-        public MalformedProviderNameException(String s) {
-            super(s);
-        }
-    }
 }

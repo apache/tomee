@@ -321,6 +321,111 @@ public class ProviderManagerTest extends TestCase {
         }
     }
 
+    public void testInheritedAttributes() throws Exception {
+
+        final ProviderManager manager = new ProviderManager(new ProviderLoader() {
+            @Override
+            public ServiceProvider load(ID id) {
+                if ("color".equalsIgnoreCase(id.getName())) {
+                    final ServiceProvider color = new ServiceProvider();
+                    color.setClassName(Color.class.getName());
+                    color.setFactoryName("fooFactory");
+                    color.setId("Color");
+                    color.setService("Resource");
+                    color.setConstructor("one, two, three");
+                    color.setDescription("the description");
+                    color.setDisplayName("the display name");
+                    color.getProperties().setProperty("red", "0");
+                    color.getProperties().setProperty("green", "0");
+                    color.getProperties().setProperty("blue", "0");
+                    color.getTypes().add(Color.class.getName());
+                    return color;
+                }
+
+                if ("red".equalsIgnoreCase(id.getName())) {
+                    final ServiceProvider red = new ServiceProvider();
+                    red.setId("Red");
+                    red.setParent("Color");
+                    red.getProperties().setProperty("red", "255");
+                    return red;
+                }
+
+                if ("orange".equalsIgnoreCase(id.getName())) {
+                    final ServiceProvider orange = new ServiceProvider();
+                    orange.setId("Orange");
+                    orange.setParent("Red");
+                    orange.getProperties().setProperty("green", "200");
+                    return orange;
+                }
+
+                throw new IllegalStateException(id.toString());
+            }
+
+            @Override
+            public List<ServiceProvider> load(String namespace) {
+                List<ServiceProvider> list = new ArrayList<ServiceProvider>();
+                list.add(load(new ID(namespace, "color")));
+                list.add(load(new ID(namespace, "red")));
+                list.add(load(new ID(namespace, "orange")));
+                return list;
+            }
+        });
+
+        { // Assert Orange
+
+            // Should have inherited from Red
+
+            final ServiceProvider provider = manager.get("dEFAUlT", "orAngE");
+            assertNotNull(provider);
+            assertEquals(Color.class.getName(), provider.getClassName());
+            assertEquals("Resource", provider.getService());
+            assertEquals("one, two, three", provider.getConstructor());
+            assertEquals("the description", provider.getDescription());
+            assertEquals("the display name", provider.getDisplayName());
+            assertEquals("fooFactory", provider.getFactoryName());
+            assertEquals("255", provider.getProperties().getProperty("reD"));
+            assertEquals("200", provider.getProperties().get("grEeN"));
+            assertEquals("0", provider.getProperties().get("bLue"));
+            assertEquals(1, provider.getTypes().size());
+        }
+
+        { // Assert Red
+
+            // Should have inherited green and blue values from Color
+
+            final ServiceProvider provider = manager.get("dEFaulT", "REd");
+            assertNotNull(provider);
+            assertEquals(Color.class.getName(), provider.getClassName());
+            assertEquals("Resource", provider.getService());
+            assertEquals("one, two, three", provider.getConstructor());
+            assertEquals("the description", provider.getDescription());
+            assertEquals("the display name", provider.getDisplayName());
+            assertEquals("fooFactory", provider.getFactoryName());
+            assertEquals("255", provider.getProperties().getProperty("rED"));
+            assertEquals("0", provider.getProperties().get("grEEN"));
+            assertEquals("0", provider.getProperties().get("bLUe"));
+        }
+
+        { // Assert Color
+            // Must be able to retrieve provider and properties in a case-insensitive manner
+
+            final ServiceProvider provider = manager.get("DeFaulT", "CoLoR");
+            assertNotNull(provider);
+            assertEquals(Color.class.getName(), provider.getClassName());
+            assertEquals("Resource", provider.getService());
+            assertEquals("one, two, three", provider.getConstructor());
+            assertEquals("the description", provider.getDescription());
+            assertEquals("the display name", provider.getDisplayName());
+            assertEquals("fooFactory", provider.getFactoryName());
+            assertEquals("0", provider.getProperties().getProperty("rEd"));
+            assertEquals("0", provider.getProperties().get("grEEn"));
+            assertEquals("0", provider.getProperties().get("blUE"));
+        }
+
+        assertEquals(3, manager.getAll().size());
+    }
+
+
     public static class Color {
         private int red;
         private int green;
