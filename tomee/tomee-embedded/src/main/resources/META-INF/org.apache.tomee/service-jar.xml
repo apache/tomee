@@ -16,32 +16,28 @@
   limitations under the License.
 -->
 <ServiceJar xmlns="http://www.openejb.org/System/Configuration">
-  <ServiceProvider id="Default CMP Container" parent="org.apache.openejb:Default CMP Container"/>
-  <ServiceProvider id="Default BMP Container" parent="org.apache.openejb:Default BMP Container"/>
-  <ServiceProvider id="Default Stateless Container" parent="org.apache.openejb:Default Stateless Container"/>
-  <ServiceProvider id="Default Singleton Container" parent="org.apache.openejb:Default Singleton Container"/>
-  <ServiceProvider id="Default Stateful Container" parent="org.apache.openejb:Default Stateful Container"/>
-  <ServiceProvider id="Default Managed Container" parent="org.apache.openejb:Default Managed Container"/>
-  <ServiceProvider id="Default MDB Container" parent="org.apache.openejb:Default MDB Container"/>
-  <ServiceProvider id="Default JDK 1.3 ProxyFactory" parent="org.apache.openejb:Default JDK 1.3 ProxyFactory"/>
+  <ServiceProvider id="Default CMP Container" parent="org.apache.openejb.embedded:Default CMP Container"/>
+  <ServiceProvider id="Default BMP Container" parent="org.apache.openejb.embedded:Default BMP Container"/>
+  <ServiceProvider id="Default Stateless Container" parent="org.apache.openejb.embedded:Default Stateless Container"/>
+  <ServiceProvider id="Default Singleton Container" parent="org.apache.openejb.embedded:Default Singleton Container"/>
+  <ServiceProvider id="Default Stateful Container" parent="org.apache.openejb.embedded:Default Stateful Container"/>
+  <ServiceProvider id="Default Managed Container" parent="org.apache.openejb.embedded:Default Managed Container"/>
+  <ServiceProvider id="Default MDB Container" parent="org.apache.openejb.embedded:Default MDB Container"/>
+  <ServiceProvider id="Default JDK 1.3 ProxyFactory" parent="org.apache.openejb.embedded:Default JDK 1.3 ProxyFactory"/>
   <ServiceProvider id="Tomcat Security Service"
                    class-name="org.apache.tomee.catalina.TomcatSecurityService"
                    service="SecurityService"
                    types="SecurityService"/>
-  <ServiceProvider id="PseudoSecurityService" parent="org.apache.openejb:PseudoSecurityService"/>
-  <ServiceProvider id="Default Security Service" parent="org.apache.openejb:Default Security Service"/>
-  <ServiceProvider id="Default Transaction Manager" parent="org.apache.openejb:Default Transaction Manager"/>
-  <ServiceProvider id="Default JDBC Database" parent="org.apache.openejb:Default JDBC Database">
-    JdbcUrl=jdbc:hsqldb:file:data/hsqldb/hsqldb
-  </ServiceProvider>
-  <ServiceProvider id="Default Unmanaged JDBC Database" parent="org.apache.openejb:Default Unmanaged JDBC Database">
-    JdbcUrl=jdbc:hsqldb:file:data/hsqldb/hsqldb
-  </ServiceProvider>
-  <ServiceProvider id="Default JMS Resource Adapter" parent="org.apache.openejb:Default JMS Resource Adapter"/>
-  <ServiceProvider id="Default JMS Connection Factory" parent="org.apache.openejb:Default JMS Connection Factory"/>
-  <ServiceProvider id="Default Queue" parent="org.apache.openejb:Default Queue"/>
-  <ServiceProvider id="Default Topic" parent="org.apache.openejb:Default Topic"/>
-  <ServiceProvider id="Default ORB" parent="org.apache.openejb:Default ORB"/>
-  <ServiceProvider id="Default Mail Session" parent="org.apache.openejb:Default Mail Session"/>
-  <ServiceProvider id="Default Remote Jndi Provider" parent="org.apache.openejb:Default Remote Jndi Provider"/>
+  <ServiceProvider id="PseudoSecurityService" parent="org.apache.openejb.embedded:PseudoSecurityService"/>
+  <ServiceProvider id="Default Security Service" parent="org.apache.openejb.embedded:Default Security Service"/>
+  <ServiceProvider id="Default Transaction Manager" parent="org.apache.openejb.embedded:Default Transaction Manager"/>
+  <ServiceProvider id="Default JDBC Database" parent="org.apache.openejb.embedded:Default JDBC Database"/>
+  <ServiceProvider id="Default Unmanaged JDBC Database" parent="org.apache.openejb.embedded:Default Unmanaged JDBC Database"/>
+  <ServiceProvider id="Default JMS Resource Adapter" parent="org.apache.openejb.embedded:Default JMS Resource Adapter"/>
+  <ServiceProvider id="Default JMS Connection Factory" parent="org.apache.openejb.embedded:Default JMS Connection Factory"/>
+  <ServiceProvider id="Default Queue" parent="org.apache.openejb.embedded:Default Queue"/>
+  <ServiceProvider id="Default Topic" parent="org.apache.openejb.embedded:Default Topic"/>
+  <ServiceProvider id="Default ORB" parent="org.apache.openejb.embedded:Default ORB"/>
+  <ServiceProvider id="Default Mail Session" parent="org.apache.openejb.embedded:Default Mail Session"/>
+  <ServiceProvider id="Default Remote Jndi Provider" parent="org.apache.openejb.embedded:Default Remote Jndi Provider"/>
 </ServiceJar>
