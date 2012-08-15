@@ -16,27 +16,11 @@
  */
 package org.apache.openejb.config.provider;
 
-import org.apache.openejb.config.sys.ServiceProvider;
-
 /**
- * @version $Rev$ $Date$
- */
-public class InvalidProviderDeclarationException extends IllegalArgumentException {
-
-    private final ID id;
-    private final ServiceProvider provider;
-
-    public InvalidProviderDeclarationException(String s, ID id, ServiceProvider provider) {
-        super(String.format("%s - %s", id, s));
-        this.id = id;
-        this.provider = provider;
-    }
-
-    public ServiceProvider getProvider() {
-        return provider;
-    }
-
-    public ID getId() {
-        return id;
+* @version $Rev$ $Date$
+*/
+public class MalformedProviderNameException extends IllegalArgumentException {
+    public MalformedProviderNameException(String s) {
+        super(s);
     }
 }

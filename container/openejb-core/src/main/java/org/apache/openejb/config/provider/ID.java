@@ -64,7 +64,7 @@ public class ID {
             return new ID(parts[0], parts[1]);
         }
 
-        throw new ProviderManager.MalformedProviderNameException(raw);
+        throw new MalformedProviderNameException(raw);
     }
 
     @Override

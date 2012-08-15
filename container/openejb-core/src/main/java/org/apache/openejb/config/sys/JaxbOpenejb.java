@@ -180,7 +180,7 @@ public abstract class JaxbOpenejb {
         return servicesJar;
     }
 
-    private static ServicesJar parseServicesJar(InputStream in) throws ParserConfigurationException, SAXException, IOException {
+    public static ServicesJar parseServicesJar(InputStream in) throws ParserConfigurationException, SAXException, IOException {
         InputSource inputSource = new InputSource(in);
 
         SAXParserFactory factory = SAX_PARSER_FACTORY;
@@ -206,7 +206,7 @@ public abstract class JaxbOpenejb {
                 provider.setFactoryName(att.getValue("", "factory-name"));
                 provider.setConstructor(att.getValue("", "constructor"));
                 provider.setClassName(att.getValue("", "class-name"));
-                provider.setParent(att.getValue("", "provider"));
+                provider.setParent(att.getValue("", "parent"));
                 String typesString = att.getValue("", "types");
                 if (typesString != null){
                     ListAdapter listAdapter = new ListAdapter();
