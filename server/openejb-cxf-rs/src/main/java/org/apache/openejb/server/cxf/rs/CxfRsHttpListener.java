@@ -16,18 +16,8 @@
  */
 package org.apache.openejb.server.cxf.rs;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.naming.Context;
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.ws.rs.core.Application;
-import javax.xml.bind.Marshaller;
 import org.apache.cxf.endpoint.Server;
+import org.apache.cxf.feature.AbstractFeature;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.lifecycle.ResourceProvider;
 import org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider;
@@ -37,7 +27,6 @@ import org.apache.cxf.service.invoker.Invoker;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.openejb.BeanContext;
-import org.apache.openejb.BeanType;
 import org.apache.openejb.Injection;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
@@ -45,11 +34,24 @@ import org.apache.openejb.server.httpd.HttpRequest;
 import org.apache.openejb.server.httpd.HttpRequestImpl;
 import org.apache.openejb.server.httpd.HttpResponse;
 import org.apache.openejb.server.rest.RsHttpListener;
+import org.apache.openejb.util.ListConfigurator;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.ObjectRecipeHelper;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.xbean.recipe.ObjectRecipe;
+
+import javax.naming.Context;
+import javax.servlet.http.HttpServletRequestWrapper;
+import javax.ws.rs.core.Application;
+import javax.xml.bind.Marshaller;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * System property:
@@ -70,12 +72,25 @@ public class CxfRsHttpListener implements RsHttpListener {
     public static final String DEFAULT_CXF_JAXRS_PROVIDERS_KEY = "default";
     public static final String OPENEJB_CXF_PROPERTIES = "openejb.cxf.rs.jaxb.properties";
 
+    public static final String OPENEJB_JAXRS_READ_PROPERTIES = "openejb.jaxrs.read-properties";
+    public static final String OPENEJB_JAXRS_CXF_FEATURES = "openejb.jaxrs.cxf.features";
+
     private static final List<Object> PROVIDERS = createConfiguredProviderList("", CxfRsHttpListener.class.getClassLoader());
     private static final Map<String, Object> cxfProperties = toMap(SystemInstance.get().getProperty(OPENEJB_CXF_PROPERTIES));
 
     private HTTPTransportFactory transportFactory;
     private AbstractHTTPDestination destination;
     private Server server;
+
+    private static List<AbstractFeature> GLOBAL_FEATURES = new ArrayList<AbstractFeature>();
+    static {
+        final List<AbstractFeature> features = ListConfigurator.getList(
+                SystemInstance.get().getProperties(), OPENEJB_JAXRS_CXF_FEATURES,
+                CxfRsHttpListener.class.getClassLoader(), AbstractFeature.class);
+        if (features != null) {
+            GLOBAL_FEATURES.addAll(features);
+        }
+    }
 
     public CxfRsHttpListener(HTTPTransportFactory httpTransportFactory) {
         transportFactory = httpTransportFactory;
@@ -142,6 +157,19 @@ public class CxfRsHttpListener implements RsHttpListener {
             factory.getProperties().putAll(specificProperties);
         } else if (cxfProperties != null) {
             factory.getProperties().putAll(cxfProperties);
+        }
+
+        if (SystemInstance.get().getOptions().get(OPENEJB_JAXRS_READ_PROPERTIES, false)) {
+            List<AbstractFeature> features = ListConfigurator.getList(
+                    SystemInstance.get().getProperties(), clazz.getName() + "." + OPENEJB_JAXRS_CXF_FEATURES,
+                    clazz.getClassLoader(), AbstractFeature.class);
+            if (features == null) {
+                features = new ArrayList<AbstractFeature>();
+            }
+            features.addAll(GLOBAL_FEATURES);
+            if (!features.isEmpty()) {
+                factory.setFeatures(features);
+            }
         }
 
         if (rp != null) {
