@@ -83,8 +83,8 @@ public class TomEEMyFacesContainerInitializer implements ServletContainerInitial
 
             if (ctx instanceof ApplicationContextFacade) {
                 try {
-                    final ApplicationContext appCtx = (ApplicationContext) get(ctx);
-                    final Context tomcatCtx = (Context) get(appCtx);
+                    final ApplicationContext appCtx = (ApplicationContext) get(ApplicationContextFacade.class, ctx);
+                    final Context tomcatCtx = (Context) get(ApplicationContext.class, appCtx);
                     if (!Arrays.asList(tomcatCtx.findApplicationListeners()).contains(StartupServletContextListener.class.getName())) {
                         addListener(ctx);
                     }
@@ -144,8 +144,8 @@ public class TomEEMyFacesContainerInitializer implements ServletContainerInitial
         }
     }
 
-    private static Object get(final Object facade) throws Exception {
-        final Field field = ApplicationContextFacade.class.getDeclaredField("context");
+    private static Object get(final Class<?> clazz, final Object facade) throws Exception {
+        final Field field = clazz.getDeclaredField("context");
         boolean acc = field.isAccessible();
         field.setAccessible(true);
         try {
