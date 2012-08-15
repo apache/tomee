@@ -1,12 +1,7 @@
-Title: JSF
+Title: JSF-CDI-EJB
 
-
-A simple web-app showing how to use dependency injection in JSF managed beans using TomEE.
-
-It contains a Local Stateless session bean (CalculatorImpl) which adds two numbers and returns the result.
-
-The application also contains a CDI managed bean (CalculatorBean), which uses the EJB to add two numbers
-and display the results to the user. The EJB is injected in the managed bean using @EJB annotation.
+The simple application contains a CDI managed bean `CalculatorBean`, which uses the `Calculator` EJB to add two numbers
+and display the results to the user. The EJB is injected in the managed bean using @Inject annotation.
 
 You could run this in the latest Apache TomEE [snapshot](https://repository.apache.org/content/repositories/snapshots/org/apache/openejb/apache-tomee/)
 
@@ -78,37 +73,26 @@ in the bean and then the commandButton-action method is invoked.
 In this case, CalculatorBean#add() is invoked.
 
 Calculator#add() delegates the work to the ejb, gets the result, stores it
-and then instructs what view is to be rendered.
+and then returns what view is to be rendered.
 
-You're right. The return value "success" is checked up in faces-config navigation-rules
+The return value "success" is checked up in faces-config navigation-rules
 and the respective page is rendered.
 
-In our case, 'result.xhtml' page is rendered.
-
-The request scoped 'calculatorBean' is available here, and we use EL to display the values.
+In our case, 'result.xhtml' page is rendered where
+use EL and display the result from the request-scoped `calculatorBean`.
 
 #Source Code
-
-## Calculator
-
-    package org.superbiz.jsf;
-    
-    import javax.ejb.Remote;
-    
-    @Remote
-    public interface Calculator {
-        public double add(double x, double y);
-    }
 
 ## CalculatorBean
 
     import javax.enterprise.context.RequestScoped;
     import javax.inject.Named;
+    import javax.inject.Inject;
 
     @RequestScoped
     @Named
     public class CalculatorBean {
-        @EJB
+        @Inject
         Calculator calculator;
         private double x;
         private double y;
@@ -144,14 +128,14 @@ The request scoped 'calculatorBean' is available here, and we use EL to display 
         }
     }
 
-## CalculatorImpl
+## Calculator
 
     package org.superbiz.jsf;
     
     import javax.ejb.Stateless;
     
     @Stateless
-    public class CalculatorImpl implements Calculator {
+    public class Calculator{
     
         public double add(double x, double y) {
             return x + y;
