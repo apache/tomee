@@ -31,7 +31,6 @@ public class RemoteTomEEEJBEnricherArchiveAppender implements AuxiliaryArchiveAp
     public Archive<?> createAuxiliaryArchive() {
         return ShrinkWrap.create(JavaArchive.class, "arquillian-tomee-archive-appender.jar")
                 .addClasses(RemoteTomEEObserver.class, RemoteTomEERemoteExtension.class, OpenEJBTransactionProvider.class)
-                .addAsResource(new StringAsset("manager = tomee"), ArchivePaths.create(OpenEJBTransactionProvider.CONFIG_PATH))
                 .addAsServiceProvider(RemoteLoadableExtension.class, RemoteTomEERemoteExtension.class);
     }
 }
