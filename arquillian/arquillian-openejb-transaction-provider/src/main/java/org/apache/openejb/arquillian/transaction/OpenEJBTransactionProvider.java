@@ -21,43 +21,48 @@ import org.apache.openejb.OpenEJBRuntimeException;
 import org.jboss.arquillian.transaction.spi.provider.TransactionProvider;
 import org.jboss.arquillian.transaction.spi.test.TransactionalTest;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.transaction.TransactionManager;
+
 public class OpenEJBTransactionProvider implements TransactionProvider {
     public static final String CONFIG_PATH = "arquillian-transaction-configuration.properties";
 
     @Override
     public void beginTransaction(final TransactionalTest test) {
-        if (accept(test.getManager())) {
-            try {
-                OpenEJB.getTransactionManager().begin();
-            } catch (Exception e) {
-                throw new OpenEJBRuntimeException(e);
-            }
+        try {
+            lookup(test.getManager()).begin();
+        } catch (Exception e) {
+            throw new OpenEJBRuntimeException(e);
         }
     }
 
     @Override
     public void commitTransaction(final TransactionalTest test) {
-        if (accept(test.getManager())) {
-            try {
-                OpenEJB.getTransactionManager().commit();
-            } catch (Exception e) {
-                throw new OpenEJBRuntimeException(e);
-            }
+        try {
+            lookup(test.getManager()).commit();
+        } catch (Exception e) {
+            throw new OpenEJBRuntimeException(e);
         }
     }
 
     @Override
     public void rollbackTransaction(final TransactionalTest test) {
-        if (accept(test.getManager())) {
-            try {
-                OpenEJB.getTransactionManager().rollback();
-            } catch (Exception e) {
-                throw new OpenEJBRuntimeException(e);
-            }
+        try {
+            lookup(test.getManager()).rollback();
+        } catch (Exception e) {
+            throw new OpenEJBRuntimeException(e);
         }
     }
 
-    private boolean accept(final String manager) {
+    private static TransactionManager lookup(final String manager) throws NamingException {
+        if (builtIn(manager)) {
+            return OpenEJB.getTransactionManager();
+        }
+        return (TransactionManager) new InitialContext().lookup(manager);
+    }
+
+    private static boolean builtIn(final String manager) {
         return manager == null || manager.isEmpty()
                     || "openejb".equalsIgnoreCase(manager)
                     || "tomee".equalsIgnoreCase(manager);
