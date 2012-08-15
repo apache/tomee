@@ -16,10 +16,12 @@
  */
 package org.apache.openejb.arquillian.tests.hibernate;
 
+import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ReloadableEntityManagerFactory;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
+import org.apache.ziplock.JarLocation;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ArchivePaths;
@@ -29,21 +31,14 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.DependencyResolvers;
 import org.jboss.shrinkwrap.resolver.api.ResolutionException;
 import org.jboss.shrinkwrap.resolver.api.maven.MavenDependencyResolver;
+import org.jboss.shrinkwrap.resolver.api.maven.MavenResolutionFilter;
 import org.jboss.shrinkwrap.resolver.api.maven.filter.ScopeFilter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.naming.InitialContext;
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceContext;
-
 import java.io.File;
-import java.util.Properties;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(Arquillian.class)
@@ -78,16 +73,24 @@ public class HibernateTest {
                             "    </properties>\n" +
                             "  </persistence-unit>\n" +
                             "</persistence>"), ArchivePaths.create("persistence.xml"))
-                    .addAsLibraries(hibernate);
+                    .addAsLibraries(hibernate)
+                    .addAsLibraries(JarLocation.jarLocation(ResolutionException.class))
+                    .addAsLibraries(JarLocation.jarLocation(MavenResolutionFilter.class));
     }
 
     @Test // using an internal lookup because in tomee embedded new InitialContext() is not guaranteed
     public void checkEmIsHibernateOne() throws Exception {
+        AppInfo info = null;
+        for (AppInfo app : SystemInstance.get().getComponent(Assembler.class).getDeployedApplications()) {
+            if (app.appId.endsWith("hibernate-app")) {
+                info = app;
+                break;
+            }
+        }
+
         final EntityManagerFactory emf = (EntityManagerFactory)
-                SystemInstance.get().getComponent(ContainerSystem.class)
-                        .getJNDIContext().lookup(Assembler.PERSISTENCE_UNIT_NAMING_CONTEXT
-                        + SystemInstance.get().getComponent(Assembler.class).getDeployedApplications()
-                        .iterator().next().persistenceUnits.iterator().next().id);
+            SystemInstance.get().getComponent(ContainerSystem.class)
+                .getJNDIContext().lookup(Assembler.PERSISTENCE_UNIT_NAMING_CONTEXT + info.persistenceUnits.iterator().next().id);
         assertTrue(((ReloadableEntityManagerFactory) emf).getDelegate().getClass().getName().startsWith("org.hibernate."));
     }
 }
