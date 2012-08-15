@@ -16,14 +16,10 @@
  */
 package org.apache.tomee.myfaces;
 
-import org.apache.myfaces.webapp.StartupServletContextListener;
-
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 public class TomEEMyFacesContextListener implements ServletContextListener {
-    private StartupServletContextListener delegate;
-
     @Override
     public void contextInitialized(final ServletContextEvent sce) {
         // no-op
