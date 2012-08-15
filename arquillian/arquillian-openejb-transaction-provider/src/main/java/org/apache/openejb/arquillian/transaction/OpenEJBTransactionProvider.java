@@ -26,8 +26,6 @@ import javax.naming.NamingException;
 import javax.transaction.TransactionManager;
 
 public class OpenEJBTransactionProvider implements TransactionProvider {
-    public static final String CONFIG_PATH = "arquillian-transaction-configuration.properties";
-
     @Override
     public void beginTransaction(final TransactionalTest test) {
         try {
