@@ -149,9 +149,12 @@ public abstract class CxfEndpoint {
 		svrFactory.setStart(false);
 		svrFactory.setServiceBean(implementor);
         svrFactory.setDestinationFactory(httpTransportFactory);
-        if (getEndpointProperties() != null) {
-            svrFactory.setProperties(getEndpointProperties());
+
+        final Map<String, Object> properties = getEndpointProperties();
+        if (properties != null) {
+            svrFactory.setProperties(properties);
         }
+
 
 		if (HTTPBinding.HTTP_BINDING.equals(implInfo.getBindingType())) {
 			svrFactory.setTransportId("http://cxf.apache.org/bindings/xformat");
