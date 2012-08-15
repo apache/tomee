@@ -93,6 +93,12 @@
       <artifactId>arquillian-common</artifactId>
       <version>${tomee.version}</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>arquillian-openejb-transaction-provider</artifactId>
+      <version>${tomee.version}</version>
+    </dependency>
   </dependencies>
 
   <build>

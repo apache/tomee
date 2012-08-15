@@ -30,6 +30,11 @@
   <name>OpenEJB :: Arquillian Adaptors Parent :: Webapp Remote</name>
 
   <dependencies>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>arquillian-openejb-transaction-provider</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>org.jboss.arquillian.container</groupId>

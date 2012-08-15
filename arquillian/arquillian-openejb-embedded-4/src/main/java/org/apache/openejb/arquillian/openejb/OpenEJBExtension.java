@@ -16,20 +16,23 @@
  */
 package org.apache.openejb.arquillian.openejb;
 
+import org.apache.openejb.arquillian.common.ArquillianUtil;
+import org.apache.openejb.arquillian.common.deployment.DeploymentExceptionObserver;
+import org.apache.openejb.arquillian.common.deployment.DeploymentExceptionProvider;
+import org.apache.openejb.arquillian.transaction.OpenEJBTransactionProvider;
+import org.apache.openejb.util.JuliLogStreamFactory;
+import org.apache.openejb.util.LogCategory;
+import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
+import org.jboss.arquillian.core.spi.LoadableExtension;
+import org.jboss.arquillian.test.spi.TestEnricher;
+import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
+import org.jboss.arquillian.transaction.impl.container.TransactionRemoteExtension;
+import org.jboss.arquillian.transaction.spi.provider.TransactionProvider;
+
 import java.util.Enumeration;
 import java.util.logging.Handler;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
-import org.apache.openejb.arquillian.common.ArquillianUtil;
-import org.apache.openejb.arquillian.common.deployment.DeploymentExceptionObserver;
-import org.apache.openejb.arquillian.common.deployment.DeploymentExceptionProvider;
-import org.apache.openejb.util.JuliLogStreamFactory;
-import org.apache.openejb.util.LogCategory;
-import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
-import org.jboss.arquillian.container.test.spi.client.deployment.ApplicationArchiveProcessor;
-import org.jboss.arquillian.core.spi.LoadableExtension;
-import org.jboss.arquillian.test.spi.TestEnricher;
-import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 
 public class OpenEJBExtension implements LoadableExtension {
     private static final String OPENEJB_ADAPTER_NAME = "openejb";
@@ -56,6 +59,7 @@ public class OpenEJBExtension implements LoadableExtension {
         }
         logger.setUseParentHandlers(false);
         logger.addHandler(new JuliLogStreamFactory.OpenEJBSimpleLayoutHandler());
+
     }
 
     @Override
@@ -64,8 +68,12 @@ public class OpenEJBExtension implements LoadableExtension {
             extensionBuilder.service(DeployableContainer.class, OpenEJBDeployableContainer.class)
                 .service(TestEnricher.class, OpenEJBInjectionEnricher.class)
                 .service(ResourceProvider.class, DeploymentExceptionProvider.class)
+                .service(TransactionProvider.class, OpenEJBTransactionProvider.class)
                 .observer(TestObserver.class)
                 .observer(DeploymentExceptionObserver.class);
+
+            // small hack since this extension can't be loaded in embedded mode by default
+            new TransactionRemoteExtension().register(extensionBuilder);
         }
     }
 }

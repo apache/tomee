@@ -41,9 +41,11 @@ import org.jboss.arquillian.container.spi.context.annotation.ContainerScoped;
 import org.jboss.arquillian.container.spi.context.annotation.DeploymentScoped;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
+import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
+import org.jboss.arquillian.transaction.impl.configuration.TransactionConfiguration;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
@@ -124,6 +126,10 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
 
     @Inject
     private Instance<TestClass> testClass;
+
+    @Inject
+    @ApplicationScoped
+    private InstanceProducer<TransactionConfiguration> txConfig;
 
     @Override
     public Class<OpenEJBConfiguration> getConfigurationClass() {
