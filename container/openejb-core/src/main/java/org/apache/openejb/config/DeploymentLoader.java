@@ -84,6 +84,7 @@ import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+import java.util.zip.ZipEntry;
 
 import static org.apache.openejb.config.NewLoaderLogic.applyBuiltinExcludes;
 import static org.apache.openejb.config.TldScanner.scanForTagLibs;
@@ -1538,6 +1539,19 @@ public class DeploymentLoader implements DeploymentFilterable {
 
             if (classFinder.find(filter)) {
                 cls = EjbModule.class;
+                // if it is a war just throw an error
+                try {
+                    final File ar = URLs.toFile(urls);
+                    if (!ar.isDirectory() && !ar.getName().endsWith("ar")) { // guess no archive extension, check it is not a hidden war
+                        final JarFile war = new JarFile(ar);
+                        final ZipEntry entry = war.getEntry("WEB-INF/");
+                        if (entry != null) {
+                            logger.warning("you deployed " + urls.toExternalForm() + ", it seems it is a war with no extension, please rename it");
+                        }
+                    }
+                } catch (Exception ignored) {
+                    // no-op
+                }
             }
 
             if (otherTypes.size() > 0) {

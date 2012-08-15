@@ -81,6 +81,9 @@ public final class ValidatorBuilder {
                 factory = Validation.buildDefaultValidatorFactory();
             } else {
                 Configuration<?> configuration = getConfig(config);
+                if (configuration == null) {
+                    configuration = getConfig(config);
+                }
                 try {
                     factory = configuration.buildValidatorFactory();
                 } catch (ValidationException ve) {
