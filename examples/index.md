@@ -69,8 +69,8 @@ All the examples show code, but some are better documented than others.  Example
 {span-one-third
 ### REST
 
- - [webapps/rest-example-with-application](webapps/rest-example-with-application/README.html)
- - [webapps/rest-example](webapps/rest-example/README.html)
+ - [rest-example-with-application](rest-example-with-application/README.html)
+ - [rest-example](rest-example/README.html)
  - [rest-on-ejb](rest-on-ejb/README.html)
 }
 
@@ -108,6 +108,7 @@ All the examples show code, but some are better documented than others.  Example
 {span-one-third
 ###  Security
 
+ - [testing-security-3](testing-security-3/README.html)
  - [testing-security-2](testing-security-2/README.html)
  - [testing-security](testing-security/README.html)
 }
@@ -121,7 +122,7 @@ All the examples show code, but some are better documented than others.  Example
  - [injection-of-datasource](injection-of-datasource/README.html)
  - [datasource-ciphered-password](datasource-ciphered-password/README.html) *
  - [dynamic-datasource-routing](dynamic-datasource-routing/README.html) *
- - [webapps/resources-declared-in-webapp](webapps/resources-declared-in-webapp/README.html)
+ - [resources-declared-in-webapp](resources-declared-in-webapp/README.html)
 }
 
 {span-one-third
@@ -162,7 +163,7 @@ All the examples show code, but some are better documented than others.  Example
 
  - [spring-integration](spring-integration/README.html)
  - [spring-data-proxy](spring-data-proxy/README.html)
- - [webapps/struts](webapps/struts/README.html)
+ - [struts](struts/README.html)
 }
 
 }
@@ -211,11 +212,12 @@ All the examples show code, but some are better documented than others.  Example
 {span-two-thirds
 ### Misc
 
- - [webapps/applet](webapps/applet/README.html)
- - [webapps/ejb-examples](webapps/ejb-examples/README.html)
- - [webapps/ejb-webservice](webapps/ejb-webservice/README.html)
- - [webapps/jsf](webapps/jsf/README.html)
- - [webapps/moviefun](webapps/moviefun/README.html)
+ - [applet](applet/README.html)
+ - [ejb-examples](ejb-examples/README.html)
+ - [ejb-webservice](ejb-webservice/README.html)
+ - [jsf-cdi-and-ejb](jsf-cdi-and-ejb/README.html)
+ - [jsf-managedBean-and-ejb](jsf-managedBean-and-ejb/README.html)
+ - [moviefun](moviefun/README.html)
  - [helloworld-weblogic](helloworld-weblogic/README.html)
  - [polling-parent](polling-parent/README.html)
 }
