@@ -404,6 +404,12 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         sys.containerSystem = new ContainerSystemInfo();
         sys.facilities = new FacilitiesInfo();
 
+        // listener + some config can be defined as service
+        for (Service service : openejb.getServices()) {
+            final ServiceInfo info = configureService(service, ServiceInfo.class);
+            sys.facilities.services.add(info);
+        }
+
         for (final JndiProvider provider : openejb.getJndiProvider()) {
             final JndiContextInfo info = configureService(provider, JndiContextInfo.class);
             sys.facilities.remoteJndiContexts.add(info);

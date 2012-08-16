@@ -17,44 +17,38 @@
 
 package org.apache.openejb.server.cxf.rs;
 
-import java.util.Properties;
+import org.apache.cxf.jaxrs.client.WebClient;
+import org.apache.openejb.OpenEjbContainer;
+import org.apache.openejb.config.DeploymentFilterable;
+import org.apache.openejb.config.DeploymentLoader;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import javax.ejb.Singleton;
 import javax.ejb.embeddable.EJBContainer;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
-import javax.ws.rs.ext.Provider;
-import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.openejb.OpenEjbContainer;
-import org.apache.openejb.config.DeploymentFilterable;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import java.util.Properties;
 
 import static junit.framework.Assert.assertEquals;
 
 public class CustomExceptionMapperTest {
     private static EJBContainer container;
-    private static String providers;
 
     @BeforeClass public static void start() throws Exception {
-        providers = System.getProperty(CxfRsHttpListener.OPENEJB_CXF_JAXRS_PROVIDERS_KEY);
         final Properties properties = new Properties();
         properties.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*openejb-cxf-rs.*");
         properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
-        properties.setProperty(CxfRsHttpListener.OPENEJB_CXF_JAXRS_PROVIDERS_KEY, EM.class.getName());
+        properties.setProperty(DeploymentLoader.OPENEJB_ALTDD_PREFIX, "em");
         container = EJBContainer.createEJBContainer(properties);
     }
 
     @AfterClass public static void close() throws Exception {
         if (container != null) {
             container.close();
-        }
-        if (providers == null) {
-            System.clearProperty(CxfRsHttpListener.OPENEJB_CXF_JAXRS_PROVIDERS_KEY);
-        } else {
-            System.setProperty(CxfRsHttpListener.OPENEJB_CXF_JAXRS_PROVIDERS_KEY, providers);
         }
     }
 

@@ -28,19 +28,17 @@ import org.apache.cxf.jaxws.handler.soap.SOAPHandlerInterceptor;
 import org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.core.webservices.JaxWsUtils;
 import org.apache.openejb.core.webservices.PortData;
 import org.apache.openejb.server.cxf.ConfigureCxfSecurity;
 import org.apache.openejb.server.cxf.CxfEndpoint;
-import org.apache.openejb.server.cxf.CxfService;
 import org.apache.openejb.server.cxf.CxfServiceConfiguration;
 import org.apache.openejb.server.cxf.JaxWsImplementorInfoImpl;
 
 import javax.xml.ws.WebServiceException;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 
 /**
  * A web service endpoint which invokes an EJB container.
@@ -48,8 +46,8 @@ import java.util.Properties;
 public class EjbEndpoint extends CxfEndpoint {
     private final BeanContext beanContext;
 
-    public EjbEndpoint(Bus bus, PortData portData, BeanContext beanContext, HTTPTransportFactory httpTransportFactory) {
-        super(bus, portData, beanContext.getJndiEnc(), beanContext.getBeanClass(), httpTransportFactory);
+    public EjbEndpoint(Bus bus, PortData portData, BeanContext beanContext, HTTPTransportFactory httpTransportFactory, Collection<ServiceInfo> services) {
+        super(bus, portData, beanContext.getJndiEnc(), beanContext.getBeanClass(), httpTransportFactory, services);
         this.beanContext = beanContext;
 
         String bindingURI = JaxWsUtils.getBindingURI(portData.getBindingID());
@@ -67,25 +65,6 @@ public class EjbEndpoint extends CxfEndpoint {
 
     protected Class getImplementorClass() {
         return (Class) this.implementor;
-    }
-
-    @Override
-    protected Map<String, Object> getEndpointProperties() {
-        final Map<String, Object> map = new HashMap<String, Object>();
-        for (Map.Entry<Object, Object> entry : port.getProperties().entrySet()) {
-            map.put(entry.getKey().toString(), entry.getValue());
-        }
-        return map;
-    }
-
-    @Override
-    protected Properties getFeaturesProperties() {
-        return port.getProperties();
-    }
-
-    @Override
-    protected String getFeaturePropertyKey() {
-        return CxfService.OPENEJB_JAXWS_CXF_FEATURES;
     }
 
     protected void init() {

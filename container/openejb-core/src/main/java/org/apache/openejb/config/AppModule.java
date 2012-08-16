@@ -53,6 +53,7 @@ public class AppModule implements DeploymentModule {
     private final Map<String, TransactionType> txTypeByUnit = new HashMap<String, TransactionType>();
     // TODO We could turn this into the Resources JAXB object and support containers and other things as well
     private final Collection<Resource> resources = new HashSet<Resource>();
+    private final Collection<org.apache.openejb.config.sys.Service> services = new HashSet<org.apache.openejb.config.sys.Service>();
     private final ClassLoader classLoader;
     private EntityMappings cmpMappings;
     private final Map<String,Object> altDDs = new HashMap<String,Object>();
@@ -274,6 +275,10 @@ public class AppModule implements DeploymentModule {
 
     public Collection<Resource> getResources() {
         return resources;
+    }
+
+    public Collection<org.apache.openejb.config.sys.Service> getServices() {
+        return services;
     }
 
     public Collection<DeploymentModule> getDeploymentModule() {

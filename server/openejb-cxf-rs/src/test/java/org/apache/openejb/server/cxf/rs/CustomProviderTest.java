@@ -20,6 +20,7 @@ package org.apache.openejb.server.cxf.rs;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.config.DeploymentFilterable;
+import org.apache.openejb.config.DeploymentLoader;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -43,26 +44,18 @@ import static junit.framework.Assert.assertEquals;
 
 public class CustomProviderTest {
     private static EJBContainer container;
-    private static String providers;
 
     @BeforeClass public static void start() throws Exception {
-        providers = System.getProperty(CxfRsHttpListener.OPENEJB_CXF_JAXRS_PROVIDERS_KEY);
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
         properties.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*openejb-cxf-rs.*");
         properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
-        properties.setProperty(CxfRsHttpListener.OPENEJB_CXF_JAXRS_PROVIDERS_KEY, ReverseProvider.class.getName());
-        properties.setProperty(CustomSpecificService.class.getName() + CxfRsHttpListener.OPENEJB_CXF_JAXRS_PROVIDERS_SUFFIX, ConstantProvider.class.getName());
+        properties.setProperty(DeploymentLoader.OPENEJB_ALTDD_PREFIX, "custom");
         container = EJBContainer.createEJBContainer(properties);
     }
 
     @AfterClass public static void close() throws Exception {
         if (container != null) {
             container.close();
-        }
-        if (providers == null) {
-            System.clearProperty(CxfRsHttpListener.OPENEJB_CXF_JAXRS_PROVIDERS_KEY);
-        } else {
-            System.setProperty(CxfRsHttpListener.OPENEJB_CXF_JAXRS_PROVIDERS_KEY, providers);
         }
     }
 

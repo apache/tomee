@@ -22,6 +22,7 @@ import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.extension.ExtensionManagerBus;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
+import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.core.webservices.PortData;
 import org.apache.openejb.server.cxf.transport.HttpTransportFactory;
 import org.apache.openejb.server.httpd.HttpListener;
@@ -29,6 +30,7 @@ import org.apache.openejb.server.httpd.HttpRequest;
 import org.apache.openejb.server.httpd.HttpResponse;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public abstract class CxfWsContainer implements HttpListener {
@@ -37,10 +39,12 @@ public abstract class CxfWsContainer implements HttpListener {
     protected AbstractHTTPDestination destination;
     protected CxfEndpoint endpoint;
     protected HTTPTransportFactory httpTransportFactory;
+    protected final Collection<ServiceInfo> availableServices;
 
-    public CxfWsContainer(Bus bus, PortData port) {
+    public CxfWsContainer(Bus bus, PortData port, Collection<ServiceInfo> services) {
         this.bus = bus;
         this.port = port;
+        this.availableServices = services;
         
         List<String> ids = new ArrayList<String>();
         ids.add("http://schemas.xmlsoap.org/wsdl/soap/");

@@ -50,7 +50,7 @@ public class DiscoverCustomProviderTest {
         properties.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*openejb-cxf-rs.*");
         properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
         properties.setProperty(RESTService.OPENEJB_JAXRS_PROVIDERS_AUTO_PROP, "true");
-        properties.setProperty("openejb.cxf.rs.jaxb.properties", "faultStackTraceEnabled=true");
+        properties.setProperty(CxfRsHttpListener.CXF_JAXRS_PREFIX + "debug", "true");
         container = EJBContainer.createEJBContainer(properties);
     }
 

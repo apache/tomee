@@ -43,12 +43,14 @@ public class TomeeJaxWsService implements Service {
         system.addObserver(this);
     }
 
+    // mainly here because is the service manager is disabled cxf service will not be called
+    // but this one will be
     public void afterApplicationCreated(@Observes final AfterApplicationCreated event) {
         // required for Pojo Web Services because when Assembler creates the application
         // the CoreContainerSystem does not contain the WebContext
         // see also the start method getContainerSystem().addWebDeployment(webContext);
         WsService component = SystemInstance.get().getComponent(WsService.class);
         if (component == null) return;
-        component.afterApplicationCreated(event.getWeb());
+        component.afterApplicationCreated(event.getApp(), event.getWeb());
     }
 }

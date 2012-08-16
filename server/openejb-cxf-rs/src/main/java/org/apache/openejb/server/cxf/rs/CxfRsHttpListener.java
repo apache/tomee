@@ -17,7 +17,6 @@
 package org.apache.openejb.server.cxf.rs;
 
 import org.apache.cxf.endpoint.Server;
-import org.apache.cxf.feature.AbstractFeature;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.lifecycle.ResourceProvider;
 import org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider;
@@ -28,69 +27,37 @@ import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.Injection;
-import org.apache.openejb.loader.Options;
-import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.assembler.classic.ServiceInfo;
+import org.apache.openejb.assembler.classic.util.ServiceInfos;
+import org.apache.openejb.server.cxf.transport.util.CxfUtil;
 import org.apache.openejb.server.httpd.HttpRequest;
 import org.apache.openejb.server.httpd.HttpRequestImpl;
 import org.apache.openejb.server.httpd.HttpResponse;
 import org.apache.openejb.server.rest.RsHttpListener;
-import org.apache.openejb.util.ListConfigurator;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.ObjectRecipeHelper;
 import org.apache.webbeans.config.WebBeansContext;
-import org.apache.xbean.recipe.ObjectRecipe;
 
 import javax.naming.Context;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.ws.rs.core.Application;
 import javax.xml.bind.Marshaller;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * System property:
- * <ul>
- *     <li>-Dopenejb.cxf.jax-rs.providers=&lt;qualified name&gt;:default</li>
- * </ul>
- * Note: default means jaxb and json
- *
- * Providers are created from system properties so config is done:
- * [<service class name>.providers.</service>|openejb.cxf.jax-rs.providers].<provider class>.<property name>=<value>
- *
- */
 public class CxfRsHttpListener implements RsHttpListener {
-    private static final Logger LOGGER = Logger.getInstance(LogCategory.CXF, CxfRsHttpListener.class);
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_RS, CxfRsHttpListener.class);
 
-    public static final String OPENEJB_CXF_JAXRS_PROVIDERS_KEY = "openejb.cxf.jax-rs.providers";
-    public static final String OPENEJB_CXF_JAXRS_PROVIDERS_SUFFIX = ".providers";
-    public static final String DEFAULT_CXF_JAXRS_PROVIDERS_KEY = "default";
-    public static final String OPENEJB_CXF_PROPERTIES = "openejb.cxf.rs.jaxb.properties";
-
-    public static final String OPENEJB_JAXRS_READ_PROPERTIES = "openejb.jaxrs.read-properties";
-    public static final String OPENEJB_JAXRS_CXF_FEATURES = "openejb.jaxrs.cxf.features";
-
-    private static final List<Object> PROVIDERS = createConfiguredProviderList("", CxfRsHttpListener.class.getClassLoader());
-    private static final Map<String, Object> cxfProperties = toMap(SystemInstance.get().getProperty(OPENEJB_CXF_PROPERTIES));
+    public static final String CXF_JAXRS_PREFIX = "cxf.jaxrs.";
+    public static final String PROVIDERS_KEY = CXF_JAXRS_PREFIX + "providers";
 
     private HTTPTransportFactory transportFactory;
     private AbstractHTTPDestination destination;
     private Server server;
-
-    private static List<AbstractFeature> GLOBAL_FEATURES = new ArrayList<AbstractFeature>();
-    static {
-        final List<AbstractFeature> features = ListConfigurator.getList(
-                SystemInstance.get().getProperties(), OPENEJB_JAXRS_CXF_FEATURES,
-                CxfRsHttpListener.class.getClassLoader(), AbstractFeature.class);
-        if (features != null) {
-            GLOBAL_FEATURES.addAll(features);
-        }
-    }
 
     public CxfRsHttpListener(HTTPTransportFactory httpTransportFactory) {
         transportFactory = httpTransportFactory;
@@ -114,26 +81,25 @@ public class CxfRsHttpListener implements RsHttpListener {
     }
 
     @Override
-    public void deploySingleton(String fullContext, Object o, Application appInstance, Collection<Class<?>> additionalProviders) {
-        deploy(o.getClass(), fullContext, new SingletonResourceProvider(o), o, appInstance, null, additionalProviders);
+    public void deploySingleton(String fullContext, Object o, Application appInstance,
+                                Collection<Class<?>> additionalProviders, Collection<ServiceInfo> services) {
+        deploy(o.getClass(), fullContext, new SingletonResourceProvider(o), o, appInstance, null, additionalProviders, services);
     }
 
     @Override
-    public void deployPojo(String fullContext, Class<?> loadedClazz, Application app, Collection<Injection> injections, Context context, WebBeansContext owbCtx, Collection<Class<?>> additionalProviders) {
-        deploy(loadedClazz, fullContext, new OpenEJBPerRequestPojoResourceProvider(loadedClazz, injections, context, owbCtx), null, app, null, additionalProviders);
+    public void deployPojo(String fullContext, Class<?> loadedClazz, Application app, Collection<Injection> injections,
+                           Context context, WebBeansContext owbCtx, Collection<Class<?>> additionalProviders, Collection<ServiceInfo> services) {
+        deploy(loadedClazz, fullContext, new OpenEJBPerRequestPojoResourceProvider(loadedClazz, injections, context, owbCtx),
+                            null, app, null, additionalProviders, services);
     }
 
     @Override
-    public void deployEJB(String fullContext, BeanContext beanContext, Collection<Class<?>> additionalProviders) {
-        deploy(beanContext.getBeanClass(), fullContext, null, null, null, new OpenEJBEJBInvoker(beanContext), additionalProviders);
+    public void deployEJB(String fullContext, BeanContext beanContext, Collection<Class<?>> additionalProviders, Collection<ServiceInfo> services) {
+        deploy(beanContext.getBeanClass(), fullContext, null, null, null, new OpenEJBEJBInvoker(beanContext), additionalProviders, services);
     }
 
-    private void deploy(Class<?> clazz, String address, ResourceProvider rp, Object serviceBean, Application app, Invoker invoker, Collection<Class<?>> additionalProviders) {
-        final List<Object> providers = createConfiguredProviderList(nameForProviders(clazz), clazz.getClassLoader());
-        if (additionalProviders != null && !additionalProviders.isEmpty()) {
-            providers.addAll(instantiate(additionalProviders));
-        }
-
+    private void deploy(Class<?> clazz, String address, ResourceProvider rp, Object serviceBean, Application app, Invoker invoker,
+                        Collection<Class<?>> additionalProviders, Collection<ServiceInfo> services) {
         final String impl;
         if (serviceBean != null) {
             impl = serviceBean.getClass().getName();
@@ -141,35 +107,34 @@ public class CxfRsHttpListener implements RsHttpListener {
             impl = clazz.getName();
         }
 
-        final Map<String, Object> specificProperties = toMap(SystemInstance.get().getProperty(OPENEJB_CXF_PROPERTIES + "." + impl + "."));
-
         final JAXRSServerFactoryBean factory = new JAXRSServerFactoryBean();
         factory.setResourceClasses(clazz);
         factory.setDestinationFactory(transportFactory);
         factory.setBus(transportFactory.getBus());
         factory.setAddress(address);
-        factory.setProviders(providers);
-        if (factory.getProperties() == null) {
-            factory.setProperties(new HashMap<String, Object>());
-        }
 
-        if (specificProperties != null) {
-            factory.getProperties().putAll(specificProperties);
-        } else if (cxfProperties != null) {
-            factory.getProperties().putAll(cxfProperties);
-        }
+        CxfUtil.configureEndpoint(factory, services, CXF_JAXRS_PREFIX, impl);
 
-        if (SystemInstance.get().getOptions().get(OPENEJB_JAXRS_READ_PROPERTIES, false)) {
-            List<AbstractFeature> features = ListConfigurator.getList(
-                    SystemInstance.get().getProperties(), clazz.getName() + "." + OPENEJB_JAXRS_CXF_FEATURES,
-                    clazz.getClassLoader(), AbstractFeature.class);
-            if (features == null) {
-                features = new ArrayList<AbstractFeature>();
+        // providers
+        final ServiceInfo info = ServiceInfos.findByClass(services, impl);
+        List<Object> providers = null;
+        if (info != null) {
+            final String provider = info.properties.getProperty(PROVIDERS_KEY);
+            if (provider != null) {
+                providers = ServiceInfos.resolve(services, provider.split(","));
+                if (providers != null && additionalProviders != null && !additionalProviders.isEmpty()) {
+                    providers.addAll(providers(services, info, additionalProviders));
+                }
+                factory.setProviders(providers);
             }
-            features.addAll(GLOBAL_FEATURES);
-            if (!features.isEmpty()) {
-                factory.setFeatures(features);
+        }
+        if (providers == null) {
+            providers = new ArrayList<Object>();
+            providers.addAll(defaultProviders());
+            if (additionalProviders != null && !additionalProviders.isEmpty()) {
+                providers.addAll(providers(services, info, additionalProviders));
             }
+            factory.setProviders(providers);
         }
 
         if (rp != null) {
@@ -191,117 +156,44 @@ public class CxfRsHttpListener implements RsHttpListener {
         destination = (AbstractHTTPDestination) server.getDestination();
     }
 
-    private Collection<Object> instantiate(final Collection<Class<?>> classes) {
-        final List<Object> instances = new ArrayList<Object>();
-        for (Class<?> clazz : classes) {
-            try {
-                instances.add(clazz.newInstance());
-            } catch (InstantiationException e) {
-                LOGGER.warning("can't instantiate '" + clazz.getName() + "'", e);
-            } catch (IllegalAccessException e) {
-                LOGGER.warning("can't access '" + clazz.getName() + "'", e);
+    private Collection<Object> providers(final Collection<ServiceInfo> services, final ServiceInfo service, final Collection<Class<?>> additionalProviders) {
+        final Collection<Object> instances = new ArrayList<Object>();
+
+        final String prefix;
+        if (service != null) {
+            prefix = service.id + ".";
+        } else {
+            prefix = "";
+        }
+
+        for (Class<?> clazz : additionalProviders) {
+            final Object instance = ServiceInfos.resolve(services, prefix + clazz.getName());
+            if (instance != null) {
+                instances.add(instance);
+            } else {
+                try {
+                    instances.add(clazz.newInstance());
+                } catch (Exception e) {
+                    LOGGER.error("can't instantiate " + clazz.getName(), e);
+                }
             }
         }
         return instances;
-    }
-
-    private String nameForProviders(Class<?> clazz) {
-        if (clazz == null) {
-            return "default"; // whatever it is it will be overriden by default providers
-        }
-        return clazz.getName();
     }
 
     public void undeploy() {
         server.stop();
     }
 
-    private static List<Object> createConfiguredProviderList(final String prefix, final ClassLoader loader) {
-        final String key;
-        final String systPropPrefix;
-        if (prefix == null || prefix.trim().isEmpty()) {
-            key = OPENEJB_CXF_JAXRS_PROVIDERS_KEY;
-            systPropPrefix = key + ".";
-        } else {
-            key = prefix + OPENEJB_CXF_JAXRS_PROVIDERS_SUFFIX;
-            systPropPrefix = prefix + ".";
-        }
-
-        String providersProperty = SystemInstance.get().getProperty(key);
-        // if no overriding
-        if (PROVIDERS != null && (providersProperty == null || providersProperty.trim().isEmpty())) {
-            return PROVIDERS;
-        }
-
+    private static List<Object> defaultProviders() {
         final JAXBElementProvider jaxb = new JAXBElementProvider();
         final Map<String, Object> jaxbProperties = new HashMap<String, Object> ();
         jaxbProperties.put(Marshaller.JAXB_FRAGMENT, true);
         jaxb.setMarshallerProperties(jaxbProperties);
 
-        final JSONProvider json = buildProvider(JSONProvider.class, loader,
-                OPENEJB_CXF_JAXRS_PROVIDERS_KEY + "." + JSONProvider.class.getName() + ".",
-                systPropPrefix + JSONProvider.class.getName() + ".");
+        final JSONProvider json = new JSONProvider();
+        json.setSerializeAsArray(true);
 
-        List<Object> providerList = new ArrayList<Object>();
-        if (providersProperty != null && !providersProperty.trim().isEmpty()) {
-            String[] providers = providersProperty.split(",|;| ");
-            for (String provider : providers) {
-                if (DEFAULT_CXF_JAXRS_PROVIDERS_KEY.equals(provider)) {
-                    providerList.add(json);
-                    providerList.add(jaxb);
-                } else {
-                    try {
-                        providerList.add(ObjectRecipeHelper.createMeFromSystemProps(systPropPrefix + provider + ".", null, loader.loadClass(provider)));
-                    } catch (Exception e) {
-                        LOGGER.error("can't add jax-rs provider " + provider + " in the current webapp"); // don't print this exception
-                    }
-                }
-            }
-            return providerList;
-        }
-
-        providerList.add(jaxb);
-        providerList.add(json);
-        return providerList;
-    }
-
-    // generally faster than looping all system properties
-    // Note: should respect general format of custom provider config
-    private static <T> T buildProvider(final Class<T> clazz, final ClassLoader classloader, final String globalPrefix, final String prefix) {
-        // quick look in clazz (and not parent) if we can look for some property
-        final Map<String, Object> properties = new HashMap<String, Object>();
-        final Options options = SystemInstance.get().getOptions();
-        for (Field field : clazz.getDeclaredFields()) {
-            if (Modifier.isStatic(field.getModifiers())) {
-                continue;
-            }
-
-            if (prefix != null) {
-                final String key = prefix + field.getName();
-                if (options.has(key)) {
-                    properties.put(field.getName(), options.getProperties().get(key));
-                } else if (options.has(globalPrefix + field.getName())) {
-                    properties.put(field.getName(), options.getProperties().get(globalPrefix + field.getName()));
-                }
-            }
-        }
-        return clazz.cast(new ObjectRecipe(clazz, properties).create(classloader));
-    }
-
-    private static Map<String, Object> toMap(String property) {
-        if (property == null || property.isEmpty()) {
-            return null;
-        }
-
-        final Map<String, Object> properties = new HashMap<String, Object>();
-        for (String str : property.split(",| ")) {
-            final String[] kv = str.split("=");
-            if (kv.length == 2) {
-                properties.put(kv[0], kv[1]);
-            } else {
-                properties.put(str, "");
-            }
-        }
-        return properties;
+        return Arrays.asList((Object) jaxb, json);
     }
 }

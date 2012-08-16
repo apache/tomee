@@ -17,6 +17,8 @@
 package org.apache.openejb.util;
 
 import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 public final class PropertiesHelper {
@@ -36,5 +38,13 @@ public final class PropertiesHelper {
             // no-op
         }
         return new String(baos.toByteArray());
+    }
+
+    public static Map<String, Object> map(final Properties props) {
+        final Map<String, Object> map = new HashMap<String, Object>();
+        for (Map.Entry<Object, Object> entry : props.entrySet()) {
+            map.put((String) entry.getKey(), entry.getValue());
+        }
+        return map;
     }
 }

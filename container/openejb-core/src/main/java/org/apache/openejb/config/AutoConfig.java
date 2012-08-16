@@ -165,7 +165,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
     public synchronized AppModule deploy(AppModule appModule) throws OpenEJBException {
         AppResources appResources = new AppResources(appModule);
 
-        processDataSourceDefinitions(appModule);
+        processApplicationResources(appModule);
 
         for (EjbModule ejbModule : appModule.getEjbModules()) {
             processActivationConfig(ejbModule);
@@ -846,7 +846,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         }
     }
 
-    private void processDataSourceDefinitions(AppModule module) throws OpenEJBException {
+    private void processApplicationResources(AppModule module) throws OpenEJBException {
         Collection<Resource> resources = module.getResources();
 
         if (resources.size() == 0) return;
