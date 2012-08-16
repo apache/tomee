@@ -4,7 +4,10 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.feature.AbstractFeature;
 import org.apache.openejb.OpenEjbContainer;
+import org.apache.openejb.config.DeploymentLoader;
 import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.config.sys.Resources;
+import org.apache.openejb.config.sys.Service;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
@@ -26,6 +29,7 @@ public class FeatureTest {
     public Properties config() {
         return new Properties() {{
             setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
+            setProperty(DeploymentLoader.OPENEJB_ALTDD_PREFIX, "feature");
         }};
     }
 
@@ -41,6 +45,25 @@ public class FeatureTest {
 
         final EjbModule module = new EjbModule(jar);
         module.setOpenejbJar(openejbJar);
+
+        final Resources resources = new Resources();
+
+        final Service service = new Service("my-feature", null, null, null);
+        service.setClassName(MyFeature.class.getName());
+        resources.add(service);
+
+        final Service properties = new Service("my-props", null, null, null);
+        properties.setClassName(Properties.class.getName());
+        properties.getProperties().setProperty("faultStackTraceEnabled", "true");
+        resources.add(properties);
+
+        final Service beanService = new Service("bean-config", null, null, null);
+        beanService.setClassName(AuthenticatorServiceBean.class.getName());
+        beanService.getProperties().setProperty("cxf.jaxws.features", "my-feature");
+        beanService.getProperties().setProperty("cxf.jaxws.properties", "my-props");
+        resources.add(beanService);
+
+        module.initResources(resources);
 
         return module;
     }

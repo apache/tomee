@@ -33,12 +33,11 @@ import org.apache.openejb.assembler.classic.MessageDrivenBeanInfo;
 import org.apache.openejb.assembler.classic.PersistenceUnitInfo;
 import org.apache.openejb.assembler.classic.PortInfo;
 import org.apache.openejb.assembler.classic.ResourceInfo;
+import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.assembler.classic.ServletInfo;
 import org.apache.openejb.assembler.classic.ValidatorBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
-import org.apache.openejb.config.sys.Container;
-import org.apache.openejb.config.sys.Resource;
-import org.apache.openejb.config.sys.ServiceProvider;
+import org.apache.openejb.config.sys.*;
 import org.apache.openejb.jee.AdminObject;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.ConfigProperty;
@@ -74,6 +73,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -114,6 +114,7 @@ class AppInfoBuilder {
         if (appInfo.path == null) appInfo.path = appInfo.appId;
 
         buildAppResources(appModule, appInfo);
+        buildAppServices(appModule, appInfo);
 
         //
         //  J2EE Connectors
@@ -276,6 +277,14 @@ class AppInfoBuilder {
 
         return appInfo;
 
+    }
+
+    private void buildAppServices(final AppModule appModule, final AppInfo appInfo) throws OpenEJBException {
+        final Collection<org.apache.openejb.config.sys.Service> services = appModule.getServices();
+        for (org.apache.openejb.config.sys.Service service : services) {
+            final ServiceInfo info = configFactory.configureService(service, ServiceInfo.class);
+            appInfo.services.add(info);
+        }
     }
 
     private void buildAppResources(AppModule module, AppInfo info) {

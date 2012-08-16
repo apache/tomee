@@ -260,19 +260,8 @@ public class ReadDescriptors implements DynamicDeployer {
         URL url = getUrl(module, "resources.xml");
         if (url != null) {
             try {
-                Resources openejb = JaxbOpenejb.unmarshal(Resources.class, IO.read(url));
+                final Resources openejb = JaxbOpenejb.unmarshal(Resources.class, IO.read(url));
                 module.initResources(openejb);
-
-                // warn if other entities than resources were declared
-                if (openejb.getContainer().size() > 0) {
-                    logger.warning("containers can't be declared at module level");
-                }
-                if (openejb.getConnectionManager() != null) {
-                    logger.warning("connection manager can't be declared at module level");
-                }
-                if (openejb.getJndiProvider().size() > 0) {
-                    logger.warning("jndi providers can't be declared at module level");
-                }
             } catch (Exception e) {
                 logger.warning("can't read " + url.toString() + " to load resources for module " + module.toString(), e);
             }

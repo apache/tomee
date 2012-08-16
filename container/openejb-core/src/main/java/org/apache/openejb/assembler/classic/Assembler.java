@@ -1542,14 +1542,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     public void createService(ServiceInfo serviceInfo) throws OpenEJBException {
-        ObjectRecipe serviceRecipe = createRecipe(serviceInfo);
+        final ObjectRecipe serviceRecipe = createRecipe(serviceInfo);
 
-        Object service = serviceRecipe.create();
+        final Object service = serviceRecipe.create();
         SystemInstance.get().addObserver(service);
 
-        Class serviceClass = service.getClass();
-
         logUnusedProperties(serviceRecipe, serviceInfo);
+
+        final Class<?> serviceClass = service.getClass();
 
         getContext().put(serviceClass.getName(), service);
 
@@ -1914,12 +1914,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         logger.getChildLogger("service").debug("createService.success", serviceInfo.service, serviceInfo.id, serviceInfo.className);
     }
 
-    private void logUnusedProperties(ObjectRecipe serviceRecipe, ServiceInfo info) {
+    public static void logUnusedProperties(ObjectRecipe serviceRecipe, ServiceInfo info) {
         Map<String, Object> unsetProperties = serviceRecipe.getUnsetProperties();
         logUnusedProperties(unsetProperties, info);
     }
 
-    private void logUnusedProperties(Map<String, Object> unsetProperties, ServiceInfo info) {
+    private static void logUnusedProperties(Map<String, Object> unsetProperties, ServiceInfo info) {
         for (String property : unsetProperties.keySet()) {
             //TODO: DMB: Make more robust later
             if (property.equalsIgnoreCase("JndiName")) return;
@@ -1939,13 +1939,18 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
     }
 
+    public static ObjectRecipe prepareRecipe(final ServiceInfo info) {
+        final String[] constructorArgs = info.constructorArgs.toArray(new String[info.constructorArgs.size()]);
+        final ObjectRecipe serviceRecipe = new ObjectRecipe(info.className, info.factoryMethod, constructorArgs, null);
+        serviceRecipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
+        serviceRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
+        return serviceRecipe;
+    }
+
     private ObjectRecipe createRecipe(ServiceInfo info) {
         Logger serviceLogger = logger.getChildLogger("service");
         serviceLogger.info("createService", info.service, info.id, info.className);
-        String[] constructorArgs = info.constructorArgs.toArray(new String[info.constructorArgs.size()]);
-        ObjectRecipe serviceRecipe = new ObjectRecipe(info.className, info.factoryMethod, constructorArgs, null);
-        serviceRecipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
-        serviceRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
+        final ObjectRecipe serviceRecipe = prepareRecipe(info);
         serviceRecipe.setAllProperties(info.properties);
 
         if (serviceLogger.isDebugEnabled()) {

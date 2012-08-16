@@ -18,19 +18,26 @@
 package org.apache.openejb.server.cxf;
 
 import org.apache.cxf.Bus;
+import org.apache.cxf.databinding.DataBinding;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.endpoint.ServerImpl;
 import org.apache.cxf.feature.AbstractFeature;
+import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 import org.apache.cxf.jaxws.handler.PortInfoImpl;
 import org.apache.cxf.jaxws.support.JaxWsEndpointImpl;
 import org.apache.cxf.jaxws.support.JaxWsImplementorInfo;
 import org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean;
+import org.apache.cxf.message.Message;
 import org.apache.cxf.service.Service;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
+import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.assembler.classic.ServiceInfo;
+import org.apache.openejb.assembler.classic.util.ServiceInfos;
 import org.apache.openejb.core.webservices.HandlerResolverImpl;
 import org.apache.openejb.core.webservices.PortData;
-import org.apache.openejb.util.ListConfigurator;
+import org.apache.openejb.server.cxf.transport.util.CxfUtil;
+import org.apache.openejb.util.PropertiesHelper;
 
 import javax.naming.Context;
 import javax.xml.transform.Source;
@@ -38,13 +45,15 @@ import javax.xml.ws.Binding;
 import javax.xml.ws.handler.Handler;
 import javax.xml.ws.http.HTTPBinding;
 import javax.xml.ws.soap.SOAPBinding;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 
 public abstract class CxfEndpoint {
-	protected Bus bus;
+    public static final String CXF_JAXWS_PREFIX = "cxf.jaxws.";
+    protected Bus bus;
 
 	protected PortData port;
 	
@@ -64,13 +73,16 @@ public abstract class CxfEndpoint {
 	
 	protected HTTPTransportFactory httpTransportFactory;
 
-	public CxfEndpoint(Bus bus, PortData port, Context context,
-			Object implementor, HTTPTransportFactory httpTransportFactory) {
+    protected Collection<ServiceInfo> availableServices;
+
+    public CxfEndpoint(Bus bus, PortData port, Context context,
+			Object implementor, HTTPTransportFactory httpTransportFactory, Collection<ServiceInfo> services) {
 		this.bus = bus;
 		this.port = port;
 		this.context = context;
 		this.implementor = implementor;
 		this.httpTransportFactory = httpTransportFactory;
+        this.availableServices = services;
 		this.bus.setExtension(this, CxfEndpoint.class);
 	}
 
@@ -151,8 +163,9 @@ public abstract class CxfEndpoint {
 		svrFactory.setStart(false);
 		svrFactory.setServiceBean(implementor);
         svrFactory.setDestinationFactory(httpTransportFactory);
-        svrFactory.setProperties(getEndpointProperties());
-        svrFactory.setFeatures(ListConfigurator.getList(getFeaturesProperties(), getFeaturePropertyKey(), getImplementorClass().getClassLoader(), AbstractFeature.class));
+
+        // look for bean info if exists
+        CxfUtil.configureEndpoint(svrFactory, availableServices, CXF_JAXWS_PREFIX, getImplementorClass().getName());
 
 		if (HTTPBinding.HTTP_BINDING.equals(implInfo.getBindingType())) {
 			svrFactory.setTransportId("http://cxf.apache.org/bindings/xformat");
@@ -171,14 +184,6 @@ public abstract class CxfEndpoint {
 
 		server.start();
 	}
-
-    protected abstract Properties getFeaturesProperties();
-
-    protected abstract String getFeaturePropertyKey();
-
-    protected Map<String,Object> getEndpointProperties() {
-        return null;
-    }
 
     protected void init() {
         // no-op

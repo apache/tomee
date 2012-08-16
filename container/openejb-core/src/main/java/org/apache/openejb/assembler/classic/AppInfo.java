@@ -36,6 +36,7 @@ public class AppInfo extends InfoObject {
     public final List<ConnectorInfo> connectors = new ArrayList<ConnectorInfo>();
     public final List<WebAppInfo> webApps = new ArrayList<WebAppInfo>();
     public final List<PersistenceUnitInfo> persistenceUnits = new ArrayList<PersistenceUnitInfo>();
+    public List<ServiceInfo> services = new ArrayList<ServiceInfo>();
     public final List<String> libs = new ArrayList<String>();
     public final Set<String> watchedResources = new TreeSet<String>();
     public final Set<String> resourceIds = new TreeSet<String>();

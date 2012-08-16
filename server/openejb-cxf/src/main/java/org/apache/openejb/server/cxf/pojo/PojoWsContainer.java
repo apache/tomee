@@ -18,10 +18,12 @@
 package org.apache.openejb.server.cxf.pojo;
 
 import org.apache.cxf.Bus;
+import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.core.webservices.PortData;
 import org.apache.openejb.server.cxf.CxfWsContainer;
 
 import javax.naming.Context;
+import java.util.Collection;
 import java.util.Map;
 
 public class PojoWsContainer extends CxfWsContainer {
@@ -30,8 +32,8 @@ public class PojoWsContainer extends CxfWsContainer {
     private final Map<String, Object> bindings;
 
 
-    public PojoWsContainer(Bus bus, PortData port, Context context, Class target, Map<String, Object> bdgs) {
-        super(bus, port);
+    public PojoWsContainer(Bus bus, PortData port, Context context, Class target, Map<String, Object> bdgs, Collection<ServiceInfo> services) {
+        super(bus, port, services);
         if (target == null) throw new NullPointerException("target is null");
         this.context = context;
         this.target = target;
@@ -39,6 +41,6 @@ public class PojoWsContainer extends CxfWsContainer {
     }
 
     protected PojoEndpoint createEndpoint() {
-        return new PojoEndpoint(bus, port, context, target, httpTransportFactory, bindings);
+        return new PojoEndpoint(bus, port, context, target, httpTransportFactory, bindings, availableServices);
     }
 }

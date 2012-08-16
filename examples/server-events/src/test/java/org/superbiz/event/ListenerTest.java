@@ -26,6 +26,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(Arquillian.class)
 public class ListenerTest {
@@ -39,5 +40,6 @@ public class ListenerTest {
     @Test
     public void check() {
         assertEquals("listener-test", AutoDiscoveredListener.getAppName());
+        assertTrue(MyListener.isLogAllEvent());
     }
 }
