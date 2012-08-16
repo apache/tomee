@@ -19,16 +19,11 @@
 <resources>
   <!-- our bean config -->
   <Service class-name="org.superbiz.ws.security.CalculatorBean">
-    cxf.jaxws.in-interceptors = wss4j-in
+    cxf.jaxws.in-interceptors = wss4j
   </Service>
 
   <!-- the interceptors -->
-  <Service id="wss4j-in" class-name="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor">
-    properties = $in-prop
-  </Service>
-
-  <!-- the properties for saaj interceptors -->
-  <Service id="in-prop" class-name="org.apache.openejb.config.sys.MapFactory" factory-name="create" constructor="prop">
+  <Service id="wss4j" class-name="org.apache.openejb.server.cxf.config.WSS4JInInterceptorFactory" factory-name="create">
     action = UsernameToken
     passwordType = PasswordText
     passwordCallbackClass = org.superbiz.ws.security.PasswordCallbackHandler
