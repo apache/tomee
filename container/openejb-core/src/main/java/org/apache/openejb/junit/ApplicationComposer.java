@@ -293,6 +293,8 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                 Assembler assembler = new Assembler();
                 SystemInstance.get().setComponent(Assembler.class, assembler);
 
+                assembler.buildContainerSystem(config.getOpenEjbConfiguration());
+
                 if ("true".equals(configuration.getProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "false"))) {
                     try {
                         serviceManager = new ServiceManagerProxy();
@@ -301,8 +303,6 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                         throw new OpenEJBRuntimeException(e);
                     }
                 }
-
-                assembler.buildContainerSystem(config.getOpenEjbConfiguration());
 
                 final AppInfo appInfo = config.configureApplication(appModule);
 

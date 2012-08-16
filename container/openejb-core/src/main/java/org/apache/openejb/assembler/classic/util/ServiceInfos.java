@@ -97,6 +97,10 @@ public final class ServiceInfos {
         }
 
         final ObjectRecipe serviceRecipe = Assembler.prepareRecipe(info);
+        return build(services, info, serviceRecipe);
+    }
+
+    public static Object build(final Collection<ServiceInfo> services, final ServiceInfo info, final ObjectRecipe serviceRecipe) {
         // we can't ask to have a setter for existing code
         serviceRecipe.allow(Option.FIELD_INJECTION);
         serviceRecipe.allow(Option.PRIVATE_PROPERTIES);
