@@ -133,6 +133,7 @@
     <module>webservice-inheritance</module>
     <module>webservice-security</module>
     <module>webservice-ws-security</module>
+    <module>webservice-ws-with-resources-config</module>
     <module>webservice-handlerchain</module>
     <module>webservice-holder</module>
   </modules>
