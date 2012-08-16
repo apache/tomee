@@ -33,28 +33,35 @@ public class CxfRSService extends RESTService {
     private HttpTransportFactory httpTransportFactory;
 
 
-    @Override public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
+    @Override
+    public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
         throw new UnsupportedOperationException(getClass().getName() + " cannot be invoked directly");
     }
 
-    @Override public void service(Socket socket) throws ServiceException, IOException {
+    @Override
+    public void service(Socket socket) throws ServiceException, IOException {
         throw new UnsupportedOperationException(getClass().getName() + " cannot be invoked directly");
     }
 
-    @Override public String getName() {
+    @Override
+    public String getName() {
         return NAME;
     }
 
-    @Override public void init(Properties properties) throws Exception {
-        // no-op
+    @Override
+    public void init(Properties properties) throws Exception {
+        super.init(properties);
+        CxfUtil.configureBus(getName());
     }
 
-    @Override protected void beforeStart() {
+    @Override
+    protected void beforeStart() {
         super.beforeStart();
         httpTransportFactory = new HttpTransportFactory(CxfUtil.getBus());
     }
 
-    @Override protected RsHttpListener createHttpListener() {
+    @Override
+    protected RsHttpListener createHttpListener() {
         return new CxfRsHttpListener(httpTransportFactory);
     }
 }

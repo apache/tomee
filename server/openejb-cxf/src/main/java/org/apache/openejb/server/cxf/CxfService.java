@@ -18,10 +18,7 @@
 package org.apache.openejb.server.cxf;
 
 import org.apache.cxf.Bus;
-import org.apache.cxf.bus.extension.ExtensionManagerBus;
-import org.apache.cxf.feature.AbstractFeature;
 import org.apache.openejb.BeanContext;
-import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.core.webservices.PortData;
 import org.apache.openejb.server.cxf.client.SaajInterceptor;
@@ -30,12 +27,10 @@ import org.apache.openejb.server.cxf.pojo.PojoWsContainer;
 import org.apache.openejb.server.cxf.transport.util.CxfUtil;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.webservices.WsService;
-import org.apache.openejb.util.ListConfigurator;
 
 import javax.naming.Context;
 import java.net.URL;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
@@ -55,17 +50,7 @@ public class CxfService extends WsService {
 
     public void init(final Properties props) throws java.lang.Exception {
         super.init(props);
-
-        // set bus features
-        final Bus bus = CxfUtil.getBus();
-        if (bus instanceof ExtensionManagerBus) { // always true normally
-            final List<AbstractFeature> features = ListConfigurator.getList(
-                    new Properties(props), OPENEJB_JAXWS_CXF_FEATURES,
-                    CxfUtil.class.getClassLoader(), AbstractFeature.class);
-            if (features != null) {
-                ((ExtensionManagerBus) bus).setFeatures(features);
-            }
-        }
+        CxfUtil.configureBus(getName());
     }
 
     protected HttpListener createEjbWsContainer(URL moduleBaseUrl, PortData port, BeanContext beanContext, Collection<ServiceInfo> services) {

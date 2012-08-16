@@ -18,13 +18,16 @@ package org.apache.openejb.server.cxf.transport.util;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
+import org.apache.cxf.bus.CXFBusImpl;
 import org.apache.cxf.bus.extension.ExtensionManagerBus;
 import org.apache.cxf.databinding.DataBinding;
 import org.apache.cxf.endpoint.AbstractEndpointFactory;
 import org.apache.cxf.feature.AbstractFeature;
+import org.apache.cxf.interceptor.AbstractBasicInterceptorProvider;
 import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.message.Message;
 import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.assembler.classic.util.ServiceInfos;
 import org.apache.openejb.loader.SystemInstance;
@@ -44,6 +47,7 @@ public final class CxfUtil {
     public static final String DATABINDING = "databinding";
     public static final String ADDRESS = "address";
     public static final String DEBUG = "debug";
+    public static final String BUS_PREFIX = "bus-";
 
     private CxfUtil() {
         // no-op
@@ -90,35 +94,11 @@ public final class CxfUtil {
             // endpoint features
             final String featuresIds = beanConfig.getProperty(prefix + FEATURES);
             if (featuresIds != null) {
-                final List<?> features = ServiceInfos.resolve(availableServices, featuresIds.split(","));
-                for (Object instance : features) {
-                    if (!AbstractFeature.class.isInstance(instance)) {
-                        throw new OpenEJBRuntimeException("feature should inherit from " + AbstractFeature.class.getName());
-                    }
-                }
+                final List<?> features = createFeatures(availableServices, featuresIds);
                 svrFactory.setFeatures((List<AbstractFeature>) features);
             }
 
-            // interceptors
-            final String inInterceptorsIds = beanConfig.getProperty(prefix + IN_INTERCEPTORS);
-            if (inInterceptorsIds != null && !inInterceptorsIds.trim().isEmpty()) {
-                svrFactory.setInInterceptors(createInterceptors(availableServices, inInterceptorsIds));
-            }
-
-            final String inFaultInterceptorsIds = beanConfig.getProperty(prefix + IN_FAULT_INTERCEPTORS);
-            if (inFaultInterceptorsIds != null && !inFaultInterceptorsIds.trim().isEmpty()) {
-                svrFactory.setInFaultInterceptors(createInterceptors(availableServices, inFaultInterceptorsIds));
-            }
-
-            final String outInterceptorsIds = beanConfig.getProperty(prefix + OUT_INTERCEPTORS);
-            if (outInterceptorsIds != null && !outInterceptorsIds.trim().isEmpty()) {
-                svrFactory.setOutInterceptors(createInterceptors(availableServices, outInterceptorsIds));
-            }
-
-            final String outFaultInterceptorsIds = beanConfig.getProperty(prefix + OUT_FAULT_INTERCEPTORS);
-            if (outFaultInterceptorsIds != null && !outFaultInterceptorsIds.trim().isEmpty()) {
-                svrFactory.setOutFaultInterceptors(createInterceptors(availableServices, outFaultInterceptorsIds));
-            }
+            configureInterceptors(svrFactory, prefix, availableServices, beanConfig);
 
             // databinding
             final String databinding = beanConfig.getProperty(prefix + DATABINDING);
@@ -139,6 +119,39 @@ public final class CxfUtil {
         }
     }
 
+    private static void configureInterceptors(final AbstractBasicInterceptorProvider abip, final String prefix, final Collection<ServiceInfo> availableServices, final Properties beanConfig) {
+        // interceptors
+        final String inInterceptorsIds = beanConfig.getProperty(prefix + IN_INTERCEPTORS);
+        if (inInterceptorsIds != null && !inInterceptorsIds.trim().isEmpty()) {
+            abip.getInInterceptors().addAll(createInterceptors(availableServices, inInterceptorsIds));
+        }
+
+        final String inFaultInterceptorsIds = beanConfig.getProperty(prefix + IN_FAULT_INTERCEPTORS);
+        if (inFaultInterceptorsIds != null && !inFaultInterceptorsIds.trim().isEmpty()) {
+            abip.getInFaultInterceptors().addAll(createInterceptors(availableServices, inFaultInterceptorsIds));
+        }
+
+        final String outInterceptorsIds = beanConfig.getProperty(prefix + OUT_INTERCEPTORS);
+        if (outInterceptorsIds != null && !outInterceptorsIds.trim().isEmpty()) {
+            abip.getOutInterceptors().addAll(createInterceptors(availableServices, outInterceptorsIds));
+        }
+
+        final String outFaultInterceptorsIds = beanConfig.getProperty(prefix + OUT_FAULT_INTERCEPTORS);
+        if (outFaultInterceptorsIds != null && !outFaultInterceptorsIds.trim().isEmpty()) {
+            abip.getOutFaultInterceptors().addAll(createInterceptors(availableServices, outFaultInterceptorsIds));
+        }
+    }
+
+    private static List<AbstractFeature> createFeatures(final Collection<ServiceInfo> availableServices, final String featuresIds) {
+        final List<?> features = ServiceInfos.resolve(availableServices, featuresIds.split(","));
+        for (Object instance : features) {
+            if (!AbstractFeature.class.isInstance(instance)) {
+                throw new OpenEJBRuntimeException("feature should inherit from " + AbstractFeature.class.getName());
+            }
+        }
+        return (List<AbstractFeature>) features;
+    }
+
     private static List<Interceptor<? extends Message>> createInterceptors(final Collection<ServiceInfo> availableServices, final String ids) {
         final List<?> instances = ServiceInfos.resolve(availableServices, ids.split(","));
         for (Object instance : instances) {
@@ -147,5 +160,33 @@ public final class CxfUtil {
             }
         }
         return (List<Interceptor<? extends Message>>) instances;
+    }
+
+    public static void configureBus(final String name) {
+        final Bus bus = getDefaultBus();
+        if (bus instanceof CXFBusImpl) {
+            final CXFBusImpl busImpl = (CXFBusImpl) bus;
+            final List<ServiceInfo> serviceInfos = SystemInstance.get()
+                                                        .getComponent(OpenEjbConfiguration.class).facilities.services;
+            for (ServiceInfo service : serviceInfos) {
+                if (service.id.equals(BUS_PREFIX + name)) {
+                    final String featuresIds = service.properties.getProperty(FEATURES);
+                    if (featuresIds != null) {
+                        final List<AbstractFeature> features = createFeatures(serviceInfos, featuresIds);
+                        if (features != null) {
+                            features.addAll(busImpl.getFeatures());
+                            busImpl.setFeatures(features);
+                        }
+                    }
+
+                    final Properties properties = ServiceInfos.serviceProperties(serviceInfos, service.properties.getProperty(ENDPOINT_PROPERTIES));
+                    if (properties != null) {
+                        busImpl.getProperties().putAll(PropertiesHelper.map(properties));
+                    }
+
+                    configureInterceptors(busImpl, "", serviceInfos, service.properties);
+                }
+            }
+        }
     }
 }
