@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.server.cxf;
+package org.apache.openejb.server.cxf.config;
 
 import org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor;
 

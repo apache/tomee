@@ -24,6 +24,7 @@ import org.apache.openejb.config.sys.MapFactory;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
+import org.apache.xbean.recipe.UnsetPropertiesRecipe;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -102,6 +103,10 @@ public final class ServiceInfos {
     }
 
     public static Object build(final Collection<ServiceInfo> services, final ServiceInfo info, final ObjectRecipe serviceRecipe) {
+        if (!info.properties.containsKey("properties")) {
+            info.properties.put("properties", new UnsetPropertiesRecipe());
+        }
+
         // we can't ask to have a setter for existing code
         serviceRecipe.allow(Option.FIELD_INJECTION);
         serviceRecipe.allow(Option.PRIVATE_PROPERTIES);
