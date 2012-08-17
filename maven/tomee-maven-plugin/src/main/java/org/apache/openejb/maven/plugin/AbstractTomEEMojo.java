@@ -542,6 +542,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             strings.add("-Dtomee.noshutdownhook=true");
         }
 
+        System.setProperty("server.shutdown.port", Integer.toString(tomeeShutdownPort));
         final RemoteServer server = new RemoteServer(getConnectAttempts(), false);
         if (!getNoShutdownHook()) {
             addShutdownHooks(server);
