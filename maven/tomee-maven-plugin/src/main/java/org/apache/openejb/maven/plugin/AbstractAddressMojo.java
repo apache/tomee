@@ -23,7 +23,7 @@ public abstract class AbstractAddressMojo extends AbstractMojo {
     /**
      * @parameter expression="${tomee-plugin.http}" default-value="8080"
      */
-    protected int tomeeHttpPort = 8008;
+    protected int tomeeHttpPort = 8080;
 
     /**
      * @parameter expression="${tomee-plugin.host}" default-value="localhost"
