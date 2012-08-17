@@ -28,7 +28,6 @@ import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentLoader;
 import org.apache.openejb.config.UnknownModuleTypeException;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.util.proxy.ProxyEJB;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
