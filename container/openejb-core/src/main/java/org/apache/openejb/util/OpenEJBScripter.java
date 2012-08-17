@@ -17,15 +17,19 @@
 package org.apache.openejb.util;
 
 import org.apache.openejb.AppContext;
-import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
-import org.apache.openejb.util.proxy.ProxyEJB;
 
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
-import javax.script.*;
+import javax.script.Bindings;
+import javax.script.ScriptContext;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import javax.script.SimpleScriptContext;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
