@@ -28,7 +28,7 @@ import org.apache.openejb.core.stateful.StatefulEjbObjectHandler;
 import org.apache.openejb.core.stateless.StatelessEjbObjectHandler;
 import org.apache.openejb.jee.SessionType;
 import org.apache.openejb.spi.SecurityService;
-import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
+import org.apache.openejb.util.proxy.LocalBeanProxyGeneratorImpl;
 import org.apache.openejb.util.proxy.ProxyManager;
 
 import javax.ejb.EJBLocalObject;
@@ -133,7 +133,7 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
             }
 
             if (InterfaceType.LOCALBEAN.equals(interfaceType)) {
-                return LocalBeanProxyFactory.newProxyInstance(di.getClassLoader(), di.getBeanClass(), handler);
+                return LocalBeanProxyGeneratorImpl.newProxyInstance(di.getClassLoader(), di.getBeanClass(), handler);
             } else {
                 List<Class> interfaces = new ArrayList<Class>();
                 interfaces.addAll(di.getInterfaces(interfaceType));

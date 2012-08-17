@@ -177,7 +177,7 @@ public class LocalBeanProxyGeneratorImplTest extends TestCase {
 	private SampleLocalBean loadProxy(TestInvocationHandler invocationHandler) throws Exception {
 		ClassLoader cl = Thread.currentThread().getContextClassLoader();
 		
-		return (SampleLocalBean) LocalBeanProxyFactory.newProxyInstance(cl, SampleLocalBean.class, invocationHandler);
+		return (SampleLocalBean) LocalBeanProxyGeneratorImpl.newProxyInstance(cl, SampleLocalBean.class, invocationHandler);
 	}
 
 	public void testShouldReturnCorrectMethodSignatures() throws Exception {
