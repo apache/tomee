@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.util.proxy;
 
+import org.apache.openejb.util.Debug;
 import org.apache.xbean.asm.ClassWriter;
 import org.apache.xbean.asm.Label;
 import org.apache.xbean.asm.MethodVisitor;
@@ -37,12 +38,41 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class LocalBeanProxyGeneratorImpl implements LocalBeanProxyGenerator, Opcodes {
+public class LocalBeanProxyGeneratorImpl implements Opcodes {
     private static final String[] SERIALIZABLE = new String[]{Serializable.class.getName().replace('.', '/')};
     public static final java.lang.reflect.InvocationHandler NON_BUSINESS_HANDLER = new NonBusinessHandler();
 
     static final String BUSSINESS_HANDLER_NAME = "businessHandler";
     static final String NON_BUSINESS_HANDLER_NAME = "nonBusinessHandler";
+
+    public static Object newProxyInstance(ClassLoader cl, Class interfce, java.lang.reflect.InvocationHandler h) throws IllegalArgumentException {
+        try {
+            final LocalBeanProxyGeneratorImpl generator = new LocalBeanProxyGeneratorImpl();
+
+            final Class proxyClass = generator.createProxy(interfce, cl);
+            final Object object = generator.constructProxy(proxyClass, h);
+
+            return object;
+        } catch (Throwable e) {
+            throw new InternalError(Debug.printStackTrace(e));
+        }
+    }
+
+    public static java.lang.reflect.InvocationHandler getInvocationHandler(Object proxy) {
+        try {
+            final Field field = proxy.getClass().getDeclaredField(BUSSINESS_HANDLER_NAME);
+            field.setAccessible(true);
+            try {
+                return (java.lang.reflect.InvocationHandler) field.get(proxy);
+            } finally {
+                field.setAccessible(false);
+            }
+        } catch (NoSuchFieldException e) {
+            throw new IllegalArgumentException(e);
+        } catch (IllegalAccessException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
 
     public Object constructProxy(final Class clazz, final java.lang.reflect.InvocationHandler handler) throws IllegalStateException {
 

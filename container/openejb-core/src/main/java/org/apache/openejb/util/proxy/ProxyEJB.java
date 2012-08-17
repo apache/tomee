@@ -29,7 +29,7 @@ public class ProxyEJB {
 
     public static Object proxy(final BeanContext beanContext, final Class<?>[] itfs) {
         if (beanContext.isLocalbean()) {
-            return LocalBeanProxyFactory.newProxyInstance(itfs[0].getClassLoader(), itfs[0], new Handler(beanContext));
+            return LocalBeanProxyGeneratorImpl.newProxyInstance(itfs[0].getClassLoader(), itfs[0], new Handler(beanContext));
         }
         return Proxy.newProxyInstance(itfs[0].getClassLoader(), itfs, new Handler(beanContext));
     }
