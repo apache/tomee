@@ -31,13 +31,25 @@ public class DeployApplication implements Command {
 
     @Override
     public Object execute(Params params) throws Exception {
-        final AppInfo info = deployer.deploy(params.getString("path"));
+        final String path = params.getString("path");
 
-        // the path is translated from the parameter to a file path
-        // the input can be "mvn:org.superbiz/rest-example.1.0/war" for instance or an http url
-        final Map<String, Object> json = new HashMap<String, Object>();
-        json.put("path", info.path);
-        json.put("appId", info.appId);
-        return json;
+        if (params.getBoolean("undeploy")) {
+            deployer.undeploy(path);
+
+            final Map<String, Object> json = new HashMap<String, Object>();
+            json.put("path", path);
+            json.put("undeployed", Boolean.TRUE);
+            return json;
+
+        } else {
+            final AppInfo info = deployer.deploy(path);
+
+            // the path is translated from the parameter to a file path
+            // the input can be "mvn:org.superbiz/rest-example.1.0/war" for instance or an http url
+            final Map<String, Object> json = new HashMap<String, Object>();
+            json.put("path", info.path);
+            json.put("appId", info.appId);
+            return json;
+        }
     }
 }
