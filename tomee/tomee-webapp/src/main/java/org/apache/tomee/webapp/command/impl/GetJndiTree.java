@@ -21,7 +21,7 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.ivm.BaseEjbProxyHandler;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
-import org.apache.openejb.util.proxy.LocalBeanProxyGeneratorImpl;
+import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
 import org.apache.tomee.webapp.command.Command;
 import org.apache.tomee.webapp.command.Params;
@@ -42,7 +42,7 @@ public class GetJndiTree implements Command {
 
         } else if (bean instanceof java.rmi.Remote
                 || bean instanceof org.apache.openejb.core.ivm.IntraVmProxy
-                || (bean != null && LocalBeanProxyGeneratorImpl.isLocalBean(bean.getClass()))) {
+                || (bean != null && LocalBeanProxyFactory.isProxy(bean.getClass()))) {
             return "BEAN";
         } else {
             return "OTHER";

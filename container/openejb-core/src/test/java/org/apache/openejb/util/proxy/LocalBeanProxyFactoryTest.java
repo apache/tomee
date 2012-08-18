@@ -18,9 +18,11 @@
 package org.apache.openejb.util.proxy;
 
 import junit.framework.TestCase;
+import org.apache.openejb.core.ivm.IntraVmProxy;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -29,7 +31,7 @@ import java.util.List;
 
 import javax.ejb.EJBException;
 
-public class LocalBeanProxyGeneratorImplTest extends TestCase {
+public class LocalBeanProxyFactoryTest extends TestCase {
 	
 	public class Call {
 		private String methodName;
@@ -177,11 +179,11 @@ public class LocalBeanProxyGeneratorImplTest extends TestCase {
 	private SampleLocalBean loadProxy(TestInvocationHandler invocationHandler) throws Exception {
 		ClassLoader cl = Thread.currentThread().getContextClassLoader();
 		
-		return (SampleLocalBean) LocalBeanProxyGeneratorImpl.newProxyInstance(cl, SampleLocalBean.class, invocationHandler);
+		return (SampleLocalBean) LocalBeanProxyFactory.newProxyInstance(cl, invocationHandler, SampleLocalBean.class, IntraVmProxy.class, Serializable.class);
 	}
 
 	public void testShouldReturnCorrectMethodSignatures() throws Exception {
-		LocalBeanProxyGeneratorImpl proxyGenerator = new LocalBeanProxyGeneratorImpl();
+		LocalBeanProxyFactory proxyGenerator = new LocalBeanProxyFactory();
 		assertEquals("(II)I", proxyGenerator.getMethodSignatureAsString(Integer.TYPE, new Class<?>[] { Integer.TYPE, Integer.TYPE }));
 		assertEquals("(ZZ)Z", proxyGenerator.getMethodSignatureAsString(Boolean.TYPE, new Class<?>[] { Boolean.TYPE, Boolean.TYPE }));
 		assertEquals("(CC)C", proxyGenerator.getMethodSignatureAsString(Character.TYPE, new Class<?>[] { Character.TYPE, Character.TYPE }));		
@@ -861,7 +863,7 @@ public class LocalBeanProxyGeneratorImplTest extends TestCase {
 	
 	@Test
 	public void testAreThoseTwoMethodsTheSame() throws Exception {
-		LocalBeanProxyGeneratorImpl proxyGenerator = new LocalBeanProxyGeneratorImpl();
+		LocalBeanProxyFactory proxyGenerator = new LocalBeanProxyFactory();
 		
 		assertEquals("[I", proxyGenerator.getAsmTypeAsString(int[].class, true));
 		assertEquals("[[I", proxyGenerator.getAsmTypeAsString(int[][].class, false));
@@ -881,8 +883,8 @@ public class LocalBeanProxyGeneratorImplTest extends TestCase {
         TestInvocationHandler invocationHandler = new TestInvocationHandler(new EnumParams());
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
 
-        LocalBeanProxyGeneratorImpl generator = new LocalBeanProxyGeneratorImpl();
-        Class cls = generator.createProxy(EnumParams.class, cl);
+        LocalBeanProxyFactory generator = new LocalBeanProxyFactory();
+        Class cls = generator.createProxy(EnumParams.class, cl, new Class[]{ IntraVmProxy.class, Serializable.class});
         EnumParams proxy = (EnumParams) generator.constructProxy(cls, invocationHandler);
 
         proxy.someStringMethod(Color.GREEN.name());
@@ -900,8 +902,8 @@ public class LocalBeanProxyGeneratorImplTest extends TestCase {
 
     public void testGetEnumType() throws Exception {
         System.out.println(Color.class.getCanonicalName());
-        LocalBeanProxyGeneratorImpl localBeanProxyGenerator = new LocalBeanProxyGeneratorImpl();
-        assertEquals("Lorg/apache/openejb/util/proxy/LocalBeanProxyGeneratorImplTest$Color;", localBeanProxyGenerator.getAsmTypeAsString(Color.class, true));
+        LocalBeanProxyFactory localBeanProxyGenerator = new LocalBeanProxyFactory();
+        assertEquals("Lorg/apache/openejb/util/proxy/LocalBeanProxyFactoryTest$Color;", localBeanProxyGenerator.getAsmTypeAsString(Color.class, true));
     }
 
     @Test

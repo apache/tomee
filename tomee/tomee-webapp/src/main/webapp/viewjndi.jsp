@@ -30,7 +30,7 @@ java.util.Properties
 <%@ page import="javax.naming.NamingException" %>
 <%@ page import="java.lang.reflect.Method" %>
 <%@ page import="java.lang.reflect.Field" %>
-<%@ page import="org.apache.openejb.util.proxy.LocalBeanProxyGeneratorImpl" %>
+<%@ page import="org.apache.openejb.util.proxy.LocalBeanProxyFactory" %>
 <html>
 <head>
     <meta charset="utf-8">
@@ -46,6 +46,7 @@ java.util.Properties
             padding-top: 60px;
             padding-bottom: 40px;
         }
+
         .sidebar-nav {
             padding: 9px 0;
         }
@@ -60,34 +61,36 @@ java.util.Properties
 
 
 <body>
-    <div class="navbar navbar-fixed-top">
-        <div class="navbar-inner">
-            <div class="container-fluid">
-                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </a>
-                <a class="brand" href="http://openejb.apache.org">TomEE</a>
-                <div class="nav-collapse">
-                    <ul class="nav">
-                        <li><a href="index.jsp">Index</a></li>
-                        <li class="active"><a href="viewjndi.jsp">JNDI</a></li>
-                        <li><a href="viewejb.jsp">EJB</a></li>
-                        <li><a href="viewclass.jsp">Class</a></li>
-                        <li><a href="invokeobj.jsp">Invoke</a></li>
-                    </ul>
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container-fluid">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+            <a class="brand" href="http://openejb.apache.org">TomEE</a>
 
-                </div><!--/.nav-collapse -->
+            <div class="nav-collapse">
+                <ul class="nav">
+                    <li><a href="index.jsp">Index</a></li>
+                    <li class="active"><a href="viewjndi.jsp">JNDI</a></li>
+                    <li><a href="viewejb.jsp">EJB</a></li>
+                    <li><a href="viewclass.jsp">Class</a></li>
+                    <li><a href="invokeobj.jsp">Invoke</a></li>
+                </ul>
+
             </div>
+            <!--/.nav-collapse -->
         </div>
     </div>
+</div>
 
 
-    <div class="container-fluid">
-        <div class="row-fluid">
-            <div class="span12">
-        <%
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            <%
             try{
                 String selected = request.getParameter("selected");
                 if (selected == null) {
@@ -217,7 +220,7 @@ java.util.Properties
                 buildNode(node, (Context) obj);
             } else if (obj instanceof java.rmi.Remote
                 || obj instanceof org.apache.openejb.core.ivm.IntraVmProxy
-                || (obj != null && LocalBeanProxyGeneratorImpl.isLocalBean(obj.getClass()))) {
+                || (obj != null && LocalBeanProxyFactory.isProxy(obj.getClass()))) {
                 node.type = Node.BEAN;
             } else {
                 node.type = Node.OTHER;

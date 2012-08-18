@@ -23,6 +23,7 @@ import org.apache.openejb.core.ivm.IntraVmProxy;
 import org.apache.openejb.core.ivm.naming.java.javaURLContextFactory;
 import org.apache.openejb.core.ivm.naming.openejb.openejbURLContextFactory;
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 import org.apache.xbean.naming.context.ContextUtil;
 
 import javax.naming.Binding;
@@ -151,7 +152,7 @@ public class IvmContext implements Context, Serializable {
             }
 
             // don't cache proxies
-            if (!(obj instanceof IntraVmProxy || obj.getClass().getName().endsWith("$LocalBeanProxy"))) {
+            if (!(obj instanceof IntraVmProxy)) {
             	fastCache.put(compoundName, obj);
             }
         }
