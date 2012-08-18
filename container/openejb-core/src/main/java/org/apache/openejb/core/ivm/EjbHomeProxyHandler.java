@@ -30,7 +30,7 @@ import org.apache.openejb.core.stateless.StatelessEjbHomeHandler;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.proxy.LocalBeanProxyGeneratorImpl;
+import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
 
 import javax.ejb.AccessLocalException;
@@ -38,6 +38,7 @@ import javax.ejb.EJBAccessException;
 import javax.ejb.EJBException;
 import javax.ejb.EJBHome;
 import java.io.ObjectStreamException;
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.rmi.AccessException;
 import java.rmi.RemoteException;
@@ -135,7 +136,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
             // TODO Is it correct for ManagedBean injection via managed bean class?
             if ((InterfaceType.LOCALBEAN.equals(objectInterfaceType) || getBeanContext().getComponentType().equals(BeanType.MANAGED))
                     && !getBeanContext().isDynamicallyImplemented()) {
-                return LocalBeanProxyGeneratorImpl.newProxyInstance(handler.getBeanContext().getClassLoader(), handler.getBeanContext().getBeanClass(), handler);
+                return LocalBeanProxyFactory.newProxyInstance(handler.getBeanContext().getClassLoader(), handler, handler.getBeanContext().getBeanClass(), new Class[]{IntraVmProxy.class, Serializable.class});
             } else {
                 List<Class> proxyInterfaces = new ArrayList<Class>(handler.getInterfaces().size() + 1);
                 proxyInterfaces.addAll(handler.getInterfaces());

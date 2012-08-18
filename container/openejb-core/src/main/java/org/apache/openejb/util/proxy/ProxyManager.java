@@ -60,8 +60,8 @@ public class ProxyManager {
     }
 
     public static java.lang.reflect.InvocationHandler getInvocationHandler(Object proxy) {
-        if (proxy.getClass().getName().endsWith("$LocalBeanProxy")) {
-            return LocalBeanProxyGeneratorImpl.getInvocationHandler(proxy);
+        if (LocalBeanProxyFactory.isProxy(proxy.getClass())) {
+            return LocalBeanProxyFactory.getInvocationHandler(proxy);
         }
         checkDefaultFactory();
         return defaultFactory.getInvocationHandler(proxy);

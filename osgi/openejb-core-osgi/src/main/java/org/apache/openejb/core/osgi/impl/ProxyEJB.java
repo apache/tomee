@@ -18,8 +18,10 @@ package org.apache.openejb.core.osgi.impl;
 
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.RpcContainer;
+import org.apache.openejb.core.ivm.IntraVmProxy;
 import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
@@ -30,7 +32,7 @@ public class ProxyEJB {
 
     public static Object proxy(final BeanContext beanContext, final Class<?>[] itfs) {
         if (beanContext.isLocalbean()) {
-            return LocalBeanProxyFactory.newProxyInstance(itfs[0].getClassLoader(), itfs[0], new Handler(beanContext));
+            return LocalBeanProxyFactory.newProxyInstance(itfs[0].getClassLoader(), new Handler(beanContext), itfs[0], IntraVmProxy.class, Serializable.class);
         }
         return Proxy.newProxyInstance(itfs[0].getClassLoader(), itfs, new Handler(beanContext));
     }

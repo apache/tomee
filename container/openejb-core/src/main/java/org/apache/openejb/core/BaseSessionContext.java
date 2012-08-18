@@ -28,7 +28,7 @@ import org.apache.openejb.core.stateful.StatefulEjbObjectHandler;
 import org.apache.openejb.core.stateless.StatelessEjbObjectHandler;
 import org.apache.openejb.jee.SessionType;
 import org.apache.openejb.spi.SecurityService;
-import org.apache.openejb.util.proxy.LocalBeanProxyGeneratorImpl;
+import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
 
 import javax.ejb.EJBLocalObject;
@@ -36,6 +36,7 @@ import javax.ejb.EJBObject;
 import javax.ejb.SessionContext;
 import javax.transaction.UserTransaction;
 import javax.xml.rpc.handler.MessageContext;
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -133,7 +134,7 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
             }
 
             if (InterfaceType.LOCALBEAN.equals(interfaceType)) {
-                return LocalBeanProxyGeneratorImpl.newProxyInstance(di.getClassLoader(), di.getBeanClass(), handler);
+                return LocalBeanProxyFactory.newProxyInstance(di.getClassLoader(), handler, di.getBeanClass(), IntraVmProxy.class, Serializable.class);
             } else {
                 List<Class> interfaces = new ArrayList<Class>();
                 interfaces.addAll(di.getInterfaces(interfaceType));
