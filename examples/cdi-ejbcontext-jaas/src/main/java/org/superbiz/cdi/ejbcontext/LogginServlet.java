@@ -33,6 +33,6 @@ public class LogginServlet extends HttpServlet {
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.login(req.getParameter("myUser"), req.getParameter("myPass"));
         // think to persist the information in the session if you need it later
-        resp.getWriter().write("logged user ==> " + bean.info());
+        resp.getWriter().write("logged user ==> " + bean.info() + "; isUserInRole(admin)? " + req.isUserInRole("admin"));
     }
 }
