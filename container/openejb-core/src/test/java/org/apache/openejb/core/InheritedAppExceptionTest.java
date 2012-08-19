@@ -57,7 +57,7 @@ public class InheritedAppExceptionTest {
     @Test
     public void testRollback() throws Exception {
         SystemInstance.init(new Properties());
-        BeanContext cdi = new BeanContext("foo", null, new ModuleContext("foo",null, "bar", new AppContext("foo", SystemInstance.get(), null, null, null, false, Collections.EMPTY_LIST), null), Object.class, null, new HashMap<String, String>());
+        BeanContext cdi = new BeanContext("foo", null, new ModuleContext("foo",null, "bar", new AppContext("foo", SystemInstance.get(), null, null, null, false, 10, 20, 60), null), Object.class, null, new HashMap<String, String>());
         cdi.addApplicationException(AE1.class, true, true);
         cdi.addApplicationException(AE3.class, true, false);
         cdi.addApplicationException(AE6.class, false, true);
