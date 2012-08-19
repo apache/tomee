@@ -41,12 +41,12 @@ import static junit.framework.Assert.assertNotNull;
  */
 public class WebArchives {
 
-    public static File jarArchive(Class... classes) throws IOException {
-        return jarArchive(new HashMap<String, String>(), "temp", classes);
+    public static File warArchive(Class... classes) throws IOException {
+        return warArchive(new HashMap<String, String>(), "temp", classes);
     }
 
 
-    public static File jarArchive(Map<String, String> entries, String archiveNamePrefix, Class... classes) throws IOException {
+    public static File warArchive(Map<String, String> entries, String archiveNamePrefix, Class... classes) throws IOException {
 
         ClassLoader loader = WebArchives.class.getClassLoader();
 
@@ -94,10 +94,11 @@ public class WebArchives {
         protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
             resp.setHeader("Content-Type", "text/html");
             Debug.Trace.report(resp.getOutputStream());
+
         }
     }
 
     public static void main(String[] args) throws IOException {
-        System.out.println(jarArchive(Foo.class));
+        System.out.println(warArchive(Foo.class));
     }
 }
