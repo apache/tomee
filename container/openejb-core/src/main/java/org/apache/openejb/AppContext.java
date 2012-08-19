@@ -16,8 +16,6 @@
  */
 package org.apache.openejb;
 
-import org.apache.openejb.assembler.classic.ServiceInfo;
-import org.apache.openejb.assembler.classic.util.ServiceInfos;
 import org.apache.openejb.core.WebContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.DaemonThreadFactory;
@@ -43,15 +41,6 @@ import java.util.concurrent.TimeUnit;
  * @version $Rev$ $Date$
 */
 public class AppContext extends DeploymentContext {
-    public static final String DEFAULT_ASYNCHRONOUS_POOL_ID = "asynchronous-pool";
-    public static final String ASYNCHRONOUS_POOL_CORE_SIZE = DEFAULT_ASYNCHRONOUS_POOL_ID + ".core-size";
-    public static final String ASYNCHRONOUS_POOL_MAX_SIZE = DEFAULT_ASYNCHRONOUS_POOL_ID + ".max-size";
-    public static final String ASYNCHRONOUS_POOL_KEEP_ALIVE = DEFAULT_ASYNCHRONOUS_POOL_ID + ".keep-alive";
-
-    private static final int DEFAULT_CORE_POOL_SIZE = 10;
-    private static final int DEFAULT_MAX_POOL_SIZE = 20;
-    private static final int DEFAULT_KEEP_ALIVE = 60;
-
     private final SystemInstance systemInstance;
     private final ClassLoader classLoader;
     private final Context globalJndiContext;
@@ -69,7 +58,7 @@ public class AppContext extends DeploymentContext {
     private final List<BeanContext> beanContexts = new ArrayList<BeanContext>();
     private final List<WebContext> webContexts = new ArrayList<WebContext>();
 
-    public AppContext(String id, SystemInstance systemInstance, ClassLoader classLoader, Context globalJndiContext, Context appJndiContext, boolean standaloneModule, Collection<ServiceInfo> configuration) {
+    public AppContext(String id, SystemInstance systemInstance, ClassLoader classLoader, Context globalJndiContext, Context appJndiContext, boolean standaloneModule, int corePoolSize, int maxPoolSize, int keepAlive) {
         super(id, systemInstance.getOptions());
         this.classLoader = classLoader;
         this.systemInstance = systemInstance;
@@ -77,30 +66,6 @@ public class AppContext extends DeploymentContext {
         this.appJndiContext = appJndiContext;
         this.standaloneModule = standaloneModule;
         this.blockingQueue = new LinkedBlockingQueue<Runnable>();
-
-        // pool config
-        int corePoolSize = DEFAULT_CORE_POOL_SIZE;
-        int maxPoolSize = DEFAULT_MAX_POOL_SIZE;
-        int keepAlive = DEFAULT_KEEP_ALIVE;
-
-        ServiceInfo appConfig = ServiceInfos.find(configuration, id);
-        if (appConfig != null) {
-            corePoolSize = Integer.parseInt(appConfig.properties.getProperty(ASYNCHRONOUS_POOL_CORE_SIZE, Integer.toString(corePoolSize)).trim());
-            maxPoolSize = Integer.parseInt(appConfig.properties.getProperty(ASYNCHRONOUS_POOL_MAX_SIZE, Integer.toString(maxPoolSize)).trim());
-            keepAlive = Integer.parseInt(appConfig.properties.getProperty(ASYNCHRONOUS_POOL_KEEP_ALIVE, Integer.toString(keepAlive)).trim());
-        } else {
-            appConfig = ServiceInfos.find(configuration, DEFAULT_ASYNCHRONOUS_POOL_ID);
-            if (appConfig != null) {
-                int l = DEFAULT_ASYNCHRONOUS_POOL_ID.length() + 1;
-                corePoolSize = Integer.parseInt(appConfig.properties.getProperty(ASYNCHRONOUS_POOL_CORE_SIZE.substring(l), Integer.toString(corePoolSize)).trim());
-                maxPoolSize = Integer.parseInt(appConfig.properties.getProperty(ASYNCHRONOUS_POOL_MAX_SIZE.substring(l), Integer.toString(maxPoolSize)).trim());
-                keepAlive = Integer.parseInt(appConfig.properties.getProperty(ASYNCHRONOUS_POOL_KEEP_ALIVE.substring(l), Integer.toString(keepAlive)).trim());
-            }
-        }
-
-        corePoolSize = getOptions().get(ASYNCHRONOUS_POOL_CORE_SIZE, corePoolSize);
-        maxPoolSize = getOptions().get(ASYNCHRONOUS_POOL_MAX_SIZE, maxPoolSize);
-        keepAlive = getOptions().get(ASYNCHRONOUS_POOL_KEEP_ALIVE, keepAlive);
 
         this.asynchPool = new ThreadPoolExecutor(corePoolSize, maxPoolSize, keepAlive, TimeUnit.SECONDS, blockingQueue, new DaemonThreadFactory("@Asynch", id));
     }

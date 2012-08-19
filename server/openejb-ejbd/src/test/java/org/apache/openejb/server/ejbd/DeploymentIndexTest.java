@@ -16,20 +16,19 @@
  */
 package org.apache.openejb.server.ejbd;
 
-import java.lang.reflect.Method;
-import java.rmi.RemoteException;
-import java.util.Collections;
-
+import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.ModuleContext;
 import org.apache.openejb.SystemException;
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.client.EJBMetaDataImpl;
 import org.apache.openejb.client.EJBRequest;
 import org.apache.openejb.client.InterfaceType;
-import org.apache.openejb.AppContext;
+import org.apache.openejb.loader.SystemInstance;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.lang.reflect.Method;
+import java.rmi.RemoteException;
 
 public class DeploymentIndexTest {
 
@@ -40,7 +39,7 @@ public class DeploymentIndexTest {
     @Before
     public void setUp() throws SystemException {
         method = Method.class.getMethods()[0];
-        beanContext = new BeanContext("aDeploymentId", null, new ModuleContext("", null, "", new AppContext("", SystemInstance.get(), null, null, null, false, Collections.EMPTY_LIST), null), DeploymentIndexTest.class, null, null, null, null, null, null, null, null, null, null, false);
+        beanContext = new BeanContext("aDeploymentId", null, new ModuleContext("", null, "", new AppContext("", SystemInstance.get(), null, null, null, false, 10, 20, 60), null), DeploymentIndexTest.class, null, null, null, null, null, null, null, null, null, null, false);
         deploymentIndex = new DeploymentIndex(new BeanContext[] {beanContext, beanContext});
     }
 
