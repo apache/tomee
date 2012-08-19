@@ -41,14 +41,17 @@ public class PortAddressRegistryImpl implements PortAddressRegistry {
 
         // create portAddress
         PortAddress portAddress = portsById.get(portId);
-        if (portAddress != null) {
+        if (portAddress != null) { // shouldn't happen but better to avoid NPE here
             throw new OpenEJBException("A webservice port with qname " + portAddress.getPortQName() + " is already registered to the portId " + portId);
         }
         portAddress = new PortAddress(portId, serviceQName, portQName, address, portInterface);
         portsById.put(portId, portAddress);
 
         // portsByInterface
-        Map<String, PortAddress> ports = portsByInterface.get(portInterface);
+        Map<String, PortAddress> ports = null;
+        if (portInterface != null) { // localbean have no interface
+            ports = portsByInterface.get(portInterface);
+        }
         if (ports == null) {
             ports = new TreeMap<String, PortAddress>();
             portsByInterface.put(portInterface, ports);
