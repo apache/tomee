@@ -55,9 +55,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
 
 
 public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
@@ -68,8 +66,6 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
 
     public static final String OPENEJB_TIMEOUT_JOB_NAME = "OPENEJB_TIMEOUT_JOB";
     public static final String OPENEJB_TIMEOUT_JOB_GROUP_NAME = "OPENEJB_TIMEOUT_GROUP";
-
-    private static final Map<Object, Scheduler> SCHEDULER_BY_BEANCONTEXT = new ConcurrentHashMap<Object, Scheduler>();
 
     private boolean transacted;
     private int retryAttempts;
@@ -115,7 +111,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
     }
 
     public static synchronized Scheduler getDefaultScheduler(BeanContext deployment) {
-        Scheduler scheduler = SCHEDULER_BY_BEANCONTEXT.get(deployment.getDeploymentID());
+        Scheduler scheduler = deployment.get(Scheduler.class);
         boolean valid;
         try {
             valid = !scheduler.isShutdown();
@@ -173,7 +169,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
             thisScheduler = scheduler;
         }
 
-        SCHEDULER_BY_BEANCONTEXT.put(deployment.getDeploymentID(), thisScheduler);
+        deployment.set(Scheduler.class, thisScheduler);
 
         return thisScheduler;
     }
@@ -207,7 +203,6 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                 throw new OpenEJBRuntimeException("Unable to shutdown scheduler", e);
             }
         }
-        SCHEDULER_BY_BEANCONTEXT.remove(deployment.getDeploymentID());
     }
 
     public static void shutdown() {
