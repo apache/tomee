@@ -29,8 +29,8 @@
     <Engine name="Catalina" defaultHost="localhost">
 
       <Realm className="org.apache.catalina.realm.JAASRealm" appName="PropertiesLoginModule"
-             userClassNames="org.apache.openejb.core.security.AbstractSecurityService$User"
-             roleClassNames="org.apache.openejb.core.security.AbstractSecurityService$Group">
+             userClassNames="org.apache.openejb.core.security.jaas.UserPrincipal"
+             roleClassNames="org.apache.openejb.core.security.jaas.GroupPrincipal">
       </Realm>
 
       <Host name="localhost"  appBase="webapps"
