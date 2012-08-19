@@ -23,9 +23,11 @@ import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.resource.jdbc.pool.PoolDataSourceCreator;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.reflection.Reflections;
 import org.apache.tomcat.jdbc.pool.ConnectionPool;
 import org.apache.tomcat.jdbc.pool.PoolConfiguration;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
+import org.apache.tomcat.jdbc.pool.PooledConnection;
 
 import javax.management.ObjectName;
 import javax.sql.DataSource;
@@ -33,6 +35,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
+import java.sql.Driver;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.Properties;
@@ -122,6 +125,16 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
             initJmx(name);
         }
 
+        @Override
+        public ConnectionPool createPool() throws SQLException {
+            if (pool != null) {
+                return pool;
+            } else {
+                pool = new TomEEConnectionPool(poolProperties); // to force to init the driver with TCCL
+                return pool;
+            }
+        }
+
         public TomEEDataSource(final PoolConfiguration poolConfiguration, final String name) {
             super(poolConfiguration);
             try { // just to force the pool to be created and be able to register the mbean
@@ -169,6 +182,30 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
             final Connection connection = super.getConnection(u, p);
             return (Connection) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
                     new Class<?>[] { Connection.class }, new ContantHashCodeHandler(connection, connection.hashCode()));
+        }
+    }
+
+    private static class TomEEConnectionPool extends ConnectionPool {
+        public TomEEConnectionPool(final PoolConfiguration poolProperties) throws SQLException {
+            super(poolProperties);
+        }
+
+        @Override
+        protected PooledConnection create(boolean incrementCounter) {
+            final PooledConnection con = super.create(incrementCounter);
+            if (getPoolProperties().getDataSource() == null) { // using driver
+                // init driver with TCCL
+                ClassLoader cl = Thread.currentThread().getContextClassLoader();
+                if (cl == null) {
+                    cl = TomEEConnectionPool.class.getClassLoader();
+                }
+                try {
+                    Reflections.set(con, "driver", Class.forName(getPoolProperties().getDriverClassName(), true, cl).newInstance());
+                } catch (java.lang.Exception cn) {
+                    // will fail later, no worry
+                }
+            }
+            return con;
         }
     }
 
