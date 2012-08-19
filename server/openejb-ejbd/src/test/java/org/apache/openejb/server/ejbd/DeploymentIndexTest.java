@@ -18,6 +18,7 @@ package org.apache.openejb.server.ejbd;
 
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
+import java.util.Collections;
 
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.ModuleContext;
@@ -39,7 +40,7 @@ public class DeploymentIndexTest {
     @Before
     public void setUp() throws SystemException {
         method = Method.class.getMethods()[0];
-        beanContext = new BeanContext("aDeploymentId", null, new ModuleContext("", null, "", new AppContext("", SystemInstance.get(), null, null, null, false), null), DeploymentIndexTest.class, null, null, null, null, null, null, null, null, null, null, false);
+        beanContext = new BeanContext("aDeploymentId", null, new ModuleContext("", null, "", new AppContext("", SystemInstance.get(), null, null, null, false, Collections.EMPTY_LIST), null), DeploymentIndexTest.class, null, null, null, null, null, null, null, null, null, null, false);
         deploymentIndex = new DeploymentIndex(new BeanContext[] {beanContext, beanContext});
     }
 
