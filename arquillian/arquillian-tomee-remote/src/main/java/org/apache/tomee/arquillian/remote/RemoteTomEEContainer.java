@@ -16,9 +16,7 @@
  */
 package org.apache.tomee.arquillian.remote;
 
-import java.io.FileOutputStream;
 import org.apache.openejb.arquillian.common.Files;
-import org.apache.openejb.arquillian.common.IO;
 import org.apache.openejb.arquillian.common.Setup;
 import org.apache.openejb.arquillian.common.TomEEContainer;
 import org.apache.openejb.config.RemoteServer;

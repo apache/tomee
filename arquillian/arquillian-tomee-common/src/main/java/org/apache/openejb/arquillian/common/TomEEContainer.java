@@ -257,10 +257,26 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
     }
 
     protected Deployer deployer() throws NamingException {
-        final Properties properties = new Properties();
-        properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
-        properties.setProperty(Context.PROVIDER_URL, "http://" + configuration.getHost() + ":" + configuration.getHttpPort() + "/tomee/ejb");
-        return (Deployer) new InitialContext(properties).lookup("openejb/DeployerBusinessRemote");
+        return lookupDeployerWithRetry(5);
+    }
+
+    protected Deployer lookupDeployerWithRetry(int retry) throws NamingException {
+        try {
+            final Properties properties = new Properties();
+            properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
+            properties.setProperty(Context.PROVIDER_URL, "http://" + configuration.getHost() + ":" + configuration.getHttpPort() + "/tomee/ejb");
+            return (Deployer) new InitialContext(properties).lookup("openejb/DeployerBusinessRemote");
+        } catch (RuntimeException ne) { // surely "org.apache.openejb.client.ClientRuntimeException: Invalid response from server: -1"
+            if (retry > 1) {
+                try { // wait a bit before retrying
+                    Thread.sleep(200);
+                } catch (InterruptedException ignored) {
+                    // no-op
+                }
+                return lookupDeployerWithRetry(retry - 1);
+            }
+            throw ne;
+        }
     }
 
     protected String getArchiveNameWithoutExtension(final Archive<?> archive) {
