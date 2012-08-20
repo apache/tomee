@@ -16,78 +16,105 @@
  */
 package org.apache.openejb.config.rules;
 
+import org.apache.openejb.config.AppModule;
+import org.apache.openejb.config.DeploymentModule;
 import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.config.WebModule;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.xbean.finder.ResourceFinder;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+
 
 public class CheckDescriptorLocation extends ValidationBase {
 
 
-    EjbModule currentModule;
+    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_VALIDATION, "org.apache.openejb.config.rules");
 
     @Override
-    public void validate(EjbModule ejbModule) {
+    public void validate(AppModule appModule){
+
+        List<String> validated = new ArrayList<String>();
+
+        for(WebModule webModule:appModule.getWebModules())
+        {
+            validated.add(webModule.getModuleId());
+            validateWebModule(webModule);
+        }
+
+        for(EjbModule ejbModule:appModule.getEjbModules())
+        {
+            //without this check, CheckDescriptorLocationTest#testWarWithDescriptorInRoot() would fail
+            if(!validated.contains(ejbModule.getModuleId()))
+            {
+                validateEjbModule(ejbModule);
+            }
+        }
+
+    }
+
+    private void validateWebModule(DeploymentModule webModule) {
         URL baseUrl = null;
-        this.currentModule = ejbModule;
-        File file = ejbModule.getFile();
+        this.module= webModule;
+        List<String> descriptorsToSearch = Arrays.asList("beans.xml","ejb-jar.xml","faces-config.xml");
+        File file = webModule.getFile();
         if (file != null) {
-            validateDescriptorsAreNotPlacedInRoot(file);
+            try {
+                URL rootOfArchive=file.toURI().toURL();
+                URL metaInf=new URL(rootOfArchive.toExternalForm()+"META-INF/");
+                Map<String, URL> incorrectlyLocatedDescriptors
+                        = retrieveDescriptors(file, descriptorsToSearch, rootOfArchive, metaInf);
+                warnIncorrectLocationOfDescriptors(incorrectlyLocatedDescriptors,"WEB-INF");
+            } catch (MalformedURLException ignored) {
+                    //ignored
+            }
         }
 
     }
 
-    private void validateDescriptorsAreNotPlacedInRoot(File file) {
-        ResourceFinder resourceFinder = null;
-        try {
-            resourceFinder = new ResourceFinder(file.toURI().toURL());
-        } catch (MalformedURLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+    public void validateEjbModule(DeploymentModule deploymentModule) {
+        URL baseUrl = null;
+        this.module= deploymentModule;
+        List<String> descriptorsToSearch = Arrays.asList("beans.xml","ejb-jar.xml","openejb-jar.xml","env-entries.properties");
+        File file = deploymentModule.getFile();
+        if (file != null) {
+            try {
+                URL rootOfArchive=file.toURI().toURL();
+                Map<String, URL> incorrectlyLocatedDescriptors
+                        = retrieveDescriptors(file, descriptorsToSearch, rootOfArchive);
+                warnIncorrectLocationOfDescriptors(incorrectlyLocatedDescriptors,"META-INF");
+            } catch (MalformedURLException ignored) {
+                  //ignored
+            }
         }
-        //ResourceFinder resourceFinder = new ResourceFinder(baseUrl);
-        Map<String, URL> descriptorsPlacedInWrongLocation = getDescriptorsPlacedInWrongLocation(resourceFinder);
 
-        if (descriptorsPlacedInWrongLocation.size() > 0) {
-            warnIncorrectLocationOfDescriptors(descriptorsPlacedInWrongLocation);
-
-        }
     }
 
-    private static Map<String, URL> getDescriptorsPlacedInWrongLocation(
-            ResourceFinder finder) {
+    private static Map<String,URL> retrieveDescriptors(File file, List<String> descriptorsToSearch, URL... locationsToSearch ){
+      final Map<String,URL>  descriptorAndWrongLocation = new HashMap<String,URL>();
 
-        Map<String, URL> descriptorsMap = null;
-        try {
-            descriptorsMap = retrieveDescriptorsPlacedInWrongLocation(finder);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return descriptorsMap;
+
+            ResourceFinder finder = new ResourceFinder(locationsToSearch);
+            for(String descriptor:descriptorsToSearch)
+            {
+                URL resource = finder.getResource(descriptor);
+                if(resource!=null)
+                {
+                   descriptorAndWrongLocation.put(descriptor,resource);
+                }
+            }
+
+        return descriptorAndWrongLocation;
     }
 
-
-    private static Map<String, URL> retrieveDescriptorsPlacedInWrongLocation(
-            ResourceFinder finder) throws IOException {
-        final Map<String, URL> map = new HashMap<String, URL>();
-        String[] known = {"web.xml", "ejb-jar.xml", "openejb-jar.xml", "env-entries.properties", "beans.xml", "ra.xml", "application.xml", "application-client.xml", "persistence.xml"};
-        for (String descriptor : known) {
-            final URL url = finder.getResource(descriptor);
-            if (url != null) map.put(descriptor, url);
-        }
-
-        return map;
-    }
-
-    private void warnIncorrectLocationOfDescriptors(Map<String, URL> descriptorsPlacedInWrongLocation) {
+    private void warnIncorrectLocationOfDescriptors(Map<String, URL> descriptorsPlacedInWrongLocation, String expectedLocation) {
         for (Map.Entry<String, URL> map : descriptorsPlacedInWrongLocation.entrySet()) {
 
-            warn(currentModule.toString(), "descriptor.incorrectLocation", map.getKey(), map.getValue());
+            warn(this.module.toString(), "descriptor.incorrectLocation", map.getValue().toExternalForm(), expectedLocation);
         }
     }
 }
