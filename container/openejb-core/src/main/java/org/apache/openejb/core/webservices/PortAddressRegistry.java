@@ -23,6 +23,6 @@ import java.util.Set;
 
 public interface PortAddressRegistry {
     void addPort(String serviceId, QName serviceQName, String portId, QName portQName, String portInterface, String address) throws OpenEJBException;
-    void removePort(String serviceId, QName serviceQName, String portId);
+    void removePort(String serviceId, QName serviceQName, String portId, String portInterface);
     Set<PortAddress> getPorts(String id, QName serviceQName, String referenceClassName);
 }

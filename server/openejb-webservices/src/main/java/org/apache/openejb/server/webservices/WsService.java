@@ -385,7 +385,7 @@ public abstract class WsService implements ServerService, SelfManaging {
                         String address = ejbAddresses.remove(enterpriseBean.ejbDeploymentId);
                         addressesForApp(appInfo.appId).remove(address);
                         if (address != null) {
-                            portAddressRegistry.removePort(portInfo.serviceId, portInfo.wsdlService, portInfo.portId);
+                            portAddressRegistry.removePort(portInfo.serviceId, portInfo.wsdlService, portInfo.portId, portInfo.seiInterfaceName);
                         }
 
                         // remove container from web server
@@ -421,7 +421,7 @@ public abstract class WsService implements ServerService, SelfManaging {
                     String address = servletAddresses.remove(webApp.moduleId + "." + servlet.servletName);
                     addressesForApp(webApp.moduleId).remove(address);
                     if (address != null) {
-                        portAddressRegistry.removePort(portInfo.serviceId, portInfo.wsdlService, portInfo.portId);
+                        portAddressRegistry.removePort(portInfo.serviceId, portInfo.wsdlService, portInfo.portId, portInfo.seiInterfaceName);
                     }
 
                     // clear servlet's reference to the webservice container

@@ -76,7 +76,7 @@ public class PortAddressRegistryImpl implements PortAddressRegistry {
         ports.put(portId, portAddress);
     }
 
-    public synchronized void removePort(String serviceId, QName serviceQName, String portId) {
+    public synchronized void removePort(String serviceId, QName serviceQName, String portId, String portInterface) {
         if (serviceId == null) throw new NullPointerException("serviceId is null");
         if (serviceQName == null) throw new NullPointerException("serviceQName is null");
         if (portId == null) throw new NullPointerException("portId is null");
@@ -88,12 +88,16 @@ public class PortAddressRegistryImpl implements PortAddressRegistry {
             return;
         }
 
+        Map<String, PortAddress> ports = null;
+
         // remove from portsByInterface
-        Map<String, PortAddress> ports = portsByInterface.get(serviceId);
-        if (ports != null) {
-            ports.remove(portId);
-            if (ports.isEmpty()) {
-                portsByInterface.remove(serviceId);
+        if (portInterface != null) {
+            ports = portsByInterface.get(portInterface);
+            if (ports != null) {
+                ports.remove(portId);
+                if (ports.isEmpty()) {
+                    portsByInterface.remove(portInterface);
+                }
             }
         }
 
