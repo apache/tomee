@@ -69,6 +69,8 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
     public static final String OPENEJB_TIMEOUT_JOB_NAME = "OPENEJB_TIMEOUT_JOB";
     public static final String OPENEJB_TIMEOUT_JOB_GROUP_NAME = "OPENEJB_TIMEOUT_GROUP";
 
+    public static final String EJB_TIMER_RETRY_ATTEMPTS = "EjbTimer.RetryAttempts";
+
     private boolean transacted;
     private int retryAttempts;
 
@@ -78,7 +80,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
     private transient Scheduler scheduler;
 
     public EjbTimerServiceImpl(BeanContext deployment) {
-        this(deployment, getDefaultTransactionManager(), getDefaultScheduler(deployment), new MemoryTimerStore(getDefaultTransactionManager()), 1);
+        this(deployment, getDefaultTransactionManager(), getDefaultScheduler(deployment), new MemoryTimerStore(getDefaultTransactionManager()), -1);
     }
 
     public static TransactionManager getDefaultTransactionManager() {
@@ -93,6 +95,9 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         TransactionType transactionType = deployment.getTransactionType(deployment.getEjbTimeout());
         this.transacted = transactionType == TransactionType.Required || transactionType == TransactionType.RequiresNew;
         this.retryAttempts = retryAttempts;
+        if (retryAttempts < 0) {
+            this.retryAttempts = deployment.getOptions().get(EJB_TIMER_RETRY_ATTEMPTS, 1);
+        }
     }
 
     private void writeObject(final ObjectOutputStream out) throws IOException {
