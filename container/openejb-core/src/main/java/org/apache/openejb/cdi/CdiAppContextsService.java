@@ -21,6 +21,8 @@ import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.OWBLogConst;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.context.*;
+import org.apache.webbeans.conversation.ConversationImpl;
+import org.apache.webbeans.conversation.ConversationManager;
 import org.apache.webbeans.el.ELContextStore;
 import org.apache.webbeans.spi.ContextsService;
 import org.apache.webbeans.web.context.ServletRequestContext;
@@ -54,11 +56,14 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
 
     private final SingletonContext singletonContext = new SingletonContext();
 
+    private final WebBeansContext webBeansContext;
+
     public CdiAppContextsService() {
-        this(WebBeansContext.currentInstance().getOpenWebBeansConfiguration().supportsConversation());
+        this(WebBeansContext.currentInstance(), WebBeansContext.currentInstance().getOpenWebBeansConfiguration().supportsConversation());
     }
 
-    public CdiAppContextsService(boolean supportsConversation) {
+    public CdiAppContextsService(WebBeansContext wbc, boolean supportsConversation) {
+        webBeansContext = wbc;
         dependentContext.setActive(true);
         if (supportsConversation) {
             conversationContext = new ThreadLocal<ConversationContext>();
@@ -212,6 +217,10 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     }
 
     private void destroyRequestContext() {
+        if (supportsConversation()) { // OWB-595
+            cleanupConversation();
+        }
+
         //Get context
         RequestContext context = getRequestContext();
 
@@ -245,6 +254,27 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         }
 
         RequestScopedBeanInterceptorHandler.removeThreadLocals();
+    }
+
+    private void cleanupConversation() {
+        final ConversationContext conversationContext = getConversationContext();
+        if (conversationContext == null) {
+            return;
+        }
+
+        final ConversationManager conversationManager = webBeansContext.getConversationManager();
+        final Conversation conversation = conversationManager.getConversationBeanReference();
+        if (conversation == null) {
+            return;
+        }
+
+        if (conversation.isTransient()) {
+            webBeansContext.getContextsService().endContext(ConversationScoped.class, null);
+        } else {
+            final ConversationImpl conversationImpl = (ConversationImpl) conversation;
+            conversationImpl.updateTimeOut();
+            conversationImpl.setInUsed(false);
+        }
     }
 
     /**

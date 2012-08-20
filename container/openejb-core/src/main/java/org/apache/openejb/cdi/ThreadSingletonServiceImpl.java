@@ -102,7 +102,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         } else {
             services.put(ELAdaptor.class,new CustomELAdapter(appContext, startupObject.getWebContext()));
         }
-        services.put(ContextsService.class, new CdiAppContextsService(true));
+        services.put(ContextsService.class, new CdiAppContextsService(appContext.getWebBeansContext(), true));
         services.put(ResourceInjectionService.class, new CdiResourceInjectionService());
         services.put(ScannerService.class, new CdiScanner());
         services.put(LoaderService.class, new OptimizedLoaderService());
