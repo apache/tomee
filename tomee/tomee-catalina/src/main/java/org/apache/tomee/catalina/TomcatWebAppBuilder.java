@@ -337,7 +337,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 final File cXml = new File(war, Constants.ApplicationContextXml);
                 if (cXml.exists()) {
                     contextXml = IO.read(cXml);
-                    System.out.println("using context file " + cXml.getAbsolutePath());
+                    logger.info("using context file " + cXml.getAbsolutePath());
                 }
             } else { // war
                 final JarFile warAsJar = new JarFile(war);
