@@ -176,7 +176,7 @@ public class MainImpl implements Main {
         // so we'll set up all the props in it
         SystemInstance systemInstance = null;
         try {
-            SystemInstance.init(System.getProperties());
+            SystemInstance.init(new Properties());
             OptionsLog.install();
             systemInstance = SystemInstance.get();
         } catch (Exception e) {

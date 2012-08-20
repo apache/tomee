@@ -23,6 +23,7 @@ import org.apache.openejb.observer.ObserverManager;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -64,7 +65,21 @@ public class SystemInstance {
     private SystemInstance(final Properties properties) throws Exception {
         this.components = new HashMap<Class, Object>();
 
-        this.internalProperties.putAll(System.getProperties());
+        for (Map.Entry<? extends Object, ? extends Object> e : System.getProperties().entrySet()){
+            final String key = e.getKey().toString();
+            if (key.startsWith("sun.")) continue;
+            if (key.startsWith("os.")) continue;
+            if (key.startsWith("user.")) continue;
+            if (key.startsWith("awt.")) continue;
+            if (key.startsWith("java.vm.")) continue;
+            if (key.startsWith("java.runtime.")) continue;
+            if (key.startsWith("java.awt.")) continue;
+            if (key.startsWith("java.specification.")) continue;
+            if (key.startsWith("java.class.")) continue;
+            if (key.startsWith("java.library.")) continue;
+            this.internalProperties.put(e.getKey(), e.getValue());
+        }
+
         this.internalProperties.putAll(properties);
 
         this.options = new Options(internalProperties, new Options(System.getProperties()));
