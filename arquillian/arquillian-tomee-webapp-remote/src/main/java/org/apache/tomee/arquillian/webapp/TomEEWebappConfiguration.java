@@ -20,6 +20,9 @@ import org.apache.openejb.arquillian.common.Prefixes;
 import org.apache.openejb.arquillian.common.TomEEConfiguration;
 import org.apache.openejb.resolver.maven.VersionResolver;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @version $Rev$ $Date$
  */
@@ -100,5 +103,20 @@ public class TomEEWebappConfiguration extends TomEEConfiguration {
 
     public void setAjpPort(int ajpPort) {
         this.ajpPort = ajpPort;
+    }
+
+    @Override
+    public int[] portsAlreadySet() {
+        final List<Integer> value = new ArrayList<Integer>();
+        if (getStopPort() > 0) {
+            value.add(getStopPort());
+        }
+        if (getHttpPort() > 0) {
+            value.add(getHttpPort());
+        }
+        if (getAjpPort() > 0) {
+            value.add(getAjpPort());
+        }
+        return toInts(value);
     }
 }

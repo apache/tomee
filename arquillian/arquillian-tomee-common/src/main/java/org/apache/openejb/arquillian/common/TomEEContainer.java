@@ -40,6 +40,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.io.File;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Arrays;
@@ -176,23 +177,29 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
             OutputStream out = socket.getOutputStream();
             out.write(SHUTDOWN_COMMAND.getBytes());
 
-            waitForShutdown(10);
+            waitForShutdown(socket, 10);
         } catch (Exception e) {
             throw new LifecycleException("Unable to stop TomEE", e);
         }
     }
 
-    protected void waitForShutdown(int tries) {
+    protected void waitForShutdown(Socket socket, int tries) {
         try {
-
-            Socket socket = new Socket(configuration.getHost(), configuration.getStopPort());
             OutputStream out = socket.getOutputStream();
             out.close();
         } catch (Exception e) {
             if (tries > 2) {
                 Threads.sleep(2000);
 
-                waitForShutdown(--tries);
+                waitForShutdown(socket, --tries);
+            }
+        } finally {
+            if (socket != null) {
+                try {
+                    socket.close();
+                } catch (IOException ignored) {
+                    // no-op
+                }
             }
         }
     }
