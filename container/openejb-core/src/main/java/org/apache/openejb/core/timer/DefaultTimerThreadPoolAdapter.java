@@ -39,6 +39,8 @@ public class DefaultTimerThreadPoolAdapter implements ThreadPool {
 
     private static final Logger logger = Logger.getInstance(LogCategory.TIMER, "org.apache.openejb.util.resources");
 
+    public static final String OPENEJB_TIMER_POOL_SIZE = "openejb.timer.pool.size";
+
     private Executor executor;
 
     private String instanceId;
@@ -64,7 +66,7 @@ public class DefaultTimerThreadPoolAdapter implements ThreadPool {
 
         if (this.executor == null) {
 
-            int size = Integer.parseInt(SystemInstance.get().getProperty("openejb.timer.pool.size", "3"));
+            int size = Integer.parseInt(SystemInstance.get().getProperty(OPENEJB_TIMER_POOL_SIZE, "3"));
             if (size < 3) {
                 size = 3;
             }
