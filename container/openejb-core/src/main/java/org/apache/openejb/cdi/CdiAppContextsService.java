@@ -25,6 +25,7 @@ import org.apache.webbeans.conversation.ConversationImpl;
 import org.apache.webbeans.conversation.ConversationManager;
 import org.apache.webbeans.el.ELContextStore;
 import org.apache.webbeans.spi.ContextsService;
+import org.apache.webbeans.spi.ConversationService;
 import org.apache.webbeans.web.context.ServletRequestContext;
 import org.apache.webbeans.web.context.SessionContextManager;
 import org.apache.webbeans.web.intercept.RequestScopedBeanInterceptorHandler;
@@ -64,6 +65,9 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
 
     public CdiAppContextsService(WebBeansContext wbc, boolean supportsConversation) {
         webBeansContext = wbc;
+        if (wbc == null) {
+            wbc = WebBeansContext.currentInstance();
+        }
         dependentContext.setActive(true);
         if (supportsConversation) {
             conversationContext = new ThreadLocal<ConversationContext>();
@@ -257,6 +261,10 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     }
 
     private void cleanupConversation() {
+        if (webBeansContext.getService(ConversationService.class) == null) {
+            return;
+        }
+
         final ConversationContext conversationContext = getConversationContext();
         if (conversationContext == null) {
             return;
@@ -350,6 +358,10 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
      * @param context context
      */
     private void initConversationContext(ConversationContext context) {
+        if (webBeansContext.getService(ConversationService.class) == null) {
+            return;
+        }
+
         if (context == null) {
             if (conversationContext.get() == null) {
                 ConversationContext newContext = new ConversationContext();
@@ -370,6 +382,10 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
      * Destroy conversation context.
      */
     private void destroyConversationContext() {
+        if (webBeansContext.getService(ConversationService.class) == null) {
+            return;
+        }
+
         ConversationContext context = getConversationContext();
 
         if (context != null) {
