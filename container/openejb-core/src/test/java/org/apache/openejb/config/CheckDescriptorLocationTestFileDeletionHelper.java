@@ -50,7 +50,7 @@ public class CheckDescriptorLocationTestFileDeletionHelper {
 
     private void deleteOrMarkForDelete(File file) {
         if (file.getName().contains(
-                CheckDescriptorLocationTest.JAR_FILENAME_PREFIX)) {
+                CheckDescriptorLocationTest.FILENAME_PREFIX)) {
 
             boolean deleted = file.delete();
             if (!deleted) {

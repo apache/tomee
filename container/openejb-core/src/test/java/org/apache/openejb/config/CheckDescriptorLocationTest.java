@@ -21,6 +21,7 @@ import org.apache.openejb.config.rules.KeyType;
 import org.apache.openejb.config.rules.Keys;
 import org.apache.openejb.config.rules.ValidationRunner;
 import org.apache.openejb.util.Archives;
+import org.apache.openejb.util.WebArchives;
 import org.junit.runner.RunWith;
 
 import javax.ejb.Stateless;
@@ -32,23 +33,59 @@ import java.util.Map;
 @RunWith(ValidationRunner.class)
 public class CheckDescriptorLocationTest {
 
-    public File jarFile;
-    public static final String JAR_FILENAME_PREFIX = "ValTest";
+ public static final String FILENAME_PREFIX = "ValTest";
 
     @Keys({@Key(value = "descriptor.incorrectLocation", type = KeyType.WARNING)})
-    public AppModule testWebinfJar() throws Exception {
+    public AppModule testJar() throws Exception {
         Map<String, String> map = new HashMap<String, String>();
         map.put("ejb-jar.xml", "<ejb-jar/>"); // Place the descriptor in
         // incorrect location (directly
         // under root)
 
-        jarFile = Archives.jarArchive(map, JAR_FILENAME_PREFIX, FooBean.class);
-
+        File jarFile = Archives.jarArchive(map,FILENAME_PREFIX, FooBean.class);
         DeploymentLoader loader = new DeploymentLoader();
         AppModule appModule = loader.load(jarFile);
 
         return appModule;
     }
+
+
+    @Keys({@Key(value = "descriptor.incorrectLocation", type = KeyType.WARNING, count=1)})
+    public AppModule testWarWithDescriptorInMetaInf() throws Exception {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("META-INF/ejb-jar.xml", "<ejb-jar/>");
+        map.put("WEB-INF/web.xml","<web-app/>");
+
+        // Place the descriptor in
+        // incorrect location (directly
+        // under root)
+        File warFile = WebArchives.warArchive(map, FILENAME_PREFIX, FooBean.class);
+
+        DeploymentLoader loader = new DeploymentLoader();
+        AppModule appModule = loader.load(warFile);
+
+        return appModule;
+    }
+
+
+    @Keys({@Key(value = "descriptor.incorrectLocation", type = KeyType.WARNING, count=1)})
+    public AppModule testWarWithDescriptorInRoot() throws Exception {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("ejb-jar.xml", "<ejb-jar/>");
+        map.put("WEB-INF/web.xml","<web-app/>");
+
+        // Place the descriptor in
+        // incorrect location (directly
+        // under root)
+        File warFile = WebArchives.warArchive(map, FILENAME_PREFIX, FooBean.class);
+
+        DeploymentLoader loader = new DeploymentLoader();
+        AppModule appModule = loader.load(warFile);
+
+        return appModule;
+    }
+
+
 
     @Stateless
     class FooBean {
