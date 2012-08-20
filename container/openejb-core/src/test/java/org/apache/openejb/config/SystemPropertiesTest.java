@@ -17,10 +17,12 @@
 package org.apache.openejb.config;
 
 import junit.framework.TestCase;
+import org.junit.Ignore;
 
 /**
  * @version $Rev$ $Date$
  */
+@Ignore
 public class SystemPropertiesTest extends TestCase {
 
 }
