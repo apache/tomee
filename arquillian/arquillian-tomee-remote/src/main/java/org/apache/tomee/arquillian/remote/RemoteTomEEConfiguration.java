@@ -19,6 +19,9 @@ package org.apache.tomee.arquillian.remote;
 import org.apache.openejb.arquillian.common.Prefixes;
 import org.apache.openejb.arquillian.common.TomEEConfiguration;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @version $Rev$ $Date$
  */
@@ -104,5 +107,20 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
 
     public void setConf(String conf) {
         this.conf = conf;
+    }
+
+    @Override
+    public int[] portsAlreadySet() {
+        final List<Integer> value = new ArrayList<Integer>();
+        if (getStopPort() > 0) {
+            value.add(getStopPort());
+        }
+        if (getHttpPort() > 0) {
+            value.add(getHttpPort());
+        }
+        if (getAjpPort() > 0) {
+            value.add(getAjpPort());
+        }
+        return toInts(value);
     }
 }

@@ -18,16 +18,13 @@ package org.apache.openejb.arquillian.common;
 
 
 import org.apache.openejb.OpenEJBRuntimeException;
-import org.apache.openejb.loader.*;
 import org.jboss.arquillian.container.spi.ConfigurationException;
 import org.jboss.arquillian.container.spi.client.container.ContainerConfiguration;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.io.StringReader;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 public class TomEEConfiguration implements ContainerConfiguration {
@@ -40,6 +37,7 @@ public class TomEEConfiguration implements ContainerConfiguration {
     private String host = "localhost";
     private String serverXml = null;
     private String properties = "";
+    private String portRange = ""; // only used if port < 0, empty means whatever, can be "1024-65535"
 
     public int getHttpPort() {
         return httpPort;
@@ -127,5 +125,32 @@ public class TomEEConfiguration implements ContainerConfiguration {
             }
         }
         return properties;
+    }
+
+    public String getPortRange() {
+        return portRange;
+    }
+
+    public void setPortRange(String portRange) {
+        this.portRange = portRange;
+    }
+
+    public int[] portsAlreadySet() {
+        final List<Integer> value = new ArrayList<Integer>();
+        if (stopPort > 0) {
+            value.add(stopPort);
+        }
+        if (httpPort > 0) {
+            value.add(httpPort);
+        }
+        return toInts(value);
+    }
+
+    protected int[] toInts(List<Integer> values) {
+        int[] array = new int[values.size()];
+        for (int i = 0; i < array.length; i++) {
+            array[i] = values.get(i);
+        }
+        return array;
     }
 }
