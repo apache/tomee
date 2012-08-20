@@ -99,7 +99,7 @@ public class DeploymentLoader implements DeploymentFilterable {
     public static final String OPENEJB_ALTDD_PREFIX = "openejb.altdd.prefix";
     private static final String ddDir = "META-INF/";
     private boolean scanManagedBeans = true;
-    private static final Collection<String> KNOWN_DESCRIPTORS = Arrays.asList("web.xml", "ejb-jar.xml", "openejb-jar.xml", "env-entries.properties", "beans.xml", "ra.xml", "application.xml", "application-client.xml", "persistence-fragment.xml", "persistence.xml", "validation.xml", NewLoaderLogic.EXCLUSION_FILE);
+    private static final Collection<String> KNOWN_DESCRIPTORS = Arrays.asList("application.properties", "web.xml", "ejb-jar.xml", "openejb-jar.xml", "env-entries.properties", "beans.xml", "ra.xml", "application.xml", "application-client.xml", "persistence-fragment.xml", "persistence.xml", "validation.xml", NewLoaderLogic.EXCLUSION_FILE);
 
     public AppModule load(final File jarFile) throws OpenEJBException {
         // verify we have a valid file
