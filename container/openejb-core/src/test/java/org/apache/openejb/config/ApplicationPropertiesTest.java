@@ -170,7 +170,71 @@ public class ApplicationPropertiesTest extends TestCase {
         assertContexts(containerSystem);
     }
 
+    public void testOverrideUnprefixedVsPrefixedOpenEJB() throws Exception {
+        final ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
 
+        { // setup the system
+            assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
+            assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
+        }
+
+        {
+            SystemInstance.get().getProperties().put("openejb.fooApp.color", "orange");
+            SystemInstance.get().getProperties().put("fooApp.color", "green");
+
+            final Map<String, String> map = new HashMap<String, String>();
+            map.put("META-INF/ejb-jar.xml", "<ejb-jar id=\"fooModule\"/>");
+            final File module = Archives.fileArchive(map, WidgetBean.class);
+
+            final AppModule appModule = config.loadApplication(this.getClass().getClassLoader(), "fooApp", Arrays.asList(module));
+            final AppInfo appInfo = config.configureApplication(appModule);
+            assembler.createApplication(appInfo);
+        }
+
+        final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+
+        assertContexts(containerSystem);
+    }
+
+    public void testOverrideUnprefixedVsPrefixedTomEE() throws Exception {
+        final ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
+
+        { // setup the system
+            assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
+            assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
+        }
+
+        {
+            SystemInstance.get().getProperties().put("tomee.fooApp.color", "orange");
+            SystemInstance.get().getProperties().put("fooApp.color", "green");
+
+            final Map<String, String> map = new HashMap<String, String>();
+            map.put("META-INF/ejb-jar.xml", "<ejb-jar id=\"fooModule\"/>");
+            final File module = Archives.fileArchive(map, WidgetBean.class);
+
+            final AppModule appModule = config.loadApplication(this.getClass().getClassLoader(), "fooApp", Arrays.asList(module));
+            final AppInfo appInfo = config.configureApplication(appModule);
+            assembler.createApplication(appInfo);
+        }
+
+        final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+
+        assertContexts(containerSystem);
+    }
+
+    /**
+     * Not implemented.  Don't do it if you want deterministic behavior
+     *
+     * Use one or the other, use both and no guarantee is made
+     * @throws Exception
+     */
+    public void _testOverrideUnprefixedVsPrefixedTomEEAndOpenEJB() throws Exception {
+
+        SystemInstance.get().getProperties().put("tomee.fooApp.color", "green");
+        SystemInstance.get().getProperties().put("openejb.fooApp.color", "blue");
+    }
 
     private void assertContexts(ContainerSystem containerSystem) {
         final BeanContext beanContext = containerSystem.getBeanContext("WidgetBean");
