@@ -149,6 +149,21 @@
         <version>2.12</version>
         <executions>
           <execution>
+            <id>test-tomee-embedded</id>
+            <phase>test</phase>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <skip>${maven.test.skip}</skip>
+              <systemPropertyVariables>
+                <tomee.version>${tomee.version}</tomee.version>
+                <arquillian.launch>tomee-embedded</arquillian.launch>
+                <openejb.arquillian.adapter>tomee-embedded</openejb.arquillian.adapter>
+              </systemPropertyVariables>
+            </configuration>
+          </execution>
+          <execution>
             <id>test-tomee-remote</id>
             <phase>test</phase>
             <goals>
@@ -161,21 +176,6 @@
                 <tomee.classifier>${distribution.under.test}</tomee.classifier>
                 <arquillian.launch>tomee-remote</arquillian.launch>
                 <openejb.arquillian.adapter>tomee-remote</openejb.arquillian.adapter>
-              </systemPropertyVariables>
-            </configuration>
-          </execution>
-          <execution>
-            <id>test-tomee-embedded</id>
-            <phase>test</phase>
-            <goals>
-              <goal>test</goal>
-            </goals>
-            <configuration>
-              <skip>${maven.test.skip}</skip>
-              <systemPropertyVariables>
-                <tomee.version>${tomee.version}</tomee.version>
-                <arquillian.launch>tomee-embedded</arquillian.launch>
-                <openejb.arquillian.adapter>tomee-embedded</openejb.arquillian.adapter>
               </systemPropertyVariables>
             </configuration>
           </execution>

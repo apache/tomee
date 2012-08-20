@@ -17,17 +17,14 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBRuntimeException;
-import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.Pipe;
 
 import java.io.File;
 import java.io.OutputStream;
-import java.lang.reflect.Field;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -286,6 +283,7 @@ public class RemoteServer {
                 }
 
                 // tmp
+                /*
                 Thread t = new Thread() {
                     @Override
                     public void run() {
@@ -312,21 +310,6 @@ public class RemoteServer {
                                     } catch (Exception e1) {
                                         e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                                     }
-                                    /*
-                                    // continue ;)
-                                    try {
-                                        int n = Thread.activeCount();
-                                        Thread[] th = new Thread[n];
-                                        int nb = Thread.enumerate(th);
-                                        for (int i = 0; i < nb; i++) {
-                                            for (StackTraceElement elt : th[nb].getStackTrace()) {
-                                                System.out.println("\tat " + elt);
-                                            }
-                                        }
-                                    } catch (InterruptedException e1) {
-                                        // stop
-                                    }
-                                    */
                                     i = 0;
                                 }
                             }
@@ -335,6 +318,7 @@ public class RemoteServer {
                 };
                 t.setDaemon(true);
                 t.start();
+                */
                 // end tmp
 
                 server = Runtime.getRuntime().exec(args);
