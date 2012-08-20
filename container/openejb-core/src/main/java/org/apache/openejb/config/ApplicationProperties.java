@@ -21,9 +21,11 @@ import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.SuperProperties;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Properties;
@@ -74,9 +76,31 @@ public class ApplicationProperties implements DynamicDeployer {
     }
 
     private void applyOverrides(AppModule appModule) {
-        final String id = appModule.getModuleId() + ".";
 
-        final Properties properties = SystemInstance.get().getProperties();
+        final SuperProperties properties = new SuperProperties().caseInsensitive(false);
+        properties.putAll(SystemInstance.get().getProperties());
+
+        // Anything starting with "openejb" or "tomee" trumps other properties
+        // so "openejb.foo" always beats "foo"
+        for (Map.Entry<Object, Object> entry : SystemInstance.get().getProperties().entrySet()) {
+            final String key = entry.getKey().toString();
+
+            for (String prefix : Arrays.asList("openejb.", "tomee.")) {
+                if (key.startsWith(prefix)) {
+                    final String property = key.substring(prefix.length());
+
+                    if (appModule.getProperties().containsKey(property)) {
+                        log.debug("Overriding system property " + property + "=" + entry.getValue());
+                    } else {
+                        log.debug("Adding system property " + property + "=" + entry.getValue());
+                    }
+
+                    properties.put(property, entry.getValue());
+                }
+            }
+        }
+
+        final String id = appModule.getModuleId() + ".";
 
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
             final String key = entry.getKey().toString();
