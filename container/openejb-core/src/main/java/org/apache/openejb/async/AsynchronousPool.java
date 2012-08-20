@@ -33,7 +33,6 @@ import java.util.concurrent.DelayQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
@@ -59,7 +58,7 @@ public class AsynchronousPool {
                 corePoolSize,
                 maximumPoolSize,
                 keepAliveTime.getTime(),
-                unit, blockingQueue, new DaemonThreadFactory("@Asynchronous", id));
+                unit, blockingQueue, new DaemonThreadFactory("@Asynchronous", id.trim()));
     }
 
     public static AsynchronousPool create(AppContext appContext) {
