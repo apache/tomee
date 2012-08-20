@@ -48,11 +48,12 @@ public class AsynchronousPool {
 
     public AsynchronousPool(String id, int corePoolSize, int maximumPoolSize, Duration keepAliveTime) {
         this.blockingQueue = new LinkedBlockingQueue<Runnable>();
+        final TimeUnit unit = (keepAliveTime.getUnit() != null) ? keepAliveTime.getUnit() : TimeUnit.SECONDS;
         this.executor = new ThreadPoolExecutor(
                 corePoolSize,
                 maximumPoolSize,
                 keepAliveTime.getTime(),
-                keepAliveTime.getUnit(), blockingQueue, new DaemonThreadFactory("@Asynchronous", id));
+                unit, blockingQueue, new DaemonThreadFactory("@Asynchronous", id));
     }
 
     public static AsynchronousPool create(AppContext appContext) {
