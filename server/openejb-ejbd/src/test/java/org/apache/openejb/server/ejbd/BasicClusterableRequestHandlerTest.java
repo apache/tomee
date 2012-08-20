@@ -46,7 +46,7 @@ public class BasicClusterableRequestHandlerTest extends RMockTestCase {
         request = (ClusterableRequest) mock(ClusterableRequest.class);
         response = (ClusterableResponse) mock(ClusterableResponse.class);
         clusteredContainer = (ClusteredRPCContainer) mock(ClusteredRPCContainer.class);
-        beanContext = new BeanContext("aDeploymentId", null, new ModuleContext("", null, "", new AppContext("", SystemInstance.get(), null, null, null, false, 10, 20, 60), null), BasicClusterableRequestHandlerTest.class, null, null, null, null, null, null, null, null, null, null, false);
+        beanContext = new BeanContext("aDeploymentId", null, new ModuleContext("", null, "", new AppContext("", SystemInstance.get(), null, null, null, false), null), BasicClusterableRequestHandlerTest.class, null, null, null, null, null, null, null, null, null, null, false);
     }
     
     public void testNoOpWhenNotAClusteredContainer() throws Exception {

@@ -29,7 +29,6 @@ import org.apache.openejb.loader.SystemInstance;
 
 import javax.ejb.EntityBean;
 import javax.ejb.EntityContext;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -37,7 +36,7 @@ public class BookBean implements EntityBean, Cmp2Entity {
     public static Object deploymentInfo;
     static {
         try {
-            deploymentInfo = new BeanContext("book", null, new ModuleContext("", null, "", new AppContext("", SystemInstance.get(), Book.class.getClassLoader(), new IvmContext(), new IvmContext(), false, 10, 20, 60), new IvmContext()),
+            deploymentInfo = new BeanContext("book", null, new ModuleContext("", null, "", new AppContext("", SystemInstance.get(), Book.class.getClassLoader(), new IvmContext(), new IvmContext(), false), new IvmContext()),
                     BookBean.class,
                     null,
                     null,

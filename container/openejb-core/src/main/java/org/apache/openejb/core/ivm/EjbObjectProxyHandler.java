@@ -16,10 +16,11 @@
  */
 package org.apache.openejb.core.ivm;
 
-import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.InterfaceType;
+import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.async.AsynchronousPool;
 import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.spi.ApplicationServer;
@@ -232,31 +233,24 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
 
     protected abstract Object remove(Class interfce, Method method, Object[] args, Object proxy) throws Throwable;
 
-    protected Object businessMethod(Class<?> interfce, Method method, Object[] args, Object proxy) throws Throwable {
-        BeanContext beanContext = getBeanContext();
+    protected Object businessMethod(final Class<?> interfce,final  Method method,final  Object[] args, Object proxy) throws Throwable {
+        final BeanContext beanContext = getBeanContext();
+        final AsynchronousPool asynchronousPool = beanContext.getModuleContext().getAppContext().getAsynchronousPool();
+
         if (beanContext.isAsynchronous(method)) {
-            return asynchronizedBusinessMethod(interfce, method, args, proxy);
+            return asynchronousPool.invoke(new Callable<Object>() {
+                @Override
+                public Object call() throws Exception {
+                    return synchronizedBusinessMethod(interfce, method, args);
+                }
+            }, method.getReturnType() == Void.TYPE
+            );
         } else {
-            return synchronizedBusinessMethod(interfce, method, args, proxy);
+            return synchronizedBusinessMethod(interfce, method, args);
         }
     }
 
-    protected Object asynchronizedBusinessMethod(Class<?> interfce, Method method, Object[] args, Object proxy) throws Throwable {
-        BeanContext beanContext = getBeanContext();
-        AtomicBoolean asynchronousCancelled = new AtomicBoolean(false);
-        AsynchronousCall asynchronousCall = new AsynchronousCall(interfce, method, args, asynchronousCancelled);
-        try {
-            Future<Object> retValue = beanContext.getModuleContext().getAppContext().submitTask(asynchronousCall);
-            if (method.getReturnType() == Void.TYPE) {
-                return null;
-            }
-            return new FutureAdapter<Object>(retValue, asynchronousCancelled, beanContext.getModuleContext().getAppContext());
-        } catch (RejectedExecutionException e) {
-            throw new EJBException("fail to allocate internal resource to execute the target task", e);
-        }
-    }
-
-    protected Object synchronizedBusinessMethod(Class<?> interfce, Method method, Object[] args, Object proxy) throws Throwable {
+    protected Object synchronizedBusinessMethod(Class<?> interfce, Method method, Object[] args) throws OpenEJBException {
         return container.invoke(deploymentID, interfaceType, interfce, method, args, primaryKey);
     }
 
@@ -272,169 +266,5 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
         return homeHandler.createProxy(primaryKey, mainInterface);
     }
 
-    private class AsynchronousCall implements Callable<Object> {
 
-        private Class<?> interfce;
-
-        private Method method;
-
-        private Object[] args;
-
-        private AtomicBoolean asynchronousCancelled;
-
-        public AsynchronousCall(Class<?> interfce, Method method, Object[] args, AtomicBoolean asynchronousCancelled) {
-            this.interfce = interfce;
-            this.method = method;
-            this.args = args;
-            this.asynchronousCancelled = asynchronousCancelled;
-        }
-
-        @Override
-        public Object call() throws Exception {
-            try {
-                ThreadContext.initAsynchronousCancelled(asynchronousCancelled);
-                Object retValue = container.invoke(deploymentID, interfaceType, interfce, method, args, primaryKey);
-                if (retValue == null) {
-                    return null;
-                } else if (retValue instanceof Future<?>) {
-                    //TODO do we need to strictly check AsyncResult  or just Future ?
-                    Future<?> asyncResult = (Future<?>) retValue;
-                    return asyncResult.get();
-                } else {
-                    // The bean isn't returning the right result!
-                    // We should never arrive here !
-                    return null;
-                }
-            } finally {
-                ThreadContext.removeAsynchronousCancelled();
-            }
-        }
-    }
-
-    private class FutureAdapter<T> implements Future<T> {
-
-        private Future<T> target;
-
-        private AtomicBoolean asynchronousCancelled;
-
-        private AppContext appContext;
-
-        private volatile boolean canceled;
-
-        public FutureAdapter(Future<T> target, AtomicBoolean asynchronousCancelled, AppContext appContext) {
-            this.target = target;
-            this.asynchronousCancelled = asynchronousCancelled;
-            this.appContext = appContext;
-        }
-
-        @Override
-        public boolean cancel(boolean mayInterruptIfRunning) {
-            /*In EJB 3.1 spec 3.4.8.1.1
-             *a. If a client calls cancel on its Future object, the container will attempt to cancel the associated asynchronous invocation only if that invocation has not already been dispatched.
-             *  There is no guarantee that an asynchronous invocation can be cancelled, regardless of how quickly cancel is called after the client receives its Future object.
-             *  If the asynchronous invocation can not be cancelled, the method must return false.
-             *  If the asynchronous invocation is successfully cancelled, the method must return true.
-             *b. the meaning of parameter mayInterruptIfRunning is changed.
-             *  So, we should never call cancel(true), or the underlying Future object will try to interrupt the target thread.
-            */
-            /**
-             * We use our own flag canceled to identify whether the task is canceled successfully.
-             */
-            if(canceled) {
-                return true;
-            }
-            if (appContext.removeTask((Runnable) target)) {
-                //We successfully remove the task from the queue
-                canceled = true;
-                return true;
-            } else {
-                //Not find the task in the queue, the status might be ran/canceled or running
-                //Future.isDone() will return true when the task has been ran or canceled,
-                //since we never call the Future.cancel method, the isDone method will only return true when the task has ran
-                if (!target.isDone()) {
-                    //The task is in the running state
-                    asynchronousCancelled.set(mayInterruptIfRunning);
-                }
-                return false;
-            }
-        }
-
-        @Override
-        public T get() throws InterruptedException, ExecutionException {
-            if(canceled) {
-                throw new CancellationException();
-            }
-            
-            T object = null;
-
-            try {
-                object = target.get();
-            } catch (Throwable e) {
-                handleException(e);
-            }
-
-            return object;
-        }
-
-        @Override
-        public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-            if (canceled) {
-                throw new CancellationException();
-            }
-            
-            T object = null;
-
-            try {
-                object = target.get(timeout, unit);
-            } catch (Throwable e) {
-                handleException(e);
-            }
-
-            return object;
-            
-        }
-        
-        private void handleException(Throwable e) throws ExecutionException {
-            
-            //unwarp the exception to find the root cause
-            while (e.getCause() != null) {
-                e = (Throwable) e.getCause();
-            }
-            
-            /* 
-             * StatefulContainer.obtainInstance(Object, ThreadContext, Method)
-             * will return NoSuchObjectException instead of NoSuchEJBException             * 
-             * when it can't obtain an instance.   Actually, the async client 
-             * is expecting a NoSuchEJBException.  Wrap it here as a workaround.
-             */
-            if (e instanceof NoSuchObjectException) {
-                e = new NoSuchEJBException(e.getMessage(), (Exception) e);
-            }
-
-            boolean isExceptionUnchecked = (e instanceof Error) || (e instanceof RuntimeException);
-
-            // throw checked excpetion and EJBException directly.
-            if (!isExceptionUnchecked || e instanceof EJBException) {
-                throw new ExecutionException(e);
-            }
-
-            // wrap unchecked exception with EJBException before throwing.
-            throw (e instanceof Exception) ? new ExecutionException(new EJBException((Exception) e))
-                    : new ExecutionException(new EJBException(new Exception(e)));
-            
-        }
-
-        @Override
-        public boolean isCancelled() {
-            return canceled;
-        }
-
-        @Override
-        public boolean isDone() {
-            if(canceled) {
-                return false;
-            }
-            return target.isDone();
-        }
-    }
 }
