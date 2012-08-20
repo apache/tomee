@@ -61,7 +61,7 @@ public class AsynchronousPool {
 
         final String id = appContext.getId();
         final int corePoolSize = options.get("AsynchronousPool.CorePoolSize", 10);
-        final int maximumPoolSize = options.get("AsynchronousPool.MaximumPoolSize", 20);
+        final int maximumPoolSize = Math.max(options.get("AsynchronousPool.MaximumPoolSize", 20), corePoolSize);
         final Duration keepAliveTime = options.get("AsynchronousPool.KeepAliveTime", new Duration(60, TimeUnit.SECONDS));
 
         return new AsynchronousPool(id, corePoolSize, maximumPoolSize, keepAliveTime);
