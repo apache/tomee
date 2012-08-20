@@ -16,18 +16,6 @@
  */
 package org.apache.openejb.arquillian.common;
 
-import java.io.File;
-import java.io.OutputStream;
-import java.net.Socket;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.Deployer;
 import org.apache.openejb.assembler.classic.AppInfo;
@@ -47,6 +35,19 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import java.io.File;
+import java.io.OutputStream;
+import java.net.Socket;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public abstract class TomEEContainer<Configuration extends TomEEConfiguration> implements DeployableContainer<Configuration> {
     protected static final Logger LOGGER = Logger.getLogger(TomEEContainer.class.getName());
@@ -106,7 +107,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
                 Object value = entry.getValue();
                 int port = new Integer(value + "");
                 if (port <= 0) {
-                    port = NetworkUtil.getNextAvailablePort();
+                    port = nextPort(configuration.getPortRange(), configuration.portsAlreadySet());
                     entry.setValue(port);
                 }
             } catch (NumberFormatException mustNotBeAPortConfig) {
@@ -133,6 +134,38 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
                 }
             }
         }
+    }
+
+    private int nextPort(final String portRange, int[] excluded) {
+        if (portRange == null || portRange.isEmpty()) {
+            int retry = 10;
+            while (retry > 0) {
+                boolean ok = true;
+                int port = NetworkUtil.getNextAvailablePort();
+                if (excluded != null) {
+                    for (int exclude : excluded) {
+                        if (exclude == port) {
+                            ok = false;
+                        }
+                    }
+                }
+                if (ok) {
+                    return port;
+                }
+                retry--;
+            }
+            throw new IllegalArgumentException("can't find a port available excluding " + Arrays.asList(excluded));
+        }
+
+        if (!portRange.contains("-")) {
+            int port = Integer.parseInt(portRange.trim());
+            return NetworkUtil.getNextAvailablePort(new int[]{port});
+        }
+
+        final String[] minMax = portRange.trim().split("-");
+        int min = Integer.parseInt(minMax[0]);
+        int max = Integer.parseInt(minMax[1]);
+        return NetworkUtil.getNextAvailablePort(min, max, excluded);
     }
 
     public abstract void start() throws LifecycleException;

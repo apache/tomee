@@ -41,6 +41,35 @@ public final class NetworkUtil {
         return port;
     }
 
+    public static int getNextAvailablePort(int min, int max, int... excepted) {
+        int port = -1;
+        ServerSocket s = null;
+        for (int i = min; i <= max; i++) {
+            try {
+                s = create(new int[] { i });
+                port = s.getLocalPort();
+                s.close();
+
+                boolean forbidden = false;
+                if (excepted != null) {
+                    for (int j = 0; j < excepted.length; j++) {
+                        if (port == excepted[j]) {
+                            forbidden = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!forbidden) {
+                    break;
+                }
+            } catch (IOException ioe) {
+                port = -1;
+            }
+        }
+        return port;
+    }
+
     private static ServerSocket create(int[] ports) throws IOException {
         for (int port : ports) {
             try {
