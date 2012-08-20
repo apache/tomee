@@ -17,6 +17,7 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.Pipe;
@@ -363,9 +364,16 @@ public class RemoteServer {
 
                 String command = "SHUTDOWN" + Character.toString((char) 0); // SHUTDOWN + EOF
 
-                Socket socket = new Socket(host, shutdownPort);
-                OutputStream out = socket.getOutputStream();
-                out.write(command.getBytes());
+                Socket socket = null;
+                try {
+                    socket= new Socket(host, shutdownPort);
+                    OutputStream out = socket.getOutputStream();
+                    out.write(command.getBytes());
+                } finally {
+                    if (socket != null) {
+                        socket.close();
+                    }
+                }
 
                 if (server != null) {
                     server.waitFor();
