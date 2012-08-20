@@ -30,7 +30,7 @@ public class DaemonThreadFactory implements ThreadFactory {
     private AtomicInteger ids = new AtomicInteger(0);
 
     public DaemonThreadFactory(Object... name) {
-        this.name = join(" ", name);
+        this.name = join(" ", name).trim();
     }
 
     public DaemonThreadFactory(Class... clazz) {
@@ -48,7 +48,7 @@ public class DaemonThreadFactory implements ThreadFactory {
 
     @Override
     public Thread newThread(Runnable runnable) {
-        Thread t = new Thread(runnable, name.trim() + " - " + ids.incrementAndGet());
+        Thread t = new Thread(runnable, name + " - " + ids.incrementAndGet());
         t.setDaemon(true);
         return t;
     }
