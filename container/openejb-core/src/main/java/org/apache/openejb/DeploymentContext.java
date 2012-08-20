@@ -17,6 +17,7 @@
 package org.apache.openejb;
 
 import org.apache.openejb.loader.Options;
+import org.apache.openejb.util.SuperProperties;
 
 import java.util.Properties;
 import java.util.Map;
@@ -28,7 +29,7 @@ import java.util.HashMap;
 public class DeploymentContext {
     private final String id;
     private final Map<Class, Object> data = new HashMap<Class, Object>();
-    private final Properties properties = new Properties();
+    private final Properties properties = new SuperProperties().caseInsensitive(true);
     private Options options;
 
     public DeploymentContext(String id, Options parent) {

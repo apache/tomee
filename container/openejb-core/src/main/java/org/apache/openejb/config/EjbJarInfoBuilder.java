@@ -146,6 +146,7 @@ public class EjbJarInfoBuilder {
 
         ejbJar.watchedResources.addAll(jar.getWatchedResources());
 
+        ejbJar.properties.putAll(jar.getProperties());
         ejbJar.properties.putAll(jar.getOpenejbJar().getProperties());
 
         for (EnterpriseBean bean : jar.getEjbJar().getEnterpriseBeans()) {

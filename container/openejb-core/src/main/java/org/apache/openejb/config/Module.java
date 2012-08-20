@@ -18,10 +18,12 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.config.sys.Resources;
 import org.apache.openejb.jee.bval.ValidationConfigType;
+import org.apache.openejb.util.SuperProperties;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 public class Module {
@@ -37,6 +39,7 @@ public class Module {
     private AppModule appModule = null;
     private Resources resources = null;
     private final Set<String> mbeans = new HashSet<String>();
+    private final Properties properties = new SuperProperties().caseInsensitive(true);
 
     public Module(boolean needId) {
         if (needId) {
@@ -46,6 +49,10 @@ public class Module {
 
     public Module() {
         this(true);
+    }
+
+    public Properties getProperties() {
+        return properties;
     }
 
     public ValidationConfigType getValidationConfig() {

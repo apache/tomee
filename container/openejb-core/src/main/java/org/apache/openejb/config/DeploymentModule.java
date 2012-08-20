@@ -17,6 +17,7 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.jee.NamedModule;
+import org.apache.openejb.jee.jpa.unit.Properties;
 import org.apache.openejb.loader.SystemInstance;
 
 import java.io.File;
@@ -51,6 +52,8 @@ public interface DeploymentModule {
     boolean isStandaloneModule();
     
     void setStandaloneModule(boolean isStandalone);
+
+    java.util.Properties getProperties();
 
     class ID {
         private final String name;
