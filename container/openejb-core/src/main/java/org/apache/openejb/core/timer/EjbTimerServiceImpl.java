@@ -128,6 +128,11 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         properties.put(StdSchedulerFactory.PROP_THREAD_POOL_CLASS, systemInstance.hasProperty(QUARTZ_THREAD_POOL_ADAPTER) ? systemInstance.getOptions().get(QUARTZ_THREAD_POOL_ADAPTER, SimpleThreadPool.class.getName())
                 : defaultThreadPool);
         properties.put(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, "OpenEJB-TimerService-Scheduler");
+
+        // to ensure we can shutdown correctly
+        properties.put("org.quartz.jobStore.makeThreadsDaemon", "true");
+        properties.put("org.quartz.scheduler.makeSchedulerThreadDaemon", "true");
+
         updateProperties(properties, null);
 
         boolean newInstance = updateProperties(properties, deployment.getEjbName() + ".")
