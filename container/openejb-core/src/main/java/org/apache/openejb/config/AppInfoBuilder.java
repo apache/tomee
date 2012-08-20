@@ -109,6 +109,7 @@ class AppInfoBuilder {
         appInfo.watchedResources.addAll(appModule.getWatchedResources());
         appInfo.mbeans.addAll(appModule.getAdditionalLibMbeans());
         appInfo.jaxRsProviders.addAll(appModule.getJaxRsProviders());
+        appInfo.properties.putAll(appModule.getProperties());
 
         if (appInfo.appId == null) throw new IllegalArgumentException("AppInfo.appId cannot be null");
         if (appInfo.path == null) appInfo.path = appInfo.appId;
