@@ -35,6 +35,7 @@ import org.apache.openejb.spi.ContainerSystem;
  * @version $Rev$ $Date$
  */
 public class DeploymentContextOptionsTest extends TestCase {
+
     @Override
     protected void setUp() throws Exception {
         SystemInstance.reset();
@@ -218,7 +219,6 @@ public class DeploymentContextOptionsTest extends TestCase {
         final String defaultValue = key + " (not set)";
         assertEquals(defaultValue, options.get(key, defaultValue));
     }
-
 
     public static interface Widget {
 

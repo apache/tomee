@@ -35,13 +35,14 @@ import java.util.TreeSet;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.jpa.unit.TransactionType;
+import org.apache.openejb.util.SuperProperties;
 
 /**
  * @version $Rev$ $Date$
  */
 public class AppModule implements DeploymentModule {
 
-    private final Properties properties = new Properties();
+    private final Properties properties = new SuperProperties().caseInsensitive(true);
     private final Application application;
     private final ValidationContext validation;
     private final List<URL> additionalLibraries = new ArrayList<URL>();

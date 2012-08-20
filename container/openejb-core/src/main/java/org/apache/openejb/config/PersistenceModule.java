@@ -22,6 +22,7 @@ import org.apache.openejb.jee.jpa.unit.Persistence;
 
 import java.io.File;
 import java.net.URI;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Map;
@@ -84,6 +85,11 @@ public class PersistenceModule implements DeploymentModule {
     }
 
     public ValidationContext getValidation() {
+        return null;
+    }
+
+    @Override
+    public Properties getProperties() {
         return null;
     }
 

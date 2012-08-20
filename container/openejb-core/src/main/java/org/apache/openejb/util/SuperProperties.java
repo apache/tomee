@@ -162,6 +162,11 @@ public class SuperProperties extends Properties {
         this.caseInsensitive = caseInsensitive;
     }
 
+    public SuperProperties caseInsensitive(boolean caseInsensitive) {
+        setCaseInsensitive(caseInsensitive);
+        return this;
+    }
+
     /**
      * Gets the text that separates keys and values.
      * The default is "=".
