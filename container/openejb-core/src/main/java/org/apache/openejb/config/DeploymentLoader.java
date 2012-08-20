@@ -1319,7 +1319,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 for (final JarEntry entry : Collections.list(jarFile.entries())) {
                     final String entryName = entry.getName();
                     if (!entry.isDirectory() && entryName.startsWith("WEB-INF/")
-                            && (KNOWN_DESCRIPTORS.contains(entryName) || entryName.endsWith(".xml"))) { // + web.xml, web-fragment.xml...
+                            && (KNOWN_DESCRIPTORS.contains(entryName.substring("WEB-INF/".length())) || entryName.endsWith(".xml"))) { // + web.xml, web-fragment.xml...
                         descriptors.put(entryName, new URL(jarURL, entry.getName()));
                     }
                 }
