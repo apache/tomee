@@ -61,9 +61,9 @@ public class ServiceLogger extends ServerServiceFilter {
         try {
             final Class<?> MDC = ServiceLogger.class.getClassLoader().loadClass("org.apache.log4j.MDC");
             MDBput = MDC.getMethod("put", String.class, String.class);
-        } catch (Exception e) {
+        } catch (Exception e) { // no need to log it with a higher level
             Logger.getInstance(LogCategory.OPENEJB, ServiceLogger.class.getName())
-                    .info("can't find log4j MDC class");
+                    .debug("can't find log4j MDC class");
         }
     }
 
