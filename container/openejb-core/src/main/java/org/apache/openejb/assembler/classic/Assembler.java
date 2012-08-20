@@ -40,8 +40,8 @@ import org.apache.openejb.assembler.classic.event.AssemblerAfterApplicationCreat
 import org.apache.openejb.assembler.classic.event.AssemblerBeforeApplicationDestroyed;
 import org.apache.openejb.assembler.classic.event.AssemblerCreated;
 import org.apache.openejb.assembler.classic.event.AssemblerDestroyed;
-import org.apache.openejb.assembler.classic.util.ServiceInfos;
 import org.apache.openejb.assembler.monitoring.JMXContainer;
+import org.apache.openejb.async.AsynchronousPool;
 import org.apache.openejb.cdi.CdiAppContextsService;
 import org.apache.openejb.cdi.CdiBuilder;
 import org.apache.openejb.cdi.CdiResourceInjectionService;
@@ -179,15 +179,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, Assembler.class);
 
     public static final String OPENEJB_JPA_DEPLOY_TIME_ENHANCEMENT_PROP = "openejb.jpa.deploy-time-enhancement";
-
-    public static final String DEFAULT_ASYNCHRONOUS_POOL_ID = "asynchronous-pool";
-    public static final String ASYNCHRONOUS_POOL_CORE_SIZE = DEFAULT_ASYNCHRONOUS_POOL_ID + ".core-size";
-    public static final String ASYNCHRONOUS_POOL_MAX_SIZE = DEFAULT_ASYNCHRONOUS_POOL_ID + ".max-size";
-    public static final String ASYNCHRONOUS_POOL_KEEP_ALIVE = DEFAULT_ASYNCHRONOUS_POOL_ID + ".keep-alive";
-
-    private static final int DEFAULT_CORE_POOL_SIZE = 10;
-    private static final int DEFAULT_MAX_POOL_SIZE = 20;
-    private static final int DEFAULT_KEEP_ALIVE = 60;
 
     private static final String GLOBAL_UNIQUE_ID = "global";
 
@@ -587,36 +578,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 classLoader = ClassLoaderUtil.createClassLoader(appInfo.path, new URL[]{generatedJar.toURI().toURL()}, classLoader);
             }
 
-
-            // async pool config
-            int corePoolSize = DEFAULT_CORE_POOL_SIZE;
-            int maxPoolSize = DEFAULT_MAX_POOL_SIZE;
-            int keepAlive = DEFAULT_KEEP_ALIVE;
-            ServiceInfo appConfig = ServiceInfos.find(appInfo.services, appInfo.appId);
-            if (appConfig != null) {
-                corePoolSize = Integer.parseInt(appConfig.properties.getProperty(ASYNCHRONOUS_POOL_CORE_SIZE, Integer.toString(corePoolSize)).trim());
-                maxPoolSize = Integer.parseInt(appConfig.properties.getProperty(ASYNCHRONOUS_POOL_MAX_SIZE, Integer.toString(maxPoolSize)).trim());
-                keepAlive = Integer.parseInt(appConfig.properties.getProperty(ASYNCHRONOUS_POOL_KEEP_ALIVE, Integer.toString(keepAlive)).trim());
-            } else {
-                appConfig = ServiceInfos.find(appInfo.services, DEFAULT_ASYNCHRONOUS_POOL_ID);
-                if (appConfig != null) {
-                    int l = DEFAULT_ASYNCHRONOUS_POOL_ID.length() + 1;
-                    corePoolSize = Integer.parseInt(appConfig.properties.getProperty(ASYNCHRONOUS_POOL_CORE_SIZE.substring(l), Integer.toString(corePoolSize)).trim());
-                    maxPoolSize = Integer.parseInt(appConfig.properties.getProperty(ASYNCHRONOUS_POOL_MAX_SIZE.substring(l), Integer.toString(maxPoolSize)).trim());
-                    keepAlive = Integer.parseInt(appConfig.properties.getProperty(ASYNCHRONOUS_POOL_KEEP_ALIVE.substring(l), Integer.toString(keepAlive)).trim());
-                }
-            }
-
-            corePoolSize = SystemInstance.get().getOptions().get(ASYNCHRONOUS_POOL_CORE_SIZE, corePoolSize);
-            maxPoolSize = SystemInstance.get().getOptions().get(ASYNCHRONOUS_POOL_MAX_SIZE, maxPoolSize);
-            keepAlive = SystemInstance.get().getOptions().get(ASYNCHRONOUS_POOL_KEEP_ALIVE, keepAlive);
-
-            final AppContext appContext = new AppContext(appInfo.appId, SystemInstance.get(), classLoader, globalJndiContext, appJndiContext, appInfo.standaloneModule, corePoolSize, maxPoolSize, keepAlive);
+            final AppContext appContext = new AppContext(appInfo.appId, SystemInstance.get(), classLoader, globalJndiContext, appJndiContext, appInfo.standaloneModule);
             appContext.getInjections().addAll(injections);
             appContext.getBindings().putAll(globalBindings);
             appContext.getBindings().putAll(appBindings);
 
             containerSystem.addAppContext(appContext);
+
+            appContext.set(AsynchronousPool.class, AsynchronousPool.create(appContext));
 
             final Context containerSystemContext = containerSystem.getJNDIContext();
 

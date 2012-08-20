@@ -16,9 +16,9 @@
  */
 package org.apache.openejb;
 
+import org.apache.openejb.async.AsynchronousPool;
 import org.apache.openejb.core.WebContext;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.util.DaemonThreadFactory;
 import org.apache.webbeans.config.WebBeansContext;
 
 import javax.enterprise.inject.spi.BeanManager;
@@ -29,17 +29,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @version $Rev$ $Date$
-*/
+ */
 public class AppContext extends DeploymentContext {
     private final SystemInstance systemInstance;
     private final ClassLoader classLoader;
@@ -51,23 +44,17 @@ public class AppContext extends DeploymentContext {
     private final Collection<Injection> injections = new HashSet<Injection>();
     private final Map<String, Object> bindings = new HashMap<String, Object>();
 
-    private BlockingQueue<Runnable> blockingQueue;
-    private ExecutorService asynchPool;
-
     // TODO perhaps to be deleted
     private final List<BeanContext> beanContexts = new ArrayList<BeanContext>();
     private final List<WebContext> webContexts = new ArrayList<WebContext>();
 
-    public AppContext(String id, SystemInstance systemInstance, ClassLoader classLoader, Context globalJndiContext, Context appJndiContext, boolean standaloneModule, int corePoolSize, int maxPoolSize, int keepAlive) {
+    public AppContext(String id, SystemInstance systemInstance, ClassLoader classLoader, Context globalJndiContext, Context appJndiContext, boolean standaloneModule) {
         super(id, systemInstance.getOptions());
         this.classLoader = classLoader;
         this.systemInstance = systemInstance;
         this.globalJndiContext = globalJndiContext;
         this.appJndiContext = appJndiContext;
         this.standaloneModule = standaloneModule;
-        this.blockingQueue = new LinkedBlockingQueue<Runnable>();
-
-        this.asynchPool = new ThreadPoolExecutor(corePoolSize, maxPoolSize, keepAlive, TimeUnit.SECONDS, blockingQueue, new DaemonThreadFactory("@Asynch", id));
     }
 
     public Collection<Injection> getInjections() {
@@ -137,15 +124,7 @@ public class AppContext extends DeploymentContext {
         return standaloneModule;
     }
 
-    /**
-     *  Asynchronous Invocation Thread Pool Methods
-     */
-    public Future<Object> submitTask(Callable<Object> callable){
-        return asynchPool.submit(callable);
+    public AsynchronousPool getAsynchronousPool() {
+        return get(AsynchronousPool.class);
     }
-
-    public boolean removeTask(Runnable task) {
-        return blockingQueue.remove(task);
-    }
-
 }
