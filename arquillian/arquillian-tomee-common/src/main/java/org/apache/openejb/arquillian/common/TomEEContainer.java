@@ -336,13 +336,18 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
             e.printStackTrace();
             throw new DeploymentException("Unable to undeploy " + archive.getName(), e);
         } finally {
-            LOGGER.info("cleaning " + deployed.file.getAbsolutePath());
-            Files.delete(deployed.file); // "i" folder
+            try {
+                LOGGER.info("cleaning " + deployed.file.getAbsolutePath());
+                Files.delete(deployed.file); // "i" folder
 
-            final File pathFile = new File(deployed.path);
-            if (!deployed.path.equals(deployed.file.getAbsolutePath()) && pathFile.exists()) {
-                LOGGER.info("cleaning " + pathFile);
-                Files.delete(pathFile);
+                final File pathFile = new File(deployed.path);
+                if (!deployed.path.equals(deployed.file.getAbsolutePath()) && pathFile.exists()) {
+                    LOGGER.info("cleaning " + pathFile);
+                    Files.delete(pathFile);
+                }
+            } catch (Throwable t) {
+                t.printStackTrace();
+                System.out.println(">>>>> here it is");
             }
         }
     }
