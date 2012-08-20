@@ -26,6 +26,8 @@ import java.util.TreeSet;
  * @version $Rev$ $Date$
  */
 public class AppInfo extends InfoObject {
+    public final Properties properties = new Properties();
+
     public String appId;
     public String path;
     public boolean autoDeploy = true;

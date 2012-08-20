@@ -55,6 +55,7 @@ public class EjbJarBuilder {
         HashMap<String, BeanContext> deployments = new HashMap<String, BeanContext>();
 
         ModuleContext moduleContext = new ModuleContext(ejbJar.moduleName, ejbJar.moduleUri, ejbJar.uniqueId, context, moduleJndiContext);
+        moduleContext.getProperties().putAll(ejbJar.properties);
         InterceptorBindingBuilder interceptorBindingBuilder = new InterceptorBindingBuilder(context.getClassLoader(), ejbJar);
 
         MethodScheduleBuilder methodScheduleBuilder = new MethodScheduleBuilder();
