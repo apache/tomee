@@ -124,7 +124,16 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         }
 
         final Properties properties = new Properties();
+        properties.putAll(SystemInstance.get().getProperties());
+        properties.putAll(deployment.getModuleContext().getAppContext().getProperties());
+        properties.putAll(deployment.getModuleContext().getProperties());
+        properties.putAll(deployment.getProperties());
+
+        // TODO just iterate over these properties and look for "org.quartz.scheduler*" props
+
         final SystemInstance systemInstance = SystemInstance.get();
+
+
         final String defaultThreadPool = DefaultTimerThreadPoolAdapter.class.getName();
         properties.put(StdSchedulerFactory.PROP_THREAD_POOL_CLASS, systemInstance.hasProperty(QUARTZ_THREAD_POOL_ADAPTER) ? systemInstance.getOptions().get(QUARTZ_THREAD_POOL_ADAPTER, SimpleThreadPool.class.getName())
                 : defaultThreadPool);
