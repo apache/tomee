@@ -37,6 +37,7 @@ import org.quartz.Trigger;
 import org.quartz.TriggerKey;
 import org.quartz.impl.StdSchedulerFactory;
 import org.quartz.impl.triggers.AbstractTrigger;
+import org.quartz.simpl.RAMJobStore;
 import org.quartz.simpl.SimpleThreadPool;
 
 import javax.ejb.EJBContext;
@@ -128,9 +129,6 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         properties.put(StdSchedulerFactory.PROP_THREAD_POOL_CLASS, systemInstance.hasProperty(QUARTZ_THREAD_POOL_ADAPTER) ? systemInstance.getOptions().get(QUARTZ_THREAD_POOL_ADAPTER, SimpleThreadPool.class.getName())
                 : defaultThreadPool);
         properties.put(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, "OpenEJB-TimerService-Scheduler");
-
-        // to ensure we can shutdown correctly
-        properties.put("org.quartz.jobStore.makeThreadsDaemon", "true");
         properties.put("org.quartz.scheduler.makeSchedulerThreadDaemon", "true");
 
         updateProperties(properties, null);
@@ -147,6 +145,11 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                 && properties.containsKey("org.quartz.threadPool.threadCount")
                 & !properties.containsKey("openejb.timer.pool.size")) {
             log.info("Found property 'org.quartz.threadPool.threadCount' for default thread pool, please use 'openejb.timer.pool.size' instead");
+        }
+
+        // to ensure we can shutdown correctly, default doesn't support such a configuration
+        if (!properties.getProperty(StdSchedulerFactory.PROP_JOB_STORE_CLASS, RAMJobStore.class.getName()).equals(RAMJobStore.class.getName())) {
+            properties.put("org.quartz.jobStore.makeThreadsDaemon", properties.getProperty("org.quartz.jobStore.makeThreadsDaemon", "true"));
         }
 
         scheduler = systemInstance.getComponent(Scheduler.class);
