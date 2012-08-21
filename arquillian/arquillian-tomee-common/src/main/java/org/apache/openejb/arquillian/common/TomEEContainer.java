@@ -43,7 +43,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -100,21 +101,38 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
                 }
             }
         }
+
         //
         // Set ports if they are unspecified
         //
+        final Collection<Integer> randomPorts = new ArrayList<Integer>();
+        for (int i : configuration.portsAlreadySet()) { // ensure we don't use already initialized port (fixed ones)
+            randomPorts.add(i);
+        }
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             if (!entry.getKey().toLowerCase().endsWith("port")) continue;
             try {
                 Object value = entry.getValue();
                 int port = new Integer(value + "");
                 if (port <= 0) {
-                    port = nextPort(configuration.getPortRange(), configuration.portsAlreadySet());
+                    int retry = 0;
+                    do { // nextPort can in some case returns twice the same port since it doesn't hold the port
+                        if (retry++ == Integer.MAX_VALUE) { // really too much, just some protection over infinite loop
+                            break;
+                        }
+
+                        // ports already set != random port if some port are forced
+                        port = nextPort(configuration.getPortRange(), randomPorts);
+                    } while (randomPorts.contains(port));
+
                     entry.setValue(port);
+                    randomPorts.add(port);
                 }
             } catch (NumberFormatException mustNotBeAPortConfig) {
+                // no-op
             }
         }
+        randomPorts.clear();
 
         // with multiple containers we don't want it so let the user eb able to skip it
         if (configuration.getExportConfAsSystemProperty()) {
@@ -138,25 +156,17 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         }
     }
 
-    private int nextPort(final String portRange, int[] excluded) {
+    private int nextPort(final String portRange, final Collection<Integer> excluded) {
         if (portRange == null || portRange.isEmpty()) {
             int retry = 10;
             while (retry > 0) {
-                boolean ok = true;
                 int port = NetworkUtil.getNextAvailablePort();
-                if (excluded != null) {
-                    for (int exclude : excluded) {
-                        if (exclude == port) {
-                            ok = false;
-                        }
-                    }
-                }
-                if (ok) {
+                if (!excluded.contains(port)) {
                     return port;
                 }
                 retry--;
             }
-            throw new IllegalArgumentException("can't find a port available excluding " + Arrays.asList(excluded));
+            throw new IllegalArgumentException("can't find a port available excluding " + excluded);
         }
 
         if (!portRange.contains("-")) {
