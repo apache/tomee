@@ -17,13 +17,8 @@
 package org.apache.tomee.catalina;
 
 import org.apache.openejb.config.TldScanner;
-import org.apache.openejb.jee.JaxbJavaee;
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.util.DaemonThreadFactory;
 
-import javax.xml.bind.JAXBException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
 
 /**
  * The classes listed and loaded eagerly have static initializers which take a tiny bit of time.
@@ -129,9 +124,7 @@ public class Warmup {
                 "org.apache.openejb.server.ejbd.EjbRequestHandler",
                 "org.apache.openejb.util.Duration",
                 "org.apache.openejb.util.Join",
-                "org.apache.openejb.util.JuliLogStreamFactory",
                 "org.apache.openejb.util.LogCategory",
-                "org.apache.openejb.util.Logger",
                 "org.apache.openejb.util.Messages",
                 "org.apache.openejb.util.SafeToolkit",
                 "org.apache.openejb.util.StringTemplate",
@@ -164,47 +157,60 @@ public class Warmup {
                 "org.slf4j.impl.StaticLoggerBinder",
         };
 
-        final ExecutorService executor = Executors.newFixedThreadPool(4, new DaemonThreadFactory("warmup"));
+        final ClassLoader loader = Warmup.class.getClassLoader();
 
-        executor.execute(new JaxbJavaeeLoad(WebApp.class));
-        executor.execute(new Runnable() {
+        try { // see org.apache.openejb.Core
+            Class.forName("org.apache.openejb.util.Logger", true, loader);
+            Class.forName("org.apache.openejb.util.JuliLogStreamFactory", true, loader);
+        } catch (Throwable e) {
+            // no-op
+        }
+
+        final int permits = 2 * Runtime.getRuntime().availableProcessors() + 1;
+        final Semaphore semaphore = new Semaphore(0);
+
+        final Thread tld = new Thread() {
             @Override
             public void run() {
                 try {
                     TldScanner.scan(TomcatLoader.class.getClassLoader());
                 } catch (Throwable throwable) {
+                    // no-op
                 }
             }
-        });
+        };
+        tld.setDaemon(true);
+        tld.start();
 
-        for (final String className : classes) {
-            final ClassLoader loader = Warmup.class.getClassLoader();
-            executor.execute(new Runnable() {
+        final int part = (int) Math.round(classes.length * 1. / permits);
+        for (int i = 0; i < permits; i++) {
+            final int offset = i * part;
+            final Thread thread = new Thread() {
                 @Override
                 public void run() {
-                    try {
-                        Class.forName(className, true, loader);
-                    } catch (Throwable throwable) {
+                    int max = offset + part;
+                    if (offset / part == permits - 1) { // last one
+                        max = classes.length;
                     }
+
+                    for (int c = offset; c < max; c++) {
+                        try {
+                            Class.forName(classes[c], true, loader);
+                        } catch (Throwable e) {
+                            // no-op
+                        }
+                    }
+                    semaphore.release();
                 }
-            });
+            };
+            thread.setDaemon(true);
+            thread.start();
         }
-    }
-
-    private static class JaxbJavaeeLoad implements Runnable {
-
-        private final Class<?> type;
-
-        private JaxbJavaeeLoad(Class<?> type) {
-            this.type = type;
-        }
-
-        @Override
-        public void run() {
-            try {
-                JaxbJavaee.getContext(type);
-            } catch (JAXBException e) {
-            }
+        try {
+            semaphore.acquire(permits);
+            tld.join();
+        } catch (InterruptedException e) {
+            Thread.interrupted();
         }
     }
 
