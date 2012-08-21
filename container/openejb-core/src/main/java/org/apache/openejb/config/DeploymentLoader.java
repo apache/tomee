@@ -1069,7 +1069,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                     }
                 }
             } else {
-                logger.info("faces config file is null");
+                logger.debug("faces config file is null");
             }
         }
 
