@@ -17,19 +17,21 @@
 
 package org.apache.openejb.core.timer;
 
+import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.DaemonThreadFactory;
+import org.apache.openejb.util.ExecutorBuilder;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.executor.OfferRejectedExecutionHandler;
 import org.quartz.SchedulerConfigException;
 import org.quartz.spi.ThreadPool;
 
 import java.util.concurrent.Executor;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @version $Rev$ $Date$
@@ -62,47 +64,38 @@ public class DefaultTimerThreadPoolAdapter implements ThreadPool {
     private final boolean threadPoolExecutorUsed;
 
     public DefaultTimerThreadPoolAdapter() {
-        this.executor = SystemInstance.get().getComponent(Executor.class);
+        final TimerExecutor timerExecutor = SystemInstance.get().getComponent(TimerExecutor.class);
 
-        if (this.executor == null) {
+        if (timerExecutor != null) {
+            this.executor = timerExecutor.executor;
+        } else {
+            this.executor = new ExecutorBuilder()
+                    .size(3)
+                    .prefix("EjbTimerPool")
+                    .build(SystemInstance.get().getOptions());
 
-            int size = Integer.parseInt(SystemInstance.get().getProperty(OPENEJB_TIMER_POOL_SIZE, "3"));
-            if (size < 3) {
-                size = 3;
-            }
-
-            this.executor = new ThreadPoolExecutor(size
-                    , size
-                    , 60L
-                    , TimeUnit.SECONDS
-                    , new LinkedBlockingQueue<Runnable>(size)
-                    , new DaemonThreadFactory(DefaultTimerThreadPoolAdapter.class)
-                    , new RejectedExecutionHandler() {
-                @Override
-                public void rejectedExecution(final Runnable r, final ThreadPoolExecutor tpe) {
-
-                    if (null == r || null == tpe || tpe.isShutdown() || tpe.isTerminated() || tpe.isTerminating()) {
-                        return;
-                    }
-
-                    try {
-                        if (!tpe.getQueue().offer(r, 30, TimeUnit.SECONDS)) {
-                            throw new RejectedExecutionException("Timeout waiting for executor slot");
-                        }
-                    } catch (InterruptedException e) {
-                        throw new RejectedExecutionException("Interrupted waiting for executor slot");
-                    }
-                }
-            }
-            );
-            ((ThreadPoolExecutor) this.executor).allowCoreThreadTimeOut(true);
-            SystemInstance.get().setComponent(Executor.class, this.executor);
+            SystemInstance.get().setComponent(TimerExecutor.class, new TimerExecutor(this.executor));
         }
 
         this.threadPoolExecutorUsed = (this.executor instanceof ThreadPoolExecutor);
 
         if (!this.threadPoolExecutorUsed) {
             logger.warning("Unrecognized ThreadPool implementation [" + this.executor.getClass().getName() + "] is used, EJB Timer service may not work correctly");
+        }
+    }
+
+    // This is to prevent other parts of the code becoming dependent
+    // on the executor produced for EJB Timers
+    //
+    // If we want to share an Executor across the whole system
+    // for @Asynchronous and @Remote execution we should design
+    // that specifically and have it explicitly created somewhere
+    public final static class TimerExecutor {
+        private final Executor executor;
+
+        private TimerExecutor(Executor executor) {
+            if (executor == null) throw new IllegalArgumentException("executor cannot be null");
+            this.executor = executor;
         }
     }
 
@@ -186,4 +179,5 @@ public class DefaultTimerThreadPoolAdapter implements ThreadPool {
     public void setThreadPriority(final int threadPriority) {
         this.threadPriority = threadPriority;
     }
+
 }
