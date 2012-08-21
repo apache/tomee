@@ -442,12 +442,11 @@ public class RemoteServer {
 
     private boolean connect(int tries) {
         if (verbose) System.out.println("[] CONNECT ATTEMPT " + (this.tries - tries));
-        //System.out.println("CONNECT "+ tries);
-        try {
 
-            Socket socket = new Socket(host, shutdownPort);
-            OutputStream out = socket.getOutputStream();
-            out.close();
+        Socket socket = null;
+        try {
+            socket = new Socket(host, shutdownPort);
+            socket.getOutputStream().close();
             if (verbose) System.out.println("[] CONNECTED IN " + (this.tries - tries));
         } catch (Exception e) {
             if (tries < 2) {
@@ -460,6 +459,14 @@ public class RemoteServer {
                     e.printStackTrace();
                 }
                 return connect(--tries);
+            }
+        } finally {
+            if (socket != null) {
+                try {
+                    socket.close();
+                } catch (Exception ignored) {
+                    // no-op
+                }
             }
         }
 
