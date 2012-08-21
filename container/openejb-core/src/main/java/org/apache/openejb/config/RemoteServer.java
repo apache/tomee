@@ -23,6 +23,7 @@ import org.apache.openejb.util.Pipe;
 
 import java.io.File;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -283,7 +284,6 @@ public class RemoteServer {
                 }
 
                 // tmp
-                /*
                 Thread t = new Thread() {
                     @Override
                     public void run() {
@@ -318,7 +318,6 @@ public class RemoteServer {
                 };
                 t.setDaemon(true);
                 t.start();
-                */
                 // end tmp
 
                 server = Runtime.getRuntime().exec(args);
