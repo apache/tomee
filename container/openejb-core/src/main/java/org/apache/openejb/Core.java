@@ -16,10 +16,9 @@
  */
 package org.apache.openejb;
 
-import java.util.concurrent.Semaphore;
-import org.apache.openejb.util.JuliLogStreamFactory;
-import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
+
+import java.util.concurrent.Semaphore;
 
 /**
 * @version $Rev$ $Date$
@@ -73,7 +72,7 @@ public class Core {
                 "org.apache.xbean.naming.reference.SimpleReference",
                 "org.apache.xbean.propertyeditor.PropertyEditors",
                 "org.apache.xbean.propertyeditor.ReferenceIdentityMap",
-                "org.apache.xbean.recipe.ReflectionUtil",
+                "org.apache.xbean.recipe.ReflectionUtil"
         };
 
         final Thread preloadMessages = new Thread() {
@@ -94,34 +93,32 @@ public class Core {
             Class.forName("org.apache.openejb.util.JuliLogStreamFactory", true, loader);
         } catch (Throwable e) {
             // no-op
-        } finally {
-            semaphore.release();
         }
 
-        for (final String className : classes) {
-            try {
-                semaphore.acquire();
-                final Thread thread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Class.forName(className, true, loader);
-                        } catch (Throwable e) {
-                            // no-op
-                        } finally {
-                            semaphore.release();
+        final int part = classes.length / permits; // works since we have a pair number of classes
+        for (int i = 0; i < permits; i++) {
+            final int offset = i * part;
+            final Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        semaphore.acquire();
+                        for (int c = offset; c < offset + part; c++) {
+                            Class.forName(classes[c], true, loader);
                         }
+                    } catch (Throwable e) {
+                        // no-op
+                    } finally {
+                        semaphore.release();
                     }
-                });
-                thread.setDaemon(true);
-                thread.start();
-            } catch (InterruptedException e) {
-                Thread.interrupted();
-            }
+                }
+            });
+            thread.setDaemon(true);
+            thread.start();
         }
         try {
-            semaphore.acquire(permits);
             preloadMessages.join();
+            semaphore.acquire(permits);
         } catch (InterruptedException e) {
             Thread.interrupted();
         }
