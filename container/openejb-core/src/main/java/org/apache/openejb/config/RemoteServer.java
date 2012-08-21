@@ -283,46 +283,7 @@ public class RemoteServer {
                     System.out.println(Join.join("\n", args));
                 }
 
-                // tmp
-                Thread t = new Thread() {
-                    @Override
-                    public void run() {
-                        setName("[DEBUG] Dump Observer");
-
-                        boolean end = false;
-                        int i = 0;
-                        while (!end) {
-                            try {
-                                if (server == null) {
-                                    throw new IllegalThreadStateException();
-                                }
-                                server.exitValue();
-                                end = true;
-                            } catch (IllegalThreadStateException e) {
-                                i++;
-                                try {
-                                    Thread.sleep(Integer.getInteger("sleep", 5000 * 60));
-                                } catch (InterruptedException e1) {
-                                    e1.printStackTrace();
-                                }
-                                if (i == 5) {
-                                    try {
-                                        final Field f = server.getClass().getDeclaredField("pid");
-                                        f.setAccessible(true);
-                                        int pid = (Integer) f.get(server);
-                                        Pipe.pipe(Runtime.getRuntime().exec("kill -3 " + pid));
-                                    } catch (Exception e1) {
-                                        e1.printStackTrace();
-                                    }
-                                    i = 0;
-                                }
-                            }
-                        }
-                    }
-                };
-                t.setDaemon(true);
-                t.start();
-                // end tmp
+                // kill3UNIXDebug();
 
                 server = Runtime.getRuntime().exec(args);
 
@@ -341,6 +302,48 @@ public class RemoteServer {
         } else {
             if (verbose) System.out.println("[] FOUND STARTED SERVER");
         }
+    }
+
+    // debugging method (mainly for buildbot), don't let it activated when all is fine
+    private void kill3UNIXDebug() {
+        Thread t = new Thread() {
+            @Override
+            public void run() {
+                setName("[DEBUG] Dump Observer");
+
+                boolean end = false;
+                int i = 0;
+                while (!end) {
+                    try {
+                        if (server == null) {
+                            throw new IllegalThreadStateException();
+                        }
+                        server.exitValue();
+                        end = true;
+                    } catch (IllegalThreadStateException e) {
+                        i++;
+                        try {
+                            Thread.sleep(Integer.getInteger("sleep", 5000 * 60));
+                        } catch (InterruptedException e1) {
+                            e1.printStackTrace();
+                        }
+                        if (i == 5) {
+                            try {
+                                final Field f = server.getClass().getDeclaredField("pid");
+                                f.setAccessible(true);
+                                int pid = (Integer) f.get(server);
+                                Pipe.pipe(Runtime.getRuntime().exec("kill -3 " + pid));
+                            } catch (Exception e1) {
+                                e1.printStackTrace();
+                            }
+                            i = 0;
+                        }
+                    }
+                }
+            }
+        };
+        t.setDaemon(true);
+        t.start();
     }
 
     private File lib(String name, File... dirs) {

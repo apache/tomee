@@ -19,6 +19,7 @@ package org.apache.openejb;
 import org.apache.openejb.util.Messages;
 
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 /**
 * @version $Rev$ $Date$
@@ -58,11 +59,10 @@ public class Core {
                 "org.apache.openejb.loader.SystemInstance",
                 "org.apache.openejb.monitoring.StatsInterceptor",
                 "org.apache.openejb.persistence.JtaEntityManagerRegistry",
-                "org.apache.openejb.util.Duration",
+                // "org.apache.openejb.util.Duration",
                 "org.apache.openejb.util.Join",
                 "org.apache.openejb.util.JuliLogStreamFactory",
                 "org.apache.openejb.util.LogCategory",
-                "org.apache.openejb.util.Logger",
                 "org.apache.openejb.util.Messages",
                 "org.apache.openejb.util.SafeToolkit",
                 "org.apache.openejb.util.StringTemplate",
@@ -85,34 +85,39 @@ public class Core {
         };
         preloadMessages.start();
 
-        final int permits = Runtime.getRuntime().availableProcessors() + 1;
-        final Semaphore semaphore = new Semaphore(permits);
+        final int permits = 2 * Runtime.getRuntime().availableProcessors() + 1;
+        final Semaphore semaphore = new Semaphore(0);
         final ClassLoader loader = OpenEjbContainer.class.getClassLoader();
 
-        try { // do it before all other to force juli config
+        try { // logging classes should be loaded before any other classes so do it here synchronously
+            Class.forName("org.apache.openejb.util.Logger", true, loader);
             Class.forName("org.apache.openejb.util.JuliLogStreamFactory", true, loader);
         } catch (Throwable e) {
             // no-op
         }
 
-        final int part = classes.length / permits; // works since we have a pair number of classes
+        long start = System.nanoTime();
+        final int part = (int) Math.round(classes.length * 1. / permits);
         for (int i = 0; i < permits; i++) {
             final int offset = i * part;
-            final Thread thread = new Thread(new Runnable() {
+            final Thread thread = new Thread() {
                 @Override
                 public void run() {
-                    try {
-                        semaphore.acquire();
-                        for (int c = offset; c < offset + part; c++) {
-                            Class.forName(classes[c], true, loader);
-                        }
-                    } catch (Throwable e) {
-                        // no-op
-                    } finally {
-                        semaphore.release();
+                    int max = offset + part;
+                    if (offset / part == permits - 1) { // last one
+                        max = classes.length;
                     }
+
+                    for (int c = offset; c < max; c++) {
+                        try {
+                            Class.forName(classes[c], true, loader);
+                        } catch (Throwable e) {
+                            // no-op
+                        }
+                    }
+                    semaphore.release();
                 }
-            });
+            };
             thread.setDaemon(true);
             thread.start();
         }
@@ -122,6 +127,8 @@ public class Core {
         } catch (InterruptedException e) {
             Thread.interrupted();
         }
+        long end = System.nanoTime();
+        System.out.println(TimeUnit.NANOSECONDS.toMillis(end - start));
     }
 
     public static void warmup() {}

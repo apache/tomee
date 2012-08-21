@@ -7,7 +7,6 @@ import org.xml.sax.helpers.DefaultHandler;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -73,15 +72,23 @@ public class QuickServerXmlParser extends DefaultHandler {
     }
 
     public String http() {
-        return ports.get(DEFAULT_HTTP_PORT);
+        return value(HTTP_KEY, DEFAULT_HTTP_PORT);
     }
 
     public String ajp() {
-        return ports.get(DEFAULT_AJP_PORT);
+        return value(AJP_KEY, DEFAULT_AJP_PORT);
     }
 
     public String stop() {
-        return ports.get(DEFAULT_STOP_PORT);
+        return value(STOP_KEY, DEFAULT_STOP_PORT);
+    }
+
+    private String value(final String key, final String defaultValue) {
+        final String port = ports.get(key);
+        if (port == null) {
+            return defaultValue;
+        }
+        return port;
     }
 
     @Override
