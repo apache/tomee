@@ -207,6 +207,36 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
     }
 
     public void shutdownMe() {
+        cleanTimerData();
+        shutdownMyScheduler();
+    }
+
+    private void cleanTimerData() {
+        if (timerStore == null || scheduler == null || deployment == null) {
+            return;
+        }
+
+        final Collection<TimerData> timerDatas = timerStore.getTimers(deployment.getDeploymentID().toString());
+        if (timerDatas == null) {
+            return;
+        }
+
+        for (TimerData data : timerDatas) {
+            final Trigger trigger = data.getTrigger();
+            if (trigger == null) {
+                continue;
+            }
+
+            final TriggerKey key = trigger.getKey();
+            try {
+                scheduler.unscheduleJob(key);
+            } catch (SchedulerException ignored) {
+                log.warning("An error occured deleting trigger '" + key + "' on bean " + deployment.getDeploymentID());
+            }
+        }
+    }
+
+    private void shutdownMyScheduler() {
         boolean defaultScheduler = false;
         final Scheduler ds = SystemInstance.get().getComponent(Scheduler.class);
         try { // == is the faster way to test, we rely on name (key in quartz registry) only for serialization
