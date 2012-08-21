@@ -243,8 +243,7 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
                 public Object call() throws Exception {
                     return synchronizedBusinessMethod(interfce, method, args);
                 }
-            }, method.getReturnType() == Void.TYPE
-            );
+            }, method.getReturnType() == Void.TYPE);
         } else {
             return synchronizedBusinessMethod(interfce, method, args);
         }

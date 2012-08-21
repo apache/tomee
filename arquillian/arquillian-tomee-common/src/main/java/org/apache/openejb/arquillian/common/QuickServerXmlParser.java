@@ -18,9 +18,9 @@ public class QuickServerXmlParser extends DefaultHandler {
     }
 
     private static final String STOP_KEY = "STOP";
-    private static final String HTTP_KEY = "STOP";
-    private static final String AJP_KEY = "STOP";
-    private static final String DEFAULT_CONNECTOR_KEY = "HTTP";
+    private static final String HTTP_KEY = "HTTP";
+    private static final String AJP_KEY = "AJP";
+    private static final String DEFAULT_CONNECTOR_KEY = HTTP_KEY;
 
     public static final String DEFAULT_HTTP_PORT = "8080";
     public static final String DEFAULT_STOP_PORT = "8005";
@@ -28,14 +28,10 @@ public class QuickServerXmlParser extends DefaultHandler {
 
     private final Map<String, String> ports = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
 
-    public QuickServerXmlParser() {
+    public QuickServerXmlParser() { // ensure defaults are present
         ports.put(STOP_KEY, DEFAULT_STOP_PORT);
         ports.put(HTTP_KEY, DEFAULT_HTTP_PORT);
         ports.put(AJP_KEY, DEFAULT_AJP_PORT);
-    }
-
-    public static void main(String[] args) throws Exception {
-        System.out.println(parse(new File("/tmp/server.xml")));
     }
 
     @Override
@@ -46,7 +42,7 @@ public class QuickServerXmlParser extends DefaultHandler {
             if (port != null) {
                 ports.put(STOP_KEY, port);
             } else {
-                ports.put(STOP_KEY, port);
+                ports.put(STOP_KEY, DEFAULT_STOP_PORT);
             }
         } else if ("Connector".equalsIgnoreCase(localName)) {
             String protocol = attributes.getValue("protocol");
