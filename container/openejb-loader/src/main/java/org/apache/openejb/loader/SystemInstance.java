@@ -71,12 +71,18 @@ public class SystemInstance {
             if (key.startsWith("os.")) continue;
             if (key.startsWith("user.")) continue;
             if (key.startsWith("awt.")) continue;
-            if (key.startsWith("java.vm.")) continue;
-            if (key.startsWith("java.runtime.")) continue;
-            if (key.startsWith("java.awt.")) continue;
-            if (key.startsWith("java.specification.")) continue;
-            if (key.startsWith("java.class.")) continue;
-            if (key.startsWith("java.library.")) continue;
+            if (key.startsWith("java.")) {
+                final String pkg = key.substring("java.".length());
+                if (pkg.startsWith("vm.")) continue;
+                if (pkg.startsWith("runtime.")) continue;
+                if (pkg.startsWith("awt.")) continue;
+                if (pkg.startsWith("specification.")) continue;
+                if (pkg.startsWith("class.")) continue;
+                if (pkg.startsWith("library.")) continue;
+                if (pkg.startsWith("ext.")) continue;
+                if (pkg.startsWith("vendor.")) continue;
+                if (pkg.startsWith("endorsed.")) continue;
+            }
             this.internalProperties.put(e.getKey(), e.getValue());
         }
 
