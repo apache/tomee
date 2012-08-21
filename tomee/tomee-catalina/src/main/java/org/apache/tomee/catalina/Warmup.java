@@ -35,14 +35,9 @@ public class Warmup {
      *
      * This method itself does nothing.
      */
-    public static void warmup() {
-    }
+    public static void warmup() {}
 
     static {
-        initialize();
-    }
-
-    private static void initialize() {
         final String[] classes = {
                 "java.util.concurrent.TimeUnit",
                 "java.util.concurrent.atomic.AtomicLong",
@@ -144,7 +139,7 @@ public class Warmup {
                 "org.apache.tomcat.util.threads.ThreadPoolExecutor",
                 "org.apache.tomee.catalina.BackportUtil",
                 "org.apache.tomee.catalina.BackportUtil$1",
-                "org.apache.tomee.catalina.TomcatLoader",
+                // "org.apache.tomee.catalina.TomcatLoader", // can't be loaded from here
                 "org.apache.webbeans.config.WebBeansFinder",
                 "org.apache.webbeans.container.InjectionResolver",
                 "org.apache.webbeans.util.WebBeansUtil",
@@ -173,7 +168,7 @@ public class Warmup {
             @Override
             public void run() {
                 try {
-                    TldScanner.scan(TomcatLoader.class.getClassLoader());
+                    TldScanner.scan(loader);
                 } catch (Throwable throwable) {
                     // no-op
                 }
@@ -203,6 +198,7 @@ public class Warmup {
                     semaphore.release();
                 }
             };
+            thread.setName("warmup - " + (i + 1));
             thread.setDaemon(true);
             thread.start();
         }
