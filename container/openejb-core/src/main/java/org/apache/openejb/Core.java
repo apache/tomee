@@ -96,7 +96,6 @@ public class Core {
             // no-op
         }
 
-        long start = System.nanoTime();
         final int part = (int) Math.round(classes.length * 1. / permits);
         for (int i = 0; i < permits; i++) {
             final int offset = i * part;
@@ -127,8 +126,6 @@ public class Core {
         } catch (InterruptedException e) {
             Thread.interrupted();
         }
-        long end = System.nanoTime();
-        System.out.println(TimeUnit.NANOSECONDS.toMillis(end - start));
     }
 
     public static void warmup() {}
