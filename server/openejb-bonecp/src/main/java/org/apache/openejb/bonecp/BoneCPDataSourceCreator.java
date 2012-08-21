@@ -20,11 +20,18 @@ import com.jolbox.bonecp.BoneCP;
 import com.jolbox.bonecp.BoneCPConfig;
 import com.jolbox.bonecp.BoneCPDataSource;
 import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.resource.jdbc.BasicDataSourceUtil;
+import org.apache.openejb.resource.jdbc.plugin.DataSourcePlugin;
 import org.apache.openejb.resource.jdbc.pool.PoolDataSourceCreator;
+import org.apache.openejb.util.Strings;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Field;
+import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
+import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 public class BoneCPDataSourceCreator extends PoolDataSourceCreator {
     @Override
@@ -38,15 +45,53 @@ public class BoneCPDataSourceCreator extends PoolDataSourceCreator {
             properties.setProperty("jdbcUrl", properties.getProperty("url"));
         }
 
+        // updating relative url if mandatory (hsqldb for instance)
+        final String currentUrl = properties.getProperty("jdbcUrl");
+        if (currentUrl != null) {
+            try {
+                final DataSourcePlugin helper = BasicDataSourceUtil.getDataSourcePlugin(currentUrl);
+                if (helper != null) {
+                    final String newUrl = helper.updatedUrl(currentUrl);
+                    if (!currentUrl.equals(newUrl)) {
+                        properties.setProperty("jdbcUrl", newUrl);
+                    }
+                }
+            } catch (SQLException ignored) {
+                // no-op
+            }
+        }
+
+        // TODO: convert some more properties:
+        // InitialSize, TestOnReturn, ConnectionProperties, MaxOpenPreparedStatements
+        // AccessToUnderlyingConnectionAllowed, MaxActive, PoolPreparedStatements, MinIdle, TestWhileIdle
+        // NumTestsPerEvictionRun, MaxIdle, MaxWait, MinEvictableIdleTimeMillis, TestOnBorrow, ValidationQuery
+
+        final String cipher = properties.getProperty("PasswordCipher");
+        if (cipher == null || "PlainText".equals(cipher)) { // no need to warn
+            properties.remove("PasswordCipher");
+        }
+        if (properties.containsKey("TimeBetweenEvictionRunsMillis")) {
+            properties.setProperty("idleConnectionTestPeriodInSeconds", String.valueOf(Integer.parseInt((String) properties.remove("TimeBetweenEvictionRunsMillis")) / 1000));
+        }
+        if (properties.containsKey("UserName")) {
+            properties.put("username", properties.remove("UserName"));
+        }
+
+        // bonecp expects bonecp prefix in properties
+        final Properties prefixedProps = new Properties();
+        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+            prefixedProps.put("bonecp." + Strings.lcfirst((String) entry.getKey()), entry.getValue());
+        }
+
         final BoneCPConfig config;
         final BoneCP pool;
         try {
-            config = new BoneCPConfig(properties);
+            config = new BoneCPConfig(prefixedProps);
             pool = new BoneCP(config);
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
         }
-        return new BoneCPDataSourceProvidedPool(pool);
+        return build(BoneCPDataSourceProvidedPool.class, new BoneCPDataSourceProvidedPool(pool), new Properties());
     }
 
     @Override
@@ -78,6 +123,11 @@ public class BoneCPDataSourceCreator extends PoolDataSourceCreator {
             } catch (IllegalAccessException e) {
                 throw new OpenEJBRuntimeException(e);
             }
+        }
+
+        // @Override // java 7
+        public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+            throw new SQLFeatureNotSupportedException();
         }
     }
 }

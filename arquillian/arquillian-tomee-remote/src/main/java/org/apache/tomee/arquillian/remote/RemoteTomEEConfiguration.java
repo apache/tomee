@@ -36,6 +36,7 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
     private boolean removeUnusedWebapps = true;
     private int ajpPort = 8009;
     private String conf;
+    private boolean cleanOnStartUp;
 
     public String getGroupId() {
         return groupId;
@@ -122,5 +123,13 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
             value.add(getAjpPort());
         }
         return toInts(value);
+    }
+
+    public void setCleanOnStartUp(boolean clearOnStartUp) {
+        this.cleanOnStartUp = clearOnStartUp;
+    }
+
+    public boolean getCleanOnStartUp() {
+        return cleanOnStartUp;
     }
 }

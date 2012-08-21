@@ -80,7 +80,9 @@ public abstract class PoolDataSourceCreator implements DataSourceCreator {
         recipeOptions(serviceRecipe);
         serviceRecipe.setAllProperties(properties);
         final T value = (T) serviceRecipe.create();
-        recipes.put(value, serviceRecipe);
+        if (value instanceof DataSource) { // avoid to keep config objects
+            recipes.put(value, serviceRecipe);
+        }
         return value;
     }
 
@@ -93,7 +95,7 @@ public abstract class PoolDataSourceCreator implements DataSourceCreator {
         return value;
     }
 
-    private void recipeOptions(final ObjectRecipe recipe) {
+    private void recipeOptions(final ObjectRecipe recipe) { // important to not set "properties" attribute because pools often use it for sthg else
         recipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
         recipe.allow(Option.IGNORE_MISSING_PROPERTIES);
     }
