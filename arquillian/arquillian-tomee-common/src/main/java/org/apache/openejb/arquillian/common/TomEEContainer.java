@@ -194,7 +194,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
                 waitForShutdown(socket, --tries);
             }
         } finally {
-            if (socket != null) {
+            if (socket != null && !socket.isClosed()) {
                 try {
                     socket.close();
                 } catch (IOException ignored) {
@@ -211,7 +211,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
     public void addServlets(final HTTPContext httpContext, final AppInfo appInfo) {
         for (WebAppInfo webApps : appInfo.webApps) {
             for (ServletInfo servlet : webApps.servlets) {
-                // weird but arquillianurl doesn't match the servlet url but its context
+                // weird but arquillian url doesn't match the servlet url but its context
                 String clazz = servlet.servletClass;
                 if (clazz == null) {
                     clazz = servlet.servletName;
