@@ -76,31 +76,9 @@ public class ApplicationProperties implements DynamicDeployer {
     }
 
     private void applyOverrides(AppModule appModule) {
-
-        final SuperProperties properties = new SuperProperties().caseInsensitive(false);
-        properties.putAll(SystemInstance.get().getProperties());
-
-        // Anything starting with "openejb" or "tomee" trumps other properties
-        // so "openejb.foo" always beats "foo"
-        for (Map.Entry<Object, Object> entry : SystemInstance.get().getProperties().entrySet()) {
-            final String key = entry.getKey().toString();
-
-            for (String prefix : Arrays.asList("openejb.", "tomee.")) {
-                if (key.startsWith(prefix)) {
-                    final String property = key.substring(prefix.length());
-
-                    if (appModule.getProperties().containsKey(property)) {
-                        log.debug("Overriding system property " + property + "=" + entry.getValue());
-                    } else {
-                        log.debug("Adding system property " + property + "=" + entry.getValue());
-                    }
-
-                    properties.put(property, entry.getValue());
-                }
-            }
-        }
-
         final String id = appModule.getModuleId() + ".";
+
+        final Properties properties = SystemInstance.get().getProperties();
 
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
             final String key = entry.getKey().toString();
