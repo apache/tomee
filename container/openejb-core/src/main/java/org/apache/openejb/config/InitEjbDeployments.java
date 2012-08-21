@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.openejb.jee.ManagedBean;
+import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.Logger;
@@ -113,7 +115,9 @@ public class InitEjbDeployments implements DynamicDeployer {
                     ejbDeployment.setDeploymentId(formatDeploymentId(bean, contextData, template));
                 } else {
                     ejbDeployment.setDeploymentId(formatDeploymentId(bean, contextData, template));
-                    logger.info("Auto-deploying ejb " + bean.getEjbName() + ": EjbDeployment(deployment-id=" + ejbDeployment.getDeploymentId() + ")");
+                    if (!(bean instanceof ManagedBean) || !((ManagedBean) bean).isHidden()) {
+                        logger.info("Auto-deploying ejb " + bean.getEjbName() + ": EjbDeployment(deployment-id=" + ejbDeployment.getDeploymentId() + ")");
+                    }
                 }
 
                 openejbJar.getEjbDeployment().add(ejbDeployment);

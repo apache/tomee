@@ -300,15 +300,19 @@ public class RemoteServer {
                                 end = true;
                             } catch (IllegalThreadStateException e) {
                                 i++;
+                                try {
+                                    Thread.sleep(Integer.getInteger("sleep", 5000 * 60));
+                                } catch (InterruptedException e1) {
+                                    e1.printStackTrace();
+                                }
                                 if (i == 5) {
                                     try {
-                                        Thread.sleep(Integer.getInteger("sleep", 5000 * 60));
                                         final Field f = server.getClass().getDeclaredField("pid");
                                         f.setAccessible(true);
                                         int pid = (Integer) f.get(server);
                                         Pipe.pipe(Runtime.getRuntime().exec("kill -3 " + pid));
                                     } catch (Exception e1) {
-                                        e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                        e1.printStackTrace();
                                     }
                                     i = 0;
                                 }
