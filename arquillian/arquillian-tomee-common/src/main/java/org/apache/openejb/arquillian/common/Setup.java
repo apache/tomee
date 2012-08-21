@@ -48,10 +48,6 @@ import java.util.logging.Logger;
 public class Setup {
     private static final Logger LOGGER = Logger.getLogger(Setup.class.getName()); // JUL is used by arquillian so that's fine
 
-    public static final int DEFAULT_HTTP_PORT = 8080;
-    public static final int DEFAULT_STOP_PORT = 8005;
-    public static final int DEFAULT_AJP_PORT = 8009;
-
     public static void exportProperties(final File openejbHome, final TomEEConfiguration c) {
         System.setProperty("java.naming.provider.url", "http://" + c.getHost() + ":" + c.getHttpPort() + "/tomee/ejb");
         System.setProperty("connect.tries", "90");
@@ -63,23 +59,14 @@ public class Setup {
     }
 
     public static void updateServerXml(final File openejbHome, final int httpPort, final int stopPort, final int ajpPort) throws IOException {
-        final Map<String, String> replacements = new HashMap<String, String>();
-        replacements.put(Integer.toString(DEFAULT_HTTP_PORT), String.valueOf(httpPort));
-        replacements.put(Integer.toString(DEFAULT_STOP_PORT), String.valueOf(stopPort));
-        replacements.put(Integer.toString(DEFAULT_AJP_PORT), String.valueOf(ajpPort));
-        final String s = File.separator;
-        replace(replacements, new File(openejbHome, "conf" + s + "server.xml"));
+        final File sXml = new File(openejbHome, "conf" + File.separator + "server.xml");
+        final QuickServerXmlParser ports = QuickServerXmlParser.parse(sXml);
 
-        // tmp
-        System.out.println("config http = " + httpPort);
-        System.out.println("config stop = " + stopPort);
-        System.out.println("server.xml:");
-        try {
-            System.out.println(org.apache.openejb.loader.IO.slurp(new File(openejbHome, "conf" + s + "server.xml")));
-        } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        // end tmp
+        final Map<String, String> replacements = new HashMap<String, String>();
+        replacements.put(ports.http(), String.valueOf(httpPort));
+        replacements.put(ports.stop(), String.valueOf(stopPort));
+        replacements.put(ports.ajp(), String.valueOf(ajpPort));
+        replace(replacements, sXml);
     }
 
     public static File findHome(File directory) {
@@ -264,7 +251,7 @@ public class Setup {
             final Method ajbPort = config.getClass().getMethod("getAjpPort");
             return (Integer) ajbPort.invoke(config);
         } catch (Exception e) {
-            return DEFAULT_AJP_PORT;
+            return Integer.parseInt(QuickServerXmlParser.DEFAULT_AJP_PORT);
         }
     }
 
