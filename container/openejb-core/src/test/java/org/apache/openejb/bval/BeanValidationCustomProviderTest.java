@@ -17,7 +17,6 @@
 package org.apache.openejb.bval;
 
 import org.apache.bval.jsr303.ApacheValidationProvider;
-import org.apache.openejb.Core;
 import org.apache.openejb.assembler.classic.ValidatorBuilder;
 import org.apache.openejb.bval.util.CustomValidatorProvider;
 import org.apache.openejb.jee.Empty;
@@ -42,9 +41,6 @@ import static org.junit.Assert.assertTrue;
 public class BeanValidationCustomProviderTest {
     @EJB
     private ABean bean;
-    static {
-        Core.warmup();
-    }
 
     @BeforeClass
     public static void initProvider() {

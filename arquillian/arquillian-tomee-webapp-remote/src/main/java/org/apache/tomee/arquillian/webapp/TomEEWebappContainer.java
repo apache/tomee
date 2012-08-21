@@ -32,6 +32,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /*
@@ -115,7 +116,7 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
                 Setup.removeUselessWebapps(openejbHome);
             }
 
-            if (false) {
+            if (logger.isLoggable(Level.FINE)) {
                 Map<Object, Object> map = new TreeMap(System.getProperties());
                 for (Map.Entry<Object, Object> entry : map.entrySet()) {
                     System.out.printf("%s = %s\n", entry.getKey(), entry.getValue());
