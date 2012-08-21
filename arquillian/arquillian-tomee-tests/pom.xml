@@ -120,34 +120,28 @@
 
   <build>
     <plugins>
-      <!-- trying to use random port for each test instead of a single one
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <version>1.7</version>
-        <executions>
-          <execution>
-            <id>reserve-network-port</id>
-            <phase>process-test-classes</phase>
-            <goals>
-              <goal>reserve-network-port</goal>
-            </goals>
-            <configuration>
-              <portNames>
-                <portName>tomee.http.port</portName>
-                <portName>tomee.shutdown.port</portName>
-              </portNames>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      -->
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.12</version>
         <executions>
+          <execution>
+            <id>test-tomee-remote</id>
+            <phase>test</phase>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <skip>${maven.test.skip}</skip>
+              <systemPropertyVariables>
+                <openejb.arquillian.debug>true</openejb.arquillian.debug>
+                <tomee.version>${tomee.version}</tomee.version>
+                <tomee.classifier>${distribution.under.test}</tomee.classifier>
+                <arquillian.launch>tomee-remote</arquillian.launch>
+                <openejb.arquillian.adapter>tomee-remote</openejb.arquillian.adapter>
+              </systemPropertyVariables>
+            </configuration>
+          </execution>
           <execution>
             <id>test-tomee-embedded</id>
             <phase>test</phase>
@@ -160,22 +154,6 @@
                 <tomee.version>${tomee.version}</tomee.version>
                 <arquillian.launch>tomee-embedded</arquillian.launch>
                 <openejb.arquillian.adapter>tomee-embedded</openejb.arquillian.adapter>
-              </systemPropertyVariables>
-            </configuration>
-          </execution>
-          <execution>
-            <id>test-tomee-remote</id>
-            <phase>test</phase>
-            <goals>
-              <goal>test</goal>
-            </goals>
-            <configuration>
-              <skip>${maven.test.skip}</skip>
-              <systemPropertyVariables>
-                <tomee.version>${tomee.version}</tomee.version>
-                <tomee.classifier>${distribution.under.test}</tomee.classifier>
-                <arquillian.launch>tomee-remote</arquillian.launch>
-                <openejb.arquillian.adapter>tomee-remote</openejb.arquillian.adapter>
               </systemPropertyVariables>
             </configuration>
           </execution>

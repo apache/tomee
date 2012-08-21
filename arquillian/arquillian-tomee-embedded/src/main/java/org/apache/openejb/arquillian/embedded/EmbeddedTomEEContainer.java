@@ -59,6 +59,7 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
         return EmbeddedTomEEConfiguration.class;
     }
 
+    @Override
     public void setup(EmbeddedTomEEConfiguration configuration) {
         super.setup(configuration);
         container = new Container();
@@ -80,6 +81,7 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
 		return configuration;
 	}
 
+    @Override
     public void start() throws LifecycleException {
         try {
             container.start();
@@ -90,6 +92,7 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
         }
     }
 
+    @Override
     public void stop() throws LifecycleException {
         try {
             container.stop();
@@ -98,10 +101,12 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
         }
     }
 
+    @Override
     public ProtocolDescription getDefaultProtocol() {
         return new ProtocolDescription("Local");
     }
-    
+
+    @Override
     public ProtocolMetaData deploy(Archive<?> archive) throws DeploymentException {
     	try {
             final File tempDir = Files.createTempDir();
@@ -126,6 +131,7 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
         }
     }
 
+    @Override
     public void undeploy(Archive<?> archive) throws DeploymentException {
     	try {
             final String name = archive.getName();

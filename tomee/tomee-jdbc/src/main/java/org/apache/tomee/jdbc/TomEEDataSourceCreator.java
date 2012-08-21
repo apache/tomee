@@ -20,6 +20,8 @@ import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
+import org.apache.openejb.resource.jdbc.BasicDataSourceUtil;
+import org.apache.openejb.resource.jdbc.plugin.DataSourcePlugin;
 import org.apache.openejb.resource.jdbc.pool.PoolDataSourceCreator;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -35,7 +37,6 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
-import java.sql.Driver;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.Properties;
@@ -100,9 +101,31 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
                     continue;
                 }
 
-                converted.put(key, value);
+                converted.put(uncapitalize(key), value);
             }
         }
+
+        final String currentUrl = properties.getProperty("url");
+        if (currentUrl != null) {
+            try {
+                final DataSourcePlugin helper = BasicDataSourceUtil.getDataSourcePlugin(currentUrl);
+                if (helper != null) {
+                    final String newUrl = helper.updatedUrl(currentUrl);
+                    if (!currentUrl.equals(newUrl)) {
+                        properties.setProperty("url", newUrl);
+                    }
+                }
+            } catch (SQLException ignored) {
+                // no-op
+            }
+        }
+    }
+
+    private static String uncapitalize(final String key) {
+        if (key == null || key.isEmpty()) {
+            return key;
+        }
+        return Character.toLowerCase(key.charAt(0)) + key.substring(1);
     }
 
     @Override

@@ -45,6 +45,7 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
     private RemoteServer container;
     private boolean shutdown = false;
 
+    @Override
     public void start() throws LifecycleException {
         // see if TomEE is already running by checking the http port
         if (Setup.isRunning(configuration.getHost(), configuration.getHttpPort())) {
@@ -172,6 +173,7 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
         Zips.unzip(zipFile, catalinaDirectory);
     }
 
+    @Override
     public void stop() throws LifecycleException {
         // only stop the container if we started it
         if (shutdown) {
@@ -179,6 +181,7 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
         }
     }
 
+    @Override
     public Class<TomEEWebappConfiguration> getConfigurationClass() {
         return TomEEWebappConfiguration.class;
     }

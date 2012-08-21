@@ -62,6 +62,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         this.options = new Options(System.getProperties());
     }
 
+    @Override
     public void setup(Configuration configuration) {
         this.configuration = configuration;
 
@@ -171,6 +172,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
 
     public abstract void start() throws LifecycleException;
 
+    @Override
     public void stop() throws LifecycleException {
         try {
             Socket socket = new Socket(configuration.getHost(), configuration.getStopPort());
@@ -204,6 +206,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         }
     }
 
+    @Override
     public ProtocolDescription getDefaultProtocol() {
         return new ProtocolDescription("Servlet 2.5");
     }
@@ -231,6 +234,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         }
     }
 
+    @Override
     public ProtocolMetaData deploy(Archive<?> archive) throws DeploymentException {
         try {
             String tmpDir = configuration.getAppWorkingDir();
@@ -304,7 +308,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         try {
             final Properties properties = new Properties();
             properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
-            properties.setProperty(Context.PROVIDER_URL, "http://" + configuration.getHost() + ":" + configuration.getHttpPort() + "/tomee/ejb");
+            properties.setProperty(Context.PROVIDER_URL, providerUrl());
             return (Deployer) new InitialContext(properties).lookup("openejb/DeployerBusinessRemote");
         } catch (RuntimeException ne) { // surely "org.apache.openejb.client.ClientRuntimeException: Invalid response from server: -1"
             if (retry > 1) {
@@ -319,6 +323,10 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         }
     }
 
+    protected String providerUrl() {
+        return "http://" + configuration.getHost() + ":" + configuration.getHttpPort() + "/tomee/ejb";
+    }
+
     protected String getArchiveNameWithoutExtension(final Archive<?> archive) {
         final String archiveName = archive.getName();
         final int extensionOffset = archiveName.lastIndexOf('.');
@@ -328,6 +336,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         return archiveName;
     }
 
+    @Override
     public void undeploy(Archive<?> archive) throws DeploymentException {
         final DeployedApp deployed = moduleIds.get(archive.getName());
         try {
@@ -347,10 +356,12 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         }
     }
 
+    @Override
     public void deploy(Descriptor descriptor) throws DeploymentException {
         throw new UnsupportedOperationException("Not implemented");
     }
 
+    @Override
     public void undeploy(Descriptor descriptor) throws DeploymentException {
         throw new UnsupportedOperationException("Not implemented");
     }

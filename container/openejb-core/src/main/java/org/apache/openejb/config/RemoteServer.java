@@ -328,14 +328,7 @@ public class RemoteServer {
                             e1.printStackTrace();
                         }
                         if (i == 5) {
-                            try {
-                                final Field f = server.getClass().getDeclaredField("pid");
-                                f.setAccessible(true);
-                                int pid = (Integer) f.get(server);
-                                Pipe.pipe(Runtime.getRuntime().exec("kill -3 " + pid));
-                            } catch (Exception e1) {
-                                e1.printStackTrace();
-                            }
+                            kill3UNIX();
                             i = 0;
                         }
                     }
@@ -344,6 +337,21 @@ public class RemoteServer {
         };
         t.setDaemon(true);
         t.start();
+    }
+
+    public void kill3UNIX() { // debug purpose only
+        if (System.getProperty("os.name").toLowerCase().contains("win")) {
+            return;
+        }
+
+        try {
+            final Field f = server.getClass().getDeclaredField("pid");
+            f.setAccessible(true);
+            int pid = (Integer) f.get(server);
+            Pipe.pipe(Runtime.getRuntime().exec("kill -3 " + pid));
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
     }
 
     private File lib(String name, File... dirs) {
