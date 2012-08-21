@@ -162,6 +162,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         final Chain chain = new Chain();
 
+        chain.add(new SystemPropertiesOverride());
+
         chain.add(new GeneratedClientModules.Add());
 
         chain.add(new ReadDescriptors());
