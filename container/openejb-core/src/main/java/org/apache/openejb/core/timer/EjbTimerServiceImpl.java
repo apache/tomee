@@ -207,8 +207,16 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
     }
 
     public void shutdownMe() {
+        boolean defaultScheduler = false;
+        final Scheduler ds = SystemInstance.get().getComponent(Scheduler.class);
+        try { // == is the faster way to test, we rely on name (key in quartz registry) only for serialization
+            defaultScheduler = ds == scheduler || scheduler.getSchedulerName().equals(ds.getSchedulerName());
+        } catch (Exception e) {
+            // no-op: default should be fine
+        }
+
         // if specific instance
-        if (scheduler != null && scheduler != SystemInstance.get().getComponent(Scheduler.class)) {
+        if (scheduler != null && !defaultScheduler) {
             try {
                 scheduler.shutdown();
             } catch (SchedulerException e) {
