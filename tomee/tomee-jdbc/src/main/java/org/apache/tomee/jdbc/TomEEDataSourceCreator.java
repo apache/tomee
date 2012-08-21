@@ -35,6 +35,7 @@ import org.apache.tomcat.jdbc.pool.PooledConnection;
 import javax.management.ObjectName;
 import javax.sql.DataSource;
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
@@ -240,7 +241,11 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
             if ("hashCode".equals(method.getName())) {
                 return hashCode;
             }
-            return method.invoke(delegate, args);
+            try {
+                return method.invoke(delegate, args);
+            } catch (InvocationTargetException ite) {
+                throw ite.getCause();
+            }
         }
     }
 }

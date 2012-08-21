@@ -18,6 +18,7 @@ package org.apache.openejb.resource.jdbc.logging;
 
 import javax.sql.DataSource;
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
@@ -33,7 +34,13 @@ public class LoggingSqlDataSource implements InvocationHandler {
 
     @Override
     public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-        final Object result = method.invoke(delegate, args);
+        final Object result;
+        try {
+            result = method.invoke(delegate, args);
+        } catch (InvocationTargetException ite) {
+            throw ite.getCause();
+        }
+
         if ("getConnection".equals(method.getName())) {
             return Proxy.newProxyInstance(delegate.getClass().getClassLoader(),
                     INTERFACES, new LoggingSqlConnection((Connection) result));
