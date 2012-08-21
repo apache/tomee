@@ -25,6 +25,7 @@ import org.apache.openejb.resource.jdbc.plugin.DataSourcePlugin;
 import org.apache.openejb.resource.jdbc.pool.PoolDataSourceCreator;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.Strings;
 import org.apache.openejb.util.reflection.Reflections;
 import org.apache.tomcat.jdbc.pool.ConnectionPool;
 import org.apache.tomcat.jdbc.pool.PoolConfiguration;
@@ -101,7 +102,7 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
                     continue;
                 }
 
-                converted.put(uncapitalize(key), value);
+                converted.put(Strings.lcfirst(key), value);
             }
         }
 
@@ -119,13 +120,6 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
                 // no-op
             }
         }
-    }
-
-    private static String uncapitalize(final String key) {
-        if (key == null || key.isEmpty()) {
-            return key;
-        }
-        return Character.toLowerCase(key.charAt(0)) + key.substring(1);
     }
 
     @Override

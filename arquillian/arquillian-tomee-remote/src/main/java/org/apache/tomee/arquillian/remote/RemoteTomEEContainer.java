@@ -73,6 +73,10 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
     private void configure() throws LifecycleException, IOException {
         final File workingDirectory = new File(configuration.getDir()).getAbsoluteFile();
 
+        if (configuration.getCleanOnStartUp()) {
+            Files.delete(workingDirectory);
+        }
+
         if (workingDirectory.exists()) {
 
             Files.assertDir(workingDirectory);
