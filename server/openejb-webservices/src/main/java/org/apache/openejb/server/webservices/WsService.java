@@ -396,6 +396,7 @@ public abstract class WsService implements ServerService, SelfManaging {
 
                         // destroy webservice container
                         destroyEjbWsContainer(enterpriseBean.ejbDeploymentId);
+                        ejbLocations.remove(enterpriseBean.ejbDeploymentId);
                     }
                 }
             }
@@ -412,9 +413,12 @@ public abstract class WsService implements ServerService, SelfManaging {
                         continue;
                     }
 
-                    PortInfo portInfo = ports.get(servlet.servletClass);
+                    PortInfo portInfo = ports.remove(servlet.servletClass);
                     if (portInfo == null) {
-                        continue;
+                        portInfo = ports.remove(servlet.servletName);
+                        if (portInfo == null) {
+                            continue;
+                        }
                     }
 
                     // remove wsdl addresses from global registry
@@ -426,13 +430,18 @@ public abstract class WsService implements ServerService, SelfManaging {
 
                     // clear servlet's reference to the webservice container
                     if (this.wsRegistry != null) {
-                        this.wsRegistry.clearWsContainer(virtualHost, webApp.contextRoot, servlet.servletName);
+                        try {
+                            this.wsRegistry.clearWsContainer(virtualHost, webApp.contextRoot, servlet.servletName);
+                        } catch (IllegalArgumentException ignored) {
+                            // no-op
+                        }
                     }
 
                     // destroy webservice container
                     destroyPojoWsContainer(portInfo.serviceLink);
                 }
             }
+            addressesByApplication.remove(appInfo.appId);
         }
     }
 

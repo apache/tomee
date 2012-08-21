@@ -51,13 +51,12 @@ public class PortAddressRegistryImpl implements PortAddressRegistry {
         Map<String, PortAddress> ports = null;
         if (portInterface != null) { // localbean have no interface
             ports = portsByInterface.get(portInterface);
+            if (ports == null) {
+                ports = new TreeMap<String, PortAddress>();
+                portsByInterface.put(portInterface, ports);
+            }
+            ports.put(portId, portAddress);
         }
-        if (ports == null) {
-            ports = new TreeMap<String, PortAddress>();
-            portsByInterface.put(portInterface, ports);
-        }
-        ports.put(portId, portAddress);
-
 
         // portsByServiceId
         ports = portsByServiceId.get(serviceId);
