@@ -173,7 +173,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
 
         // to ensure we can shutdown correctly, default doesn't support such a configuration
         if (!properties.getProperty(StdSchedulerFactory.PROP_JOB_STORE_CLASS, RAMJobStore.class.getName()).equals(RAMJobStore.class.getName())) {
-            properties.put("org.quartz.jobStore.makeThreadsDaemon", properties.getProperty("org.quartz.jobStore.makeThreadsDaemon", "true"));
+            properties.put("org.quartz.jobStore.makeThreadsDaemons", properties.getProperty("org.quartz.jobStore.makeThreadsDaemon", "true"));
         }
 
         scheduler = systemInstance.getComponent(Scheduler.class);
