@@ -878,7 +878,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             ResourceInfo resourceInfo = configFactory.configureService(resource, ResourceInfo.class);
             resourceInfo.originAppName = module.getModuleId();
             final ResourceRef resourceRef = new ResourceRef();
-            resourceRef.setResType(resource.getType());
+            resourceRef.setResType(chooseType(module.getClassLoader(), resourceInfo.types, resource.getType()));
 
             if (DataSource.class.getName().equals(resource.getType())
                     && resource.getProperties().containsKey(ORIGIN_FLAG)
@@ -924,6 +924,26 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
         resourceInfos.clear();
         // resources.clear(); // don't clear it since we want to keep this to be able to undeploy resources with the app
+    }
+
+    private static String chooseType(final ClassLoader classLoader, final List<String> types, final String defaultType) {
+        if (types != null) {
+            for (String type : types) {
+                if (canLoad(classLoader, type)) {
+                    return type;
+                }
+            }
+        }
+        return defaultType;
+    }
+
+    private static boolean canLoad(final ClassLoader classLoader, final String type) {
+        try {
+            classLoader.loadClass(type);
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
     }
 
     private String dataSourceLookupName(Resource datasource) {
