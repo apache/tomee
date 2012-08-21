@@ -18,6 +18,7 @@ package org.apache.openejb.util;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.Collection;
 
 public final class NetworkUtil {
     private NetworkUtil() {
@@ -41,7 +42,7 @@ public final class NetworkUtil {
         return port;
     }
 
-    public static int getNextAvailablePort(int min, int max, int... excepted) {
+    public static int getNextAvailablePort(int min, int max, Collection<Integer> excepted) {
         int port = -1;
         ServerSocket s = null;
         for (int i = min; i <= max; i++) {
@@ -50,17 +51,7 @@ public final class NetworkUtil {
                 port = s.getLocalPort();
                 s.close();
 
-                boolean forbidden = false;
-                if (excepted != null) {
-                    for (int j = 0; j < excepted.length; j++) {
-                        if (port == excepted[j]) {
-                            forbidden = true;
-                            break;
-                        }
-                    }
-                }
-
-                if (!forbidden) {
+                if (excepted == null || !excepted.contains(port)) {
                     break;
                 }
             } catch (IOException ioe) {
