@@ -56,6 +56,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
 import java.util.Properties;
 
 
@@ -63,7 +64,6 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
     private static final long serialVersionUID = 1L;
     private static final Logger log = Logger.getInstance(LogCategory.TIMER, "org.apache.openejb.util.resources");
 
-    public static final String QUARTZ_THREAD_POOL_ADAPTER = "openejb.org.quartz.threadPool.class";
     public static final String QUARTZ_MAKE_SCHEDULER_THREAD_DAEMON = "org.quartz.scheduler.makeSchedulerThreadDaemon";
 
     public static final String OPENEJB_TIMEOUT_JOB_NAME = "OPENEJB_TIMEOUT_JOB";
@@ -130,26 +130,19 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         }
 
         final Properties properties = new Properties();
-        properties.putAll(SystemInstance.get().getProperties());
-        properties.putAll(deployment.getModuleContext().getAppContext().getProperties());
-        properties.putAll(deployment.getModuleContext().getProperties());
-        properties.putAll(deployment.getProperties());
+        putAll(properties, SystemInstance.get().getProperties());
+        putAll(properties, deployment.getModuleContext().getAppContext().getProperties());
+        putAll(properties, deployment.getModuleContext().getProperties());
+        putAll(properties, deployment.getProperties());
 
-        boolean newInstance = false;
-        for (String key : properties.stringPropertyNames()) {
-            if (key.startsWith("org.quartz.")) { // custom config -> don't use default scheduler
-                newInstance = true;
-                break;
-            }
-        }
+        // custom config -> don't use default scheduler
+        boolean newInstance = properties.size() > 0;
 
         final SystemInstance systemInstance = SystemInstance.get();
 
         final String defaultThreadPool = DefaultTimerThreadPoolAdapter.class.getName();
         if (!properties.containsKey(StdSchedulerFactory.PROP_THREAD_POOL_CLASS)) {
-            properties.put(StdSchedulerFactory.PROP_THREAD_POOL_CLASS,
-                systemInstance.hasProperty(QUARTZ_THREAD_POOL_ADAPTER) ?
-                    systemInstance.getOptions().get(QUARTZ_THREAD_POOL_ADAPTER, SimpleThreadPool.class.getName()) : defaultThreadPool);
+            properties.put(StdSchedulerFactory.PROP_THREAD_POOL_CLASS, defaultThreadPool);
         }
         if (!properties.containsKey(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME)) {
             properties.put(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, "OpenEJB-TimerService-Scheduler");
@@ -204,6 +197,15 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         deployment.set(Scheduler.class, thisScheduler);
 
         return thisScheduler;
+    }
+
+    private static void putAll(Properties a, final Properties b) {
+        for (Map.Entry<Object, Object> entry : b.entrySet()) {
+            final String key = entry.getKey().toString();
+            if (key.startsWith("org.quartz.")) {
+                a.put(entry.getKey(), entry.getValue());
+            }
+        }
     }
 
     public void shutdownMe() {
