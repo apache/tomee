@@ -16,13 +16,23 @@
  */
 package org.apache.openejb.arquillian.common;
 
-import java.lang.reflect.Method;
-
-import org.apache.openejb.loader.*;
+import org.apache.openejb.loader.ProvisioningUtil;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.JarExtractor;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.lang.reflect.Method;
 import java.net.Socket;
 import java.util.Collection;
 import java.util.HashMap;
@@ -59,6 +69,17 @@ public class Setup {
         replacements.put(Integer.toString(DEFAULT_AJP_PORT), String.valueOf(ajpPort));
         final String s = File.separator;
         replace(replacements, new File(openejbHome, "conf" + s + "server.xml"));
+
+        // tmp
+        System.out.println("config http = " + httpPort);
+        System.out.println("config stop = " + stopPort);
+        System.out.println("server.xml:");
+        try {
+            System.out.println(org.apache.openejb.loader.IO.slurp(new File(openejbHome, "conf" + s + "server.xml")));
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        // end tmp
     }
 
     public static File findHome(File directory) {
@@ -126,13 +147,21 @@ public class Setup {
     }
 
     public static boolean isRunning(final String host, final int port) {
+        Socket socket = null;
         try {
-            final Socket socket = new Socket(host, port);
-            final OutputStream out = socket.getOutputStream();
-            out.close();
+            socket = new Socket(host, port);
+            socket.getOutputStream().close();
             return true;
         } catch (Exception e) {
             return false;
+        } finally {
+            if (socket != null) {
+                try {
+                    socket.close();
+                } catch (IOException ignored) {
+                    // no-op
+                }
+            }
         }
     }
 
