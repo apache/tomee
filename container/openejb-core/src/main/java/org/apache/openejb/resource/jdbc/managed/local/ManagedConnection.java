@@ -73,7 +73,7 @@ public class ManagedConnection implements InvocationHandler {
             final Transaction transaction = transactionManager.getTransaction();
 
             if (transaction == null) { // shouldn't be possible
-                return method.invoke(delegate, args);
+                return invoke(method, delegate, args);
             }
 
             // if we have a tx check it is the same this connection is linked to
@@ -117,12 +117,20 @@ public class ManagedConnection implements InvocationHandler {
                 return invokeUnderTransaction(delegate, method, args);
             }
 
-            return method.invoke(delegate, args);
+            return invoke(method, delegate, args);
         } catch (InvocationTargetException ite) {
             throw ite.getTargetException();
         }
 
 
+    }
+
+    private static Object invoke(final Method method, final Connection delegate, final Object[] args) throws Throwable {
+        try {
+            return method.invoke(delegate, args);
+        } catch (InvocationTargetException ite) {
+            throw ite.getCause();
+        }
     }
 
     private Object invokeUnderTransaction(final Connection delegate, final Method method, final Object[] args) throws Exception {

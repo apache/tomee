@@ -25,12 +25,19 @@ public final class TimeWatcherExecutor {
         // no-op
     }
 
-    public static TimerWatcherResult execute(final Method mtd, final Object instance, final Object[] args, boolean watch) throws InvocationTargetException, IllegalAccessException {
+    public static TimerWatcherResult execute(final Method mtd, final Object instance, final Object[] args, boolean watch) throws Throwable {
         long start = 0, duration = 0;
         if (watch) {
             start = System.nanoTime();
         }
-        final Object result = mtd.invoke(instance, args);
+
+        final Object result;
+        try {
+            result = mtd.invoke(instance, args);
+        } catch (InvocationTargetException ite) {
+            throw ite.getCause();
+        }
+
         if (watch) {
             duration = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
         }
