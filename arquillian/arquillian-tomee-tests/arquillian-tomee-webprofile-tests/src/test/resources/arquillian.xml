@@ -24,8 +24,8 @@
       <property name="httpPort">-1</property>
       <property name="ajpPort">-1</property>
       <property name="stopPort">-1</property>
-      <property name="dir">target/apache-tomee-remote</property>
-      <property name="appWorkingDir">target/arquillian-test-working-dir</property>
+      <property name="dir">target/tomee-embedded</property>
+      <property name="appWorkingDir">target/arquillian-embedded-working-dir</property>
       <property name="portRange">20000-30000</property>
       <property name="properties">
         openejb.classloader.forced-load=org.apache.openejb.arquillian.tests
@@ -37,8 +37,8 @@
       <property name="httpPort">-1</property>
       <property name="ajpPort">-1</property>
       <property name="stopPort">-1</property>
-      <property name="dir">target/apache-tomee-remote</property>
-      <property name="appWorkingDir">target/arquillian-test-working-dir</property>
+      <property name="dir">target/tomee-remote</property>
+      <property name="appWorkingDir">target/arquillian-remote-working-dir</property>
       <property name="portRange">20000-30000</property>
       <property name="cleanOnStartUp">true</property>
       <property name="properties">
@@ -51,8 +51,8 @@
       <property name="httpPort">-1</property>
       <property name="ajpPort">-1</property>
       <property name="stopPort">-1</property>
-      <property name="dir">target/apache-tomee-remote</property>
-      <property name="appWorkingDir">target/arquillian-test-working-dir</property>
+      <property name="dir">target/tomee-webapp</property>
+      <property name="appWorkingDir">target/arquillian-webapp-working-dir</property>
       <property name="portRange">20000-30000</property>
       <property name="properties">
         openejb.classloader.forced-load=org.apache.openejb.arquillian.tests.
