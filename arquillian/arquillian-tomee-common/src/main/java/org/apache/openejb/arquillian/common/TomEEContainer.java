@@ -329,6 +329,14 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
                 }
                 return lookupDeployerWithRetry(retry - 1);
             }
+            if (Boolean.getBoolean("openejb.arquillian.debug") && retry >= 0) {
+                try { // wait a lot to be sure that's not a timing issue
+                    Thread.sleep(10000);
+                } catch (InterruptedException ignored) {
+                    // no-op
+                }
+                return lookupDeployerWithRetry(-1);
+            }
             throw ne;
         }
     }
