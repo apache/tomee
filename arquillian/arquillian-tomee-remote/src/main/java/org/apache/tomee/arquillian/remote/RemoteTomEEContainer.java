@@ -17,14 +17,20 @@
 package org.apache.tomee.arquillian.remote;
 
 import org.apache.openejb.arquillian.common.Files;
+import org.apache.openejb.arquillian.common.IO;
 import org.apache.openejb.arquillian.common.Setup;
 import org.apache.openejb.arquillian.common.TomEEContainer;
+import org.apache.openejb.assembler.Deployer;
 import org.apache.openejb.config.RemoteServer;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Properties;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,6 +45,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
     private RemoteServer container;
     private boolean shutdown = false;
 
+    @Override
     public void start() throws LifecycleException {
         // see if TomEE is already running by checking the http port
         if (Setup.isRunning(configuration.getHost(), configuration.getHttpPort())) {
@@ -117,6 +124,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
         }
     }
 
+    @Override
     public void stop() throws LifecycleException {
         // only stop the container if we started it
         if (shutdown) {
@@ -124,7 +132,27 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
         }
     }
 
+    @Override
     public Class<RemoteTomEEConfiguration> getConfigurationClass() {
         return RemoteTomEEConfiguration.class;
+    }
+
+    @Override
+    protected Deployer deployer() throws NamingException {
+        try {
+            return super.deployer();
+        } catch (RuntimeException ne) {
+            // some debug lines
+            if (Boolean.getBoolean("openejb.arquillian.debug")) {
+                container.kill3UNIX();
+                LOGGER.info("Can't connect to deployer through: " + providerUrl());
+                try {
+                    LOGGER.info("Here is the server.xml:\n" + IO.slurp(new File(Setup.findHome(new File(configuration.getDir()).getAbsoluteFile()), "conf/server.xml")));
+                } catch (IOException ignored) {
+                    // no-op
+                }
+            }
+            throw ne;
+        }
     }
 }
