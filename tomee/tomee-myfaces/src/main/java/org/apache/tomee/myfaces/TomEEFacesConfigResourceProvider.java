@@ -25,6 +25,7 @@ import org.apache.xbean.finder.UrlSet;
 
 import javax.faces.context.ExternalContext;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
@@ -34,13 +35,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.regex.Pattern;
 
 public class TomEEFacesConfigResourceProvider extends DefaultFacesConfigResourceProvider {
     private static final String META_INF_PREFIX = "META-INF/";
     private static final String FACES_CONFIG_SUFFIX = ".faces-config.xml";
     private static final String FACES_CONFIG_IMPLICIT = "META-INF/faces-config.xml";
-    private static final Pattern FILE_PATTERN = Pattern.compile("^.*" + Pattern.quote(FACES_CONFIG_SUFFIX) + "$");
     private static final Map<ClassLoader, Collection<URL>> CACHED_RESOURCES = new HashMap<ClassLoader, Collection<URL>>();
 
     @Override
@@ -84,8 +83,10 @@ public class TomEEFacesConfigResourceProvider extends DefaultFacesConfigResource
             } else {
                 final File metaInf = new File(file, META_INF_PREFIX);
                 if (metaInf.exists() && metaInf.isDirectory()) {
-                    for (File f : Files.collect(metaInf, FILE_PATTERN)) {
-                        urlSet.add(f.toURI().toURL());
+                    for (File f : Files.collect(metaInf, FacesConfigSuffixFilter.INSTANCE)) {
+                        if (!f.isDirectory()) {
+                            urlSet.add(f.toURI().toURL());
+                        }
                     }
                 }
             }
@@ -105,5 +106,14 @@ public class TomEEFacesConfigResourceProvider extends DefaultFacesConfigResource
 
     public static void clear(final ClassLoader loader) {
         CACHED_RESOURCES.remove(loader);
+    }
+
+    private static class FacesConfigSuffixFilter implements FileFilter {
+        public static final FacesConfigSuffixFilter INSTANCE = new FacesConfigSuffixFilter();
+
+        @Override
+        public boolean accept(final File pathname) {
+            return pathname.isDirectory() || pathname.getName().endsWith(FACES_CONFIG_SUFFIX);
+        }
     }
 }
