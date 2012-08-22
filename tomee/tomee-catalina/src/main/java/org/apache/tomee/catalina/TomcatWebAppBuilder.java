@@ -783,8 +783,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     appContext = a.createApplication(contextInfo.appInfo, classLoader);
                     // todo add watched resources to context
                 } catch (Exception e) {
-                    undeploy(standardContext, contextInfo);
                     logger.error("Unable to deploy collapsed ear in war " + standardContext.getPath() + ": Exception: " + e.getMessage(), e);
+                    undeploy(standardContext, contextInfo);
                     // just to force tomee to start without EE part
                     if (System.getProperty(TOMEE_EAT_EXCEPTION_PROP) == null) {
                         final TomEERuntimeException tre = new TomEERuntimeException(e);
