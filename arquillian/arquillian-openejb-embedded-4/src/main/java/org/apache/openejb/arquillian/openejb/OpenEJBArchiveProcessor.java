@@ -84,15 +84,15 @@ public class OpenEJBArchiveProcessor {
         final Collection<URL> additionalPaths = new ArrayList<URL>();
 
         final String prefix;
-        if (archive instanceof WebArchive) {
+        if (WebArchive.class.isInstance(archive)) {
             prefix = WEB_INF;
 
             final Map<ArchivePath, Node> content = archive.getContent(new IncludeRegExpPaths("/WEB-INF/lib/.*"));
             for (Map.Entry<ArchivePath, Node> node : content.entrySet()) {
                 final Asset asset = node.getValue().getAsset();
-                if (asset instanceof UrlAsset) {
+                if (UrlAsset.class.isInstance(asset)) {
                     additionalPaths.add(get(URL.class, "url", asset));
-                } else if (asset instanceof FileAsset) {
+                } else if (FileAsset.class.isInstance(asset)) {
                     try {
                         additionalPaths.add(get(File.class, "file", asset).toURI().toURL());
                     } catch (MalformedURLException e) {
@@ -162,15 +162,15 @@ public class OpenEJBArchiveProcessor {
             }
             if (persistenceXml != null) {
                 final Asset asset = persistenceXml.getAsset();
-                if (asset instanceof UrlAsset) {
+                if (UrlAsset.class.isInstance(asset)) {
                     appModule.getAltDDs().put(PERSISTENCE_XML, Arrays.asList(get(URL.class, "url", asset)));
-                } else if (asset instanceof FileAsset) {
+                } else if (FileAsset.class.isInstance(asset)) {
                     try {
                         appModule.getAltDDs().put(PERSISTENCE_XML, Arrays.asList(get(File.class, "file", asset).toURI().toURL()));
                     } catch (MalformedURLException e) {
                         appModule.getAltDDs().put(PERSISTENCE_XML, Arrays.asList(new AssetSource(persistenceXml.getAsset())));
                     }
-                } else if (asset instanceof ClassLoaderAsset) {
+                } else if (ClassLoaderAsset.class.isInstance(asset)) {
                     final URL url = get(ClassLoader.class, "classLoader", asset).getResource(get(String.class, "resourceName", asset));
                     if (url != null) {
                         appModule.getAltDDs().put(PERSISTENCE_XML, Arrays.asList(url));
