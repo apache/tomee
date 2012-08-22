@@ -24,6 +24,7 @@ import org.apache.openejb.RpcContainer;
 import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -64,6 +65,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
     private static final long serialVersionUID = 1L;
     private static final Logger log = Logger.getInstance(LogCategory.TIMER, "org.apache.openejb.util.resources");
 
+    public static final String QUARTZ_JMX = "org.quartz.scheduler.jmx.export";
     public static final String QUARTZ_MAKE_SCHEDULER_THREAD_DAEMON = "org.quartz.scheduler.makeSchedulerThreadDaemon";
 
     public static final String OPENEJB_TIMEOUT_JOB_NAME = "OPENEJB_TIMEOUT_JOB";
@@ -136,7 +138,13 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         putAll(properties, deployment.getProperties());
 
         // custom config -> don't use default scheduler
-        boolean newInstance = properties.size() > 0;
+        boolean newInstance = false;
+        for (String key : properties.stringPropertyNames()) {
+            if (key.startsWith("org.quartz.")) {
+                newInstance = true;
+                break;
+            }
+        }
 
         final SystemInstance systemInstance = SystemInstance.get();
 
@@ -149,6 +157,16 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         }
         if (!properties.containsKey(QUARTZ_MAKE_SCHEDULER_THREAD_DAEMON)) {
             properties.put(QUARTZ_MAKE_SCHEDULER_THREAD_DAEMON, "true");
+        }
+        if (!properties.containsKey(QUARTZ_JMX) && LocalMBeanServer.isJMXActive()) {
+            properties.put(QUARTZ_JMX, "true");
+        }
+        if (!properties.containsKey(StdSchedulerFactory.PROP_SCHED_INSTANCE_ID)) {
+            if (!newInstance) {
+                properties.setProperty(StdSchedulerFactory.PROP_SCHED_INSTANCE_ID, "OpenEJB");
+            } else {
+                properties.setProperty(StdSchedulerFactory.PROP_SCHED_INSTANCE_ID, deployment.getDeploymentID().toString());
+            }
         }
 
         // adding our custom persister

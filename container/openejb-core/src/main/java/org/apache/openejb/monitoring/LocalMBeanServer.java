@@ -19,7 +19,26 @@ package org.apache.openejb.monitoring;
 
 import org.apache.openejb.loader.SystemInstance;
 
-import javax.management. *;
+import javax.management.Attribute;
+import javax.management.AttributeList;
+import javax.management.AttributeNotFoundException;
+import javax.management.InstanceAlreadyExistsException;
+import javax.management.InstanceNotFoundException;
+import javax.management.IntrospectionException;
+import javax.management.InvalidAttributeValueException;
+import javax.management.ListenerNotFoundException;
+import javax.management.MBeanException;
+import javax.management.MBeanInfo;
+import javax.management.MBeanRegistrationException;
+import javax.management.MBeanServer;
+import javax.management.NotCompliantMBeanException;
+import javax.management.NotificationFilter;
+import javax.management.NotificationListener;
+import javax.management.ObjectInstance;
+import javax.management.ObjectName;
+import javax.management.OperationsException;
+import javax.management.QueryExp;
+import javax.management.ReflectionException;
 import javax.management.loading.ClassLoaderRepository;
 import java.io.ObjectInputStream;
 import java.lang.management.ManagementFactory;
@@ -38,7 +57,7 @@ public class LocalMBeanServer implements MBeanServer {
         return INSTANCE;
     }
 
-    private static boolean isJMXActive() {
+    public static boolean isJMXActive() {
         return SystemInstance.get().getOptions().get(OPENEJB_JMX_ACTIVE, true);
     }
 
