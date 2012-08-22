@@ -200,11 +200,14 @@ public class ServletRequestAdapter implements HttpRequest {
     }
 
     public String getMethod() {
+        /*
         try { // to check it is supported
             return Method.valueOf(request.getMethod()).name();
         } catch (IllegalArgumentException e) {
             return Method.UNSUPPORTED.name();
         }
+        */
+        return request.getMethod(); // some method can be added so don't filter it
     }
 
     @Override
