@@ -29,7 +29,7 @@
       <property name="appWorkingDir">target/arquillian-test-working-dir</property>
       <property name="properties">
         aResourceAdapter = new://Resource?type=ActiveMQResourceAdapter
-        aResourceAdapter.BrokerXmlConfig = broker:(tcp://localhost:61616?daemon=true)?persistent=false&amp;deleteAllMessagesOnStartup=true
+        aResourceAdapter.BrokerXmlConfig = broker:(tcp://localhost:11616?daemon=true)?persistent=false&amp;deleteAllMessagesOnStartup=true
         aResourceAdapter.DataSource =
 
         aConnectionFactory = new://Resource?type=javax.jms.ConnectionFactory

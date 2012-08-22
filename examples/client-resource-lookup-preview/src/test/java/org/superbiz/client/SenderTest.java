@@ -61,7 +61,7 @@ public class SenderTest {
         // can be set this way or with the key Resource/<type>
         // in fact we create on client side a mini jndi tree
         // the key is the jndi name (the one used for the lookup)
-        System.setProperty("aConnectionFactory", "connectionfactory:org.apache.activemq.ActiveMQConnectionFactory:tcp://localhost:61616");
+        System.setProperty("aConnectionFactory", "connectionfactory:org.apache.activemq.ActiveMQConnectionFactory:tcp://localhost:11616");
         System.setProperty("aQueue", "queue:org.apache.activemq.command.ActiveMQQueue:LISTENER");
     }
 
