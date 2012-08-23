@@ -16,16 +16,20 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<resources>
-  <!-- our bean config -->
-  <Service class-name="org.superbiz.ws.security.CalculatorBean">
-    cxf.jaxws.in-interceptors = wss4j
-  </Service>
-
-  <!-- the interceptors -->
-  <Service id="wss4j" class-name="org.apache.openejb.server.cxf.config.WSS4JInInterceptorFactory" factory-name="create">
-    action = UsernameToken
-    passwordType = PasswordText
-    passwordCallbackClass = org.superbiz.ws.security.PasswordCallbackHandler
-  </Service>
-</resources>
+<AppContext>
+  <BeanContexts>
+    <BeanContext id="CalculatorBean">
+      <Configuration>
+        cxf.jaxws.in-interceptors = wss4j
+      </Configuration>
+    </BeanContext>
+  </BeanContexts>
+  <Resources>
+    <!-- the interceptors -->
+    <Service id="wss4j" class-name="org.apache.openejb.server.cxf.config.WSS4JInInterceptorFactory" factory-name="create">
+      action = UsernameToken
+      passwordType = PasswordText
+      passwordCallbackClass = org.superbiz.ws.security.PasswordCallbackHandler
+    </Service>
+  </Resources>
+</AppContext>
