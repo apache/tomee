@@ -2379,7 +2379,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                          */
                         if (sessionBean.getSessionType() != SessionType.STATEFUL) {
                             // REST can be fun
-                            if (annotationFinder.isAnnotationPresent(Path.class) || !annotationFinder.findAnnotatedMethods(Path.class).isEmpty()) {
+                            if (annotationFinder.isAnnotationPresent(Path.class)) {
                                 sessionBean.setRestService(true);
                             }
                         }
@@ -5106,6 +5106,10 @@ public class AnnotationDeployer implements DynamicDeployer {
         for (Annotated<Method> aMethod : methods) {
             Method method = aMethod.get();
             Class<?> clazz = method.getDeclaringClass();
+            if (!isARestClassToDeploy(clazz)) {
+                continue;
+            }
+
             int modifiers = clazz.getModifiers();
             if (!Modifier.isAbstract(modifiers)) {
                 if (!isEJB(clazz)) {
@@ -5117,6 +5121,22 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         return classes;
+    }
+
+    private static boolean isARestClassToDeploy(final Class<?> clazz) {
+        if (clazz == null) {
+            return false;
+        }
+
+        // sub resources are @Path but not on the class
+        Class<?> current = clazz;
+        while (current != null) {
+            if (current.getAnnotation(Path.class) != null) {
+                return true;
+            }
+            current = current.getSuperclass();
+        }
+        return false;
     }
 
     private static boolean isEJB(Class<?> clazz) {
