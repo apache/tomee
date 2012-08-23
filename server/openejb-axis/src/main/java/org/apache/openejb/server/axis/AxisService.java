@@ -23,7 +23,7 @@ import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.providers.java.RPCProvider;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.assembler.classic.ServiceInfo;
+import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
 import org.apache.openejb.core.webservices.HandlerChainData;
 import org.apache.openejb.core.webservices.HandlerData;
 import org.apache.openejb.core.webservices.PortData;
@@ -42,7 +42,6 @@ import javax.xml.namespace.QName;
 import javax.xml.rpc.handler.HandlerInfo;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,7 +69,7 @@ public class AxisService extends WsService {
     }
 
     @Override
-    protected HttpListener createEjbWsContainer(URL url, PortData port, BeanContext beanContext, Collection<ServiceInfo> serviceInfos) throws Exception {
+    protected HttpListener createEjbWsContainer(URL url, PortData port, BeanContext beanContext, ServiceConfiguration serviceInfos) throws Exception {
         ClassLoader classLoader = beanContext.getClassLoader();
 
         // todo build JaxRpcServiceInfo in assembler
@@ -103,7 +102,7 @@ public class AxisService extends WsService {
         }
     }
 
-    protected HttpListener createPojoWsContainer(URL moduleBaseUrl, PortData port, String serviceId, Class target, Context context, String contextRoot, Map<String, Object> bdgs, Collection<ServiceInfo> serviceInfos) throws Exception {
+    protected HttpListener createPojoWsContainer(URL moduleBaseUrl, PortData port, String serviceId, Class target, Context context, String contextRoot, Map<String, Object> bdgs, ServiceConfiguration serviceInfos) throws Exception {
         ClassLoader classLoader = target.getClassLoader();
 
         // todo build JaxRpcServiceInfo in assembler
