@@ -16,46 +16,19 @@
  */
 package org.superbiz.client;
 
-import org.apache.ziplock.IO;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.container.test.api.RunAsClient;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.superbiz.client.app.Listener;
 
-import java.net.URL;
+import javax.jms.ConnectionFactory;
+import javax.jms.Queue;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import java.util.Properties;
 
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
-import static org.junit.matchers.JUnitMatchers.containsString;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-@RunAsClient
-@RunWith(Arquillian.class)
 public class SenderTest {
-    private static final String APP_NAME = "app-server";
-    private static final String MESSAGE = "sender test message";
-
-    // this sample is just about configuration so
-    // to avoid complicated code in this demo we use sleep
-    // shouldn't be done this way in real life
-    private static final int RETRY = 10;
-    private static final int SLEEP_RETRY = 500;
-
-    @ArquillianResource
-    private URL url;
-
-    @Deployment
-    public static WebArchive war() {
-        return ShrinkWrap.create(WebArchive.class, APP_NAME + ".war")
-                .addPackage(Listener.class.getPackage());
-
-    }
-
     @BeforeClass
     public static void configureClientResources() {
         // can be set this way or with the key Resource/<type>
@@ -67,23 +40,15 @@ public class SenderTest {
 
     @Test
     public void send() throws Exception {
-        final String rawUrl = url.toExternalForm(); // app-server webapp url
-        final String providerUrl = rawUrl.substring(0, rawUrl.length() - APP_NAME.length() - 1) + "tomee/ejb";
+        final Properties properties = new Properties();
+        properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
+        final Context context = new InitialContext(properties);
 
-        // send the message
-        Sender.send(providerUrl, MESSAGE);
+        final Queue destination = (Queue) context.lookup("java:aQueue");
+        assertNotNull(destination);
+        assertEquals("LISTENER", destination.getQueueName());
 
-        // check the message was received, we can need to wait a bit
-        for (int i = 0; i < RETRY; i++) {
-            final String message = IO.slurp(new URL(rawUrl + "messages")); // the servlet URL
-            System.out.println("Server received: " + message);
-            try {
-                assertThat(message, containsString(MESSAGE));
-                return; // done!
-            } catch (AssertionError ae) {
-                Thread.sleep(SLEEP_RETRY); // wait a bit that the message was received
-            }
-        }
-        fail();
+        final ConnectionFactory connectionFactory = (ConnectionFactory) context.lookup("java:aConnectionFactory");
+        assertNotNull(connectionFactory);
     }
 }
