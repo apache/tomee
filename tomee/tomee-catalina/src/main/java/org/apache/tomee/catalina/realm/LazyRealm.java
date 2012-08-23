@@ -70,10 +70,11 @@ public class LazyRealm implements Realm {
         if (delegate == null) {
             synchronized (this) {
                 if (delegate == null) {
-                    final Class<Realm> clazz;
+                    final Object instance;
+
+                    final Class<?> clazz;
                     try {
-                        clazz = (Class<Realm>) Thread.currentThread().getContextClassLoader()
-                                .loadClass(realmClass);
+                        clazz = Thread.currentThread().getContextClassLoader().loadClass(realmClass);
                     } catch (ClassNotFoundException e) {
                         throw new TomEERuntimeException(e);
                     }
@@ -90,7 +91,7 @@ public class LazyRealm implements Realm {
                                         .unmarshal(properties.trim().replaceAll("\\p{Space}*(\\p{Alnum}*)=", "\n$1="));
                                 recipe.setAllProperties(props);
                             }
-                            delegate = (Realm) recipe.create();
+                            instance = recipe.create();
                         } catch (Exception e) {
                             throw new TomEERuntimeException(e);
                         }
@@ -99,13 +100,19 @@ public class LazyRealm implements Realm {
                         final Set<Bean<?>> beans = bm.getBeans(clazz);
                         final Bean<?> bean = bm.resolve(beans);
                         creationalContext = bm.createCreationalContext(null);
-                        delegate = (Realm) bm.getReference(bean, clazz, creationalContext);
-                        if (delegate == null) {
-                            throw new TomEERuntimeException("realm can't be retrieved from cdi");
-                        }
+                        instance = bm.getReference(bean, clazz, creationalContext);
                     }
+
+                    if (instance == null) {
+                        throw new TomEERuntimeException("realm can't be retrieved from cdi");
+                    }
+                    if (instance instanceof Realm) {
+                        delegate = (Realm) instance;
+                    } else {
+                        delegate = new LowTypedRealm(instance);
+                    }
+                    delegate.setContainer(container);
                 }
-                delegate.setContainer(container);
             }
         }
         return delegate;
