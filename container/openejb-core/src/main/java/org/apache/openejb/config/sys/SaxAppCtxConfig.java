@@ -68,7 +68,7 @@ public class SaxAppCtxConfig {
         private class Root extends DefaultHandler {
             @Override
             public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
-                if (localName.equalsIgnoreCase("Configuration")) {
+                if (localName.equalsIgnoreCase("Configuration") || localName.equalsIgnoreCase("Properties")) {
                     push(new Configuration("", module.getProperties()));
                 } else if (localName.equalsIgnoreCase("BeanContexts")) {
                     push(new BeanContexts(localName));
