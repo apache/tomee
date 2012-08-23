@@ -36,7 +36,7 @@ public class MovieTest extends TestCase {
     private Context getContext(String user, String pass) throws NamingException {
         Properties p = new Properties();
         p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
-        p.setProperty("openejb.authentication.realmName", "MyScriptLogin");
+        p.setProperty("openejb.authentication.realmName", "ScriptLogin");
         p.put(Context.SECURITY_PRINCIPAL, user);
         p.put(Context.SECURITY_CREDENTIALS, pass);
 
@@ -45,7 +45,6 @@ public class MovieTest extends TestCase {
 
     protected void setUp() throws Exception {
         final ClassLoader ctxCl = Thread.currentThread().getContextClassLoader();
-        System.setProperty("java.security.auth.login.config", ctxCl.getResource("login.config").toExternalForm());
         System.setProperty("openejb.ScriptLoginModule.scriptURI", ctxCl.getResource("loginscript.js").toExternalForm());
 
         Properties p = new Properties();
