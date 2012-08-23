@@ -152,8 +152,7 @@ If you split your descriptors into separate directories, this support will not w
  - src/main/resources/META-INF/persistence.xml
  - src/**test**/resources/META-INF/test.ejb-jar.xml
 
-This support is not is aware of any Maven, Gradle, IntelliJ, NetBeans, Ant or other settings.
-
+This support is **not** aware of any Maven, Gradle, Ant, IntelliJ, NetBeans, Eclipse or other settings.
 
 
 
