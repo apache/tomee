@@ -79,13 +79,14 @@
     <module>jpa-hibernate</module>
     <module>jpa-enumerated</module>
     <module>jsf-managedBean-and-ejb</module>
-	<module>jsf-cdi-and-ejb</module>
+    <module>jsf-cdi-and-ejb</module>
     <module>lookup-of-ejbs</module>
     <module>lookup-of-ejbs-with-descriptor</module>
     <module>mbean-auto-registration</module>
     <module>movies-complete-meta</module>
     <module>movies-complete</module>
     <module>moviefun</module>
+    <module>multi-jpa-provider-testing</module>
     <module>multiple-arquillian-adapters</module>
     <module>multiple-tomee-arquillian</module>
     <module>persistence-fragment</module>
