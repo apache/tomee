@@ -24,7 +24,6 @@ import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.PortInfo;
-import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.assembler.classic.ServletInfo;
 import org.apache.openejb.assembler.classic.SingletonBeanInfo;
 import org.apache.openejb.assembler.classic.StatelessBeanInfo;
@@ -32,6 +31,7 @@ import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.assembler.classic.WsBuilder;
 import org.apache.openejb.assembler.classic.event.AssemblerAfterApplicationCreated;
 import org.apache.openejb.assembler.classic.event.AssemblerBeforeApplicationDestroyed;
+import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.WebContext;
 import org.apache.openejb.core.webservices.PortAddressRegistry;
@@ -48,6 +48,7 @@ import org.apache.openejb.server.httpd.util.HttpUtil;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.PojoUtil;
 import org.apache.openejb.util.StringTemplate;
 
 import javax.naming.Context;
@@ -193,11 +194,11 @@ public abstract class WsService implements ServerService, SelfManaging {
         }
     }
 
-    protected abstract HttpListener createEjbWsContainer(URL moduleBaseUrl, PortData port, BeanContext beanContext, Collection<ServiceInfo> services) throws Exception;
+    protected abstract HttpListener createEjbWsContainer(URL moduleBaseUrl, PortData port, BeanContext beanContext, ServiceConfiguration configuration) throws Exception;
 
     protected abstract void destroyEjbWsContainer(String deploymentId);
 
-    protected abstract HttpListener createPojoWsContainer(URL moduleBaseUrl, PortData port, String serviceId, Class target, Context context, String contextRoot, Map<String, Object> bindings, Collection<ServiceInfo> services) throws Exception;
+    protected abstract HttpListener createPojoWsContainer(URL moduleBaseUrl, PortData port, String serviceId, Class target, Context context, String contextRoot, Map<String, Object> bindings, ServiceConfiguration configuration) throws Exception;
 
     protected abstract void destroyPojoWsContainer(String serviceId);
 
@@ -248,7 +249,7 @@ public abstract class WsService implements ServerService, SelfManaging {
                         try {
                             PortData port = WsBuilder.toPortData(portInfo, beanContext.getInjections(), moduleBaseUrl, beanContext.getClassLoader());
 
-                            HttpListener container = createEjbWsContainer(moduleBaseUrl, port, beanContext, appInfo.services);
+                            HttpListener container = createEjbWsContainer(moduleBaseUrl, port, beanContext, new ServiceConfiguration(beanContext.getProperties(), appInfo.services));
 
                             // generate a location if one was not assigned
                             String location = port.getLocation();
@@ -345,7 +346,9 @@ public abstract class WsService implements ServerService, SelfManaging {
 
                 PortData port = WsBuilder.toPortData(portInfo, injections, moduleBaseUrl, classLoader);
 
-                HttpListener container = createPojoWsContainer(moduleBaseUrl, port, portInfo.serviceLink, target, context, webApp.contextRoot, bindings, appInfo.services);
+                HttpListener container = createPojoWsContainer(moduleBaseUrl, port, portInfo.serviceLink,
+                        target, context, webApp.contextRoot, bindings,
+                        new ServiceConfiguration(PojoUtil.findConfiguration(appInfo.pojoConfigurations, target.getName()), appInfo.services));
 
                 if (wsRegistry != null) {
                     // give servlet a reference to the webservice container

@@ -28,7 +28,7 @@ import org.apache.cxf.jaxws.handler.soap.SOAPHandlerInterceptor;
 import org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.openejb.BeanContext;
-import org.apache.openejb.assembler.classic.ServiceInfo;
+import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
 import org.apache.openejb.core.webservices.JaxWsUtils;
 import org.apache.openejb.core.webservices.PortData;
 import org.apache.openejb.server.cxf.ConfigureCxfSecurity;
@@ -37,7 +37,6 @@ import org.apache.openejb.server.cxf.CxfServiceConfiguration;
 import org.apache.openejb.server.cxf.JaxWsImplementorInfoImpl;
 
 import javax.xml.ws.WebServiceException;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -46,8 +45,8 @@ import java.util.List;
 public class EjbEndpoint extends CxfEndpoint {
     private final BeanContext beanContext;
 
-    public EjbEndpoint(Bus bus, PortData portData, BeanContext beanContext, HTTPTransportFactory httpTransportFactory, Collection<ServiceInfo> services) {
-        super(bus, portData, beanContext.getJndiEnc(), beanContext.getBeanClass(), httpTransportFactory, services);
+    public EjbEndpoint(Bus bus, PortData portData, BeanContext beanContext, HTTPTransportFactory httpTransportFactory, ServiceConfiguration config) {
+        super(bus, portData, beanContext.getJndiEnc(), beanContext.getBeanClass(), httpTransportFactory, config);
         this.beanContext = beanContext;
 
         String bindingURI = JaxWsUtils.getBindingURI(portData.getBindingID());

@@ -9,6 +9,8 @@ import org.apache.openejb.config.sys.Resources;
 import org.apache.openejb.config.sys.Service;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
+import org.apache.openejb.jee.oejb3.EjbDeployment;
+import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.junit.Configuration;
 import org.apache.openejb.junit.Module;
@@ -38,13 +40,15 @@ public class FeatureTest {
         final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(bean);
 
-        final EjbModule module = new EjbModule(ejbJar);
-        final Resources resources = new Resources();
+        final OpenejbJar openejbJar = new OpenejbJar();
+        openejbJar.addEjbDeployment(new EjbDeployment(ejbJar.getEnterpriseBeans()[0]));
+        final Properties properties = openejbJar.getEjbDeployment().iterator().next().getProperties();
+        properties.setProperty(CxfRsHttpListener.CXF_JAXRS_PREFIX + CxfUtil.FEATURES, "my-feature");
 
-        final Service beanService = new Service(null);
-        beanService.setClassName(MySecondRestClass.class.getName());
-        beanService.getProperties().setProperty(CxfRsHttpListener.CXF_JAXRS_PREFIX + CxfUtil.FEATURES, "my-feature");
-        resources.getService().add(beanService);
+        final EjbModule module = new EjbModule(ejbJar);
+        module.setOpenejbJar(openejbJar);
+
+        final Resources resources = new Resources();
 
         final Service feature = new Service("my-feature", null);
         feature.setClassName(MyFeature.class.getName());

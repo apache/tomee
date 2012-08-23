@@ -16,21 +16,6 @@
  */
 package org.apache.openejb.config;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Iterator;
-import java.util.List;
-import javax.wsdl.Definition;
-import javax.wsdl.factory.WSDLFactory;
-import javax.wsdl.xml.WSDLReader;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.config.sys.JaxbOpenejb;
 import org.apache.openejb.config.sys.Resources;
@@ -64,11 +49,28 @@ import org.apache.openejb.loader.IO;
 import org.apache.openejb.util.LengthInputStream;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.Saxs;
 import org.apache.openejb.util.URLs;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import javax.wsdl.Definition;
+import javax.wsdl.factory.WSDLFactory;
+import javax.wsdl.xml.WSDLReader;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Iterator;
+import java.util.List;
 
 public class ReadDescriptors implements DynamicDeployer {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, ReadDescriptors.class);
@@ -310,9 +312,7 @@ public class ReadDescriptors implements DynamicDeployer {
                     final Exception[] realIssue = {v3ParsingException};
 
                     try {
-                        SAXParserFactory factory = SAXParserFactory.newInstance();
-                        factory.setNamespaceAware(true);
-                        factory.setValidating(false);
+                        SAXParserFactory factory = Saxs.namespaceAwareFactory();
                         SAXParser parser = factory.newSAXParser();
                         parser.parse(source.get(), new DefaultHandler() {
                             public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
@@ -574,10 +574,7 @@ public class ReadDescriptors implements DynamicDeployer {
         final LengthInputStream in = new LengthInputStream(is);
         InputSource inputSource = new InputSource(in);
 
-        SAXParserFactory factory = SAXParserFactory.newInstance();
-        factory.setNamespaceAware(true);
-        factory.setValidating(false);
-        SAXParser parser = factory.newSAXParser();
+        SAXParser parser = Saxs.namespaceAwareFactory().newSAXParser();
 
         try {
             parser.parse(inputSource, new DefaultHandler(){
@@ -602,10 +599,7 @@ public class ReadDescriptors implements DynamicDeployer {
             final LengthInputStream in = new LengthInputStream(is);
             InputSource inputSource = new InputSource(in);
 
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            factory.setNamespaceAware(true);
-            factory.setValidating(false);
-            SAXParser parser = factory.newSAXParser();
+            SAXParser parser = Saxs.namespaceAwareFactory().newSAXParser();
 
             parser.parse(inputSource, new DefaultHandler() {
                 public void startElement(String uri, String localName, String qName, Attributes att) throws SAXException {

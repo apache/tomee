@@ -51,7 +51,7 @@ public class CxfRSService extends RESTService {
     @Override
     public void init(Properties properties) throws Exception {
         super.init(properties);
-        CxfUtil.configureBus(getName());
+        CxfUtil.configureBus();
     }
 
     @Override

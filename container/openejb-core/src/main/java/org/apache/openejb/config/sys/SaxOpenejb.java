@@ -16,14 +16,8 @@
  */
 package org.apache.openejb.config.sys;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.Saxs;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -31,10 +25,13 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * Plain Java code for parsing a tomee.xml or openejb.xml file
@@ -42,74 +39,21 @@ import java.util.List;
  *
  * @version $Rev$ $Date$
  */
-class SaxOpenejb extends DefaultHandler {
+class SaxOpenejb extends StackHandler {
 
     public static final String HOME_VAR = "$home";
     private final Openejb openejb = new Openejb();
 
-    private final List<DefaultHandler> handlers = new LinkedList<DefaultHandler>();
-
     public static Openejb parse(final InputSource source) throws SAXException, ParserConfigurationException, IOException {
-        SAXParserFactory factory = SAXParserFactory.newInstance();
-        factory.setNamespaceAware(true);
-        factory.setValidating(false);
-        SAXParser parser = factory.newSAXParser();
+        SAXParser parser = Saxs.factory().newSAXParser();
         final SaxOpenejb sax = new SaxOpenejb();
         parser.parse(source, sax);
         return sax.openejb;
     }
 
-    private DefaultHandler get() {
-        return handlers.get(0);
-    }
-
-    private DefaultHandler pop() {
-        return handlers.remove(0);
-    }
-
-    private void push(DefaultHandler handler) {
-        handlers.add(0, handler);
-    }
-
     @Override
     public void startDocument() throws SAXException {
         push(new Document());
-    }
-
-    @Override
-    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-        get().startElement(uri, localName, qName, attributes);
-    }
-
-    @Override
-    public void endElement(String uri, String localName, String qName) throws SAXException {
-        get().endElement(uri, localName, qName);
-        pop();
-    }
-
-    @Override
-    public void characters(char[] ch, int start, int length) throws SAXException {
-        get().characters(ch, start, length);
-    }
-
-    public class Content extends DefaultHandler {
-
-        private StringBuilder characters = new StringBuilder();
-
-        public void startElement(String uri, String localName, String qName, Attributes attributes) {
-            characters = new StringBuilder();
-        }
-
-        public void characters(char ch[], int start, int length) {
-            characters.append(new String(ch, start, length));
-        }
-
-        public void endElement(String uri, String localName, String qName) {
-            setValue(characters.toString());
-        }
-
-        public void setValue(String text) {
-        }
     }
 
     private class Root extends DefaultHandler {
@@ -122,11 +66,11 @@ class SaxOpenejb extends DefaultHandler {
             else if (localName.equals("TransactionManager")) push(new TransactionManagerElement());
             else if (localName.equals("ConnectionManager")) push(new ConnectionManagerElement());
             else if (localName.equals("ProxyFactory")) push(new ProxyFactoryElement());
-            else if (localName.equals("Resource")) push(new ResourceElement());
-            else if (localName.equals("Connector")) push(new ResourceElement());
+            else if (localName.equals("Resource")) push(new ResourceElement(openejb.getResource()));
+            else if (localName.equals("Connector")) push(new ResourceElement(openejb.getResource()));
             else if (localName.equals("Deployments")) push(new DeploymentsElement());
             else if (localName.equals("Import")) push(new ImportElement());
-            else if (localName.equals("Service")) push(new DeclaredServiceElement());
+            else if (localName.equals("Service")) push(new DeclaredServiceElement(openejb.getServices()));
             else throw new IllegalStateException("Unsupported Element: " + localName);
             get().startElement(uri, localName, qName, attributes);
         }
@@ -156,32 +100,6 @@ class SaxOpenejb extends DefaultHandler {
         @Override
         public void endElement(String uri, String localName, String qName) throws SAXException {
             openejb.getDeployments().add(deployments);
-        }
-    }
-
-    private abstract class ServiceElement<S extends org.apache.openejb.config.Service> extends Content {
-
-        final S service;
-
-        protected ServiceElement(S service) {
-            this.service = service;
-        }
-
-        @Override
-        public void startElement(String uri, String localName, String qName, Attributes attributes) {
-            if (attributes.getValue("type") != null) service.setType(attributes.getValue("type"));
-            if (attributes.getValue("jar") != null) service.setJar(attributes.getValue("jar"));
-            if (attributes.getValue("provider") != null) service.setProvider(attributes.getValue("provider"));
-            if (attributes.getValue("id") != null) service.setId(attributes.getValue("id"));
-        }
-
-        @Override
-        public void setValue(String text) {
-            try {
-                service.getProperties().putAll(new PropertiesAdapter().unmarshal(text));
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
         }
     }
 
@@ -270,44 +188,6 @@ class SaxOpenejb extends DefaultHandler {
         }
     }
 
-    public class ResourceElement extends ServiceElement<Resource> {
-
-        public ResourceElement() {
-            super(new Resource());
-        }
-
-        @Override
-        public void startElement(String uri, String localName, String qName, Attributes attributes) {
-            super.startElement(uri, localName, qName, attributes);
-            service.setJndi(attributes.getValue("jndi"));
-        }
-
-        @Override
-        public void endElement(String uri, String localName, String qName) {
-            openejb.getResource().add(service);
-            super.endElement(uri, localName, qName);
-        }
-    }
-
-    public class DeclaredServiceElement extends ServiceElement<Service> {
-
-        public DeclaredServiceElement() {
-            super(new Service());
-        }
-
-        @Override
-        public void startElement(String uri, String localName, String qName, Attributes attributes) {
-            super.startElement(uri, localName, qName, attributes);
-            service.setClazz(attributes.getValue("class"));
-        }
-
-        @Override
-        public void endElement(String uri, String localName, String qName) {
-            openejb.getServices().add(service);
-            super.endElement(uri, localName, qName);
-        }
-    }
-
     private class ImportElement extends DefaultHandler {
         private String path = null;
 
@@ -321,7 +201,7 @@ class SaxOpenejb extends DefaultHandler {
             if (path != null) {
                 updatePath();
 
-                InputStream is = null;
+                InputStream is;
                 try {
                     final URL url = new URL(path);
                     is = url.openStream();

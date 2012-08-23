@@ -18,11 +18,9 @@
 package org.apache.openejb.server.cxf;
 
 import org.apache.cxf.Bus;
-import org.apache.cxf.BusFactory;
-import org.apache.cxf.bus.extension.ExtensionManagerBus;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
-import org.apache.openejb.assembler.classic.ServiceInfo;
+import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
 import org.apache.openejb.core.webservices.PortData;
 import org.apache.openejb.server.cxf.transport.HttpTransportFactory;
 import org.apache.openejb.server.httpd.HttpListener;
@@ -30,7 +28,6 @@ import org.apache.openejb.server.httpd.HttpRequest;
 import org.apache.openejb.server.httpd.HttpResponse;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public abstract class CxfWsContainer implements HttpListener {
@@ -38,13 +35,13 @@ public abstract class CxfWsContainer implements HttpListener {
     protected final PortData port;
     protected AbstractHTTPDestination destination;
     protected CxfEndpoint endpoint;
-    protected HTTPTransportFactory httpTransportFactory;
-    protected final Collection<ServiceInfo> availableServices;
+    protected final HTTPTransportFactory httpTransportFactory;
+    protected final ServiceConfiguration serviceConfiguration;
 
-    public CxfWsContainer(Bus bus, PortData port, Collection<ServiceInfo> services) {
+    public CxfWsContainer(final Bus bus, final PortData port, final ServiceConfiguration config) {
         this.bus = bus;
         this.port = port;
-        this.availableServices = services;
+        this.serviceConfiguration = config;
         
         List<String> ids = new ArrayList<String>();
         ids.add("http://schemas.xmlsoap.org/wsdl/soap/");

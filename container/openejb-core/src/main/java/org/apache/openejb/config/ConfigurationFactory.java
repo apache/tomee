@@ -176,6 +176,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         chain.add(new AnnotationDeployer());
 
+        chain.add(new AppContextConfigDeployer()); // before application properties
+
         chain.add(new BeanProperties());
 
         chain.add(new ProxyBeanClassUpdate());

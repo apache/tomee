@@ -189,7 +189,9 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                 if (obj instanceof WebModule) {
                     appModule.getWebModules().add((WebModule) obj);
                 } else if (obj instanceof EjbModule) {
-                    appModule.getEjbModules().add((EjbModule) obj);
+                    final EjbModule ejbModule = (EjbModule) obj;
+                    ejbModule.initAppModule(appModule);
+                    appModule.getEjbModules().add(ejbModule);
                 } else if (obj instanceof EjbJar) {
 
                     final EjbJar ejbJar = (EjbJar) obj;

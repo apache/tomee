@@ -19,6 +19,7 @@ package org.apache.openejb.persistence;
 import org.apache.openejb.core.TempClassLoader;
 import org.apache.openejb.javaagent.Agent;
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.util.Saxs;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -29,7 +30,6 @@ import javax.persistence.spi.PersistenceProvider;
 import javax.sql.DataSource;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -42,14 +42,14 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.Arrays;
-import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -207,11 +207,7 @@ public class PersistenceBootstrap {
     private static void collectUnits(InputStream in, final Map<String, Unit> units, final Properties args) throws ParserConfigurationException, SAXException, IOException {
         InputSource inputSource = new InputSource(in);
 
-        SAXParserFactory factory = SAXParserFactory.newInstance();
-        factory.setNamespaceAware(true);
-        factory.setValidating(false);
-        SAXParser parser = factory.newSAXParser();
-
+        SAXParser parser = Saxs.namespaceAwareFactory().newSAXParser();
 
         parser.parse(inputSource, new DefaultHandler() {
             private StringBuilder characters = new StringBuilder();

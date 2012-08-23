@@ -35,6 +35,7 @@ public class AppInfo extends InfoObject {
     public boolean standaloneModule;
     public final List<ClientInfo> clients = new ArrayList<ClientInfo>();
     public final List<EjbJarInfo> ejbJars = new ArrayList<EjbJarInfo>();
+    public final List<IdPropertiesInfo> pojoConfigurations = new ArrayList<IdPropertiesInfo>();
     public final List<ConnectorInfo> connectors = new ArrayList<ConnectorInfo>();
     public final List<WebAppInfo> webApps = new ArrayList<WebAppInfo>();
     public final List<PersistenceUnitInfo> persistenceUnits = new ArrayList<PersistenceUnitInfo>();

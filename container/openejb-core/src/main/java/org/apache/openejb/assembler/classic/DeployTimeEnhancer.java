@@ -24,6 +24,7 @@ import org.apache.openejb.util.JarCreator;
 import org.apache.openejb.util.JarExtractor;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.Saxs;
 import org.apache.openejb.util.URLs;
 import org.apache.xbean.finder.filter.Filter;
 import org.xml.sax.Attributes;
@@ -31,7 +32,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -51,7 +51,6 @@ import java.util.zip.ZipEntry;
 
 public class DeployTimeEnhancer {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_DEPLOY, DeployTimeEnhancer.class);
-    private static final SAXParserFactory SAX_PARSER_FACTORY = SAXParserFactory.newInstance();
 
     private static final String OPENEJB_JAR_ENHANCEMENT_INCLUDE = "openejb.jar.enhancement.include";
     private static final String OPENEJB_JAR_ENHANCEMENT_EXCLUDE = "openejb.jar.enhancement.exclude";
@@ -61,11 +60,6 @@ public class DeployTimeEnhancer {
     private static final String META_INF_PERSISTENCE_XML = "META-INF/persistence.xml";
     private static final String TMP_ENHANCEMENT_SUFFIX = ".tmp-enhancement";
     private static final String JAR_ENHANCEMENT_SUFFIX = "-enhanced";
-
-    static {
-        SAX_PARSER_FACTORY.setNamespaceAware(true);
-        SAX_PARSER_FACTORY.setValidating(false);
-    }
 
     private final Method enhancerMethod;
     private final Constructor<?> optionsConstructor;
@@ -200,7 +194,7 @@ public class DeployTimeEnhancer {
 
         // then jar-file
         try {
-            final SAXParser parser = SAX_PARSER_FACTORY.newSAXParser();
+            final SAXParser parser = Saxs.factory().newSAXParser();
             final JarFileParser handler = new JarFileParser();
             parser.parse(new File(pXml), handler);
             for (String path : handler.getPaths()) {
