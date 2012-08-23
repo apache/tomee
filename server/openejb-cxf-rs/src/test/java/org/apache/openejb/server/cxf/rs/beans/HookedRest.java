@@ -27,10 +27,11 @@ public class HookedRest {
     @Inject
     private SimpleEJB ejb;
     private boolean post = false;
+    private int construct = 0;
 
     @PostConstruct
     public void post() {
-        post = true && ejb != null;
+        post = ejb != null && construct == 0;
     }
 
     @Path("/post")

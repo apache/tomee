@@ -16,10 +16,21 @@
  */
 package org.apache.openejb.server.cxf.rs.beans;
 
-import javax.ejb.Stateless;
+import javax.annotation.PostConstruct;
+import javax.ejb.Singleton;
 
-@Stateless
+@Singleton
 public class SimpleEJB {
+    private int init = 0;
+
+    @PostConstruct
+    public void count() {
+        init++;
+        if (init > 1) {
+            throw new RuntimeException();
+        }
+    }
+
     public String ok() {
         return "ok";
     }
