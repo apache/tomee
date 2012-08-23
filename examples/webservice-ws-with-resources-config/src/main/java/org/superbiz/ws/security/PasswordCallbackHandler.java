@@ -28,6 +28,7 @@ public class PasswordCallbackHandler implements CallbackHandler {
     public void handle(final Callback[] callbacks) throws IOException, UnsupportedCallbackException {
         final WSPasswordCallback pc = (WSPasswordCallback) callbacks[0];
         if (pc.getIdentifier().equals("openejb")) {
+            System.out.println("logged openejb user");
             pc.setPassword("tomee");
         }
     }
