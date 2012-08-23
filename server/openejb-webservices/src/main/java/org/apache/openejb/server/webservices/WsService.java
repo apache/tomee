@@ -31,6 +31,7 @@ import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.assembler.classic.WsBuilder;
 import org.apache.openejb.assembler.classic.event.AssemblerAfterApplicationCreated;
 import org.apache.openejb.assembler.classic.event.AssemblerBeforeApplicationDestroyed;
+import org.apache.openejb.assembler.classic.util.PojoUtil;
 import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.WebContext;
@@ -48,7 +49,6 @@ import org.apache.openejb.server.httpd.util.HttpUtil;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.PojoUtil;
 import org.apache.openejb.util.StringTemplate;
 
 import javax.naming.Context;

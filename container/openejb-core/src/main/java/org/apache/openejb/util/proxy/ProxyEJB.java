@@ -14,12 +14,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.core.osgi.impl;
+package org.apache.openejb.util.proxy;
 
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.core.ivm.IntraVmProxy;
-import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
@@ -28,6 +27,19 @@ import java.lang.reflect.Proxy;
 public class ProxyEJB {
     private ProxyEJB() {
         // no-op
+    }
+
+    public static Object proxy(final BeanContext beanContext) {
+        if (beanContext.getBusinessLocalInterface() != null) {
+            return proxy(beanContext, new Class<?>[] { beanContext.getBusinessLocalInterface() });
+        }
+        if (beanContext.isLocalbean()) {
+            return proxy(beanContext, new Class<?>[]{beanContext.getBusinessLocalBeanInterface()});
+        }
+        if (beanContext.getBusinessRemoteInterface() != null) {
+            return proxy(beanContext, new Class<?>[] { beanContext.getBusinessRemoteInterface() });
+        }
+        throw new IllegalArgumentException("can't proxy " + beanContext.getEjbName());
     }
 
     public static Object proxy(final BeanContext beanContext, final Class<?>[] itfs) {

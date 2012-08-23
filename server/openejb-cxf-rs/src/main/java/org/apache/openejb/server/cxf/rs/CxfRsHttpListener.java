@@ -37,6 +37,7 @@ import org.apache.openejb.server.httpd.HttpResponse;
 import org.apache.openejb.server.rest.RsHttpListener;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.proxy.ProxyEJB;
 import org.apache.webbeans.config.WebBeansContext;
 
 import javax.naming.Context;
@@ -96,7 +97,9 @@ public class CxfRsHttpListener implements RsHttpListener {
 
     @Override
     public void deployEJB(String fullContext, BeanContext beanContext, Collection<Class<?>> additionalProviders, ServiceConfiguration configuration) {
-        deploy(beanContext.getBeanClass(), fullContext, null, null, null, new OpenEJBEJBInvoker(beanContext), additionalProviders, configuration);
+        final Object proxy = ProxyEJB.proxy(beanContext);
+        deploy(beanContext.getBeanClass(), fullContext, new NoopResourceProvider(beanContext.getBeanClass(), proxy),
+                proxy, null, new OpenEJBEJBInvoker(), additionalProviders, configuration);
     }
 
     private void deploy(Class<?> clazz, String address, ResourceProvider rp, Object serviceBean, Application app, Invoker invoker,
