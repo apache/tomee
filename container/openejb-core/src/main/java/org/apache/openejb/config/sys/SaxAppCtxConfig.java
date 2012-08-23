@@ -31,7 +31,6 @@ import org.xml.sax.helpers.DefaultHandler;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -70,19 +69,16 @@ public class SaxAppCtxConfig {
             @Override
             public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
                 if (localName.equalsIgnoreCase("Configuration")) {
-                    push(new Configuration(module.getProperties()));
+                    push(new Configuration("", module.getProperties()));
                 } else if (localName.equalsIgnoreCase("BeanContexts")) {
                     push(new BeanContexts(localName));
                 } else if (localName.equalsIgnoreCase("Pojos")) {
                     push(new Pojos(localName));
                 } else if (localName.equalsIgnoreCase("Resources")) {
                     push(new ResourcesConfig());
+                    get().startElement(uri, localName, qName, attributes);
                 } else {
                     throw new IllegalStateException("Unsupported Element: " + localName);
-                }
-
-                if (!(get() instanceof Pojos)) {
-                    get().startElement(uri, localName, qName, attributes);
                 }
             }
         }
@@ -90,32 +86,23 @@ public class SaxAppCtxConfig {
         private class Configuration extends Content {
             private final Properties properties;
 
-            private LinkedList<String> currentPrefix = new LinkedList<String>();
+            private final String prefix;
 
-            private Configuration(final Properties properties) {
+            private Configuration(final String prefix, final Properties properties) {
                 this.properties = properties;
+                this.prefix =  prefix;
             }
 
             @Override
             public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) {
-                if (currentPrefix.isEmpty()) { // <Configuration> used as marker
-                    currentPrefix.push("");
-                } else {
-                    currentPrefix.push(currentPrefix.getLast() + localName + ".");
-                    push(this);
-                }
+                push(new Configuration(prefix + localName + ".", properties));
             }
 
             @Override
-            public void setValue(final String text) { // endElement
-                final String current = currentPrefix.pop();
-                if (currentPrefix.size() == 0) { // <Configuration>, all is done
-                    return;
-                }
-
+            public void setValue(final String text) {
                 try {
                     for (Map.Entry<Object, Object> entry : new PropertiesAdapter().unmarshal(text).entrySet()) {
-                        properties.put(current + entry.getKey(), entry.getValue());
+                        properties.put(prefix + entry.getKey(), entry.getValue());
                     }
                 } catch (Exception e) {
                     throw new RuntimeException(e);
@@ -229,11 +216,10 @@ public class SaxAppCtxConfig {
             @Override
             public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
                 if (localName.equalsIgnoreCase("Configuration")) {
-                    push(new Configuration(pojoConfig.getProperties()));
+                    push(new Configuration("", pojoConfig.getProperties()));
                 } else {
                     throw new IllegalStateException("Unsupported Element: " + localName);
                 }
-                get().startElement(uri, localName, qName, attributes);
             }
 
             @Override
