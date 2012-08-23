@@ -22,6 +22,7 @@ import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SingletonBean;
+import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -38,15 +39,19 @@ public class ParseAppCtxXmlTest {
         new AppContextConfigDeployer().deploy(module);
 
         // Properties
+        assertEquals("dummy", module.getProperties().getProperty("foo.bar"));
         assertEquals("10", module.getProperties().getProperty("AsynchronousPool.CorePoolSize"));
         assertEquals("10", module.getProperties().getProperty("AsynchronousPool.MaximumPoolSize"));
         assertEquals("foo", module.getProperties().getProperty("AnyPropertyPrefix.someproperty"));
         assertEquals("my-app", module.getProperties().getProperty("org.quartz.scheduler.instanceName"));
         assertEquals("my-bean", module.getProperties().getProperty("org.quartz.scheduler.instanceId"));
         assertEquals("org.superbiz.MyLogPlugin", module.getProperties().getProperty("org.quartz.plugin.LogPlugin.class"));
+        assertEquals("3", module.getProperties().getProperty("1.2"));
 
         // BeanContext
-        assertEquals("wss4j", module.getEjbModules().iterator().next().getOpenejbJar().getDeploymentsByEjbName().get("CalculatorBean").getProperties().getProperty("cxf.jaxws.in-interceptors"));
+        final EjbDeployment calculator = module.getEjbModules().iterator().next().getOpenejbJar().getDeploymentsByEjbName().get("CalculatorBean");
+        assertEquals("ok", calculator.getProperties().getProperty("no.root"));
+        assertEquals("wss4j", calculator.getProperties().getProperty("cxf.jaxws.in-interceptors"));
 
         // Pojo
         assertEquals("my-feature", module.getPojoConfigurations().get("org.foo.bar").getProperties().getProperty("cxf.jaxrs.features"));

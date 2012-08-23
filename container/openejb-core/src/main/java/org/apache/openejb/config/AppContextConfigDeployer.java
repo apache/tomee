@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 public class AppContextConfigDeployer implements DynamicDeployer {
     private static final String CONFIG_NAME = "app-ctx.xml";
@@ -36,14 +38,22 @@ public class AppContextConfigDeployer implements DynamicDeployer {
         final Collection<DeploymentModule> deploymentModule = appModule.getDeploymentModule();
         deploymentModule.add(appModule);
 
+        // parse files once since it is application scoped (we don't want duplicates)
+        final Set<String> alreadyParsed = new HashSet<String>();
+
         for (DeploymentModule module : deploymentModule) {
             final Object o = module.getAltDDs().get(CONFIG_NAME);
             if (o instanceof URL) {
-                configure(appModule, (URL) o);
+                final URL url = (URL) o;
+                if (alreadyParsed.add(url.toExternalForm())) {
+                    configure(appModule, url);
+                }
             } else if (o != null) {
-                throw new OpenEJBException("Unknown application.properties type: " + o.getClass().getName());
+                throw new OpenEJBException("Unknown app-ctx.xml type: " + o.getClass().getName());
             }
         }
+
+        alreadyParsed.clear();
 
         return appModule;
     }

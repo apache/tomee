@@ -17,6 +17,7 @@
   -->
 <AppContext>
   <Configuration>
+    foo.bar = dummy
     <AsynchronousPool>
       CorePoolSize = 10
       MaximumPoolSize = 10
@@ -32,10 +33,12 @@
       plugin.LogPlugin.class = org.superbiz.MyLogPlugin
       plugin.LogPlugin.active = true
     </org.quartz>
+    1.2 = 3
   </Configuration>
   <BeanContexts>
     <BeanContext id="CalculatorBean">
       <Configuration>
+        no.root = ok
         <cxf.jaxws>
           in-interceptors = wss4j
         </cxf.jaxws>
