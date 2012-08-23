@@ -76,7 +76,10 @@ public final class ServiceInfos {
 
         final List<Object> instances = new ArrayList<Object>();
         for (String id : ids) {
-            instances.add(resolve(serviceInfos, id));
+            final Object instance = resolve(serviceInfos, id);
+            if (instance != null) {
+                instances.add(instance);
+            }
         }
         return instances;
     }

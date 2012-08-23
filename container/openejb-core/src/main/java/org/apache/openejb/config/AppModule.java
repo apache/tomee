@@ -19,6 +19,10 @@ package org.apache.openejb.config;
 import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.jee.Application;
 import org.apache.openejb.jee.jpa.EntityMappings;
+import org.apache.openejb.jee.jpa.unit.Persistence;
+import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
+import org.apache.openejb.jee.jpa.unit.TransactionType;
+import org.apache.openejb.util.SuperProperties;
 
 import java.io.File;
 import java.net.URI;
@@ -32,10 +36,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
-import org.apache.openejb.jee.jpa.unit.Persistence;
-import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
-import org.apache.openejb.jee.jpa.unit.TransactionType;
-import org.apache.openejb.util.SuperProperties;
 
 /**
  * @version $Rev$ $Date$
@@ -62,7 +62,8 @@ public class AppModule implements DeploymentModule {
     private final boolean standaloneModule;
     private boolean delegateFirst = true;
     private final Set<String> additionalLibMbeans = new TreeSet<String>();
-    private Collection<String> jaxRsProviders = new TreeSet<String>();
+    private final Collection<String> jaxRsProviders = new TreeSet<String>();
+    private final Map<String, PojoConfiguration> pojoConfigurations = new HashMap<String, PojoConfiguration>();
 
     private ID id;
     private boolean webapp = false;
@@ -338,5 +339,9 @@ public class AppModule implements DeploymentModule {
             type = TransactionType.JTA;
         }
         return type;
+    }
+
+    public Map<String, PojoConfiguration> getPojoConfigurations() {
+        return pojoConfigurations;
     }
 }

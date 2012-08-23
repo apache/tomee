@@ -27,6 +27,7 @@ import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.EntityManagerFactoryCallable;
 import org.apache.openejb.assembler.classic.HandlerChainInfo;
+import org.apache.openejb.assembler.classic.IdPropertiesInfo;
 import org.apache.openejb.assembler.classic.JndiEncInfo;
 import org.apache.openejb.assembler.classic.MdbContainerInfo;
 import org.apache.openejb.assembler.classic.MessageDrivenBeanInfo;
@@ -37,7 +38,9 @@ import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.assembler.classic.ServletInfo;
 import org.apache.openejb.assembler.classic.ValidatorBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
-import org.apache.openejb.config.sys.*;
+import org.apache.openejb.config.sys.Container;
+import org.apache.openejb.config.sys.Resource;
+import org.apache.openejb.config.sys.ServiceProvider;
 import org.apache.openejb.jee.AdminObject;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.ConfigProperty;
@@ -113,6 +116,8 @@ class AppInfoBuilder {
 
         if (appInfo.appId == null) throw new IllegalArgumentException("AppInfo.appId cannot be null");
         if (appInfo.path == null) appInfo.path = appInfo.appId;
+
+        buildPojoConfiguration(appModule, appInfo);
 
         buildAppResources(appModule, appInfo);
         buildAppServices(appModule, appInfo);
@@ -278,6 +283,15 @@ class AppInfoBuilder {
 
         return appInfo;
 
+    }
+
+    private void buildPojoConfiguration(final AppModule appModule, final AppInfo appInfo) {
+        for (Map.Entry<String, PojoConfiguration> config : appModule.getPojoConfigurations().entrySet()) {
+            final IdPropertiesInfo info = new IdPropertiesInfo();
+            info.id = config.getKey();
+            info.properties.putAll(config.getValue().getProperties());
+            appInfo.pojoConfigurations.add(info);
+        }
     }
 
     private void buildAppServices(final AppModule appModule, final AppInfo appInfo) throws OpenEJBException {

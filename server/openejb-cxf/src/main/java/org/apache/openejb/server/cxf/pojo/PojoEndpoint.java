@@ -27,7 +27,7 @@ import org.apache.cxf.resource.ResourceManager;
 import org.apache.cxf.resource.ResourceResolver;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.openejb.InjectionProcessor;
-import org.apache.openejb.assembler.classic.ServiceInfo;
+import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
 import org.apache.openejb.core.webservices.JaxWsUtils;
 import org.apache.openejb.core.webservices.PortData;
 import org.apache.openejb.server.cxf.CxfEndpoint;
@@ -36,7 +36,6 @@ import org.apache.openejb.server.cxf.JaxWsImplementorInfoImpl;
 
 import javax.naming.Context;
 import javax.xml.ws.WebServiceException;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -45,8 +44,10 @@ import static org.apache.openejb.InjectionProcessor.unwrap;
 public class PojoEndpoint extends CxfEndpoint {
     private InjectionProcessor<Object> injectionProcessor;
 
-    public PojoEndpoint(Bus bus, PortData port, Context context, Class<?> instance, HTTPTransportFactory httpTransportFactory, Map<String, Object> bindings, Collection<ServiceInfo> services) {
-    	super(bus, port, context, instance, httpTransportFactory, services);
+    public PojoEndpoint(Bus bus, PortData port, Context context, Class<?> instance,
+                        HTTPTransportFactory httpTransportFactory,
+                        Map<String, Object> bindings, ServiceConfiguration config) {
+    	super(bus, port, context, instance, httpTransportFactory, config);
 
         String bindingURI = null;
         if (port.getBindingID() != null) {

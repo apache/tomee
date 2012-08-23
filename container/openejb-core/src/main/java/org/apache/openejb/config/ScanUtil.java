@@ -16,12 +16,12 @@
  */
 package org.apache.openejb.config;
 
+import org.apache.openejb.util.Saxs;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.net.URL;
@@ -29,18 +29,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 public final class ScanUtil {
-    private static final SAXParserFactory SAX_FACTORY = SAXParserFactory.newInstance();
-
     private ScanUtil() {
         // no-op
     }
 
     public static ScanHandler read(final URL scanXml) throws IOException {
-        final SAXParser parser;
         try {
-            synchronized (SAX_FACTORY) {
-                parser = SAX_FACTORY.newSAXParser();
-            }
+            final SAXParser parser = Saxs.factory().newSAXParser();
             final ScanHandler handler = new ScanHandler();
             parser.parse(new BufferedInputStream(scanXml.openStream()), handler);
             return handler;

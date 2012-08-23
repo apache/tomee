@@ -28,6 +28,7 @@ import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.Injection;
 import org.apache.openejb.assembler.classic.ServiceInfo;
+import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
 import org.apache.openejb.assembler.classic.util.ServiceInfos;
 import org.apache.openejb.server.cxf.transport.util.CxfUtil;
 import org.apache.openejb.server.httpd.HttpRequest;
@@ -82,24 +83,24 @@ public class CxfRsHttpListener implements RsHttpListener {
 
     @Override
     public void deploySingleton(String fullContext, Object o, Application appInstance,
-                                Collection<Class<?>> additionalProviders, Collection<ServiceInfo> services) {
-        deploy(o.getClass(), fullContext, new SingletonResourceProvider(o), o, appInstance, null, additionalProviders, services);
+                                Collection<Class<?>> additionalProviders, ServiceConfiguration configuration) {
+        deploy(o.getClass(), fullContext, new SingletonResourceProvider(o), o, appInstance, null, additionalProviders, configuration);
     }
 
     @Override
     public void deployPojo(String fullContext, Class<?> loadedClazz, Application app, Collection<Injection> injections,
-                           Context context, WebBeansContext owbCtx, Collection<Class<?>> additionalProviders, Collection<ServiceInfo> services) {
+                           Context context, WebBeansContext owbCtx, Collection<Class<?>> additionalProviders, ServiceConfiguration configuration) {
         deploy(loadedClazz, fullContext, new OpenEJBPerRequestPojoResourceProvider(loadedClazz, injections, context, owbCtx),
-                            null, app, null, additionalProviders, services);
+                            null, app, null, additionalProviders, configuration);
     }
 
     @Override
-    public void deployEJB(String fullContext, BeanContext beanContext, Collection<Class<?>> additionalProviders, Collection<ServiceInfo> services) {
-        deploy(beanContext.getBeanClass(), fullContext, null, null, null, new OpenEJBEJBInvoker(beanContext), additionalProviders, services);
+    public void deployEJB(String fullContext, BeanContext beanContext, Collection<Class<?>> additionalProviders, ServiceConfiguration configuration) {
+        deploy(beanContext.getBeanClass(), fullContext, null, null, null, new OpenEJBEJBInvoker(beanContext), additionalProviders, configuration);
     }
 
     private void deploy(Class<?> clazz, String address, ResourceProvider rp, Object serviceBean, Application app, Invoker invoker,
-                        Collection<Class<?>> additionalProviders, Collection<ServiceInfo> services) {
+                        Collection<Class<?>> additionalProviders, ServiceConfiguration configuration) {
         final String impl;
         if (serviceBean != null) {
             impl = serviceBean.getClass().getName();
@@ -113,26 +114,25 @@ public class CxfRsHttpListener implements RsHttpListener {
         factory.setBus(transportFactory.getBus());
         factory.setAddress(address);
 
-        CxfUtil.configureEndpoint(factory, services, CXF_JAXRS_PREFIX, impl);
+        CxfUtil.configureEndpoint(factory, configuration, CXF_JAXRS_PREFIX, impl);
+
+        final Collection<ServiceInfo> services = configuration.getAvailableServices();
 
         // providers
-        final ServiceInfo info = ServiceInfos.findByClass(services, impl);
+        final String provider = configuration.getProperties().getProperty(PROVIDERS_KEY);
         List<Object> providers = null;
-        if (info != null) {
-            final String provider = info.properties.getProperty(PROVIDERS_KEY);
-            if (provider != null) {
-                providers = ServiceInfos.resolve(services, provider.split(","));
-                if (providers != null && additionalProviders != null && !additionalProviders.isEmpty()) {
-                    providers.addAll(providers(services, info, additionalProviders));
-                }
-                factory.setProviders(providers);
+        if (provider != null) {
+            providers = ServiceInfos.resolve(services, provider.split(","));
+            if (providers != null && additionalProviders != null && !additionalProviders.isEmpty()) {
+                providers.addAll(providers(services, additionalProviders));
             }
+            factory.setProviders(providers);
         }
         if (providers == null) {
             providers = new ArrayList<Object>();
             providers.addAll(defaultProviders());
             if (additionalProviders != null && !additionalProviders.isEmpty()) {
-                providers.addAll(providers(services, info, additionalProviders));
+                providers.addAll(providers(services, additionalProviders));
             }
             factory.setProviders(providers);
         }
@@ -156,18 +156,10 @@ public class CxfRsHttpListener implements RsHttpListener {
         destination = (AbstractHTTPDestination) server.getDestination();
     }
 
-    private Collection<Object> providers(final Collection<ServiceInfo> services, final ServiceInfo service, final Collection<Class<?>> additionalProviders) {
+    private Collection<Object> providers(final Collection<ServiceInfo> services, final Collection<Class<?>> additionalProviders) {
         final Collection<Object> instances = new ArrayList<Object>();
-
-        final String prefix;
-        if (service != null) {
-            prefix = service.id + ".";
-        } else {
-            prefix = "";
-        }
-
         for (Class<?> clazz : additionalProviders) {
-            final Object instance = ServiceInfos.resolve(services, prefix + clazz.getName());
+            final Object instance = ServiceInfos.resolve(services, clazz.getName());
             if (instance != null) {
                 instances.add(instance);
             } else {

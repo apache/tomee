@@ -1,5 +1,4 @@
-/**
- *
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,24 +14,29 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.server.cxf.ejb;
+package org.apache.openejb.util;
 
-import org.apache.cxf.Bus;
-import org.apache.openejb.BeanContext;
-import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
-import org.apache.openejb.core.webservices.PortData;
-import org.apache.openejb.server.cxf.CxfWsContainer;
+import javax.xml.parsers.SAXParserFactory;
 
-public class EjbWsContainer extends CxfWsContainer {
-    private final BeanContext beanContext;
-
-    public EjbWsContainer(Bus bus, PortData port, BeanContext beanContext, ServiceConfiguration config) {
-        super(bus, port, config);
-        if (beanContext == null) throw new NullPointerException("deploymentInfo is null");
-        this.beanContext = beanContext;
+public final class Saxs {
+    private static final SAXParserFactory FACTORY = SAXParserFactory.newInstance();
+    private static final SAXParserFactory NAMESPACE_AWARE_FACTORY = SAXParserFactory.newInstance();
+    static {
+        FACTORY.setNamespaceAware(true);
+        FACTORY.setValidating(false);
+        NAMESPACE_AWARE_FACTORY.setNamespaceAware(true);
+        NAMESPACE_AWARE_FACTORY.setValidating(false);
     }
 
-    protected EjbEndpoint createEndpoint() {
-    	return new EjbEndpoint(bus, port, beanContext, httpTransportFactory, serviceConfiguration);
+    private Saxs() {
+        // no-op
+    }
+
+    public static SAXParserFactory factory() {
+        return FACTORY;
+    }
+
+    public static SAXParserFactory namespaceAwareFactory() {
+        return NAMESPACE_AWARE_FACTORY;
     }
 }

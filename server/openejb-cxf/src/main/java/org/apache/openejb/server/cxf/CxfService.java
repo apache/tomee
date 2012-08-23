@@ -19,7 +19,7 @@ package org.apache.openejb.server.cxf;
 
 import org.apache.cxf.Bus;
 import org.apache.openejb.BeanContext;
-import org.apache.openejb.assembler.classic.ServiceInfo;
+import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
 import org.apache.openejb.core.webservices.PortData;
 import org.apache.openejb.server.cxf.client.SaajInterceptor;
 import org.apache.openejb.server.cxf.ejb.EjbWsContainer;
@@ -30,7 +30,6 @@ import org.apache.openejb.server.webservices.WsService;
 
 import javax.naming.Context;
 import java.net.URL;
-import java.util.Collection;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
@@ -50,15 +49,15 @@ public class CxfService extends WsService {
 
     public void init(final Properties props) throws java.lang.Exception {
         super.init(props);
-        CxfUtil.configureBus(getName());
+        CxfUtil.configureBus();
     }
 
-    protected HttpListener createEjbWsContainer(URL moduleBaseUrl, PortData port, BeanContext beanContext, Collection<ServiceInfo> services) {
+    protected HttpListener createEjbWsContainer(URL moduleBaseUrl, PortData port, BeanContext beanContext, ServiceConfiguration config) {
         Bus bus = CxfUtil.getBus();
 
         CxfCatalogUtils.loadOASISCatalog(bus, moduleBaseUrl, "META-INF/jax-ws-catalog.xml");
 
-        EjbWsContainer container = new EjbWsContainer(bus, port, beanContext, services);
+        EjbWsContainer container = new EjbWsContainer(bus, port, beanContext, config);
         container.start();
         wsContainers.put(beanContext.getDeploymentID().toString(), container);
         return container;
@@ -71,7 +70,7 @@ public class CxfService extends WsService {
         }
     }
 
-    protected HttpListener createPojoWsContainer(URL moduleBaseUrl, PortData port, String serviceId, Class target, Context context, String contextRoot, Map<String, Object> bdgs, Collection<ServiceInfo> services) {
+    protected HttpListener createPojoWsContainer(URL moduleBaseUrl, PortData port, String serviceId, Class target, Context context, String contextRoot, Map<String, Object> bdgs, ServiceConfiguration services) {
         Bus bus = CxfUtil.getBus();
 
         CxfCatalogUtils.loadOASISCatalog(bus, moduleBaseUrl, "META-INF/jax-ws-catalog.xml");

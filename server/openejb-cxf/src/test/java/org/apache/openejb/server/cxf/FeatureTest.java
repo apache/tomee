@@ -40,8 +40,10 @@ public class FeatureTest {
 
         final OpenejbJar openejbJar = new OpenejbJar();
         openejbJar.addEjbDeployment(new EjbDeployment(jar.getEnterpriseBeans()[0]));
-        openejbJar.getEjbDeployment().iterator().next().getProperties()
-                .setProperty(CxfService.OPENEJB_JAXWS_CXF_FEATURES, MyFeature.class.getName());
+        final Properties properties = openejbJar.getEjbDeployment().iterator().next().getProperties();
+        properties.setProperty(CxfService.OPENEJB_JAXWS_CXF_FEATURES, MyFeature.class.getName());
+        properties.setProperty("cxf.jaxws.features", "my-feature");
+        properties.setProperty("cxf.jaxws.properties", "my-props");
 
         final EjbModule module = new EjbModule(jar);
         module.setOpenejbJar(openejbJar);
@@ -52,16 +54,10 @@ public class FeatureTest {
         service.setClassName(MyFeature.class.getName());
         resources.add(service);
 
-        final Service properties = new Service("my-props", null, null, null);
-        properties.setClassName(Properties.class.getName());
-        properties.getProperties().setProperty("faultStackTraceEnabled", "true");
-        resources.add(properties);
-
-        final Service beanService = new Service("bean-config", null, null, null);
-        beanService.setClassName(AuthenticatorServiceBean.class.getName());
-        beanService.getProperties().setProperty("cxf.jaxws.features", "my-feature");
-        beanService.getProperties().setProperty("cxf.jaxws.properties", "my-props");
-        resources.add(beanService);
+        final Service myProps = new Service("my-props", null, null, null);
+        myProps.setClassName(Properties.class.getName());
+        myProps.getProperties().setProperty("faultStackTraceEnabled", "true");
+        resources.add(myProps);
 
         module.initResources(resources);
 

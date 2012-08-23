@@ -15,9 +15,19 @@
       See the License for the specific language governing permissions and
       limitations under the License.
   -->
-<resources>
-  <Service class-name="org.apache.openejb.server.cxf.rs.CustomExceptionMapperTest$RestWithExceptionMapper">
-    cxf.jaxrs.providers = em
-  </Service>
-  <Service class-name="org.apache.openejb.server.cxf.rs.CustomExceptionMapperTest$EM" id="em" />
-</resources>
+<AppContext>
+  <BeanContexts>
+    <BeanContext id="CustomizedService">
+      <Configuration>
+        <cxf.jaxrs>
+          providers = configured
+        </cxf.jaxrs>
+      </Configuration>
+    </BeanContext>
+  </BeanContexts>
+  <Resources>
+    <Service class-name="org.apache.openejb.server.cxf.rs.CustomProviderWithConfigTest$ConfigurableProvider" id="configured">
+      str = done!
+    </Service>
+  </Resources>
+</AppContext>

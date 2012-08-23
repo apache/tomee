@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,24 +14,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.server.cxf.ejb;
+package org.apache.openejb.assembler.classic;
 
-import org.apache.cxf.Bus;
-import org.apache.openejb.BeanContext;
-import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
-import org.apache.openejb.core.webservices.PortData;
-import org.apache.openejb.server.cxf.CxfWsContainer;
+import java.util.Properties;
 
-public class EjbWsContainer extends CxfWsContainer {
-    private final BeanContext beanContext;
-
-    public EjbWsContainer(Bus bus, PortData port, BeanContext beanContext, ServiceConfiguration config) {
-        super(bus, port, config);
-        if (beanContext == null) throw new NullPointerException("deploymentInfo is null");
-        this.beanContext = beanContext;
-    }
-
-    protected EjbEndpoint createEndpoint() {
-    	return new EjbEndpoint(bus, port, beanContext, httpTransportFactory, serviceConfiguration);
-    }
+public class IdPropertiesInfo extends InfoObject {
+    public String id;
+    public final Properties properties = new Properties();
 }

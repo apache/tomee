@@ -21,6 +21,7 @@ import org.apache.openejb.config.ConfigUtils;
 import org.apache.openejb.jee.JAXBContextFactory;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.util.Join;
+import org.apache.openejb.util.Saxs;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -38,7 +39,6 @@ import javax.xml.bind.ValidationEventHandler;
 import javax.xml.bind.ValidationException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -58,8 +58,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public abstract class JaxbOpenejb {
-
-    private static final SAXParserFactory SAX_PARSER_FACTORY = SAXParserFactory.newInstance();
 
     @SuppressWarnings({"unchecked"})
     public static <T> T create(Class<T> type) {
@@ -183,10 +181,7 @@ public abstract class JaxbOpenejb {
     public static ServicesJar parseServicesJar(InputStream in) throws ParserConfigurationException, SAXException, IOException {
         InputSource inputSource = new InputSource(in);
 
-        SAXParserFactory factory = SAX_PARSER_FACTORY;
-        factory.setNamespaceAware(true);
-        factory.setValidating(false);
-        SAXParser parser = factory.newSAXParser();
+        SAXParser parser = Saxs.namespaceAwareFactory().newSAXParser();
 
         final ServicesJar servicesJar1 = new ServicesJar();
 
@@ -332,10 +327,7 @@ public abstract class JaxbOpenejb {
     public static <T> T unmarshal(Class<T> type, InputStream in, boolean filter) throws ParserConfigurationException, SAXException, JAXBException {
         InputSource inputSource = new InputSource(in);
 
-        SAXParserFactory factory = SAXParserFactory.newInstance();
-        factory.setNamespaceAware(true);
-        factory.setValidating(false);
-        SAXParser parser = factory.newSAXParser();
+        SAXParser parser = Saxs.namespaceAwareFactory().newSAXParser();
 
         JAXBContext ctx = getContext(type);
         Unmarshaller unmarshaller = ctx.createUnmarshaller();

@@ -17,23 +17,24 @@
 
 package org.apache.openejb.server.rest;
 
-import java.util.Collection;
-import javax.naming.Context;
-import javax.ws.rs.core.Application;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.Injection;
-import org.apache.openejb.assembler.classic.ServiceInfo;
+import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.webbeans.config.WebBeansContext;
 
+import javax.naming.Context;
+import javax.ws.rs.core.Application;
+import java.util.Collection;
+
 public interface RsHttpListener extends HttpListener {
     void deploySingleton(String fullContext, Object o, Application appInstance,
-                         Collection<Class<?>> additionalProviders, Collection<ServiceInfo> serviceInfos);
+                         Collection<Class<?>> additionalProviders, ServiceConfiguration serviceInfos);
 
     void deployPojo(String fullContext, Class<?> loadedClazz, Application app, Collection<Injection> injections,
-                    Context context, WebBeansContext owbCtx, Collection<Class<?>> additionalProviders, Collection<ServiceInfo> serviceInfos);
+                    Context context, WebBeansContext owbCtx, Collection<Class<?>> additionalProviders, ServiceConfiguration serviceInfos);
 
-    void deployEJB(String fullContext, BeanContext beanContext, Collection<Class<?>> additionalProviders, Collection<ServiceInfo> serviceInfos);
+    void deployEJB(String fullContext, BeanContext beanContext, Collection<Class<?>> additionalProviders, ServiceConfiguration serviceInfos);
 
     void undeploy();
 }

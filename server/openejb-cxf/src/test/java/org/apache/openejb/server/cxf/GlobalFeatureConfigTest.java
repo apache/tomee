@@ -42,9 +42,7 @@ public class GlobalFeatureConfigTest {
         return new Properties() {{
             setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
 
-            setProperty("bus-cxf", "new://Service?class-name=java.util.Properties");
-            setProperty("bus-cxf.features", "logging");
-
+            setProperty(CxfUtil.BUS_PREFIX + CxfUtil.FEATURES, "logging");
             setProperty("logging", "new://Service?class-name=" + LoggingFeature.class.getName());
         }};
     }

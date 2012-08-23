@@ -29,6 +29,7 @@ import org.apache.cxf.message.Message;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.ServiceInfo;
+import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
 import org.apache.openejb.assembler.classic.util.ServiceInfos;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.PropertiesHelper;
@@ -47,7 +48,8 @@ public final class CxfUtil {
     public static final String DATABINDING = "databinding";
     public static final String ADDRESS = "address";
     public static final String DEBUG = "debug";
-    public static final String BUS_PREFIX = "bus-";
+    public static final String BUS_PREFIX = "org.apache.openejb.cxf.bus.";
+    public static final String BUS_CONFIGURED_FLAG = "openejb.cxf.bus.configured";
 
     private CxfUtil() {
         // no-op
@@ -77,45 +79,47 @@ public final class CxfUtil {
         }
     }
 
-    public static void configureEndpoint(final AbstractEndpointFactory svrFactory, final Collection<ServiceInfo> availableServices, final String prefix, final String beanId) {
-        final ServiceInfo beanInfo = ServiceInfos.findByClass(availableServices, beanId);
-        if (beanInfo != null) {
-            final Properties beanConfig = beanInfo.properties;
+    public static void configureEndpoint(final AbstractEndpointFactory svrFactory, final ServiceConfiguration configuration, final String prefix, final String beanId) {
+        final Properties beanConfig = configuration.getProperties();
+        if (beanConfig == null || beanConfig.isEmpty()) {
+            return;
+        }
 
-            // endpoint properties
-            final Properties properties = ServiceInfos.serviceProperties(availableServices, beanConfig.getProperty(prefix + ENDPOINT_PROPERTIES));
-            if (properties != null) {
-                svrFactory.setProperties(PropertiesHelper.map(properties));
-            }
-            if (SystemInstance.get().getOptions().get(prefix + DEBUG, false)) {
-                svrFactory.getProperties(true).put("faultStackTraceEnabled", "true");
-            }
+        final Collection<ServiceInfo> availableServices = configuration.getAvailableServices();
 
-            // endpoint features
-            final String featuresIds = beanConfig.getProperty(prefix + FEATURES);
-            if (featuresIds != null) {
-                final List<?> features = createFeatures(availableServices, featuresIds);
-                svrFactory.setFeatures((List<AbstractFeature>) features);
-            }
+        // endpoint properties
+        final Properties properties = ServiceInfos.serviceProperties(availableServices, beanConfig.getProperty(prefix + ENDPOINT_PROPERTIES));
+        if (properties != null) {
+            svrFactory.setProperties(PropertiesHelper.map(properties));
+        }
+        if (SystemInstance.get().getOptions().get(prefix + DEBUG, false)) {
+            svrFactory.getProperties(true).put("faultStackTraceEnabled", "true");
+        }
 
-            configureInterceptors(svrFactory, prefix, availableServices, beanConfig);
+        // endpoint features
+        final String featuresIds = beanConfig.getProperty(prefix + FEATURES);
+        if (featuresIds != null) {
+            final List<?> features = createFeatures(availableServices, featuresIds);
+            svrFactory.setFeatures((List<AbstractFeature>) features);
+        }
 
-            // databinding
-            final String databinding = beanConfig.getProperty(prefix + DATABINDING);
-            if (databinding != null && !databinding.trim().isEmpty()) {
-                final Object instance = ServiceInfos.resolve(availableServices, databinding);
-                if (!DataBinding.class.isInstance(instance)) {
-                    throw new OpenEJBRuntimeException(instance + " is not a " + DataBinding.class.getName()
-                            + ", please check configuration of service [id=" + databinding + "]");
-                }
-                svrFactory.setDataBinding((DataBinding) instance);
-            }
+        configureInterceptors(svrFactory, prefix, availableServices, beanConfig);
 
-            // address: easier than using openejb-jar.xml
-            final String changedAddress = beanConfig.getProperty(prefix + ADDRESS);
-            if (changedAddress != null && !changedAddress.trim().isEmpty()) {
-                svrFactory.setAddress(changedAddress);
+        // databinding
+        final String databinding = beanConfig.getProperty(prefix + DATABINDING);
+        if (databinding != null && !databinding.trim().isEmpty()) {
+            final Object instance = ServiceInfos.resolve(availableServices, databinding);
+            if (!DataBinding.class.isInstance(instance)) {
+                throw new OpenEJBRuntimeException(instance + " is not a " + DataBinding.class.getName()
+                        + ", please check configuration of service [id=" + databinding + "]");
             }
+            svrFactory.setDataBinding((DataBinding) instance);
+        }
+
+        // address: easier than using openejb-jar.xml
+        final String changedAddress = beanConfig.getProperty(prefix + ADDRESS);
+        if (changedAddress != null && !changedAddress.trim().isEmpty()) {
+            svrFactory.setAddress(changedAddress);
         }
     }
 
@@ -162,31 +166,40 @@ public final class CxfUtil {
         return (List<Interceptor<? extends Message>>) instances;
     }
 
-    public static void configureBus(final String name) {
+    public static void configureBus() {
+        if (SystemInstance.get().getProperties().containsKey(BUS_CONFIGURED_FLAG)) { // jaxws and jaxrs for instance
+            return;
+        }
+
         final Bus bus = getDefaultBus();
         if (bus instanceof CXFBusImpl) {
+            final ServiceConfiguration configuration = new ServiceConfiguration(SystemInstance.get().getProperties(),
+                    SystemInstance.get().getComponent(OpenEjbConfiguration.class).facilities.services);
+
             final CXFBusImpl busImpl = (CXFBusImpl) bus;
-            final List<ServiceInfo> serviceInfos = SystemInstance.get()
-                                                        .getComponent(OpenEjbConfiguration.class).facilities.services;
-            for (ServiceInfo service : serviceInfos) {
-                if (service.id.equals(BUS_PREFIX + name)) {
-                    final String featuresIds = service.properties.getProperty(FEATURES);
-                    if (featuresIds != null) {
-                        final List<AbstractFeature> features = createFeatures(serviceInfos, featuresIds);
-                        if (features != null) {
-                            features.addAll(busImpl.getFeatures());
-                            busImpl.setFeatures(features);
-                        }
-                    }
+            final Collection<ServiceInfo> serviceInfos = configuration.getAvailableServices();
+            final Properties properties = configuration.getProperties();
+            if (properties == null || properties.isEmpty()) {
+                return;
+            }
 
-                    final Properties properties = ServiceInfos.serviceProperties(serviceInfos, service.properties.getProperty(ENDPOINT_PROPERTIES));
-                    if (properties != null) {
-                        busImpl.getProperties().putAll(PropertiesHelper.map(properties));
-                    }
-
-                    configureInterceptors(busImpl, "", serviceInfos, service.properties);
+            final String featuresIds = properties.getProperty(BUS_PREFIX + FEATURES);
+            if (featuresIds != null) {
+                final List<AbstractFeature> features = createFeatures(serviceInfos, featuresIds);
+                if (features != null) {
+                    features.addAll(busImpl.getFeatures());
+                    busImpl.setFeatures(features);
                 }
             }
+
+            final Properties busProperties = ServiceInfos.serviceProperties(serviceInfos, properties.getProperty(BUS_PREFIX + ENDPOINT_PROPERTIES));
+            if (busProperties != null) {
+                busImpl.getProperties().putAll(PropertiesHelper.map(busProperties));
+            }
+
+            configureInterceptors(busImpl, BUS_PREFIX, serviceInfos, configuration.getProperties());
+
+            SystemInstance.get().getProperties().setProperty(BUS_CONFIGURED_FLAG, "true");
         }
     }
 }

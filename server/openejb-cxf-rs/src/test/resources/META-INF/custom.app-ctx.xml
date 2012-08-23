@@ -15,14 +15,25 @@
       See the License for the specific language governing permissions and
       limitations under the License.
   -->
-<resources>
-  <Service class-name="org.apache.openejb.server.cxf.rs.CustomProviderTest$CustomService">
-    cxf.jaxrs.providers = reverse
-  </Service>
-  <Service class-name="org.apache.openejb.server.cxf.rs.CustomProviderTest$ReverseProvider" id="reverse" />
-
-  <Service class-name="org.apache.openejb.server.cxf.rs.CustomProviderTest$CustomSpecificService">
-    cxf.jaxrs.providers = constant
-  </Service>
-  <Service class-name="org.apache.openejb.server.cxf.rs.CustomProviderTest$ConstantProvider" id="constant" />
-</resources>
+<AppContext>
+  <BeanContexts>
+    <BeanContext id="CustomSpecificService">
+      <Configuration>
+        <cxf.jaxrs>
+          providers = constant
+        </cxf.jaxrs>
+      </Configuration>
+    </BeanContext>
+    <BeanContext id="CustomService">
+      <Configuration>
+        <cxf.jaxrs>
+          providers = reverse
+        </cxf.jaxrs>
+      </Configuration>
+    </BeanContext>
+  </BeanContexts>
+  <Resources>
+    <Service class-name="org.apache.openejb.server.cxf.rs.CustomProviderTest$ConstantProvider" id="constant" />
+    <Service class-name="org.apache.openejb.server.cxf.rs.CustomProviderTest$ReverseProvider" id="reverse" />
+  </Resources>
+</AppContext>
