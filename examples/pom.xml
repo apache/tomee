@@ -125,6 +125,7 @@
     <module>testing-security</module>
     <module>testing-security-2</module>
     <module>testing-security-3</module>
+    <module>testing-security-4</module>
     <module>testing-transactions</module>
     <module>testing-transactions-bmt</module>
     <module>tomee-jersey-eclipselink</module>
