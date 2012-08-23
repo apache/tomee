@@ -511,7 +511,7 @@ public class AnnotationDeployerTest {
 
     }
 
-    public static class RESTMethod {
+    public static class RESTMethod extends RESTClass {
         @Path("/method") public void noop() {
             // no-op
         }
