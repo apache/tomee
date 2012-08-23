@@ -119,48 +119,29 @@ public class BeanContext extends DeploymentContext {
     private Object containerData;
 
     private boolean destroyed;
-    private Class homeInterface;
-    private Class remoteInterface;
-    private Class localHomeInterface;
-    private Class localInterface;
     private final Class beanClass;
-    private Class pkClass;
     private final List<Class> businessLocals = new ArrayList<Class>();
     private final List<Class> businessRemotes = new ArrayList<Class>();
-    private Class mdbInterface;
     private Class serviceEndpointInterface;
-
-    private final List<Method> removeMethods = new ArrayList<Method>();
-
-    private final Set<String> dependsOn = new LinkedHashSet<String>();
 
     private Method ejbTimeout;
     private EjbTimerService ejbTimerService;
 
     private boolean isBeanManagedTransaction;
     private boolean isBeanManagedConcurrency;
-    private boolean isReentrant;
     private Container container;
-    private EJBHome ejbHomeRef;
-    private EJBLocalHome ejbLocalHomeRef;
-    private String destinationId;
 
     private String ejbName;
     private String runAs;
-
-    private Method createMethod = null;
 
     private final BeanType componentType;
 
     private boolean hidden = false;
 
-    private final Map<Method, Method> postCreateMethodMap = new HashMap<Method, Method>();
     //private final Map<Method, TransactionType> methodTransactionType = new HashMap<Method, TransactionType>();
     private final Map<Method, Method> methodMap = new HashMap<Method, Method>();
     private final Map<Method, MethodContext> methodContextMap = new HashMap<Method, MethodContext>();
     private final Map<String, ViewContext> viewContextMap = new HashMap<String, ViewContext>();
-
-    private Index<EntityManagerFactory, Map> extendedEntityManagerFactories;
 
     private TransactionPolicyFactory transactionPolicyFactory;
 
@@ -168,20 +149,28 @@ public class BeanContext extends DeploymentContext {
     private final Set<InterceptorData> instanceScopedInterceptors = new HashSet<InterceptorData>();
     private final List<InterceptorInstance> systemInterceptors = new ArrayList<InterceptorInstance>();
     private final List<InterceptorInstance> userInterceptors = new ArrayList<InterceptorInstance>();
-    private final Map<String, String> activationProperties = new HashMap<String, String>();
     private final List<Injection> injections = new ArrayList<Injection>();
     private final Map<Class, InterfaceType> interfaces = new HashMap<Class, InterfaceType>();
     private final Map<Class, ExceptionType> exceptions = new HashMap<Class, ExceptionType>();
 
-    private boolean loadOnStartup;
     private final boolean localbean;
     private Duration accessTimeout;
-    private Duration statefulTimeout;
 
     private Set<Class<?>> asynchronousClasses = new HashSet<Class<?>>();
     private Set<String> asynchronousMethodSignatures = new HashSet<String>();
     private Class<?> proxyClass;
-    private LockType lockType = LockType.WRITE;
+
+    private Mdb mdb;
+    private Singleton singleton;
+    private Stateful stateful;
+    private Cmp cmp;
+    private LegacyView legacyView;
+
+    /**
+     * TODO: Move to MethodContext
+     */
+    private final Map<Method, Boolean> removeExceptionPolicy = new HashMap<Method, Boolean>();
+
 
     public Class getInterface(InterfaceType interfaceType) {
         switch (interfaceType) {
@@ -287,21 +276,24 @@ public class BeanContext extends DeploymentContext {
         this(id, jndiContext, moduleContext, componentType, localBean, beanClass);
 
 
-        this.pkClass = pkClass;
-
         this.proxyClass = proxy;
 
-        this.homeInterface = homeInterface;
-        this.localInterface = localInterface;
-        this.localHomeInterface = localHomeInterface;
+        if (homeInterface != null) this.getLegacyView().homeInterface = homeInterface;
+        if (localInterface != null) this.getLegacyView().localInterface = localInterface;
+        if (localHomeInterface != null) this.getLegacyView().localHomeInterface = localHomeInterface;
+        if (remoteInterface != null) this.getLegacyView().remoteInterface = remoteInterface;
+
         if (businessLocals != null) {
             this.businessLocals.addAll(businessLocals);
         }
         if (businessRemotes != null) {
             this.businessRemotes.addAll(businessRemotes);
         }
-        this.remoteInterface = remoteInterface;
-        this.pkClass = pkClass;
+
+        if (pkClass != null) {
+            getCmp().pkClass = pkClass;
+        }
+
         this.serviceEndpointInterface = serviceEndpointInterface;
 
 //        if (businessLocal != null && localHomeInterface == null){
@@ -350,6 +342,41 @@ public class BeanContext extends DeploymentContext {
         }
 
         this.initDefaultLock();
+    }
+
+    private LegacyView getLegacyView() {
+        if (legacyView == null) {
+            legacyView = new LegacyView();
+        }
+        return legacyView;
+    }
+
+    private Mdb getMdb() {
+        if (mdb == null) {
+            mdb = new Mdb();
+        }
+        return mdb;
+    }
+
+    private Singleton getSingleton() {
+        if (singleton == null) {
+            singleton = new Singleton();
+        }
+        return singleton;
+    }
+
+    private Stateful getStateful() {
+        if (stateful == null) {
+            stateful = new Stateful();
+        }
+        return stateful;
+    }
+
+    private Cmp getCmp() {
+        if (cmp == null) {
+            cmp = new Cmp();
+        }
+        return cmp;
     }
 
     /**
@@ -422,8 +449,8 @@ public class BeanContext extends DeploymentContext {
     public BeanContext(String id, Context jndiContext, ModuleContext moduleContext, Class beanClass, Class mdbInterface, Map<String, String> activationProperties) throws SystemException {
         this(id, jndiContext, moduleContext, BeanType.MESSAGE_DRIVEN, false, beanClass);
 
-        this.mdbInterface = mdbInterface;
-        this.activationProperties.putAll(activationProperties);
+        this.getMdb().mdbInterface = mdbInterface;
+        this.getMdb().activationProperties.putAll(activationProperties);
 
         if (TimedObject.class.isAssignableFrom(beanClass)) {
             try {
@@ -461,10 +488,10 @@ public class BeanContext extends DeploymentContext {
             try {
 
                 lock = (Lock) c.getAnnotation(Lock.class);
-                this.lockType = lock.value();
+                this.getSingleton().lockType = lock.value();
 
                 if (logger.isDebugEnabled()) {
-                    logger.debug("Declared Lock for " + c.getName() + " is " + this.lockType);
+                    logger.debug("Declared Lock for " + c.getName() + " is " + this.getSingleton().lockType);
                 }
 
             } catch (NullPointerException e) {
@@ -475,7 +502,7 @@ public class BeanContext extends DeploymentContext {
         }
 
         if (logger.isDebugEnabled()) {
-            logger.debug("Default Lock for " + this.beanClass.getName() + " is " + this.lockType);
+            logger.debug("Default Lock for " + this.beanClass.getName() + " is " + this.getSingleton().lockType);
         }
     }
 
@@ -513,11 +540,11 @@ public class BeanContext extends DeploymentContext {
     }
 
     public Index<EntityManagerFactory, Map> getExtendedEntityManagerFactories() {
-        return extendedEntityManagerFactories;
+        return getStateful().extendedEntityManagerFactories;
     }
 
     public void setExtendedEntityManagerFactories(Index<EntityManagerFactory, Map> extendedEntityManagerFactories) {
-        this.extendedEntityManagerFactories = extendedEntityManagerFactories;
+        this.getStateful().extendedEntityManagerFactories = extendedEntityManagerFactories;
     }
 
     public void setContainer(Container container) {
@@ -533,7 +560,7 @@ public class BeanContext extends DeploymentContext {
     }
 
     public LockType getLockType() {
-        return this.lockType;
+        return this.getSingleton().lockType;
     }
 
     public TransactionType getTransactionType(Method method) {
@@ -619,19 +646,19 @@ public class BeanContext extends DeploymentContext {
     }
 
     public Class getHomeInterface() {
-        return homeInterface;
+        return (legacyView == null) ? null : getLegacyView().homeInterface;
     }
 
     public Class getRemoteInterface() {
-        return remoteInterface;
+        return (legacyView == null) ? null : getLegacyView().remoteInterface;
     }
 
     public Class getLocalHomeInterface() {
-        return localHomeInterface;
+        return (legacyView == null) ? null : getLegacyView().localHomeInterface;
     }
 
     public Class getLocalInterface() {
-        return localInterface;
+        return (legacyView == null) ? null : getLegacyView().localInterface;
     }
 
     public Class getBeanClass() {
@@ -655,7 +682,7 @@ public class BeanContext extends DeploymentContext {
     }
 
     public Class getMdbInterface() {
-        return mdbInterface;
+        return (mdb == null)? null: getMdb().mdbInterface;
     }
 
     public Class getServiceEndpointInterface() {
@@ -663,21 +690,21 @@ public class BeanContext extends DeploymentContext {
     }
 
     public Map<String, String> getActivationProperties() {
-        return activationProperties;
+        return getMdb().activationProperties;
     }
 
     public Class getPrimaryKeyClass() {
-        return pkClass;
+        return (cmp == null) ? null : cmp.pkClass;
     }
 
     public EJBHome getEJBHome() {
         if (getHomeInterface() == null) {
             throw new IllegalStateException("This component has no home interface: " + getDeploymentID());
         }
-        if (ejbHomeRef == null) {
-            ejbHomeRef = (EJBHome) EjbHomeProxyHandler.createHomeProxy(this, InterfaceType.EJB_HOME);
+        if (getLegacyView().ejbHomeRef == null) {
+            getLegacyView().ejbHomeRef = (EJBHome) EjbHomeProxyHandler.createHomeProxy(this, InterfaceType.EJB_HOME);
         }
-        return ejbHomeRef;
+        return getLegacyView().ejbHomeRef;
     }
 
 
@@ -685,10 +712,10 @@ public class BeanContext extends DeploymentContext {
         if (getLocalHomeInterface() == null) {
             throw new IllegalStateException("This component has no local home interface: " + getDeploymentID());
         }
-        if (ejbLocalHomeRef == null) {
-            ejbLocalHomeRef = (EJBLocalHome) EjbHomeProxyHandler.createHomeProxy(this, InterfaceType.EJB_LOCAL_HOME);
+        if (getLegacyView().ejbLocalHomeRef == null) {
+            getLegacyView().ejbLocalHomeRef = (EJBLocalHome) EjbHomeProxyHandler.createHomeProxy(this, InterfaceType.EJB_LOCAL_HOME);
         }
-        return ejbLocalHomeRef;
+        return getLegacyView().ejbLocalHomeRef;
     }
 
     //unused
@@ -754,11 +781,11 @@ public class BeanContext extends DeploymentContext {
     }
 
     public String getDestinationId() {
-        return destinationId;
+        return getMdb().destinationId;
     }
 
     public void setDestinationId(String destinationId) {
-        this.destinationId = destinationId;
+        this.getMdb().destinationId = destinationId;
     }
 
     public void setBeanManagedTransaction(boolean value) {
@@ -774,11 +801,11 @@ public class BeanContext extends DeploymentContext {
     }
 
     public boolean isReentrant() {
-        return isReentrant;
+        return getCmp().isReentrant;
     }
 
     public void setIsReentrant(boolean reentrant) {
-        isReentrant = reentrant;
+        getCmp().isReentrant = reentrant;
     }
 
     public Method getMatchingBeanMethod(Method interfaceMethod) {
@@ -846,13 +873,8 @@ public class BeanContext extends DeploymentContext {
     }
 
     public List<Method> getRemoveMethods() {
-        return removeMethods;
+        return getStateful().removeMethods;
     }
-
-    /**
-     * TODO: Move to MethodContext
-     */
-    private final Map<Method, Boolean> removeExceptionPolicy = new HashMap<Method, Boolean>();
 
     /**
      * TODO: Move to MethodContext
@@ -955,16 +977,16 @@ public class BeanContext extends DeploymentContext {
     }
 
     public void createMethodMap() throws org.apache.openejb.SystemException {
-        if (remoteInterface != null) {
-            mapObjectInterface(remoteInterface);
-            mapHomeInterface(homeInterface);
+        if (getRemoteInterface() != null) {
+            mapObjectInterface(getLegacyView().remoteInterface);
+            mapHomeInterface(getLegacyView().homeInterface);
         }
 
-        if (localInterface != null) {
-            mapObjectInterface(localInterface);
+        if (getLocalInterface() != null) {
+            mapObjectInterface(getLegacyView().localInterface);
         }
-        if (localHomeInterface != null) {
-            mapHomeInterface(localHomeInterface);
+        if (getLocalHomeInterface() != null) {
+            mapHomeInterface(getLegacyView().localHomeInterface);
         }
 
         if (serviceEndpointInterface != null) {
@@ -981,7 +1003,7 @@ public class BeanContext extends DeploymentContext {
 
         if (componentType == BeanType.MESSAGE_DRIVEN && MessageDrivenBean.class.isAssignableFrom(beanClass)) {
             try {
-                createMethod = beanClass.getMethod("ejbCreate");
+                getLegacyView().createMethod = beanClass.getMethod("ejbCreate");
             } catch (NoSuchMethodException e) {
                 // if there isn't an ejbCreate method that is fine
             }
@@ -1001,7 +1023,7 @@ public class BeanContext extends DeploymentContext {
                             break;
                         }
                     }
-                    if (beanMethod == null && (homeInterface != null || localHomeInterface != null)) {
+                    if (beanMethod == null && (getHomeInterface() != null || getLocalHomeInterface() != null)) {
                         throw new IllegalStateException("Bean class has no @Remove methods to match EJBObject.remove() or EJBLocalObject.remove().  A no-arg remove method must be added: beanClass=" + beanClass.getName());
                     }
                 }
@@ -1029,8 +1051,8 @@ public class BeanContext extends DeploymentContext {
             throw new org.apache.openejb.SystemException(nsme);
         }
 
-        if (mdbInterface != null) {
-            mapObjectInterface(mdbInterface);
+        if (mdb != null && mdb.mdbInterface != null) {
+            mapObjectInterface(getMdb().mdbInterface);
         }
     }
 
@@ -1048,7 +1070,7 @@ public class BeanContext extends DeploymentContext {
                     StringBuilder ejbCreateName = new StringBuilder(method.getName());
                     ejbCreateName.replace(0, 1, "ejbC");
                     beanMethod = beanClass.getMethod(ejbCreateName.toString(), method.getParameterTypes());
-                    createMethod = beanMethod;
+                    getLegacyView().createMethod = beanMethod;
                     /*
                     Entity beans have a ejbCreate and ejbPostCreate methods with matching
                     parameters. This code maps that relationship.
@@ -1056,9 +1078,9 @@ public class BeanContext extends DeploymentContext {
                     if (this.componentType == BeanType.BMP_ENTITY || this.componentType == BeanType.CMP_ENTITY) {
                         ejbCreateName.insert(3, "Post");
                         Class clazz = beanClass;
-                        if (cmpImplClass != null) clazz = cmpImplClass;
+                        if (getCmp().cmpImplClass != null) clazz = getCmp().cmpImplClass;
                         Method postCreateMethod = clazz.getMethod(ejbCreateName.toString(), method.getParameterTypes());
-                        postCreateMethodMap.put(createMethod, postCreateMethod);
+                        getCmp().postCreateMethodMap.put(getLegacyView().createMethod, postCreateMethod);
                     }
                     /*
                      * Stateless session beans only have one create method. The getCreateMethod is
@@ -1127,11 +1149,11 @@ public class BeanContext extends DeploymentContext {
     }
 
     public Method getCreateMethod() {
-        return createMethod;
+        return getLegacyView().createMethod;
     }
 
     public Method getMatchingPostCreateMethod(Method createMethod) {
-        return this.postCreateMethodMap.get(createMethod);
+        return this.getCmp().postCreateMethodMap.get(createMethod);
     }
 
     public boolean isAsynchronous(Method method) {
@@ -1147,64 +1169,52 @@ public class BeanContext extends DeploymentContext {
         return methodContext != null && methodContext.isAsynchronous();
     }
 
-    //
-    // CMP specific data
-    //
-
-    private boolean cmp2;
-    private KeyGenerator keyGenerator;
-    private String primaryKeyField;
-    private Class cmpImplClass;
-    private String abstractSchemaName;
-
-    private Set<String> remoteQueryResults = new TreeSet<String>();
-
     public boolean isCmp2() {
-        return cmp2;
+        return getCmp().cmp2;
     }
 
     public void setCmp2(boolean cmp2) {
-        this.cmp2 = cmp2;
+        this.getCmp().cmp2 = cmp2;
     }
 
     public String getPrimaryKeyField() {
-        return primaryKeyField;
+        return getCmp().primaryKeyField;
     }
 
     public void setPrimaryKeyField(String primaryKeyField) {
-        this.primaryKeyField = primaryKeyField;
+        this.getCmp().primaryKeyField = primaryKeyField;
     }
 
     public KeyGenerator getKeyGenerator() {
-        return keyGenerator;
+        return getCmp().keyGenerator;
     }
 
     public void setKeyGenerator(KeyGenerator keyGenerator) {
-        this.keyGenerator = keyGenerator;
+        this.getCmp().keyGenerator = keyGenerator;
     }
 
     public void setRemoteQueryResults(String methodSignature) {
-        remoteQueryResults.add(methodSignature);
+        getCmp().remoteQueryResults.add(methodSignature);
     }
 
     public boolean isRemoteQueryResults(String methodSignature) {
-        return remoteQueryResults.contains(methodSignature);
+        return getCmp().remoteQueryResults.contains(methodSignature);
     }
 
     public Class getCmpImplClass() {
-        return cmpImplClass;
+        return getCmp().cmpImplClass;
     }
 
     public void setCmpImplClass(Class cmpImplClass) {
-        this.cmpImplClass = cmpImplClass;
+        this.getCmp().cmpImplClass = cmpImplClass;
     }
 
     public String getAbstractSchemaName() {
-        return abstractSchemaName;
+        return getCmp().abstractSchemaName;
     }
 
     public void setAbstractSchemaName(String abstractSchemaName) {
-        this.abstractSchemaName = abstractSchemaName;
+        this.getCmp().abstractSchemaName = abstractSchemaName;
     }
 
     public Method getEjbTimeout() {
@@ -1252,15 +1262,15 @@ public class BeanContext extends DeploymentContext {
     }
 
     public boolean isLoadOnStartup() {
-        return loadOnStartup;
+        return getSingleton().loadOnStartup;
     }
 
     public void setLoadOnStartup(boolean loadOnStartup) {
-        this.loadOnStartup = loadOnStartup;
+        this.getSingleton().loadOnStartup = loadOnStartup;
     }
 
     public Set<String> getDependsOn() {
-        return dependsOn;
+        return getSingleton().dependsOn;
     }
 
     public boolean isSessionSynchronized() {
@@ -1291,11 +1301,11 @@ public class BeanContext extends DeploymentContext {
     }
 
     public Duration getStatefulTimeout() {
-        return statefulTimeout;
+        return getStateful().statefulTimeout;
     }
 
     public void setStatefulTimeout(Duration statefulTimeout) {
-        this.statefulTimeout = statefulTimeout;
+        this.getStateful().statefulTimeout = statefulTimeout;
     }
 
 
@@ -1571,5 +1581,45 @@ public class BeanContext extends DeploymentContext {
         if (ejbTimerService != null && ejbTimerService instanceof EjbTimerServiceImpl) {
             ((EjbTimerServiceImpl) ejbTimerService).shutdownMe();
         }
+    }
+
+    private static class Cmp {
+        private boolean cmp2;
+        private KeyGenerator keyGenerator;
+        private String primaryKeyField;
+        private Class cmpImplClass;
+        private String abstractSchemaName;
+        private Class pkClass;
+        private Set<String> remoteQueryResults = new TreeSet<String>();
+        private boolean isReentrant;
+        private final Map<Method, Method> postCreateMethodMap = new HashMap<Method, Method>();
+    }
+
+    private static class Mdb {
+        private String destinationId;
+        private final Map<String, String> activationProperties = new HashMap<String, String>();
+        private Class mdbInterface;
+    }
+
+    private static class Singleton {
+        private LockType lockType = LockType.WRITE;
+        private boolean loadOnStartup;
+        private final Set<String> dependsOn = new LinkedHashSet<String>();
+    }
+
+    private static class Stateful {
+        private Index<EntityManagerFactory, Map> extendedEntityManagerFactories;
+        private Duration statefulTimeout;
+        private final List<Method> removeMethods = new ArrayList<Method>();
+    }
+
+    private static class LegacyView {
+        private EJBHome ejbHomeRef;
+        private EJBLocalHome ejbLocalHomeRef;
+        private Class homeInterface;
+        private Class remoteInterface;
+        private Class localHomeInterface;
+        private Class localInterface;
+        private Method createMethod;
     }
 }
