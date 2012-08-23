@@ -144,3 +144,18 @@ As noted in [the documentation](../../alternate-descriptors.html), several prefi
 
     Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
 
+# Warning on Tooling
+
+If you split your descriptors into separate directories, this support will not work.  Specifically, this will not work:
+
+ - src/main/resources/META-INF/ejb-jar.xml
+ - src/main/resources/META-INF/persistence.xml
+ - src/**test**/resources/META-INF/test.ejb-jar.xml
+
+This support is not is aware of any Maven, Gradle, IntelliJ, NetBeans, Ant or other settings.
+
+
+
+
+
+
