@@ -42,6 +42,7 @@ public class WSS4JInInterceptorFactory {
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
             map.put(entry.getKey().toString(), entry.getValue());
         }
+        properties.clear();
         return new WSS4JInInterceptor(map);
     }
 }

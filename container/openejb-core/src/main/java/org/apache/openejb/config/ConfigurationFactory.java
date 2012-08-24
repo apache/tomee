@@ -76,6 +76,7 @@ import org.apache.openejb.config.sys.JndiProvider;
 import org.apache.openejb.config.sys.Openejb;
 import org.apache.openejb.config.sys.ProxyFactory;
 import org.apache.openejb.config.sys.Resource;
+import org.apache.openejb.config.sys.SaxAppCtxConfig;
 import org.apache.openejb.config.sys.SecurityService;
 import org.apache.openejb.config.sys.Service;
 import org.apache.openejb.config.sys.ServiceProvider;
@@ -160,6 +161,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             }
         }
 
+        final AppContextConfigDeployer appContextConfigDeployer = new AppContextConfigDeployer();
+
         final Chain chain = new Chain();
 
         chain.add(new SystemPropertiesOverride());
@@ -168,15 +171,15 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         chain.add(new ReadDescriptors());
 
+        chain.add(appContextConfigDeployer.currentPhase(SaxAppCtxConfig.Phase.BEFORE_SCANNING));
+
         chain.add(new ApplicationProperties());
 
         chain.add(new ModuleProperties());
 
         chain.add(new LegacyProcessor());
 
-        chain.add(new AnnotationDeployer());
-
-        chain.add(new AppContextConfigDeployer()); // before application properties
+        chain.add(new AnnotationDeployer(appContextConfigDeployer.currentPhase(SaxAppCtxConfig.Phase.AFTER_SACNNING)));
 
         chain.add(new BeanProperties());
 
