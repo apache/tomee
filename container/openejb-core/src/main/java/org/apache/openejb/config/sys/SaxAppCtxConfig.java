@@ -22,6 +22,8 @@ import org.apache.openejb.config.PojoConfiguration;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Saxs;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -29,13 +31,20 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 public class SaxAppCtxConfig {
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, SaxAppContextConfig.class);
+
     public static void parse(final AppModule appModule, final InputSource source) throws SAXException, ParserConfigurationException, IOException {
         Saxs.factory()
             .newSAXParser()
@@ -43,6 +52,17 @@ public class SaxAppCtxConfig {
     }
 
     private static class SaxAppContextConfig extends StackHandler {
+        private static final Collection<String> IMPORT_ALIASES = Arrays.asList("import", "include");
+        private static final Collection<String> APPLICATION_ALIASES = Arrays.asList("appcontext", "application");
+        private static final Collection<String> POJOS_ALIASES = Arrays.asList("pojocontexts", "pojos");
+        private static final Collection<String> POJO_ALIASES = Arrays.asList("pojo");
+        private static final Collection<String> MODULE_ALIASES = Arrays.asList("modulecontext", "module", "beancontexts", "ejbs");
+        private static final Collection<String> BEAN_CONTEXT_ALIASES = Arrays.asList("ejb", "beancontext");
+        private static final Collection<String> CONFIGURATION_ALIASES = Arrays.asList("configuration", "properties", "settings");
+        private static final Collection<String> RESOURCES_ALIASES = Arrays.asList("resources");
+        private static final Collection<String> SERVICE_ALIASES = Arrays.asList("service");
+        private static final Collection<String> RESOURCE_ALIASES = Arrays.asList("resource");
+
         private final AppModule module;
 
         public SaxAppContextConfig(final AppModule appModule) {
@@ -57,7 +77,7 @@ public class SaxAppCtxConfig {
         private class Document extends DefaultHandler {
             @Override
             public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
-                if (localName.equalsIgnoreCase("AppContext")) {
+                if (APPLICATION_ALIASES.contains(localName.toLowerCase())) {
                     push(new Root());
                 } else {
                     throw new IllegalStateException("Unsupported Element: " + localName);
@@ -68,17 +88,51 @@ public class SaxAppCtxConfig {
         private class Root extends DefaultHandler {
             @Override
             public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
-                if (localName.equalsIgnoreCase("Configuration") || localName.equalsIgnoreCase("Properties")) {
+                final String name = localName.toLowerCase();
+                if (CONFIGURATION_ALIASES.contains(name)) {
                     push(new Configuration("", module.getProperties()));
-                } else if (localName.equalsIgnoreCase("BeanContexts")) {
-                    push(new BeanContexts(localName));
-                } else if (localName.equalsIgnoreCase("Pojos")) {
-                    push(new Pojos(localName));
-                } else if (localName.equalsIgnoreCase("Resources")) {
+                } else if (MODULE_ALIASES.contains(name)) {
+                    push(new BeanContexts(attributes.getValue("id")));
+                } else if (POJOS_ALIASES.contains(name)) {
+                    push(new Pojos());
+                } else if (RESOURCES_ALIASES.contains(name)) {
                     push(new ResourcesConfig());
-                    get().startElement(uri, localName, qName, attributes);
+                } else if (IMPORT_ALIASES.contains(name)) {
+                    importFile(attributes.getValue("path"));
+                    push(new DefaultHandler()); // just to keep the stack consistent
                 } else {
                     throw new IllegalStateException("Unsupported Element: " + localName);
+                }
+            }
+
+            private void importFile(final String path) throws SAXException {
+                final File file = new File(path);
+                if (file.exists()) {
+                    try {
+                        parse(module, new InputSource(new FileInputStream(file)));
+                    } catch (ParserConfigurationException e) {
+                        throw new SAXException(e);
+                    } catch (IOException e) {
+                        throw new SAXException(e);
+                    }
+                } else { // try in the classpath
+                    final ClassLoader cl = module.getClassLoader();
+                    if (cl != null) {
+                        final InputStream is = cl.getResourceAsStream(path);
+                        if (is != null) {
+                            try {
+                                parse(module, new InputSource(is));
+                            } catch (ParserConfigurationException e) {
+                                throw new SAXException(e);
+                            } catch (IOException e) {
+                                throw new SAXException(e);
+                            }
+                        } else {
+                            LOGGER.warning("Can't find " + path);
+                        }
+                    } else {
+                        LOGGER.warning("Can't find " + path + ", no classloader for the module " + module);
+                    }
                 }
             }
         }
@@ -113,15 +167,19 @@ public class SaxAppCtxConfig {
         private class Pojos extends DefaultHandler {
             protected final List<PojoConfig> genericConfigs = new ArrayList<PojoConfig>();
 
-            private final String tagName;
+            protected final Collection<String> aliases;
 
-            public Pojos(final String tag) {
-                tagName = tag.substring(0, tag.length() - 1); // remove 's'
+            private Pojos() {
+                this(POJO_ALIASES);
+            }
+
+            protected Pojos(final Collection<String> aliases) {
+                this.aliases = aliases;
             }
 
             @Override
             public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
-                if (localName.equalsIgnoreCase(tagName)) {
+                if (aliases.contains(localName.toLowerCase())) {
                     final PojoConfig beanConfig = newItem();
                     final String id = attributes.getValue("id");
                     if (id == null || "*".equals(id)) {
@@ -156,13 +214,16 @@ public class SaxAppCtxConfig {
         }
 
         private class BeanContexts extends Pojos {
-            public BeanContexts(final String tag) {
-                super(tag);
+            private final String id;
+
+            public BeanContexts(final String id) {
+                super(BEAN_CONTEXT_ALIASES);
+                this.id = id;
             }
 
             @Override
-            protected DefaultHandler childParser(final String id, final PojoConfig beanConfig) {
-                return new BeanContext(id, (BeanContextConfig) beanConfig);
+            protected DefaultHandler childParser(final String beanId, final PojoConfig beanConfig) {
+                return new BeanContext(id, beanId, (BeanContextConfig) beanConfig);
             }
 
             @Override
@@ -178,6 +239,10 @@ public class SaxAppCtxConfig {
                     }
 
                     for (EjbModule ejbModule : module.getEjbModules()) {
+                        if (acceptModule(id, ejbModule)) {
+                            continue;
+                        }
+
                         for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
                             final String name = bean.getEjbName();
 
@@ -215,7 +280,7 @@ public class SaxAppCtxConfig {
 
             @Override
             public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
-                if (localName.equalsIgnoreCase("Configuration")) {
+                if (CONFIGURATION_ALIASES.contains(localName.toLowerCase())) {
                     push(new Configuration("", pojoConfig.getProperties()));
                 } else {
                     throw new IllegalStateException("Unsupported Element: " + localName);
@@ -229,13 +294,20 @@ public class SaxAppCtxConfig {
         }
 
         private class BeanContext extends Pojo {
-            public BeanContext(final String id, final BeanContextConfig beanConfig) {
+            private final String moduleId;
+
+            public BeanContext(final String moduleId, final String id, final BeanContextConfig beanConfig) {
                 super(id, beanConfig);
+                this.moduleId = moduleId;
             }
 
             @Override
             public void endElement(final String uri, final String localName, final String qName) throws SAXException {
                 for (EjbModule ejbModule : module.getEjbModules()) {
+                    if (!acceptModule(moduleId, ejbModule)) {
+                        continue;
+                    }
+
                     final EnterpriseBean bean = ejbModule.getEjbJar().getEnterpriseBeansByEjbName().get(id);
                     if (bean == null) {
                         continue;
@@ -265,13 +337,10 @@ public class SaxAppCtxConfig {
         private class ResourcesConfig extends DefaultHandler {
             @Override
             public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
-                if (localName.equalsIgnoreCase("Resources")) {
-                    return;
-                }
-
-                if (localName.equalsIgnoreCase("Service")) {
+                final String name = localName.toLowerCase();
+                if (SERVICE_ALIASES.contains(name)) {
                     push(new DeclaredServiceElement(module.getServices()));
-                } else if (localName.equalsIgnoreCase("Resource")) {
+                } else if (RESOURCE_ALIASES.contains(name)) {
                     push(new ResourceElement(module.getResources()));
                 } else {
                     throw new IllegalStateException("Unsupported Element: " + localName);
@@ -279,5 +348,9 @@ public class SaxAppCtxConfig {
                 get().startElement(uri, localName, qName, attributes);
             }
         }
+    }
+
+    private static boolean acceptModule(final String id, final EjbModule ejbModule) {
+        return id == null || id.equals(ejbModule.getModuleId());
     }
 }
