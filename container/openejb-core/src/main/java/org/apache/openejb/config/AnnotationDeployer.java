@@ -16,8 +16,6 @@
  */
 package org.apache.openejb.config;
 
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.ext.Provider;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.api.LocalClient;
@@ -194,9 +192,11 @@ import javax.resource.spi.ConnectionDefinitions;
 import javax.resource.spi.Connector;
 import javax.resource.spi.SecurityPermission;
 import javax.resource.spi.work.WorkContext;
+import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.ext.Provider;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.WebServiceRef;
@@ -316,6 +316,10 @@ public class AnnotationDeployer implements DynamicDeployer {
     private final DynamicDeployer preJndiBindingDeployer;
 
     // TODO: explode it in Configuration factory to be able to add other deployer easily between phases
+    public AnnotationDeployer() {
+        this(null);
+    }
+
     public AnnotationDeployer(final DynamicDeployer postDiscoverDeployer) {
         discoverAnnotatedBeans = new DiscoverAnnotatedBeans();
         processAnnotatedBeans = new ProcessAnnotatedBeans();
@@ -327,11 +331,15 @@ public class AnnotationDeployer implements DynamicDeployer {
     }
 
     public AppModule deploy(AppModule appModule) throws OpenEJBException {
+        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(appModule.getClassLoader());
         setModule(appModule);
         try {
             appModule = discoverAnnotatedBeans.deploy(appModule);
             appModule = envEntriesPropertiesDeployer.deploy(appModule);
-            appModule = preJndiBindingDeployer.deploy(appModule);
+            if (preJndiBindingDeployer != null) {
+                appModule = preJndiBindingDeployer.deploy(appModule);
+            }
             appModule = mergeWebappJndiContext.deploy(appModule);
             appModule = builtInEnvironmentEntries.deploy(appModule);
             appModule = processAnnotatedBeans.deploy(appModule);
@@ -339,6 +347,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             appModule = mBeanDeployer.deploy(appModule);
             return appModule;
         } finally {
+            Thread.currentThread().setContextClassLoader(classLoader);
             removeModule();
         }
     }
@@ -351,12 +360,15 @@ public class AnnotationDeployer implements DynamicDeployer {
 
     public WebModule deploy(WebModule webModule) throws OpenEJBException {
         setModule(webModule);
+        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(webModule.getClassLoader());
         try {
             webModule = discoverAnnotatedBeans.deploy(webModule);
             webModule = envEntriesPropertiesDeployer.deploy(webModule);
             webModule = processAnnotatedBeans.deploy(webModule);
             return webModule;
         } finally {
+            Thread.currentThread().setContextClassLoader(classLoader);
             removeModule();
         }
     }
