@@ -34,8 +34,10 @@ public class ParseAppCtxXmlTest {
     public void parse() throws IOException, OpenEJBException {
         final AppModule module = new AppModule(ParseAppCtxXmlTest.class.getClassLoader(), "");
         module.getAltDDs().put("app-ctx.xml", ParseAppCtxXmlTest.class.getClassLoader().getResource("complete-app-ctx.xml"));
-        module.getEjbModules().add(new EjbModule(new EjbJar()));
+        module.getEjbModules().add(ejbModule("1"));
         module.getEjbModules().iterator().next().getEjbJar().addEnterpriseBean(new SingletonBean("CalculatorBean", "CalculatorBean"));
+        module.getEjbModules().add(ejbModule("2"));
+        module.getEjbModules().get(1).getEjbJar().addEnterpriseBean(new SingletonBean("BeanInAModule", "BeanInAModule"));
         new AppContextConfigDeployer().deploy(module);
 
         // Properties
@@ -48,10 +50,17 @@ public class ParseAppCtxXmlTest {
         assertEquals("org.superbiz.MyLogPlugin", module.getProperties().getProperty("org.quartz.plugin.LogPlugin.class"));
         assertEquals("3", module.getProperties().getProperty("1.2"));
 
+        // imported config
+        assertEquals("true", module.getProperties().getProperty("i.m.imported"));
+
         // BeanContext
         final EjbDeployment calculator = module.getEjbModules().iterator().next().getOpenejbJar().getDeploymentsByEjbName().get("CalculatorBean");
         assertEquals("ok", calculator.getProperties().getProperty("no.root"));
         assertEquals("wss4j", calculator.getProperties().getProperty("cxf.jaxws.in-interceptors"));
+
+        // ModuleContext
+        final EjbDeployment beanInAModule = module.getEjbModules().get(1).getOpenejbJar().getDeploymentsByEjbName().get("BeanInAModule");
+        assertEquals("mId", beanInAModule.getProperties().getProperty("module.id"));
 
         // Pojo
         assertEquals("my-feature", module.getPojoConfigurations().get("org.foo.bar").getProperties().getProperty("cxf.jaxrs.features"));
@@ -59,5 +68,11 @@ public class ParseAppCtxXmlTest {
         // Resources
         assertEquals("UsernameToken", module.getServices().iterator().next().getProperties().getProperty("action"));
         assertEquals("notsureitwillconnectthisway", module.getResources().iterator().next().getProperties().getProperty("JdbcUrl"));
+    }
+
+    private EjbModule ejbModule(final String id) {
+        final EjbModule module = new EjbModule(new EjbJar());
+        module.setModuleId(id);
+        return module;
     }
 }
