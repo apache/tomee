@@ -67,7 +67,7 @@ public class LowTypedRealm implements Realm {
 
     private Method findMethod(final Class<?> clazz, final Class<?>[] argTypes) {
         for (Method mtd : clazz.getMethods()) {
-            if (!Modifier.isAbstract(mtd.getModifiers())) {
+            if (Modifier.isAbstract(mtd.getModifiers())) {
                 continue;
             }
 

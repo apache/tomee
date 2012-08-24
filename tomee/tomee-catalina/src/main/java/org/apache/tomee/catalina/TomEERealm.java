@@ -16,18 +16,27 @@
  */
 package org.apache.tomee.catalina;
 
-import java.security.Principal;
-import java.security.cert.X509Certificate;
-import javax.security.auth.callback.CallbackHandler;
+import org.apache.catalina.Realm;
+import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.realm.CombinedRealm;
-import org.apache.catalina.realm.JAASRealm;
+import org.apache.catalina.realm.GenericPrincipal;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
 import org.ietf.jgss.GSSContext;
 
+import java.security.Principal;
+import java.security.cert.X509Certificate;
+
 public class TomEERealm extends CombinedRealm {
+    private static final String INFO = TomEERealm.class.getName() + "/1.0";
+
     private final ThreadLocal<Request> requests = new ThreadLocal<Request>();
+
+    @Override
+    public String getInfo() {
+        return INFO;
+    }
 
     @Override
     public Principal authenticate(String username, String password) {
@@ -49,6 +58,34 @@ public class TomEERealm extends CombinedRealm {
     @Override
     public Principal authenticate(GSSContext gssContext, boolean storeCreds) {
         return logInTomEE(super.authenticate(gssContext, storeCreds));
+    }
+
+    @Override
+    public boolean hasRole(final Wrapper wrapper, final Principal principal, final String rawRole) {
+        String role = rawRole;
+
+        // Check for a role alias defined in a <security-role-ref> element
+        if (wrapper != null) {
+            final String realRole = wrapper.findSecurityReference(role);
+            if (realRole != null) {
+                role = realRole;
+            }
+        }
+
+        if (principal == null || role == null) {
+            return false;
+        }
+
+        if (principal instanceof  GenericPrincipal) {
+            return ((GenericPrincipal) principal).hasRole(role);
+        }
+
+        for (Realm realm : realms) { // when used implicitely (always?) realms.size == 1 so no need of a strategy
+            if (realm.hasRole(wrapper, principal, rawRole)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private Principal logInTomEE(final Principal pcp) {
