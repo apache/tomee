@@ -1,8 +1,36 @@
-Title: Injection Of Env Entry
+Title: Using EnvEntries
 
-*Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
+The `@Resource` annotation can be used to inject several things including
+DataSources, Topics, Queues, etc.  Most of these are container supplied objects.
 
-## Configuration
+It is possible, however, to supply your own values to be injected via an `<env-entry>`
+in your `ejb-jar.xml` or `web.xml` deployment descriptor.  Java EE 6 supported `<env-entry>` types
+are limited to the following:
+
+ - java.lang.String
+ - java.lang.Integer
+ - java.lang.Short
+ - java.lang.Float
+ - java.lang.Double
+ - java.lang.Byte
+ - java.lang.Character
+ - java.lang.Boolean
+ - java.lang.Class
+ - java.lang.Enum (any enum)
+
+See also the [Custom Injection](../custom-injection) exmaple for a TomEE and OpenEJB feature that will let you
+use more than just the above types as well as declare `<env-entry>` items with a plain properties file.
+
+# Using @Resource for basic properties
+
+The use of the `@Resource` annotation isn't limited to setters.  For
+example, this annotation could have been used on the corresponding *field*
+like so:
+
+    @Resource
+    private int maxLineItems;
+
+A fuller example might look like this:
 
     package org.superbiz.injection.enventry;
     
@@ -10,15 +38,6 @@ Title: Injection Of Env Entry
     import javax.ejb.Singleton;
     import java.util.Date;
     
-    /**
-     * This example demostrates the use of the injection of environment entries
-     * using <b>Resource</b> annotation.
-     * <p/>
-     * "EJB Core Contracts and Requirements" specification section 16.4.1.1.
-     *
-     * @version $Rev: 1090807 $ $Date: 2011-04-10 07:12:31 -0700 (Sun, 10 Apr 2011) $
-     */
-    //START SNIPPET: code
     @Singleton
     public class Configuration {
     
@@ -51,34 +70,18 @@ Title: Injection Of Env Entry
         }
     }
 
-## Shape
+Here we have an `@Singleton` bean called `Confuration` that has the following properties (`<env-entry>` items)
 
-    package org.superbiz.injection.enventry;
-    
-    /**
-     * @version $Revision$ $Date$
-     */
-    public enum Shape {
-    
-        CIRCLE,
-        TRIANGLE,
-        SQUARE
-    }
+- String color
+- Shape shape
+- Class strategy
+- long date
 
-## Widget
+## Supplying @Resource values for <env-entry> items in ejb-jar.xml
 
-    package org.superbiz.injection.enventry;
-    
-    /**
-     * Exists to show that any class object can be injected and does
-     * not need to be loaded directly in app code.
-     *
-     * @version $Revision$ $Date$
-     */
-    public class Widget {
-    }
+The values for our `color`, `shape`, `strategy` and `date` properties are supplied via `<env-entry>` elements in the `ejb-jar.xml` file or the
+`web.xml` file like so:
 
-## ejb-jar.xml
 
     <ejb-jar xmlns="http://java.sun.com/xml/ns/javaee" version="3.0" metadata-complete="false">
       <enterprise-beans>
@@ -108,8 +111,64 @@ Title: Injection Of Env Entry
         </session>
       </enterprise-beans>
     </ejb-jar>
-        <!-- END SNIPPET: code -->
+
+
+### Using the @Resource 'name' attribute
+
+Note that `date` was referenced by `name` as:
+
+    @Resource(name = "date")
+    private long date;
+
+When the `@Resource(name)` is used, you do not need to specify the full class name of the bean and can do it briefly like so:
+
+      <env-entry>
+        <description>The name was explicitly set in the annotation so the classname prefix isn't required</description>
+        <env-entry-name>date</env-entry-name>
+        <env-entry-type>java.lang.Long</env-entry-type>
+        <env-entry-value>123456789</env-entry-value>
+      </env-entry>
+
+Conversly, `color` was not referenced by `name`
+
+    @Resource
+    private String color;
+
+When something is not referenced by `name` in the `@Resource` annotation a default name is created.  The format is essentially this:
+
+    bean.getClass() + "/" + field.getName()
+
+So the default `name` of the above `color` property ends up being `org.superbiz.injection.enventry.Configuration/color`.  This is the name
+we must use when we attempt to decalre a value for it in xml.
+
+      <env-entry>
+        <env-entry-name>org.superbiz.injection.enventry.Configuration/color</env-entry-name>
+        <env-entry-type>java.lang.String</env-entry-type>
+        <env-entry-value>orange</env-entry-value>
+      </env-entry>
+
+### @Resource and Enum (Enumerations)
+
+The `shape` field is actually a custom Java Enum type
+
+    package org.superbiz.injection.enventry;
+
+    public enum Shape {
     
+        CIRCLE,
+        TRIANGLE,
+        SQUARE
+    }
+
+As of Java EE 6, java.lang.Enum types are allowed as `<env-entry>` items.  Declaring one in xml is done using the actual enum's class name like so:
+
+          <env-entry>
+            <env-entry-name>org.superbiz.injection.enventry.Configuration/shape</env-entry-name>
+            <env-entry-type>org.superbiz.injection.enventry.Shape</env-entry-type>
+            <env-entry-value>TRIANGLE</env-entry-value>
+          </env-entry>
+
+Do not use `<env-entry-type>java.lang.Enum</env-entry-type>` or it will not work!
 
 ## ConfigurationTest
 
@@ -121,7 +180,6 @@ Title: Injection Of Env Entry
     import javax.naming.Context;
     import java.util.Date;
     
-    //START SNIPPET: code
     public class ConfigurationTest extends TestCase {
     
     
