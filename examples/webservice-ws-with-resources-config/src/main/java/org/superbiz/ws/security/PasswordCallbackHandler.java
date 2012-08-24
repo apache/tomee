@@ -24,12 +24,20 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import java.io.IOException;
 
 public class PasswordCallbackHandler implements CallbackHandler {
+    private static boolean called = false;
+
     @Override
     public void handle(final Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+        called = true;
+
         final WSPasswordCallback pc = (WSPasswordCallback) callbacks[0];
         if (pc.getIdentifier().equals("openejb")) {
             System.out.println("logged openejb user");
             pc.setPassword("tomee");
         }
+    }
+
+    public static boolean wasCalled() {
+        return called;
     }
 }

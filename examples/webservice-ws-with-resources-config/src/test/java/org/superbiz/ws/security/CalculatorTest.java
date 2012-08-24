@@ -37,6 +37,7 @@ import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
 public class CalculatorTest {
@@ -93,5 +94,8 @@ public class CalculatorTest {
         }
 
         container.close();
+
+        // valid it passed because all was fine and not because the server config was not here
+        assertTrue(PasswordCallbackHandler.wasCalled());
     }
 }
