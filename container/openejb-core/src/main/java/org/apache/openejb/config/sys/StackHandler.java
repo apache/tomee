@@ -9,6 +9,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class StackHandler extends DefaultHandler {
+    private static final boolean DEBUG = Boolean.getBoolean("openejb.sax.debug");
+
     private final List<DefaultHandler> handlers = new LinkedList<DefaultHandler>();
 
     protected DefaultHandler get() {
@@ -20,18 +22,37 @@ public class StackHandler extends DefaultHandler {
     }
 
     protected void push(DefaultHandler handler) {
+        if (DEBUG) {
+            for (int i = 0; i < handlers.size(); i++) {
+                System.out.print("  ");
+            }
+            System.out.println("+ " + handler);
+        }
         handlers.add(0, handler);
     }
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+        if (DEBUG) {
+            for (int i = 0; i < handlers.size(); i++) {
+                System.out.print("  ");
+            }
+            System.out.println("> " + get());
+        }
         get().startElement(uri, localName, qName, attributes);
     }
 
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         get().endElement(uri, localName, qName);
-        pop();
+        if (!DEBUG) {
+            pop();
+        } else {
+            for (int i = 0; i < handlers.size(); i++) {
+                System.out.print("  ");
+            }
+            System.out.println(" - " + pop());
+        }
     }
 
     @Override

@@ -30,8 +30,16 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+// this deployer is able to be called multiple times
 public class AppContextConfigDeployer implements DynamicDeployer {
     private static final String CONFIG_NAME = "app-ctx.xml";
+
+    private SaxAppCtxConfig.Phase currentPhase = SaxAppCtxConfig.Phase.BEFORE_SCANNING;
+
+    public AppContextConfigDeployer currentPhase(final SaxAppCtxConfig.Phase currentPhase) {
+        this.currentPhase = currentPhase;
+        return this;
+    }
 
     @Override
     public AppModule deploy(final AppModule appModule) throws OpenEJBException {
@@ -58,11 +66,11 @@ public class AppContextConfigDeployer implements DynamicDeployer {
         return appModule;
     }
 
-    private static void configure(final AppModule appModule, final URL url) throws OpenEJBException {
+    private void configure(final AppModule appModule, final URL url) throws OpenEJBException {
         InputStream is = null;
         try {
             is = IO.read(url);
-            SaxAppCtxConfig.parse(appModule, new InputSource(is)); // work directly on the module, avoid temp objects
+            SaxAppCtxConfig.parse(appModule, new InputSource(is), currentPhase); // work directly on the module, avoid temp objects
         } catch (SAXException e) {
             throw new OpenEJBException("can't parse " + url.toExternalForm(), e);
         } catch (ParserConfigurationException e) {

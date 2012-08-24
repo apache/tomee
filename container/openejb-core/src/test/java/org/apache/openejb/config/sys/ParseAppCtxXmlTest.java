@@ -34,11 +34,12 @@ public class ParseAppCtxXmlTest {
     public void parse() throws IOException, OpenEJBException {
         final AppModule module = new AppModule(ParseAppCtxXmlTest.class.getClassLoader(), "");
         module.getAltDDs().put("app-ctx.xml", ParseAppCtxXmlTest.class.getClassLoader().getResource("complete-app-ctx.xml"));
+        new AppContextConfigDeployer().currentPhase(SaxAppCtxConfig.Phase.BEFORE_SCANNING).deploy(module);
         module.getEjbModules().add(ejbModule("1"));
         module.getEjbModules().iterator().next().getEjbJar().addEnterpriseBean(new SingletonBean("CalculatorBean", "CalculatorBean"));
         module.getEjbModules().add(ejbModule("2"));
         module.getEjbModules().get(1).getEjbJar().addEnterpriseBean(new SingletonBean("BeanInAModule", "BeanInAModule"));
-        new AppContextConfigDeployer().deploy(module);
+        new AppContextConfigDeployer().currentPhase(SaxAppCtxConfig.Phase.AFTER_SACNNING).deploy(module);
 
         // Properties
         assertEquals("dummy", module.getProperties().getProperty("foo.bar"));

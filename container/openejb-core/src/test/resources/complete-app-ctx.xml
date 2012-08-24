@@ -36,6 +36,10 @@
     </org.quartz>
     1.2 = 3
   </Configuration>
+  <EnvEntries>
+    <EnvEntry key="eek">eev</EnvEntry>
+    <EnvEntry key="jee">openejb</EnvEntry>
+  </EnvEntries>
   <BeanContexts>
     <BeanContext id="CalculatorBean">
       <Configuration>

@@ -42,6 +42,18 @@ public class EnvEntriesPropertiesDeployer implements DynamicDeployer {
 
     private static final Logger log = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, EnvEntriesPropertiesDeployer.class);
 
+    public static final String ENV_ENTRY_PROPERTIES = "env-entry.properties";
+
+    private final String descriptorName;
+
+    public EnvEntriesPropertiesDeployer() {
+        this(ENV_ENTRY_PROPERTIES);
+    }
+
+    public EnvEntriesPropertiesDeployer(final String descriptor) {
+        descriptorName = descriptor;
+    }
+
     public AppModule deploy(AppModule appModule) throws OpenEJBException {
 
         // ApplicationClient META-INF/env-entries.properties
@@ -118,14 +130,14 @@ public class EnvEntriesPropertiesDeployer implements DynamicDeployer {
 
     @SuppressWarnings({"unchecked"})
     private Map<String, String> getEnvEntries(DeploymentModule module) {
-        final Object value = module.getAltDDs().get("env-entries.properties");
+        final Object value = module.getAltDDs().get(descriptorName);
         if (value instanceof Map) {
             return (Map<String, String>) value;
         }
 
         URL propsUrl = (URL) value;
         if (propsUrl == null) {
-            propsUrl = (URL) module.getAltDDs().get("env-entry.properties");
+            propsUrl = (URL) module.getAltDDs().get(descriptorName);
         }
         if (propsUrl == null) return Collections.emptyMap();
         try {

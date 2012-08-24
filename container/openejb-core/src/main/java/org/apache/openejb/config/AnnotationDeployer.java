@@ -313,12 +313,15 @@ public class AnnotationDeployer implements DynamicDeployer {
     private final MBeanDeployer mBeanDeployer;
     private final BuiltInEnvironmentEntries builtInEnvironmentEntries;
     private final MergeWebappJndiContext mergeWebappJndiContext;
+    private final DynamicDeployer preJndiBindingDeployer;
 
-    public AnnotationDeployer() {
+    // TODO: explode it in Configuration factory to be able to add other deployer easily between phases
+    public AnnotationDeployer(final DynamicDeployer postDiscoverDeployer) {
         discoverAnnotatedBeans = new DiscoverAnnotatedBeans();
         processAnnotatedBeans = new ProcessAnnotatedBeans();
         builtInEnvironmentEntries = new BuiltInEnvironmentEntries();
         envEntriesPropertiesDeployer = new EnvEntriesPropertiesDeployer();
+        preJndiBindingDeployer = postDiscoverDeployer;
         mBeanDeployer = new MBeanDeployer();
         mergeWebappJndiContext = new MergeWebappJndiContext();
     }
@@ -328,6 +331,7 @@ public class AnnotationDeployer implements DynamicDeployer {
         try {
             appModule = discoverAnnotatedBeans.deploy(appModule);
             appModule = envEntriesPropertiesDeployer.deploy(appModule);
+            appModule = preJndiBindingDeployer.deploy(appModule);
             appModule = mergeWebappJndiContext.deploy(appModule);
             appModule = builtInEnvironmentEntries.deploy(appModule);
             appModule = processAnnotatedBeans.deploy(appModule);
