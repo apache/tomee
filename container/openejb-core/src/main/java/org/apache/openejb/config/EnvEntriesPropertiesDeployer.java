@@ -42,7 +42,7 @@ public class EnvEntriesPropertiesDeployer implements DynamicDeployer {
 
     private static final Logger log = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, EnvEntriesPropertiesDeployer.class);
 
-    public static final String ENV_ENTRY_PROPERTIES = "env-entry.properties";
+    public static final String ENV_ENTRY_PROPERTIES = "env-entries.properties";
 
     private final String descriptorName;
 
