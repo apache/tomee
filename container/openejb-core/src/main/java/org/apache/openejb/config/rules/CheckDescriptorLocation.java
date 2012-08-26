@@ -29,6 +29,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
+import static org.apache.openejb.util.CollectionsUtil.safe;
+
 
 public class CheckDescriptorLocation extends ValidationBase {
 
@@ -40,13 +42,13 @@ public class CheckDescriptorLocation extends ValidationBase {
 
         List<String> validated = new ArrayList<String>();
 
-        for(WebModule webModule:appModule.getWebModules())
+        for(WebModule webModule: safe(appModule.getWebModules()))
         {
             validated.add(webModule.getModuleId());
             validateWebModule(webModule);
         }
 
-        for(EjbModule ejbModule:appModule.getEjbModules())
+        for(EjbModule ejbModule: safe(appModule.getEjbModules()))
         {
             //without this check, CheckDescriptorLocationTest#testWarWithDescriptorInRoot() would fail
             if(!validated.contains(ejbModule.getModuleId()))
@@ -56,6 +58,9 @@ public class CheckDescriptorLocation extends ValidationBase {
         }
 
     }
+
+
+
 
     private void validateWebModule(DeploymentModule webModule) {
         URL baseUrl = null;
