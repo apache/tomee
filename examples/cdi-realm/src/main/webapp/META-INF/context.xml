@@ -1,0 +1,3 @@
+<Context>
+  <Realm cdi="true" className="org.apache.tomee.catalina.realm.LazyRealm" realmClass="org.superbiz.AuthBean" />
+</Context>
