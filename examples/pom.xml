@@ -47,6 +47,7 @@
     <module>cdi-produces-disposes</module>
     <module>cdi-produces-field</module>
     <module>cdi-query</module>
+    <module>cdi-realm</module>
     <module>change-jaxws-url</module>
     <module>component-interfaces</module>
     <module>client-resource-lookup-preview</module>
