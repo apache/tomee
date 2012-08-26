@@ -988,7 +988,13 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         if (realm != null && !(realm instanceof TomEERealm)
                 && (standardContext.getParent() == null
                 || (standardContext.getParent() != null && !realm.equals(standardContext.getParent().getRealm())))) {
-            standardContext.setRealm(tomeeRealm(realm));
+            final ClassLoader originalLoader = Thread.currentThread().getContextClassLoader();
+            Thread.currentThread().setContextClassLoader(standardContext.getLoader().getClassLoader());
+            try {
+                standardContext.setRealm(tomeeRealm(realm));
+            } finally {
+                Thread.currentThread().setContextClassLoader(originalLoader);
+            }
         }
 
         // if appInfo is null this is a failed deployment... just ignore

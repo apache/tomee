@@ -72,9 +72,14 @@ public class LazyRealm implements Realm {
                 if (delegate == null) {
                     final Object instance;
 
+                    ClassLoader cl = Thread.currentThread().getContextClassLoader();
+                    if (container != null && container.getLoader() != null && container.getLoader().getClassLoader() != null) {
+                        cl = container.getLoader().getClassLoader();
+                    }
+
                     final Class<?> clazz;
                     try {
-                        clazz = Thread.currentThread().getContextClassLoader().loadClass(realmClass);
+                        clazz = cl.loadClass(realmClass);
                     } catch (ClassNotFoundException e) {
                         throw new TomEERuntimeException(e);
                     }
