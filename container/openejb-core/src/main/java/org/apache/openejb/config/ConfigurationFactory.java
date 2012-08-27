@@ -943,7 +943,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             }
 
 
-            final String providerType = service.getClass().getSimpleName();
+            final String providerType = getProviderType(service);
 
             ServiceProvider provider = resolveServiceProvider(service, infoType);
 
@@ -969,14 +969,16 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
             final Properties overrides = trim(getSystemProperties(service.getId(), provider.getService()));
 
-            trim(service.getProperties());
+            final Properties serviceProperties = service.getProperties();
+
+            trim(serviceProperties);
 
             trim(provider.getProperties());
 
             logger.info("configureService.configuring", service.getId(), provider.getService(), provider.getId());
 
             if (logger.isDebugEnabled()) {
-                for (final Map.Entry<Object, Object> entry : service.getProperties().entrySet()) {
+                for (final Map.Entry<Object, Object> entry : serviceProperties.entrySet()) {
                     final Object key = entry.getKey();
                     Object value = entry.getValue();
 
@@ -1002,11 +1004,11 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             final Properties props = new SuperProperties();
 
             // weird hack but sometimes we don't want default values when we want null for instance
-            if (service.getProperties() == null || "false".equals(service.getProperties().getProperty(IGNORE_DEFAULT_VALUES_PROP, "false"))) {
+            if (serviceProperties == null || "false".equals(serviceProperties.getProperty(IGNORE_DEFAULT_VALUES_PROP, "false"))) {
                 props.putAll(provider.getProperties());
             }
 
-            props.putAll(service.getProperties());
+            props.putAll(serviceProperties);
             props.putAll(overrides);
 
             props.remove(IGNORE_DEFAULT_VALUES_PROP);
@@ -1048,6 +1050,19 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
     }
 
+    private static String getProviderType(org.apache.openejb.config.Service service) {
+
+        Class<?> clazz = service.getClass();
+
+        if (AbstractService.class.isAssignableFrom(clazz)) {
+            while (!clazz.getSuperclass().equals(AbstractService.class)) {
+                clazz = clazz.getSuperclass();
+            }
+        }
+
+        return clazz.getSimpleName();
+    }
+
     private static Properties trim(final Properties properties) {
         for (final Map.Entry<Object, Object> entry : properties.entrySet()) {
             final Object o = entry.getValue();
@@ -1078,7 +1093,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
             final ServiceProvider provider = new ServiceProvider();
             provider.setId(service.getId());
-            provider.setService(service.getClass().getSimpleName());
+            provider.setService(getProviderType(service));
             provider.getTypes().add(service.getType());
             provider.setClassName(service.getClassName());
             provider.setConstructor(service.getConstructor());
@@ -1091,7 +1106,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
 
         if (service.getType() != null) {
-            return ServiceUtils.getServiceProviderByType(service.getClass().getSimpleName(), service.getType());
+            return ServiceUtils.getServiceProviderByType(getProviderType(service), service.getType());
         }
 
         if (service.getId() != null) {

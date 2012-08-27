@@ -100,7 +100,7 @@ public class Archives {
     }
 
 
-    public static File jarArchive(Map<String, String> entries, String archiveNamePrefix, Class... classes) throws IOException {
+    public static File jarArchive(Map<String, ?> entries, String archiveNamePrefix, Class... classes) throws IOException {
 
         ClassLoader loader = Archives.class.getClassLoader();
 
@@ -131,11 +131,30 @@ public class Archives {
             out.closeEntry();
         }
 
-        for (Map.Entry<String, String> entry : entries.entrySet()) {
+        for (Map.Entry<String, ?> entry : entries.entrySet()) {
 
             out.putNextEntry(new ZipEntry(entry.getKey()));
 
-            out.write(entry.getValue().getBytes());
+            final Object value = entry.getValue();
+
+            if (value instanceof String) {
+
+                String s = (String) value;
+                out.write(s.getBytes());
+
+            } else if (value instanceof File) {
+
+                final File file = (File) value;
+                if (file.isDirectory()) throw new IllegalArgumentException(entry.getKey() + " is a directory, not a file.");
+                IO.copy(file, out);
+
+            } else if (value instanceof URL) {
+
+                IO.copy((URL)value, out);
+
+            }
+
+            out.closeEntry();
         }
 
         // Complete the ZIP file
