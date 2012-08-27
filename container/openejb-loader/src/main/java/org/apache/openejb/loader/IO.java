@@ -246,6 +246,15 @@ public class IO {
         }
     }
 
+    public static void copy(URL from, OutputStream to) throws IOException {
+        final InputStream read = read(from);
+        try {
+            copy(read, to);
+        } finally {
+            close(read);
+        }
+    }
+
     public static void copy(InputStream from, File to) throws IOException {
         final OutputStream write = write(to);
         try {
