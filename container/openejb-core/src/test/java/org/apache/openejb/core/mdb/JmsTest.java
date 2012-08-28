@@ -26,6 +26,7 @@ import org.apache.geronimo.connector.work.WorkContextHandler;
 import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.resource.activemq.ActiveMQResourceAdapter;
+import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.NetworkUtil;
 
 import javax.jms.*;
@@ -37,6 +38,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class JmsTest extends TestCase {
     protected static final String REQUEST_QUEUE_NAME = "request";
@@ -58,7 +60,7 @@ public class JmsTest extends TestCase {
         // initialize properties
         ra.setServerUrl(brokerAddress);
         ra.setBrokerXmlConfig(brokerXmlConfig);
-        ra.setStartupTimeout(10000);
+        ra.setStartupTimeout(new Duration(10, TimeUnit.SECONDS));
 
         // create a thead pool for ActiveMQ
         final Executor threadPool = Executors.newFixedThreadPool(30);

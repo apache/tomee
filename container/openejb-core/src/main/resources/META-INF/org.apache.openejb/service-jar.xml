@@ -525,22 +525,48 @@
             service="TransactionManager"
             types="TransactionManager"
             factory-name="create"
-            constructor="defaultTransactionTimeoutSeconds, TxRecovery, tmId, bufferClassName, bufferSizeKb, checksumEnabled, adler32Checksum, flushSleepTimeMilliseconds, logFileDir, logFileExt, logFileName, maxBlocksPerFile, maxBuffers, maxLogFiles, minBuffers, threadsWaitingForceThreshold"
+            constructor="defaultTransactionTimeoutSeconds, defaultTransactionTimeout, TxRecovery, tmId, bufferClassName, bufferSizeKb, checksumEnabled, adler32Checksum, flushSleepTimeMilliseconds, flushSleepTime, logFileDir, logFileExt, logFileName, maxBlocksPerFile, maxBuffers, maxLogFiles, minBuffers, threadsWaitingForceThreshold"
             class-name="org.apache.openejb.resource.GeronimoTransactionManagerFactory">
-           defaultTransactionTimeoutSeconds 600
-           TxRecovery false
-           bufferSizeKb 32
-           checksumEnabled true
-           adler32Checksum true
-           flushSleepTimeMilliseconds 50
-           logFileDir txlog
-           logFileExt log
-           logFileName howl
-           maxBlocksPerFile -1
-           maxBuffers 0
-           maxLogFiles 2
-           minBuffers 4
-           threadsWaitingForceThreshold -1
+      defaultTransactionTimeout 10 minutes
+
+      # When set to true, Howl logging is enabled
+      TxRecovery false
+
+      # Requires TxRecovery
+      bufferSizeKb 32
+
+      # Requires TxRecovery
+      checksumEnabled true
+
+      # Requires TxRecovery
+      adler32Checksum true
+
+      # Requires TxRecovery
+      flushSleepTime 50 Milliseconds
+
+      # Requires TxRecovery
+      logFileDir txlog
+
+      # Requires TxRecovery
+      logFileExt log
+
+      # Requires TxRecovery
+      logFileName howl
+
+      # Requires TxRecovery
+      maxBlocksPerFile -1
+
+      # Requires TxRecovery
+      maxBuffers 0
+
+      # Requires TxRecovery
+      maxLogFiles 2
+
+      # Requires TxRecovery
+      minBuffers 4
+
+      # Requires TxRecovery
+      threadsWaitingForceThreshold -1
     </ServiceProvider>
 
   <!--
@@ -553,7 +579,7 @@
           service="Resource"
           types="javax.sql.DataSource, DataSource"
           factory-name="create"
-          constructor="ServiceId, JtaManaged, JdbcDriver, Definition"
+          constructor="ServiceId, JtaManaged, JdbcDriver, Definition, MaxWaitTime, TimeBetweenEvictionRuns, MinEvictableIdleTime"
           class-name="org.apache.openejb.resource.jdbc.DataSourceFactory">
     ServiceId
 
@@ -655,7 +681,7 @@
     # to be returned before throwing an exception, or -1 to wait
     # indefinitely.
 
-    MaxWait	-1
+    MaxWaitTime	-1 millisecond
 
     # The SQL query that will be used to validate connections from
     # this pool before returning them to the caller. If specified,
@@ -697,7 +723,7 @@
     # connection evictor thread. When set to a negative number, no
     # idle connection evictor thread will be run.
 
-    TimeBetweenEvictionRunsMillis	-1
+    TimeBetweenEvictionRuns	-1 millisecond
 
     # The number of connectionss to examine during each run of the
     # idle connection evictor thread (if any).
@@ -708,7 +734,7 @@
     # pool before it is eligable for eviction by the idle
     # connection evictor (if any).
 
-    MinEvictableIdleTimeMillis	1800000
+    MinEvictableIdleTime	30 minutes
 
     # If true, a statement pool is created for each Connection and
     # PreparedStatements created by one of the following methods are
@@ -759,7 +785,7 @@
           service="Resource"
           types="javax.sql.DataSource, DataSource"
           factory-name="create"
-          constructor="ServiceId, JtaManaged, JdbcDriver, Definition"
+          constructor="ServiceId, JtaManaged, JdbcDriver, Definition, MaxWaitTime, TimeBetweenEvictionRuns, MinEvictableIdleTime"
           class-name="org.apache.openejb.resource.jdbc.DataSourceFactory">
     ServiceId
 
@@ -848,7 +874,7 @@
     # to be returned before throwing an exception, or -1 to wait
     # indefinitely.
 
-    MaxWait	-1
+    MaxWaitTime	-1 millisecond
 
     # The SQL query that will be used to validate connections from
     # this pool before returning them to the caller. If specified,
@@ -890,7 +916,7 @@
     # connection evictor thread. When set to a negative number, no
     # idle connection evictor thread will be run.
 
-    TimeBetweenEvictionRunsMillis	-1
+    TimeBetweenEvictionRuns	-1 millisecond
 
     # The number of connectionss to examine during each run of the
     # idle connection evictor thread (if any).
@@ -901,7 +927,7 @@
     # pool before it is eligable for eviction by the idle
     # connection evictor (if any).
 
-    MinEvictableIdleTimeMillis	1800000
+    MinEvictableIdleTime	30 minutes
 
     # If true, a statement pool is created for each Connection and
     # PreparedStatements created by one of the following methods are
@@ -965,8 +991,8 @@
     # DataSource for persistence messages
     DataSource Default Unmanaged JDBC Database
 
-    # How long to wait for broker startup in milliseconds
-    StartupTimeout 10000
+    # How long to wait for broker startup
+    StartupTimeout 10 seconds
 
   </ServiceProvider>
 
@@ -989,10 +1015,10 @@
     PoolMinSize 0
 
     # Maximum amount of time to wait for a connection
-    ConnectionMaxWaitMilliseconds 5000
+    ConnectionMaxWaitTime 5 seconds
 
     # Maximum amount of time a connection can be idle before being reclaimed
-    ConnectionMaxIdleMinutes 15
+    ConnectionMaxIdleTime 15 Minutes
   </ServiceProvider>
 
   <ServiceProvider

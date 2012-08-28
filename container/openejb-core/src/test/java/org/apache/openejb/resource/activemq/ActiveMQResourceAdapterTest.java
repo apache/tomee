@@ -18,7 +18,10 @@
 package org.apache.openejb.resource.activemq;
 
 import junit.framework.TestCase;
+import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.NetworkUtil;
+
+import java.util.concurrent.TimeUnit;
 
 public class ActiveMQResourceAdapterTest extends TestCase {
     public void test() throws Exception {
@@ -27,7 +30,7 @@ public class ActiveMQResourceAdapterTest extends TestCase {
 
         String brokerAddress = NetworkUtil.getLocalAddress("broker:(tcp://", ")?useJmx=false");
         resourceAdapter.setBrokerXmlConfig(brokerAddress);
-        resourceAdapter.setStartupTimeout(10000);
+        resourceAdapter.setStartupTimeout(new Duration(10, TimeUnit.SECONDS));
 
         //    DataSource Default Unmanaged JDBC Database
         //

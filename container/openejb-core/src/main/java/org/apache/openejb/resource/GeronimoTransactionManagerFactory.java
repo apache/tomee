@@ -25,8 +25,10 @@ import org.apache.geronimo.transaction.manager.XidFactory;
 import org.apache.geronimo.transaction.manager.XidFactoryImpl;
 import org.apache.geronimo.transaction.manager.WrapperNamedXAResource;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.Duration;
 
 import javax.transaction.xa.XAResource;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @version $Rev$ $Date$
@@ -36,14 +38,16 @@ public class GeronimoTransactionManagerFactory {
     private static final byte[] DEFAULT_TM_ID = new byte[]{71, 84, 77, 73, 68};
     private static final int DEFAULT_BUFFER_SIZE = 32;
 
-    public static GeronimoTransactionManager create(int defaultTransactionTimeoutSeconds,
+    public static GeronimoTransactionManager create(Integer defaultTransactionTimeoutSeconds, // Deprecated, use defaultTransactionTimeout
+                                                    Duration defaultTransactionTimeout,
                                                     boolean txRecovery,
                                                     byte[] tmId,
                                                     String bufferClassName,
                                                     int bufferSizeKb,
                                                     boolean checksumEnabled,
                                                     boolean adler32Checksum,
-                                                    int flushSleepTimeMilliseconds,
+                                                    Integer flushSleepTimeMilliseconds, // Deprecated, use flushSleepTime
+                                                    Duration flushSleepTime,
                                                     String logFileDir,
                                                     String logFileExt,
                                                     String logFileName,
@@ -52,6 +56,21 @@ public class GeronimoTransactionManagerFactory {
                                                     int maxLogFiles,
                                                     int minBuffers,
                                                     int threadsWaitingForceThreshold) throws Exception {
+
+        if (flushSleepTime.getUnit() == null) {
+            flushSleepTime.setUnit(TimeUnit.MILLISECONDS);
+        }
+        if (flushSleepTimeMilliseconds == null) {
+            flushSleepTimeMilliseconds = (int) TimeUnit.MILLISECONDS.convert(flushSleepTime.getTime(), flushSleepTime.getUnit());
+        }
+
+        if (defaultTransactionTimeout.getUnit() == null) {
+            defaultTransactionTimeout.setUnit(TimeUnit.SECONDS);
+        }
+        if (defaultTransactionTimeoutSeconds == null) {
+            defaultTransactionTimeoutSeconds = (int) TimeUnit.SECONDS.convert(defaultTransactionTimeout.getTime(), defaultTransactionTimeout.getUnit());
+        }
+
         XidFactory xidFactory = null;
         TransactionLog txLog = null;
         if (txRecovery) {

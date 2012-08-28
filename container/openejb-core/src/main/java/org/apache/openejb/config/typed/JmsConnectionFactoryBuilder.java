@@ -36,10 +36,12 @@ public class JmsConnectionFactoryBuilder extends Resource {
     private int poolMaxSize = 10;
     @XmlAttribute
     private int poolMinSize = 0;
+    @XmlJavaTypeAdapter(DurationAdapter.class)
     @XmlAttribute
-    private int connectionMaxWaitMilliseconds = 5000;
+    private org.apache.openejb.util.Duration connectionMaxWaitTime = org.apache.openejb.util.Duration.parse("5 seconds");
+    @XmlJavaTypeAdapter(DurationAdapter.class)
     @XmlAttribute
-    private int connectionMaxIdleMinutes = 15;
+    private org.apache.openejb.util.Duration connectionMaxIdleTime = org.apache.openejb.util.Duration.parse("15 Minutes");
 
     public JmsConnectionFactoryBuilder() {
         setClassName("org.apache.activemq.ra.ActiveMQManagedConnectionFactory");
@@ -105,30 +107,46 @@ public class JmsConnectionFactoryBuilder extends Resource {
         return poolMinSize;
     }
 
-    public JmsConnectionFactoryBuilder withConnectionMaxWaitMilliseconds(int connectionMaxWaitMilliseconds) {
-        this.connectionMaxWaitMilliseconds = connectionMaxWaitMilliseconds;
+    public JmsConnectionFactoryBuilder withConnectionMaxWaitTime(org.apache.openejb.util.Duration connectionMaxWaitTime) {
+        this.connectionMaxWaitTime = connectionMaxWaitTime;
         return this;
     }
 
-    public void setConnectionMaxWaitMilliseconds(int connectionMaxWaitMilliseconds) {
-        this.connectionMaxWaitMilliseconds = connectionMaxWaitMilliseconds;
+    public void setConnectionMaxWaitTime(org.apache.openejb.util.Duration connectionMaxWaitTime) {
+        this.connectionMaxWaitTime = connectionMaxWaitTime;
     }
 
-    public int getConnectionMaxWaitMilliseconds() {
-        return connectionMaxWaitMilliseconds;
+    public org.apache.openejb.util.Duration getConnectionMaxWaitTime() {
+        return connectionMaxWaitTime;
     }
 
-    public JmsConnectionFactoryBuilder withConnectionMaxIdleMinutes(int connectionMaxIdleMinutes) {
-        this.connectionMaxIdleMinutes = connectionMaxIdleMinutes;
+    public JmsConnectionFactoryBuilder withConnectionMaxWaitTime(long time, TimeUnit unit) {
+        return withConnectionMaxWaitTime(new Duration(time, unit));
+    }
+
+    public void setConnectionMaxWaitTime(long time, TimeUnit unit) {
+        setConnectionMaxWaitTime(new Duration(time, unit));
+    }
+
+    public JmsConnectionFactoryBuilder withConnectionMaxIdleTime(org.apache.openejb.util.Duration connectionMaxIdleTime) {
+        this.connectionMaxIdleTime = connectionMaxIdleTime;
         return this;
     }
 
-    public void setConnectionMaxIdleMinutes(int connectionMaxIdleMinutes) {
-        this.connectionMaxIdleMinutes = connectionMaxIdleMinutes;
+    public void setConnectionMaxIdleTime(org.apache.openejb.util.Duration connectionMaxIdleTime) {
+        this.connectionMaxIdleTime = connectionMaxIdleTime;
     }
 
-    public int getConnectionMaxIdleMinutes() {
-        return connectionMaxIdleMinutes;
+    public org.apache.openejb.util.Duration getConnectionMaxIdleTime() {
+        return connectionMaxIdleTime;
+    }
+
+    public JmsConnectionFactoryBuilder withConnectionMaxIdleTime(long time, TimeUnit unit) {
+        return withConnectionMaxIdleTime(new Duration(time, unit));
+    }
+
+    public void setConnectionMaxIdleTime(long time, TimeUnit unit) {
+        setConnectionMaxIdleTime(new Duration(time, unit));
     }
 
     public Properties getProperties() {

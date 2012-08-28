@@ -23,6 +23,7 @@ import org.apache.openejb.resource.jdbc.dbcp.DbcpDataSourceCreator;
 import org.apache.openejb.resource.jdbc.logging.LoggingSqlDataSource;
 import org.apache.openejb.resource.jdbc.pool.DataSourceCreator;
 import org.apache.openejb.resource.jdbc.pool.DefaultDataSourceCreator;
+import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.xbean.recipe.ObjectRecipe;
@@ -36,6 +37,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @version $Rev$ $Date$
@@ -56,9 +58,12 @@ public class DataSourceFactory {
         put("bonecp", "org.apache.openejb.bonecp.BoneCPDataSourceCreator"); // bonecp
     }};
 
-    public static DataSource create(final String name, final boolean configuredManaged, final Class impl, final String definition) throws IllegalAccessException, InstantiationException, IOException {
+    public static DataSource create(final String name, final boolean configuredManaged, final Class impl, final String definition, Duration maxWaitTime, Duration timeBetweenEvictionRuns, Duration minEvictableIdleTime) throws IllegalAccessException, InstantiationException, IOException {
         final Properties properties = asProperties(definition);
 
+        convert(properties, maxWaitTime, "maxWaitTime", "maxWait");
+        convert(properties, timeBetweenEvictionRuns, "timeBetweenEvictionRuns", "timeBetweenEvictionRunsMillis");
+        convert(properties, minEvictableIdleTime, "minEvictableIdleTime", "minEvictableIdleTimeMillis");
         // these can be added and are managed by OpenEJB and not the DataSource itself
         properties.remove("Definition");
         properties.remove("JtaManaged");
@@ -121,6 +126,22 @@ public class DataSourceFactory {
         }
 
         return ds;
+    }
+
+    private static void convert(Properties properties, Duration duration, String key, String oldKey) {
+        properties.remove(key);
+
+        // If someone is using the legacy property, use it
+        if (properties.contains(oldKey)) return;
+        properties.remove(oldKey);
+
+        if (duration == null) return;
+        if (duration.getUnit() == null) {
+            duration.setUnit(TimeUnit.MILLISECONDS);
+        }
+
+        final long milliseconds = TimeUnit.MILLISECONDS.convert(duration.getTime(), duration.getUnit());
+        properties.put(oldKey, milliseconds + "");
     }
 
     public static DataSourceCreator creator(final Object creatorName, boolean willBeProxied) {

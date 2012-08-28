@@ -58,8 +58,9 @@ public class DataSourceBuilder extends Resource {
     private int maxIdle = 20;
     @XmlAttribute
     private int minIdle = 0;
+    @XmlJavaTypeAdapter(DurationAdapter.class)
     @XmlAttribute
-    private int maxWait = -1;
+    private org.apache.openejb.util.Duration maxWaitTime = org.apache.openejb.util.Duration.parse("-1 millisecond");
     @XmlAttribute
     private String validationQuery = null;
     @XmlAttribute
@@ -68,12 +69,14 @@ public class DataSourceBuilder extends Resource {
     private boolean testOnReturn = false;
     @XmlAttribute
     private boolean testWhileIdle = false;
+    @XmlJavaTypeAdapter(DurationAdapter.class)
     @XmlAttribute
-    private long timeBetweenEvictionRunsMillis = -1;
+    private org.apache.openejb.util.Duration timeBetweenEvictionRuns = org.apache.openejb.util.Duration.parse("-1 millisecond");
     @XmlAttribute
     private int numTestsPerEvictionRun = 3;
+    @XmlJavaTypeAdapter(DurationAdapter.class)
     @XmlAttribute
-    private long minEvictableIdleTimeMillis = 1800000;
+    private org.apache.openejb.util.Duration minEvictableIdleTime = org.apache.openejb.util.Duration.parse("30 minutes");
     @XmlAttribute
     private boolean poolPreparedStatements = false;
     @XmlAttribute
@@ -88,7 +91,7 @@ public class DataSourceBuilder extends Resource {
         setType("javax.sql.DataSource");
         setId("DataSource");
 
-        setConstructor("serviceId, jtaManaged, jdbcDriver, definition");
+        setConstructor("serviceId, jtaManaged, jdbcDriver, definition, maxWaitTime, timeBetweenEvictionRuns, minEvictableIdleTime");
 
         setFactoryName("create");
 
@@ -294,17 +297,25 @@ public class DataSourceBuilder extends Resource {
         return minIdle;
     }
 
-    public DataSourceBuilder withMaxWait(int maxWait) {
-        this.maxWait = maxWait;
+    public DataSourceBuilder withMaxWaitTime(org.apache.openejb.util.Duration maxWaitTime) {
+        this.maxWaitTime = maxWaitTime;
         return this;
     }
 
-    public void setMaxWait(int maxWait) {
-        this.maxWait = maxWait;
+    public void setMaxWaitTime(org.apache.openejb.util.Duration maxWaitTime) {
+        this.maxWaitTime = maxWaitTime;
     }
 
-    public int getMaxWait() {
-        return maxWait;
+    public org.apache.openejb.util.Duration getMaxWaitTime() {
+        return maxWaitTime;
+    }
+
+    public DataSourceBuilder withMaxWaitTime(long time, TimeUnit unit) {
+        return withMaxWaitTime(new Duration(time, unit));
+    }
+
+    public void setMaxWaitTime(long time, TimeUnit unit) {
+        setMaxWaitTime(new Duration(time, unit));
     }
 
     public DataSourceBuilder withValidationQuery(String validationQuery) {
@@ -359,25 +370,25 @@ public class DataSourceBuilder extends Resource {
         return testWhileIdle;
     }
 
-    public DataSourceBuilder withTimeBetweenEvictionRunsMillis(long timeBetweenEvictionRunsMillis) {
-        this.timeBetweenEvictionRunsMillis = timeBetweenEvictionRunsMillis;
+    public DataSourceBuilder withTimeBetweenEvictionRuns(org.apache.openejb.util.Duration timeBetweenEvictionRuns) {
+        this.timeBetweenEvictionRuns = timeBetweenEvictionRuns;
         return this;
     }
 
-    public void setTimeBetweenEvictionRunsMillis(long timeBetweenEvictionRunsMillis) {
-        this.timeBetweenEvictionRunsMillis = timeBetweenEvictionRunsMillis;
+    public void setTimeBetweenEvictionRuns(org.apache.openejb.util.Duration timeBetweenEvictionRuns) {
+        this.timeBetweenEvictionRuns = timeBetweenEvictionRuns;
     }
 
-    public long getTimeBetweenEvictionRunsMillis() {
-        return timeBetweenEvictionRunsMillis;
+    public org.apache.openejb.util.Duration getTimeBetweenEvictionRuns() {
+        return timeBetweenEvictionRuns;
     }
 
     public DataSourceBuilder withTimeBetweenEvictionRuns(long time, TimeUnit unit) {
-        return withTimeBetweenEvictionRunsMillis(TimeUnit.MILLISECONDS.convert(time, unit));
+        return withTimeBetweenEvictionRuns(new Duration(time, unit));
     }
 
     public void setTimeBetweenEvictionRuns(long time, TimeUnit unit) {
-        setTimeBetweenEvictionRunsMillis(TimeUnit.MILLISECONDS.convert(time, unit));
+        setTimeBetweenEvictionRuns(new Duration(time, unit));
     }
 
     public DataSourceBuilder withNumTestsPerEvictionRun(int numTestsPerEvictionRun) {
@@ -393,25 +404,25 @@ public class DataSourceBuilder extends Resource {
         return numTestsPerEvictionRun;
     }
 
-    public DataSourceBuilder withMinEvictableIdleTimeMillis(long minEvictableIdleTimeMillis) {
-        this.minEvictableIdleTimeMillis = minEvictableIdleTimeMillis;
+    public DataSourceBuilder withMinEvictableIdleTime(org.apache.openejb.util.Duration minEvictableIdleTime) {
+        this.minEvictableIdleTime = minEvictableIdleTime;
         return this;
     }
 
-    public void setMinEvictableIdleTimeMillis(long minEvictableIdleTimeMillis) {
-        this.minEvictableIdleTimeMillis = minEvictableIdleTimeMillis;
+    public void setMinEvictableIdleTime(org.apache.openejb.util.Duration minEvictableIdleTime) {
+        this.minEvictableIdleTime = minEvictableIdleTime;
     }
 
-    public long getMinEvictableIdleTimeMillis() {
-        return minEvictableIdleTimeMillis;
+    public org.apache.openejb.util.Duration getMinEvictableIdleTime() {
+        return minEvictableIdleTime;
     }
 
     public DataSourceBuilder withMinEvictableIdleTime(long time, TimeUnit unit) {
-        return withMinEvictableIdleTimeMillis(TimeUnit.MILLISECONDS.convert(time, unit));
+        return withMinEvictableIdleTime(new Duration(time, unit));
     }
 
     public void setMinEvictableIdleTime(long time, TimeUnit unit) {
-        setMinEvictableIdleTimeMillis(TimeUnit.MILLISECONDS.convert(time, unit));
+        setMinEvictableIdleTime(new Duration(time, unit));
     }
 
     public DataSourceBuilder withPoolPreparedStatements(boolean poolPreparedStatements) {
