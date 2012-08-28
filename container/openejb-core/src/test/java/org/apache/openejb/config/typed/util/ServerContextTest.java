@@ -21,7 +21,11 @@ import org.apache.openejb.config.typed.DataSourceBuilder;
 import org.apache.openejb.config.typed.SecurityServiceBuilder;
 import org.apache.openejb.config.typed.StatelessContainerBuilder;
 import org.apache.openejb.config.typed.TransactionManagerBuilder;
+import org.apache.openejb.jee.JAXBContextFactory;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+import java.io.ByteArrayOutputStream;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
@@ -63,5 +67,22 @@ public class ServerContextTest extends TestCase {
                 .withMinEvictableIdleTime(15, TimeUnit.MINUTES)
                 .withTimeBetweenEvictionRuns(5, TimeUnit.MINUTES)
         );
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        JAXBContext jaxbContext = JAXBContextFactory.newInstance(ServerContext.class
+                , TransactionManagerBuilder.class
+                , SecurityServiceBuilder.class
+                , StatelessContainerBuilder.class
+                , DataSourceBuilder.class);
+
+        Marshaller marshaller = jaxbContext.createMarshaller();
+
+        marshaller.setProperty("jaxb.formatted.output", true);
+
+        marshaller.marshal(serverContext, baos);
+
+        final String marshal = new String(baos.toByteArray());
+        System.out.println(marshal);
     }
 }

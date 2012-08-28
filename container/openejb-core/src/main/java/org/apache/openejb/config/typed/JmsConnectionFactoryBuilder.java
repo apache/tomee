@@ -16,21 +16,29 @@
  */
 package org.apache.openejb.config.typed;
 
-import org.apache.openejb.config.sys.Resource;
-import org.apache.openejb.config.typed.util.Builders;
+import org.apache.openejb.config.typed.util.*;
+import org.apache.openejb.config.sys.*;
+import javax.xml.bind.annotation.*;
+import org.apache.openejb.util.Duration;
+import java.util.*;
+import java.util.concurrent.*;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.util.Properties;
-
+@XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "JmsConnectionFactory")
 public class JmsConnectionFactoryBuilder extends Resource {
 
+    @XmlAttribute
     private String resourceAdapter = "Default JMS Resource Adapter";
+    @XmlAttribute
     private String transactionSupport = "xa";
+    @XmlAttribute
     private int poolMaxSize = 10;
+    @XmlAttribute
     private int poolMinSize = 0;
+    @XmlAttribute
     private int connectionMaxWaitMilliseconds = 5000;
+    @XmlAttribute
     private int connectionMaxIdleMinutes = 15;
 
     public JmsConnectionFactoryBuilder() {
@@ -54,7 +62,6 @@ public class JmsConnectionFactoryBuilder extends Resource {
         this.resourceAdapter = resourceAdapter;
     }
 
-    @XmlAttribute
     public String getResourceAdapter() {
         return resourceAdapter;
     }
@@ -68,7 +75,6 @@ public class JmsConnectionFactoryBuilder extends Resource {
         this.transactionSupport = transactionSupport;
     }
 
-    @XmlAttribute
     public String getTransactionSupport() {
         return transactionSupport;
     }
@@ -82,7 +88,6 @@ public class JmsConnectionFactoryBuilder extends Resource {
         this.poolMaxSize = poolMaxSize;
     }
 
-    @XmlAttribute
     public int getPoolMaxSize() {
         return poolMaxSize;
     }
@@ -96,7 +101,6 @@ public class JmsConnectionFactoryBuilder extends Resource {
         this.poolMinSize = poolMinSize;
     }
 
-    @XmlAttribute
     public int getPoolMinSize() {
         return poolMinSize;
     }
@@ -110,7 +114,6 @@ public class JmsConnectionFactoryBuilder extends Resource {
         this.connectionMaxWaitMilliseconds = connectionMaxWaitMilliseconds;
     }
 
-    @XmlAttribute
     public int getConnectionMaxWaitMilliseconds() {
         return connectionMaxWaitMilliseconds;
     }
@@ -124,7 +127,6 @@ public class JmsConnectionFactoryBuilder extends Resource {
         this.connectionMaxIdleMinutes = connectionMaxIdleMinutes;
     }
 
-    @XmlAttribute
     public int getConnectionMaxIdleMinutes() {
         return connectionMaxIdleMinutes;
     }

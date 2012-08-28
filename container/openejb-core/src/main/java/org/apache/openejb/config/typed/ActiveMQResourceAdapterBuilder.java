@@ -16,21 +16,26 @@
  */
 package org.apache.openejb.config.typed;
 
-import org.apache.openejb.config.sys.Resource;
-import org.apache.openejb.config.typed.util.Builders;
+import org.apache.openejb.config.typed.util.*;
+import org.apache.openejb.config.sys.*;
+import javax.xml.bind.annotation.*;
 import org.apache.openejb.util.Duration;
+import java.util.*;
+import java.util.concurrent.*;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-
+@XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "ActiveMQResourceAdapter")
 public class ActiveMQResourceAdapterBuilder extends Resource {
 
+    @XmlAttribute
     private String brokerXmlConfig = "broker:(tcp://localhost:61616)?useJmx=false";
+    @XmlAttribute
     private java.net.URI serverUrl = java.net.URI.create("vm://localhost?waitForStart=20000&async=true");
+    @XmlAttribute
     private String dataSource = "Default Unmanaged JDBC Database";
+    @XmlJavaTypeAdapter(DurationAdapter.class)
+    @XmlAttribute
     private org.apache.openejb.util.Duration startupTimeout = org.apache.openejb.util.Duration.parse("10000");
 
     public ActiveMQResourceAdapterBuilder() {
@@ -54,7 +59,6 @@ public class ActiveMQResourceAdapterBuilder extends Resource {
         this.brokerXmlConfig = brokerXmlConfig;
     }
 
-    @XmlAttribute
     public String getBrokerXmlConfig() {
         return brokerXmlConfig;
     }
@@ -68,7 +72,6 @@ public class ActiveMQResourceAdapterBuilder extends Resource {
         this.serverUrl = serverUrl;
     }
 
-    @XmlAttribute
     public java.net.URI getServerUrl() {
         return serverUrl;
     }
@@ -82,7 +85,6 @@ public class ActiveMQResourceAdapterBuilder extends Resource {
         this.dataSource = dataSource;
     }
 
-    @XmlAttribute
     public String getDataSource() {
         return dataSource;
     }
@@ -96,7 +98,6 @@ public class ActiveMQResourceAdapterBuilder extends Resource {
         this.startupTimeout = startupTimeout;
     }
 
-    @XmlAttribute
     public org.apache.openejb.util.Duration getStartupTimeout() {
         return startupTimeout;
     }

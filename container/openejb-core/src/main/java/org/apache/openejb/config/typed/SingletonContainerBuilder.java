@@ -16,18 +16,20 @@
  */
 package org.apache.openejb.config.typed;
 
-import org.apache.openejb.config.sys.Container;
-import org.apache.openejb.config.typed.util.Builders;
+import org.apache.openejb.config.typed.util.*;
+import org.apache.openejb.config.sys.*;
+import javax.xml.bind.annotation.*;
 import org.apache.openejb.util.Duration;
+import java.util.*;
+import java.util.concurrent.*;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-
+@XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "SingletonContainer")
 public class SingletonContainerBuilder extends Container {
 
+    @XmlJavaTypeAdapter(DurationAdapter.class)
+    @XmlAttribute
     private org.apache.openejb.util.Duration accessTimeout = org.apache.openejb.util.Duration.parse("30 seconds");
 
     public SingletonContainerBuilder() {
@@ -53,7 +55,6 @@ public class SingletonContainerBuilder extends Container {
         this.accessTimeout = accessTimeout;
     }
 
-    @XmlAttribute
     public org.apache.openejb.util.Duration getAccessTimeout() {
         return accessTimeout;
     }

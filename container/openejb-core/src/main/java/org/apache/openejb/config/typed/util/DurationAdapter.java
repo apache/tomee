@@ -14,35 +14,18 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.config.typed;
+package org.apache.openejb.config.typed.util;
 
-import org.apache.openejb.config.typed.util.*;
-import org.apache.openejb.config.sys.*;
-import javax.xml.bind.annotation.*;
 import org.apache.openejb.util.Duration;
-import java.util.*;
-import java.util.concurrent.*;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "ProxyFactory")
-public class ProxyFactoryBuilder extends ProxyFactory {
-
-
-    public ProxyFactoryBuilder() {
-        setClassName("org.apache.openejb.util.proxy.Jdk13ProxyFactory");
-        setType("ProxyFactory");
-        setId("ProxyFactory");
-
+public class DurationAdapter extends javax.xml.bind.annotation.adapters.XmlAdapter<java.lang.String, Duration> {
+    @Override
+    public Duration unmarshal(String v) throws Exception {
+        return Duration.parse(v);
     }
 
-    public ProxyFactoryBuilder id(String id) {
-        setId(id);
-        return this;
+    @Override
+    public String marshal(Duration v) throws Exception {
+        return v.toString();
     }
-
-    public Properties getProperties() {
-        return Builders.getProperties(this);
-    }
-
 }

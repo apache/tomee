@@ -16,30 +16,45 @@
  */
 package org.apache.openejb.config.typed;
 
-import org.apache.openejb.config.sys.TransactionManager;
-import org.apache.openejb.config.typed.util.Builders;
+import org.apache.openejb.config.typed.util.*;
+import org.apache.openejb.config.sys.*;
+import javax.xml.bind.annotation.*;
+import org.apache.openejb.util.Duration;
+import java.util.*;
+import java.util.concurrent.*;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-
+@XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "TransactionManager")
 public class TransactionManagerBuilder extends TransactionManager {
 
+    @XmlAttribute
     private long defaultTransactionTimeoutSeconds = 600;
+    @XmlAttribute
     private boolean txRecovery = false;
+    @XmlAttribute
     private int bufferSizeKb = 32;
+    @XmlAttribute
     private boolean checksumEnabled = true;
+    @XmlAttribute
     private boolean adler32Checksum = true;
+    @XmlAttribute
     private long flushSleepTimeMilliseconds = 50;
+    @XmlAttribute
     private String logFileDir = "txlog";
+    @XmlAttribute
     private String logFileExt = "log";
+    @XmlAttribute
     private String logFileName = "howl";
+    @XmlAttribute
     private int maxBlocksPerFile = -1;
+    @XmlAttribute
     private int maxBuffers = 0;
+    @XmlAttribute
     private int maxLogFiles = 2;
+    @XmlAttribute
     private int minBuffers = 4;
+    @XmlAttribute
     private int threadsWaitingForceThreshold = -1;
 
     public TransactionManagerBuilder() {
@@ -47,7 +62,7 @@ public class TransactionManagerBuilder extends TransactionManager {
         setType("TransactionManager");
         setId("TransactionManager");
 
-        setConstructor("defaultTransactionTimeoutSeconds, TxRecovery, tmId, bufferClassName, bufferSizeKb, checksumEnabled, adler32Checksum, flushSleepTimeMilliseconds, logFileDir, logFileExt, logFileName, maxBlocksPerFile, maxBuffers, maxLogFiles, minBuffers, threadsWaitingForceThreshold");
+        setConstructor("defaultTransactionTimeoutSeconds, txRecovery, tmId, bufferClassName, bufferSizeKb, checksumEnabled, adler32Checksum, flushSleepTimeMilliseconds, logFileDir, logFileExt, logFileName, maxBlocksPerFile, maxBuffers, maxLogFiles, minBuffers, threadsWaitingForceThreshold");
 
         setFactoryName("create");
 
@@ -67,7 +82,6 @@ public class TransactionManagerBuilder extends TransactionManager {
         this.defaultTransactionTimeoutSeconds = defaultTransactionTimeoutSeconds;
     }
 
-    @XmlAttribute
     public long getDefaultTransactionTimeoutSeconds() {
         return defaultTransactionTimeoutSeconds;
     }
@@ -89,7 +103,6 @@ public class TransactionManagerBuilder extends TransactionManager {
         this.txRecovery = txRecovery;
     }
 
-    @XmlAttribute
     public boolean getTxRecovery() {
         return txRecovery;
     }
@@ -103,7 +116,6 @@ public class TransactionManagerBuilder extends TransactionManager {
         this.bufferSizeKb = bufferSizeKb;
     }
 
-    @XmlAttribute
     public int getBufferSizeKb() {
         return bufferSizeKb;
     }
@@ -117,7 +129,6 @@ public class TransactionManagerBuilder extends TransactionManager {
         this.checksumEnabled = checksumEnabled;
     }
 
-    @XmlAttribute
     public boolean getChecksumEnabled() {
         return checksumEnabled;
     }
@@ -131,7 +142,6 @@ public class TransactionManagerBuilder extends TransactionManager {
         this.adler32Checksum = adler32Checksum;
     }
 
-    @XmlAttribute
     public boolean getAdler32Checksum() {
         return adler32Checksum;
     }
@@ -145,7 +155,6 @@ public class TransactionManagerBuilder extends TransactionManager {
         this.flushSleepTimeMilliseconds = flushSleepTimeMilliseconds;
     }
 
-    @XmlAttribute
     public long getFlushSleepTimeMilliseconds() {
         return flushSleepTimeMilliseconds;
     }
@@ -167,7 +176,6 @@ public class TransactionManagerBuilder extends TransactionManager {
         this.logFileDir = logFileDir;
     }
 
-    @XmlAttribute
     public String getLogFileDir() {
         return logFileDir;
     }
@@ -181,7 +189,6 @@ public class TransactionManagerBuilder extends TransactionManager {
         this.logFileExt = logFileExt;
     }
 
-    @XmlAttribute
     public String getLogFileExt() {
         return logFileExt;
     }
@@ -195,7 +202,6 @@ public class TransactionManagerBuilder extends TransactionManager {
         this.logFileName = logFileName;
     }
 
-    @XmlAttribute
     public String getLogFileName() {
         return logFileName;
     }
@@ -209,7 +215,6 @@ public class TransactionManagerBuilder extends TransactionManager {
         this.maxBlocksPerFile = maxBlocksPerFile;
     }
 
-    @XmlAttribute
     public int getMaxBlocksPerFile() {
         return maxBlocksPerFile;
     }
@@ -223,7 +228,6 @@ public class TransactionManagerBuilder extends TransactionManager {
         this.maxBuffers = maxBuffers;
     }
 
-    @XmlAttribute
     public int getMaxBuffers() {
         return maxBuffers;
     }
@@ -237,7 +241,6 @@ public class TransactionManagerBuilder extends TransactionManager {
         this.maxLogFiles = maxLogFiles;
     }
 
-    @XmlAttribute
     public int getMaxLogFiles() {
         return maxLogFiles;
     }
@@ -251,7 +254,6 @@ public class TransactionManagerBuilder extends TransactionManager {
         this.minBuffers = minBuffers;
     }
 
-    @XmlAttribute
     public int getMinBuffers() {
         return minBuffers;
     }
@@ -265,7 +267,6 @@ public class TransactionManagerBuilder extends TransactionManager {
         this.threadsWaitingForceThreshold = threadsWaitingForceThreshold;
     }
 
-    @XmlAttribute
     public int getThreadsWaitingForceThreshold() {
         return threadsWaitingForceThreshold;
     }

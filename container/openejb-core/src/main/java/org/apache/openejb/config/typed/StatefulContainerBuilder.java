@@ -16,24 +16,33 @@
  */
 package org.apache.openejb.config.typed;
 
-import org.apache.openejb.config.sys.Container;
-import org.apache.openejb.config.typed.util.Builders;
+import org.apache.openejb.config.typed.util.*;
+import org.apache.openejb.config.sys.*;
+import javax.xml.bind.annotation.*;
 import org.apache.openejb.util.Duration;
+import java.util.*;
+import java.util.concurrent.*;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-
+@XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "StatefulContainer")
 public class StatefulContainerBuilder extends Container {
 
+    @XmlJavaTypeAdapter(DurationAdapter.class)
+    @XmlAttribute
     private org.apache.openejb.util.Duration accessTimeout = org.apache.openejb.util.Duration.parse("30 seconds");
+    @XmlAttribute
     private String cache = "org.apache.openejb.core.stateful.SimpleCache";
+    @XmlAttribute
     private String passivator = "org.apache.openejb.core.stateful.SimplePassivater";
+    @XmlJavaTypeAdapter(DurationAdapter.class)
+    @XmlAttribute
     private org.apache.openejb.util.Duration timeOut = org.apache.openejb.util.Duration.parse("20");
+    @XmlAttribute
     private int frequency = 60;
+    @XmlAttribute
     private int capacity = 1000;
+    @XmlAttribute
     private int bulkPassivate = 100;
 
     public StatefulContainerBuilder() {
@@ -59,7 +68,6 @@ public class StatefulContainerBuilder extends Container {
         this.accessTimeout = accessTimeout;
     }
 
-    @XmlAttribute
     public org.apache.openejb.util.Duration getAccessTimeout() {
         return accessTimeout;
     }
@@ -81,7 +89,6 @@ public class StatefulContainerBuilder extends Container {
         this.cache = cache;
     }
 
-    @XmlAttribute
     public String getCache() {
         return cache;
     }
@@ -95,7 +102,6 @@ public class StatefulContainerBuilder extends Container {
         this.passivator = passivator;
     }
 
-    @XmlAttribute
     public String getPassivator() {
         return passivator;
     }
@@ -109,7 +115,6 @@ public class StatefulContainerBuilder extends Container {
         this.timeOut = timeOut;
     }
 
-    @XmlAttribute
     public org.apache.openejb.util.Duration getTimeOut() {
         return timeOut;
     }
@@ -131,7 +136,6 @@ public class StatefulContainerBuilder extends Container {
         this.frequency = frequency;
     }
 
-    @XmlAttribute
     public int getFrequency() {
         return frequency;
     }
@@ -145,7 +149,6 @@ public class StatefulContainerBuilder extends Container {
         this.capacity = capacity;
     }
 
-    @XmlAttribute
     public int getCapacity() {
         return capacity;
     }
@@ -159,7 +162,6 @@ public class StatefulContainerBuilder extends Container {
         this.bulkPassivate = bulkPassivate;
     }
 
-    @XmlAttribute
     public int getBulkPassivate() {
         return bulkPassivate;
     }

@@ -88,9 +88,11 @@ public class ProviderGenerator extends Resource {
             out.println("import " + Duration.class.getName() + ";");
             out.println("import java.util.*;");
             out.println("import java.util.concurrent.*;");
+            out.println("import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;");
             out.println();
 
             out.println(template(
+                    "@XmlAccessorType(XmlAccessType.FIELD)\n" +
                     "@XmlRootElement(name = \"${name}\")\n" +
                             "public class ${builder} extends ${service} {\n"
             )
@@ -109,8 +111,12 @@ public class ProviderGenerator extends Resource {
                 final String value = entry.getValue().toString();
                 final String type = guessType(key, value);
 
+                if (Duration.class.getName().endsWith(type)) {
+                    out.println("    @XmlJavaTypeAdapter(DurationAdapter.class)");
+                }
                 out.println(
                         template(
+                                "    @XmlAttribute\n" +
                                 "    private ${type} ${key} = ${value};"
                         ).apply(
                                 "builder", builder,
@@ -135,8 +141,6 @@ public class ProviderGenerator extends Resource {
                     .apply(
                             "builder", builder,
                             "className", provider.getClassName() + "",
-                            "constructor", provider.getConstructor() + "",
-                            "factoryName", provider.getFactoryName() + "",
                             "type", types.get(0),
                             "name", name
                     )
@@ -146,7 +150,7 @@ public class ProviderGenerator extends Resource {
                 out.println(template(
                         "        setConstructor(\"${constructor}\");\n")
                         .apply(
-                                "constructor", provider.getConstructor()
+                                "constructor", fixConstructor(provider)
                         ));
             }
 
@@ -209,7 +213,6 @@ public class ProviderGenerator extends Resource {
 
                 // getter
                 out.println(template(
-                        "    @XmlAttribute\n" +
                                 "    public ${type} get${Key}() {\n" +
                                 "        return ${key};\n" +
                                 "    }\n")
@@ -313,6 +316,15 @@ public class ProviderGenerator extends Resource {
             out.flush();
             out.close();
         }
+    }
+
+    private static String fixConstructor(ServiceProvider provider) {
+        final String s = provider.getConstructor() + "";
+        final String[] split = s.split(" *, *");
+        for (int i = 0; i < split.length; i++) {
+            split[i] = Strings.lcfirst(split[i]);
+        }
+        return Join.join(", ", split);
     }
 
     private static String asValue(String type, String value) {
