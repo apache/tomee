@@ -16,16 +16,19 @@
  */
 package org.apache.openejb.config.typed;
 
-import org.apache.openejb.config.sys.Container;
-import org.apache.openejb.config.typed.util.Builders;
+import org.apache.openejb.config.typed.util.*;
+import org.apache.openejb.config.sys.*;
+import javax.xml.bind.annotation.*;
+import org.apache.openejb.util.Duration;
+import java.util.*;
+import java.util.concurrent.*;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.util.Properties;
-
+@XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "BmpEntityContainer")
 public class BmpEntityContainerBuilder extends Container {
 
+    @XmlAttribute
     private int poolSize = 10;
 
     public BmpEntityContainerBuilder() {
@@ -33,7 +36,7 @@ public class BmpEntityContainerBuilder extends Container {
         setType("BMP_ENTITY");
         setId("BmpEntityContainer");
 
-        setConstructor("id, securityService, PoolSize");
+        setConstructor("id, securityService, poolSize");
 
     }
 
@@ -51,7 +54,6 @@ public class BmpEntityContainerBuilder extends Container {
         this.poolSize = poolSize;
     }
 
-    @XmlAttribute
     public int getPoolSize() {
         return poolSize;
     }

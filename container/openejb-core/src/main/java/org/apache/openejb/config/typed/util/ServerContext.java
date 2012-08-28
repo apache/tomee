@@ -32,12 +32,21 @@ import org.apache.openejb.config.sys.SecurityService;
 import org.apache.openejb.config.sys.Service;
 import org.apache.openejb.config.sys.TransactionManager;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
 /**
  * @version $Rev$ $Date$
  */
+@XmlRootElement(name = "ServerContext")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class ServerContext {
 
+    @XmlTransient
     private final ConfigurationFactory factory = new ConfigurationFactory();
+    @XmlTransient
     private final Assembler assembler = new Assembler();
 
     public void createTransactionManager(TransactionManager service) throws OpenEJBException {

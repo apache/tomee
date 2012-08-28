@@ -16,43 +16,71 @@
  */
 package org.apache.openejb.config.typed;
 
-import org.apache.openejb.config.sys.Resource;
-import org.apache.openejb.config.typed.util.Builders;
+import org.apache.openejb.config.typed.util.*;
+import org.apache.openejb.config.sys.*;
+import javax.xml.bind.annotation.*;
+import org.apache.openejb.util.Duration;
+import java.util.*;
+import java.util.concurrent.*;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-
+@XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "DataSource")
 public class DataSourceBuilder extends Resource {
 
+    @XmlAttribute
     private String serviceId = null;
+    @XmlAttribute
     private String definition = null;
+    @XmlAttribute
     private boolean jtaManaged = true;
+    @XmlAttribute
     private String jdbcDriver = "org.hsqldb.jdbcDriver";
+    @XmlAttribute
     private java.net.URI jdbcUrl = java.net.URI.create("jdbc:hsqldb:mem:hsqldb");
+    @XmlAttribute
     private String userName = "sa";
+    @XmlAttribute
     private String password = null;
+    @XmlAttribute
     private String passwordCipher = "PlainText";
+    @XmlAttribute
     private String connectionProperties = null;
+    @XmlAttribute
     private boolean defaultAutoCommit = true;
+    @XmlAttribute
     private String defaultReadOnly = null;
+    @XmlAttribute
     private int initialSize = 0;
+    @XmlAttribute
     private int maxActive = 20;
+    @XmlAttribute
     private int maxIdle = 20;
+    @XmlAttribute
     private int minIdle = 0;
+    @XmlAttribute
     private int maxWait = -1;
+    @XmlAttribute
     private String validationQuery = null;
+    @XmlAttribute
     private boolean testOnBorrow = true;
+    @XmlAttribute
     private boolean testOnReturn = false;
+    @XmlAttribute
     private boolean testWhileIdle = false;
+    @XmlAttribute
     private long timeBetweenEvictionRunsMillis = -1;
+    @XmlAttribute
     private int numTestsPerEvictionRun = 3;
+    @XmlAttribute
     private long minEvictableIdleTimeMillis = 1800000;
+    @XmlAttribute
     private boolean poolPreparedStatements = false;
+    @XmlAttribute
     private int maxOpenPreparedStatements = 0;
+    @XmlAttribute
     private boolean accessToUnderlyingConnectionAllowed = false;
+    @XmlAttribute
     private boolean ignoreDefaultValues = false;
 
     public DataSourceBuilder() {
@@ -80,7 +108,6 @@ public class DataSourceBuilder extends Resource {
         this.serviceId = serviceId;
     }
 
-    @XmlAttribute
     public String getServiceId() {
         return serviceId;
     }
@@ -94,7 +121,6 @@ public class DataSourceBuilder extends Resource {
         this.definition = definition;
     }
 
-    @XmlAttribute
     public String getDefinition() {
         return definition;
     }
@@ -108,7 +134,6 @@ public class DataSourceBuilder extends Resource {
         this.jtaManaged = jtaManaged;
     }
 
-    @XmlAttribute
     public boolean getJtaManaged() {
         return jtaManaged;
     }
@@ -122,7 +147,6 @@ public class DataSourceBuilder extends Resource {
         this.jdbcDriver = jdbcDriver;
     }
 
-    @XmlAttribute
     public String getJdbcDriver() {
         return jdbcDriver;
     }
@@ -136,7 +160,6 @@ public class DataSourceBuilder extends Resource {
         this.jdbcUrl = jdbcUrl;
     }
 
-    @XmlAttribute
     public java.net.URI getJdbcUrl() {
         return jdbcUrl;
     }
@@ -150,7 +173,6 @@ public class DataSourceBuilder extends Resource {
         this.userName = userName;
     }
 
-    @XmlAttribute
     public String getUserName() {
         return userName;
     }
@@ -164,7 +186,6 @@ public class DataSourceBuilder extends Resource {
         this.password = password;
     }
 
-    @XmlAttribute
     public String getPassword() {
         return password;
     }
@@ -178,7 +199,6 @@ public class DataSourceBuilder extends Resource {
         this.passwordCipher = passwordCipher;
     }
 
-    @XmlAttribute
     public String getPasswordCipher() {
         return passwordCipher;
     }
@@ -192,7 +212,6 @@ public class DataSourceBuilder extends Resource {
         this.connectionProperties = connectionProperties;
     }
 
-    @XmlAttribute
     public String getConnectionProperties() {
         return connectionProperties;
     }
@@ -206,7 +225,6 @@ public class DataSourceBuilder extends Resource {
         this.defaultAutoCommit = defaultAutoCommit;
     }
 
-    @XmlAttribute
     public boolean getDefaultAutoCommit() {
         return defaultAutoCommit;
     }
@@ -220,7 +238,6 @@ public class DataSourceBuilder extends Resource {
         this.defaultReadOnly = defaultReadOnly;
     }
 
-    @XmlAttribute
     public String getDefaultReadOnly() {
         return defaultReadOnly;
     }
@@ -234,7 +251,6 @@ public class DataSourceBuilder extends Resource {
         this.initialSize = initialSize;
     }
 
-    @XmlAttribute
     public int getInitialSize() {
         return initialSize;
     }
@@ -248,7 +264,6 @@ public class DataSourceBuilder extends Resource {
         this.maxActive = maxActive;
     }
 
-    @XmlAttribute
     public int getMaxActive() {
         return maxActive;
     }
@@ -262,7 +277,6 @@ public class DataSourceBuilder extends Resource {
         this.maxIdle = maxIdle;
     }
 
-    @XmlAttribute
     public int getMaxIdle() {
         return maxIdle;
     }
@@ -276,7 +290,6 @@ public class DataSourceBuilder extends Resource {
         this.minIdle = minIdle;
     }
 
-    @XmlAttribute
     public int getMinIdle() {
         return minIdle;
     }
@@ -290,7 +303,6 @@ public class DataSourceBuilder extends Resource {
         this.maxWait = maxWait;
     }
 
-    @XmlAttribute
     public int getMaxWait() {
         return maxWait;
     }
@@ -304,7 +316,6 @@ public class DataSourceBuilder extends Resource {
         this.validationQuery = validationQuery;
     }
 
-    @XmlAttribute
     public String getValidationQuery() {
         return validationQuery;
     }
@@ -318,7 +329,6 @@ public class DataSourceBuilder extends Resource {
         this.testOnBorrow = testOnBorrow;
     }
 
-    @XmlAttribute
     public boolean getTestOnBorrow() {
         return testOnBorrow;
     }
@@ -332,7 +342,6 @@ public class DataSourceBuilder extends Resource {
         this.testOnReturn = testOnReturn;
     }
 
-    @XmlAttribute
     public boolean getTestOnReturn() {
         return testOnReturn;
     }
@@ -346,7 +355,6 @@ public class DataSourceBuilder extends Resource {
         this.testWhileIdle = testWhileIdle;
     }
 
-    @XmlAttribute
     public boolean getTestWhileIdle() {
         return testWhileIdle;
     }
@@ -360,7 +368,6 @@ public class DataSourceBuilder extends Resource {
         this.timeBetweenEvictionRunsMillis = timeBetweenEvictionRunsMillis;
     }
 
-    @XmlAttribute
     public long getTimeBetweenEvictionRunsMillis() {
         return timeBetweenEvictionRunsMillis;
     }
@@ -382,7 +389,6 @@ public class DataSourceBuilder extends Resource {
         this.numTestsPerEvictionRun = numTestsPerEvictionRun;
     }
 
-    @XmlAttribute
     public int getNumTestsPerEvictionRun() {
         return numTestsPerEvictionRun;
     }
@@ -396,7 +402,6 @@ public class DataSourceBuilder extends Resource {
         this.minEvictableIdleTimeMillis = minEvictableIdleTimeMillis;
     }
 
-    @XmlAttribute
     public long getMinEvictableIdleTimeMillis() {
         return minEvictableIdleTimeMillis;
     }
@@ -418,7 +423,6 @@ public class DataSourceBuilder extends Resource {
         this.poolPreparedStatements = poolPreparedStatements;
     }
 
-    @XmlAttribute
     public boolean getPoolPreparedStatements() {
         return poolPreparedStatements;
     }
@@ -432,7 +436,6 @@ public class DataSourceBuilder extends Resource {
         this.maxOpenPreparedStatements = maxOpenPreparedStatements;
     }
 
-    @XmlAttribute
     public int getMaxOpenPreparedStatements() {
         return maxOpenPreparedStatements;
     }
@@ -446,7 +449,6 @@ public class DataSourceBuilder extends Resource {
         this.accessToUnderlyingConnectionAllowed = accessToUnderlyingConnectionAllowed;
     }
 
-    @XmlAttribute
     public boolean getAccessToUnderlyingConnectionAllowed() {
         return accessToUnderlyingConnectionAllowed;
     }
@@ -460,7 +462,6 @@ public class DataSourceBuilder extends Resource {
         this.ignoreDefaultValues = ignoreDefaultValues;
     }
 
-    @XmlAttribute
     public boolean getIgnoreDefaultValues() {
         return ignoreDefaultValues;
     }

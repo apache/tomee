@@ -16,12 +16,15 @@
  */
 package org.apache.openejb.config.typed;
 
-import org.apache.openejb.config.sys.Resource;
-import org.apache.openejb.config.typed.util.Builders;
+import org.apache.openejb.config.typed.util.*;
+import org.apache.openejb.config.sys.*;
+import javax.xml.bind.annotation.*;
+import org.apache.openejb.util.Duration;
+import java.util.*;
+import java.util.concurrent.*;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import java.util.Properties;
-
+@XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "JavaMailSession")
 public class JavaMailSessionBuilder extends Resource {
 

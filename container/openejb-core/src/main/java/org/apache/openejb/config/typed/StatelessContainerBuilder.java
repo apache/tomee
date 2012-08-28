@@ -16,30 +16,48 @@
  */
 package org.apache.openejb.config.typed;
 
-import org.apache.openejb.config.sys.Container;
-import org.apache.openejb.config.typed.util.Builders;
+import org.apache.openejb.config.typed.util.*;
+import org.apache.openejb.config.sys.*;
+import javax.xml.bind.annotation.*;
 import org.apache.openejb.util.Duration;
+import java.util.*;
+import java.util.concurrent.*;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-
+@XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "StatelessContainer")
 public class StatelessContainerBuilder extends Container {
 
+    @XmlJavaTypeAdapter(DurationAdapter.class)
+    @XmlAttribute
     private org.apache.openejb.util.Duration accessTimeout = org.apache.openejb.util.Duration.parse("30 seconds");
+    @XmlAttribute
     private int maxSize = 10;
+    @XmlAttribute
     private int minSize = 0;
+    @XmlAttribute
     private boolean strictPooling = true;
+    @XmlJavaTypeAdapter(DurationAdapter.class)
+    @XmlAttribute
     private org.apache.openejb.util.Duration maxAge = org.apache.openejb.util.Duration.parse("0 hours");
+    @XmlAttribute
     private boolean replaceAged = true;
+    @XmlAttribute
     private boolean replaceFlushed = false;
+    @XmlAttribute
     private int maxAgeOffset = -1;
+    @XmlJavaTypeAdapter(DurationAdapter.class)
+    @XmlAttribute
     private org.apache.openejb.util.Duration idleTimeout = org.apache.openejb.util.Duration.parse("0 minutes");
+    @XmlAttribute
     private boolean garbageCollection = false;
+    @XmlJavaTypeAdapter(DurationAdapter.class)
+    @XmlAttribute
     private org.apache.openejb.util.Duration sweepInterval = org.apache.openejb.util.Duration.parse("5 minutes");
+    @XmlAttribute
     private int callbackThreads = 5;
+    @XmlJavaTypeAdapter(DurationAdapter.class)
+    @XmlAttribute
     private org.apache.openejb.util.Duration closeTimeout = org.apache.openejb.util.Duration.parse("5 minutes");
 
     public StatelessContainerBuilder() {
@@ -65,7 +83,6 @@ public class StatelessContainerBuilder extends Container {
         this.accessTimeout = accessTimeout;
     }
 
-    @XmlAttribute
     public org.apache.openejb.util.Duration getAccessTimeout() {
         return accessTimeout;
     }
@@ -87,7 +104,6 @@ public class StatelessContainerBuilder extends Container {
         this.maxSize = maxSize;
     }
 
-    @XmlAttribute
     public int getMaxSize() {
         return maxSize;
     }
@@ -101,7 +117,6 @@ public class StatelessContainerBuilder extends Container {
         this.minSize = minSize;
     }
 
-    @XmlAttribute
     public int getMinSize() {
         return minSize;
     }
@@ -115,7 +130,6 @@ public class StatelessContainerBuilder extends Container {
         this.strictPooling = strictPooling;
     }
 
-    @XmlAttribute
     public boolean getStrictPooling() {
         return strictPooling;
     }
@@ -129,7 +143,6 @@ public class StatelessContainerBuilder extends Container {
         this.maxAge = maxAge;
     }
 
-    @XmlAttribute
     public org.apache.openejb.util.Duration getMaxAge() {
         return maxAge;
     }
@@ -151,7 +164,6 @@ public class StatelessContainerBuilder extends Container {
         this.replaceAged = replaceAged;
     }
 
-    @XmlAttribute
     public boolean getReplaceAged() {
         return replaceAged;
     }
@@ -165,7 +177,6 @@ public class StatelessContainerBuilder extends Container {
         this.replaceFlushed = replaceFlushed;
     }
 
-    @XmlAttribute
     public boolean getReplaceFlushed() {
         return replaceFlushed;
     }
@@ -179,7 +190,6 @@ public class StatelessContainerBuilder extends Container {
         this.maxAgeOffset = maxAgeOffset;
     }
 
-    @XmlAttribute
     public int getMaxAgeOffset() {
         return maxAgeOffset;
     }
@@ -193,7 +203,6 @@ public class StatelessContainerBuilder extends Container {
         this.idleTimeout = idleTimeout;
     }
 
-    @XmlAttribute
     public org.apache.openejb.util.Duration getIdleTimeout() {
         return idleTimeout;
     }
@@ -215,7 +224,6 @@ public class StatelessContainerBuilder extends Container {
         this.garbageCollection = garbageCollection;
     }
 
-    @XmlAttribute
     public boolean getGarbageCollection() {
         return garbageCollection;
     }
@@ -229,7 +237,6 @@ public class StatelessContainerBuilder extends Container {
         this.sweepInterval = sweepInterval;
     }
 
-    @XmlAttribute
     public org.apache.openejb.util.Duration getSweepInterval() {
         return sweepInterval;
     }
@@ -251,7 +258,6 @@ public class StatelessContainerBuilder extends Container {
         this.callbackThreads = callbackThreads;
     }
 
-    @XmlAttribute
     public int getCallbackThreads() {
         return callbackThreads;
     }
@@ -265,7 +271,6 @@ public class StatelessContainerBuilder extends Container {
         this.closeTimeout = closeTimeout;
     }
 
-    @XmlAttribute
     public org.apache.openejb.util.Duration getCloseTimeout() {
         return closeTimeout;
     }

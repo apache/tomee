@@ -16,16 +16,19 @@
  */
 package org.apache.openejb.config.typed;
 
-import org.apache.openejb.config.sys.Container;
-import org.apache.openejb.config.typed.util.Builders;
+import org.apache.openejb.config.typed.util.*;
+import org.apache.openejb.config.sys.*;
+import javax.xml.bind.annotation.*;
+import org.apache.openejb.util.Duration;
+import java.util.*;
+import java.util.concurrent.*;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.util.Properties;
-
+@XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "CmpEntityContainer")
 public class CmpEntityContainerBuilder extends Container {
 
+    @XmlAttribute
     private String cmpEngineFactory = "org.apache.openejb.core.cmp.jpa.JpaCmpEngineFactory";
 
     public CmpEntityContainerBuilder() {
@@ -33,7 +36,7 @@ public class CmpEntityContainerBuilder extends Container {
         setType("CMP_ENTITY");
         setId("CmpEntityContainer");
 
-        setConstructor("id, transactionManager, securityService, CmpEngineFactory");
+        setConstructor("id, transactionManager, securityService, cmpEngineFactory");
 
     }
 
@@ -51,7 +54,6 @@ public class CmpEntityContainerBuilder extends Container {
         this.cmpEngineFactory = cmpEngineFactory;
     }
 
-    @XmlAttribute
     public String getCmpEngineFactory() {
         return cmpEngineFactory;
     }

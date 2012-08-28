@@ -16,19 +16,25 @@
  */
 package org.apache.openejb.config.typed;
 
-import org.apache.openejb.config.sys.Container;
-import org.apache.openejb.config.typed.util.Builders;
+import org.apache.openejb.config.typed.util.*;
+import org.apache.openejb.config.sys.*;
+import javax.xml.bind.annotation.*;
+import org.apache.openejb.util.Duration;
+import java.util.*;
+import java.util.concurrent.*;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.util.Properties;
-
+@XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "MessageDrivenContainer")
 public class MessageDrivenContainerBuilder extends Container {
 
+    @XmlAttribute
     private String resourceAdapter = "Default JMS Resource Adapter";
+    @XmlAttribute
     private String messageListenerInterface = "javax.jms.MessageListener";
+    @XmlAttribute
     private String activationSpecClass = "org.apache.activemq.ra.ActiveMQActivationSpec";
+    @XmlAttribute
     private int instanceLimit = 10;
 
     public MessageDrivenContainerBuilder() {
@@ -36,7 +42,7 @@ public class MessageDrivenContainerBuilder extends Container {
         setType("MESSAGE");
         setId("MessageDrivenContainer");
 
-        setConstructor("id, securityService, ResourceAdapter, MessageListenerInterface, ActivationSpecClass, InstanceLimit");
+        setConstructor("id, securityService, resourceAdapter, messageListenerInterface, activationSpecClass, instanceLimit");
 
     }
 
@@ -54,7 +60,6 @@ public class MessageDrivenContainerBuilder extends Container {
         this.resourceAdapter = resourceAdapter;
     }
 
-    @XmlAttribute
     public String getResourceAdapter() {
         return resourceAdapter;
     }
@@ -68,7 +73,6 @@ public class MessageDrivenContainerBuilder extends Container {
         this.messageListenerInterface = messageListenerInterface;
     }
 
-    @XmlAttribute
     public String getMessageListenerInterface() {
         return messageListenerInterface;
     }
@@ -82,7 +86,6 @@ public class MessageDrivenContainerBuilder extends Container {
         this.activationSpecClass = activationSpecClass;
     }
 
-    @XmlAttribute
     public String getActivationSpecClass() {
         return activationSpecClass;
     }
@@ -96,7 +99,6 @@ public class MessageDrivenContainerBuilder extends Container {
         this.instanceLimit = instanceLimit;
     }
 
-    @XmlAttribute
     public int getInstanceLimit() {
         return instanceLimit;
     }
