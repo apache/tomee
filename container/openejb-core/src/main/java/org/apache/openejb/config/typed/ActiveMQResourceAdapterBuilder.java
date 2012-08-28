@@ -36,7 +36,7 @@ public class ActiveMQResourceAdapterBuilder extends Resource {
     private String dataSource = "Default Unmanaged JDBC Database";
     @XmlJavaTypeAdapter(DurationAdapter.class)
     @XmlAttribute
-    private org.apache.openejb.util.Duration startupTimeout = org.apache.openejb.util.Duration.parse("10000");
+    private org.apache.openejb.util.Duration startupTimeout = org.apache.openejb.util.Duration.parse("10 seconds");
 
     public ActiveMQResourceAdapterBuilder() {
         setClassName("org.apache.openejb.resource.activemq.ActiveMQResourceAdapter");

@@ -28,8 +28,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlRootElement(name = "TransactionManager")
 public class TransactionManagerBuilder extends TransactionManager {
 
+    @XmlJavaTypeAdapter(DurationAdapter.class)
     @XmlAttribute
-    private long defaultTransactionTimeoutSeconds = 600;
+    private org.apache.openejb.util.Duration defaultTransactionTimeout = org.apache.openejb.util.Duration.parse("10 minutes");
     @XmlAttribute
     private boolean txRecovery = false;
     @XmlAttribute
@@ -38,8 +39,9 @@ public class TransactionManagerBuilder extends TransactionManager {
     private boolean checksumEnabled = true;
     @XmlAttribute
     private boolean adler32Checksum = true;
+    @XmlJavaTypeAdapter(DurationAdapter.class)
     @XmlAttribute
-    private long flushSleepTimeMilliseconds = 50;
+    private org.apache.openejb.util.Duration flushSleepTime = org.apache.openejb.util.Duration.parse("50 Milliseconds");
     @XmlAttribute
     private String logFileDir = "txlog";
     @XmlAttribute
@@ -62,7 +64,7 @@ public class TransactionManagerBuilder extends TransactionManager {
         setType("TransactionManager");
         setId("TransactionManager");
 
-        setConstructor("defaultTransactionTimeoutSeconds, txRecovery, tmId, bufferClassName, bufferSizeKb, checksumEnabled, adler32Checksum, flushSleepTimeMilliseconds, logFileDir, logFileExt, logFileName, maxBlocksPerFile, maxBuffers, maxLogFiles, minBuffers, threadsWaitingForceThreshold");
+        setConstructor("defaultTransactionTimeoutSeconds, defaultTransactionTimeout, txRecovery, tmId, bufferClassName, bufferSizeKb, checksumEnabled, adler32Checksum, flushSleepTimeMilliseconds, flushSleepTime, logFileDir, logFileExt, logFileName, maxBlocksPerFile, maxBuffers, maxLogFiles, minBuffers, threadsWaitingForceThreshold");
 
         setFactoryName("create");
 
@@ -73,25 +75,25 @@ public class TransactionManagerBuilder extends TransactionManager {
         return this;
     }
 
-    public TransactionManagerBuilder withDefaultTransactionTimeoutSeconds(long defaultTransactionTimeoutSeconds) {
-        this.defaultTransactionTimeoutSeconds = defaultTransactionTimeoutSeconds;
+    public TransactionManagerBuilder withDefaultTransactionTimeout(org.apache.openejb.util.Duration defaultTransactionTimeout) {
+        this.defaultTransactionTimeout = defaultTransactionTimeout;
         return this;
     }
 
-    public void setDefaultTransactionTimeoutSeconds(long defaultTransactionTimeoutSeconds) {
-        this.defaultTransactionTimeoutSeconds = defaultTransactionTimeoutSeconds;
+    public void setDefaultTransactionTimeout(org.apache.openejb.util.Duration defaultTransactionTimeout) {
+        this.defaultTransactionTimeout = defaultTransactionTimeout;
     }
 
-    public long getDefaultTransactionTimeoutSeconds() {
-        return defaultTransactionTimeoutSeconds;
+    public org.apache.openejb.util.Duration getDefaultTransactionTimeout() {
+        return defaultTransactionTimeout;
     }
 
     public TransactionManagerBuilder withDefaultTransactionTimeout(long time, TimeUnit unit) {
-        return withDefaultTransactionTimeoutSeconds(TimeUnit.SECONDS.convert(time, unit));
+        return withDefaultTransactionTimeout(new Duration(time, unit));
     }
 
     public void setDefaultTransactionTimeout(long time, TimeUnit unit) {
-        setDefaultTransactionTimeoutSeconds(TimeUnit.SECONDS.convert(time, unit));
+        setDefaultTransactionTimeout(new Duration(time, unit));
     }
 
     public TransactionManagerBuilder withTxRecovery(boolean txRecovery) {
@@ -146,25 +148,25 @@ public class TransactionManagerBuilder extends TransactionManager {
         return adler32Checksum;
     }
 
-    public TransactionManagerBuilder withFlushSleepTimeMilliseconds(long flushSleepTimeMilliseconds) {
-        this.flushSleepTimeMilliseconds = flushSleepTimeMilliseconds;
+    public TransactionManagerBuilder withFlushSleepTime(org.apache.openejb.util.Duration flushSleepTime) {
+        this.flushSleepTime = flushSleepTime;
         return this;
     }
 
-    public void setFlushSleepTimeMilliseconds(long flushSleepTimeMilliseconds) {
-        this.flushSleepTimeMilliseconds = flushSleepTimeMilliseconds;
+    public void setFlushSleepTime(org.apache.openejb.util.Duration flushSleepTime) {
+        this.flushSleepTime = flushSleepTime;
     }
 
-    public long getFlushSleepTimeMilliseconds() {
-        return flushSleepTimeMilliseconds;
+    public org.apache.openejb.util.Duration getFlushSleepTime() {
+        return flushSleepTime;
     }
 
     public TransactionManagerBuilder withFlushSleepTime(long time, TimeUnit unit) {
-        return withFlushSleepTimeMilliseconds(TimeUnit.MILLISECONDS.convert(time, unit));
+        return withFlushSleepTime(new Duration(time, unit));
     }
 
     public void setFlushSleepTime(long time, TimeUnit unit) {
-        setFlushSleepTimeMilliseconds(TimeUnit.MILLISECONDS.convert(time, unit));
+        setFlushSleepTime(new Duration(time, unit));
     }
 
     public TransactionManagerBuilder withLogFileDir(String logFileDir) {

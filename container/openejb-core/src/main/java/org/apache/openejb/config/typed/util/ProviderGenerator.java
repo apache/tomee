@@ -368,7 +368,7 @@ public class ProviderGenerator extends Resource {
             return Duration.class.getName();
         }
 
-        if (value.matches("[0-9]+ (m|h|s)[^ ]*")) {
+        if (value.matches("-?[0-9]+ +(m|h|s|M|H|S)[^ ]*")) {
             return Duration.class.getName();
         }
 

@@ -17,15 +17,13 @@
 package org.apache.openejb.config.typed.util;
 
 import junit.framework.TestCase;
+import org.apache.openejb.config.typed.ActiveMQResourceAdapterBuilder;
 import org.apache.openejb.config.typed.DataSourceBuilder;
+import org.apache.openejb.config.typed.JmsConnectionFactoryBuilder;
 import org.apache.openejb.config.typed.SecurityServiceBuilder;
 import org.apache.openejb.config.typed.StatelessContainerBuilder;
 import org.apache.openejb.config.typed.TransactionManagerBuilder;
-import org.apache.openejb.jee.JAXBContextFactory;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
-import java.io.ByteArrayOutputStream;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
@@ -68,21 +66,14 @@ public class ServerContextTest extends TestCase {
                 .withTimeBetweenEvictionRuns(5, TimeUnit.MINUTES)
         );
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        serverContext.createResource(new ActiveMQResourceAdapterBuilder()
+                .id("JmsResourceAdapter")
+                .withDataSource("FooDataSource")
+        );
 
-        JAXBContext jaxbContext = JAXBContextFactory.newInstance(ServerContext.class
-                , TransactionManagerBuilder.class
-                , SecurityServiceBuilder.class
-                , StatelessContainerBuilder.class
-                , DataSourceBuilder.class);
-
-        Marshaller marshaller = jaxbContext.createMarshaller();
-
-        marshaller.setProperty("jaxb.formatted.output", true);
-
-        marshaller.marshal(serverContext, baos);
-
-        final String marshal = new String(baos.toByteArray());
-        System.out.println(marshal);
+        serverContext.createResource(new JmsConnectionFactoryBuilder()
+                .id("FooJmsConnectionFactory")
+                .withResourceAdapter("JmsResourceAdapter")
+        );
     }
 }

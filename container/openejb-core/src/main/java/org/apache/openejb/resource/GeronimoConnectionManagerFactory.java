@@ -28,6 +28,7 @@ import org.apache.geronimo.connector.outbound.connectionmanagerconfig.XATransact
 import org.apache.geronimo.transaction.manager.NamedXAResourceFactory;
 import org.apache.geronimo.transaction.manager.RecoverableTransactionManager;
 import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.util.Duration;
 
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.transaction.HeuristicMixedException;
@@ -38,6 +39,7 @@ import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
+import java.util.concurrent.TimeUnit;
 
 public class GeronimoConnectionManagerFactory   {
     private String name;
@@ -149,12 +151,28 @@ public class GeronimoConnectionManagerFactory   {
         this.connectionMaxWaitMilliseconds = connectionMaxWaitMilliseconds;
     }
 
+    public void setConnectionMaxWaitTime(Duration connectionMaxWait) {
+        if (connectionMaxWait.getUnit() == null) {
+            connectionMaxWait.setUnit(TimeUnit.MILLISECONDS);
+        }
+        final long milleseconds = TimeUnit.MILLISECONDS.convert(connectionMaxWait.getTime(), connectionMaxWait.getUnit());
+        setConnectionMaxWaitMilliseconds((int) milleseconds);
+    }
+
     public int getConnectionMaxIdleMinutes() {
         return connectionMaxIdleMinutes;
     }
 
     public void setConnectionMaxIdleMinutes(int connectionMaxIdleMinutes) {
         this.connectionMaxIdleMinutes = connectionMaxIdleMinutes;
+    }
+
+    public void setConnectionMaxIdleTime(Duration connectionMaxIdle) {
+        if (connectionMaxIdle.getUnit() == null) {
+            connectionMaxIdle.setUnit(TimeUnit.MINUTES);
+        }
+        final long minutes = TimeUnit.MINUTES.convert(connectionMaxIdle.getTime(), connectionMaxIdle.getUnit());
+        setConnectionMaxIdleMinutes((int) minutes);
     }
 
     public GenericConnectionManager create() {

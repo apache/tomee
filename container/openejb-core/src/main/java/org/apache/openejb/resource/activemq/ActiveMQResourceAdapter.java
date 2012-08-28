@@ -17,6 +17,7 @@
 package org.apache.openejb.resource.activemq;
 
 import org.apache.activemq.broker.BrokerService;
+import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.URISupport;
 
@@ -28,6 +29,7 @@ import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQResourceAdapter {
 
@@ -51,9 +53,11 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
         return Integer.parseInt(this.startupTimeout);
     }
 
-    public void setStartupTimeout(int startupTimeout) {
-        startupTimeout = (startupTimeout < 5000 ? 5000 : startupTimeout);
-        this.startupTimeout = "" + startupTimeout;
+    public void setStartupTimeout(Duration startupTimeout) {
+        if (startupTimeout.getUnit() == null) {
+            startupTimeout.setUnit(TimeUnit.MILLISECONDS);
+        }
+        this.startupTimeout = "" + TimeUnit.MILLISECONDS.convert(startupTimeout.getTime(), startupTimeout.getUnit());
     }
 
     @Override
