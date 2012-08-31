@@ -26,7 +26,6 @@ import org.apache.openejb.core.managed.ManagedObjectHandler;
 import org.apache.openejb.core.singleton.SingletonEjbObjectHandler;
 import org.apache.openejb.core.stateful.StatefulEjbObjectHandler;
 import org.apache.openejb.core.stateless.StatelessEjbObjectHandler;
-import org.apache.openejb.jee.SessionType;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
@@ -139,7 +138,7 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
                 List<Class> interfaces = new ArrayList<Class>();
                 interfaces.addAll(di.getInterfaces(interfaceType));
                 interfaces.add(IntraVmProxy.class);
-                if (SessionType.STATEFUL.equals(type) || SessionType.MANAGED.equals(type)) {
+                if (BeanType.STATEFUL.equals(type) || BeanType.MANAGED.equals(type)) {
                     interfaces.add(BeanContext.Removable.class);
                 }
                 return ProxyManager.newProxyInstance(interfaces.toArray(new Class[interfaces.size()]), handler);
