@@ -58,6 +58,8 @@ import javax.naming.LinkRef;
 import javax.naming.Name;
 import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
 import javax.validation.Validator;
@@ -284,6 +286,10 @@ public class JndiEncBuilder {
                 reference = new LinkRef("module/" + name);
             } else if (Request.class.equals(type)) {
                 reference = new ObjectReference(ThreadLocalContextManager.REQUEST);
+            } else if (HttpServletRequest.class.equals(type)) {
+                reference = new ObjectReference(ThreadLocalContextManager.HTTP_SERVLET_REQUEST);
+            } else if (ServletRequest.class.equals(type)) {
+                reference = new ObjectReference(ThreadLocalContextManager.SERVLET_REQUEST);
             } else if (UriInfo.class.equals(type)) {
                 reference = new ObjectReference(ThreadLocalContextManager.URI_INFO);
             } else if (HttpHeaders.class.equals(type)) {
