@@ -16,15 +16,36 @@
  */
 package org.apache.openejb.core;
 
+import javax.mail.Authenticator;
+import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
-import java.util.Properties;
 import java.util.Map;
+import java.util.Properties;
 
 public class MailSessionFactory {
     private final Properties properties = new Properties();
 
     public Session create() {
-        return Session.getInstance(properties);
+        final String password = properties.getProperty("password");
+
+        Authenticator auth = null;
+        if (password != null) {
+            String user = properties.getProperty("mail.smtp.user");
+            if(user == null) {
+                user = properties.getProperty("mail.user");
+            }
+
+            if(user != null) {
+                final PasswordAuthentication pa = new PasswordAuthentication(user, password);
+                auth = new Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return pa;
+                    }
+                };
+            }
+        }
+
+        return Session.getInstance(properties, auth);
     }
 
     public Properties getProperties() {
