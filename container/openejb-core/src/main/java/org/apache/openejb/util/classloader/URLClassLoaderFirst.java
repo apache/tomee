@@ -183,6 +183,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
 
         if (name.startsWith("java.")) return true;
         if (name.startsWith("javax.faces.")) return false;
+        if (name.startsWith("javax.ws.rs.")) return false; // while jersey-core brings the api!
         if (name.startsWith("javax.")) return true;
         if (name.startsWith("sun.")) return true;
 
