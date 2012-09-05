@@ -44,6 +44,7 @@ import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.ha.CatalinaCluster;
 import org.apache.catalina.loader.WebappClassLoader;
 import org.apache.catalina.loader.WebappLoader;
+import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.startup.Constants;
 import org.apache.catalina.startup.ContextConfig;
 import org.apache.catalina.startup.HostConfig;
@@ -585,6 +586,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     sessionManagerClass = TomcatHelper.getServer().getParentClassLoader().loadClass(sessionManager);
                 } catch (ClassNotFoundException e) {
                     logger.error("can't find '" + sessionManager + "', StandardManager will be used", e);
+                    sessionManagerClass = StandardManager.class;
                 }
             }
 
@@ -672,16 +674,15 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 return null;
             }
 
+            final String id = getId(standardContext);
             for (final WebAppInfo webApp : contextInfo.appInfo.webApps) {
-
                 if (webApp == null) {
                     logger.debug("ContextInfo.appInfo.webApps entry is null StandardContext " + standardContext.getName());
                     continue;
                 }
 
-                if (standardContext.getName().equals("/" + webApp.contextRoot)
-                        || standardContext.getName().equals(webApp.contextRoot)  // ROOT for instance
-                        || standardContext.getName().isEmpty() && webApp.contextRoot.equals("/")) { // possible when user config it manually to be ROOT
+                final String wId = getId(webApp.host, webApp.contextRoot);
+                if (id.equals(wId)) {
                     return webApp;
                 }
             }
@@ -800,11 +801,13 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         }
 
 
+        final String id = getId(standardContext);
         WebAppInfo webAppInfo = null;
         // appInfo is null when deployment fails
         if (contextInfo.appInfo != null) {
             for (final WebAppInfo w : contextInfo.appInfo.webApps) {
-                if (("/" + w.contextRoot).equals(standardContext.getPath()) || isRootApplication(standardContext)) {
+                final String wId = getId(w.host, w.contextRoot);
+                if (id.equals(wId)) {
                     webAppInfo = w;
 
                     if (appContext == null) {
@@ -820,6 +823,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             if (appContext == null) {
                 appContext = getContainerSystem().getAppContext(contextInfo.appInfo.appId);
             }
+
+            // ensure matching (see getId() usage)
+            webAppInfo.host = standardContext.getHostname();
+            webAppInfo.contextRoot = standardContext.getName();
 
             // save jsf stuff
             final Map<String, Set<String>> scannedJsfClasses = new HashMap<String, Set<String>>();
@@ -1005,10 +1012,11 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             return;
         }
 
+        final String id = getId(standardContext);
         WebAppInfo currentWebAppInfo = null;
         for (final WebAppInfo webAppInfo : contextInfo.appInfo.webApps) {
-            final boolean isRoot = isRootApplication(standardContext);
-            if (("/" + webAppInfo.contextRoot).equals(standardContext.getPath()) || isRoot) {
+            final String wId = getId(webAppInfo.host, webAppInfo.contextRoot);
+            if (id.equals(wId)) {
                 currentWebAppInfo = webAppInfo;
                 break;
             }
@@ -1071,6 +1079,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             safeBind(comp, "ORB", new SystemComponentReference(ORB.class));
             safeBind(comp, "HandleDelegate", new SystemComponentReference(HandleDelegate.class));
         } catch (NamingException e) {
+            // no-op
         }
         ContextAccessController.setReadOnly(listenerName);
 
@@ -1400,17 +1409,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     }
 
     /**
-     * Returns true if given context is root web appliction
-     * false otherwise.
-     *
-     * @param standardContext tomcat context
-     * @return true if given context is root web appliction
-     */
-    private boolean isRootApplication(final StandardContext standardContext) {
-        return "".equals(standardContext.getPath());
-    }
-
-    /**
      * Returns application base of the given host.
      *
      * @param standardHost tomcat host
@@ -1571,11 +1569,21 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      * @return id of the context
      */
     private String getId(final StandardContext standardContext) {
-        String contextRoot = standardContext.getName();
+        return getId(standardContext.getHostname(), standardContext.getName());
+    }
+
+    private String getId(final String host, final String context) {
+        String contextRoot = context;
+        if ("ROOT".equals(contextRoot)) {
+            contextRoot = "";
+        }
         if (!contextRoot.startsWith("/")) {
             contextRoot = "/" + contextRoot;
         }
-        return standardContext.getHostname() + contextRoot;
+        if (host != null) {
+            return host + contextRoot;
+        }
+        return defaultHost + contextRoot;
     }
 
     /**
@@ -1584,7 +1592,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      * @param standardContext context
      * @return context info
      */
-    private ContextInfo getContextInfo(final StandardContext standardContext) {
+    public ContextInfo getContextInfo(final StandardContext standardContext) {
         final String id = getId(standardContext);
         return infos.get(id);
     }
@@ -1635,7 +1643,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         infos.remove(id);
     }
 
-    private static class ContextInfo {
+    public static class ContextInfo {
 
         public AppInfo appInfo;
         public StandardContext standardContext;

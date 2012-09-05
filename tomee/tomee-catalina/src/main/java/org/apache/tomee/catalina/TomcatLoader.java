@@ -363,6 +363,15 @@ public class TomcatLoader implements Loader {
             ejbServer = null;
         }
 
+        TomcatWebAppBuilder tomcatWebAppBuilder = (TomcatWebAppBuilder) SystemInstance.get().getComponent(WebAppBuilder.class);
+        if (tomcatWebAppBuilder != null) {
+            try {
+                tomcatWebAppBuilder.stop();
+            } catch (Exception ignored) {
+                // no-op
+            }
+        }
+
         //Destroy OpenEJB system
         OpenEJB.destroy();
     }

@@ -17,26 +17,6 @@
  */
 package org.apache.tomee.catalina;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.ejb.spi.HandleDelegate;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.LinkRef;
-import javax.naming.NamingException;
-import javax.naming.RefAddr;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.transaction.TransactionManager;
-import javax.transaction.TransactionSynchronizationRegistry;
-import javax.transaction.UserTransaction;
 import org.apache.catalina.core.NamingContextListener;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardServer;
@@ -62,6 +42,7 @@ import org.apache.openejb.assembler.classic.ResourceEnvReferenceInfo;
 import org.apache.openejb.assembler.classic.ResourceInfo;
 import org.apache.openejb.assembler.classic.ResourceReferenceInfo;
 import org.apache.openejb.assembler.classic.ServiceReferenceInfo;
+import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.assembler.classic.WsBuilder;
 import org.apache.openejb.core.WebContext;
@@ -85,6 +66,27 @@ import org.apache.tomee.common.UserTransactionFactory;
 import org.apache.tomee.common.WsFactory;
 import org.omg.CORBA.ORB;
 
+import javax.ejb.spi.HandleDelegate;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.LinkRef;
+import javax.naming.NamingException;
+import javax.naming.RefAddr;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
+import javax.transaction.UserTransaction;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import static org.apache.tomee.common.EnumFactory.ENUM_VALUE;
 import static org.apache.tomee.common.NamingUtil.COMPONENT_TYPE;
 import static org.apache.tomee.common.NamingUtil.DEPLOYMENT_ID;
@@ -105,8 +107,6 @@ import static org.apache.tomee.common.NamingUtil.WS_QNAME;
 import static org.apache.tomee.common.NamingUtil.setStaticValue;
 
 public class TomcatJndiBuilder {
-    private static final Map<Context, Map<String, ContextValueHelper>> CONTEXT_VALUES = new HashMap<Context, Map<String, ContextValueHelper>>();
-
     private final StandardContext standardContext;
     private final WebAppInfo webAppInfo;
     private final Collection<Injection> injections;
@@ -202,7 +202,7 @@ public class TomcatJndiBuilder {
             }
         }
 
-        if (webContext != null && webContext.getBindings() != null) {
+        if (webContext != null && webContext.getBindings() != null && root != null) {
             for (Map.Entry<String, Object> entry : webContext.getBindings().entrySet()) {
                 try {
                     final String key = entry.getKey();
@@ -230,6 +230,10 @@ public class TomcatJndiBuilder {
 
             if (webContext != null) {
                 comp.rebind("BeanManager", webContext.getAppContext().getBeanManager());
+            } else { // possible?
+                comp.rebind("BeanManager", cs.getAppContext(
+                        ((TomcatWebAppBuilder) SystemInstance.get().getComponent(WebAppBuilder.class))
+                            .getContextInfo(standardContext).appInfo.appId).getBeanManager());
             }
         } catch (Exception ignored) {
             ignored.printStackTrace();
@@ -301,6 +305,7 @@ public class TomcatJndiBuilder {
                 return;
             }
         } catch (Throwable e) {
+            // no-op
         }
 
         if (isLookupRef(naming, ref)) return;
@@ -467,9 +472,7 @@ public class TomcatJndiBuilder {
             }
 
             JtaEntityManagerRegistry jtaEntityManagerRegistry = SystemInstance.get().getComponent(JtaEntityManagerRegistry.class);
-            JtaEntityManager jtaEntityManager = new JtaEntityManager(ref.persistenceUnitName, jtaEntityManagerRegistry, factory, ref.properties, ref.extended);
-            Object object = jtaEntityManager;
-            setResource(resource, object);
+            setResource(resource, new JtaEntityManager(ref.persistenceUnitName, jtaEntityManagerRegistry, factory, ref.properties, ref.extended));
         }
 
         if (addEntry) {
@@ -724,6 +727,7 @@ public class TomcatJndiBuilder {
         try {
             wsdlUrl = new URL(ref.wsdlFile);
         } catch (MalformedURLException e) {
+            // no-op
         }
 
         if (wsdlUrl == null) {
@@ -734,6 +738,7 @@ public class TomcatJndiBuilder {
             try {
                 wsdlUrl = standardContext.getServletContext().getResource("/" + ref.wsdlFile);
             } catch (MalformedURLException e) {
+                // no-op
             }
         }
 
@@ -754,13 +759,6 @@ public class TomcatJndiBuilder {
 
     public static void importOpenEJBResourcesInTomcat(final Collection<ResourceInfo> resources, final StandardServer server) {
         final NamingResources naming = server.getGlobalNamingResources();
-        final Context ctx;
-        try {
-            ctx = new InitialContext();
-        } catch (NamingException e) {
-            e.printStackTrace();
-            return;
-        }
 
         for (ResourceInfo info : resources) {
             final String name = info.id;
@@ -788,23 +786,6 @@ public class TomcatJndiBuilder {
 
         public void setProperty(String name, Object value) {
             contextResource.setProperty(name, value);
-        }
-    }
-
-
-    private static class ContextValueHelper {
-        public ContextValue contextValue;
-        public Collection<String> keys = new ArrayList<String>();
-
-        public ContextValueHelper(String name) {
-            contextValue = new ContextValue(name);
-        }
-
-        public void addValue(String name, String link) {
-            if (!keys.contains(name)) {
-                contextValue.addValue(link);
-                keys.add(name);
-            } // else some magic could be done here, probably for ears...
         }
     }
 }
