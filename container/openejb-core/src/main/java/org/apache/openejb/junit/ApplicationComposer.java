@@ -33,6 +33,7 @@ import org.apache.openejb.config.WebModule;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
+import org.apache.openejb.injection.FallbackPropertyInjector;
 import org.apache.openejb.jee.Application;
 import org.apache.openejb.jee.Beans;
 import org.apache.openejb.jee.Connector;
@@ -87,6 +88,11 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
         if (configs.size() > 1) {
             final String gripe = "Test class should have no more than one @Configuration method";
             errors.add(new Exception(gripe));
+        }
+
+        final List<FrameworkMethod> mockInjector = testClass.getAnnotatedMethods(MockInjector.class);
+        if (mockInjector.size() > 1) {
+            errors.add(new Exception("Test class should have no more than one @MockInjector method"));
         }
 
         for (FrameworkMethod method : configs) {
@@ -287,6 +293,14 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
             if (SystemInstance.isInitialized()) SystemInstance.reset();
 
             SystemInstance.init(configuration);
+
+            final List<FrameworkMethod> mockInjectors = testClass.getAnnotatedMethods(MockInjector.class);
+            for (FrameworkMethod method : methods) { // max == 1 so no need to break
+                final Object o = method.invokeExplosively(testInstance);
+                if (o instanceof FallbackPropertyInjector) {
+                    SystemInstance.get().setComponent(FallbackPropertyInjector.class, (FallbackPropertyInjector) o);
+                }
+            }
 
             try {
                 ConfigurationFactory config = new ConfigurationFactory();

@@ -17,11 +17,12 @@
 package org.apache.openejb;
 
 import org.apache.openejb.core.ivm.naming.JndiUrlReference;
+import org.apache.openejb.injection.FallbackPropertyInjector;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.util.AsmParameterNameLoader;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.AsmParameterNameLoader;
 import org.apache.openejb.util.PassthroughFactory;
 import org.apache.xbean.naming.reference.SimpleReference;
 import org.apache.xbean.recipe.ObjectRecipe;
@@ -29,14 +30,14 @@ import org.apache.xbean.recipe.Option;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.LinkedHashMap;
 import java.util.Map.Entry;
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
 
 public class InjectionProcessor<T> {
 
@@ -216,8 +217,15 @@ public class InjectionProcessor<T> {
                     }
                 }
 
+                if (value == null) { // used for testing/mocking
+                    final FallbackPropertyInjector fallback = SystemInstance.get().getComponent(FallbackPropertyInjector.class);
+                    if (fallback != null) {
+                        value = fallback.getValue(injection);
+                    }
+                }
+
                 if (value != null) {
-                    String prefix;
+                    final String prefix;
                     if (usePrefix) {
                         prefix = injection.getTarget().getName() + "/";
                     } else {
