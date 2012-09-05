@@ -36,7 +36,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.4</version>
+        <version>2.3.2</version>
         <configuration>
           <compilerId>groovy-eclipse-compiler</compilerId>
           <source>1.6</source>
@@ -46,7 +46,7 @@
           <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-eclipse-compiler</artifactId>
-            <version>2.6.0-01</version>
+            <version>2.7.0-01</version>
           </dependency>
         </dependencies>
       </plugin>
@@ -58,6 +58,11 @@
       <id>apache-m2-snapshot</id>
       <name>Apache Snapshot Repository</name>
       <url>http://repository.apache.org/snapshots</url>
+    </repository>
+    <repository>
+      <id>nexus</id>
+      <name>Nexus Repository</name>
+      <url>http://nexus.codehaus.org</url>
     </repository>
   </repositories>
 
@@ -72,7 +77,7 @@
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-all</artifactId>
-      <version>2.0.0-rc-4</version>
+      <version>2.0.1</version>
     </dependency>
 
     <dependency>
