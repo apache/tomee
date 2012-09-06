@@ -22,7 +22,7 @@ import org.apache.openejb.client.ServerMetaData;
 /**
  * @version $Rev$ $Date$
  */
-@Log
+@Log(Log.Level.FINE)
 public class RetryingRequest {
 
     private final Request request;

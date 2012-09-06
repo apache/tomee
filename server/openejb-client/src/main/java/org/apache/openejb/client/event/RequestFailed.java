@@ -23,18 +23,18 @@ import java.net.URI;
 /**
  * @version $Rev$ $Date$
  */
-@Log(Log.Level.SEVERE)
+@Log(Log.Level.WARNING)
 public class RequestFailed {
 
     private final URI server;
-
     private final Request request;
+    private final Throwable throwable;
 
-    public RequestFailed(URI server, Request request) {
+    public RequestFailed(final URI server, final Request request, final Throwable throwable) {
         this.server = server;
         this.request = request;
+        this.throwable = throwable;
     }
-
 
     public URI getServer() {
         return server;
@@ -44,10 +44,12 @@ public class RequestFailed {
         return request;
     }
 
+    public Throwable getThrowable() {
+        return throwable;
+    }
+
     @Override
     public String toString() {
-        return "RequestFailed{" +
-                "server=" + server +
-                "} " + request;
+        return "RequestFailed{" + "server=" + this.server + "} " + this.request + " {error=" + this.throwable.getMessage() + "}";
     }
 }

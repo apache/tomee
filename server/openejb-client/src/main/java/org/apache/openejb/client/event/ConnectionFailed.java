@@ -21,7 +21,7 @@ import java.net.URI;
 /**
  * @version $Rev$ $Date$
  */
-@Log(Log.Level.SEVERE)
+@Log(Log.Level.WARNING)
 public class ConnectionFailed {
     private final URI uri;
     private final Throwable cause;
@@ -35,6 +35,6 @@ public class ConnectionFailed {
     public String toString() {
         return "ConnectionFailed{" +
                 "uri=" + uri +
-                '}';
+                " cause=" + this.cause + "}";
     }
 }
