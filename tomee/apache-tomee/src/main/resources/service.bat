@@ -209,10 +209,9 @@ set PR_STDERROR=auto
 	++JvmOptions=-Djava.io.tmpdir="%CATALINA_BASE%\temp" ^
 	++JvmOptions=-Djava.util.logging.manager="org.apache.juli.ClassLoaderLogManager" ^
 	++JvmOptions=-Djava.util.logging.config.file="%CATALINA_BASE%\conf\logging.properties" ^
-	++JvmOptions=-Xmx768M ^
+	++JvmOptions=-Xmx1024M ^
 	++JvmOptions=-Djava.awt.headless=true ^
 	++JvmOptions=-XX:+UseParallelGC ^
-	++JvmOptions=-XX:+AggressiveHeap ^
 	++JvmOptions=-XX:MaxPermSize=256M ^
 	++JvmOptions=-Xss2048k
 
