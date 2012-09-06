@@ -343,7 +343,7 @@ public class Client {
             final URI uri = conn.getURI();
             final Set<URI> failed = getFailed();
 
-            Client.fireEvent(new RequestFailed(uri, req));
+            Client.fireEvent(new RequestFailed(uri, req, e));
 
             if (FINER) {
                 logger.log(Level.FINER, "Add Failed " + uri.toString());
