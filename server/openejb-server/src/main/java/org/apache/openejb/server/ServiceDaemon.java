@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -44,6 +45,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+@SuppressWarnings("UnusedDeclaration")
 @Managed
 public class ServiceDaemon implements ServerService {
 
@@ -54,7 +56,7 @@ public class ServiceDaemon implements ServerService {
 
     private SocketListener socketListener;
 
-    private int timeout = 1000;
+    private int timeout = 0;
 
     private InetAddress inetAddress;
 
@@ -68,7 +70,7 @@ public class ServiceDaemon implements ServerService {
     private StringTemplate discoveryUriFormat;
     private URI serviceUri;
     private Properties props;
-	private String[] enabledCipherSuites;
+    private String[] enabledCipherSuites;
 
     public ServiceDaemon(ServerService next) {
         this.next = next;
@@ -122,7 +124,7 @@ public class ServiceDaemon implements ServerService {
         secure = options.get("secure", false);
 
         timeout = options.get("timeout", timeout);
-        
+
         enabledCipherSuites = options.get("enabledCipherSuites", "SSL_DH_anon_WITH_RC4_128_MD5").split(",");
 
         next.init(props);
@@ -145,11 +147,14 @@ public class ServiceDaemon implements ServerService {
                     serverSocket = factory.createServerSocket(port, backlog, inetAddress);
                     ((SSLServerSocket) serverSocket).setEnabledCipherSuites(enabledCipherSuites);
                 } else {
-                    serverSocket = new ServerSocket(port, backlog, inetAddress);
+                    serverSocket = new ServerSocket();
+                    serverSocket.setReuseAddress(true);
+                    serverSocket.bind(new InetSocketAddress(inetAddress, port), backlog);
                 }
 
-                port = serverSocket.getLocalPort();
                 serverSocket.setSoTimeout(timeout);
+                port = serverSocket.getLocalPort();
+
             } catch (Exception e) {
                 throw new ServiceException("Service failed to open socket", e);
             }
@@ -288,6 +293,7 @@ public class ServiceDaemon implements ServerService {
                 Socket socket = null;
                 try {
                     socket = serverSocket.accept();
+                    socket.setSoLinger(true, 10);
                     socket.setTcpNoDelay(true);
 
                     if (socket.isClosed()) {
@@ -310,8 +316,7 @@ public class ServiceDaemon implements ServerService {
                     // It's up to the consumer of the socket
                     // to close it.
                 } catch (SocketTimeoutException e) {
-                    // we don't really care
-                    // log.debug("Socket timed-out",e);
+                    // Ignore - Should not get here on serverSocket.setSoTimeout(0)
                 } catch (SocketException e) {
                     if (!stop.get()) {
                         log.debug("Socket error", e);
