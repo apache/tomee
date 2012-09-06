@@ -16,6 +16,12 @@
  */
 package org.apache.openejb.client;
 
+import org.apache.openejb.client.event.ConnectionOpened;
+import org.apache.openejb.client.event.ConnectionPoolCreated;
+import org.apache.openejb.client.event.ConnectionPoolTimeout;
+
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -34,13 +40,6 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
-import javax.net.ssl.SSLSocket;
-import javax.net.ssl.SSLSocketFactory;
-
-import org.apache.openejb.client.event.ConnectionOpened;
-import org.apache.openejb.client.event.ConnectionPoolCreated;
-import org.apache.openejb.client.event.ConnectionPoolTimeout;
 
 public class SocketConnectionFactory implements ConnectionFactory {
 
@@ -76,13 +75,13 @@ public class SocketConnectionFactory implements ConnectionFactory {
             //Ignore
         }
     }
-    
-    private String[] getEnabledCipherSuites(){
+
+    private String[] getEnabledCipherSuites() {
         String property = System.getProperty(ENABLED_CIPHER_SUITES);
-        if (property != null){
+        if (property != null) {
             return property.split(",");
         } else {
-    	    return new String[]{ "SSL_DH_anon_WITH_RC4_128_MD5"};
+            return new String[]{"SSL_DH_anon_WITH_RC4_128_MD5"};
         }
     }
 
@@ -253,15 +252,18 @@ public class SocketConnectionFactory implements ConnectionFactory {
 
             try {
                 if (uri.getScheme().equalsIgnoreCase("ejbds")) {
-                    final SSLSocket sslSocket = (SSLSocket) SSLSocketFactory.getDefault().createSocket(address.getAddress(), SocketConnectionFactory.this.timeoutSocket);
+                    final SSLSocket sslSocket = (SSLSocket) SSLSocketFactory.getDefault().createSocket();
                     sslSocket.setEnabledCipherSuites(enabledCipherSuites);
                     this.socket = sslSocket;
+
                 } else {
                     this.socket = new Socket();
-                    this.socket.connect(address, SocketConnectionFactory.this.timeoutSocket);
                 }
 
                 this.socket.setTcpNoDelay(true);
+                this.socket.setSoLinger(true, 10);
+                this.socket.connect(address, SocketConnectionFactory.this.timeoutSocket);
+
                 Client.fireEvent(new ConnectionOpened(uri));
 
             } catch (ConnectException e) {
