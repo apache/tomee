@@ -1,4 +1,4 @@
-Package: tomee
+Package: {1}
 Version: {0}
 Section: web
 Priority: optional

@@ -44,13 +44,22 @@ import java.io.PrintWriter;
 import java.util.Map;
 
 public class PackageBuilder {
+    private final String user;
+    private final String group;
+
+    private long size = 0;
+
+    public PackageBuilder(String user, String group) {
+        this.user = user;
+        this.group = group;
+    }
 
     private File uncompress(File gz) throws IOException, CompressorException {
         final File output = new File(gz.getParent(), FilenameUtils.getBaseName(gz.getName()));
         output.delete();
 
         final InputStream is = new FileInputStream(gz);
-        CompressorInputStream in = new CompressorStreamFactory().createCompressorInputStream("gz", is);
+        final CompressorInputStream in = new CompressorStreamFactory().createCompressorInputStream("gz", is);
         IOUtils.copy(in, new FileOutputStream(output));
         in.close();
 
@@ -92,7 +101,7 @@ public class PackageBuilder {
                 newFile.mkdirs();
             } else {
                 final OutputStream out = new FileOutputStream(newFile);
-                IOUtils.copy(in, out);
+                this.size = this.size + IOUtils.copy(in, out);
                 out.close();
             }
         }
@@ -102,8 +111,8 @@ public class PackageBuilder {
     }
 
     private String getCheckSumLine(String name, File file) throws IOException {
-        FileInputStream fis = new FileInputStream(file);
-        String md5 = DigestUtils.md5Hex(fis);
+        final FileInputStream fis = new FileInputStream(file);
+        final String md5 = DigestUtils.md5Hex(fis);
         fis.close();
         return md5 + " " + name;
     }
@@ -115,9 +124,8 @@ public class PackageBuilder {
             final TarArchiveEntry entry = new TarArchiveEntry(file);
             entry.setName(name);
 
-            //TODO: remove hard-coded value
-            entry.setUserName("tomee");
-            entry.setGroupName("tomee");
+            entry.setUserName(this.user);
+            entry.setGroupName(this.group);
 
             if (modeMappings != null && modeMappings.containsKey(name)) {
                 entry.setMode(modeMappings.get(name));
@@ -317,7 +325,7 @@ public class PackageBuilder {
         final File deb = new File(sourceTarGz.getParent(), name + "-" + version + ".deb");
         try {
             createDebPackage(
-                    isControl,
+                    "Installed-Size: " + (this.size / 1024) + "\n" + isControl,
                     isPostinst,
                     isPrerm,
                     md5sums,
