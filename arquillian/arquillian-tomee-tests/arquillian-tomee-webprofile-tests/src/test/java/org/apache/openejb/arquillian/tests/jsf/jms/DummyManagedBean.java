@@ -18,9 +18,9 @@ package org.apache.openejb.arquillian.tests.jsf.jms;
 
 import javax.annotation.Resource;
 import javax.faces.bean.ManagedBean;
+import javax.jms.ConnectionFactory;
 import javax.jms.Queue;
 import javax.jms.Topic;
-import javax.jms.ConnectionFactory;
 
 @ManagedBean
 public class DummyManagedBean {
@@ -33,21 +33,24 @@ public class DummyManagedBean {
     @Resource
     ConnectionFactory connectionFactory;
 
-    public String getFoo()
-    {
-        if(queue!=null){return "queueInjected";}
+    public String getFoo() {
+        if (queue != null) {
+            return "queueInjected";
+        }
         return "queueNotInjected";
     }
 
-    public String getBoo()
-    {
-        if(topic!=null){return "topicInjected";}
+    public String getBoo() {
+        if (topic != null) {
+            return "topicInjected";
+        }
         return "topicNotInjected";
     }
 
-    public String getBaz()
-    {
-        if(connectionFactory!=null){return "connectionFactoryInjected";}
+    public String getBaz() {
+        if (connectionFactory != null) {
+            return "connectionFactoryInjected";
+        }
         return "connectionFactoryNotInjected";
     }
 }
