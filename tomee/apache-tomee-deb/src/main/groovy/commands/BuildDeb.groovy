@@ -72,18 +72,18 @@ class BuildDeb {
         String name = require('name')
         String version = require('version')
 
-        final PackageBuilder builder = new PackageBuilder()
+        final PackageBuilder builder = new PackageBuilder("tomee", "tomee")
 
         Map<String, String> dirMapping = new MapBuilder<String, String>(new HashMap<String, String>())
                 .add("/bin", "/usr/tomee")
-                .add("/conf", "/usr/tomee")
+                .add("/conf", "/etc/tomee")
                 .add("/endorsed", "/usr/tomee")
                 .add("/lib", "/usr/tomee")
-                .add("/LICENSE", "/usr/tomee")
-                .add("/NOTICE", "/usr/tomee")
-                .add("/RELEASE-NOTES", "/usr/tomee")
-                .add("/RUNNING.txt", "/usr/tomee")
-                .add("/work", "/usr/tomee")
+                .add("/LICENSE", "/usr/share/doc/tomee")
+                .add("/NOTICE", "/usr/share/doc/tomee")
+                .add("/RELEASE-NOTES", "/usr/share/doc/tomee")
+                .add("/RUNNING.txt", "/usr/share/doc/tomee")
+                .add("/work", "/var/tomee")
                 .add("/logs", "/var/tomee")
                 .add("/webapps", "/var/tomee")
                 .add("/temp", "/tmp/tomee")
@@ -97,7 +97,9 @@ class BuildDeb {
         final File gz = new File(new File(require('project.folder')), 'build/' + original.getName())
         FileUtils.copyFile(original, gz)
 
-        final String control = StringUtils.replace(getResource("control"), "{0}", version)
+        String control = StringUtils.replace(getResource("control"), "{0}", version)
+        control = StringUtils.replace(control, "{1}", name)
+
         builder.createDebPackage(name, version, gz,
                 control,
                 getResource("postinst"),
@@ -106,9 +108,6 @@ class BuildDeb {
                 modeMapping
         )
         gz.delete()
-
-
-
     }
 }
 
