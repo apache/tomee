@@ -22,12 +22,8 @@ import org.apache.openejb.loader.IO;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.shrinkwrap.api.asset.Asset;
 import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
-import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.descriptor.api.Descriptors;
-import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceDescriptor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -43,16 +39,15 @@ public class JMSInjectionTest extends JSFs {
     @ArquillianResource
     private URL url;
 
-    static Logger logger=Logger.getLogger(JMSInjectionTest.class.getName());
+    static Logger logger = Logger.getLogger(JMSInjectionTest.class.getName());
 
     @Deployment
-    public static WebArchive getArchive()
-    {
+    public static WebArchive getArchive() {
 
         return base("jsf-jms-test.war")
                 .addPackage(JMSInjectionTest.class.getPackage())
                 .addAsWebResource(new ClassLoaderAsset(
-        JMSInjectionTest.class.getPackage().getName().replace('.', '/').concat("/").concat("dummy.xhtml")), "dummy.xhtml");
+                        JMSInjectionTest.class.getPackage().getName().replace('.', '/').concat("/").concat("dummy.xhtml")), "dummy.xhtml");
     }
 
     @Test
