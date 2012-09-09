@@ -34,7 +34,7 @@ public class LoadOnStartupAdapter extends XmlAdapter<String, Integer> {
         if (value.equalsIgnoreCase("false")) {
             return null;
         }
-        return Integer.valueOf(value);
+        return Integer.valueOf(value.trim());
     }
 
     @Override
