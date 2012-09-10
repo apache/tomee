@@ -313,7 +313,7 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
             SystemInstance.init(configuration);
 
             final List<FrameworkMethod> mockInjectors = testClass.getAnnotatedMethods(MockInjector.class);
-            for (FrameworkMethod method : methods) { // max == 1 so no need to break
+            for (FrameworkMethod method : mockInjectors) { // max == 1 so no need to break
                 final Object o = method.invokeExplosively(testInstance);
                 if (o instanceof FallbackPropertyInjector) {
                     SystemInstance.get().setComponent(FallbackPropertyInjector.class, (FallbackPropertyInjector) o);
