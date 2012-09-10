@@ -17,30 +17,39 @@
 package org.apache.openejb.config.sys;
 
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.config.AppContextConfigDeployer;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
+import org.apache.openejb.junit.AppResource;
+import org.apache.openejb.junit.ApplicationComposer;
+import org.apache.openejb.junit.Module;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 
+@RunWith(ApplicationComposer.class)
 public class ParseAppCtxXmlTest {
+    @AppResource
+    private AppModule module;
+
+    @Module
+    public AppModule module() {
+        final AppModule app = new AppModule(ParseAppCtxXmlTest.class.getClassLoader(), "");
+        app.getAltDDs().put("app-ctx.xml", ParseAppCtxXmlTest.class.getClassLoader().getResource("complete-app-ctx.xml"));
+        app.getEjbModules().add(ejbModule("1"));
+        app.getEjbModules().iterator().next().getEjbJar().addEnterpriseBean(new SingletonBean("CalculatorBean", CalculatorConfigured.class.getName()));
+        app.getEjbModules().add(ejbModule("2"));
+        app.getEjbModules().get(1).getEjbJar().addEnterpriseBean(new SingletonBean("BeanInAModule", CalculatorConfigured2.class.getName()));
+        return app;
+    }
+
     @Test
     public void parse() throws IOException, OpenEJBException {
-        final AppModule module = new AppModule(ParseAppCtxXmlTest.class.getClassLoader(), "");
-        module.getAltDDs().put("app-ctx.xml", ParseAppCtxXmlTest.class.getClassLoader().getResource("complete-app-ctx.xml"));
-        new AppContextConfigDeployer().currentPhase(SaxAppCtxConfig.Phase.BEFORE_SCANNING).deploy(module);
-        module.getEjbModules().add(ejbModule("1"));
-        module.getEjbModules().iterator().next().getEjbJar().addEnterpriseBean(new SingletonBean("CalculatorBean", "CalculatorBean"));
-        module.getEjbModules().add(ejbModule("2"));
-        module.getEjbModules().get(1).getEjbJar().addEnterpriseBean(new SingletonBean("BeanInAModule", "BeanInAModule"));
-        new AppContextConfigDeployer().currentPhase(SaxAppCtxConfig.Phase.AFTER_SACNNING).deploy(module);
-
         // Properties
         assertEquals("dummy", module.getProperties().getProperty("foo.bar"));
         assertEquals("10", module.getProperties().getProperty("AsynchronousPool.CorePoolSize"));
@@ -55,12 +64,12 @@ public class ParseAppCtxXmlTest {
         assertEquals("true", module.getProperties().getProperty("i.m.imported"));
 
         // BeanContext
-        final EjbDeployment calculator = module.getEjbModules().iterator().next().getOpenejbJar().getDeploymentsByEjbName().get("CalculatorBean");
+        final EjbDeployment calculator = module.getEjbModules().get(1).getOpenejbJar().getDeploymentsByEjbName().get("CalculatorBean");
         assertEquals("ok", calculator.getProperties().getProperty("no.root"));
         assertEquals("wss4j", calculator.getProperties().getProperty("cxf.jaxws.in-interceptors"));
 
         // ModuleContext
-        final EjbDeployment beanInAModule = module.getEjbModules().get(1).getOpenejbJar().getDeploymentsByEjbName().get("BeanInAModule");
+        final EjbDeployment beanInAModule = module.getEjbModules().get(2).getOpenejbJar().getDeploymentsByEjbName().get("BeanInAModule");
         assertEquals("mId", beanInAModule.getProperties().getProperty("module.id"));
 
         // Pojo
@@ -75,5 +84,15 @@ public class ParseAppCtxXmlTest {
         final EjbModule module = new EjbModule(new EjbJar());
         module.setModuleId(id);
         return module;
+    }
+
+    // just some class to be able to deploy "fake" ejbs
+
+    public static class CalculatorConfigured {
+
+    }
+
+    public static class CalculatorConfigured2 {
+
     }
 }

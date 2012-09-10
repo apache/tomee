@@ -45,6 +45,7 @@ public class EnvEntriesPropertiesDeployer implements DynamicDeployer {
     public static final String ENV_ENTRY_PROPERTIES = "env-entries.properties";
 
     private final String descriptorName;
+    private final Map<String, String> additionalEnvEntries = new HashMap<String, String>();
 
     public EnvEntriesPropertiesDeployer() {
         this(ENV_ENTRY_PROPERTIES);
@@ -141,12 +142,20 @@ public class EnvEntriesPropertiesDeployer implements DynamicDeployer {
         }
         if (propsUrl == null) return Collections.emptyMap();
         try {
-            Properties envEntriesProps = IO.readProperties(propsUrl);
-
+            final Properties envEntriesProps = IO.readProperties(propsUrl);
+            envEntriesProps.putAll(additionalEnvEntries);
             return new HashMap(envEntriesProps);
         } catch (IOException e) {
             log.error("envprops.notLoaded", e, module.getModuleId(), propsUrl.toExternalForm());
             return Collections.emptyMap();
         }
+    }
+
+    public void addEnvEntries(final String key, final String value) {
+        additionalEnvEntries.put(key, value);
+    }
+
+    public void resetAdditionalEnvEntries() {
+        additionalEnvEntries.clear();
     }
 }

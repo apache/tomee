@@ -16,14 +16,15 @@
  */
 package org.apache.openejb.config.sys;
 
-import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.config.AppModule;
+import org.apache.openejb.config.BeanProperties;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.config.EnvEntriesPropertiesDeployer;
 import org.apache.openejb.config.PojoConfiguration;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Saxs;
@@ -40,7 +41,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -48,14 +48,12 @@ import java.util.Properties;
 public class SaxAppCtxConfig {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, SaxAppContextConfig.class);
 
-    public enum Phase {
-        BEFORE_SCANNING, AFTER_SACNNING
-    }
-
-    public static void parse(final AppModule appModule, final InputSource source, final Phase phase) throws SAXException, ParserConfigurationException, IOException {
+    public static void parse(final AppModule appModule, final InputSource source,
+                             final EnvEntriesPropertiesDeployer envEntriesDeployer, final BeanProperties beanProperties)
+            throws SAXException, ParserConfigurationException, IOException {
         Saxs.factory()
             .newSAXParser()
-                .parse(source, new SaxAppContextConfig(appModule, phase));
+                .parse(source, new SaxAppContextConfig(appModule, envEntriesDeployer, beanProperties));
     }
 
     private static class SaxAppContextConfig extends StackHandler {
@@ -73,11 +71,13 @@ public class SaxAppCtxConfig {
         private static final Collection<String> ENV_ENTRY_ALIASES = Arrays.asList("enventry", "env-entry");
 
         private final AppModule module;
-        private final Phase phase;
+        private final EnvEntriesPropertiesDeployer envEntriesDeployer;
+        private final BeanProperties beanPropertiesDeployer;
 
-        public SaxAppContextConfig(final AppModule appModule, Phase phase) {
+        public SaxAppContextConfig(final AppModule appModule, final EnvEntriesPropertiesDeployer envEntriesDeployer, final BeanProperties beanProperties) {
             this.module = appModule;
-            this.phase = phase;
+            this.envEntriesDeployer = envEntriesDeployer;
+            this.beanPropertiesDeployer = beanProperties;
         }
 
         @Override
@@ -88,11 +88,13 @@ public class SaxAppCtxConfig {
         private class Document extends DefaultHandler {
             @Override
             public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
-                if (APPLICATION_ALIASES.contains(localName.toLowerCase())) {
-                    push(new Root());
-                } else {
+                // by default don't care about root tag
+                if (!APPLICATION_ALIASES.contains(localName.toLowerCase())
+                        && SystemInstance.get().getOptions().get("openejb.configuration.strict-tags", false)) {
                     throw new IllegalStateException("Unsupported Element: " + localName);
+
                 }
+                push(new Root());
             }
         }
 
@@ -122,7 +124,7 @@ public class SaxAppCtxConfig {
                 final File file = new File(path);
                 if (file.exists()) {
                     try {
-                        parse(module, new InputSource(new FileInputStream(file)), phase);
+                        parse(module, new InputSource(new FileInputStream(file)), envEntriesDeployer, beanPropertiesDeployer);
                     } catch (ParserConfigurationException e) {
                         throw new SAXException(e);
                     } catch (IOException e) {
@@ -134,7 +136,7 @@ public class SaxAppCtxConfig {
                         final InputStream is = cl.getResourceAsStream(path);
                         if (is != null) {
                             try {
-                                parse(module, new InputSource(is), phase);
+                                parse(module, new InputSource(is), envEntriesDeployer, beanPropertiesDeployer);
                             } catch (ParserConfigurationException e) {
                                 throw new SAXException(e);
                             } catch (IOException e) {
@@ -167,10 +169,6 @@ public class SaxAppCtxConfig {
 
             @Override
             public void setValue(final String text) {
-                if (!phase.equals(Phase.AFTER_SACNNING)) {
-                    return;
-                }
-
                 try {
                     for (Map.Entry<Object, Object> entry : new PropertiesAdapter().unmarshal(text).entrySet()) {
                         properties.put(prefix + entry.getKey(), entry.getValue());
@@ -218,10 +216,6 @@ public class SaxAppCtxConfig {
 
             @Override
             public void endElement(final String uri, final String localName, final String qName) throws SAXException {
-                if (!phase.equals(Phase.AFTER_SACNNING)) {
-                    return;
-                }
-
                 for (PojoConfig generic : genericConfigs) {
                     for (PojoConfiguration config : module.getPojoConfigurations().values()) {
                         for (String key : generic.getProperties().stringPropertyNames()) {
@@ -254,41 +248,9 @@ public class SaxAppCtxConfig {
 
             @Override
             public void endElement(final String uri, final String localName, final String qName) throws SAXException {
-                if (!phase.equals(Phase.AFTER_SACNNING)) {
-                    return;
-                }
-
                 for (PojoConfig generic : genericConfigs) { // BeanContextConfig
-                    if (!generic.hasProperties()) {
-                        continue;
-                    }
-
-                    for (EjbModule ejbModule : module.getEjbModules()) {
-                        if (acceptModule(id, ejbModule)) {
-                            continue;
-                        }
-
-                        for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
-                            final String name = bean.getEjbName();
-
-                            OpenejbJar openEjbJar = ejbModule.getOpenejbJar();
-                            if (openEjbJar == null) {
-                                openEjbJar = new OpenejbJar();
-                                ejbModule.setOpenejbJar(openEjbJar);
-                            }
-
-                            final Map<String, EjbDeployment> openejbJarDeployment = openEjbJar.getDeploymentsByEjbName();
-                            EjbDeployment deployment = openejbJarDeployment.get(name);
-                            if (deployment == null) {
-                                deployment = openEjbJar.addEjbDeployment(bean);
-                            }
-
-                            for (String key : generic.getProperties().stringPropertyNames()) {
-                                if (!deployment.getProperties().containsKey(key)) {
-                                    deployment.getProperties().put(key, generic.getProperties().get(key));
-                                }
-                            }
-                        }
+                    if (generic.hasProperties()) {
+                        beanPropertiesDeployer.addGlobalProperties(generic.getProperties());
                     }
                 }
             }
@@ -314,10 +276,6 @@ public class SaxAppCtxConfig {
 
             @Override
             public void endElement(final String uri, final String localName, final String qName) throws SAXException {
-                if (!phase.equals(Phase.AFTER_SACNNING)) {
-                    return;
-                }
-
                 module.getPojoConfigurations().put(id, new PojoConfiguration(pojoConfig.getProperties()));
             }
         }
@@ -332,35 +290,13 @@ public class SaxAppCtxConfig {
 
             @Override
             public void endElement(final String uri, final String localName, final String qName) throws SAXException {
-                if (!phase.equals(Phase.AFTER_SACNNING)) {
-                    return;
-                }
-
                 for (EjbModule ejbModule : module.getEjbModules()) {
                     if (!acceptModule(moduleId, ejbModule)) {
                         continue;
                     }
 
-                    final EnterpriseBean bean = ejbModule.getEjbJar().getEnterpriseBeansByEjbName().get(id);
-                    if (bean == null) {
-                        continue;
-                    }
-
-                    final String name = bean.getEjbName();
-
                     if (pojoConfig.hasProperties()) {
-                        OpenejbJar openEjbJar = ejbModule.getOpenejbJar();
-                        if (openEjbJar == null) {
-                            openEjbJar = new OpenejbJar();
-                            ejbModule.setOpenejbJar(openEjbJar);
-                        }
-
-                        final Map<String, EjbDeployment> openejbJarDeployment = openEjbJar.getDeploymentsByEjbName();
-                        EjbDeployment deployment = openejbJarDeployment.get(name);
-                        if (deployment == null) {
-                            deployment = openEjbJar.addEjbDeployment(bean);
-                        }
-                        deployment.getProperties().putAll(pojoConfig.getProperties());
+                        beanPropertiesDeployer.addProperties(id, pojoConfig.getProperties());
                     }
                 }
             }
@@ -382,53 +318,19 @@ public class SaxAppCtxConfig {
         }
 
         private class EnvEntries extends DefaultHandler {
-            protected final String ENV_ENTRY_KEY = EnvEntries.class.getName();
-
-            private final Map<String, String> values = new HashMap<String, String>();
-
             @Override
             public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
                 if (ENV_ENTRY_ALIASES.contains(localName.toLowerCase())) {
-                    push(new EnvEntry(values));
+                    push(new EnvEntry());
                     get().startElement(uri, localName, qName, attributes);
                 } else {
                     throw new IllegalStateException("Unsupported Element: " + localName);
                 }
             }
-
-            @Override
-            public void endElement(final String uri, final String localName, final String qName) throws SAXException {
-                if (!phase.equals(Phase.AFTER_SACNNING)) {
-                    return;
-                }
-
-                if (values.size() == 0) {
-                    return;
-                }
-
-                for (EjbModule ejbModule : module.getEjbModules()) {
-                    ejbModule.getAltDDs().put(ENV_ENTRY_KEY, values);
-                }
-                try {
-                    new EnvEntriesPropertiesDeployer(ENV_ENTRY_KEY).deploy(module);
-                } catch (OpenEJBException e) {
-                    LOGGER.error("can't manage app-ctx.xml env-entries", e);
-                }
-                for (EjbModule ejbModule : module.getEjbModules()) {
-                    ejbModule.getAltDDs().remove(ENV_ENTRY_KEY);
-                }
-                values.clear();
-            }
         }
 
         private class EnvEntry extends Content {
-            private final Map<String, String> storage;
-
             private String key;
-
-            public EnvEntry(final Map<String, String> values) {
-                storage = values;
-            }
 
             @Override
             public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) {
@@ -441,11 +343,7 @@ public class SaxAppCtxConfig {
 
             @Override
             public void setValue(final String text) {
-                if (!phase.equals(Phase.AFTER_SACNNING)) {
-                    return;
-                }
-
-                storage.put(key, text);
+                envEntriesDeployer.addEnvEntries(key, text);
             }
         }
     }

@@ -34,11 +34,12 @@ import java.util.Set;
 public class AppContextConfigDeployer implements DynamicDeployer {
     private static final String CONFIG_NAME = "app-ctx.xml";
 
-    private SaxAppCtxConfig.Phase currentPhase = SaxAppCtxConfig.Phase.BEFORE_SCANNING;
+    private final EnvEntriesPropertiesDeployer envEntriesDeployer;
+    private final BeanProperties beanPropertiesDeployer;
 
-    public AppContextConfigDeployer currentPhase(final SaxAppCtxConfig.Phase currentPhase) {
-        this.currentPhase = currentPhase;
-        return this;
+    public AppContextConfigDeployer(final EnvEntriesPropertiesDeployer envEntriesPropertiesDeployer, BeanProperties beanProperties) {
+        envEntriesDeployer = envEntriesPropertiesDeployer;
+        beanPropertiesDeployer = beanProperties;
     }
 
     @Override
@@ -70,7 +71,7 @@ public class AppContextConfigDeployer implements DynamicDeployer {
         InputStream is = null;
         try {
             is = IO.read(url);
-            SaxAppCtxConfig.parse(appModule, new InputSource(is), currentPhase); // work directly on the module, avoid temp objects
+            SaxAppCtxConfig.parse(appModule, new InputSource(is), envEntriesDeployer, beanPropertiesDeployer); // work directly on the module/deployer, avoid temp objects
         } catch (SAXException e) {
             throw new OpenEJBException("can't parse " + url.toExternalForm(), e);
         } catch (ParserConfigurationException e) {
