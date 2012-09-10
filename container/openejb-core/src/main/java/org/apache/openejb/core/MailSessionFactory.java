@@ -24,13 +24,16 @@ import java.util.Properties;
 
 public class MailSessionFactory {
     private final Properties properties = new Properties();
+    private boolean useDefault = false;
 
     public Session create() {
         final String password = properties.getProperty("password");
 
         Authenticator auth = null;
         if (password != null) {
-            String user = properties.getProperty("mail.smtp.user");
+            final String protocol = properties.getProperty("mail.transport.protocol", "smtp");
+
+            String user = properties.getProperty("mail." + protocol + ".user");
             if(user == null) {
                 user = properties.getProperty("mail.user");
             }
@@ -45,7 +48,17 @@ public class MailSessionFactory {
             }
         }
 
-        return Session.getInstance(properties, auth);
+        if (useDefault) {
+            if (auth != null) {
+                return Session.getDefaultInstance(properties, auth);
+            }
+            return Session.getDefaultInstance(properties);
+        }
+
+        if (auth != null) {
+            return Session.getInstance(properties, auth);
+        }
+        return Session.getInstance(properties);
     }
 
     public Properties getProperties() {
@@ -59,5 +72,9 @@ public class MailSessionFactory {
                 this.properties.put(entry.getKey(), entry.getValue());
             }
         }
+    }
+
+    public void setUseDefault(boolean useDefault) {
+        this.useDefault = useDefault;
     }
 }
