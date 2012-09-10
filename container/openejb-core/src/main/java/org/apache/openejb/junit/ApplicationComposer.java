@@ -55,11 +55,14 @@ import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.archive.ClassesArchive;
 import org.junit.rules.MethodRule;
 import org.junit.runners.BlockJUnit4ClassRunner;
+import org.junit.runners.model.FrameworkField;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
 
+import javax.naming.Context;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -105,7 +108,7 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
 
         int appModules = 0;
         int modules = 0;
-        Class[] moduleTypes = { WebModule.class, EjbModule.class, EjbJar.class, EnterpriseBean.class, Persistence.class, PersistenceUnit.class, Connector.class, Beans.class, Application.class, Class[].class};
+        Class[] moduleTypes = { AppModule.class, WebModule.class, EjbModule.class, EjbJar.class, EnterpriseBean.class, Persistence.class, PersistenceUnit.class, Connector.class, Beans.class, Application.class, Class[].class};
         for (FrameworkMethod method : testClass.getAnnotatedMethods(Module.class)) {
 
             modules++;
@@ -256,6 +259,21 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                     ejbModule.setFinder(new AnnotationFinder(new ClassesArchive(bean)).link());
                     ejbModule.setBeans(new Beans());
                     appModule.getEjbModules().add(ejbModule);
+                } else if (obj instanceof AppModule) {
+
+                    // we can probably go further here
+                    final AppModule module = (AppModule) obj;
+                    appModule.getEjbModules().addAll(module.getEjbModules());
+                    appModule.getPersistenceModules().addAll(module.getPersistenceModules());
+                    appModule.getAdditionalLibMbeans().addAll(module.getAdditionalLibMbeans());
+                    appModule.getWebModules().addAll(module.getWebModules());
+                    appModule.getConnectorModules().addAll(module.getConnectorModules());
+                    appModule.getResources().addAll(module.getResources());
+                    appModule.getServices().addAll(module.getServices());
+                    appModule.getPojoConfigurations().putAll(module.getPojoConfigurations());
+                    appModule.getAdditionalLibraries().addAll(module.getAdditionalLibraries());
+                    appModule.getAltDDs().putAll(module.getAltDDs());
+                    appModule.getProperties().putAll(module.getProperties());
                 }
             }
 
@@ -352,6 +370,23 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                     System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
                     System.getProperties().put(OPENEJB_APPLICATION_COMPOSER_CONTEXT, appContext.getGlobalJndiContext());
+
+                    // test injections
+                    final List<FrameworkField> fields = testClass.getAnnotatedFields(AppResource.class);
+                    for (FrameworkField field : fields) {
+                        final Class<?> type = field.getType();
+                        if (AppModule.class.isAssignableFrom(type)) {
+                            final Field jField = field.getField();
+                            jField.setAccessible(true);
+                            jField.set(testInstance, appModule);
+                        } else if (Context.class.isAssignableFrom(type)) {
+                            final Field jField = field.getField();
+                            jField.setAccessible(true);
+                            jField.set(testInstance, appContext.getGlobalJndiContext());
+                        } else {
+                            throw new IllegalArgumentException("can't find value for type " + type.getName());
+                        }
+                    }
 
                     final ThreadContext previous = ThreadContext.enter(new ThreadContext(context, null, Operation.BUSINESS));
                     try {

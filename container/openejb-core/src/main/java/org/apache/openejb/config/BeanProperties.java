@@ -25,6 +25,7 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.SuperProperties;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -34,6 +35,9 @@ import java.util.Properties;
 public class BeanProperties implements DynamicDeployer {
 
     private static final Logger log = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, ModuleProperties.class);
+
+    private final Map<String, Properties> additionalProperties = new HashMap<String, Properties>();
+    private final Properties globalProperties = new Properties();
 
     @Override
     public AppModule deploy(AppModule appModule) throws OpenEJBException {
@@ -56,6 +60,15 @@ public class BeanProperties implements DynamicDeployer {
             final Map<String, EjbDeployment> deploymentMap = openejbJar.getDeploymentsByEjbName();
             for (EnterpriseBean bean : module.getEjbJar().getEnterpriseBeans()) {
                 final SuperProperties properties = new SuperProperties().caseInsensitive(true);
+
+                properties.putAll(globalProperties);
+
+                final String additionalKey = bean.getEjbName();
+                if (additionalProperties.containsKey(additionalKey)) {
+                    for (Map.Entry<Object, Object> entry : additionalProperties.get(additionalKey).entrySet()) {
+                        properties.put(entry.getKey().toString(), entry.getValue().toString());
+                    }
+                }
 
                 final EjbDeployment deployment = deploymentMap.get(bean.getEjbName());
                 if (deployment != null) {
@@ -92,7 +105,22 @@ public class BeanProperties implements DynamicDeployer {
             }
         }
 
+        // cleanup
+        additionalProperties.clear();
+        globalProperties.clear();
+
         return appModule;
     }
 
+    public void addProperties(final String id, final Properties properties) {
+        if (additionalProperties.containsKey(id)) {
+            additionalProperties.get(id).putAll(properties);
+        } else {
+            additionalProperties.put(id, properties);
+        }
+    }
+
+    public void addGlobalProperties(final Properties properties) {
+        globalProperties.putAll(properties);
+    }
 }

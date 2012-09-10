@@ -161,7 +161,11 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             }
         }
 
-        final AppContextConfigDeployer appContextConfigDeployer = new AppContextConfigDeployer();
+        // annotation deployer encapsulate some logic, to be able to push to it some config
+        // we give the ability here to get the internal deployer to push the config values
+        final AnnotationDeployer annotationDeployer = new AnnotationDeployer();
+        final BeanProperties beanProperties = new BeanProperties();
+        final AppContextConfigDeployer appContextConfigDeployer = new AppContextConfigDeployer(annotationDeployer.getEnvEntriesPropertiesDeployer(), beanProperties);
 
         final Chain chain = new Chain();
 
@@ -171,7 +175,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         chain.add(new ReadDescriptors());
 
-        chain.add(appContextConfigDeployer.currentPhase(SaxAppCtxConfig.Phase.BEFORE_SCANNING));
+        chain.add(appContextConfigDeployer);
 
         chain.add(new ApplicationProperties());
 
@@ -179,9 +183,9 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         chain.add(new LegacyProcessor());
 
-        chain.add(new AnnotationDeployer(appContextConfigDeployer.currentPhase(SaxAppCtxConfig.Phase.AFTER_SACNNING)));
+        chain.add(annotationDeployer);
 
-        chain.add(new BeanProperties());
+        chain.add(beanProperties);
 
         chain.add(new ProxyBeanClassUpdate());
 
