@@ -52,6 +52,8 @@ import org.apache.openejb.util.Join;
 import org.apache.openejb.util.ServiceManagerProxy;
 import org.apache.webbeans.inject.OWBInjector;
 import org.apache.xbean.finder.AnnotationFinder;
+import org.apache.xbean.finder.IAnnotationFinder;
+import org.apache.xbean.finder.archive.Archive;
 import org.apache.xbean.finder.archive.ClassesArchive;
 import org.junit.rules.MethodRule;
 import org.junit.runners.BlockJUnit4ClassRunner;
@@ -75,6 +77,15 @@ import static org.apache.openejb.config.DeploymentsResolver.DEPLOYMENTS_CLASSPAT
 public class ApplicationComposer extends BlockJUnit4ClassRunner {
 
     public static final String OPENEJB_APPLICATION_COMPOSER_CONTEXT = "openejb.application.composer.context";
+    private static final Class[] MODULE_TYPES = { IAnnotationFinder.class, ClassesArchive.class,
+            AppModule.class, WebModule.class, EjbModule.class,
+            Application.class,
+            EjbJar.class, EnterpriseBean.class,
+            Persistence.class, PersistenceUnit.class,
+            Connector.class, Beans.class,
+            Class[].class
+    };
+
     private final TestClass testClass;
     private ServiceManagerProxy serviceManager = null;
 
@@ -108,7 +119,7 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
 
         int appModules = 0;
         int modules = 0;
-        Class[] moduleTypes = { AppModule.class, WebModule.class, EjbModule.class, EjbJar.class, EnterpriseBean.class, Persistence.class, PersistenceUnit.class, Connector.class, Beans.class, Application.class, Class[].class};
+
         for (FrameworkMethod method : testClass.getAnnotatedMethods(Module.class)) {
 
             modules++;
@@ -119,8 +130,8 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
 
                 appModules++;
 
-            } else if (!isValidModuleType(type, moduleTypes)) {
-                final String gripe = "@Module method must return " + Join.join(" or ", moduleTypes).replaceAll("(class|interface) ", "");
+            } else if (!isValidModuleType(type, MODULE_TYPES)) {
+                final String gripe = "@Module method must return " + Join.join(" or ", MODULE_TYPES).replaceAll("(class|interface) ", "");
                 errors.add(new Exception(gripe));
             }
         }
@@ -186,6 +197,16 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                 ejbDeployment.setDeploymentId(javaClass.getName());
 
                 appModule.getEjbModules().add(new EjbModule(ejbJar, openejbJar));
+            }
+
+            // call the mock injector before module method to be able to use mocked classes
+            FallbackPropertyInjector mockInjector = null;
+            final List<FrameworkMethod> mockInjectors = testClass.getAnnotatedMethods(MockInjector.class);
+            for (FrameworkMethod method : mockInjectors) { // max == 1 so no need to break
+                final Object o = method.invokeExplosively(testInstance);
+                if (o instanceof FallbackPropertyInjector) {
+                    mockInjector = (FallbackPropertyInjector) o;
+                }
             }
 
             Application application = null;
@@ -259,6 +280,18 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                     ejbModule.setFinder(new AnnotationFinder(new ClassesArchive(bean)).link());
                     ejbModule.setBeans(new Beans());
                     appModule.getEjbModules().add(ejbModule);
+                } else if (obj instanceof IAnnotationFinder) {
+
+                    final EjbModule ejbModule = new EjbModule(new EjbJar(method.getName()));
+                    ejbModule.setFinder((IAnnotationFinder) obj);
+                    ejbModule.setBeans(new Beans());
+                    appModule.getEjbModules().add(ejbModule);
+                } else if (obj instanceof ClassesArchive) {
+
+                    final EjbModule ejbModule = new EjbModule(new EjbJar(method.getName()));
+                    ejbModule.setFinder(new AnnotationFinder((Archive) obj).link());
+                    ejbModule.setBeans(new Beans());
+                    appModule.getEjbModules().add(ejbModule);
                 } else if (obj instanceof AppModule) {
 
                     // we can probably go further here
@@ -312,12 +345,8 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
 
             SystemInstance.init(configuration);
 
-            final List<FrameworkMethod> mockInjectors = testClass.getAnnotatedMethods(MockInjector.class);
-            for (FrameworkMethod method : mockInjectors) { // max == 1 so no need to break
-                final Object o = method.invokeExplosively(testInstance);
-                if (o instanceof FallbackPropertyInjector) {
-                    SystemInstance.get().setComponent(FallbackPropertyInjector.class, (FallbackPropertyInjector) o);
-                }
+            if (mockInjector instanceof FallbackPropertyInjector) {
+                SystemInstance.get().setComponent(FallbackPropertyInjector.class, mockInjector);
             }
 
             try {

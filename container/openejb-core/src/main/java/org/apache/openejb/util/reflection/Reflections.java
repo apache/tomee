@@ -25,28 +25,50 @@ public final class Reflections {
     }
 
     public static Object invokeByReflection(final Object obj, final String mtdName, final Class<?>[] paramTypes, final Object[] args) {
-        Method mtd;
-        try {
-            mtd = obj.getClass().getDeclaredMethod(mtdName, paramTypes);
-            return mtd.invoke(obj, args);
-        } catch (Exception e) {
-            throw new IllegalArgumentException(e);
+        Class<?> clazz = obj.getClass();
+        while (clazz != null) {
+            boolean acc = true;
+            Method mtd = null;
+            try {
+                mtd = clazz.getDeclaredMethod(mtdName, paramTypes);
+                acc = mtd.isAccessible();
+                mtd.setAccessible(true);
+                return mtd.invoke(obj, args);
+            } catch (NoSuchMethodException nsme) {
+                // no-op
+            } catch (Exception e) {
+                throw new IllegalArgumentException(e);
+            } finally {
+                if (mtd != null) {
+                    mtd.setAccessible(acc);
+                }
+            }
+
+            clazz = clazz.getSuperclass();
         }
+        throw new IllegalArgumentException(new NoSuchMethodException(obj.getClass().getName() + " ." + mtdName));
     }
 
     public static void set(final Object instance, final String field, final Object value) {
-        Field f;
-        try {
-            f = instance.getClass().getDeclaredField(field);
-            boolean acc = f.isAccessible();
-            f.setAccessible(true);
+        Class<?> clazz = instance.getClass();
+        while (clazz != null) {
             try {
-                f.set(instance, value);
-            } finally {
-                f.setAccessible(acc);
+                final Field f = clazz.getDeclaredField(field);
+                boolean acc = f.isAccessible();
+                f.setAccessible(true);
+                try {
+                    f.set(instance, value);
+                    return;
+                } finally {
+                    f.setAccessible(acc);
+                }
+            } catch (NoSuchFieldException nsfe) {
+                // no-op
+            } catch (Exception e) {
+                throw new IllegalArgumentException(e);
             }
-        } catch (Exception e) {
-            throw new IllegalArgumentException(e);
+
+            clazz = clazz.getSuperclass();
         }
     }
 }
