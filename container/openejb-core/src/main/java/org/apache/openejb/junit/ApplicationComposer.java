@@ -199,13 +199,45 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                 appModule.getEjbModules().add(new EjbModule(ejbJar, openejbJar));
             }
 
+            // For the moment we just take the first @Configuration method
+            // maybe later we can add something fancy to allow multiple configurations using a qualifier
+            // as a sort of altDD/altConfig concept.  Say for example the altDD prefix might be "foo",
+            // we can then imagine something like this:
+            // @Foo @Configuration public Properties alternateConfig(){...}
+            // @Foo @Module  public Properties alternateModule(){...}
+            // anyway, one thing at a time ....
+
+            final Properties configuration = new Properties();
+            configuration.put(DEPLOYMENTS_CLASSPATH_PROPERTY, "false");
+
+            final List<FrameworkMethod> methods = testClass.getAnnotatedMethods(Configuration.class);
+            for (FrameworkMethod method : methods) {
+                final Object o = method.invokeExplosively(testInstance);
+                if (o instanceof Properties) {
+                    Properties properties = (Properties) o;
+                    configuration.putAll(properties);
+                }
+                break;
+            }
+
+            if (SystemInstance.isInitialized()) SystemInstance.reset();
+
+            SystemInstance.init(configuration);
+
+            // save the test under test to be able to retrieve it from extensions
+            // /!\ has to be done before all other init
+            SystemInstance.get().setComponent(TestInstance.class, new TestInstance(testClass.getJavaClass(), testInstance));
+
             // call the mock injector before module method to be able to use mocked classes
-            FallbackPropertyInjector mockInjector = null;
+            // it will often use the TestInstance so
             final List<FrameworkMethod> mockInjectors = testClass.getAnnotatedMethods(MockInjector.class);
             for (FrameworkMethod method : mockInjectors) { // max == 1 so no need to break
-                final Object o = method.invokeExplosively(testInstance);
+                Object o = method.invokeExplosively(testInstance);
+                if (o instanceof Class<?>) {
+                    o = ((Class<?>) o).newInstance();
+                }
                 if (o instanceof FallbackPropertyInjector) {
-                    mockInjector = (FallbackPropertyInjector) o;
+                    SystemInstance.get().setComponent(FallbackPropertyInjector.class, (FallbackPropertyInjector) o);
                 }
             }
 
@@ -318,35 +350,6 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                 newModule.getEjbModules().addAll(appModule.getEjbModules());
                 newModule.getConnectorModules().addAll(appModule.getConnectorModules());
                 appModule = newModule;
-            }
-
-            // For the moment we just take the first @Configuration method
-            // maybe later we can add something fancy to allow multiple configurations using a qualifier
-            // as a sort of altDD/altConfig concept.  Say for example the altDD prefix might be "foo",
-            // we can then imagine something like this:
-            // @Foo @Configuration public Properties alternateConfig(){...}
-            // @Foo @Module  public Properties alternateModule(){...}
-            // anyway, one thing at a time ....
-
-            final Properties configuration = new Properties();
-            configuration.put(DEPLOYMENTS_CLASSPATH_PROPERTY, "false");
-
-            final List<FrameworkMethod> methods = testClass.getAnnotatedMethods(Configuration.class);
-            for (FrameworkMethod method : methods) {
-                final Object o = method.invokeExplosively(testInstance);
-                if (o instanceof Properties) {
-                    Properties properties = (Properties) o;
-                    configuration.putAll(properties);
-                }
-                break;
-            }
-
-            if (SystemInstance.isInitialized()) SystemInstance.reset();
-
-            SystemInstance.init(configuration);
-
-            if (mockInjector instanceof FallbackPropertyInjector) {
-                SystemInstance.get().setComponent(FallbackPropertyInjector.class, mockInjector);
             }
 
             try {
