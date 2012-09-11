@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
     Licensed to the Apache Software Foundation (ASF) under one or more
@@ -16,23 +15,4 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <parent>
-    <artifactId>openejb</artifactId>
-    <groupId>org.apache.openejb</groupId>
-    <version>4.1.0-SNAPSHOT</version>
-  </parent>
-  <modelVersion>4.0.0</modelVersion>
-  <artifactId>utils</artifactId>
-  <packaging>pom</packaging>
-  <name>OpenEJB :: Utils</name>
-
-  <modules>
-    <module>webdeployer</module>
-    <module>openejb-logging</module>
-    <module>openejb-spring</module>
-    <module>openejb-core-hibernate</module>
-    <module>openejb-provisionning</module>
-    <module>openejb-mockito</module>
-  </modules>
-</project>
+<beans />

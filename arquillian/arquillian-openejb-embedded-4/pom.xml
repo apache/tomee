@@ -99,6 +99,13 @@
       <artifactId>arquillian-openejb-transaction-provider</artifactId>
       <version>${tomee.version}</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>1.9.0</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>

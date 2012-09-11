@@ -24,6 +24,7 @@ import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.InjectionProcessor;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.arquillian.openejb.mockito.MockitoEnricher;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.spi.ContainerSystem;
@@ -45,6 +46,9 @@ public class OpenEJBInjectionEnricher implements TestEnricher {
         if (ctx == null) { // deployment exception
             return;
         }
+
+        // don't rely on arquillian since this enrichment should absolutely be done before the following ones
+        new MockitoEnricher().enrich(testInstance);
 
         final BeanManager bm = ctx.getWebBeansContext().getBeanManagerImpl();
         try {
