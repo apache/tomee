@@ -56,6 +56,7 @@ import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -211,10 +212,6 @@ public abstract class RESTService implements ServerService, SelfManaging {
         restEjbs.clear();
     }
 
-    private static boolean isManagedBean(final BeanContext ctx) {
-        return BeanType.MANAGED.equals(ctx.getComponentType());
-    }
-
     private boolean hasEjbAndIsNotAManagedBean(final Map<String, EJBRestServiceInfo> restEjbs, final String clazz) {
         return restEjbs.containsKey(clazz) && !BeanType.MANAGED.equals(restEjbs.get(clazz).context.getComponentType());
     }
@@ -364,16 +361,30 @@ public abstract class RESTService implements ServerService, SelfManaging {
             return address.substring(0, address.lastIndexOf("/"));
         }
 
-        String webCtx = context; // context can get the app path too
+        // context can get the app path too
+        // so keep only web context without /
+        String webCtx = context;
+        if (webCtx.startsWith("/")) {
+            webCtx = webCtx.substring(1);
+        }
         if (webCtx.contains("/")) {
             webCtx = webCtx.substring(0, webCtx.indexOf("/"));
         }
-        int idx = address.indexOf(webCtx);
-        String base = address.substring(0, idx);
-        if (!base.endsWith("/") && !webCtx.startsWith("/")) {
-            base = base + '/';
+
+        // get root path ending with /
+        String base;
+        try {
+            final URL url = new URL(address);
+            base = url.getProtocol() + "://" + url.getHost() + ":" + url.getPort() + "/";
+        } catch (MalformedURLException e) {
+            int idx = address.indexOf(webCtx);
+            base = address.substring(0, idx);
+            if (!base.endsWith("/") && !webCtx.startsWith("/")) {
+                base = base + '/';
+            }
         }
-        return base + context;
+
+        return base + webCtx;
     }
 
     private String getAddress(String context, Class<?> clazz) {
