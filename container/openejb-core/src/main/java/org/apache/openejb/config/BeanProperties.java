@@ -123,4 +123,14 @@ public class BeanProperties implements DynamicDeployer {
     public void addGlobalProperties(final Properties properties) {
         globalProperties.putAll(properties);
     }
+
+    public void addGlobalProperties(final String prefix, final Properties properties) {
+        if (prefix == null || prefix.isEmpty()) {
+            addGlobalProperties(properties);
+        } else {
+            for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+                globalProperties.put(prefix + "." + entry.getKey(), entry.getValue());
+            }
+        }
+    }
 }

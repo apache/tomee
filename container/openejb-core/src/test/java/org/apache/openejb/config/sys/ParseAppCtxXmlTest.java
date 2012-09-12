@@ -71,6 +71,7 @@ public class ParseAppCtxXmlTest {
         // ModuleContext
         final EjbDeployment beanInAModule = module.getEjbModules().get(2).getOpenejbJar().getDeploymentsByEjbName().get("BeanInAModule");
         assertEquals("mId", beanInAModule.getProperties().getProperty("module.id"));
+        assertEquals("2", module.getEjbModules().get(2).getProperties().getProperty("modulecontext"));
 
         // Pojo
         assertEquals("my-feature", module.getPojoConfigurations().get("org.foo.bar").getProperties().getProperty("cxf.jaxrs.features"));
