@@ -18,15 +18,12 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.jee.Beans;
 import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.NamedModule;
 import org.apache.openejb.jee.Webservices;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.xbean.finder.IAnnotationFinder;
 
 import java.io.File;
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicReference;
@@ -51,8 +48,6 @@ public class EjbModule extends Module implements WsModule {
 
     private ClientModule clientModule;
     private ID id;
-
-    private final Set<String> repositories = new TreeSet<String>();
 
     public EjbModule(EjbJar ejbJar) {
         this(Thread.currentThread().getContextClassLoader(), null, ejbJar, null);
@@ -171,10 +166,6 @@ public class EjbModule extends Module implements WsModule {
 
     public Set<String> getWatchedResources() {
         return watchedResources;
-    }
-
-    public Set<String> getRepositories() {
-        return repositories;
     }
 
     @Override

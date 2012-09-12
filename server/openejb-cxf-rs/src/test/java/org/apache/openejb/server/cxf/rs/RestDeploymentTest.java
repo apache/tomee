@@ -109,6 +109,7 @@ public class RestDeploymentTest {
         appModule.setModuleId("rest");
         appModule.getWebModules().add(webModule);
         appModule.getEjbModules().add(new EjbModule(ejbJar));
+        appModule.getEjbModules().iterator().next().setModuleId(webModule.getModuleId());
         annotationDeployer.deploy(appModule);
 
         AppInfo appInfo = factory.configureApplication(appModule);
@@ -135,8 +136,8 @@ public class RestDeploymentTest {
         ServiceInfo serviceInfo = new ServiceInfo();
         serviceInfo.className = HttpServerFactory.class.getName();
         serviceInfo.properties = new Properties();
-        serviceInfo.properties.setProperty("port", "-1");
-        serviceInfo.properties.setProperty("bind", "foo");
+        serviceInfo.properties.setProperty("port", "4204");
+        serviceInfo.properties.setProperty("bind", "localhost");
 
         OpenEjbConfiguration configuration = new OpenEjbConfiguration();
         SystemInstance.get().setComponent(OpenEjbConfiguration.class, configuration);

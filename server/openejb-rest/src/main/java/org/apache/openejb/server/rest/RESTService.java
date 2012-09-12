@@ -24,6 +24,7 @@ import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
+import org.apache.openejb.assembler.classic.IdPropertiesInfo;
 import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.assembler.classic.event.AssemblerAfterApplicationCreated;
@@ -130,6 +131,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
 
         boolean useApp = false;
         String appPrefix = webApp.contextRoot;
+        Collection<IdPropertiesInfo> pojoConfigurations = null; // done lazily
         for (String app : webApp.restApplications) { // normally a unique one but we support more
             appPrefix = webApp.contextRoot; // if multiple application classes reinit it
             if (!appPrefix.endsWith("/")) {
@@ -165,8 +167,9 @@ public abstract class RESTService implements ServerService, SelfManaging {
                     // no more a singleton if the ejb is not a singleton...but it is a weird case
                     deployEJB(appPrefix, restEjbs.get(o.getClass().getName()).context, additionalProviders, appInfo.services);
                 } else {
+                    pojoConfigurations = findPojoConfig(pojoConfigurations, appInfo, webApp);
                     deploySingleton(appPrefix, o, appInstance, classLoader, additionalProviders,
-                            new ServiceConfiguration(PojoUtil.findConfiguration(appInfo.pojoConfigurations, o.getClass().getName()), appInfo.services));
+                            new ServiceConfiguration(PojoUtil.findConfiguration(pojoConfigurations, o.getClass().getName()), appInfo.services));
                 }
             }
             Set<Class<?>> classes = appInstance.getClasses();
@@ -174,8 +177,9 @@ public abstract class RESTService implements ServerService, SelfManaging {
                 if (hasEjbAndIsNotAManagedBean(restEjbs, clazz.getName())) {
                     deployEJB(appPrefix, restEjbs.get(clazz.getName()).context, additionalProviders, appInfo.services);
                 } else {
+                    pojoConfigurations = findPojoConfig(pojoConfigurations, appInfo, webApp);
                     deployPojo(appPrefix, clazz, appInstance, classLoader, injections, context, owbCtx, additionalProviders,
-                            new ServiceConfiguration(PojoUtil.findConfiguration(appInfo.pojoConfigurations, clazz.getName()), appInfo.services));
+                            new ServiceConfiguration(PojoUtil.findConfiguration(pojoConfigurations, clazz.getName()), appInfo.services));
                 }
             }
 
@@ -199,9 +203,10 @@ public abstract class RESTService implements ServerService, SelfManaging {
                 } else {
                     try {
                         Class<?> loadedClazz = classLoader.loadClass(clazz);
+                        pojoConfigurations = findPojoConfig(pojoConfigurations, appInfo, webApp);
                         deployPojo(appPrefix, loadedClazz, null, classLoader, injections, context, owbCtx,
                                 additionalProviders,
-                                new ServiceConfiguration(PojoUtil.findConfiguration(appInfo.pojoConfigurations, loadedClazz.getName()), appInfo.services));
+                                new ServiceConfiguration(PojoUtil.findConfiguration(pojoConfigurations, loadedClazz.getName()), appInfo.services));
                     } catch (ClassNotFoundException e) {
                         throw new OpenEJBRestRuntimeException("can't find class " + clazz, e);
                     }
@@ -210,6 +215,17 @@ public abstract class RESTService implements ServerService, SelfManaging {
         }
 
         restEjbs.clear();
+    }
+
+    protected Collection<IdPropertiesInfo> findPojoConfig(final Collection<IdPropertiesInfo> pojoConfigurations, final AppInfo appInfo, final WebAppInfo webApp) {
+        if (pojoConfigurations == null) {
+            for (EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
+                if (ejbJarInfo.moduleId.equals(webApp.moduleId)) {
+                    return ejbJarInfo.pojoConfigurations;
+                }
+            }
+        }
+        return pojoConfigurations;
     }
 
     private boolean hasEjbAndIsNotAManagedBean(final Map<String, EJBRestServiceInfo> restEjbs, final String clazz) {
@@ -367,21 +383,19 @@ public abstract class RESTService implements ServerService, SelfManaging {
         if (webCtx.startsWith("/")) {
             webCtx = webCtx.substring(1);
         }
-        if (webCtx.contains("/")) {
-            webCtx = webCtx.substring(0, webCtx.indexOf("/"));
-        }
 
         // get root path ending with /
         String base;
         try {
             final URL url = new URL(address);
-            base = url.getProtocol() + "://" + url.getHost() + ":" + url.getPort() + "/";
-        } catch (MalformedURLException e) {
-            int idx = address.indexOf(webCtx);
-            base = address.substring(0, idx);
-            if (!base.endsWith("/") && !webCtx.startsWith("/")) {
-                base = base + '/';
+            final int port = url.getPort();
+            if (port > 0) {
+                return base = url.getProtocol() + "://" + url.getHost() + ":" + port + "/" + webCtx;
+            } else {
+                base = url.getProtocol() + "://" + url.getHost() + "/" + webCtx;
             }
+        } catch (MalformedURLException e) {
+            throw new OpenEJBRestRuntimeException("bad url: " + address, e);
         }
 
         return base + webCtx;

@@ -23,6 +23,7 @@ import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
+import org.apache.openejb.assembler.classic.IdPropertiesInfo;
 import org.apache.openejb.assembler.classic.PortInfo;
 import org.apache.openejb.assembler.classic.ServletInfo;
 import org.apache.openejb.assembler.classic.SingletonBeanInfo;
@@ -327,6 +328,7 @@ public abstract class WsService implements ServerService, SelfManaging {
             logger.error("Invalid ejb jar location " + webApp.path, e);
         }
 
+        Collection<IdPropertiesInfo> pojoConfiguration = null; // lazy init
         for (ServletInfo servlet : webApp.servlets) {
             if (servlet.servletName == null) {
                 continue;
@@ -346,9 +348,18 @@ public abstract class WsService implements ServerService, SelfManaging {
 
                 PortData port = WsBuilder.toPortData(portInfo, injections, moduleBaseUrl, classLoader);
 
+                if (pojoConfiguration == null) {
+                    for (EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
+                        if (ejbJarInfo.moduleName.equals(webApp.moduleId)) {
+                            pojoConfiguration = ejbJarInfo.pojoConfigurations;
+                            break;
+                        }
+                    }
+                }
+
                 HttpListener container = createPojoWsContainer(moduleBaseUrl, port, portInfo.serviceLink,
                         target, context, webApp.contextRoot, bindings,
-                        new ServiceConfiguration(PojoUtil.findConfiguration(appInfo.pojoConfigurations, target.getName()), appInfo.services));
+                        new ServiceConfiguration(PojoUtil.findConfiguration(pojoConfiguration, target.getName()), appInfo.services));
 
                 if (wsRegistry != null) {
                     // give servlet a reference to the webservice container

@@ -63,6 +63,7 @@ import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.jee.oejb3.PojoDeployment;
 import org.apache.openejb.jpa.integration.MakeTxLookup;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.CircularReferencesException;
@@ -180,10 +181,17 @@ class AppInfoBuilder {
                     bean.containerId = d.getContainerId();
                 }
 
+
+                for (PojoDeployment pojoDeployment : ejbModule.getOpenejbJar().getPojoDeployment()) {
+                    final IdPropertiesInfo info = new IdPropertiesInfo();
+                    info.id = pojoDeployment.getClassName();
+                    info.properties.putAll(pojoDeployment.getProperties());
+                    ejbJarInfo.pojoConfigurations.add(info);
+                }
+
                 ejbJarInfo.validationInfo = ValidatorBuilder.getInfo(ejbModule.getValidationConfig());
                 ejbJarInfo.portInfos.addAll(configureWebservices(ejbModule.getWebservices()));
                 ejbJarInfo.uniqueId = ejbModule.getUniqueId();
-                ejbJarInfo.repositories = ejbModule.getRepositories();
                 configureWebserviceSecurity(ejbJarInfo, ejbModule);
 
                 ejbJarInfos.put(ejbModule, ejbJarInfo);
