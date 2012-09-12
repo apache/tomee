@@ -43,9 +43,15 @@ public final class ValidatorBuilder {
         // the only message logged is "ignoreXmlConfiguration == true"
         // which is false since we parse it ourself
         // so hidding it
-        final java.util.logging.Logger offLogger = java.util.logging.Logger.getLogger("org.apache.bval.jsr303.ConfigurationImpl");
-        offLogger.setLevel(Level.OFF); // only used to log it so simply hide it
-        // offLogger.setFilter(new RemoveLogMessage(offLogger.getFilter(), Level.INFO, "ignoreXmlConfiguration == true"));
+        try {
+            final Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass("org.apache.bval.jsr303.ConfigurationImpl");
+            final java.util.logging.Logger offLogger = java.util.logging.Logger.getLogger(clazz.getName());
+            offLogger.setLevel(Level.OFF); // only used to log it so simply hide it
+        } catch (ClassNotFoundException ignored) {
+            // no-op
+        } catch (NoClassDefFoundError ncdef) {
+            // no-op
+        }
     }
 
     private ValidatorBuilder() {
