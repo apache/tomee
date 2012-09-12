@@ -29,6 +29,7 @@ public class EjbJarInfo extends CommonInfoObject {
     public final Properties properties = new Properties();
 
     public String moduleName;
+    public String moduleId;
     public URI moduleUri;
     public String path;
 
@@ -55,6 +56,6 @@ public class EjbJarInfo extends CommonInfoObject {
     public final JndiEncInfo moduleJndiEnc = new JndiEncInfo();
 
     public BeansInfo beans;
-    public Set<String> repositories = new TreeSet<String>();
     public Set<String> mbeans = new TreeSet<String>();
+    public final List<IdPropertiesInfo> pojoConfigurations = new ArrayList<IdPropertiesInfo>();
 }

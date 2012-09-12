@@ -36,7 +36,7 @@ import java.util.Properties;
 
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = {"moduleName", "properties","ejbDeployment"})
+@XmlType(propOrder = {"moduleName", "properties","ejbDeployment", "pojoDeployment"})
 @XmlRootElement(name = "openejb-jar")
 public class OpenejbJar implements NamedModule {
     @XmlElement(name = "properties")
@@ -49,11 +49,21 @@ public class OpenejbJar implements NamedModule {
     @XmlElement(name = "ejb-deployment", required = true)
     protected List<EjbDeployment> ejbDeployment;
 
+    @XmlElement(name = "pojo-deployment")
+    protected List<PojoDeployment> pojoDeployment;
+
     public List<EjbDeployment> getEjbDeployment() {
         if (ejbDeployment == null) {
             ejbDeployment = new ArrayList<EjbDeployment>();
         }
         return this.ejbDeployment;
+    }
+
+    public List<PojoDeployment> getPojoDeployment() {
+        if (pojoDeployment == null) {
+            pojoDeployment = new ArrayList<PojoDeployment>();
+        }
+        return pojoDeployment;
     }
 
     public Map<String,EjbDeployment> getDeploymentsById(){
