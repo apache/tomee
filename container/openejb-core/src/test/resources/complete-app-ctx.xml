@@ -51,11 +51,25 @@
     </BeanContext>
   </BeanContexts>
   <ModuleContext id="2">
-    <BeanContext id="BeanInAModule">
-      <Configuration>
-        module.id = mId
-      </Configuration>
-    </BeanContext>
+    <Properties>
+      modulecontext = 2
+    </Properties>
+    <BeanContexts>
+      <BeanContext id="BeanInAModule">
+        <Configuration>
+          module.id = mId
+        </Configuration>
+      </BeanContext>
+    </BeanContexts>
+    <Pojos>
+      <Pojo id="org.foo2.bar">
+        <Configuration>
+          <cxf.jaxrs>
+            module = 2
+          </cxf.jaxrs>
+        </Configuration>
+      </Pojo>
+    </Pojos>
   </ModuleContext>
   <Pojos>
     <Pojo id="org.foo.bar">

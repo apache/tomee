@@ -18,12 +18,11 @@ package org.apache.openejb.config.sys;
 
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.BeanProperties;
+import org.apache.openejb.config.DeploymentModule;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.config.EnvEntriesPropertiesDeployer;
 import org.apache.openejb.config.PojoConfiguration;
-import org.apache.openejb.jee.EnterpriseBean;
-import org.apache.openejb.jee.oejb3.EjbDeployment;
-import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.config.WebModule;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -61,7 +60,9 @@ public class SaxAppCtxConfig {
         private static final Collection<String> APPLICATION_ALIASES = Arrays.asList("appcontext", "app-context", "application");
         private static final Collection<String> POJOS_ALIASES = Arrays.asList("pojocontexts", "pojo-contexts", "pojos");
         private static final Collection<String> POJO_ALIASES = Arrays.asList("pojo");
-        private static final Collection<String> MODULE_ALIASES = Arrays.asList("modulecontext", "module", "beancontexts", "bean-contexts", "ejbs");
+        private static final Collection<String> BEAN_CONTEXTS_ALIASES = Arrays.asList("beancontexts", "bean-contexts", "ejbs");
+        private static final Collection<String> WEBAPP_ALIASES = Arrays.asList("webapps", "webcontexts", "web-contexts", "wars");
+        private static final Collection<String> MODULE_ALIASES = Arrays.asList("modulecontext", "module");
         private static final Collection<String> BEAN_CONTEXT_ALIASES = Arrays.asList("ejb", "beancontext", "bean-context");
         private static final Collection<String> CONFIGURATION_ALIASES = Arrays.asList("configuration", "properties", "settings");
         private static final Collection<String> RESOURCES_ALIASES = Arrays.asList("resources");
@@ -106,8 +107,12 @@ public class SaxAppCtxConfig {
                     push(new Configuration("", module.getProperties()));
                 } else if (ENV_ENTRIES_ALIASES.contains(name)) {
                     push(new EnvEntries());
+                } else if (BEAN_CONTEXTS_ALIASES.contains(name)) {
+                    push(new BeanContexts(null));
                 } else if (MODULE_ALIASES.contains(name)) {
-                    push(new BeanContexts(attributes.getValue("id")));
+                    push(new ModuleContext(attributes.getValue("id")));
+                } else if (WEBAPP_ALIASES.contains(name)) {
+                    push(new WebAppContext(attributes.getValue("id")));
                 } else if (POJOS_ALIASES.contains(name)) {
                     push(new Pojos());
                 } else if (RESOURCES_ALIASES.contains(name)) {
@@ -169,9 +174,46 @@ public class SaxAppCtxConfig {
 
             @Override
             public void setValue(final String text) {
+                if (properties == null) {
+                    return;
+                }
+
                 try {
                     for (Map.Entry<Object, Object> entry : new PropertiesAdapter().unmarshal(text).entrySet()) {
                         properties.put(prefix + entry.getKey(), entry.getValue());
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        private class MultipleConfiguration extends Content {
+            private final Collection<Properties> properties;
+
+            private final String prefix;
+
+            private MultipleConfiguration(final String prefix, final Collection<Properties> properties) {
+                this.properties = properties;
+                this.prefix =  prefix;
+            }
+
+            @Override
+            public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) {
+                push(new MultipleConfiguration(prefix + localName + ".", properties));
+            }
+
+            @Override
+            public void setValue(final String text) {
+                if (properties == null) {
+                    return;
+                }
+
+                try {
+                    for (Properties p : properties) {
+                        for (Map.Entry<Object, Object> entry : new PropertiesAdapter().unmarshal(text).entrySet()) {
+                            p.put(prefix + entry.getKey(), entry.getValue());
+                        }
                     }
                 } catch (Exception e) {
                     throw new RuntimeException(e);
@@ -228,6 +270,55 @@ public class SaxAppCtxConfig {
             }
         }
 
+        private class ModuleContext extends DefaultHandler {
+            protected final String id;
+
+            private ModuleContext(final String id) {
+                this.id = id;
+            }
+
+            @Override
+            public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
+                final String name = localName.toLowerCase();
+                if (BEAN_CONTEXTS_ALIASES.contains(name)) {
+                    push(new BeanContexts(id));
+                } else if (POJOS_ALIASES.contains(name)) {
+                    push(new Pojos());
+                } else if (CONFIGURATION_ALIASES.contains(name)) {
+                    push(new MultipleConfiguration("", propertiesForModule(id)));
+                } else {
+                    throw new IllegalStateException("Unsupported Element: " + localName);
+                }
+            }
+
+            protected Collection<Properties> propertiesForModule(final String id) {
+                final Collection<Properties> props = new ArrayList<Properties>();
+                for (DeploymentModule m : module.getDeploymentModule()) {
+                    if (acceptModule(id, m)) {
+                        props.add(m.getProperties());
+                    }
+                }
+                return props;
+            }
+        }
+
+        private class WebAppContext extends ModuleContext {
+            private WebAppContext(final String id) {
+                super(id);
+            }
+
+            @Override
+            protected Collection<Properties> propertiesForModule(final String id) {
+                final Collection<Properties> props = new ArrayList<Properties>();
+                for (WebModule m : module.getWebModules()) {
+                    if (acceptModule(id, m)) {
+                        props.add(m.getProperties());
+                    }
+                }
+                return props;
+            }
+        }
+
         private class BeanContexts extends Pojos {
             private final String id;
 
@@ -250,7 +341,7 @@ public class SaxAppCtxConfig {
             public void endElement(final String uri, final String localName, final String qName) throws SAXException {
                 for (PojoConfig generic : genericConfigs) { // BeanContextConfig
                     if (generic.hasProperties()) {
-                        beanPropertiesDeployer.addGlobalProperties(generic.getProperties());
+                        beanPropertiesDeployer.addGlobalProperties(id, generic.getProperties());
                     }
                 }
             }
@@ -348,7 +439,7 @@ public class SaxAppCtxConfig {
         }
     }
 
-    private static boolean acceptModule(final String id, final EjbModule ejbModule) {
+    private static boolean acceptModule(final String id, final DeploymentModule ejbModule) {
         return id == null || id.equals(ejbModule.getModuleId());
     }
 }
