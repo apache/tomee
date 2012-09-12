@@ -25,6 +25,7 @@ import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.xbean.finder.util.Classes;
 import org.xml.sax.InputSource;
 
 import javax.servlet.ServletContainerInitializer;
@@ -43,6 +44,9 @@ public class OpenEJBContextConfig extends ContextConfig {
 
     private static final String MYFACES_TOMEEM_CONTAINER_INITIALIZER = "org.apache.tomee.myfaces.TomEEMyFacesContainerInitializer";
     private static final String TOMEE_MYFACES_CONTEXT_LISTENER = "org.apache.tomee.myfaces.TomEEMyFacesContextListener";
+
+    private static final String CLASSES = "classes";
+    private static final String WEB_INF = "WEB-INF";
 
     private TomcatWebAppBuilder.StandardContextInfo info;
 
@@ -144,7 +148,7 @@ public class OpenEJBContextConfig extends ContextConfig {
             final URLClassLoader loader = new URLClassLoader(new URL[]{file.toURI().toURL()});
             for (String webAnnotatedClassName : webAppInfo.webAnnotatedClasses) {
 
-                final String classFile = webAnnotatedClassName.replace('.', '/') + ".class";
+                final String classFile = webAnnotatedClassName.substring(getSubPackage(file).length()).replace('.', '/') + ".class";
                 final URL classUrl = loader.getResource(classFile);
 
                 if (classUrl == null) {
@@ -168,6 +172,34 @@ public class OpenEJBContextConfig extends ContextConfig {
         } catch (Exception e) {
             logger.error("OpenEJBContextConfig.processAnnotationsFile: failed.", e);
         }
+    }
+
+    // because we don't always get WEB-INF/classes folder, simply get the already appended subpackage
+    private static String getSubPackage(final File file) {
+        File current = file.getParentFile();
+        if (current == null) {
+            return "";
+        }
+
+        File previous = file;
+        while (current.getParentFile() != null) {
+            if (CLASSES.equals(previous.getName()) && WEB_INF.equals(current.getName())) {
+                String path = file.getAbsolutePath().replaceFirst(previous.getAbsolutePath(), "");
+                if (path.startsWith(File.separator)) {
+                    path = path.substring(File.separator.length());
+                }
+                if (path.endsWith(File.separator)) {
+                    path = path.substring(0, path.length() - 1);
+                }
+
+                return path + File.separator;
+            }
+
+            previous = current;
+            current = current.getParentFile();
+        }
+
+        return ""; // no subpackage found
     }
 
     @Override
