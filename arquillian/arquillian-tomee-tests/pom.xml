@@ -26,6 +26,7 @@
     <module>arquillian-tomee-webprofile-tests</module>
     <module>arquillian-tomee-jaxrs-tests</module>
     <module>arquillian-tomee-jaxws-tests</module>
+    <module>arquillian-tomee-jms-tests</module>
     <module>arquillian-tomee-codi-tests</module>
   </modules>
 

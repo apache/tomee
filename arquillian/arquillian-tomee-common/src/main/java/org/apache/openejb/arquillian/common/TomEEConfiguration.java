@@ -17,27 +17,23 @@
 package org.apache.openejb.arquillian.common;
 
 
-import org.apache.openejb.OpenEJBRuntimeException;
 import org.jboss.arquillian.container.spi.ConfigurationException;
 import org.jboss.arquillian.container.spi.client.container.ContainerConfiguration;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 public class TomEEConfiguration implements ContainerConfiguration {
 
-    private boolean exportConfAsSystemProperty = false;
-    private int httpPort = 8080;
-    private int stopPort = 8005;
-    private String dir = System.getProperty("java.io.tmpdir") + "/arquillian-apache-tomee";
-    private String appWorkingDir = System.getProperty("java.io.tmpdir");
-    private String host = "localhost";
-    private String serverXml = null;
-    private String properties = "";
-    private String portRange = ""; // only used if port < 0, empty means whatever, can be "1024-65535"
+    protected boolean exportConfAsSystemProperty = false;
+    protected int httpPort = 8080;
+    protected int stopPort = 8005;
+    protected String dir = System.getProperty("java.io.tmpdir") + "/arquillian-apache-tomee";
+    protected String appWorkingDir = System.getProperty("java.io.tmpdir");
+    protected String host = "localhost";
+    protected String serverXml = null;
+    protected String properties = "";
+    protected String portRange = ""; // only used if port < 0, empty means whatever, can be "1024-65535"
 
     public int getHttpPort() {
         return httpPort;
@@ -106,25 +102,8 @@ public class TomEEConfiguration implements ContainerConfiguration {
         this.properties = properties;
     }
 
-    public Properties systemProperties() {
-        if (properties == null || properties.isEmpty()) {
-            return new Properties();
-        }
-
-        final Properties properties = new Properties();
-        final ByteArrayInputStream bais = new ByteArrayInputStream(getProperties().getBytes());
-        try {
-            properties.load(bais);
-        } catch (IOException e) {
-            throw new OpenEJBRuntimeException(e);
-        } finally {
-            try {
-                IO.close(bais);
-            } catch (IOException ignored) {
-                // no-op
-            }
-        }
-        return properties;
+    public String systemProperties() {
+        return properties.replaceAll("\n *", "\n");
     }
 
     public String getPortRange() {

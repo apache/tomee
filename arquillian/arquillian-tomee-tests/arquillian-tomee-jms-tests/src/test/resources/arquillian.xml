@@ -26,9 +26,11 @@
       <property name="dir">target/apache-tomee-remote</property>
       <property name="appWorkingDir">target/arquillian-test-working-dir</property>
       <property name="properties">
+        Default\ JMS\ Resource\ Adapter.BrokerXmlConfig = broker:(tcp://localhost:61616)?useJmx=false&amp;broker.persistent=false
         My\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
         My\ Unmanaged\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
-        openejb.classloader.forced-load=org.apache.openejb.arquillian.tests.
+
+        openejb.classloader.forced-load=org.apache.openejb.arquillian.tests.jms
       </property>
     </configuration>
   </container>
@@ -40,9 +42,11 @@
       <property name="dir">target/apache-tomee-remote</property>
       <property name="appWorkingDir">target/arquillian-test-working-dir</property>
       <property name="properties">
+        Default\ JMS\ Resource\ Adapter.BrokerXmlConfig = broker:(tcp://localhost:61616)?useJmx=false&amp;broker.persistent=false
         My\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
         My\ Unmanaged\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
-        openejb.classloader.forced-load=org.apache.openejb.arquillian.tests
+
+        openejb.classloader.forced-load=org.apache.openejb.arquillian.tests.jms
       </property>
     </configuration>
   </container>
@@ -54,9 +58,11 @@
       <property name="dir">target/apache-tomee-remote</property>
       <property name="appWorkingDir">target/arquillian-test-working-dir</property>
       <property name="properties">
+        Default\ JMS\ Resource\ Adapter.BrokerXmlConfig = broker:(tcp://localhost:61616)?useJmx=false&amp;broker.persistent=false
         My\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
         My\ Unmanaged\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
-        openejb.classloader.forced-load=org.apache.openejb.arquillian.tests.
+
+        openejb.classloader.forced-load=org.apache.openejb.arquillian.tests.jms
       </property>
     </configuration>
   </container>

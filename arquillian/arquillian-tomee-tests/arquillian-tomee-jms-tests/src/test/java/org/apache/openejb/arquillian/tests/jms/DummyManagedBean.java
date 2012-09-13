@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.arquillian.tests.jsf.jms;
+package org.apache.openejb.arquillian.tests.jms;
 
 import javax.annotation.Resource;
 import javax.faces.bean.ManagedBean;
@@ -25,13 +25,13 @@ import javax.jms.Topic;
 @ManagedBean
 public class DummyManagedBean {
     @Resource
-    Queue queue;
+    private Queue queue;
 
     @Resource
-    Topic topic;
+    private Topic topic;
 
     @Resource
-    ConnectionFactory connectionFactory;
+    private ConnectionFactory connectionFactory;
 
     public String getFoo() {
         if (queue != null) {
