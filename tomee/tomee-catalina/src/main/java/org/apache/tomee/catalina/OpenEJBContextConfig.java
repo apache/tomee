@@ -148,7 +148,12 @@ public class OpenEJBContextConfig extends ContextConfig {
             final URLClassLoader loader = new URLClassLoader(new URL[]{file.toURI().toURL()});
             for (String webAnnotatedClassName : webAppInfo.webAnnotatedClasses) {
 
-                final String classFile = webAnnotatedClassName.substring(getSubPackage(file).length()).replace('.', '/') + ".class";
+                final String includedPackage = getSubPackage(file);
+                if (includedPackage == null || !webAnnotatedClassName.startsWith(includedPackage)) {
+                    continue;
+                }
+
+                final String classFile = webAnnotatedClassName.substring(includedPackage.length()).replace('.', '/') + ".class";
                 final URL classUrl = loader.getResource(classFile);
 
                 if (classUrl == null) {
