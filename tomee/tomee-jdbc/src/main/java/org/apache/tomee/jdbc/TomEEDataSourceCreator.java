@@ -23,6 +23,7 @@ import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.resource.jdbc.BasicDataSourceUtil;
 import org.apache.openejb.resource.jdbc.plugin.DataSourcePlugin;
 import org.apache.openejb.resource.jdbc.pool.PoolDataSourceCreator;
+import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Strings;
@@ -43,6 +44,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 public class TomEEDataSourceCreator extends PoolDataSourceCreator {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, TomEEDataSourceCreator.class);
@@ -50,7 +52,9 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
     @Override
     public DataSource pool(final String name, final DataSource ds, Properties properties) {
         final Properties converted = new Properties();
-        updateProperties(new SuperProperties(properties).caseInsensitive(true), converted, null);
+        final SuperProperties prop = new SuperProperties().caseInsensitive(true);
+        prop.putAll(properties);
+        updateProperties(prop, converted, null);
 
         final PoolConfiguration config = build(PoolProperties.class, converted);
         config.setDataSource(ds);
@@ -67,7 +71,11 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
     public DataSource pool(final String name, final String driver, final Properties properties) {
         final Properties converted = new Properties();
         converted.setProperty("name", name);
-        updateProperties(new SuperProperties(properties).caseInsensitive(true), converted, driver);
+
+        final SuperProperties prop = new SuperProperties().caseInsensitive(true);
+        prop.putAll(properties);
+
+        updateProperties(prop, converted, driver);
         final PoolConfiguration config = build(PoolProperties.class, converted);
         return build(TomEEDataSource.class, new TomEEDataSource(config, name), converted);
     }
@@ -78,25 +86,22 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
             converted.setProperty("driverClassName", driver);
         }
         if (properties.containsKey("JdbcDriver")) {
-            converted.setProperty("driverClassName", (String) properties.get("JdbcDriver"));
+            converted.setProperty("driverClassName", (String) properties.remove("JdbcDriver"));
         }
         if (properties.containsKey("JdbcUrl")) {
-            converted.setProperty("url", (String) properties.get("JdbcUrl"));
+            converted.setProperty("url", (String) properties.remove("JdbcUrl"));
         }
         if (properties.containsKey("user")) {
-            converted.setProperty("username", (String) properties.get("user"));
-        }
-        if (properties.containsKey("user")) {
-            converted.setProperty("username", (String) properties.get("user"));
+            converted.setProperty("username", (String) properties.remove("user"));
         }
         if (properties.containsKey("maxWaitTime")) {
-            converted.setProperty("maxWait", (String) properties.get("maxWaitTime"));
+            converted.setProperty("maxWait", toMillis((String) properties.remove("maxWaitTime")));
         }
         if (properties.containsKey("timeBetweenEvictionRuns")) {
-            converted.setProperty("timeBetweenEvictionRunsMillis", (String) properties.get("timeBetweenEvictionRuns"));
+            converted.setProperty("timeBetweenEvictionRunsMillis", toMillis((String) properties.remove("timeBetweenEvictionRuns")));
         }
         if (properties.containsKey("minEvictableIdleTime")) {
-            converted.setProperty("minEvictableIdleTimeMillis", (String) properties.get("minEvictableIdleTime"));
+            converted.setProperty("minEvictableIdleTimeMillis", toMillis((String) properties.remove("minEvictableIdleTime")));
         }
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
             final String key = entry.getKey().toString();
@@ -133,6 +138,10 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
                 // no-op
             }
         }
+    }
+
+    private String toMillis(final String d) {
+        return Long.toString(new Duration(d).getTime(TimeUnit.MILLISECONDS));
     }
 
     @Override
