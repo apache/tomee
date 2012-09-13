@@ -16,7 +16,10 @@
  */
 package org.apache.openejb.assembler.classic.util;
 
+import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.IdPropertiesInfo;
+import org.apache.openejb.assembler.classic.WebAppInfo;
 
 import java.util.Collection;
 import java.util.Properties;
@@ -33,5 +36,23 @@ public final class PojoUtil {
             }
         }
         return null;
+    }
+
+    public static Collection<IdPropertiesInfo> findPojoConfig(final Collection<IdPropertiesInfo> pojoConfigurations, final AppInfo appInfo, final WebAppInfo webApp) {
+        if (pojoConfigurations == null) {
+            for (EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
+                if (ejbJarInfo.moduleId.equals(webApp.moduleId)) {
+                    return ejbJarInfo.pojoConfigurations;
+                }
+            }
+
+            // useless normally but we had some code where modulName was the webapp moduleId
+            for (EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
+                if (ejbJarInfo.moduleName.equals(webApp.moduleId)) {
+                    return ejbJarInfo.pojoConfigurations;
+                }
+            }
+        }
+        return pojoConfigurations;
     }
 }
