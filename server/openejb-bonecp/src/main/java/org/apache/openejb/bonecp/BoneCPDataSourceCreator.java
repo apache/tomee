@@ -23,6 +23,7 @@ import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.resource.jdbc.BasicDataSourceUtil;
 import org.apache.openejb.resource.jdbc.plugin.DataSourcePlugin;
 import org.apache.openejb.resource.jdbc.pool.PoolDataSourceCreator;
+import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.Strings;
 
 import javax.sql.DataSource;
@@ -31,6 +32,7 @@ import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 public class BoneCPDataSourceCreator extends PoolDataSourceCreator {
@@ -41,8 +43,20 @@ public class BoneCPDataSourceCreator extends PoolDataSourceCreator {
 
     @Override
     public DataSource pool(final String name, final DataSource ds, final Properties properties) {
+        final BoneCPConfig config;
+        final BoneCP pool;
+        try {
+            config = new BoneCPConfig(prefixedProps(properties));
+            pool = new BoneCP(config);
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e);
+        }
+        return build(BoneCPDataSourceProvidedPool.class, new BoneCPDataSourceProvidedPool(pool), new Properties());
+    }
+
+    private Properties prefixedProps(final Properties properties) {
         if (properties.containsKey("url")) {
-            properties.setProperty("jdbcUrl", properties.getProperty("url"));
+            properties.setProperty("", properties.getProperty("url"));
         }
 
         // updating relative url if mandatory (hsqldb for instance)
@@ -63,40 +77,40 @@ public class BoneCPDataSourceCreator extends PoolDataSourceCreator {
 
         // TODO: convert some more properties:
         // InitialSize, TestOnReturn, ConnectionProperties, MaxOpenPreparedStatements
-        // AccessToUnderlyingConnectionAllowed, MaxActive, PoolPreparedStatements, MinIdle, TestWhileIdle
+        // AccessToUnderlyingConnectionAllowed, PoolPreparedStatements, MinIdle, TestWhileIdle
         // NumTestsPerEvictionRun, MaxIdle, MaxWait, MinEvictableIdleTimeMillis, TestOnBorrow, ValidationQuery
 
         final String cipher = properties.getProperty("PasswordCipher");
         if (cipher == null || "PlainText".equals(cipher)) { // no need to warn
             properties.remove("PasswordCipher");
         }
-        if (properties.containsKey("TimeBetweenEvictionRunsMillis")) {
-            properties.setProperty("idleConnectionTestPeriodInSeconds", String.valueOf(Integer.parseInt((String) properties.remove("TimeBetweenEvictionRunsMillis")) / 1000));
+        if (properties.containsKey("TimeBetweenEvictionRuns")) {
+            properties.setProperty("idleConnectionTestPeriodInSeconds", Long.toString(new Duration((String) properties.remove("TimeBetweenEvictionRuns")).getTime(TimeUnit.SECONDS)));
         }
         if (properties.containsKey("UserName")) {
             properties.put("username", properties.remove("UserName"));
+        }
+        if (properties.containsKey("MaxActive")) {
+            properties.put("maxConnectionsPerPartition", properties.remove("MaxActive"));
         }
 
         // bonecp expects bonecp prefix in properties
         final Properties prefixedProps = new Properties();
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-            prefixedProps.put("bonecp." + Strings.lcfirst((String) entry.getKey()), entry.getValue());
+            final String suffix = Strings.lcfirst((String) entry.getKey());
+            prefixedProps.put("bonecp." + suffix, entry.getValue());
         }
 
-        final BoneCPConfig config;
-        final BoneCP pool;
-        try {
-            config = new BoneCPConfig(prefixedProps);
-            pool = new BoneCP(config);
-        } catch (Exception e) {
-            throw new IllegalArgumentException(e);
-        }
-        return build(BoneCPDataSourceProvidedPool.class, new BoneCPDataSourceProvidedPool(pool), new Properties());
+        return prefixedProps;
     }
 
     @Override
     public DataSource pool(final String name, final String driver, final Properties properties) {
-        final BoneCPDataSource ds = build(BoneCPDataSource.class, properties);
+        // bonecp already have a kind of ObjectRecipe so simply giving it the values
+        final Properties props = new Properties();
+        props.put("properties", prefixedProps(properties));
+
+        final BoneCPDataSource ds = build(BoneCPDataSource.class, props);
         if (ds.getDriverClass() == null || ds.getDriverClass().isEmpty()) {
             ds.setDriverClass(driver);
         }
