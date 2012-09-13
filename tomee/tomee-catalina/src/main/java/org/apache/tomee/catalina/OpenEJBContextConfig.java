@@ -197,7 +197,11 @@ public class OpenEJBContextConfig extends ContextConfig {
                     path = path.substring(0, path.length() - 1);
                 }
 
-                return path + File.separator;
+                if (path.isEmpty()) {
+                    return path;
+                }
+
+                return path + ".";
             }
 
             previous = current;

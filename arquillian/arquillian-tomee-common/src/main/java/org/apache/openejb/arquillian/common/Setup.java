@@ -257,21 +257,21 @@ public class Setup {
     }
 
     public static void configureSystemProperties(final File openejbHome, final TomEEConfiguration configuration) {
-        final Properties props = new Properties();
+        final StringBuilder builder = new StringBuilder();
         final File systemProperties = new File(openejbHome, "conf/system.properties");
         if (systemProperties.exists()) {
             try {
-                org.apache.openejb.loader.IO.readProperties(systemProperties);
+                builder.append(org.apache.openejb.loader.IO.slurp(systemProperties));
             } catch (IOException e) {
                 LOGGER.log(Level.SEVERE, "can't read " + systemProperties.getAbsolutePath(), e);
             }
         }
-        props.putAll(configuration.systemProperties());
+        builder.append("\n").append(configuration.systemProperties());
 
         FileWriter writer = null;
         try {
             writer = new FileWriter(systemProperties);
-            props.store(writer, "");
+            writer.write(builder.toString());
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "can't save system properties " + systemProperties.getAbsolutePath(), e);
             return;

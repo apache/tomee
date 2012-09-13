@@ -22,12 +22,13 @@
   <container qualifier="tomee-embedded" default="true">
     <configuration>
       <property name="httpPort">-1</property>
-      <property name="ajpPort">-1</property>
       <property name="stopPort">-1</property>
       <property name="dir">target/tomee-embedded</property>
       <property name="appWorkingDir">target/arquillian-embedded-working-dir</property>
       <property name="portRange">20001-30000</property>
       <property name="properties">
+        My\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
+        My\ Unmanaged\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
         openejb.classloader.forced-load=org.apache.openejb.arquillian.tests
       </property>
     </configuration>
@@ -42,6 +43,8 @@
       <property name="portRange">20001-30000</property>
       <property name="cleanOnStartUp">true</property>
       <property name="properties">
+        My\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
+        My\ Unmanaged\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
         openejb.classloader.forced-load=org.apache.openejb.arquillian.tests
       </property>
     </configuration>
@@ -55,6 +58,8 @@
       <property name="appWorkingDir">target/arquillian-webapp-working-dir</property>
       <property name="portRange">20001-30000</property>
       <property name="properties">
+        My\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
+        My\ Unmanaged\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
         openejb.classloader.forced-load=org.apache.openejb.arquillian.tests.
       </property>
     </configuration>

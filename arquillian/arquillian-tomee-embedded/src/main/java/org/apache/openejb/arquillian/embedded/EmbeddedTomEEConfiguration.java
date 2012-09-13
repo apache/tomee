@@ -16,11 +16,16 @@
  */
 package org.apache.openejb.arquillian.embedded;
 
+import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.arquillian.common.IO;
 import org.apache.openejb.arquillian.common.Prefixes;
 import org.apache.openejb.arquillian.common.TomEEConfiguration;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * @version $Rev$ $Date$
@@ -37,5 +42,26 @@ public class EmbeddedTomEEConfiguration extends TomEEConfiguration {
             value.add(getHttpPort());
         }
         return toInts(value);
+    }
+
+    public Properties systemPropertiesAsProperties() {
+        if (properties == null || properties.isEmpty()) {
+            return new Properties();
+        }
+
+        final Properties properties = new Properties();
+        final ByteArrayInputStream bais = new ByteArrayInputStream(getProperties().getBytes());
+        try {
+            properties.load(bais);
+        } catch (IOException e) {
+            throw new OpenEJBRuntimeException(e);
+        } finally {
+            try {
+                IO.close(bais);
+            } catch (IOException ignored) {
+                // no-op
+            }
+        }
+        return properties;
     }
 }

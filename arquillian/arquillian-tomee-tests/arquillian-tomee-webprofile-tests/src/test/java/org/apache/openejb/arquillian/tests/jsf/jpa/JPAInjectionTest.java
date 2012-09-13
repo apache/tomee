@@ -33,7 +33,6 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.logging.Logger;
 
 import static junit.framework.Assert.assertTrue;
 
@@ -43,22 +42,19 @@ public class JPAInjectionTest extends JSFs {
     @ArquillianResource
     private URL url;
 
-    static Logger logger=Logger.getLogger(JPAInjectionTest.class.getName());
-
-    @Deployment
-    public static WebArchive getArchive()
-    {
-        PersistenceDescriptor persistenceDescriptor= Descriptors.create(PersistenceDescriptor.class)
+    @Deployment(testable = false)
+    public static WebArchive getArchive() {
+        PersistenceDescriptor persistenceDescriptor = Descriptors.create(PersistenceDescriptor.class)
                 .createPersistenceUnit()
-                .name("test-pu")
-                .transactionType("JTA")
-                .clazz(PersistenceDescriptor.class.getName())
-                .jtaDataSource("test-ds")
+                    .name("test-pu")
+                    .transactionType("JTA")
+                    .clazz(PersistenceDescriptor.class.getName())
+                    .jtaDataSource("test-ds")
                 .up();
 
 
-        Asset persistenceAsset=new StringAsset(persistenceDescriptor.exportAsString());
-        return base("jsf-jpa-test.war").addAsManifestResource(persistenceAsset, "persistence.xml")
+        Asset persistenceAsset = new StringAsset(persistenceDescriptor.exportAsString());
+        return base("jsf-jpa-test.war").addAsWebInfResource(persistenceAsset, "persistence.xml")
                 .addPackage(JPAInjectionTest.class.getPackage())
                 .addAsWebResource(new ClassLoaderAsset(
                         JPAInjectionTest.class.getPackage().getName().replace('.', '/').concat("/").concat("dummy.xhtml")), "dummy.xhtml");
