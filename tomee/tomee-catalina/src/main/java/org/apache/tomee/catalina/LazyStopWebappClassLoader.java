@@ -25,6 +25,7 @@ import org.apache.openejb.loader.SystemInstance;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Enumeration;
 
 public class LazyStopWebappClassLoader extends WebappClassLoader {
     public static final String TOMEE_WEBAPP_FIRST = "tomee.webapp-first";
@@ -94,5 +95,14 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
 
     public static boolean isDelegate() {
         return !SystemInstance.get().getOptions().get(TOMEE_WEBAPP_FIRST, true);
+    }
+
+    @Override
+    public Enumeration<URL> getResources(final String name) throws IOException {
+        final Enumeration<URL> urls = super.getResources(name);
+        if (TomEEClassLoaderEnricher.isSlf4jQuery(name)) {
+            return TomEEClassLoaderEnricher.filterSlf4jImpl(urls);
+        }
+        return urls;
     }
 }
