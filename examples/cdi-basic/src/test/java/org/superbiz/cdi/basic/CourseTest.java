@@ -16,21 +16,33 @@
  */
 package org.superbiz.cdi.basic;
 
-import junit.framework.TestCase;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ejb.EJB;
 import javax.ejb.embeddable.EJBContainer;
 
-public class CourseTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+public class CourseTest {
+
+    private static EJBContainer container;
 
     @EJB
     private Course course;
 
+    @BeforeClass
+    public static void start() {
+        container = EJBContainer.createEJBContainer();
+    }
+
     @Before
     public void setUp() throws Exception {
-        EJBContainer.createEJBContainer().getContext().bind("inject", this);
+        container.getContext().bind("inject", this);
     }
 
     @Test
@@ -50,5 +62,10 @@ public class CourseTest extends TestCase {
         // Was the @PostConstruct called on Faculty?
         assertEquals(faculty.getFacultyName(), "Computer Science");
         assertEquals(faculty.getFacultyMembers().size(), 2);
+    }
+
+    @AfterClass
+    public static void stop() {
+        container.close();
     }
 }
