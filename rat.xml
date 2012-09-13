@@ -43,7 +43,7 @@
           <exclude name="arquillian/arquillian-tomee-embedded/src/main/resources/META-INF/services/org.jboss.arquillian.core.spi.LoadableExtension"/>
           <exclude name="arquillian/arquillian-tomee-remote/src/main/resources/META-INF/services/org.jboss.arquillian.core.spi.LoadableExtension"/>
           <exclude name="arquillian/arquillian-tomee-tests/src/test/resources/org/apache/openejb/arquillian/tests/jaxrs/foo"/>
-          <exclude name="arquillian/arquillian-tomee-tests/src/test/resources/test.getresources"/>
+          <exclude name="arquillian/arquillian-tomee-tests/arquillian-tomee-webprofile-tests/src/test/resources/test.getresources"/>
           <exclude name="arquillian/arquillian-tomee-webapp-remote/src/main/resources/META-INF/services/org.jboss.arquillian.core.spi.LoadableExtension"/>
           <exclude name="arquillian/arquillian-openejb-embedded-4/src/main/resources/META-INF/services/org.jboss.arquillian.core.spi.LoadableExtension" />
           <exclude name="container/openejb-jee/src/main/xsdlist/xsdlist.txt"/>
@@ -53,6 +53,7 @@
           <exclude name="container/openejb-core/src/test/resources/META-INF/services/org.apache.openejb.core.security.jaas.LoginProvider" />
           <exclude name="container/openejb-junit/src/main/resources/META-INF/openejb-test-login.config"/>
           <exclude name="osgi/openejb-core-osgi/src/main/resources/META-INF/services/javax.enterprise.inject.spi.Extension"/>
+          <exclude name="server/openejb-cxf/src/main/resources/META-INF/cxf.extension"/>
           <exclude name="server/openejb-cxf-rs/src/main/resources/META-INF/services/javax.ws.rs.ext.RuntimeDelegate"/>
           <exclude name="server/openejb-ssh/src/test/key/ssh-key.ser"/>
           <exclude name="examples/datasource-ciphered-password/src/test/resources/META-INF/beans.xml"/>
@@ -62,7 +63,11 @@
           <exclude name="examples/deltaspike-configproperty/src/main/resources/META-INF/services/org.apache.deltaspike.core.spi.config.ConfigSourceProvider" />
           <exclude name="examples/server-events/src/main/resources/META-INF/org.apache.openejb.extension" />
           <exclude name="examples/testing-security-3/src/main/resources/META-INF/services/org.apache.openejb.core.security.jaas.LoginProvider" />
+          <exclude name="utils/openejb-mockito/src/main/resources/META-INF/services/javax.enterprise.inject.spi.Extension"/>
           <exclude name="tomee/apache-tomee/src/main/resources/service.readme.txt"/>
+          <exclude name="tomee/apache-tomee-deb/src/main/resources/prerm"/>
+          <exclude name="tomee/apache-tomee-deb/src/main/resources/postinst"/>
+          <exclude name="tomee/apache-tomee-deb/src/main/resources/control"/>
           <exclude name="tomee/tomee-embedded/src/main/resources/META-INF/services/javax.ejb.spi.EJBContainerProvider"/>
           <exclude name="tomee/tomee-embedded/src/main/resources/META-INF/services/org.apache.webbeans.spi.plugins.OpenWebBeansPlugin"/>
           <exclude name="tomee/tomee-myfaces/src/main/resources/META-INF/services/org.apache.myfaces.spi.AnnotationProviderFactory"/>
@@ -91,19 +96,18 @@
           <exclude name="**/META-INF/org.apache.openejb.resource.jdbc.plugin.DataSourcePlugin/**"/>
           <exclude name="**/META-INF/org.apache.openejb.resource.jdbc.cipher.PasswordCipher/**"/>
           <exclude name="**/META-INF/services/org/apache/activemq/broker/**"/> 
-          <exclude name="**/META-INF/org.apache.openejb.tomcat/ServerClassLoader"/> 
-          <exclude name="**/server/openejb-cxf/src/main/resources/META-INF/cxf.extension"/> 
- 
- 
-          <!-- insignificant test descriptors --> 
-          <exclude name="**/container/openejb-core/src/test/resources/altddPU1/**/*.xml"/> 
-          <exclude name="**/container/openejb-core/src/test/resources/altddapp1/**/*.xml"/> 
-          <exclude name="**/container/openejb-core/src/test/resources/altddapp2/**/*.xml"/> 
-          <exclude name="**/container/openejb-core/src/test/resources/altddapp2/**/*.properties"/> 
-          <exclude name="**/container/openejb-core/src/test/resources/convert/**/*.xml"/> 
-          <exclude name="**/container/openejb-core/src/test/resources/mixedcase/**/*.xml"/> 
-          <exclude name="**/container/openejb-spring/src/test/resources/META-INF/ejb-jar.xml"/> 
- 
+          <exclude name="**/META-INF/org.apache.openejb.tomcat/ServerClassLoader"/>
+
+
+          <!-- insignificant test descriptors -->
+          <exclude name="**/container/openejb-core/src/test/resources/altddPU1/**/*.xml"/>
+          <exclude name="**/container/openejb-core/src/test/resources/altddapp1/**/*.xml"/>
+          <exclude name="**/container/openejb-core/src/test/resources/altddapp2/**/*.xml"/>
+          <exclude name="**/container/openejb-core/src/test/resources/altddapp2/**/*.properties"/>
+          <exclude name="**/container/openejb-core/src/test/resources/convert/**/*.xml"/>
+          <exclude name="**/container/openejb-core/src/test/resources/mixedcase/**/*.xml"/>
+          <exclude name="**/container/openejb-spring/src/test/resources/META-INF/ejb-jar.xml"/>
+
           <!-- empty or insignificant descriptors from examples --> 
           <exclude name="**/examples/**/src/*/resources/META-INF/ejb-jar.xml"/> 
           <exclude name="**/examples/**/src/*/resources/META-INF/application-client.xml"/> 
