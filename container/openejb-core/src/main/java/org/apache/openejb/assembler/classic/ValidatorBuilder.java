@@ -101,6 +101,21 @@ public final class ValidatorBuilder {
             providerClassName = SystemInstance.get().getOptions().get(VALIDATION_PROVIDER_KEY, (String) null);
         }
 
+        // the only message logged by bval is "ignoreXmlConfiguration == true"
+        // which is false since we parse it ourself so hidding it
+        if (providerClassName == null || "org.apache.bval.jsr303.ApacheValidationProvider".equals(providerClassName)) {
+            bvalOffLogging(); // do it with original classloader
+
+            // it is important to switch of classloader because tomee uses a hierarchic logmanager
+            final ClassLoader original = Thread.currentThread().getContextClassLoader();
+            Thread.currentThread().setContextClassLoader(ValidatorBuilder.class.getClassLoader());
+            try {
+                bvalOffLogging();
+            } finally {
+                Thread.currentThread().setContextClassLoader(original);
+            }
+        }
+
         if (providerClassName != null) {
             try {
                 @SuppressWarnings({"unchecked","rawtypes"})
@@ -123,15 +138,6 @@ public final class ValidatorBuilder {
         }
 
         // config is manage here so ignore provider parsing so ignore it from the impl
-        //
-        // the only message logged by bval is "ignoreXmlConfiguration == true"
-        // which is false since we parse it ourself so hidding it
-        if (providerClassName == null || "org.apache.bval.jsr303.ApacheValidationProvider".equals(providerClassName)) {
-            final java.util.logging.Logger offLogger = java.util.logging.Logger.getLogger("org.apache.bval.jsr303.ConfigurationImpl");
-            if (!Level.SEVERE.equals(offLogger.getLevel())) {
-                offLogger.setLevel(Level.SEVERE);
-            }
-        }
         target.ignoreXmlConfiguration();
 
         String messageInterpolatorClass = info.messageInterpolatorClass;
@@ -190,5 +196,13 @@ public final class ValidatorBuilder {
         }
 
         return target;
+    }
+
+    private static void bvalOffLogging() {
+        final java.util.logging.Logger offLogger = java.util.logging.Logger.getLogger("org.apache.bval.jsr303.ConfigurationImpl");
+        if (!Level.SEVERE.equals(offLogger.getLevel())) {
+            offLogger.setLevel(Level.SEVERE);
+            offLogger.setUseParentHandlers(false);
+        }
     }
 }
