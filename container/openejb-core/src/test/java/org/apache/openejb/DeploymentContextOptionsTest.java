@@ -39,6 +39,7 @@ public class DeploymentContextOptionsTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         SystemInstance.reset();
+        Thread.currentThread().getContextClassLoader().loadClass("org.apache.bval.jsr303.ConfigurationImpl");
     }
 
     public void testBeanContextOptions() throws Exception {
