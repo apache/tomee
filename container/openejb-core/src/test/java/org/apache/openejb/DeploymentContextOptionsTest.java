@@ -17,6 +17,7 @@
 package org.apache.openejb;
 
 import junit.framework.TestCase;
+import org.apache.bval.jsr303.ConfigurationImpl;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
@@ -31,6 +32,8 @@ import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 
+import javax.validation.ValidationException;
+
 /**
  * @version $Rev$ $Date$
  */
@@ -39,7 +42,12 @@ public class DeploymentContextOptionsTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         SystemInstance.reset();
-        Thread.currentThread().getContextClassLoader().loadClass("org.apache.bval.jsr303.ConfigurationImpl");
+
+        try { // hack for buildbot
+            new ConfigurationImpl(null, null);
+        } catch (ValidationException ve) {
+            // no-op
+        }
     }
 
     public void testBeanContextOptions() throws Exception {
