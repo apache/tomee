@@ -26,6 +26,7 @@ import org.apache.openejb.resource.jdbc.pool.PoolDataSourceCreator;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Strings;
+import org.apache.openejb.util.SuperProperties;
 import org.apache.openejb.util.reflection.Reflections;
 import org.apache.tomcat.jdbc.pool.ConnectionPool;
 import org.apache.tomcat.jdbc.pool.PoolConfiguration;
@@ -49,7 +50,7 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
     @Override
     public DataSource pool(final String name, final DataSource ds, Properties properties) {
         final Properties converted = new Properties();
-        updateProperties(properties, converted, null);
+        updateProperties(new SuperProperties(properties).caseInsensitive(true), converted, null);
 
         final PoolConfiguration config = build(PoolProperties.class, converted);
         config.setDataSource(ds);
@@ -66,24 +67,36 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
     public DataSource pool(final String name, final String driver, final Properties properties) {
         final Properties converted = new Properties();
         converted.setProperty("name", name);
-        updateProperties(properties, converted, driver);
+        updateProperties(new SuperProperties(properties).caseInsensitive(true), converted, driver);
         final PoolConfiguration config = build(PoolProperties.class, converted);
         return build(TomEEDataSource.class, new TomEEDataSource(config, name), converted);
     }
 
-    private void updateProperties(final Properties properties, final Properties converted, final String driver) {
+    private void updateProperties(final SuperProperties properties, final Properties converted, final String driver) {
         // some compatibility with old dbcp style
         if (driver != null) {
             converted.setProperty("driverClassName", driver);
         }
-        if (properties.getProperty("JdbcDriver") != null) {
-            converted.setProperty("driverClassName", (String) properties.remove("JdbcDriver"));
+        if (properties.containsKey("JdbcDriver")) {
+            converted.setProperty("driverClassName", (String) properties.get("JdbcDriver"));
         }
         if (properties.containsKey("JdbcUrl")) {
-            converted.setProperty("url", (String) properties.remove("JdbcUrl"));
+            converted.setProperty("url", (String) properties.get("JdbcUrl"));
         }
         if (properties.containsKey("user")) {
-            converted.setProperty("username", (String) properties.remove("user"));
+            converted.setProperty("username", (String) properties.get("user"));
+        }
+        if (properties.containsKey("user")) {
+            converted.setProperty("username", (String) properties.get("user"));
+        }
+        if (properties.containsKey("maxWaitTime")) {
+            converted.setProperty("maxWait", (String) properties.get("maxWaitTime"));
+        }
+        if (properties.containsKey("timeBetweenEvictionRuns")) {
+            converted.setProperty("timeBetweenEvictionRunsMillis", (String) properties.get("timeBetweenEvictionRuns"));
+        }
+        if (properties.containsKey("minEvictableIdleTime")) {
+            converted.setProperty("minEvictableIdleTimeMillis", (String) properties.get("minEvictableIdleTime"));
         }
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
             final String key = entry.getKey().toString();
@@ -94,11 +107,10 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
                 }
                 if ("MaxOpenPreparedStatements".equalsIgnoreCase(key) || "PoolPreparedStatements".equalsIgnoreCase(key)) {
                     String interceptors = properties.getProperty("jdbcInterceptors");
-                    if (interceptors == null) {
-                        interceptors = properties.getProperty("JdbcInterceptors");
-                    }
                     if (interceptors == null || !interceptors.contains("StatementCache")) {
-                        LOGGER.warning("Tomcat-jdbc doesn't support '" + key + "' property, please configure the StatementCache jdbc interceptor");
+                        converted.setProperty("jdbcInterceptors",
+                                "StatementCache(max=" + properties.getProperty("MaxOpenPreparedStatements", "128") + ")");
+                        LOGGER.debug("Tomcat-jdbc StatementCache added to handle prepared statement cache/pool");
                     }
                     continue;
                 }
