@@ -271,7 +271,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     }
 
     private void removeDefaultWebapps() {
-        final File webapps = new File(catalinaBase, "webapps");
+        final File webapps = new File(catalinaBase, webappDir);
         if (webapps.isDirectory()) {
             for (File webapp : webapps.listFiles()) {
                 final String name = webapp.getName();

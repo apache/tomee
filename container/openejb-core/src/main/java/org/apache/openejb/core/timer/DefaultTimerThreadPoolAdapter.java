@@ -17,21 +17,17 @@
 
 package org.apache.openejb.core.timer;
 
-import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.util.DaemonThreadFactory;
 import org.apache.openejb.util.ExecutorBuilder;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.executor.OfferRejectedExecutionHandler;
 import org.quartz.SchedulerConfigException;
 import org.quartz.spi.ThreadPool;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.RejectedExecutionHandler;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @version $Rev$ $Date$
@@ -161,7 +157,17 @@ public class DefaultTimerThreadPoolAdapter implements ThreadPool {
 
     @Override
     public void shutdown(final boolean arg0) {
-        //TODO Seems we should never try to shutdown the thread pool, as it is shared in global scope
+        if (threadPoolExecutorUsed) {
+            final ThreadPoolExecutor tpe = (ThreadPoolExecutor) executor;
+            tpe.shutdown();
+            if (arg0) {
+                try {
+                    tpe.awaitTermination(1, TimeUnit.HOURS);
+                } catch (InterruptedException e) {
+                    logger.error(e.getMessage(), e);
+                }
+            }
+        }
     }
 
     public int getThreadCount() {

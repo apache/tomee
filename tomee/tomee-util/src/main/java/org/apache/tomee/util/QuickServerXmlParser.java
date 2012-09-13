@@ -37,7 +37,7 @@ public class QuickServerXmlParser extends DefaultHandler {
     private static final String HTTP_KEY = "HTTP";
     private static final String AJP_KEY = "AJP";
     private static final String HOST_KEY = "host";
-    private static final String APP_BASE_KEY = "host";
+    private static final String APP_BASE_KEY = "app-base";
     private static final String DEFAULT_CONNECTOR_KEY = HTTP_KEY;
 
     public static final String DEFAULT_HTTP_PORT = "8080";
