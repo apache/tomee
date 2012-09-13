@@ -16,17 +16,6 @@
  */
 package org.apache.tomee.embedded;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Writer;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-import javax.naming.Context;
-import javax.naming.NamingException;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Server;
 import org.apache.catalina.Service;
@@ -59,6 +48,18 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.runtime.log.NullLogChute;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
+
+import javax.naming.Context;
+import javax.naming.NamingException;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Writer;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * @version $Rev$ $Date$
