@@ -36,8 +36,21 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
-        <version>1.6</version>
+        <version>1.7</version>
         <executions>
+          <execution>
+            <id>check-tomcat</id>
+            <phase>package</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target name="check-if-already-in-m2">
+                <available file="${artifact.path}" property="dont-download-tomcat" />
+              </target>
+              <exportAntProperties>true</exportAntProperties>
+            </configuration>
+          </execution>
           <execution>
             <id>download-tomcat</id>
             <phase>package</phase>
@@ -45,8 +58,20 @@
               <goal>run</goal>
             </goals>
             <configuration>
-              <target>
+              <target name="download" unless="dont-download-tomcat">
                 <get src="${tomcat.url}" dest="${tomcat.tmp}" verbose="true" />
+              </target>
+            </configuration>
+          </execution>
+          <execution>
+            <id>mock-tomcat</id>
+            <phase>package</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target name="copy" if="dont-download-tomcat">
+                <copy file="${artifact.path}" tofile="${tomcat.tmp}"/>
               </target>
             </configuration>
           </execution>
@@ -81,5 +106,6 @@
     <!-- using a proxy is generally better -->
     <tomcat.url>http://www.apache.org/dist/tomcat/tomcat-7/v${tomcat.version}/bin/apache-tomcat-${tomcat.version}.zip</tomcat.url>
     <tomcat.tmp>${project.build.directory}/apache-tomcat-${tomcat.bundle.version}.zip</tomcat.tmp>
+    <artifact.path>${settings.localRepository}/org/apache/openejb/${project.artifactId}/${project.version}/${project.artifactId}-${project.version}.zip</artifact.path>
   </properties>
 </project>
