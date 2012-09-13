@@ -256,6 +256,7 @@ public class Container {
             for (EjbJarInfo ejbJar : appInfo.ejbJars) {
                 if (file.getName().equals(ejbJar.moduleName)) {
                     ejbJar.moduleName = name;
+                    ejbJar.moduleId = name;
                 }
                 for (EnterpriseBeanInfo ejb : ejbJar.enterpriseBeans) {
                     if (BeanContext.Comp.openejbCompName(file.getName()).equals(ejb.ejbName)) {

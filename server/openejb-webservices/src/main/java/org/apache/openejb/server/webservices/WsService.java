@@ -348,14 +348,7 @@ public abstract class WsService implements ServerService, SelfManaging {
 
                 PortData port = WsBuilder.toPortData(portInfo, injections, moduleBaseUrl, classLoader);
 
-                if (pojoConfiguration == null) {
-                    for (EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
-                        if (ejbJarInfo.moduleName.equals(webApp.moduleId)) {
-                            pojoConfiguration = ejbJarInfo.pojoConfigurations;
-                            break;
-                        }
-                    }
-                }
+                pojoConfiguration = PojoUtil.findPojoConfig(pojoConfiguration, appInfo, webApp);
 
                 HttpListener container = createPojoWsContainer(moduleBaseUrl, port, portInfo.serviceLink,
                         target, context, webApp.contextRoot, bindings,
