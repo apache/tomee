@@ -38,6 +38,7 @@ public class DefaultTimerThreadPoolAdapter implements ThreadPool {
     private static final Logger logger = Logger.getInstance(LogCategory.TIMER, "org.apache.openejb.util.resources");
 
     public static final String OPENEJB_TIMER_POOL_SIZE = "openejb.timer.pool.size";
+    public static final String OPENEJB_EJB_TIMER_POOL_AWAIT_SECONDS = "openejb.ejb-timer-pool.shutdown.timeout";
 
     private Executor executor;
 
@@ -161,8 +162,9 @@ public class DefaultTimerThreadPoolAdapter implements ThreadPool {
             final ThreadPoolExecutor tpe = (ThreadPoolExecutor) executor;
             tpe.shutdown();
             if (arg0) {
+                int timeout = SystemInstance.get().getOptions().get(OPENEJB_EJB_TIMER_POOL_AWAIT_SECONDS, 5);
                 try {
-                    tpe.awaitTermination(1, TimeUnit.HOURS);
+                    tpe.awaitTermination(timeout, TimeUnit.SECONDS);
                 } catch (InterruptedException e) {
                     logger.error(e.getMessage(), e);
                 }
