@@ -19,6 +19,7 @@ package org.apache.openejb.arquillian.common;
 import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.JarExtractor;
+import org.apache.tomee.util.QuickServerXmlParser;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
 
 import java.io.BufferedReader;

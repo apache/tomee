@@ -50,6 +50,7 @@ import org.apache.openejb.config.RemoteServer;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Zips;
+import org.apache.tomee.util.QuickServerXmlParser;
 
 import static org.apache.maven.artifact.Artifact.SCOPE_COMPILE;
 import static org.apache.maven.artifact.repository.ArtifactRepositoryPolicy.CHECKSUM_POLICY_WARN;
@@ -134,6 +135,11 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
      * @parameter expression="${tomee-plugin.shutdown}" default-value="8005"
      */
     protected int tomeeShutdownPort = 8005;
+
+    /**
+     * @parameter expression="${tomee-plugin.ajp}" default-value="8009"
+     */
+    protected int tomeeAjpPort = 8009;
 
     /**
      * @parameter expression="${tomee-plugin.args}"
@@ -442,16 +448,17 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     private void overrideAddresses() {
         final File serverXml = new File(catalinaBase, "conf/server.xml");
         final String value = read(serverXml);
+        final QuickServerXmlParser parser = QuickServerXmlParser.parse(serverXml);
 
         FileWriter writer = null;
         try {
             writer = new FileWriter(serverXml);
             writer.write(value
-                    .replace("8080", Integer.toString(tomeeHttpPort))
-                    .replace("8005", Integer.toString(tomeeShutdownPort))
-                    .replace("localhost", tomeeHost)
-                    .replace("webapps", webappDir));
-            writer.close();
+                    .replace(parser.http(), Integer.toString(tomeeHttpPort))
+                    .replace(parser.ajp(), Integer.toString(tomeeAjpPort))
+                    .replace(parser.stop(), Integer.toString(tomeeShutdownPort))
+                    .replace(parser.host(), tomeeHost)
+                    .replace(parser.appBase(), webappDir));
         } catch (IOException e) {
             throw new TomEEException(e.getMessage(), e);
         } finally {
