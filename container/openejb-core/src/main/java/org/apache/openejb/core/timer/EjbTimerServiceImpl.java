@@ -39,7 +39,6 @@ import org.quartz.TriggerKey;
 import org.quartz.impl.StdSchedulerFactory;
 import org.quartz.impl.triggers.AbstractTrigger;
 import org.quartz.simpl.RAMJobStore;
-import org.quartz.simpl.SimpleThreadPool;
 
 import javax.ejb.EJBContext;
 import javax.ejb.EJBException;
@@ -72,6 +71,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
     public static final String OPENEJB_TIMEOUT_JOB_GROUP_NAME = "OPENEJB_TIMEOUT_GROUP";
 
     public static final String EJB_TIMER_RETRY_ATTEMPTS = "EjbTimer.RetryAttempts";
+    public static final String OPENEJB_QUARTZ_USE_TCCL = "openejb.quartz.use-TCCL";
 
     private boolean transacted;
     private int retryAttempts;
@@ -191,8 +191,18 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         Scheduler thisScheduler;
         if (scheduler == null || newInstance) {
             try {
-                thisScheduler = new StdSchedulerFactory(properties).getScheduler();
-                thisScheduler.start();
+                // start in container context to avoid thread leaks
+                final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
+                if (!"true".equals(deployment.getProperties().getProperty(OPENEJB_QUARTZ_USE_TCCL, "false"))) {
+                    Thread.currentThread().setContextClassLoader(EjbTimerServiceImpl.class.getClassLoader());
+                }
+                try {
+                    thisScheduler = new StdSchedulerFactory(properties).getScheduler();
+                    thisScheduler.start();
+                } finally {
+                    Thread.currentThread().setContextClassLoader(oldCl);
+                }
+
                 //durability is configured with true, which means that the job will be kept in the store even if no trigger is attached to it.
                 //Currently, all the EJB beans share with the same job instance
                 JobDetail job = JobBuilder.newJob(EjbTimeoutJob.class)
