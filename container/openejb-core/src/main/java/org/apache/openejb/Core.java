@@ -32,7 +32,7 @@ public class Core {
 
                 "org.apache.openejb.config.sys.JaxbJavaee",
                 "org.apache.bval.jsr303.ApacheValidatorFactory",
-                "org.apache.bval.jsr303.ConfigurationImpl",
+                // "org.apache.bval.jsr303.ConfigurationImpl", see org.apache.openejb.assembler.classic.ValidatorBuilder.bvalOffLogging()
                 "org.apache.bval.jsr303.ConstraintAnnotationAttributes",
                 "org.apache.bval.jsr303.ConstraintDefaults",
                 "org.apache.bval.jsr303.groups.GroupsComputer",
