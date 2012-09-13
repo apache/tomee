@@ -27,20 +27,17 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class SimpleServletLoadOnStartupTest {
 
-
-
-
     @Deployment(testable = false)
     public static WebArchive getArchive() {
       return  ShrinkWrap.create(WebArchive.class,"test-loadonStartup.war")
+                .addClass(SimpleServlet.class)
                 .addAsWebInfResource(new ClassLoaderAsset(
                         SimpleServletLoadOnStartupTest.class.getPackage().getName().replace('.', '/').concat("/").concat("web.xml")), "web.xml");
 
     }
 
     @Test
-    public void testDeployment()
-    {
+    public void testDeployment() {
         // should succeed without errors for load-on-startup value with leading/trailing space
     }
 
