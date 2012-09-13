@@ -183,12 +183,21 @@ public class TomEEWebappLoader extends WebappLoader {
             final Map<String, URL> urls = new HashMap<String, URL>();
 
 
+            final Enumeration<URL> result;
+
             if (webapp.isStarted() || webapp.getParent() == null) { // we set a parent so if it is null webapp was detroyed
                 add(urls, app.getResources(name));
                 add(urls, webapp.getResources(name));
-                return new ArrayEnumeration(clear(urls.values()));
+                result = new ArrayEnumeration(clear(urls.values()));
+            } else {
+                result = app.getResources(name);
             }
-            return app.getResources(name);
+
+            if (TomEEClassLoaderEnricher.isSlf4jQuery(name)) {
+                return TomEEClassLoaderEnricher.filterSlf4jImpl(result);
+            }
+
+            return result;
         }
 
         private List<URL> clear(Iterable<URL> urls) { // take care of antiJarLocking
