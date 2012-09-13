@@ -27,17 +27,6 @@ import java.util.List;
  */
 @Prefixes({"tomee", "tomee.embedded"})
 public class EmbeddedTomEEConfiguration extends TomEEConfiguration {
-
-    private int ajpPort = 8009;
-
-    public int getAjpPort() {
-        return ajpPort;
-    }
-
-    public void setAjpPort(int ajpPort) {
-        this.ajpPort = ajpPort;
-    }
-
     @Override
     public int[] portsAlreadySet() {
         final List<Integer> value = new ArrayList<Integer>();
@@ -46,9 +35,6 @@ public class EmbeddedTomEEConfiguration extends TomEEConfiguration {
         }
         if (getHttpPort() > 0) {
             value.add(getHttpPort());
-        }
-        if (getAjpPort() > 0) {
-            value.add(getAjpPort());
         }
         return toInts(value);
     }
