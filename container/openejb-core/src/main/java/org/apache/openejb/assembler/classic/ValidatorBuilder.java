@@ -20,7 +20,6 @@ import java.util.logging.Level;
 import org.apache.openejb.jee.bval.PropertyType;
 import org.apache.openejb.jee.bval.ValidationConfigType;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.log.RemoveLogMessage;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -43,15 +42,8 @@ public final class ValidatorBuilder {
         // the only message logged is "ignoreXmlConfiguration == true"
         // which is false since we parse it ourself
         // so hidding it
-        try {
-            final Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass("org.apache.bval.jsr303.ConfigurationImpl");
-            final java.util.logging.Logger offLogger = java.util.logging.Logger.getLogger(clazz.getName());
-            offLogger.setLevel(Level.OFF); // only used to log it so simply hide it
-        } catch (ClassNotFoundException ignored) {
-            // no-op
-        } catch (NoClassDefFoundError ncdef) {
-            // no-op
-        }
+        final java.util.logging.Logger offLogger = java.util.logging.Logger.getLogger("org.apache.bval.jsr303.ConfigurationImpl");
+        offLogger.setLevel(Level.SEVERE); // only used to log it so simply hide it
     }
 
     private ValidatorBuilder() {
