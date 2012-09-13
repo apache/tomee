@@ -38,19 +38,12 @@ public final class ValidatorBuilder {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, ValidatorBuilder.class);
     public static final String VALIDATION_PROVIDER_KEY = "openejb.bean-validation.provider";
 
-    static {
-        // the only message logged is "ignoreXmlConfiguration == true"
-        // which is false since we parse it ourself
-        // so hidding it
-        final java.util.logging.Logger offLogger = java.util.logging.Logger.getLogger("org.apache.bval.jsr303.ConfigurationImpl");
-        offLogger.setLevel(Level.SEVERE); // only used to log it so simply hide it
-    }
-
     private ValidatorBuilder() {
         // no-op
     }
 
     public static ValidatorFactory buildFactory(ClassLoader classLoader, ValidationInfo info) {
+        // now we will not be polluted by log build
         return buildFactory(info, classLoader);
     }
 
@@ -128,7 +121,17 @@ public final class ValidatorBuilder {
             target = Validation.byDefaultProvider().configure();
             Thread.currentThread().setContextClassLoader(classLoader);
         }
-        // config is manage here so ignore provider parsing
+
+        // config is manage here so ignore provider parsing so ignore it from the impl
+        //
+        // the only message logged by bval is "ignoreXmlConfiguration == true"
+        // which is false since we parse it ourself so hidding it
+        if (providerClassName == null || "org.apache.bval.jsr303.ApacheValidationProvider".equals(providerClassName)) {
+            final java.util.logging.Logger offLogger = java.util.logging.Logger.getLogger("org.apache.bval.jsr303.ConfigurationImpl");
+            if (!Level.SEVERE.equals(offLogger.getLevel())) {
+                offLogger.setLevel(Level.SEVERE);
+            }
+        }
         target.ignoreXmlConfiguration();
 
         String messageInterpolatorClass = info.messageInterpolatorClass;
