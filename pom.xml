@@ -330,11 +330,11 @@
         <module>server</module>
         <module>examples</module>
         <module>assembly</module>
+        <module>tck</module>
         <module>arquillian</module>
         <module>utils</module>
         <module>tomee</module>
         <module>osgi</module>
-        <module>tck</module>
       </modules>
     </profile>
     <profile>
