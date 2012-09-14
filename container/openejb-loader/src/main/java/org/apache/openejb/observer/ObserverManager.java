@@ -28,9 +28,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ObserverManager {
-
     private final List<Observer> observers = new ArrayList<Observer>();
 
     public boolean addObserver(Object observer) {
@@ -70,6 +71,7 @@ public class ObserverManager {
                 if (!(event instanceof ObserverFailed)) {
                     fireEvent(new ObserverFailed(observer, event, t));
                 }
+                Logger.getLogger(ObserverManager.class.getName()).log(Level.SEVERE, "error invoking " + observer, t);
             }
         }
     }
