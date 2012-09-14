@@ -369,31 +369,32 @@ public abstract class RESTService implements ServerService, SelfManaging {
         // context can get the app path too
         // so keep only web context without /
         String webCtx = context;
-        if (webCtx.startsWith("/")) {
+        while (webCtx.startsWith("/")) {
             webCtx = webCtx.substring(1);
         }
 
         // get root path ending with /
-        String base;
         try {
             final URL url = new URL(address);
             final int port = url.getPort();
             if (port > 0) {
-                return base = url.getProtocol() + "://" + url.getHost() + ":" + port + "/" + webCtx;
+                return url.getProtocol() + "://" + url.getHost() + ":" + port + "/" + webCtx;
             } else {
-                base = url.getProtocol() + "://" + url.getHost() + "/" + webCtx;
+                return url.getProtocol() + "://" + url.getHost() + "/" + webCtx;
             }
         } catch (MalformedURLException e) {
             throw new OpenEJBRestRuntimeException("bad url: " + address, e);
         }
-
-        return base + webCtx;
     }
 
     private String getAddress(String context, Class<?> clazz) {
         String root = NOPATH_PREFIX;
         if (context != null) {
-            root += context;
+            if (context.startsWith("/")) {
+                root += context.substring(1);
+            } else {
+                root += context;
+            }
         }
 
         Class<?> usedClass = clazz;
@@ -420,7 +421,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
                 if (path != null) {
                     String classPath = path.value();
                     if (classPath.startsWith("/")) {
-                        classPath = classPath.replaceFirst("/", "");
+                        classPath = classPath.substring(1);
                     }
                     if (!root.endsWith("/")) {
                         root = root + "/";
