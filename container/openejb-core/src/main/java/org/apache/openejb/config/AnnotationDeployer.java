@@ -1925,7 +1925,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                     // if the servlet is a rest init servlet don't deploy rest classes automatically
                     for (ParamValue param : servlet.getInitParam()) {
-                        if (param.getParamName().equals(Application.class.getName())) {
+                        if (param.getParamName().equals(Application.class.getName()) || param.getParamName().equals("javax.ws.rs.Application")) {
                             webModule.getRestApplications().clear();
                             webModule.getRestApplications().add(param.getParamValue());
                             break;
