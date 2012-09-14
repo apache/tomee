@@ -89,6 +89,9 @@ import org.apache.tomcat.util.digester.Digester;
 import org.apache.tomee.catalina.cluster.ClusterObserver;
 import org.apache.tomee.catalina.cluster.TomEEClusterListener;
 import org.apache.tomee.catalina.event.AfterApplicationCreated;
+import org.apache.tomee.catalina.routing.RouteFilter;
+import org.apache.tomee.catalina.routing.RouterInitializer;
+import org.apache.tomee.catalina.routing.RouterValve;
 import org.apache.tomee.common.LegacyAnnotationProcessor;
 import org.apache.tomee.common.TomcatVersion;
 import org.apache.tomee.common.UserTransactionFactory;
@@ -113,6 +116,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -216,6 +220,14 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         for (final Service service : standardServer.findServices()) {
             if (service.getContainer() instanceof Engine) {
                 final Engine engine = (Engine) service.getContainer();
+
+                // add the global router if relevant
+                final URL globalRouterConf = RouterInitializer.serverRouterConfigurationURL();
+                if (globalRouterConf != null) {
+                    final RouterValve routerValve = new RouterValve();
+                    routerValve.setConfigurationPath(globalRouterConf);
+                    engine.getPipeline().addValve(routerValve);
+                }
 
                 parentClassLoader = engine.getParentClassLoader();
 
