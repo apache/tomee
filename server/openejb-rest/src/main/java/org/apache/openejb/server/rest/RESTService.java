@@ -387,6 +387,14 @@ public abstract class RESTService implements ServerService, SelfManaging {
         }
     }
 
+    private Class<?> findPath(final Class<?> clazz) {
+        Class<?> usedClass = clazz;
+        while (usedClass.getAnnotation(Path.class) == null && usedClass.getSuperclass() != null) {
+            usedClass = usedClass.getSuperclass();
+        }
+        return usedClass;
+    }
+
     private String getAddress(String context, Class<?> clazz) {
         String root = NOPATH_PREFIX;
         if (context != null) {
@@ -397,9 +405,18 @@ public abstract class RESTService implements ServerService, SelfManaging {
             }
         }
 
-        Class<?> usedClass = clazz;
-        while (usedClass.getAnnotation(Path.class) == null && usedClass.getSuperclass() != null) {
-            usedClass = usedClass.getSuperclass();
+        Class<?> usedClass = findPath(clazz);
+        if (usedClass == null || Object.class.equals(usedClass)) { // try interfaces
+            final Class<?>[] itfs = clazz.getInterfaces();
+            if (itfs != null) {
+                for (Class<?> c : itfs) {
+                    usedClass = findPath(c);
+                    if (usedClass.getAnnotation(Path.class) != null ) {
+                        break;
+                    }
+                }
+            }
+
         }
         if (usedClass == null || usedClass.getAnnotation(Path.class) == null) {
             throw new IllegalArgumentException("no @Path annotation on " + clazz.getName());
