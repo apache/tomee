@@ -106,7 +106,7 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
             webBeansContext.getBeanManagerImpl().getInjectionResolver().clearCaches();
 
             // Delte proxies
-            webBeansContext.getJavassistProxyFactory().clear();
+            webBeansContext.getProxyFactory().clear();
 
             // Delete AnnotateTypeCache
             webBeansContext.getAnnotatedElementFactory().clear();

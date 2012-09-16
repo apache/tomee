@@ -24,6 +24,7 @@ import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.context.creational.CreationalContextImpl;
 import org.apache.webbeans.decorator.DelegateHandler;
 import org.apache.webbeans.decorator.WebBeansDecoratorConfig;
+import org.apache.webbeans.proxy.ProxyFactory;
 
 import javax.enterprise.context.spi.Context;
 import javax.enterprise.context.spi.CreationalContext;
@@ -106,14 +107,16 @@ public class CdiInterceptor implements Serializable {
 
         if (bean.getDecoratorStack().size() > 0) {
 
-            Class<?> proxyClass = webBeansContext.getJavassistProxyFactory().getInterceptorProxyClasses().get((InjectionTargetBean<?>) bean);
+            final ProxyFactory proxyFactory = webBeansContext.getProxyFactory();
+
+            Class<?> proxyClass = proxyFactory.getInterceptorProxyClasses().get((InjectionTargetBean<?>) bean);
             if (proxyClass == null) {
-                proxyClass = webBeansContext.getJavassistProxyFactory().createProxyClass(bean);
-                webBeansContext.getJavassistProxyFactory().getInterceptorProxyClasses().put((InjectionTargetBean<?>) bean, proxyClass);
+                proxyClass = proxyFactory.createProxyClass(bean);
+                proxyFactory.getInterceptorProxyClasses().put((InjectionTargetBean<?>) bean, proxyClass);
             }
-            Object delegate = proxyClass.newInstance();
-            DelegateHandler delegateHandler = new DelegateHandler(bean, ejbContext);
-            ((ProxyObject) delegate).setHandler(delegateHandler);
+
+            final DelegateHandler delegateHandler = new DelegateHandler(bean, ejbContext);
+            final Object delegate = proxyFactory.createDecoratorDelegate(bean, delegateHandler);
 
             // Gets component decorator stack
             List<Object> decorators = WebBeansDecoratorConfig.getDecoratorStack(bean, instance, delegate, (CreationalContextImpl<?>) context);
