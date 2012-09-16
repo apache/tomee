@@ -117,7 +117,6 @@
     <module>simple-stateless-callbacks</module>
     <module>simple-stateless-with-descriptor</module>
     <module>simple-webservice</module>
-    <module>spring-integration</module>
     <module>spring-data-proxy</module>
     <module>spring-data-proxy-meta</module>
     <module>struts</module>
