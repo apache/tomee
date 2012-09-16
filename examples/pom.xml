@@ -23,7 +23,7 @@
   <parent>
     <artifactId>openejb</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.1.0-SNAPSHOT</version>
+    <version>4.1.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>examples</artifactId>
@@ -46,7 +46,6 @@
     <module>cdi-application-scope</module>
     <module>cdi-produces-disposes</module>
     <module>cdi-produces-field</module>
-    <module>cdi-query</module>
     <module>cdi-realm</module>
     <module>change-jaxws-url</module>
     <module>component-interfaces</module>
@@ -117,7 +116,6 @@
     <module>simple-stateless-callbacks</module>
     <module>simple-stateless-with-descriptor</module>
     <module>simple-webservice</module>
-    <module>spring-integration</module>
     <module>spring-data-proxy</module>
     <module>spring-data-proxy-meta</module>
     <module>struts</module>

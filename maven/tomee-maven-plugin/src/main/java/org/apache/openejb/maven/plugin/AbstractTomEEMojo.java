@@ -101,7 +101,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     protected boolean skipCurrentProject;
 
     /**
-     * @parameter expression="${tomee-plugin.version}" default-value="1.1.0-SNAPSHOT"
+     * @parameter expression="${tomee-plugin.version}" default-value="1.1.0"
      */
     protected String tomeeVersion;
 

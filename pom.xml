@@ -33,7 +33,7 @@
   <artifactId>openejb</artifactId>
   <packaging>pom</packaging>
 
-  <version>4.1.0-SNAPSHOT</version>
+  <version>4.1.0</version>
 
   <name>Apache OpenEJB</name>
   <description>Apache OpenEJB is an open source, modular, configurable and extendable EJB Container System and EJB
@@ -90,8 +90,8 @@
 
   <properties>
 
-    <openejb.version>4.1.0-SNAPSHOT</openejb.version>
-    <tomee.version>1.1.0-SNAPSHOT</tomee.version>
+    <openejb.version>4.1.0</openejb.version>
+    <tomee.version>1.1.0</tomee.version>
 
     <!-- Maven module versions -->
     <maven-bundle-plugin.version>2.3.7</maven-bundle-plugin.version>
@@ -117,7 +117,7 @@
     <javaee-api.version>6.0-4</javaee-api.version>
 
     <!-- Used mainly in assembly/openejb-tomcat* projects  -->
-    <tomcat.bundle.version>7.0.30-SNAPSHOT</tomcat.bundle.version> <!-- don't merge with tomcat.version since we can release it ourself -->
+    <tomcat.bundle.version>7.0.30</tomcat.bundle.version> <!-- don't merge with tomcat.version since we can release it ourself -->
     <tomcat.version>7.0.30</tomcat.version>
 
     <!-- used mainly by jetty modules -->
@@ -136,13 +136,13 @@
     -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+    <scannotation.version>1.0.2</scannotation.version>
     <bval.version>0.4</bval.version>
     <org.apache.activemq.version>5.6.0</org.apache.activemq.version>
     <quartz.version>2.1.6</quartz.version>
     <org.springframework.version>3.1.0.RELEASE</org.springframework.version>
     <junit.version>4.9</junit.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
-    <scannotation.version>1.0.2</scannotation.version>
     <org.apache.openwebbeans.version>1.1.6-SNAPSHOT</org.apache.openwebbeans.version>
     <geronimo.connector.version>3.1.1</geronimo.connector.version>
     <geronimo-osgi.version>1.1</geronimo-osgi.version>
