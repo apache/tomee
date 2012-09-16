@@ -170,8 +170,8 @@ public class SimpleRouter {
 
         for (int i = 0; i < types.length; i++) {
             types[i] = SimpleType.STRING;
-            keys[i] = routes[i].getOrigin();
-            values[i] = routes[i].getRawDestination();
+            keys[i] = routes[i].getOrigin().substring(prefix.length());
+            values[i] = routes[i].getRawDestination().substring(prefix.length());
         }
 
         try {

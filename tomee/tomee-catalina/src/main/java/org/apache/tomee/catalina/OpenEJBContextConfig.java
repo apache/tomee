@@ -25,8 +25,6 @@ import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.tomee.catalina.routing.RouterInitializer;
-import org.apache.xbean.finder.util.Classes;
 import org.xml.sax.InputSource;
 
 import javax.servlet.ServletContainerInitializer;
@@ -87,9 +85,6 @@ public class OpenEJBContextConfig extends ContextConfig {
 
     @Override
     protected void webConfig() {
-        // routing config
-        context.addServletContainerInitializer(new RouterInitializer(), null); // first one
-
         // read the real config
         super.webConfig();
 

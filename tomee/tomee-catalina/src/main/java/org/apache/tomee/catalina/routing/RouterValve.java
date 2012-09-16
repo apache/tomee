@@ -20,12 +20,20 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
 import org.apache.catalina.valves.ValveBase;
+import org.apache.openejb.config.DeploymentLoader;
+import org.apache.openejb.loader.SystemInstance;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 public class RouterValve extends ValveBase {
+    public static final String ROUTER_CONF = "tomee-router.conf";
+    public static final String WEB_INF = "/WEB-INF/";
+
     private SimpleRouter router = new SimpleRouter();
 
     @Override
@@ -53,5 +61,47 @@ public class RouterValve extends ValveBase {
     protected synchronized void stopInternal() throws LifecycleException {
         router.cleanUp();
         super.stopInternal();
+    }
+
+    public static URL configurationURL(final ServletContext ctx) {
+        try {
+            return ctx.getResource(WEB_INF + routerConfigurationName());
+        } catch (MalformedURLException e) {
+            // let return null
+        }
+
+        return null;
+    }
+
+    public static String routerConfigurationName() {
+        final String conf = SystemInstance.get().getOptions().get(DeploymentLoader.OPENEJB_ALTDD_PREFIX, (String) null);
+        if (conf == null) {
+            return ROUTER_CONF;
+        } else {
+            return conf + "." + ROUTER_CONF;
+        }
+    }
+
+    public static URL serverRouterConfigurationURL() {
+        final File confDir = SystemInstance.get().getHome().getDirectory();
+        final File configFile = new File(confDir, "conf/" + routerConfigurationName());
+
+        if (configFile.exists()) {
+            try {
+                return configFile.toURI().toURL();
+            } catch (MalformedURLException e) {
+                // let return null
+            }
+        }
+
+        return null;
+    }
+
+    public void setPrefix(final String name) {
+        if (name == null || "/".equals(name)) {
+            router.setPrefix("");
+        } else {
+            router.setPrefix(name);
+        }
     }
 }
