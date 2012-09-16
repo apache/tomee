@@ -19,13 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.ejb.Local;
 import javax.ejb.Stateful;
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
 
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
@@ -83,130 +80,73 @@ public class StatefulConcurrentLookupTest {
 
     @Test
     public void testLookup() throws Exception {
-
-        final CountDownLatch latchInit = new CountDownLatch(THREAD_COUNT);
-        final CountDownLatch latchComplete = new CountDownLatch(THREAD_COUNT);
-
-        final List<TestRunnable> runnables = new ArrayList<TestRunnable>();
-        final List<Thread> threads = new ArrayList<Thread>();
-
-        int i = 0;
-        for (; i < THREAD_COUNT; i++) {
-            runnables.add(new TestRunnable("Lookup." + i, false, latchInit, latchComplete));
-            threads.add(new Thread(runnables.get(i)));
-        }
-
-        for (final Thread thread : threads) {
-            thread.setDaemon(false);
-            thread.start();
-        }
-
-        for (final Thread thread : threads) {
-            thread.join();
-        }
-
-        for (final TestRunnable runnable : runnables) {
-            if (runnable.isSuccess()) {
-                i--;
-            }
-        }
-
-        StatefulConcurrentLookupTest.print("testLookup: Threads successfully processed - " + (THREAD_COUNT - i));
-        assertEquals(THREAD_COUNT, (THREAD_COUNT - i));
+        runScenario(false);
     }
 
     @Test
     public void testLookupWithFail() throws Exception {
+        runScenario(true);
+    }
 
-        final CountDownLatch latchInit = new CountDownLatch(THREAD_COUNT);
-        final CountDownLatch latchComplete = new CountDownLatch(THREAD_COUNT);
+    private void runScenario(boolean throwException) throws InterruptedException {
+        final CountDownLatch startingLine = new CountDownLatch(THREAD_COUNT);
+        final CountDownLatch finishingLine = new CountDownLatch(THREAD_COUNT);
 
         final List<TestRunnable> runnables = new ArrayList<TestRunnable>();
-        final List<Thread> threads = new ArrayList<Thread>();
 
         int i = 0;
         for (; i < THREAD_COUNT; i++) {
-            runnables.add(new TestRunnable("Lookup.Fail." + i, true, latchInit, latchComplete));
-            threads.add(new Thread(runnables.get(i)));
-        }
-
-        for (final Thread thread : threads) {
-            thread.setDaemon(false);
+            final TestRunnable runnable = new TestRunnable("Lookup." + i, throwException, startingLine, finishingLine);
+            runnables.add(runnable);
+            final Thread thread = new Thread(runnable);
+            thread.setDaemon(true);
             thread.start();
         }
 
-        for (final Thread thread : threads) {
-            thread.join();
-        }
+        assertTrue("Threads failed to start", startingLine.await(30, TimeUnit.SECONDS));
+        assertTrue("Threads failed to finish", finishingLine.await(30, TimeUnit.SECONDS));
 
         for (final TestRunnable runnable : runnables) {
-            if (!runnable.isSuccess()) {
+            if (!throwException == runnable.isSuccess()) {
                 i--;
             }
         }
 
-        StatefulConcurrentLookupTest.print("testLookupWithFail: Threads successfully processed - " + (THREAD_COUNT - i));
         assertEquals(THREAD_COUNT, (THREAD_COUNT - i));
     }
 
     private static class TestRunnable implements Runnable {
 
-        private final CountDownLatch latchInit;
-        private final CountDownLatch latchComplete;
+        private final CountDownLatch startingLine;
+        private final CountDownLatch finishingLine;
         private final String name;
-        private final boolean throh;
-        private boolean success = false;
+        private final boolean throwException;
+        private volatile boolean success = false;
 
-        private TestRunnable(final String name, final boolean throh, final CountDownLatch latchInit, final CountDownLatch latchComplete) {
+        private TestRunnable(final String name, final boolean throwException, final CountDownLatch startingLine, final CountDownLatch finishingLine) {
             this.name = name;
-            this.throh = throh;
-            this.latchInit = latchInit;
-            this.latchComplete = latchComplete;
+            this.throwException = throwException;
+            this.startingLine = startingLine;
+            this.finishingLine = finishingLine;
         }
 
         @Override
         public void run() {
 
-            InitialContext ctx = null;
-
+            startingLine.countDown();
             try {
-                ctx = new InitialContext();
-            } catch (NamingException ex) {
-                Logger.getLogger(StatefulConcurrentLookupTest.class.getName()).log(Level.SEVERE, null, ex);
-            } finally {
-                //Get all threads raring to go.
-                latchInit.countDown();
-            }
+                startingLine.await();
 
-            try {
-                latchInit.await();
-            } catch (InterruptedException e) {
-                //Ignore
-            }
-
-            //All threads will now fight for concurrent access
-            try {
-
+                final InitialContext ctx = new InitialContext();
                 final MyLocalBean bean = (MyLocalBean) ctx.lookup("MyLocalBeanImplLocal");
-                bean.set(this.name, this.throh);
-                success = this.name.equals(bean.get());
 
+                bean.set(name, throwException);
+                success = name.equals(bean.get());
             } catch (Throwable t) {
                 success = false;
-                //StatefulConcurrentLookupTest.print(t.getMessage());
             } finally {
-                latchComplete.countDown();
+                finishingLine.countDown();
             }
-
-            try {
-                latchComplete.await();
-            } catch (InterruptedException e) {
-                //Ignore
-            }
-        }
-
-        public String getName() {
-            return name;
         }
 
         public boolean isSuccess() {
@@ -214,14 +154,10 @@ public class StatefulConcurrentLookupTest {
         }
     }
 
-    private static synchronized void print(final String txt) {
-        System.out.println(txt);
-    }
-
     @Local
     public static interface MyLocalBean {
 
-        void set(final String txt, final boolean throh);
+        void set(final String txt, final boolean throwException);
 
         String get();
     }
@@ -230,18 +166,18 @@ public class StatefulConcurrentLookupTest {
     public static class MyLocalBeanImpl implements MyLocalBean {
 
         private String txt = "default";
-        private boolean throh = false;
+        private boolean throwException = false;
 
         @Override
-        public void set(final String txt, final boolean throh) {
+        public void set(final String txt, final boolean throwException) {
             this.txt = txt;
-            this.throh = throh;
+            this.throwException = throwException;
         }
 
         @Override
         public String get() {
 
-            if (this.throh) {
+            if (this.throwException) {
                 throw new UnsupportedOperationException(this.txt);
             }
 
