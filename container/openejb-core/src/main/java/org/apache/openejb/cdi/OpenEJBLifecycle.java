@@ -448,7 +448,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             beanManager.getInjectionResolver().clearCaches();
 
             //Delte proxies
-            webBeansContext.getJavassistProxyFactory().clear();
+            webBeansContext.getProxyFactory().clear();
 
             //Delete AnnotateTypeCache
             webBeansContext.getAnnotatedElementFactory().clear();
