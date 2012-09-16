@@ -198,7 +198,7 @@ public class WebBeansListener implements ServletContextListener, ServletRequestL
     public void sessionDidActivate(HttpSessionEvent event) {
         if (failoverService.isSupportFailOver() || failoverService.isSupportPassivation()) {
             HttpSession session = event.getSession();
-            failoverService.restoreBeans(session);
+            failoverService.sessionDidActivate(session);
         }
     }
 
