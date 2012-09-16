@@ -26,6 +26,7 @@ import org.apache.openejb.resource.jdbc.pool.DefaultDataSourceCreator;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.SuperProperties;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
@@ -64,6 +65,7 @@ public class DataSourceFactory {
         convert(properties, maxWaitTime, "maxWaitTime", "maxWait");
         convert(properties, timeBetweenEvictionRuns, "timeBetweenEvictionRuns", "timeBetweenEvictionRunsMillis");
         convert(properties, minEvictableIdleTime, "minEvictableIdleTime", "minEvictableIdleTimeMillis");
+
         // these can be added and are managed by OpenEJB and not the DataSource itself
         properties.remove("Definition");
         properties.remove("JtaManaged");
@@ -181,7 +183,10 @@ public class DataSourceFactory {
     }
 
     private static Properties asProperties(final String definition) throws IOException {
-        return IO.readProperties(IO.read(definition), new Properties());
+        final SuperProperties properties = new SuperProperties();
+        properties.caseInsensitive(true);
+        properties.putAll(IO.readProperties(IO.read(definition), new Properties()));
+        return properties;
     }
 
     public static void trimNotSupportedDataSourceProperties(Properties properties) {
