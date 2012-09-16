@@ -33,6 +33,7 @@ import org.apache.webbeans.config.OpenWebBeansConfiguration;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.intercept.ApplicationScopedBeanInterceptorHandler;
 import org.apache.webbeans.intercept.NormalScopedBeanInterceptorHandler;
+import org.apache.webbeans.proxy.ProxyFactory;
 import org.apache.webbeans.spi.ContainerLifecycle;
 import org.apache.webbeans.spi.ContextsService;
 import org.apache.webbeans.spi.ConversationService;
@@ -105,7 +106,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         services.put(ResourceInjectionService.class, new CdiResourceInjectionService());
         services.put(ScannerService.class, new CdiScanner());
         services.put(LoaderService.class, new OptimizedLoaderService());
-        services.put(org.apache.webbeans.proxy.ProxyFactory.class, new AsmFactory());
+        services.put(org.apache.webbeans.proxy.ProxyFactory.class, new ProxyFactory(new AsmFactory()));
 
         optional(services, ConversationService.class, "org.apache.webbeans.jsf.DefaultConversationService");
 
@@ -294,3 +295,4 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
     }
 
 }
+
