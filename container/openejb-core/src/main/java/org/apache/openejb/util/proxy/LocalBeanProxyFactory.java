@@ -49,18 +49,30 @@ public class LocalBeanProxyFactory implements Opcodes {
 
     private static final String BUSSINESS_HANDLER_NAME = "businessHandler";
     private static final String NON_BUSINESS_HANDLER_NAME = "nonBusinessHandler";
-    // This whole class could be turned static
-    private static final LocalBeanProxyFactory GENERATOR = new LocalBeanProxyFactory();
 
     public static Object newProxyInstance(ClassLoader classLoader, InvocationHandler handler, Class classToSubclass, final Class... interfaces) throws IllegalArgumentException {
         try {
 
-            final Class proxyClass = GENERATOR.createProxy(classToSubclass, classLoader, interfaces);
-            final Object object = GENERATOR.constructProxy(proxyClass, handler);
-
-            return object;
+            final Class proxyClass = createProxy(classToSubclass, classLoader, interfaces);
+            return constructProxy(proxyClass, handler);
         } catch (Throwable e) {
             throw new InternalError(Debug.printStackTrace(e));
+        }
+    }
+
+    public static void setInvocationHandler(Object proxy, InvocationHandler invocationHandler) {
+        try {
+            final Field field = proxy.getClass().getDeclaredField(BUSSINESS_HANDLER_NAME);
+            field.setAccessible(true);
+            try {
+                field.set(proxy, invocationHandler);
+            } finally {
+                field.setAccessible(false);
+            }
+        } catch (NoSuchFieldException e) {
+            throw new IllegalArgumentException(e);
+        } catch (IllegalAccessException e) {
+            throw new IllegalArgumentException(e);
         }
     }
 
@@ -80,7 +92,7 @@ public class LocalBeanProxyFactory implements Opcodes {
         }
     }
 
-    public Object constructProxy(final Class clazz, final java.lang.reflect.InvocationHandler handler) throws IllegalStateException {
+    public static Object constructProxy(final Class clazz, final java.lang.reflect.InvocationHandler handler) throws IllegalStateException {
 
         final Object instance = Unsafe.allocateInstance(clazz);
 
@@ -103,19 +115,20 @@ public class LocalBeanProxyFactory implements Opcodes {
         return clazz.isAnnotationPresent(Proxy.class);
     }
 
-    public Class createProxy(final Class<?> classToProxy, final ClassLoader cl, final Class... interfaces) {
-        final String proxyName = classToProxy.getName() + "$LocalBeanProxy";
+    public static Class createProxy(final Class<?> classToProxy, final ClassLoader cl, final String proxyName, final Class... interfaces) {
         final String classFileName = proxyName.replace('.', '/');
 
         try {
             return cl.loadClass(proxyName);
         } catch (Exception e) {
+            // no-op
         }
 
         synchronized (LocalBeanProxyFactory.class) { // it can be done by concurrent threads
             try { // try it again
                 return cl.loadClass(proxyName);
             } catch (Exception e) {
+                // no-op
             }
             try {
                 final byte[] proxyBytes = generateProxy(classToProxy, classFileName, interfaces);
@@ -126,7 +139,11 @@ public class LocalBeanProxyFactory implements Opcodes {
         }
     }
 
-    private byte[] generateProxy(final Class<?> classToProxy, final String proxyName, final Class<?>... interfaces) throws ProxyGenerationException {
+    public static Class createProxy(final Class<?> classToProxy, final ClassLoader cl, final Class... interfaces) {
+        return createProxy(classToProxy, cl, classToProxy.getName() + "$LocalBeanProxy", interfaces);
+    }
+
+    public static byte[] generateProxy(final Class<?> classToProxy, final String proxyName, final Class<?>... interfaces) throws ProxyGenerationException {
         final ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 
         final String proxyClassFileName = proxyName.replace('.', '/');
@@ -178,7 +195,7 @@ public class LocalBeanProxyFactory implements Opcodes {
         return cw.toByteArray();
     }
 
-    private void getNonPrivateMethods(Class<?> clazz, Map<String, List<Method>> methodMap) {
+    private static void getNonPrivateMethods(Class<?> clazz, Map<String, List<Method>> methodMap) {
         while (clazz != null) {
             for (Method method : clazz.getDeclaredMethods()) {
                 final int modifiers = method.getModifiers();
@@ -208,7 +225,7 @@ public class LocalBeanProxyFactory implements Opcodes {
         }
     }
 
-    private boolean isOverridden(final List<Method> methods, final Method method) {
+    private static boolean isOverridden(final List<Method> methods, final Method method) {
         for (final Method m : methods) {
             if (Arrays.equals(m.getParameterTypes(), method.getParameterTypes())) {
                 return true;
@@ -217,7 +234,7 @@ public class LocalBeanProxyFactory implements Opcodes {
         return false;
     }
 
-    private void processMethod(final ClassWriter cw, final Method method, final String proxyName, final String handlerName) throws ProxyGenerationException {
+    private static void processMethod(final ClassWriter cw, final Method method, final String proxyName, final String handlerName) throws ProxyGenerationException {
         if ("<init>".equals(method.getName())) {
             return;
         }
@@ -415,7 +432,7 @@ public class LocalBeanProxyFactory implements Opcodes {
      * @param type Type the needs to be returned
      * @return The matching bytecode instruction
      */
-    private int getReturnInsn(final Class<?> type) {
+    private static int getReturnInsn(final Class<?> type) {
         if (type.isPrimitive()) {
             if (Integer.TYPE.equals(type)) {
                 return IRETURN;
@@ -445,7 +462,7 @@ public class LocalBeanProxyFactory implements Opcodes {
      * @param type Type to load
      * @return Bytecode instruction to use
      */
-    private int getVarInsn(final Class<?> type) {
+    private static int getVarInsn(final Class<?> type) {
         if (type.isPrimitive()) {
             if (Integer.TYPE.equals(type)) {
                 return ILOAD;
@@ -474,7 +491,7 @@ public class LocalBeanProxyFactory implements Opcodes {
      * @param type Type whose primitive method we want to lookup
      * @return The name of the method to use
      */
-    private String getPrimitiveMethod(final Class<?> type) {
+    private static String getPrimitiveMethod(final Class<?> type) {
         if (Integer.TYPE.equals(type)) {
             return "intValue";
         } else if (Boolean.TYPE.equals(type)) {
@@ -501,7 +518,7 @@ public class LocalBeanProxyFactory implements Opcodes {
      * @param returnType The type to cast to with CHECKCAST
      * @return CHECKCAST parameter
      */
-    String getCastType(final Class<?> returnType) {
+    static String getCastType(final Class<?> returnType) {
         if (returnType.isPrimitive()) {
             return getWrapperType(returnType);
         } else {
@@ -511,10 +528,8 @@ public class LocalBeanProxyFactory implements Opcodes {
 
     /**
      * Returns the wrapper type for a primitive, e.g. java.lang.Integer for int
-     * @param type
-     * @return
      */
-    private String getWrapperType(final Class<?> type) {
+    private static String getWrapperType(final Class<?> type) {
         if (Integer.TYPE.equals(type)) {
             return Integer.class.getCanonicalName().replace('.', '/');
         } else if (Boolean.TYPE.equals(type)) {
@@ -540,10 +555,8 @@ public class LocalBeanProxyFactory implements Opcodes {
 
     /**
      * Invokes the most appropriate bytecode instruction to put a number on the stack
-     * @param mv
-     * @param i
      */
-    private void pushIntOntoStack(final MethodVisitor mv, final int i) {
+    private static void pushIntOntoStack(final MethodVisitor mv, final int i) {
         if (i == 0) {
             mv.visitInsn(ICONST_0);
         } else if (i == 1) {
@@ -572,7 +585,7 @@ public class LocalBeanProxyFactory implements Opcodes {
      * @param type Type of array to create
      * @throws ProxyGenerationException
      */
-    private void createArrayDefinition(final MethodVisitor mv, final int size, final Class<?> type) throws ProxyGenerationException {
+    private static void createArrayDefinition(final MethodVisitor mv, final int size, final Class<?> type) throws ProxyGenerationException {
         // create a new array of java.lang.class (2)
 
         if (size < 0) {
@@ -585,7 +598,7 @@ public class LocalBeanProxyFactory implements Opcodes {
     }
 
 
-    String getMethodSignatureAsString(final Class<?> returnType, final Class<?>[] parameterTypes) {
+    static String getMethodSignatureAsString(final Class<?> returnType, final Class<?>[] parameterTypes) {
         final StringBuilder builder = new StringBuilder();
         builder.append("(");
         for (Class<?> parameterType : parameterTypes) {
@@ -600,10 +613,8 @@ public class LocalBeanProxyFactory implements Opcodes {
 
     /**
      * Returns the single letter that matches the given primitive in bytecode instructions
-     * @param type
-     * @return
      */
-    private String getPrimitiveLetter(final Class<?> type) {
+    private static String getPrimitiveLetter(final Class<?> type) {
         if (Integer.TYPE.equals(type)) {
             return "I";
         } else if (Void.TYPE.equals(type)) {
@@ -633,7 +644,7 @@ public class LocalBeanProxyFactory implements Opcodes {
      * @param wrap True if a non-array object should be wrapped with L and ; - e.g. Ljava/lang/Integer;
      * @return String to use for ASM
      */
-    public String getAsmTypeAsString(final Class<?> parameterType, final boolean wrap) {
+    public static String getAsmTypeAsString(final Class<?> parameterType, final boolean wrap) {
         if (parameterType.isArray()) {
             if (parameterType.getComponentType().isPrimitive()) {
                 final Class<?> componentType = parameterType.getComponentType();
