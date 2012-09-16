@@ -42,7 +42,6 @@
     <module>cdi-ejbcontext-jaas</module>
     <module>cdi-events</module>
     <module>cdi-interceptors</module>
-    <module>cdi-query</module>
     <module>cdi-request-scope</module>
     <module>cdi-application-scope</module>
     <module>cdi-produces-disposes</module>
