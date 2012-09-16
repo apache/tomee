@@ -89,8 +89,6 @@ import org.apache.tomcat.util.digester.Digester;
 import org.apache.tomee.catalina.cluster.ClusterObserver;
 import org.apache.tomee.catalina.cluster.TomEEClusterListener;
 import org.apache.tomee.catalina.event.AfterApplicationCreated;
-import org.apache.tomee.catalina.routing.RouteFilter;
-import org.apache.tomee.catalina.routing.RouterInitializer;
 import org.apache.tomee.catalina.routing.RouterValve;
 import org.apache.tomee.common.LegacyAnnotationProcessor;
 import org.apache.tomee.common.TomcatVersion;
@@ -222,7 +220,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 final Engine engine = (Engine) service.getContainer();
 
                 // add the global router if relevant
-                final URL globalRouterConf = RouterInitializer.serverRouterConfigurationURL();
+                final URL globalRouterConf = RouterValve.serverRouterConfigurationURL();
                 if (globalRouterConf != null) {
                     final RouterValve routerValve = new RouterValve();
                     routerValve.setConfigurationPath(globalRouterConf);
@@ -299,7 +297,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      */
     public void start() {
         globalListenerSupport.start();
-
     }
 
     /**
@@ -903,6 +900,15 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     applicationCtx.addELResolver(resolver);
                 }
             }
+        }
+
+        // router
+        final URL routerConfig = RouterValve.configurationURL(standardContext.getServletContext());
+        if (routerConfig != null) {
+            final RouterValve filter = new RouterValve();
+            filter.setPrefix(standardContext.getName());
+            filter.setConfigurationPath(routerConfig);
+            standardContext.getPipeline().addValve(filter);
         }
     }
 
