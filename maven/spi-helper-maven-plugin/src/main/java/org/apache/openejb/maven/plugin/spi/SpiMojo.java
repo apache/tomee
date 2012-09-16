@@ -374,7 +374,7 @@ public class SpiMojo extends AbstractMojo {
         }
 
         // plugin dependencies
-        final Plugin thisPlugin = (Plugin) project.getBuild().getPluginsAsMap().get("org.apache.openejb:spi-helper-maven-plugin");
+        final Plugin thisPlugin = (Plugin) project.getBuild().getPluginsAsMap().get("org.apache.openejb.maven:spi-helper-maven-plugin");
         if (thisPlugin != null && thisPlugin.getDependencies() != null) {
             for (Dependency artifact : thisPlugin.getDependencies()) {
                 final Artifact resolved = new DefaultArtifact(
