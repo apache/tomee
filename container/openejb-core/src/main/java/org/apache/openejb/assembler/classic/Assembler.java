@@ -42,6 +42,7 @@ import org.apache.openejb.assembler.classic.event.AssemblerCreated;
 import org.apache.openejb.assembler.classic.event.AssemblerDestroyed;
 import org.apache.openejb.assembler.monitoring.JMXContainer;
 import org.apache.openejb.async.AsynchronousPool;
+import org.apache.openejb.cdi.AsmFactory;
 import org.apache.openejb.cdi.CdiAppContextsService;
 import org.apache.openejb.cdi.CdiBuilder;
 import org.apache.openejb.cdi.CdiResourceInjectionService;
@@ -985,6 +986,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             services.put(ScannerService.class, new CdiScanner());
             services.put(ELAdaptor.class, new CustomELAdapter(appContext));
             services.put(LoaderService.class, new OptimizedLoaderService());
+            services.put(org.apache.webbeans.proxy.ProxyFactory.class, new AsmFactory());
             final Properties properties = new Properties();
             properties.setProperty(org.apache.webbeans.spi.SecurityService.class.getName(), ManagedSecurityService.class.getName());
             webBeansContext = new WebBeansContext(services, properties);
