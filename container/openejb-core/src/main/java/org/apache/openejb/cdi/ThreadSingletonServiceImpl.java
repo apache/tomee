@@ -105,6 +105,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         services.put(ResourceInjectionService.class, new CdiResourceInjectionService());
         services.put(ScannerService.class, new CdiScanner());
         services.put(LoaderService.class, new OptimizedLoaderService());
+        services.put(org.apache.webbeans.proxy.ProxyFactory.class, new AsmFactory());
 
         optional(services, ConversationService.class, "org.apache.webbeans.jsf.DefaultConversationService");
 
