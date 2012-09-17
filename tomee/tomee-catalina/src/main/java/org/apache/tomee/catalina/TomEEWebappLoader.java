@@ -262,9 +262,9 @@ public class TomEEWebappLoader extends WebappLoader {
             return app.hashCode();
         }
 
-        @Override
+        @Override // used to add cdi beans in the webbeanscontext, don't add parent beans
         public boolean isSame(final ClassLoader classLoader) {
-            return classLoader == this; // not equals ;)
+            return classLoader == this || (webapp != null && webapp.equals(classLoader)); // not equals ;)
         }
     }
 }
