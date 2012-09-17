@@ -79,10 +79,10 @@ public interface DeploymentModule {
         }
 
         private String name(NamedModule vendor, NamedModule spec, URI uri, File location, String name, DeploymentModule module) {
+            if (spec != null && spec.getModuleName() != null) return spec.getModuleName().trim(); // used to override defaults so do it first
             if (name != null && !name.startsWith("@")) return name;
             if (vendor != null && vendor.getModuleName() != null) return vendor.getModuleName().trim();
             if (vendor != null && vendor.getId() != null) return vendor.getId().trim();
-            if (spec != null && spec.getModuleName() != null) return spec.getModuleName().trim();
             if (spec != null && spec.getId() != null) return spec.getId().trim();
             if (uri != null) return stripExtension(uri.getPath());
             if (location != null && SystemInstance.get().getOptions().get(OPENEJB_MODULENAME_USE_HASH, false)) return moduleName(location) + module.hashCode();
