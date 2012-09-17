@@ -152,7 +152,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
                 final AppModule appModule;
                 //final Class<? extends DeploymentModule> o = EjbModule.class;
-                final EjbModule ejbModule = createEjbModule(baseUrl, jarPath, classLoader, getModuleId(jarFile));
+                final EjbModule ejbModule = createEjbModule(baseUrl, jarPath, classLoader, null);
 
                 // wrap the EJB Module with an Application Module
                 appModule = new AppModule(ejbModule);
@@ -164,7 +164,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
             if (ClientModule.class.equals(moduleClass)) {
                 final String jarLocation = URLs.toFilePath(baseUrl);
-                final ClientModule clientModule = createClientModule(baseUrl, jarLocation, getOpenEJBClassLoader(), getModuleId(jarFile));
+                final ClientModule clientModule = createClientModule(baseUrl, jarLocation, getOpenEJBClassLoader(), null);
 
                 // Wrap the resource module with an Application Module
                 return new AppModule(clientModule);
@@ -172,7 +172,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
             if (ConnectorModule.class.equals(moduleClass)) {
                 final String jarLocation = URLs.toFilePath(baseUrl);
-                final ConnectorModule connectorModule = createConnectorModule(jarLocation, jarLocation, getOpenEJBClassLoader(), getModuleId(jarFile));
+                final ConnectorModule connectorModule = createConnectorModule(jarLocation, jarLocation, getOpenEJBClassLoader(), null);
 
                 // Wrap the resource module with an Application Module
                 return new AppModule(connectorModule);
@@ -268,11 +268,6 @@ public class DeploymentLoader implements DeploymentFilterable {
                 }
             }
         }
-    }
-
-    private String getModuleId(final File file) {
-        final String filename = file.getName();
-        return SystemInstance.get().getOptions().get(filename + ".moduleId", (String) null);
     }
 
     protected AppModule createAppModule(final File jarFile, final String jarPath) throws OpenEJBException {
