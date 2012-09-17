@@ -99,7 +99,13 @@ public abstract class RESTService implements ServerService, SelfManaging {
 
         final ClassLoader classLoader = getClassLoader(webContext.getClassLoader());
         final Collection<Injection> injections = webContext.getInjections();
-        final WebBeansContext owbCtx = webContext.getAppContext().getWebBeansContext();
+        final WebBeansContext owbCtx;
+        if (webContext.getWebbeansContext() != null) {
+            owbCtx = webContext.getWebbeansContext();
+        } else {
+            owbCtx = webContext.getAppContext().getWebBeansContext();
+        }
+
         Context context = webContext.getJndiEnc();
         if (context == null) { // usually true since it is set in org.apache.tomee.catalina.TomcatWebAppBuilder.afterStart() and lookup(comp) fails
             context = webContext.getAppContext().getAppJndiContext();
