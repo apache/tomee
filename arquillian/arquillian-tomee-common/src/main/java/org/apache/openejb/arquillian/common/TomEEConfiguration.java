@@ -34,6 +34,7 @@ public class TomEEConfiguration implements ContainerConfiguration {
     protected String serverXml = null;
     protected String properties = "";
     protected String portRange = ""; // only used if port < 0, empty means whatever, can be "1024-65535"
+    protected boolean quickSession = true;
 
     public int getHttpPort() {
         return httpPort;
@@ -112,6 +113,14 @@ public class TomEEConfiguration implements ContainerConfiguration {
 
     public void setPortRange(String portRange) {
         this.portRange = portRange;
+    }
+
+    public boolean isQuickSession() {
+        return quickSession;
+    }
+
+    public void setQuickSession(boolean quickSession) {
+        this.quickSession = quickSession;
     }
 
     public int[] portsAlreadySet() {
