@@ -268,6 +268,11 @@ public class Setup {
         }
         builder.append("\n").append(configuration.systemProperties());
 
+        if (configuration.isQuickSession()) {
+            builder.append("\nopenejb.session.manager=org.apache.tomee.catalina.session.QuickSessionManager");
+        }
+        builder.append("\n");
+
         FileWriter writer = null;
         try {
             writer = new FileWriter(systemProperties);

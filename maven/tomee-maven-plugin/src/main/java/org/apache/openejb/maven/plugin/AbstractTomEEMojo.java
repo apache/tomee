@@ -207,6 +207,11 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     protected Map<String, String> systemVariables;
 
     /**
+     * @parameter expression="${tomee-plugin.quick-session}" default-value="true"
+     */
+    private boolean quickSession;
+
+    /**
      * supported formats:
      * --> groupId:artifactId:version...
      * --> unzip:groupId:artifactId:version...
@@ -547,6 +552,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         }
         if (getNoShutdownHook()) {
             strings.add("-Dtomee.noshutdownhook=true");
+        }
+        if (quickSession) {
+            strings.add("-Dopenejb.session.manager=org.apache.tomee.catalina.session.QuickSessionManager");
         }
 
         System.setProperty("server.shutdown.port", Integer.toString(tomeeShutdownPort));

@@ -78,6 +78,7 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
         configuration.setHost(tomeeConfiguration.getHost());
         configuration.setServerXml(tomeeConfiguration.getServerXml());
         configuration.setProperties(tomeeConfiguration.systemPropertiesAsProperties());
+        configuration.setQuickSession(tomeeConfiguration.isQuickSession());
 		return configuration;
 	}
 

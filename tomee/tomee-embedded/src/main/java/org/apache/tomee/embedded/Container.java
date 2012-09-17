@@ -85,11 +85,16 @@ public class Container {
         configuration.setHttpPort(23880);
         configuration.setStopPort(23881);
         setup(configuration);
-        tomcat = new TomcatWithFastSessionIDs();
     }
 
     public void setup(Configuration configuration) {
         this.configuration = configuration;
+
+        if (configuration.isQuickSession()) {
+            tomcat = new TomcatWithFastSessionIDs();
+        } else {
+            tomcat = new Tomcat();
+        }
     }
 
     public void start() throws Exception {
