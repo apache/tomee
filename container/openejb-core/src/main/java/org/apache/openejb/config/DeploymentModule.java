@@ -17,7 +17,6 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.jee.NamedModule;
-import org.apache.openejb.jee.jpa.unit.Properties;
 import org.apache.openejb.loader.SystemInstance;
 
 import java.io.File;
@@ -59,6 +58,7 @@ public interface DeploymentModule {
         private final String name;
         private final File location;
         private final URI uri;
+        private boolean overriden = false;
 
         public ID(NamedModule vendorDd, NamedModule specDd, String name, File location, URI uri, DeploymentModule module) {
             this.name = name(vendorDd, specDd, uri, location, name, module);
@@ -79,6 +79,14 @@ public interface DeploymentModule {
         }
 
         private String name(NamedModule vendor, NamedModule spec, URI uri, File location, String name, DeploymentModule module) {
+            if (location != null) {
+                final String systPropName = SystemInstance.get().getOptions().get(location.getName() + ".moduleId", (String) null);
+                if (systPropName != null) {
+                    overriden = true;
+                    return systPropName;
+                }
+            }
+
             if (spec != null && spec.getModuleName() != null) return spec.getModuleName().trim(); // used to override defaults so do it first
             if (name != null && !name.startsWith("@")) return name;
             if (vendor != null && vendor.getModuleName() != null) return vendor.getModuleName().trim();
@@ -89,6 +97,10 @@ public interface DeploymentModule {
             if (location != null) return moduleName(location);
             if (name != null) return name;
             return "@" + module.getClass().getSimpleName() + module.hashCode();
+        }
+
+        public boolean isOverriden() {
+            return overriden;
         }
 
         private String moduleName(File location) {
