@@ -78,7 +78,7 @@ public class Container {
     private Map<String, AppInfo> infos = new HashMap<String, AppInfo>(); // TODO: manage multimap
     private ConfigurationFactory configurationFactory;
     private Assembler assembler;
-    private final Tomcat tomcat;
+    private Tomcat tomcat;
 
     public Container() {
         final Configuration configuration = new Configuration();
