@@ -20,6 +20,7 @@ import org.apache.openejb.jee.Beans;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.Webservices;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.xbean.finder.IAnnotationFinder;
 
 import java.io.File;
@@ -70,6 +71,9 @@ public class EjbModule extends Module implements WsModule {
         if (jarURI != null) file = new File(jarURI);
 
         this.id = new ID(openejbJar, ejbJar, moduleId, file, null, this);
+        if (id.isOverriden() && ejbJar != null) {
+            ejbJar.setModuleName(id.getName());
+        }
         this.validation = new ValidationContext(this);
     }
 
