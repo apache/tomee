@@ -30,6 +30,7 @@ public class Configuration {
     protected String dir;
     private File serverXml = null;
     private Properties properties;
+    private boolean quickSession = true;
 
     public int getHttpPort() {
         return httpPort;
@@ -88,5 +89,13 @@ public class Configuration {
 
     public Properties getProperties() {
         return properties;
+    }
+
+    public boolean isQuickSession() {
+        return quickSession;
+    }
+
+    public void setQuickSession(boolean quickSession) {
+        this.quickSession = quickSession;
     }
 }
