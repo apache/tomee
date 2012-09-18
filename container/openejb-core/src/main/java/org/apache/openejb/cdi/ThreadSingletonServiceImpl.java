@@ -58,6 +58,9 @@ import org.apache.webbeans.web.intercept.RequestScopedBeanInterceptorHandler;
 public class ThreadSingletonServiceImpl implements ThreadSingletonService {
 
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, ThreadSingletonServiceImpl.class);
+
+    public static final String OPENEJB_OWB_PROXY_FACTORY = "openejb.owb.proxy-factory";
+
     //this needs to be static because OWB won't tell us what the existing SingletonService is and you can't set it twice.
     private static final ThreadLocal<WebBeansContext> contexts = new ThreadLocal<WebBeansContext>();
     private static final Map<ClassLoader, WebBeansContext> contextByClassLoader = new ConcurrentHashMap<ClassLoader, WebBeansContext>();
@@ -65,6 +68,13 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
 
     public ThreadSingletonServiceImpl() {
         // no-op
+    }
+
+    private static Factory owbProxyFactory() {
+        if ("asm".equals(SystemInstance.get().getProperty(OPENEJB_OWB_PROXY_FACTORY))) {
+            return new AsmFactory();
+        }
+        return new JavassistFactory();
     }
 
     @Override
@@ -106,7 +116,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         services.put(ResourceInjectionService.class, new CdiResourceInjectionService());
         services.put(ScannerService.class, new CdiScanner());
         services.put(LoaderService.class, new OptimizedLoaderService());
-        services.put(org.apache.webbeans.proxy.ProxyFactory.class, new ProxyFactory(new AsmFactory()));
+        services.put(org.apache.webbeans.proxy.ProxyFactory.class, new ProxyFactory(owbProxyFactory()));
 
         optional(services, ConversationService.class, "org.apache.webbeans.jsf.DefaultConversationService");
 
