@@ -82,6 +82,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.monitoring.DynamicMBeanWrapper;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
+import org.apache.openejb.monitoring.remote.RemoteResourceMonitor;
 import org.apache.openejb.observer.Observes;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
@@ -150,6 +151,8 @@ import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -194,7 +197,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     protected OpenEjbConfigurationFactory configFactory;
     private final Map<String, AppInfo> deployedApplications = new HashMap<String, AppInfo>();
     private final Set<String> moduleIds = new HashSet<String>();
-    private final Set<ObjectName> containersObjectNames = new HashSet<ObjectName>();
+    private final Set<ObjectName> containerObjectNames = new HashSet<ObjectName>();
+    private final RemoteResourceMonitor remoteResourceMonitor = new RemoteResourceMonitor();
 
 
     @Override
@@ -1092,7 +1096,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
         }
 
-        final Iterator<ObjectName> it = containersObjectNames.iterator();
+        final Iterator<ObjectName> it = containerObjectNames.iterator();
         final MBeanServer server = LocalMBeanServer.get();
         while (it.hasNext()) {
             try {
@@ -1101,6 +1105,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 // no-op
             }
             it.remove();
+        }
+        try {
+            remoteResourceMonitor.unregister();
+        } catch (Exception ignored) {
+            // no-op
         }
 
         NamingEnumeration<Binding> namingEnumeration = null;
@@ -1514,7 +1523,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             final ObjectName objectName = ObjectNameBuilder.uniqueName("containers", serviceInfo.id, service);
             try {
                 LocalMBeanServer.get().registerMBean(new DynamicMBeanWrapper(new JMXContainer(serviceInfo, (Container) service)), objectName);
-                containersObjectNames.add(objectName);
+                containerObjectNames.add(objectName);
             } catch (Exception e) {
                 // no-op
             } catch (NoClassDefFoundError ncdfe) { // OSGi
@@ -1739,17 +1748,32 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             // service becomes a ConnectorReference which merges connection manager and mcf
             service = new ConnectorReference(connectionManager, managedConnectionFactory);
         } else if (service instanceof DataSource) {
-                ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-                if (classLoader == null) {
-                    classLoader = getClass().getClassLoader();
-                }
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            if (classLoader == null) {
+                classLoader = getClass().getClassLoader();
+            }
 
-                final ImportSql importer = new ImportSql(classLoader, serviceInfo.id, (DataSource) service);
-                if (importer.hasSomethingToImport()) {
-                    importer.doImport();
-                }
+            final ImportSql importer = new ImportSql(classLoader, serviceInfo.id, (DataSource) service);
+            if (importer.hasSomethingToImport()) {
+                importer.doImport();
+            }
 
             logUnusedProperties(DataSourceFactory.forgetRecipe(service, serviceRecipe), serviceInfo);
+
+            final Properties prop = serviceInfo.properties;
+            String url = prop.getProperty("JdbcUrl", prop.getProperty("url"));
+            if (url == null) {
+                url = prop.getProperty("jdbcUrl");
+            }
+            if (url == null) {
+                logger.info("can't find url for " + serviceInfo.id + " will not monitor it");
+            } else {
+                final String host = extractHost(url);
+                if (host != null) {
+                    remoteResourceMonitor.addHost(host);
+                    remoteResourceMonitor.registerIfNot();
+                }
+            }
         } else {
             logUnusedProperties(serviceRecipe, serviceInfo);
         }
@@ -1773,6 +1797,27 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         config.facilities.resources.add(serviceInfo);
 
         logger.getChildLogger("service").debug("createService.success", serviceInfo.service, serviceInfo.id, serviceInfo.className);
+    }
+
+    private static String extractHost(final String url) { // can be enhanced
+        if (url == null || !url.contains("://")) {
+            return null;
+        }
+
+        final int idx = url.indexOf("://");
+        final String subUrl = url.substring(idx + 3);
+        final int port = subUrl.indexOf(':');
+        final int slash = subUrl.indexOf('/');
+
+        int end = port;
+        if (end < 0 ||  (slash > 0 && slash < end)) {
+            end = slash;
+        }
+        if (end > 0) {
+            return subUrl.substring(0, end);
+        }
+
+        return subUrl;
     }
 
     private int getIntProperty(Properties properties, String propertyName, int defaultValue) {

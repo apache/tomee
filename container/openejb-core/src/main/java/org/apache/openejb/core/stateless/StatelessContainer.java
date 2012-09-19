@@ -32,7 +32,6 @@ import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 import javax.interceptor.AroundInvoke;
-import javax.management.ObjectName;
 
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.BeanContext;
