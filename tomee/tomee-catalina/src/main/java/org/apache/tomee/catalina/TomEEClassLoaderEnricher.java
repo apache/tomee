@@ -18,7 +18,7 @@ package org.apache.tomee.catalina;
 
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.classloader.WebAppEnricher;
-import org.apache.openejb.loader.IO;
+import org.apache.openejb.component.ClassLoaderEnricher;
 import org.apache.openejb.loader.JarLocation;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
@@ -34,6 +34,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -87,7 +88,7 @@ public final class TomEEClassLoaderEnricher implements WebAppEnricher {
 
     @Override
     public URL[] enrichment(final ClassLoader appCl) {
-        final Collection<URL> urls = new ArrayList<URL>();
+        final Collection<URL> urls = new HashSet<URL>();
 
         // from class
         final ClassLoader cl = TomEEClassLoaderEnricher.class.getClassLoader(); // reference classloader = standardclassloader
@@ -156,6 +157,9 @@ public final class TomEEClassLoaderEnricher implements WebAppEnricher {
                 }
             }
         }
+
+        // from config
+        urls.addAll(Arrays.asList(SystemInstance.get().getComponent(ClassLoaderEnricher.class).applicationEnrichment()));
 
         return urls.toArray(new URL[urls.size()]);
     }
