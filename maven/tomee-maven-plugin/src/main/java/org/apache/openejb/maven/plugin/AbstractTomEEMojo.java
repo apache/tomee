@@ -142,6 +142,11 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     protected int tomeeAjpPort = 8009;
 
     /**
+     * @parameter expression="${tomee-plugin.https}" default-value="8443"
+     */
+    protected int tomeeHttpsPort = 8080;
+
+    /**
      * @parameter expression="${tomee-plugin.args}"
      */
     protected String args;
@@ -460,6 +465,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             writer = new FileWriter(serverXml);
             writer.write(value
                     .replace(parser.http(), Integer.toString(tomeeHttpPort))
+                    .replace(parser.https(), Integer.toString(tomeeHttpsPort))
                     .replace(parser.ajp(), Integer.toString(tomeeAjpPort))
                     .replace(parser.stop(), Integer.toString(tomeeShutdownPort))
                     .replace(parser.host(), tomeeHost)
