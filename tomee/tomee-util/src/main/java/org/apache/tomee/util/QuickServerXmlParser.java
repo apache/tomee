@@ -35,12 +35,14 @@ public class QuickServerXmlParser extends DefaultHandler {
 
     private static final String STOP_KEY = "STOP";
     private static final String HTTP_KEY = "HTTP";
+    private static final String SECURED_SUFFIX = "S";
     private static final String AJP_KEY = "AJP";
     private static final String HOST_KEY = "host";
     private static final String APP_BASE_KEY = "app-base";
     private static final String DEFAULT_CONNECTOR_KEY = HTTP_KEY;
 
     public static final String DEFAULT_HTTP_PORT = "8080";
+    public static final String DEFAULT_HTTPS_PORT = "8443";
     public static final String DEFAULT_STOP_PORT = "8005";
     public static final String DEFAULT_AJP_PORT = "8009";
     public static final String DEFAULT_HOST = "localhost";
@@ -74,7 +76,12 @@ public class QuickServerXmlParser extends DefaultHandler {
                 protocol = protocol.substring(0, protocol.indexOf("/"));
             }
             final String port = attributes.getValue("port");
-            values.put(protocol.toUpperCase(), port);
+            final String ssl = attributes.getValue("secure");
+            if (ssl == null || "false".equalsIgnoreCase(ssl)) {
+                values.put(protocol.toUpperCase(), port);
+            } else {
+                values.put(protocol.toUpperCase() + SECURED_SUFFIX, port);
+            }
         } else if ("Host".equalsIgnoreCase(localName)) {
             final String host = attributes.getValue("name");
             if (host != null) {
@@ -103,6 +110,10 @@ public class QuickServerXmlParser extends DefaultHandler {
         return value(HTTP_KEY, DEFAULT_HTTP_PORT);
     }
 
+    public String https() { // enough common to be exposed as method
+        return securedValue(HTTP_KEY, DEFAULT_HTTPS_PORT);
+    }
+
     public String ajp() {
         return value(AJP_KEY, DEFAULT_AJP_PORT);
     }
@@ -119,12 +130,16 @@ public class QuickServerXmlParser extends DefaultHandler {
         return value(HOST_KEY, DEFAULT_HOST);
     }
 
-    private String value(final String key, final String defaultValue) {
+    public String value(final String key, final String defaultValue) {
         final String port = values.get(key);
         if (port == null) {
             return defaultValue;
         }
         return port;
+    }
+
+    public String securedValue(final String key, final String defaultValue) {
+        return value(key + SECURED_SUFFIX, defaultValue);
     }
 
     @Override
