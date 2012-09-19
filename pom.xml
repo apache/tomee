@@ -136,7 +136,7 @@
     -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <bval.version>0.4</bval.version>
+    <bval.version>0.5</bval.version>
     <org.apache.activemq.version>5.6.0</org.apache.activemq.version>
     <quartz.version>2.1.6</quartz.version>
     <org.springframework.version>3.1.0.RELEASE</org.springframework.version>
@@ -436,6 +436,11 @@
     <!--<enabled>true</enabled>-->
     <!--</snapshots>-->
     <!--</repository>-->
+    <repository>
+      <id>bval-staging</id>
+      <name>BVal staging Repository</name>
+      <url>https://repository.apache.org/content/repositories/orgapachebval-012/</url>
+    </repository>
     <!-- Apache snapshots -->
     <repository>
       <id>apache-snapshots</id>
