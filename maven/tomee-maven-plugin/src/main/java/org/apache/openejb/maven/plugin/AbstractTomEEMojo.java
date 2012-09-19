@@ -253,6 +253,11 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     protected String packaging;
 
     /**
+     * @parameter expression="${tomee-plugin.keep-server-xml}" default-value="false"
+     */
+    protected boolean keepServerXmlAsthis;
+
+    /**
      * The current user system settings for use in Maven.
      *
      * @parameter expression="${settings}"
@@ -270,7 +275,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         overrideConf(config);
         overrideConf(bin);
         overrideConf(lib);
-        overrideAddresses();
+        if (!keepServerXmlAsthis) {
+            overrideAddresses();
+        }
         if (removeDefaultWebapps) {
             removeDefaultWebapps();
         }
