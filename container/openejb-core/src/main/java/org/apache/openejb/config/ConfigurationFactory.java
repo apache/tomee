@@ -66,6 +66,7 @@ import org.apache.openejb.assembler.classic.StatefulSessionContainerInfo;
 import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
+import org.apache.openejb.component.ClassLoaderEnricher;
 import org.apache.openejb.config.sys.AbstractService;
 import org.apache.openejb.config.sys.AdditionalDeployments;
 import org.apache.openejb.config.sys.ConnectionManager;
@@ -148,7 +149,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         final Options options = SystemInstance.get().getOptions();
         if (SystemInstance.get().getComponent(DataSourceCreator.class) == null) {
-            final String creator = SystemInstance.get().getOptions().get(OPENEJB_JDBC_DATASOURCE_CREATOR, (String) null);
+            final String creator = options.get(OPENEJB_JDBC_DATASOURCE_CREATOR, (String) null);
             if (creator == null) {
                 SystemInstance.get().setComponent(DataSourceCreator.class, new DefaultDataSourceCreator());
             } else {
@@ -159,6 +160,9 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                     SystemInstance.get().setComponent(DataSourceCreator.class, new DefaultDataSourceCreator());
                 }
             }
+        }
+        if (SystemInstance.get().getComponent(ClassLoaderEnricher.class) == null) {
+            SystemInstance.get().setComponent(ClassLoaderEnricher.class, new ClassLoaderEnricher());
         }
 
         // annotation deployer encapsulate some logic, to be able to push to it some config

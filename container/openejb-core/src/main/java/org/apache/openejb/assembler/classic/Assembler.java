@@ -51,6 +51,7 @@ import org.apache.openejb.cdi.CustomELAdapter;
 import org.apache.openejb.cdi.ManagedSecurityService;
 import org.apache.openejb.cdi.OpenEJBTransactionService;
 import org.apache.openejb.cdi.OptimizedLoaderService;
+import org.apache.openejb.component.ClassLoaderEnricher;
 import org.apache.openejb.core.ConnectorReference;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.CoreUserTransaction;
@@ -1437,6 +1438,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 logger.warning("can't find open-jpa-integration jar");
             }
         }
+        jars.addAll(Arrays.asList(SystemInstance.get().getComponent(ClassLoaderEnricher.class).applicationEnrichment()));
 
         // Create the class loader
         final ParentClassLoaderFinder parentFinder = SystemInstance.get().getComponent(ParentClassLoaderFinder.class);
