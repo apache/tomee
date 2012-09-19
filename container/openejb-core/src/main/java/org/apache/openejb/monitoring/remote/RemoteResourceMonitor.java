@@ -19,7 +19,6 @@ package org.apache.openejb.monitoring.remote;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
-import org.fusesource.mqtt.codec.PINGREQ;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
@@ -33,9 +32,6 @@ import javax.management.MBeanInfo;
 import javax.management.MBeanNotificationInfo;
 import javax.management.MBeanOperationInfo;
 import javax.management.MBeanParameterInfo;
-import javax.management.MBeanRegistrationException;
-import javax.management.MBeanServer;
-import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
 import java.io.IOException;
