@@ -16,8 +16,6 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import java.lang.reflect.Field;
-import java.util.logging.Level;
 import org.apache.openejb.jee.bval.PropertyType;
 import org.apache.openejb.jee.bval.ValidationConfigType;
 import org.apache.openejb.loader.SystemInstance;
@@ -123,12 +121,6 @@ public final class ValidatorBuilder {
             Thread.currentThread().setContextClassLoader(classLoader);
         }
 
-        // config is manage here so ignore provider parsing so ignore it from the impl
-        // the only message logged by bval is "ignoreXmlConfiguration == true"
-        // which is false since we parse it ourself so hidding it
-        if (providerClassName == null || "org.apache.bval.jsr303.ApacheValidationProvider".equals(providerClassName)) {
-            bvalOffLogging(target);
-        }
         target.ignoreXmlConfiguration();
 
         String messageInterpolatorClass = info.messageInterpolatorClass;
@@ -187,24 +179,5 @@ public final class ValidatorBuilder {
         }
 
         return target;
-    }
-
-    private static void bvalOffLogging(final Configuration<?> target) {
-        try {
-            final Field field = target.getClass().getDeclaredField("log");
-            final boolean acc = field.isAccessible();
-            field.setAccessible(true);
-            try {
-                final java.util.logging.Logger offLogger = (java.util.logging.Logger) field.get(null);
-                if (!Level.SEVERE.equals(offLogger.getLevel())) { // do it this way since it is faster
-                    offLogger.setLevel(Level.SEVERE);
-                    offLogger.setUseParentHandlers(false);
-                }
-            } finally {
-                field.setAccessible(acc);
-            }
-        } catch (Exception e) {
-            // no-op
-        }
     }
 }
