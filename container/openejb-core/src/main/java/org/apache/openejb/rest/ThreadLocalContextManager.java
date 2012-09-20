@@ -21,8 +21,10 @@ import javax.ws.rs.core.Application;
 
 public class ThreadLocalContextManager {
     public static final ThreadLocalRequest REQUEST = new ThreadLocalRequest();
+    public static final ThreadLocalServletConfig SERVLET_CONFIG = new ThreadLocalServletConfig();
     public static final ThreadLocalServletRequest SERVLET_REQUEST = new ThreadLocalServletRequest();
     public static final ThreadLocalHttpServletRequest HTTP_SERVLET_REQUEST = new ThreadLocalHttpServletRequest();
+    public static final ThreadLocalHttpServletResponse HTTP_SERVLET_RESPONSE = new ThreadLocalHttpServletResponse();
     public static final ThreadLocalUriInfo URI_INFO = new ThreadLocalUriInfo();
     public static final ThreadLocalHttpHeaders HTTP_HEADERS = new ThreadLocalHttpHeaders();
     public static final ThreadLocalSecurityContext SECURITY_CONTEXT = new ThreadLocalSecurityContext();
@@ -33,7 +35,9 @@ public class ThreadLocalContextManager {
     public static void reset() {
         REQUEST.remove();
         SERVLET_REQUEST.remove();
+        SERVLET_CONFIG.remove();
         HTTP_SERVLET_REQUEST.remove();
+        HTTP_SERVLET_RESPONSE.remove();
         URI_INFO.remove();
         HTTP_HEADERS.remove();
         SECURITY_CONTEXT.remove();

@@ -62,8 +62,10 @@ import javax.ejb.TimerService;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.jms.Queue;
 import javax.jms.Topic;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
@@ -137,6 +139,8 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         ignoredReferenceTypes.add(Providers.class.getName());
         ignoredReferenceTypes.add(ServletRequest.class.getName());
         ignoredReferenceTypes.add(HttpServletRequest.class.getName());
+        ignoredReferenceTypes.add(ServletConfig.class.getName());
+        ignoredReferenceTypes.add(HttpServletResponse.class.getName());
     }
 
     private final ConfigurationFactory configFactory;

@@ -58,8 +58,10 @@ import javax.naming.LinkRef;
 import javax.naming.Name;
 import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
 import javax.validation.Validator;
@@ -300,6 +302,10 @@ public class JndiEncBuilder {
                 reference = new ObjectReference(ThreadLocalContextManager.CONTEXT_RESOLVER);
             } else if (Providers.class.equals(type)) {
                 reference = new ObjectReference(ThreadLocalContextManager.PROVIDERS);
+            } else if (ServletConfig.class.equals(type)) {
+                reference = new ObjectReference(ThreadLocalContextManager.SERVLET_CONFIG);
+            } else if (HttpServletResponse.class.equals(type)) {
+                reference = new ObjectReference(ThreadLocalContextManager.HTTP_SERVLET_RESPONSE);
             } else if (referenceInfo.resourceID != null) {
                 String jndiName = "openejb/Resource/" + referenceInfo.resourceID;
                 reference = new IntraVmJndiReference(jndiName);

@@ -27,6 +27,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.ejb.Singleton;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
@@ -65,10 +66,13 @@ public class RsInjectionTest {
         @Context
         private Providers providers;
 
+        @Context
+        private HttpServletResponse response;
+
         @GET
         @Path("/check")
         public boolean check() {
-            return providers != null;
+            return providers != null && response != null;
         }
     }
 }
