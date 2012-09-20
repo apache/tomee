@@ -107,7 +107,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>arquillian-openejb-embedded-4</artifactId>
-      <version>4.1.0</version>
+      <version>4.5.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -130,7 +130,7 @@
     <dependency> <!-- just a facade pom which will bring hibernate for us -->
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core-hibernate</artifactId>
-      <version>4.1.0</version>
+      <version>4.5.0</version>
       <scope>test</scope>
       <type>pom</type>
     </dependency>

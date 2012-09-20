@@ -65,7 +65,7 @@
             <webappArtifact>
               <groupId>org.apache.openejb</groupId>
               <artifactId>openejb-tomcat-webapp</artifactId>
-              <version>4.1.0</version>
+              <version>4.5.0</version>
               <contextPath>openejb</contextPath>
             </webappArtifact>
           </webapps>

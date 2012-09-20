@@ -1,4 +1,3 @@
-package org.apache.openejb.maven.plugin;
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  *  contributor license agreements.  See the NOTICE file distributed with
@@ -101,7 +100,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     protected boolean skipCurrentProject;
 
     /**
-     * @parameter expression="${tomee-plugin.version}" default-value="1.1.0"
+     * @parameter expression="${tomee-plugin.version}" default-value="1.5.0"
      */
     protected String tomeeVersion;
 

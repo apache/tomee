@@ -33,7 +33,7 @@
   <artifactId>openejb</artifactId>
   <packaging>pom</packaging>
 
-  <version>4.1.0</version>
+  <version>4.5.0</version>
 
   <name>Apache OpenEJB</name>
   <description>Apache OpenEJB is an open source, modular, configurable and extendable EJB Container System and EJB
@@ -90,8 +90,8 @@
 
   <properties>
 
-    <openejb.version>4.1.0</openejb.version>
-    <tomee.version>1.1.0</tomee.version>
+    <openejb.version>4.5.0</openejb.version>
+    <tomee.version>1.5.0</tomee.version>
 
     <!-- Maven module versions -->
     <maven-bundle-plugin.version>2.3.7</maven-bundle-plugin.version>
@@ -137,7 +137,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <scannotation.version>1.0.2</scannotation.version>
-    <bval.version>0.4</bval.version>
+    <bval.version>0.5</bval.version>
     <org.apache.activemq.version>5.6.0</org.apache.activemq.version>
     <quartz.version>2.1.6</quartz.version>
     <org.springframework.version>3.1.0.RELEASE</org.springframework.version>
@@ -436,6 +436,11 @@
     <!--<enabled>true</enabled>-->
     <!--</snapshots>-->
     <!--</repository>-->
+    <repository>
+      <id>bval-staging</id>
+      <name>BVal staging Repository</name>
+      <url>https://repository.apache.org/content/repositories/orgapachebval-012/</url>
+    </repository>
     <!-- Apache snapshots -->
     <repository>
       <id>apache-snapshots</id>

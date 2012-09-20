@@ -22,7 +22,7 @@
   <parent>
     <artifactId>osgi</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.1.0</version>
+    <version>4.5.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-core-osgi</artifactId>
@@ -117,9 +117,9 @@
 
   <properties>
     <openejb.osgi.import.pkg>
-      javax.annotation;version="[1.1.0,2.0.0)",
-      javax.annotation.security;version="[1.1.0,2.0.0)",
-      javax.annotation.sql;version="[1.1.0,2.0.0)",
+      javax.annotation;version="[1.5.0,2.0.0)",
+      javax.annotation.security;version="[1.5.0,2.0.0)",
+      javax.annotation.sql;version="[1.5.0,2.0.0)",
       javax.crypto,
       javax.crypto.spec,
       javax.el,
@@ -168,8 +168,8 @@
       javax.servlet.http,
       javax.servlet.jsp,
       javax.sql,
-      javax.transaction;version="[1.1.0,2.0.0)",
-      javax.transaction.xa;version="[1.1.0,2.0.0)",
+      javax.transaction;version="[1.5.0,2.0.0)",
+      javax.transaction.xa;version="[1.5.0,2.0.0)",
       javax.validation,
       javax.validation.bootstrap,
       javax.ws.rs,
