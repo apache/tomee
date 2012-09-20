@@ -21,6 +21,7 @@ import org.junit.Test;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -79,7 +80,7 @@ public class StickyConnectionStrategyIteratorTest {
             Assert.assertTrue(found.contains(uri));
         }
 
-        Assert.assertFalse(
+        Assert.assertFalse("Found: " + found + ", Expected: " + Arrays.asList(uris),
                 found.get(0).equals(uris[0]) &&
                 found.get(1).equals(uris[1]) &&
                 found.get(2).equals(uris[2]) &&
