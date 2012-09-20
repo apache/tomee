@@ -33,7 +33,9 @@ import org.apache.webbeans.config.OpenWebBeansConfiguration;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.intercept.ApplicationScopedBeanInterceptorHandler;
 import org.apache.webbeans.intercept.NormalScopedBeanInterceptorHandler;
+import org.apache.webbeans.proxy.Factory;
 import org.apache.webbeans.proxy.ProxyFactory;
+import org.apache.webbeans.proxy.javassist.JavassistFactory;
 import org.apache.webbeans.spi.ContainerLifecycle;
 import org.apache.webbeans.spi.ContextsService;
 import org.apache.webbeans.spi.ConversationService;
@@ -70,7 +72,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         // no-op
     }
 
-    private static Factory owbProxyFactory() {
+    public static Factory owbProxyFactory() {
         if ("asm".equals(SystemInstance.get().getProperty(OPENEJB_OWB_PROXY_FACTORY))) {
             return new AsmFactory();
         }
