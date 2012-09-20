@@ -24,8 +24,10 @@ import org.apache.cxf.message.Exchange;
 import org.apache.openejb.InvalidateReferenceException;
 import org.apache.openejb.rest.ThreadLocalContextManager;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.SecurityContext;
@@ -69,6 +71,12 @@ public class OpenEJBEJBInvoker extends JAXRSInvoker {
             } else if (HttpServletRequest.class.equals(type)) {
                 HttpServletRequest httpServletRequest = JAXRSUtils.createContextValue(exchange.getInMessage(), null, HttpServletRequest.class);
                 ThreadLocalContextManager.HTTP_SERVLET_REQUEST.set(httpServletRequest);
+            } else if (HttpServletResponse.class.equals(type)) {
+                HttpServletResponse httpServletResponse = JAXRSUtils.createContextValue(exchange.getInMessage(), null, HttpServletResponse.class);
+                ThreadLocalContextManager.HTTP_SERVLET_RESPONSE.set(httpServletResponse);
+            } else if (ServletConfig.class.equals(type)) {
+                ServletConfig servletConfig = JAXRSUtils.createContextValue(exchange.getInMessage(), null, ServletConfig.class);
+                ThreadLocalContextManager.SERVLET_CONFIG.set(servletConfig);
             }
         }
 
