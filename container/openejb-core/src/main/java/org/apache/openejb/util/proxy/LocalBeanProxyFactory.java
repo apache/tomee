@@ -179,7 +179,7 @@ public class LocalBeanProxyFactory implements Opcodes {
             for (final Method method : entry.getValue()) {
                 final String name = method.getName();
 
-                if (!Modifier.isPrivate(method.getModifiers())
+                if (Modifier.isPublic(method.getModifiers())
                         || (method.getParameterTypes().length == 0 && ("finalize".equals(name)
                         || "clone".equals(name)))) {
                     // forward invocations of any public methods or 
