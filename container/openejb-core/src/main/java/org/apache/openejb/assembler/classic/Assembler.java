@@ -51,6 +51,7 @@ import org.apache.openejb.cdi.CustomELAdapter;
 import org.apache.openejb.cdi.ManagedSecurityService;
 import org.apache.openejb.cdi.OpenEJBTransactionService;
 import org.apache.openejb.cdi.OptimizedLoaderService;
+import org.apache.openejb.cdi.ThreadSingletonServiceImpl;
 import org.apache.openejb.component.ClassLoaderEnricher;
 import org.apache.openejb.core.ConnectorReference;
 import org.apache.openejb.core.CoreContainerSystem;
@@ -991,7 +992,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             services.put(ScannerService.class, new CdiScanner());
             services.put(ELAdaptor.class, new CustomELAdapter(appContext));
             services.put(LoaderService.class, new OptimizedLoaderService());
-//            services.put(org.apache.webbeans.proxy.ProxyFactory.class, new AsmFactory());
+            services.put(org.apache.webbeans.proxy.ProxyFactory.class, new org.apache.webbeans.proxy.ProxyFactory(ThreadSingletonServiceImpl.owbProxyFactory()));
             final Properties properties = new Properties();
             properties.setProperty(org.apache.webbeans.spi.SecurityService.class.getName(), ManagedSecurityService.class.getName());
             webBeansContext = new WebBeansContext(services, properties);

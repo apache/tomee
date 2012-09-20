@@ -72,7 +72,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         // no-op
     }
 
-    private static Factory owbProxyFactory() {
+    public static Factory owbProxyFactory() {
         if ("asm".equals(SystemInstance.get().getProperty(OPENEJB_OWB_PROXY_FACTORY))) {
             return new AsmFactory();
         }
