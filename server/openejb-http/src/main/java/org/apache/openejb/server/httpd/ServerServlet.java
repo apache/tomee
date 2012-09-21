@@ -31,13 +31,25 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class ServerServlet extends HttpServlet {
+    private static final String ACTIVATED_INIT_PARAM = "activated";
+
     private EjbServer ejbServer;
+    private boolean activated = true;
 
     public void init(ServletConfig config) {
         ejbServer = SystemInstance.get().getComponent(EjbServer.class);
+        final String activatedStr = config.getInitParameter(ACTIVATED_INIT_PARAM);
+        if (activatedStr != null) {
+            activated = Boolean.getBoolean(ACTIVATED_INIT_PARAM);
+        }
     }
 
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if (!activated) {
+            response.getWriter().write("");
+            return;
+        }
+
         ServletInputStream in = request.getInputStream();
         ServletOutputStream out = response.getOutputStream();
         try {
