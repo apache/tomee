@@ -16,6 +16,7 @@
  */
 package org.apache.openejb;
 
+import org.apache.openejb.api.LocalClient;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.config.AppModule;
@@ -173,27 +174,54 @@ public class OpenEjbContainer extends EJBContainer {
 
         final BeanContext context = resolve(clazz);
 
-        if (context == null) throw new NoInjectionMetaDataException(clazz.getName());
+        if (context != null) { // found the test class directly
+            final InjectionProcessor processor = new InjectionProcessor(object, context.getInjections(), context.getJndiContext());
+            cdiInjections(context, object);
+            try {
+                return (T) processor.createInstance();
+            } catch (OpenEJBException e) {
+                throw new InjectionException(clazz.getName(), e);
+            }
+        } else if (!isAnnotatedLocalClient(clazz)) { // nothing to do
+            throw new NoInjectionMetaDataException(clazz.getName());
+        }
 
-        final InjectionProcessor processor = new InjectionProcessor(object, context.getInjections(), context.getJndiContext());
+        // the test class was not found in beans (OpenEJB ran from parent) but was annotated @LocalClient
+        try {
+            final InjectionProcessor<?> processor = ClientInjections.clientInjector(object);
+            cdiInjections(null, object);
+            return (T) processor.createInstance();
+        } catch (OpenEJBException e) {
+            throw new NoInjectionMetaDataException("Injection failed", e);
+        }
+    }
 
-        final ThreadContext callContext = new ThreadContext(context, null, Operation.INJECTION);
-        final ThreadContext oldContext = ThreadContext.enter(callContext);
+    private <T> void cdiInjections(final BeanContext context, final T object) {
+        ThreadContext oldContext = null;
+        if (context != null) {
+            final ThreadContext callContext = new ThreadContext(context, null, Operation.INJECTION);
+            oldContext = ThreadContext.enter(callContext);
+        }
         try {
             OWBInjector.inject(webBeanContext.getBeanManagerImpl(), object, null);
         } catch (Throwable t) {
-            logger.warning("an error occured while injecting the class '" + clazz.getName() + "': " + t.getMessage());
-            // TODO handle this differently
-            // this is temporary till the injector can be rewritten
+            logger.warning("an error occured while injecting the class '" + object.getClass().getName() + "': " + t.getMessage());
         } finally {
-            ThreadContext.exit(oldContext);
+            if (oldContext != null) {
+                ThreadContext.exit(oldContext);
+            }
         }
+    }
 
-        try {
-            return (T) processor.createInstance();
-        } catch (OpenEJBException e) {
-            throw new InjectionException(clazz.getName(), e);
+    private boolean isAnnotatedLocalClient(final Class<?> clazz) {
+        Class<?> current = clazz;
+        while (current != null && current != Object.class) {
+            if (current.getAnnotation(LocalClient.class) != null) {
+                return true;
+            }
+            current = current.getSuperclass();
         }
+        return false;
     }
 
     private BeanContext resolve(Class<?> clazz) {
@@ -236,8 +264,12 @@ public class OpenEjbContainer extends EJBContainer {
 
 
     public static class NoInjectionMetaDataException extends IllegalStateException {
-        public NoInjectionMetaDataException(String s) {
-            super(String.format("%s : Annotate the class with @%s so it can be discovered in the application scanning process", s, javax.annotation.ManagedBean.class.getName()));
+        public NoInjectionMetaDataException(final String s) {
+            this(s, null);
+        }
+
+        public NoInjectionMetaDataException(final String s, final Exception e) {
+            super(String.format("%s : Annotate the class with @%s so it can be discovered in the application scanning process", s, javax.annotation.ManagedBean.class.getName()), e);
         }
     }
 
