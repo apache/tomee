@@ -39,6 +39,7 @@ import org.apache.cxf.message.Message;
 import org.apache.openejb.Injection;
 import org.apache.openejb.InjectionProcessor;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.rest.ThreadLocalContextManager;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.inject.OWBInjector;
@@ -69,6 +70,8 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
 
     @Override
     public Object getInstance(Message m) {
+        Contexts.bind(m.getExchange());
+
         final BeanManagerImpl bm = webbeansContext.getBeanManagerImpl();
         if (bm.isInUse()) {
             creator = new CdiBeanCreator(bm);
@@ -89,6 +92,7 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
         if (creator != null) {
             creator.release();
         }
+        ThreadLocalContextManager.reset();
     }
 
     @Override
