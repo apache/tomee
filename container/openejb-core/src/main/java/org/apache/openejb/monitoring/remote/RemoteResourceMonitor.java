@@ -24,7 +24,6 @@ import javax.management.Attribute;
 import javax.management.AttributeList;
 import javax.management.AttributeNotFoundException;
 import javax.management.DynamicMBean;
-import javax.management.InstanceAlreadyExistsException;
 import javax.management.InvalidAttributeValueException;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanException;
@@ -73,7 +72,7 @@ public class RemoteResourceMonitor implements DynamicMBean {
         }
 
         final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
-        jmxName.set("ObjectType", "hosts");
+        jmxName.set("ObjectType", "Related Hosts");
         objectName = jmxName.build();
 
         try {
@@ -146,13 +145,18 @@ public class RemoteResourceMonitor implements DynamicMBean {
     private static String ping(final String host) {
         try {
             final InetAddress address = InetAddress.getByName(host);
-            final long start = System.nanoTime();
             boolean ok = address.isReachable(30000);
-            final long end = System.nanoTime();
-            if (!ok) {
-                return "Can't ping host, timeout (30s)";
+            if (ok) { // do it twice since the first one is generally longer
+                final long start = System.nanoTime();
+                ok = address.isReachable(30000);
+                final long end = System.nanoTime();
+                if (ok) {
+                    final long duration = end - start;
+                    final long ms = TimeUnit.NANOSECONDS.toMillis(duration);
+                    return "Ping done in " + ms + "." + Long.toString(duration - 1000 * ms) + " ms";
+                }
             }
-            return Long.toString(TimeUnit.NANOSECONDS.toMillis(end - start));
+            return "Can't ping host, timeout (30s)";
         } catch (UnknownHostException e) {
             return "Can't find host: " + e.getMessage();
         } catch (IOException e) {
