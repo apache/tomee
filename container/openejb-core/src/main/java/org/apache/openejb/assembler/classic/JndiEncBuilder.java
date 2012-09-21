@@ -29,6 +29,7 @@ import org.apache.openejb.core.ivm.naming.IntraVmJndiReference;
 import org.apache.openejb.core.ivm.naming.JaxWsServiceReference;
 import org.apache.openejb.core.ivm.naming.JndiReference;
 import org.apache.openejb.core.ivm.naming.JndiUrlReference;
+import org.apache.openejb.core.ivm.naming.MapObjectReference;
 import org.apache.openejb.core.ivm.naming.ObjectReference;
 import org.apache.openejb.core.ivm.naming.PersistenceContextReference;
 import org.apache.openejb.core.ivm.naming.Reference;
@@ -270,50 +271,61 @@ public class JndiEncBuilder {
         }
 
         for (ResourceReferenceInfo referenceInfo : jndiEnc.resourceRefs) {
+            if (!(referenceInfo instanceof ContextReferenceInfo)) {
+                if (referenceInfo.location != null) {
+                    Reference reference = buildReferenceLocation(referenceInfo.location);
+                    bindings.put(normalize(referenceInfo.referenceName), reference);
+                    continue;
+                }
 
-            if (referenceInfo.location != null) {
-                Reference reference = buildReferenceLocation(referenceInfo.location);
+                Class<?> type = getType(referenceInfo.referenceType, referenceInfo);
+
+                Object reference;
+                if (URL.class.equals(type)) {
+                    reference = new URLReference(referenceInfo.resourceID);
+                } else if (type.isAnnotationPresent(ManagedBean.class)) {
+                    ManagedBean managed = type.getAnnotation(ManagedBean.class);
+                    String name = managed.value().length() == 0 ? type.getSimpleName() : managed.value();
+                    reference = new LinkRef("module/" + name);
+                } else if (referenceInfo.resourceID != null) {
+                    String jndiName = "openejb/Resource/" + referenceInfo.resourceID;
+                    reference = new IntraVmJndiReference(jndiName);
+                } else {
+                    String jndiName = "openejb/Resource/" + referenceInfo.referenceName;
+                    reference = new IntraVmJndiReference(jndiName);
+                }
+
                 bindings.put(normalize(referenceInfo.referenceName), reference);
-                continue;
-            }
-
-            Class<?> type = getType(referenceInfo.referenceType, referenceInfo);
-
-            Object reference;
-            if (URL.class.equals(type)) {
-                reference = new URLReference(referenceInfo.resourceID);
-            } else if (type.isAnnotationPresent(ManagedBean.class)) {
-                ManagedBean managed = type.getAnnotation(ManagedBean.class);
-                String name = managed.value().length() == 0 ? type.getSimpleName() : managed.value();
-                reference = new LinkRef("module/" + name);
-            } else if (Request.class.equals(type)) {
-                reference = new ObjectReference(ThreadLocalContextManager.REQUEST);
-            } else if (HttpServletRequest.class.equals(type)) {
-                reference = new ObjectReference(ThreadLocalContextManager.HTTP_SERVLET_REQUEST);
-            } else if (ServletRequest.class.equals(type)) {
-                reference = new ObjectReference(ThreadLocalContextManager.SERVLET_REQUEST);
-            } else if (UriInfo.class.equals(type)) {
-                reference = new ObjectReference(ThreadLocalContextManager.URI_INFO);
-            } else if (HttpHeaders.class.equals(type)) {
-                reference = new ObjectReference(ThreadLocalContextManager.HTTP_HEADERS);
-            } else if (SecurityContext.class.equals(type)) {
-                reference = new ObjectReference(ThreadLocalContextManager.SECURITY_CONTEXT);
-            } else if (ContextResolver.class.equals(type)) {
-                reference = new ObjectReference(ThreadLocalContextManager.CONTEXT_RESOLVER);
-            } else if (Providers.class.equals(type)) {
-                reference = new ObjectReference(ThreadLocalContextManager.PROVIDERS);
-            } else if (ServletConfig.class.equals(type)) {
-                reference = new ObjectReference(ThreadLocalContextManager.SERVLET_CONFIG);
-            } else if (HttpServletResponse.class.equals(type)) {
-                reference = new ObjectReference(ThreadLocalContextManager.HTTP_SERVLET_RESPONSE);
-            } else if (referenceInfo.resourceID != null) {
-                String jndiName = "openejb/Resource/" + referenceInfo.resourceID;
-                reference = new IntraVmJndiReference(jndiName);
             } else {
-                String jndiName = "openejb/Resource/" + referenceInfo.referenceName;
-                reference = new IntraVmJndiReference(jndiName);
+                final Class<?> type = getType(referenceInfo.referenceType, referenceInfo);
+                Object reference;
+
+                if (Request.class.equals(type)) {
+                    reference = new ObjectReference(ThreadLocalContextManager.REQUEST);
+                } else if (HttpServletRequest.class.equals(type)) {
+                    reference = new ObjectReference(ThreadLocalContextManager.HTTP_SERVLET_REQUEST);
+                } else if (ServletRequest.class.equals(type)) {
+                    reference = new ObjectReference(ThreadLocalContextManager.SERVLET_REQUEST);
+                } else if (UriInfo.class.equals(type)) {
+                    reference = new ObjectReference(ThreadLocalContextManager.URI_INFO);
+                } else if (HttpHeaders.class.equals(type)) {
+                    reference = new ObjectReference(ThreadLocalContextManager.HTTP_HEADERS);
+                } else if (SecurityContext.class.equals(type)) {
+                    reference = new ObjectReference(ThreadLocalContextManager.SECURITY_CONTEXT);
+                } else if (ContextResolver.class.equals(type)) {
+                    reference = new ObjectReference(ThreadLocalContextManager.CONTEXT_RESOLVER);
+                } else if (Providers.class.equals(type)) {
+                    reference = new ObjectReference(ThreadLocalContextManager.PROVIDERS);
+                } else if (ServletConfig.class.equals(type)) {
+                    reference = new ObjectReference(ThreadLocalContextManager.SERVLET_CONFIG);
+                } else if (HttpServletResponse.class.equals(type)) {
+                    reference = new ObjectReference(ThreadLocalContextManager.HTTP_SERVLET_RESPONSE);
+                } else {
+                    reference = new MapObjectReference(ThreadLocalContextManager.OTHERS, referenceInfo.referenceType);
+                }
+
+                bindings.put(normalize(referenceInfo.referenceName), reference);
             }
-            bindings.put(normalize(referenceInfo.referenceName), reference);
         }
 
         for (ResourceEnvReferenceInfo referenceInfo : jndiEnc.resourceEnvRefs) {

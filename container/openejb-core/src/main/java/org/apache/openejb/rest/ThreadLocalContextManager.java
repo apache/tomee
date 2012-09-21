@@ -18,6 +18,7 @@
 package org.apache.openejb.rest;
 
 import javax.ws.rs.core.Application;
+import java.util.Map;
 
 public class ThreadLocalContextManager {
     public static final ThreadLocalRequest REQUEST = new ThreadLocalRequest();
@@ -31,6 +32,7 @@ public class ThreadLocalContextManager {
     public static final ThreadLocalContextResolver CONTEXT_RESOLVER = new ThreadLocalContextResolver();
     public static final ThreadLocalProviders PROVIDERS = new ThreadLocalProviders();
     public static final ThreadLocal<Application> APPLICATION = new ThreadLocal<Application>();
+    public static final ThreadLocal<Map<String, Object>> OTHERS = new ThreadLocal<Map<String, Object>>();
 
     public static void reset() {
         REQUEST.remove();
@@ -44,5 +46,11 @@ public class ThreadLocalContextManager {
         CONTEXT_RESOLVER.remove();
         PROVIDERS.remove();
         APPLICATION.remove();
+
+        final Map<String, Object> map = OTHERS.get();
+        if (map != null) {
+            map.clear();
+        }
+        OTHERS.remove();
     }
 }
