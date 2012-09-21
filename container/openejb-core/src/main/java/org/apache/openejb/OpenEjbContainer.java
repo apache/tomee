@@ -207,7 +207,7 @@ public class OpenEjbContainer extends EJBContainer {
         } catch (Throwable t) {
             logger.warning("an error occured while injecting the class '" + object.getClass().getName() + "': " + t.getMessage());
         } finally {
-            if (oldContext != null) {
+            if (context != null) {
                 ThreadContext.exit(oldContext);
             }
         }
