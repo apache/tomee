@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.core;
 
+import org.apache.openejb.ClientInjections;
 import org.apache.openejb.Core;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.Injection;
@@ -182,31 +183,8 @@ public class LocalInitialContext extends ContextWrapper {
     }
 
     private void inject(Object obj) throws NamingException {
-        if (obj == null) throw new NullPointerException("Object supplied to 'inject' operation is null");
-        Class clazz = obj.getClass();
-
-        Context clients = (Context) getRoot().lookup("openejb/client/");
-
-        Context context = null;
-        List<Injection> injections = null;
-
-        while (clazz != null && !clazz.equals(Object.class)) {
-            try {
-                String moduleId = (String) clients.lookup(clazz.getName());
-                context = (Context) clients.lookup(moduleId);
-                injections = (List<Injection>) context.lookup("info/injections");
-                break;
-            } catch (NamingException e) {
-                clazz = clazz.getSuperclass();
-            }
-        }
-
-        if (injections == null) throw new NamingException("Unable to find injection meta-data for "+obj.getClass().getName()+".  Ensure that class was annotated with @"+ LocalClient.class.getName()+" and was successfully discovered and deployed.  See http://openejb.apache.org/3.0/local-client-injection.html");
-
         try {
-            InjectionProcessor processor = new InjectionProcessor(obj, injections, context);
-
-            processor.createInstance();
+            ClientInjections.clientInjector(obj).createInstance();
         } catch (OpenEJBException e) {
             throw (NamingException) new NamingException("Injection failed").initCause(e);
         }
