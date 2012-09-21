@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.assembler.classic.ContextReferenceInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EjbLocalReferenceInfo;
 import org.apache.openejb.assembler.classic.EjbReferenceInfo;
@@ -283,7 +284,12 @@ public class JndiEncInfoBuilder {
 
     private void buildResourceRefInfos(JndiConsumer item, JndiEncInfo moduleJndiEnc, JndiEncInfo compJndiEnc) {
         for (ResourceRef res : item.getResourceRef()) {
-            ResourceReferenceInfo info = new ResourceReferenceInfo();
+            final ResourceReferenceInfo info;
+            if (res instanceof ContextRef) {
+                info = new ContextReferenceInfo();
+            } else {
+                info = new ResourceReferenceInfo();
+            }
 
             if (res.getResAuth() != null) {
                 info.referenceAuth = res.getResAuth().toString();
