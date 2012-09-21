@@ -76,7 +76,15 @@ public final class ServiceInfos {
 
         final List<Object> instances = new ArrayList<Object>();
         for (String id : ids) {
-            final Object instance = resolve(serviceInfos, id);
+            Object instance = resolve(serviceInfos, id);
+            if (instance == null) {  // maybe id == classname
+                try {
+                    instance = Thread.currentThread().getContextClassLoader().loadClass(id).newInstance();
+                } catch (Exception e) {
+                    // ignore
+                }
+            }
+
             if (instance != null) {
                 instances.add(instance);
             }

@@ -724,7 +724,15 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             }
 
             String destinationId = (mappedName.length() == 0) ? ref.getName() : mappedName;
-            destinationId = getResourceId(moduleId, destinationId, refType, appResources);
+            try {
+                destinationId = getResourceId(moduleId, destinationId, refType, appResources);
+            } catch (OpenEJBException ex) {
+                if (!(ref instanceof ContextRef)) {
+                    throw ex;
+                } else { // let jaxrs provider manage it
+                    continue;
+                }
+            }
             ref.setMappedName(destinationId);
         }
 
@@ -1080,25 +1088,32 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 return;
             }
         } catch (Throwable t) {
+            // no-op
         }
 
-        ResourceLink link = ejbDeployment.getResourceLink(refName);
-        if (link == null) {
-            String id = (mappedName.length() == 0) ? ref.getName() : mappedName;
-            if (id.startsWith("java:")) {
-                id = id.substring("java:".length());
-            }
-            id = getResourceId(ejbDeployment.getDeploymentId(), id, refType, appResources);
-            logger.info("Auto-linking resource-ref '" + refName + "' in bean " + ejbDeployment.getDeploymentId() + " to Resource(id=" + id + ")");
+        try {
+            ResourceLink link = ejbDeployment.getResourceLink(refName);
+            if (link == null) {
+                String id = (mappedName.length() == 0) ? ref.getName() : mappedName;
+                if (id.startsWith("java:")) {
+                    id = id.substring("java:".length());
+                }
+                id = getResourceId(ejbDeployment.getDeploymentId(), id, refType, appResources);
+                logger.info("Auto-linking resource-ref '" + refName + "' in bean " + ejbDeployment.getDeploymentId() + " to Resource(id=" + id + ")");
 
-            link = new ResourceLink();
-            link.setResId(id);
-            link.setResRefName(refName);
-            ejbDeployment.addResourceLink(link);
-        } else {
-            String id = getResourceId(ejbDeployment.getDeploymentId(), link.getResId(), refType, appResources);
-            link.setResId(id);
-            link.setResRefName(refName);
+                link = new ResourceLink();
+                link.setResId(id);
+                link.setResRefName(refName);
+                ejbDeployment.addResourceLink(link);
+            } else {
+                String id = getResourceId(ejbDeployment.getDeploymentId(), link.getResId(), refType, appResources);
+                link.setResId(id);
+                link.setResRefName(refName);
+            }
+        } catch (OpenEJBException ex) {
+            if (!(ref instanceof ContextRef)) {
+                throw ex;
+            }
         }
     }
 

@@ -3619,7 +3619,7 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         private void buildContext(JndiConsumer consumer, Member member) {
-            ResourceRef ref = new ResourceRef();
+            final ContextRef ref = new ContextRef();
             ref.setName(member.getDeclaringClass().getName() + "/" + member.getName());
             ref.setResType(member.getType().getName());
 

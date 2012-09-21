@@ -17,10 +17,13 @@
 package org.apache.openejb.server.cxf.rs;
 
 import org.apache.cxf.jaxrs.JAXRSInvoker;
+import org.apache.cxf.jaxrs.ext.ContextProvider;
 import org.apache.cxf.jaxrs.model.ClassResourceInfo;
 import org.apache.cxf.jaxrs.model.OperationResourceInfo;
+import org.apache.cxf.jaxrs.provider.ProviderFactory;
 import org.apache.cxf.jaxrs.utils.JAXRSUtils;
 import org.apache.cxf.message.Exchange;
+import org.apache.cxf.message.Message;
 import org.apache.openejb.InvalidateReferenceException;
 import org.apache.openejb.rest.ThreadLocalContextManager;
 
@@ -38,6 +41,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class OpenEJBEJBInvoker extends JAXRSInvoker {
     @Override
@@ -77,6 +82,18 @@ public class OpenEJBEJBInvoker extends JAXRSInvoker {
             } else if (ServletConfig.class.equals(type)) {
                 ServletConfig servletConfig = JAXRSUtils.createContextValue(exchange.getInMessage(), null, ServletConfig.class);
                 ThreadLocalContextManager.SERVLET_CONFIG.set(servletConfig);
+            } else {
+                final Message message = exchange.getInMessage();
+                final ContextProvider<?> provider = ProviderFactory.getInstance(message).createContextProvider(type, message);
+                if (provider != null) {
+                    final Object value = provider.createContext(message);
+                    Map<String, Object> map = ThreadLocalContextManager.OTHERS.get();
+                    if (map == null) {
+                        map = new HashMap<String, Object>();
+                        ThreadLocalContextManager.OTHERS.set(map);
+                    }
+                    map.put(type.getName(), value);
+                }
             }
         }
 
