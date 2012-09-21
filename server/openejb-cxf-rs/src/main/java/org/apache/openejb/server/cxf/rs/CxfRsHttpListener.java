@@ -84,26 +84,26 @@ public class CxfRsHttpListener implements RsHttpListener {
 
     @Override
     public void deploySingleton(String fullContext, Object o, Application appInstance,
-                                Collection<Class<?>> additionalProviders, ServiceConfiguration configuration) {
+                                Collection<Object> additionalProviders, ServiceConfiguration configuration) {
         deploy(o.getClass(), fullContext, new SingletonResourceProvider(o), o, appInstance, null, additionalProviders, configuration);
     }
 
     @Override
     public void deployPojo(String fullContext, Class<?> loadedClazz, Application app, Collection<Injection> injections,
-                           Context context, WebBeansContext owbCtx, Collection<Class<?>> additionalProviders, ServiceConfiguration configuration) {
+                           Context context, WebBeansContext owbCtx, Collection<Object> additionalProviders, ServiceConfiguration configuration) {
         deploy(loadedClazz, fullContext, new OpenEJBPerRequestPojoResourceProvider(loadedClazz, injections, context, owbCtx),
                             null, app, null, additionalProviders, configuration);
     }
 
     @Override
-    public void deployEJB(String fullContext, BeanContext beanContext, Collection<Class<?>> additionalProviders, ServiceConfiguration configuration) {
+    public void deployEJB(String fullContext, BeanContext beanContext, Collection<Object> additionalProviders, ServiceConfiguration configuration) {
         final Object proxy = ProxyEJB.proxy(beanContext);
         deploy(beanContext.getBeanClass(), fullContext, new NoopResourceProvider(beanContext.getBeanClass(), proxy),
                 proxy, null, new OpenEJBEJBInvoker(), additionalProviders, configuration);
     }
 
     private void deploy(Class<?> clazz, String address, ResourceProvider rp, Object serviceBean, Application app, Invoker invoker,
-                        Collection<Class<?>> additionalProviders, ServiceConfiguration configuration) {
+                        Collection<Object> additionalProviders, ServiceConfiguration configuration) {
         final String impl;
         if (serviceBean != null) {
             impl = serviceBean.getClass().getName();
@@ -159,18 +159,23 @@ public class CxfRsHttpListener implements RsHttpListener {
         destination = (AbstractHTTPDestination) server.getDestination();
     }
 
-    private Collection<Object> providers(final Collection<ServiceInfo> services, final Collection<Class<?>> additionalProviders) {
+    private Collection<Object> providers(final Collection<ServiceInfo> services, final Collection<Object> additionalProviders) {
         final Collection<Object> instances = new ArrayList<Object>();
-        for (Class<?> clazz : additionalProviders) {
-            final Object instance = ServiceInfos.resolve(services, clazz.getName());
-            if (instance != null) {
-                instances.add(instance);
-            } else {
-                try {
-                    instances.add(clazz.newInstance());
-                } catch (Exception e) {
-                    LOGGER.error("can't instantiate " + clazz.getName(), e);
+        for (Object o : additionalProviders) {
+            if (o instanceof Class<?>) {
+                final Class<?> clazz = (Class<?>) o;
+                final Object instance = ServiceInfos.resolve(services, clazz.getName());
+                if (instance != null) {
+                    instances.add(instance);
+                } else {
+                    try {
+                        instances.add(clazz.newInstance());
+                    } catch (Exception e) {
+                        LOGGER.error("can't instantiate " + clazz.getName(), e);
+                    }
                 }
+            } else {
+                instances.add(o);
             }
         }
         return instances;

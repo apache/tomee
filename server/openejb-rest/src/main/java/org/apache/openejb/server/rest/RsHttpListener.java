@@ -29,12 +29,12 @@ import java.util.Collection;
 
 public interface RsHttpListener extends HttpListener {
     void deploySingleton(String fullContext, Object o, Application appInstance,
-                         Collection<Class<?>> additionalProviders, ServiceConfiguration serviceInfos);
+                         Collection<Object> additionalProviders, ServiceConfiguration serviceInfos);
 
     void deployPojo(String fullContext, Class<?> loadedClazz, Application app, Collection<Injection> injections,
-                    Context context, WebBeansContext owbCtx, Collection<Class<?>> additionalProviders, ServiceConfiguration serviceInfos);
+                    Context context, WebBeansContext owbCtx, Collection<Object> additionalProviders, ServiceConfiguration serviceInfos);
 
-    void deployEJB(String fullContext, BeanContext beanContext, Collection<Class<?>> additionalProviders, ServiceConfiguration serviceInfos);
+    void deployEJB(String fullContext, BeanContext beanContext, Collection<Object> additionalProviders, ServiceConfiguration serviceInfos);
 
     void undeploy();
 }
