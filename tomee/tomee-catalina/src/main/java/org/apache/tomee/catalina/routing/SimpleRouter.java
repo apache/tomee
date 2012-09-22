@@ -91,7 +91,7 @@ public class SimpleRouter {
         final Route cachedRoute = cache.get(uri);
         if (cachedRoute != null) {
             cachedRoute.matches(uri);
-            return cachedRoute.cleanDestination();
+            return cachedRoute.cleanDestination(prefix);
         }
 
         for (Route route : routes) {
@@ -99,7 +99,7 @@ public class SimpleRouter {
                 if (route.getOrigin().equals(uri)) {
                     cache.put(uri, route);
                 }
-                return route.cleanDestination();
+                return route.cleanDestination(prefix);
             }
         }
 
@@ -206,5 +206,13 @@ public class SimpleRouter {
                 routes = newRoutes;
             }
         }
+    }
+
+    public boolean hasPrefix() {
+        return prefix != null && !prefix.isEmpty();
+    }
+
+    public String getPrefix() {
+        return prefix;
     }
 }
