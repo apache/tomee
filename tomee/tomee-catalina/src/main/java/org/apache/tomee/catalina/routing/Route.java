@@ -41,7 +41,7 @@ public class Route {
         return this;
     }
 
-    public String cleanDestination() {
+    public String cleanDestination(final String prefix) {
         String destination = this.destination;
 
         final Matcher matcher = this.matcher.get();
@@ -54,7 +54,10 @@ public class Route {
 
         this.matcher.remove(); // single call to this method
 
-        return destination;
+        if (prefix == null) {
+            return destination;
+        }
+        return destination.substring(prefix.length());
     }
 
     public String getOrigin() {

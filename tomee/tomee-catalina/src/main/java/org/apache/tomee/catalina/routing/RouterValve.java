@@ -44,7 +44,11 @@ public class RouterValve extends ValveBase {
             return;
         }
 
-        response.sendRedirect(destination);
+        if (router.hasPrefix()) {
+            request.getRequestDispatcher(destination).forward(request, response);
+        } else {
+            response.sendRedirect(destination);
+        }
     }
 
     public void setConfigurationPath(URL configurationPath) {
