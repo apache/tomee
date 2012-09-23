@@ -206,12 +206,25 @@ public class TomcatJndiBuilder {
             for (Map.Entry<String, Object> entry : webContext.getBindings().entrySet()) {
                 try {
                     final String key = entry.getKey();
-                    Object value = normalize(entry.getValue());
+                    if (key.startsWith("global/")) { // will be done later
+                        continue;
+                    }
+
+                    final Object value = normalize(entry.getValue());
                     Contexts.createSubcontexts(root, key);
                     root.rebind(key, value);
                 } catch (NamingException e) {
                     e.printStackTrace();
                 }
+            }
+        }
+
+        // merge global: we bind our global to be able to get a real global context and not a local one (bindigns)
+        if (root != null) {
+            try {
+                root.bind("global", SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext().lookup("global"));
+            } catch (NamingException e) {
+                e.printStackTrace();
             }
         }
 
