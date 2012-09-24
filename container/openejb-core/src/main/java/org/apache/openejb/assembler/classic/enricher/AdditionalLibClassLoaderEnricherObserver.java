@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.assembler.classic;
+package org.apache.openejb.assembler.classic.enricher;
 
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.component.ClassLoaderEnricher;
