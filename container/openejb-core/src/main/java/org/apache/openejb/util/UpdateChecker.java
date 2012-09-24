@@ -39,7 +39,7 @@ public class UpdateChecker {
     private String checkerProxy = SystemInstance.get().getOptions().get("openejb.version.check.proxy", (String) null);
     private String auto = "auto";
     private String url = SystemInstance.get().getOptions().get("openejb.version.check.url", auto);
-    private String tag = "latest";
+    private String tag = "release";
     private String undefined = "undefined";
     private String latest = "undefined";
 
@@ -93,7 +93,7 @@ public class UpdateChecker {
 
         try {
             final URL url = new URL(realUrl);
-            final String metaData = IO.readFileAsString(url.toURI());
+            final String metaData = IO.slurp(url);
             latest = extractLatest(metaData);
             if (!usesLatest()) {
                 LOGGER.warning(message());
