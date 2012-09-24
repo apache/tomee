@@ -241,6 +241,7 @@ public class Setup {
                 } finally {
                     IO.close(fos);
                 }
+                configuration.setStopPort(Integer.parseInt(QuickServerXmlParser.parse(sXml).stop()));
                 return; // in this case we don't want to override the conf
             }
         }

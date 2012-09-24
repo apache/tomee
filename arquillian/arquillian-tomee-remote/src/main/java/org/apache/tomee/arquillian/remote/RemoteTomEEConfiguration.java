@@ -37,6 +37,8 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
     private int ajpPort = 8009;
     private String conf;
     private boolean cleanOnStartUp;
+    private boolean debug;
+    private int debugPort = 5005;
 
     public String getGroupId() {
         return groupId;
@@ -131,5 +133,21 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
 
     public boolean getCleanOnStartUp() {
         return cleanOnStartUp;
+    }
+
+    public boolean isDebug() {
+        return debug;
+    }
+
+    public void setDebug(boolean debug) {
+        this.debug = debug;
+    }
+
+    public int getDebugPort() {
+        return debugPort;
+    }
+
+    public void setDebugPort(int debugPort) {
+        this.debugPort = debugPort;
     }
 }
