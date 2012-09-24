@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
@@ -124,5 +125,18 @@ public class OpenejbJar implements NamedModule {
 
     public EjbDeployment addEjbDeployment(EnterpriseBean bean) {
         return addEjbDeployment(new EjbDeployment(bean));
+    }
+
+    public OpenejbJar postRead() {
+        if (pojoDeployment != null && properties != null) {
+            for (PojoDeployment pojo : pojoDeployment) {
+                for (String key : properties.stringPropertyNames()) {
+                    if (!pojo.getProperties().containsKey(key)) {
+                        pojo.getProperties().put(key, properties.get(key));
+                    }
+                }
+            }
+        }
+        return this;
     }
 }
