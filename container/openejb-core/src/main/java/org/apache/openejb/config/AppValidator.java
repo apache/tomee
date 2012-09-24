@@ -130,7 +130,7 @@ public class AppValidator {
             return defaultRules;
         }
 
-        final ValidationRule[] rules = new ValidationRule[additionalValidators.length + 11];
+        final ValidationRule[] rules = new ValidationRule[additionalValidators.length + defaultRules.length];
         for (int i = 0; i < additionalValidators.length; i++) {
             rules[i] = additionalValidators[i];
         }
