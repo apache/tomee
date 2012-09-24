@@ -37,8 +37,12 @@ import java.util.Properties;
  */
 public class RemoteServer {
     private static final Options options = new Options(System.getProperties());
+    public static final String SERVER_DEBUG_PORT = "server.debug.port";
+    public static final String SERVER_SHUTDOWN_PORT = "server.shutdown.port";
+    public static final String SERVER_SHUTDOWN_HOST = "server.shutdown.host";
+    public static final String OPENEJB_SERVER_DEBUG = "openejb.server.debug";
 
-    private final boolean debug = options.get("openejb.server.debug", false);
+    private final boolean debug = options.get(OPENEJB_SERVER_DEBUG, false);
     private final boolean profile = options.get("openejb.server.profile", false);
     private final boolean tomcat;
     private final String javaOpts = System.getProperty("java.opts");
@@ -65,8 +69,8 @@ public class RemoteServer {
         File home = getHome();
         tomcat = (home != null) && (new File(new File(home, "bin"), "catalina.sh").exists());
 
-        shutdownPort = options.get("server.shutdown.port", tomcat ? 8005 : 4200);
-        host = options.get("server.shutdown.host", "localhost");
+        shutdownPort = options.get(SERVER_SHUTDOWN_PORT, tomcat ? 8005 : 4200);
+        host = options.get(SERVER_SHUTDOWN_HOST, "localhost");
     }
 
     public void init(Properties props) {
@@ -143,7 +147,7 @@ public class RemoteServer {
                 //DMB: If you don't use an array, you get problems with jar paths containing spaces
                 // the command won't parse correctly
                 String[] args;
-                final int debugPort = options.get("server.debug.port", 5005);
+                final int debugPort = options.get(SERVER_DEBUG_PORT, 5005);
                 if (!tomcat) {
                     if (debug) {
                         args = new String[] { java,

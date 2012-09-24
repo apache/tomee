@@ -24,13 +24,10 @@ import org.apache.openejb.assembler.Deployer;
 import org.apache.openejb.config.RemoteServer;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
-import java.util.Properties;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -57,16 +54,40 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
 
         shutdown = true;
 
+        final String shutdownPort = System.getProperty(RemoteServer.SERVER_SHUTDOWN_PORT);
+        final String shutdownHost = System.getProperty(RemoteServer.SERVER_SHUTDOWN_HOST);
+        final String debug = System.getProperty(RemoteServer.OPENEJB_SERVER_DEBUG);
+        final String debugPort = System.getProperty(RemoteServer.SERVER_DEBUG_PORT);
+
         try {
 
             configure();
 
+            System.setProperty(RemoteServer.SERVER_SHUTDOWN_PORT, Integer.toString(configuration.getStopPort()));
+            System.setProperty(RemoteServer.SERVER_SHUTDOWN_HOST, configuration.getHost());
+            if (configuration.isDebug()) {
+                System.setProperty(RemoteServer.OPENEJB_SERVER_DEBUG, "true");
+                System.setProperty(RemoteServer.SERVER_DEBUG_PORT, Integer.toString(configuration.getDebugPort()));
+            }
             container = new RemoteServer();
 
             container.start();
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Unable to start remote container", e);
             throw new LifecycleException("Unable to start remote container:" + e.getMessage(), e);
+        } finally {
+            resetSystemProperty(RemoteServer.SERVER_SHUTDOWN_PORT, shutdownPort);
+            resetSystemProperty(RemoteServer.SERVER_SHUTDOWN_HOST, shutdownHost);
+            resetSystemProperty(RemoteServer.OPENEJB_SERVER_DEBUG, debug);
+            resetSystemProperty(RemoteServer.SERVER_DEBUG_PORT, debugPort);
+        }
+    }
+
+    private static void resetSystemProperty(final String key, final String value) {
+        if (value == null) {
+            System.getProperties().remove(key);
+        } else {
+            System.setProperty(key, value);
         }
     }
 
