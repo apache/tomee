@@ -436,11 +436,6 @@
     <!--<enabled>true</enabled>-->
     <!--</snapshots>-->
     <!--</repository>-->
-    <repository>
-      <id>bval-staging</id>
-      <name>BVal staging Repository</name>
-      <url>https://repository.apache.org/content/repositories/orgapachebval-012/</url>
-    </repository>
     <!-- Apache snapshots -->
     <repository>
       <id>apache-snapshots</id>
