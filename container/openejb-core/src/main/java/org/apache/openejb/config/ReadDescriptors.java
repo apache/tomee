@@ -292,7 +292,7 @@ public class ReadDescriptors implements DynamicDeployer {
         if (source != null) {
             try {
                 // Attempt to parse it first as a v3 descriptor
-                OpenejbJar openejbJar = JaxbOpenejbJar3.unmarshal(OpenejbJar.class, source.get());
+                OpenejbJar openejbJar = JaxbOpenejbJar3.unmarshal(OpenejbJar.class, source.get()).postRead();
                 ejbModule.setOpenejbJar(openejbJar);
             } catch (final Exception v3ParsingException) {
                 // Attempt to parse it second as a v2 descriptor
