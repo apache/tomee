@@ -934,6 +934,14 @@
         <version>${org.apache.activemq.version}</version>
         <exclusions>
           <exclusion>
+            <groupId>org.fusesource.mqtt-client</groupId>
+            <artifactId>mqtt-client</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.fusesource.fuse-extra</groupId>
+            <artifactId>fusemq-leveldb</artifactId>
+          </exclusion>
+          <exclusion>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
           </exclusion>
@@ -1011,7 +1019,7 @@
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-j2ee-management_1.0_spec</artifactId>
+            <artifactId>geronimo-j2ee-management_1.1_spec</artifactId>
           </exclusion>
           <exclusion>
             <groupId>commons-primitives</groupId>
@@ -1448,6 +1456,10 @@
           <exclusion>
             <groupId>net.sf.scannotation</groupId>
             <artifactId>scannotation</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>asm</groupId>
+            <artifactId>asm</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
