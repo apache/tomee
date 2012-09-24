@@ -28,7 +28,8 @@ public class HelpTomEEMojo extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         getLog().info("Available commands:");
-        getLog().info("\t- tomee:run: run and wait the server");
+        getLog().info("\t- tomee:run: run and wait for the server");
+        getLog().info("\t- tomee:debug: run in debug mode and wait for the server (alias of run)");
         getLog().info("\t- tomee:start: run the server");
         getLog().info("\t- tomee:stop: stop the server (to use with start)");
         getLog().info("\t- tomee:configtest: run configtest tomcat command");
