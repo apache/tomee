@@ -454,21 +454,8 @@
         <module>webbeans-web</module>
         <module>webbeans-ejb</module>
         <module>webbeans-ee</module>
-        <module>webbeans-tomcat6</module>
-        <module>webbeans-tomcat7</module>
-        <module>webbeans-jms</module>       
         <module>webbeans-jsf</module>
-        <module>webbeans-jsf12</module>
-        <module>webbeans-el10</module>
-        <module>webbeans-resource</module>
-        <module>webbeans-jee5-ejb-resource</module>
         <module>webbeans-osgi</module>
-        <module>webbeans-porting</module>
-        <module>webbeans-test</module>
-        <module>samples</module>
-        <module>webbeans-tck</module>
-        <module>distribution</module>
-        <module>webbeans-doc</module>
     </modules>
 
     <dependencyManagement>
