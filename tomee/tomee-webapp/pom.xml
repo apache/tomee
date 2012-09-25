@@ -148,7 +148,7 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.openwebbeans</groupId>
+      <groupId>org.apache.openejb.openwebbeans</groupId>
       <artifactId>openwebbeans-jsf</artifactId>
       <version>${org.apache.openwebbeans.version}</version>
     </dependency>

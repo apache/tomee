@@ -21,8 +21,8 @@ under the License.
     <description>Sample JSF2 Application</description>
     <parent>
         <artifactId>samples</artifactId>
-        <groupId>org.apache.openwebbeans</groupId>
-        <version>1.1.6-SNAPSHOT</version>
+        <groupId>org.apache.openejb.openwebbeans</groupId>
+        <version>1.1.5-openejb-4.5.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -39,13 +39,13 @@ under the License.
 
         <!-- JSR-299 Impl -->
         <dependency>
-            <groupId>org.apache.openwebbeans</groupId>
+            <groupId>org.apache.openejb.openwebbeans</groupId>
             <artifactId>openwebbeans-impl</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>org.apache.openwebbeans</groupId>
+            <groupId>org.apache.openejb.openwebbeans</groupId>
             <artifactId>openwebbeans-resource</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -58,14 +58,14 @@ under the License.
 
         <!-- JSF Plugin -->
         <dependency>
-            <groupId>org.apache.openwebbeans</groupId>
+            <groupId>org.apache.openejb.openwebbeans</groupId>
             <artifactId>openwebbeans-jsf</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <!-- Web Plugin -->
         <dependency>
-            <groupId>org.apache.openwebbeans</groupId>
+            <groupId>org.apache.openejb.openwebbeans</groupId>
             <artifactId>openwebbeans-web</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -98,7 +98,7 @@ under the License.
 
         <!-- SPI API -->
         <dependency>
-            <groupId>org.apache.openwebbeans</groupId>
+            <groupId>org.apache.openejb.openwebbeans</groupId>
             <artifactId>openwebbeans-spi</artifactId>
             <version>${project.version}</version>
         </dependency>

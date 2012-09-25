@@ -20,12 +20,12 @@
     <modelVersion>4.0.0</modelVersion>
     
     <parent>
-        <groupId>org.apache.openwebbeans</groupId>
+        <groupId>org.apache.openejb.openwebbeans</groupId>
         <artifactId>openwebbeans</artifactId>
         <version>@pom.version@</version>
     </parent>
     
-    <groupId>org.apache.openwebbeans</groupId>
+    <groupId>org.apache.openejb.openwebbeans</groupId>
     <artifactId>openwebbeans-impl-it</artifactId>
     <version>@pom.version@</version>
   
@@ -36,7 +36,7 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.openwebbeans</groupId>
+            <groupId>org.apache.openejb.openwebbeans</groupId>
             <artifactId>openwebbeans-impl</artifactId>
             <version>@pom.version@</version>
         </dependency>

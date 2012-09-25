@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.openwebbeans.test</groupId>
         <artifactId>parent</artifactId>
-        <version>1.1.6-SNAPSHOT</version>
+        <version>1.1.5-openejb-4.5.0</version>
     </parent>
     
     <artifactId>cditest-owb</artifactId>
@@ -53,13 +53,13 @@
         </dependency>
         
         <dependency>
-            <groupId>org.apache.openwebbeans</groupId>
+            <groupId>org.apache.openejb.openwebbeans</groupId>
             <artifactId>openwebbeans-spi</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>org.apache.openwebbeans</groupId>
+            <groupId>org.apache.openejb.openwebbeans</groupId>
             <artifactId>openwebbeans-impl</artifactId>
         </dependency>
 
@@ -96,7 +96,7 @@
             <!-- simulate a unit test when webbeans-web is in the Classpath -->
             <dependencies>
                 <dependency>
-                    <groupId>org.apache.openwebbeans</groupId>
+                    <groupId>org.apache.openejb.openwebbeans</groupId>
                     <artifactId>openwebbeans-web</artifactId>
                 </dependency>
             </dependencies>

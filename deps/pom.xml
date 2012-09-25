@@ -29,5 +29,6 @@
 
   <modules>
     <module>mbean-annotation-api</module>
+    <module>openwebbeans</module>
   </modules>
 </project>

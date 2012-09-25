@@ -20,8 +20,8 @@ under the License.
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <artifactId>samples</artifactId>
-        <groupId>org.apache.openwebbeans</groupId>
-        <version>1.1.6-SNAPSHOT</version>
+        <groupId>org.apache.openejb.openwebbeans</groupId>
+        <version>1.1.5-openejb-4.5.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -51,13 +51,13 @@ under the License.
 
         <!-- JSF Plugin -->
         <dependency>
-            <groupId>org.apache.openwebbeans</groupId>
+            <groupId>org.apache.openejb.openwebbeans</groupId>
             <artifactId>openwebbeans-jsf</artifactId>
         </dependency>
 
         <!-- Web Plugin -->
         <dependency>
-            <groupId>org.apache.openwebbeans</groupId>
+            <groupId>org.apache.openejb.openwebbeans</groupId>
             <artifactId>openwebbeans-web</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -86,7 +86,7 @@ under the License.
 
         <!-- JMS Plugin -->
         <dependency>
-            <groupId>org.apache.openwebbeans</groupId>
+            <groupId>org.apache.openejb.openwebbeans</groupId>
             <artifactId>openwebbeans-jms</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -107,7 +107,7 @@ under the License.
 
         <!-- SPI API -->
         <dependency>
-            <groupId>org.apache.openwebbeans</groupId>
+            <groupId>org.apache.openejb.openwebbeans</groupId>
             <artifactId>openwebbeans-spi</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>

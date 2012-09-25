@@ -22,14 +22,14 @@
     <parent>
         <groupId>org.apache</groupId>
         <artifactId>apache</artifactId>
-        <version>10</version>
+        <version>11</version>
     </parent>
 
-    <groupId>org.apache.openwebbeans</groupId>
+    <groupId>org.apache.openejb.openwebbeans</groupId>
     <artifactId>openwebbeans</artifactId>
     <name>Apache OpenWebBeans</name>
     <packaging>pom</packaging>
-    <version>1.1.6-SNAPSHOT</version>
+    <version>1.1.5-openejb-4.5.0</version>
 
     <url>openwebbeans.apache.org</url>
 
@@ -607,44 +607,44 @@
 
             <!--  this is used for TCK tests        -->
             <dependency>
-                <groupId>org.apache.openwebbeans</groupId>
+                <groupId>org.apache.openejb.openwebbeans</groupId>
                 <artifactId>openwebbeans-impl</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.apache.openwebbeans</groupId>
+                <groupId>org.apache.openejb.openwebbeans</groupId>
                 <artifactId>openwebbeans-porting</artifactId>
                 <version>${project.version}</version>
                 <scope>test</scope>
             </dependency>
 
             <dependency>
-                <groupId>org.apache.openwebbeans</groupId>
+                <groupId>org.apache.openejb.openwebbeans</groupId>
                 <artifactId>openwebbeans-web</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.apache.openwebbeans</groupId>
+                <groupId>org.apache.openejb.openwebbeans</groupId>
                 <artifactId>openwebbeans-jsf</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.apache.openwebbeans</groupId>
+                <groupId>org.apache.openejb.openwebbeans</groupId>
                 <artifactId>openwebbeans-spi</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.apache.openwebbeans</groupId>
+                <groupId>org.apache.openejb.openwebbeans</groupId>
                 <artifactId>openwebbeans-resource</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.apache.openwebbeans</groupId>
+                <groupId>org.apache.openejb.openwebbeans</groupId>
                 <artifactId>openwebbeans-ejb</artifactId>
                 <version>${project.version}</version>
             </dependency>

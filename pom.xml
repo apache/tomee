@@ -143,7 +143,7 @@
     <org.springframework.version>3.1.0.RELEASE</org.springframework.version>
     <junit.version>4.9</junit.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
-    <org.apache.openwebbeans.version>1.1.6-SNAPSHOT</org.apache.openwebbeans.version>
+    <org.apache.openwebbeans.version>1.1.5-openejb-4.5.0</org.apache.openwebbeans.version>
     <geronimo.connector.version>3.1.1</geronimo.connector.version>
     <geronimo-osgi.version>1.1</geronimo-osgi.version>
     <geronimo-javamail_1.4_spec.version>1.7.1</geronimo-javamail_1.4_spec.version>
@@ -1445,7 +1445,7 @@
         <version>${commons-discovery.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.openwebbeans</groupId>
+        <groupId>org.apache.openejb.openwebbeans</groupId>
         <artifactId>openwebbeans-impl</artifactId>
         <version>${org.apache.openwebbeans.version}</version>
         <exclusions>
@@ -1464,12 +1464,12 @@
         </exclusions>
       </dependency>
       <dependency>
-        <groupId>org.apache.openwebbeans</groupId>
+        <groupId>org.apache.openejb.openwebbeans</groupId>
         <artifactId>openwebbeans-jsf</artifactId>
         <version>${org.apache.openwebbeans.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.openwebbeans</groupId>
+        <groupId>org.apache.openejb.openwebbeans</groupId>
         <artifactId>openwebbeans-spi</artifactId>
         <version>${org.apache.openwebbeans.version}</version>
         <exclusions>
@@ -1492,7 +1492,7 @@
         </exclusions>
       </dependency>
       <dependency>
-        <groupId>org.apache.openwebbeans</groupId>
+        <groupId>org.apache.openejb.openwebbeans</groupId>
         <artifactId>openwebbeans-ejb</artifactId>
         <version>${org.apache.openwebbeans.version}</version>
         <exclusions>
@@ -1511,7 +1511,7 @@
         </exclusions>
       </dependency>
       <dependency>
-        <groupId>org.apache.openwebbeans</groupId>
+        <groupId>org.apache.openejb.openwebbeans</groupId>
         <artifactId>openwebbeans-ee</artifactId>
         <version>${org.apache.openwebbeans.version}</version>
         <exclusions>
@@ -1542,13 +1542,13 @@
         </exclusions>
       </dependency>
       <dependency>
-        <groupId>org.apache.openwebbeans</groupId>
+        <groupId>org.apache.openejb.openwebbeans</groupId>
         <artifactId>openwebbeans-web</artifactId>
         <version>${org.apache.openwebbeans.version}</version>
       </dependency>
       <dependency>
         <artifactId>openwebbeans-ee-common</artifactId>
-        <groupId>org.apache.openwebbeans</groupId>
+        <groupId>org.apache.openejb.openwebbeans</groupId>
         <version>${org.apache.openwebbeans.version}</version>
         <exclusions>
           <exclusion>

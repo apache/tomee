@@ -20,8 +20,8 @@ under the License.
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <artifactId>samples</artifactId>
-        <groupId>org.apache.openwebbeans</groupId>
-        <version>1.1.6-SNAPSHOT</version>
+        <groupId>org.apache.openejb.openwebbeans</groupId>
+        <version>1.1.5-openejb-4.5.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -62,7 +62,7 @@ under the License.
 
         <!-- JSR-299 Implementation -->
         <dependency>
-            <groupId>org.apache.openwebbeans</groupId>
+            <groupId>org.apache.openejb.openwebbeans</groupId>
             <artifactId>openwebbeans-impl</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
@@ -94,7 +94,7 @@ under the License.
 
         <!-- SPI API -->
         <dependency>
-            <groupId>org.apache.openwebbeans</groupId>
+            <groupId>org.apache.openejb.openwebbeans</groupId>
             <artifactId>openwebbeans-spi</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
@@ -102,7 +102,7 @@ under the License.
 
         <!-- JSF Plugin -->
         <dependency>
-            <groupId>org.apache.openwebbeans</groupId>
+            <groupId>org.apache.openejb.openwebbeans</groupId>
             <artifactId>openwebbeans-jsf12</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
@@ -110,7 +110,7 @@ under the License.
 
         <!-- EL Plugin -->
         <dependency>
-            <groupId>org.apache.openwebbeans</groupId>
+            <groupId>org.apache.openejb.openwebbeans</groupId>
             <artifactId>openwebbeans-el10</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
@@ -118,7 +118,7 @@ under the License.
 
         <!-- Web Plugin -->
         <dependency>
-            <groupId>org.apache.openwebbeans</groupId>
+            <groupId>org.apache.openejb.openwebbeans</groupId>
             <artifactId>openwebbeans-web</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
@@ -156,14 +156,14 @@ under the License.
 
         <!-- EJB PLugin-->
         <dependency>
-            <groupId>org.apache.openwebbeans</groupId>
+            <groupId>org.apache.openejb.openwebbeans</groupId>
             <artifactId>openwebbeans-ejb</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <!-- Resource  PLugin-->
         <dependency>
-            <groupId>org.apache.openwebbeans</groupId>
+            <groupId>org.apache.openejb.openwebbeans</groupId>
             <artifactId>openwebbeans-resource</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>

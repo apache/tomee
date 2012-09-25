@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.apache.openwebbeans</groupId>
+        <groupId>org.apache.openejb.openwebbeans</groupId>
         <artifactId>openwebbeans</artifactId>
         <version>@project.version@</version>
     </parent>
@@ -208,24 +208,24 @@
                         </dependency>
 
                         <dependency>
-                            <groupId>org.apache.openwebbeans</groupId>
+                            <groupId>org.apache.openejb.openwebbeans</groupId>
                             <artifactId>openwebbeans-spi</artifactId>
                             <version>@project.version@</version>
                         </dependency>
 
                         <dependency>
-                            <groupId>org.apache.openwebbeans</groupId>
+                            <groupId>org.apache.openejb.openwebbeans</groupId>
                             <artifactId>openwebbeans-impl</artifactId>
                             <version>@project.version@</version>
                         </dependency>
                         <dependency>
-                            <groupId>org.apache.openwebbeans</groupId>
+                            <groupId>org.apache.openejb.openwebbeans</groupId>
                             <artifactId>openwebbeans-web</artifactId>
                             <version>@project.version@</version>
                         </dependency>
 
                         <dependency>
-                            <groupId>org.apache.openwebbeans</groupId>
+                            <groupId>org.apache.openejb.openwebbeans</groupId>
                             <artifactId>openwebbeans-tomcat7</artifactId>
                             <version>@project.version@</version>
                         </dependency>
