@@ -83,3 +83,7 @@ This Product also includes software developed by David Heinemeier Hansson.
 This product includes software Copyright University of Southampton IT Innovation Centre, 2009
 (http://www.it-innovation.soton.ac.uk).
 
+=========================================================================
+  - JAnsi (http://http://jansi.fusesource.org/) org.fusesource.jansi:jansi:jar:1.8
+    License: Apache V2
+
