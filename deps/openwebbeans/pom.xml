@@ -1,0 +1,796 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.apache</groupId>
+        <artifactId>apache</artifactId>
+        <version>10</version>
+    </parent>
+
+    <groupId>org.apache.openwebbeans</groupId>
+    <artifactId>openwebbeans</artifactId>
+    <name>Apache OpenWebBeans</name>
+    <packaging>pom</packaging>
+    <version>1.1.6-SNAPSHOT</version>
+
+    <url>openwebbeans.apache.org</url>
+
+    <description>
+        Apache OpenWebBeans is an open source implementation of
+        JSR-299 WebBeans
+    </description>
+
+    <organization>
+        <name>The Apache Software Foundation</name>
+        <url>http://apache.org</url>
+    </organization>
+
+    <inceptionYear>2008</inceptionYear>
+
+    <scm>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/openwebbeans/trunk</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/openwebbeans/trunk</developerConnection>
+        <url>https://svn.apache.org/repos/asf/openwebbeans/trunk</url>
+    </scm>
+
+    <issueManagement>
+        <system>jira</system>
+        <url>http://issues.apache.org/jira/browse/OWB</url>
+    </issueManagement>
+
+    <distributionManagement>
+        <site>
+            <id>apache.openwebbeans.site</id>
+            <url>scp://minotaur.apache.org/www/openwebbeans.apache.org/${project.version}</url>
+        </site>
+    </distributionManagement>
+
+    <properties>
+        <geronimo_jaxws.version>1.0</geronimo_jaxws.version>
+        <geronimo_servlet.version>1.2</geronimo_servlet.version>
+        <dom4j.version>1.6.1</dom4j.version>
+        <geronimo_ejb.version>1.0.2</geronimo_ejb.version>
+        <geronimo_el.version>1.0.2</geronimo_el.version>
+        <scannatation.version>1.0.2</scannatation.version>
+        <geronimo_annotation.version>1.0.1</geronimo_annotation.version>
+        <geronimo_jpa.version>1.1</geronimo_jpa.version>
+        <geronimo_jta.version>1.1.1</geronimo_jta.version>
+        <geronimo_jsp.version>1.0.1</geronimo_jsp.version>
+        <geronimo_cdi.version>1.0</geronimo_cdi.version>
+        <geronimo_atinject.version>1.0</geronimo_atinject.version>
+        <geronimo_interceptor.version>1.0</geronimo_interceptor.version>
+        <geronimo_validation.version>1.1</geronimo_validation.version>
+        <javassist.version>3.12.0.GA</javassist.version>
+        <openejb.version>3.1.4</openejb.version>
+        <myfaces.version>2.0.7</myfaces.version>
+    </properties>
+    
+    <mailingLists>
+        <mailingList>
+            <name>OpenWebBeans Developer List</name>
+            <subscribe>dev-subscribe@openwebbeans.apache.org</subscribe>
+            <unsubscribe>dev-unsubscribe@openwebbeans.apache.org</unsubscribe>
+            <post>dev@openwebbeans.apache.org</post>
+            <archive>http://mail-archives.apache.org/mod_mbox/openwebbeans-dev/</archive>
+        </mailingList>
+        <mailingList>
+            <name>OpenWebBeans User List</name>
+            <subscribe>user-subscribe@openwebbeans.apache.org</subscribe>
+            <unsubscribe>user-unsubscribe@openwebbeans.apache.org</unsubscribe>
+            <post>user@openwebbeans.apache.org</post>
+            <archive>http://mail-archives.apache.org/mod_mbox/openwebbeans-user/</archive>
+        </mailingList>
+        <mailingList>
+            <name>OpenWebBeans Commits List</name>
+            <subscribe>commits-subscribe@openwebbeans.apache.org</subscribe>
+            <unsubscribe>commits-unsubscribe@openwebbeans.apache.org</unsubscribe>
+            <post>commits@openwebbeans.apache.org</post>
+            <archive>http://mail-archives.apache.org/mod_mbox/openwebbeans-commits/</archive>
+        </mailingList>
+        <mailingList>
+            <name>OpenWebBeans Private List</name>
+            <subscribe>private-subscribe@openwebbeans.apache.org</subscribe>
+            <unsubscribe>private-unsubscribe@openwebbeans.apache.org</unsubscribe>
+            <post>private@openwebbeans.apache.org</post>
+        </mailingList>
+    </mailingLists>
+
+    <developers>
+        <developer>
+            <id>gerdogdu</id>
+            <name>Gurkan Erdogdu</name>
+            <email>gerdogdu at apache dot org</email>
+            <roles>
+                <role>PMC</role>
+                <role>Chair</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>bergmark</id>
+            <name>Joe Bergmark</name>
+            <email>bergmark at gmail dot com</email>
+            <roles>
+                <role>PMC</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>kevan</id>
+            <name>Kevan Miller</name>
+            <email>kevan dot miller at gmail dot com</email>
+            <roles>
+                <role>PMC</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>matzew</id>
+            <name>Matthias Wessendorf</name>
+            <email>matzew at apache dot org</email>
+            <organization>Oracle, Germany</organization>
+            <organizationUrl>http://www.oracle.com/</organizationUrl>
+            <roles>
+                <role>Committer,Mentor</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>covener</id>
+            <name>Eric Covener</name>
+            <email>covener at gmail dot com</email>
+            <roles>
+                <role>PMC</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>struberg</id>
+            <name>Mark Struberg</name>
+            <email>struberg at yahoo dot de</email>
+            <roles>
+                <role>PMC</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>dblevins</id>
+            <name>David Blevins</name>
+            <email>david dot blevins at visi dot com</email>
+            <roles>
+                <role>PMC</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>gpetracek</id>
+            <name>Gerhard Petracek</name>
+            <email>gpetracek at apache dot org</email>
+            <organization>IRIAN.at, Austria</organization>
+            <organizationUrl>http://www.irian.at/</organizationUrl>
+            <roles>
+                <role>PMC</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+        <developer>
+            <id>kelapure</id>
+            <name>Rohit Kelapure</name>
+            <email>kelapure at apache dot org</email>
+            <url>http://www.linkedin.com/in/rohitkelapure</url>
+            <organization>IBM</organization>
+            <organizationUrl>http://wasdynacache.blogspot.com</organizationUrl>
+            <roles>
+                <role>Committer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>rederpj</id>
+            <name>Paul J. Reder</name>
+            <email>rederpj at apache dot org</email>
+            <roles>
+                <role>Committer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>djencks</id>
+            <name>David Jencks</name>
+            <email>djencks at apache dot org</email>
+            <roles>
+                <role>PMC</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>martinkoci</id>
+            <name>Martin Koci</name>
+            <email>martinkoci at apache dot org</email>
+            <timezone>+1</timezone>
+            <roles>
+              <role>committer</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <contributors>
+        <contributor>
+            <name>Adonis Raduca</name>
+            <email>adonis.raduca at codebeat.ro</email>
+            <roles>
+                <role>Logo-creator</role>
+            </roles>
+        </contributor>
+    </contributors>
+
+    <build>
+        <defaultGoal>install</defaultGoal>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-remote-resources-plugin</artifactId>
+                    <version>1.2.1</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>process</goal>
+                            </goals>
+                            <configuration>
+                                <resourceBundles>
+                                    <resourceBundle>org.apache:apache-jar-resource-bundle:1.4</resourceBundle>
+                                </resourceBundles>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>2.3.2</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Specification-Title>${project.name}</Specification-Title>
+                            <Specification-Version>${project.version}</Specification-Version>
+                            <Specification-Vendor>${project.organization.name}</Specification-Vendor>
+                            <Implementation-Title>${project.name}</Implementation-Title>
+                            <Implementation-Version>${project.version}</Implementation-Version>
+                            <Implementation-Vendor>${project.organization.name}</Implementation-Vendor>
+                            <Implementation-Vendor-Id>org.apache</Implementation-Vendor-Id>
+                        </manifestEntries>
+                        <!-- Adding Manifest File -->
+                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>2.1.0</version>
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <supportedProjectTypes>
+                        <supportedProjectType>jar</supportedProjectType>
+                        <supportedProjectType>bundle</supportedProjectType>
+                        <supportedProjectType>war</supportedProjectType>
+                    </supportedProjectTypes>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Bundle-Version>${project.version}</Bundle-Version>
+                        <Export-Package>!org.apache.webbeans.internal.*,org.apache.webbeans.*;version="${project.version}"</Export-Package>
+                        <Private-Package>org.apache.webbeans.internal.*</Private-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-remote-resources-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.9</version>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                        <include>**/*TestCase.java</include>
+                        <include>**/*Tests*.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+            <!-- force generating a *-sources.jar when building a jar, e.g. for a snapshot release -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.1.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>2.7</version>
+                <executions>
+                  <execution>
+                    <id>verify-style</id>
+                    <phase>verify</phase>
+                    <goals><goal>check</goal></goals>
+                  </execution>
+                </executions>
+                <configuration>
+                    <configLocation>openwebbeans/owb-checks-default.xml</configLocation>
+                    <headerLocation>openwebbeans/owb-header.txt</headerLocation>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.openwebbeans.build-tools</groupId>
+                        <artifactId>checkstyle-rules</artifactId>
+                        <version>1.2</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.rat</groupId>
+                <artifactId>apache-rat-plugin</artifactId>
+                <version>0.7</version>
+                <configuration>
+                    <includes>
+                        <include>src/**/*</include>
+                        <include>pom.xml</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/*/MANIFEST.MF</exclude>
+                        <exclude>.git</exclude>
+                        <exclude>.gitignore</exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.4</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>cim</report>
+                            <report>index</report>
+                            <report>issue-tracking</report>
+                            <report>mailing-list</report>
+                            <report>project-team</report>
+                            <report>scm</report>
+                            <report>summary</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.8</version>
+                <configuration>
+                    <quiet>true</quiet>
+                    <links>
+                        <link>http://download.oracle.com/javaee/6/api/</link>
+                        <link>http://download.oracle.com/javase/6/docs/api/</link>
+                        <link>http://myfaces.apache.org/core20/myfaces-api/apidocs/</link>
+                    </links>
+                </configuration>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>javadoc</report>
+                            <report>test-javadoc</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
+
+    <modules>
+        <module>webbeans-spi</module>
+        <module>webbeans-impl</module>
+        <module>webbeans-ee-common</module>
+        <module>webbeans-web</module>
+        <module>webbeans-ejb</module>
+        <module>webbeans-ee</module>
+        <module>webbeans-tomcat6</module>
+        <module>webbeans-tomcat7</module>
+        <module>webbeans-jms</module>       
+        <module>webbeans-jsf</module>
+        <module>webbeans-jsf12</module>
+        <module>webbeans-el10</module>
+        <module>webbeans-resource</module>
+        <module>webbeans-jee5-ejb-resource</module>
+        <module>webbeans-osgi</module>
+        <module>webbeans-porting</module>
+        <module>webbeans-test</module>
+        <module>samples</module>
+        <module>webbeans-tck</module>
+        <module>distribution</module>
+        <module>webbeans-doc</module>
+    </modules>
+
+    <dependencyManagement>
+
+        <dependencies>
+
+            <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-jaxws_2.1_spec</artifactId>
+                <version>${geronimo_jaxws.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-servlet_2.5_spec</artifactId>
+                <version>${geronimo_servlet.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>dom4j</groupId>
+                <artifactId>dom4j</artifactId>
+                <version>${dom4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-ejb_3.1_spec</artifactId>
+                <version>${geronimo_ejb.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-el_2.2_spec</artifactId>
+                <version>${geronimo_el.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-validation_1.0_spec</artifactId>
+                <version>${geronimo_validation.version}</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>org.apache.myfaces.core</groupId>
+                <artifactId>myfaces-api</artifactId>
+                <version>${myfaces.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.myfaces.core</groupId>
+                <artifactId>myfaces-impl</artifactId>
+                <version>${myfaces.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javassist</groupId>
+                <artifactId>javassist</artifactId>
+                <version>${javassist.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.xbean</groupId>
+                <artifactId>xbean-finder</artifactId>
+                <version>3.7</version>
+            </dependency>
+
+            <dependency>
+                <groupId>net.sf.scannotation</groupId>
+                <artifactId>scannotation</artifactId>
+                <version>${scannatation.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>javassist</groupId>
+                        <artifactId>javassist</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.8.2</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-annotation_1.1_spec</artifactId>
+                <version>${geronimo_annotation.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.osgi</groupId>
+                <artifactId>org.osgi.core</artifactId>
+                <version>4.2.0</version>
+                <scope>provided</scope>
+            </dependency>
+            
+
+            <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-jpa_2.0_spec</artifactId>
+                <version>${geronimo_jpa.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-interceptor_1.1_spec</artifactId>
+                <version>${geronimo_interceptor.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-jta_1.1_spec</artifactId>
+                <version>${geronimo_jta.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-jsp_2.1_spec</artifactId>
+                <version>${geronimo_jsp.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-jcdi_1.0_spec</artifactId>
+                <version>${geronimo_cdi.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-atinject_1.0_spec</artifactId>
+                <version>${geronimo_atinject.version}</version>
+            </dependency>
+
+            <!--  this is used for TCK tests        -->
+            <dependency>
+                <groupId>org.apache.openwebbeans</groupId>
+                <artifactId>openwebbeans-impl</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.openwebbeans</groupId>
+                <artifactId>openwebbeans-porting</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.openwebbeans</groupId>
+                <artifactId>openwebbeans-web</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.openwebbeans</groupId>
+                <artifactId>openwebbeans-jsf</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.openwebbeans</groupId>
+                <artifactId>openwebbeans-spi</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.openwebbeans</groupId>
+                <artifactId>openwebbeans-resource</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.openwebbeans</groupId>
+                <artifactId>openwebbeans-ejb</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- CDI Testing Framework -->
+            <dependency>
+                <groupId>org.apache.openwebbeans.test</groupId>
+                <artifactId>cditest</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.openwebbeans.test</groupId>
+                <artifactId>cditest-owb</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.openejb</groupId>
+                <artifactId>openejb-core</artifactId>
+                <version>${openejb.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.openejb</groupId>
+                <artifactId>openejb-tomcat-catalina</artifactId>
+                <version>${openejb.version}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+
+    <profiles>
+        <profile>
+            <id>reporting</id>
+            <activation>
+                <property>
+                    <name>skipReports</name>
+                    <value>!true</value>
+                </property>
+            </activation>
+            <reporting>
+                <plugins>
+                    <!-- Apache plugins in alphabetical order -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jxr-plugin</artifactId>
+                        <version>2.3</version>
+                        <configuration>
+                            <inputEncoding>
+                                ${project.build.sourceEncoding}
+                            </inputEncoding>
+                            <outputEncoding>
+                                ${project.build.sourceEncoding}
+                            </outputEncoding>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-pmd-plugin</artifactId>
+                        <version>2.5</version>
+                        <configuration>
+                            <targetJdk>1.5</targetJdk>
+                            <rulesets>
+                                <ruleset>
+                                    http://svn.codehaus.org/mojo/trunk/mojo/mojo-parent/src/main/config/pmd/mojo_rules.xml
+                                </ruleset>
+                            </rulesets>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>
+                            maven-project-info-reports-plugin
+                        </artifactId>
+                        <version>2.4</version>
+                        <reportSets>
+                            <reportSet>
+                                <reports>
+                                    <report>cim</report>
+                                    <report>dependencies</report>
+                                    <report>dependency-convergence</report>
+                                    <report>dependency-management</report>
+                                    <report>index</report>
+                                    <report>issue-tracking</report>
+                                    <report>license</report>
+                                    <report>mailing-list</report>
+                                    <report>plugin-management</report>
+                                    <report>project-team</report>
+                                    <report>scm</report>
+                                    <report>summary</report>
+                                </reports>
+                            </reportSet>
+                        </reportSets>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-report-plugin</artifactId>
+                        <version>2.9</version>
+                        <reportSets>
+                            <reportSet>
+                                <reports>
+                                    <report>report</report>
+                                </reports>
+                            </reportSet>
+                        </reportSets>
+                    </plugin>
+                    <!-- Codehaus plugins in alphabetical order -->
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>cobertura-maven-plugin</artifactId>
+                        <version>2.5.1</version>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>taglist-maven-plugin</artifactId>
+                        <version>2.4</version>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>findbugs-maven-plugin</artifactId>
+                        <version>2.3.2</version>
+                        <configuration>
+                            <threshold>Low</threshold>
+                        </configuration>
+                    </plugin>
+
+                </plugins>
+            </reporting>
+
+        </profile>
+
+
+        <profile>
+            <id>jsr330-tck</id>
+            <modules>
+                <module>atinject-tck</module>
+            </modules>
+        </profile>
+
+        <profile>
+            <id>doc</id>
+            <modules>
+                <module>webbeans-doc</module>
+            </modules>
+        </profile>
+
+    </profiles>
+</project>

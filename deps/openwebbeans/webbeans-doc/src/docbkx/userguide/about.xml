@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <!--
+        Licensed to the Apache Software Foundation (ASF) under one or more
+        contributor license agreements. See the NOTICE file distributed with
+        this work for additional information regarding copyright ownership. The
+        ASF licenses this file to you under the Apache License, Version 2.0 (the
+        "License"); you may not use this file except in compliance with the
+        License. You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable
+        law or agreed to in writing, software distributed under the License is
+        distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+        KIND, either express or implied. See the License for the specific
+        language governing permissions and limitations under the License.
+    -->
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" 
+    "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd"[
+    
+    <!ENTITY % entities SYSTEM "../entities.ent" >
+    %entities;
+]>
+
+<chapter>
+    <chapterinfo id="chapter.about">
+        <keywordset>
+            <keyword>About</keyword>
+        </keywordset>
+        <authorinitials>jlmonteiro</authorinitials>
+    </chapterinfo>
+
+    <title>About OpenWebBeans</title>
+
+    <!-- Begin of Index-Span for chapter-wide index entry -->
+    <indexterm class="startofrange" id="idx.chapter.about">
+        <primary>About</primary>
+    </indexterm>
+
+    <epigraph>
+        <para>
+            This chapter explains what is &productname; and team.
+        </para>
+    </epigraph>
+
+    <bridgehead renderas="sect3">Subtitle formatting</bridgehead>
+
+
+    <para>OpenWebBeans is an ASL-License implementation of the JSR-299, Contexts
+        and Dependency Injection for the Java EE platform.</para>
+
+    <para>
+        The specification can be found here:
+        <ulink url="http://www.jcp.org/en/jsr/detail?id=299">http://www.jcp.org/en/jsr/detail?id=299</ulink>
+        .
+    </para>
+
+    <indexterm class="endofrange" startref="idx.chapter.about"></indexterm>
+
+    <section>
+        <title>The team</title>
+
+        <para>The following team members have been developing the OpenWebBeans.</para>
+
+        <table>
+            <title>Team composition.</title>
+            <tgroup cols="4" align="left" colsep="1" rowsep="1">
+                <colspec colname="id" colwidth="1*" align="left" />
+                <colspec colname="name" colwidth="2*" align="left" />
+                <colspec colname="email" colwidth="2*" align="left" />
+                <colspec colname="roles" colwidth="1*" align="left" />
+                    
+                <thead>
+                    <row>
+                        <!-- no way to change bg color without PI -->
+                        <?dbhtml bgcolor="#E0E0E0" ?>
+                        <?dbfo bgcolor="#E0E0E0" ?>
+                        
+                        <entry>Id</entry>
+                        <entry>Name</entry>
+                        <entry>Email</entry>
+                        <entry>Roles</entry>
+                    </row>
+                </thead>
+                <tbody>
+                    <row>
+                        <entry><code>gerdogdu</code></entry>
+                        <entry>Gurkan Erdogdu</entry>
+                        <entry><code>gerdogdu at apache dot org</code></entry>
+                        <entry>PMC Chair</entry>
+                    </row>
+                    <row>
+                        <entry><code>kevan</code></entry>
+                        <entry>Kevan Miller</entry>
+                        <entry><code>kevan dot miller at gmail dot com</code></entry>
+                        <entry>PMC</entry>
+                    </row>
+                    <row>
+                        <entry><code>struberg</code></entry>
+                        <entry>Mark Struberg</entry>
+                        <entry><code>struberg at yahoo dot de</code></entry>
+                        <entry>PMC</entry>
+                    </row>
+                    <row>
+                        <entry><code>dblevins</code></entry>
+                        <entry>David Blevins</entry>
+                        <entry><code>david dot blevins at visi dot com</code></entry>
+                        <entry>PMC</entry>
+                    </row>
+                    <row>
+                        <entry><code>bergmark</code></entry>
+                        <entry>Joe Bergmark</entry>
+                        <entry><code>bergmark at gmail dot com</code></entry>
+                        <entry>PMC</entry>
+                    </row>
+                    <row>
+                        <entry><code>covener</code></entry>
+                        <entry>Eric Covener</entry>
+                        <entry><code>covener at gmail dot com</code></entry>
+                        <entry>PMC</entry>
+                    </row>
+                    <row>
+                        <entry><code>matzew</code></entry>
+                        <entry>Matthias Wessendorf</entry>
+                        <entry><code>matzew at apache dot org</code></entry>
+                        <entry>Committer</entry>
+                    </row>
+                    <row>
+                        <entry><code>gpetracek</code></entry>
+                        <entry>Gerhard Petracek</entry>
+                        <entry><code>gpetracek at apache dot org</code></entry>
+                        <entry>PMC</entry>
+                    </row>
+                    <row>
+                        <entry><code>kelapure</code></entry>
+                        <entry>Rohit Kelapure</entry>
+                        <entry><code>kelapure at apache dot org</code></entry>
+                        <entry>Committer</entry>
+                    </row>
+                    <row>
+                        <entry><code>rederpj</code></entry>
+                        <entry>Paul J. Reder</entry>
+                        <entry><code>rederpj at apache dot org</code></entry>
+                        <entry>Committer</entry>
+                    </row>
+                </tbody>
+            </tgroup>
+
+        </table>        
+        
+    </section>
+
+</chapter>

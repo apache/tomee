@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<head>
+  <title>OpenWebBeans :: Examples :: Reservation</title>
+  <link type="text/css" rel="stylesheet" href="#{facesContext.externalContext.requestContextPath}/main.css"/>
+</head>
+
+<body>
+
+<ui:composition template="/admin/menu.xhtml">
+
+    <ui:define name="caption">
+        <h:outputText value="List Hotels" styleClass="captionTitle" />
+    </ui:define>
+
+    <ui:define name="body">
+
+        <h:form id="form">
+
+            <h:dataTable id="dt" cellpadding="5" value="#{adminListBean.hotels}" binding="#{adminListBean.model}" var="model" styleClass="table dataTable" rowClasses="oddRow,evenRow">
+
+                <h:column id="dt1">
+                    <f:facet name="header">
+                        <h:outputText id="col1" value="Name" />
+                    </f:facet>
+
+                    <h:outputText id="col11" value="#{model.name}" />
+                </h:column>
+
+                <h:column id="dt2">
+                    <f:facet name="header">
+                        <h:outputText id="col2" value="Star" />
+                    </f:facet>
+
+                    <h:outputText id="col22" value="#{model.star}" />
+                </h:column>
+
+                <h:column id="dt5">
+                    <h:commandLink action="#{adminListBean.getForUpdate}" value="Show Detail" />
+                </h:column>
+
+                <h:column id="dt6">
+                    <h:commandLink action="#{adminListBean.delete}" value="Delete" />
+                </h:column>
+
+
+            </h:dataTable>
+
+        </h:form>
+
+        <div class="caption">
+            <h:outputText value="Hotel Details" styleClass="captionTitle" />
+        </div>
+
+        <h:form>
+            <h:panelGrid columns="2" styleClass="table" cellspacing="2" cellpadding="5" columnClasses="leftColumns,rightColumns">
+
+                <h:outputLabel for="name">
+                    <h:outputText value="Name" />
+                </h:outputLabel>
+
+                <h:inputText  value="#{adminListBean.selected.name}" id="name" required="true" requiredMessage="Name is required!"/>
+
+                <h:outputLabel for="star">
+                    <h:outputText value="Star" />
+                </h:outputLabel>
+
+                <h:inputText  value="#{adminListBean.selected.star}" id="star" required="true" requiredMessage="Star is required!" converterMessage="Star must between [1-5]" validatorMessage="Star must between [1-5]">
+                    <f:validateLongRange maximum="5" minimum="1"/>
+                </h:inputText>
+
+                <h:outputLabel for="city">
+                    <h:outputText value="City" id="cityCol" />
+                </h:outputLabel>
+
+                <h:inputText  value="#{adminListBean.selected.city}" id="city" required="true" requiredMessage="City is required">
+                </h:inputText>
+
+                <h:outputLabel for="country">
+                    <h:outputText id="countryCol" value="Country" />
+                </h:outputLabel>
+
+                <h:inputText  value="#{adminListBean.selected.country}" id="country" required="true" requiredMessage="Country name is required!">
+                </h:inputText>
+
+                <f:verbatim></f:verbatim>
+                <h:commandButton action="#{adminListBean.update}" value="Update" />
+
+            </h:panelGrid>
+        </h:form>
+
+    </ui:define>
+</ui:composition>
+</body>
+</html>

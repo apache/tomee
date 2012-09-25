@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--
+	
+	Licensed to the Apache Software Foundation (ASF) under one or more
+	contributor license agreements. See the NOTICE file distributed with
+	this work for additional information regarding copyright ownership.
+	The ASF licenses this file to You under the Apache License, Version
+	2.0 (the "License"); you may not use this file except in compliance
+	with the License. You may obtain a copy of the License at
+	
+	http://www.apache.org/licenses/LICENSE-2.0 Unless required by
+	applicable law or agreed to in writing, software distributed under the
+	License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+	CONDITIONS OF ANY KIND, either express or implied. See the License for
+	the specific language governing permissions and limitations under the
+	License.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<head>
+  <title>OpenWebBeans :: Examples :: Telephone EJB Sample</title>
+</head>
+
+<body>
+  
+  <div id="container">
+    <div id="content">
+		<h:messages globalOnly="false" showSummary="true" infoStyle="font-weight:bold;color:red;"></h:messages>
+		
+		<h3>OpenEJB, Tomcat and OpenWebBeans Telephone Directory Sample</h3>
+		
+		<h:form id="form">
+						
+			<div style="border:1px solid black;margin: 25px 75px;">
+			
+				<h:panelGrid columns="2">
+					
+					<h:outputLabel for="text">
+						<h:outputText value="Name : "></h:outputText>
+					</h:outputLabel>
+					<h:inputText id="text" value="#{operation.name}" required="true" requiredMessage="Please give a name!"></h:inputText>
+
+					<h:outputLabel for="surname">
+						<h:outputText value="Surname : "></h:outputText>
+					</h:outputLabel>
+					<h:inputText id="surname" value="#{operation.surname}" required="true" requiredMessage="Please give a surname!"></h:inputText>
+
+					<h:outputLabel for="telephone">
+						<h:outputText value="Telephone : "></h:outputText>
+					</h:outputLabel>
+					<h:inputText id="telephone" value="#{operation.telephone}" required="true" requiredMessage="Please give a telephone!"></h:inputText>
+																				
+					<h:outputLabel for="chk">
+						<h:outputText value="Business Telephone : "></h:outputText>
+					</h:outputLabel>
+					<h:selectBooleanCheckbox value="#{operation.business}" />
+										
+					<h:commandButton action="#{operation.addRecord}" value="Add New Record"></h:commandButton>
+					<h:commandButton action="#{operation.showList}" value="Show All Records"></h:commandButton>
+					
+				</h:panelGrid>												
+			</div>
+			
+			<div>
+				<h3>Telephone Lists</h3>
+				<h:dataTable value="#{operation.records}" var="record" cellspacing="5">
+
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="Record Id" />
+						</f:facet>
+						<h:outputText value="#{record.id}" />
+					</h:column>
+					
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="Name" />
+						</f:facet>
+						<h:outputText value="#{record.name}" />
+					</h:column>
+					
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="Surname" />
+						</f:facet>
+						<h:outputText value="#{record.surname}" />
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="Telephone" />
+						</f:facet>
+						<h:outputText value="#{record.number}" />
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="Business" />
+						</f:facet>
+						<h:selectBooleanCheckbox value="#{record.business}" />
+					</h:column>
+					
+									
+				</h:dataTable>
+			
+			</div>
+			
+		</h:form>
+	    </div>
+    
+  </div>
+</body>
+</html>

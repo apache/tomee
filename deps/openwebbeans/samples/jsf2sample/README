@@ -1,0 +1,26 @@
+INTRODUCTION
+---------------------
+This examples shows the usage of MyFaces JSF2 + OpenWebBeans in Tomcat 7.
+
+HOW TO
+--------------------
+1* Checkout http://svn.apache.org/repos/asf/tomcat/tc7.0.x/tags/TOMCAT_7_0_0_RC4/  and run "ant" in trunk
+   This will create a Tomcat 7.
+2* Update Tomcat conf/tomcat-users.xml
+   - Updates "conf/tomcat-users.xml" with the following content,
+    <role rolename="manager-script"/>
+    <user username="admin" password="" roles="manager-script"/>
+
+   This will be necessary to run "mvn tomcat:deploy" command.
+
+3* Run "mvn clean tomcat:deploy"
+   This command will deploy the application into Tomcat.
+
+4* Open Web Browser and write
+   - http://localhost:8080/jsf2sample/
+     Shows the AJAX functionality of JSF2 specification.
+   - http://localhost:8080/jsf2sample/conversation.jsf
+     Show the usage of JSF conversations.
+
+5* Enjoy!
+

@@ -1,0 +1,70 @@
+~~ Licensed to the Apache Software Foundation (ASF) under one or more
+~~ contributor license agreements. See the NOTICE file distributed with this
+~~ work for additional information regarding copyright ownership. The ASF
+~~ licenses this file to You under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance with the License.
+~~ You may obtain a copy of the License at
+~~ http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+~~ or agreed to in writing, software distributed under the License is
+~~ distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied. See the License for the specific language
+~~ governing permissions and limitations under the License.
+Apache OpenWebBeans Configuration
+
+  Since OpenWebBeans is built in a modular fashion, we need a way to activate
+  different implementations for a SPI Service by just dropping a JAR file
+  into the classpath. This is where the OpenWebBeans configuration mechanism
+  kicks in.
+
+* Basis configuration mechanism
+
+  When the OpenWebBeans container starts, it parses the whole classpath for
+  his configuration data which are contained in files with the name
+
+-----------------
+META-INF/openwebbeans/openwebbeans.properties
+-----------------
+
+  Each of this files have a single property with the name
+
+-----------------
+configuration.ordinal=10
+-----------------
+
+  The configured number of the configuration.ordinal represents the order
+  of which the properties gets stacked up. After reading all openwebbeans.properties
+  files, we sort them according to their configuration.ordinal in ascending manner.
+
+  If no configuration.ordinal is given, a default value of 100 is assumed.
+
+  As last step, all the property values will get merged into a single
+  Properties instance in the order of their configuration.ordinal. As
+  a result, properties from files with higher configuration.ordinal will
+  override properties with the same name from a configuration file with lower
+  configuration.ordinal.
+
+  The final value for a specific property will be used to determine the SPI implementation class.
+
+
+* Configure your own SPI implementations
+
+  If you, for example, like to provide your own ScannerService, then create a class
+  which implements the org.apache.webbeans.spi.ScannerService interface.
+
+  For using your own ScannerService instead of the default one, just add a
+
+-----------------
+META-INF/openwebbeans/openwebbeans.properties
+-----------------
+
+  file to your JAR and add the following line:
+
+-----------------
+# this is the sample configuration for using an own ScannerService
+
+# use a higher configuration.ordinal than the provided configuration files
+configuration.ordinal=101
+
+# Sample implementation of org.apache.webbeans.corespi.ScannerService.
+org.apache.webbeans.spi.ScannerService=com.mycompany.myproject.MySpecialScannerService
+-----------------

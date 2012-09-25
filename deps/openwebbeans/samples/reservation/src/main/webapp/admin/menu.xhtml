@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<head>
+  <title>OpenWebBeans :: Examples :: Reservation</title>
+  <link type="text/css" rel="stylesheet" href="#{facesContext.externalContext.requestContextPath}/main.css"/>
+</head>
+
+<body>
+
+<div id="main">
+
+    <h:messages globalOnly="false" showSummary="true" infoClass="message infoMessage" errorClass="message errorMessage"></h:messages>
+
+    <div class="logout">
+
+        <h:outputLink value="#{facesContext.externalContext.requestContextPath}/admin/menu.xhtml" style="float:left;">
+            <h:outputText value="Home Page" />
+        </h:outputLink>
+
+        <h:form style="margin-left:10px;float:left;">
+            <h:commandLink action="#{logoutBean.logout}" value="Logout"/>
+        </h:form>
+    </div>
+
+
+    <div class="caption">
+        <h:outputText value="Welcome, "/>
+        <h:outputText value="#{sessionTracker.user.name} #{sessionTracker.user.surname}" style="color:red;font-weight:bold;"/>
+
+        <br/>
+
+        <h:outputText value="Last Login Date : "/>
+        <h:outputText value="#{sessionTracker.user.lastLoginDate}" style="color:red;font-weight:bold;"/>
+
+        <ul style="display: block;margin-top: 15px;clear: both;">
+            <h:outputLink value="#{facesContext.externalContext.requestContextPath}/admin/defineHotel.xhtml" styleClass="menuItem">
+                <h:outputText value="Define New Hotel" />
+            </h:outputLink>
+
+            <h:outputLink value="#{facesContext.externalContext.requestContextPath}/admin/listHotels.xhtml" styleClass="menuItem">
+                <h:outputText value="List Hotels" />
+            </h:outputLink>
+
+            <h:outputLink value="#{facesContext.externalContext.requestContextPath}/admin/listUsers.xhtml" styleClass="menuItem">
+                <h:outputText value="Show User Reservations" />
+            </h:outputLink>
+        </ul>
+
+        <ui:insert name="caption"></ui:insert>
+
+    </div>
+
+    <ui:insert name="body"></ui:insert>
+
+</div>
+</body>
+</html>

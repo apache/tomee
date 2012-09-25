@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <!--
+        Licensed to the Apache Software Foundation (ASF) under one or more
+        contributor license agreements. See the NOTICE file distributed with
+        this work for additional information regarding copyright ownership. The
+        ASF licenses this file to you under the Apache License, Version 2.0 (the
+        "License"); you may not use this file except in compliance with the
+        License. You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable
+        law or agreed to in writing, software distributed under the License is
+        distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+        KIND, either express or implied. See the License for the specific
+        language governing permissions and limitations under the License.
+    -->
+<!DOCTYPE preface PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" 
+    "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd"[
+    
+    <!ENTITY % entities SYSTEM "../entities.ent" >
+    %entities;
+]>
+
+<preface>
+	<title>Preface</title>
+	<para>
+		In this guide we merged all kind of information needed to
+		configure parts of the
+		&productnamecomplete;
+		(from now on simply called
+		&productname;
+		throughout the rest of this document). A comprehensive index has
+		been provided which should help you to quickly find the
+		information you are looking for. We have also included a
+		glossary that contains explanations of terms that are mentioned
+		throughout this guide.
+	</para>
+	<para>
+		We hope that this user guide helps you to increase your
+		knowledge and understanding of
+		&productname;. We are sure that it will make development of applications
+		based on
+		&productname;
+		a lot easier for you. Feedback is always welcome.
+	</para>
+	
+	<bridgehead renderas="sect2">Conventions used in this document</bridgehead>
+	<bridgehead renderas="sect3">Typography</bridgehead>
+	<para>
+		the following typographical conventions are used in this
+		document:
+	</para>
+	<variablelist>
+		<varlistentry>
+			<term>
+				<database>database</database>
+			</term>
+			<listitem>
+				<para>
+					used for database elements (tables, fields, keys,
+					views,...)
+				</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>
+				<classname>class</classname>
+				,
+				<interfacename>interface</interfacename>
+				,
+				<methodname>method</methodname>
+			</term>
+			<listitem>
+				<para>
+					used for (Java) classes, interfaces and methods
+				</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>
+				<sgmltag class="emptytag">tag</sgmltag>
+				,
+				<sgmltag class="attribute">attribute</sgmltag>
+				,
+				<sgmltag class="attvalue">value</sgmltag>
+			</term>
+			<listitem>
+				<para>
+					used for XML elements (tags, attributes and values)
+				</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>
+				<property>
+					property
+					<replaceable>N</replaceable>
+				</property>
+				,
+				<parameter>
+					parameter
+					<replaceable>N</replaceable>
+				</parameter>
+			</term>
+			<listitem>
+				<para>
+					used for property- and parameternames. The '
+					<replaceable>N</replaceable>
+					' (or other literal) is a variable part of the name,
+					which usually stands for a running number.
+				</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>
+				<literal>value</literal>
+			</term>
+			<listitem>
+				<para>
+					used for defined values. This can be a default value
+					an example or the value of a constant.
+				</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>
+				<code>bean name="myBean"</code>
+			</term>
+			<listitem>
+				<para>used for inline sourcecode examples</para>
+			</listitem>
+		</varlistentry>
+	</variablelist>
+    <para>
+    	<programlisting language="xml"><![CDATA[<bean name="beanName" class="fqn.of.the.bean">
+	<property name="beanPropertyName" ref="with its value"/>
+</bean>]]></programlisting>
+    used for longer source code examples
+    </para>
+	<note><para>Indicates a tip, suggestion or general note</para></note>
+	<warning><para>Indicates a warning</para></warning>
+</preface>

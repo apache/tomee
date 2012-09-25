@@ -1,0 +1,84 @@
+~~ Licensed to the Apache Software Foundation (ASF) under one or more
+~~ contributor license agreements. See the NOTICE file distributed with this
+~~ work for additional information regarding copyright ownership. The ASF
+~~ licenses this file to You under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance with the License.
+~~ You may obtain a copy of the License at
+~~ http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+~~ or agreed to in writing, software distributed under the License is
+~~ distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied. See the License for the specific language
+~~ governing permissions and limitations under the License.
+Contributing to OpenWebBeans
+
+  We are always looking for new contributors to the project. 
+
+
+* Mailing Lists
+
+  Please join our discussions about the project in our mailing lists by
+  sending an informal email to
+
+----------------
+user-subscribe@openwebbeans.apache.org
+----------------
+
+  for any usage specific questions, and
+
+----------------
+dev-subscribe@openwebbeans.apache.org
+----------------
+
+  for bugs and feature discussions.
+
+
+* Issue Tracking
+
+  Bug reports and feature requests will be maintained via JIRA at
+
+  {{{https://issues.apache.org/jira/browse/OWB}https://issues.apache.org/jira/browse/OWB}}
+
+
+* Source Repository
+
+  The sources of Apache OpenWebBeans are maintained in the Apache Software Foundation
+  Subversion repository.
+
+  The sources can be checked out read only with the following command:
+
+----------------
+svn co http://svn.apache.org/repos/asf/openwebbeans/trunk openwebbeans
+----------------
+
+  If you have commit rights, then you should use
+
+----------------
+svn co https://svn.apache.org/repos/asf/openwebbeans/trunk openwebbeans
+----------------
+
+
+* Building OpenWebBeans
+
+  Apache OpenWebBeans can be built by using Apache Maven. Just go into the
+  source directory and execute
+
+----------------
+mvn clean install
+----------------
+
+  The following maven profiles exist in our build to trigger additional
+  build steps and configuration:
+
+  * tck - for executing the JSR-299 standalone TCK
+
+  * jsr330-tck - for executing the JSR-330 TCK
+
+  * doc - for building the documentation PDF from docbook
+
+  []
+
+  To activate all of them use
+
+----------------
+mvn clean install -Ptck -Pjsr330-tck -Pdoc
+----------------

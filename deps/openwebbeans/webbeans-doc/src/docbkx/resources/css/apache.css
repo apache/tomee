@@ -1,0 +1,374 @@
+/*
+        Licensed to the Apache Software Foundation (ASF) under one or more
+        contributor license agreements. See the NOTICE file distributed with
+        this work for additional information regarding copyright ownership. The
+        ASF licenses this file to you under the Apache License, Version 2.0 (the
+        "License"); you may not use this file except in compliance with the
+        License. You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable
+        law or agreed to in writing, software distributed under the License is
+        distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+        KIND, either express or implied. See the License for the specific
+        language governing permissions and limitations under the License.
+*/ 
+/* General formatting */
+html {
+	padding-right: 0px;
+	padding-left: 0px;
+	padding-bottom: 0px;
+	margin: 0px;
+	color: #333333;
+	padding-top: 0px;
+	font-family: Arial, Helvetica, sans-serif;
+	border: dotted 0px red;
+}
+
+body {
+	font-size: 12px;
+	font-family: Arial, Helvetica, sans-serif;
+	color: #333333;
+	background: #FFFFFF;
+	border: dotted 0px blue;
+	height: auto;
+	overflow: auto;
+	margin-top: 0px;
+	margin-left: 0px;
+	margin-right: 0px;
+	padding-right: 0px;
+	padding-left: 0px;
+	padding-bottom: 0px;
+	padding-top: 0px;
+}
+
+a,
+a:link,
+a:active {
+	color: #003399;
+	text-decoration: underline;
+}
+
+a:visited {
+	color: #991B00;
+	text-decoration: underline;
+}
+
+a:hover {
+	color: #6699FF;
+	text-decoration: underline;
+}
+
+a.navigation {
+	text-decoration: none;
+	color: #333333;
+}
+
+a.navigation:hover {
+	text-decoration: underline;
+	background-color: transparent;
+	color: #003399;
+}
+
+table {
+	margin-bottom: 8;
+	margin-top: 2;
+}
+
+table.admon {
+	width: 500px;
+	border: 1px solid #333333;
+	margin-left: 150px;
+	margin-right: 150px;
+	margin-bottom: 10px;
+	margin-top: 10px;
+	vertical-align: top;
+	background-color: #F0F0F0;
+}
+
+td {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+
+td.name {
+	width: 25%;
+}
+
+td.desc {
+	width: 75%;
+}
+
+img {
+	border: none;
+	margin-bottom: 1px;
+	margin-left: 1px;
+	margin-right: 1px;
+	margin-top: 1px;
+}
+
+pre.screen {
+	background: #F0F0F0;
+	width: 700px;
+	padding-bottom: 2px;
+	padding-left: 2px;
+	padding-right: 2px;
+	padding-top: 2px;
+	margin-left: 10px;
+}
+
+pre.programlisting {
+	background: #F0F0F0;
+	border: thin dashed;
+	width: 800px;
+	padding-bottom: 5px;
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top: 5px;
+	margin-left: 40px;
+}
+
+code.replaceable {
+	font-style: normal;
+	font-weight: bolder;
+}
+
+DIV.example-output {
+	padding-left: 15px;
+	border-style: solid;
+	border-width: 0px;
+	border-left-width: 2px;
+	border-color: black;
+}
+
+div.example-source {
+	background: #F0F0F0;
+}
+
+div.refentry div.titlepage {
+	margin-left: 20px;
+}
+
+div.refentry div.titlepage h1.title {
+	margin-left: -20px;
+	margin-bottom: 0px;
+	font-size: 36pt;
+}
+
+div.biblioentry .title,
+div.bibliography .subtitle {
+	font-size: 12px;
+	font-family: Arial, Helvetica, sans-serif;
+	color: #333333;
+}
+
+div.table,
+div.informaltable {
+	padding-left: 10px;
+}
+
+div.navheader {
+	padding-top: 0px;
+	background-color: #F4F4F4;
+	padding-left: 10px;
+	padding-right: 10px;
+	font-weight: bold;
+	color: #333333;
+	text-decoration: none;
+	border-bottom: 1px solid black;
+	margin-bottom: 10px;
+	padding-bottom: 0px;
+}
+
+div.navfooter {
+	background-color: #F4F4F4;
+	border-top: 1px solid black;
+	margin-top: 10px;
+	padding-top: 0px;
+	margin-bottom: 0px;
+	padding-bottom: 0px;
+	padding-left: 10px;
+	padding-right: 10px;
+	font-size: 9px;
+	color: #8B8B8B;
+	text-decoration: none;
+}
+
+div.copyrightfooter {
+	background-color: #c6bec6;
+	margin-top: 0px;
+	padding-top: 0px;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-bottom: 2px;
+}
+
+div.copyrightfooter p {
+	margin-top: 0px;
+	padding-top: 10px;
+}
+
+div.refentry,
+div.preface,
+div.chapter,
+div.appendix,
+div.reference,
+div.part,
+div.bibliography,
+div.glossary,
+div.index,
+div.colophon,
+div.legalnotice,
+div.sect1,
+div.sect2,
+div.sect3,
+div.section
+	{
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+div.book {
+	margin-left: 10px;
+	margin-right: 10px;
+	margin-top: 5px;
+}
+
+p {
+	max-width: 800px;
+	font-size: 12px;
+}
+
+p.publisher {
+	text-align: center;
+}
+
+.company {
+	font-size: 9px;
+	color: #DF0141;
+	text-decoration: none
+}
+
+.contact {
+	font-size: 11px;
+	color: #0000CC;
+	text-decoration: none
+}
+
+.copy {
+	color: #BEBEBE;
+	text-decoration: none
+}
+
+.legal {
+	color: #8B8B8B;
+	text-decoration: none
+}
+
+.subtitle {
+	color: #990000;
+	font-weight: bold;
+	text-decoration: none;
+	
+	border: 1px solid #aaaaaa;
+	background-color: #dddddd;
+}
+
+.title {
+	font-size: 16px;
+	color: #990000;
+	font-weight: bold;
+	text-decoration: none;
+	
+	border: 1px solid #999999;
+	background-color: #eeeeee;
+}
+
+.epigraph {
+	font-style: italic;
+	text-align: right;
+}
+
+.topnav {
+	font-weight: bold;
+	color: #333333;
+	text-decoration: none;
+}
+
+.topnav:Hover {
+	font-weight: bold;
+	color: #333333;
+	text-decoration: none
+}
+
+.topnav:Visited {
+	font-weight: bold;
+	color: #333333
+}
+
+.copyright {
+	color: #7F7F7F;
+	font-size: 9px;
+}
+
+/* Navigation header formatting */
+.navheadtitle {
+	font-weight: bold;
+	font-size: 14px color : #333333;
+	text-decoration: none;
+	margin-top: 5px;
+	margin-bottom: 2px;
+}
+
+.navheadsubtitle {
+	font-weight: normal;
+	font-size: 10px color : #333333;
+	text-decoration: none;
+	margin-bottom: 2px;
+}
+
+.navhead hr.top-nav-sep {
+	display: none;
+}
+
+.navhead .slidestitle {
+	font-weight: normal;
+	font-size: 10pt;
+	font-style: italic;
+}
+
+/* Navigation footer formatting */
+.navfoot {
+	font-size: 9px;
+	color: #8B8B8B;
+	text-decoration: none;
+	border-top: 1px solid black;
+	margin-top: 10px;
+	padding-top: 4px;
+}
+
+.navfoot hr.bottom-nav-sep {
+	display: none;
+}
+
+/* General navigation formatting */
+.link-text {
+	font-weight: bold;
+	font-size: 10pt;
+}
+
+.link-text a {
+	text-decoration: none;
+}
+
+.link-text a:link {
+	color: blue;
+}
+
+.link-text a:visited {
+	color: blue;
+}
+
+.no-link-text {
+	color: #7F7F7F;
+}
+/* EOF */

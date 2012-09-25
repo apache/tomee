@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <!--
+        Licensed to the Apache Software Foundation (ASF) under one or more
+        contributor license agreements. See the NOTICE file distributed with
+        this work for additional information regarding copyright ownership. The
+        ASF licenses this file to you under the Apache License, Version 2.0 (the
+        "License"); you may not use this file except in compliance with the
+        License. You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable
+        law or agreed to in writing, software distributed under the License is
+        distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+        KIND, either express or implied. See the License for the specific
+        language governing permissions and limitations under the License.
+    -->
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" 
+    "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd"[
+    
+    <!ENTITY % entities SYSTEM "../entities.ent" >
+    %entities;
+]>
+
+<chapter>
+
+    <chapterinfo id="chapter.intro">
+        <keywordset>
+            <keyword>Introduction</keyword>
+        </keywordset>
+        <authorinitials>jlmonteiro</authorinitials>
+    </chapterinfo>
+    <title>Introduction</title>
+   
+  <!-- What is OpenWebBeans -->	
+  <section id="whatisopenwebbeans">
+    <title>What is OpenWebBeans?</title>
+    <para>
+    	OpenWebBeans is an ASL-licensed implementation of the JSR-299: Contexts and Dependency Injection and JSR-330: Dependency Injection for Java. 
+    </para>
+    <section id="features">
+      <title>OpenWebBeans Features</title>
+      <warning><para>Currently OpenWebBeans does not fully implements JSR-299 specification but it is JSR-299 compatible.</para></warning>
+      <para>Currently OpenWebBeans implementation supports the following main features. </para>      
+      <itemizedlist spacing="compact">
+         <listitem>
+         	<para><emphasis>JSR-330 Support:</emphasis> It supports the JSR-330 based injections.</para>
+         </listitem>
+         <listitem>
+            <para><emphasis>Managed Beans Support:</emphasis> Supports the configuration and injection of Managed Beans</para>
+         </listitem>
+         <listitem>
+            <para><emphasis>Session Beans Support in Embeddable OpenEJB in Tomcat 6.x:</emphasis> It supports Session Beans using in embeddable Apache OpenEJB.</para>
+         </listitem>
+         <listitem>
+            <para><emphasis>Producer Field and Method Support:</emphasis> It supports producer based beans.</para>
+         </listitem>
+         <listitem>
+            <para><emphasis>Injection of @Resource, @PersistenceUnit and @PersistenceContext:</emphasis> Currently it is able to inject these resource types.</para>
+         </listitem>
+         <listitem>
+            <para><emphasis>Java Messaging Service (JMS) Injection Support:</emphasis> It supports injection of JMS Connection Factory, JMS Sessions etc.</para>
+		</listitem>
+        <listitem>
+        	<para><emphasis>Event/Observer Support:</emphasis> It supports Event and Observers.</para>
+        </listitem> 
+        <listitem>
+            <para><emphasis>Interceptor and Decrotator Support for Managed Beans:</emphasis> It supports interceptors and decorators for managed beans. Currently
+            it does not support @InterceptorBinding style interceptors and decorators on Session beans.</para>
+        </listitem>
+        <listitem>
+            <para><emphasis>Java SE Support:</emphasis> It can be used in Java SE environments like Java Swing applications.</para>
+        </listitem>
+        <listitem>
+            <para><emphasis>Java EE Web Application Support:</emphasis> It can be used in Java EE Web containers like Tomcat, Jetty etc.</para>
+        </listitem>            
+      </itemizedlist>
+    </section>
+    
+    <section id="modules">
+    	<title>OpenWebBeans Plugin Architecture</title>
+    	<para>OpenWebBeans have been developing as a small core package and including other pieces as a plugin. Each of the package and plugin 
+    	modules are followings:</para>
+    	<itemizedlist spacing="compact">
+    		<listitem>
+    			<para>
+    				<emphasis>JSR-330 API Package:</emphasis> Contains JSR-330 defined API. It will move into the Geronimo specifications in a near time.
+    			</para>
+    		</listitem>    	
+    		<listitem>
+    			<para>
+    				<emphasis>JSR-299 API Package:</emphasis> Contains JSR-299 defined API. It will move into the Geronimo specifications in a near time.
+    			</para>
+    		</listitem>
+    		<listitem>
+    			<para>
+    				<emphasis>OpenWebBeans Implementation(Core) Package:</emphasis> Contains core dependency injection related implementation.
+    			</para>    			
+    		</listitem>
+    		<listitem>
+    			<para>
+    				<emphasis>EJB Plugin:</emphasis> Session Beans injection implementation based on the Apache OpenEJB embeddable in Apache Tomcat
+    			</para>
+    		</listitem>    		
+    		<listitem>
+    			<para>
+    				<emphasis>OpenWebBeans Geronimo Plugin:</emphasis> Geronimo Java EE Server integration codes.
+    			</para>
+    		</listitem>    		    		
+    		<listitem>
+    			<para>
+    				<emphasis>OpenWebBeans JMS Plugin:</emphasis> Provides Java Messaging Service (JMS) related artifact injections.(Connection factories, Sessions etc.)
+    			</para>
+    		</listitem>
+    		<listitem>
+    			<para>
+    				<emphasis>OpenWebBeans Resource Plugin:</emphasis> Provides Java EE resource injections. Currently, it supports only for @PersistenceUnit, @PersistenceContext and @Resource annotations.
+    				To use @Resource based annotations without OpenEJB, you have to define it explicitly in web.xml via &lt;resource-ref&gt; element.
+    			</para>
+                <para>
+                    Example:
+                    <programlisting language="java"><![CDATA[public class Injector{
+   @Produces @Resource(name="myResource") myResource;
+}]]></programlisting>                       
+                    <programlisting language="xml"><![CDATA[<resource-ref>
+   <resource-name>myResource</resource-name>
+   .....
+</resource-ref>]]></programlisting>     
+                </para>
+    		</listitem>    		    		    		
+    		<listitem>
+    			<para>
+    				<emphasis>OpenWebBeans JSF Plugin:</emphasis> Using of dependency injection service in Java Server Faces environment.
+    			</para>
+    		</listitem>    		    		    		
+			<listitem>
+				<para>
+					<emphasis>OpenWebBeans JPA Plugin:</emphasis> It is deprecated now. Use OpenWebBeans Resource plugin instead.
+				</para>
+			</listitem>    		   
+    	</itemizedlist>
+    	
+    	<section>
+    		<title>How to use Plugins?</title>
+    		<para>
+    			Plugins are discovered by the OpenWebBeans runtime using <code>java.util.ServiceLoader</code> class. Each plugin jar
+    			contains META-INF/services folder that contains plugin implementation class. Your sole responsbility to use plugin is to add
+    			related <emphasis>Plugin JAR</emphasis> into the application classpath.
+    		</para>
+    	</section>
+    	
+    	<!-- Section OpenWebBeans SPI -->
+    	<section>
+    		<title>OpenWebBeans SPI</title>
+    		<para>OpenWebBeans interacts with Java EE specific services via SPI interfaces and their specific implementations.
+    		There are several SPI interfaces that are configured in the OpenWebBeans default configuration file. You can
+    		override and replace those SPI implementation with providing your new implementation. For example, OpenWebBeans SPI
+    		<code>org.apache.webbeans.spi.JNDIService</code> interface defines methods to interact with runtime JNDI provider. 
+    		There are two different JNDIService implementation, one for example</para>
+    		
+ <programlisting><![CDATA[org.apache.webbeans.spi.JNDIService=org.apache.webbeans.spi.se.JNDIServiceStaticImpl
+org.apache.webbeans.spi.JNDIService=org.apache.webbeans.spi.ee.JNDIServiceEnterpriseImpl]]></programlisting>
+    		
+    		<para>First one is used in Java SE environment as a simple name-value <code>Map</code> implementation whereas 
+    		the second one contains full blown container provided JNDI context implementation. You would look
+    		at <emphasis>OpenWebBeans Configuration</emphasis> section for getting all SPI interfaces and their explanations.</para>
+    	
+    	</section><!-- End of section OpenWebBeans SPI -->
+    	
+    	<!-- Start of configuration section -->
+    	<section>
+    		<title>OpenWebBeans Configuration</title>
+    		<para>OpenWebBeans has some configuration properties. Most of the configuration parameters are included within
+    		core jar file. But if you wish to update or replace existing configuration, please continue to reading</para>
+    		
+    		<section>
+    			<title>How Configuration Works?</title>
+    			<para>OpenWebBeans' configuration is defined with Java properties file. The name of the default properties
+    			file is <code>"/META-INF/openwebbeans/openwebbeans-default.properties"</code> and it is included within
+    			<code>openwebbeans-impl.jar</code>
+    			file. 
+    			</para>
+    			
+    			<para>
+    				If you wish to override or replace the configuration parameters, create a properties file with name
+    				<code>"/META-INF/openwebbeans/openwebbeans.properties"</code> and put it into your application classpath. In your
+    				properties file, you can override the default configuration parameter values.
+    			</para>
+    			
+    		</section>
+    		
+    		
+    		
+    		<section>
+    			<title>Configuration Parameters</title>
+    			<para>OpenWebBeans defines a several comfuration parameters. Those are listed below:</para>
+    			<itemizedlist>
+    				<listitem>
+    					<para><emphasis>org.apache.webbeans.spi.JNDIService:</emphasis> JNDI service SPI interface. Configures JNDI Service implementation for getting
+    					objects from JNDI tree.</para>
+    				</listitem>
+    				
+    				<listitem>
+    					<para><emphasis>org.apache.webbeans.spi.JNDIService.jmsConnectionFactoryJndi:</emphasis>  Configures JMS ConnectionFactory object jndi name.</para>
+    				</listitem>
+    				
+    				<listitem>
+    					<para><emphasis>org.apache.webbeans.conversation.Conversation.periodicDelay:</emphasis>  Conversation removing thread periodic delay. Unused
+    					conversations are removed by the container periodically.</para>
+    				</listitem>
+    				
+    				<listitem>
+    					<para><emphasis>org.apache.webbeans.spi.TransactionService:</emphasis> Transaction service SPI interface.  Configures Transaction Service provider 
+    					implementation for getting transaction manager and transaction.</para>
+    				</listitem>
+    				
+    				<listitem>
+    					<para><emphasis>org.apache.webbeans.resource.spi.ResourceService:</emphasis> Resource service SPI interface. Defines how to inject Java EE based resources
+    					like @PersistenceContext, @PersistenceUnit, @WebServiceRef and @Resource.</para>
+    				</listitem>
+    				
+    				<listitem>
+    					<para><emphasis>org.apache.webbeans.spi.deployer.MetaDataDiscoveryService:</emphasis> Discovery service SPI interfaces. Configures Discovery Service
+    					implementation for  discovering JSR-299 beans and configuration xmls.</para>
+    				</listitem>
+    				
+    				<listitem>
+    					<para><emphasis>org.apache.webbeans.spi.deployer.UseEjbMetaDataDiscoveryService:</emphasis> Defines whether or not use EJB session bean discovery. If 
+    					application is run in the OpenEJB embeddable container, one must define this as true.</para>
+    				</listitem>
+    				
+    				<listitem>
+    					<para><emphasis>org.apache.webbeans.fieldInjection.useOwbSpecificInjection:</emphasis>  Use @Inject annotation at injection fields or not. If it is set to true
+  						you can inject objects into beans without @Inject annotation. Not portable!</para>
+    				</listitem>
+    				
+    				<listitem>
+    					<para><emphasis>org.apache.webbeans.spi.conversation.ConversationService:</emphasis> Conversation Service SPI. Configures Conversation Service
+    					implementation for getting conversation related informations. Currently conversation service is implemented for Java Server Faces
+    					based applications.</para>
+    				</listitem>
+    				
+    				<listitem>
+    					<para><emphasis>org.apache.webbeans.application.jsp:</emphasis> Defines configuration parameter to specify that application is full Java
+    					Server Pages(JSP) application. If application is JSP, OpenWebBeans register ELResolver with JSP application.</para>
+    				</listitem>
+    				
+    				<listitem>
+    					<para><emphasis>org.apache.webbeans.spi.lifecycle.Lifecycle:</emphasis> Bootstrap service SPI interface. Defines how OpenWebBeans container is bootstrapped.</para>
+    				</listitem>
+    				
+    			</itemizedlist>
+    		</section>
+    		
+    		<section>
+    			<title>Default Configuration Values</title>
+                <para>OpenWebBeans comes with default configuration parameters are set. As explained above, those default parameter values
+                are defined in the provided jar file of the OpenWebBean. Default parameter values are the following</para>
+                
+                <itemizedlist>
+                	<listitem>
+						<programlisting><![CDATA[org.apache.webbeans.spi.JNDIService=org.apache.webbeans.spi.se.JNDIServiceStaticImpl]]></programlisting>                	
+                	</listitem>
+                	
+                </itemizedlist>
+                
+    		</section>
+    		
+    	</section> <!-- End of Configuration Section -->
+    	
+    </section>
+    
+</section>
+<!-- End of SECTION What is OpenWebBeans -->
+
+</chapter>

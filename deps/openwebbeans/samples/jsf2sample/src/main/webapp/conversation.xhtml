@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<!--
+	
+	Licensed to the Apache Software Foundation (ASF) under one or more
+	contributor license agreements. See the NOTICE file distributed with
+	this work for additional information regarding copyright ownership.
+	The ASF licenses this file to You under the Apache License, Version
+	2.0 (the "License"); you may not use this file except in compliance
+	with the License. You may obtain a copy of the License at
+	
+	http://www.apache.org/licenses/LICENSE-2.0 Unless required by
+	applicable law or agreed to in writing, software distributed under the
+	License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+	CONDITIONS OF ANY KIND, either express or implied. See the License for
+	the specific language governing permissions and limitations under the
+	License.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html">
+<h:head>
+	<title>JSF2 Ajax with OpenWebBeans Demo</title>
+</h:head>
+<h:body>
+	
+	<div>
+	<h3>JSF2 Conversation Demo</h3>
+	<p>
+		Number will be increased each time user press <b>Show Number</b> button if conversation is in progress. Initial number set to <b>10</b>
+	</p>
+	</div>
+	
+	<ul>
+	<li><h4>Click <b style="color: red;">Start Conversation</b> to start conversation </h4></li>
+	<li><h4>Click <b style="color: red;">End Conversation</b> to end conversation </h4></li>
+	<li><h4>Click <b style="color: red;">Show Number</b> to show number in the current conversation </h4></li>
+	</ul>
+
+	<h:form id="form">
+		
+		<h:outputScript name="jsf.js" library="javax.faces" target="body"></h:outputScript>		
+		
+		<div>		
+			<h:outputText value="Current Number  : " style="color:red;"/>
+			<h:outputText value="#{conversationBean.current}" id="status" style="font-weight:bold;" />
+		</div>
+
+		<div style="margin-top: 10px;">
+			<h:outputText value="#{conversationBean.message}" id="message" style="font-weight:bold;" />			
+		</div>		
+			
+		<div style="margin-top: 10px;">
+			<h:commandButton id="button1" value="Start Conversation" action="#{conversationBean.startConversation}">
+			</h:commandButton>
+			
+			<h:commandButton id="button2" value="End Conversation" action="#{conversationBean.stopConversation}">
+			</h:commandButton>
+			
+			<h:commandButton id="button3" value="Show Number" action="#{conversationBean.conversationLive}">
+			</h:commandButton>							
+		</div>
+				
+	</h:form>
+
+</h:body>
+</html>

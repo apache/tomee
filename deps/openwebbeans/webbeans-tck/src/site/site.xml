@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+
+<project name="OpenWebBeans">
+    <bannerLeft>
+        <name>Apache OpenWebBeans</name>
+        <src>http://openwebbeans.apache.org/owb/images/logos/openwebbeans_hor.png</src>
+        <href>http://openwebbeans.apache.org</href>
+    </bannerLeft>
+    
+    <bannerRight>
+        <name>Apache Banner</name>
+        <src>http://www.apache.org/images/asf-logo.gif</src>
+        <href>http://www.apache.org</href>
+    </bannerRight>
+    
+    <publishDate format="dd MMM yyyy" />
+    <version position="left"/>
+    
+    <body>
+        <breadcrumbs>
+        <item name="Apache" href="http://www.apache.org"/>
+        <item name="OpenWebBeans" href="http://openwebbeans.apache.org"/>
+        </breadcrumbs>
+
+        <menu name="Overview">
+            <item name="Introduction" href="index.html" />
+        </menu>
+
+        <menu name="OpenWebBeans">
+            <item name="JSR-299" href="jsr299.html" />
+            <item name="JSR-330" href="jsr330.html" />
+            <item name="Contributing" href="contributing.html" />
+            <item name="Documentation" href="documentation.html"/>
+            <item name="IRC" href="irc.html" />
+            <item name="FAQ" href="faq.html" />
+            <item name="Extensions" href="extensions/index.html" />
+            <item name="Download Apache OWB" href="http://www.apache.org/dyn/closer.cgi/openwebbeans/" />
+        </menu>
+
+        <menu ref="modules" />
+
+        <menu name="Examples">
+            <item name="guess" href="examples/guess.html" />
+        </menu>
+
+        <menu ref="reports"/>
+    </body>
+</project>
+
