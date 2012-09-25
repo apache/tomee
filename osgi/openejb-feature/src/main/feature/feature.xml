@@ -46,13 +46,13 @@
 
   <feature name="org.apache.openwebbeans" version="${org.apache.openwebbeans.version}">
     <bundle>wrap:mvn:net.sf.scannotation/scannotation/${scannotation.version}</bundle>
-    <bundle>mvn:org.apache.openwebbeans/openwebbeans-spi/${org.apache.openwebbeans.version}</bundle>
-    <bundle>mvn:org.apache.openwebbeans/openwebbeans-impl/${org.apache.openwebbeans.version}</bundle>
-    <bundle>mvn:org.apache.openwebbeans/openwebbeans-ee/${org.apache.openwebbeans.version}</bundle>
-    <bundle>mvn:org.apache.openwebbeans/openwebbeans-ee-common/${org.apache.openwebbeans.version}</bundle>
-    <bundle>mvn:org.apache.openwebbeans/openwebbeans-ejb/${org.apache.openwebbeans.version}</bundle>
-    <bundle>mvn:org.apache.openwebbeans/openwebbeans-osgi/${org.apache.openwebbeans.version}</bundle>
-    <bundle>mvn:org.apache.openwebbeans/openwebbeans-web/${org.apache.openwebbeans.version}</bundle>
+    <bundle>mvn:org.apache.openejb.openwebbeans/openwebbeans-spi/${org.apache.openwebbeans.version}</bundle>
+    <bundle>mvn:org.apache.openejb.openwebbeans/openwebbeans-impl/${org.apache.openwebbeans.version}</bundle>
+    <bundle>mvn:org.apache.openejb.openwebbeans/openwebbeans-ee/${org.apache.openwebbeans.version}</bundle>
+    <bundle>mvn:org.apache.openejb.openwebbeans/openwebbeans-ee-common/${org.apache.openwebbeans.version}</bundle>
+    <bundle>mvn:org.apache.openejb.openwebbeans/openwebbeans-ejb/${org.apache.openwebbeans.version}</bundle>
+    <bundle>mvn:org.apache.openejb.openwebbeans/openwebbeans-osgi/${org.apache.openwebbeans.version}</bundle>
+    <bundle>mvn:org.apache.openejb.openwebbeans/openwebbeans-web/${org.apache.openwebbeans.version}</bundle>
   </feature>
 
   <feature name="geronimo-osgi" version="${geronimo-osgi.version}">
