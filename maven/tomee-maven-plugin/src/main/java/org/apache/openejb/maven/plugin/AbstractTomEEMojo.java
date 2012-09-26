@@ -630,21 +630,26 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
     private File resolve() {
         if (!settings.isOffline()) {
-            if ("snapshots".equals(apacheRepos) || "true".equals(apacheRepos)) {
-                remoteRepos.add(new DefaultArtifactRepository("apache", "https://repository.apache.org/content/repositories/snapshots/",
-                        new DefaultRepositoryLayout(),
-                        new ArtifactRepositoryPolicy(true, UPDATE_POLICY_DAILY, CHECKSUM_POLICY_WARN),
-                        new ArtifactRepositoryPolicy(false, UPDATE_POLICY_NEVER, CHECKSUM_POLICY_WARN)));
-            } else {
-                try {
-                    new URI(apacheRepos); // to check it is a uri
-                    remoteRepos.add(new DefaultArtifactRepository("additional-repo-tomee-mvn-plugin", apacheRepos,
+            try {
+                if ("snapshots".equals(apacheRepos) || "true".equals(apacheRepos)) {
+                    remoteRepos.add(new DefaultArtifactRepository("apache", "https://repository.apache.org/content/repositories/snapshots/",
                             new DefaultRepositoryLayout(),
                             new ArtifactRepositoryPolicy(true, UPDATE_POLICY_DAILY, CHECKSUM_POLICY_WARN),
-                            new ArtifactRepositoryPolicy(true, UPDATE_POLICY_NEVER, CHECKSUM_POLICY_WARN)));
-                } catch (URISyntaxException e) {
-                    // ignored, use classical repos
+                            new ArtifactRepositoryPolicy(false, UPDATE_POLICY_NEVER, CHECKSUM_POLICY_WARN)));
+                } else {
+                    try {
+                        new URI(apacheRepos); // to check it is a uri
+                        remoteRepos.add(new DefaultArtifactRepository("additional-repo-tomee-mvn-plugin", apacheRepos,
+                                new DefaultRepositoryLayout(),
+                                new ArtifactRepositoryPolicy(true, UPDATE_POLICY_DAILY, CHECKSUM_POLICY_WARN),
+                                new ArtifactRepositoryPolicy(true, UPDATE_POLICY_NEVER, CHECKSUM_POLICY_WARN)));
+                    } catch (URISyntaxException e) {
+                        // ignored, use classical repos
+                    }
                 }
+            } catch (UnsupportedOperationException uoe) {
+                // can happen if remoterepos is unmodifiable (possible in complex builds)
+                // no-op
             }
         } else if (remoteRepos != null && remoteRepos.isEmpty()) {
             remoteRepos = new ArrayList<ArtifactRepository>();
