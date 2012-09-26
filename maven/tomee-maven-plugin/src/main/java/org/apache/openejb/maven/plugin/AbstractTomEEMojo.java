@@ -248,6 +248,11 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     protected boolean removeDefaultWebapps;
 
     /**
+     * @parameter expression="${tomee-plugin.remove-tomee-webapps}" default-value="false"
+     */
+    protected boolean removeTomeeWebapp;
+
+    /**
      * @parameter expression="${project.packaging}"
      */
     protected String packaging;
@@ -279,7 +284,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             overrideAddresses();
         }
         if (removeDefaultWebapps) {
-            removeDefaultWebapps();
+            removeDefaultWebapps(removeTomeeWebapp);
         }
         if (!skipCurrentProject) {
             copyWar();
@@ -287,12 +292,12 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         run();
     }
 
-    private void removeDefaultWebapps() {
+    private void removeDefaultWebapps(final boolean removeTomee) {
         final File webapps = new File(catalinaBase, webappDir);
         if (webapps.isDirectory()) {
             for (File webapp : webapps.listFiles()) {
                 final String name = webapp.getName();
-                if (webapp.isDirectory() && !name.equals("openejb") && !name.equals("tomee")) {
+                if (webapp.isDirectory() && (removeTomee || !name.equals("tomee"))) {
                     try {
                         deleteDirectory(webapp);
                     } catch (IOException ignored) {
