@@ -16,6 +16,22 @@ package org.apache.openejb.maven.plugin;
  *   limitations under the License.
  */
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
+import org.apache.maven.artifact.repository.DefaultArtifactRepository;
+import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.settings.Settings;
+import org.apache.openejb.config.RemoteServer;
+import org.apache.openejb.loader.Files;
+import org.apache.openejb.loader.IO;
+import org.apache.openejb.loader.Zips;
+import org.apache.tomee.util.QuickServerXmlParser;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -38,21 +54,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
-import org.apache.maven.artifact.repository.DefaultArtifactRepository;
-import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.settings.Settings;
-import org.apache.openejb.config.RemoteServer;
-import org.apache.openejb.loader.Files;
-import org.apache.openejb.loader.IO;
-import org.apache.openejb.loader.Zips;
-import org.apache.tomee.util.QuickServerXmlParser;
 
 import static org.apache.maven.artifact.Artifact.SCOPE_COMPILE;
 import static org.apache.maven.artifact.repository.ArtifactRepositoryPolicy.CHECKSUM_POLICY_WARN;
@@ -60,9 +61,7 @@ import static org.apache.maven.artifact.repository.ArtifactRepositoryPolicy.UPDA
 import static org.apache.maven.artifact.repository.ArtifactRepositoryPolicy.UPDATE_POLICY_NEVER;
 import static org.apache.maven.artifact.versioning.VersionRange.createFromVersion;
 import static org.apache.openejb.util.JarExtractor.delete;
-import static org.codehaus.plexus.util.FileUtils.copyDirectory;
 import static org.codehaus.plexus.util.FileUtils.deleteDirectory;
-import static org.codehaus.plexus.util.FileUtils.filename;
 import static org.codehaus.plexus.util.IOUtil.close;
 import static org.codehaus.plexus.util.IOUtil.copy;
 
@@ -455,7 +454,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
         if (warFile.exists() && warFile.isDirectory()) {
             try {
-                copyDirectory(warFile, out);
+                IO.copyDirectory(warFile, out);
             } catch (IOException e) {
                 throw new TomEEException(e.getMessage(), e);
             }
