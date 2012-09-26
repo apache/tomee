@@ -91,6 +91,11 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
         }
     }
 
+    @Override
+    protected void setPorts() {
+        // done in configure to be consistent with the server.xml if set
+    }
+
     private void configure() throws LifecycleException, IOException {
         final File workingDirectory = new File(configuration.getDir()).getAbsoluteFile();
 
@@ -135,6 +140,8 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
         if (configuration.isRemoveUnusedWebapps()) {
             Setup.removeUselessWebapps(openejbHome);
         }
+
+        super.setPorts();
 
         if (logger.isLoggable(Level.FINE)) {
             final Map<Object, Object> map = new TreeMap<Object, Object>(System.getProperties());
