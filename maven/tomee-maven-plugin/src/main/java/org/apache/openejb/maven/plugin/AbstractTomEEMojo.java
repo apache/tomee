@@ -30,6 +30,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
@@ -60,6 +62,7 @@ import static org.apache.maven.artifact.versioning.VersionRange.createFromVersio
 import static org.apache.openejb.util.JarExtractor.delete;
 import static org.codehaus.plexus.util.FileUtils.copyDirectory;
 import static org.codehaus.plexus.util.FileUtils.deleteDirectory;
+import static org.codehaus.plexus.util.FileUtils.filename;
 import static org.codehaus.plexus.util.IOUtil.close;
 import static org.codehaus.plexus.util.IOUtil.copy;
 
@@ -278,8 +281,17 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         copyLibs(webapps, new File(catalinaBase, webappDir), "war"); // TODO: manage custom context ?context=foo
         copyLibs(apps, new File(catalinaBase, appDir), "jar");
         overrideConf(config);
-        overrideConf(bin);
         overrideConf(lib);
+        final Collection<File> copied = overrideConf(bin);
+
+        for (File copy : copied) {
+            if (copy.getName().endsWith(".bat") || copy.getName().endsWith(".sh")) {
+                if (!copy.setExecutable(true)) {
+                    getLog().warn("can't make " + copy.getPath() + " executable");
+                }
+            }
+        }
+
         if (!keepServerXmlAsthis) {
             overrideAddresses();
         }
@@ -507,13 +519,14 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         }
     }
 
-    private void overrideConf(final File dir) {
+    private Collection<File> overrideConf(final File dir) {
         if (!dir.exists()) {
-            return;
+            return Collections.emptyList();
         }
 
         final File[] files = dir.listFiles();
         if (files != null) {
+            final Collection<File> copied = new ArrayList<File>();
             for (final File f : files) {
                 if (f.isHidden()) {
                     continue;
@@ -536,6 +549,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                         out = new FileOutputStream(destination);
                         copy(in, out);
 
+                        copied.add(f);
                         getLog().info("Override '" + file + "'");
                     } catch (Exception e) {
                         throw new TomEEException(e.getMessage(), e);
@@ -545,7 +559,11 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                     }
                 }
             }
+
+            return copied;
         }
+
+        return Collections.emptyList();
     }
 
     protected void run() {
