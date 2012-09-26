@@ -102,6 +102,31 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
             }
         }
 
+        setPorts();
+
+        // with multiple containers we don't want it so let the user eb able to skip it
+        if (configuration.getExportConfAsSystemProperty()) {
+            //
+            // Export the config back out to properties
+            //
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                for (String prefix : prefixes.value()) {
+                    try {
+                        final String property = prefix + "." + entry.getKey();
+                        final String value = entry.getValue().toString();
+
+                        LOGGER.log(Level.FINER, String.format("Exporting '%s=%s'", property, value));
+
+                        System.setProperty(property, value);
+                    } catch (Throwable e) {
+                        // value cannot be converted to a string
+                    }
+                }
+            }
+        }
+    }
+
+    protected void setPorts() {
         //
         // Set ports if they are unspecified
         //
@@ -109,6 +134,8 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         for (int i : configuration.portsAlreadySet()) { // ensure we don't use already initialized port (fixed ones)
             randomPorts.add(i);
         }
+
+        final ObjectMap map = new ObjectMap(configuration);
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             if (!entry.getKey().toLowerCase().endsWith("port")) continue;
             try {
@@ -133,27 +160,6 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
             }
         }
         randomPorts.clear();
-
-        // with multiple containers we don't want it so let the user eb able to skip it
-        if (configuration.getExportConfAsSystemProperty()) {
-            //
-            // Export the config back out to properties
-            //
-            for (Map.Entry<String, Object> entry : map.entrySet()) {
-                for (String prefix : prefixes.value()) {
-                    try {
-                        final String property = prefix + "." + entry.getKey();
-                        final String value = entry.getValue().toString();
-
-                        LOGGER.log(Level.FINER, String.format("Exporting '%s=%s'", property, value));
-
-                        System.setProperty(property, value);
-                    } catch (Throwable e) {
-                        // value cannot be converted to a string
-                    }
-                }
-            }
-        }
     }
 
     private int nextPort(final String portRange, final Collection<Integer> excluded) {
