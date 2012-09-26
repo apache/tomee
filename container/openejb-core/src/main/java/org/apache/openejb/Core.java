@@ -19,7 +19,6 @@ package org.apache.openejb;
 import org.apache.openejb.util.Messages;
 
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
 
 /**
 * @version $Rev$ $Date$
@@ -32,7 +31,6 @@ public class Core {
 
                 "org.apache.openejb.config.sys.JaxbJavaee",
                 "org.apache.bval.jsr303.ApacheValidatorFactory",
-                // "org.apache.bval.jsr303.ConfigurationImpl", see org.apache.openejb.assembler.classic.ValidatorBuilder.bvalOffLogging()
                 "org.apache.bval.jsr303.ConstraintAnnotationAttributes",
                 "org.apache.bval.jsr303.ConstraintDefaults",
                 "org.apache.bval.jsr303.groups.GroupsComputer",
@@ -59,7 +57,6 @@ public class Core {
                 "org.apache.openejb.loader.SystemInstance",
                 "org.apache.openejb.monitoring.StatsInterceptor",
                 "org.apache.openejb.persistence.JtaEntityManagerRegistry",
-                // "org.apache.openejb.util.Duration",
                 "org.apache.openejb.util.Join",
                 "org.apache.openejb.util.JuliLogStreamFactory",
                 "org.apache.openejb.util.LogCategory",
@@ -69,6 +66,7 @@ public class Core {
                 "org.apache.openejb.util.proxy.ProxyManager",
                 "org.apache.openjpa.enhance.PCRegistry",
                 "org.apache.openjpa.lib.util.Localizer",
+                "org.apache.webbeans.logger.WebBeansLoggerFacade",
                 "org.apache.xbean.naming.reference.SimpleReference",
                 "org.apache.xbean.propertyeditor.PropertyEditors",
                 "org.apache.xbean.propertyeditor.ReferenceIdentityMap",
