@@ -30,6 +30,7 @@ public class Core {
                 "org.slf4j.impl.StaticLoggerBinder",
 
                 "org.apache.openejb.config.sys.JaxbJavaee",
+                "org.apache.bval.jsr303.ApacheValidationProvider",
                 "org.apache.bval.jsr303.ApacheValidatorFactory",
                 "org.apache.bval.jsr303.ConstraintAnnotationAttributes",
                 "org.apache.bval.jsr303.ConstraintDefaults",
