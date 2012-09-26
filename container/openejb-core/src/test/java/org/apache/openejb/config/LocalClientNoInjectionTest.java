@@ -25,6 +25,7 @@ import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.jee.jpa.unit.Persistence;
+import org.apache.webbeans.logger.JULLoggerFactory;
 
 import javax.ejb.Local;
 import javax.ejb.Remote;
@@ -37,7 +38,11 @@ import java.util.Properties;
 
 public class LocalClientNoInjectionTest extends TestCase {
 
+
     public void setUp() throws OpenEJBException, NamingException, IOException {
+        //avoid linkage error on mac, only used for tests so don't need to add it in Core
+        JULLoggerFactory.class.getName();
+
         ConfigurationFactory config = new ConfigurationFactory();
         Assembler assembler = new Assembler();
 

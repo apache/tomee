@@ -30,6 +30,7 @@ import org.apache.openejb.jee.jpa.unit.TransactionType;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.junit.Configuration;
 import org.apache.openejb.junit.Module;
+import org.apache.webbeans.logger.JULLoggerFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -40,6 +41,11 @@ import static junit.framework.Assert.assertTrue;
 public class ResourceLocalEmInjectionTest {
     @EJB
     private PersistManager persistManager;
+
+    public void setUp() {
+        //avoid linkage error on mac, only used for tests so don't need to add it in Core
+        JULLoggerFactory.class.getName();
+    }
 
     @Test
     public void injection2Validator() {
