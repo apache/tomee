@@ -17,7 +17,6 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.core.LocalInitialContextFactory;
-import org.apache.webbeans.logger.JULLoggerFactory;
 
 import javax.naming.InitialContext;
 import java.util.Properties;
@@ -26,11 +25,6 @@ import java.util.Properties;
  * @version $Rev$ $Date$
 */
 public class LocalClientSubclassTest extends LocalClientTest {
-
-    public void setUp() {
-        //avoid linkage error on mac, only used for tests so don't need to add it in Core
-        JULLoggerFactory.class.getName();
-    }
 
     @Override
     public void test() throws Exception {
