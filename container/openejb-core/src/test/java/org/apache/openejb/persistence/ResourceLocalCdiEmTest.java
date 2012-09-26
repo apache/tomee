@@ -46,11 +46,6 @@ public class ResourceLocalCdiEmTest {
     @Inject
     private PersistManager persistManager;
 
-    public void setUp() {
-        //avoid linkage error on mac, only used for tests so don't need to add it in Core
-        JULLoggerFactory.class.getName();
-    }
-
     @Test
     public void injection() {
         assertNotNull(persistManager);
@@ -59,6 +54,9 @@ public class ResourceLocalCdiEmTest {
 
     @Configuration
     public Properties config() {
+        //avoid linkage error on mac, only used for tests so don't need to add it in Core
+        JULLoggerFactory.class.getName();
+
         final Properties p = new Properties();
         p.put("ResourceLocalCdiEmTest", "new://Resource?type=DataSource");
         p.put("ResourceLocalCdiEmTest.JdbcDriver", "org.hsqldb.jdbcDriver");
