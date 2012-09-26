@@ -42,11 +42,6 @@ public class ResourceLocalEmInjectionTest {
     @EJB
     private PersistManager persistManager;
 
-    public void setUp() {
-        //avoid linkage error on mac, only used for tests so don't need to add it in Core
-        JULLoggerFactory.class.getName();
-    }
-
     @Test
     public void injection2Validator() {
         assertNotNull(persistManager);
@@ -55,6 +50,9 @@ public class ResourceLocalEmInjectionTest {
 
     @Configuration
     public Properties config() {
+        //avoid linkage error on mac, only used for tests so don't need to add it in Core
+        JULLoggerFactory.class.getName();
+
         final Properties p = new Properties();
         p.put("ResourceLocalEmInjectionTest", "new://Resource?type=DataSource");
         p.put("ResourceLocalEmInjectionTest.JdbcDriver", "org.hsqldb.jdbcDriver");
