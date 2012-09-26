@@ -290,15 +290,27 @@ public class Setup {
         }
     }
 
-    public static void synchronizeConf(final File openejbHome, final File confSrc) {
-        final File conf = new File(openejbHome, "conf");
-        final Collection<File> files = org.apache.openejb.loader.Files.collect(confSrc, TrueFileFilter.instance());
-        files.remove(confSrc);
-        for (File f : files) {
-            try {
-                org.apache.openejb.loader.IO.copy(f, new File(conf, relativize(f, confSrc)));
-            } catch (Exception e) {
-                LOGGER.log(Level.WARNING, "ignoring copy of " + f.getAbsolutePath(), e);
+    public static void synchronizeFolder(final File openejbHome, final String src, final String dir) {
+        if (src != null && !src.isEmpty()) {
+            final File confSrc = new File(src);
+            if (confSrc.exists()) {
+                final File conf = new File(openejbHome, dir);
+                final Collection<File> files = org.apache.openejb.loader.Files.collect(confSrc, TrueFileFilter.instance());
+                files.remove(confSrc);
+                for (File f : files) {
+                    if (f.isDirectory()) {
+                        LOGGER.log(Level.WARNING, "skipping " + f.getAbsolutePath() + " since folders are currently not supported");
+                        continue;
+                    }
+
+                    try {
+                        org.apache.openejb.loader.IO.copy(f, new File(conf, relativize(f, confSrc)));
+                    } catch (Exception e) {
+                        LOGGER.log(Level.WARNING, "ignoring copy of " + f.getAbsolutePath(), e);
+                    }
+                }
+            } else {
+                LOGGER.warning("can't find " + confSrc.getAbsolutePath());
             }
         }
     }

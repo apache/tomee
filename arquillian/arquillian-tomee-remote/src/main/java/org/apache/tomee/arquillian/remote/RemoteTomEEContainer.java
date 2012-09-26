@@ -126,14 +126,9 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
         Setup.configureServerXml(openejbHome, configuration);
         Setup.configureSystemProperties(openejbHome, configuration);
 
-        if (configuration.getConf() != null && !configuration.getConf().isEmpty()) {
-            final File confSrc = new File(configuration.getConf());
-            if (confSrc.exists()) {
-                Setup.synchronizeConf(openejbHome, confSrc);
-            } else {
-                LOGGER.warning("can't find " + confSrc.getAbsolutePath());
-            }
-        }
+        Setup.synchronizeFolder(openejbHome, configuration.getConf(), "conf");
+        Setup.synchronizeFolder(openejbHome, configuration.getBin(), "bin");
+        Setup.synchronizeFolder(openejbHome, configuration.getLib(), "lib");
 
         Setup.exportProperties(openejbHome, configuration);
 
