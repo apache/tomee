@@ -1829,19 +1829,23 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
     private String normalizeResourceId(String resourceId) {
         if (resourceId == null) return null;
 
+        if (resourceId.startsWith("java:")) {
+            resourceId = resourceId.substring("java:".length());
+        }
+
         // strip off "java:comp/env"
-        if (resourceId.startsWith("java:comp/env/")) {
-            resourceId = resourceId.substring("java:comp/env/".length());
+        if (resourceId.startsWith("comp/env/")) {
+            resourceId = resourceId.substring("comp/env/".length());
         }
 
         // strip off "java:openejb/Resource"
-        if (resourceId.startsWith("java:openejb/Resource/")) {
-            resourceId = resourceId.substring("java:openejb/Resource/".length());
+        if (resourceId.startsWith("openejb/Resource/")) {
+            resourceId = resourceId.substring("openejb/Resource/".length());
         }
 
         // strip off "java:openejb/Connector"
-        if (resourceId.startsWith("java:openejb/Connector/")) {
-            resourceId = resourceId.substring("java:openejb/Connector/".length());
+        if (resourceId.startsWith("openejb/Connector/")) {
+            resourceId = resourceId.substring("openejb/Connector/".length());
         }
 
         return resourceId;
