@@ -40,6 +40,7 @@ public class RemoteServer {
     public static final String SERVER_DEBUG_PORT = "server.debug.port";
     public static final String SERVER_SHUTDOWN_PORT = "server.shutdown.port";
     public static final String SERVER_SHUTDOWN_HOST = "server.shutdown.host";
+    public static final String SERVER_SHUTDOWN_COMMAND = "server.shutdown.command";
     public static final String OPENEJB_SERVER_DEBUG = "openejb.server.debug";
 
     private final boolean debug = options.get(OPENEJB_SERVER_DEBUG, false);
@@ -58,6 +59,7 @@ public class RemoteServer {
     private final boolean verbose;
     private final int shutdownPort;
     private final String host;
+    private final String command;
 
     public RemoteServer() {
         this(options.get("connect.tries", 60), options.get("verbose", false));
@@ -70,6 +72,7 @@ public class RemoteServer {
         tomcat = (home != null) && (new File(new File(home, "bin"), "catalina.sh").exists());
 
         shutdownPort = options.get(SERVER_SHUTDOWN_PORT, tomcat ? 8005 : 4200);
+        command = options.get(SERVER_SHUTDOWN_COMMAND, "SHUTDOWN");
         host = options.get(SERVER_SHUTDOWN_HOST, "localhost");
     }
 
@@ -417,13 +420,13 @@ public class RemoteServer {
                     System.out.println("[] STOP SERVER");
                 }
 
-                String command = "SHUTDOWN" + Character.toString((char) 0); // SHUTDOWN + EOF
+                String fcommand = command + Character.toString((char) 0); // SHUTDOWN + EOF
 
                 Socket socket = null;
                 try {
                     socket= new Socket(host, shutdownPort);
                     OutputStream out = socket.getOutputStream();
-                    out.write(command.getBytes());
+                    out.write(fcommand.getBytes());
                 } finally {
                     if (socket != null) {
                         socket.close();
