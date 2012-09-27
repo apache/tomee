@@ -153,7 +153,7 @@ public class TomEEConfiguration implements ContainerConfiguration {
     }
 
     public String getStopCommand() {
-        return stopCommand + Character.toString((char) -1); // last char to avoid warning/error log message
+        return stopCommand +  Character.toString((char) 0); // last char to avoid warning/error log message
     }
 
     public void setStopCommand(String stopCommand) {
