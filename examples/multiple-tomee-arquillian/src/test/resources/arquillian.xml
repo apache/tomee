@@ -25,6 +25,7 @@
         <property name="ajpPort">-1</property>
         <property name="version">${tomee.version}</property>
         <property name="dir">target/apache-tomee-remote-1</property>
+        <property name="conf">m</property>
         <property name="appWorkingDir">target/arquillian-test-working-dir-1</property>
       </configuration>
     </container>
