@@ -87,7 +87,7 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.apache.openejb.openwebbeans</groupId>
+      <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-jsf</artifactId>
       <version>${org.apache.openwebbeans.version}</version>
       <scope>compile</scope>
