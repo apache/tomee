@@ -1829,6 +1829,10 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
     private String normalizeResourceId(String resourceId) {
         if (resourceId == null) return null;
 
+        if (resourceId.startsWith("comp/env/")) {
+            resourceId = resourceId.substring("comp/env/".length());
+        }
+
         // strip off "java:comp/env"
         if (resourceId.startsWith("java:comp/env/")) {
             resourceId = resourceId.substring("java:comp/env/".length());

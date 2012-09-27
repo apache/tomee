@@ -54,7 +54,6 @@ import java.util.logging.Logger;
 public abstract class TomEEContainer<Configuration extends TomEEConfiguration> implements DeployableContainer<Configuration> {
     protected static final Logger LOGGER = Logger.getLogger(TomEEContainer.class.getName());
 
-    protected static final String SHUTDOWN_COMMAND = "SHUTDOWN" + Character.toString((char) -1);
     protected Configuration configuration;
     protected Map<String, DeployedApp> moduleIds = new HashMap<String, DeployedApp>();
     private final Options options;
@@ -191,9 +190,9 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
     @Override
     public void stop() throws LifecycleException {
         try {
-            Socket socket = new Socket(configuration.getHost(), configuration.getStopPort());
+            Socket socket = new Socket(configuration.getStopHost(), configuration.getStopPort());
             OutputStream out = socket.getOutputStream();
-            out.write(SHUTDOWN_COMMAND.getBytes());
+            out.write(configuration.getStopCommand().getBytes());
 
             waitForShutdown(socket, 10);
         } catch (Exception e) {
