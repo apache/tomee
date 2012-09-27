@@ -106,6 +106,7 @@ import org.apache.openejb.util.SafeToolkit;
 import org.apache.openejb.util.proxy.ProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
 import org.apache.webbeans.config.WebBeansContext;
+import org.apache.webbeans.logger.JULLoggerFactory;
 import org.apache.webbeans.spi.ContainerLifecycle;
 import org.apache.webbeans.spi.ContextsService;
 import org.apache.webbeans.spi.LoaderService;
@@ -178,6 +179,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     static {
         AsmParameterNameLoader.install();
+        //avoid linkage error on mac
+        // adding just in case others run into in their tests
+        JULLoggerFactory.class.getName();
     }
 
     public static final String OPENEJB_URL_PKG_PREFIX = IvmContext.class.getPackage().getName();
