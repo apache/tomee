@@ -1129,6 +1129,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             destroyResource(binding.getName(), binding.getClassName(), object);
         }
 
+        try {
+            containerSystem.getJNDIContext().unbind("java:global");
+        } catch (NamingException ignored) {
+            // no-op
+        }
+
         SystemInstance.get().removeComponent(OpenEjbConfiguration.class);
         SystemInstance.get().removeComponent(JtaEntityManagerRegistry.class);
         SystemInstance.get().removeComponent(TransactionSynchronizationRegistry.class);
@@ -1216,11 +1222,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     // no-op
                 }
             }
-        }
-        try {
-            containerSystem.getJNDIContext().unbind("java:global");
-        } catch (NamingException ignored) {
-            // no-op
         }
 
         EjbResolver globalResolver = new EjbResolver(null, EjbResolver.Scope.GLOBAL);
