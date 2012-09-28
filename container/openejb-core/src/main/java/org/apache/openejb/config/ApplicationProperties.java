@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
+ * TODO Check for app.properties
  * @version $Rev$ $Date$
  */
 public class ApplicationProperties implements DynamicDeployer {
