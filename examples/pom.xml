@@ -93,6 +93,7 @@
     <module>persistence-fragment</module>
     <module>pojo-webservice</module>
     <module>polling-parent</module>
+    <module>projectstage-demo</module>
     <module>quartz-app</module>
     <module>realm-in-tomee</module>
     <module>reload-persistence-unit-properties</module>
