@@ -54,7 +54,6 @@ import java.util.logging.Logger;
 public abstract class TomEEContainer<Configuration extends TomEEConfiguration> implements DeployableContainer<Configuration> {
     protected static final Logger LOGGER = Logger.getLogger(TomEEContainer.class.getName());
 
-    protected static final String SHUTDOWN_COMMAND = "SHUTDOWN" + Character.toString((char) -1);
     protected Configuration configuration;
     protected Map<String, DeployedApp> moduleIds = new HashMap<String, DeployedApp>();
     private final Options options;
@@ -102,6 +101,31 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
             }
         }
 
+        setPorts();
+
+        // with multiple containers we don't want it so let the user eb able to skip it
+        if (configuration.getExportConfAsSystemProperty()) {
+            //
+            // Export the config back out to properties
+            //
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                for (String prefix : prefixes.value()) {
+                    try {
+                        final String property = prefix + "." + entry.getKey();
+                        final String value = entry.getValue().toString();
+
+                        LOGGER.log(Level.FINER, String.format("Exporting '%s=%s'", property, value));
+
+                        System.setProperty(property, value);
+                    } catch (Throwable e) {
+                        // value cannot be converted to a string
+                    }
+                }
+            }
+        }
+    }
+
+    protected void setPorts() {
         //
         // Set ports if they are unspecified
         //
@@ -109,6 +133,8 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         for (int i : configuration.portsAlreadySet()) { // ensure we don't use already initialized port (fixed ones)
             randomPorts.add(i);
         }
+
+        final ObjectMap map = new ObjectMap(configuration);
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             if (!entry.getKey().toLowerCase().endsWith("port")) continue;
             try {
@@ -133,27 +159,6 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
             }
         }
         randomPorts.clear();
-
-        // with multiple containers we don't want it so let the user eb able to skip it
-        if (configuration.getExportConfAsSystemProperty()) {
-            //
-            // Export the config back out to properties
-            //
-            for (Map.Entry<String, Object> entry : map.entrySet()) {
-                for (String prefix : prefixes.value()) {
-                    try {
-                        final String property = prefix + "." + entry.getKey();
-                        final String value = entry.getValue().toString();
-
-                        LOGGER.log(Level.FINER, String.format("Exporting '%s=%s'", property, value));
-
-                        System.setProperty(property, value);
-                    } catch (Throwable e) {
-                        // value cannot be converted to a string
-                    }
-                }
-            }
-        }
     }
 
     private int nextPort(final String portRange, final Collection<Integer> excluded) {
@@ -185,9 +190,9 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
     @Override
     public void stop() throws LifecycleException {
         try {
-            Socket socket = new Socket(configuration.getHost(), configuration.getStopPort());
+            Socket socket = new Socket(configuration.getStopHost(), configuration.getStopPort());
             OutputStream out = socket.getOutputStream();
-            out.write(SHUTDOWN_COMMAND.getBytes());
+            out.write(configuration.getStopCommand().getBytes());
 
             waitForShutdown(socket, 10);
         } catch (Exception e) {

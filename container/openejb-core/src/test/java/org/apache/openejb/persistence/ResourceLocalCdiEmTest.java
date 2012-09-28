@@ -34,6 +34,7 @@ import org.apache.openejb.jee.jpa.unit.TransactionType;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.junit.Configuration;
 import org.apache.openejb.junit.Module;
+import org.apache.webbeans.logger.JULLoggerFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -53,6 +54,9 @@ public class ResourceLocalCdiEmTest {
 
     @Configuration
     public Properties config() {
+        //avoid linkage error on mac, only used for tests so don't need to add it in Core
+        JULLoggerFactory.class.getName();
+
         final Properties p = new Properties();
         p.put("ResourceLocalCdiEmTest", "new://Resource?type=DataSource");
         p.put("ResourceLocalCdiEmTest.JdbcDriver", "org.hsqldb.jdbcDriver");

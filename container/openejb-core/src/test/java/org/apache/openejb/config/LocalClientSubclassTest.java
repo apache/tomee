@@ -28,7 +28,6 @@ public class LocalClientSubclassTest extends LocalClientTest {
 
     @Override
     public void test() throws Exception {
-
         Properties properties = new Properties();
         properties.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
         InitialContext context = new InitialContext(properties);

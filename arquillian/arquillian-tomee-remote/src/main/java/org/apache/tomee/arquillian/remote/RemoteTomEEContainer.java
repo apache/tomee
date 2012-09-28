@@ -56,6 +56,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
 
         final String shutdownPort = System.getProperty(RemoteServer.SERVER_SHUTDOWN_PORT);
         final String shutdownHost = System.getProperty(RemoteServer.SERVER_SHUTDOWN_HOST);
+        final String shutdownCommand = System.getProperty(RemoteServer.SERVER_SHUTDOWN_COMMAND);
         final String debug = System.getProperty(RemoteServer.OPENEJB_SERVER_DEBUG);
         final String debugPort = System.getProperty(RemoteServer.SERVER_DEBUG_PORT);
 
@@ -64,7 +65,8 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
             configure();
 
             System.setProperty(RemoteServer.SERVER_SHUTDOWN_PORT, Integer.toString(configuration.getStopPort()));
-            System.setProperty(RemoteServer.SERVER_SHUTDOWN_HOST, configuration.getHost());
+            System.setProperty(RemoteServer.SERVER_SHUTDOWN_COMMAND, configuration.getStopCommand());
+            System.setProperty(RemoteServer.SERVER_SHUTDOWN_HOST, configuration.getStopHost());
             if (configuration.isDebug()) {
                 System.setProperty(RemoteServer.OPENEJB_SERVER_DEBUG, "true");
                 System.setProperty(RemoteServer.SERVER_DEBUG_PORT, Integer.toString(configuration.getDebugPort()));
@@ -78,6 +80,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
         } finally {
             resetSystemProperty(RemoteServer.SERVER_SHUTDOWN_PORT, shutdownPort);
             resetSystemProperty(RemoteServer.SERVER_SHUTDOWN_HOST, shutdownHost);
+            resetSystemProperty(RemoteServer.SERVER_SHUTDOWN_COMMAND, shutdownCommand);
             resetSystemProperty(RemoteServer.OPENEJB_SERVER_DEBUG, debug);
             resetSystemProperty(RemoteServer.SERVER_DEBUG_PORT, debugPort);
         }
@@ -126,14 +129,9 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
         Setup.configureServerXml(openejbHome, configuration);
         Setup.configureSystemProperties(openejbHome, configuration);
 
-        if (configuration.getConf() != null && !configuration.getConf().isEmpty()) {
-            final File confSrc = new File(configuration.getConf());
-            if (confSrc.exists()) {
-                Setup.synchronizeConf(openejbHome, confSrc);
-            } else {
-                LOGGER.warning("can't find " + confSrc.getAbsolutePath());
-            }
-        }
+        Setup.synchronizeFolder(openejbHome, configuration.getConf(), "conf");
+        Setup.synchronizeFolder(openejbHome, configuration.getBin(), "bin");
+        Setup.synchronizeFolder(openejbHome, configuration.getLib(), "lib");
 
         Setup.exportProperties(openejbHome, configuration);
 

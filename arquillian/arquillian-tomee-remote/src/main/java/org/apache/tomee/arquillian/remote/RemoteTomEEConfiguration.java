@@ -36,6 +36,8 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
     private boolean removeUnusedWebapps = true;
     private int ajpPort = 8009;
     private String conf;
+    private String bin;
+    private String lib;
     private boolean cleanOnStartUp;
     private boolean debug;
     private int debugPort = 5005;
@@ -110,6 +112,22 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
 
     public void setConf(String conf) {
         this.conf = conf;
+    }
+
+    public String getBin() {
+        return bin;
+    }
+
+    public void setBin(String bin) {
+        this.bin = bin;
+    }
+
+    public String getLib() {
+        return lib;
+    }
+
+    public void setLib(String lib) {
+        this.lib = lib;
     }
 
     @Override

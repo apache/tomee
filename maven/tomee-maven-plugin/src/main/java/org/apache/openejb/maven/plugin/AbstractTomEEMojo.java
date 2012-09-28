@@ -16,26 +16,6 @@
  */
 package org.apache.openejb.maven.plugin;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -52,13 +32,35 @@ import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Zips;
 import org.apache.tomee.util.QuickServerXmlParser;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
 import static org.apache.maven.artifact.Artifact.SCOPE_COMPILE;
 import static org.apache.maven.artifact.repository.ArtifactRepositoryPolicy.CHECKSUM_POLICY_WARN;
 import static org.apache.maven.artifact.repository.ArtifactRepositoryPolicy.UPDATE_POLICY_DAILY;
 import static org.apache.maven.artifact.repository.ArtifactRepositoryPolicy.UPDATE_POLICY_NEVER;
 import static org.apache.maven.artifact.versioning.VersionRange.createFromVersion;
 import static org.apache.openejb.util.JarExtractor.delete;
-import static org.codehaus.plexus.util.FileUtils.copyDirectory;
 import static org.codehaus.plexus.util.FileUtils.deleteDirectory;
 import static org.codehaus.plexus.util.IOUtil.close;
 import static org.codehaus.plexus.util.IOUtil.copy;
@@ -248,6 +250,11 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     protected boolean removeDefaultWebapps;
 
     /**
+     * @parameter expression="${tomee-plugin.remove-tomee-webapps}" default-value="false"
+     */
+    protected boolean removeTomeeWebapp;
+
+    /**
      * @parameter expression="${project.packaging}"
      */
     protected String packaging;
@@ -273,13 +280,22 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         copyLibs(webapps, new File(catalinaBase, webappDir), "war"); // TODO: manage custom context ?context=foo
         copyLibs(apps, new File(catalinaBase, appDir), "jar");
         overrideConf(config);
-        overrideConf(bin);
         overrideConf(lib);
+        final Collection<File> copied = overrideConf(bin);
+
+        for (File copy : copied) {
+            if (copy.getName().endsWith(".bat") || copy.getName().endsWith(".sh")) {
+                if (!copy.setExecutable(true)) {
+                    getLog().warn("can't make " + copy.getPath() + " executable");
+                }
+            }
+        }
+
         if (!keepServerXmlAsthis) {
             overrideAddresses();
         }
         if (removeDefaultWebapps) {
-            removeDefaultWebapps();
+            removeDefaultWebapps(removeTomeeWebapp);
         }
         if (!skipCurrentProject) {
             copyWar();
@@ -287,12 +303,12 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         run();
     }
 
-    private void removeDefaultWebapps() {
+    private void removeDefaultWebapps(final boolean removeTomee) {
         final File webapps = new File(catalinaBase, webappDir);
         if (webapps.isDirectory()) {
             for (File webapp : webapps.listFiles()) {
                 final String name = webapp.getName();
-                if (webapp.isDirectory() && !name.equals("openejb") && !name.equals("tomee")) {
+                if (webapp.isDirectory() && (removeTomee || !name.equals("tomee"))) {
                     try {
                         deleteDirectory(webapp);
                     } catch (IOException ignored) {
@@ -425,7 +441,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             out = new File(parent, name);
         }
         delete(out);
-        if (!out.isDirectory()) {
+        if (out.exists() && !out.isDirectory()) {
             final String dir = name.substring(0, name.lastIndexOf('.'));
             final File unpacked;
             if (war) {
@@ -438,7 +454,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
         if (warFile.exists() && warFile.isDirectory()) {
             try {
-                copyDirectory(warFile, out);
+                IO.copyDirectory(warFile, out);
             } catch (IOException e) {
                 throw new TomEEException(e.getMessage(), e);
             }
@@ -502,13 +518,14 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         }
     }
 
-    private void overrideConf(final File dir) {
+    private Collection<File> overrideConf(final File dir) {
         if (!dir.exists()) {
-            return;
+            return Collections.emptyList();
         }
 
         final File[] files = dir.listFiles();
         if (files != null) {
+            final Collection<File> copied = new ArrayList<File>();
             for (final File f : files) {
                 if (f.isHidden()) {
                     continue;
@@ -531,6 +548,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                         out = new FileOutputStream(destination);
                         copy(in, out);
 
+                        copied.add(f);
                         getLog().info("Override '" + file + "'");
                     } catch (Exception e) {
                         throw new TomEEException(e.getMessage(), e);
@@ -540,7 +558,11 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                     }
                 }
             }
+
+            return copied;
         }
+
+        return Collections.emptyList();
     }
 
     protected void run() {
@@ -625,21 +647,26 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
     private File resolve() {
         if (!settings.isOffline()) {
-            if ("snapshots".equals(apacheRepos) || "true".equals(apacheRepos)) {
-                remoteRepos.add(new DefaultArtifactRepository("apache", "https://repository.apache.org/content/repositories/snapshots/",
-                        new DefaultRepositoryLayout(),
-                        new ArtifactRepositoryPolicy(true, UPDATE_POLICY_DAILY, CHECKSUM_POLICY_WARN),
-                        new ArtifactRepositoryPolicy(false, UPDATE_POLICY_NEVER, CHECKSUM_POLICY_WARN)));
-            } else {
-                try {
-                    new URI(apacheRepos); // to check it is a uri
-                    remoteRepos.add(new DefaultArtifactRepository("additional-repo-tomee-mvn-plugin", apacheRepos,
+            try {
+                if ("snapshots".equals(apacheRepos) || "true".equals(apacheRepos)) {
+                    remoteRepos.add(new DefaultArtifactRepository("apache", "https://repository.apache.org/content/repositories/snapshots/",
                             new DefaultRepositoryLayout(),
                             new ArtifactRepositoryPolicy(true, UPDATE_POLICY_DAILY, CHECKSUM_POLICY_WARN),
-                            new ArtifactRepositoryPolicy(true, UPDATE_POLICY_NEVER, CHECKSUM_POLICY_WARN)));
-                } catch (URISyntaxException e) {
-                    // ignored, use classical repos
+                            new ArtifactRepositoryPolicy(false, UPDATE_POLICY_NEVER, CHECKSUM_POLICY_WARN)));
+                } else {
+                    try {
+                        new URI(apacheRepos); // to check it is a uri
+                        remoteRepos.add(new DefaultArtifactRepository("additional-repo-tomee-mvn-plugin", apacheRepos,
+                                new DefaultRepositoryLayout(),
+                                new ArtifactRepositoryPolicy(true, UPDATE_POLICY_DAILY, CHECKSUM_POLICY_WARN),
+                                new ArtifactRepositoryPolicy(true, UPDATE_POLICY_NEVER, CHECKSUM_POLICY_WARN)));
+                    } catch (URISyntaxException e) {
+                        // ignored, use classical repos
+                    }
                 }
+            } catch (UnsupportedOperationException uoe) {
+                // can happen if remoterepos is unmodifiable (possible in complex builds)
+                // no-op
             }
         } else if (remoteRepos != null && remoteRepos.isEmpty()) {
             remoteRepos = new ArrayList<ArtifactRepository>();

@@ -33,7 +33,7 @@
     <fileSet>
       <directory>${project.basedir}/src/main/legal</directory>
       <includes>
-        <include>LICENCE</include>
+        <include>LICENSE</include>
         <include>NOTICE</include>
       </includes>
       <outputDirectory>/</outputDirectory>

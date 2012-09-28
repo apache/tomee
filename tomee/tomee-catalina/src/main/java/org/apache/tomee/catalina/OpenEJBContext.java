@@ -17,6 +17,8 @@
  */
 package org.apache.tomee.catalina;
 
+import org.apache.naming.ContextBindings;
+import org.apache.openejb.assembler.DeployerEjb;
 import org.apache.openejb.core.ThreadContext;
 
 import javax.naming.Binding;
@@ -254,8 +256,18 @@ public class OpenEJBContext implements Context {
      */
     private Context getThreadContext() throws NamingException {
         ThreadContext threadContext = ThreadContext.getThreadContext();
+        if (skipEjbContext(threadContext)) {
+            return ContextBindings.getClassLoader();
+        }
         Context context = threadContext.getBeanContext().getJndiEnc();
         return context;
+    }
+
+    private boolean skipEjbContext(final ThreadContext threadContext) {
+        // we use it to deploy so if any lookup is done during the deployment
+        // we don't want to get the DeployerEjb JNDI tree
+        // since this method is pretty quick that's not an issue to do the test
+        return DeployerEjb.class.equals(threadContext.getBeanContext().getBeanClass());
     }
 
 }
