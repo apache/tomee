@@ -189,7 +189,7 @@ public class OpenEJBContextConfig extends ContextConfig {
         File previous = file;
         while (current.getParentFile() != null) {
             if (CLASSES.equals(previous.getName()) && WEB_INF.equals(current.getName())) {
-                String path = file.getAbsolutePath().replaceFirst(previous.getAbsolutePath(), "");
+                String path = file.getAbsolutePath().substring(previous.getAbsolutePath().length());
                 if (path.startsWith(File.separator)) {
                     path = path.substring(File.separator.length());
                 }
