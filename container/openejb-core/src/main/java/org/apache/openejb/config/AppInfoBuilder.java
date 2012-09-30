@@ -360,8 +360,14 @@ class AppInfoBuilder {
             webAppInfo.restClass.addAll(webModule.getRestClasses());
             webAppInfo.ejbWebServices.addAll(webModule.getEjbWebServices());
             webAppInfo.ejbRestServices.addAll(webModule.getEjbRestServices());
-            webAppInfo.webAnnotatedClasses.addAll(webModule.getWebAnnotatedClasses());
             webAppInfo.jaxRsProviders.addAll(webModule.getJaxrsProviders());
+
+            for (Map.Entry<String, Set<String>> entry : webModule.getWebAnnotatedClasses().entrySet()) {
+                final ClassListInfo info = new ClassListInfo();
+                info.name = entry.getKey();
+                info.list.addAll(entry.getValue());
+                webAppInfo.webAnnotatedClasses.add(info);
+            }
 
             for (Map.Entry<String, Set<String>> entry : webModule.getJsfAnnotatedClasses().entrySet()) {
                 final ClassListInfo info = new ClassListInfo();

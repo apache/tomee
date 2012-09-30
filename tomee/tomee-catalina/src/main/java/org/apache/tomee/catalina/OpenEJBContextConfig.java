@@ -20,19 +20,22 @@ import org.apache.catalina.Context;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.deploy.WebXml;
 import org.apache.catalina.startup.ContextConfig;
+import org.apache.openejb.assembler.classic.ClassListInfo;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.URLs;
 import org.xml.sax.InputSource;
 
 import javax.servlet.ServletContainerInitializer;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -43,9 +46,6 @@ public class OpenEJBContextConfig extends ContextConfig {
 
     private static final String MYFACES_TOMEEM_CONTAINER_INITIALIZER = "org.apache.tomee.myfaces.TomEEMyFacesContainerInitializer";
     private static final String TOMEE_MYFACES_CONTEXT_LISTENER = "org.apache.tomee.myfaces.TomEEMyFacesContextListener";
-
-    private static final String CLASSES = "classes";
-    private static final String WEB_INF = "WEB-INF";
 
     private TomcatWebAppBuilder.StandardContextInfo info;
 
@@ -128,137 +128,78 @@ public class OpenEJBContextConfig extends ContextConfig {
     }
 
     @Override
-    protected void processAnnotationsFile(File file, WebXml fragment,
-            boolean handlesTypesOnly) {
-        logger.debug("processAnnotationsFile {0}", file.getAbsolutePath() );
-        try {
-            final WebAppInfo webAppInfo = info.get();
-
-            if (webAppInfo == null) {
-                logger.warning("WebAppInfo not found. " + info);
-                super.processAnnotationsFile(file, fragment, handlesTypesOnly);
-                return;
-            }
-
-            logger.debug("Optimized Scan of File {0}", file.getAbsolutePath());
-
-            // TODO We should just remember which jars each class came from
-            // then we wouldn't need to lookup the class from the URL in this
-            // way to guarantee we only add classes from this URL.
-            final URLClassLoader loader = new URLClassLoader(new URL[]{file.toURI().toURL()});
-            for (String webAnnotatedClassName : webAppInfo.webAnnotatedClasses) {
-
-                final String includedPackage = getSubPackage(file);
-                if (includedPackage == null || !webAnnotatedClassName.startsWith(includedPackage)) {
-                    continue;
-                }
-
-                final String classFile = webAnnotatedClassName.substring(includedPackage.length()).replace('.', '/') + ".class";
-                final URL classUrl = loader.getResource(classFile);
-
-                if (classUrl == null) {
-                    logger.debug("Not present " + webAnnotatedClassName);
-                    continue;
-                }
-
-                logger.debug("Found {0}", webAnnotatedClassName);
-
-                final InputStream inputStream = classUrl.openStream();
-                try {
-                    processAnnotationsStream(inputStream, fragment, handlesTypesOnly);
-                    logger.debug("Succeeded {0}", webAnnotatedClassName);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } finally {
-                    inputStream.close();
-                }
-
-            }
-        } catch (Exception e) {
-            logger.error("OpenEJBContextConfig.processAnnotationsFile: failed.", e);
-        }
-    }
-
-    // because we don't always get WEB-INF/classes folder, simply get the already appended subpackage
-    private static String getSubPackage(final File file) {
-        File current = file.getParentFile();
-        if (current == null) {
-            return "";
-        }
-
-        File previous = file;
-        while (current.getParentFile() != null) {
-            if (CLASSES.equals(previous.getName()) && WEB_INF.equals(current.getName())) {
-                String path = file.getAbsolutePath().substring(previous.getAbsolutePath().length());
-                if (path.startsWith(File.separator)) {
-                    path = path.substring(File.separator.length());
-                }
-                if (path.endsWith(File.separator)) {
-                    path = path.substring(0, path.length() - 1);
-                }
-
-                if (path.isEmpty()) {
-                    return path;
-                }
-
-                return path + ".";
-            }
-
-            previous = current;
-            current = current.getParentFile();
-        }
-
-        return ""; // no subpackage found
-    }
-
-    @Override
-    protected void processAnnotationsUrl(URL url, WebXml fragment, boolean handlesTypeOnly) {
-        logger.debug("processAnnotationsUrl " + url);
-        if (SystemInstance.get().getOptions().get("tomee.tomcat.scan", false)) {
-            super.processAnnotationsUrl(url, fragment, handlesTypeOnly);
+    protected void processAnnotationsFile(File file, WebXml fragment, boolean handlesTypesOnly) {
+        final WebAppInfo webAppInfo = info.get();
+        if (webAppInfo == null) {
+            super.processAnnotationsFile(file, fragment, handlesTypesOnly);
             return;
         }
 
-        try {
-            final WebAppInfo webAppInfo = info.get();
-
-            if (webAppInfo == null) {
-                logger.warning("WebAppInfo not found. " + info);
-                super.processAnnotationsUrl(url, fragment, handlesTypeOnly);
-                return;
-            }
-
-            logger.debug("Optimized Scan of URL " + url);
-
-            // TODO We should just remember which jars each class came from
-            // then we wouldn't need to lookup the class from the URL in this
-            // way to guarantee we only add classes from this URL.
-            final URLClassLoader loader = new URLClassLoader(new URL[]{url});
-            for (String webAnnotatedClassName : webAppInfo.webAnnotatedClasses) {
-
-                final String classFile = webAnnotatedClassName.replace('.', '/') + ".class";
-                final URL classUrl = loader.getResource(classFile);
-
-                if (classUrl == null) {
-                    logger.debug("Not present " + webAnnotatedClassName);
+        for (ClassListInfo webAnnotated : webAppInfo.webAnnotatedClasses) {
+            try {
+                final URL url = new URL(webAnnotated.name);
+                final File classAsFile = URLs.toFile(new URL(webAnnotated.name));
+                if (!isIncludedIn(file, classAsFile)) {
                     continue;
                 }
 
-                logger.debug("Found " + webAnnotatedClassName);
+                internalProcessAnnotationsStream(url, fragment, handlesTypesOnly);
+            } catch (MalformedURLException e) {
+                throw new IllegalArgumentException(e);
+            } catch (IOException e) {
+                throw new IllegalArgumentException(e);
+            }
+        }
+    }
 
-                final InputStream inputStream = classUrl.openStream();
-                try {
-                    processAnnotationsStream(inputStream, fragment, handlesTypeOnly);
-                    logger.debug("Succeeded " + webAnnotatedClassName);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } finally {
-                    inputStream.close();
+    @Override
+    protected void processAnnotationsUrl(URL currentUrl, WebXml fragment, boolean handlesTypeOnly) {
+        final WebAppInfo webAppInfo = info.get();
+        if (webAppInfo == null) {
+            super.processAnnotationsUrl(currentUrl, fragment, handlesTypeOnly);
+            return;
+        }
+
+        for (ClassListInfo webAnnotated : webAppInfo.webAnnotatedClasses) {
+            try {
+                final URL url = new URL(webAnnotated.name);
+                final File classAsFile = URLs.toFile(new URL(webAppInfo.webAnnotatedClasses.iterator().next().name));
+                final File currentUrlAsFile = URLs.toFile(currentUrl);
+                if (!currentUrlAsFile.equals(classAsFile)) {
+                    continue;
                 }
 
+                internalProcessAnnotationsStream(url, fragment, handlesTypeOnly);
+            } catch (MalformedURLException e) {
+                throw new IllegalArgumentException(e);
+            } catch (IOException e) {
+                throw new IllegalArgumentException(e);
             }
-        } catch (Exception e) {
-            logger.error("OpenEJBContextConfig.processAnnotationsUrl: failed.", e);
         }
+    }
+
+    private void internalProcessAnnotationsStream(final URL url, final WebXml fragment, final boolean handlesTypeOnly) {
+        InputStream is = null;
+        try {
+            is = url.openStream();
+            processAnnotationsStream(is, fragment, handlesTypeOnly);
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException(e);
+        } catch (IOException e) {
+            throw new IllegalArgumentException(e);
+        } finally {
+            IO.close(is);
+        }
+    }
+
+    private static boolean isIncludedIn(final File file, final File classAsFile) {
+        File current = classAsFile;
+        while (current != null && current.exists()) {
+            if (current.equals(file)) {
+                return true;
+            }
+            current = current.getParentFile();
+        }
+        return false;
     }
 }

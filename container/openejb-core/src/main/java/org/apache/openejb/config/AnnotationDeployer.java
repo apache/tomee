@@ -111,6 +111,7 @@ import org.apache.openejb.jee.TransactionType;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.WebserviceDescription;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.loader.JarLocation;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Classes;
 import org.apache.openejb.util.Join;
@@ -1126,7 +1127,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
 
                 final List<Annotated<Class<?>>> found = finder.findMetaAnnotatedClasses(clazz);
-                webModule.getWebAnnotatedClasses().addAll(metaToStr(found));
+                webModule.getWebAnnotatedClasses().putAll(metaToStr(found));
             }
 
             return webModule;
@@ -5173,12 +5174,43 @@ public class AnnotationDeployer implements DynamicDeployer {
         return classes;
     }
 
-    private static Collection<String> metaToStr(List<Annotated<Class<?>>> found) {
-        final Collection<String> classes = new ArrayList<String>(found.size());
+    private static Map<String, Set<String>> metaToStr(final List<Annotated<Class<?>>> found) {
+        final Map<String, Set<String>> classes = new HashMap<String, Set<String>>(found.size());
         for (Annotated<Class<?>> clazz : found) {
-            classes.add(clazz.get().getName());
+            final Class<?> loadedClass = clazz.get();
+            final URL url = classLocation(loadedClass);
+            Set<String> list = classes.get(url);
+            if (list == null) {
+                list = new HashSet<String>();
+                classes.put(url.toExternalForm(), list);
+            }
+            list.add(loadedClass.getName());
         }
         return classes;
+    }
+
+    public static URL classLocation(Class clazz) {
+        try {
+            String classFileName = clazz.getName().replace(".", "/") + ".class";
+
+            ClassLoader loader = clazz.getClassLoader();
+            URL url;
+            if (loader != null) {
+                url = loader.getResource(classFileName);
+            } else {
+                url = clazz.getResource(classFileName);
+            }
+
+            if (url == null) {
+                throw new IllegalStateException("classloader.getResource(classFileName) returned a null URL");
+            }
+
+            return url;
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     public EnvEntriesPropertiesDeployer getEnvEntriesPropertiesDeployer() {
