@@ -32,6 +32,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.ArrayEnumeration;
 import org.apache.openejb.util.URLs;
 import org.apache.openejb.util.classloader.ClassLoaderComparator;
+import org.apache.openejb.util.classloader.URLClassLoaderFirst;
 import org.apache.tomcat.util.ExceptionUtils;
 import org.apache.tomcat.util.modeler.Registry;
 
@@ -193,8 +194,8 @@ public class TomEEWebappLoader extends WebappLoader {
                 result = app.getResources(name);
             }
 
-            if (TomEEClassLoaderEnricher.isSlf4jQuery(name)) {
-                return TomEEClassLoaderEnricher.filterSlf4jImpl(result);
+            if (URLClassLoaderFirst.isSlf4jQuery(name)) {
+                return URLClassLoaderFirst.filterSlf4jImpl(result);
             }
 
             return result;
