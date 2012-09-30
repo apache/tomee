@@ -1127,7 +1127,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
 
                 final List<Annotated<Class<?>>> found = finder.findMetaAnnotatedClasses(clazz);
-                webModule.getWebAnnotatedClasses().putAll(metaToStr(found));
+                addWebAnnotatedClassInfo(webModule.getWebAnnotatedClasses(), found);
             }
 
             return webModule;
@@ -5174,22 +5174,21 @@ public class AnnotationDeployer implements DynamicDeployer {
         return classes;
     }
 
-    private static Map<String, Set<String>> metaToStr(final List<Annotated<Class<?>>> found) {
-        final Map<String, Set<String>> classes = new HashMap<String, Set<String>>(found.size());
+    private static Map<String, Set<String>> addWebAnnotatedClassInfo(final Map<String, Set<String>> classes, final List<Annotated<Class<?>>> found) {
         for (Annotated<Class<?>> clazz : found) {
             final Class<?> loadedClass = clazz.get();
 
             // url of the jar/folder containing the class
-            URL url;
+            String url;
             try {
-                url = JarLocation.jarLocation(loadedClass).toURI().toURL();
+                url = JarLocation.jarLocation(loadedClass).toURI().toURL().toExternalForm();
             } catch (MalformedURLException e) {
-                url = classLocation(loadedClass);
+                url = classLocation(loadedClass).toExternalForm();
             }
             Set<String> list = classes.get(url);
             if (list == null) {
                 list = new HashSet<String>();
-                classes.put(url.toExternalForm(), list);
+                classes.put(url, list);
             }
 
             // saving class url
