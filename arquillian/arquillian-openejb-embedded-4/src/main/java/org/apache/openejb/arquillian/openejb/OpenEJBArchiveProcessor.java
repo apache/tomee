@@ -42,6 +42,7 @@ import org.jboss.shrinkwrap.api.asset.Asset;
 import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
 import org.jboss.shrinkwrap.api.asset.FileAsset;
 import org.jboss.shrinkwrap.api.asset.UrlAsset;
+import org.jboss.shrinkwrap.api.classloader.ShrinkWrapClassLoader;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.impl.base.filter.IncludeRegExpPaths;
 
@@ -112,9 +113,9 @@ public class OpenEJBArchiveProcessor {
 
         final ClassLoader loader;
         if (!WEB_INF.equals(prefix)) {
-            loader = new URLClassLoader(urls, parent);
+            loader = new SWClassLoader("", new URLClassLoader(urls, parent), archive);
         } else {
-            loader = new URLClassLoaderFirst(urls, parent);
+            loader = new SWClassLoader("/WEB-INF/classes/", new URLClassLoaderFirst(urls, parent), archive);
         }
 
         final AppModule appModule = new AppModule(loader, archive.getName());

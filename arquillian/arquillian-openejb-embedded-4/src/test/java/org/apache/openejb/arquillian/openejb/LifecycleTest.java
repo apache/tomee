@@ -103,7 +103,7 @@ public class LifecycleTest {
     }
 
     private static void checkCl() { // openejb classloader, not the app one
-        assertThat(Thread.currentThread().getContextClassLoader(), instanceOf(URLClassLoader.class));
+        assertThat(Thread.currentThread().getContextClassLoader().getParent(), instanceOf(URLClassLoader.class));
     }
 
     public static class Foo {

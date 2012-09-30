@@ -176,7 +176,7 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
         try {
             final AppModule module = OpenEJBArchiveProcessor.createModule(archive, testClass.get());
             final AppInfo appInfo = configurationFactory.configureApplication(module);
-            final AppContext appCtx = assembler.createApplication(appInfo);
+            final AppContext appCtx = assembler.createApplication(appInfo, module.getClassLoader());
 
             final ServletContext appServletContext = new MockServletContext();
             final HttpSession appSession = new MockHttpSession();
@@ -204,6 +204,11 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
 
         if (appContext.get() == null) {
             return;
+        }
+
+        final ClassLoader cl = appContext.get().getClassLoader();
+        if (cl instanceof SWClassLoader) {
+            ((SWClassLoader) cl).close();
         }
 
         try {
