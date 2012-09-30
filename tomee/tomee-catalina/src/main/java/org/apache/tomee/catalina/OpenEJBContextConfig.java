@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -123,11 +124,6 @@ public class OpenEJBContextConfig extends ContextConfig {
     }
 
     @Override
-    protected void parseWebXml(InputSource source, WebXml dest, boolean fragment) {
-        super.parseWebXml(source, dest, fragment);
-    }
-
-    @Override
     protected void processAnnotationsFile(File file, WebXml fragment, boolean handlesTypesOnly) {
         final WebAppInfo webAppInfo = info.get();
         if (webAppInfo == null) {
@@ -137,13 +133,12 @@ public class OpenEJBContextConfig extends ContextConfig {
 
         for (ClassListInfo webAnnotated : webAppInfo.webAnnotatedClasses) {
             try {
-                final URL url = new URL(webAnnotated.name);
-                final File classAsFile = URLs.toFile(new URL(webAnnotated.name));
-                if (!isIncludedIn(file, classAsFile)) {
+                final File classContainerAsFile = URLs.toFile(new URL(webAnnotated.name));
+                if (!isIncludedIn(file, classContainerAsFile)) {
                     continue;
                 }
 
-                internalProcessAnnotationsStream(url, fragment, handlesTypesOnly);
+                internalProcessAnnotationsStream(webAnnotated.list, fragment, handlesTypesOnly);
             } catch (MalformedURLException e) {
                 throw new IllegalArgumentException(e);
             } catch (IOException e) {
@@ -162,14 +157,13 @@ public class OpenEJBContextConfig extends ContextConfig {
 
         for (ClassListInfo webAnnotated : webAppInfo.webAnnotatedClasses) {
             try {
-                final URL url = new URL(webAnnotated.name);
-                final File classAsFile = URLs.toFile(new URL(webAppInfo.webAnnotatedClasses.iterator().next().name));
+                final File classContainerAsFile = URLs.toFile(new URL(webAnnotated.name));
                 final File currentUrlAsFile = URLs.toFile(currentUrl);
-                if (!currentUrlAsFile.equals(classAsFile)) {
+                if (!isIncludedIn(currentUrlAsFile, classContainerAsFile)) {
                     continue;
                 }
 
-                internalProcessAnnotationsStream(url, fragment, handlesTypeOnly);
+                internalProcessAnnotationsStream(webAnnotated.list, fragment, handlesTypeOnly);
             } catch (MalformedURLException e) {
                 throw new IllegalArgumentException(e);
             } catch (IOException e) {
@@ -178,28 +172,34 @@ public class OpenEJBContextConfig extends ContextConfig {
         }
     }
 
-    private void internalProcessAnnotationsStream(final URL url, final WebXml fragment, final boolean handlesTypeOnly) {
-        InputStream is = null;
-        try {
-            is = url.openStream();
-            processAnnotationsStream(is, fragment, handlesTypeOnly);
-        } catch (MalformedURLException e) {
-            throw new IllegalArgumentException(e);
-        } catch (IOException e) {
-            throw new IllegalArgumentException(e);
-        } finally {
-            IO.close(is);
+    private void internalProcessAnnotationsStream(final Collection<String> urls, final WebXml fragment, final boolean handlesTypeOnly) {
+        for (String url : urls) {
+            InputStream is = null;
+            try {
+                is = new URL(url).openStream();
+                processAnnotationsStream(is, fragment, handlesTypeOnly);
+            } catch (MalformedURLException e) {
+                throw new IllegalArgumentException(e);
+            } catch (IOException e) {
+                throw new IllegalArgumentException(e);
+            } finally {
+                IO.close(is);
+            }
         }
     }
 
     private static boolean isIncludedIn(final File file, final File classAsFile) {
         File current = classAsFile;
+        boolean webInf = false;
         while (current != null && current.exists()) {
             if (current.equals(file)) {
                 return true;
             }
+            if (current.getName().equals("WEB-INF")) {
+                webInf = true; // if class loaded from JVM classloader we'll not find it in the war
+            }
             current = current.getParentFile();
         }
-        return false;
+        return !webInf;
     }
 }

@@ -224,7 +224,23 @@ public class TomcatJndiBuilder {
             try {
                 root.bind("global", SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext().lookup("global"));
             } catch (NamingException e) {
-                e.printStackTrace();
+                // bind only global bindings
+                if (webContext != null && webContext.getBindings() != null) {
+                    for (Map.Entry<String, Object> entry : webContext.getBindings().entrySet()) {
+                        try {
+                            final String key = entry.getKey();
+                            if (!key.startsWith("global/")) {
+                                continue;
+                            }
+
+                            final Object value = normalize(entry.getValue());
+                            Contexts.createSubcontexts(root, key);
+                            root.rebind(key, value);
+                        } catch (NamingException ignored) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
             }
         }
 
