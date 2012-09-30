@@ -37,6 +37,7 @@ import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePath;
 import org.jboss.shrinkwrap.api.Node;
+import org.jboss.shrinkwrap.api.asset.ArchiveAsset;
 import org.jboss.shrinkwrap.api.asset.Asset;
 import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
 import org.jboss.shrinkwrap.api.asset.FileAsset;
@@ -98,6 +99,8 @@ public class OpenEJBArchiveProcessor {
                     } catch (MalformedURLException e) {
                         LOGGER.log(Level.SEVERE, "can't add a library to the deployment", e);
                     }
+                } else if (ArchiveAsset.class.isInstance(asset)) {
+                    archive.merge(((ArchiveAsset) asset).getArchive());
                 }
             }
         } else {
