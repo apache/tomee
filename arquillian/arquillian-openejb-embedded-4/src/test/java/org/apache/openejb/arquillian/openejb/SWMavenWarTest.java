@@ -52,7 +52,7 @@ public class SWMavenWarTest {
     public static class SWBean {
         public Class<?> gherkin() throws Exception {
             final ClassLoader loader = Thread.currentThread().getContextClassLoader();
-            assertThat(loader, instanceOf(URLClassLoaderFirst.class));
+            assertThat(loader.getParent(), instanceOf(URLClassLoaderFirst.class));
             return loader.loadClass("gherkin.Main");
         }
     }
