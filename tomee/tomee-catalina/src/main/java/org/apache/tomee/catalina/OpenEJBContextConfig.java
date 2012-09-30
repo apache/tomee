@@ -51,7 +51,7 @@ public class OpenEJBContextConfig extends ContextConfig {
 
     // processAnnotationXXX is called for each folder of WEB-INF
     // since we store all classes in WEB-INF we will do it only once so use this boolean to avoid multiple processing
-    private ThreadLocal<Boolean> webInfClassesAnnotationsProcessed = new ThreadLocal<Boolean>();
+    private boolean webInfClassesAnnotationsProcessed = false;
 
     public OpenEJBContextConfig(TomcatWebAppBuilder.StandardContextInfo standardContextInfo) {
         logger.debug("OpenEJBContextConfig({0})", standardContextInfo.toString());
@@ -128,64 +128,50 @@ public class OpenEJBContextConfig extends ContextConfig {
 
     @Override // called before processAnnotationsFile so using it as hook to init webInfClassesAnnotationsProcessed
     protected void processServletContainerInitializers(final Set<WebXml> fragments) {
-        webInfClassesAnnotationsProcessed.set(false);
+        webInfClassesAnnotationsProcessed = false;
         try {
             super.processServletContainerInitializers(fragments);
         } catch (RuntimeException e) { // if exception occurs we have to clear the threadlocal
-            webInfClassesAnnotationsProcessed.remove();
+            webInfClassesAnnotationsProcessed = false;
             throw e;
         }
     }
 
     @Override // called after processAnnotationsXX so using it as hook to reset webInfClassesAnnotationsProcessed
     protected void processAnnotations(final Set<WebXml> fragments, final boolean handlesTypesOnly) {
-        webInfClassesAnnotationsProcessed.remove();
+        webInfClassesAnnotationsProcessed = false;
         super.processAnnotations(fragments, handlesTypesOnly);
     }
 
 
     @Override
     protected void processAnnotationsFile(File file, WebXml fragment, boolean handlesTypesOnly) {
-        if (webInfClassesAnnotationsProcessed.get()) {
-            return;
-        }
-
         final WebAppInfo webAppInfo = info.get();
         if (webAppInfo == null) {
             super.processAnnotationsFile(file, fragment, handlesTypesOnly);
             return;
         }
 
-        for (ClassListInfo webAnnotated : webAppInfo.webAnnotatedClasses) {
-            try {
-                final File classContainerAsFile = URLs.toFile(new URL(webAnnotated.name));
-                if (!isIncludedIn(classContainerAsFile, file)) {
-                    continue;
-                }
-
-                internalProcessAnnotationsStream(webAnnotated.list, fragment, handlesTypesOnly);
-            } catch (MalformedURLException e) {
-                throw new IllegalArgumentException(e);
-            } catch (IOException e) {
-                throw new IllegalArgumentException(e);
-            }
-        }
-        webInfClassesAnnotationsProcessed.set(true);
+        internalProcessAnnotations(file, webAppInfo, fragment, handlesTypesOnly);
     }
 
     @Override
     protected void processAnnotationsUrl(URL currentUrl, WebXml fragment, boolean handlesTypeOnly) {
+        final File currentUrlAsFile = URLs.toFile(currentUrl);
+
         final WebAppInfo webAppInfo = info.get();
         if (webAppInfo == null) {
             super.processAnnotationsUrl(currentUrl, fragment, handlesTypeOnly);
             return;
         }
 
+        internalProcessAnnotations(currentUrlAsFile, webAppInfo, fragment, handlesTypeOnly);
+    }
+
+    private void internalProcessAnnotations(final File currentUrlAsFile, final WebAppInfo webAppInfo, final WebXml fragment, final boolean  handlesTypeOnly) {
         for (ClassListInfo webAnnotated : webAppInfo.webAnnotatedClasses) {
             try {
-                final File classContainerAsFile = URLs.toFile(new URL(webAnnotated.name));
-                final File currentUrlAsFile = URLs.toFile(currentUrl);
-                if (!isIncludedIn(classContainerAsFile, currentUrlAsFile)) {
+                if (!isIncludedIn(webAnnotated.name, currentUrlAsFile)) {
                     continue;
                 }
 
@@ -214,11 +200,21 @@ public class OpenEJBContextConfig extends ContextConfig {
         }
     }
 
-    private static boolean isIncludedIn(final File file, final File classAsFile) {
+    private boolean isIncludedIn(final String filePath, final File classAsFile) throws MalformedURLException {
+        final File file = URLs.toFile(new URL(filePath));
+
         File current = classAsFile;
         boolean webInf = false;
         while (current != null && current.exists()) {
             if (current.equals(file)) {
+                final File parent = current.getParentFile();
+                if ("classes".equals(current.getName()) && parent != null && "WEB-INF".equals(parent.getName())) {
+                    if (webInfClassesAnnotationsProcessed) {
+                        return false;
+                    }
+                    webInfClassesAnnotationsProcessed = true;
+                    return true;
+                }
                 return true;
             }
             if (current.getName().equals("WEB-INF")) {
@@ -226,6 +222,6 @@ public class OpenEJBContextConfig extends ContextConfig {
             }
             current = current.getParentFile();
         }
-        return !webInf;
+        return !webInf; // not in the file but not in a war too so use it
     }
 }
