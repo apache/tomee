@@ -32,8 +32,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -227,26 +225,5 @@ public final class TomEEClassLoaderEnricher implements WebAppEnricher {
                 }
             }
         }
-    }
-
-    /**
-     * Helper part
-     */
-    public static final String SLF4J_STATIC_LOGGER_BINDER_CLASS = "org/slf4j/impl/StaticLoggerBinder.class";
-
-    public static boolean isSlf4jQuery(final String name) {
-        return SLF4J_STATIC_LOGGER_BINDER_CLASS.equals(name);
-    }
-
-    public static Enumeration<URL> filterSlf4jImpl(final Enumeration<URL> result) {
-        final Collection<URL> values = Collections.list(result);
-        if (values.size() > 1) {
-            // remove openejb one
-            final URL url = TomEEClassLoaderEnricher.class.getResource("/" + SLF4J_STATIC_LOGGER_BINDER_CLASS);
-            if (url != null) {
-                values.remove(url);
-            }
-        }
-        return Collections.enumeration(values);
     }
 }

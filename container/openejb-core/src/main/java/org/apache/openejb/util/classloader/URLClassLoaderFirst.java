@@ -18,11 +18,14 @@ package org.apache.openejb.util.classloader;
 
 import org.apache.openejb.loader.SystemInstance;
 
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Enumeration;
 
 // TODO: look SM usage, find a better name
 public class URLClassLoaderFirst extends URLClassLoader {
@@ -322,5 +325,32 @@ public class URLClassLoaderFirst extends URLClassLoader {
     private static boolean isWebAppEnrichment(final String openejb) {
         return openejb.startsWith("hibernate.") || openejb.startsWith("jpa.integration.")
                 || openejb.startsWith("toplink.") || openejb.startsWith("eclipselink.");
+    }
+
+    @Override
+    public Enumeration<URL> getResources(final String name) throws IOException {
+        final Enumeration<URL> result = super.getResources(name);
+        if (isSlf4jQuery(name)) {
+            return filterSlf4jImpl(result);
+        }
+        return result;
+    }
+
+    public static final String SLF4J_STATIC_LOGGER_BINDER_CLASS = "org/slf4j/impl/StaticLoggerBinder.class";
+
+    public static boolean isSlf4jQuery(final String name) {
+        return SLF4J_STATIC_LOGGER_BINDER_CLASS.equals(name);
+    }
+
+    public static Enumeration<URL> filterSlf4jImpl(final Enumeration<URL> result) {
+        final Collection<URL> values = Collections.list(result);
+        if (values.size() > 1) {
+            // remove openejb one
+            final URL url = URLClassLoaderFirst.class.getResource("/" + SLF4J_STATIC_LOGGER_BINDER_CLASS);
+            if (url != null) {
+                values.remove(url);
+            }
+        }
+        return Collections.enumeration(values);
     }
 }

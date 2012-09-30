@@ -21,6 +21,7 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.loader.WebappClassLoader;
 import org.apache.openejb.classloader.WebAppEnricher;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.classloader.URLClassLoaderFirst;
 
 import java.io.File;
 import java.io.IOException;
@@ -100,8 +101,8 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
     @Override
     public Enumeration<URL> getResources(final String name) throws IOException {
         final Enumeration<URL> urls = super.getResources(name);
-        if (TomEEClassLoaderEnricher.isSlf4jQuery(name)) {
-            return TomEEClassLoaderEnricher.filterSlf4jImpl(urls);
+        if (URLClassLoaderFirst.isSlf4jQuery(name)) {
+            return URLClassLoaderFirst.filterSlf4jImpl(urls);
         }
         return urls;
     }
