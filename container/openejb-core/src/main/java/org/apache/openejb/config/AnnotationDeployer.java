@@ -5178,13 +5178,22 @@ public class AnnotationDeployer implements DynamicDeployer {
         final Map<String, Set<String>> classes = new HashMap<String, Set<String>>(found.size());
         for (Annotated<Class<?>> clazz : found) {
             final Class<?> loadedClass = clazz.get();
-            final URL url = classLocation(loadedClass);
+
+            // url of the jar/folder containing the class
+            URL url;
+            try {
+                url = JarLocation.jarLocation(loadedClass).toURI().toURL();
+            } catch (MalformedURLException e) {
+                url = classLocation(loadedClass);
+            }
             Set<String> list = classes.get(url);
             if (list == null) {
                 list = new HashSet<String>();
                 classes.put(url.toExternalForm(), list);
             }
-            list.add(loadedClass.getName());
+
+            // saving class url
+            list.add(classLocation(loadedClass).toExternalForm());
         }
         return classes;
     }
