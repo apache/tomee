@@ -174,10 +174,21 @@ public class OpenEJBContextConfig extends ContextConfig {
                 }
 
                 final String file = currentUrl.getFile();
-                final String webAppDir = new File(path).getName();
-                final int idx = file.indexOf(webAppDir);
+                String webAppDir = new File(path).getName();
+                int idx = file.indexOf(webAppDir);
+
+                // some more tries to manage context config (path can be different from context)
+                if (idx < 0) {
+                    webAppDir = webAppInfo.moduleId;
+                    idx = file.indexOf(webAppDir);
+                }
+                if (idx < 0) {
+                    webAppDir = webAppInfo.contextRoot;
+                    idx = file.indexOf(webAppDir);
+                }
+
                 if (idx > 0) {
-                    String pathUnderWebapp = path + file.substring(idx + webAppDir.length());
+                    String pathUnderWebapp = file.substring(idx + webAppDir.length());
                     if (!pathUnderWebapp.startsWith("/")) {
                         pathUnderWebapp = '/' + pathUnderWebapp;
                     }
