@@ -54,8 +54,8 @@ public class BackportUtil {
                 break;
             }
             default: {
-                // TODO Perhaps fail or log
-                api = new Tomcat55();
+                // not sure we can work on somthing else so it is a more reasonable default
+                api = new Tomcat7();
             }
         }
     }
