@@ -157,12 +157,37 @@ public class OpenEJBContextConfig extends ContextConfig {
 
     @Override
     protected void processAnnotationsUrl(URL currentUrl, WebXml fragment, boolean handlesTypeOnly) {
-        final File currentUrlAsFile = URLs.toFile(currentUrl);
-
         final WebAppInfo webAppInfo = info.get();
         if (webAppInfo == null) {
             super.processAnnotationsUrl(currentUrl, fragment, handlesTypeOnly);
             return;
+        }
+
+        File currentUrlAsFile;
+        try {
+            currentUrlAsFile = URLs.toFile(currentUrl);
+        } catch (IllegalArgumentException iae) {
+            if ("jndi".equals(currentUrl.getProtocol())) {
+                String path = webAppInfo.path;
+                if (path.endsWith("/")) {
+                    path = path.substring(0, path.length() - 1);
+                }
+
+                final String file = currentUrl.getFile();
+                final String webAppDir = new File(path).getName();
+                final int idx = file.indexOf(webAppDir);
+                if (idx > 0) {
+                    String pathUnderWebapp = path + file.substring(idx + webAppDir.length());
+                    if (!pathUnderWebapp.startsWith("/")) {
+                        pathUnderWebapp = '/' + pathUnderWebapp;
+                    }
+                    currentUrlAsFile = new File(path + pathUnderWebapp);
+                } else {
+                    throw new IllegalArgumentException("can't find path under current webapp deployment [" + webAppInfo.contextRoot + "]");
+                }
+            } else {
+                throw iae;
+            }
         }
 
         internalProcessAnnotations(currentUrlAsFile, webAppInfo, fragment, handlesTypeOnly);
