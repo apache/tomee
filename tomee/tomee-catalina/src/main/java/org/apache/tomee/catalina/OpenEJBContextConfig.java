@@ -28,7 +28,6 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URLs;
-import org.xml.sax.InputSource;
 
 import javax.servlet.ServletContainerInitializer;
 import java.io.File;
@@ -49,6 +48,10 @@ public class OpenEJBContextConfig extends ContextConfig {
     private static final String TOMEE_MYFACES_CONTEXT_LISTENER = "org.apache.tomee.myfaces.TomEEMyFacesContextListener";
 
     private TomcatWebAppBuilder.StandardContextInfo info;
+
+    // processAnnotationXXX is called for each folder of WEB-INF
+    // since we store all classes in WEB-INF we will do it only once so use this boolean to avoid multiple processing
+    private ThreadLocal<Boolean> webInfClassesAnnotationsProcessed = new ThreadLocal<Boolean>();
 
     public OpenEJBContextConfig(TomcatWebAppBuilder.StandardContextInfo standardContextInfo) {
         logger.debug("OpenEJBContextConfig({0})", standardContextInfo.toString());
@@ -123,8 +126,30 @@ public class OpenEJBContextConfig extends ContextConfig {
         return classes;
     }
 
+    @Override // called before processAnnotationsFile so using it as hook to init webInfClassesAnnotationsProcessed
+    protected void processServletContainerInitializers(final Set<WebXml> fragments) {
+        webInfClassesAnnotationsProcessed.set(false);
+        try {
+            super.processServletContainerInitializers(fragments);
+        } catch (RuntimeException e) { // if exception occurs we have to clear the threadlocal
+            webInfClassesAnnotationsProcessed.remove();
+            throw e;
+        }
+    }
+
+    @Override // called after processAnnotationsXX so using it as hook to reset webInfClassesAnnotationsProcessed
+    protected void processAnnotations(final Set<WebXml> fragments, final boolean handlesTypesOnly) {
+        webInfClassesAnnotationsProcessed.remove();
+        super.processAnnotations(fragments, handlesTypesOnly);
+    }
+
+
     @Override
     protected void processAnnotationsFile(File file, WebXml fragment, boolean handlesTypesOnly) {
+        if (webInfClassesAnnotationsProcessed.get()) {
+            return;
+        }
+
         final WebAppInfo webAppInfo = info.get();
         if (webAppInfo == null) {
             super.processAnnotationsFile(file, fragment, handlesTypesOnly);
@@ -134,7 +159,7 @@ public class OpenEJBContextConfig extends ContextConfig {
         for (ClassListInfo webAnnotated : webAppInfo.webAnnotatedClasses) {
             try {
                 final File classContainerAsFile = URLs.toFile(new URL(webAnnotated.name));
-                if (!isIncludedIn(file, classContainerAsFile)) {
+                if (!isIncludedIn(classContainerAsFile, file)) {
                     continue;
                 }
 
@@ -145,6 +170,7 @@ public class OpenEJBContextConfig extends ContextConfig {
                 throw new IllegalArgumentException(e);
             }
         }
+        webInfClassesAnnotationsProcessed.set(true);
     }
 
     @Override
@@ -159,7 +185,7 @@ public class OpenEJBContextConfig extends ContextConfig {
             try {
                 final File classContainerAsFile = URLs.toFile(new URL(webAnnotated.name));
                 final File currentUrlAsFile = URLs.toFile(currentUrl);
-                if (!isIncludedIn(currentUrlAsFile, classContainerAsFile)) {
+                if (!isIncludedIn(classContainerAsFile, currentUrlAsFile)) {
                     continue;
                 }
 
