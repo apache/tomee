@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,27 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.arquillian.openejb;
+package org.apache.openejb.arquillian.common;
 
-import org.apache.openejb.AppContext;
-import org.apache.openejb.arquillian.common.enrichment.OpenEJBEnricher;
-import org.jboss.arquillian.core.api.Instance;
-import org.jboss.arquillian.core.api.annotation.Inject;
-import org.jboss.arquillian.test.spi.TestEnricher;
+import org.apache.openejb.config.AdditionalBeanDiscoverer;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.observer.Observes;
+import org.apache.openejb.observer.event.ObserverAdded;
 
-import java.lang.reflect.Method;
-
-public class OpenEJBInjectionEnricher implements TestEnricher {
-    @Inject
-    private Instance<AppContext> appContext;
-
-    @Override
-    public void enrich(final Object testInstance) {
-        OpenEJBEnricher.enrich(testInstance, appContext.get());
-    }
-
-    @Override
-    public Object[] resolve(final Method method) {
-        return new Object[method.getParameterTypes().length];
+public class BeanDicovererInstaller {
+    public void install(@Observes final ObserverAdded added) {
+        if (added.getObserver() == this) {
+            SystemInstance.get().setComponent(AdditionalBeanDiscoverer.class, new TestClassDiscoverer());
+        }
     }
 }

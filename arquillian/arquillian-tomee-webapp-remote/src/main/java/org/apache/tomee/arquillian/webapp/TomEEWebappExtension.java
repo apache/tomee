@@ -18,11 +18,13 @@
 package org.apache.tomee.arquillian.webapp;
 
 import org.apache.openejb.arquillian.common.ArquillianUtil;
+import org.apache.openejb.arquillian.common.TomEEInjectionEnricher;
 import org.apache.openejb.arquillian.common.deployment.DeploymentExceptionObserver;
 import org.apache.openejb.arquillian.common.deployment.DeploymentExceptionProvider;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender;
 import org.jboss.arquillian.core.spi.LoadableExtension;
+import org.jboss.arquillian.test.spi.TestEnricher;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 
 public class TomEEWebappExtension implements LoadableExtension {
@@ -34,6 +36,7 @@ public class TomEEWebappExtension implements LoadableExtension {
             builder.service(DeployableContainer.class, TomEEWebappContainer.class)
                 .service(AuxiliaryArchiveAppender.class, TomEEWebappEJBEnricherArchiveAppender.class)
                 .observer(DeploymentExceptionObserver.class)
+                .service(TestEnricher.class, TomEEInjectionEnricher.class)
                 .service(ResourceProvider.class, DeploymentExceptionProvider.class);
         }
     }

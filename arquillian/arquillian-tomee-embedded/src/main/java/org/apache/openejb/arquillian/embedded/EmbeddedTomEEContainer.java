@@ -16,10 +16,12 @@
  */
 package org.apache.openejb.arquillian.embedded;
 
-import org.apache.openejb.AppContext;
 import org.apache.openejb.arquillian.common.Files;
+import org.apache.openejb.arquillian.common.TestClassDiscoverer;
 import org.apache.openejb.arquillian.common.TomEEContainer;
 import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.config.AdditionalBeanDiscoverer;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.tomee.embedded.Configuration;
 import org.apache.tomee.embedded.Container;
 import org.jboss.arquillian.container.spi.client.container.DeploymentException;
@@ -28,28 +30,14 @@ import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
-import org.jboss.arquillian.container.spi.context.annotation.ContainerScoped;
-import org.jboss.arquillian.container.spi.context.annotation.DeploymentScoped;
-import org.jboss.arquillian.core.api.InstanceProducer;
-import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 
-import javax.enterprise.inject.spi.BeanManager;
-import javax.naming.Context;
 import java.io.File;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfiguration> {
-
-    @Inject
-    @ContainerScoped
-    private InstanceProducer<Context> contextInstance;
-
-    @Inject
-    @DeploymentScoped
-    private InstanceProducer<BeanManager> beanManagerInstance;
 
     private static final Map<Archive<?>, File> ARCHIVES = new ConcurrentHashMap<Archive<?>, File>();
 
@@ -86,7 +74,7 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
     public void start() throws LifecycleException {
         try {
             container.start();
-            contextInstance.set(container.getJndiContext());
+            SystemInstance.get().setComponent(AdditionalBeanDiscoverer.class, new TestClassDiscoverer());
         } catch (Exception e) {
             e.printStackTrace();
             throw new LifecycleException("Something went wrong", e);
@@ -114,9 +102,9 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
             final String name = archive.getName();
             final File file = new File(tempDir, name);
             ARCHIVES.put(archive, file);
-        	archive.as(ZipExporter.class).exportTo(file, true);
+            archiveWithTestInfo(archive).as(ZipExporter.class).exportTo(file, true);
 
-            final AppContext appContext = container.deploy(name, file);
+            container.deploy(name, file);
             final AppInfo info = container.getInfo(name);
             final String context = getArchiveNameWithoutExtension(archive);
 
@@ -124,7 +112,6 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
             httpContext.add(new Servlet("ArquillianServletRunner", "/" + context));
             addServlets(httpContext, info);
 
-            beanManagerInstance.set(appContext.getBeanManager());
             return new ProtocolMetaData().addContext(httpContext);
         } catch (Exception e) {
             e.printStackTrace();

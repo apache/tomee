@@ -414,6 +414,7 @@ public class RemoteServer {
     }
 
     public void stop() {
+        Thread processKiller = null;
         if (!serverHasAlreadyBeenStarted) {
             try {
                 if (verbose) {
@@ -434,11 +435,21 @@ public class RemoteServer {
                 }
 
                 if (server != null) {
+                    processKiller = new ProcessKillerThread(server);
+                    processKiller.start();
                     server.waitFor();
+                    processKiller.interrupt();
                     server = null;
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                e.printStackTrace(System.err);
+                if (processKiller != null) {
+                    try {
+                        processKiller.join();
+                    } catch (InterruptedException e1) {
+                        processKiller.interrupt();
+                    }
+                }
             }
         }
     }
@@ -478,5 +489,32 @@ public class RemoteServer {
         }
 
         return true;
+    }
+
+    public static class ProcessKillerThread extends Thread {
+        private final Process process;
+
+        public ProcessKillerThread(final Process server) {
+            process = server;
+        }
+
+        @Override
+        public void run() {
+            try {
+                Thread.sleep(5000); // TODO: configure it
+                process.exitValue();
+            } catch (IllegalThreadStateException itse) {
+                // not yet terminated, kill
+                System.err.println("Killing process " + process + " because after 5mn it is still running");
+                process.destroy();
+                try {
+                    process.waitFor();
+                } catch (InterruptedException e) {
+                    // no-op
+                }
+            } catch (InterruptedException e) {
+                // no-op
+            }
+        }
     }
 }

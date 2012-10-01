@@ -18,11 +18,13 @@
 package org.apache.openejb.arquillian.embedded;
 
 import org.apache.openejb.arquillian.common.ArquillianUtil;
+import org.apache.openejb.arquillian.common.TomEEInjectionEnricher;
 import org.apache.openejb.arquillian.common.deployment.DeploymentExceptionObserver;
 import org.apache.openejb.arquillian.common.deployment.DeploymentExceptionProvider;
 import org.apache.openejb.arquillian.transaction.OpenEJBTransactionProvider;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.core.spi.LoadableExtension;
+import org.jboss.arquillian.test.spi.TestEnricher;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 import org.jboss.arquillian.transaction.impl.client.TransactionExtension;
 import org.jboss.arquillian.transaction.impl.container.TransactionRemoteExtension;
@@ -36,6 +38,7 @@ public class EmbeddedTomEEExtension implements LoadableExtension {
         if (ArquillianUtil.isCurrentAdapter(ADAPTER)) {
             builder.service(DeployableContainer.class, EmbeddedTomEEContainer.class)
                 .observer(DeploymentExceptionObserver.class)
+                .service(TestEnricher.class, TomEEInjectionEnricher.class)
                 .service(TransactionProvider.class, OpenEJBTransactionProvider.class)
                 .service(ResourceProvider.class, DeploymentExceptionProvider.class);
 

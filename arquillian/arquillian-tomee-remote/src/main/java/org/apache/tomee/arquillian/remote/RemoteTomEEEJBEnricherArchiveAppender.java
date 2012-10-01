@@ -17,13 +17,14 @@
 
 package org.apache.tomee.arquillian.remote;
 
+import org.apache.openejb.arquillian.common.TomEEInjectionEnricher;
+import org.apache.openejb.arquillian.common.enrichment.OpenEJBEnricher;
+import org.apache.openejb.arquillian.common.mockito.MockitoEnricher;
 import org.apache.openejb.arquillian.transaction.OpenEJBTransactionProvider;
 import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender;
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 
 public class RemoteTomEEEJBEnricherArchiveAppender implements AuxiliaryArchiveAppender {
@@ -31,6 +32,7 @@ public class RemoteTomEEEJBEnricherArchiveAppender implements AuxiliaryArchiveAp
     public Archive<?> createAuxiliaryArchive() {
         return ShrinkWrap.create(JavaArchive.class, "arquillian-tomee-archive-appender.jar")
                 .addClasses(RemoteTomEEObserver.class, RemoteTomEERemoteExtension.class, OpenEJBTransactionProvider.class)
+                .addClasses(OpenEJBEnricher.class, TomEEInjectionEnricher.class, MockitoEnricher.class)
                 .addAsServiceProvider(RemoteLoadableExtension.class, RemoteTomEERemoteExtension.class);
     }
 }

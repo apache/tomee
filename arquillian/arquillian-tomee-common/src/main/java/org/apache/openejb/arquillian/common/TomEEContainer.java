@@ -31,7 +31,13 @@ import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
+import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.ArchivePaths;
+import org.jboss.shrinkwrap.api.Assignable;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
@@ -57,6 +63,9 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
     protected Configuration configuration;
     protected Map<String, DeployedApp> moduleIds = new HashMap<String, DeployedApp>();
     private final Options options;
+
+    @Inject
+    private Instance<TestClass> testClass;
 
     protected TomEEContainer() {
         this.options = new Options(System.getProperties());
@@ -268,7 +277,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
                 LOGGER.warning("can't create " + file.getParent());
             }
 
-            archive.as(ZipExporter.class).exportTo(file, true);
+            archiveWithTestInfo(archive).as(ZipExporter.class).exportTo(file, true);
 
             final String fileName = file.getName();
             if (fileName.endsWith(".war")) { // ??
@@ -313,6 +322,10 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
             e.printStackTrace();
             throw new DeploymentException("Unable to deploy", e);
         }
+    }
+
+    protected Assignable archiveWithTestInfo(final Archive<?> archive) {
+        return archive.add(new StringAsset(testClass.get().getJavaClass().getName()), ArchivePaths.create("arquillian-tomee-info.txt"));
     }
 
     protected Deployer deployer() throws NamingException {
