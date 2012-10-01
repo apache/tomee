@@ -156,7 +156,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     /**
      * Context information for web applications
      */
-    private final TreeMap<String, ContextInfo> infos = new TreeMap<String, ContextInfo>();
+    private final Map<String, ContextInfo> infos = new HashMap<String, ContextInfo>();
     /**
      * Global listener for Tomcat fired events.
      */
@@ -481,10 +481,13 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         }
     }
 
-    public AppInfo standaAloneWebAppInfo(final String path) {
+    public synchronized ContextInfo standaAloneWebAppInfo(final String path) {
         for (ContextInfo info : infos.values()) {
-            if (info.appInfo.webAppAlone && (path.equals(info.appInfo.path) || path.equals(info.appInfo.path + ".war"))) {
-                return info.appInfo;
+            if (info.appInfo != null
+                && (info.appInfo.webAppAlone && (path.equals(info.appInfo.path) || path.equals(info.appInfo.path + ".war")))) {
+                return info;
+            } else if (info.standardContext != null && (path.equals(info.standardContext.getDocBase()) || path.equals(info.standardContext.getDocBase() + ".war"))) {
+                return info;
             }
         }
         return null;
@@ -1317,7 +1320,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      * {@inheritDoc}
      */
     @Override
-    public void afterStop(final StandardServer standardServer) {
+    public synchronized void afterStop(final StandardServer standardServer) {
         // clean ear based webapps after shutdown
         for (final ContextInfo contextInfo : infos.values()) {
             if (contextInfo != null && contextInfo.deployer != null) {
@@ -1643,7 +1646,11 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      */
     public ContextInfo getContextInfo(final StandardContext standardContext) {
         final String id = getId(standardContext);
-        return infos.get(id);
+        final ContextInfo value;
+        synchronized (infos) {
+            value = infos.get(id);
+        }
+        return value;
     }
 
     /**
@@ -1651,13 +1658,17 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      *
      * @return context info
      */
-    private ContextInfo getContextInfo(final String webAppHost, final String webAppContextRoot) {
+    private synchronized ContextInfo getContextInfo(final String webAppHost, final String webAppContextRoot) {
         String host = webAppHost;
         if (host == null) {
             host = defaultHost;
         }
         final String id = host + "/" + webAppContextRoot;
-        return infos.get(id);
+        final ContextInfo value;
+        synchronized (infos) {
+            value = infos.get(id);
+        }
+        return value;
     }
 
     /**
@@ -1672,12 +1683,17 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         if (!contextRoot.startsWith("/")) {
             contextRoot = "/" + contextRoot;
         }
+
         final String id = host + contextRoot;
-        ContextInfo contextInfo = infos.get(id);
-        if (contextInfo == null) {
-            contextInfo = new ContextInfo();
-            contextInfo.standardContext = standardContext;
-            infos.put(id, contextInfo);
+
+        ContextInfo contextInfo;
+        synchronized (infos) {
+            contextInfo = infos.get(id);
+            if (contextInfo == null) {
+                contextInfo = new ContextInfo();
+                contextInfo.standardContext = standardContext;
+                infos.put(id, contextInfo);
+            }
         }
         return contextInfo;
     }
@@ -1689,7 +1705,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      */
     private void removeContextInfo(final StandardContext standardContext) {
         final String id = getId(standardContext);
-        infos.remove(id);
+        synchronized (infos) {
+            infos.remove(id);
+        }
     }
 
     public static class ContextInfo {
@@ -1699,6 +1717,15 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         public HostConfig deployer;
         public Host host;
         public LinkResolver<EntityManagerFactory> emfLinkResolver;
+
+        @Override
+        public String toString() {
+            return "ContextInfo{"
+                    + "appInfo = " + appInfo + ", "
+                    + "deployer = " + deployer + ", "
+                    + "host = " + host
+                + "}";
+        }
     }
 
     private static class DeployedApplication {

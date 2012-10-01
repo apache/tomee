@@ -23,7 +23,6 @@ import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.tomee.catalina.TomEERuntimeException;
 import org.apache.tomee.catalina.TomcatWebAppBuilder;
 
 import java.io.File;
@@ -37,7 +36,12 @@ public class TomcatWebappDeployer implements WebAppDeployer {
         } catch (Exception e) {
             throw new OpenEJBRuntimeException(e);
         }
-        return tomcatWebAppBuilder.standaAloneWebAppInfo(file.getAbsolutePath());
+
+        final TomcatWebAppBuilder.ContextInfo info = tomcatWebAppBuilder.standaAloneWebAppInfo(file.getAbsolutePath());
+        if (info == null) { // error
+            return null;
+        }
+        return info.appInfo;
     }
 
     private AppInfo fakeInfo(final File file, final String context) {
