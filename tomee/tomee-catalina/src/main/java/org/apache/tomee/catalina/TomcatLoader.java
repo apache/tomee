@@ -28,6 +28,7 @@ import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.startup.Bootstrap;
 import org.apache.catalina.startup.Catalina;
 import org.apache.openejb.OpenEJB;
+import org.apache.openejb.assembler.WebAppDeployer;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.classloader.WebAppEnricher;
@@ -50,6 +51,7 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.OptionsLog;
 import org.apache.tomcat.util.scan.Constants;
+import org.apache.tomee.catalina.deployment.TomcatWebappDeployer;
 import org.apache.tomee.installer.Installer;
 import org.apache.tomee.installer.Paths;
 import org.apache.tomee.loader.TomcatHelper;
@@ -212,6 +214,9 @@ public class TomcatLoader implements Loader {
             SystemInstance.get().setComponent(WebAppBuilder.class, tomcatWebAppBuilder);
         }
         SystemInstance.get().setComponent(ParentClassLoaderFinder.class, tomcatWebAppBuilder);
+
+        // set webapp deployer reusing tomcat deployer instead of our custom deployer for war
+        SystemInstance.get().setComponent(WebAppDeployer.class, new TomcatWebappDeployer());
 
         // for compatibility purpose, no more used normally by our trunk
         SystemInstance.get().setComponent(WebDeploymentListeners.class, new WebDeploymentListeners());
