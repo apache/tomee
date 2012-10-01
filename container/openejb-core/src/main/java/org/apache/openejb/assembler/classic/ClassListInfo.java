@@ -21,12 +21,7 @@ import java.util.Set;
 
 // just to store a kind of Map<String, Set<String>>
 // TODO: find a better name, key can be a classname, a jar/file path...
-public class ClassListInfo extends InfoObject implements Comparable<ClassListInfo> {
+public class ClassListInfo extends InfoObject {
     public String name;
     public final Set<String> list = new HashSet<String>();
-
-    @Override
-    public int compareTo(final ClassListInfo o) {
-        return name.compareTo(o.name);
-    }
 }
