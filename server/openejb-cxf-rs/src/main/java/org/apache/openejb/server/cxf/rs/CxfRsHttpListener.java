@@ -97,7 +97,7 @@ public class CxfRsHttpListener implements RsHttpListener {
 
     @Override
     public void deployEJB(String fullContext, BeanContext beanContext, Collection<Object> additionalProviders, ServiceConfiguration configuration) {
-        final Object proxy = ProxyEJB.proxy(beanContext);
+        final Object proxy = ProxyEJB.subclassProxy(beanContext);
         deploy(beanContext.getBeanClass(), fullContext, new NoopResourceProvider(beanContext.getBeanClass(), proxy),
                 proxy, null, new OpenEJBEJBInvoker(), additionalProviders, configuration);
     }
