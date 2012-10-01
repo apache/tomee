@@ -425,10 +425,12 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 // Note: the line standardContext.getLoader().setDelegate(true);
                 // could be hardcoded in the custom loader
                 // but here we have all the classloading logic
-                standardContext.setParentClassLoader(classLoader);
-                standardContext.setDelegate(true);
-                standardContext.setLoader(new TomEEWebappLoader(appInfo.path, classLoader));
-                standardContext.getLoader().setDelegate(true);
+                if (classLoader != null) {
+                    standardContext.setParentClassLoader(classLoader);
+                    standardContext.setDelegate(true);
+                    standardContext.setLoader(new TomEEWebappLoader(appInfo.path, classLoader));
+                    standardContext.getLoader().setDelegate(true);
+                }
 
                 String host = webApp.host;
                 if (host == null) {
@@ -436,27 +438,46 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     logger.info("using default host: " + host);
                 }
 
-                // TODO: instead of storing deployers, we could just lookup the right hostconfig for the server.
-                final HostConfig deployer = deployers.get(host);
-                appInfo.autoDeploy = false;
-                if (isReady(deployer)) { // if not ready using directly host to avoid a NPE
-                    // host isn't set until we call deployer.manageApp, so pass it
-                    // ?? host is set through an event and it can be null here :(
-                    final ContextInfo contextInfo = addContextInfo(host, standardContext);
-                    contextInfo.appInfo = appInfo;
-                    contextInfo.deployer = deployer;
-                    deployer.manageApp(standardContext);
-                } else if (hosts.containsKey(host)) {
-                    final Host theHost = hosts.get(host);
-
-                    final ContextInfo contextInfo = addContextInfo(host, standardContext);
-                    contextInfo.appInfo = appInfo;
-                    contextInfo.host = theHost;
-
-                    theHost.addChild(standardContext);
+                if (classLoader != null) {
+                    appInfo.autoDeploy = false;
+                    deployWar(standardContext, host, appInfo);
+                } else { // force a normal deployment with lazy building of AppInfo
+                    deployWar(standardContext, host, null);
                 }
             }
         }
+    }
+
+    public void deployWar(final StandardContext standardContext, final String host, final AppInfo info) {
+        // TODO: instead of storing deployers, we could just lookup the right hostconfig for the server.
+        final HostConfig deployer = deployers.get(host);
+        if (isReady(deployer)) { // if not ready using directly host to avoid a NPE
+            if (info != null) {
+                final ContextInfo contextInfo = addContextInfo(host, standardContext);
+                contextInfo.appInfo = info;
+                contextInfo.deployer = deployer;
+            }
+
+            deployer.manageApp(standardContext);
+        } else if (hosts.containsKey(host)) {
+            final Host theHost = hosts.get(host);
+            if (info != null) {
+                final ContextInfo contextInfo = addContextInfo(host, standardContext);
+                contextInfo.appInfo = info;
+                contextInfo.host = theHost;
+            }
+
+            theHost.addChild(standardContext);
+        }
+    }
+
+    public AppInfo standaAloneWebAppInfo(final String path) {
+        for (ContextInfo info : infos.values()) {
+            if (info.appInfo.webAppAlone && (path.equals(info.appInfo.path) || path.equals(info.appInfo.path + ".war"))) {
+                return info.appInfo;
+            }
+        }
+        return null;
     }
 
     // TODO: find something more sexy

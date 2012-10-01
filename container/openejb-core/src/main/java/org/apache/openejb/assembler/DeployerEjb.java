@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.assembler;
 
-import javax.enterprise.inject.Alternative;
 import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.OpenEJBException;
@@ -40,6 +39,7 @@ import org.apache.openejb.util.Logger;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
+import javax.enterprise.inject.Alternative;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -65,11 +65,12 @@ public class DeployerEjb implements Deployer {
     public static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, DeployerEjb.class);
 
     private final static File uniqueFile;
+    private final static boolean oldWarDeployer = "old".equalsIgnoreCase(SystemInstance.get().getOptions().get("openejb.deployer.war", "new"));
 
     static {
         String uniqueName = "OpenEJB-" + new BigInteger(128, new SecureRandom()).toString(Character.MAX_RADIX);
         String tempDir = System.getProperty("java.io.tmpdir");
-        File unique = null;
+        File unique;
         try {
             unique = new File(tempDir, uniqueName).getCanonicalFile();
             unique.createNewFile();
@@ -133,6 +134,25 @@ public class DeployerEjb implements Deployer {
 
         final File file = new File(realLocation(rawLocation));
 
+        final WebAppDeployer warDeployer = SystemInstance.get().getComponent(WebAppDeployer.class);
+        if (warDeployer != null && !oldWarDeployer && (file.getName().endsWith(".war") || new File(file, "WEB-INF").exists())) {
+            /* this is generally slow so using the previous if as simpler heurisitic
+            try {
+                final URL url = file.toURI().toURL();
+                final ClassLoader tempClassLoader = ClassLoaderUtil.createClassLoader(file.getCanonicalPath(), new URL[]{url}, ParentClassLoaderFinder.Helper.get());
+                final Class<?> type = deploymentLoader.discoverModuleType(url, tempClassLoader, true);
+                if (WebModule.class.equals(type)) {
+                    return warDeployer.deploy(appModule.getWebModules().iterator().next().getContextRoot(), file);
+                }
+            } catch (MalformedURLException e) {
+                // no-op
+            } catch (IOException e) {
+                // no-op
+            }
+            */
+            return warDeployer.deploy(contextRoot(properties, file.getAbsolutePath()), file);
+        }
+
         AppInfo appInfo;
 
         try {
@@ -147,7 +167,7 @@ public class DeployerEjb implements Deployer {
                 modules.put(module.getModuleId(), module);
             }
             for (WebModule module : appModule.getWebModules()) {
-                final String contextRoot = properties.getProperty("webapp." + module.getJarLocation() + ".context-root");
+                final String contextRoot = contextRoot(properties, module.getJarLocation());
                 if (contextRoot != null) {
                     module.setContextRoot(contextRoot);
                 }
@@ -183,6 +203,7 @@ public class DeployerEjb implements Deployer {
                     }
                 }
             }
+
             appInfo = configurationFactory.configureApplication(appModule);
             appInfo.autoDeploy = Boolean.parseBoolean(properties.getProperty("openejb.app.autodeploy", "false"));
 
@@ -301,5 +322,9 @@ public class DeployerEjb implements Deployer {
             }
         }
         saveDeployment(new File(moduleId), false);
+    }
+
+    private static String contextRoot(final Properties properties, final String jarPath) {
+        return properties.getProperty("webapp." + jarPath + ".context-root");
     }
 }
