@@ -29,17 +29,9 @@ public class ProxyEJB {
         // no-op
     }
 
-    public static Object proxy(final BeanContext beanContext) {
-        if (beanContext.getBusinessLocalInterface() != null) {
-            return proxy(beanContext, new Class<?>[] { beanContext.getBusinessLocalInterface() });
-        }
-        if (beanContext.isLocalbean()) {
-            return proxy(beanContext, new Class<?>[]{beanContext.getBusinessLocalBeanInterface()});
-        }
-        if (beanContext.getBusinessRemoteInterface() != null) {
-            return proxy(beanContext, new Class<?>[] { beanContext.getBusinessRemoteInterface() });
-        }
-        throw new IllegalArgumentException("can't proxy " + beanContext.getEjbName());
+    public static Object subclassProxy(final BeanContext beanContext) {
+        final Class beanClass = beanContext.getBeanClass();
+        return LocalBeanProxyFactory.newProxyInstance(beanClass.getClassLoader(), new Handler(beanContext), beanClass, IntraVmProxy.class, Serializable.class);
     }
 
     public static Object proxy(final BeanContext beanContext, final Class<?>[] itfs) {
