@@ -504,33 +504,35 @@ public class RemoteServer {
         public void run() {
             long sleep = 0; // recall immediately shutdown (win issue)
             int tries = MAX_TRIES;
-            try {
-                Thread.sleep(sleep);
-                sleep += SLEEP_INC;
-                if (server != null) {
-                    server.exitValue();
-                }
-            } catch (IllegalThreadStateException itse) {
-                tries--;
-                if (tries == 0) {
+            while (tries > 0) {
+                try {
+                    Thread.sleep(sleep);
+                    sleep += SLEEP_INC;
                     if (server != null) {
-                        // not yet terminated, kill
-                        server.destroy();
+                        server.exitValue();
+                    }
+                    break; // server == null or exitValue returned (= process stopped)
+                } catch (IllegalThreadStateException itse) {
+                    tries--;
+                    if (tries == 0) { // kill if possible
+                        if (server != null) {
+                            server.destroy();
+                            try {
+                                server.waitFor();
+                            } catch (InterruptedException e) {
+                                // no-op
+                            }
+                        }
+                    } else { // under windows we sometimes need to send shutdown multiple times (see connect())
                         try {
-                            server.waitFor();
-                        } catch (InterruptedException e) {
+                            shutdown();
+                        } catch (Exception e) {
                             // no-op
                         }
                     }
-                } else { // under windows we sometimes need to send shutdown multiple times
-                    try {
-                        shutdown();
-                    } catch (Exception e) {
-                        // no-op
-                    }
+                } catch (InterruptedException e) {
+                    // no-op
                 }
-            } catch (InterruptedException e) {
-                // no-op
             }
         }
     }
