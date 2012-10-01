@@ -93,7 +93,11 @@ public class TomcatWsRegistry implements WsRegistry {
             throw new IllegalArgumentException("Invalid virtual host '" + virtualHost + "'.  Do you have a matchiing Host entry in the server.xml?");
         }
 
-        Context context = (Context) host.findChild("/" + contextRoot);
+        if (!contextRoot.startsWith("/")) {
+            contextRoot= "/" + contextRoot;
+        }
+
+        Context context = (Context) host.findChild(contextRoot);
         if (context == null) {
             throw new IllegalArgumentException("Could not find web application context " + contextRoot + " in host " + host.getName());
         }
