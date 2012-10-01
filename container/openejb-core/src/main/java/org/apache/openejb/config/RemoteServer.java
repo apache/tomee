@@ -281,7 +281,7 @@ public class RemoteServer {
                     } else {
                         argsList.add(cmd);
                     }
-                    
+
                     args = argsList.toArray(new String[argsList.size()]);
                 }
 
@@ -421,21 +421,10 @@ public class RemoteServer {
                     System.out.println("[] STOP SERVER");
                 }
 
-                String fcommand = command + Character.toString((char) 0); // SHUTDOWN + EOF
-
-                Socket socket = null;
-                try {
-                    socket= new Socket(host, shutdownPort);
-                    OutputStream out = socket.getOutputStream();
-                    out.write(fcommand.getBytes());
-                } finally {
-                    if (socket != null) {
-                        socket.close();
-                    }
-                }
+                shutdown();
 
                 if (server != null) {
-                    processKiller = new ProcessKillerThread(server);
+                    processKiller = new ProcessKillerThread();
                     processKiller.start();
                     server.waitFor();
                     processKiller.interrupt();
@@ -450,6 +439,22 @@ public class RemoteServer {
                         processKiller.interrupt();
                     }
                 }
+            }
+        }
+    }
+
+    private void shutdown() throws Exception {
+        String fcommand = command + Character.toString((char) 0); // SHUTDOWN + EOF
+
+        Socket socket = null;
+        try {
+            socket= new Socket(host, shutdownPort);
+            OutputStream out = socket.getOutputStream();
+            out.write(fcommand.getBytes());
+            out.flush();
+        } finally {
+            if (socket != null) {
+                socket.close();
             }
         }
     }
@@ -491,26 +496,38 @@ public class RemoteServer {
         return true;
     }
 
-    public static class ProcessKillerThread extends Thread {
-        private final Process process;
-
-        public ProcessKillerThread(final Process server) {
-            process = server;
-        }
+    public class ProcessKillerThread extends Thread {
+        private static final int MAX_TRIES = 10;
+        private static final int SLEEP_INC = 500;
 
         @Override
         public void run() {
+            long sleep = 0; // recall immediately shutdown (win issue)
+            int tries = MAX_TRIES;
             try {
-                Thread.sleep(5000); // TODO: configure it
-                process.exitValue();
+                Thread.sleep(sleep);
+                sleep += SLEEP_INC;
+                if (server != null) {
+                    server.exitValue();
+                }
             } catch (IllegalThreadStateException itse) {
-                // not yet terminated, kill
-                System.err.println("Killing process " + process + " because after 5mn it is still running");
-                process.destroy();
-                try {
-                    process.waitFor();
-                } catch (InterruptedException e) {
-                    // no-op
+                tries--;
+                if (tries == 0) {
+                    if (server != null) {
+                        // not yet terminated, kill
+                        server.destroy();
+                        try {
+                            server.waitFor();
+                        } catch (InterruptedException e) {
+                            // no-op
+                        }
+                    }
+                } else { // under windows we sometimes need to send shutdown multiple times
+                    try {
+                        shutdown();
+                    } catch (Exception e) {
+                        // no-op
+                    }
                 }
             } catch (InterruptedException e) {
                 // no-op

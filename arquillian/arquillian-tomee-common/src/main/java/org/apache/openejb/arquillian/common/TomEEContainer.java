@@ -48,6 +48,7 @@ import javax.naming.NamingException;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.Character;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -201,7 +202,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         try {
             Socket socket = new Socket(configuration.getStopHost(), configuration.getStopPort());
             OutputStream out = socket.getOutputStream();
-            out.write(configuration.getStopCommand().getBytes());
+            out.write(configuration.getStopCommand().getBytes() + Character.toString((char) 0));
 
             waitForShutdown(socket, 10);
         } catch (Exception e) {
