@@ -202,7 +202,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         try {
             Socket socket = new Socket(configuration.getStopHost(), configuration.getStopPort());
             OutputStream out = socket.getOutputStream();
-            out.write(configuration.getStopCommand().getBytes() + Character.toString((char) 0));
+            out.write((configuration.getStopCommand() + Character.toString((char) 0)).getBytes());
 
             waitForShutdown(socket, 10);
         } catch (Exception e) {
