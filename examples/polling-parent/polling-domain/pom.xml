@@ -27,7 +27,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>polling-domain</artifactId>
-  <name>Polling :: Domain</name>
+  <name>OpenEJB :: Examples :: Polling :: Domain</name>
 
   <dependencies>
     <dependency>

@@ -27,7 +27,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>polling-client</artifactId>
-  <name>Polling :: Client</name>
+  <name>OpenEJB :: Examples :: Polling :: Client</name>
   <description>Just a cli to avoid to remember URLs</description>
 
   <dependencies>
