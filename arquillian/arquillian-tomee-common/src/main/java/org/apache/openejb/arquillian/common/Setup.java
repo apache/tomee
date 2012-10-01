@@ -21,6 +21,11 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.JarExtractor;
 import org.apache.tomee.util.QuickServerXmlParser;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
+import org.jboss.shrinkwrap.api.ArchivePaths;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.exporter.ZipExporter;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -48,6 +53,7 @@ import java.util.logging.Logger;
  */
 public class Setup {
     private static final Logger LOGGER = Logger.getLogger(Setup.class.getName()); // JUL is used by arquillian so that's fine
+    public static final String TOMEE_BEAN_DISCOVERER_JAR = "lib/arquillian-tomee-bean-discoverer.jar";
 
     public static void exportProperties(final File openejbHome, final TomEEConfiguration c) {
         System.setProperty("java.naming.provider.url", "http://" + c.getHost() + ":" + c.getHttpPort() + "/tomee/ejb");
@@ -317,6 +323,19 @@ public class Setup {
 
     private static String relativize(final File f, final File base) {
         return f.getAbsolutePath().substring(base.getAbsolutePath().length() + 1);
+    }
+
+    public static void installArquillianBeanDiscoverer(final File home) {
+        final File destination = new File(home, TOMEE_BEAN_DISCOVERER_JAR);
+        ShrinkWrap.create(JavaArchive.class, destination.getName())
+                .addClasses(BeanDicovererInstaller.class, TestClassDiscoverer.class)
+                .addAsManifestResource(new StringAsset(BeanDicovererInstaller.class.getName()), ArchivePaths.create("org.apache.openejb.extension"))
+                .as(ZipExporter.class).exportTo(destination, false);
+    }
+
+    public static void removeArquillianBeanDiscoverer(final File home) {
+        final File destination = new File(home, TOMEE_BEAN_DISCOVERER_JAR);
+        Files.delete(destination);
     }
 
     private static class TrueFileFilter implements FileFilter {

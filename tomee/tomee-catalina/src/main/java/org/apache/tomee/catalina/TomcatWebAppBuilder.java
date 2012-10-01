@@ -409,7 +409,16 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     standardContext.setDocBase(webApp.path);
                 }
                 if (standardContext.getDocBase() != null && standardContext.getDocBase().endsWith(".war")) {
+                    DeploymentLoader.unpack(new File(standardContext.getDocBase()));
+                    if (standardContext.getPath().endsWith(".war")) {
+                        standardContext.setPath(removeFirstSlashAndWar("/" + standardContext.getPath()));
+                        webApp.contextRoot = standardContext.getPath();
+                    }
                     standardContext.setDocBase(standardContext.getDocBase().substring(0, standardContext.getDocBase().length() - 4));
+                }
+
+                if (getContextInfo(webApp.host, webApp.contextRoot) != null) { // possible because of the previous renaming
+                    continue;
                 }
 
                 // add classloader which is an URLClassLoader created by openejb

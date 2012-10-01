@@ -84,7 +84,6 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
     // system
     private Assembler assembler;
     private InitialContext initialContext;
-    private ContainerSystem containerSystem;
     private ConfigurationFactory configurationFactory;
 
     // suite
@@ -103,10 +102,6 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
     @Inject
     @DeploymentScoped
     private InstanceProducer<HttpSession> sessionProducer;
-
-    @Inject
-    @ContainerScoped
-    private InstanceProducer<ContainerSystem> containerSystemProducer;
 
     @Inject
     @SuiteScoped
@@ -166,8 +161,6 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
         }
 
         assembler = SystemInstance.get().getComponent(Assembler.class);
-        containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-        containerSystemProducer.set(containerSystem);
         configurationFactory = new ConfigurationFactory();
     }
 

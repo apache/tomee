@@ -32,6 +32,12 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-core</artifactId>
+      <version>${openejb.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.jboss.arquillian.test</groupId>
       <artifactId>arquillian-test-spi</artifactId>
       <version>${version.arquillian}</version>

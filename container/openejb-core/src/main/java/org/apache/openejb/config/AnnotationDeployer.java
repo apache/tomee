@@ -438,6 +438,10 @@ public class AnnotationDeployer implements DynamicDeployer {
                     removeModule();
                 }
             }
+            final AdditionalBeanDiscoverer discoverer = SystemInstance.get().getComponent(AdditionalBeanDiscoverer.class);
+            if (discoverer != null) {
+                appModule = discoverer.discover(appModule);
+            }
             return appModule;
         }
 

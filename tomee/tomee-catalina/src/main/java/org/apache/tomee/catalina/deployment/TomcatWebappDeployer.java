@@ -17,6 +17,7 @@
  */
 package org.apache.tomee.catalina.deployment;
 
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.WebAppDeployer;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
@@ -34,7 +35,7 @@ public class TomcatWebappDeployer implements WebAppDeployer {
         try {
             tomcatWebAppBuilder.deployWebApps(fakeInfo(file, context), null);
         } catch (Exception e) {
-            throw new TomEERuntimeException(e);
+            throw new OpenEJBRuntimeException(e);
         }
         return tomcatWebAppBuilder.standaAloneWebAppInfo(file.getAbsolutePath());
     }

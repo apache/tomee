@@ -30,6 +30,11 @@
   <name>OpenEJB :: Arquillian Adaptors Parent :: TomEE Common</name>
 
   <dependencies>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>arquillian-common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>org.jboss.arquillian.container</groupId>
@@ -45,12 +50,6 @@
     </dependency>
 
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
       <version>${javaee-api.version}</version>
@@ -61,6 +60,24 @@
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-util</artifactId>
       <version>${tomee.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.xbean</groupId>
+      <artifactId>xbean-finder-shaded</artifactId>
+      <version>3.11</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-jee</artifactId>
+      <version>${openejb.version}</version>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>

@@ -41,6 +41,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
 
     private RemoteServer container;
     private boolean shutdown = false;
+    private File openejbHome;
 
     @Override
     public void start() throws LifecycleException {
@@ -114,7 +115,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
         Files.readable(workingDirectory);
         Files.writable(workingDirectory);
 
-        File openejbHome = Setup.findHome(workingDirectory);
+        openejbHome = Setup.findHome(workingDirectory);
 
         if (openejbHome == null) {
             openejbHome = Setup.downloadAndUnpack(workingDirectory, configuration.getArtifactName());
@@ -134,6 +135,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
         Setup.synchronizeFolder(openejbHome, configuration.getLib(), "lib");
 
         Setup.exportProperties(openejbHome, configuration);
+        Setup.installArquillianBeanDiscoverer(openejbHome);
 
         if (configuration.isRemoveUnusedWebapps()) {
             Setup.removeUselessWebapps(openejbHome);
@@ -151,6 +153,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
     public void stop() throws LifecycleException {
         // only stop the container if we started it
         if (shutdown) {
+            Setup.removeArquillianBeanDiscoverer(openejbHome);
             container.stop();
         }
     }
