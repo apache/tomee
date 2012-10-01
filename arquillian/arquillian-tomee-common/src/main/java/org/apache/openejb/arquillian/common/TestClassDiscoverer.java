@@ -39,6 +39,12 @@ public class TestClassDiscoverer implements AdditionalBeanDiscoverer {
             return module;
         }
 
+        try {
+            module.getClassLoader().loadClass(name);
+        } catch (ClassNotFoundException e) {
+            return module;
+        }
+
         final EjbJar ejbJar = new EjbJar();
         final OpenejbJar openejbJar = new OpenejbJar();
         final ManagedBean bean = ejbJar.addEnterpriseBean(new ManagedBean(name, name, true));

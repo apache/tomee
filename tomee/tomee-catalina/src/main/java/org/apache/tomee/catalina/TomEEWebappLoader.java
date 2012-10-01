@@ -44,6 +44,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -187,11 +188,11 @@ public class TomEEWebappLoader extends WebappLoader {
             final Enumeration<URL> result;
 
             if (webapp.isStarted() || webapp.getParent() == null) { // we set a parent so if it is null webapp was detroyed
-                add(urls, app.getResources(name));
-                add(urls, webapp.getResources(name));
+                add(urls, secureGetResources(app, name));
+                add(urls, secureGetResources(webapp, name));
                 result = new ArrayEnumeration(clear(urls.values()));
             } else {
-                result = app.getResources(name);
+                result = secureGetResources(app, name);
             }
 
             if (URLClassLoaderFirst.isSlf4jQuery(name)) {
@@ -199,6 +200,14 @@ public class TomEEWebappLoader extends WebappLoader {
             }
 
             return result;
+        }
+
+        private Enumeration<URL> secureGetResources(final ClassLoader loader, final String name) throws IOException{
+            try {
+                return loader.getResources(name);
+            } catch (IllegalStateException ise) {
+                return Collections.enumeration(Collections.EMPTY_LIST);
+            }
         }
 
         private List<URL> clear(Iterable<URL> urls) { // take care of antiJarLocking
