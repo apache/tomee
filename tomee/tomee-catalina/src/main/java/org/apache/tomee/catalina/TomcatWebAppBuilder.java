@@ -412,6 +412,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     DeploymentLoader.unpack(new File(standardContext.getDocBase()));
                     if (standardContext.getPath().endsWith(".war")) {
                         standardContext.setPath(removeFirstSlashAndWar("/" + standardContext.getPath()));
+                        standardContext.setName(standardContext.getPath());
                         webApp.contextRoot = standardContext.getPath();
                     }
                     standardContext.setDocBase(standardContext.getDocBase().substring(0, standardContext.getDocBase().length() - 4));

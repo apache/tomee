@@ -192,6 +192,7 @@
             </goals>
             <configuration>
               <target>
+                <delete dir="${openejb.home}/webapps/ROOT" />
                 <delete dir="${openejb.home}/webapps/docs" />
                 <delete dir="${openejb.home}/webapps/manager" />
                 <delete dir="${openejb.home}/webapps/host-manager" />
