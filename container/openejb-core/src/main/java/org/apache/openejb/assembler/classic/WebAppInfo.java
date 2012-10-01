@@ -17,6 +17,7 @@
 package org.apache.openejb.assembler.classic;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -35,7 +36,7 @@ public class WebAppInfo extends CommonInfoObject {
     public final Set<String> restApplications = new TreeSet<String>();
     public final Set<String> ejbWebServices = new TreeSet<String>();
     public final Set<String> ejbRestServices = new TreeSet<String>();
-    public final Set<ClassListInfo> webAnnotatedClasses = new TreeSet<ClassListInfo>();
+    public final Set<ClassListInfo> webAnnotatedClasses = new LinkedHashSet<ClassListInfo>();
     public final List<PortInfo> portInfos = new ArrayList<PortInfo>();
     public final JndiEncInfo jndiEnc = new JndiEncInfo();
     public final List<ServletInfo> servlets = new ArrayList<ServletInfo>();
