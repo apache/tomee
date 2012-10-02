@@ -28,7 +28,6 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -49,7 +48,7 @@ public class TomEEFacesConfigResourceProvider extends DefaultFacesConfigResource
 
         Collection<URL> urlSet = CACHED_RESOURCES.get(loader);
         if (urlSet != null) {
-            return new ArrayList<URL>(urlSet); // copy it since it can be modified then
+            return new HashSet<URL>(urlSet); // copy it since it can be modified then
         }
 
         urlSet  = new HashSet<URL>();
@@ -94,7 +93,7 @@ public class TomEEFacesConfigResourceProvider extends DefaultFacesConfigResource
         }
 
         CACHED_RESOURCES.put(loader, urlSet);
-        return urlSet;
+        return new HashSet<URL>(urlSet);
     }
 
     private ClassLoader getClassLoader() {
