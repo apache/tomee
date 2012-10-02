@@ -206,6 +206,7 @@ public class MdbContainer implements RpcContainer {
             for (Map.Entry<String, String> entry : activationProperties.entrySet()) {
                 objectRecipe.setMethodProperty(entry.getKey(), entry.getValue());
             }
+            objectRecipe.setMethodProperty("beanClass", beanContext.getBeanClass());
 
             // create the activationSpec
             ActivationSpec activationSpec = (ActivationSpec) objectRecipe.create(activationSpecClass.getClassLoader());
@@ -214,6 +215,7 @@ public class MdbContainer implements RpcContainer {
             Set<String> unusedProperties = new TreeSet<String>(objectRecipe.getUnsetProperties().keySet());
             unusedProperties.remove("destination");
             unusedProperties.remove("destinationType");
+            unusedProperties.remove("beanClass");
             if (!unusedProperties.isEmpty()) {
                 throw new IllegalArgumentException("No setter found for the activation spec properties: " + unusedProperties);
             }
