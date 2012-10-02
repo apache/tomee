@@ -19,6 +19,7 @@ package org.apache.openejb.core.mdb;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.resource.XAResourceWrapper;
 import org.apache.openejb.core.transaction.TransactionType;
+import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 
 import javax.resource.spi.UnavailableException;
 import javax.resource.spi.ActivationSpec;
@@ -66,12 +67,14 @@ public class EndpointFactory implements MessageEndpointFactory {
         EndpointHandler endpointHandler = new EndpointHandler(container, beanContext, instanceFactory, xaResource);
         MessageEndpoint messageEndpoint = null;
         try {
-            messageEndpoint = (MessageEndpoint) Proxy.newProxyInstance(classLoader, interfaces, endpointHandler);
+            messageEndpoint = (MessageEndpoint) LocalBeanProxyFactory.newProxyInstance(classLoader, endpointHandler, beanContext.getBeanClass(), interfaces);
+//            messageEndpoint = (MessageEndpoint) Proxy.newProxyInstance(classLoader, interfaces, endpointHandler);
         } catch (IllegalArgumentException e) {
             //try to create the proxy with tccl once again.
             ClassLoader tccl = Thread.currentThread().getContextClassLoader();
             if (tccl != null) {
-                messageEndpoint = (MessageEndpoint) Proxy.newProxyInstance(tccl, interfaces, endpointHandler);
+                messageEndpoint = (MessageEndpoint) LocalBeanProxyFactory.newProxyInstance(tccl, endpointHandler, beanContext.getBeanClass(), interfaces);
+//                messageEndpoint = (MessageEndpoint) Proxy.newProxyInstance(tccl, interfaces, endpointHandler);
             } else {
                 throw e;
             }
