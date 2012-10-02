@@ -55,7 +55,7 @@ public class JPAInjectionTest extends JSFs {
 
         Asset persistenceAsset = new StringAsset(persistenceDescriptor.exportAsString());
         return base("jsf-jpa-test.war").addAsWebInfResource(persistenceAsset, "persistence.xml")
-                .addPackage(JPAInjectionTest.class.getPackage())
+                .addClasses(DummyManagedBean.class)
                 .addAsWebResource(new ClassLoaderAsset(
                         JPAInjectionTest.class.getPackage().getName().replace('.', '/').concat("/").concat("dummy.xhtml")), "dummy.xhtml");
 

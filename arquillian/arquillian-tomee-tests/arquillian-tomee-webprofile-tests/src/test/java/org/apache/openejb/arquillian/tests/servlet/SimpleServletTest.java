@@ -51,7 +51,7 @@ public class SimpleServletTest {
 
     @Deployment(testable = false)
     public static WebArchive getArchive() {
-        return new WebModule(SimpleServletTest.class).getArchive();
+        return new WebModule(SimpleServletTest.class, SimpleServletTest.class).getArchive();
     }
 
     protected void validateTest(String expectedOutput) throws IOException {

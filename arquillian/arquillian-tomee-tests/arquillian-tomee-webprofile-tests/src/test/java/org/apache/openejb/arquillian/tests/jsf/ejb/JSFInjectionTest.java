@@ -40,7 +40,7 @@ public class JSFInjectionTest extends JSFs {
     @Deployment(testable = false)
     public static WebArchive getArchive() {
         return base("jsf-injection-test.war")
-                .addPackage(JSFInjectionTest.class.getPackage())
+                .addClasses(DummyEJB.class, DummyManagedBean.class)
                 .addAsWebResource(new ClassLoaderAsset(
                         JSFInjectionTest.class.getPackage().getName().replace('.', '/').concat("/").concat("dummy.xhtml")), "dummy.xhtml");
     }

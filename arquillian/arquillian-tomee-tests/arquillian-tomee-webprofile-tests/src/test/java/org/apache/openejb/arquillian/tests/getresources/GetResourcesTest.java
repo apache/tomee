@@ -44,14 +44,12 @@ public class GetResourcesTest {
     @ArquillianResource
     private URL url;
 
-    @Deployment(testable = false) public static WebArchive createDeployment() {
+    @Deployment(testable = false)
+    public static WebArchive createDeployment() {
         return ShrinkWrap.create(WebArchive.class, TEST_NAME + ".war")
-                .addClass(GetResourcesServletExporter.class)
-                .addClass(GetResourcesListener.class)
-                .addClass(GetResourcesHolder.class)
-                .addAsWebResource(Thread.currentThread().getContextClassLoader().getResource("test.getresources"), "/config/test.getresources")
-                .addAsWebResource(Thread.currentThread().getContextClassLoader().getResource("test.getresources"), "/config/test.getresources2")
-                .addAsLibraries(JarLocation.jarLocation(Test.class))
+                .addClasses(GetResourcesServletExporter.class, GetResourcesListener.class, GetResourcesHolder.class)
+                .addAsResource(Thread.currentThread().getContextClassLoader().getResource("test.getresources"), "/config/test.getresources")
+                .addAsResource(Thread.currentThread().getContextClassLoader().getResource("test.getresources"), "/config/test.getresources2")
                 .setWebXML(new StringAsset(
                       Descriptors.create(WebAppDescriptor.class)
                         .version("3.0").exportAsString()));
