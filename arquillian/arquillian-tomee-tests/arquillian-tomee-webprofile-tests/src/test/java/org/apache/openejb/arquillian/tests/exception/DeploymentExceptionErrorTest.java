@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.arquillian.tests.deployment.exception;
+package org.apache.openejb.arquillian.tests.exception;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.webbeans.exception.WebBeansConfigurationException;

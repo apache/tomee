@@ -26,8 +26,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import static junit.framework.Assert.assertTrue;
-
 @WebServlet(name = "get-resources", urlPatterns = "/get-resources")
 public class GetResourcesServletExporter extends HttpServlet {
     @Override protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -37,10 +35,12 @@ public class GetResourcesServletExporter extends HttpServlet {
 
         try {
             // all this tests will throw an exception if it fails
-            getServletContext().getResource("/config/test.getresources").openStream().close();
-            getServletContext().getResourceAsStream("/config/test.getresources").close();
-            getServletContext().getResourcePaths("/config/").iterator().next();
-            assertTrue(new File(getServletContext().getRealPath("/config/test.getresources")).exists());
+            getServletContext().getResource("/WEB-INF/classes/config/test.getresources").openStream().close();
+            getServletContext().getResourceAsStream("/WEB-INF/classes/config/test.getresources").close();
+            getServletContext().getResourcePaths("/WEB-INF/classes/config/").iterator().next();
+            if (!new File(getServletContext().getRealPath("/WEB-INF/classes/config/test.getresources")).exists()) {
+                throw new RuntimeException(); // fail
+            }
 
             writer.write("servletContextGetResource=ok");
         } catch (Exception e) {
