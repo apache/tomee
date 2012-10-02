@@ -1489,7 +1489,15 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     private AppModule loadApplication(final StandardContext standardContext) {
         final ServletContext servletContext = standardContext.getServletContext();
 
-        final TomcatDeploymentLoader tomcatDeploymentLoader = new TomcatDeploymentLoader(standardContext, getId(standardContext));
+        // don't use getId since the app id shouldnt get the host (jndi)
+        // final TomcatDeploymentLoader tomcatDeploymentLoader = new TomcatDeploymentLoader(standardContext, getId(standardContext));
+
+        String id = standardContext.getName();
+        if (id.startsWith("/")) {
+            id = id.substring(1);
+        }
+
+        final TomcatDeploymentLoader tomcatDeploymentLoader = new TomcatDeploymentLoader(standardContext, id);
         final AppModule appModule;
         try {
             appModule = tomcatDeploymentLoader.load(new File(servletContext.getRealPath(".")).getParentFile());
