@@ -31,18 +31,22 @@ import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.UndeployException;
+import org.apache.openejb.assembler.WebAppDeployer;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
+import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.Logger;
 import org.apache.tomee.catalina.TomEERuntimeException;
 import org.apache.tomee.catalina.TomcatLoader;
+import org.apache.tomee.catalina.TomcatWebAppBuilder;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
@@ -255,29 +259,51 @@ public class Container {
     }
 
     public AppContext deploy(String name, File file, boolean overrideName) throws OpenEJBException, IOException, NamingException {
-        AppInfo appInfo = configurationFactory.configureApplication(file);
-        if (overrideName) {
-            appInfo.appId = name;
-            for (EjbJarInfo ejbJar : appInfo.ejbJars) {
-                if (file.getName().equals(ejbJar.moduleName)) {
-                    ejbJar.moduleName = name;
-                    ejbJar.moduleId = name;
+        final AppContext context;
+        final AppInfo appInfo;
+        if ((file.getName().endsWith(".war") || new File(file, "WEB-INF").exists())
+                && SystemInstance.get().getComponent(WebAppDeployer.class) != null) {
+            String contextRoot = file.getName();
+            if (overrideName) {
+                contextRoot = name;
+            }
+            SystemInstance.get().getComponent(WebAppDeployer.class).deploy(contextRoot, file);
+
+            TomcatWebAppBuilder.ContextInfo ci = ((TomcatWebAppBuilder) SystemInstance.get().getComponent(WebAppBuilder.class))
+                    .standaAloneWebAppInfo(file.getAbsolutePath());
+            if (ci != null) {
+                appInfo = ci.appInfo;
+                context = SystemInstance.get().getComponent(ContainerSystem.class).getAppContext(appInfo.appId);
+            } else {
+                appInfo = null;
+                context = null;
+            }
+        } else {
+            appInfo = configurationFactory.configureApplication(file);
+            if (overrideName) {
+                appInfo.appId = name;
+                for (EjbJarInfo ejbJar : appInfo.ejbJars) {
+                    if (file.getName().equals(ejbJar.moduleName)) {
+                        ejbJar.moduleName = name;
+                        ejbJar.moduleId = name;
+                    }
+                    for (EnterpriseBeanInfo ejb : ejbJar.enterpriseBeans) {
+                        if (BeanContext.Comp.openejbCompName(file.getName()).equals(ejb.ejbName)) {
+                            ejb.ejbName = BeanContext.Comp.openejbCompName(name);
+                        }
+                    }
                 }
-                for (EnterpriseBeanInfo ejb : ejbJar.enterpriseBeans) {
-                    if (BeanContext.Comp.openejbCompName(file.getName()).equals(ejb.ejbName)) {
-                        ejb.ejbName = BeanContext.Comp.openejbCompName(name);
+                for (WebAppInfo webApp : appInfo.webApps) {
+                    if (sameApplication(file, webApp)) {
+                        webApp.moduleId = name;
+                        webApp.contextRoot = lastPart(name, webApp.contextRoot);
                     }
                 }
             }
-            for (WebAppInfo webApp : appInfo.webApps) {
-                if (sameApplication(file, webApp)) {
-                    webApp.moduleId = name;
-                    webApp.contextRoot = lastPart(name, webApp.contextRoot);
-                }
-            }
+
+            context = assembler.createApplication(appInfo);
         }
 
-        AppContext context = assembler.createApplication(appInfo);
         moduleIds.put(name, appInfo.path);
         infos.put(name, appInfo);
         appContexts.put(name, context);
