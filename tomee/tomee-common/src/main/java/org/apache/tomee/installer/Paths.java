@@ -17,6 +17,8 @@
  */
 package org.apache.tomee.installer;
 
+import org.apache.openejb.jpa.integration.MakeTxLookup;
+import org.apache.openejb.loader.JarLocation;
 import org.apache.tomee.common.TomcatVersion;
 
 import java.io.File;
@@ -259,11 +261,14 @@ public class Paths {
     }
 
     public File findTomEELibJar(final String prefix) {
-        final File jar = findJar(getCatalinaLibDir(), prefix);
+        File jar = findJar(getCatalinaLibDir(), prefix);
         if (jar == null) { // maybe tomcat/openejb integration
             final String tomeeWar = System.getProperty("tomee.war");
             if (tomeeWar != null) {
-                return findJar(new File(tomeeWar, "lib"), prefix);
+                jar = findJar(new File(tomeeWar, "lib"), prefix);
+            }
+            if (jar == null || !jar.exists()) {
+                jar = JarLocation.jarLocation(MakeTxLookup.class);
             }
         }
         return jar;
