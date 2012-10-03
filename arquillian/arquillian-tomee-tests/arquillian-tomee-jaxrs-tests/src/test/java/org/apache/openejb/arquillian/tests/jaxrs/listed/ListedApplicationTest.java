@@ -35,7 +35,7 @@ public class ListedApplicationTest extends JaxrsTest {
 
     @Deployment(testable = false)
     public static WebArchive archive() {
-        return new WebModule(ListedApplicationTest.class).getArchive();
+        return new WebModule(ListedApplicationTest.class, ListedApplicationTest.class).getArchive();
     }
 
     @Test

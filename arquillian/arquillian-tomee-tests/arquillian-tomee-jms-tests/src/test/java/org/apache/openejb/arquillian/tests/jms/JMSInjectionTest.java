@@ -46,7 +46,7 @@ public class JMSInjectionTest {
     public static WebArchive getArchive() {
 
         return ShrinkWrap.create(WebArchive.class, "jsf-jms-test.war")
-                .addPackage(JMSInjectionTest.class.getPackage())
+                .addClasses(DummyManagedBean.class)
                 .addAsWebResource(new ClassLoaderAsset(
                         JMSInjectionTest.class.getPackage().getName().replace('.', '/').concat("/").concat("dummy.xhtml")), "dummy.xhtml")
                 .setWebXML(new StringAsset(Descriptors.create(WebAppDescriptor.class)

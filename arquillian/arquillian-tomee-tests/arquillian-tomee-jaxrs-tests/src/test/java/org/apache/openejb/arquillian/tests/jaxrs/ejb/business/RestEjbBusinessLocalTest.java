@@ -33,7 +33,7 @@ public class RestEjbBusinessLocalTest extends JaxrsTest {
 
     @Deployment(testable = false)
     public static WebArchive archive() {
-        return new WebModule(RestEjbBusinessLocalTest.class).getArchive();
+        return new WebModule(RestEjbBusinessLocalTest.class, RestEjbBusinessLocalTest.class).getArchive();
     }
 
     @Test

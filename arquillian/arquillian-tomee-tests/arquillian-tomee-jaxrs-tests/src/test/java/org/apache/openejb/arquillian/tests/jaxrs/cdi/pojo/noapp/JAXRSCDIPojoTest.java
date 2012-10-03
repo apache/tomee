@@ -36,7 +36,7 @@ public class JAXRSCDIPojoTest extends JaxrsTest {
 
     @Deployment(testable = false)
     public static WebArchive archive() {
-        return new WebModule(JAXRSCDIPojoTest.class).getArchive()
+        return new WebModule(JAXRSCDIPojoTest.class, JAXRSCDIPojoTest.class).getArchive()
                 .addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
     }
 

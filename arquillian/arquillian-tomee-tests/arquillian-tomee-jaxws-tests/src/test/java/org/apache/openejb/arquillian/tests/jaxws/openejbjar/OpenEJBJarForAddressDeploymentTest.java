@@ -36,7 +36,7 @@ public class OpenEJBJarForAddressDeploymentTest {
 
     @Deployment(testable = false)
     public static WebArchive createDeployment() {
-        return new WebModule(OpenEJBJarForAddressDeploymentTest.class).getArchive();
+        return new WebModule(OpenEJBJarForAddressDeploymentTest.class, OpenEJBJarForAddressDeploymentTest.class).getArchive();
     }
 
     @Test

@@ -42,7 +42,7 @@ public class MyFacesExtCdiDeploymentTest {
     @Inject
     private ProjectStage projectStage;
 
-    @Deployment(testable = true)
+    @Deployment
     public static WebArchive getArchive() {
         final WebAppDescriptor descriptor = Descriptors.create(WebAppDescriptor.class).version(WebAppVersionType._3_0);
         // web.xml params is not supported by default
