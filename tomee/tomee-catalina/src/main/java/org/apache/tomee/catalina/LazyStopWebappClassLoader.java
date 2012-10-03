@@ -51,6 +51,25 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
         }
     }
 
+    @Override
+    public Class<?> loadClass(final String name) throws ClassNotFoundException {
+        if ("org.apache.openejb.hibernate.OpenEJBJtaPlatform".equals(name)
+                || "org.apache.openejb.jpa.integration.hibernate.PrefixNamingStrategy".equals(name)
+                || "org.apache.openejb.jpa.integration.eclipselink.PrefixSessionCustomizer".equals(name)
+                || "org.apache.openejb.eclipselink.JTATransactionController".equals(name)
+                || "org.apache.tomee.mojarra.TomEEInjectionProvider".equals(name)) {
+            // don't load them from system classloader (breaks all in embedded mode and no sense in other cases)
+            final ClassLoader old = system;
+            system = NoClassClassLoader.INSTANCE;
+            try {
+                return super.loadClass(name);
+            } finally {
+                system = old;
+            }
+        }
+        return super.loadClass(name);
+    }
+
     public void internalStop() throws LifecycleException {
         if (isStarted()) {
             super.stop();
@@ -105,5 +124,14 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
             return URLClassLoaderFirst.filterSlf4jImpl(urls);
         }
         return urls;
+    }
+
+    private static class NoClassClassLoader extends ClassLoader {
+        private static final NoClassClassLoader INSTANCE = new NoClassClassLoader();
+
+        @Override
+        public Class<?> loadClass(final String name) throws ClassNotFoundException {
+            throw new ClassNotFoundException();
+        }
     }
 }
