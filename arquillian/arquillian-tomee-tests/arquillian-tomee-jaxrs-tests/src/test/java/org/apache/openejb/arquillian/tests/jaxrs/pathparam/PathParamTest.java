@@ -32,7 +32,7 @@ import org.junit.runner.RunWith;
 public class PathParamTest extends JaxrsTest {
     @Deployment(testable = false)
     public static WebArchive archive() {
-        return new WebModule(PathParamTest.class).getArchive();
+        return new WebModule(PathParamTest.class, PathParamTest.class).getArchive();
     }
 
     @Test

@@ -33,7 +33,7 @@ public class NoAppTest extends JaxrsTest {
 
     @Deployment(testable = false)
     public static WebArchive archive() {
-        return new WebModule(NoAppTest.class).getArchive();
+        return new WebModule(NoAppTest.class, NoAppTest.class).getArchive();
     }
 
     @Test

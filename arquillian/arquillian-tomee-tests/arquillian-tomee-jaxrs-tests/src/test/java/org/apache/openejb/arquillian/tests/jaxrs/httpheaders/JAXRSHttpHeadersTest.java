@@ -44,7 +44,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
 
     @Deployment(testable = false)
     public static WebArchive archive() {
-        return new WebModule(JAXRSHttpHeadersTest.class).getArchive();
+        return new WebModule(JAXRSHttpHeadersTest.class, JAXRSHttpHeadersTest.class).getArchive();
     }
 
     /**
