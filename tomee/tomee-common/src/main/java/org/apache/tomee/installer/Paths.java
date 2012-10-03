@@ -259,7 +259,14 @@ public class Paths {
     }
 
     public File findTomEELibJar(final String prefix) {
-        return findJar(getCatalinaLibDir(), prefix);
+        final File jar = findJar(getCatalinaLibDir(), prefix);
+        if (jar == null) { // maybe tomcat/openejb integration
+            final String tomeeWar = System.getProperty("tomee.war");
+            if (tomeeWar != null) {
+                return findJar(new File(tomeeWar, "lib"), prefix);
+            }
+        }
+        return jar;
     }
 
     private File findJar(File dir, String namePrefix) {
