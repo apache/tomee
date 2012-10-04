@@ -16,18 +16,10 @@
  */
 package org.apache.openejb.assembler;
 
-import org.apache.openejb.ClassLoaderUtil;
-import org.apache.openejb.NoSuchApplicationException;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.OpenEJBRuntimeException;
-import org.apache.openejb.UndeployException;
+import org.apache.openejb.*;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.config.AppModule;
-import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.config.DeploymentLoader;
-import org.apache.openejb.config.DeploymentModule;
-import org.apache.openejb.config.WebModule;
+import org.apache.openejb.config.*;
 import org.apache.openejb.config.sys.AdditionalDeployments;
 import org.apache.openejb.config.sys.Deployments;
 import org.apache.openejb.config.sys.JaxbOpenejb;
@@ -46,11 +38,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.security.SecureRandom;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
-import java.util.TreeMap;
+import java.util.*;
 
 import static javax.ejb.TransactionManagementType.BEAN;
 import static org.apache.openejb.config.ConfigurationFactory.ADDITIONAL_DEPLOYMENTS;
@@ -134,23 +122,9 @@ public class DeployerEjb implements Deployer {
 
         final File file = new File(realLocation(rawLocation));
 
-        final WebAppDeployer warDeployer = SystemInstance.get().getComponent(WebAppDeployer.class);
-        if (warDeployer != null && !oldWarDeployer && (file.getName().endsWith(".war") || new File(file, "WEB-INF").exists())) {
-            /* this is generally slow so using the previous if as simpler heurisitic
-            try {
-                final URL url = file.toURI().toURL();
-                final ClassLoader tempClassLoader = ClassLoaderUtil.createClassLoader(file.getCanonicalPath(), new URL[]{url}, ParentClassLoaderFinder.Helper.get());
-                final Class<?> type = deploymentLoader.discoverModuleType(url, tempClassLoader, true);
-                if (WebModule.class.equals(type)) {
-                    return warDeployer.deploy(appModule.getWebModules().iterator().next().getContextRoot(), file);
-                }
-            } catch (MalformedURLException e) {
-                // no-op
-            } catch (IOException e) {
-                // no-op
-            }
-            */
-            return warDeployer.deploy(contextRoot(properties, file.getAbsolutePath()), file);
+        if (WebAppDeployer.Helper.isWebApp(file) && !oldWarDeployer) {
+            return SystemInstance.get().getComponent(WebAppDeployer.class)
+                        .deploy(contextRoot(properties, file.getAbsolutePath()), file);
         }
 
         AppInfo appInfo;
