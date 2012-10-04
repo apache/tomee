@@ -19,7 +19,6 @@
 
 <features name="openejb-features">
   <repository>mvn:org.apache.openejb/javaee-api/${javaee-api.version}/xml/features</repository>
-  <repository>mvn:org.apache.activemq/activemq-karaf/${org.apache.activemq.version}/xml/features</repository>
 
   <feature name="org.apache.commons">
     <bundle>mvn:commons-cli/commons-cli/${commons-cli.version}</bundle>
