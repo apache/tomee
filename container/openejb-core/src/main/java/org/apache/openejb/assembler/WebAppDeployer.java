@@ -17,9 +17,21 @@
 package org.apache.openejb.assembler;
 
 import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.loader.SystemInstance;
 
 import java.io.File;
 
 public interface WebAppDeployer {
     AppInfo deploy(String contextRoot, File file);
+
+    public static final class Helper {
+        private Helper() {
+            // no-op
+        }
+
+        public static boolean isWebApp(final File file) {
+            return (file.getName().endsWith(".war") || new File(file, "WEB-INF").exists())
+                        && SystemInstance.get().getComponent(WebAppDeployer.class) != null;
+        }
+    }
 }

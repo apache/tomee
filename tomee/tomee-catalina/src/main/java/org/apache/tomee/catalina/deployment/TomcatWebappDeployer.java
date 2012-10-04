@@ -32,7 +32,7 @@ public class TomcatWebappDeployer implements WebAppDeployer {
     public AppInfo deploy(final String context, final File file) {
         final TomcatWebAppBuilder tomcatWebAppBuilder = (TomcatWebAppBuilder) SystemInstance.get().getComponent(WebAppBuilder.class);
         try {
-            tomcatWebAppBuilder.deployWebApps(fakeInfo(file, context), null);
+            tomcatWebAppBuilder.deployWebApps(fakeInfo(file, context), null); // classloader == null -> standalone war
         } catch (Exception e) {
             throw new OpenEJBRuntimeException(e);
         }
@@ -44,7 +44,8 @@ public class TomcatWebappDeployer implements WebAppDeployer {
         return info.appInfo;
     }
 
-    private AppInfo fakeInfo(final File file, final String context) {
+    // simply create a fake AppInfo to be able to deploy reusing the logic we already have
+    private static AppInfo fakeInfo(final File file, final String context) {
         final AppInfo info = new AppInfo();
         info.path = file.getAbsolutePath();
         info.webAppAlone = true;

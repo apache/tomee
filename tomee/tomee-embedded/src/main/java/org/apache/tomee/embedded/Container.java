@@ -261,21 +261,17 @@ public class Container {
     public AppContext deploy(String name, File file, boolean overrideName) throws OpenEJBException, IOException, NamingException {
         final AppContext context;
         final AppInfo appInfo;
-        if ((file.getName().endsWith(".war") || new File(file, "WEB-INF").exists())
-                && SystemInstance.get().getComponent(WebAppDeployer.class) != null) {
+        if (WebAppDeployer.Helper.isWebApp(file)) {
             String contextRoot = file.getName();
             if (overrideName) {
                 contextRoot = name;
             }
-            SystemInstance.get().getComponent(WebAppDeployer.class).deploy(contextRoot, file);
 
-            TomcatWebAppBuilder.ContextInfo ci = ((TomcatWebAppBuilder) SystemInstance.get().getComponent(WebAppBuilder.class))
-                    .standaAloneWebAppInfo(file.getAbsolutePath());
-            if (ci != null) {
-                appInfo = ci.appInfo;
+            appInfo = SystemInstance.get().getComponent(WebAppDeployer.class).deploy(contextRoot, file);
+
+            if (appInfo != null) {
                 context = SystemInstance.get().getComponent(ContainerSystem.class).getAppContext(appInfo.appId);
             } else {
-                appInfo = null;
                 context = null;
             }
         } else {
