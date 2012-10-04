@@ -17,6 +17,8 @@
 
 package org.apache.openejb.core.osgi.impl;
 
+import org.apache.webbeans.annotation.AnyLiteral;
+import org.apache.webbeans.annotation.DefaultLiteral;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
@@ -26,13 +28,10 @@ import org.slf4j.LoggerFactory;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Default;
 import javax.enterprise.inject.spi.AfterBeanDiscovery;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.InjectionPoint;
-import javax.enterprise.util.AnnotationLiteral;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.Collections;
@@ -61,10 +60,21 @@ public class RegisterOSGIServicesExtension implements Extension {
     }
 
     public static class OSGiServiceBean<T> implements Bean<T> {
+        private static final Set<Annotation> QUALIFIERS;
+
+        static {
+            final Set<Annotation> qualifiers = new HashSet<Annotation>();
+            qualifiers.add(new DefaultLiteral());
+            qualifiers.add(new AnyLiteral());
+            QUALIFIERS = Collections.unmodifiableSet(qualifiers);
+        }
+
         private final ServiceReference service;
+        private final Class<?> clazz;
 
         public OSGiServiceBean(final ServiceReference srv) {
             service = srv;
+            clazz = serviceClass(service);
         }
 
         @Override
@@ -92,10 +102,7 @@ public class RegisterOSGIServicesExtension implements Extension {
 
         @Override
         public Set<Annotation> getQualifiers() {
-            final Set<Annotation> qualifiers = new HashSet<Annotation>();
-            qualifiers.add( new AnnotationLiteral<Default>() {} );
-            qualifiers.add( new AnnotationLiteral<Any>() {} );
-            return qualifiers;
+            return QUALIFIERS;
         }
 
         @Override
@@ -120,7 +127,7 @@ public class RegisterOSGIServicesExtension implements Extension {
 
         @Override
         public Class<?> getBeanClass() {
-            return service.getBundle().getBundleContext().getService(service).getClass();
+            return clazz;
         }
 
         @Override
