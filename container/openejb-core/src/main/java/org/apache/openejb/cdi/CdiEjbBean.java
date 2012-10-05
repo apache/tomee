@@ -16,23 +16,26 @@
  */
 package org.apache.openejb.cdi;
 
-import java.lang.reflect.Member;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import javax.ejb.Remove;
-import javax.enterprise.context.spi.Context;
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.Typed;
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.InjectionPoint;
-import javax.enterprise.inject.spi.SessionBeanType;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.assembler.classic.ProxyInterfaceResolver;
 import org.apache.webbeans.component.AbstractOwbBean;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.ejb.common.component.BaseEjbBean;
+
+import javax.ejb.Remove;
+import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.Typed;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.InjectionPoint;
+import javax.enterprise.inject.spi.SessionBeanType;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Member;
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public class CdiEjbBean<T> extends BaseEjbBean<T> {
     private final BeanContext beanContext;
@@ -81,23 +84,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
     @Override
     @SuppressWarnings("unchecked")
     protected T getInstance(CreationalContext<T> creationalContext) {
-        final List<Class> classes = beanContext.getBusinessLocalInterfaces();
-        CurrentCreationalContext currentCreationalContext = beanContext.get(CurrentCreationalContext.class);
-        CreationalContext existing = currentCreationalContext.get();
-        currentCreationalContext.set(creationalContext);
-        try {
-            if (classes.size() == 0 && beanContext.isLocalbean()) {
-                BeanContext.BusinessLocalBeanHome home = beanContext.getBusinessLocalBeanHome();
-                return (T) home.create();
-            } else {
-                final Class<?> mainInterface = classes.get(0);
-                List<Class> interfaces = ProxyInterfaceResolver.getInterfaces(beanContext.getBeanClass(), mainInterface, classes);
-                BeanContext.BusinessLocalHome home = beanContext.getBusinessLocalHome(interfaces, mainInterface);
-                return (T) home.create();
-            }
-        } finally {
-            currentCreationalContext.set(existing);
-        }
+        return (T) webBeansContext.getBeanManagerImpl().getReference(new RealEjbBean(this), getBeanClass(), creationalContext);
     }
 
     @Override
@@ -161,7 +148,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
 
     @Override
     protected void destroyStatefulSessionBeanInstance(T proxyInstance, Object ejbInstance) {
-        super.destroyStatefulSessionBeanInstance(proxyInstance, ejbInstance);
+        // super.destroyStatefulSessionBeanInstance(proxyInstance, ejbInstance);
     }
 
     @Override
@@ -242,4 +229,156 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
         return toReturn;
     }
 
+    private static class RealEjbBean<T> extends AbstractOwbBean<T> {
+        private final CdiEjbBean<T> delegate;
+
+        public RealEjbBean(final CdiEjbBean<T> cdiEjbBean) {
+            super(cdiEjbBean.getWebBeansType(), cdiEjbBean.getReturnType(), cdiEjbBean.getWebBeansContext());
+
+            delegate = cdiEjbBean;
+
+            setNullable(cdiEjbBean.isNullable());
+            setSerializable(cdiEjbBean.isSerializable());
+            setEnabled(cdiEjbBean.isEnabled());
+            setName(cdiEjbBean.getName());
+            setSpecializedBean(cdiEjbBean.isSpecializedBean());
+        }
+
+        @Override
+        public void setImplScopeType(final Annotation scopeType) {
+            delegate.setImplScopeType(scopeType);
+        }
+
+
+        @Override
+        public T createNewInstance(final CreationalContext<T> creationalContext) {
+            final List<Class> classes = delegate.beanContext.getBusinessLocalInterfaces();
+            CurrentCreationalContext currentCreationalContext = delegate.beanContext.get(CurrentCreationalContext.class);
+            CreationalContext existing = currentCreationalContext.get();
+            currentCreationalContext.set(creationalContext);
+            try {
+                if (classes.size() == 0 && delegate.beanContext.isLocalbean()) {
+                    BeanContext.BusinessLocalBeanHome home = delegate.beanContext.getBusinessLocalBeanHome();
+                    return (T) home.create();
+                } else {
+                    final Class<?> mainInterface = classes.get(0);
+                    List<Class> interfaces = ProxyInterfaceResolver.getInterfaces(delegate.beanContext.getBeanClass(), mainInterface, classes);
+                    BeanContext.BusinessLocalHome home = delegate.beanContext.getBusinessLocalHome(interfaces, mainInterface);
+                    return (T) home.create();
+                }
+            } finally {
+                currentCreationalContext.set(existing);
+            }
+        }
+
+        @Override
+        public void destroyCreatedInstance(final T instance, final CreationalContext<T> creationalContext) {
+            delegate.destroyCreatedInstance(instance, creationalContext);
+        }
+
+        @Override
+        public void addQualifier(final Annotation qualifier) {
+            delegate.addQualifier(qualifier);
+        }
+
+        @Override
+        public void addStereoType(final Annotation stereoType) {
+            delegate.addStereoType(stereoType);
+        }
+
+        @Override
+        public void addApiType(final Class<?> apiType) {
+            delegate.addApiType(apiType);
+        }
+
+        @Override
+        public void addInjectionPoint(final InjectionPoint injectionPoint) {
+            delegate.addInjectionPoint(injectionPoint);
+        }
+
+        @Override
+        public Set<Annotation> getOwbStereotypes() {
+            return delegate.getOwbStereotypes();
+        }
+
+        @Override
+        public List<InjectionPoint> getInjectionPoint(final Member member) {
+            return delegate.getInjectionPoint(member);
+        }
+
+        @Override
+        public String getId() {
+            return delegate.getId();
+        }
+
+        @Override
+        public boolean isPassivationCapable() {
+            return delegate.isPassivationCapable();
+        }
+
+        @Override
+        public boolean isDependent() {
+            return delegate.isDependent();
+        }
+
+        @Override
+        public void validatePassivationDependencies() {
+            delegate.validatePassivationDependencies();
+        }
+
+        @Override
+        public WebBeansContext getWebBeansContext() {
+            return delegate.getWebBeansContext();
+        }
+
+        @Override
+        public Set<Type> getTypes() {
+            return delegate.getTypes();
+        }
+
+        @Override
+        public Set<Annotation> getQualifiers() {
+            return delegate.getQualifiers();
+        }
+
+        @Override
+        public Class<? extends Annotation> getScope() {
+            return delegate.getScope();
+        }
+
+        @Override
+        public String getName() {
+            return delegate.getName();
+        }
+
+        @Override
+        public Set<InjectionPoint> getInjectionPoints() {
+            return delegate.getInjectionPoints();
+        }
+
+        @Override
+        public Class<?> getBeanClass() {
+            return delegate.getBeanClass();
+        }
+
+        @Override
+        public Set<Class<? extends Annotation>> getStereotypes() {
+            return delegate.getStereotypes();
+        }
+
+        @Override
+        public boolean isAlternative() {
+            return delegate.isAlternative();
+        }
+
+        @Override
+        protected T createInstance(final CreationalContext<T> creationalContext) {
+            return createNewInstance(creationalContext);
+        }
+
+        @Override
+        protected void destroyInstance(final T instance, final CreationalContext<T> creationalContext) {
+            delegate.destroyCreatedInstance(instance, creationalContext);
+        }
+    }
 }

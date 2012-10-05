@@ -459,7 +459,7 @@ public class StatefulContainer implements RpcContainer {
 
         final Class scope = beanContext.get(CdiEjbBean.class).getScope();
         if (callMethod.getDeclaringClass() != BeanContext.Removable.class && scope != Dependent.class) {
-            throw new UnsupportedOperationException("Can not call EJB Statefull Bean Remove Method without scoped @Dependent.  Found scope: @" + scope.getSimpleName());
+            throw new UnsupportedOperationException("Can not call EJB Stateful Bean Remove Method without scoped @Dependent.  Found scope: @" + scope.getSimpleName());
         }
 
 
