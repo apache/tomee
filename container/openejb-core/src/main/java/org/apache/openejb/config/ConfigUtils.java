@@ -120,7 +120,7 @@ public class ConfigUtils {
             /*
              * [5] Try finding the standard openejb.conf file relative to the
              */
-            file = SystemInstance.get().getConf("conf/openejb.conf");
+            file = SystemInstance.get().getConf("openejb.conf");
             if (file != null && file.exists() && file.isFile()) {
                 return file.getAbsolutePath();
             }
@@ -149,7 +149,7 @@ public class ConfigUtils {
             throw new OpenEJBException("Could not locate config file: ", e);
         }
 
-        return (file == null) ? null : file.getAbsolutePath();
+        return (file == null || !file.exists()) ? null : file.getAbsolutePath();
     }
 
     public static File createConfig(File config) throws java.io.IOException {
