@@ -1393,8 +1393,6 @@ public class BeanContext extends DeploymentContext {
                 final InjectionProcessor interceptorInjector = new InjectionProcessor(interceptorConstructor.create(creationalContext), this.getInjections(), org.apache.openejb.InjectionProcessor.unwrap(ctx));
                 try {
                     final Object interceptorInstance = interceptorInjector.createInstance();
-
-                    // TODO we likely don't want to create a new one each time -- investigate the destroy() method
                     try {
                         OWBInjector.inject(webBeansContext.getBeanManagerImpl(), interceptorInstance, creationalContext);
                     } catch (Throwable t) {

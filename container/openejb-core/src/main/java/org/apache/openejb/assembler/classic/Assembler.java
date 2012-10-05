@@ -1912,11 +1912,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     public void createTransactionManager(TransactionServiceInfo serviceInfo) throws OpenEJBException {
 
-        ObjectRecipe serviceRecipe = createRecipe(serviceInfo);
-
-        Object service = serviceRecipe.create();
-
-        logUnusedProperties(serviceRecipe, serviceInfo);
+        Object service = SystemInstance.get().getComponent(TransactionManager.class);
+        if (service == null) {
+            ObjectRecipe serviceRecipe = createRecipe(serviceInfo);
+            service = serviceRecipe.create();
+            logUnusedProperties(serviceRecipe, serviceInfo);
+        } else {
+            logger.info("Reusing provided TransactionManager " + service);
+        }
 
         Class interfce = serviceInterfaces.get(serviceInfo.service);
         checkImplementation(interfce, service.getClass(), serviceInfo.service, serviceInfo.id);

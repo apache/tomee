@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Remove;
+import javax.enterprise.context.spi.Context;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.Typed;
 import javax.enterprise.inject.spi.Bean;
@@ -29,6 +30,7 @@ import javax.enterprise.inject.spi.SessionBeanType;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.assembler.classic.ProxyInterfaceResolver;
+import org.apache.webbeans.component.AbstractOwbBean;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.ejb.common.component.BaseEjbBean;
 
@@ -79,7 +81,6 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
     @Override
     @SuppressWarnings("unchecked")
     protected T getInstance(CreationalContext<T> creationalContext) {
-
         final List<Class> classes = beanContext.getBusinessLocalInterfaces();
         CurrentCreationalContext currentCreationalContext = beanContext.get(CurrentCreationalContext.class);
         CreationalContext existing = currentCreationalContext.get();
@@ -166,6 +167,9 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
     @Override
     public List<Method> getRemoveMethods() {
         // Should we delegate to super and merge both?
+        if (beanContext.isLocalbean()) {
+            return findRemove(beanContext.getBeanClass(), beanContext.getBeanClass());
+        }
         return findRemove(beanContext.getBeanClass(), beanContext.getBusinessLocalInterface());
     }
 
