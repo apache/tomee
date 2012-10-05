@@ -33,7 +33,11 @@
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
       <version>${project.version}</version>
-      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-jpa-integration</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.osgi</groupId>
@@ -67,6 +71,7 @@
               <artifactSet>
                 <includes>
                   <include>org.apache.openejb:openejb-core</include>
+                  <include>org.apache.openejb:openejb-jpa-integration</include>
                 </includes>
               </artifactSet>
               <filters>
@@ -379,6 +384,11 @@
       org.apache.openejb.core.transaction;version=${openejb.osgi.export.version},
       org.apache.openejb.core.webservices;version=${openejb.osgi.export.version},
       org.apache.openejb.junit;version=${openejb.osgi.export.version},
+      org.apache.openejb.jpa.integraton;version=${openejb.osgi.export.version},
+      org.apache.openejb.jpa.integraton.hibernate;version=${openejb.osgi.export.version},
+      org.apache.openejb.jpa.integraton.eclipselink;version=${openejb.osgi.export.version},
+      org.apache.openejb.hibernate;version=${openejb.osgi.export.version},
+      org.apache.openejb.eclipselink;version=${openejb.osgi.export.version},
       org.apache.openejb.math;version=${openejb.osgi.export.version},
       org.apache.openejb.math.stat;version=${openejb.osgi.export.version},
       org.apache.openejb.math.stat.descriptive;version=${openejb.osgi.export.version},
