@@ -117,8 +117,8 @@ public class ProvisioningUtil {
     }
 
     public static void addAdditionalLibraries() throws IOException {
-        final File conf = new File(SystemInstance.get().getBase().getDirectory("conf"), ADDITIONAL_LIB_CONFIG);
-        if (!conf.exists()) {
+        File conf = SystemInstance.get().getConf(ADDITIONAL_LIB_CONFIG);
+        if (conf == null || !conf.exists()) {
             return;
         }
 

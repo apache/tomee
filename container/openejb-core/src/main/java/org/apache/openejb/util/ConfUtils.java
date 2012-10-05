@@ -92,9 +92,9 @@ public class ConfUtils {
 
         SystemInstance system = SystemInstance.get();
         FileUtils base = system.getBase();
-        File conf = base.getDirectory("conf");
+        File conf = system.getConf(null);
 
-        if (!conf.exists()) return null;
+        if (conf != null && !conf.exists()) return null;
 
         File file = new File(conf, name);
 

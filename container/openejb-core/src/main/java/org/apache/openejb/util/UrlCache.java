@@ -301,7 +301,7 @@ public class UrlCache {
 
             File dir = null;
             // if we are not embedded, cache (temp) dir is under base dir
-            if (openejbBase.getDirectory("conf").exists()) {
+            if (SystemInstance.get().getConf(null).exists()) {
                 try {
                     dir = openejbBase.getDirectory("temp");
                 } catch (IOException e) {

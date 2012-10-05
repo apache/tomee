@@ -242,14 +242,31 @@ public class SystemInstance {
         addSystemProperties(file);
     }
 
+    public File getConf(final String subPath) {
+        File conf = null;
+        try {
+            conf = system.getBase().getDirectory("conf");
+        } catch (IOException e) {
+            try {
+                conf = system.getBase().getDirectory("etc");
+            } catch (IOException ie) {
+                // no-op
+            }
+        }
+        if (conf == null) {
+            return new File(system.getBase().getDirectory(), "conf");
+        }
+        if (subPath == null) {
+            return conf;
+        }
+        return new File(conf, subPath);
+    }
+
     private static void readSystemProperties() {
         // Read in and apply the conf/system.properties
-        try {
-            final File conf = system.getBase().getDirectory("conf");
-            final File file = new File(conf, "system.properties");
-            addSystemProperties(file);
-        } catch (IOException e) {
-            // no-op
+        final File conf = system.getConf("system.properties");
+        if (conf != null && conf.exists()) {
+            addSystemProperties(conf);
         }
     }
 

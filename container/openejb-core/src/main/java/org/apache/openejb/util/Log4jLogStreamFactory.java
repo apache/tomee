@@ -63,7 +63,10 @@ public class Log4jLogStreamFactory implements LogStreamFactory {
 
         final boolean embedded = SystemInstance.get().getOptions().get("openejb.logging.embedded", false);
 
-        final File confDir = SystemInstance.get().getBase().getDirectory("conf");
+        File confDir = SystemInstance.get().getConf(null);
+        if (confDir ==  null) {
+            confDir = SystemInstance.get().getBase().getDirectory("conf");
+        }
 
         //Use the old file name first
         File loggingPropertiesFile = new File(confDir, LOGGING_PROPERTIES_FILE);
@@ -103,7 +106,7 @@ public class Log4jLogStreamFactory implements LogStreamFactory {
 
     private void preprocessProperties(final Properties properties) {
         final FileUtils base = SystemInstance.get().getBase();
-        final File confDir = new File(base.getDirectory(), "conf");
+        final File confDir = SystemInstance.get().getConf(null);
         final File baseDir = base.getDirectory();
         final File userDir = new File("foo").getParentFile();
 

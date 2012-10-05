@@ -310,7 +310,7 @@ public class Logger {
 
     private static Properties loadLoggingProperties() {
         try {
-            final File conf = SystemInstance.get().getBase().getDirectory("conf");
+            final File conf = SystemInstance.get().getConf(null);
 
             final File file = new File(conf, "logging.properties");
 

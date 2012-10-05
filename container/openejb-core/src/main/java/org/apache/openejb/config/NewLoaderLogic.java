@@ -194,9 +194,8 @@ public class NewLoaderLogic {
         FileInputStream fis = null;
 
         try {
-            final File conf = SystemInstance.get().getBase().getDirectory("conf");
-            final File exclusionsFile = new File(conf, EXCLUSION_FILE);
-            if (exclusionsFile.exists()) {
+            final File exclusionsFile = SystemInstance.get().getConf(EXCLUSION_FILE);
+            if (exclusionsFile != null && exclusionsFile.exists()) {
                 fis = new FileInputStream(exclusionsFile);
                 exclusions = readInputStreamList(fis);
 
