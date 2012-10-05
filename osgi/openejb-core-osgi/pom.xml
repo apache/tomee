@@ -33,18 +33,22 @@
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
       <version>${project.version}</version>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.core</artifactId>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.compendium</artifactId>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.components</groupId>
       <artifactId>geronimo-transaction</artifactId>
+      <optional>true</optional>
     </dependency>
   </dependencies>
   <build>
@@ -52,7 +56,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>1.5</version>
+        <version>2.0</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -60,11 +64,16 @@
               <goal>shade</goal>
             </goals>
             <configuration>
+              <artifactSet>
+                <includes>
+                  <include>org.apache.openejb:openejb-core</include>
+                </includes>
+              </artifactSet>
               <filters>
                 <filter>
                   <artifact>org.apache.openejb:openejb-core</artifact>
                   <includes>
-                    <include>**/**</include>
+                    <include>**</include>
                   </includes>
                   <excludes>
                     <exclude>org/apache/openejb/client/**</exclude>
@@ -72,11 +81,6 @@
                   </excludes>
                 </filter>
               </filters>
-              <artifactSet>
-                <includes>
-                  <include>org.apache.openejb:openejb-core</include>
-                </includes>
-              </artifactSet>
             </configuration>
           </execution>
         </executions>
@@ -97,7 +101,7 @@
             <Private-Package>${openejb.osgi.private.pkg}</Private-Package>
             <Implementation-Title>Apache OpenEJB</Implementation-Title>
             <Implementation-Version>${project.version}</Implementation-Version>
-            <Include-Resource>${pom.basedir}/src/main/resources</Include-Resource>
+            <Include-Resource>{maven-resources}</Include-Resource>
             <_failok>true</_failok>
             <_nouses>true</_nouses>
           </instructions>
@@ -116,7 +120,7 @@
   </build>
 
   <properties>
-    <openejb.osgi.import.pkg>
+    <openejb.osgi.import.pkg> <!-- don't add * in imports otherwise it will bring back ibm packages! -->
       javax.annotation;version="[1.1.0,2.0.0)",
       javax.annotation.security;version="[1.1.0,2.0.0)",
       javax.annotation.sql;version="[1.1.0,2.0.0)",
@@ -205,6 +209,7 @@
       org.apache.activemq.store.memory;resolution:=optional;version="[5.4,6)",
       org.apache.bval.jsr303;resolution:=optional,
       org.apache.bval.jsr303.resolver;resolution:=optional,
+      org.apache.bval.constraints;resolution:=optional,
       org.apache.commons.beanutils,
       org.apache.commons.cli;version="[1.2,2)",
       org.apache.commons.dbcp;resolution:=optional;version="[1.4,2)",
@@ -217,8 +222,8 @@
       org.apache.geronimo.connector.outbound.connectiontracking;version="[3.0,4)",
       org.apache.geronimo.connector.work;version="[3.0,4)",
       org.apache.geronimo.osgi.locator,
-      org.apache.geronimo.transaction.log;version="[3.0,4)",
-      org.apache.geronimo.transaction.manager;version="[3.0,4)",
+      org.apache.geronimo.transaction.log;version="[3.0,4)";resolution:=optional,,
+      org.apache.geronimo.transaction.manager;version="[2.0,4)",
       org.apache.kahadb.util;resolution:=optional;version="[5.4,6)",
       org.apache.log4j;resolution:=optional,
       org.apache.openejb.api;version="[4.0,5)",
@@ -243,38 +248,67 @@
       org.apache.webbeans.annotation;version="[1.1,2)",
       org.apache.webbeans.component;version="[1.1,2)",
       org.apache.webbeans.component.creation;version="[1.1,2)",
+      org.apache.webbeans.component.third;version="[1.1,2)",
       org.apache.webbeans.config;version="[1.1,2)",
       org.apache.webbeans.container;version="[1.1,2)",
       org.apache.webbeans.context;version="[1.1,2)",
       org.apache.webbeans.context.creational;version="[1.1,2)",
       org.apache.webbeans.conversation;version="[1.1,2)",
+      org.apache.webbeans.corespi;version="[1.1,2)",
+      org.apache.webbeans.corespi.scanner;version="[1.1,2)",
+      org.apache.webbeans.corespi.se;version="[1.1,2)",
+      org.apache.webbeans.corespi.security;version="[1.1,2)",
       org.apache.webbeans.decorator;version="[1.1,2)",
       org.apache.webbeans.deployment;version="[1.1,2)",
       org.apache.webbeans.deployment.stereotype;version="[1.1,2)",
+      org.apache.webbeans.ee.common.beans;version="[1.1,2)",
+      org.apache.webbeans.ee.common.services;version="[1.1,2)",
+      org.apache.webbeans.ee.beans;version="[1.1,2)",
       org.apache.webbeans.ee.event;version="[1.1,2)",
       org.apache.webbeans.ejb.common.component;version="[1.0,2)",
+      org.apache.webbeans.ejb.common.interceptor;version="[1.0,2)",
+      org.apache.webbeans.ejb.common.proxy;version="[1.0,2)",
       org.apache.webbeans.ejb.common.util;version="[1.0,2)",
+      org.apache.webbeans.ejb.plugin;version="[1.0,2)",
       org.apache.webbeans.el;version="[1.1,2)",
+      org.apache.webbeans.el.el22;version="[1.1,2)",
+      org.apache.webbeans.event;version="[1.1,2)",
       org.apache.webbeans.exception;version="[1.1,2)",
+      org.apache.webbeans.exception.definition;version="[1.1,2)",
+      org.apache.webbeans.exception.helper;version="[1.1,2)",
       org.apache.webbeans.exception.inject;version="[1.1,2)",
       org.apache.webbeans.inject;version="[1.1,2)",
+      org.apache.webbeans.inject.impl;version="[1.1,2)",
+      org.apache.webbeans.inject.instance;version="[1.1,2)",
       org.apache.webbeans.intercept;version="[1.1,2)",
+      org.apache.webbeans.intercept.custom;version="[1.1,2)",
+      org.apache.webbeans.intercept.ejb;version="[1.1,2)",
       org.apache.webbeans.intercept.webbeans;version="[1.1,2)",
       org.apache.webbeans.jms;version="[1.1,2)",
+      org.apache.webbeans.lifecycle;version="[1.1,2)",
       org.apache.webbeans.logger;version="[1.1,2)",
       org.apache.webbeans.plugins;version="[1.1,2)",
       org.apache.webbeans.portable;version="[1.1,2)",
+      org.apache.webbeans.portable.creation;version="[1.1,2)",
       org.apache.webbeans.portable.events;version="[1.1,2)",
       org.apache.webbeans.portable.events.discovery;version="[1.1,2)",
       org.apache.webbeans.portable.events.generics;version="[1.1,2)",
       org.apache.webbeans.proxy;version="[1.1,2)",
+      org.apache.webbeans.proxy.asm;version="[1.1,2)",
+      org.apache.webbeans.proxy.javassist;version="[1.1,2)",
       org.apache.webbeans.service;version="[1.1,2)",
+      org.apache.webbeans.servlet;version="[1.1,2)",
       org.apache.webbeans.spi;version="[1.1,2)",
       org.apache.webbeans.spi.adaptor;version="[1.1,2)",
       org.apache.webbeans.spi.api;version="[1.1,2)",
       org.apache.webbeans.spi.plugins;version="[1.1,2)",
       org.apache.webbeans.util;version="[1.1,2)",
       org.apache.webbeans.web.context;version="[1.1,2)",
+      org.apache.webbeans.web.failover;version="[1.1,2)",
+      org.apache.webbeans.web.intercept;version="[1.1,2)",
+      org.apache.webbeans.web.lifecycle;version="[1.1,2)",
+      org.apache.webbeans.web.scanner;version="[1.1,2)",
+      org.apache.webbeans.web.util;version="[1.1,2)",
       org.apache.webbeans.xml;version="[1.1,2)",
       org.apache.xbean.asm;version="[3.1,4)",
       org.apache.xbean.asm.commons;version="[3.1,4)",
@@ -299,25 +333,30 @@
       org.xml.sax,
       org.xml.sax.helpers,
       org.osgi.service.packageadmin,
-      org.osgi.framework;version="[1.4,1.6)",
-      org.osgi.util.tracker;version="[1.4,1.6)",
-      javassist.util.proxy;version="[3.9,4)"
+      org.osgi.framework;version="[1.4,2)",
+      org.osgi.util.tracker;version="[1.4,2)",
+      javassist.util.proxy;version="[3.9,4)",
+      org.osgi.service.blueprint;resolution:=optional
     </openejb.osgi.import.pkg>
     <openejb.osgi.export>
       '=META-INF.org^.apache^.openejb',
       org.apache.openejb;version=${openejb.osgi.export.version},
       org.apache.openejb.api.internal;version=${openejb.osgi.export.version},
+      org.apache.openejb.async;version=${openejb.osgi.export.version},
       org.apache.openejb.assembler;version=${openejb.osgi.export.version},
       org.apache.openejb.assembler.classic;version=${openejb.osgi.export.version},
       org.apache.openejb.assembler.classic.cmd;version=${openejb.osgi.export.version},
       org.apache.openejb.assembler.dynamic;version=${openejb.osgi.export.version},
       org.apache.openejb.assembler.bval;version=${openejb.osgi.export.version},
+      org.apache.openejb.assembler.monitoring;version=${openejb.osgi.export.version},
+      org.apache.openejb.bval;version=${openejb.osgi.export.version},
       org.apache.openejb.cdi;version=${openejb.osgi.export.version},
       org.apache.openejb.cli;version=${openejb.osgi.export.version},
       org.apache.openejb.config;version=${openejb.osgi.export.version},
       org.apache.openejb.config.rules;version=${openejb.osgi.export.version},
       org.apache.openejb.config.sys;version=${openejb.osgi.export.version},
       org.apache.openejb.core;version=${openejb.osgi.export.version},
+      org.apache.openejb.assembler.classic.event;version=${openejb.osgi.export.version},
       org.apache.openejb.core.asynch;version=${openejb.osgi.export.version},
       org.apache.openejb.core.cmp;version=${openejb.osgi.export.version},
       org.apache.openejb.core.cmp.cmp2;version=${openejb.osgi.export.version},
@@ -370,6 +409,6 @@
       org.apache.openejb.core.osgi.*;version=${openejb.osgi.export.version}
     </openejb.osgi.export>
     <openejb.bundle.activator>org.apache.openejb.core.osgi.impl.Activator</openejb.bundle.activator>
-    <openejb.osgi.dynamic.import.pkg>*</openejb.osgi.dynamic.import.pkg>
+    <!--<openejb.osgi.dynamic.import.pkg>*</openejb.osgi.dynamic.import.pkg>-->
   </properties>
 </project>

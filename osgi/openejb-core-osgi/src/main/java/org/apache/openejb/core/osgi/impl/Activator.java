@@ -19,15 +19,16 @@ package org.apache.openejb.core.osgi.impl;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.cdi.CdiScanner;
-import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.loader.OpenEJBInstance;
 import org.apache.openejb.loader.SystemInstance;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.transaction.TransactionManager;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Properties;
@@ -39,6 +40,8 @@ public class Activator implements BundleActivator {
     private static final Logger LOGGER = LoggerFactory.getLogger(Activator.class);
     private static final String SERVICE_MANAGER_NAME = "org.apache.openejb.server.ServiceManager";
     private static final long TRACKER_TIMEOUT = SystemInstance.get().getOptions().get("openejb.osgi.tracker.timeout", 30);
+
+    public static final String OPENEJB_OSGI_NATIVE_TRANSACTION_MANAGER = "openejb.osgi.native-transaction-manager";
 
     private OpenEJBInstance openejb;
     private Object serviceManager;
@@ -63,6 +66,19 @@ public class Activator implements BundleActivator {
 
         SystemInstance.init(env);
         // OptionsLog.install();
+        if (!SystemInstance.get().getOptions().get(OPENEJB_OSGI_NATIVE_TRANSACTION_MANAGER, false)) {
+            final ServiceReference sr = context.getServiceReference(TransactionManager.class.getName());
+            if (sr != null) {
+                final TransactionManager txMgr = (TransactionManager) context.getService(sr);
+                if (txMgr != null) {
+                    SystemInstance.get().setComponent(TransactionManager.class, txMgr);
+                } else {
+                    LOGGER.info("Using standard OpenEJB Transaction Manager (but found a service reference on an OSGi one)");
+                }
+            } else {
+                LOGGER.info("Using standard OpenEJB Transaction Manager");
+            }
+        }
 
         try {
             openejb.init(env);
