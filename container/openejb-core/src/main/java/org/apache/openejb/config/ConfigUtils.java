@@ -112,23 +112,17 @@ public class ConfigUtils {
              * [4] Try finding the standard openejb.xml file relative to the
              * openejb.base directory
              */
-            try {
-                file = SystemInstance.get().getBase().getFile("conf/openejb.xml");
-                if (file != null && file.exists() && file.isFile()) {
-                    return file.getAbsolutePath();
-                }
-            } catch (java.io.FileNotFoundException e) {
+            file = SystemInstance.get().getConf("openejb.xml");
+            if (file != null && file.exists() && file.isFile()) {
+                return file.getAbsolutePath();
             }
 
             /*
              * [5] Try finding the standard openejb.conf file relative to the
              */
-            try {
-                file = SystemInstance.get().getBase().getFile("conf/openejb.conf");
-                if (file != null && file.exists() && file.isFile()) {
-                    return file.getAbsolutePath();
-                }
-            } catch (java.io.FileNotFoundException e) {
+            file = SystemInstance.get().getConf("conf/openejb.conf");
+            if (file != null && file.exists() && file.isFile()) {
+                return file.getAbsolutePath();
             }
 
 
@@ -139,9 +133,9 @@ public class ConfigUtils {
                  *     the openejb-x.x.x.jar
                  */
 
-                final File confDir = SystemInstance.get().getBase().getDirectory("conf", false);
+                File confDir = SystemInstance.get().getConf(null);
 
-                if (confDir.exists()) {
+                if (confDir != null && confDir.exists()) {
                     File config = new File(confDir, "openejb.xml");
                     logger.info("Cannot find the configuration file [conf/openejb.xml].  Creating one at "+config.getAbsolutePath());
                     file = createConfig(config);
