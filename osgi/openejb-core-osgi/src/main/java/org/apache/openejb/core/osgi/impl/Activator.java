@@ -48,7 +48,7 @@ public class Activator implements BundleActivator {
 
     @Override
     public void start(final BundleContext context) throws Exception {
-        LOGGER.info("Starting OpenEJB for bundle #{0}", context.getBundle().getBundleId());
+        LOGGER.info("Starting OpenEJB for bundle #{}", context.getBundle().getBundleId());
 
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
@@ -146,7 +146,7 @@ public class Activator implements BundleActivator {
 
     private static void invoke(final Object serviceManager, final String name) throws OpenEJBException, InvocationTargetException, IllegalAccessException {
         if (serviceManager == null) {
-            LOGGER.warn("can't invoke method {0} since the service manager is null", name);
+            LOGGER.warn("can't invoke method {} since the service manager is null", name);
             return;
         }
 
