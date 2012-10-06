@@ -118,8 +118,11 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
             Class homeInterface = beanContext.getInterface(interfaceType);
             proxyInterfaces.add(homeInterface);
             proxyInterfaces.add(IntraVmProxy.class);
+            if (BeanType.STATEFUL.equals(beanContext.getComponentType()) || BeanType.MANAGED.equals(beanContext.getComponentType())) {
+                proxyInterfaces.add(BeanContext.Removable.class);
+            }
 
-            return ProxyManager.newProxyInstance(proxyInterfaces.toArray(new Class[]{}), handler);
+            return ProxyManager.newProxyInstance(proxyInterfaces.toArray(new Class[proxyInterfaces.size()]), handler);
         } catch (Exception e) {
             throw new OpenEJBRuntimeException("Can't create EJBHome stub" + e.getMessage(), e);
         }
