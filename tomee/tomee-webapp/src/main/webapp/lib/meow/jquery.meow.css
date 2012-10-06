@@ -1,0 +1,108 @@
+.meows {
+  position: fixed;
+  top: 0;
+  right: 0;
+}
+
+.meow {
+  position: relative;
+  margin: 20px 20px 0 0;
+}
+
+.meow .inner {
+  width: 300px;
+  min-height: 48px;
+  padding: 10px;
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 15px;
+  color: #fff;
+  text-shadow: 1px 1px 3px #000;
+  background: #191919;
+  border: 2px solid transparent;
+  -webkit-border-radius: 10px;
+   -khtml-border-radius: 10px;
+     -moz-border-radius: 10px;
+      -ms-border-radius: 10px;
+       -o-border-radius: 10px;
+          border-radius: 10px;
+  -webkit-opacity: 0.75;
+   -khtml-opacity: 0.75;
+     -moz-opacity: 0.75;
+      -ms-opacity: 0.75;
+       -o-opacity: 0.75;
+          opacity: 0.75;
+  zoom: 1;
+  -webkit-box-shadow: 2px 2px 10px rgba(25, 25, 25, 0.25);
+   -khtml-box-shadow: 2px 2px 10px rgba(25, 25, 25, 0.25);
+     -moz-box-shadow: 2px 2px 10px rgba(25, 25, 25, 0.25);
+      -ms-box-shadow: 2px 2px 10px rgba(25, 25, 25, 0.25);
+       -o-box-shadow: 2px 2px 10px rgba(25, 25, 25, 0.25);
+          box-shadow: 2px 2px 10px rgba(25, 25, 25, 0.25);
+}
+
+.meow .inner:after {
+  display: block;
+  height: 0;
+  clear: both;
+  line-height: 0;
+  content: "\0200";
+  visibility: hidden;
+}
+
+.meow.hover .inner {
+  border: 2px solid #fff;
+}
+
+.meow .inner h1 {
+  padding: 0;
+  margin: 0;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.meow .inner .icon {
+  float: left;
+  width: 48px;
+  height: 48px;
+  margin-right: 6px;
+}
+
+.meow .inner .icon img {
+  max-width: 48px;
+  max-height: 48px;
+}
+
+.meow .inner .close {
+  display: none;
+}
+
+.meow.hover .inner .close {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  display: block;
+  width: 18px;
+  height: 18px;
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 14px;
+  color: #ffffff;
+  text-align: center;
+  text-decoration: none;
+  background: #191919;
+  border: 2px solid #ffffff;
+  -webkit-border-radius: 18px;
+   -khtml-border-radius: 18px;
+     -moz-border-radius: 18px;
+      -ms-border-radius: 18px;
+       -o-border-radius: 18px;
+          border-radius: 18px;
+  -webkit-opacity: 0.75;
+   -khtml-opacity: 0.75;
+     -moz-opacity: 0.75;
+      -ms-opacity: 0.75;
+       -o-opacity: 0.75;
+          opacity: 0.75;
+  zoom: 1;
+}
