@@ -16,16 +16,6 @@
  */
 package org.apache.openejb.cdi;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Set;
-import java.util.WeakHashMap;
-import javax.ejb.Stateful;
-import javax.enterprise.context.spi.Context;
-import javax.enterprise.context.spi.Contextual;
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBException;
 import org.apache.webbeans.config.WebBeansContext;
@@ -38,6 +28,17 @@ import org.apache.webbeans.spi.plugins.AbstractOwbPlugin;
 import org.apache.webbeans.spi.plugins.OpenWebBeansEjbPlugin;
 import org.apache.webbeans.spi.plugins.OpenWebBeansJavaEEPlugin;
 import org.apache.webbeans.util.WebBeansUtil;
+
+import javax.ejb.Stateful;
+import javax.enterprise.context.spi.Context;
+import javax.enterprise.context.spi.Contextual;
+import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.ProcessAnnotatedType;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Set;
+import java.util.WeakHashMap;
 
 
 public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPlugin, OpenWebBeansEjbPlugin {
@@ -147,18 +148,7 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
         final CreationalContext<Object> cc = (CreationalContext<Object>) creationalContext;
         final Contextual<Object> component = (Contextual<Object>) bean;
 
-        final boolean openejbBean = component instanceof CdiEjbBean;
-        if (openejbBean) {
-            ((CdiEjbBean) component).setAskedType(interfce);
-        }
-        try {
-            return context.get(component, cc);
-        } finally {
-            if (openejbBean) {
-                ((CdiEjbBean) component).clearAskedType();
-            }
-        }
-
+        return context.get(component, cc);
     }
 
     @Override

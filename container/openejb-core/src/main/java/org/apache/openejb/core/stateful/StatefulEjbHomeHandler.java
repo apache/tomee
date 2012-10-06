@@ -24,6 +24,7 @@ import javax.ejb.RemoveException;
 
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.cdi.CdiEjbBean;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 import org.apache.openejb.util.proxy.ProxyManager;
