@@ -18,6 +18,7 @@ package org.apache.openejb.cdi;
 
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.BeanType;
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.ProxyInterfaceResolver;
 import org.apache.webbeans.component.OwbBean;
 import org.apache.webbeans.component.WebBeansType;
@@ -37,6 +38,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.rmi.NoSuchObjectException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -175,6 +177,15 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
                 ((BeanContext.Removable) proxyInstance).$$remove();
             } catch (NoSuchEJBException nsee) {
                 // no-op
+            } catch (Exception nsoe) {
+                if (nsoe instanceof NoSuchObjectException) {
+                    // no-op
+                } else {
+                    if (nsoe instanceof RuntimeException) {
+                        throw (RuntimeException) nsoe;
+                    }
+                    throw new OpenEJBRuntimeException(nsoe);
+                }
             }
         }
     }
@@ -283,6 +294,8 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
         Object ejbInstance = dependentSFSBToBeRemoved.remove(System.identityHashCode(instance));
         if (ejbInstance != null) {
             destroyStatefulSessionBeanInstance((T) ejbInstance, cc);
+        } else {
+            destroyStatefulSessionBeanInstance(instance, cc);
         }
     }
 
