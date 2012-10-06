@@ -144,7 +144,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
     @SuppressWarnings("unchecked")
     protected T getInstance(final CreationalContext<T> creationalContext) {
         final T instance;
-        if (Dependent.class == scopeClass) { // no need to add any layer
+        if (scopeClass == null || Dependent.class == scopeClass) { // no need to add any layer, null = @New
             instance = createEjb(creationalContext);
         } else {
             final InstanceBean<T> bean = new InstanceBean<T>(this);
