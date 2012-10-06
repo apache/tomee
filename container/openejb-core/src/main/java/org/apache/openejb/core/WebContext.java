@@ -94,7 +94,7 @@ public class WebContext {
 
     public Object newInstance(Class beanClass) throws OpenEJBException {
 
-            final WebBeansContext webBeansContext = getAppContext().getWebBeansContext();
+            final WebBeansContext webBeansContext = getWebBeansContext();
 
             final ConstructorInjectionBean<Object> beanDefinition = new ConstructorInjectionBean<Object>(webBeansContext, beanClass).complete();
 
@@ -131,10 +131,17 @@ public class WebContext {
             return beanInstance;
     }
 
+    private WebBeansContext getWebBeansContext() {
+        if (webbeansContext == null) {
+            return getAppContext().getWebBeansContext();
+        }
+        return webbeansContext;
+    }
+
     public Object inject(Object o) throws OpenEJBException {
 
         try {
-            final WebBeansContext webBeansContext = getAppContext().getWebBeansContext();
+            final WebBeansContext webBeansContext = getWebBeansContext();
 
             final ConstructorInjectionBean<Object> beanDefinition = new ConstructorInjectionBean(webBeansContext, o.getClass()).complete();
 

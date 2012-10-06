@@ -198,7 +198,7 @@ public class WebappBeanManager extends BeanManagerImpl {
     @Override
     public void validate(InjectionPoint injectionPoint) {
         super.validate(injectionPoint);
-        getParentBm().validate(injectionPoint); // TODO: check it
+        // getParentBm().validate(injectionPoint); // prevent injections from webapp only
     }
 
     @Override
