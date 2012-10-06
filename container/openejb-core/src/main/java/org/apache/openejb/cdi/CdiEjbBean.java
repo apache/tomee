@@ -18,7 +18,6 @@ package org.apache.openejb.cdi;
 
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.BeanType;
-import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.ProxyInterfaceResolver;
 import org.apache.webbeans.component.OwbBean;
 import org.apache.webbeans.component.WebBeansType;
@@ -38,6 +37,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.rmi.NoSuchObjectException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -163,7 +163,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
 
     @Override
     protected void destroyComponentInstance(final T instance, final CreationalContext<T> creational) {
-        if (Dependent.class == scopeClass) {
+        if (scopeClass == null || Dependent.class == scopeClass) {
             destroyStatefulSessionBeanInstance(instance, creational);
         } else {
             destroyScopedStateful(instance, creational);
@@ -177,14 +177,9 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
                 ((BeanContext.Removable) proxyInstance).$$remove();
             } catch (NoSuchEJBException nsee) {
                 // no-op
-            } catch (Exception nsoe) {
-                if (nsoe instanceof NoSuchObjectException) {
-                    // no-op
-                } else {
-                    if (nsoe instanceof RuntimeException) {
-                        throw (RuntimeException) nsoe;
-                    }
-                    throw new OpenEJBRuntimeException(nsoe);
+            } catch (UndeclaredThrowableException nsoe) {
+                if (!(nsoe.getCause() instanceof NoSuchObjectException)) {
+                    throw nsoe;
                 }
             }
         }
