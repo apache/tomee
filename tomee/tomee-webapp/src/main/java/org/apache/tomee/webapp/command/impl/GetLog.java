@@ -19,7 +19,7 @@ package org.apache.tomee.webapp.command.impl;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.tomee.webapp.command.Command;
-import org.apache.tomee.webapp.command.Params;
+import org.apache.tomee.webapp.command.CommandSession;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -27,14 +27,14 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
-
 public class GetLog implements Command {
 
     @Override
-    public Object execute(Params params) throws Exception {
+    public Object execute(final CommandSession session, final Map<String, Object> params) throws Exception {
         final Map<String, Object> json = new HashMap<String, Object>();
 
-        final File logFolder = new File(System.getProperty("catalina.base"), "logs");
+        final File logFolder = new File(System.getProperty("catalina.base"),
+                "logs");
 
         final File[] files = logFolder.listFiles();
         final Set<String> names = new TreeSet<String>();
@@ -48,15 +48,15 @@ public class GetLog implements Command {
 
         json.put("files", names);
 
-        final String loadFileName = params.getString("file");
+        final String loadFileName = (String) params.get("file");
         if (loadFileName != null) {
             Map<String, Object> log = new HashMap<String, Object>();
             log.put("name", loadFileName);
 
             log.put("lines", read(
-                    Boolean.valueOf(params.getString("escapeHtml")),
+                    Boolean.valueOf((String) params.get("escapeHtml")),
                     new File(logFolder, loadFileName),
-                    params.getInteger("tail")
+                    Integer.getInteger((String) params.get("tail"))
             ));
 
             json.put("log", log);
@@ -66,7 +66,8 @@ public class GetLog implements Command {
     }
 
 
-    private Collection<String> read(final boolean escapeHtml, final File file, final Integer tail) throws IOException {
+    private Collection<String> read(final boolean escapeHtml, final File file,
+                                    final Integer tail) throws IOException {
         final Queue<String> lines = new LinkedList<String>();
 
         BufferedReader br = null;

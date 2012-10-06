@@ -15,15 +15,11 @@
  * limitations under the License.
  */
 
-package org.apache.tomee.webapp.command.impl.script;
+package org.apache.tomee.webapp.command;
 
-public class MethodParam {
-    public final Class<?> pType;
-    public final Object pValue;
+public interface CommandSession {
 
+    Object get(String key);
+    void set(String key, Object value);
 
-    public MethodParam(Class<?> pType, Object pValue) {
-        this.pType = pType;
-        this.pValue = pValue;
-    }
 }
