@@ -36,19 +36,22 @@
         </location>
     </error-page>
 
-    <!-- ************************************************************************************** -->
-
-    <listener>
-        <listener-class>org.apache.tomee.webapp.listener.UserSessionListener</listener-class>
-    </listener>
-
-    <!-- ************************************************************************************** -->
-
     <servlet>
         <servlet-name>LoaderServlet</servlet-name>
         <servlet-class>org.apache.tomee.loader.LoaderServlet</servlet-class>
         <load-on-startup>0</load-on-startup>
     </servlet>
+
+    <!-- ************************************************************************************** -->
+
+    <servlet>
+        <servlet-name>applicationSocketServlet</servlet-name>
+        <servlet-class>org.apache.tomee.webapp.servlet.ApplicationSocketServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>applicationSocketServlet</servlet-name>
+        <url-pattern>/socket</url-pattern>
+    </servlet-mapping>
 
     <!-- ************************************************************************************** -->
 
@@ -106,19 +109,6 @@
 
     <!-- ************************************************************************************** -->
 
-    <servlet>
-        <servlet-name>CommandExecutor</servlet-name>
-        <servlet-class>org.apache.tomee.webapp.command.CommandExecutor</servlet-class>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>CommandExecutor</servlet-name>
-        <url-pattern>/command/*</url-pattern>
-    </servlet-mapping>
-
-
-    <!-- ************************************************************************************** -->
-
     <!-- basic security to replace context.xml and allow remote accesses -->
     <security-constraint>
         <web-resource-collection>
@@ -135,6 +125,14 @@
         <web-resource-collection>
             <web-resource-name>Server EJB</web-resource-name>
             <url-pattern>/ejb/*</url-pattern>
+        </web-resource-collection>
+    </security-constraint>
+
+    <!-- /socket has no auth-constraint. It is has public access. -->
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Socket</web-resource-name>
+            <url-pattern>/socket</url-pattern>
         </web-resource-collection>
     </security-constraint>
 

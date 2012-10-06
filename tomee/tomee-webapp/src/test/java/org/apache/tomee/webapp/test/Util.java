@@ -17,41 +17,26 @@
 
 package org.apache.tomee.webapp.test;
 
-import org.apache.tomee.webapp.command.CommandSession;
-import org.apache.tomee.webapp.command.impl.RunScript;
-import org.junit.Test;
-
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+public class Util {
 
-public class RunScriptTest {
+    public static String readJsFile(String fileName) throws IOException {
+        StringBuilder contents = new StringBuilder();
 
-    @Test
-    public void getInstanceTest() throws Exception {
-        final Map<String, Object> params = new HashMap<String, Object>();
-        params.put("scriptCode", Util.readJsFile("/Test.js"));
-        params.put("engineName", "js");
+        DataInputStream in = new DataInputStream(RunScriptTest.class.getResourceAsStream(fileName));
+        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+        String strLine;
+        while ((strLine = br.readLine()) != null) {
+            contents.append(strLine);
+            contents.append('\n');
+        }
+        in.close();
 
-        final RunScript shell = new RunScript();
-        final Object result = shell.execute(new CommandSession() {
-            @Override
-            public Object get(String key) {
-                return null;
-            }
 
-            @Override
-            public void set(String key, Object value) {
-
-            }
-        }, params);
-
-        assertEquals("myValue", result);
+        return contents.toString();
     }
 }
-
