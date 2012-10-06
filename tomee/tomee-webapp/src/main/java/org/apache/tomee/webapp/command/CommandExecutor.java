@@ -18,108 +18,52 @@
 package org.apache.tomee.webapp.command;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import org.apache.tomee.webapp.TomeeException;
+import com.google.gson.reflect.TypeToken;
+import org.quartz.SimpleTrigger;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
 
-public class CommandExecutor extends HttpServlet {
+public class CommandExecutor {
+    private Gson gson = new Gson();
+    private final Type mapType = new TypeToken<Map<String, Object>>() {}.getType();
 
-    private static final int TIMEOUT = 20;
+    private static final String PATH = "org.apache.tomee.webapp.command.impl.";
 
-    public interface Executor {
-        void call(Map<String, Object> json) throws Exception;
-    }
+    public Map<String, Object> execute(final CommandSession session, final String raw) {
+        final Map<String, Object> result = new HashMap<String, Object>();
 
-    private List<Command> getCommands(final HttpServletRequest req, String key) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-        final String strCmds = req.getParameter(key);
-        if (strCmds == null || "".equals(strCmds.trim())) {
-            return Collections.emptyList();
-        }
+        final long start = System.currentTimeMillis();
+        result.put("start", start);
 
-        final List<Command> result = new ArrayList<Command>();
-        final String[] arrCmds = strCmds.split(",");
-        for (String strCmd : arrCmds) {
-            final Class<?> cls = Class.forName("org.apache.tomee.webapp.command.impl." + strCmd);
-            final Command cmd = (Command) cls.newInstance();
-            result.add(cmd);
-        }
-
-        return result;
-    }
-
-    public void execute(final HttpServletRequest req, final HttpServletResponse resp) {
         try {
-            resp.setContentType("application/json");
-            resp.setCharacterEncoding("UTF-8");
+            final Map<String, Object> params = gson.fromJson(raw, mapType);
+            result.put("params", params);
 
-            final Gson gson;
-            if (Boolean.valueOf(req.getParameter("pretty"))) {
-                gson = new GsonBuilder().setPrettyPrinting().create();
-            } else {
-                gson = new Gson();
-            }
+            // Remove the cmdName from this list.
+            final String cmdName = (String) params.remove("cmdName");
+            final Class<?> cls = Class.forName(PATH + cmdName);
+            final Command cmd = (Command) cls.newInstance();
 
-
-            final Params params = new Params(req, resp);
-            final Map<String, Object> result = Collections.synchronizedMap(new HashMap<String, Object>());
-
-            //execute the commands
-            {
-                final List<Command> commands = getCommands(req, "cmd");
-                for (Command command : commands) {
-                    result.put(command.getClass().getSimpleName(), command.execute(params));
-                }
-            }
-
-            //execute the async commands
-            {
-                final List<Command> commands = getCommands(req, "asyncCmd");
-                final ExecutorService executor = Executors.newCachedThreadPool();
-                final List<Callable<Void>> commandsToRun = new ArrayList<Callable<Void>>();
-                for (final Command command : commands) {
-                    final Callable<Void> callMe = new Callable<Void>() {
-                        @Override
-                        public Void call() throws Exception {
-                            result.put(command.getClass().getSimpleName(), command.execute(params));
-                            return null;
-                        }
-                    };
-                    commandsToRun.add(callMe);
-                }
-
-                if (params.getInteger("timeout") != null) {
-                    executor.invokeAll(commandsToRun, params.getLong("timeout"), TimeUnit.SECONDS);
-                } else {
-                    executor.invokeAll(commandsToRun, TIMEOUT, TimeUnit.SECONDS);
-                }
-                executor.shutdown();
-            }
-
-            resp.getWriter().write(gson.toJson(result));
+            result.put("cmdName", cmdName);
+            result.put("output", cmd.execute(session, params));
+            result.put("success", Boolean.TRUE);
 
         } catch (Throwable e) {
-            //this will redirect the result to the ErrorServlet
-            throw new TomeeException(e);
+            result.put("success", Boolean.FALSE);
+
+            final Writer writer = new StringWriter();
+            final PrintWriter printWriter = new PrintWriter(writer);
+            e.printStackTrace(printWriter);
+
+            result.put("output", writer.toString());
         }
-    }
 
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        execute(req, resp);
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        execute(req, resp);
+        result.put("timeSpent", (System.currentTimeMillis() - start));
+        return result;
     }
 }

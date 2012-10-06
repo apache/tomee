@@ -17,8 +17,10 @@
 
 package org.apache.tomee.webapp.command;
 
+import java.util.Map;
+
 public interface Command {
 
-    Object execute(Params params) throws Exception;
+    Object execute(CommandSession session, Map<String, Object> params) throws Exception;
 
 }

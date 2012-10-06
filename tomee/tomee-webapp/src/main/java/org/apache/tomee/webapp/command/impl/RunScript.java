@@ -22,32 +22,35 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.tomee.webapp.TomeeException;
 import org.apache.tomee.webapp.command.Command;
-import org.apache.tomee.webapp.command.Params;
-import org.apache.tomee.webapp.command.impl.script.Utility;
+import org.apache.tomee.webapp.command.CommandSession;
 
 import javax.script.*;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 public class RunScript implements Command {
 
     @Override
-    public Object execute(final Params params) throws Exception {
-        final String scriptCode = params.getString("scriptCode");
+    public Object execute(final CommandSession session, final Map<String, Object> params) throws Exception {
+        final String scriptCode = (String) params.get("scriptCode");
         if (scriptCode == null) {
             return null; //nothing to do
         }
 
-        String engineName = params.getString("engineName");
+        String engineName = (String) params.get("engineName");
         if (engineName == null) {
             engineName = "js";
         }
 
         final CountDownLatch latch = new CountDownLatch(1);
 
-        //everything should be created inside the new classloader, so run it inside another thread and set the proper classloader
-        final ExecutionThread execution = new ExecutionThread(latch, params, engineName, scriptCode);
+        // everything should be created inside the new classloader,
+        // so run it inside another thread and set the proper classloader
+        final ExecutionThread execution = new ExecutionThread(latch, session,
+                engineName, scriptCode);
         final Thread thread = new Thread(execution);
-        thread.setContextClassLoader(getClassLoader(params.getString("appName")));
+        thread.setContextClassLoader(
+                getClassLoader((String) params.get("appName")));
         thread.start();
 
         //wait until it is done
@@ -66,7 +69,8 @@ public class RunScript implements Command {
             return Thread.currentThread().getContextClassLoader();
         }
 
-        final ContainerSystem cs = SystemInstance.get().getComponent(ContainerSystem.class);
+        final ContainerSystem cs = SystemInstance.get().getComponent(
+                ContainerSystem.class);
         final AppContext ctx = cs.getAppContext(appName);
         if (ctx == null) {
             return Thread.currentThread().getContextClassLoader();
@@ -77,7 +81,7 @@ public class RunScript implements Command {
 
     private class ExecutionThread implements Runnable {
         private final CountDownLatch latch;
-        private final Params params;
+        private final CommandSession session;
         private final String engineName;
         private final String scriptCode;
 
@@ -92,9 +96,12 @@ public class RunScript implements Command {
             return exception;
         }
 
-        private ExecutionThread(final CountDownLatch latch, final Params params, final String engineName, final String scriptCode) {
+        private ExecutionThread(final CountDownLatch latch,
+                                final CommandSession session,
+                                final String engineName,
+                                final String scriptCode) {
             this.latch = latch;
-            this.params = params;
+            this.session = session;
             this.engineName = engineName;
             this.scriptCode = scriptCode;
         }
@@ -102,15 +109,16 @@ public class RunScript implements Command {
         @Override
         public void run() {
             final ScriptEngineManager manager = new ScriptEngineManager();
-            final ScriptEngine engine = manager.getEngineByName(this.engineName);
+            final ScriptEngine engine = manager.getEngineByName(
+                    this.engineName);
 
             //new context for the execution of this script
             final ScriptContext newContext = new SimpleScriptContext();
 
             //creating the bidings object for the current execution
-            final Bindings bindings = newContext.getBindings(ScriptContext.ENGINE_SCOPE);
-
-            bindings.put("util", new Utility(this.params));
+            final Bindings bindings = newContext.getBindings(
+                    ScriptContext.ENGINE_SCOPE);
+            bindings.put("session", session);
 
             try {
                 this.result = engine.eval(this.scriptCode, newContext);
