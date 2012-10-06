@@ -147,7 +147,17 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
         final CreationalContext<Object> cc = (CreationalContext<Object>) creationalContext;
         final Contextual<Object> component = (Contextual<Object>) bean;
 
-        return context.get(component, cc);
+        final boolean openejbBean = component instanceof CdiEjbBean;
+        if (openejbBean) {
+            ((CdiEjbBean) component).setAskedType(interfce);
+        }
+        try {
+            return context.get(component, cc);
+        } finally {
+            if (openejbBean) {
+                ((CdiEjbBean) component).clearAskedType();
+            }
+        }
 
     }
 

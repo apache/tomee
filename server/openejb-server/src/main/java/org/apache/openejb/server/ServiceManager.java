@@ -184,7 +184,11 @@ public abstract class ServiceManager {
 
     public static void register(String serviceName, ServerService service, MBeanServer server) {
         try {
-            server.registerMBean(new ManagedMBean(service), getObjectName(serviceName));
+            final ObjectName on = getObjectName(serviceName);
+            if (server.isRegistered(on)) {
+                server.unregisterMBean(on);
+            }
+            server.registerMBean(new ManagedMBean(service), on);
         } catch (Exception e) {
             logger.error("Unable to register MBean ", e);
         }

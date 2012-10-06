@@ -27,6 +27,7 @@ import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentLoader;
 import org.apache.openejb.config.UnknownModuleTypeException;
+import org.apache.openejb.core.ivm.IntraVmProxy;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.proxy.ProxyEJB;
 import org.osgi.framework.Bundle;
@@ -59,7 +60,6 @@ public class Deployer implements BundleListener {
 
     private final Map<Bundle, List<ServiceRegistration>> registrations = new ConcurrentHashMap<Bundle, List<ServiceRegistration>>();
     private final Map<Bundle, String> paths = new ConcurrentHashMap<Bundle, String>();
-    private final Map<Bundle, BundleContext> contexts = new ConcurrentHashMap<Bundle, BundleContext>();
 
     private final Activator openejbActivator;
 
@@ -79,15 +79,11 @@ public class Deployer implements BundleListener {
             case BundleEvent.STARTED:
                 final BundleContext context = event.getBundle().getBundleContext();
                 if (context != null) {
-                    contexts.put(event.getBundle(), context);
                     deploy(event.getBundle());
                 }
                 break;
             case BundleEvent.STOPPED:
             case BundleEvent.UNINSTALLED:
-                if (contexts.containsKey(event.getBundle())) {
-                    contexts.remove(event.getBundle());
-                }
                 undeploy(event.getBundle());
                 break;
             case BundleEvent.UPDATED:
@@ -111,14 +107,6 @@ public class Deployer implements BundleListener {
         try {
             try {
                 try {
-                    BundleContext context = bundle.getBundleContext();
-                    if (context == null && contexts.containsKey(bundle)) {
-                        context = contexts.get(bundle);
-                    } else if (context == null) {
-                        LOGGER.warn("can't get bundle context of bundle {0}", bundle.getBundleId());
-                        return;
-                    }
-
                     // equinox? found in aries
                     File bundleDump = bundle.getBundleContext().getDataFile(bundle.getSymbolicName() + "/" + bundle.getVersion() + "/");
                     // TODO: what should happen if there is multiple versions?
@@ -258,8 +246,13 @@ public class Deployer implements BundleListener {
         }
     }
 
-    private void registerService(final BeanContext beanContext, final BundleContext context, final List<Class> interfaces) {
-        if (!interfaces.isEmpty()) {
+    private void registerService(final BeanContext beanContext, final BundleContext context, final List<Class> rawItf) {
+        if (!rawItf.isEmpty()) {
+            final List<Class> interfaces = new ArrayList<Class>(rawItf);
+            if (interfaces.contains(IntraVmProxy.class)) {
+                interfaces.remove(IntraVmProxy.class);
+            }
+
             final Class<?>[] itfs = interfaces.toArray(new Class<?>[interfaces.size()]);
             try {
                 final Object service = ProxyEJB.proxy(beanContext, itfs);

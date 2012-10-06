@@ -22,7 +22,7 @@ package org.apache.openejb.util.classloader;
  * without patching it.
  *
  */
-public class MultipleClassLoader extends ClassLoader {
+public class MultipleClassLoader extends ClassLoader implements ClassLoaderComparator {
     private final ClassLoader second;
 
     public MultipleClassLoader(ClassLoader first, ClassLoader second) {
@@ -63,5 +63,10 @@ public class MultipleClassLoader extends ClassLoader {
     @Override
     public int hashCode() {
         return getParent().hashCode();
+    }
+
+    @Override
+    public boolean isSame(final ClassLoader cl) {
+        return equals(cl);
     }
 }

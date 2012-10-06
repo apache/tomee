@@ -61,6 +61,7 @@ public class Activator implements BundleActivator {
         env.setProperty("openejb.loader", "context");
         env.setProperty("openejb.deployments.classpath", "false");
         env.setProperty("openejb.nobanner", "true");
+        env.setProperty("openejb.classloader.forced-skip", "org.slf4j"); // otherwise we'll get a ClassNotFound on org.slf4j.impl.StaticLoggerBinder
         env.setProperty("openejb.modulename.useHash", "true");
         env.setProperty(CdiScanner.OPENEJB_CDI_FILTER_CLASSLOADER, "false"); // TODO: improve it reactivating it
 
