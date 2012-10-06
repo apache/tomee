@@ -18,6 +18,7 @@ package org.apache.openejb.cdi;
 
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.BeanType;
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.ProxyInterfaceResolver;
 import org.apache.webbeans.component.OwbBean;
 import org.apache.webbeans.component.WebBeansType;
@@ -180,6 +181,13 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
             } catch (UndeclaredThrowableException nsoe) {
                 if (!(nsoe.getCause() instanceof NoSuchObjectException)) {
                     throw nsoe;
+                }
+            } catch (Exception e) {
+                if (!(e instanceof NoSuchObjectException)) {
+                    if (e instanceof RuntimeException) {
+                        throw (RuntimeException) e;
+                    }
+                    throw new OpenEJBRuntimeException(e);
                 }
             }
         }
