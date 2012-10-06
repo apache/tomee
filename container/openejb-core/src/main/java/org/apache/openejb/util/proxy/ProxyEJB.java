@@ -34,6 +34,14 @@ public class ProxyEJB {
         return LocalBeanProxyFactory.newProxyInstance(beanClass.getClassLoader(), new Handler(beanContext), beanClass, IntraVmProxy.class, Serializable.class);
     }
 
+    // same as proxy() but it doesn't add IvmProxy and Serializable interfaces (use in bridges proxies like OSGi services)
+    public static Object simpleProxy(final BeanContext beanContext, final Class<?>[] itfs) {
+        if (beanContext.isLocalbean()) {
+            return LocalBeanProxyFactory.newProxyInstance(itfs[0].getClassLoader(), new Handler(beanContext), itfs[0]);
+        }
+        return Proxy.newProxyInstance(itfs[0].getClassLoader(), itfs, new Handler(beanContext));
+    }
+
     public static Object proxy(final BeanContext beanContext, final Class<?>[] itfs) {
         if (beanContext.isLocalbean()) {
             return LocalBeanProxyFactory.newProxyInstance(itfs[0].getClassLoader(), new Handler(beanContext), itfs[0], IntraVmProxy.class, Serializable.class);

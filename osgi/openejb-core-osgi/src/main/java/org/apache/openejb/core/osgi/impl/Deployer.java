@@ -255,7 +255,7 @@ public class Deployer implements BundleListener {
 
             final Class<?>[] itfs = interfaces.toArray(new Class<?>[interfaces.size()]);
             try {
-                final Object service = ProxyEJB.proxy(beanContext, itfs);
+                final Object service = ProxyEJB.simpleProxy(beanContext, itfs);
                 registrations.get(context.getBundle()).add(context.registerService(str(itfs), service, new Properties()));
                 LOGGER.info("EJB registered: {0} for interfaces {1}", beanContext.getEjbName(), interfaces);
             } catch (IllegalArgumentException iae) {
