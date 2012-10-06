@@ -187,7 +187,11 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory {
     public void register() throws OpenEJBException {
         final MBeanServer server = LocalMBeanServer.get();
         try {
-            server.registerMBean(mBeanify(), generateObjectName());
+            generateObjectName();
+            if (server.isRegistered(objectName)) {
+                server.unregisterMBean(objectName);
+            }
+            server.registerMBean(mBeanify(), objectName);
         } catch (Exception e) {
             throw new OpenEJBException("can't register the mbean for the entity manager factory " + getPUname(), e);
         } catch (NoClassDefFoundError ncdfe) {

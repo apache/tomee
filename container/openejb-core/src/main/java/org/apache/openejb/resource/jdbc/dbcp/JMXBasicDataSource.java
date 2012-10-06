@@ -20,6 +20,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.management.Description;
+import javax.management.MBeanServer;
 import javax.management.ManagedAttribute;
 import javax.management.ManagedOperation;
 import javax.management.ObjectName;
@@ -39,8 +40,12 @@ public class JMXBasicDataSource {
         this.ds = ds;
 
         objectName = ObjectNameBuilder.uniqueName("datasources", name, ds);
+        final MBeanServer server = LocalMBeanServer.get();
         try {
-            LocalMBeanServer.get().registerMBean(new DynamicMBeanWrapper(this), objectName);
+            if (server.isRegistered(objectName)) {
+                server.unregisterMBean(objectName);
+            }
+            server.registerMBean(new DynamicMBeanWrapper(this), objectName);
         } catch (Exception e) {
             e.printStackTrace(); // TODO
         }

@@ -313,9 +313,13 @@ public class SingletonInstanceManager {
             jmxName.set("j2eeType", "Invocations");
 
             // register the invocation stats interceptor
+            final MBeanServer server = LocalMBeanServer.get();
             try {
                 ObjectName objectName = jmxName.build();
-                LocalMBeanServer.get().registerMBean(new ManagedMBean(stats), objectName);
+                if (server.isRegistered(objectName)) {
+                    server.unregisterMBean(objectName);
+                }
+                server.registerMBean(new ManagedMBean(stats), objectName);
                 data.add(objectName);
             } catch (Exception e) {
                 logger.error("Unable to register MBean ", e);

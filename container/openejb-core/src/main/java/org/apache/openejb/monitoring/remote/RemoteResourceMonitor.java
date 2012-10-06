@@ -31,6 +31,7 @@ import javax.management.MBeanInfo;
 import javax.management.MBeanNotificationInfo;
 import javax.management.MBeanOperationInfo;
 import javax.management.MBeanParameterInfo;
+import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
 import java.io.IOException;
@@ -75,8 +76,12 @@ public class RemoteResourceMonitor implements DynamicMBean {
         jmxName.set("ObjectType", "Related Hosts");
         objectName = jmxName.build();
 
+        final MBeanServer server = LocalMBeanServer.get();
         try {
-            LocalMBeanServer.get().registerMBean(this, objectName);
+            if (server.isRegistered(objectName)) {
+                server.unregisterMBean(objectName);
+            }
+            server.registerMBean(this, objectName);
         } catch (Exception e) {
             throw new OpenEJBRuntimeException(e);
         }

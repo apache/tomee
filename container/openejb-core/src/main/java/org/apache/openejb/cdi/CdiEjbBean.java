@@ -39,6 +39,7 @@ import java.util.Set;
 
 public class CdiEjbBean<T> extends BaseEjbBean<T> {
     private final BeanContext beanContext;
+    private final ThreadLocal<Class<?>> askedType = new ThreadLocal<Class<?>>();
 
     public CdiEjbBean(BeanContext beanContext, WebBeansContext webBeansContext) {
         this(beanContext, webBeansContext, beanContext.getManagedClass());
@@ -84,7 +85,12 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
     @Override
     @SuppressWarnings("unchecked")
     protected T getInstance(CreationalContext<T> creationalContext) {
-        return (T) webBeansContext.getBeanManagerImpl().getReference(new RealEjbBean(this), getBeanClass(), creationalContext);
+        Type asked = askedType.get();
+        if (asked == null) {
+            askedType.remove();
+            asked = getBeanClass();
+        }
+        return (T) webBeansContext.getBeanManagerImpl().getReference(new RealEjbBean(this), asked, creationalContext);
     }
 
     @Override
@@ -227,6 +233,14 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
         }
 
         return toReturn;
+    }
+
+    public void setAskedType(final Class<?> askedType) {
+        this.askedType.set(askedType);
+    }
+
+    public void clearAskedType() {
+        askedType.remove();
     }
 
     private static class RealEjbBean<T> extends AbstractOwbBean<T> {

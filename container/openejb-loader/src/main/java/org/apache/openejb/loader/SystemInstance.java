@@ -247,13 +247,18 @@ public class SystemInstance {
         try {
             conf = system.getBase().getDirectory("conf");
         } catch (IOException e) {
+            // no-op
+        }
+
+        if (conf == null || !conf.exists()) {
             try {
                 conf = system.getBase().getDirectory("etc");
-            } catch (IOException ie) {
+            } catch (IOException e) {
                 // no-op
             }
         }
-        if (conf == null) {
+
+        if (conf == null || !conf.exists()) {
             return new File(system.getBase().getDirectory(), "conf");
         }
         if (subPath == null) {

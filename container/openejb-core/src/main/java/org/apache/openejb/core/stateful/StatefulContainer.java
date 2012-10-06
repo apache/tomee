@@ -305,6 +305,9 @@ public class StatefulContainer implements RpcContainer {
             // register the invocation stats interceptor
             try {
                 ObjectName objectName = jmxName.set("j2eeType", "Invocations").build();
+                if (server.isRegistered(objectName)) {
+                    server.unregisterMBean(objectName);
+                }
                 server.registerMBean(new ManagedMBean(stats), objectName);
                 data.jmxNames.add(objectName);
             } catch (Exception e) {
