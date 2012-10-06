@@ -92,7 +92,7 @@ public class Deployer implements BundleListener {
                 } catch (NullPointerException npe) {
                     // can happen when shutting down an OSGi server
                     // because of all stop events
-                    LOGGER.warn("can't undeploy bundle #{0}", event.getBundle().getBundleId());
+                    LOGGER.warn("can't undeploy bundle #{}", event.getBundle().getBundleId());
                 }
                 deploy(event.getBundle());
                 break;
@@ -100,8 +100,13 @@ public class Deployer implements BundleListener {
     }
 
     private void deploy(final Bundle bundle) {
+        if (bundle.getBundleContext() == null) {
+            return;
+        }
+
         final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
         final ClassLoader osgiCl = new OSGIClassLoader(bundle, OpenEJBBundleContextHolder.get().getBundle());
+
         Thread.currentThread().setContextClassLoader(osgiCl);
 
         try {
@@ -118,11 +123,11 @@ public class Deployer implements BundleListener {
                     }
 
                     if (bundleDump == null || !bundleDump.exists()) {
-                        LOGGER.warn("can't find bundle {0}", bundle.getBundleId());
+                        LOGGER.warn("can't find bundle {}", bundle.getBundleId());
                         return;
                     }
 
-                    LOGGER.info("looking bundle {0} in {1}", bundle.getBundleId(), bundleDump);
+                    LOGGER.info("looking bundle {} in {}", bundle.getBundleId(), bundleDump);
                     final AppModule appModule = new OSGiDeploymentLoader(bundle).load(bundleDump);
                     LOGGER.info("deploying bundle #" + bundle.getBundleId() + " as an EJBModule");
 
@@ -170,6 +175,31 @@ public class Deployer implements BundleListener {
         int max = 0;
         File out;
         File f = null;
+
+        final File[] files = root.listFiles();
+        if (files == null) {
+            return null;
+        }
+
+        for (File current : files) {
+            if (current.getName().startsWith("version")) {
+                final String v = current.getName().substring("version".length());
+                if (!v.contains(".")) {
+                    continue;
+                }
+
+                final int idx = v.indexOf('.');
+                final int cMin = Integer.parseInt(v.substring(0, idx));
+                final int cMax = Integer.parseInt(v.substring(idx + 1, v.length()));
+
+                if (cMax > max || (cMax == max && cMin > min)) {
+                    f = current;
+                    min = cMin;
+                    max = cMax;
+                }
+            }
+        }
+
         do {
             do {
                 out = f;
@@ -202,15 +232,15 @@ public class Deployer implements BundleListener {
                     assembler.destroyApplication(paths.remove(bundle));
                 }
             } catch (IllegalStateException ise) {
-                LOGGER.error("Can't undeploy bundle #{0}", bundle.getBundleId());
+                LOGGER.error("Can't undeploy bundle #{}", bundle.getBundleId());
             } catch (UndeployException e) {
-                LOGGER.error("Can't undeploy bundle #{0}", bundle.getBundleId(), e);
+                LOGGER.error("Can't undeploy bundle #{}", bundle.getBundleId(), e);
             } catch (NoSuchApplicationException e) {
-                LOGGER.error("Can't undeploy non existing bundle #{0}", bundle.getBundleId(), e);
+                LOGGER.error("Can't undeploy non existing bundle #{}", bundle.getBundleId(), e);
             }
         }
 
-        LOGGER.info("[Deployer] Bundle {0} has been stopped", bundle.getSymbolicName());
+        LOGGER.info("[Deployer] Bundle {} has been stopped", bundle.getSymbolicName());
     }
 
     /**
@@ -229,19 +259,19 @@ public class Deployer implements BundleListener {
 
             try {
                 if (beanContext.getBusinessRemoteInterface() != null) {
-                    LOGGER.info("registering remote bean: {0}", beanContext.getEjbName());
+                    LOGGER.info("registering remote bean: {}", beanContext.getEjbName());
                     registerService(beanContext, context, beanContext.getBusinessRemoteInterfaces());
                 }
                 if (beanContext.getBusinessLocalInterface() != null) {
-                    LOGGER.info("registering local bean: {0}", beanContext.getEjbName());
+                    LOGGER.info("registering local bean: {}", beanContext.getEjbName());
                     registerService(beanContext, context, beanContext.getBusinessLocalInterfaces());
                 }
                 if (beanContext.isLocalbean()) {
-                    LOGGER.info("registering local view bean: {0}", beanContext.getEjbName());
+                    LOGGER.info("registering local view bean: {}", beanContext.getEjbName());
                     registerService(beanContext, context, Arrays.asList(beanContext.getBusinessLocalBeanInterface()));
                 }
             } catch (Exception e) {
-                LOGGER.error("[Deployer] can't register: {0}", beanContext.getEjbName());
+                LOGGER.error("[Deployer] can't register: {}", beanContext.getEjbName());
             }
         }
     }
@@ -257,9 +287,9 @@ public class Deployer implements BundleListener {
             try {
                 final Object service = ProxyEJB.simpleProxy(beanContext, itfs);
                 registrations.get(context.getBundle()).add(context.registerService(str(itfs), service, new Properties()));
-                LOGGER.info("EJB registered: {0} for interfaces {1}", beanContext.getEjbName(), interfaces);
+                LOGGER.info("EJB registered: {} for interfaces {}", beanContext.getEjbName(), interfaces);
             } catch (IllegalArgumentException iae) {
-                LOGGER.error("can't register: {0} for interfaces {1}", beanContext.getEjbName(), interfaces);
+                LOGGER.error("can't register: {} for interfaces {}", beanContext.getEjbName(), interfaces);
             }
         }
     }

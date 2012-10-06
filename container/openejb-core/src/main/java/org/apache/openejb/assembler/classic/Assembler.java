@@ -42,7 +42,6 @@ import org.apache.openejb.assembler.classic.event.AssemblerCreated;
 import org.apache.openejb.assembler.classic.event.AssemblerDestroyed;
 import org.apache.openejb.assembler.monitoring.JMXContainer;
 import org.apache.openejb.async.AsynchronousPool;
-import org.apache.openejb.cdi.AsmFactory;
 import org.apache.openejb.cdi.CdiAppContextsService;
 import org.apache.openejb.cdi.CdiBuilder;
 import org.apache.openejb.cdi.CdiResourceInjectionService;
@@ -153,8 +152,6 @@ import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -1879,11 +1876,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     public void createSecurityService(SecurityServiceInfo serviceInfo) throws OpenEJBException {
 
-        ObjectRecipe serviceRecipe = createRecipe(serviceInfo);
-
-        Object service = serviceRecipe.create();
-
-        logUnusedProperties(serviceRecipe, serviceInfo);
+        Object service = SystemInstance.get().getComponent(SecurityService.class);
+        if (service == null) {
+            ObjectRecipe serviceRecipe = createRecipe(serviceInfo);
+            service = serviceRecipe.create();
+            logUnusedProperties(serviceRecipe, serviceInfo);
+        }
 
         Class interfce = serviceInterfaces.get(serviceInfo.service);
         checkImplementation(interfce, service.getClass(), serviceInfo.service, serviceInfo.id);
