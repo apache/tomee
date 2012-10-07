@@ -195,7 +195,7 @@ public class DeployerEjb implements Deployer {
                 ClassLoaderUtil.destroyClassLoader(appModule.getJarLocation());
             }
 
-            e.printStackTrace();
+            LOGGER.error("Can't deploy " + inLocation, e);
 
             if (e instanceof javax.validation.ValidationException) {
                 throw (javax.validation.ValidationException) e;

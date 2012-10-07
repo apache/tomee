@@ -493,6 +493,18 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         return null;
     }
 
+    public synchronized Collection<String> availableApps() {
+        final Collection<String> apps = new ArrayList<String>();
+        for (ContextInfo info : infos.values()) {
+            if (info.appInfo != null) {
+                apps.add(info.appInfo.path);
+            } else if (info.standardContext != null) {
+                apps.add("[not deployed] " + info.standardContext.getName());
+            }
+        }
+        return apps;
+    }
+
     // TODO: find something more sexy
     private static Field HOST_CONFIG_HOST = null;
 

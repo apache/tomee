@@ -294,6 +294,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
                 if (appInfo != null) {
                     moduleIds.put(archive.getName(), new DeployedApp(appInfo.path, file.getParentFile()));
                 } else {
+                    LOGGER.severe("appInfo was not found for " + file.getPath() + ", available are: " + apps());
                     throw new OpenEJBException("can't get appInfo");
                 }
             } catch (OpenEJBException re) { // clean up in undeploy needs it
@@ -323,6 +324,19 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
             e.printStackTrace();
             throw new DeploymentException("Unable to deploy", e);
         }
+    }
+
+    private Collection<String> apps() {
+        final Collection<String> paths = new ArrayList<String>();
+        try {
+            final Collection<AppInfo> appInfos = deployer().getDeployedApps();
+            for (AppInfo info : appInfos) {
+                paths.add(info.path);
+            }
+        } catch (Exception e) { // don't throw an exception just because of this log info
+            // no-op
+        }
+        return paths;
     }
 
     protected Assignable archiveWithTestInfo(final Archive<?> archive) {
