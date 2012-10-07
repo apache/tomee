@@ -354,6 +354,8 @@
       org.apache.openejb.assembler;version=${openejb.osgi.export.version},
       org.apache.openejb.assembler.classic;version=${openejb.osgi.export.version},
       org.apache.openejb.assembler.classic.cmd;version=${openejb.osgi.export.version},
+      org.apache.openejb.assembler.classic.assembler;version=${openejb.osgi.export.version},
+      org.apache.openejb.assembler.classic.util;version=${openejb.osgi.export.version},
       org.apache.openejb.assembler.dynamic;version=${openejb.osgi.export.version},
       org.apache.openejb.assembler.bval;version=${openejb.osgi.export.version},
       org.apache.openejb.assembler.monitoring;version=${openejb.osgi.export.version},
