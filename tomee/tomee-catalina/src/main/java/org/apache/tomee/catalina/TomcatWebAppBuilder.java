@@ -483,8 +483,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
     public synchronized ContextInfo standaAloneWebAppInfo(final File file) {
         for (ContextInfo info : infos.values()) {
-            if (info.appInfo != null
-                && (info.appInfo.webAppAlone && (file.equals(new File(info.appInfo.path)) || file.equals(new File(info.appInfo.path + ".war"))))) {
+            if (info.appInfo != null && info.appInfo.webAppAlone
+                    && ((file.equals(new File(info.appInfo.path)) || file.equals(new File(info.appInfo.path + ".war"))))) {
                 return info;
             }
             if (info.standardContext != null && (file.equals(new File(info.standardContext.getDocBase())) || file.equals(new File(info.standardContext.getDocBase() + ".war")))) {
@@ -495,8 +495,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         // still not found - trying another algorithm - weird but it seems to happen
         final String path = file.getAbsolutePath();
         for (ContextInfo info : infos.values()) {
-            if (info.appInfo != null
-                    && (info.appInfo.webAppAlone && info.appInfo.path.endsWith(path) || (info.appInfo.path + ".war").endsWith(path))) {
+            if (info.appInfo != null && info.appInfo.webAppAlone
+                    && (info.appInfo.path.endsWith(path) || (info.appInfo.path + ".war").endsWith(path))) {
                 return info;
             }
         }
