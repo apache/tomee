@@ -110,6 +110,9 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
     private static Set<String> ignoredReferenceTypes = new TreeSet<String>();
     public static final String AUTOCREATE_JTA_DATASOURCE_FROM_NON_JTA_ONE_KEY = "openejb.autocreate.jta-datasource-from-non-jta-one";
 
+    public static final ThreadLocal<Collection<String>> PROVIDED_RESOURCES = new ThreadLocal<Collection<String>>();
+    public static final ThreadLocal<String> PROVIDED_RESOURCES_PREFIX = new ThreadLocal<String>();
+
     static{
         // Context objects are automatically handled
         ignoredReferenceTypes.add("javax.ejb.SessionContext");
@@ -182,20 +185,25 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
         resolvePersistenceRefs(appModule);
 
-        for (EjbModule ejbModule : appModule.getEjbModules()) {
-            deploy(ejbModule, appResources);
-        }
-        for (ClientModule clientModule : appModule.getClientModules()) {
-            deploy(clientModule, appResources);
-        }
-        for (ConnectorModule connectorModule : appModule.getConnectorModules()) {
-            deploy(connectorModule);
-        }
-        for (WebModule webModule : appModule.getWebModules()) {
-            deploy(webModule, appResources);
-        }
-        for (PersistenceModule persistenceModule : appModule.getPersistenceModules()) {
-            deploy(appModule, persistenceModule);
+        try {
+            for (EjbModule ejbModule : appModule.getEjbModules()) {
+                deploy(ejbModule, appResources);
+            }
+            for (ClientModule clientModule : appModule.getClientModules()) {
+                deploy(clientModule, appResources);
+            }
+            for (ConnectorModule connectorModule : appModule.getConnectorModules()) {
+                deploy(connectorModule);
+            }
+            for (WebModule webModule : appModule.getWebModules()) {
+                deploy(webModule, appResources);
+            }
+            for (PersistenceModule persistenceModule : appModule.getPersistenceModules()) {
+                deploy(appModule, persistenceModule);
+            }
+        } finally {
+            PROVIDED_RESOURCES.remove();
+            PROVIDED_RESOURCES_PREFIX.remove();
         }
         return appModule;
     }
@@ -703,6 +711,12 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
     }
 
     private void processJndiRefs(String moduleId, JndiConsumer jndiConsumer, AppResources appResources, ClassLoader classLoader) throws OpenEJBException {
+        final Collection<String> ignoredResources = PROVIDED_RESOURCES.get();
+        String ignoredResourcesPrefix = PROVIDED_RESOURCES_PREFIX.get();
+        if (ignoredResourcesPrefix == null) {
+            ignoredResourcesPrefix = "";
+        }
+
         // Resource reference
         for (ResourceRef ref : jndiConsumer.getResourceRef()) {
             // skip destinations with lookup name
@@ -724,16 +738,21 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             }
 
             String destinationId = (mappedName.length() == 0) ? ref.getName() : mappedName;
-            try {
-                destinationId = getResourceId(moduleId, destinationId, refType, appResources);
-            } catch (OpenEJBException ex) {
-                if (!(ref instanceof ContextRef)) {
-                    throw ex;
-                } else { // let jaxrs provider manage it
-                    continue;
+            if (ignoredResources != null && ignoredResources.contains(destinationId)) {
+                ref.setLookupName(ignoredResourcesPrefix + destinationId);
+                ref.setName("openejb/" + moduleId + "/" + destinationId);
+            } else {
+                try {
+                    destinationId = getResourceId(moduleId, destinationId, refType, appResources);
+                } catch (OpenEJBException ex) {
+                    if (!(ref instanceof ContextRef)) {
+                        throw ex;
+                    } else { // let jaxrs provider manage it
+                        continue;
+                    }
                 }
+                ref.setMappedName(destinationId);
             }
-            ref.setMappedName(destinationId);
         }
 
         // Resource env reference

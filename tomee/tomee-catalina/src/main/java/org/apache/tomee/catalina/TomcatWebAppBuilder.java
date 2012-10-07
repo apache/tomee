@@ -38,7 +38,9 @@ import org.apache.catalina.core.StandardWrapper;
 import org.apache.catalina.deploy.ApplicationParameter;
 import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextResource;
+import org.apache.catalina.deploy.ContextResourceEnvRef;
 import org.apache.catalina.deploy.ContextResourceLink;
+import org.apache.catalina.deploy.ContextService;
 import org.apache.catalina.deploy.ContextTransaction;
 import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.ha.CatalinaCluster;
@@ -69,6 +71,7 @@ import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.cdi.CdiBuilder;
 import org.apache.openejb.config.AppModule;
+import org.apache.openejb.config.AutoConfig;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentLoader;
 import org.apache.openejb.config.WebModule;
@@ -836,6 +839,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         ContextInfo contextInfo = getContextInfo(standardContext);
         final ClassLoader classLoader = standardContext.getLoader().getClassLoader();
         if (contextInfo == null) {
+            final Collection<String> tomcatResources = getResourcesNames(standardContext.getNamingResources());
+            AutoConfig.PROVIDED_RESOURCES.set(tomcatResources);
+            AutoConfig.PROVIDED_RESOURCES_PREFIX.set("java:/comp/env/");
+
             final AppModule appModule = loadApplication(standardContext);
             if (appModule != null) {
                 try {
@@ -964,6 +971,41 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             filter.setConfigurationPath(routerConfig);
             standardContext.getPipeline().addValve(filter);
         }
+    }
+
+    private Collection<String> getResourcesNames(final NamingResources namingResources) {
+        final Collection<String> names = new ArrayList<String>();
+        for (ContextResource resource : namingResources.findResources()) {
+            final String name = resource.getName();
+            if (name != null) {
+                names.add(resource.getName());
+            }
+        }
+        for (ContextEnvironment resource : namingResources.findEnvironments()) {
+            final String name = resource.getName();
+            if (name != null) {
+                names.add(resource.getName());
+            }
+        }
+        for (ContextResourceLink resource : namingResources.findResourceLinks()) {
+            final String name = resource.getName();
+            if (name != null) {
+                names.add(resource.getName());
+            }
+        }
+        for (ContextService resource : namingResources.findServices()) {
+            final String name = resource.getName();
+            if (name != null) {
+                names.add(resource.getName());
+            }
+        }
+        for (ContextResourceEnvRef resource : namingResources.findResourceEnvRefs()) {
+            final String name = resource.getName();
+            if (name != null) {
+                names.add(resource.getName());
+            }
+        }
+        return names;
     }
 
     private static void updateInjections(final Collection<Injection> injections, final ClassLoader classLoader, final boolean keepInjection) {
