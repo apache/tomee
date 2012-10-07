@@ -43,7 +43,7 @@ public class TomcatWebappDeployer implements WebAppDeployer {
 
         final TomcatWebAppBuilder.ContextInfo info = tomcatWebAppBuilder.standaAloneWebAppInfo(file.getAbsolutePath());
         if (info == null || info.appInfo == null) {
-            LOGGER.error("Can't find of appInfo for " + file + ", availables: " + tomcatWebAppBuilder.availableApps());
+            LOGGER.error("Can't find of appInfo for " + (file != null ? file.getAbsolutePath() : null) + ", availables: " + tomcatWebAppBuilder.availableApps());
         }
 
         if (info == null) { // error
