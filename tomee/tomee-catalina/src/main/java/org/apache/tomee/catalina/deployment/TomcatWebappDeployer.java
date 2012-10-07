@@ -41,7 +41,7 @@ public class TomcatWebappDeployer implements WebAppDeployer {
             throw new OpenEJBRuntimeException(e);
         }
 
-        final TomcatWebAppBuilder.ContextInfo info = tomcatWebAppBuilder.standaAloneWebAppInfo(file.getAbsolutePath());
+        final TomcatWebAppBuilder.ContextInfo info = tomcatWebAppBuilder.standaAloneWebAppInfo(file);
         if (info == null || info.appInfo == null) {
             LOGGER.error("Can't find of appInfo for " + (file != null ? file.getAbsolutePath() : null) + ", availables: " + tomcatWebAppBuilder.availableApps());
         }

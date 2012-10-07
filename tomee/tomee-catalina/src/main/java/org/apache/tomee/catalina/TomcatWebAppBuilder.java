@@ -481,12 +481,13 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         }
     }
 
-    public synchronized ContextInfo standaAloneWebAppInfo(final String path) {
+    public synchronized ContextInfo standaAloneWebAppInfo(final File file) {
         for (ContextInfo info : infos.values()) {
             if (info.appInfo != null
-                && (info.appInfo.webAppAlone && (path.equals(info.appInfo.path) || path.equals(info.appInfo.path + ".war")))) {
+                && (info.appInfo.webAppAlone && (file.equals(new File(info.appInfo.path)) || file.equals(new File(info.appInfo.path + ".war"))))) {
                 return info;
-            } else if (info.standardContext != null && (path.equals(info.standardContext.getDocBase()) || path.equals(info.standardContext.getDocBase() + ".war"))) {
+            }
+            if (info.standardContext != null && (file.equals(new File(info.standardContext.getDocBase())) || file.equals(new File(info.standardContext.getDocBase() + ".war")))) {
                 return info;
             }
         }
