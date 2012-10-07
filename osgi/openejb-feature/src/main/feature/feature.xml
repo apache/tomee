@@ -19,6 +19,7 @@
 
 <features name="openejb-features">
   <repository>mvn:org.apache.openejb/javaee-api/${javaee-api.version}/xml/features</repository>
+  <repository>mvn:org.apache.cxf.karaf/apache-cxf/${cxf.version}/xml/features</repository>
 
   <feature name="org.apache.commons">
     <bundle>mvn:commons-cli/commons-cli/${commons-cli.version}</bundle>
@@ -125,5 +126,28 @@
     <bundle>mvn:org.apache.openejb/openejb-server/${project.version}</bundle>
     <bundle>mvn:org.apache.openejb/openejb-client/${project.version}</bundle>
     <bundle>mvn:org.apache.openejb/openejb-core-osgi/${project.version}</bundle> <!-- after openejb-client -->
+  </feature>
+
+
+  <!--
+    next features are work in progress
+  -->
+
+  <feature name="openejb-cxf" version="${project.version}">
+    <feature>cxf</feature>
+    <bundle>mvn:org.apache.openejb/openejb-http/${project.version}</bundle>
+    <bundle>mvn:org.apache.openejb/openejb-cxf-transport/${project.version}</bundle>
+  </feature>
+
+  <feature name="openejb-rest" version="${project.version}">
+    <feature>openejb-cxf</feature>
+    <bundle>mvn:org.apache.openejb/openejb-rest/${project.version}</bundle>
+    <bundle>mvn:org.apache.openejb/openejb-cxf-rs/${project.version}</bundle>
+  </feature>
+
+  <feature name="openejb-soap" version="${project.version}">
+    <feature>openejb-cxf</feature>
+    <bundle>mvn:org.apache.openejb/openejb-webservices/${project.version}</bundle>
+    <bundle>mvn:org.apache.openejb/openejb-cxf/${project.version}</bundle>
   </feature>
 </features>
