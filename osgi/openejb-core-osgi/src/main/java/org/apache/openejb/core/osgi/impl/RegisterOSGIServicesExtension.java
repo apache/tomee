@@ -71,10 +71,19 @@ public class RegisterOSGIServicesExtension implements Extension {
 
         private final ServiceReference service;
         private final Class<?> clazz;
+        private final Set<Type> types = new HashSet<Type>();
 
         public OSGiServiceBean(final ServiceReference srv) {
             service = srv;
             clazz = serviceClass(service);
+
+            for (String clazz : (String[]) service.getProperty(Constants.OBJECTCLASS)) {
+                try {
+                    types.add(service.getBundle().loadClass(clazz));
+                } catch (ClassNotFoundException ignored) {
+                    // no-op
+                }
+            }
         }
 
         @Override
@@ -89,14 +98,6 @@ public class RegisterOSGIServicesExtension implements Extension {
 
         @Override
         public Set<Type> getTypes() {
-            final Set<Type> types = new HashSet<Type>();
-            for (String clazz : (String[]) service.getProperty(Constants.OBJECTCLASS)) {
-                try {
-                    types.add(service.getBundle().loadClass(clazz));
-                } catch (ClassNotFoundException ignored) {
-                    // no-op
-                }
-            }
             return types;
         }
 
