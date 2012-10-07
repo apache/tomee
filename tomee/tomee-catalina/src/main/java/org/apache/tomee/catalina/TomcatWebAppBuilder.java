@@ -491,6 +491,16 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 return info;
             }
         }
+
+        // still not found - trying another algorithm - weird but it seems to happen
+        final String path = file.getAbsolutePath();
+        for (ContextInfo info : infos.values()) {
+            if (info.appInfo != null
+                    && (info.appInfo.webAppAlone && info.appInfo.path.endsWith(path) || (info.appInfo.path + ".war").endsWith(path))) {
+                return info;
+            }
+        }
+
         return null;
     }
 
