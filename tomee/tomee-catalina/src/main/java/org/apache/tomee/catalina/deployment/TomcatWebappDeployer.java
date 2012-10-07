@@ -23,11 +23,15 @@ import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.tomee.catalina.TomcatWebAppBuilder;
 
 import java.io.File;
 
 public class TomcatWebappDeployer implements WebAppDeployer {
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, TomcatWebappDeployer.class);
+
     @Override
     public AppInfo deploy(final String context, final File file) {
         final TomcatWebAppBuilder tomcatWebAppBuilder = (TomcatWebAppBuilder) SystemInstance.get().getComponent(WebAppBuilder.class);
@@ -38,6 +42,10 @@ public class TomcatWebappDeployer implements WebAppDeployer {
         }
 
         final TomcatWebAppBuilder.ContextInfo info = tomcatWebAppBuilder.standaAloneWebAppInfo(file.getAbsolutePath());
+        if (info == null || info.appInfo == null) {
+            LOGGER.error("Can't find of appInfo for " + file + ", availables: " + tomcatWebAppBuilder.availableApps());
+        }
+
         if (info == null) { // error
             return null;
         }
