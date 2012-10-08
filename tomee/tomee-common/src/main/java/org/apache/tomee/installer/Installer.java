@@ -129,8 +129,10 @@ public class Installer {
 
         // add our listener
         final String newTomcatUsers = tomcatUsersXml.replace("</tomcat-users>",
+                "  <!-- Activate those lines to get access to TomEE GUI\n" +
                 "  <role rolename=\"tomee-admin\" />\n" +
                 "  <user username=\"tomee\" password=\"tomee\" roles=\"tomee-admin,manager-gui\" />" +
+                "  -->" +
                 "\n</tomcat-users>\n");
 
         // overwrite server.xml

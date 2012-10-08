@@ -27,6 +27,7 @@ import org.apache.catalina.Manager;
 import org.apache.catalina.Pipeline;
 import org.apache.catalina.Realm;
 import org.apache.catalina.Service;
+import org.apache.catalina.UserDatabase;
 import org.apache.catalina.Valve;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.ContainerBase;
@@ -51,6 +52,7 @@ import org.apache.catalina.startup.Constants;
 import org.apache.catalina.startup.ContextConfig;
 import org.apache.catalina.startup.HostConfig;
 import org.apache.catalina.startup.RealmRuleSet;
+import org.apache.catalina.users.MemoryUserDatabase;
 import org.apache.naming.ContextAccessController;
 import org.apache.naming.ContextBindings;
 import org.apache.openejb.AppContext;
@@ -307,6 +309,31 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      */
     public void stop() {
         globalListenerSupport.stop();
+    }
+
+    public void start(final StandardServer server) {
+        if (SystemInstance.get().isDefaultProfile()) { // add user tomee is no user are specified
+            try {
+                final NamingResources resources = server.getGlobalNamingResources();
+                final ContextResource userDataBaseResource = resources.findResource("UserDatabase");
+                final UserDatabase db = (UserDatabase) server.getGlobalNamingContext().lookup(userDataBaseResource.getName());
+                if (!db.getUsers().hasNext() && db instanceof MemoryUserDatabase) {
+                    final MemoryUserDatabase mudb = (MemoryUserDatabase) db;
+                    final boolean oldRo = mudb.getReadonly();
+                    try {
+                        ((MemoryUserDatabase) db).setReadonly(false);
+
+                        db.createRole("tomee-admin", "tomee admin role");
+                        db.createUser("tomee", "tomee", "TomEE");
+                        db.findUser("tomee").addRole(db.findRole("tomee-admin"));
+                    } finally {
+                        mudb.setReadonly(oldRo);
+                    }
+                }
+            } catch (Throwable t) {
+                // no-op
+            }
+        }
     }
 
     private static synchronized Digester createDigester() {
