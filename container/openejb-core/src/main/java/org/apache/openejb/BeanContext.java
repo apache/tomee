@@ -59,11 +59,13 @@ import javax.ejb.LockType;
 import javax.ejb.MessageDrivenBean;
 import javax.ejb.TimedObject;
 import javax.ejb.Timer;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.context.spi.Contextual;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.naming.Context;
 import javax.persistence.EntityManagerFactory;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -1591,10 +1593,17 @@ public class BeanContext extends DeploymentContext {
         final BeanManagerImpl bm = moduleContext.getAppContext().getWebBeansContext().getBeanManagerImpl();
         if (!bm.isInUse()) {
             isPassivatingScope = true;
+            return;
         }
 
         final CdiEjbBean<?> bean = get(CdiEjbBean.class);
-        isPassivatingScope =  bean == null || bm.isPassivatingScope(bean.getScope());
+        if (bean == null) {
+            isPassivatingScope = true;
+            return;
+        }
+
+        final Class<? extends Annotation> scope = bean.getScope();
+        isPassivatingScope =  !bm.isNormalScope(scope) || bm.isPassivatingScope(scope);
     }
 
     public boolean isPassivatingScope() {
