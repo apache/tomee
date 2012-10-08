@@ -2766,7 +2766,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                                 !name.equals("java.io.Externalizable") &&
                                 !name.startsWith("javax.ejb.") &&
                                 !descriptor.contains(interfce.getName()) &&
-                                !interfce.isSynthetic()) {
+                                !interfce.isSynthetic() &&
+                                !"net.sourceforge.cobertura.coveragedata.HasBeenInstrumented".equals(name)) {
                             interfaces.add(interfce);
                         }
                     }
