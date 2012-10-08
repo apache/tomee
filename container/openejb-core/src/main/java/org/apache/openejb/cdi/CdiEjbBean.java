@@ -319,7 +319,6 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
 
         @Override
         public void destroyCreatedInstance(final T instance, final CreationalContext<T> creationalContext) {
-            System.out.println("destroyed " + instance);
             bean.destroyComponentInstance(instance, creationalContext);
         }
 
