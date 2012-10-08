@@ -93,6 +93,9 @@
       <resource>
         <directory>src/main/resources</directory>
         <filtering>true</filtering>
+        <excludes>
+          <exclude>**/*.exe</exclude>
+        </excludes>
       </resource>
     </resources>
 
