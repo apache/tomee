@@ -30,7 +30,7 @@ public class InternalSecurityInterceptor {
 
     @AroundInvoke
     public Object invoke(final InvocationContext ic) throws Exception {
-        if (!SystemInstance.get().getOptions().get(OPENEJB_INTERNAL_BEANS_SECURITY_ENABLED, false)) {
+        if (SystemInstance.get().isDefaultProfile() || !SystemInstance.get().getOptions().get(OPENEJB_INTERNAL_BEANS_SECURITY_ENABLED, true)) {
             return ic.proceed();
         }
 

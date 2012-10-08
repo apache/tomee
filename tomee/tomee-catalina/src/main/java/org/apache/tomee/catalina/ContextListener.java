@@ -91,6 +91,8 @@ public interface ContextListener {
      */
     void afterStop(StandardServer standardServer);
 
+    void start(StandardServer server);
+
     /**
      * Called on periodic events.
      *

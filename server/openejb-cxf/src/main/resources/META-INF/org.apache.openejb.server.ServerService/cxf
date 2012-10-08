@@ -10,4 +10,4 @@ authMethod  = NONE
 
 # virtualHost =
 
-disabled    = false
+disabled    = ${openejb.profile.custom}

@@ -1,7 +1,7 @@
 server      = org.apache.openejb.server.ejbd.EjbServer
 bind        = 127.0.0.1
 port        = 4201
-disabled    = false
+disabled    = ${openejb.profile.custom}
 threads     = 200
 backlog     = 200
 discovery   = ejb:ejbd://{bind}:{port}

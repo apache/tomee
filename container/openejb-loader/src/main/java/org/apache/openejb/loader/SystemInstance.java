@@ -38,6 +38,8 @@ import java.util.Properties;
  * @org.apache.xbean.XBean element="system"
  */
 public class SystemInstance {
+    private static final String PROFILE_PROP = "openejb.profile";
+    private static final String DEFAULT_PROFILE = "development";
 
     private final long startTime = System.currentTimeMillis();
 
@@ -235,6 +237,7 @@ public class SystemInstance {
         readUserSystemProperties();
         readSystemProperties();
         initialized = true;
+        get().setProperty("openejb.profile.custom", Boolean.toString(!get().isDefaultProfile()));
     }
 
     private static void readUserSystemProperties() {
@@ -293,6 +296,14 @@ public class SystemInstance {
 
     public static SystemInstance get() {
         return system;
+    }
+
+    public String currentProfile() {
+        return getProperty(PROFILE_PROP, DEFAULT_PROFILE);
+    }
+
+    public boolean isDefaultProfile() {
+        return DEFAULT_PROFILE.equals(currentProfile());
     }
 
     /**
