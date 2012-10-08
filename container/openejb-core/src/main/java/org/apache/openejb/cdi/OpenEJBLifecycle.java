@@ -242,6 +242,8 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
 
                         EjbUtility.fireEvents((Class<Object>) implClass, bean, (ProcessAnnotatedTypeImpl<Object>) processAnnotatedEvent);
 
+                        beanContext.initIsPassivationScope();
+
                         webBeansContext.getWebBeansUtil().setInjectionTargetBeanEnableFlag(bean);
 
                         Class clazz = beanContext.getBeanClass();
