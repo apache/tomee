@@ -26,7 +26,8 @@
 }
 
 .tomee-console-output {
-    background-color: #222222;
+    background-color: #F7F7F9;
+    border: 1px solid #E1E1E8;
     color: gray;
     overflow: auto;
     padding: 5px;
@@ -38,6 +39,8 @@
 
 .line-separator {
     height: 1px;
-    background: #717171;
-    border-bottom: 1px solid #313030;
+    margin: 9px 1px;
+    overflow: auto;
+    background-color: #E5E5E5;
+    border-bottom: 1px solid white;
 }
