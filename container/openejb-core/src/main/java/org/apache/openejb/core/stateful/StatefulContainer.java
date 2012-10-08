@@ -65,7 +65,6 @@ import javax.ejb.RemoveException;
 import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
 import javax.enterprise.context.Dependent;
-import javax.enterprise.context.RequestScoped;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.naming.Context;
@@ -502,7 +501,7 @@ public class StatefulContainer implements RpcContainer {
             Method runMethod = null;
             try {
                 // Obtain instance
-                instance = obtainInstance(primKey, callContext, callMethod, beanContext.getScope() != RequestScoped.class);
+                instance = obtainInstance(primKey, callContext, callMethod, beanContext.isPassivatingScope());
 
                 // Resume previous Bean transaction if there was one
                 if (txPolicy instanceof BeanTransactionPolicy){
