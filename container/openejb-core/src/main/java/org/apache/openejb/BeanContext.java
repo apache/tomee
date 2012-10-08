@@ -63,6 +63,7 @@ import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.naming.Context;
 import javax.persistence.EntityManagerFactory;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -1573,6 +1574,14 @@ public class BeanContext extends DeploymentContext {
 
     public void setHidden(boolean hidden) {
         this.hidden = hidden;
+    }
+
+    public Class<? extends Annotation> getScope() {
+        final CdiEjbBean<?> bean = get(CdiEjbBean.class);
+        if (bean != null) {
+            return bean.getScope();
+        }
+        return null;
     }
 
     public void stop() {
