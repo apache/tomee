@@ -26,6 +26,7 @@ TOMEE.I18N = (function () {
 
         'application.console':'Console',
         'application.console.run': 'Execute',
+        'application.console.clear.output': 'Clear output',
         'application.console.done': 'Script executed.',
         'application.console.run.time': 'Time',
         'application.console.run.output.empty': 'Empty',

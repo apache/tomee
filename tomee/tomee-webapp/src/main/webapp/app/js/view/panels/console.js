@@ -29,6 +29,11 @@ TOMEE.ApplicationTabConsole = function () {
         });
     });
 
+    container.find('.tomee-execute-clear-btn').on('click', function () {
+        var consoleOutput = container.find('.tomee-console-output');
+        consoleOutput.empty();
+    });
+
     channel.bind('ui-actions', 'container-resized', function (data) {
         var consoleOutput = container.find('.tomee-console-output'),
             consoleEditor = container.find('.tomee-code'),
