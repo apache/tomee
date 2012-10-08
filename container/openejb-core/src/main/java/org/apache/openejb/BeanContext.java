@@ -1585,10 +1585,7 @@ public class BeanContext extends DeploymentContext {
         }
 
         final CdiEjbBean<?> bean = get(CdiEjbBean.class);
-        if (bean != null) {
-            return bm.isPassivatingScope(bean.getScope());
-        }
-        return true;
+        return bean == null || bm.isPassivatingScope(bean.getScope());
     }
 
     public void stop() {
