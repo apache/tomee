@@ -34,7 +34,7 @@ public class ServerServlet extends HttpServlet {
     private static final String ACTIVATED_INIT_PARAM = "activated";
 
     private EjbServer ejbServer;
-    private boolean activated = SystemInstance.isDefaultProfile();
+    private boolean activated = SystemInstance.get().isDefaultProfile();
 
     public void init(ServletConfig config) {
         ejbServer = SystemInstance.get().getComponent(EjbServer.class);
