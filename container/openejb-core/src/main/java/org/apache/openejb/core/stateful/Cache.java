@@ -46,7 +46,7 @@ public interface Cache<K, V> {
      * @throws Exception if an entry is loaded and the afterLoad method threw an
      * exception
      */
-    V checkOut(K key) throws Exception;
+    V checkOut(K key, boolean loadIfNotFound) throws Exception;
 
     /**
      * Marks the entry available, so it can be accessed again.

@@ -65,6 +65,7 @@ import javax.ejb.RemoveException;
 import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
 import javax.enterprise.context.Dependent;
+import javax.enterprise.context.RequestScoped;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.naming.Context;
@@ -501,7 +502,7 @@ public class StatefulContainer implements RpcContainer {
             Method runMethod = null;
             try {
                 // Obtain instance
-                instance = obtainInstance(primKey, callContext, callMethod);
+                instance = obtainInstance(primKey, callContext, callMethod, beanContext.getScope() != RequestScoped.class);
 
                 // Resume previous Bean transaction if there was one
                 if (txPolicy instanceof BeanTransactionPolicy){
@@ -619,7 +620,7 @@ public class StatefulContainer implements RpcContainer {
             Instance instance = null;
             try {
                 // Obtain instance
-                instance = obtainInstance(primKey, callContext, callMethod);
+                instance = obtainInstance(primKey, callContext, callMethod, true);
 
                 // Resume previous Bean transaction if there was one
                 if (txPolicy instanceof BeanTransactionPolicy){
@@ -665,7 +666,7 @@ public class StatefulContainer implements RpcContainer {
         }
     }
 
-    private Instance obtainInstance(Object primaryKey, ThreadContext callContext, Method callMethod) throws OpenEJBException {
+    private Instance obtainInstance(Object primaryKey, ThreadContext callContext, Method callMethod, boolean checkOutIfNecessary) throws OpenEJBException {
         if (primaryKey == null) {
             throw new SystemException(new NullPointerException("Cannot obtain an instance of the stateful session bean with a null session id"));
         }
@@ -678,7 +679,7 @@ public class StatefulContainer implements RpcContainer {
             instance = checkedOutInstances.get(primaryKey);
             if (instance == null) { // no need to check for extended persistence contexts it shouldn't happen
                 try {
-                    instance = cache.checkOut(primaryKey);
+                    instance = cache.checkOut(primaryKey, checkOutIfNecessary);
                 } catch (OpenEJBException e) {
                     throw e;
                 } catch (Exception e) {

@@ -226,11 +226,14 @@ public class SimpleCache<K, V> implements Cache<K, V> {
         cache.put(key, entry);
     }
 
-    public V checkOut(K key) throws Exception {
+    public V checkOut(K key, boolean loadEntryIfNotFound) throws Exception {
         // attempt (up to 10 times) to obtain the entry from the cache
         for (int i = 0; i < 10; i++) {
             // find the entry
             Entry entry = cache.get(key);
+            if (!loadEntryIfNotFound && entry == null) {
+                return null;
+            }
             if (entry == null) {
                 entry = loadEntry(key);
                 if (entry == null) {
