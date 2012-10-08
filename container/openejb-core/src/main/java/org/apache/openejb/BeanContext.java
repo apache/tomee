@@ -44,6 +44,7 @@ import org.apache.openejb.util.proxy.DynamicProxyImplFactory;
 import org.apache.webbeans.component.AbstractInjectionTargetBean;
 import org.apache.webbeans.component.InjectionTargetBean;
 import org.apache.webbeans.config.WebBeansContext;
+import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.context.creational.CreationalContextImpl;
 import org.apache.webbeans.inject.AbstractInjectable;
 import org.apache.webbeans.inject.OWBInjector;
@@ -61,6 +62,7 @@ import javax.ejb.Timer;
 import javax.enterprise.context.spi.Contextual;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.naming.Context;
 import javax.persistence.EntityManagerFactory;
 import java.lang.annotation.Annotation;
@@ -1576,12 +1578,17 @@ public class BeanContext extends DeploymentContext {
         this.hidden = hidden;
     }
 
-    public Class<? extends Annotation> getScope() {
+    public boolean isPassivatingScope() {
+        final BeanManagerImpl bm = moduleContext.getAppContext().getWebBeansContext().getBeanManagerImpl();
+        if (!bm.isInUse()) {
+            return true;
+        }
+
         final CdiEjbBean<?> bean = get(CdiEjbBean.class);
         if (bean != null) {
-            return bean.getScope();
+            return bm.isPassivatingScope(bean.getScope());
         }
-        return null;
+        return true;
     }
 
     public void stop() {
