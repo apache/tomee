@@ -62,15 +62,22 @@ import javax.ejb.Timer;
 import javax.enterprise.context.spi.Contextual;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanManager;
 import javax.naming.Context;
 import javax.persistence.EntityManagerFactory;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.Future;
 
 
@@ -79,6 +86,8 @@ public class BeanContext extends DeploymentContext {
 
     public static final String USER_INTERCEPTOR_KEY = "org.apache.openejb.default.system.interceptors";
     public static final String USER_INTERCEPTOR_SEPARATOR = ",| |;";
+
+    private boolean isPassivatingScope = true;
 
     public boolean isDynamicallyImplemented() {
         return proxyClass != null;
@@ -1578,14 +1587,18 @@ public class BeanContext extends DeploymentContext {
         this.hidden = hidden;
     }
 
-    public boolean isPassivatingScope() {
+    public void initIsPassivationScope() {
         final BeanManagerImpl bm = moduleContext.getAppContext().getWebBeansContext().getBeanManagerImpl();
         if (!bm.isInUse()) {
-            return true;
+            isPassivatingScope = true;
         }
 
         final CdiEjbBean<?> bean = get(CdiEjbBean.class);
-        return bean == null || bm.isPassivatingScope(bean.getScope());
+        isPassivatingScope =  bean == null || bm.isPassivatingScope(bean.getScope());
+    }
+
+    public boolean isPassivatingScope() {
+        return isPassivatingScope;
     }
 
     public void stop() {
