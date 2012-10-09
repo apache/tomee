@@ -95,6 +95,7 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
                     }
 
                     persistenceAdapter.setDataSource(dataSource);
+                    broker.setPersistent(true);
                     broker.setPersistenceAdapter(persistenceAdapter);
                 } else {
                     final MemoryPersistenceAdapter persistenceAdapter = new MemoryPersistenceAdapter();
