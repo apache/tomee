@@ -19,6 +19,7 @@ package org.apache.openejb.core.mdb;
 
 import junit.framework.TestCase;
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.ActiveMQSession;
 import org.apache.geronimo.connector.GeronimoBootstrapContext;
 import org.apache.geronimo.connector.work.GeronimoWorkManager;
 import org.apache.geronimo.connector.work.TransactionContextHandler;
@@ -30,14 +31,22 @@ import org.apache.openejb.resource.activemq.ActiveMQResourceAdapter;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.NetworkUtil;
 
-import javax.jms.*;
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageConsumer;
+import javax.jms.MessageListener;
+import javax.jms.MessageProducer;
+import javax.jms.ObjectMessage;
+import javax.jms.Session;
 import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.ResourceAdapterInternalException;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.UUID;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -52,8 +61,6 @@ public class JmsTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-
-        ActiveMQ5Factory.clear();
 
         // create a transaction manager
         final GeronimoTransactionManager transactionManager = new GeronimoTransactionManager();
@@ -93,6 +100,7 @@ public class JmsTest extends TestCase {
             ra.stop();
             ra = null;
         }
+        ActiveMQ5Factory.clear();
         super.tearDown();
     }
 
@@ -128,7 +136,6 @@ public class JmsTest extends TestCase {
             final ObjectMessage requestMessage = session.createObjectMessage();
             requestMessage.setJMSReplyTo(responseQueue);
             requestMessage.setObject((Serializable) request);
-            requestMessage.setJMSCorrelationID(UUID.randomUUID().toString());
 
             // Send the request message
             producer = session.createProducer(requestQueue);
@@ -136,7 +143,7 @@ public class JmsTest extends TestCase {
 
             // wait for the response message
             consumer = session.createConsumer(responseQueue);
-            final Message message = consumer.receive(1000);
+            final Message message = consumer.receive(5000);
 
             // verify message
             assertNotNull("Did not get a response message", message);
