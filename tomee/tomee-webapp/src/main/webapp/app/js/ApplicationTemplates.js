@@ -49,5 +49,6 @@ TOMEE.ApplicationTemplates = (function (paths) {
     'application-toolbar',
     'application-tab-console',
     'application-tab-console-output-line',
-    'application-tab-log'
+    'application-tab-log',
+    'application-tab-log-file'
 ]);
