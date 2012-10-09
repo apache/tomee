@@ -39,7 +39,6 @@ TOMEE.ApplicationTabConsole = function () {
             consoleEditor = container.find('.tomee-code'),
             outputHeight = data.containerHeight - data.toolbarHeight - consoleEditor.height();
 
-        consoleOutput.css('padding-top', data.toolbarHeight + 'px');
         consoleOutput.height(outputHeight);
     });
 

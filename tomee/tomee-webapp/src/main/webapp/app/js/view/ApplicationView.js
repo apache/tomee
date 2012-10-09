@@ -77,12 +77,15 @@ TOMEE.ApplicationView = function () {
 
     return {
         render:function () {
-            var myBody = $('body');
+            var myBody = $('body'),
+                emptyDiv = $('<div></div>');
+            myBody.append(emptyDiv);
             myBody.append(toolbar.getEl());
             myBody.append(containerWrapper);
 
-            switchPanel('console');
+            emptyDiv.height(toolbar.getEl().height());
 
+            switchPanel('console');
             updateContainerSize();
         }
     };

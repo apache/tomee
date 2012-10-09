@@ -41,6 +41,11 @@
     overflow: auto;
 }
 
+.tomee-log-output-ul {
+    list-style: none;
+    margin-left: 5px;
+}
+
 .line-separator {
     height: 1px;
     margin: 9px 1px;
