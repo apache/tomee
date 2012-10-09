@@ -1230,9 +1230,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
             }
 
-            unbind(globalContext, "global/" + appInfo.appId);
-            unbind(globalContext, appInfo.appId);
-            unbind(globalContext, "openejb/global/global/" + appInfo.appId);
+            if (appInfo.appId != null && !appInfo.appId.isEmpty()) {
+                unbind(globalContext, "global/" + appInfo.appId);
+                unbind(globalContext, appInfo.appId);
+                unbind(globalContext, "openejb/global/global/" + appInfo.appId);
+            }
 
             // dumpJndiTree(globalContext, "\n\nJndi Tree After unbinds:\n======================\n\n");
         }
