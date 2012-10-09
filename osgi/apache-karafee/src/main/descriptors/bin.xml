@@ -82,7 +82,7 @@
       <fileMode>0755</fileMode>
     </fileSet>
     <fileSet>
-      <directory>target/features-repo</directory>
+      <directory>target/repo</directory>
       <outputDirectory>/system</outputDirectory>
     </fileSet>
   </fileSets>
