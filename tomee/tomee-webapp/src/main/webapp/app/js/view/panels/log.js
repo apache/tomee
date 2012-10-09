@@ -22,6 +22,15 @@ TOMEE.ApplicationTabLog = function () {
     var channel = TOMEE.ApplicationChannel,
         container = $(TOMEE.ApplicationTemplates.getValue('application-tab-log', {}));
 
+    channel.bind('ui-actions', 'container-resized', function (data) {
+        var consoleOutput = container.find('.tomee-log-output'),
+            bbar = container.find('.tomee-log-bbar'),
+            outputHeight = data.containerHeight - data.toolbarHeight - bbar.height();
+
+        consoleOutput.css('padding-top', data.toolbarHeight + 'px');
+        consoleOutput.height(outputHeight);
+    });
+
     channel.bind('server-callback', 'GetLog', function (params) {
         if (!params.data.success) {
             return;
@@ -41,12 +50,25 @@ TOMEE.ApplicationTabLog = function () {
             });
             logFiles.append(file);
         });
+
+        if (params.data.output.log) {
+            setFileName(params.data.output.log.name);
+            var lines = container.find('.tomee-log-output');
+            lines.empty();
+            lines.append($(TOMEE.ApplicationTemplates.getValue('application-tab-log-lines', {
+                lines: params.data.output.log.lines
+            })));
+        }
     });
 
     channel.bind('ui-actions', 'log-file-selected', function (param) {
-        var fileName = container.find('.log-file-name');
-        fileName.html(param.file);
+        setFileName(param.file);
     });
+
+    function setFileName(name) {
+        var el = container.find('.log-file-name');
+        el.html(name);
+    }
 
     return {
         getEl:function () {
