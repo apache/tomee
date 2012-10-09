@@ -67,7 +67,7 @@ public class MdbProxy {
     }
 
     private static class MdbInvocationHandler implements InvocationHandler {
-        private static final int MAX_RESPONSE_WAIT = 1000;
+        private static final int MAX_RESPONSE_WAIT = 5000;
         private Connection connection;
         private Session session;
         private MessageProducer producer;

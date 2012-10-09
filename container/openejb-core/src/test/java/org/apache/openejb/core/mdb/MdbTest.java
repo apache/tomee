@@ -75,7 +75,7 @@ public class MdbTest extends JmsTest {
 
             // wait for the response message
             consumer = session.createConsumer(responseQueue);
-            Message message = consumer.receive(1000);
+            Message message = consumer.receive(5000);
 
             // verify message
             assertNotNull("Did not get a response message", message);
