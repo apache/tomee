@@ -116,6 +116,8 @@
     <!-- to change easily the javaee api version -->
     <javaee-api.version>6.0-4</javaee-api.version>
 
+    <jaxb.version>2.2.6</jaxb.version>
+
     <!-- Used mainly in assembly/openejb-tomcat* projects  -->
     <tomcat.bundle.version>7.0.32-SNAPSHOT</tomcat.bundle.version> <!-- don't merge with tomcat.version since we can release it ourself -->
     <tomcat.version>7.0.32</tomcat.version>
@@ -1210,7 +1212,7 @@
       <dependency>
         <groupId>com.sun.xml.bind</groupId>
         <artifactId>jaxb-impl</artifactId>
-        <version>2.2.5</version>
+        <version>${jaxb.version}</version>
         <exclusions>
           <exclusion>
             <groupId>javax.xml.bind</groupId>
@@ -1233,7 +1235,7 @@
       <dependency>
         <groupId>com.sun.xml.bind</groupId>
         <artifactId>jaxb-xjc</artifactId>
-        <version>2.2.5</version>
+        <version>${jaxb.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.xbean</groupId>
