@@ -25,6 +25,33 @@ public class Contexts {
         // no-op
     }
 
+    public static void unbindLeaf(final Context context, final String path) {
+        if (path == null) {
+            return;
+        }
+
+        final String[] parts = path.split("/");
+        final String name = parts[parts.length - 1];
+        if (parts.length > 1 && parts[0].startsWith("java:")) {
+            parts[0] = parts[0].substring("java:".length());
+        }
+
+        Context lastContext = context;
+        for (int i = 0; i < parts.length - 1; i++) { // browse it this way to do the same than createSubcontexts
+            try {
+                lastContext = (Context) lastContext.lookup(parts[i]);
+            } catch (NamingException e) {
+                return;
+            }
+        }
+
+        try {
+            lastContext.unbind(name);
+        } catch (NamingException e) {
+            // no-op
+        }
+    }
+
     public static Context createSubcontexts(Context context, String key) {
         final String[] parts = key.split("/");
 

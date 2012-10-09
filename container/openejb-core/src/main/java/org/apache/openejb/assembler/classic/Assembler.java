@@ -94,6 +94,7 @@ import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.AsmParameterNameLoader;
 import org.apache.openejb.util.Contexts;
 import org.apache.openejb.util.EventHelper;
+import org.apache.openejb.util.JndiTreeBrowser;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
@@ -894,10 +895,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     continue;
                 }
 
-                // a bit weird but just to be consistent if user doesn't lookup directly the resource
+                // a bit weird but just < ></>o be consistent if user doesn't lookup directly the resource
                 Context lastContext = Contexts.createSubcontexts(containerSystemContext, path);
                 try {
-                    lastContext.bind(path.substring(path.lastIndexOf("/") + 1, path.length()), value.getValue());
+                    lastContext.rebind(path.substring(path.lastIndexOf("/") + 1, path.length()), value.getValue());
                 } catch (NameAlreadyBoundException nabe) {
                     nabe.printStackTrace();
                 }
@@ -1190,6 +1191,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         SystemInstance.get().fireEvent(new AssemblerBeforeApplicationDestroyed(appInfo));
 
+        final Context globalContext = containerSystem.getJNDIContext();
         final AppContext appContext = containerSystem.getAppContext(appInfo.appId);
 
         if (null == appContext) {
@@ -1204,6 +1206,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             final Map<String, Object> cb = appContext.getBindings();
 
+            // dumpJndiTree(globalContext, "\n\nJndi Tree Before unbinds:\n===================\n\n");
+
             for (Map.Entry<String, Object> value : cb.entrySet()) {
                 String path = value.getKey();
                 if (path.startsWith("global")) {
@@ -1213,12 +1217,24 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     continue;
                 }
 
+                unbind(globalContext, path);
+                unbind(globalContext, "openejb/global/" + path.substring("java:".length()));
+                unbind(globalContext, path.substring("java:global".length()));
+            }
+
+            if (globalContext instanceof IvmContext) {
                 try {
-                    containerSystem.getJNDIContext().unbind(path);
-                } catch (NamingException ignored) {
+                    ((IvmContext) globalContext).prune("java:global");
+                } catch (NamingException e) {
                     // no-op
                 }
             }
+
+            unbind(globalContext, "global/" + appInfo.appId);
+            unbind(globalContext, appInfo.appId);
+            unbind(globalContext, "openejb/global/global/" + appInfo.appId);
+
+            // dumpJndiTree(globalContext, "\n\nJndi Tree After unbinds:\n======================\n\n");
         }
 
         EjbResolver globalResolver = new EjbResolver(null, EjbResolver.Scope.GLOBAL);
@@ -1227,8 +1243,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
         SystemInstance.get().setComponent(EjbResolver.class, globalResolver);
 
-
-        Context globalContext = containerSystem.getJNDIContext();
         UndeployException undeployException = new UndeployException(messages.format("destroyApplication.failed", appInfo.path));
 
         WebAppBuilder webAppBuilder = SystemInstance.get().getComponent(WebAppBuilder.class);
@@ -1392,11 +1406,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
         }
 
-        final Context ic = containerSystem.getJNDIContext();
         for (String id : appInfo.resourceIds) {
             final String name = OPENEJB_RESOURCE_JNDI_PREFIX + id;
             try {
-                final Object object = ic.lookup(name);
+                final Object object = globalContext.lookup(name);
                 final String clazz;
                 if (object == null) { // should it be possible?
                     clazz = "?";
@@ -1404,7 +1417,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     clazz = object.getClass().getName();
                 }
                 destroyResource(id, clazz, object);
-                ic.unbind(name);
+                globalContext.unbind(name);
             } catch (NamingException e) {
                 logger.warning("can't unbind resource '{0}'", id);
             }
@@ -1419,6 +1432,23 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         logger.debug("destroyApplication.success", appInfo.path);
+    }
+
+    private void unbind(final Context context, final String name) {
+        try {
+            context.unbind(name);
+        } catch (NamingException e) {
+            // no-op
+        }
+    }
+
+    private void dumpJndiTree(final Context containerSystemContext, final String message) {
+        System.out.println(message);
+        try {
+            JndiTreeBrowser.log(containerSystemContext, "foo");
+        } catch (NamingException e) {
+            // no-op
+        }
     }
 
     public ClassLoader createAppClassLoader(AppInfo appInfo) throws OpenEJBException, IOException {
