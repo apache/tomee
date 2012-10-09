@@ -44,8 +44,8 @@ public class JmsTest extends TestCase {
     protected static final String REQUEST_QUEUE_NAME = "request";
     protected ConnectionFactory connectionFactory;
     protected ActiveMQResourceAdapter ra;
-    protected String brokerAddress = "tcp://127.0.0.1:61616";//NetworkUtil.getLocalAddress("tcp://", "");
-    protected String brokerXmlConfig = "broker:(" + brokerAddress + ")?useJmx=false";
+    protected String brokerAddress = NetworkUtil.getLocalAddress("tcp://", "");
+    protected String brokerXmlConfig = "broker:(" + brokerAddress + ")?useJmx=false&persistent=false&cacheTempDestinations=true";
 
     @Override
     protected void setUp() throws Exception {
