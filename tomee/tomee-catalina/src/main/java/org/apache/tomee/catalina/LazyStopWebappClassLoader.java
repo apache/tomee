@@ -59,12 +59,14 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
                 || "org.apache.openejb.eclipselink.JTATransactionController".equals(name)
                 || "org.apache.tomee.mojarra.TomEEInjectionProvider".equals(name)) {
             // don't load them from system classloader (breaks all in embedded mode and no sense in other cases)
-            final ClassLoader old = system;
-            system = NoClassClassLoader.INSTANCE;
-            try {
-                return super.loadClass(name);
-            } finally {
-                system = old;
+            synchronized (system) {
+                final ClassLoader old = system;
+                system = NoClassClassLoader.INSTANCE;
+                try {
+                    return super.loadClass(name);
+                } finally {
+                    system = old;
+                }
             }
         }
         return super.loadClass(name);
@@ -124,6 +126,11 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
             return URLClassLoaderFirst.filterSlf4jImpl(urls);
         }
         return urls;
+    }
+
+    @Override
+    public String toString() {
+        return "LazyStop" + super.toString();
     }
 
     private static class NoClassClassLoader extends ClassLoader {
