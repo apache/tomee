@@ -110,9 +110,13 @@
             <configuration>
               <descriptors>
                 <descriptor>mvn:org.apache.openejb/openejb-feature/${openejb.version}/xml/features</descriptor>
+                <descriptor>mvn:org.apache.activemq/activemq-karaf/${org.apache.activemq.version}/xml/features</descriptor>
               </descriptors>
               <features>
                 <feature>openejb-server</feature>
+                <feature>war</feature>
+                <feature>transaction</feature>
+                <feature>webconsole</feature>
               </features>
               <repository>target/repo</repository>
             </configuration>
