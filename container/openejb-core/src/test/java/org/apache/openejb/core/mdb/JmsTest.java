@@ -118,7 +118,7 @@ public class JmsTest extends TestCase {
 
             // create a new temp response queue
             session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            final Destination responseQueue = session.createTemporaryQueue();
+            final Destination responseQueue = session.createQueue("queue-tmp");
 
             // Create a request messages
             final ObjectMessage requestMessage = session.createObjectMessage();
