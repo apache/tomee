@@ -27,7 +27,6 @@ TOMEE.ApplicationTabLog = function () {
             bbar = container.find('.tomee-log-bbar'),
             outputHeight = data.containerHeight - data.toolbarHeight - bbar.height();
 
-        consoleOutput.css('padding-top', data.toolbarHeight + 'px');
         consoleOutput.height(outputHeight);
     });
 
