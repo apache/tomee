@@ -146,18 +146,27 @@ public class IO {
         return new ZipInputStream(read);
     }
 
-    public static void close(Closeable closeable) throws IOException {
-        if (closeable == null) return;
+    public static IOException close(Closeable closeable) throws IOException {
+        if (closeable == null) return null;
         try {
             if (closeable instanceof Flushable) {
                 ((Flushable) closeable).flush();
             }
         } catch (IOException e) {
+            try {
+                closeable.close();
+            } catch (IOException e2) {
+                // no-op
+            } finally {
+                return e;
+            }
         }
         try {
             closeable.close();
         } catch (IOException e) {
+            return e;
         }
+        return null;
     }
 
     public static boolean delete(File file) {
