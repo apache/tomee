@@ -289,7 +289,10 @@ public class Setup {
             return;
         } finally {
             try {
-                IO.close(writer);
+                final IOException ioe = IO.close(writer);
+                if (ioe != null) {
+                    LOGGER.log(Level.SEVERE, "can't save system properties " + systemProperties.getAbsolutePath(), ioe);
+                }
             } catch (IOException ignored) {
                 // no-op
             }
