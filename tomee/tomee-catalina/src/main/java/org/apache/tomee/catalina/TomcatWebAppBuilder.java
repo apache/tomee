@@ -1760,7 +1760,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         if (host == null) {
             host = defaultHost;
         }
-        final String id = host + "/" + webAppContextRoot;
+
+        final String id = getId(host, webAppContextRoot);
+
         final ContextInfo value;
         synchronized (infos) {
             value = infos.get(id);
