@@ -1,5 +1,5 @@
 server      = org.apache.openejb.server.activemq.BrokerServer
 bind        = 127.0.0.1
 port        = 4206
-disabled    = ${openejb.profile.custom}
+disabled    = false
 threads     = -
