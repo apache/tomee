@@ -50,5 +50,6 @@ TOMEE.ApplicationTemplates = (function (paths) {
     'application-tab-console',
     'application-tab-console-output-line',
     'application-tab-log',
-    'application-tab-log-file'
+    'application-tab-log-file',
+    'application-tab-log-lines'
 ]);
