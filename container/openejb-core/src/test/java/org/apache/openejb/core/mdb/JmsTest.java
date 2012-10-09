@@ -25,6 +25,7 @@ import org.apache.geronimo.connector.work.TransactionContextHandler;
 import org.apache.geronimo.connector.work.WorkContextHandler;
 import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.resource.activemq.ActiveMQ5Factory;
 import org.apache.openejb.resource.activemq.ActiveMQResourceAdapter;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.NetworkUtil;
@@ -36,6 +37,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.UUID;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -50,6 +52,8 @@ public class JmsTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
+
+        ActiveMQ5Factory.clear();
 
         // create a transaction manager
         final GeronimoTransactionManager transactionManager = new GeronimoTransactionManager();
@@ -118,12 +122,13 @@ public class JmsTest extends TestCase {
 
             // create a new temp response queue
             session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            final Destination responseQueue = session.createQueue("queue-tmp");
+            final Destination responseQueue = session.createTemporaryQueue();
 
             // Create a request messages
             final ObjectMessage requestMessage = session.createObjectMessage();
             requestMessage.setJMSReplyTo(responseQueue);
             requestMessage.setObject((Serializable) request);
+            requestMessage.setJMSCorrelationID(UUID.randomUUID().toString());
 
             // Send the request message
             producer = session.createProducer(requestQueue);
