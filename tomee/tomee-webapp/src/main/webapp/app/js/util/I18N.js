@@ -32,6 +32,7 @@ TOMEE.I18N = (function () {
         'application.console.run.output.empty': 'Empty',
 
         'application.log':'Log',
+        'application.log.select.a.file': 'Select a file',
 
         'dummy':'dummy'
     };

@@ -19,13 +19,42 @@
 TOMEE.ApplicationTabLog = function () {
     "use strict";
 
-    var container = $(TOMEE.ApplicationTemplates.getValue('application-tab-log', {}));
+    var channel = TOMEE.ApplicationChannel,
+        container = $(TOMEE.ApplicationTemplates.getValue('application-tab-log', {}));
+
+    channel.bind('server-callback', 'GetLog', function (params) {
+        if (!params.data.success) {
+            return;
+        }
+
+        var logFiles = container.find('.tomee-log-files');
+        logFiles.empty();
+
+        TOMEE.utils.forEach(params.data.output.files, function (value) {
+            var file = $(TOMEE.ApplicationTemplates.getValue('application-tab-log-file', {
+                file:value
+            }));
+            file.on('click', function () {
+                channel.send('ui-actions', 'log-file-selected', {
+                    file:value
+                });
+            });
+            logFiles.append(file);
+        });
+    });
+
+    channel.bind('ui-actions', 'log-file-selected', function (param) {
+        var fileName = container.find('.log-file-name');
+        fileName.html(param.file);
+    });
 
     return {
-        getEl: function() {
+        getEl:function () {
             return container;
         },
-        onAppend: function() {},
-        onDetach: function() {}
+        onAppend:function () {
+        },
+        onDetach:function () {
+        }
     };
 };
