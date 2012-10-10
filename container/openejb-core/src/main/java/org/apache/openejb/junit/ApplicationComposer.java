@@ -93,6 +93,18 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
         super(klass);
         testClass = new TestClass(klass);
         validate();
+        linkageErrorProtection();
+    }
+
+    private void linkageErrorProtection() {
+        final ClassLoader loader = getClass().getClassLoader();
+        try {
+            Class.forName("sun.security.pkcs11.SunPKCS11", true, loader);
+            Class.forName("sun.security.pkcs11.SunPKCS11$Descriptor", true, loader);
+            Class.forName("sun.security.pkcs11.wrapper.PKCS11Exception", true, loader);
+        } catch (Throwable e) {
+            // no-op: not an issue
+        }
     }
 
     private void validate() throws InitializationError {
@@ -384,10 +396,6 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                         final InjectionProcessor processor = new InjectionProcessor(testInstance, context.getInjections(), context.getJndiContext());
 
                         processor.createInstance();
-//                        load("org.apache.webbeans.component.AbstractOwbBean");
-//                        load("sun.security.pkcs11.SunPKCS11");
-//                        load("sun.security.pkcs11.SunPKCS11$Descriptor");
-//                        load("sun.security.pkcs11.wrapper.PKCS11Exception");
                         try {
                             OWBInjector.inject(appContext.getBeanManager(), testInstance, null);
                         } catch (Throwable t) {
