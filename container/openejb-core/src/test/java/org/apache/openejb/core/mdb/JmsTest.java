@@ -141,7 +141,7 @@ public class JmsTest extends TestCase {
 
             // wait for the response message
             consumer = session.createConsumer(responseQueue);
-            final Message message = consumer.receive(5000);
+            final Message message = consumer.receive(30000);
 
             // verify message
             assertNotNull("Did not get a response message", message);
