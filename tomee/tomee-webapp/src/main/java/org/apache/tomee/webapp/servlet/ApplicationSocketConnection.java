@@ -23,12 +23,16 @@ import org.apache.catalina.websocket.WsOutbound;
 import org.apache.tomee.webapp.command.CommandExecutor;
 import org.apache.tomee.webapp.command.CommandSession;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.nio.CharBuffer;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 public class ApplicationSocketConnection extends StreamInbound implements CommandSession {
     private Gson gson = new Gson();
@@ -68,6 +72,21 @@ public class ApplicationSocketConnection extends StreamInbound implements Comman
 
         final Map<String, Object> result = executor.execute(this, params);
         getOutputObject().writeTextMessage(CharBuffer.wrap(gson.toJson(result)));
+    }
+
+    @Override
+    public boolean login(String user, String password) {
+        Properties props = new Properties();
+        props.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
+        props.put("java.naming.provider.url", "http://127.0.0.1:8080/openejb/ejb");
+        props.setProperty(Context.SECURITY_PRINCIPAL, user);
+        props.setProperty(Context.SECURITY_CREDENTIALS, password);
+        try {
+            new InitialContext(props);
+            return true;
+        } catch (NamingException e) {
+            return false;
+        }
     }
 
     @Override

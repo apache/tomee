@@ -15,16 +15,29 @@
  * limitations under the License.
  */
 
-var myImports = new JavaImporter(
-    java.util.Properties,
-    javax.naming.InitialContext
-);
+package org.apache.tomee.webapp.command.impl;
 
-with (myImports) {
-    var p = new Properties();
-    p.put("java.naming.factory.initial", "org.apache.openejb.client.LocalInitialContextFactory");
+import org.apache.tomee.webapp.command.Command;
+import org.apache.tomee.webapp.command.CommandSession;
 
-    var ctx = new InitialContext(p);
-    var myBean =  ctx.lookup("openejb/DeployerBusinessRemote");
-    util.save('result', myBean.getUniqueFile());
+import java.util.Map;
+
+public class Login implements Command {
+
+    @Override
+    public Object execute(CommandSession session, Map<String, Object> params) throws Exception {
+        final String user = (String) params.get("user");
+        final String pass = (String) params.get("pass");
+        final boolean result = session.login(user, pass);
+
+        if (result) {
+            session.set("user", user);
+            session.set("pass", pass);
+        } else {
+            session.set("user", null);
+            session.set("pass", null);
+        }
+
+        return result;
+    }
 }

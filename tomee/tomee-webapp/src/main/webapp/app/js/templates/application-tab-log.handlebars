@@ -4,11 +4,16 @@
         <div class="navbar-inner">
             <div class="container" style="width: auto; padding: 0 20px;">
                 <ul class="nav pull-right">
-                    <li class="dropdown open">
-                        <a href="#" class="dropdown-toggle"
-                           data-toggle="dropdown">
-                            <span class="log-file-name">{{i18n "application.log.select.a.file"}}</span></a>
-                        <ul class="dropdown-menu tomee-log-files"></ul>
+                    <li class="dropdown">
+                        <div class="btn-group">
+                            <button class="btn btn-primary">
+                                <span class="log-file-name">{{i18n "application.log.select.a.file"}}</span>
+                            </button>
+                            <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu tomee-log-files"></ul>
+                        </div>
                     </li>
                 </ul>
             </div>

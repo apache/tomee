@@ -24,6 +24,9 @@ TOMEE.ApplicationTabConsole = function () {
         codeArea = null;
 
     container.find('.tomee-execute-btn').on('click', function () {
+        var btn = container.find('.tomee-execute-btn');
+        btn.prop('disabled', true);
+
         channel.send('ui-actions', 'execute-script', {
             text:codeArea.getValue()
         });
@@ -42,15 +45,17 @@ TOMEE.ApplicationTabConsole = function () {
         consoleOutput.height(outputHeight);
     });
 
-    channel.bind('server-callback', 'RunScript', function (params) {
-        var consoleOutput = container.find('.tomee-console-output'),
+    channel.bind('server-command-callback', 'RunScript', function (data) {
+        var btn = container.find('.tomee-execute-btn'),
+            consoleOutput = container.find('.tomee-console-output'),
             newLineData = {
-                time: params.data.timeSpent,
-                output: params.data.output
+                time:data.timeSpent,
+                output:data.output
             },
             newLine = $(TOMEE.ApplicationTemplates.getValue(
                 'application-tab-console-output-line', newLineData));
 
+        btn.prop('disabled', false);
         consoleOutput.prepend(newLine);
     });
 
@@ -62,7 +67,7 @@ TOMEE.ApplicationTabConsole = function () {
             if (!codeArea) {
                 codeArea = CodeMirror(container.children('.tomee-code').get(0), {
                     lineNumbers:true,
-                    value:'// Add your code here.\n'
+                    value:TOMEE.ApplicationTemplates.getValue('application-tab-console-sample', {})
                 });
             }
             codeArea.focus();

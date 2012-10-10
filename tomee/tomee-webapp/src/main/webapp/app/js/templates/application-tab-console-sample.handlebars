@@ -1,0 +1,14 @@
+// Sample script
+var myImports = new JavaImporter(
+  java.util.Properties,
+  javax.naming.InitialContext
+);
+
+with (myImports) {
+  var p = new Properties();
+  p.put("java.naming.factory.initial", "org.apache.openejb.client.LocalInitialContextFactory");
+
+  var ctx = new InitialContext(p);
+  var myBean =  ctx.lookup("openejb/DeployerBusinessRemote");
+  myBean.getUniqueFile();
+}

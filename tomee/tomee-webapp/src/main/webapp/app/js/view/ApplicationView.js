@@ -71,7 +71,7 @@ TOMEE.ApplicationView = function () {
         channel.send('ui-actions', 'container-resized', {
             containerHeight:containerHeight,
             containerWidth:containerWidth,
-            toolbarHeight: toolbarHeight
+            toolbarHeight:toolbarHeight
         });
     }
 

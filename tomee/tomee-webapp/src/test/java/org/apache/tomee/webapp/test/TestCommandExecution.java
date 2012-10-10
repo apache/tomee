@@ -18,7 +18,6 @@
 package org.apache.tomee.webapp.test;
 
 import com.google.gson.Gson;
-import junit.framework.Assert;
 import org.apache.catalina.websocket.WsOutbound;
 import org.apache.tomee.webapp.servlet.ApplicationSocketConnection;
 import org.junit.Test;

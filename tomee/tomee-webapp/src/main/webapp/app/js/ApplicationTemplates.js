@@ -32,7 +32,6 @@ TOMEE.ApplicationTemplates = (function (paths) {
                 }
             }
         );
-
     });
 
     return {
@@ -48,6 +47,7 @@ TOMEE.ApplicationTemplates = (function (paths) {
     'application',
     'application-toolbar',
     'application-tab-console',
+    'application-tab-console-sample',
     'application-tab-console-output-line',
     'application-tab-log',
     'application-tab-log-file',

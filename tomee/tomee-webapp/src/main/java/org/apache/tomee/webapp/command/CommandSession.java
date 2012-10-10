@@ -19,6 +19,7 @@ package org.apache.tomee.webapp.command;
 
 public interface CommandSession {
 
+    boolean login(String user, String password);
     Object get(String key);
     void set(String key, Object value);
 

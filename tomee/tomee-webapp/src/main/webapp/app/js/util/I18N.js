@@ -22,17 +22,21 @@ TOMEE.I18N = (function () {
     var messages = {
         'application.name':'Apache TomEE',
 
-        'ms': 'ms',
+        'ms':'ms',
 
         'application.console':'Console',
-        'application.console.run': 'Execute',
-        'application.console.clear.output': 'Clear output',
-        'application.console.done': 'Script executed.',
-        'application.console.run.time': 'Time',
-        'application.console.run.output.empty': 'Empty',
+        'application.console.run':'Execute',
+        'application.console.clear.output':'Clear output',
+        'application.console.done':'Script executed.',
+        'application.console.run.time':'Time',
+        'application.console.run.output.empty':'Empty',
 
         'application.log':'Log',
-        'application.log.select.a.file': 'Select a file',
+        'application.log.select.a.file':'Select a file',
+
+        'application.sign.in':'Sign In',
+        'application.log.in':'Login',
+        'application.password':'Password',
 
         'dummy':'dummy'
     };
@@ -46,7 +50,7 @@ TOMEE.I18N = (function () {
         return result;
     };
 
-    Handlebars.registerHelper('i18n', function(key) {
+    Handlebars.registerHelper('i18n', function (key) {
         return get(key);
     });
 

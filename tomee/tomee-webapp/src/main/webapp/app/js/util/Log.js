@@ -14,31 +14,30 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
-    "use strict";
+ "use strict";
  */
 
-(function() {
+(function () {
     var winConsole = window.console,
 
-        // These are the available methods.
-        // Add more to this list if necessary.
+        // These are the available methods. Add more to this list if necessary.
         consoleEmpty = {
-            error: function() {},
-            log: function() {}
+            error:function () {},
+            log:function () {}
         },
 
-        consoleProxy = (function() {
+        consoleProxy = (function () {
             // This object wraps the "window.console"
             var consoleWrapper = {};
 
             function buildMethodProxy(key) {
                 if (winConsole[key] && typeof winConsole[key] === 'function') {
-                    consoleWrapper[key] = function() {
+                    consoleWrapper[key] = function () {
                         var cFunc = winConsole[key];
                         cFunc.call(winConsole, arguments);
                     };
                 } else {
-                    consoleWrapper[key] = function() {
+                    consoleWrapper[key] = function () {
                         consoleEmpty[key]();
                     };
                 }
