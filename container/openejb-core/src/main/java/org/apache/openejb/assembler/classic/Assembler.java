@@ -1222,18 +1222,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 unbind(globalContext, path.substring("java:global".length()));
             }
 
-            if (globalContext instanceof IvmContext) {
-                try {
-                    ((IvmContext) globalContext).prune("java:global");
-                } catch (NamingException e) {
-                    // no-op
-                }
-            }
-
-            if (appInfo.appId != null && !appInfo.appId.isEmpty()) {
+            if (appInfo.appId != null && !appInfo.appId.isEmpty() && !"openejb".equals(appInfo.appId)) {
                 unbind(globalContext, "global/" + appInfo.appId);
                 unbind(globalContext, appInfo.appId);
-                unbind(globalContext, "openejb/global/global/" + appInfo.appId);
             }
 
             // dumpJndiTree(globalContext, "\n\nJndi Tree After unbinds:\n======================\n\n");
@@ -1353,6 +1344,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
         moduleIds.clear();
 
+        // dumpJndiTree(globalContext, "-->");
+
         try {
             if (globalContext instanceof IvmContext) {
                 IvmContext ivmContext = (IvmContext) globalContext;
@@ -1447,7 +1440,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     private void dumpJndiTree(final Context containerSystemContext, final String message) {
         System.out.println(message);
         try {
-            JndiTreeBrowser.log(containerSystemContext, "foo");
+            JndiTreeBrowser.log(containerSystemContext);
         } catch (NamingException e) {
             // no-op
         }

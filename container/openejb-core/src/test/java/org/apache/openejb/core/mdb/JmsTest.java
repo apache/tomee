@@ -19,20 +19,17 @@ package org.apache.openejb.core.mdb;
 
 import junit.framework.TestCase;
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.activemq.ActiveMQSession;
 import org.apache.geronimo.connector.GeronimoBootstrapContext;
 import org.apache.geronimo.connector.work.GeronimoWorkManager;
 import org.apache.geronimo.connector.work.TransactionContextHandler;
 import org.apache.geronimo.connector.work.WorkContextHandler;
 import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.resource.activemq.ActiveMQ5Factory;
 import org.apache.openejb.resource.activemq.ActiveMQResourceAdapter;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.NetworkUtil;
 
 import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -53,7 +50,7 @@ import java.util.concurrent.TimeUnit;
 
 public class JmsTest extends TestCase {
     protected static final String REQUEST_QUEUE_NAME = "request";
-    protected ConnectionFactory connectionFactory;
+    protected ActiveMQConnectionFactory connectionFactory;
     protected ActiveMQResourceAdapter ra;
     protected String brokerAddress = NetworkUtil.getLocalAddress("tcp://", "");
     protected String brokerXmlConfig = "broker:(" + brokerAddress + ")?useJmx=false&persistent=false&cacheTempDestinations=true";
@@ -83,14 +80,16 @@ public class JmsTest extends TestCase {
         // wrap the work mananger and transaction manager in a bootstrap context (connector spec thing)
         final BootstrapContext bootstrapContext = new GeronimoBootstrapContext(workManager, transactionManager, transactionManager);
 
+        // Create a ConnectionFactory
+        connectionFactory = new ActiveMQConnectionFactory(brokerAddress);
+        ra.setConnectionFactory(connectionFactory);
+
         // start the resource adapter
         try {
             ra.start(bootstrapContext);
         } catch (ResourceAdapterInternalException e) {
             throw new OpenEJBException(e);
         }
-        // Create a ConnectionFactory
-        connectionFactory = new ActiveMQConnectionFactory(brokerAddress);
     }
 
     @Override
@@ -100,7 +99,6 @@ public class JmsTest extends TestCase {
             ra.stop();
             ra = null;
         }
-        ActiveMQ5Factory.clear();
         super.tearDown();
     }
 

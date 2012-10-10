@@ -209,15 +209,4 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
     public Collection<BrokerService> getBrokers() {
         return brokers.values();
     }
-
-    public static synchronized void clear() {
-        for (BrokerService bs : brokers.values()) {
-            try {
-                bs.stop();
-            } catch (Exception e) {
-                // no-op
-            }
-        }
-        brokers.clear();
-    }
 }
