@@ -28,6 +28,8 @@
  */
 TOMEE.ApplicationChannel = (function () {
 
+    var channels = {};
+
     function createChannel(channelName) {
         "use strict";
 
@@ -121,10 +123,6 @@ TOMEE.ApplicationChannel = (function () {
             send:send
         };
     }
-
-    ;
-
-    var channels = {};
 
     function getChannel(name) {
         if (!channels[name]) {

@@ -67,6 +67,7 @@
         <include>**/*.png</include>
         <include>**/*.js</include>
         <include>**/*.html</include>
+        <include>**/*.handlebars</include>
         <include>images/*.gif</include>
         <include>lib/*.jar</include>
       </includes>

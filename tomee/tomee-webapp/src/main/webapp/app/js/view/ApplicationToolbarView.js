@@ -22,25 +22,42 @@ TOMEE.ApplicationToolbarView = function () {
     var channel = TOMEE.ApplicationChannel,
         el = $(TOMEE.ApplicationTemplates.getValue('application-toolbar', {}));
 
-    (function(keys) {
-        TOMEE.utils.forEach(keys, function(key) {
-            el.find('.' + key).bind('click', (function() {
+    (function (keys) {
+        TOMEE.utils.forEach(keys, function (key) {
+            el.find('.' + key).bind('click', (function () {
                 updateSelected(key);
             }));
         });
 
     })(['home', 'console', 'log']);
 
-    var updateSelected = function(key) {
+    el.find('.tomee-login-btn').on('click', function () {
+        var user = el.find('.tomee-login').val(),
+            pass = el.find('.tomee-password').val(),
+            btn = el.find('.tomee-login-btn');
+
+        channel.send('ui-actions', 'login-btn-click', {
+            user:user,
+            pass:pass
+        });
+        btn.prop('disabled', true);
+    });
+
+    channel.bind('server-command-callback', 'Login', function (params) {
+        var btn = el.find('.tomee-login-btn');
+        btn.prop('disabled', false);
+    });
+
+    var updateSelected = function (key) {
         el.find('.toolbar-item').removeClass('active');
         el.find('.' + key).addClass('active');
 
         channel.send('ui-actions', 'toolbar-click', {
-            key: key
+            key:key
         });
     };
 
-   return {
+    return {
         getEl:function () {
             return el;
         }

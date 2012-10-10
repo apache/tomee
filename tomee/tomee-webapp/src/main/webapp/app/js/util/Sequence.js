@@ -21,7 +21,7 @@ TOMEE.Sequence = (function () {
 
     var sequenceMap = {};
 
-    var next = function (prefix) {
+    function next(prefix) {
         var myPrefix = prefix;
         if (!myPrefix || myPrefix === '') {
             myPrefix = 'TOMEE';
@@ -35,9 +35,9 @@ TOMEE.Sequence = (function () {
 
         sequenceMap[myPrefix] = sequence + 1;
         return myPrefix + '-' + sequence;
-    };
+    }
 
     return {
-        next: next
+        next:next
     };
 })();

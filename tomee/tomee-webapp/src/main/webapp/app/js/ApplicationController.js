@@ -29,27 +29,35 @@ TOMEE.ApplicationController = function () {
 
     view.render();
     model.sendMessage({
-        cmdName: 'GetLog',
-        aNumber: 1
+        cmdName:'GetLog',
+        aNumber:1
     });
 
-    channel.bind('ui-actions', 'execute-script', function(data) {
+    channel.bind('ui-actions', 'execute-script', function (data) {
         model.sendMessage({
-            cmdName: 'RunScript',
-            scriptCode: data.text
+            cmdName:'RunScript',
+            scriptCode:data.text
+        });
+    });
+
+    channel.bind('ui-actions', 'login-btn-click', function (data) {
+        model.sendMessage({
+            cmdName:'Login',
+            user:data.user,
+            pass:data.pass
         });
     });
 
     channel.bind('ui-actions', 'log-file-selected', function (param) {
         model.sendMessage({
-            cmdName: 'GetLog',
-            file: param.file
+            cmdName:'GetLog',
+            file:param.file
         });
     });
 
-    channel.bind('server-callback', 'RunScript', function(data) {
+    channel.bind('server-command-callback', 'RunScript', function (data) {
         $.meow({
-            message: TOMEE.I18N.get('application.console.done')
+            message:TOMEE.I18N.get('application.console.done')
         });
     });
 

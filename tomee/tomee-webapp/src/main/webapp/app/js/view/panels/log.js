@@ -20,7 +20,8 @@ TOMEE.ApplicationTabLog = function () {
     "use strict";
 
     var channel = TOMEE.ApplicationChannel,
-        container = $(TOMEE.ApplicationTemplates.getValue('application-tab-log', {}));
+        container = $(TOMEE.ApplicationTemplates.getValue('application-tab-log', {})),
+        selectedFile = null;
 
     channel.bind('ui-actions', 'container-resized', function (data) {
         var consoleOutput = container.find('.tomee-log-output'),
@@ -30,15 +31,11 @@ TOMEE.ApplicationTabLog = function () {
         consoleOutput.height(outputHeight);
     });
 
-    channel.bind('server-callback', 'GetLog', function (params) {
-        if (!params.data.success) {
-            return;
-        }
-
+    channel.bind('server-command-callback-success', 'GetLog', function (data) {
         var logFiles = container.find('.tomee-log-files');
         logFiles.empty();
 
-        TOMEE.utils.forEach(params.data.output.files, function (value) {
+        TOMEE.utils.forEach(data.output.files, function (value) {
             var file = $(TOMEE.ApplicationTemplates.getValue('application-tab-log-file', {
                 file:value
             }));
@@ -50,14 +47,27 @@ TOMEE.ApplicationTabLog = function () {
             logFiles.append(file);
         });
 
-        if (params.data.output.log) {
-            setFileName(params.data.output.log.name);
+        if (data.output.log) {
+            setFileName(data.output.log.name);
             var lines = container.find('.tomee-log-output');
             lines.empty();
             lines.append($(TOMEE.ApplicationTemplates.getValue('application-tab-log-lines', {
-                lines: params.data.output.log.lines
+                lines:data.output.log.lines
             })));
+
+            lines.animate({
+                scrollTop: lines.prop("scrollHeight") - lines.height()
+            }, 500);
         }
+    });
+
+    container.find('.log-file-name').on('click', function() {
+        if(!selectedFile) {
+            return;
+        }
+        channel.send('ui-actions', 'log-file-selected', {
+            file:selectedFile
+        });
     });
 
     channel.bind('ui-actions', 'log-file-selected', function (param) {
@@ -67,6 +77,7 @@ TOMEE.ApplicationTabLog = function () {
     function setFileName(name) {
         var el = container.find('.log-file-name');
         el.html(name);
+        selectedFile = name;
     }
 
     return {

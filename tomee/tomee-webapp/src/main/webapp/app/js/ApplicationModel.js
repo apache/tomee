@@ -87,9 +87,14 @@ TOMEE.ApplicationModel = function () {
             var data = JSON.parse(message.data);
             if (data.cmdName) {
                 // Commands callback calls
-                channel.send('server-callback', data.cmdName, {
-                    data:data
-                });
+                channel.send('server-command-callback', data.cmdName, data);
+
+                if (data.success) {
+                    channel.send('server-command-callback-success', data.cmdName, data);
+                } else {
+                    channel.send('server-command-callback-error', data.cmdName, data);
+                }
+
             } else {
                 channel.send('server-callback', 'socket-message-received', {
                     data:data

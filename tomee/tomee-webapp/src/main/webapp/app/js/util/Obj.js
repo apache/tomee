@@ -19,7 +19,7 @@
 
 TOMEE.utils = (function () {
 
-    var isPrimitive = function (value) {
+    function isPrimitive(value) {
         if ('number' === (typeof value)) {
             return true;
         }
@@ -33,9 +33,9 @@ TOMEE.utils = (function () {
         }
 
         return false;
-    };
+    }
 
-    var getSafe = function (obj, defaultValue) {
+    function getSafe(obj, defaultValue) {
         if (obj instanceof Function) {
             try {
                 return obj();
@@ -49,9 +49,9 @@ TOMEE.utils = (function () {
             return obj;
         }
         return defaultValue;
-    };
+    }
 
-    var toArray = function (obj, objBuilder) {
+    function toArray(obj, objBuilder) {
         if (!obj) {
             return [];
         }
@@ -66,9 +66,9 @@ TOMEE.utils = (function () {
         }
 
         return result;
-    };
+    }
 
-    var getArray = function (obj) {
+    function getArray(obj) {
         if (!obj) {
             return [];
         }
@@ -78,30 +78,30 @@ TOMEE.utils = (function () {
         }
 
         return [obj];
-    };
+    }
 
-    var getObject = function (obj) {
+    function getObject(obj) {
         if (!obj) {
             return {};
         }
         return obj;
-    };
+    }
 
-    var stringFormat = function (str, values) {
+    function stringFormat(str, values) {
         var result = str;
         for (var key in values) {
             var reg = new RegExp("\\{" + key + "\\}", "gm");
             result = result.replace(reg, values[key]);
         }
         return result;
-    };
+    }
 
-    var forEach = function (value, callback) {
+    function forEach(value, callback) {
         var arr = getArray(value);
-        for(var i = 0; i < arr.length; i++) {
+        for (var i = 0; i < arr.length; i++) {
             callback(arr[i], i);
         }
-    };
+    }
 
     return {
         isPrimitive:isPrimitive,

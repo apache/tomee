@@ -41,6 +41,11 @@ public class RunScriptTest {
         final RunScript shell = new RunScript();
         final Object result = shell.execute(new CommandSession() {
             @Override
+            public boolean login(String user, String password) {
+                return false;
+            }
+
+            @Override
             public Object get(String key) {
                 return null;
             }
