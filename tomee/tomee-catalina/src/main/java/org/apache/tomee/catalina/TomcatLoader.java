@@ -20,9 +20,6 @@ package org.apache.tomee.catalina;
 import org.apache.catalina.Container;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
-import org.apache.catalina.Lifecycle;
-import org.apache.catalina.LifecycleEvent;
-import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.startup.Bootstrap;
@@ -103,15 +100,15 @@ public class TomcatLoader implements Loader {
     /**
      * OpenEJB Server Daemon
      */
-    private EjbServer ejbServer;
+    private static EjbServer ejbServer;
 
     /**
      * OpenEJB Service Manager that manage services
      */
-    private ServiceManager manager;
+    private static ServiceManager manager;
 
     /** other services */
-    private List<ServerService> services = new ArrayList<ServerService> ();
+    private static final List<ServerService> services = new ArrayList<ServerService> ();
 
     /**
      * Creates a new instance.
@@ -288,15 +285,6 @@ public class TomcatLoader implements Loader {
             }
         }
 
-        standardServer.addLifecycleListener(new LifecycleListener() {
-            public void lifecycleEvent(LifecycleEvent event) {
-                String type = event.getType();
-                if (Lifecycle.AFTER_STOP_EVENT.equals(type)) {
-                    TomcatLoader.this.destroy();
-                }
-            }
-        });
-
         if (SystemInstance.get().getOptions().get(TOMEE_NOSHUTDOWNHOOK_PROP, (String) null) != null) {
             final Field daemonField = Bootstrap.class.getDeclaredField("daemon");
             final boolean acc = daemonField.isAccessible();
@@ -339,7 +327,7 @@ public class TomcatLoader implements Loader {
     /**
      * Destroy system.
      */
-    public void destroy() {
+    public static void destroy() {
         for (ServerService s : services) {
             try {
                 s.stop();

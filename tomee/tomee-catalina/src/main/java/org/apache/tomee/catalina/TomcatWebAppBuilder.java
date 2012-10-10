@@ -1422,6 +1422,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 }
             }
         }
+
+        TomcatLoader.destroy();
     }
 
     /**
