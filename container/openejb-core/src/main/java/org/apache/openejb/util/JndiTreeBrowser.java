@@ -89,7 +89,7 @@ public class JndiTreeBrowser {
         @Override
         public void doWork(String path, String name, Object obj) {
             final String complete = path + "/" + name;
-            if (complete.contains(filter)) {
+            if (filter == null || complete.contains(filter)) {
                 System.out.println(complete);
             }
         }
