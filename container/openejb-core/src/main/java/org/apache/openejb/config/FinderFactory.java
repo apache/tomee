@@ -16,6 +16,15 @@
  */
 package org.apache.openejb.config;
 
+import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.xbean.finder.Annotated;
+import org.apache.xbean.finder.AnnotationFinder;
+import org.apache.xbean.finder.IAnnotationFinder;
+import org.apache.xbean.finder.archive.Archive;
+import org.apache.xbean.finder.archive.ClassesArchive;
+import org.apache.xbean.finder.archive.ClasspathArchive;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,13 +36,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.xbean.finder.Annotated;
-import org.apache.xbean.finder.AnnotationFinder;
-import org.apache.xbean.finder.IAnnotationFinder;
-import org.apache.xbean.finder.archive.Archive;
-import org.apache.xbean.finder.archive.ClassesArchive;
-import org.apache.xbean.finder.archive.ClasspathArchive;
 
 public class FinderFactory {
 
@@ -170,7 +172,35 @@ public class FinderFactory {
 
         @Override
         public List<Class<?>> findAnnotatedClasses(Class<? extends Annotation> annotation) {
-            return filter(delegate.findAnnotatedClasses(annotation), new ClassPredicate<Object>(getAnnotatedClassNames()));
+            try {
+                return filter(delegate.findAnnotatedClasses(annotation), new ClassPredicate<Object>(getAnnotatedClassNames()));
+            } catch (TypeNotPresentException tnpe) {
+                throw handleException(tnpe, annotation);
+            }
+        }
+
+        private RuntimeException handleException(final TypeNotPresentException tnpe, final Class<? extends Annotation> annotation) {
+            try {
+                final Method mtd = AnnotationFinder.class.getDeclaredMethod("getAnnotationInfos", String.class);
+                mtd.setAccessible(true);
+                final List<?> infos = (List<?>) mtd.invoke(delegate);
+                for (Object info : infos) {
+                    if (info instanceof AnnotationFinder.ClassInfo) {
+                        final AnnotationFinder.ClassInfo classInfo = (AnnotationFinder.ClassInfo) info;
+                        try {
+                            // can throw the exception
+                            classInfo.get().isAnnotationPresent(annotation);
+                        } catch (TypeNotPresentException tnpe2) {
+                            throw new OpenEJBRuntimeException("Missing type for annotation " + annotation.getName() + " on class " + classInfo.getName(), tnpe2);
+                        } catch (ThreadDeath ignored) {
+                            // no-op
+                        }
+                    }
+                }
+            } catch (Throwable th) {
+                // no-op
+            }
+            return tnpe;
         }
 
         @Override
@@ -220,7 +250,11 @@ public class FinderFactory {
 
         @Override
         public List<Annotated<Class<?>>> findMetaAnnotatedClasses(Class<? extends Annotation> annotation) {
-            return filter(delegate.findMetaAnnotatedClasses(annotation), new AnnotatedClassPredicate(getAnnotatedClassNames()));
+            try {
+                return filter(delegate.findMetaAnnotatedClasses(annotation), new AnnotatedClassPredicate(getAnnotatedClassNames()));
+            } catch (TypeNotPresentException tnpe) {
+                throw handleException(tnpe, annotation);
+            }
         }
 
         @Override
