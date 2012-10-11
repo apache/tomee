@@ -145,7 +145,7 @@ org.eclipse.
 org.junit.
 org.osgi.core-
 oro-
-pax-
+pax-url
 plexus-
 quartz-
 rmock-
