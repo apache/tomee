@@ -90,7 +90,7 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
                 synchronization.setTargetBinariesDir(new File(buildDir, "apache-tomee/webapps/" + finalName + "/WEB-INF/classes"));
             }
             if (synchronization.getUpdateInterval() <= 0) {
-                synchronization.setUpdateInterval(15); // sec
+                synchronization.setUpdateInterval(5); // sec
             }
             if (synchronization.getExtensions() == null) {
                 synchronization.setExtensions(Arrays.asList(".html", ".css", ".js", ".xhtml"));
