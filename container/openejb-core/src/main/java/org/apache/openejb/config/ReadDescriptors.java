@@ -751,10 +751,17 @@ public class ReadDescriptors implements DynamicDeployer {
     }
 
     public static FacesConfig readFacesConfig(URL url) throws OpenEJBException {
-        FacesConfig facesConfig;
         try {
-     		facesConfig = (FacesConfig) JaxbJavaee
-    		.unmarshalJavaee(FacesConfig.class, IO.read(url));
+            final Source src = getSource(url);
+            if (src == null) {
+                return new FacesConfig();
+            }
+
+            final String content = IO.slurp(src.get());
+            if (isEmpty(new ByteArrayInputStream(content.getBytes()), "faces-config")) {
+                return new FacesConfig();
+            }
+     		return  (FacesConfig) JaxbJavaee.unmarshalJavaee(FacesConfig.class, new ByteArrayInputStream(content.getBytes()));
         } catch (SAXException e) {
             throw new OpenEJBException("Cannot parse the faces configuration file: " + url.toExternalForm(), e);
         } catch (JAXBException e) {
@@ -764,7 +771,6 @@ public class ReadDescriptors implements DynamicDeployer {
         } catch (Exception e) {
             throw new OpenEJBException("Encountered unknown error parsing the faces configuration file: " + url.toExternalForm(), e);
         }
-        return facesConfig;
     }
 
     private static Source getSource(Object o) {
