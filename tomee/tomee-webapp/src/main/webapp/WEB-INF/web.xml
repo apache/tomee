@@ -35,6 +35,10 @@
             /error
         </location>
     </error-page>
+    
+    <listener>
+        <listener-class>org.apache.tomee.webapp.listeners.SessionListener</listener-class>
+    </listener>
 
     <servlet>
         <servlet-name>LoaderServlet</servlet-name>
