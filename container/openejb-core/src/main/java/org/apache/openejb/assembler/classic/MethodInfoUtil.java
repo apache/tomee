@@ -528,7 +528,7 @@ public class MethodInfoUtil {
         for (int i = 0; i < parameterTypes.length; i++) {
             Class<?> parameterType = parameterTypes[i];
             String methodParam = methodParams.get(i);
-            if (!methodParam.equals(getName(parameterType))) {
+            if (!methodParam.equals(getName(parameterType)) && !methodParam.equals(parameterType.getName())) {
                 return false;
             }
         }
@@ -538,7 +538,7 @@ public class MethodInfoUtil {
 
     private static String getName(Class<?> type) {
         if (type.isArray()) {
-            return getName(type.getComponentType()) + "[]";
+            return getName(type.getComponentType()) + "[]"; // depend on JVM? type.getName() seems to work on Oracle one
         } else {
             return type.getName();
         }
