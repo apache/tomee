@@ -215,7 +215,12 @@ public class WebappDeployer implements Deployer {
 		}
 	}
 
-	private void delete(final File f) {
+    @Override
+    public void reload(final String s) {
+        throw new UnsupportedOperationException();
+    }
+
+    private void delete(final File f) {
 		if (f == null || (!f.exists())) {
 			return;
 		}

@@ -301,4 +301,26 @@ public class DeployerEjb implements Deployer {
     private static String contextRoot(final Properties properties, final String jarPath) {
         return properties.getProperty("webapp." + jarPath + ".context-root");
     }
+
+    public void reload(final String moduleId) {
+        for (AppInfo info : assembler.getDeployedApplications()) {
+            if (info.path.equals(moduleId)) {
+                reload(info);
+                break;
+            }
+        }
+    }
+
+    private void reload(final AppInfo info) {
+        if (info.webAppAlone) {
+            SystemInstance.get().getComponent(WebAppDeployer.class).reload(info.path);
+        } else {
+            try {
+                assembler.destroyApplication(info);
+                assembler.createApplication(info);
+            } catch (Exception e) {
+                throw new OpenEJBRuntimeException(e);
+            }
+        }
+    }
 }

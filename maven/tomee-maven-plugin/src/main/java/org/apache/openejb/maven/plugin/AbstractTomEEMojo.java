@@ -273,6 +273,8 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
      */
     protected Settings settings;
 
+    protected File deployedFile = null;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         unzip(resolve(), catalinaBase);
@@ -476,6 +478,8 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         } else {
             getLog().warn("'" + warFile + "' doesn't exist, ignoring (maybe run mvn package before this plugin)");
         }
+
+        deployedFile = out;
     }
 
     private void overrideAddresses() {

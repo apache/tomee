@@ -39,4 +39,6 @@ public interface Deployer {
     AppInfo deploy(String location, Properties properties) throws OpenEJBException;
 
     void undeploy(String moduleId) throws UndeployException, NoSuchApplicationException;
+
+    void reload(String moduleId);
 }
