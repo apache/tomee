@@ -84,10 +84,10 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
                 synchronization.setResourcesDir(new File(baseDir, "src/main/webapp"));
             }
             if (synchronization.getTargetResourcesDir() == null) {
-                synchronization.setTargetResourcesDir(new File(buildDir, "apache-tomee/webapps/" + finalName));
+                synchronization.setTargetResourcesDir(new File(catalinaBase, webappDir + "/" + finalName));
             }
             if (synchronization.getTargetBinariesDir() == null) {
-                synchronization.setTargetBinariesDir(new File(buildDir, "apache-tomee/webapps/" + finalName + "/WEB-INF/classes"));
+                synchronization.setTargetBinariesDir(new File(catalinaBase, webappDir + "/" + finalName + "/WEB-INF/classes"));
             }
             if (synchronization.getUpdateInterval() <= 0) {
                 synchronization.setUpdateInterval(5); // sec
