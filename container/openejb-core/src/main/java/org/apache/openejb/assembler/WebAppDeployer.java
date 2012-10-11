@@ -23,6 +23,7 @@ import java.io.File;
 
 public interface WebAppDeployer {
     AppInfo deploy(String contextRoot, File file);
+    void reload(String appId);
 
     public static final class Helper {
         private Helper() {

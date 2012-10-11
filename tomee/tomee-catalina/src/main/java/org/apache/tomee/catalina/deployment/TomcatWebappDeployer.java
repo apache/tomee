@@ -41,7 +41,7 @@ public class TomcatWebappDeployer implements WebAppDeployer {
             throw new OpenEJBRuntimeException(e);
         }
 
-        final TomcatWebAppBuilder.ContextInfo info = tomcatWebAppBuilder.standaAloneWebAppInfo(file);
+        final TomcatWebAppBuilder.ContextInfo info = contextInfo(file);
         if (info == null || info.appInfo == null) {
             LOGGER.error("Can't find of appInfo for " + (file != null ? file.getAbsolutePath() : null) + ", availables: " + tomcatWebAppBuilder.availableApps());
         }
@@ -50,6 +50,22 @@ public class TomcatWebappDeployer implements WebAppDeployer {
             return null;
         }
         return info.appInfo;
+    }
+
+    @Override
+    public void reload(final String path) {
+        final File file = new File(path);
+        final TomcatWebAppBuilder.ContextInfo info = contextInfo(file);
+        if (info == null || info.standardContext == null) { // error
+            LOGGER.warning("Can't find " + path);
+        } else {
+            info.standardContext.reload();
+        }
+    }
+
+    private TomcatWebAppBuilder.ContextInfo contextInfo(final File file) {
+        final TomcatWebAppBuilder tomcatWebAppBuilder = (TomcatWebAppBuilder) SystemInstance.get().getComponent(WebAppBuilder.class);
+        return tomcatWebAppBuilder.standaAloneWebAppInfo(file);
     }
 
     // simply create a fake AppInfo to be able to deploy reusing the logic we already have

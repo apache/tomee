@@ -171,10 +171,12 @@ public class NewLoaderLogic {
             final File file = URLs.toFile(url);
 
             final String name = filter(file).getName();
-            if (filter.accept(name)
-                    && (includeFilter == null || !includeFilter.accept(name))
-                    && (excludeFilter == null || excludeFilter.accept(name))) {
-                iterator.remove();
+            if (includeFilter == null || !includeFilter.accept(name)) {
+                if (filter != null && filter.accept(name)) {
+                    iterator.remove();
+                } else if (excludeFilter != null && excludeFilter.accept(name)) {
+                    iterator.remove();
+                }
             }
         }
 

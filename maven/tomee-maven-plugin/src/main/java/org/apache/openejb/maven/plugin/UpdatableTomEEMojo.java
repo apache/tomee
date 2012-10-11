@@ -16,16 +16,23 @@
  */
 package org.apache.openejb.maven.plugin;
 
+import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.assembler.Deployer;
+import org.apache.openejb.client.RemoteInitialContextFactory;
 import org.apache.openejb.config.RemoteServer;
 import org.apache.openejb.loader.Files;
 import org.codehaus.plexus.util.FileUtils;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
@@ -58,6 +65,12 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
      * @required
      */
     private String finalName;
+
+    /**
+     * @parameter expression="${tomee-plugin.reload-on-update}" default-value="false"
+     * @required
+     */
+    private boolean reloadOnUpdate;
 
     private Timer timer;
 
@@ -130,12 +143,18 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
         }
 
         private void updateFiles(final File source, final File output, final long ts) {
+            if (!source.exists()) {
+                getLog().debug(source.getAbsolutePath() + " does'tn exist");
+                return;
+            }
+
             if (!source.isDirectory()) {
                 getLog().warn(source.getAbsolutePath() + " is not a directory, skipping");
                 return;
             }
 
             final Collection<File> files = Files.collect(source, fileFilter);
+            int updated = 0;
             for (File file : files) {
                 if (file.isDirectory()
                         || file.lastModified() < lastUpdate) {
@@ -143,6 +162,18 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
                 }
 
                 updateFile(source, output, file, ts);
+                updated++;
+            }
+
+            if (updated > 0 && reloadOnUpdate) {
+                if (deployedFile != null && deployedFile.exists()) {
+                    String path = deployedFile.getAbsolutePath();
+                    if (path.endsWith(".war")) {
+                        path = path.substring(0, path.length() - ".war".length());
+                    }
+                    getLog().info("Reloading " + path);
+                    deployer().reload(path);
+                }
             }
         }
 
@@ -167,6 +198,22 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
             } catch (IOException e) {
                 getLog().error(e);
             }
+        }
+    }
+
+    private Deployer deployer() {
+        if (removeTomeeWebapp) {
+            throw new OpenEJBRuntimeException("Can't use reload feature without TomEE Webapp, please set removeTomeeWebapp to false");
+        }
+
+        final Properties properties = new Properties();
+        properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName());
+        properties.setProperty(Context.PROVIDER_URL, "http://" + tomeeHost + ":" + tomeeHttpPort + "/tomee/ejb");
+        try {
+            final Context context = new InitialContext(properties);
+            return (Deployer) context.lookup("openejb/DeployerBusinessRemote");
+        } catch (NamingException e) {
+            throw new OpenEJBRuntimeException("Can't lookup Deployer", e);
         }
     }
 
