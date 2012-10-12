@@ -18,21 +18,10 @@
 
 package org.apache.openejb.cdi;
 
-import java.net.URL;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.interceptor.Interceptor;
-
-import org.apache.openejb.AppContext;
-import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.BeansInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
-import org.apache.openejb.core.WebContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.classloader.ClassLoaderComparator;
 import org.apache.openejb.util.classloader.DefaultClassLoaderComparator;
@@ -46,11 +35,21 @@ import org.apache.webbeans.spi.BDABeansXmlScanner;
 import org.apache.webbeans.spi.ScannerService;
 import org.apache.webbeans.util.AnnotationUtil;
 
+import javax.interceptor.Interceptor;
+import java.net.URL;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 /**
  * @version $Rev:$ $Date:$
  */
 public class CdiScanner implements ScannerService {
     public static final String OPENEJB_CDI_FILTER_CLASSLOADER = "openejb.cdi.filter.classloader";
+    public static final ThreadLocal<Collection<String>> ADDITIONAL_CLASSES = new ThreadLocal<Collection<String>>();
 
     // TODO add all annotated class
     private final Set<Class<?>> classes = new HashSet<Class<?>>();
@@ -62,6 +61,14 @@ public class CdiScanner implements ScannerService {
 
     @Override
     public void init(Object object) {
+        try {
+            internalInit(object);
+        } finally {
+            ADDITIONAL_CLASSES.remove();
+        }
+    }
+
+    public void internalInit(Object object) {
         if (!(object instanceof StartupObject)) {
             return;
         }
@@ -167,23 +174,40 @@ public class CdiScanner implements ScannerService {
             // here for ears we need to skip classes in the parent classloader
             final ClassLoader scl = ClassLoader.getSystemClassLoader();
             final boolean filterByClassLoader = "true".equals(SystemInstance.get().getProperty(OPENEJB_CDI_FILTER_CLASSLOADER, "true"));
-            for (String className : beans.managedClasses) {
-                if (ejbClasses.contains(className)) continue;
-                final Class clazz = load(className, classLoader);
-                if (clazz == null) {
-                    continue;
-                }
 
-                final ClassLoader cl = clazz.getClassLoader();
-                // 1. this classloader is the good one
-                // 2. the classloader is the appclassloader one and we are in the ear parent
-                if (!filterByClassLoader
-                        || comparator.isSame(cl) || (cl.equals(scl) && startupObject.getWebContext() == null)) {
-                    classes.add(clazz);
+            final Iterator<String> it = beans.managedClasses.iterator();
+            while (it.hasNext()) {
+                process(classLoader, ejbClasses, it, startupObject, comparator, scl, filterByClassLoader);
+            }
+
+            final Collection<String> otherClasses = ADDITIONAL_CLASSES.get();
+            if (otherClasses != null) {
+                final Iterator<String> it2 = otherClasses.iterator();
+                while (it2.hasNext()) {
+                    process(classLoader, ejbClasses, it2, startupObject, comparator, scl, filterByClassLoader);
                 }
             }
         }
 
+    }
+
+    private void process(final ClassLoader classLoader, final Set<String> ejbClasses, final Iterator<String> it, final StartupObject startupObject, final ClassLoaderComparator comparator, final ClassLoader scl, final boolean filterByClassLoader) {
+        final String className = it.next();
+        if (ejbClasses.contains(className)) it.remove();
+        final Class clazz = load(className, classLoader);
+        if (clazz == null) {
+            return;
+        }
+
+        final ClassLoader cl = clazz.getClassLoader();
+        // 1. this classloader is the good one
+        // 2. the classloader is the appclassloader one and we are in the ear parent
+        if (!filterByClassLoader
+                || comparator.isSame(cl) || (cl.equals(scl) && startupObject.getWebContext() == null)) {
+            classes.add(clazz);
+        } else {
+            it.remove();
+        }
     }
 
     private boolean addErrors(final StringBuilder errors, final String msg, final List<String> list) {
