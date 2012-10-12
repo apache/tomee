@@ -19,6 +19,7 @@ package org.apache.openejb.core.osgi.impl;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.cdi.CdiScanner;
+import org.apache.openejb.cdi.OptimizedLoaderService;
 import org.apache.openejb.loader.OpenEJBInstance;
 import org.apache.openejb.loader.SystemInstance;
 import org.osgi.framework.BundleActivator;

@@ -24,13 +24,20 @@ import org.apache.openejb.UndeployException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.config.AppModule;
+import org.apache.openejb.config.ConfigurableClasspathArchive;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentLoader;
+import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.config.FinderFactory;
+import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.openejb.config.UnknownModuleTypeException;
 import org.apache.openejb.core.ivm.IntraVmProxy;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.ArrayEnumeration;
 import org.apache.openejb.util.proxy.ProxyEJB;
+import org.apache.xbean.finder.AnnotationFinder;
+import org.apache.xbean.finder.filter.Filter;
+import org.apache.xbean.osgi.bundle.util.BundleUtils;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
@@ -41,6 +48,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,6 +70,7 @@ public class Deployer implements BundleListener {
 
     private final Map<Bundle, List<ServiceRegistration>> registrations = new ConcurrentHashMap<Bundle, List<ServiceRegistration>>();
     private final Map<Bundle, String> paths = new ConcurrentHashMap<Bundle, String>();
+    private final Map<Bundle, Set<URL>> libByBundle = new ConcurrentHashMap<Bundle, Set<URL>>();
 
     private final Activator openejbActivator;
 
@@ -111,18 +120,37 @@ public class Deployer implements BundleListener {
 
         Thread.currentThread().setContextClassLoader(osgiCl);
 
+        final Set<Bundle> wiredBundles = BundleUtils.getWiredBundles(bundle);
+        final Set<URL> libs = new HashSet<URL>();
+        final Filter filter = new OSGiPrefixFilter(NewLoaderLogic.getExclusions());
+        for (Bundle b : wiredBundles) {
+            final String location = b.getLocation();
+            if (location == null || !filter.accept(location)) {
+                continue;
+            }
+
+            final File file = findBundleFile(b);
+            if (file == null) {
+                continue;
+            }
+
+            try {
+                libs.add(file.toURI().toURL());
+            } catch (MalformedURLException e) {
+                // no-op
+            }
+
+            final Set<URL> others = libByBundle.get(b);
+            if (others != null) {
+                libs.addAll(others);
+            }
+        }
+
         try {
             try {
                 try {
-                    // equinox? found in aries
-                    File bundleDump = bundle.getBundleContext().getDataFile(bundle.getSymbolicName() + "/" + bundle.getVersion() + "/");
-                    // TODO: what should happen if there is multiple versions?
-                    if (!bundleDump.exists() && bundle.getBundleContext().getDataFile("") != null) { // felix. TODO: maybe find something better
-                        bundleDump = findFelixJar(bundle.getBundleContext());
-                    }
-                    if (bundleDump == null || !bundleDump.exists()) {
-                        bundleDump = findEquinoxJar(bundle.getBundleContext());
-                    }
+                    File bundleDump = findBundleFile(bundle);
+                    libs.remove(bundleDump.toURI().toURL()); // remove this bundle from libs
 
                     if (bundleDump == null || !bundleDump.exists()) {
                         LOGGER.warn("can't find bundle {}", bundle.getBundleId());
@@ -131,9 +159,20 @@ public class Deployer implements BundleListener {
 
                     LOGGER.info("looking bundle {} in {}", bundle.getBundleId(), bundleDump);
                     final AppModule appModule = new OSGiDeploymentLoader(bundle).load(bundleDump);
-                    LOGGER.info("deploying bundle #" + bundle.getBundleId() + " as an EJBModule");
+                    if (libs.size() > 0) {
+                        for (EjbModule ejbModule : appModule.getEjbModules()) {
+                            if (ejbModule.getJarLocation() != null) {
+                                final Set<URL> cp = new HashSet<URL>(libs);
+                                cp.add(new File(ejbModule.getJarLocation()).toURI().toURL());
 
-                    RegisterOSGIServicesExtension.current = null;
+                                final AnnotationFinder annotationFinder = new AnnotationFinder(new ConfigurableClasspathArchive(ejbModule, cp));
+                                FinderFactory.enableFinderOptions(annotationFinder);
+                                ejbModule.setFinder(annotationFinder.link());
+                            }
+                        }
+                        libByBundle.put(bundle, libs);
+                    }
+                    LOGGER.info("deploying bundle #" + bundle.getBundleId() + " as an EJBModule");
 
                     final ConfigurationFactory configurationFactory = new ConfigurationFactory();
                     final AppInfo appInfo = configurationFactory.configureApplication(appModule);
@@ -161,6 +200,18 @@ public class Deployer implements BundleListener {
             RegisterOSGIServicesExtension.current = null;
             Thread.currentThread().setContextClassLoader(oldCl);
         }
+    }
+
+    private static File findBundleFile(final Bundle bundle) {
+        // equinox? found in aries
+        File bundleDump = bundle.getBundleContext().getDataFile(bundle.getSymbolicName() + "/" + bundle.getVersion() + "/");
+        if (!bundleDump.exists() && bundle.getBundleContext().getDataFile("") != null) {
+            bundleDump = findFelixJar(bundle.getBundleContext());
+        }
+        if (bundleDump == null || !bundleDump.exists()) {
+            bundleDump = findEquinoxJar(bundle.getBundleContext());
+        }
+        return bundleDump;
     }
 
     private static File findEquinoxJar(final BundleContext bundleContext) {
@@ -221,6 +272,7 @@ public class Deployer implements BundleListener {
     }
 
     private void undeploy(final Bundle bundle) {
+        libByBundle.remove(bundle);
         if (registrations.containsKey(bundle)) {
             for (final ServiceRegistration registration : registrations.get(bundle)) {
                 try {
@@ -432,6 +484,35 @@ public class Deployer implements BundleListener {
         @Override
         protected ClassLoader getOpenEJBClassLoader() {
             return new OSGIClassLoader(bundle, OpenEJBBundleContextHolder.get().getBundle());
+        }
+    }
+
+    private static class OSGiPrefixFilter implements Filter {
+        private final String[] exclusions;
+
+        public OSGiPrefixFilter(final String[] exclusions) {
+            this.exclusions = exclusions;
+            for (int i = 0; i < exclusions.length; i++) {
+                if (exclusions[i].endsWith("-")) {
+                    this.exclusions[i] = exclusions[i].substring(0, exclusions[i].length() - 1);
+                }
+            }
+        }
+
+        @Override
+        public boolean accept(final String s) {
+            for (String e : exclusions) {
+                if (s.contains(e)) {
+                    return false;
+                }
+            }
+            return !s.contains("org.apache.geronimo.specs")
+                    && !s.contains("org.apache.felix.framework")
+                    && !s.equals("System Bundle")
+                    && !s.startsWith("mvn:javax.")
+                    && !s.contains("org.apache.bval")
+                    && !s.contains("org.apache.aries")
+                    && !s.contains("org.apache.karaf");
         }
     }
 }
