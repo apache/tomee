@@ -23,6 +23,7 @@ import org.apache.openejb.config.*;
 import org.apache.openejb.config.sys.AdditionalDeployments;
 import org.apache.openejb.config.sys.Deployments;
 import org.apache.openejb.config.sys.JaxbOpenejb;
+import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
@@ -51,6 +52,8 @@ import static org.apache.openejb.loader.ProvisioningUtil.realLocation;
 public class DeployerEjb implements Deployer {
     public static final String OPENEJB_DEPLOYER_FORCED_APP_ID_PROP = "openejb.deployer.forced.appId";
     public static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, DeployerEjb.class);
+
+    public static final ThreadLocal<Boolean> AUTO_DEPLOY = new ThreadLocal<Boolean>();
 
     private final static File uniqueFile;
     private final static boolean oldWarDeployer = "old".equalsIgnoreCase(SystemInstance.get().getOptions().get("openejb.deployer.war", "new"));
@@ -121,10 +124,16 @@ public class DeployerEjb implements Deployer {
         AppModule appModule = null;
 
         final File file = new File(realLocation(rawLocation));
+        final boolean autoDeploy = Boolean.parseBoolean(properties.getProperty("openejb.app.autodeploy", "false"));
 
         if (WebAppDeployer.Helper.isWebApp(file) && !oldWarDeployer) {
-            return SystemInstance.get().getComponent(WebAppDeployer.class)
+            AUTO_DEPLOY.set(autoDeploy);
+            try {
+                return SystemInstance.get().getComponent(WebAppDeployer.class)
                         .deploy(contextRoot(properties, file.getAbsolutePath()), file);
+            } finally {
+                AUTO_DEPLOY.remove();
+            }
         }
 
         AppInfo appInfo;
@@ -179,7 +188,7 @@ public class DeployerEjb implements Deployer {
             }
 
             appInfo = configurationFactory.configureApplication(appModule);
-            appInfo.autoDeploy = Boolean.parseBoolean(properties.getProperty("openejb.app.autodeploy", "false"));
+            appInfo.autoDeploy = autoDeploy;
 
             if (properties != null && properties.containsKey(OPENEJB_DEPLOYER_FORCED_APP_ID_PROP)) {
                 appInfo.appId = properties.getProperty(OPENEJB_DEPLOYER_FORCED_APP_ID_PROP);

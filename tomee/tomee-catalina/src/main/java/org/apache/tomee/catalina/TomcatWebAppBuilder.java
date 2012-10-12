@@ -60,6 +60,7 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.assembler.DeployerEjb;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ClassListInfo;
@@ -877,6 +878,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     contextInfo.standardContext = standardContext; // ensure to do it before an exception can be thrown
 
                     contextInfo.appInfo = configurationFactory.configureApplication(appModule);
+                    final Boolean autoDeploy = DeployerEjb.AUTO_DEPLOY.get();
+                    contextInfo.appInfo.autoDeploy = autoDeploy == null || autoDeploy;
+                    DeployerEjb.AUTO_DEPLOY.remove();
 
                     appContext = a.createApplication(contextInfo.appInfo, classLoader);
                     // todo add watched resources to context
