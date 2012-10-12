@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.util.reflection;
 
+import org.apache.openejb.OpenEJBRuntimeException;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
@@ -70,5 +72,28 @@ public final class Reflections {
 
             clazz = clazz.getSuperclass();
         }
+    }
+
+    public static Object get(final Object instance, final String field) {
+        Class<?> clazz = instance.getClass();
+        while (clazz != null) {
+            try {
+                final Field f = clazz.getDeclaredField(field);
+                boolean acc = f.isAccessible();
+                f.setAccessible(true);
+                try {
+                    return f.get(instance);
+                } finally {
+                    f.setAccessible(acc);
+                }
+            } catch (NoSuchFieldException nsfe) {
+                // no-op
+            } catch (Exception e) {
+                throw new IllegalArgumentException(e);
+            }
+
+            clazz = clazz.getSuperclass();
+        }
+        throw new OpenEJBRuntimeException(new NoSuchFieldException(field));
     }
 }

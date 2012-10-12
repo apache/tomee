@@ -61,14 +61,6 @@ public class CdiScanner implements ScannerService {
 
     @Override
     public void init(Object object) {
-        try {
-            internalInit(object);
-        } finally {
-            ADDITIONAL_CLASSES.remove();
-        }
-    }
-
-    public void internalInit(Object object) {
         if (!(object instanceof StartupObject)) {
             return;
         }
