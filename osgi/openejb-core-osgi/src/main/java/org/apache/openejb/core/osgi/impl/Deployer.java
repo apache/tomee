@@ -26,6 +26,7 @@ import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.BeansInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.cdi.CdiScanner;
+import org.apache.openejb.cdi.OptimizedLoaderService;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentLoader;
@@ -35,6 +36,9 @@ import org.apache.openejb.core.ivm.IntraVmProxy;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.ArrayEnumeration;
 import org.apache.openejb.util.proxy.ProxyEJB;
+import org.apache.openejb.util.reflection.Reflections;
+import org.apache.webbeans.config.WebBeansContext;
+import org.apache.webbeans.portable.events.ExtensionLoader;
 import org.apache.xbean.finder.filter.Filter;
 import org.apache.xbean.osgi.bundle.util.BundleUtils;
 import org.osgi.framework.Bundle;
@@ -45,6 +49,7 @@ import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.enterprise.inject.spi.Extension;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -71,7 +76,8 @@ public class Deployer implements BundleListener {
     private final Map<Bundle, String> paths = new ConcurrentHashMap<Bundle, String>();
 
     private final Activator openejbActivator;
-    private Map<Bundle, Collection<String>> cdiClasses = new ConcurrentHashMap<Bundle, Collection<String>>();
+    private final Map<Bundle, Collection<String>> cdiClasses = new ConcurrentHashMap<Bundle, Collection<String>>();
+    private final Map<Bundle, Collection<String>> cdiExtensions = new ConcurrentHashMap<Bundle, Collection<String>>();
 
     public Deployer(final Activator activator) {
         openejbActivator = activator;
@@ -136,13 +142,22 @@ public class Deployer implements BundleListener {
                 }
                 list.addAll(classes);
             }
+
+            final Collection<String> extensions = cdiExtensions.get(b);
+            if (extensions != null) {
+                Collection<String> list = OptimizedLoaderService.ADDITIONAL_EXTENSIONS.get();
+                if (list == null) {
+                    list = new ArrayList<String>();
+                    OptimizedLoaderService.ADDITIONAL_EXTENSIONS.set(list);
+                }
+                list.addAll(extensions);
+            }
         }
 
         try {
             try {
                 try {
                     File bundleDump = findBundleFile(bundle);
-                    // libs.remove(bundleDump.toURI().toURL()); // remove this bundle from libs
 
                     if (bundleDump == null || !bundleDump.exists()) {
                         LOGGER.warn("can't find bundle {}", bundle.getBundleId());
@@ -184,6 +199,7 @@ public class Deployer implements BundleListener {
                     registerService(bundle, appContext);
 
                     saveCDIClasses(bundle, appInfo);
+                    saveCDIExtension(bundle, appContext);
                 } catch (UnknownModuleTypeException unknowException) {
                     LOGGER.info("bundle #" + bundle.getBundleId() + " is not an EJBModule");
                 } catch (Exception ex) {
@@ -196,6 +212,18 @@ public class Deployer implements BundleListener {
             RegisterOSGIServicesExtension.current = null;
             Thread.currentThread().setContextClassLoader(oldCl);
         }
+    }
+
+    private void saveCDIExtension(final Bundle bundle, final AppContext appContext) {
+        final WebBeansContext context = appContext.getWebBeansContext();
+        final ExtensionLoader extensionLoader = context.getExtensionLoader();
+        final Set<Class<? extends Extension>> extensions = (Set<Class<? extends Extension>>) Reflections.get(extensionLoader, "extensionClasses");
+        final Set<String> names = new HashSet<String>();
+        for (Class<?> extension : extensions) {
+            names.add(extension.getName());
+        }
+        names.remove(RegisterOSGIServicesExtension.class.getName()); // automatically added to all through our OSGiClassLoader
+        cdiExtensions.put(bundle, names);
     }
 
     private void saveCDIClasses(final Bundle bundle, final AppInfo app) {
@@ -288,10 +316,8 @@ public class Deployer implements BundleListener {
     }
 
     private void undeploy(final Bundle bundle) {
-        final Collection<String> cdiClassesForThisBundle = cdiClasses.remove(bundle);
-        if (cdiClassesForThisBundle != null) {
-            cdiClassesForThisBundle.clear();
-        }
+        clean(bundle, cdiClasses);
+        clean(bundle, cdiExtensions);
 
         if (registrations.containsKey(bundle)) {
             for (final ServiceRegistration registration : registrations.get(bundle)) {
@@ -320,6 +346,13 @@ public class Deployer implements BundleListener {
         }
 
         LOGGER.info("[Deployer] Bundle {} has been stopped", bundle.getSymbolicName());
+    }
+
+    private void clean(final Bundle bundle, final Map<Bundle, Collection<String>> lists) {
+        final Collection<String> list = lists.remove(bundle);
+        if (list != null) {
+            list.clear();
+        }
     }
 
     /**

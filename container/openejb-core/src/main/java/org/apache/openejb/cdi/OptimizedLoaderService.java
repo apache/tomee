@@ -22,7 +22,9 @@ import org.apache.webbeans.service.DefaultLoaderService;
 import org.apache.webbeans.spi.LoaderService;
 import org.apache.webbeans.spi.plugins.OpenWebBeansPlugin;
 
+import javax.enterprise.inject.spi.Extension;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -31,6 +33,8 @@ import java.util.List;
 public class OptimizedLoaderService implements LoaderService {
 
     private static final Logger log = Logger.getInstance(LogCategory.OPENEJB.createChild("cdi"), OptimizedLoaderService.class);
+
+    public static final ThreadLocal<Collection<String>> ADDITIONAL_EXTENSIONS = new ThreadLocal<Collection<String>>();
 
     private final LoaderService loaderService;
 
@@ -53,7 +57,20 @@ public class OptimizedLoaderService implements LoaderService {
         if (OpenWebBeansPlugin.class.equals(serviceType)) return loadWebBeansPlugins(classLoader);
 
         // As far as we know, this only is reached for CDI Extension discovery
-        return loaderService.load(serviceType, classLoader);
+        final List<T> list = loaderService.load(serviceType, classLoader);
+        if (Extension.class.equals(serviceType)) {
+            final Collection<String> additional = ADDITIONAL_EXTENSIONS.get();
+            if (additional != null) {
+                for (String name : additional) {
+                    try {
+                        list.add((T) classLoader.loadClass(name).newInstance());
+                    } catch (Exception ignored) {
+                        // no-op
+                    }
+                }
+            }
+        }
+        return list;
     }
 
     private <T> List<T> loadWebBeansPlugins(ClassLoader loader) {
