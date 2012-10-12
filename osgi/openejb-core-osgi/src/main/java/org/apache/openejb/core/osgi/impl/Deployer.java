@@ -60,7 +60,6 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -166,21 +165,6 @@ public class Deployer implements BundleListener {
 
                     LOGGER.info("looking bundle {} in {}", bundle.getBundleId(), bundleDump);
                     final AppModule appModule = new OSGiDeploymentLoader(bundle).load(bundleDump);
-                    /*
-                    if (libs.size() > 0) {
-                        for (EjbModule ejbModule : appModule.getEjbModules()) {
-                            if (ejbModule.getJarLocation() != null) {
-                                final Set<URL> cp = new HashSet<URL>(libs);
-                                cp.add(new File(ejbModule.getJarLocation()).toURI().toURL());
-
-                                final AnnotationFinder annotationFinder = new AnnotationFinder(new ConfigurableClasspathArchive(ejbModule, cp));
-                                FinderFactory.enableFinderOptions(annotationFinder);
-                                ejbModule.setFinder(annotationFinder.link());
-                            }
-                        }
-                        // libByBundle.put(bundle, libs);
-                    }
-                    */
                     LOGGER.info("deploying bundle #" + bundle.getBundleId() + " as an EJBModule");
 
                     final ConfigurationFactory configurationFactory = new ConfigurationFactory();
@@ -348,7 +332,7 @@ public class Deployer implements BundleListener {
         LOGGER.info("[Deployer] Bundle {} has been stopped", bundle.getSymbolicName());
     }
 
-    private void clean(final Bundle bundle, final Map<Bundle, Collection<String>> lists) {
+    private static void clean(final Bundle bundle, final Map<Bundle, Collection<String>> lists) {
         final Collection<String> list = lists.remove(bundle);
         if (list != null) {
             list.clear();
@@ -515,18 +499,6 @@ public class Deployer implements BundleListener {
         }
     }
 
-    private static class EmptyEnumeration<T> implements Enumeration<T> {
-        @Override
-        public boolean hasMoreElements() {
-            return false;
-        }
-
-        @Override
-        public T nextElement() {
-            throw new NoSuchElementException();
-        }
-    }
-
     public class OSGiDeploymentLoader extends DeploymentLoader {
         private final Bundle bundle;
 
@@ -544,10 +516,12 @@ public class Deployer implements BundleListener {
         private final String[] exclusions;
 
         public OSGiPrefixFilter(final String[] exclusions) {
-            this.exclusions = exclusions;
+            this.exclusions = new String[exclusions.length];
             for (int i = 0; i < exclusions.length; i++) {
                 if (exclusions[i].endsWith("-")) {
                     this.exclusions[i] = exclusions[i].substring(0, exclusions[i].length() - 1);
+                } else {
+                    this.exclusions[i] = exclusions[i];
                 }
             }
         }
