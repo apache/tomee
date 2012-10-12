@@ -29,6 +29,7 @@ import org.apache.openejb.config.DeploymentLoader;
 import org.apache.openejb.config.UnknownModuleTypeException;
 import org.apache.openejb.core.ivm.IntraVmProxy;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.ArrayEnumeration;
 import org.apache.openejb.util.proxy.ProxyEJB;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -44,6 +45,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -131,9 +133,13 @@ public class Deployer implements BundleListener {
                     final AppModule appModule = new OSGiDeploymentLoader(bundle).load(bundleDump);
                     LOGGER.info("deploying bundle #" + bundle.getBundleId() + " as an EJBModule");
 
+                    RegisterOSGIServicesExtension.current = null;
+
                     final ConfigurationFactory configurationFactory = new ConfigurationFactory();
                     final AppInfo appInfo = configurationFactory.configureApplication(appModule);
                     appInfo.appId = "bundle_" + bundle.getBundleId();
+
+                    RegisterOSGIServicesExtension.current = bundle;
 
                     final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
                     final AppContext appContext = assembler.createApplication(appInfo, osgiCl);
@@ -152,6 +158,7 @@ public class Deployer implements BundleListener {
                 LOGGER.error("can't deploy bundle #" + bundle.getBundleId(), ex1);
             }
         } finally {
+            RegisterOSGIServicesExtension.current = null;
             Thread.currentThread().setContextClassLoader(oldCl);
         }
     }
@@ -364,23 +371,24 @@ public class Deployer implements BundleListener {
 
         @Override
         protected Enumeration<URL> findResources(final String name) throws IOException {
-            Enumeration<URL> urls;
+            final Set<URL> urls = new HashSet<URL>();
             try {
-                urls = fallbackBundle.getResources(name);
-                if (urls != null && urls.hasMoreElements()) {
-                    return urls;
+                final Enumeration<URL> furls = fallbackBundle.getResources(name);
+                if (furls != null) {
+                    while (furls.hasMoreElements()) {
+                        urls.add(furls.nextElement());
+                    }
                 }
             } catch (IOException ignored) {
                 // no-op
             }
-            urls = backingBundle.getResources(name);
-            if (urls != null && urls.hasMoreElements()) {
-                return urls;
+            final Enumeration<URL> burls = backingBundle.getResources(name);
+            if (burls != null) {
+                while (burls.hasMoreElements()) {
+                    urls.add(burls.nextElement());
+                }
             }
-            if (urls != null && urls.hasMoreElements()) {
-                return urls;
-            }
-            return new EmptyEnumeration<URL>();
+            return new ArrayEnumeration(urls);
         }
 
         @Override

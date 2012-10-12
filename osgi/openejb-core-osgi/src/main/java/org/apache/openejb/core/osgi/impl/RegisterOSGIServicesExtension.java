@@ -41,15 +41,20 @@ import java.util.Set;
 public class RegisterOSGIServicesExtension implements Extension {
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisterOSGIServicesExtension.class);
 
+    protected static Bundle current = null;
+
     public void afterBeanDiscovery(@Observes final AfterBeanDiscovery abd) {
-        final Bundle[] bundles = OpenEJBBundleContextHolder.get().getBundles();
-        for (Bundle bundle : bundles) {
-            final ServiceReference[] services = bundle.getRegisteredServices();
+        if (current != null) {
+            final ServiceReference[] services = current.getRegisteredServices();
             if (services != null) {
                 for (ServiceReference service  : services) {
-                    final Class<?> clazz = serviceClass(service);
-                    abd.addBean(new OSGiServiceBean<Object>(service));
-                    LOGGER.debug("added service {} as a CDI Application scoped bean", clazz.getName());
+                    try {
+                        final Class<?> clazz = serviceClass(service);
+                        abd.addBean(new OSGiServiceBean<Object>(service));
+                        LOGGER.debug("added service {} as a CDI Application scoped bean", clazz.getName());
+                    } catch (NoClassDefFoundError ignored) {
+                        // no-op
+                    }
                 }
             }
         }
