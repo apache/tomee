@@ -45,15 +45,20 @@ public class RegisterOSGIServicesExtension implements Extension {
 
     public void afterBeanDiscovery(@Observes final AfterBeanDiscovery abd) {
         if (current != null) {
-            final ServiceReference[] services = current.getRegisteredServices();
-            if (services != null) {
-                for (ServiceReference service  : services) {
-                    try {
-                        final Class<?> clazz = serviceClass(service);
-                        abd.addBean(new OSGiServiceBean<Object>(service));
-                        LOGGER.debug("added service {} as a CDI Application scoped bean", clazz.getName());
-                    } catch (NoClassDefFoundError ignored) {
-                        // no-op
+            for (Bundle b : current.getBundleContext().getBundles()) {
+                final ServiceReference[] services = b.getRegisteredServices();
+                if (services != null) {
+                    for (ServiceReference service  : services) {
+                        try {
+                            final Class<?> clazz = serviceClass(service);
+                            current.loadClass(clazz.getName());
+                            abd.addBean(new OSGiServiceBean<Object>(service));
+                            LOGGER.debug("added service {} as a CDI Application scoped bean", clazz.getName());
+                        } catch (NoClassDefFoundError ignored) {
+                            // no-op
+                        } catch (ClassNotFoundException e) {
+                            // can't load the class so no need to register the service
+                        }
                     }
                 }
             }

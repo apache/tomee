@@ -24,20 +24,14 @@ import org.apache.openejb.UndeployException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.config.AppModule;
-import org.apache.openejb.config.ConfigurableClasspathArchive;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentLoader;
-import org.apache.openejb.config.EjbModule;
-import org.apache.openejb.config.FinderFactory;
-import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.openejb.config.UnknownModuleTypeException;
 import org.apache.openejb.core.ivm.IntraVmProxy;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.ArrayEnumeration;
 import org.apache.openejb.util.proxy.ProxyEJB;
-import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.filter.Filter;
-import org.apache.xbean.osgi.bundle.util.BundleUtils;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
@@ -48,7 +42,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -70,7 +63,6 @@ public class Deployer implements BundleListener {
 
     private final Map<Bundle, List<ServiceRegistration>> registrations = new ConcurrentHashMap<Bundle, List<ServiceRegistration>>();
     private final Map<Bundle, String> paths = new ConcurrentHashMap<Bundle, String>();
-    private final Map<Bundle, Set<URL>> libByBundle = new ConcurrentHashMap<Bundle, Set<URL>>();
 
     private final Activator openejbActivator;
 
@@ -120,6 +112,7 @@ public class Deployer implements BundleListener {
 
         Thread.currentThread().setContextClassLoader(osgiCl);
 
+        /*
         final Set<Bundle> wiredBundles = BundleUtils.getWiredBundles(bundle);
         final Set<URL> libs = new HashSet<URL>();
         final Filter filter = new OSGiPrefixFilter(NewLoaderLogic.getExclusions());
@@ -140,17 +133,18 @@ public class Deployer implements BundleListener {
                 // no-op
             }
 
-            final Set<URL> others = libByBundle.get(b);
-            if (others != null) {
-                libs.addAll(others);
-            }
+            // final Set<URL> others = libByBundle.get(b);
+            // if (others != null) {
+            //    libs.addAll(others);
+            //}
         }
+        */
 
         try {
             try {
                 try {
                     File bundleDump = findBundleFile(bundle);
-                    libs.remove(bundleDump.toURI().toURL()); // remove this bundle from libs
+                    // libs.remove(bundleDump.toURI().toURL()); // remove this bundle from libs
 
                     if (bundleDump == null || !bundleDump.exists()) {
                         LOGGER.warn("can't find bundle {}", bundle.getBundleId());
@@ -159,6 +153,7 @@ public class Deployer implements BundleListener {
 
                     LOGGER.info("looking bundle {} in {}", bundle.getBundleId(), bundleDump);
                     final AppModule appModule = new OSGiDeploymentLoader(bundle).load(bundleDump);
+                    /*
                     if (libs.size() > 0) {
                         for (EjbModule ejbModule : appModule.getEjbModules()) {
                             if (ejbModule.getJarLocation() != null) {
@@ -170,8 +165,9 @@ public class Deployer implements BundleListener {
                                 ejbModule.setFinder(annotationFinder.link());
                             }
                         }
-                        libByBundle.put(bundle, libs);
+                        // libByBundle.put(bundle, libs);
                     }
+                    */
                     LOGGER.info("deploying bundle #" + bundle.getBundleId() + " as an EJBModule");
 
                     final ConfigurationFactory configurationFactory = new ConfigurationFactory();
@@ -272,7 +268,8 @@ public class Deployer implements BundleListener {
     }
 
     private void undeploy(final Bundle bundle) {
-        libByBundle.remove(bundle);
+        // libByBundle.remove(bundle);
+
         if (registrations.containsKey(bundle)) {
             for (final ServiceRegistration registration : registrations.get(bundle)) {
                 try {
