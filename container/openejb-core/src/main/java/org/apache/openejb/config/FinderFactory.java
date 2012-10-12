@@ -34,6 +34,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -97,7 +98,7 @@ public class FinderFactory {
         return new ModuleLimitedFinder(finder);
     }
 
-    private static class DebugArchive implements Archive {
+    public static class DebugArchive implements Archive {
         private final Archive archive;
 
         private DebugArchive(Archive archive) {
@@ -124,7 +125,8 @@ public class FinderFactory {
             }
         }
     }
-    private AnnotationFinder enableFinderOptions(AnnotationFinder annotationFinder) {
+
+    public static AnnotationFinder enableFinderOptions(AnnotationFinder annotationFinder) {
         if (annotationFinder.hasMetaAnnotations()) {
             annotationFinder.enableMetaAnnotations();
         }
@@ -135,7 +137,7 @@ public class FinderFactory {
         return annotationFinder;
     }
 
-    private static boolean enableFindSubclasses() {
+    public static boolean enableFindSubclasses() {
         return isJaxRsInstalled() && SystemInstance.get().getOptions().get(TOMEE_JAXRS_DEPLOY_UNDECLARED_PROP, false);
     }
 
