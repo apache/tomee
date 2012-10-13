@@ -28,6 +28,8 @@ import org.apache.openejb.util.Logger;
 import org.apache.tomee.catalina.TomcatWebAppBuilder;
 
 import java.io.File;
+import java.util.Collection;
+import java.util.Iterator;
 
 public class TomcatWebappDeployer implements WebAppDeployer {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, TomcatWebappDeployer.class);
@@ -35,13 +37,31 @@ public class TomcatWebappDeployer implements WebAppDeployer {
     @Override
     public AppInfo deploy(final String context, final File file) {
         final TomcatWebAppBuilder tomcatWebAppBuilder = (TomcatWebAppBuilder) SystemInstance.get().getComponent(WebAppBuilder.class);
+
+        final Collection<String> alreadyDeployed = tomcatWebAppBuilder.availableApps();
+
         try {
             tomcatWebAppBuilder.deployWebApps(fakeInfo(file, context), null); // classloader == null -> standalone war
         } catch (Exception e) {
             throw new OpenEJBRuntimeException(e);
         }
 
-        final TomcatWebAppBuilder.ContextInfo info = contextInfo(file);
+        TomcatWebAppBuilder.ContextInfo info = contextInfo(file);
+
+        if (info == null) { // try another time doing a diff with apps before deployment and apps after
+            final Collection<String> deployedNow = tomcatWebAppBuilder.availableApps();
+            final Iterator<String> it = deployedNow.iterator();
+            while (it.hasNext()) {
+                if (alreadyDeployed.contains(it.next())) {
+                    it.remove();
+                }
+            }
+
+            if (deployedNow.size() == 1) {
+                info = contextInfo(new File(deployedNow.iterator().next()));
+            }
+        }
+
         if (info == null || info.appInfo == null) {
             LOGGER.error("Can't find of appInfo for " + (file != null ? file.getAbsolutePath() : null) + ", availables: " + tomcatWebAppBuilder.availableApps());
         }
