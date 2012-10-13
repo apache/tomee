@@ -47,11 +47,13 @@ import java.util.Set;
 public class TempClassLoader extends URLClassLoader {
     private final Set<Skip> skip;
     private final ClassLoader system;
+    private final boolean embedded;
 
     public TempClassLoader(ClassLoader parent) {
         super(new URL[0], parent);
         skip = SystemInstance.get().getOptions().getAll("openejb.tempclassloader.skip", Skip.NONE);
         system = ClassLoader.getSystemClassLoader();
+        embedded = getClass().getClassLoader() == system;
     }
 
     /*
@@ -95,7 +97,7 @@ public class TempClassLoader extends URLClassLoader {
         // don't load classes from app classloader
         // we do it after the previous one since it will probably result to the same
         // Class and the previous one is faster than this one
-        if (URLClassLoaderFirst.canBeLoadedFromSystem(name)) {
+        if (!embedded && URLClassLoaderFirst.canBeLoadedFromSystem(name)) {
             try {
                 c = system.loadClass(name);
                 if (c != null) {
