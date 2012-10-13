@@ -33,6 +33,7 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
 
     private boolean restarting = false;
     private volatile Context relatedContext;
+    private boolean forceStopPhase = Boolean.parseBoolean(SystemInstance.get().getProperty("tomee.webappclassloader.force-stop-phase", "false"));
 
     public LazyStopWebappClassLoader() {
         setDelegate(isDelegate());
@@ -45,8 +46,7 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
     @Override
     public void stop() throws LifecycleException {
         // in our destroyapplication method we need a valid classloader to TomcatWebAppBuilder.afterStop()
-        // exception: restarting we really stop it for the moment
-        if (restarting || TomcatContextUtil.isReloading(relatedContext)) {
+        if (forceStopPhase && (restarting || TomcatContextUtil.isReloading(relatedContext))) {
             internalStop();
         }
     }
