@@ -17,7 +17,6 @@
 package org.apache.openejb.core;
 
 import org.apache.openejb.loader.IO;
-import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.classloader.URLClassLoaderFirst;
 import org.apache.xbean.asm.ClassReader;
@@ -30,8 +29,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -48,11 +45,13 @@ import java.util.Set;
  */
 // Note: this class is a fork from OpenJPA
 public class TempClassLoader extends URLClassLoader {
-    private Set<Skip> skip;
+    private final Set<Skip> skip;
+    private final ClassLoader system;
 
     public TempClassLoader(ClassLoader parent) {
         super(new URL[0], parent);
         skip = SystemInstance.get().getOptions().getAll("openejb.tempclassloader.skip", Skip.NONE);
+        system = ClassLoader.getSystemClassLoader();
     }
 
     /*
@@ -92,6 +91,21 @@ public class TempClassLoader extends URLClassLoader {
         if (skip(name)) {
             return Class.forName(name, resolve, getClass().getClassLoader());
         }
+
+        // don't load classes from app classloader
+        // we do it after the previous one since it will probably result to the same
+        // Class and the previous one is faster than this one
+        if (URLClassLoaderFirst.canBeLoadedFromSystem(name)) {
+            try {
+                c = system.loadClass(name);
+                if (c != null) {
+                    return c;
+                }
+            } catch (ClassNotFoundException ignored) {
+                // no-op
+            }
+        }
+
 //        ( && !name.startsWith("javax.faces.") )||
         String resourceName = name.replace('.', '/') + ".class";
         InputStream in = getResourceAsStream(resourceName);
@@ -149,10 +163,7 @@ public class TempClassLoader extends URLClassLoader {
 
     // TODO: for jsf it can be useful to include commons-logging and openwebbeans...
     private boolean skip(String name) {
-        if (skip.contains(Skip.ALL)) {
-            return true;
-        }
-        return URLClassLoaderFirst.shouldSkip(name);
+        return skip.contains(Skip.ALL) || URLClassLoaderFirst.shouldSkip(name);
     }
 
     public static enum Skip {

@@ -160,11 +160,8 @@ public class URLClassLoaderFirst extends URLClassLoader {
 
     // we skip webapp enrichment jars since we want to load them from the webapp or lib
     // Note: this is not a real limitation since it is first fail it will be done later
-    private static boolean canBeLoadedFromSystem(final String name) {
-        if (name.startsWith("org.apache.openejb.")) {
-            return !isWebAppEnrichment(name.substring("org.apache.openejb.".length()));
-        }
-        return true;
+    public static boolean canBeLoadedFromSystem(final String name) {
+        return !name.startsWith("org.apache.openejb.") || !isWebAppEnrichment(name.substring("org.apache.openejb.".length()));
     }
 
     // making all these call inline if far more costly than factorizing packages
