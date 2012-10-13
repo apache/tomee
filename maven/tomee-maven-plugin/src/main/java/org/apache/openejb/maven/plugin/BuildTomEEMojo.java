@@ -19,6 +19,10 @@ package org.apache.openejb.maven.plugin;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 
@@ -27,43 +31,24 @@ import java.io.IOException;
 
 import static org.apache.openejb.maven.plugin.util.Zips.zip;
 
-/**
- * @goal build
- * @requiresDependencyResolution runtime
- */
+@Mojo(name = "build", requiresDependencyResolution = ResolutionScope.RUNTIME_PLUS_SYSTEM)
 public class BuildTomEEMojo extends AbstractTomEEMojo {
-    /**
-     * @parameter expression="${tomee-plugin.zip}" default-value="true"
-     */
+    @Parameter(property = "tomee-plugin.zip", defaultValue = "true")
     protected boolean zip;
 
-    /**
-     * @parameter expression="${tomee-plugin.attach}" default-value="true"
-     */
+    @Parameter(property = "tomee-plugin.attach", defaultValue = "true")
     protected boolean attach;
 
-    /**
-     * @parameter expression="${tomee-plugin.zip-file}" default-value="${project.build.directory}/${project.build.finalName}.zip""
-     * @required
-     * @readOnly
-     */
+    @Parameter(property = "tomee-plugin.zip-file", defaultValue = "${project.build.directory}/${project.build.finalName}.zip")
     private File zipFile;
 
-    /**
-     * @component
-     */
+    @Component
     private MavenProjectHelper projectHelper;
 
-    /**
-     * @parameter default-value="${project}"
-     * @required
-     * @readonly
-     */
+    @Parameter(defaultValue = "${project}", required = true, readonly = true)
     private MavenProject project;
 
-    /**
-     * @parameter expression="${tomee-plugin.classifier}"
-     */
+    @Parameter(property = "tomee-plugin.classifier")
     protected String classifier = null;
 
     @Override

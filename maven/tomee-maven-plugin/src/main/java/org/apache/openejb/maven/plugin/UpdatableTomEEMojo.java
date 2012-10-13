@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.maven.plugin;
 
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.Deployer;
 import org.apache.openejb.client.RemoteInitialContextFactory;
@@ -41,35 +42,19 @@ import java.util.regex.Pattern;
 public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
     public static final int INITIAL_DELAY = 5000;
 
-    /**
-     * @parameter
-     */
+    @Parameter
     private Synchronization synchronization;
 
-    /**
-     * @parameter expression="${tomee-plugin.buildDir}" default-value="${project.build.directory}"
-     * @required
-     * @readOnly
-     */
+    @Parameter(property = "tomee-plugin.buildDir", defaultValue = "${project.build.directory}", readonly = true, required = true)
     private File buildDir;
 
-    /**
-     * @parameter expression="${tomee-plugin.baseDir}" default-value="${project.basedir}"
-     * @required
-     * @readOnly
-     */
+    @Parameter(property = "tomee-plugin.baseDir", defaultValue = "${project.basedir}", readonly = true, required = true)
     private File baseDir;
 
-    /**
-     * @parameter expression="${tomee-plugin.finalName}" default-value="${project.build.finalName}"
-     * @required
-     */
+    @Parameter(property = "tomee-plugin.finalName", defaultValue = "${project.build.finalName}", required = true)
     private String finalName;
 
-    /**
-     * @parameter expression="${tomee-plugin.reload-on-update}" default-value="false"
-     * @required
-     */
+    @Parameter(property = "tomee-plugin.reload-on-update", defaultValue = "false")
     private boolean reloadOnUpdate;
 
     private Timer timer;

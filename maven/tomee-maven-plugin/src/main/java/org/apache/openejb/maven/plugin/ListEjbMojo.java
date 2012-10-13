@@ -20,6 +20,7 @@ package org.apache.openejb.maven.plugin;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.openejb.assembler.Deployer;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
@@ -35,9 +36,8 @@ import java.util.Collection;
 
 /**
  * highly inspired from openejb command helper but with some different data.
- *
- * @goal list
  */
+@Mojo(name = "list")
 public class ListEjbMojo extends AbstractCommandMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {

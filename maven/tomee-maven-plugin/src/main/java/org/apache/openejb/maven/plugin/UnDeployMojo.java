@@ -19,12 +19,11 @@ package org.apache.openejb.maven.plugin;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.Deployer;
 
-/**
- * @goal undeploy
- */
+@Mojo(name = "undeploy")
 public class UnDeployMojo extends AbstractDeployMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {

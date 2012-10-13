@@ -25,6 +25,8 @@ import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.settings.Settings;
 import org.apache.openejb.config.RemoteServer;
 import org.apache.openejb.loader.Files;
@@ -72,150 +74,94 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     private static final String UNZIP_PREFIX = "unzip:";
     private static final String REMOVE_PREFIX = "remove:";
 
-
-    /**
-     * @component
-     */
+    @Component
     protected ArtifactFactory factory;
 
-    /**
-     * @component
-     */
+    @Component
     protected ArtifactResolver resolver;
 
-    /**
-     * @parameter expression="${localRepository}"
-     * @readonly
-     * @required
-     */
+    @Parameter(defaultValue = "${localRepository}", readonly = true, required = true)
     protected ArtifactRepository local;
 
-    /**
-     * @parameter expression="${project.remoteArtifactRepositories}"
-     * @readonly
-     * @required
-     */
+    @Parameter(defaultValue = "${project.remoteArtifactRepositories}", readonly = true, required = true)
     protected List<ArtifactRepository> remoteRepos;
 
-    /**
-     * @parameter expression="${tomee-plugin.skipCurrentProject}" default-value="false"
-     */
+    @Parameter(property = "tomee-plugin.skipCurrentProject", defaultValue = "false")
     protected boolean skipCurrentProject;
 
-    /**
-     * @parameter expression="${tomee-plugin.version}" default-value="1.5.1-SNAPSHOT"
-     */
+    @Parameter(property = "tomee-plugin.version", defaultValue = "1.5.1-SNAPSHOT")
     protected String tomeeVersion;
 
-    /**
-     * @parameter expression="${tomee-plugin.groupId}" default-value="org.apache.openejb"
-     */
+    @Parameter(property = "tomee-plugin.groupId", defaultValue = "org.apache.openejb")
     protected String tomeeGroupId;
 
-    /**
-     * @parameter expression="${tomee-plugin.artifactId}" default-value="apache-tomee"
-     */
+    @Parameter(property = "tomee-plugin.artifactId", defaultValue = "apache-tomee")
     protected String tomeeArtifactId;
 
     /**
-     * @parameter expression="${tomee-plugin.type}" default-value="zip"
-     * @readonly // while tar.gz is not managed
+     * while tar.gz is not managed it is readonly
      */
+    @Parameter(property = "tomee-plugin.type", defaultValue = "zip", readonly = true)
     protected String tomeeType;
 
-    /**
-     * @parameter expression="${tomee-plugin.apache-repos}" default-value="snapshots"
-     */
+    @Parameter(property = "tomee-plugin.apache-repos", defaultValue = "snapshots")
     protected String apacheRepos;
 
-    /**
-     * @parameter expression="${tomee-plugin.classifier}" default-value="webprofile"
-     */
+    @Parameter(property = "tomee-plugin.classifier", defaultValue = "webprofile")
     protected String tomeeClassifier;
 
-    /**
-     * @parameter expression="${tomee-plugin.shutdown}" default-value="8005"
-     */
+    @Parameter(property = "tomee-plugin.shutdown", defaultValue = "8005")
     protected int tomeeShutdownPort = 8005;
 
-    /**
-     * @parameter expression="${tomee-plugin.ajp}" default-value="8009"
-     */
+    @Parameter(property = "tomee-plugin.ajp", defaultValue = "8009")
     protected int tomeeAjpPort = 8009;
 
-    /**
-     * @parameter expression="${tomee-plugin.https}" default-value="8443"
-     */
+    @Parameter(property = "tomee-plugin.https", defaultValue = "8443")
     protected int tomeeHttpsPort = 8080;
 
-    /**
-     * @parameter expression="${tomee-plugin.args}"
-     */
+    @Parameter(property = "tomee-plugin.args")
     protected String args;
 
-    /**
-     * @parameter expression="${tomee-plugin.debug}" default-value="false"
-     */
+    @Parameter(property = "tomee-plugin.debug", defaultValue = "false")
     protected boolean debug;
 
-    /**
-     * @parameter expression="${tomee-plugin.debugPort}" default-value="5005"
-     */
+    @Parameter(property = "tomee-plugin.debugPort", defaultValue = "5005")
     protected int debugPort;
 
-    /**
-     * @parameter default-value="${project.build.directory}/apache-tomee"
-     * @readonly
-     */
+    @Parameter(defaultValue = "${project.build.directory}/apache-tomee")
     protected File catalinaBase;
 
     /**
      * relative to tomee.base.
-     *
-     * @parameter default-value="webapps"
      */
+    @Parameter(defaultValue = "webapps")
     protected String webappDir;
 
     /**
      * relative to tomee.base.
-     *
-     * @parameter default-value="apps"
      */
+    @Parameter(defaultValue = "apps")
     protected String appDir;
 
     /**
      * relative to tomee.base.
-     *
-     * @parameter default-value="lib"
      */
+    @Parameter(defaultValue = "lib")
     protected String libDir;
 
-    /**
-     * @parameter expression="${tomee-plugin.conf}" default-value="${project.basedir}/src/main/tomee/conf"
-     * @optional
-     */
+    @Parameter(property = "tomee-plugin.conf", defaultValue = "${project.basedir}/src/main/tomee/conf")
     protected File config;
 
-    /**
-     * @parameter expression="${tomee-plugin.bin}" default-value="${project.basedir}/src/main/tomee/bin"
-     * @optional
-     */
+    @Parameter(property = "tomee-plugin.bin", defaultValue = "${project.basedir}/src/main/tomee/bin")
     protected File bin;
 
-    /**
-     * @parameter expression="${tomee-plugin.lib}" default-value="${project.basedir}/src/main/tomee/lib"
-     * @optional
-     */
+    @Parameter(property = "tomee-plugin.lib", defaultValue = "${project.basedir}/src/main/tomee/lib")
     protected File lib;
 
-    /**
-     * @parameter
-     */
+    @Parameter
     protected Map<String, String> systemVariables;
 
-    /**
-     * @parameter expression="${tomee-plugin.quick-session}" default-value="true"
-     */
+    @Parameter(property = "tomee-plugin.quick-session", defaultValue = "true")
     private boolean quickSession;
 
     /**
@@ -223,54 +169,35 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
      * --> groupId:artifactId:version...
      * --> unzip:groupId:artifactId:version...
      * --> remove:prefix (often prefix = artifactId)
-     *
-     * @parameter
      */
+    @Parameter
     protected List<String> libs;
 
-    /**
-     * @parameter
-     */
+    @Parameter
     protected List<String> webapps;
 
-    /**
-     * @parameter
-     */
+    @Parameter
     protected List<String> apps;
 
-    /**
-     * @parameter default-value="${project.build.directory}/${project.build.finalName}.${project.packaging}"
-     * @readonly
-     */
+    @Parameter(defaultValue = "${project.build.directory}/${project.build.finalName}.${project.packaging}")
     protected File warFile;
 
-    /**
-     * @parameter expression="${tomee-plugin.remove-default-webapps}" default-value="true"
-     */
+    @Parameter(property = "tomee-plugin.remove-default-webapps", defaultValue = "true")
     protected boolean removeDefaultWebapps;
 
-    /**
-     * @parameter expression="${tomee-plugin.remove-tomee-webapps}" default-value="false"
-     */
+    @Parameter(property = "tomee-plugin.remove-tomee-webapps", defaultValue = "false")
     protected boolean removeTomeeWebapp;
 
-    /**
-     * @parameter expression="${project.packaging}"
-     */
+    @Parameter(defaultValue = "${project.packaging}", readonly = true, required = true)
     protected String packaging;
 
-    /**
-     * @parameter expression="${tomee-plugin.keep-server-xml}" default-value="false"
-     */
+    @Parameter(property = "tomee-plugin.keep-server-xml", defaultValue = "false")
     protected boolean keepServerXmlAsthis;
 
     /**
      * The current user system settings for use in Maven.
-     *
-     * @parameter expression="${settings}"
-     * @required
-     * @readonly
      */
+    @Parameter(defaultValue = "${settings}", required = true, readonly = true)
     protected Settings settings;
 
     protected File deployedFile = null;

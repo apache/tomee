@@ -17,10 +17,10 @@
 
 package org.apache.openejb.maven.plugin;
 
-/**
- * @goal run
- * @requiresDependencyResolution runtime
- */
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.ResolutionScope;
+
+@Mojo(name = "run", requiresDependencyResolution = ResolutionScope.RUNTIME_PLUS_SYSTEM)
 public class RunTomEEMojo extends UpdatableTomEEMojo {
     @Override
     public String getCmd() {

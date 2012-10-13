@@ -19,6 +19,8 @@ package org.apache.openejb.maven.plugin;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.Deployer;
 
@@ -26,13 +28,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-/**
- * @goal deploy
- */
+@Mojo(name = "deploy")
 public class DeployMojo extends AbstractDeployMojo {
-    /**
-     * @parameter
-     */
+    @Parameter
     protected Map<String, String> systemVariables = new HashMap<String, String>();
 
     @Override

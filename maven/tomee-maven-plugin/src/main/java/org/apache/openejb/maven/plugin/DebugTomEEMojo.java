@@ -17,10 +17,10 @@
 
 package org.apache.openejb.maven.plugin;
 
-/**
- * @goal debug
- * @requiresDependencyResolution runtime
- */
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.ResolutionScope;
+
+@Mojo(name = "debug", requiresDependencyResolution = ResolutionScope.RUNTIME_PLUS_SYSTEM)
 public class DebugTomEEMojo extends RunTomEEMojo {
     @Override
     protected void run() {
