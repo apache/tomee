@@ -18,30 +18,21 @@
 package org.apache.openejb.maven.plugin;
 
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugins.annotations.Parameter;
 
 public abstract class AbstractAddressMojo extends AbstractMojo {
-    /**
-     * @parameter expression="${tomee-plugin.http}" default-value="8080"
-     */
+    @Parameter(property = "tomee-plugin.http", defaultValue = "8080")
     protected int tomeeHttpPort = 8080;
 
-    /**
-     * @parameter expression="${tomee-plugin.host}" default-value="localhost"
-     */
+    @Parameter(property = "tomee-plugin.host", defaultValue = "localhost")
     protected String tomeeHost;
 
-    /**
-     * @parameter expression="${tomee-plugin.user}"
-     */
+    @Parameter(property = "tomee-plugin.user")
     protected String user;
 
-    /**
-     * @parameter expression="${tomee-plugin.pwd}"
-     */
+    @Parameter(property = "tomee-plugin.pwd")
     protected String password;
 
-    /**
-     * @parameter expression="${tomee-plugin.realm}"
-     */
+    @Parameter(property = "tomee-plugin.realm")
     protected String realm;
 }

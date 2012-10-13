@@ -20,6 +20,9 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.openejb.maven.util.MavenLogStreamFactory;
 
@@ -35,45 +38,24 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
-/**
- * @goal run
- * @phase compile
- */
+@Mojo(name = "run", defaultPhase = LifecyclePhase.COMPILE)
 public class OpenEJBEmbeddedMojo extends AbstractMojo {
-    /**
-     * @parameter expression="${project.artifactId}"
-     * @required
-     */
+    @Parameter(defaultValue = "${project.artifactId}")
     private String id;
 
-    /**
-     * @parameter expression="${embedded.provider}" default-value="org.apache.openejb.OpenEjbContainer"
-     * @required
-     */
+    @Parameter(property = "embedded.provider", defaultValue = "org.apache.openejb.OpenEjbContainer")
     private String provider;
 
-    /**
-     * @parameter expression="${embedded.modules}" default-value="${project.build.outputDirectory}"
-     * @required
-     */
+    @Parameter(property = "embedded.modules", defaultValue = "${project.build.outputDirectory}")
     private String modules;
 
-    /**
-     * @parameter expression="${embedded.await}" default-value="true"
-     * @required
-     */
+    @Parameter(property = "embedded.await", defaultValue = "true")
     private boolean await;
 
-    /**
-     * @parameter
-     */
+    @Parameter
     private Map<String, String> properties;
 
-    /**
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
-     */
+    @Parameter(defaultValue = "${project}", readonly = true, required = true)
     private MavenProject project;
 
     @Override

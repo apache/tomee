@@ -16,63 +16,43 @@
  */
 package org.apache.openejb.maven.plugins;
 
-import java.io.File;
-import java.lang.reflect.Field;
-import java.util.concurrent.CountDownLatch;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.tomee.embedded.Configuration;
 import org.apache.tomee.embedded.Container;
 
-/**
- * @goal run
- * @requiresDependencyResolution runtime
- */
+import java.io.File;
+import java.lang.reflect.Field;
+import java.util.concurrent.CountDownLatch;
+
+@Mojo(name = "run", requiresDependencyResolution = ResolutionScope.RUNTIME_PLUS_SYSTEM)
 public class TomEEEmbeddedMojo extends AbstractMojo {
-    /**
-     * @parameter expression="${project.packaging}"
-     */
+    @Parameter(defaultValue = "${project.packaging}")
     protected String packaging;
 
-    /**
-     * @parameter default-value="${project.build.directory}/${project.build.finalName}"
-     * @readonly
-     */
+    @Parameter(defaultValue = "${project.build.directory}/${project.build.finalName}")
     protected File warFile;
 
-    /** config of the container itself -> match 1-1 Configuration attributes -->
-
-    /**
-     * @parameter expression="${tomee-embedded-plugin.http}" default-value="8080"
-     */
+    @Parameter(property = "tomee-embedded-plugin.http", defaultValue = "8080")
     private int httpPort;
 
-    /**
-     * @parameter expression="${tomee-embedded-plugin.ajp}" default-value="8009"
-     */
+    @Parameter(property = "tomee-embedded-plugin.ajp", defaultValue = "8009")
     private int ajpPort = 8009;
 
-    /**
-     * @parameter expression="${tomee-embedded-plugin.stop}" default-value="8005"
-     */
+    @Parameter(property = "tomee-embedded-plugin.stop", defaultValue = "8005")
     private int stopPort;
 
-    /**
-     * @parameter expression="${tomee-embedded-plugin.host}" default-value="localhost"
-     */
+    @Parameter(property = "tomee-embedded-plugin.host", defaultValue = "localhost")
     private String host;
 
-    /**
-     * @parameter expression="${tomee-embedded-plugin.lib}" default-value="${project.build.directory}/apache-tomee-embedded"
-     * @optional
-     */
+    @Parameter(property = "tomee-embedded-plugin.lib", defaultValue = "${project.build.directory}/apache-tomee-embedded")
     protected String dir;
 
-    /**
-     * @parameter
-     * @optional
-     */
+    @Parameter
     private File serverXml;
 
     @Override

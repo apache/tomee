@@ -19,11 +19,11 @@ package org.apache.openejb.maven.plugin;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 
-/**
- * @goal stop
- * @requiresDependencyResolution runtime
- */
+
+@Mojo(name = "stop", requiresDependencyResolution = ResolutionScope.RUNTIME_PLUS_SYSTEM)
 public class StopTomEEMojo extends AbstractTomEEMojo {
     @Override
     public String getCmd() {

@@ -17,10 +17,10 @@
 
 package org.apache.openejb.maven.plugin;
 
-/**
- * @goal configtest
- * @requiresDependencyResolution runtime
- */
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.ResolutionScope;
+
+@Mojo(name = "configtest", requiresDependencyResolution = ResolutionScope.RUNTIME_PLUS_SYSTEM)
 public class ConfigTestTomEEMojo extends AbstractTomEEMojo {
     @Override
     public String getCmd() {
