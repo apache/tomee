@@ -46,6 +46,45 @@ TOMEE.ApplicationView = function () {
         delayedContainerResize.delay(updateContainerSize, 100);
     });
 
+    myWindow.on('keyup', function (ev) {
+        if (ev.keyCode === 18) { //ALT
+            channel.send('ui-actions', 'window-alt-released', {});
+        } else if (ev.keyCode === 17) { //CONTROL
+            channel.send('ui-actions', 'window-ctrl-released', {});
+        } else if (ev.keyCode === 16) { //SHIFT
+            channel.send('ui-actions', 'window-shift-released', {});
+        }
+
+        ev.preventDefault();
+    });
+
+    myWindow.on('keydown', function (ev) {
+        var key = [];
+        if (ev.altKey) {
+            key.push('alt');
+        } else if (ev.ctrlKey) {
+            key.push('ctrl');
+        } else if (ev.shiftKey) {
+            key.push('shift');
+        }
+
+        if (key.length === 0) {
+            return; //nothing to do
+        }
+
+        if (ev.keyCode !== 16 && ev.keyCode !== 17 && ev.keyCode !== 18) { //not SHIFT, CONTROL or ALT
+            if (ev.keyCode >= 48 && ev.keyCode <= 57 || //Numbers
+                ev.keyCode >= 65 && ev.keyCode <= 90) { //Letters
+                key.push(String.fromCharCode(ev.keyCode));
+            } else {
+                key.push(ev.keyCode);
+            }
+        }
+
+        channel.send('ui-actions', 'window-' + key.join('-') + '-pressed', {});
+        ev.preventDefault();
+    });
+
     function switchPanel(key) {
         if (selected) {
             selected.getEl().detach();
