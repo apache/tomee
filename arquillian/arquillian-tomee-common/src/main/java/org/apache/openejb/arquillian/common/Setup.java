@@ -308,18 +308,9 @@ public class Setup {
             final File confSrc = new File(src);
             if (confSrc.exists()) {
                 final File conf = new File(openejbHome, dir);
-                final Collection<File> files = org.apache.openejb.loader.Files.collect(confSrc, DirectFileOnlyFilter.instance());
+                final Collection<File> files = org.apache.openejb.loader.Files.collect(confSrc, new DirectFileOnlyFilter(confSrc));
                 files.remove(confSrc);
                 for (File f : files) {
-                    if (f.isHidden()) {
-                        continue;
-                    }
-
-                    if (f.isDirectory()) {
-                        LOGGER.log(Level.WARNING, "skipping " + f.getAbsolutePath() + " since folders are currently not supported");
-                        continue;
-                    }
-
                     try {
                         org.apache.openejb.loader.IO.copy(f, new File(conf, relativize(f, confSrc)));
                     } catch (Exception e) {
@@ -366,18 +357,15 @@ public class Setup {
     }
 
     private static class DirectFileOnlyFilter implements FileFilter {
-        private static DirectFileOnlyFilter INSTANCE = null;
+        private final File accepted;
 
-        public static DirectFileOnlyFilter instance() {
-            if (INSTANCE == null) {
-                INSTANCE = new DirectFileOnlyFilter();
-            }
-            return INSTANCE;
+        public DirectFileOnlyFilter(final File confSrc) {
+            accepted = confSrc;
         }
 
         @Override
         public boolean accept(final File pathname) {
-            return !pathname.isDirectory();
+            return pathname.isFile() && pathname.getParentFile().equals(accepted);
         }
     }
 }
