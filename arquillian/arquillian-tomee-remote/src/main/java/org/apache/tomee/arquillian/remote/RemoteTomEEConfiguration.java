@@ -41,7 +41,7 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
     private boolean cleanOnStartUp;
     private boolean debug;
     private int debugPort = 5005;
-    private String CATALINA_OPTS = null; // using this format to match the script one
+    private String catalina_opts = null; // using this format to match the script one
 
     public String getGroupId() {
         return groupId;
@@ -170,12 +170,12 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
         this.debugPort = debugPort;
     }
 
-    public String getCATALINA_OPTS() {
-        return CATALINA_OPTS;
+    public String getCatalina_opts() {
+        return catalina_opts;
     }
 
-    public void setCATALINA_OPTS(final String opts) {
-        this.CATALINA_OPTS = opts;
+    public void setCatalina_opts(final String opts) {
+        this.catalina_opts = opts;
     }
 
 
