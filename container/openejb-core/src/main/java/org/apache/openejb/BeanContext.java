@@ -1603,7 +1603,7 @@ public class BeanContext extends DeploymentContext {
         }
 
         final Class<? extends Annotation> scope = bean.getScope();
-        isPassivatingScope =  !bm.isNormalScope(scope) || (bm.isPassivatingScope(scope) && scope != ConversationScoped.class);
+        isPassivatingScope =  !bm.isNormalScope(scope) || bm.isPassivatingScope(scope);
     }
 
     public boolean isPassivatingScope() {
@@ -1615,21 +1615,12 @@ public class BeanContext extends DeploymentContext {
         if (ConversationScoped.class == bean.getScope()) {
             try {
                 return !bean.getWebBeansContext().getConversationManager().getConversationBeanReference().isTransient();
-            } catch (RuntimeException re) {
+            } catch (RuntimeException re) { // conversation not found for instance so act as @RequestScoped
                 return false;
             }
         }
 
         return isPassivatingScope;
-    }
-
-    private boolean isConversationScopedAndActive() {
-        try {
-            return ConversationScoped.class == bean.getScope()
-                && !bean.getWebBeansContext().getConversationManager().getConversationBeanReference().isTransient();
-        } catch (Exception e) { // error looking for transient state, let assume the conversation doesn't exist
-            return true;
-        }
     }
 
     public void stop() {
