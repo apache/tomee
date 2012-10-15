@@ -107,7 +107,7 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
             Setup.configureServerXml(openejbHome, configuration);
             Setup.configureSystemProperties(openejbHome, configuration);
 
-            Setup.exportProperties(openejbHome, configuration);
+            Setup.exportProperties(openejbHome, configuration, true);
 
             final URL logging = Thread.currentThread().getContextClassLoader().getResource("default.remote.logging.properties");
             if (logging != null) {
