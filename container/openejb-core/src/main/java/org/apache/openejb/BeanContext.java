@@ -59,7 +59,7 @@ import javax.ejb.LockType;
 import javax.ejb.MessageDrivenBean;
 import javax.ejb.TimedObject;
 import javax.ejb.Timer;
-import javax.enterprise.context.Dependent;
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.context.spi.Contextual;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
@@ -1603,11 +1603,33 @@ public class BeanContext extends DeploymentContext {
         }
 
         final Class<? extends Annotation> scope = bean.getScope();
-        isPassivatingScope =  !bm.isNormalScope(scope) || bm.isPassivatingScope(scope);
+        isPassivatingScope =  !bm.isNormalScope(scope) || (bm.isPassivatingScope(scope) && scope != ConversationScoped.class);
     }
 
     public boolean isPassivatingScope() {
+        final CdiEjbBean<?> bean = get(CdiEjbBean.class);
+        if (bean == null) {
+            return isPassivatingScope;
+        }
+
+        if (ConversationScoped.class == bean.getScope()) {
+            try {
+                return !bean.getWebBeansContext().getConversationManager().getConversationBeanReference().isTransient();
+            } catch (RuntimeException re) {
+                return false;
+            }
+        }
+
         return isPassivatingScope;
+    }
+
+    private boolean isConversationScopedAndActive() {
+        try {
+            return ConversationScoped.class == bean.getScope()
+                && !bean.getWebBeansContext().getConversationManager().getConversationBeanReference().isTransient();
+        } catch (Exception e) { // error looking for transient state, let assume the conversation doesn't exist
+            return true;
+        }
     }
 
     public void stop() {
