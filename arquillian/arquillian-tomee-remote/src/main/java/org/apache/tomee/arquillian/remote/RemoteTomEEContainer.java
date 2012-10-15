@@ -27,6 +27,10 @@ import org.jboss.arquillian.container.spi.client.container.LifecycleException;
 import javax.naming.NamingException;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
@@ -74,7 +78,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
             }
             container = new RemoteServer();
 
-            container.start();
+            container.start(args(), "start", true);
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Unable to start remote container", e);
             throw new LifecycleException("Unable to start remote container:" + e.getMessage(), e);
@@ -85,6 +89,23 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
             resetSystemProperty(RemoteServer.OPENEJB_SERVER_DEBUG, debug);
             resetSystemProperty(RemoteServer.SERVER_DEBUG_PORT, debugPort);
         }
+    }
+
+    private List<String> args() {
+        String opts = configuration.getCATALINA_OPTS();
+        if (opts == null || (opts = opts.trim()).isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        final List<String> splitOnSpace = new ArrayList<String>();
+        opts = opts.replace("\n", " ").trim();
+
+        final Iterator<String> it = new ArgsIterator(opts);
+        while (it.hasNext()) {
+            splitOnSpace.add(it.next());
+        }
+
+        return splitOnSpace;
     }
 
     private static void resetSystemProperty(final String key, final String value) {
@@ -179,6 +200,63 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
                 }
             }
             throw ne;
+        }
+    }
+
+    private static class ArgsIterator implements Iterator<String> {
+        private final String string;
+        private int currentIndex;
+
+        public ArgsIterator(final String opts) {
+            string = opts;
+            currentIndex = 0;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return string != null && currentIndex < string.length();
+        }
+
+        @Override
+        public String next() {
+            skipWhiteCharacters();
+
+            if (done()) {
+                throw new UnsupportedOperationException("No more element");
+            }
+
+            char endChar;
+            if (string.charAt(currentIndex) == '"') {
+                currentIndex++;
+                endChar = '"';
+            } else {
+                endChar = ' ';
+            }
+
+            final int start = currentIndex;
+            int end = string.indexOf(endChar, currentIndex + 1);
+            if (end <= 0) {
+                end = string.length();
+            }
+
+            currentIndex = end + 1;
+
+            return string.substring(start, end);
+        }
+
+        private void skipWhiteCharacters() {
+            while (!done() && (string.charAt(currentIndex) == ' ' || string.charAt(currentIndex) == '\t')) {
+                currentIndex++;
+            }
+        }
+
+        private boolean done() {
+            return currentIndex >= string.length();
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
         }
     }
 }
