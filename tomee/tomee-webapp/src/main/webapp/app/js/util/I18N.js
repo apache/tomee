@@ -35,6 +35,7 @@ TOMEE.I18N = (function () {
         'application.log.select.a.file':'Select a file',
 
         'application.sign.in':'Sign In',
+        'application.sign.out':'Sign Out',
         'application.log.in':'Login',
         'application.password':'Password',
 

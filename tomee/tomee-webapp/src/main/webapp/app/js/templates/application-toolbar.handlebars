@@ -7,15 +7,17 @@
                 <li class="toolbar-item log"><a href="#">{{i18n "application.log"}}</a></li>
             </ul>
             <ul class="nav pull-right">
-                <li class="dropdown">
+                <li class="dropdown user-login-dropdown">
                     <a class="dropdown-toggle tomee-user-name" href="#" data-toggle="dropdown">{{i18n "application.sign.in"}}</a>
                     <div class="dropdown-menu" style="padding: 15px; padding-bottom: 0px;">
                         <form>
                             <input type="text" class="span3 tomee-login" placeholder="{{i18n 'application.log.in'}}">
                             <input type="password" class="span3 tomee-password" placeholder="{{i18n 'application.password'}}">
-                            <button type="button" class="btn btn-primary pull-right tomee-login-btn">
-                                {{i18n "application.sign.in"}}
-                            </button>
+                            <div class="login-buttons">
+                                <button type="button" class="btn btn-primary pull-right tomee-login-btn">
+                                    {{i18n "application.sign.in"}}
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </li>

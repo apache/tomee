@@ -19,7 +19,15 @@ package org.apache.tomee.webapp;
 
 public class TomeeException extends RuntimeException {
 
+    public TomeeException(String message) {
+        super(message);
+    }
+
     public TomeeException(Throwable cause) {
         super(cause);
+    }
+
+    public TomeeException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

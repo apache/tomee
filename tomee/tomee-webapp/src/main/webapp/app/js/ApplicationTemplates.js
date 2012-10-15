@@ -46,6 +46,7 @@ TOMEE.ApplicationTemplates = (function (paths) {
 })([
     'application',
     'application-toolbar',
+    'application-toolbar-logout-btn',
     'application-tab-console',
     'application-tab-console-sample',
     'application-tab-console-output-line',

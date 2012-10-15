@@ -28,16 +28,16 @@ TOMEE.ApplicationController = function () {
         view = TOMEE.ApplicationView();
 
     view.render();
-    model.sendMessage({
-        cmdName:'GetLog',
-        aNumber:1
-    });
 
     channel.bind('ui-actions', 'execute-script', function (data) {
         model.sendMessage({
             cmdName:'RunScript',
             scriptCode:data.text
         });
+    });
+
+    channel.bind('ui-actions', 'logout-btn-click', function () {
+        window.location.reload();
     });
 
     channel.bind('ui-actions', 'login-btn-click', function (data) {
@@ -58,6 +58,13 @@ TOMEE.ApplicationController = function () {
     channel.bind('server-command-callback', 'RunScript', function (data) {
         $.meow({
             message:TOMEE.I18N.get('application.console.done')
+        });
+    });
+
+    channel.bind('server-command-callback-success', 'Login', function (data) {
+        model.sendMessage({
+            cmdName:'GetLog',
+            aNumber:1
         });
     });
 

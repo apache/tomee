@@ -20,8 +20,10 @@ package org.apache.tomee.webapp.servlet;
 import com.google.gson.Gson;
 import org.apache.catalina.websocket.StreamInbound;
 import org.apache.catalina.websocket.WsOutbound;
+import org.apache.openejb.assembler.util.User;
 import org.apache.tomee.webapp.command.CommandExecutor;
 import org.apache.tomee.webapp.command.CommandSession;
+import org.apache.tomee.webapp.command.UserNotAuthenticated;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -37,6 +39,9 @@ import java.util.Properties;
 public class ApplicationSocketConnection extends StreamInbound implements CommandSession {
     private Gson gson = new Gson();
     private Map<String, Object> attributes = new HashMap<String, Object>();
+
+    private String user;
+    private String pass;
 
     private String readParam(Reader in) throws IOException {
 
@@ -75,17 +80,42 @@ public class ApplicationSocketConnection extends StreamInbound implements Comman
     }
 
     @Override
-    public boolean login(String user, String password) {
+    public Context login(String user, String pass) {
         Properties props = new Properties();
         props.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
-        props.put("java.naming.provider.url", "http://127.0.0.1:8080/openejb/ejb");
+        props.put("java.naming.provider.url", "http://127.0.0.1:8080/tomee/ejb");
         props.setProperty(Context.SECURITY_PRINCIPAL, user);
-        props.setProperty(Context.SECURITY_CREDENTIALS, password);
+        props.setProperty(Context.SECURITY_CREDENTIALS, pass);
         try {
-            new InitialContext(props);
-            return true;
+            final Context context = new InitialContext(props);
+            this.user = user;
+            this.pass = pass;
+            return context;
         } catch (NamingException e) {
-            return false;
+            this.user = null;
+            this.pass = null;
+            return null;
+        }
+    }
+
+    @Override
+    public void assertAuthenticated() throws UserNotAuthenticated {
+        final Context context = this.login(this.user, this.pass);
+        if (context == null) {
+            throw new UserNotAuthenticated();
+        }
+
+        final User user;
+        try {
+            user = (User) context.lookup("openejb/UserBusinessRemote");
+        } catch (NamingException e) {
+            throw new UserNotAuthenticated();
+        }
+
+        try {
+            user.adminOnly();
+        } catch (Exception e) {
+            throw new UserNotAuthenticated(e);
         }
     }
 

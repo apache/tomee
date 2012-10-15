@@ -32,6 +32,9 @@ public class RunScript implements Command {
 
     @Override
     public Object execute(final CommandSession session, final Map<String, Object> params) throws Exception {
+        // Is this user authenticated?
+        session.assertAuthenticated();
+
         final String scriptCode = (String) params.get("scriptCode");
         if (scriptCode == null) {
             return null; //nothing to do
@@ -61,7 +64,7 @@ public class RunScript implements Command {
             //just throw it
             throw new TomeeException(execution.getException());
         }
-        return execution.getResult();
+        return String.valueOf(execution.getResult());
     }
 
     private ClassLoader getClassLoader(final String appName) {
