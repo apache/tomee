@@ -31,6 +31,9 @@ public class GetLog implements Command {
 
     @Override
     public Object execute(final CommandSession session, final Map<String, Object> params) throws Exception {
+        // Is this user authenticated?
+        session.assertAuthenticated();
+
         final Map<String, Object> json = new HashMap<String, Object>();
 
         final File logFolder = new File(System.getProperty("catalina.base"),

@@ -18,13 +18,11 @@
 package org.apache.tomee.webapp.test;
 
 import org.apache.tomee.webapp.command.CommandSession;
+import org.apache.tomee.webapp.command.UserNotAuthenticated;
 import org.apache.tomee.webapp.command.impl.RunScript;
 import org.junit.Test;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import javax.naming.Context;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,8 +39,13 @@ public class RunScriptTest {
         final RunScript shell = new RunScript();
         final Object result = shell.execute(new CommandSession() {
             @Override
-            public boolean login(String user, String password) {
-                return false;
+            public Context login(String user, String password) {
+                return null;
+            }
+
+            @Override
+            public void assertAuthenticated() throws UserNotAuthenticated {
+
             }
 
             @Override

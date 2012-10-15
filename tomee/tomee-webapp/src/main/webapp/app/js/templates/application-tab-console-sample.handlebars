@@ -6,9 +6,12 @@ var myImports = new JavaImporter(
 
 with (myImports) {
   var p = new Properties();
-  p.put("java.naming.factory.initial", "org.apache.openejb.client.LocalInitialContextFactory");
+  p.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
+  p.put("java.naming.provider.url", "http://localhost:8080/tomee/ejb");
+  p.put("java.naming.security.principal", "tomee");
+  p.put("java.naming.security.credentials", "tomee");
 
   var ctx = new InitialContext(p);
-  var myBean =  ctx.lookup("openejb/DeployerBusinessRemote");
-  myBean.getUniqueFile();
+  var myBean =  ctx.lookup("openejb/UserBusinessRemote");
+  myBean.getUserName();
 }

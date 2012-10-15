@@ -14,16 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.openejb.assembler.util;
 
-package org.apache.tomee.webapp.command;
-
-import javax.naming.Context;
-
-public interface CommandSession {
-
-    Context login(String user, String password);
-    void assertAuthenticated() throws UserNotAuthenticated;
-    Object get(String key);
-    void set(String key, Object value);
-
+public interface User {
+    void adminOnly();
+    String getUserName();
 }

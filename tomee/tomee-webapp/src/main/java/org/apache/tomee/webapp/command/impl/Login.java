@@ -20,6 +20,7 @@ package org.apache.tomee.webapp.command.impl;
 import org.apache.tomee.webapp.command.Command;
 import org.apache.tomee.webapp.command.CommandSession;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class Login implements Command {
@@ -28,16 +29,13 @@ public class Login implements Command {
     public Object execute(CommandSession session, Map<String, Object> params) throws Exception {
         final String user = (String) params.get("user");
         final String pass = (String) params.get("pass");
-        final boolean result = session.login(user, pass);
+        final Map<String, Object> result = new HashMap<String, Object>();
 
-        if (result) {
-            session.set("user", user);
-            session.set("pass", pass);
+        if (session.login(user, pass) == null) {
+            result.put("loginSuccess", Boolean.FALSE);
         } else {
-            session.set("user", null);
-            session.set("pass", null);
+            result.put("loginSuccess", Boolean.TRUE);
         }
-
         return result;
     }
 }

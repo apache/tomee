@@ -20,7 +20,8 @@ TOMEE.ApplicationToolbarView = function () {
     "use strict";
 
     var channel = TOMEE.ApplicationChannel,
-        el = $(TOMEE.ApplicationTemplates.getValue('application-toolbar', {}));
+        el = $(TOMEE.ApplicationTemplates.getValue('application-toolbar', {})),
+        logoutBtn = $(TOMEE.ApplicationTemplates.getValue('application-toolbar-logout-btn', {}));
 
     (function (keys) {
         TOMEE.utils.forEach(keys, function (key) {
@@ -43,19 +44,46 @@ TOMEE.ApplicationToolbarView = function () {
         btn.prop('disabled', true);
     });
 
-    channel.bind('server-command-callback', 'Login', function (params) {
+    logoutBtn.on('click', function () {
+      channel.send('ui-actions', 'logout-btn-click', {});
+    });
+
+    channel.bind('server-command-callback-success', 'Login', function (params) {
+        var btn = el.find('.tomee-login-btn'),
+            btnsArea = el.find('.login-buttons'),
+            menu = el.find('.user-login-dropdown'),
+            userNameMenu = el.find('.tomee-user-name'),
+            user = el.find('.tomee-login'),
+            pass = el.find('.tomee-password');
+
+        if(!params.output.loginSuccess) {
+            btn.prop('disabled', false);
+            return;
+        }
+
+        btn.remove();
+        btnsArea.append(logoutBtn);
+
+        menu.removeClass('open');
+        userNameMenu.html(user.val());
+        pass.html('123456');
+        user.prop('disabled', true);
+        pass.prop('disabled', true);
+    });
+
+    channel.bind('server-command-callback-error', 'Login', function (params) {
         var btn = el.find('.tomee-login-btn');
         btn.prop('disabled', false);
     });
 
-    var updateSelected = function (key) {
+    function updateSelected(key) {
         el.find('.toolbar-item').removeClass('active');
         el.find('.' + key).addClass('active');
 
         channel.send('ui-actions', 'toolbar-click', {
             key:key
         });
-    };
+    }
 
     return {
         getEl:function () {

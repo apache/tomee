@@ -14,16 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.openejb.assembler.util;
 
-package org.apache.tomee.webapp.command;
+import javax.annotation.Resource;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Remote;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import java.security.Principal;
 
-import javax.naming.Context;
+@Stateless(name = "openejb/User")
+@Remote(User.class)
+public class UserEjb implements User {
+    @Resource
+    private SessionContext ctx;
 
-public interface CommandSession {
+    @RolesAllowed({"tomee-admin"})
+    @Override
+    public void adminOnly() {
+        //no-op
+    }
 
-    Context login(String user, String password);
-    void assertAuthenticated() throws UserNotAuthenticated;
-    Object get(String key);
-    void set(String key, Object value);
-
+    @Override
+    public String getUserName() {
+        final Principal principal = this.ctx.getCallerPrincipal();
+        if (principal == null) {
+            return null;
+        }
+        return principal.getName();
+    }
 }
