@@ -92,7 +92,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
     }
 
     private List<String> args() {
-        String opts = configuration.getCATALINA_OPTS();
+        String opts = configuration.getCatalina_opts();
         if (opts == null || (opts = opts.trim()).isEmpty()) {
             return Collections.emptyList();
         }
@@ -155,7 +155,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
         Setup.synchronizeFolder(openejbHome, configuration.getBin(), "bin");
         Setup.synchronizeFolder(openejbHome, configuration.getLib(), "lib");
 
-        final String opts = configuration.getCATALINA_OPTS();
+        final String opts = configuration.getCatalina_opts();
         Setup.exportProperties(openejbHome, configuration, opts == null || (!opts.contains("-Xm") && !opts.matches(".*-XX:[^=]*Size=.*")));
         Setup.installArquillianBeanDiscoverer(openejbHome);
 

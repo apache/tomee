@@ -44,7 +44,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -309,9 +308,13 @@ public class Setup {
             final File confSrc = new File(src);
             if (confSrc.exists()) {
                 final File conf = new File(openejbHome, dir);
-                final Collection<File> files = org.apache.openejb.loader.Files.collect(confSrc, TrueFileFilter.instance());
+                final Collection<File> files = org.apache.openejb.loader.Files.collect(confSrc, DirectFileOnlyFilter.instance());
                 files.remove(confSrc);
                 for (File f : files) {
+                    if (f.isHidden()) {
+                        continue;
+                    }
+
                     if (f.isDirectory()) {
                         LOGGER.log(Level.WARNING, "skipping " + f.getAbsolutePath() + " since folders are currently not supported");
                         continue;
@@ -359,6 +362,22 @@ public class Setup {
         @Override
         public boolean accept(final File pathname) {
             return true;
+        }
+    }
+
+    private static class DirectFileOnlyFilter implements FileFilter {
+        private static DirectFileOnlyFilter INSTANCE = null;
+
+        public static DirectFileOnlyFilter instance() {
+            if (INSTANCE == null) {
+                INSTANCE = new DirectFileOnlyFilter();
+            }
+            return INSTANCE;
+        }
+
+        @Override
+        public boolean accept(final File pathname) {
+            return !pathname.isDirectory();
         }
     }
 }
