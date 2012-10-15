@@ -62,7 +62,7 @@ public class Setup {
         System.setProperty("server.http.port", String.valueOf(c.getHttpPort()));
         System.setProperty("server.shutdown.port", String.valueOf(c.getStopPort()));
         if (defaultMem) {
-            System.setProperty("java.opts", DEFAULT_MEM_CONFIG + "-Dtomee.httpPort=" + c.getHttpPort());
+            System.setProperty("java.opts", DEFAULT_MEM_CONFIG + " -Dtomee.httpPort=" + c.getHttpPort());
         } else {
             System.setProperty("java.opts", "-Dtomee.httpPort=" + c.getHttpPort());
         }
