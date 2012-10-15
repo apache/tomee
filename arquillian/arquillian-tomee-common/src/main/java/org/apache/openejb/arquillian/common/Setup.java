@@ -54,13 +54,16 @@ import java.util.logging.Logger;
 public class Setup {
     private static final Logger LOGGER = Logger.getLogger(Setup.class.getName()); // JUL is used by arquillian so that's fine
     public static final String TOMEE_BEAN_DISCOVERER_JAR = "lib/arquillian-tomee-bean-discoverer.jar";
+    private static final String DEFAULT_MEM_CONFIG = "-Xmx512m -Xms256m -XX:PermSize=64m -XX:MaxPermSize=256m -XX:ReservedCodeCacheSize=64m";
 
-    public static void exportProperties(final File openejbHome, final TomEEConfiguration c) {
+    public static void exportProperties(final File openejbHome, final TomEEConfiguration c, final boolean defaultMem) {
         System.setProperty("java.naming.provider.url", "http://" + c.getHost() + ":" + c.getHttpPort() + "/tomee/ejb");
         System.setProperty("connect.tries", "90");
         System.setProperty("server.http.port", String.valueOf(c.getHttpPort()));
         System.setProperty("server.shutdown.port", String.valueOf(c.getStopPort()));
-        System.setProperty("java.opts", "-Xmx512m -Xms256m -XX:PermSize=64m -XX:MaxPermSize=256m -XX:ReservedCodeCacheSize=64m -Dtomee.httpPort=" + c.getHttpPort());
+        if (defaultMem) {
+            System.setProperty("java.opts", "-Dtomee.httpPort=" + c.getHttpPort());
+        }
         System.setProperty("openejb.home", openejbHome.getAbsolutePath());
         System.setProperty("tomee.home", openejbHome.getAbsolutePath());
     }

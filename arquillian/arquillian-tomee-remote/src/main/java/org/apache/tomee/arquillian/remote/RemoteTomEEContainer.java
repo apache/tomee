@@ -155,7 +155,8 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
         Setup.synchronizeFolder(openejbHome, configuration.getBin(), "bin");
         Setup.synchronizeFolder(openejbHome, configuration.getLib(), "lib");
 
-        Setup.exportProperties(openejbHome, configuration);
+        final String opts = configuration.getCATALINA_OPTS();
+        Setup.exportProperties(openejbHome, configuration, opts == null || (!opts.contains("-Xm") && !opts.matches(".*-XX:[^=]*Size=.*")));
         Setup.installArquillianBeanDiscoverer(openejbHome);
 
         if (configuration.isRemoveUnusedWebapps()) {

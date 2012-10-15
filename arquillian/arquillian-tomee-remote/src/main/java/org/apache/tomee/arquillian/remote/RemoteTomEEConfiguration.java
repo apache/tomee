@@ -177,4 +177,6 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
     public void setCATALINA_OPTS(final String opts) {
         this.CATALINA_OPTS = opts;
     }
+
+
 }
