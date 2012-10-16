@@ -51,6 +51,7 @@ import org.apache.openejb.cdi.ManagedSecurityService;
 import org.apache.openejb.cdi.OpenEJBTransactionService;
 import org.apache.openejb.cdi.OptimizedLoaderService;
 import org.apache.openejb.cdi.ThreadSingletonServiceImpl;
+import org.apache.openejb.classloader.ClassLoaderConfigurer;
 import org.apache.openejb.component.ClassLoaderEnricher;
 import org.apache.openejb.core.ConnectorReference;
 import org.apache.openejb.core.CoreContainerSystem;
@@ -1484,10 +1485,23 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             parent = parentFinder.getParentClassLoader(parent);
         }
 
-        if (appInfo.delegateFirst) {
-            return ClassLoaderUtil.createClassLoader(appInfo.path, jars.toArray(new URL[jars.size()]), parent);
+        final ClassLoaderConfigurer configurer = ClassLoaderUtil.configurer(appInfo.appId);
+        if (configurer != null) {
+            final Iterator<URL> it = jars.iterator();
+            while (it.hasNext()) {
+                if (!configurer.accept(it.next())) {
+                    it.remove();
+                }
+            }
+            jars.addAll(Arrays.asList(configurer.additionalURLs()));
         }
-        return ClassLoaderUtil.createClassLoaderFirst(appInfo.path, jars.toArray(new URL[jars.size()]), parent);
+
+        final URL[] filtered = jars.toArray(new URL[jars.size()]);
+
+        if (appInfo.delegateFirst) {
+            return ClassLoaderUtil.createClassLoader(appInfo.path, filtered, parent);
+        }
+        return ClassLoaderUtil.createClassLoaderFirst(appInfo.path, filtered, parent);
     }
 
     public void createExternalContext(JndiContextInfo contextInfo) throws OpenEJBException {

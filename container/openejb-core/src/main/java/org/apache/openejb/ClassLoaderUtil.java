@@ -16,11 +16,14 @@
  */
 package org.apache.openejb;
 
+import org.apache.openejb.classloader.ClassLoaderConfigurer;
 import org.apache.openejb.core.TempClassLoader;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.UrlCache;
 import org.apache.openejb.util.classloader.URLClassLoaderFirst;
+import org.apache.xbean.recipe.ObjectRecipe;
 
 import java.beans.Introspector;
 import java.io.File;
@@ -33,7 +36,15 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
 import java.util.zip.ZipFile;
 
 /**
@@ -473,5 +484,42 @@ public class ClassLoaderUtil {
 
     public static String resourceName(final String s) {
         return s.replace(".", "/") + ".class";
+    }
+
+    public static ClassLoaderConfigurer configurer(final String rawId) {
+        String id = rawId;
+        if (id != null && id.startsWith("/") && !new File(id).exists() && id.length() > 1) {
+            id = id.substring(1);
+        }
+
+        String key = "tomee.classloader.configurer." + id + ".clazz";
+        String impl = SystemInstance.get().getProperty(key);
+        if (impl == null) {
+            key = "tomee.classloader.configurer.clazz";
+            impl = SystemInstance.get().getProperty(key);
+        }
+        if (impl != null) {
+            key = key.substring(0, key.length() - "clazz".length());
+
+            try {
+                final ObjectRecipe recipe = new ObjectRecipe(impl);
+                for (Map.Entry<Object, Object> entry : SystemInstance.get().getProperties().entrySet()) {
+                    String entryKey = entry.getKey().toString();
+                    if (entryKey.startsWith(key)) {String newKey = entryKey.substring(key.length());if (!"clazz".equals(newKey))
+                        recipe.setProperty(newKey, entry.getValue());
+                    }
+                }
+
+                final Object instance = recipe.create();
+                if (instance instanceof ClassLoaderConfigurer) {
+                    return (ClassLoaderConfigurer) instance;
+                } else {
+                    logger.error(impl + " is not a classlaoder configurer, using default behavior");
+                }
+            } catch (Exception e) {
+                logger.error("Can't create classloader configurer " + impl + ", using default behavior");
+            }
+        }
+        return null;
     }
 }
