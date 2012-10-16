@@ -82,26 +82,32 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
 
     private void updateProperties(final SuperProperties properties, final Properties converted, final String driver) {
         // some compatibility with old dbcp style
-        if (driver != null) {
+        if (driver != null && !properties.containsKey("driverClassName")) {
             converted.setProperty("driverClassName", driver);
         }
-        if (properties.containsKey("JdbcDriver")) {
-            converted.setProperty("driverClassName", (String) properties.remove("JdbcDriver"));
+        final String jdbcDriver = (String) properties.remove("JdbcDriver");
+        if (jdbcDriver != null && !properties.containsKey("driverClassName")) {
+            converted.setProperty("driverClassName", jdbcDriver);
         }
-        if (properties.containsKey("JdbcUrl")) {
-            converted.setProperty("url", (String) properties.remove("JdbcUrl"));
+        final String url = (String) properties.remove("JdbcUrl");
+        if (url != null && !properties.containsKey("url")) {
+            converted.setProperty("url", url);
         }
-        if (properties.containsKey("user")) {
-            converted.setProperty("username", (String) properties.remove("user"));
+        final String user = (String) properties.remove("user");
+        if (user != null && !properties.containsKey("username")) {
+            converted.setProperty("username", user);
         }
-        if (properties.containsKey("maxWaitTime")) {
-            converted.setProperty("maxWait", toMillis((String) properties.remove("maxWaitTime")));
+        final String maxWait = toMillis((String) properties.remove("maxWaitTime"));
+        if (properties.containsKey("maxWaitTime") && !properties.containsKey("maxWait")) {
+            converted.setProperty("maxWait", maxWait);
         }
-        if (properties.containsKey("timeBetweenEvictionRuns")) {
-            converted.setProperty("timeBetweenEvictionRunsMillis", toMillis((String) properties.remove("timeBetweenEvictionRuns")));
+        final String tb = toMillis((String) properties.remove("timeBetweenEvictionRuns"));
+        if (properties.containsKey("timeBetweenEvictionRuns") && !properties.containsKey("timeBetweenEvictionRunsMillis")) {
+            converted.setProperty("timeBetweenEvictionRunsMillis", tb);
         }
-        if (properties.containsKey("minEvictableIdleTime")) {
-            converted.setProperty("minEvictableIdleTimeMillis", toMillis((String) properties.remove("minEvictableIdleTime")));
+        final String minEvict = toMillis((String) properties.remove("minEvictableIdleTime"));
+        if (properties.containsKey("minEvictableIdleTime") && !properties.containsKey("minEvictableIdleTimeMillis")) {
+            converted.setProperty("minEvictableIdleTimeMillis", minEvict);
         }
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
             final String key = entry.getKey().toString();
@@ -141,6 +147,9 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
     }
 
     private String toMillis(final String d) {
+        if (d == null) {
+            return null;
+        }
         return Long.toString(new Duration(d).getTime(TimeUnit.MILLISECONDS));
     }
 

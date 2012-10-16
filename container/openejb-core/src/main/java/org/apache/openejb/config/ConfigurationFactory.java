@@ -1009,7 +1009,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 }
             }
 
-            final Properties props = new SuperProperties();
+            final Properties props = new SuperProperties().caseInsensitive(true);
 
             // weird hack but sometimes we don't want default values when we want null for instance
             if (serviceProperties == null || "false".equals(serviceProperties.getProperty(IGNORE_DEFAULT_VALUES_PROP, "false"))) {
