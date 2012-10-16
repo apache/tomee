@@ -54,8 +54,6 @@ TOMEE.ApplicationView = function () {
         } else if (ev.keyCode === 16) { //SHIFT
             channel.send('ui-actions', 'window-shift-released', {});
         }
-
-        ev.preventDefault();
     });
 
     myWindow.on('keydown', function (ev) {
@@ -71,8 +69,7 @@ TOMEE.ApplicationView = function () {
         }
 
         if (key.length === 0 &&
-            !ev.keyCode === 27 && // ESC
-            !(ev.keyCode >= 112 && ev.keyCode <= 123)) { // F1 -> F12
+            !(ev.keyCode >= 112 && ev.keyCode <= 123 || ev.keyCode === 27)) { // F1...F12 or esc
             return; //nothing to do
         }
 
