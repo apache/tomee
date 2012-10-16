@@ -19,6 +19,33 @@
 
 TOMEE.utils = (function () {
 
+    // http://www.quirksmode.org/js/keys.html
+    function keyCodeToString(keyCode) {
+        if(keyCode === 16) {
+            return 'shift';
+        }
+
+        if(keyCode === 17) {
+            return 'control';
+        }
+
+        if(keyCode === 18) {
+            return 'alt';
+        }
+
+        // Numbers or Letters
+        if (keyCode >= 48 && keyCode <= 57 || //Numbers
+            keyCode >= 65 && keyCode <= 90) { //Letters
+            return String.fromCharCode(keyCode);
+        }
+
+        if (keyCode >= 112 && keyCode <= 123) { //F1 -> F12
+            return 'F' + (keyCode - 111);
+        }
+
+        return null;
+    }
+
     function isPrimitive(value) {
         if ('number' === (typeof value)) {
             return true;
@@ -104,6 +131,7 @@ TOMEE.utils = (function () {
     }
 
     return {
+        keyCodeToString: keyCodeToString,
         isPrimitive:isPrimitive,
         getSafe:getSafe,
         toArray:toArray,
