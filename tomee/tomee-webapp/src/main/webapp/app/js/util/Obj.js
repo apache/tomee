@@ -33,6 +33,10 @@ TOMEE.utils = (function () {
             return 'alt';
         }
 
+        if(keyCode === 27) {
+            return 'esc';
+        }
+
         // Numbers or Letters
         if (keyCode >= 48 && keyCode <= 57 || //Numbers
             keyCode >= 65 && keyCode <= 90) { //Letters
