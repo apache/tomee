@@ -59,7 +59,9 @@ TOMEE.ApplicationView = function () {
     });
 
     myWindow.on('keydown', function (ev) {
-        var key = [];
+        var key = [],
+            keyStr = null;
+
         if (ev.altKey) {
             key.push('alt');
         } else if (ev.ctrlKey) {
@@ -68,18 +70,16 @@ TOMEE.ApplicationView = function () {
             key.push('shift');
         }
 
-        if (key.length === 0) {
+        if (key.length === 0 &&
+            !(ev.keyCode >= 112 && ev.keyCode <= 123)) { //F1 -> F12
             return; //nothing to do
         }
 
-        if (ev.keyCode !== 16 && ev.keyCode !== 17 && ev.keyCode !== 18) { //not SHIFT, CONTROL or ALT
-            if (ev.keyCode >= 48 && ev.keyCode <= 57 || //Numbers
-                ev.keyCode >= 65 && ev.keyCode <= 90) { //Letters
-                key.push(String.fromCharCode(ev.keyCode));
-            } else {
-                key.push(ev.keyCode);
-            }
+        keyStr = TOMEE.utils.keyCodeToString(ev.keyCode);
+        if(!keyStr) {
+            keyStr = ev.keyCode;
         }
+        key.push(keyStr);
 
         channel.send('ui-actions', 'window-' + key.join('-') + '-pressed', {});
         ev.preventDefault();
