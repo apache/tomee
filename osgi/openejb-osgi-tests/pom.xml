@@ -36,19 +36,17 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.openengsb.labs.paxexam.karaf</groupId>
-      <artifactId>paxexam-karaf-container</artifactId>
-      <version>1.0.0</version>
-      <scope>test</scope>
-    </dependency>
-    <!--
-    <dependency>
       <groupId>org.apache.karaf.tooling.exam</groupId>
       <artifactId>org.apache.karaf.tooling.exam.container</artifactId>
-      <version>3.0.1-SNAPSHOT</version>
-      <scope>provided</scope>
+      <version>${karaf.version}</version>
+      <scope>test</scope>
     </dependency>
-    -->
+    <dependency>
+      <groupId>org.apache.karaf.tooling.exam</groupId>
+      <artifactId>org.apache.karaf.tooling.exam.options</artifactId>
+      <version>${karaf.version}</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.apache.karaf.shell</groupId>
       <artifactId>org.apache.karaf.shell.console</artifactId>

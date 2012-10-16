@@ -37,6 +37,7 @@
       javax.management.loading,
       org.apache.felix.gogo.commands;version="[0.10,1)",
       org.apache.felix.gogo.commands.basic;version="[0.10,1)",
+      org.apache.felix.service.command;version="[0.10,1)";status=provisional;mandatory:=status,
       org.osgi.service.blueprint;version="[1.0.0,2.0.0)",
       org.apache.karaf.shell.console;version="[2.2,3)",
       org.apache.karaf.shell.console.completer;version="[2.2,3)",
