@@ -20,6 +20,7 @@ package org.apache.openejb.core.osgi.impl;
 import org.apache.webbeans.annotation.AnyLiteral;
 import org.apache.webbeans.annotation.DefaultLiteral;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
@@ -51,6 +52,10 @@ public class RegisterOSGIServicesExtension implements Extension {
                     for (ServiceReference service  : services) {
                         try {
                             final Class<?> clazz = serviceClass(service);
+                            if (clazz == null) {
+                                continue;
+                            }
+
                             current.loadClass(clazz.getName());
                             abd.addBean(new OSGiServiceBean<Object>(service));
                             LOGGER.debug("added service {} as a CDI Application scoped bean", clazz.getName());
@@ -65,8 +70,29 @@ public class RegisterOSGIServicesExtension implements Extension {
         }
     }
 
-    private static Class<Object> serviceClass(ServiceReference service) {
-        return (Class<Object>) service.getBundle().getBundleContext().getService(service).getClass();
+    private static Class<?> serviceClass(final ServiceReference service) {
+        final Bundle bundle = service.getBundle();
+        if (bundle == null) {
+            return null;
+        }
+
+        final BundleContext bundleContext = bundle.getBundleContext();
+        if (bundleContext == null) {
+            return null;
+        }
+
+        final Object instance;
+        try {
+            instance = bundleContext.getService(service);
+        } catch (RuntimeException re) {
+            return null;
+        }
+
+        if (instance == null) {
+            return null;
+        }
+
+        return instance.getClass();
     }
 
     public static class OSGiServiceBean<T> implements Bean<T> {
@@ -97,12 +123,12 @@ public class RegisterOSGIServicesExtension implements Extension {
         }
 
         @Override
-        public T create(CreationalContext<T> ctx) {
+        public T create(final CreationalContext<T> ctx) {
             return (T) service.getBundle().getBundleContext().getService(service);
         }
 
         @Override
-        public void destroy(T instance, CreationalContext<T> ctx) {
+        public void destroy(final T instance, final CreationalContext<T> ctx) {
             // no-op
         }
 
