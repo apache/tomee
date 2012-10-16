@@ -40,8 +40,7 @@ public class ApplicationSocketConnection extends StreamInbound implements Comman
     private Gson gson = new Gson();
     private Map<String, Object> attributes = new HashMap<String, Object>();
 
-    private String user;
-    private String pass;
+    private Context context;
 
     private String readParam(Reader in) throws IOException {
 
@@ -88,31 +87,21 @@ public class ApplicationSocketConnection extends StreamInbound implements Comman
         props.setProperty(Context.SECURITY_CREDENTIALS, pass);
         try {
             final Context context = new InitialContext(props);
-            this.user = user;
-            this.pass = pass;
-            return context;
+            this.context = context;
         } catch (NamingException e) {
-            this.user = null;
-            this.pass = null;
-            return null;
+            this.context = null;
         }
+        return context;
     }
 
     @Override
     public void assertAuthenticated() throws UserNotAuthenticated {
-        final Context context = this.login(this.user, this.pass);
-        if (context == null) {
-            throw new UserNotAuthenticated();
-        }
-
-        final User user;
-        try {
-            user = (User) context.lookup("openejb/UserBusinessRemote");
-        } catch (NamingException e) {
+        if (this.context == null) {
             throw new UserNotAuthenticated();
         }
 
         try {
+            final User user = (User) this.context.lookup("openejb/UserBusinessRemote");
             user.adminOnly();
         } catch (Exception e) {
             throw new UserNotAuthenticated(e);
