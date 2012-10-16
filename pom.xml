@@ -154,7 +154,7 @@
     <log4j.version>1.2.17</log4j.version>
     <osgi.framework.version>4.2.0</osgi.framework.version>
     <hsqldb.version>2.2.8</hsqldb.version>
-    <openjpa.version>2.2.0</openjpa.version>
+    <openjpa.version>2.2.1</openjpa.version>
 
     <!-- Apache Commons -->
     <commons-beanutils.version>1.8.3</commons-beanutils.version>
@@ -487,6 +487,18 @@
       <id>openejb-3rdparty-builds</id>
       <name>3rd Party Build Repository</name>
       <url>http://svn.apache.org/repos/asf/openejb/repo/</url>
+      <!--<url>file:///Users/dblevins/work/openejb-root/repo/</url>-->
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>openjpa</id>
+      <name>OpenJPA Release 2.2.1</name>
+      <url>https://repository.apache.org/content/repositories/orgapacheopenjpa-118/</url>
       <!--<url>file:///Users/dblevins/work/openejb-root/repo/</url>-->
       <releases>
         <enabled>true</enabled>
