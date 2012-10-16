@@ -19,9 +19,12 @@ package org.apache.tomee.catalina;
 
 import org.apache.catalina.Engine;
 import org.apache.catalina.Realm;
+import org.apache.catalina.Role;
 import org.apache.catalina.Server;
 import org.apache.catalina.Service;
+import org.apache.catalina.realm.GenericPrincipal;
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.security.AbstractSecurityService;
 import org.apache.openejb.spi.CallerPrincipal;
 import org.apache.tomee.loader.TomcatHelper;
@@ -57,6 +60,36 @@ public class TomcatSecurityService extends AbstractSecurityService {
                 }
             }
         }
+    }
+
+    @Override
+    public boolean isCallerInRole(final String role) {
+        if (super.isCallerInRole(role)) {
+            return true;
+        }
+
+        final ThreadContext threadContext = ThreadContext.getThreadContext();
+        final SecurityContext securityContext = threadContext.get(SecurityContext.class);
+        final Set<TomcatUser> users = securityContext.subject.getPrincipals(TomcatUser.class);
+        for (final TomcatUser user : users) {
+            final Principal pcp = user.getTomcatPrincipal();
+            if (pcp instanceof  GenericPrincipal) {
+                for (String r : ((GenericPrincipal) pcp).getRoles()) {
+                    if(r.equals(role)) {
+                        return true;
+                    }
+                }
+            } else if (pcp instanceof org.apache.catalina.Group) {
+                if (((org.apache.catalina.Group) pcp).getGroupname().equals(role)) {
+                    return true;
+                }
+            } else if (pcp instanceof Role) {
+                if (((Role) pcp).getRolename().equals(role)) {
+                    return true;
+                }
+            } // else ?
+        }
+        return false;
     }
 
     public UUID login(String realmName, String username, String password) throws LoginException {

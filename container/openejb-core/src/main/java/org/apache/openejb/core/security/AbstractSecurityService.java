@@ -337,8 +337,8 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
 
     protected final static class SecurityContext {
 
-        private final Subject subject;
-        private final AccessControlContext acc;
+        public final Subject subject;
+        public final AccessControlContext acc;
 
         public SecurityContext(final Subject subject) {
             this.subject = subject;
