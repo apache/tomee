@@ -16,10 +16,11 @@
  */
 
 .meows {
+    z-index: 5000;
     top: 35px;
 }
 
-. tomee-container-wrapper {
+.tomee-container-wrapper {
     position: absolute;
     top: 0px;
     left: 0px;
@@ -31,19 +32,19 @@
     color: gray;
     overflow: auto;
     padding: 5px;
-}
 
-.tomee-console-output-line {
-    padding-top: 5px;
+    .console-line {
+        padding-top: 5px;
+    }
 }
 
 .tomee-log-output {
     overflow: auto;
-}
 
-.tomee-log-output-ul {
-    list-style: none;
-    margin-left: 5px;
+    .log-lines {
+        list-style: none;
+        margin-left: 5px;
+    }
 }
 
 .line-separator {
