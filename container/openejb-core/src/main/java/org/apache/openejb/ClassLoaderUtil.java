@@ -492,12 +492,23 @@ public class ClassLoaderUtil {
             id = id.substring(1);
         }
 
+        // TODO: see how to manage tomee/openejb prefix
         String key = "tomee.classloader.configurer." + id + ".clazz";
         String impl = SystemInstance.get().getProperty(key);
         if (impl == null) {
             key = "tomee.classloader.configurer.clazz";
             impl = SystemInstance.get().getProperty(key);
+            if (impl == null) {
+                key = "openejb.classloader.configurer." + id + ".clazz";
+                impl = SystemInstance.get().getProperty(key);
+                if (impl == null) {
+                    key = "openejb.classloader.configurer.clazz";
+                    impl = SystemInstance.get().getProperty(key);
+                }
+
+            }
         }
+
         if (impl != null) {
             key = key.substring(0, key.length() - "clazz".length());
 
