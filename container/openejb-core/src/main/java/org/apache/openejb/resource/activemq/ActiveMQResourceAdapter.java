@@ -165,6 +165,10 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
                         compositeData.getParameters().put("persistent", "false");
                     }
 
+                    if ("false".equalsIgnoreCase(compositeData.getParameters().get("persistent").toString())) {
+                        properties.remove("DataSource"); // no need
+                    }
+
                     setBrokerXmlConfig(ActiveMQFactory.getBrokerMetaFile() + compositeData.toURI());
                 } else if (brokerXmlConfig.toLowerCase().startsWith("xbean:")) {
                     setBrokerXmlConfig(ActiveMQFactory.getBrokerMetaFile() + brokerXmlConfig);
