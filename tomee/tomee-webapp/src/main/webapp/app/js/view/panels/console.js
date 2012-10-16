@@ -21,15 +21,15 @@ TOMEE.ApplicationTabConsole = function () {
 
     var channel = TOMEE.ApplicationChannel,
         container = $(TOMEE.ApplicationTemplates.getValue('application-tab-console', {})),
-        codeArea = null;
+        codeArea = null,
+        active = false;
 
     container.find('.tomee-execute-btn').on('click', function () {
-        var btn = container.find('.tomee-execute-btn');
-        btn.prop('disabled', true);
+        triggerScriptExecution();
+    });
 
-        channel.send('ui-actions', 'execute-script', {
-            text:codeArea.getValue()
-        });
+    channel.bind('ui-actions', 'window-F5-pressed', function () {
+        triggerScriptExecution();
     });
 
     container.find('.tomee-execute-clear-btn').on('click', function () {
@@ -59,6 +59,20 @@ TOMEE.ApplicationTabConsole = function () {
         consoleOutput.prepend(newLine);
     });
 
+    function triggerScriptExecution() {
+        if(!active) {
+            return;
+        }
+
+        var btn = container.find('.tomee-execute-btn');
+        btn.prop('disabled', true);
+
+        channel.send('ui-actions', 'execute-script', {
+            text:codeArea.getValue()
+        });
+    }
+
+
     return {
         getEl:function () {
             return container;
@@ -71,8 +85,10 @@ TOMEE.ApplicationTabConsole = function () {
                 });
             }
             codeArea.focus();
+            active = true;
         },
         onDetach:function () {
+            active = false;
         }
     };
 };

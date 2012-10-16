@@ -21,7 +21,8 @@ TOMEE.ApplicationTabLog = function () {
 
     var channel = TOMEE.ApplicationChannel,
         container = $(TOMEE.ApplicationTemplates.getValue('application-tab-log', {})),
-        selectedFile = null;
+        selectedFile = null,
+        active = false;
 
     channel.bind('ui-actions', 'container-resized', function (data) {
         var consoleOutput = container.find('.tomee-log-output'),
@@ -62,17 +63,25 @@ TOMEE.ApplicationTabLog = function () {
     });
 
     container.find('.log-file-name').on('click', function() {
-        if(!selectedFile) {
-            return;
-        }
-        channel.send('ui-actions', 'log-file-selected', {
-            file:selectedFile
-        });
+        triggerFileSelected();
     });
 
     channel.bind('ui-actions', 'log-file-selected', function (param) {
         setFileName(param.file);
     });
+
+    channel.bind('ui-actions', 'window-F5-pressed', function () {
+        triggerFileSelected();
+    });
+
+    function triggerFileSelected() {
+        if(!active || !selectedFile) {
+            return;
+        }
+        channel.send('ui-actions', 'log-file-selected', {
+            file:selectedFile
+        });
+    }
 
     function setFileName(name) {
         var el = container.find('.log-file-name');
@@ -85,8 +94,10 @@ TOMEE.ApplicationTabLog = function () {
             return container;
         },
         onAppend:function () {
+            active = true;
         },
         onDetach:function () {
+            active = false;
         }
     };
 };
