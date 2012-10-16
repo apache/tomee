@@ -814,9 +814,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
         // we just want to wrap it to lazy stop it (afterstop)
         // to avoid classnotfound in @PreDestoy or destroyApplication()
-        final Loader loader = new LazyStopWebappLoader(standardContext);
+        final WebappLoader loader = new LazyStopWebappLoader(standardContext);
         loader.setDelegate(standardContext.getDelegate());
-        ((WebappLoader) loader).setLoaderClass(LazyStopWebappClassLoader.class.getName());
+        loader.setLoaderClass(LazyStopWebappClassLoader.class.getName());
         final Loader lazyStopLoader = new LazyStopLoader(loader);
         standardContext.setLoader(lazyStopLoader);
     }

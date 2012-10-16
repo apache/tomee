@@ -373,6 +373,7 @@
       org.apache.openejb.config.sys;version=${openejb.osgi.export.version},
       org.apache.openejb.core;version=${openejb.osgi.export.version},
       org.apache.openejb.assembler.classic.event;version=${openejb.osgi.export.version},
+      org.apache.openejb.classloader;version=${openejb.osgi.export.version},
       org.apache.openejb.core.asynch;version=${openejb.osgi.export.version},
       org.apache.openejb.core.cmp;version=${openejb.osgi.export.version},
       org.apache.openejb.core.cmp.cmp2;version=${openejb.osgi.export.version},

@@ -21,6 +21,8 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.loader.WebappLoader;
 
 public class LazyStopWebappLoader extends WebappLoader {
+    private static String currentAppId = null;
+
     private Context standardContext = null;
 
     public LazyStopWebappLoader(final Context ctx) {
@@ -49,10 +51,27 @@ public class LazyStopWebappLoader extends WebappLoader {
     }
 
     @Override
-    protected void startInternal() throws LifecycleException {
-        super.startInternal();
+    protected synchronized void startInternal() throws LifecycleException {
+        currentAppId = standardContext.getName(); // needed by classloader instantiated by next line
+        try {
+            super.startInternal();
+        } finally {
+            currentAppId = null;
+        }
+
         if (getClassLoader() instanceof LazyStopWebappClassLoader) {
             ((LazyStopWebappClassLoader) getClassLoader()).setRelatedContext(standardContext);
         }
+    }
+
+    public static String getCurrentAppId() {
+        return currentAppId;
+    }
+
+    public String getAppId() {
+        if (standardContext == null) {
+            return null;
+        }
+        return standardContext.getName();
     }
 }
