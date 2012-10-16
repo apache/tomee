@@ -71,7 +71,8 @@ TOMEE.ApplicationView = function () {
         }
 
         if (key.length === 0 &&
-            !(ev.keyCode >= 112 && ev.keyCode <= 123)) { //F1 -> F12
+            !ev.keyCode === 27 && // ESC
+            !(ev.keyCode >= 112 && ev.keyCode <= 123)) { // F1 -> F12
             return; //nothing to do
         }
 

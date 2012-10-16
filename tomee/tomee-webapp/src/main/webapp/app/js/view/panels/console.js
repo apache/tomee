@@ -32,9 +32,12 @@ TOMEE.ApplicationTabConsole = function () {
         triggerScriptExecution();
     });
 
+    channel.bind('ui-actions', 'window-esc-pressed', function () {
+        clearConsole();
+    });
+
     container.find('.tomee-execute-clear-btn').on('click', function () {
-        var consoleOutput = container.find('.tomee-console-output');
-        consoleOutput.empty();
+        clearConsole();
     });
 
     channel.bind('ui-actions', 'container-resized', function (data) {
@@ -58,6 +61,15 @@ TOMEE.ApplicationTabConsole = function () {
         btn.prop('disabled', false);
         consoleOutput.prepend(newLine);
     });
+
+    function clearConsole() {
+        if(!active) {
+            return;
+        }
+
+        var consoleOutput = container.find('.tomee-console-output');
+        consoleOutput.empty();
+    }
 
     function triggerScriptExecution() {
         if(!active) {
