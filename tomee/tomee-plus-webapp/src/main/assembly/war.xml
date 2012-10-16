@@ -64,6 +64,7 @@
         <include>WEB-INF/web.xml</include>
         <include>**/*.jsp</include>
         <include>**/*.css</include>
+        <include>**/*.less</include>
         <include>**/*.png</include>
         <include>**/*.js</include>
         <include>**/*.html</include>
