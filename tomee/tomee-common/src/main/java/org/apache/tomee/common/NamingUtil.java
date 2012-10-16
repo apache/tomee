@@ -17,12 +17,16 @@
  */
 package org.apache.tomee.common;
 
+import org.apache.catalina.core.StandardContext;
 import org.apache.naming.EjbRef;
 
 import javax.naming.RefAddr;
 import javax.naming.Reference;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class NamingUtil {
@@ -46,7 +50,11 @@ public class NamingUtil {
     public static final String WSDL_URL = "wsdlurl";
 
     private static final AtomicInteger id = new AtomicInteger(31);
-    private static final Map<String,Object> registry = new HashMap<String,Object>();
+    private static final Map<String,Object> registry = new ConcurrentHashMap<String, Object>();
+
+    // these two attributes are used to be able to cleanup quickly the registry (otherwise we need to duplicate a lot of logic)
+    private static StandardContext currentContext = null;
+    private static Map<StandardContext, Collection<String>> ID_BY_CONTEXT = new HashMap<StandardContext, Collection<String>>();
 
     public static String getProperty(Reference ref, String name) {
         RefAddr addr = ref.get(name);
@@ -71,6 +79,14 @@ public class NamingUtil {
         String token = "" + id.incrementAndGet();
         registry.put(token, value);
         resource.setProperty("static-token" + name, token);
+        if (currentContext != null) {
+            Collection<String> ids = ID_BY_CONTEXT.get(currentContext);
+            if (ids == null) {
+                ids = new ArrayList<String>();
+                ID_BY_CONTEXT.put(currentContext, ids);
+            }
+            ids.add(token);
+        }
     }
 
     @SuppressWarnings({"unchecked"})
@@ -114,4 +130,16 @@ public class NamingUtil {
         void setProperty(String name, Object value);
     }
 
+    public static void setCurrentContext(StandardContext currentContext) {
+        NamingUtil.currentContext = currentContext;
+    }
+
+    public static void cleanUpContextResource(final StandardContext context) {
+        final Collection<String> keys = ID_BY_CONTEXT.remove(context);
+        if (keys != null) {
+            for (String k : keys) {
+                registry.remove(k);
+            }
+        }
+    }
 }

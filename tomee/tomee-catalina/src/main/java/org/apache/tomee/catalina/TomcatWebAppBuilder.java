@@ -97,6 +97,7 @@ import org.apache.tomee.catalina.cluster.TomEEClusterListener;
 import org.apache.tomee.catalina.event.AfterApplicationCreated;
 import org.apache.tomee.catalina.routing.RouterValve;
 import org.apache.tomee.common.LegacyAnnotationProcessor;
+import org.apache.tomee.common.NamingUtil;
 import org.apache.tomee.common.TomcatVersion;
 import org.apache.tomee.common.UserTransactionFactory;
 import org.apache.tomee.loader.TomcatHelper;
@@ -957,7 +958,12 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
                 // merge OpenEJB jndi into Tomcat jndi
                 final TomcatJndiBuilder jndiBuilder = new TomcatJndiBuilder(standardContext, webAppInfo, injections);
-                jndiBuilder.mergeJndi();
+                NamingUtil.setCurrentContext(standardContext);
+                try {
+                    jndiBuilder.mergeJndi();
+                } finally {
+                    NamingUtil.setCurrentContext(null);
+                }
 
                 // add WebDeploymentInfo to ContainerSystem
                 final WebContext webContext = new WebContext(appContext);
@@ -1355,7 +1361,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      */
     @Override
     public void beforeStop(final StandardContext standardContext) {
-        //no-op
+        // if it is not our custom loader clean up now otherwise wait afterStop
+        if (!(standardContext.getLoader() instanceof LazyStopLoader)) {
+            jsfClasses.remove(standardContext.getLoader().getClassLoader());
+        }
     }
 
     private boolean isUnDeployable(final ContextInfo contextInfo) {
@@ -1380,6 +1389,11 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             return;
         }
 
+        final LazyStopWebappClassLoader old = lazyClassLoader(standardContext);
+        if (old != null) { // should always be the case
+            jsfClasses.remove(old);
+        }
+
         final ContextInfo contextInfo = getContextInfo(standardContext);
         if (isUnDeployable(contextInfo)) {
             try {
@@ -1389,7 +1403,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             }
         }
 
-        final LazyStopWebappClassLoader old = lazyClassLoader(standardContext);
+        NamingUtil.cleanUpContextResource(standardContext);
+
         if (old != null) {
             try {
                 old.internalStop();
