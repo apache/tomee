@@ -113,6 +113,7 @@ import org.apache.webbeans.spi.ContextsService;
 import org.apache.webbeans.spi.LoaderService;
 import org.apache.webbeans.spi.ResourceInjectionService;
 import org.apache.webbeans.spi.ScannerService;
+import org.apache.webbeans.spi.SingletonService;
 import org.apache.webbeans.spi.TransactionService;
 import org.apache.webbeans.spi.adaptor.ELAdaptor;
 import org.apache.xbean.finder.ResourceFinder;
@@ -1201,8 +1202,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         } else {
 
             final WebBeansContext webBeansContext = appContext.getWebBeansContext();
-            if (webBeansContext != null && webBeansContext.getBeanManagerImpl().isInUse()) {
-                webBeansContext.getService(ContainerLifecycle.class).stopApplication(null);
+            if (webBeansContext != null) {
+                final ClassLoader old = Thread.currentThread().getContextClassLoader();
+                Thread.currentThread().setContextClassLoader(appContext.getClassLoader());
+                try {
+                    webBeansContext.getService(ContainerLifecycle.class).stopApplication(null);
+                } finally {
+                    Thread.currentThread().setContextClassLoader(old);
+                }
             }
 
             final Map<String, Object> cb = appContext.getBindings();
