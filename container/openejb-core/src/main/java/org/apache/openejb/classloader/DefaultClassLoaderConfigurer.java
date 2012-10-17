@@ -35,8 +35,9 @@ import java.util.Collection;
 public class DefaultClassLoaderConfigurer implements ClassLoaderConfigurer {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, DefaultClassLoaderConfigurer.class);
 
-    private URL[] added;
-    private Filter excluded;
+    // just some default if one is not set
+    private URL[] added = new URL[0];
+    private Filter excluded = FalseFilter.INSTANCE;
 
     @Override
     public URL[] additionalURLs() {
@@ -107,6 +108,15 @@ public class DefaultClassLoaderConfigurer implements ClassLoaderConfigurer {
 
     private static class TrueFilter implements Filter {
         public static final TrueFilter INSTANCE = new TrueFilter();
+
+        @Override
+        public boolean accept(final String name) {
+            return true;
+        }
+    }
+
+    private static class FalseFilter implements Filter {
+        public static final FalseFilter INSTANCE = new FalseFilter();
 
         @Override
         public boolean accept(final String name) {
