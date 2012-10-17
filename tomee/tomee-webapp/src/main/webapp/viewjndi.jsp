@@ -40,7 +40,7 @@ java.util.Properties
     <meta name="author" content="">
 
     <!-- Le styles -->
-    <link href="lib/bootstrap/2.0.4/css/bootstrap.css" rel="stylesheet">
+    <link href="lib/bootstrap/2.1.1/css/bootstrap.css" rel="stylesheet">
     <style type="text/css">
         body {
             padding-top: 60px;
@@ -51,7 +51,7 @@ java.util.Properties
             padding: 9px 0;
         }
     </style>
-    <link href="lib/bootstrap/2.0.4/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="lib/bootstrap/2.1.1/css/bootstrap-responsive.css" rel="stylesheet">
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -61,7 +61,7 @@ java.util.Properties
 
 
 <body>
-<div class="navbar navbar-fixed-top">
+<div class="navbar navbar-inverse navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container-fluid">
             <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
@@ -147,7 +147,7 @@ java.util.Properties
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="lib/jquery/jquery-1.7.2.min.js"></script>
-<script src="lib/bootstrap/2.0.4/js/bootstrap.js"></script>
+<script src="lib/bootstrap/2.1.1/js/bootstrap.js"></script>
 
 </body>
 </html>
