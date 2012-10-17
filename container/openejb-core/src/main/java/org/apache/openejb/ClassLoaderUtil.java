@@ -37,6 +37,8 @@ import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -291,9 +293,37 @@ public class ClassLoaderUtil {
         return new TempClassLoader(parent);
     }
 
-    public static URLClassLoader createTempClassLoader(String appId, URL[] urls, ClassLoader parent) {
-        URLClassLoader classLoader = createClassLoader(appId, urls, parent);
-        return new TempClassLoader(classLoader);
+    public static URLClassLoader createTempClassLoader(String appId, URL[] rawUrls, ClassLoader parent) {
+        String updatedAppId = appId;
+        if (appId != null) { // here we often get the full path of the app as id where later it is simply the name of the file/dir
+            final File file = new File(appId);
+            if (file.exists()) {
+                updatedAppId = file.getName();
+                if (updatedAppId.endsWith(".war") || updatedAppId.endsWith(".ear")) {
+                    updatedAppId = updatedAppId.substring(0, updatedAppId.length() - ".war".length());
+                }
+            }
+        }
+
+        final URL[] urls;
+        ClassLoaderConfigurer configurer = ClassLoaderUtil.configurer(updatedAppId);
+        if (configurer == null) { // try the complete path
+            configurer = ClassLoaderUtil.configurer(appId);
+        }
+        if (configurer != null) {
+            final Collection<URL> urlList = new ArrayList<URL>();
+            for (URL rawUrl : rawUrls) {
+                if (configurer.accept(rawUrl)) {
+                    urlList.add(rawUrl);
+                }
+            }
+            urlList.addAll(Arrays.asList(configurer.additionalURLs()));
+            urls = urlList.toArray(new URL[urlList.size()]);
+        } else {
+            urls = rawUrls;
+        }
+
+        return new TempClassLoader(createClassLoader(appId, urls, parent));
     }
 
     /**
