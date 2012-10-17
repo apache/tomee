@@ -23,7 +23,7 @@ TOMEE.ApplicationView = function () {
         panelMap = {
             'console':TOMEE.ApplicationTabConsole(),
             'log':TOMEE.ApplicationTabLog(),
-            'webservices': TOMEE.ApplicationTabWebservices()
+            'webservices':TOMEE.ApplicationTabWebservices()
         },
         selected = null,
         container = $(TOMEE.ApplicationTemplates.getValue('application', {})),
@@ -60,12 +60,20 @@ TOMEE.ApplicationView = function () {
     });
 
     myWindow.on('keyup', function (ev) {
+        var result = {
+            consumed:false
+        };
+
         if (ev.keyCode === 18) { //ALT
-            channel.send('ui-actions', 'window-alt-released', {});
+            result = channel.send('ui-actions', 'window-alt-released', {});
         } else if (ev.keyCode === 17) { //CONTROL
-            channel.send('ui-actions', 'window-ctrl-released', {});
+            result = channel.send('ui-actions', 'window-ctrl-released', {});
         } else if (ev.keyCode === 16) { //SHIFT
-            channel.send('ui-actions', 'window-shift-released', {});
+            result = channel.send('ui-actions', 'window-shift-released', {});
+        }
+
+        if (result.consumed) {
+            ev.preventDefault();
         }
     });
 
@@ -92,8 +100,10 @@ TOMEE.ApplicationView = function () {
         }
         key.push(keyStr);
 
-        channel.send('ui-actions', 'window-' + key.join('-') + '-pressed', {});
-        ev.preventDefault();
+        var result = channel.send('ui-actions', 'window-' + key.join('-') + '-pressed', {});
+        if (result.consumed) {
+            ev.preventDefault();
+        }
     });
 
 

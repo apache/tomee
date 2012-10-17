@@ -103,7 +103,9 @@ TOMEE.ApplicationChannel = (function () {
             );
 
             if (!listeners[messageKey]) {
-                return;
+                return {
+                    consumed: false
+                };
             }
 
             var myListeners = listeners[messageKey];
@@ -115,6 +117,10 @@ TOMEE.ApplicationChannel = (function () {
             }
 
             myListeners.fire(safeParamsObj);
+
+            return {
+                consumed: true
+            };
         }
 
         return {
@@ -139,7 +145,7 @@ TOMEE.ApplicationChannel = (function () {
             getChannel(name).unbind(key, callback);
         },
         send:function (name, key, data) {
-            getChannel(name).send(key, data);
+            return getChannel(name).send(key, data);
         }
     };
 })();
