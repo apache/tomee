@@ -24,6 +24,9 @@ TOMEE.I18N = (function () {
 
         'ms':'ms',
 
+        'connection.exception': 'Connection exception',
+        'connection.exception.message': 'The application is waiting for the server.',
+
         'application.console':'Console',
         'application.console.run':'Execute',
         'application.console.clear.output':'Clear output',

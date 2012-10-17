@@ -26,21 +26,23 @@ TOMEE.ApplicationView = function () {
         },
         selected = null,
         container = $(TOMEE.ApplicationTemplates.getValue('application', {})),
-        connectionPopup = $(TOMEE.ApplicationTemplates.getValue('application-disconnected-popup', {})),
         toolbar = TOMEE.ApplicationToolbarView(),
         myWindow = $(window),
-        delayedContainerResize = TOMEE.DelayedTask();
+        delayedContainerResize = TOMEE.DelayedTask(),
+        connectionPopupVisible = false,
+        applicationDisabled = $(TOMEE.ApplicationTemplates.getValue('application-disabled', {})),
+        connectionPopup = $(TOMEE.ApplicationTemplates.getValue('application-disconnected-popup', {}));
 
     channel.bind('server-connection', 'socket-connection-opened', function (data) {
-
+        hideConnectionPopup();
     });
 
     channel.bind('server-connection', 'socket-connection-closed', function (data) {
-
+        showConnectionPopup();
     });
 
     channel.bind('server-connection', 'socket-connection-error', function (data) {
-
+        showConnectionPopup();
     });
 
     channel.bind('ui-actions', 'toolbar-click', function (data) {
@@ -93,6 +95,25 @@ TOMEE.ApplicationView = function () {
         ev.preventDefault();
     });
 
+
+    function showConnectionPopup() {
+        if (connectionPopupVisible) {
+            return;
+        }
+        connectionPopupVisible = true;
+        container.append(applicationDisabled);
+        container.append(connectionPopup);
+    }
+
+    function hideConnectionPopup() {
+        if (!connectionPopupVisible) {
+            return;
+        }
+        connectionPopupVisible = false;
+        applicationDisabled.detach();
+        connectionPopup.detach();
+    }
+
     function switchPanel(key) {
         if (selected) {
             selected.getEl().detach();
@@ -128,8 +149,12 @@ TOMEE.ApplicationView = function () {
             container.append(toolbar.getEl());
             myBody.append(container);
 
+
             switchPanel('console');
-            updateContainerSize();
+
+            showConnectionPopup();
+
+            delayedContainerResize.delay(updateContainerSize, 500);
         }
     };
 };

@@ -45,6 +45,7 @@ TOMEE.ApplicationTemplates = (function (paths) {
     };
 })([
     'application',
+    'application-disabled',
     'application-toolbar',
     'application-toolbar-logout-btn',
     'application-tab-console',
