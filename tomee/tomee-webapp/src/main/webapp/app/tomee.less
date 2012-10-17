@@ -20,31 +20,101 @@
     top: 35px;
 }
 
-.tomee-console-output {
-    background-color: #F7F7F9;
-    border: 1px solid #E1E1E8;
-    color: gray;
-    overflow: auto;
-    padding: 5px;
-
-    .console-line {
-        padding-top: 5px;
-    }
+body {
+    overflow: hidden;
 }
 
-.tomee-log-output {
-    overflow: auto;
+.tomee {
+    overflow: hidden;
 
-    .log-lines {
-        list-style: none;
-        margin-left: 5px;
+    .brand, .navbar, .navbar-inner, .nav {
+        margin: 0;
+        padding: 0;
     }
-}
 
-.line-separator {
-    height: 1px;
-    margin: 9px 1px;
-    overflow: auto;
-    background-color: #E5E5E5;
-    border-bottom: 1px solid white;
+    .navbar, .navbar-inner {
+        -webkit-border-radius: 0;
+        -moz-border-radius: 0;
+        border-radius: 0;
+    }
+
+    .brand {
+        padding-top: 10px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .navbar-fixed-bottom {
+        position: inherit;
+    }
+
+    .login-menu {
+        padding: 10px;
+        position: absolute;
+        left: auto !important;
+        right: 5px;
+        top: 40px;
+    }
+
+    .login-menu::before {
+        left: auto !important;
+        right: 9px;
+    }
+
+    .login-menu::after {
+        left: auto !important;
+        right: 10px;
+
+    }
+
+    .tomee-console {
+        .tomee-console-output {
+            background-color: #F7F7F9;
+            border: 1px solid #E1E1E8;
+            color: gray;
+            overflow: auto;
+            padding: 5px;
+
+            .console-line {
+                padding-top: 5px;
+            }
+        }
+
+        .line-separator {
+            height: 1px;
+            margin: 9px 1px;
+            overflow: auto;
+            background-color: #E5E5E5;
+            border-bottom: 1px solid white;
+        }
+
+        .buttons {
+            padding-right: 10px;
+
+            button:first-child {
+                margin-right: 5px;
+            }
+        }
+    }
+
+    .tomee-log {
+        .dropdown-menu {
+            left: auto !important;
+            right: 0;
+        }
+
+        .buttons {
+            padding-right: 10px;
+        }
+
+        .tomee-log-output {
+            overflow: auto;
+
+            .log-lines {
+                list-style: none;
+                margin-left: 5px;
+            }
+        }
+    }
+
 }

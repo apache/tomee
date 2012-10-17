@@ -1,15 +1,15 @@
 <div class="tomee-console">
     <div class="tomee-console-output"></div>
     <div class="tomee-code"></div>
-    <div class="navbar navbar-fixed-bottom" style="position: absolute;">
+    <div class="navbar navbar-inverse bbar">
         <div class="navbar-inner">
-            <div class="container" style="width: auto; padding: 0 20px;">
-                <button type="button"
-                        class="btn btn-primary pull-right tomee-execute-btn">
-                    {{i18n "application.console.run"}}
-                </button>
-                <button type="button" class="btn pull-right tomee-execute-clear-btn">
+            <div class="buttons pull-right">
+                <button type="button" class="btn tomee-execute-clear-btn">
                     {{i18n "application.console.clear.output"}}
+                </button>
+                <button type="button"
+                        class="btn btn-primary tomee-execute-btn">
+                    {{i18n "application.console.run"}}
                 </button>
             </div>
         </div>

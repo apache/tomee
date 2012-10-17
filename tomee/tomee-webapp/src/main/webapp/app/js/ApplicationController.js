@@ -68,6 +68,8 @@ TOMEE.ApplicationController = function () {
         });
     });
 
+    model.connectSocket();
+
     return {
 
     };

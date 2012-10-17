@@ -52,5 +52,6 @@ TOMEE.ApplicationTemplates = (function (paths) {
     'application-tab-console-output-line',
     'application-tab-log',
     'application-tab-log-file',
-    'application-tab-log-lines'
+    'application-tab-log-lines',
+    'application-disconnected-popup'
 ]);

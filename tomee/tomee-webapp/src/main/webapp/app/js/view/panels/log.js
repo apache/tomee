@@ -26,8 +26,8 @@ TOMEE.ApplicationTabLog = function () {
 
     channel.bind('ui-actions', 'container-resized', function (data) {
         var consoleOutput = container.find('.tomee-log-output'),
-            bbar = container.find('.tomee-log-bbar'),
-            outputHeight = data.containerHeight - data.toolbarHeight - bbar.height();
+            bbar = container.find('.bbar'),
+            outputHeight = data.containerHeight - bbar.height() + 2;
 
         consoleOutput.height(outputHeight);
     });
