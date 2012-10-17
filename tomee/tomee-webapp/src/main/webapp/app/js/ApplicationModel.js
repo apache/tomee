@@ -27,19 +27,16 @@ TOMEE.ApplicationModel = function () {
     var channel = TOMEE.ApplicationChannel,
         appSocket = null,
         reconnectTask = TOMEE.DelayedTask(),
-        reconnectDelay = 1000;
+        reconnectDelay = 5000;
 
     channel.bind('server-callback', 'socket-connection-message-received', function (data) {
         var bean = $.parseJSON(data);
         TOMEE.ApplicationChannel.send('new-data', bean);
     });
 
-    channel.bind('server-callback', 'socket-connection-closed', function () {
+    channel.bind('server-connection', 'socket-connection-closed', function () {
         reconnectTask.delay(connectSocket, reconnectDelay);
     });
-
-    // First connection
-    connectSocket();
 
     function connectSocket() {
         try {
@@ -121,6 +118,7 @@ TOMEE.ApplicationModel = function () {
     }
 
     return {
+        connectSocket:connectSocket,
         sendMessage:sendMessage
     }
 };

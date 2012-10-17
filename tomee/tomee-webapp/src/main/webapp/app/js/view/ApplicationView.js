@@ -26,12 +26,22 @@ TOMEE.ApplicationView = function () {
         },
         selected = null,
         container = $(TOMEE.ApplicationTemplates.getValue('application', {})),
-        containerWrapper = $('<div class="tomee-container-wrapper"></div>'),
+        connectionPopup = $(TOMEE.ApplicationTemplates.getValue('application-disconnected-popup', {})),
         toolbar = TOMEE.ApplicationToolbarView(),
         myWindow = $(window),
         delayedContainerResize = TOMEE.DelayedTask();
 
-    container.appendTo(containerWrapper);
+    channel.bind('server-connection', 'socket-connection-opened', function (data) {
+
+    });
+
+    channel.bind('server-connection', 'socket-connection-closed', function (data) {
+
+    });
+
+    channel.bind('server-connection', 'socket-connection-error', function (data) {
+
+    });
 
     channel.bind('ui-actions', 'toolbar-click', function (data) {
         switchPanel(data.key);
@@ -43,7 +53,7 @@ TOMEE.ApplicationView = function () {
     });
 
     myWindow.on('resize', function () {
-        delayedContainerResize.delay(updateContainerSize, 100);
+        delayedContainerResize.delay(updateContainerSize, 500);
     });
 
     myWindow.on('keyup', function (ev) {
@@ -74,7 +84,7 @@ TOMEE.ApplicationView = function () {
         }
 
         keyStr = TOMEE.utils.keyCodeToString(ev.keyCode);
-        if(!keyStr) {
+        if (!keyStr) {
             keyStr = ev.keyCode;
         }
         key.push(keyStr);
@@ -91,36 +101,32 @@ TOMEE.ApplicationView = function () {
         selected = panelMap[key];
         selected.getEl().appendTo(container);
         selected.onAppend();
+
+        updateContainerSize();
     }
 
     function updateContainerSize() {
         var containerHeight,
             containerWidth,
             toolbarHeight = toolbar.getEl().height();
-        containerWrapper.css('top', toolbarHeight + 'px');
 
-        containerHeight = (myWindow.height() - toolbarHeight);
+        containerHeight = myWindow.height();
         containerWidth = myWindow.width();
 
-        containerWrapper.css('height', containerHeight + 'px');
-        containerWrapper.css('width', containerWidth + 'px');
+        container.css('height', containerHeight + 'px');
+        container.css('width', containerWidth + 'px');
 
         channel.send('ui-actions', 'container-resized', {
-            containerHeight:containerHeight,
-            containerWidth:containerWidth,
-            toolbarHeight:toolbarHeight
+            containerHeight:containerHeight - toolbarHeight,
+            containerWidth:containerWidth - toolbarHeight
         });
     }
 
     return {
         render:function () {
-            var myBody = $('body'),
-                emptyDiv = $('<div></div>');
-            myBody.append(emptyDiv);
-            myBody.append(toolbar.getEl());
-            myBody.append(containerWrapper);
-
-            emptyDiv.height(toolbar.getEl().height());
+            var myBody = $('body');
+            container.append(toolbar.getEl());
+            myBody.append(container);
 
             switchPanel('console');
             updateContainerSize();

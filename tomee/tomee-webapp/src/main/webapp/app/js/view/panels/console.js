@@ -43,7 +43,8 @@ TOMEE.ApplicationTabConsole = function () {
     channel.bind('ui-actions', 'container-resized', function (data) {
         var consoleOutput = container.find('.tomee-console-output'),
             consoleEditor = container.find('.tomee-code'),
-            outputHeight = data.containerHeight - data.toolbarHeight - consoleEditor.height();
+            consoleBBar = container.find('.bbar'),
+            outputHeight = data.containerHeight - consoleEditor.height() - consoleBBar.height()  - 10;
 
         consoleOutput.height(outputHeight);
     });
