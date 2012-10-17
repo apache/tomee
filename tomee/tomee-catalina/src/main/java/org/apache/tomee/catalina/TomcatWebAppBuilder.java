@@ -1567,7 +1567,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             name = "";
         }
 
-        return file.isFile() && standardHost.findChild(name) != null;
+        // can be a dir or a war so exists is fine
+        return file.exists() && standardHost.findChild(name) != null;
     }
 
     /**
