@@ -55,6 +55,12 @@ TOMEE.ApplicationController = function () {
         });
     });
 
+    channel.bind('ui-actions', 'reload-webservices-table', function () {
+        model.sendMessage({
+            cmdName:'GetWebServices'
+        });
+    });
+
     channel.bind('server-command-callback', 'RunScript', function (data) {
         $.meow({
             message:TOMEE.I18N.get('application.console.done')
