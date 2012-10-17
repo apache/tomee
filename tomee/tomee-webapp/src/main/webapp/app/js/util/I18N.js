@@ -24,8 +24,8 @@ TOMEE.I18N = (function () {
 
         'ms':'ms',
 
-        'connection.exception': 'Connection exception',
-        'connection.exception.message': 'The application is waiting for the server.',
+        'connection.exception':'Connection exception',
+        'connection.exception.message':'The application is waiting for the server.',
 
         'application.console':'Console',
         'application.console.run':'Execute',
@@ -36,6 +36,12 @@ TOMEE.I18N = (function () {
 
         'application.log':'Log',
         'application.log.select.a.file':'Select a file',
+
+        'application.webservices':'Webservices',
+        'application.webservices.app.name':'Application',
+        'application.webservices.ws.name':'Name',
+        'application.webservices.ws.addr':'Address',
+        'application.webservices.ws.port':'Port',
 
         'application.sign.in':'Sign In',
         'application.sign.out':'Sign Out',
