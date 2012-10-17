@@ -40,8 +40,19 @@ public class TestClassDiscoverer implements AdditionalBeanDiscoverer {
         }
 
         try {
-            module.getClassLoader().loadClass(name);
+            final Class<?> clazz = module.getClassLoader().loadClass(name);
+
+            // call some reflection methods to make it fail if some dep are missing...
+            Class<?> current = clazz;
+            while (current != null) {
+                current.getDeclaredFields();
+                current.getDeclaredMethods();
+                current.getCanonicalName();
+                current = current.getSuperclass();
+            }
         } catch (ClassNotFoundException e) {
+            return module;
+        } catch (NoClassDefFoundError ncdfe) {
             return module;
         }
 
