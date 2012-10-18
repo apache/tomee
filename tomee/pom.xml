@@ -45,8 +45,6 @@
     <module>tomee-jaxrs-webapp</module>
     <module>apache-tomcat</module>
     <module>apache-tomee</module>
-    <module>apache-tomee-deb</module>
-    <module>apache-tomee-deb-package</module>
     <module>tomee-util</module>
   </modules>
 
