@@ -247,6 +247,8 @@ public abstract class WsService implements ServerService, SelfManaging {
                         PortInfo portInfo = ports.get(bean.ejbName);
                         if (portInfo == null) continue;
 
+                        final ClassLoader old = Thread.currentThread().getContextClassLoader();
+                        Thread.currentThread().setContextClassLoader(beanContext.getClassLoader());
                         try {
                             PortData port = WsBuilder.toPortData(portInfo, beanContext.getInjections(), moduleBaseUrl, beanContext.getClassLoader());
 
@@ -291,6 +293,8 @@ public abstract class WsService implements ServerService, SelfManaging {
                             }
                         } catch (Throwable e) {
                             logger.error("Error deploying JAX-WS Web Service for EJB " + beanContext.getDeploymentID(), e);
+                        } finally {
+                            Thread.currentThread().setContextClassLoader(old);
                         }
                     }
                 }
@@ -339,8 +343,10 @@ public abstract class WsService implements ServerService, SelfManaging {
                 continue;
             }
 
+            final ClassLoader old = Thread.currentThread().getContextClassLoader();
+            final ClassLoader classLoader = webContext.getClassLoader();
+            Thread.currentThread().setContextClassLoader(classLoader);
             try {
-                ClassLoader classLoader = webContext.getClassLoader();
                 Collection<Injection> injections = webContext.getInjections();
                 Context context = webContext.getJndiEnc();
                 Class target = classLoader.loadClass(servlet.servletClass);
@@ -369,6 +375,8 @@ public abstract class WsService implements ServerService, SelfManaging {
                 }
             } catch (Throwable e) {
                 logger.error("Error deploying CXF webservice for servlet " + portInfo.serviceLink, e);
+            } finally {
+                Thread.currentThread().setContextClassLoader(old);
             }
         }
     }
