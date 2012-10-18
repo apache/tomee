@@ -110,6 +110,10 @@ public class RemoteServer {
     }
 
     public void start(final List<String> additionalArgs, final String cmd, boolean checkPortAvailable) {
+        cmd(additionalArgs, cmd, checkPortAvailable);
+    }
+
+    private void cmd(final List<String> additionalArgs, final String cmd, boolean checkPortAvailable) {
         boolean ok = true;
         if (checkPortAvailable) {
             ok = !connect();
@@ -443,7 +447,7 @@ public class RemoteServer {
         }
     }
 
-    private void shutdown() throws Exception {
+    private void forceShutdown() throws Exception {
         String fcommand = command + Character.toString((char) 0); // SHUTDOWN + EOF
 
         Socket socket = null;
@@ -457,6 +461,10 @@ public class RemoteServer {
                 socket.close();
             }
         }
+    }
+
+    private void shutdown() throws Exception {
+        cmd(Collections.EMPTY_LIST, "stop", false);
     }
 
     private boolean connect() {
@@ -525,7 +533,7 @@ public class RemoteServer {
                         }
                     } else { // under windows we sometimes need to send shutdown multiple times (see connect())
                         try {
-                            shutdown();
+                            forceShutdown();
                         } catch (Exception e) {
                             // no-op
                         }
