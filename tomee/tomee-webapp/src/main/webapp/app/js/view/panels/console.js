@@ -22,7 +22,8 @@ TOMEE.ApplicationTabConsole = function () {
     var channel = TOMEE.ApplicationChannel,
         container = $(TOMEE.ApplicationTemplates.getValue('application-tab-console', {})),
         codeArea = null,
-        active = false;
+        active = false,
+        delayedContainerResize = TOMEE.DelayedTask();
 
     container.find('.tomee-execute-btn').on('click', function () {
         triggerScriptExecution();
@@ -44,9 +45,18 @@ TOMEE.ApplicationTabConsole = function () {
         var consoleOutput = container.find('.tomee-console-output'),
             consoleEditor = container.find('.tomee-code'),
             consoleBBar = container.find('.bbar'),
-            outputHeight = data.containerHeight - consoleEditor.height() - consoleBBar.height()  - 10;
+            splitter = container.find('.splitter'),
+            availableSpace = data.containerHeight - consoleBBar.outerHeight() - splitter.outerHeight() - 10;
 
-        consoleOutput.height(outputHeight);
+        consoleOutput.height(availableSpace / 2);
+        consoleEditor.height(availableSpace / 2);
+
+        // This guy likes special treatment
+        delayedContainerResize.delay(function() {
+            if(codeArea) {
+                codeArea.setSize(null, availableSpace / 2);
+            }
+        }, 1000);
     });
 
     channel.bind('server-command-callback', 'RunScript', function (data) {
