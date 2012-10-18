@@ -165,6 +165,11 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
                         compositeData.getParameters().put("persistent", "false");
                     }
 
+                    // compromise to avoid broker lock in some case + avoid failing tests
+                    if (!compositeData.getParameters().containsKey("watchTopicAdvisories")) {
+                        compositeData.getParameters().put("watchTopicAdvisories", "false");
+                    }
+
                     if ("false".equalsIgnoreCase(compositeData.getParameters().get("persistent").toString())) {
                         properties.remove("DataSource"); // no need
                     }
