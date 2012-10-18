@@ -140,10 +140,10 @@ TOMEE.ApplicationView = function () {
     function updateContainerSize() {
         var containerHeight,
             containerWidth,
-            toolbarHeight = toolbar.getEl().height();
+            toolbarHeight = toolbar.getEl().outerHeight();
 
-        containerHeight = myWindow.height();
-        containerWidth = myWindow.width();
+        containerHeight = myWindow.outerHeight();
+        containerWidth = myWindow.outerWidth();
 
         container.css('height', containerHeight + 'px');
         container.css('width', containerWidth + 'px');
