@@ -107,16 +107,16 @@
       <artifactId>arquillian-tomee-embedded</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>arquillian-tomee-remote</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>arquillian-tomee-webapp-remote</artifactId>
-      <version>${project.version}</version>
-    </dependency>
+    <!--<dependency>-->
+      <!--<groupId>${project.groupId}</groupId>-->
+      <!--<artifactId>arquillian-tomee-remote</artifactId>-->
+      <!--<version>${project.version}</version>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+      <!--<groupId>${project.groupId}</groupId>-->
+      <!--<artifactId>arquillian-tomee-webapp-remote</artifactId>-->
+      <!--<version>${project.version}</version>-->
+    <!--</dependency>-->
   </dependencies>
 
   <build>
@@ -191,6 +191,189 @@
   </properties>
 
   <profiles>
+
+    <profile>
+      <id>default</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>2.12</version>
+            <executions>
+              <execution>
+                <id>test-tomee-embedded</id>
+                <phase>test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <skip>${maven.test.skip}</skip>
+                  <systemPropertyVariables>
+                    <tomee.version>${tomee.version}</tomee.version>
+                    <arquillian.launch>tomee-embedded</arquillian.launch>
+                    <openejb.arquillian.adapter>tomee-embedded</openejb.arquillian.adapter>
+                  </systemPropertyVariables>
+                </configuration>
+              </execution>
+            </executions>
+            <configuration>
+              <skip>true</skip>
+              <parallel>none</parallel>
+              <threadCount>1</threadCount>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>buildbot</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>2.12</version>
+            <executions>
+              <execution>
+                <id>test-tomee-embedded</id>
+                <phase>test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <skip>${maven.test.skip}</skip>
+                  <systemPropertyVariables>
+                    <tomee.version>${tomee.version}</tomee.version>
+                    <arquillian.launch>tomee-embedded</arquillian.launch>
+                    <openejb.arquillian.adapter>tomee-embedded</openejb.arquillian.adapter>
+                  </systemPropertyVariables>
+                </configuration>
+              </execution>
+
+              <!-- Remote against Web Profile, JAX-RS and Plus -->
+
+              <execution>
+                <id>test-tomee-remote-webprofile</id>
+                <phase>test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <skip>${maven.test.skip}</skip>
+                  <systemPropertyVariables>
+                    <openejb.arquillian.debug>true</openejb.arquillian.debug>
+                    <tomee.version>${tomee.version}</tomee.version>
+                    <tomee.classifier>webprofile</tomee.classifier>
+                    <arquillian.launch>tomee-remote</arquillian.launch>
+                    <openejb.arquillian.adapter>tomee-remote</openejb.arquillian.adapter>
+                  </systemPropertyVariables>
+                </configuration>
+              </execution>
+              <execution>
+                <id>test-tomee-remote-jaxrs</id>
+                <phase>test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <skip>${maven.test.skip}</skip>
+                  <systemPropertyVariables>
+                    <openejb.arquillian.debug>true</openejb.arquillian.debug>
+                    <tomee.version>${tomee.version}</tomee.version>
+                    <tomee.classifier>jaxrs</tomee.classifier>
+                    <arquillian.launch>tomee-remote</arquillian.launch>
+                    <openejb.arquillian.adapter>tomee-remote</openejb.arquillian.adapter>
+                  </systemPropertyVariables>
+                </configuration>
+              </execution>
+              <execution>
+                <id>test-tomee-remote-plus</id>
+                <phase>test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <skip>${maven.test.skip}</skip>
+                  <systemPropertyVariables>
+                    <openejb.arquillian.debug>true</openejb.arquillian.debug>
+                    <tomee.version>${tomee.version}</tomee.version>
+                    <tomee.classifier>jaxrs</tomee.classifier>
+                    <arquillian.launch>tomee-remote</arquillian.launch>
+                    <openejb.arquillian.adapter>tomee-remote</openejb.arquillian.adapter>
+                  </systemPropertyVariables>
+                </configuration>
+              </execution>
+
+              <!-- Tomcat + war against Web Profile, JAX-RS and Plus -->
+
+              <execution>
+                <id>test-tomee-webapp-remote-webprofile</id>
+                <phase>test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <skip>${maven.test.skip}</skip>
+                  <systemPropertyVariables>
+                    <tomee.version>${tomee.version}</tomee.version>
+                    <tomee.tomcatVersion>${tomcat.bundle.version}</tomee.tomcatVersion>
+                    <tomee.artifactId>tomee-webapp</tomee.artifactId>
+                    <arquillian.launch>tomee-webapp</arquillian.launch>
+                    <openejb.arquillian.adapter>tomee-webapp</openejb.arquillian.adapter>
+                  </systemPropertyVariables>
+                </configuration>
+              </execution>
+              <execution>
+                <id>test-tomee-webapp-remote-jaxrs</id>
+                <phase>test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <skip>${maven.test.skip}</skip>
+                  <systemPropertyVariables>
+                    <tomee.version>${tomee.version}</tomee.version>
+                    <tomee.tomcatVersion>${tomcat.bundle.version}</tomee.tomcatVersion>
+                    <tomee.artifactId>tomee-jaxrs-webapp</tomee.artifactId>
+                    <arquillian.launch>tomee-webapp</arquillian.launch>
+                    <openejb.arquillian.adapter>tomee-webapp</openejb.arquillian.adapter>
+                  </systemPropertyVariables>
+                </configuration>
+              </execution>
+              <execution>
+                <id>test-tomee-webapp-remote-plus</id>
+                <phase>test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <skip>${maven.test.skip}</skip>
+                  <systemPropertyVariables>
+                    <tomee.version>${tomee.version}</tomee.version>
+                    <tomee.tomcatVersion>${tomcat.bundle.version}</tomee.tomcatVersion>
+                    <tomee.artifactId>tomee-plus-webapp</tomee.artifactId>
+                    <arquillian.launch>tomee-webapp</arquillian.launch>
+                    <openejb.arquillian.adapter>tomee-webapp</openejb.arquillian.adapter>
+                  </systemPropertyVariables>
+                </configuration>
+              </execution>
+            </executions>
+            <configuration>
+              <skip>true</skip>
+              <parallel>none</parallel>
+              <threadCount>1</threadCount>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+
     <profile>
       <!--
       Added to make it easy to quickly verify if something "should" work
