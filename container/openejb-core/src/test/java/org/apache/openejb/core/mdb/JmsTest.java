@@ -52,7 +52,7 @@ public class JmsTest extends TestCase {
     protected static final String REQUEST_QUEUE_NAME = "request";
     protected ActiveMQConnectionFactory connectionFactory;
     protected ActiveMQResourceAdapter ra;
-    protected String brokerAddress = NetworkUtil.getLocalAddress("tcp://", "");
+    protected String brokerAddress = NetworkUtil.getLocalAddress("tcp://", "?jms.watchTopicAdvisories=false") ;
     protected String brokerXmlConfig = "broker:(" + brokerAddress + ")?useJmx=false&persistent=false&cacheTempDestinations=true";
 
     @Override
