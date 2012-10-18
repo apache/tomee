@@ -62,6 +62,7 @@
       <outputDirectory>/</outputDirectory>
       <includes>
         <include>WEB-INF/web.xml</include>
+        <include>WEB-INF/classes/**</include>
         <include>**/*.jsp</include>
         <include>**/*.css</include>
         <include>**/*.less</include>
