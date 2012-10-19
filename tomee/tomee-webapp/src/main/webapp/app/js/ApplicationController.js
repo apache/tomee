@@ -50,6 +50,12 @@ TOMEE.ApplicationController = function () {
         });
     });
 
+    channel.bind('ui-actions', 'load-file-names', function () {
+        model.sendMessage({
+            cmdName:'GetLogFiles'
+        });
+    });
+
     channel.bind('ui-actions', 'log-file-selected', function (param) {
         model.sendMessage({
             cmdName:'GetLog',
