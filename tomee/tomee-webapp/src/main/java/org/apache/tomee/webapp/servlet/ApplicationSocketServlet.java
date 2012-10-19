@@ -27,7 +27,7 @@ public class ApplicationSocketServlet extends WebSocketServlet {
     @Override
     protected StreamInbound createWebSocketInbound(
             String s,
-            HttpServletRequest httpServletRequest) {
+            HttpServletRequest request) {
         return new ApplicationSocketConnection();
     }
 }

@@ -17,8 +17,8 @@
 
 package org.apache.tomee.webapp.command.impl;
 
+import org.apache.tomee.webapp.Application;
 import org.apache.tomee.webapp.command.Command;
-import org.apache.tomee.webapp.command.CommandSession;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,9 +26,12 @@ import java.util.Map;
 public class Login implements Command {
 
     @Override
-    public Object execute(CommandSession session, Map<String, Object> params) throws Exception {
+    public Object execute(Map<String, Object> params) throws Exception {
+        final String sessionId = (String) params.get("sessionId");
+        final Application.Session session = Application.getInstance().getSession(sessionId);
         final String user = (String) params.get("user");
         final String pass = (String) params.get("pass");
+
         final Map<String, Object> result = new HashMap<String, Object>();
 
         if (session.login(user, pass) == null) {

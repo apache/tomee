@@ -18,7 +18,7 @@
 package org.apache.tomee.webapp.command.impl;
 
 import org.apache.tomee.webapp.command.Command;
-import org.apache.tomee.webapp.command.CommandSession;
+import org.apache.tomee.webapp.command.IsProtected;
 import org.apache.tomee.webapp.helper.rest.Application;
 import org.apache.tomee.webapp.helper.rest.Services;
 import org.apache.tomee.webapp.helper.rest.WebServiceHelperImpl;
@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@IsProtected
 public class GetWebServices implements Command {
 
     private Map<String, Object> getServicesMap(final Services services) {
@@ -41,10 +42,7 @@ public class GetWebServices implements Command {
     }
 
     @Override
-    public Object execute(final CommandSession session, final Map<String, Object> params) throws Exception {
-        // Is this user authenticated?
-        session.assertAuthenticated();
-
+    public Object execute(final Map<String, Object> params) throws Exception {
         final Map<String, Object> json = new HashMap<String, Object>();
         json.put("rest", getServicesMap(WebServiceHelperImpl.restWebServices()));
         json.put("soap", getServicesMap(WebServiceHelperImpl.soapWebServices()));

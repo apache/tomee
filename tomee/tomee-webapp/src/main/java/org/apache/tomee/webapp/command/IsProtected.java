@@ -17,10 +17,13 @@
 
 package org.apache.tomee.webapp.command;
 
-import java.util.Map;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public interface Command {
+import static java.lang.annotation.ElementType.TYPE;
 
-    Object execute(Map<String, Object> params) throws Exception;
-
+@Retention(RetentionPolicy.RUNTIME)
+@Target({TYPE})
+public @interface IsProtected {
 }

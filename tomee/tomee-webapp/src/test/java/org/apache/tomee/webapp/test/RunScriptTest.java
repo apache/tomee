@@ -17,12 +17,9 @@
 
 package org.apache.tomee.webapp.test;
 
-import org.apache.tomee.webapp.command.CommandSession;
-import org.apache.tomee.webapp.command.UserNotAuthenticated;
 import org.apache.tomee.webapp.command.impl.RunScript;
 import org.junit.Test;
 
-import javax.naming.Context;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,27 +34,7 @@ public class RunScriptTest {
         params.put("engineName", "js");
 
         final RunScript shell = new RunScript();
-        final Object result = shell.execute(new CommandSession() {
-            @Override
-            public Context login(String user, String password) {
-                return null;
-            }
-
-            @Override
-            public void assertAuthenticated() throws UserNotAuthenticated {
-
-            }
-
-            @Override
-            public Object get(String key) {
-                return null;
-            }
-
-            @Override
-            public void set(String key, Object value) {
-
-            }
-        }, params);
+        final Object result = shell.execute(params);
 
         assertEquals("myValue", result);
     }

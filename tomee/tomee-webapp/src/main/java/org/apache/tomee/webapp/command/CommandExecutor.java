@@ -19,7 +19,7 @@ package org.apache.tomee.webapp.command;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import org.quartz.SimpleTrigger;
+import org.apache.tomee.webapp.Application;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -30,11 +30,12 @@ import java.util.Map;
 
 public class CommandExecutor {
     private Gson gson = new Gson();
-    private final Type mapType = new TypeToken<Map<String, Object>>() {}.getType();
+    private final Type mapType = new TypeToken<Map<String, Object>>() {
+    }.getType();
 
     private static final String PATH = "org.apache.tomee.webapp.command.impl.";
 
-    public Map<String, Object> execute(final CommandSession session, final String raw) {
+    public Map<String, Object> execute(final String raw) {
         final Map<String, Object> result = new HashMap<String, Object>();
 
         final long start = System.currentTimeMillis();
@@ -47,10 +48,20 @@ public class CommandExecutor {
             // Remove the cmdName from this list.
             final String cmdName = (String) params.remove("cmdName");
             final Class<?> cls = Class.forName(PATH + cmdName);
+            final IsProtected isProtected = cls.getAnnotation(IsProtected.class);
+            if (isProtected != null) {
+                final String sessionId = (String) params.get("sessionId");
+                if (sessionId == null || "".equals(sessionId.trim())) {
+                    throw new UserNotAuthenticated();
+                }
+                final Application.Session session = Application.getInstance().getSession(sessionId);
+                session.assertAuthenticated();
+            }
+
             final Command cmd = (Command) cls.newInstance();
 
             result.put("cmdName", cmdName);
-            result.put("output", cmd.execute(session, params));
+            result.put("output", cmd.execute(params));
             result.put("success", Boolean.TRUE);
 
         } catch (Throwable e) {

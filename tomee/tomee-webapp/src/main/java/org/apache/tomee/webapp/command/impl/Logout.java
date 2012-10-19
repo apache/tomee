@@ -15,15 +15,23 @@
  * limitations under the License.
  */
 
-package org.apache.tomee.webapp.command;
+package org.apache.tomee.webapp.command.impl;
 
-import javax.naming.Context;
+import org.apache.tomee.webapp.Application;
+import org.apache.tomee.webapp.command.Command;
 
-public interface CommandSession {
+import java.util.Map;
 
-    Context login(String user, String password);
-    void assertAuthenticated() throws UserNotAuthenticated;
-    Object get(String key);
-    void set(String key, Object value);
+public class Logout implements Command {
 
+    @Override
+    public Object execute(Map<String, Object> params) throws Exception {
+        final String sessionId = (String) params.get("sessionId");
+        if (sessionId == null) {
+            return null;
+        }
+        final Application.Session session = Application.getInstance().getSession(sessionId);
+        session.logout();
+        return null;
+    }
 }
