@@ -30,7 +30,7 @@ TOMEE.ApplicationToolbarView = function () {
             }));
         });
 
-    })(['home', 'console', 'webservices', 'log']);
+    })(['home', 'console', 'log']);
 
     el.find('.tomee-login-btn').on('click', function () {
         var user = el.find('.tomee-login').val(),
