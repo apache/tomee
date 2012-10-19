@@ -23,14 +23,20 @@ TOMEE.ApplicationToolbarView = function () {
         el = $(TOMEE.ApplicationTemplates.getValue('application-toolbar', {})),
         logoutBtn = $(TOMEE.ApplicationTemplates.getValue('application-toolbar-logout-btn', {}));
 
-    (function (keys) {
-        TOMEE.utils.forEach(keys, function (key) {
-            el.find('.' + key).bind('click', (function () {
-                updateSelected(key);
-            }));
-        });
+    el.find('.toolbar-item').on('click', function (ev) {
+        var tabEl = $(ev.currentTarget),
+            tabKey = tabEl.attr("tab-key");
 
-    })(['home', 'console', 'log']);
+        if (tabEl.hasClass('disabled')) {
+            return;
+        }
+
+        el.find('.toolbar-item').removeClass('active');
+        tabEl.addClass('active');
+
+        updateSelected(tabKey);
+
+    });
 
     el.find('.tomee-login-btn').on('click', function () {
         var user = el.find('.tomee-login').val(),
@@ -45,7 +51,7 @@ TOMEE.ApplicationToolbarView = function () {
     });
 
     logoutBtn.on('click', function () {
-      channel.send('ui-actions', 'logout-btn-click', {});
+        channel.send('ui-actions', 'logout-btn-click', {});
     });
 
     channel.bind('server-command-callback-success', 'Login', function (params) {
@@ -56,7 +62,7 @@ TOMEE.ApplicationToolbarView = function () {
             user = el.find('.tomee-login'),
             pass = el.find('.tomee-password');
 
-        if(!params.output.loginSuccess) {
+        if (!params.output.loginSuccess) {
             btn.prop('disabled', false);
             return;
         }
@@ -71,6 +77,7 @@ TOMEE.ApplicationToolbarView = function () {
         userNameMenu.html(user.val());
 
         el.find('.login-menu').addClass('logout');
+        el.find('.toolbar-item').removeClass('disabled');
     });
 
     channel.bind('server-command-callback-success', 'session', function (params) {
@@ -81,7 +88,7 @@ TOMEE.ApplicationToolbarView = function () {
             user = el.find('.tomee-login'),
             pass = el.find('.tomee-password');
 
-        if(!params.data.userName) {
+        if (!params.data.userName) {
             return;
         }
 
@@ -93,6 +100,7 @@ TOMEE.ApplicationToolbarView = function () {
         userNameMenu.html(params.data.userName);
 
         el.find('.login-menu').addClass('logout');
+        el.find('.toolbar-item').removeClass('disabled');
     });
 
     channel.bind('server-command-callback-error', 'Login', function (params) {
@@ -101,9 +109,6 @@ TOMEE.ApplicationToolbarView = function () {
     });
 
     function updateSelected(key) {
-        el.find('.toolbar-item').removeClass('active');
-        el.find('.' + key).addClass('active');
-
         channel.send('ui-actions', 'toolbar-click', {
             key:key
         });
