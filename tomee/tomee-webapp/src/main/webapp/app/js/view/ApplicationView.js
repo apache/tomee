@@ -21,6 +21,7 @@ TOMEE.ApplicationView = function () {
 
     var channel = TOMEE.ApplicationChannel,
         panelMap = {
+            'home': TOMEE.ApplicationTabHome(),
             'console':TOMEE.ApplicationTabConsole(),
             'log':TOMEE.ApplicationTabLog()
         },
@@ -160,7 +161,7 @@ TOMEE.ApplicationView = function () {
             myBody.append(container);
 
 
-            switchPanel('console');
+            switchPanel('home');
 
             showConnectionPopup();
 
