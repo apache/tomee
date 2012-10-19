@@ -20,14 +20,12 @@ import javax.annotation.Resource;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.ScheduleExpression;
-import javax.ejb.SessionContext;
-import javax.ejb.Startup;
+import javax.ejb.Singleton;
 import javax.ejb.Timeout;
 import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
 import javax.enterprise.inject.spi.BeanManager;
-import javax.ejb.Singleton;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 
@@ -36,7 +34,6 @@ import java.lang.annotation.Annotation;
  */
 @Singleton
 @Lock(LockType.READ)
-@Startup
 public class Scheduler {
 
     @Resource
