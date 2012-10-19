@@ -30,6 +30,6 @@ public class ActiveMqTestJms implements TestJms {
     }
 
     public ConnectionFactory getConnectionFactory() {
-        return new ActiveMQConnectionFactory("tcp://localhost:61616");
+        return new ActiveMQConnectionFactory("tcp://localhost:61616?jms.watchTopicAdvisories=false\n");
     }
 }
