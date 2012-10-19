@@ -62,13 +62,37 @@ TOMEE.ApplicationToolbarView = function () {
         }
 
         btn.remove();
+        user.remove();
+        pass.remove();
+
         btnsArea.append(logoutBtn);
 
         menu.removeClass('open');
         userNameMenu.html(user.val());
-        pass.html('123456');
-        user.prop('disabled', true);
-        pass.prop('disabled', true);
+
+        el.find('.login-menu').addClass('logout');
+    });
+
+    channel.bind('server-command-callback-success', 'session', function (params) {
+        var btn = el.find('.tomee-login-btn'),
+            btnsArea = el.find('.login-buttons'),
+            menu = el.find('.user-login-dropdown'),
+            userNameMenu = el.find('.tomee-user-name'),
+            user = el.find('.tomee-login'),
+            pass = el.find('.tomee-password');
+
+        if(!params.data.userName) {
+            return;
+        }
+
+        btn.remove();
+        user.remove();
+        pass.remove();
+        btnsArea.append(logoutBtn);
+
+        userNameMenu.html(params.data.userName);
+
+        el.find('.login-menu').addClass('logout');
     });
 
     channel.bind('server-command-callback-error', 'Login', function (params) {

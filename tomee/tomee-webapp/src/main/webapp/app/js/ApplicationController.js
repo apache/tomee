@@ -37,7 +37,9 @@ TOMEE.ApplicationController = function () {
     });
 
     channel.bind('ui-actions', 'logout-btn-click', function () {
-        window.location.reload();
+        model.sendMessage({
+            cmdName:'Logout'
+        });
     });
 
     channel.bind('ui-actions', 'login-btn-click', function (data) {
@@ -67,6 +69,10 @@ TOMEE.ApplicationController = function () {
         });
     });
 
+    channel.bind('server-command-callback', 'Logout', function (data) {
+        window.location.reload();
+    });
+
     channel.bind('server-command-callback-success', 'Login', function (data) {
         model.sendMessage({
             cmdName:'GetLog',
@@ -74,7 +80,9 @@ TOMEE.ApplicationController = function () {
         });
     });
 
-    model.connectSocket();
+    channel.bind('server-connection', 'session-ready', function () {
+        model.connectSocket();
+    });
 
     return {
 

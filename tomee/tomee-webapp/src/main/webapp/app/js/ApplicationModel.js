@@ -38,6 +38,25 @@ TOMEE.ApplicationModel = function () {
         reconnectTask.delay(connectSocket, reconnectDelay);
     });
 
+    channel.bind('server-command-callback', 'Logout', function (data) {
+        delete sessionStorage.sessionId;
+    });
+
+    (function () {
+        var params = {};
+        if (sessionStorage.sessionId) {
+            params.sessionId = sessionStorage.sessionId;
+        }
+        sendRequest({
+            servlet:'session',
+            params:params,
+            callback:function (data) {
+                sessionStorage.sessionId = data.sessionId;
+                channel.send('server-connection', 'session-ready', {});
+            }
+        });
+    })();
+
     function connectSocket() {
         try {
             appSocket = createSocket();
@@ -108,6 +127,7 @@ TOMEE.ApplicationModel = function () {
 
     function sendMessage(bean) {
         if (isSocketReady()) {
+            bean.sessionId = sessionStorage.sessionId;
             var str = JSON.stringify(bean);
             appSocket.send(str);
         } else {
@@ -117,8 +137,27 @@ TOMEE.ApplicationModel = function () {
         }
     }
 
+    function sendRequest(bean) {
+        $.ajax({
+                url:'/tomee/' + bean.servlet,
+                method:'POST',
+                dataType:'json',
+                data:bean.params,
+                success:function(data) {
+                    if(bean.callback) {
+                        bean.callback(data);
+                    }
+                    channel.send('server-command-callback-success', bean.servlet, {
+                        data:data
+                    });
+                }
+            }
+        );
+    }
+
     return {
         connectSocket:connectSocket,
-        sendMessage:sendMessage
+        sendMessage:sendMessage,
+        sendRequest:sendRequest
     }
 };

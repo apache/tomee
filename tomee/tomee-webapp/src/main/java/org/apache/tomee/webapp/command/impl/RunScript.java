@@ -22,19 +22,17 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.tomee.webapp.TomeeException;
 import org.apache.tomee.webapp.command.Command;
-import org.apache.tomee.webapp.command.CommandSession;
+import org.apache.tomee.webapp.command.IsProtected;
 
 import javax.script.*;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
+@IsProtected
 public class RunScript implements Command {
 
     @Override
-    public Object execute(final CommandSession session, final Map<String, Object> params) throws Exception {
-        // Is this user authenticated?
-        session.assertAuthenticated();
-
+    public Object execute(final Map<String, Object> params) throws Exception {
         final String scriptCode = (String) params.get("scriptCode");
         if (scriptCode == null) {
             return null; //nothing to do
@@ -49,8 +47,7 @@ public class RunScript implements Command {
 
         // everything should be created inside the new classloader,
         // so run it inside another thread and set the proper classloader
-        final ExecutionThread execution = new ExecutionThread(latch, session,
-                engineName, scriptCode);
+        final ExecutionThread execution = new ExecutionThread(latch, engineName, scriptCode);
         final Thread thread = new Thread(execution);
         thread.setContextClassLoader(
                 getClassLoader((String) params.get("appName")));
@@ -84,7 +81,6 @@ public class RunScript implements Command {
 
     private class ExecutionThread implements Runnable {
         private final CountDownLatch latch;
-        private final CommandSession session;
         private final String engineName;
         private final String scriptCode;
 
@@ -100,11 +96,9 @@ public class RunScript implements Command {
         }
 
         private ExecutionThread(final CountDownLatch latch,
-                                final CommandSession session,
                                 final String engineName,
                                 final String scriptCode) {
             this.latch = latch;
-            this.session = session;
             this.engineName = engineName;
             this.scriptCode = scriptCode;
         }
@@ -117,11 +111,6 @@ public class RunScript implements Command {
 
             //new context for the execution of this script
             final ScriptContext newContext = new SimpleScriptContext();
-
-            //creating the bidings object for the current execution
-            final Bindings bindings = newContext.getBindings(
-                    ScriptContext.ENGINE_SCOPE);
-            bindings.put("session", session);
 
             try {
                 this.result = engine.eval(this.scriptCode, newContext);

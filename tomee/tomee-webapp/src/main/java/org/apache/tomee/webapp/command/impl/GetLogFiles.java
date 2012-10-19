@@ -19,7 +19,6 @@ package org.apache.tomee.webapp.command.impl;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.tomee.webapp.command.Command;
-import org.apache.tomee.webapp.command.IsProtected;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -27,8 +26,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
-@IsProtected
-public class GetLog implements Command {
+public class GetLogFiles implements Command {
 
     @Override
     public Object execute(final Map<String, Object> params) throws Exception {
@@ -37,20 +35,17 @@ public class GetLog implements Command {
         final File logFolder = new File(System.getProperty("catalina.base"),
                 "logs");
 
-        final String loadFileName = (String) params.get("file");
-        if (loadFileName != null) {
-            Map<String, Object> log = new HashMap<String, Object>();
-            log.put("name", loadFileName);
-
-            log.put("lines", read(
-                    Boolean.valueOf((String) params.get("escapeHtml")),
-                    new File(logFolder, loadFileName),
-                    Integer.getInteger((String) params.get("tail"))
-            ));
-
-            json.put("log", log);
+        final File[] files = logFolder.listFiles();
+        final Set<String> names = new TreeSet<String>();
+        if (files != null) {
+            for (File file : files) {
+                if (file.length() > 0) {
+                    names.add(file.getName());
+                }
+            }
         }
 
+        json.put("files", names);
         return json;
     }
 

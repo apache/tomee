@@ -17,6 +17,8 @@
 
 package org.apache.tomee.webapp.listeners;
 
+import org.apache.tomee.webapp.Application;
+
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 import java.util.HashMap;
@@ -31,7 +33,7 @@ public class SessionListener implements HttpSessionListener {
     }
 
     @Override
-    public void sessionDestroyed(HttpSessionEvent httpSessionEvent) {
-        //NO-OP
+    public void sessionDestroyed(HttpSessionEvent event) {
+        Application.getInstance().removeSession(event.getSession().getId());
     }
 }

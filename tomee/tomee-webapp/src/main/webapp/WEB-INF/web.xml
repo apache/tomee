@@ -60,6 +60,17 @@
     <!-- ************************************************************************************** -->
 
     <servlet>
+        <servlet-name>sessionServlet</servlet-name>
+        <servlet-class>org.apache.tomee.webapp.servlet.SessionServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>sessionServlet</servlet-name>
+        <url-pattern>/session</url-pattern>
+    </servlet-mapping>
+
+    <!-- ************************************************************************************** -->
+
+    <servlet>
         <servlet-name>ServerServlet</servlet-name>
         <servlet-class>org.apache.openejb.server.httpd.ServerServlet</servlet-class>
     </servlet>
