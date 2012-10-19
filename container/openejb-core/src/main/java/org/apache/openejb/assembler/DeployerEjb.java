@@ -67,7 +67,7 @@ public class DeployerEjb implements Deployer {
             unique.createNewFile();
         } catch (IOException e) {
             // same trying in work directory
-            unique = new File(SystemInstance.get().getHome().getDirectory(), "work");
+            unique = new File(SystemInstance.get().getBase().getDirectory(), "work");
             if (unique.exists()) {
                 try {
                     unique = new File(unique, uniqueName).getCanonicalFile();
