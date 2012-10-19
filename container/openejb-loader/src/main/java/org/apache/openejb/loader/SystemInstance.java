@@ -236,6 +236,7 @@ public class SystemInstance {
         system = new SystemInstance(properties);
         readUserSystemProperties();
         readSystemProperties();
+        readSystemProperties(get().currentProfile());
         initialized = true;
         get().setProperty("openejb.profile.custom", Boolean.toString(!get().isDefaultProfile()));
     }
@@ -270,12 +271,23 @@ public class SystemInstance {
         return new File(conf, subPath);
     }
 
-    private static void readSystemProperties() {
+    private static void readSystemProperties(final String prefix) {
+        final String completePrefix;
+        if (prefix != null && !prefix.isEmpty()) {
+            completePrefix =  prefix + ".";
+        } else {
+            completePrefix = "";
+        }
+
         // Read in and apply the conf/system.properties
-        final File conf = system.getConf("system.properties");
+        final File conf = system.getConf(completePrefix + "system.properties");
         if (conf != null && conf.exists()) {
             addSystemProperties(conf);
         }
+    }
+
+    private static void readSystemProperties() {
+        readSystemProperties(null);
     }
 
     private static void addSystemProperties(final File file) {

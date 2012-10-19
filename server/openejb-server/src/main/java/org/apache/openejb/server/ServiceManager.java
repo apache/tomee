@@ -234,37 +234,8 @@ public abstract class ServiceManager {
                 }
             }
 
-            File serviceConfig = new File(conf, serviceName + ".properties");
-
-            if (!serviceConfig.exists()) {
-                serviceConfig = new File(conf, (legacySchema ? "" : "conf.d/") + serviceConfig.getName());
-
-                if (legacySchema) {
-                    logger.info("Using legacy configuration path for new service: " + serviceConfig);
-                }
-            }
-
-            if (serviceConfig.exists()) {
-                IO.readProperties(serviceConfig, serviceProperties);
-            } else {
-
-                final File confD = serviceConfig.getParentFile();
-
-                if (!confD.exists() && !confD.mkdirs()) {
-                    logger.warning("Failed to create " + serviceConfig.getPath());
-                }
-
-                if (confD.exists()) {
-                    if (EnvProps.extractConfigurationFiles()) {
-
-                        final String rawPropsContent = (String) serviceProperties.get(Properties.class);
-                        IO.copy(IO.read(rawPropsContent), serviceConfig);
-
-                    } else {
-                        serviceProperties.put("disabled", "true");
-                    }
-                }
-            }
+            addProperties(conf, legacySchema, new File(conf, serviceName + ".properties"), serviceProperties);
+            addProperties(conf, legacySchema, new File(conf, SystemInstance.get().currentProfile() + "." + serviceName + ".properties"), serviceProperties);
         }
 
         holdsWithUpdate(serviceProperties);
@@ -283,6 +254,43 @@ public abstract class ServiceManager {
             }
         }
 
+    }
+
+    private void addProperties(final File conf, final boolean legacySchema, final File path, final Properties fullProps) throws IOException {
+        File serviceConfig = path;
+        if (!serviceConfig.exists()) {
+            serviceConfig = new File(conf, (legacySchema ? "" : "conf.d/") + serviceConfig.getName());
+
+            if (legacySchema) {
+                logger.info("Using legacy configuration path for new service: " + serviceConfig);
+            }
+        }
+
+        final Properties props = new Properties();
+
+        if (serviceConfig.exists()) {
+            IO.readProperties(serviceConfig, props);
+        } else {
+
+            final File confD = serviceConfig.getParentFile();
+
+            if (!confD.exists() && !confD.mkdirs()) {
+                logger.warning("Failed to create " + serviceConfig.getPath());
+            }
+
+            if (confD.exists()) {
+                if (EnvProps.extractConfigurationFiles()) {
+
+                    final String rawPropsContent = (String) props.get(Properties.class);
+                    IO.copy(IO.read(rawPropsContent), serviceConfig);
+
+                } else {
+                    props.put("disabled", "true");
+                }
+            }
+        }
+
+        fullProps.putAll(props);
     }
 
     private boolean isEnabled(Properties props) {
