@@ -51,7 +51,7 @@ public class Scheduler {
     }
 
     @Timeout
-    public void timeout(Timer timer) {
+    private void timeout(Timer timer) {
         final EventConfig config = (EventConfig) timer.getInfo();
 
         beanManager.fireEvent(config.getEvent(), config.getQualifiers());
