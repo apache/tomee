@@ -43,9 +43,6 @@ public class Scheduler {
     private TimerService timerService;
 
     @Resource
-    private SessionContext sessionContext;
-
-    @Resource
     private BeanManager beanManager;
 
     public void scheduleEvent(ScheduleExpression schedule, Object event, Annotation... qualifiers) {
@@ -53,11 +50,6 @@ public class Scheduler {
         timerService.createCalendarTimer(schedule, new TimerConfig(new EventConfig(event, qualifiers), false));
     }
 
-    //    @Produces
-//    public Scheduler produce() {
-//        return sessionContext.getBusinessObject(Scheduler.class);
-//    }
-//
     @Timeout
     public void timeout(Timer timer) {
         final EventConfig config = (EventConfig) timer.getInfo();
