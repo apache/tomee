@@ -32,7 +32,7 @@ TOMEE.ApplicationTabLog = function () {
         consoleOutput.height(outputHeight);
     });
 
-    channel.bind('server-command-callback-success', 'GetLog', function (data) {
+    channel.bind('server-command-callback-success', 'GetLogFiles', function (data) {
         var logFiles = container.find('.tomee-log-files');
         logFiles.empty();
 
@@ -47,19 +47,19 @@ TOMEE.ApplicationTabLog = function () {
             });
             logFiles.append(file);
         });
+    });
 
-        if (data.output.log) {
-            setFileName(data.output.log.name);
-            var lines = container.find('.tomee-log-output');
-            lines.empty();
-            lines.append($(TOMEE.ApplicationTemplates.getValue('application-tab-log-lines', {
-                lines:data.output.log.lines
-            })));
+    channel.bind('server-command-callback-success', 'GetLog', function (data) {
+        setFileName(data.output.log.name);
+        var lines = container.find('.tomee-log-output');
+        lines.empty();
+        lines.append($(TOMEE.ApplicationTemplates.getValue('application-tab-log-lines', {
+            lines:data.output.log.lines
+        })));
 
-            lines.animate({
-                scrollTop: lines.prop("scrollHeight") - lines.height()
-            }, 500);
-        }
+        lines.animate({
+            scrollTop: lines.prop("scrollHeight") - lines.height()
+        }, 500);
     });
 
     container.find('.log-file-name').on('click', function() {
@@ -95,6 +95,7 @@ TOMEE.ApplicationTabLog = function () {
         },
         onAppend:function () {
             active = true;
+            channel.send('ui-actions', 'load-file-names', {});
         },
         onDetach:function () {
             active = false;
