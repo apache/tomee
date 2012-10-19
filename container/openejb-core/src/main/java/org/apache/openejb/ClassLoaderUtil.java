@@ -17,6 +17,7 @@
 package org.apache.openejb;
 
 import org.apache.openejb.classloader.ClassLoaderConfigurer;
+import org.apache.openejb.classloader.CompositeClassLoaderConfigurer;
 import org.apache.openejb.core.TempClassLoader;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
@@ -542,24 +543,48 @@ public class ClassLoaderUtil {
         if (impl != null) {
             key = key.substring(0, key.length() - "clazz".length());
 
+            boolean list = false;
             try {
-                final ObjectRecipe recipe = new ObjectRecipe(impl);
-                for (Map.Entry<Object, Object> entry : SystemInstance.get().getProperties().entrySet()) {
-                    String entryKey = entry.getKey().toString();
-                    if (entryKey.startsWith(key)) {String newKey = entryKey.substring(key.length());if (!"clazz".equals(newKey))
+                ClassLoaderUtil.class.getClassLoader().loadClass(impl);
+            } catch (ClassNotFoundException e) {
+                list = true;
+            }
+
+            if (!list) {
+                return createConfigurer(key, impl);
+            } else {
+                final String[] names = impl.split(",");
+                final ClassLoaderConfigurer[] configurers = new ClassLoaderConfigurer[names.length];
+                for (int i = 0; i < names.length; i++) {
+                    configurers[i] = createConfigurer(names[i], SystemInstance.get().getProperty(names[i] + ".clazz"));
+                }
+                return new CompositeClassLoaderConfigurer(configurers);
+            }
+        }
+        return null;
+    }
+
+    private static ClassLoaderConfigurer createConfigurer(final String key, final String impl) {
+        try {
+            final ObjectRecipe recipe = new ObjectRecipe(impl);
+            for (Map.Entry<Object, Object> entry : SystemInstance.get().getProperties().entrySet()) {
+                String entryKey = entry.getKey().toString();
+                if (entryKey.startsWith(key)) {
+                    String newKey = entryKey.substring(key.length());
+                    if (!"clazz".equals(newKey)) {
                         recipe.setProperty(newKey, entry.getValue());
                     }
                 }
-
-                final Object instance = recipe.create();
-                if (instance instanceof ClassLoaderConfigurer) {
-                    return (ClassLoaderConfigurer) instance;
-                } else {
-                    logger.error(impl + " is not a classlaoder configurer, using default behavior");
-                }
-            } catch (Exception e) {
-                logger.error("Can't create classloader configurer " + impl + ", using default behavior");
             }
+
+            final Object instance = recipe.create();
+            if (instance instanceof ClassLoaderConfigurer) {
+                return (ClassLoaderConfigurer) instance;
+            } else {
+                logger.error(impl + " is not a classlaoder configurer, using default behavior");
+            }
+        } catch (Exception e) {
+            logger.error("Can't create classloader configurer " + impl + ", using default behavior");
         }
         return null;
     }
