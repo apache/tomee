@@ -102,6 +102,7 @@
     <module>rest-example</module>
     <module>rest-example-with-application</module>
     <module>schedule-expression</module>
+    <module>schedule-events</module>
     <module>schedule-methods-meta</module>
     <module>schedule-methods</module>
     <module>server-events</module>
