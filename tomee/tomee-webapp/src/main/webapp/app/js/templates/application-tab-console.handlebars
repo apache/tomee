@@ -4,6 +4,13 @@
     <div class="tomee-code"></div>
     <div class="navbar navbar-inverse bbar">
         <div class="navbar-inner">
+            <div class="btn-group dropup tomee-execute-webservices-group">
+                <a class="btn dropdown-toggle tomee-execute-webservices-btn" data-toggle="dropdown" href="#">
+                    {{i18n "application.webservices"}}
+                    <span class="caret"></span>
+                </a>
+                <div class="dropdown-menu webservices-div"></div>
+            </div>
             <div class="buttons pull-right">
                 <button type="button" class="btn tomee-execute-clear-btn">
                     {{i18n "application.console.clear.output"}}

@@ -21,9 +21,12 @@ TOMEE.ApplicationTabConsole = function () {
 
     var channel = TOMEE.ApplicationChannel,
         container = $(TOMEE.ApplicationTemplates.getValue('application-tab-console', {})),
+        webservices = TOMEE.ApplicationTabWebservices(),
         codeArea = null,
         active = false,
         delayedContainerResize = TOMEE.DelayedTask();
+
+    container.find('.webservices-div').append(webservices.getEl());
 
     container.find('.tomee-execute-btn').on('click', function () {
         triggerScriptExecution();

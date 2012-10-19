@@ -20,8 +20,7 @@ TOMEE.ApplicationTabWebservices = function () {
     "use strict";
 
     var channel = TOMEE.ApplicationChannel,
-        container = $(TOMEE.ApplicationTemplates.getValue('application-tab-webservices', {})),
-        active = false;
+        container = $(TOMEE.ApplicationTemplates.getValue('application-tab-webservices', {}));
 
     channel.bind('ui-actions', 'container-resized', function (data) {
         var outputHeight = data.containerHeight - 10;
@@ -76,13 +75,6 @@ TOMEE.ApplicationTabWebservices = function () {
     return {
         getEl:function () {
             return container;
-        },
-        onAppend:function () {
-            active = true;
-            triggerRefresh();
-        },
-        onDetach:function () {
-            active = false;
         }
     };
 };

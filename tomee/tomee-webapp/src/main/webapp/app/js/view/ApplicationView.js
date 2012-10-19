@@ -22,8 +22,7 @@ TOMEE.ApplicationView = function () {
     var channel = TOMEE.ApplicationChannel,
         panelMap = {
             'console':TOMEE.ApplicationTabConsole(),
-            'log':TOMEE.ApplicationTabLog(),
-            'webservices':TOMEE.ApplicationTabWebservices()
+            'log':TOMEE.ApplicationTabLog()
         },
         selected = null,
         container = $(TOMEE.ApplicationTemplates.getValue('application', {})),
