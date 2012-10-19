@@ -20,6 +20,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.ejb.AccessTimeout;
 import javax.ejb.EJB;
 import javax.ejb.ScheduleExpression;
 import javax.ejb.embeddable.EJBContainer;
@@ -40,12 +41,18 @@ public class SchedulerTest {
     @Test
     public void test() throws Exception {
 
-        scheduler.scheduleEvent(new ScheduleExpression().hour("*").minute("*").second("*/5"), new TestEvent("five"));
+        final ScheduleExpression schedule = new ScheduleExpression()
+                .hour("*")
+                .minute("*")
+                .second("*/5");
+
+        scheduler.scheduleEvent(schedule, new TestEvent("five"));
 
         Assert.assertTrue(events.await(1, TimeUnit.MINUTES));
     }
 
 
+    @AccessTimeout(value = 1, unit = TimeUnit.MINUTES)
     public void observe(@Observes TestEvent event) {
         if ("five".equals(event.getMessage())) {
             events.countDown();
