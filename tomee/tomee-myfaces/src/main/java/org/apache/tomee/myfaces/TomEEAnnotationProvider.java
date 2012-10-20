@@ -36,9 +36,16 @@ public class TomEEAnnotationProvider extends DefaultAnnotationProvider {
     @Override
     public Map<Class<? extends Annotation>, Set<Class<?>>> getAnnotatedClasses(final ExternalContext ctx) {
         final ClassLoader cl = getClassLoader();
+
         final WebAppBuilder builder = SystemInstance.get().getComponent(WebAppBuilder.class);
-        final Map<Class<? extends Annotation>,Set<Class<?>>> map = new HashMap<Class<? extends Annotation>, Set<Class<?>>>();
-        final Map<String, Set<String>> scanned = builder.getJsfClasses().get(cl);
+        if (builder == null) throw new IllegalStateException("WebAppBuilder not found in SystemInstance");
+
+        final Map<Class<? extends Annotation>, Set<Class<?>>> map = new HashMap<Class<? extends Annotation>, Set<Class<?>>>();
+
+        final Map<ClassLoader, Map<String, Set<String>>> jsfClasses = builder.getJsfClasses();
+        if (builder == null) throw new IllegalStateException("JsfClasses not found in WebAppBuilder");
+
+        final Map<String, Set<String>> scanned = jsfClasses.get(cl);
         if (scanned == null) {
             return Collections.emptyMap();
         }
