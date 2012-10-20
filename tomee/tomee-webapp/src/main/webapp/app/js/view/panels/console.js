@@ -46,7 +46,7 @@ TOMEE.ApplicationTabConsole = function () {
         triggerScriptExecution();
     });
 
-    channel.bind('ui-actions', 'window-F5-pressed', function () {
+    channel.bind('ui-actions', 'window-ctrl-X-pressed', function () {
         triggerScriptExecution();
     });
 
