@@ -69,6 +69,12 @@ TOMEE.ApplicationController = function () {
         });
     });
 
+    channel.bind('ui-actions', 'reload-jndi-table', function () {
+        model.sendMessage({
+            cmdName:'GetJndi'
+        });
+    });
+
     channel.bind('server-command-callback', 'RunScript', function (data) {
         $.meow({
             message:TOMEE.I18N.get('application.console.done')

@@ -58,5 +58,6 @@ TOMEE.ApplicationTemplates = (function (paths) {
     'application-disconnected-popup',
     'application-tab-webservices',
     'application-tab-webservices-table',
-    'application-tab-jndi'
+    'application-tab-jndi',
+    'application-tab-jndi-table'
 ]);

@@ -22,6 +22,23 @@ TOMEE.ApplicationTabJndi = function () {
     var channel = TOMEE.ApplicationChannel,
         container = $(TOMEE.ApplicationTemplates.getValue('application-tab-jndi', {}));
 
+    channel.bind('ui-actions', 'window-F5-pressed', function () {
+        triggerRefresh();
+    });
+
+    channel.bind('server-command-callback-success', 'GetJndi', function (data) {
+        var table = $(TOMEE.ApplicationTemplates.getValue('application-tab-jndi-table', {
+            jndi:data.output.jndi
+        }));
+
+        container.find('table').remove();
+        container.append(table);
+    });
+
+    function triggerRefresh() {
+        channel.send('ui-actions', 'reload-jndi-table', {});
+    }
+
     return {
         getEl:function () {
             return container;

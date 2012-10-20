@@ -30,6 +30,7 @@ TOMEE.I18N = (function () {
         'application.home':'Home',
 
         'application.jndi':'JNDI',
+        'application.jndi.path':'Path',
 
         'application.console':'Console',
         'application.console.run':'Execute',
