@@ -20,7 +20,8 @@ TOMEE.ApplicationTabJndi = function () {
     "use strict";
 
     var channel = TOMEE.ApplicationChannel,
-        container = $(TOMEE.ApplicationTemplates.getValue('application-tab-jndi', {}));
+        container = $(TOMEE.ApplicationTemplates.getValue('application-tab-jndi', {})),
+        active = false;
 
     channel.bind('ui-actions', 'window-F5-pressed', function () {
         triggerRefresh();
@@ -36,12 +37,22 @@ TOMEE.ApplicationTabJndi = function () {
     });
 
     function triggerRefresh() {
+        if(!active) {
+            return;
+        }
         channel.send('ui-actions', 'reload-jndi-table', {});
     }
 
     return {
         getEl:function () {
             return container;
+        },
+        onAppend:function () {
+            active = true;
+            triggerRefresh();
+        },
+        onDetach:function () {
+            active = false;
         }
     };
 };
