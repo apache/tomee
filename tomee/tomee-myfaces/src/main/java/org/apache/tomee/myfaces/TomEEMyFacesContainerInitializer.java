@@ -100,6 +100,8 @@ public class TomEEMyFacesContainerInitializer implements ServletContainerInitial
     }
 
     private void addListener(final ServletContext ctx) {
+        final Logger logger = Logger.getLogger(AbstractFacesInitializer.class.getName());
+        logger.log(Level.INFO, "Installing <listener>" + StartupServletContextListener.class.getName() + "</listener>");
         ctx.addListener(StartupServletContextListener.class);
     }
 
