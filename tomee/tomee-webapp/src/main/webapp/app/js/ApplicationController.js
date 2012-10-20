@@ -85,13 +85,6 @@ TOMEE.ApplicationController = function () {
         window.location.reload();
     });
 
-    channel.bind('server-command-callback-success', 'Login', function (data) {
-        model.sendMessage({
-            cmdName:'GetLog',
-            aNumber:1
-        });
-    });
-
     channel.bind('server-connection', 'session-ready', function () {
         model.connectSocket();
     });

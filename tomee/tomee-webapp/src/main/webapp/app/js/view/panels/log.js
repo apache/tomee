@@ -22,7 +22,8 @@ TOMEE.ApplicationTabLog = function () {
     var channel = TOMEE.ApplicationChannel,
         container = $(TOMEE.ApplicationTemplates.getValue('application-tab-log', {})),
         selectedFile = null,
-        active = false;
+        active = false,
+        locked = true;
 
     channel.bind('ui-actions', 'container-resized', function (data) {
         var consoleOutput = container.find('.tomee-log-output'),
@@ -58,11 +59,11 @@ TOMEE.ApplicationTabLog = function () {
         })));
 
         lines.animate({
-            scrollTop: lines.prop("scrollHeight") - lines.height()
+            scrollTop:lines.prop("scrollHeight") - lines.height()
         }, 500);
     });
 
-    container.find('.log-file-name').on('click', function() {
+    container.find('.log-file-name').on('click', function () {
         triggerFileSelected();
     });
 
@@ -74,8 +75,24 @@ TOMEE.ApplicationTabLog = function () {
         triggerFileSelected();
     });
 
+    channel.bind('server-command-callback-success', 'Login', function (params) {
+        if (params.output.loginSuccess) {
+            locked = false;
+        } else {
+            locked = true;
+        }
+    });
+
+    channel.bind('server-command-callback-success', 'session', function (params) {
+        if (params.data.userName) {
+            locked = false;
+        } else {
+            locked = true;
+        }
+    });
+
     function triggerFileSelected() {
-        if(!active || !selectedFile) {
+        if (!active || !selectedFile) {
             return;
         }
         channel.send('ui-actions', 'log-file-selected', {
@@ -99,6 +116,9 @@ TOMEE.ApplicationTabLog = function () {
         },
         onDetach:function () {
             active = false;
+        },
+        isLocked:function () {
+            return locked;
         }
     };
 };

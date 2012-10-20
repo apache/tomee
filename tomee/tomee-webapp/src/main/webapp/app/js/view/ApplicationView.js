@@ -21,7 +21,7 @@ TOMEE.ApplicationView = function () {
 
     var channel = TOMEE.ApplicationChannel,
         panelMap = {
-            'home': TOMEE.ApplicationTabHome(),
+            'home':TOMEE.ApplicationTabHome(),
             'console':TOMEE.ApplicationTabConsole(),
             'log':TOMEE.ApplicationTabLog()
         },
@@ -47,7 +47,7 @@ TOMEE.ApplicationView = function () {
     });
 
     channel.bind('ui-actions', 'toolbar-click', function (data) {
-        switchPanel(data.key);
+        switchPanelAndSendEvent(data.key);
     });
 
     //disable default contextmenu
@@ -106,6 +106,15 @@ TOMEE.ApplicationView = function () {
         }
     });
 
+    channel.bind('ui-actions', 'window-alt-1-pressed', function () {
+        switchPanelAndSendEvent('home');
+    });
+    channel.bind('ui-actions', 'window-alt-2-pressed', function () {
+        switchPanelAndSendEvent('console');
+    });
+    channel.bind('ui-actions', 'window-alt-3-pressed', function () {
+        switchPanelAndSendEvent('log');
+    });
 
     function showConnectionPopup() {
         if (connectionPopupVisible) {
@@ -125,7 +134,20 @@ TOMEE.ApplicationView = function () {
         connectionPopup.detach();
     }
 
+    function switchPanelAndSendEvent(key) {
+        if (switchPanel(key)) {
+            channel.send('ui-actions', 'panel-switch', {
+                key:key
+            });
+        }
+    }
+
     function switchPanel(key) {
+        if (panelMap[key].isLocked && panelMap[key].isLocked()) {
+            //The panel is locked. The user should login first.
+            return false;
+        }
+
         if (selected) {
             selected.getEl().detach();
             selected.onDetach();
@@ -135,6 +157,8 @@ TOMEE.ApplicationView = function () {
         selected.onAppend();
 
         updateContainerSize();
+
+        return true;
     }
 
     function updateContainerSize() {

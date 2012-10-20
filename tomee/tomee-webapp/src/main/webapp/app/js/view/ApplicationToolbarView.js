@@ -27,15 +27,21 @@ TOMEE.ApplicationToolbarView = function () {
         var tabEl = $(ev.currentTarget),
             tabKey = tabEl.attr("tab-key");
 
-        if (tabEl.hasClass('disabled')) {
-            return;
-        }
+        channel.send('ui-actions', 'toolbar-click', {
+            key:tabKey
+        });
+    });
 
+    channel.bind('ui-actions', 'panel-switch', function (data) {
         el.find('.toolbar-item').removeClass('active');
-        tabEl.addClass('active');
+        el.find('.toolbar-item').each(function (index, htmlEl) {
+            var tabEl = $(htmlEl),
+                tabKey = tabEl.attr("tab-key");
 
-        updateSelected(tabKey);
-
+            if (tabKey === data.key) {
+                tabEl.addClass('active');
+            }
+        });
     });
 
     el.find('.tomee-login-btn').on('click', function () {
@@ -77,7 +83,6 @@ TOMEE.ApplicationToolbarView = function () {
         userNameMenu.html(user.val());
 
         el.find('.login-menu').addClass('logout');
-        el.find('.toolbar-item').removeClass('disabled');
     });
 
     channel.bind('server-command-callback-success', 'session', function (params) {
@@ -107,12 +112,6 @@ TOMEE.ApplicationToolbarView = function () {
         var btn = el.find('.tomee-login-btn');
         btn.prop('disabled', false);
     });
-
-    function updateSelected(key) {
-        channel.send('ui-actions', 'toolbar-click', {
-            key:key
-        });
-    }
 
     return {
         getEl:function () {
