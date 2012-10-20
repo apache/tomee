@@ -28,6 +28,7 @@ TOMEE.ApplicationTabConsole = function () {
 
         codeArea = null,
         active = false,
+        locked = true,
         delayedContainerResize = TOMEE.DelayedTask();
 
     container.find('.webservices-div').append(innerPanels.webservices.getEl());
@@ -39,10 +40,10 @@ TOMEE.ApplicationTabConsole = function () {
             group = button.parent('.btn-group'),
             tab = group.attr(customAttr);
 
-        container.find('.btn-group').each(function(index, grpHtmlEl) {
+        container.find('.btn-group').each(function (index, grpHtmlEl) {
             var grpEl = $(grpHtmlEl),
                 grpTabName = grpEl.attr(customAttr);
-            if(tab === grpTabName) {
+            if (tab === grpTabName) {
                 return;
             }
             innerPanels[grpTabName].onDetach();
@@ -107,6 +108,22 @@ TOMEE.ApplicationTabConsole = function () {
         consoleOutput.prepend(newLine);
     });
 
+    channel.bind('server-command-callback-success', 'Login', function (params) {
+        if (params.output.loginSuccess) {
+            locked = false;
+        } else {
+            locked = true;
+        }
+    });
+
+    channel.bind('server-command-callback-success', 'session', function (params) {
+        if (params.data.userName) {
+            locked = false;
+        } else {
+            locked = true;
+        }
+    });
+
     function clearConsole() {
         if (!active) {
             return;
@@ -146,6 +163,9 @@ TOMEE.ApplicationTabConsole = function () {
         },
         onDetach:function () {
             active = false;
+        },
+        isLocked:function () {
+            return locked;
         }
     };
 };
