@@ -22,11 +22,6 @@ TOMEE.ApplicationTabWebservices = function () {
     var channel = TOMEE.ApplicationChannel,
         container = $(TOMEE.ApplicationTemplates.getValue('application-tab-webservices', {}));
 
-    channel.bind('ui-actions', 'container-resized', function (data) {
-        var outputHeight = data.containerHeight - 10;
-        container.height(outputHeight);
-    });
-
     channel.bind('ui-actions', 'window-F5-pressed', function () {
         triggerRefresh();
     });
@@ -36,7 +31,7 @@ TOMEE.ApplicationTabWebservices = function () {
             webservices:buildTableData(data.output)
         }));
 
-        container.empty();
+        container.find('table').remove();
         container.append(table);
     });
 

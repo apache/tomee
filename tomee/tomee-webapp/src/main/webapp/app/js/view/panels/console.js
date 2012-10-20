@@ -22,11 +22,25 @@ TOMEE.ApplicationTabConsole = function () {
     var channel = TOMEE.ApplicationChannel,
         container = $(TOMEE.ApplicationTemplates.getValue('application-tab-console', {})),
         webservices = TOMEE.ApplicationTabWebservices(),
+        jndi = TOMEE.ApplicationTabJndi(),
         codeArea = null,
         active = false,
         delayedContainerResize = TOMEE.DelayedTask();
 
     container.find('.webservices-div').append(webservices.getEl());
+    container.find('.jndi-div').append(jndi.getEl());
+
+    container.find('.dropdown-toggle').on('click', function (ev) {
+        var button = $(ev.currentTarget),
+            group = button.parent('.btn-group'),
+            isOpened = group.hasClass('open');
+
+        container.find('.btn-group').removeClass('open');
+
+        if (!isOpened) {
+            group.addClass('open');
+        }
+    });
 
     container.find('.tomee-execute-btn').on('click', function () {
         triggerScriptExecution();
@@ -55,8 +69,8 @@ TOMEE.ApplicationTabConsole = function () {
         consoleEditor.height(availableSpace / 2);
 
         // This guy likes special treatment
-        delayedContainerResize.delay(function() {
-            if(codeArea) {
+        delayedContainerResize.delay(function () {
+            if (codeArea) {
                 codeArea.setSize(null, availableSpace / 2);
             }
         }, 1000);
@@ -77,7 +91,7 @@ TOMEE.ApplicationTabConsole = function () {
     });
 
     function clearConsole() {
-        if(!active) {
+        if (!active) {
             return;
         }
 
@@ -86,7 +100,7 @@ TOMEE.ApplicationTabConsole = function () {
     }
 
     function triggerScriptExecution() {
-        if(!active) {
+        if (!active) {
             return;
         }
 

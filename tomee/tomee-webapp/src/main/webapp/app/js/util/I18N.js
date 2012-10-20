@@ -29,6 +29,8 @@ TOMEE.I18N = (function () {
 
         'application.home':'Home',
 
+        'application.jndi':'JNDI',
+
         'application.console':'Console',
         'application.console.run':'Execute',
         'application.console.clear.output':'Clear output',
