@@ -20,7 +20,8 @@ TOMEE.ApplicationTabWebservices = function () {
     "use strict";
 
     var channel = TOMEE.ApplicationChannel,
-        container = $(TOMEE.ApplicationTemplates.getValue('application-tab-webservices', {}));
+        container = $(TOMEE.ApplicationTemplates.getValue('application-tab-webservices', {})),
+        active = false;
 
     channel.bind('ui-actions', 'window-F5-pressed', function () {
         triggerRefresh();
@@ -64,12 +65,22 @@ TOMEE.ApplicationTabWebservices = function () {
     }
 
     function triggerRefresh() {
+        if(!active) {
+            return;
+        }
         channel.send('ui-actions', 'reload-webservices-table', {});
     }
 
     return {
         getEl:function () {
             return container;
+        },
+        onAppend:function () {
+            active = true;
+            triggerRefresh();
+        },
+        onDetach:function () {
+            active = false;
         }
     };
 };

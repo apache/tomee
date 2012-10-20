@@ -21,24 +21,41 @@ TOMEE.ApplicationTabConsole = function () {
 
     var channel = TOMEE.ApplicationChannel,
         container = $(TOMEE.ApplicationTemplates.getValue('application-tab-console', {})),
-        webservices = TOMEE.ApplicationTabWebservices(),
-        jndi = TOMEE.ApplicationTabJndi(),
+        innerPanels = {
+            webservices:TOMEE.ApplicationTabWebservices(),
+            jndi:TOMEE.ApplicationTabJndi()
+        },
+
         codeArea = null,
         active = false,
         delayedContainerResize = TOMEE.DelayedTask();
 
-    container.find('.webservices-div').append(webservices.getEl());
-    container.find('.jndi-div').append(jndi.getEl());
+    container.find('.webservices-div').append(innerPanels.webservices.getEl());
+    container.find('.jndi-div').append(innerPanels.jndi.getEl());
 
     container.find('.dropdown-toggle').on('click', function (ev) {
         var button = $(ev.currentTarget),
+            customAttr = 'tab-name',
             group = button.parent('.btn-group'),
-            isOpened = group.hasClass('open');
+            tab = group.attr(customAttr);
 
-        container.find('.btn-group').removeClass('open');
+        container.find('.btn-group').each(function(index, grpHtmlEl) {
+            var grpEl = $(grpHtmlEl),
+                grpTabName = grpEl.attr(customAttr);
+            if(tab === grpTabName) {
+                return;
+            }
+            innerPanels[grpTabName].onDetach();
+            grpEl.removeClass('open');
+        });
 
-        if (!isOpened) {
+
+        if (group.hasClass('open')) {
+            group.removeClass('open');
+            innerPanels[tab].onDetach();
+        } else {
             group.addClass('open');
+            innerPanels[tab].onAppend();
         }
     });
 
