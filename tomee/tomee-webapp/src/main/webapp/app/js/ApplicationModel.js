@@ -66,7 +66,8 @@ TOMEE.ApplicationModel = function () {
     }
 
     function createSocket() {
-        var socket = null,
+        var isFake = false,
+            socket = null,
             host = (function () {
                 var suffix = '/tomee/socket';
                 var path = window.document.location.host + suffix;
@@ -81,7 +82,39 @@ TOMEE.ApplicationModel = function () {
         } else if ('MozWebSocket' in window) {
             socket = new MozWebSocket(host);
         } else {
-            throw 'WebSocket is not supported by this browser.';
+            socket = (function () {
+                // We need to simulate the socket object.
+                // This browser does not have it.
+                isFake = true;
+
+                var readyStateON = true;
+
+                function send(str) {
+                    $.ajax({
+                            url:'/tomee/command',
+                            type:'POST',
+                            dataType:'text',
+                            data:{
+                                strParam:str
+                            },
+                            error:function (data) {
+                                socket.onerror(data);
+                            },
+                            success:function (data) {
+                                socket.onmessage({
+                                    data:data
+                                });
+                            }
+                        }
+                    );
+                }
+
+                return {
+                    readyState:readyStateON,
+                    OPEN:readyStateON,
+                    send:send
+                }
+            })();
         }
 
         socket.onopen = function () {
@@ -91,7 +124,6 @@ TOMEE.ApplicationModel = function () {
         socket.onclose = function () {
             channel.send('server-connection', 'socket-connection-closed', {});
         };
-
 
         socket.onerror = function (message) {
             channel.send('server-connection', 'socket-connection-error', {
@@ -118,6 +150,10 @@ TOMEE.ApplicationModel = function () {
             }
         };
 
+        if (isFake) {
+            socket.onopen();
+        }
+
         return socket;
     }
 
@@ -143,8 +179,8 @@ TOMEE.ApplicationModel = function () {
                 method:'POST',
                 dataType:'json',
                 data:bean.params,
-                success:function(data) {
-                    if(bean.callback) {
+                success:function (data) {
+                    if (bean.callback) {
                         bean.callback(data);
                     }
                     channel.send('server-command-callback-success', bean.servlet, {

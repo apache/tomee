@@ -71,6 +71,17 @@
     <!-- ************************************************************************************** -->
 
     <servlet>
+        <servlet-name>commandServlet</servlet-name>
+        <servlet-class>org.apache.tomee.webapp.servlet.CommandExecutorServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>commandServlet</servlet-name>
+        <url-pattern>/command</url-pattern>
+    </servlet-mapping>
+
+    <!-- ************************************************************************************** -->
+
+    <servlet>
         <servlet-name>ServerServlet</servlet-name>
         <servlet-class>org.apache.openejb.server.httpd.ServerServlet</servlet-class>
     </servlet>
