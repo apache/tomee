@@ -69,6 +69,10 @@ public class Application {
     public class Session {
         private Context context;
 
+        public Context getContext() {
+            return context;
+        }
+
         public Context login(String user, String pass) {
             final Properties props = new Properties();
             props.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
