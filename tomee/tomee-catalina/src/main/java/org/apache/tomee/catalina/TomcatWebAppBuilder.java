@@ -213,6 +213,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      * instance.
      */
     public TomcatWebAppBuilder() {
+        SystemInstance.get().setComponent(WebAppBuilder.class, this);
 
         // TODO: re-write this bit, so this becomes part of the listener, and we register this with the mbean server.
 
