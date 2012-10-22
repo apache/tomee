@@ -133,19 +133,21 @@
   -->
 
   <feature name="openejb-cxf" version="${project.version}">
-    <feature>cxf</feature>
+    <feature>cxf-core</feature>
     <bundle>mvn:org.apache.openejb/openejb-http/${project.version}</bundle>
     <bundle>mvn:org.apache.openejb/openejb-cxf-transport/${project.version}</bundle>
   </feature>
 
   <feature name="openejb-rest" version="${project.version}">
     <feature>openejb-cxf</feature>
+    <feature>cxf-jaxrs</feature>
     <bundle>mvn:org.apache.openejb/openejb-rest/${project.version}</bundle>
     <bundle>mvn:org.apache.openejb/openejb-cxf-rs/${project.version}</bundle>
   </feature>
 
   <feature name="openejb-soap" version="${project.version}">
     <feature>openejb-cxf</feature>
+    <feature>cxf-jaxws</feature>
     <bundle>mvn:org.apache.openejb/openejb-webservices/${project.version}</bundle>
     <bundle>mvn:org.apache.openejb/openejb-cxf/${project.version}</bundle>
   </feature>
