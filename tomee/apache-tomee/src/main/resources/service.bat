@@ -204,8 +204,9 @@ set "PR_LOGPATH=%CATALINA_BASE%\logs"
 set PR_STDOUTPUT=auto
 set PR_STDERROR=auto
 
+rem before this option was added: "++JvmOptions=-Djava.library.path="%CATALINA_BASE%\bin" ^"
+rem the drawback was it was preventing custom native lib to be loaded even if added to Path
 %EXECUTABLE% //US//%SERVICE_NAME% ^
-	++JvmOptions=-Djava.library.path="%CATALINA_BASE%\bin" ^
 	++JvmOptions=-Djava.io.tmpdir="%CATALINA_BASE%\temp" ^
 	++JvmOptions=-Djava.util.logging.manager="org.apache.juli.ClassLoaderLogManager" ^
 	++JvmOptions=-Djava.util.logging.config.file="%CATALINA_BASE%\conf\logging.properties" ^
