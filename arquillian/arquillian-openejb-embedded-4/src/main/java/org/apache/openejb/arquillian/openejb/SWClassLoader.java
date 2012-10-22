@@ -26,6 +26,7 @@ import org.jboss.shrinkwrap.api.asset.Asset;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
@@ -45,6 +46,7 @@ public class SWClassLoader extends ClassLoader {
         this.archive = ar;
     }
 
+    @Override
     protected Enumeration<URL> findResources(final String name) throws IOException {
         final ArchivePath path = ArchivePaths.create(prefix + name);
         final Node node = archive.get(path);
@@ -52,6 +54,20 @@ public class SWClassLoader extends ClassLoader {
             return new Enumerator(Arrays.asList(new URL(null, "archive:" + archive.getName() + "/", new ArchiveStreamHandler(node, closeables))));
         }
         return super.findResources(name);
+    }
+
+    @Override
+    protected URL findResource(String name) {
+        final ArchivePath path = ArchivePaths.create(prefix + name);
+        final Node node = archive.get(path);
+        if (node != null) {
+            try {
+                return new URL(null, "archive:" + archive.getName() + "/", new ArchiveStreamHandler(node, closeables));
+            } catch (MalformedURLException e) {
+                // no-op: let reuse parent method
+            }
+        }
+        return super.findResource(name);
     }
 
     private static class ArchiveStreamHandler extends URLStreamHandler {
