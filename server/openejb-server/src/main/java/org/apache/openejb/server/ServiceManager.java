@@ -282,7 +282,9 @@ public abstract class ServiceManager {
                 if (EnvProps.extractConfigurationFiles()) {
 
                     final String rawPropsContent = (String) props.get(Properties.class);
-                    IO.copy(IO.read(rawPropsContent), serviceConfig);
+                    if (rawPropsContent != null) {
+                        IO.copy(IO.read(rawPropsContent), serviceConfig);
+                    }
 
                 } else {
                     props.put("disabled", "true");
