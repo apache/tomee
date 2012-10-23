@@ -26,7 +26,9 @@ import org.jboss.arquillian.container.spi.client.container.LifecycleException;
 
 import javax.naming.NamingException;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -78,6 +80,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
             }
             container = new RemoteServer();
 
+            container.setAdditionalClasspath(addOneLineFormatter(openejbHome));
             container.start(args(), "start", true);
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Unable to start remote container", e);
@@ -89,6 +92,28 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
             resetSystemProperty(RemoteServer.OPENEJB_SERVER_DEBUG, debug);
             resetSystemProperty(RemoteServer.SERVER_DEBUG_PORT, debugPort);
         }
+    }
+
+    private String addOneLineFormatter(final File home) {
+        final String name = SimpleTomEEFormatter.class.getPackage().getName().replace('.', '/') + "/" + SimpleTomEEFormatter.class.getSimpleName() + ".class";
+        final InputStream is = getClass().getResourceAsStream("/" + name);
+        if (is != null) {
+            final File parent = new File(home, "bin/classes");
+            final File destination = new File(parent, name);
+            if (!destination.getParentFile().mkdirs()) {
+                LOGGER.warning("Can't create " + destination.getPath());
+            } else {
+                try {
+                    IO.copy(is, destination);
+                    return parent.getAbsolutePath(); // to add to the classpath, don't return destination
+                } catch (IOException e) {
+                    LOGGER.log(Level.WARNING, "Can't add SingleLineFormatter", e);
+                } finally {
+                    IO.closeSilently(is);
+                }
+            }
+        }
+        return null;
     }
 
     private List<String> args() {
@@ -161,6 +186,31 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
 
         if (configuration.isRemoveUnusedWebapps()) {
             Setup.removeUselessWebapps(openejbHome);
+        }
+
+        if (configuration.isSimpleLog()) {
+            boolean doIt = true;
+            if (configuration.getConf() != null) { // let the user override it
+                final File confFolder = new File(configuration.getConf());
+                if (confFolder.exists() && new File(confFolder, "logging.properties").exists()) {
+                    doIt = false;
+                }
+            }
+
+            if (doIt) {
+                FileWriter writer = null;
+                try {
+                    writer = new FileWriter(new File(openejbHome, "conf/logging.properties"));
+                    writer.write("handlers = java.util.logging.ConsoleHandler\n" +
+                            ".handlers = java.util.logging.ConsoleHandler\n" +
+                            "java.util.logging.ConsoleHandler.level = INFO\n" +
+                            "java.util.logging.ConsoleHandler.formatter = " + SimpleTomEEFormatter.class.getName());
+                } catch (IOException ioe) {
+                    // no-op
+                } finally {
+                    IO.closeSilently(writer);
+                }
+            }
         }
 
         if (logger.isLoggable(Level.FINE)) {

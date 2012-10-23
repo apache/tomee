@@ -47,6 +47,7 @@ public class RemoteServer {
     private final boolean profile = options.get("openejb.server.profile", false);
     private final boolean tomcat;
     private final String javaOpts = System.getProperty("java.opts");
+    private String additionalClasspath = null;
 
     /**
      * Has the remote server's instance been already running ?
@@ -272,12 +273,14 @@ public class RemoteServer {
                     argsList.add("-ea");
                     argsList.add("-classpath");
                     String ps = File.pathSeparator;
+                    final StringBuilder cp = new StringBuilder(bootstrapJar.getAbsolutePath()).append(ps).append(juliJar.getAbsolutePath());
                     if (commonsLoggingJar.exists()) {
-                        argsList.add(bootstrapJar.getAbsolutePath() + ps + juliJar.getAbsolutePath() + ps + commonsLoggingJar.getAbsolutePath());
-
-                    } else {
-                        argsList.add(bootstrapJar.getAbsolutePath() + ps + juliJar.getAbsolutePath());
+                        cp.append(ps).append(commonsLoggingJar.getAbsolutePath());
                     }
+                    if (additionalClasspath != null) {
+                        cp.append(ps).append(additionalClasspath);
+                    }
+                    argsList.add(cp.toString());
 
                     argsList.add("org.apache.catalina.startup.Bootstrap");
                     if (cmd == null) {
@@ -486,5 +489,9 @@ public class RemoteServer {
         }
 
         return true;
+    }
+
+    public void setAdditionalClasspath(final String additionalClasspath) {
+        this.additionalClasspath = additionalClasspath;
     }
 }

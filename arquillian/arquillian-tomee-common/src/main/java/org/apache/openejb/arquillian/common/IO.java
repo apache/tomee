@@ -169,6 +169,14 @@ public class IO {
         return null;
     }
 
+    public static void closeSilently(final Closeable closeable) {
+        try {
+            close(closeable);
+        } catch (IOException e) {
+            // no-op
+        }
+    }
+
     public static boolean delete(File file) {
         if (file == null) return false;
         if (!file.delete()) {
