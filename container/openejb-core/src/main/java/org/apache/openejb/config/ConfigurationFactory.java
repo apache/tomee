@@ -77,7 +77,6 @@ import org.apache.openejb.config.sys.JndiProvider;
 import org.apache.openejb.config.sys.Openejb;
 import org.apache.openejb.config.sys.ProxyFactory;
 import org.apache.openejb.config.sys.Resource;
-import org.apache.openejb.config.sys.SaxAppCtxConfig;
 import org.apache.openejb.config.sys.SecurityService;
 import org.apache.openejb.config.sys.Service;
 import org.apache.openejb.config.sys.ServiceProvider;
