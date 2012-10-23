@@ -42,6 +42,7 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
     private boolean debug;
     private int debugPort = 5005;
     private String catalina_opts = null; // using this format to match the script one
+    private boolean simpleLog = false;
 
     public String getGroupId() {
         return groupId;
@@ -178,5 +179,11 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
         this.catalina_opts = opts;
     }
 
+    public boolean isSimpleLog() {
+        return simpleLog;
+    }
 
+    public void setSimpleLog(final boolean simpleLog) {
+        this.simpleLog = simpleLog;
+    }
 }
