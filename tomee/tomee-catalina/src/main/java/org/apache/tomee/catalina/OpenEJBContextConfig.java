@@ -175,6 +175,12 @@ public class OpenEJBContextConfig extends ContextConfig {
 
                 final String file = currentUrl.getFile();
                 String webAppDir = new File(path).getName();
+                if ("ROOT".equals(webAppDir)) { // no contextroot so use the host
+                    webAppDir = webAppInfo.host;
+                    if (webAppDir == null) {
+                        webAppDir = "";
+                    }
+                }
                 int idx = file.indexOf(webAppDir);
 
                 // some more tries to manage context config (path can be different from context)
