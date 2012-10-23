@@ -418,7 +418,6 @@ public class RemoteServer {
     }
 
     public void stop() {
-        Thread processKiller = null;
         if (!serverHasAlreadyBeenStarted) {
             try {
                 if (verbose) {
@@ -426,23 +425,8 @@ public class RemoteServer {
                 }
 
                 shutdown();
-
-                if (server != null) {
-                    processKiller = new ProcessKillerThread();
-                    processKiller.start();
-                    server.waitFor();
-                    processKiller.interrupt();
-                    server = null;
-                }
             } catch (Exception e) {
                 e.printStackTrace(System.err);
-                if (processKiller != null) {
-                    try {
-                        processKiller.join();
-                    } catch (InterruptedException e1) {
-                        processKiller.interrupt();
-                    }
-                }
             }
         }
     }
@@ -502,46 +486,5 @@ public class RemoteServer {
         }
 
         return true;
-    }
-
-    public class ProcessKillerThread extends Thread {
-        private static final int MAX_TRIES = 10;
-        private static final int SLEEP_INC = 500;
-
-        @Override
-        public void run() {
-            long sleep = 0; // recall immediately shutdown (win issue)
-            int tries = MAX_TRIES;
-            while (tries > 0) {
-                try {
-                    Thread.sleep(sleep);
-                    sleep += SLEEP_INC;
-                    if (server != null) {
-                        server.exitValue();
-                    }
-                    break; // server == null or exitValue returned (= process stopped)
-                } catch (IllegalThreadStateException itse) {
-                    tries--;
-                    if (tries == 0) { // kill if possible
-                        if (server != null) {
-                            server.destroy();
-                            try {
-                                server.waitFor();
-                            } catch (InterruptedException e) {
-                                // no-op
-                            }
-                        }
-                    } else { // under windows we sometimes need to send shutdown multiple times (see connect())
-                        try {
-                            forceShutdown();
-                        } catch (Exception e) {
-                            // no-op
-                        }
-                    }
-                } catch (InterruptedException e) {
-                    // no-op
-                }
-            }
-        }
     }
 }
