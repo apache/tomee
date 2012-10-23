@@ -133,7 +133,7 @@ goto end
 
 :doRemove
 rem Remove the service
-%EXECUTABLE% //DS//%SERVICE_NAME%
+"%EXECUTABLE%" //DS//%SERVICE_NAME%
 if not errorlevel 1 goto removed
 echo Failed removing '%SERVICE_NAME%' service
 goto end
@@ -153,7 +153,7 @@ rem Use the environment variables as an example
 rem Each command line option is prefixed with PR_
 
 set "PR_DESCRIPTION=Apache TomEE - http://http://openejb.apache.org/"
-set PR_INSTALL=%EXECUTABLE%
+set "PR_INSTALL=%EXECUTABLE%"
 set "PR_LOGPATH=%CATALINA_BASE%\logs"
 set "PR_CLASSPATH=%CATALINA_HOME%\bin\bootstrap.jar;%CATALINA_BASE%\bin\tomcat-juli.jar;%CATALINA_HOME%\bin\tomcat-juli.jar"
 rem Set the server jvm from JAVA_HOME
@@ -166,9 +166,9 @@ set PR_JVM=auto
 :foundJvm
 echo Using JVM:              "%PR_JVM%"
 
-echo %EXECUTABLE% //IS//%SERVICE_NAME%
+echo "%EXECUTABLE%" //IS//%SERVICE_NAME%
 
-%EXECUTABLE% //IS//%SERVICE_NAME%  ^
+"%EXECUTABLE%" //IS//%SERVICE_NAME%  ^
 	--DisplayName="%SERVICE_NAME%" ^
 	--StartClass org.apache.catalina.startup.Bootstrap ^
 	--StopClass org.apache.catalina.startup.Bootstrap ^
@@ -192,7 +192,7 @@ set PR_CLASSPATH=
 set PR_JVM=
 
 rem Set extra parameters
-%EXECUTABLE% //US//%SERVICE_NAME% ^
+"%EXECUTABLE%" //US//%SERVICE_NAME% ^
 	++JvmOptions=-Dcatalina.base="%CATALINA_BASE%" ^
 	++JvmOptions=-Dcatalina.home="%CATALINA_HOME%" ^
 	++JvmOptions=-Djava.endorsed.dirs="%CATALINA_HOME%\endorsed" ^
@@ -206,7 +206,7 @@ set PR_STDERROR=auto
 
 rem before this option was added: "++JvmOptions=-Djava.library.path="%CATALINA_BASE%\bin" ^"
 rem the drawback was it was preventing custom native lib to be loaded even if added to Path
-%EXECUTABLE% //US//%SERVICE_NAME% ^
+"%EXECUTABLE%" //US//%SERVICE_NAME% ^
 	++JvmOptions=-Djava.io.tmpdir="%CATALINA_BASE%\temp" ^
 	++JvmOptions=-Djava.util.logging.manager="org.apache.juli.ClassLoaderLogManager" ^
 	++JvmOptions=-Djava.util.logging.config.file="%CATALINA_BASE%\conf\logging.properties" ^
