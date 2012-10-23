@@ -63,7 +63,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
     }
 
     @Override
-    public void addApiType(Class<?> apiType) {
+    public void addApiType(final Class<?> apiType) {
         if (apiType == null) return;
 
         super.addApiType(apiType);
@@ -113,19 +113,20 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
     @Override
     @SuppressWarnings("unchecked")
     public List<Class<?>> getBusinessLocalInterfaces() {
-        List<Class<?>> clazzes = new ArrayList<Class<?>>();
+        final List<Class<?>> clazzes = new ArrayList<Class<?>>();
 
         if (beanContext.isLocalbean()) {
             addApiTypes(clazzes, beanContext.getBeanClass());
-        } else if (beanContext.getProxyClass() != null) {
-            addApiTypes(clazzes, beanContext.getProxyClass());
-        } else {
-            List<Class> cl = beanContext.getBusinessLocalInterfaces();
+        }
 
-            if (cl != null && !cl.isEmpty()) {
-                for (Class<?> c : cl) {
-                    clazzes.add(c);
-                }
+        if (beanContext.getProxyClass() != null) {
+            addApiTypes(clazzes, beanContext.getProxyClass());
+        }
+
+        final List<Class> cl = beanContext.getBusinessLocalInterfaces();
+        if (cl != null && !cl.isEmpty()) {
+            for (Class<?> c : cl) {
+                clazzes.add(c);
             }
         }
 
