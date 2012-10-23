@@ -205,6 +205,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         unzip(resolve(), catalinaBase);
+        if (removeDefaultWebapps) { // do it first to let add other war
+            removeDefaultWebapps(removeTomeeWebapp);
+        }
         copyLibs(libs, new File(catalinaBase, libDir), "jar");
         copyLibs(webapps, new File(catalinaBase, webappDir), "war"); // TODO: manage custom context ?context=foo
         copyLibs(apps, new File(catalinaBase, appDir), "jar");
@@ -222,9 +225,6 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
         if (!keepServerXmlAsthis) {
             overrideAddresses();
-        }
-        if (removeDefaultWebapps) {
-            removeDefaultWebapps(removeTomeeWebapp);
         }
         if (!skipCurrentProject) {
             copyWar();
