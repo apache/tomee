@@ -234,8 +234,8 @@ public abstract class ServiceManager {
                 }
             }
 
-            addProperties(conf, legacySchema, new File(conf, serviceName + ".properties"), serviceProperties);
-            addProperties(conf, legacySchema, new File(conf, SystemInstance.get().currentProfile() + "." + serviceName + ".properties"), serviceProperties);
+            addProperties(conf, legacySchema, new File(conf, serviceName + ".properties"), serviceProperties, true);
+            addProperties(conf, legacySchema, new File(conf, SystemInstance.get().currentProfile() + "." + serviceName + ".properties"), serviceProperties, false);
         }
 
         holdsWithUpdate(serviceProperties);
@@ -256,7 +256,7 @@ public abstract class ServiceManager {
 
     }
 
-    private void addProperties(final File conf, final boolean legacySchema, final File path, final Properties fullProps) throws IOException {
+    private void addProperties(final File conf, final boolean legacySchema, final File path, final Properties fullProps, final boolean tryToDump) throws IOException {
         File serviceConfig = path;
         if (!serviceConfig.exists()) {
             serviceConfig = new File(conf, (legacySchema ? "" : "conf.d/") + serviceConfig.getName());
@@ -270,7 +270,7 @@ public abstract class ServiceManager {
 
         if (serviceConfig.exists()) {
             IO.readProperties(serviceConfig, props);
-        } else {
+        } else if (tryToDump) {
 
             final File confD = serviceConfig.getParentFile();
 
@@ -281,7 +281,7 @@ public abstract class ServiceManager {
             if (confD.exists()) {
                 if (EnvProps.extractConfigurationFiles()) {
 
-                    final String rawPropsContent = (String) props.get(Properties.class);
+                    final String rawPropsContent = (String) fullProps.get(Properties.class);
                     if (rawPropsContent != null) {
                         IO.copy(IO.read(rawPropsContent), serviceConfig);
                     }
