@@ -1408,7 +1408,17 @@ public class BeanContext extends DeploymentContext {
                 try {
                     final Object interceptorInstance = interceptorInjector.createInstance();
                     try {
-                        OWBInjector.inject(webBeansContext.getBeanManagerImpl(), interceptorInstance, creationalContext);
+                        final Object oldInstanceUnderInjection = AbstractInjectable.instanceUnderInjection.get();
+                        AbstractInjectable.instanceUnderInjection.set(interceptorInstance);
+                        try {
+                            OWBInjector.inject(webBeansContext.getBeanManagerImpl(), interceptorInstance, creationalContext);
+                        } finally {
+                            if (oldInstanceUnderInjection != null) {
+                                AbstractInjectable.instanceUnderInjection.set(oldInstanceUnderInjection);
+                            } else {
+                                AbstractInjectable.instanceUnderInjection.remove();
+                            }
+                        }
                     } catch (Throwable t) {
                         // TODO handle this differently
                         // this is temporary till the injector can be rewritten

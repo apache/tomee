@@ -42,6 +42,7 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.rest.ThreadLocalContextManager;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
+import org.apache.webbeans.inject.AbstractInjectable;
 import org.apache.webbeans.inject.OWBInjector;
 
 public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
@@ -206,10 +207,19 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
 
                 final BeanManager bm = webbeansContext.getBeanManagerImpl();
                 creationalContext = bm.createCreationalContext(null);
+
+                final Object oldValue = AbstractInjectable.instanceUnderInjection.get();
+                AbstractInjectable.instanceUnderInjection.set(instance);
                 try {
                     OWBInjector.inject(bm, instance, creationalContext);
                 } catch (Exception e) {
                     // ignored
+                } finally {
+                    if (oldValue != null) {
+                        AbstractInjectable.instanceUnderInjection.set(oldValue);
+                    } else {
+                        AbstractInjectable.instanceUnderInjection.remove();
+                    }
                 }
 
                 // injector.postConstruct(); // it doesn't know it
