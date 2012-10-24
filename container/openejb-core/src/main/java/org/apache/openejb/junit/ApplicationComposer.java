@@ -50,6 +50,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.ServiceManagerProxy;
+import org.apache.webbeans.inject.AbstractInjectable;
 import org.apache.webbeans.inject.OWBInjector;
 import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.IAnnotationFinder;
@@ -396,12 +397,15 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                         final InjectionProcessor processor = new InjectionProcessor(testInstance, context.getInjections(), context.getJndiContext());
 
                         processor.createInstance();
+                        AbstractInjectable.instanceUnderInjection.set(testInstance);
                         try {
                             OWBInjector.inject(appContext.getBeanManager(), testInstance, null);
                         } catch (Throwable t) {
                             // TODO handle this differently
                             // this is temporary till the injector can be rewritten
                             t.printStackTrace();
+                        } finally {
+                            AbstractInjectable.instanceUnderInjection.remove();
                         }
                     } finally {
                         ThreadContext.exit(oldContext);
