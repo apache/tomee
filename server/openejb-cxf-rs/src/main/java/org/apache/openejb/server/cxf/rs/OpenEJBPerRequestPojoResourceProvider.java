@@ -16,22 +16,6 @@
  */
 package org.apache.openejb.server.cxf.rs;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Set;
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.InjectionException;
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
 import org.apache.cxf.jaxrs.lifecycle.ResourceProvider;
 import org.apache.cxf.jaxrs.utils.InjectionUtils;
 import org.apache.cxf.jaxrs.utils.ResourceUtils;
@@ -44,6 +28,23 @@ import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.inject.AbstractInjectable;
 import org.apache.webbeans.inject.OWBInjector;
+
+import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.InjectionException;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Set;
 
 public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
     protected Collection<Injection> injections;
@@ -155,7 +156,7 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
 
     private class CdiBeanCreator implements BeanCreator {
         private BeanManager bm;
-        private CreationalContext<?> creationalContext;
+        private CreationalContext<?> toClean;
 
         public CdiBeanCreator(BeanManager bm) {
             this.bm = bm;
@@ -170,8 +171,16 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
                 if (bean == null) {
                     throw new NoBeanFoundException();
                 }
-                creationalContext = bm.createCreationalContext(bean);
-                return bm.getReference(bean, clazz, creationalContext);
+
+                toClean = bm.createCreationalContext(bean);
+
+                try {
+                    return bm.getReference(bean, clazz, toClean);
+                } finally {
+                    if (bm.isNormalScope(bean.getScope())) {
+                        toClean = null; // will be released by the container
+                    }
+                }
             } catch (InjectionException ie) {
                 final String msg = "Resource class " + constructor.getDeclaringClass().getName() + " can not be instantiated";
                 throw new WebApplicationException(Response.serverError().entity(msg).build());
@@ -180,8 +189,8 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
 
         @Override
         public void release() {
-            if (creationalContext != null) {
-                creationalContext.release();
+            if (toClean != null) {
+                toClean.release();
             }
         }
     }
