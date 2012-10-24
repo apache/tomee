@@ -74,6 +74,7 @@
           <exclude name="tomee/tomee-myfaces/src/main/resources/META-INF/services/org.apache.myfaces.spi.FacesConfigResourceProviderFactory"/>
           <exclude name="tomee/tomee-webapp/src/main/webapp/js/jquery/jquery-1.7.1.js"/>
           <exclude name="tomee/tomee-mojarra/src/main/resources/META-INF/services/com.sun.faces.spi.injectionprovider" />
+          <exclude name="tomee/tomee-jdbc/src/test/resources/META-INF/org.apache.openejb.resource.jdbc.cipher.PasswordCipher/Mock" />
           <exclude name="tomee/tomee-webapp/src/main/webapp/lib/jquery/jquery-1.7.2.min.js" /> <!-- minimize so ignored -->
 
           <!-- user-owned config files.  see httpds default.httpd.conf for precident --> 
