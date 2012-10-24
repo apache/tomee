@@ -26,8 +26,10 @@ import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.webbeans.container.BeanManagerImpl;
+import org.apache.webbeans.inject.AbstractInjectable;
 import org.apache.webbeans.inject.OWBInjector;
 
+import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import java.util.Set;
 
@@ -44,19 +46,29 @@ public final class OpenEJBEnricher {
         // don't rely on arquillian since this enrichment should absolutely be done before the following ones
         new MockitoEnricher().enrich(testInstance);
 
+        final BeanContext context = SystemInstance.get().getComponent(ContainerSystem.class)
+                .getBeanContext(testInstance.getClass().getName());
+
         final BeanManagerImpl bm = ctx.getWebBeansContext().getBeanManagerImpl();
         if (bm.isInUse()) {
             try {
                 final Set<Bean<?>> beans = bm.getBeans(testInstance.getClass());
                 final Bean<?> bean = bm.resolve(beans);
-                OWBInjector.inject(bm, testInstance, bm.createCreationalContext(bean));
+                final CreationalContext<?> cc = bm.createCreationalContext(bean);
+                if (context != null) {
+                    context.set(CreationalContext.class, cc);
+                }
+                AbstractInjectable.instanceUnderInjection.set(testInstance);
+                try {
+                    OWBInjector.inject(bm, testInstance, cc);
+                } finally {
+                    AbstractInjectable.instanceUnderInjection.remove();
+                }
             } catch (Throwable t) {
                 // ignored
             }
         }
 
-        final BeanContext context = SystemInstance.get().getComponent(ContainerSystem.class)
-                                            .getBeanContext(testInstance.getClass().getName());
         if (context != null) {
             ThreadContext callContext = new ThreadContext(context, null, Operation.INJECTION);
             ThreadContext oldContext = ThreadContext.enter(callContext);

@@ -20,12 +20,15 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
+import org.jboss.arquillian.container.spi.event.container.BeforeUnDeploy;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.EventContext;
 import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.arquillian.test.spi.event.suite.ClassEvent;
+
+import javax.enterprise.context.spi.CreationalContext;
 
 public class TestObserver {
     @Inject
@@ -35,8 +38,7 @@ public class TestObserver {
     private Instance<TestClass> testClass;
 
     public void observes(@Observes final EventContext<ClassEvent> event) {
-        final BeanContext context = SystemInstance.get().getComponent(ContainerSystem.class)
-                .getBeanContext(testClass.get().getName());
+        final BeanContext context = beanContext();
         ThreadContext oldCtx = null;
         ClassLoader oldCl = null;
 
@@ -62,5 +64,24 @@ public class TestObserver {
 
     private void setTCCL(final ClassLoader cl) {
         Thread.currentThread().setContextClassLoader(cl);
+    }
+
+    public void release(@Observes final EventContext<BeforeUnDeploy> event) {
+        try {
+            event.proceed();
+        } finally {
+            final BeanContext bc = beanContext();
+            if (bc != null) { // can be null if deployment exception
+                final CreationalContext<?> cc = bc.get(CreationalContext.class);
+                if (cc != null) {
+                    cc.release();
+                }
+            }
+        }
+    }
+
+    private BeanContext beanContext() {
+        return SystemInstance.get().getComponent(ContainerSystem.class)
+                .getBeanContext(testClass.get().getName());
     }
 }
