@@ -21,6 +21,7 @@ import org.apache.juli.logging.LogFactory;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.resource.jdbc.BasicDataSourceUtil;
+import org.apache.openejb.resource.jdbc.cipher.PasswordCipher;
 import org.apache.openejb.resource.jdbc.plugin.DataSourcePlugin;
 import org.apache.openejb.resource.jdbc.pool.PoolDataSourceCreator;
 import org.apache.openejb.util.Duration;
@@ -109,13 +110,31 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
         if (properties.containsKey("minEvictableIdleTime") && !properties.containsKey("minEvictableIdleTimeMillis")) {
             converted.setProperty("minEvictableIdleTimeMillis", minEvict);
         }
+
+        final String passwordCipher = properties.getProperty("PasswordCipher");
+        if (passwordCipher != null && "PlainText".equals(passwordCipher)) { // no need to warn about it
+            properties.remove("PasswordCipher");
+        } else {
+            String password = properties.getProperty("Password");
+            if (passwordCipher != null) {
+                try {
+                    final PasswordCipher cipher = BasicDataSourceUtil.getPasswordCipher(passwordCipher);
+                    final String plainPwd = cipher.decrypt(password.toCharArray());
+                    converted.setProperty("password", plainPwd);
+
+                    // all went fine so remove it to avoid errors later
+                    properties.remove("PasswordCipher");
+                    properties.remove("Password");
+                } catch (SQLException e) {
+                    LOGGER.error("Can't decrypt password", e);
+                }
+            }
+        }
+
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
             final String key = entry.getKey().toString();
             final String value = entry.getValue().toString().trim();
             if (!value.isEmpty() && !converted.containsKey(key)) {
-                if ("PasswordCipher".equals(key) && "PlainText".equals(value)) { // no need to warn about it
-                    continue;
-                }
                 if ("MaxOpenPreparedStatements".equalsIgnoreCase(key) || "PoolPreparedStatements".equalsIgnoreCase(key)) {
                     String interceptors = properties.getProperty("jdbcInterceptors");
                     if (interceptors == null || !interceptors.contains("StatementCache")) {
@@ -164,13 +183,24 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
 
     public static class TomEEDataSource extends org.apache.tomcat.jdbc.pool.DataSource {
         private static final Log LOGGER = LogFactory.getLog(TomEEDataSource.class);
+        private static final Class<?>[] CONNECTION_POOL_CLASS = new Class<?>[] { PoolConfiguration.class };
 
         private ObjectName internalOn = null;
 
         public TomEEDataSource(final PoolConfiguration properties, final ConnectionPool pool, final String name) {
-            super(properties);
+            super(readOnly(properties));
             this.pool = pool;
             initJmx(name);
+        }
+
+        public TomEEDataSource(final PoolConfiguration poolConfiguration, final String name) {
+            super(readOnly(poolConfiguration));
+            try { // just to force the pool to be created and be able to register the mbean
+                createPool();
+                initJmx(name);
+            } catch (Throwable ignored) {
+                // no-op
+            }
         }
 
         @Override
@@ -183,14 +213,8 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
             }
         }
 
-        public TomEEDataSource(final PoolConfiguration poolConfiguration, final String name) {
-            super(poolConfiguration);
-            try { // just to force the pool to be created and be able to register the mbean
-                createPool();
-                initJmx(name);
-            } catch (Throwable ignored) {
-                // no-op
-            }
+        private static PoolConfiguration readOnly(final PoolConfiguration pool) {
+            return (PoolConfiguration) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), CONNECTION_POOL_CLASS, new ReadOnlyConnectionpool(pool));
         }
 
         private void initJmx(final String name) {
@@ -230,6 +254,22 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
             final Connection connection = super.getConnection(u, p);
             return (Connection) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
                     new Class<?>[] { Connection.class }, new ContantHashCodeHandler(connection, connection.hashCode()));
+        }
+    }
+
+    private static class ReadOnlyConnectionpool implements InvocationHandler {
+        private final PoolConfiguration delegate;
+
+        public ReadOnlyConnectionpool(final PoolConfiguration pool) {
+            delegate = pool;
+        }
+
+        @Override
+        public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+            if (!(method.getName().startsWith("set") && args != null && args.length == 1 && Void.TYPE.equals(method.getReturnType()))) {
+                return method.invoke(delegate, args);
+            }
+            return null;
         }
     }
 
