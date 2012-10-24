@@ -148,6 +148,15 @@ public class OpenEJBArchiveProcessor {
             ejbJar = new EjbJar();
         }
 
+        if (ejbJar.getModuleName() == null) {
+            final String name = archive.getName();
+            if (name.endsWith("ar") && name.length() > 4) {
+                ejbJar.setModuleName(name.substring(0, name.length() - ".jar".length()));
+            } else {
+                ejbJar.setModuleName(name);
+            }
+        }
+
         final EjbModule ejbModule = new EjbModule(ejbJar);
         ejbModule.setFinder(new AnnotationFinder(finderArchive));
         appModule.getEjbModules().add(ejbModule);
