@@ -185,11 +185,12 @@ public class MainImpl implements Main {
         }
 
         // Now read in and apply the properties specified on the command line
-        for (int i = 0; i < args.length; i++) {
-            String arg = args[i];
-            if (arg.indexOf("-D") != -1) {
-                String prop = arg.substring(arg.indexOf("-D") + 2, arg.indexOf("="));
-                String val = arg.substring(arg.indexOf("=") + 1);
+        for (String arg : args) {
+            final int idx = arg.indexOf("-D");
+            final int eq = arg.indexOf("=");
+            if (idx >= 0 && eq > idx) {
+                String prop = arg.substring(idx + 2, eq);
+                String val = arg.substring(eq + 1);
 
                 System.setProperty(prop, val);
                 systemInstance.setProperty(prop, val);
