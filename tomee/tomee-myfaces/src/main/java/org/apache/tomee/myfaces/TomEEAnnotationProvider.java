@@ -38,7 +38,9 @@ public class TomEEAnnotationProvider extends DefaultAnnotationProvider {
         final ClassLoader cl = getClassLoader();
 
         final WebAppBuilder builder = SystemInstance.get().getComponent(WebAppBuilder.class);
-        if (builder == null) throw new IllegalStateException("WebAppBuilder not found in SystemInstance");
+        if (builder == null) throw new IllegalStateException("WebAppBuilder not found in SystemInstance. "
+                + "Ensure the following entry exists in the Tomcat server.xml file: <Listener class=\"org.apache.tomee.catalina.ServerListener\"/>"
+        );
 
         final Map<Class<? extends Annotation>, Set<Class<?>>> map = new HashMap<Class<? extends Annotation>, Set<Class<?>>>();
 
