@@ -28,6 +28,7 @@
     <module>arquillian-tomee-jaxws-tests</module>
     <module>arquillian-tomee-jms-tests</module>
     <module>arquillian-tomee-codi-tests</module>
+    <module>arquillian-tomee-config-tests</module>
   </modules>
 
   <dependencies>
