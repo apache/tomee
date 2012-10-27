@@ -450,6 +450,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     }
                     standardContext.setDocBase(standardContext.getDocBase().substring(0, standardContext.getDocBase().length() - 4));
                 }
+                if (isRoot(standardContext.getName())) {
+                    standardContext.setName("");
+                    webApp.contextRoot = "";
+                }
 
                 if (getContextInfo(webApp.host, webApp.contextRoot) != null) { // possible because of the previous renaming
                     continue;
@@ -489,6 +493,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 }
             }
         }
+    }
+
+    private static boolean isRoot(final String name) {
+        return "/ROOT".equals(name) || "ROOT".equals(name);
     }
 
     public void deployWar(final StandardContext standardContext, final String host, final AppInfo info) {
@@ -657,7 +665,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     @Override
     public void init(final StandardContext standardContext) {
         // just adding a carriage return to get logs more readable
-        logger.info("-------------------------\nTomcatWebAppBuilder.init " + standardContext.getPath());
+        logger.info("-------------------------\nTomcatWebAppBuilder.init " + finalName(standardContext.getPath()));
 
         File warFile = warPath(standardContext);
         if (!warFile.isDirectory()) {
@@ -723,6 +731,13 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
         // listen some events
         standardContext.addContainerListener(new TomEEContainerListener());
+    }
+
+    private static String finalName(final String path) {
+        if (isRoot(path)) {
+            return "";
+        }
+        return path;
     }
 
     private static File warPath(final StandardContext standardContext) {
@@ -1477,7 +1492,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 for (File file : files) {
                     final String name = file.getName();
                     // ignore war files
-                    if (name.toLowerCase().endsWith(".war") || name.equals("ROOT") || name.equalsIgnoreCase("META-INF") || name.equalsIgnoreCase("WEB-INF")) {
+                    if (name.toLowerCase().endsWith(".war") || isRoot(name) || name.equalsIgnoreCase("META-INF") || name.equalsIgnoreCase("WEB-INF")) {
                         continue;
                     }
                     // Simple fix for TOMEE-23
@@ -1564,7 +1579,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         String name = "/" + file.getName();
 
         // ROOT context is a special case
-        if (name.equals("/ROOT")) {
+        if (isRoot(name)) {
             name = "";
         }
 
@@ -1746,7 +1761,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
     private String getId(final String host, final String context) {
         String contextRoot = context;
-        if ("ROOT".equals(contextRoot)) {
+        if (isRoot(contextRoot)) {
             contextRoot = "";
         }
         if (!contextRoot.startsWith("/")) {
