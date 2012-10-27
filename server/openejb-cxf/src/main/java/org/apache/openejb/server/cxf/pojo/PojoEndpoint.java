@@ -57,6 +57,7 @@ public class PojoEndpoint extends CxfEndpoint {
 
         serviceFactory = new JaxWsServiceFactoryBean(implInfo);
         serviceFactory.setBus(bus);
+        serviceFactory.setServiceClass(instance);
 
         // install as first to overwrite annotations (wsdl-file, wsdl-port, wsdl-service)
         CxfServiceConfiguration configuration = new CxfServiceConfiguration(port);

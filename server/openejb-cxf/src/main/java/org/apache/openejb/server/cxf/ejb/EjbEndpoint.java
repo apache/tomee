@@ -54,6 +54,7 @@ public class EjbEndpoint extends CxfEndpoint {
 
         serviceFactory = new JaxWsServiceFactoryBean(implInfo);
         serviceFactory.setBus(bus);
+        serviceFactory.setServiceClass(beanContext.getBeanClass());
 
         // install as first to overwrite annotations (wsdl-file, wsdl-port, wsdl-service)
         CxfServiceConfiguration configuration = new CxfServiceConfiguration(portData);

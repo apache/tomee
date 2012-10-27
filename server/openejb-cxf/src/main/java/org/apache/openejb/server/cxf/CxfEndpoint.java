@@ -155,6 +155,7 @@ public abstract class CxfEndpoint {
 		svrFactory.setStart(false);
 		svrFactory.setServiceBean(implementor);
         svrFactory.setDestinationFactory(httpTransportFactory);
+        svrFactory.setServiceClass(serviceFactory.getServiceClass());
 
         // look for bean info if exists
         CxfUtil.configureEndpoint(svrFactory, serviceConfiguration, CXF_JAXWS_PREFIX, getImplementorClass().getName());
