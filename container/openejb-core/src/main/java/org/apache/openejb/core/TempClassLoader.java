@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Enumeration;
 import java.util.Set;
 
 /**
@@ -65,6 +66,15 @@ public class TempClassLoader extends URLClassLoader {
 
     public Class loadClass(String name) throws ClassNotFoundException {
         return loadClass(name, false);
+    }
+
+    @Override
+    public Enumeration<URL> getResources(final String name) throws IOException {
+        final Enumeration<URL> urls = super.getResources(name);
+        if (URLClassLoaderFirst.isSlf4jQuery(name)) {
+            return URLClassLoaderFirst.filterSlf4jImpl(urls);
+        }
+        return urls;
     }
 
     protected synchronized Class loadClass(String name, boolean resolve) throws ClassNotFoundException {
