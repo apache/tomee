@@ -149,6 +149,10 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
             }
         }
 
+        if (!converted.containsKey("Password")) {
+            converted.setProperty("password", "");
+        }
+
         final String currentUrl = properties.getProperty("url");
         if (currentUrl != null) {
             try {
