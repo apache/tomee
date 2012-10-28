@@ -49,6 +49,12 @@ public class JuliLogStreamFactory implements LogStreamFactory {
             } else {
                 consoleHandlerClazz = OpenEJBSimpleLayoutHandler.class.getName();
             }
+
+            try { // check it will not fail later (case when a framework change the JVM classloading)
+                ClassLoader.getSystemClassLoader().loadClass(consoleHandlerClazz);
+            } catch (ClassNotFoundException e) {
+                consoleHandlerClazz = ConsoleHandler.class.getName();
+            }
         }
 
         try {
