@@ -149,7 +149,7 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
             }
         }
 
-        if (!converted.containsKey("Password")) {
+        if (!converted.containsKey("password")) {
             converted.setProperty("password", "");
         }
 
@@ -203,7 +203,7 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
                 createPool();
                 initJmx(name);
             } catch (Throwable ignored) {
-                // no-op
+                ignored.printStackTrace();
             }
         }
 
