@@ -1692,7 +1692,13 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 final InputStream is = new ByteArrayInputStream(serviceInfo.properties.getProperty("Definition").getBytes());
                 final Properties p = new Properties();
                 IO.readProperties(is, p);
-                props.putAll(p);
+                for (Map.Entry<Object, Object> entry : p.entrySet()) {
+                    final String key = entry.getKey().toString();
+                    if (!props.containsKey(key) // never override from Definition, just use it to complete the properties set
+                            && !(key.equalsIgnoreCase("url") && props.containsKey("JdbcUrl"))) { // with @DataSource we can get both, see org.apache.openejb.config.ConvertDataSourceDefinitions.rawDefinition()
+                        props.put(key, entry.getValue());
+                    }
+                }
             } catch (Exception e) {
                 // ignored
             }
