@@ -2767,7 +2767,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                                 !name.startsWith("javax.ejb.") &&
                                 !descriptor.contains(interfce.getName()) &&
                                 !interfce.isSynthetic() &&
-                                !"net.sourceforge.cobertura.coveragedata.HasBeenInstrumented".equals(name)) {
+                                !"net.sourceforge.cobertura.coveragedata.HasBeenInstrumented".equals(name) &&
+                                !name.startsWith("org.scalatest.")) {
                             interfaces.add(interfce);
                         }
                     }
