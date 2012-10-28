@@ -202,8 +202,8 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
             try { // just to force the pool to be created and be able to register the mbean
                 createPool();
                 initJmx(name);
-            } catch (Throwable ignored) {
-                ignored.printStackTrace();
+            } catch (Throwable e) {
+                LOGGER.error("Can't create DataSource", e);
             }
         }
 

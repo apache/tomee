@@ -83,7 +83,7 @@ public class ConvertDataSourceDefinitions implements DynamicDeployer {
         put(p, "DatabaseName", datasource.getDatabaseName());
         put(p, "Description", datasource.getDescription());
         put(p, "ServerName", datasource.getServerName());
-        put(p, "Definition", rawDefinition(datasource));
+        put(p, "Definition", rawDefinition(datasource)); // do we need it??
         put(p, AutoConfig.ORIGIN_FLAG, AutoConfig.ORIGIN_ANNOTATION);
         setProperties(datasource, p);
 
