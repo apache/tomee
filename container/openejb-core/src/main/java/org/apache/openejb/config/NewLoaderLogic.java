@@ -119,7 +119,8 @@ public class NewLoaderLogic {
                     "org.testng.",
                     "org.apache.maven.",
                     "org.eclipse.",
-                    "com.intellij."
+                    "com.intellij.",
+                    "org.scalatest."
             );
 
             // Everything between here and the end is part
