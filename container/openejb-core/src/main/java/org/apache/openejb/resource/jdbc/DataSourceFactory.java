@@ -90,6 +90,9 @@ public class DataSourceFactory {
             recipe.allow(Option.IGNORE_MISSING_PROPERTIES);
             recipe.allow(Option.NAMED_PARAMETERS);
             recipe.setAllProperties(properties);
+            if (!properties.containsKey("url") && properties.containsKey("JdbcUrl")) { // depend on the datasource class so add all well known keys
+                recipe.setProperty("url", properties.getProperty("JdbcUrl"));
+            }
 
             final DataSource dataSource = (DataSource) recipe.create();
 
