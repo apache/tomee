@@ -24,6 +24,7 @@ import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.cdi.ScopeHelper;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.ConnectorModule;
@@ -52,6 +53,8 @@ import org.apache.openejb.util.Join;
 import org.apache.openejb.util.ServiceManagerProxy;
 import org.apache.webbeans.inject.AbstractInjectable;
 import org.apache.webbeans.inject.OWBInjector;
+import org.apache.webbeans.web.lifecycle.test.MockHttpSession;
+import org.apache.webbeans.web.lifecycle.test.MockServletContext;
 import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.IAnnotationFinder;
 import org.apache.xbean.finder.archive.Archive;
@@ -383,9 +386,14 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                     }
                 }
 
+                final MockServletContext servletContext = new MockServletContext();
+                final MockHttpSession session = new MockHttpSession();
+
                 final AppInfo appInfo = config.configureApplication(appModule);
 
                 final AppContext appContext = assembler.createApplication(appInfo);
+
+                ScopeHelper.startContexts(appContext.getWebBeansContext().getContextsService(), servletContext, session);
 
                 try {
                     final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
@@ -440,6 +448,7 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                     }
 
                 } finally {
+                    ScopeHelper.stopContexts(appContext.getWebBeansContext().getContextsService(), servletContext, session);
                     assembler.destroyApplication(appInfo.path);
                 }
             } finally {
