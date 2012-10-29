@@ -61,6 +61,7 @@ public class RemoteServer {
     private final int shutdownPort;
     private final String host;
     private final String command;
+    private File home = null;
 
     public RemoteServer() {
         this(options.get("connect.tries", 60), options.get("verbose", false));
@@ -69,7 +70,7 @@ public class RemoteServer {
     public RemoteServer(int tries, boolean verbose) {
         this.tries = tries;
         this.verbose = verbose;
-        File home = getHome();
+        home = getHome();
         tomcat = (home != null) && (new File(new File(home, "bin"), "catalina.sh").exists());
 
         shutdownPort = options.get(SERVER_SHUTDOWN_PORT, tomcat ? 8005 : 4200);
@@ -410,14 +411,17 @@ public class RemoteServer {
         }
     }
 
-    private static File getHome() {
+    private File getHome() {
+        if (home != null) {
+            return home;
+        }
+
         String openejbHome = System.getProperty("openejb.home");
 
         if (openejbHome != null) {
-            return new File(openejbHome);
-        } else {
-            return null;
+            home = new File(openejbHome);
         }
+        return home;
     }
 
     public void stop() {
