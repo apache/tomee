@@ -168,6 +168,7 @@ public abstract class ServiceManager {
 
                 return service;
             } catch (Throwable t) {
+                t.printStackTrace();
                 logger.error("service.instantiation.err", t, serviceClass.getName(), t.getClass().getName(), t.getMessage());
             }
         }
