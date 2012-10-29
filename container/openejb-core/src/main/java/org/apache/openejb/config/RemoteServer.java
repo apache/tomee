@@ -24,13 +24,9 @@ import org.apache.openejb.util.Pipe;
 import java.io.File;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
+import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * @version $Rev$ $Date$
@@ -428,9 +424,29 @@ public class RemoteServer {
         if (!serverHasAlreadyBeenStarted) {
             try {
                 shutdown();
+
+                // check tomcat was effectively shutted down
+                // we can have some concurrent shutdown commands (catalina shutdown hook for instance)
+                // so we can have to wait here since it is important to be synchronous in this method
+                waitForServerShutdown();
             } catch (Exception e) {
                 e.printStackTrace(System.err);
             }
+        }
+    }
+
+    private void waitForServerShutdown() throws InterruptedException {
+        if (verbose) {
+            System.out.print("Waiting for TomEE shutdown.");
+        }
+        while (connect()) {
+            Thread.sleep(1000);
+            if (verbose) {
+                System.out.print(".");
+            }
+        }
+        if (verbose) {
+            System.out.println();
         }
     }
 
@@ -463,7 +479,8 @@ public class RemoteServer {
 
         Socket socket = null;
         try {
-            socket = new Socket(host, shutdownPort);
+            socket = new Socket(); // wee need a timeout here
+            socket.connect(new InetSocketAddress(host, shutdownPort), 1000);
             socket.getOutputStream().close();
             if (verbose) System.out.println("[] CONNECTED IN " + (this.tries - tries));
         } catch (Exception e) {
