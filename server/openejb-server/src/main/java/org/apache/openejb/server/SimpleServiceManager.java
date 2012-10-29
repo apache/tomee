@@ -44,9 +44,15 @@ public class SimpleServiceManager extends ServiceManager {
 
     private ServerService[] daemons;
     private boolean stop = false;
+    private ServiceFinder serviceFinder;
 
 
     public SimpleServiceManager() {
+        this(new SimpleServiceFinder("META-INF/"));
+    }
+
+    public SimpleServiceManager(ServiceFinder serviceFinder) {
+        this.serviceFinder = serviceFinder;
     }
 
     // Have properties files (like xinet.d) that specifies what daemons to
@@ -66,24 +72,25 @@ public class SimpleServiceManager extends ServiceManager {
     // The port to use
     // whether it's turned on
     // May be reusable elsewhere, move if another use occurs
-    public static class ServiceFinder {
+    public static class SimpleServiceFinder implements ServiceFinder {
 
         private final ResourceFinder resourceFinder;
         private ClassLoader classLoader;
 
-        public ServiceFinder(String basePath) {
+        public SimpleServiceFinder(String basePath) {
             this(basePath, Thread.currentThread().getContextClassLoader());
         }
 
-        public ServiceFinder(String basePath, ClassLoader classLoader) {
+        public SimpleServiceFinder(String basePath, ClassLoader classLoader) {
             this.resourceFinder = new ResourceFinder(basePath, classLoader);
             this.classLoader = classLoader;
         }
 
-        public Map mapAvailableServices(Class interfase) throws IOException, ClassNotFoundException {
-            Map services = resourceFinder.mapAvailableProperties(ServerService.class.getName());
+        @Override
+        public Map<String, Properties> mapAvailableServices(Class interfase) throws IOException, ClassNotFoundException {
+            final Map<String, Properties> service = resourceFinder.mapAvailableProperties(ServerService.class.getName());
 
-            for (Iterator iterator = services.entrySet().iterator(); iterator.hasNext(); ) {
+            for (Iterator iterator = service.entrySet().iterator(); iterator.hasNext(); ) {
                 Map.Entry entry = (Map.Entry) iterator.next();
                 String name = (String) entry.getKey();
                 Properties properties = (Properties) entry.getValue();
@@ -103,7 +110,7 @@ public class SimpleServiceManager extends ServiceManager {
                 properties.put(Properties.class, rawProperties);
 
             }
-            return services;
+            return service;
         }
     }
 
@@ -138,9 +145,7 @@ public class SimpleServiceManager extends ServiceManager {
 
         SystemInstance.get().setComponent(DiscoveryRegistry.class, registry);
 
-        ServiceFinder serviceFinder = new ServiceFinder("META-INF/");
-
-        Map<String, Properties> availableServices = serviceFinder.mapAvailableServices(ServerService.class);
+        Map<String, Properties> availableServices = this.serviceFinder.mapAvailableServices(ServerService.class);
 
         List<ServerService> enabledServers = initServers(availableServices);
 
