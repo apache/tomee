@@ -427,10 +427,6 @@ public class RemoteServer {
     public void stop() {
         if (!serverHasAlreadyBeenStarted) {
             try {
-                if (verbose) {
-                    System.out.println("[] STOP SERVER");
-                }
-
                 shutdown();
             } catch (Exception e) {
                 e.printStackTrace(System.err);
