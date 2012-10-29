@@ -174,11 +174,12 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
         Files.writable(openejbHome);
 
         Setup.configureServerXml(openejbHome, configuration);
-        Setup.configureSystemProperties(openejbHome, configuration);
 
         Setup.synchronizeFolder(openejbHome, configuration.getConf(), "conf");
         Setup.synchronizeFolder(openejbHome, configuration.getBin(), "bin");
         Setup.synchronizeFolder(openejbHome, configuration.getLib(), "lib");
+
+        Setup.configureSystemProperties(openejbHome, configuration);
 
         final String opts = configuration.getCatalina_opts();
         Setup.exportProperties(openejbHome, configuration, opts == null || (!opts.contains("-Xm") && !opts.matches(".*-XX:[^=]*Size=.*")));
