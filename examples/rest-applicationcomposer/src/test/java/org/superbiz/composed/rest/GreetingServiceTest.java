@@ -17,28 +17,26 @@
 package org.superbiz.composed.rest;
 
 import org.apache.openejb.OpenEjbContainer;
+import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.SingletonBean;
+import org.apache.openejb.jee.oejb3.EjbDeployment;
+import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.junit.Configuration;
-import org.apache.openejb.junit.MockInjector;
 import org.apache.openejb.junit.Module;
 import org.apache.openejb.loader.IO;
-import org.apache.openejb.mockito.MockitoInjector;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
 
 @RunWith(ApplicationComposer.class)
 public class GreetingServiceTest {
-    @Mock
-    private Messager messager;
-
     @Configuration
     public Properties configuration() {
         return new Properties() {{
@@ -46,21 +44,34 @@ public class GreetingServiceTest {
         }};
     }
 
-    @MockInjector
-    public Class<?> mockitoInjector() {
-        return MockitoInjector.class;
-    }
-
     @Module
-    public Class<?>[] app() {
-        return new Class<?>[] { GreetingService.class, Messager.class };
+    public EjbModule app() {
+        // in embedded mode only ejb are deployed
+        final SingletonBean bean = (SingletonBean) new SingletonBean(GreetingService.class).localBean();
+        bean.setRestService(true);
+
+        // now create an ejbjar and an openejb-jar to hold the provider config
+
+        final EjbJar ejbJar = new EjbJar();
+        ejbJar.addEnterpriseBean(bean);
+
+        final OpenejbJar openejbJar = new OpenejbJar();
+        openejbJar.addEjbDeployment(new EjbDeployment(ejbJar.getEnterpriseBeans()[0]));
+
+        final Properties properties = openejbJar.getEjbDeployment().iterator().next().getProperties();
+        properties.setProperty("cxf.jaxrs.providers", IllegalArgumentExceptionMapper.class.getName());
+
+        // link all and return this module
+
+        final EjbModule module = new EjbModule(ejbJar);
+        module.setOpenejbJar(openejbJar);
+
+        return module;
     }
 
     @Test
-    public void checkMockIsUsed() throws IOException {
-        when(messager.message()).thenReturn("mockito");
-
+    public void checkProviderIsUsed() throws IOException {
         final String message = IO.slurp(new URL("http://localhost:4204/GreetingServiceTest/greeting/"));
-        assertEquals("mockito", message);
+        assertEquals("this exception is handled by an exception mapper", message);
     }
 }
