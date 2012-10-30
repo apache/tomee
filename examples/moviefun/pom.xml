@@ -25,6 +25,13 @@
     <module>app</module>
     <module>monitor</module>
   </modules>
+  <repositories>
+    <repository>
+      <id>apache-m2-snapshot</id>
+      <name>Apache Snapshot Repository</name>
+      <url>http://repository.apache.org/snapshots</url>
+    </repository>
+  </repositories>
 
   <!--
   This section allows you to configure where to publish libraries for sharing.
