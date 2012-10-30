@@ -356,6 +356,7 @@
       '=META-INF.org^.apache^.openejb',
       org.apache.openejb;version=${openejb.osgi.export.version},
       org.apache.openejb.api.internal;version=${openejb.osgi.export.version},
+      org.apache.openejb.api.jmx;version=${openejb.osgi.export.version},
       org.apache.openejb.async;version=${openejb.osgi.export.version},
       org.apache.openejb.assembler;version=${openejb.osgi.export.version},
       org.apache.openejb.assembler.classic;version=${openejb.osgi.export.version},

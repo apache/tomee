@@ -18,10 +18,10 @@ package org.apache.openejb.assembler.monitoring;
 
 import java.util.Collection;
 import java.util.Properties;
-import javax.management.Description;
-import javax.management.MBean;
-import javax.management.ManagedAttribute;
-import javax.management.ManagedOperation;
+import org.apache.openejb.api.jmx.Description;
+import org.apache.openejb.api.jmx.MBean;
+import org.apache.openejb.api.jmx.ManagedAttribute;
+import org.apache.openejb.api.jmx.ManagedOperation;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;

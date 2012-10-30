@@ -17,13 +17,18 @@
 package org.apache.openejb.monitoring;
 
 import javassist.util.proxy.ProxyFactory;
+import org.apache.openejb.api.jmx.Description;
+import org.apache.openejb.api.jmx.MBean;
+import org.apache.openejb.api.jmx.ManagedAttribute;
+import org.apache.openejb.api.jmx.ManagedOperation;
+import org.apache.openejb.api.jmx.NotificationInfo;
+import org.apache.openejb.api.jmx.NotificationInfos;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
 import javax.management.AttributeNotFoundException;
-import javax.management.Description;
 import javax.management.DynamicMBean;
 import javax.management.ImmutableDescriptor;
 import javax.management.IntrospectionException;
@@ -33,14 +38,14 @@ import javax.management.MBeanException;
 import javax.management.MBeanInfo;
 import javax.management.MBeanNotificationInfo;
 import javax.management.MBeanOperationInfo;
-import javax.management.ManagedAttribute;
-import javax.management.ManagedOperation;
-import javax.management.NotificationInfo;
-import javax.management.NotificationInfos;
 import javax.management.ReflectionException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,6 +54,23 @@ import java.util.ResourceBundle;
 
 public class DynamicMBeanWrapper implements DynamicMBean {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_DEPLOY, DynamicMBeanWrapper.class);
+
+    private static final Map<Class<?>, Class<? extends Annotation>> OPENEJB_API_TO_JAVAX = new HashMap<Class<?>, Class<? extends Annotation>>();
+    static {
+        final ClassLoader loader = DynamicMBeanWrapper.class.getClassLoader();
+        try {
+            OPENEJB_API_TO_JAVAX.put(MBean.class, (Class<? extends Annotation>) loader.loadClass("javax.management.MBean"));
+            OPENEJB_API_TO_JAVAX.put(Description.class, (Class<? extends Annotation>) loader.loadClass("javax.management.Description"));
+            OPENEJB_API_TO_JAVAX.put(ManagedOperation.class, (Class<? extends Annotation>) loader.loadClass("javax.management.ManagedOperation"));
+            OPENEJB_API_TO_JAVAX.put(ManagedAttribute.class, (Class<? extends Annotation>) loader.loadClass("javax.management.ManagedAttribute"));
+            OPENEJB_API_TO_JAVAX.put(NotificationInfo.class, (Class<? extends Annotation>) loader.loadClass("javax.management.NotificationInfo"));
+            OPENEJB_API_TO_JAVAX.put(NotificationInfos.class, (Class<? extends Annotation>) loader.loadClass("javax.management.NotificationInfos"));
+        } catch (ClassNotFoundException cnfe) {
+            // ignored
+        } catch (NoClassDefFoundError ncdfe) {
+            // ignored
+        }
+    }
 
     private final MBeanInfo info;
     private final Map<String, Method> getters = new HashMap<String, Method>();
@@ -75,16 +97,16 @@ public class DynamicMBeanWrapper implements DynamicMBean {
         instance = givenInstance;
 
         // class
-        Description classDescription = annotatedMBean.getAnnotation(Description.class);
+        Description classDescription = findAnnotation(annotatedMBean, Description.class);
         description = getDescription(classDescription, "a MBean built by OpenEJB");
 
-        NotificationInfo notification = annotatedMBean.getAnnotation(NotificationInfo.class);
+        NotificationInfo notification = findAnnotation(annotatedMBean, NotificationInfo.class);
         if (notification != null) {
             MBeanNotificationInfo notificationInfo = getNotificationInfo(notification);
             notificationInfos.add(notificationInfo);
         }
 
-        NotificationInfos notifications = annotatedMBean.getAnnotation(NotificationInfos.class);
+        NotificationInfos notifications = findAnnotation(annotatedMBean, NotificationInfos.class);
         if (notifications != null && notifications.value() != null) {
             for (NotificationInfo n : notifications.value()) {
                 MBeanNotificationInfo notificationInfo = getNotificationInfo(n);
@@ -102,7 +124,7 @@ public class DynamicMBeanWrapper implements DynamicMBean {
                 continue;
             }
 
-            if (m.getAnnotation(ManagedAttribute.class) != null) {
+            if (findAnnotation(m, ManagedAttribute.class) != null) {
                 String methodName = m.getName();
                 String attrName = methodName;
                 if (((attrName.startsWith("get") && m.getParameterTypes().length == 0)
@@ -123,11 +145,11 @@ public class DynamicMBeanWrapper implements DynamicMBean {
                 } else if (methodName.startsWith("set")) {
                     setters.put(attrName, m);
                 }
-            } else if (m.getAnnotation(ManagedOperation.class) != null) {
+            } else if (findAnnotation(m, ManagedOperation.class) != null) {
                 operations.put(m.getName(), m);
 
                 String operationDescr = "";
-                Description descr = m.getAnnotation(Description.class);
+                Description descr = findAnnotation(m, Description.class);
                 if (descr != null) {
                     operationDescr = getDescription(descr, "-");
                 }
@@ -141,7 +163,7 @@ public class DynamicMBeanWrapper implements DynamicMBean {
             Method mtd = e.getValue();
 
             String attrDescr = "";
-            Description descr = mtd.getAnnotation(Description.class);
+            Description descr = findAnnotation(mtd, Description.class);
             if (descr != null) {
                 attrDescr = getDescription(descr, "-");
             }
@@ -159,6 +181,58 @@ public class DynamicMBeanWrapper implements DynamicMBean {
                 null, // default constructor is mandatory
                 operationInfos.toArray(new MBeanOperationInfo[operationInfos.size()]),
                 notificationInfos.toArray(new MBeanNotificationInfo[notificationInfos.size()]));
+    }
+
+    private <T extends Annotation> T findAnnotation(final Method method, final Class<T> searchedAnnotation) {
+        final T annotation = method.getAnnotation(searchedAnnotation);
+        if (annotation != null) {
+            return annotation;
+        }
+
+        if (OPENEJB_API_TO_JAVAX.containsKey(searchedAnnotation)) {
+            final Class<? extends Annotation> clazz = OPENEJB_API_TO_JAVAX.get(searchedAnnotation);
+            final Object javaxAnnotation = method.getAnnotation(clazz);
+            if (javaxAnnotation != null) {
+                return annotationProxy(javaxAnnotation, searchedAnnotation);
+            }
+        }
+        return null;
+    }
+
+    private <T extends Annotation> T findAnnotation(final Field field, final Class<T> searchedAnnotation) {
+        final T annotation = field.getAnnotation(searchedAnnotation);
+        if (annotation != null) {
+            return annotation;
+        }
+
+        if (OPENEJB_API_TO_JAVAX.containsKey(searchedAnnotation)) {
+            final Class<? extends Annotation> clazz = OPENEJB_API_TO_JAVAX.get(searchedAnnotation);
+            final Object javaxAnnotation = field.getAnnotation(clazz);
+            if (javaxAnnotation != null) {
+                return annotationProxy(javaxAnnotation, searchedAnnotation);
+            }
+        }
+        return null;
+    }
+
+    private <T extends Annotation> T findAnnotation(final Class<?> annotatedMBean, final Class<T> searchedAnnotation) {
+        final T annotation = annotatedMBean.getAnnotation(searchedAnnotation);
+        if (annotation != null) {
+            return annotation;
+        }
+
+        if (OPENEJB_API_TO_JAVAX.containsKey(searchedAnnotation)) {
+            final Class<? extends Annotation> clazz = OPENEJB_API_TO_JAVAX.get(searchedAnnotation);
+            final Object javaxAnnotation = annotatedMBean.getAnnotation(clazz);
+            if (javaxAnnotation != null) {
+                return annotationProxy(javaxAnnotation, searchedAnnotation);
+            }
+        }
+        return null;
+    }
+
+    private static <T extends Annotation> T annotationProxy(final Object javaxAnnotation, final Class<T> clazz) {
+        return (T) Proxy.newProxyInstance(DynamicMBeanWrapper.class.getClassLoader(), new Class<?>[]{clazz}, new AnnotationHandler(javaxAnnotation));
     }
 
     private MBeanNotificationInfo getNotificationInfo(NotificationInfo n) {
@@ -282,5 +356,42 @@ public class DynamicMBeanWrapper implements DynamicMBean {
             }
         }
         throw new MBeanException(new IllegalArgumentException(), actionName + " doesn't exist");
+    }
+
+    private static class AnnotationHandler implements InvocationHandler {
+        private final Object delegate;
+
+        public AnnotationHandler(final Object javaxAnnotation) {
+            delegate = javaxAnnotation;
+        }
+
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            Object result = null;
+            for (Method mtd : delegate.getClass().getMethods()) { // simple heurisitc which should be enough
+                if (mtd.getName().equals(method.getName())) {
+                    result = mtd.invoke(delegate, args);
+                    break;
+                }
+            }
+
+            if (result == null) {
+                return null;
+            }
+
+            if (result.getClass().isArray()) {
+                final Object[] array = (Object[]) result;
+                if (array.length == 0 || !OPENEJB_API_TO_JAVAX.containsValue(array[0].getClass())) {
+                    return array;
+                }
+
+                final Object[] translated = new Object[array.length];
+                for (int i = 0; i < translated.length; i++) {
+                    translated[i] = annotationProxy(array[i], OPENEJB_API_TO_JAVAX.get(array[i].getClass()));
+                }
+            }
+
+            return result;
+        }
     }
 }

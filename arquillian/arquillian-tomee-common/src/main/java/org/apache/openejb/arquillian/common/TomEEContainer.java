@@ -273,7 +273,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
                 	final String name = file.getName();
                 	folderFile = new File(file.getParentFile(), name.substring(0, name.length() - 4));
                 }
-            } while (file.exists() || folderFile.exists()); // we unpack the war/ear and the delete of "i" can fail (on win in particular)
+            } while (file.getParentFile().exists()); // we will delete the parent (to clean even complicated unpacking)
             if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
                 LOGGER.warning("can't create " + file.getParent());
             }

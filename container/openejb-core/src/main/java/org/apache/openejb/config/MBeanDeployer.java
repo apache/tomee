@@ -23,9 +23,10 @@ import org.apache.xbean.finder.Annotated;
 import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.IAnnotationFinder;
 
-import javax.management.MBean;
+import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -47,12 +48,16 @@ public class MBeanDeployer implements DynamicDeployer {
                 cl = getClass().getClassLoader();
             }
         }
+
+        final Collection<Class<? extends Annotation>> mbeanClasses = new ArrayList<Class<? extends Annotation>>(2);
+        mbeanClasses.add(org.apache.openejb.api.jmx.MBean.class);
+
         try { // for OSGi environment, javax.management is imported by the JRE
-            cl.loadClass("javax.management.MBean");
+            mbeanClasses.add((Class<? extends Annotation>) cl.loadClass("javax.management.MBean"));
         } catch (NoClassDefFoundError noClassDefFoundError) {
-            return appModule;
+            // ignored
         } catch (ClassNotFoundException e) {
-            return appModule;
+            // ignored
         }
 
         // there is an ejbmodule by webapp so we should't need to go through the webapp
@@ -62,15 +67,17 @@ public class MBeanDeployer implements DynamicDeployer {
                 continue;
             }
 
-            for (Annotated<Class<?>> clazz : ejbModule.getFinder().findMetaAnnotatedClasses(MBean.class)) {
-                final Class<?> realClass = clazz.get();
-                final String name = realClass.getName();
-                if (done.contains(name)) {
-                    continue;
-                }
+            for (Class<? extends Annotation> mclazz : mbeanClasses) {
+                for (Annotated<Class<?>> clazz : ejbModule.getFinder().findMetaAnnotatedClasses(mclazz)) {
+                    final Class<?> realClass = clazz.get();
+                    final String name = realClass.getName();
+                    if (done.contains(name)) {
+                        continue;
+                    }
 
-                ejbModule.getMbeans().add(name);
-                done.add(name);
+                    ejbModule.getMbeans().add(name);
+                    done.add(name);
+                }
             }
         }
         for (ClientModule clientModule : appModule.getClientModules()) {
@@ -78,13 +85,15 @@ public class MBeanDeployer implements DynamicDeployer {
                 continue;
             }
 
-            for (Annotated<Class<?>> clazz : clientModule.getFinder().findMetaAnnotatedClasses(MBean.class)) {
-                final String name = clazz.get().getName();
-                if (done.contains(name)) {
-                    continue;
-                }
+            for (Class<? extends Annotation> mclazz : mbeanClasses) {
+                for (Annotated<Class<?>> clazz : clientModule.getFinder().findMetaAnnotatedClasses(mclazz)) {
+                    final String name = clazz.get().getName();
+                    if (done.contains(name)) {
+                        continue;
+                    }
 
-                clientModule.getMbeans().add(name);
+                    clientModule.getMbeans().add(name);
+                }
             }
         }
 
@@ -101,13 +110,15 @@ public class MBeanDeployer implements DynamicDeployer {
         if (libs.size() > 0) {
             // force descriptor for additinal libs since it shouldn't occur often and can save some time
             final IAnnotationFinder finder = new AnnotationFinder(new ConfigurableClasspathArchive(appModule.getClassLoader(), true, libs));
-            for (Annotated<Class<?>> clazz : finder.findMetaAnnotatedClasses(MBean.class)) {
-                final String name = clazz.get().getName();
-                if (done.contains(name)) {
-                    continue;
-                }
+            for (Class<? extends Annotation> mclazz : mbeanClasses) {
+                for (Annotated<Class<?>> clazz : finder.findMetaAnnotatedClasses(mclazz)) {
+                    final String name = clazz.get().getName();
+                    if (done.contains(name)) {
+                        continue;
+                    }
 
-                appModule.getAdditionalLibMbeans().add(name);
+                    appModule.getAdditionalLibMbeans().add(name);
+                }
             }
         }
 
