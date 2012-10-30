@@ -853,7 +853,6 @@ public class StatefulContainer implements RpcContainer {
                 EntityManagerFactory entityManagerFactory = entry.getKey();
                 Map properties = entry.getValue();
 
-
                 JtaEntityManagerRegistry.EntityManagerTracker entityManagerTracker = entityManagerRegistry.getInheritedEntityManager(entityManagerFactory);
                 EntityManager entityManager;
                 if (entityManagerTracker == null) {
