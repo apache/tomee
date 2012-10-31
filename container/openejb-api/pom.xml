@@ -36,12 +36,6 @@
       <artifactId>mbean-annotation-api</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-shade-plugin</artifactId>
-      <version>2.0</version>
-      <scope>provided</scope>
-    </dependency>
   </dependencies>
 
   <build>
