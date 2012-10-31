@@ -39,7 +39,7 @@ public class RemoteServer {
     public static final String SERVER_SHUTDOWN_COMMAND = "server.shutdown.command";
     public static final String OPENEJB_SERVER_DEBUG = "openejb.server.debug";
 
-    private final boolean debug = options.get(OPENEJB_SERVER_DEBUG, false);
+    private boolean debug = options.get(OPENEJB_SERVER_DEBUG, false);
     private final boolean profile = options.get("openejb.server.profile", false);
     private final boolean tomcat;
     private final String javaOpts = System.getProperty("java.opts");
@@ -467,7 +467,13 @@ public class RemoteServer {
     }
 
     private void shutdown() throws Exception {
-        cmd(Collections.EMPTY_LIST, "stop", false);
+        final boolean originalDebug = debug;
+        debug = false; // make sure we don't debug the stop command otherwise in debug mode we will not stop
+        try {
+            cmd(Collections.EMPTY_LIST, "stop", false);
+        } finally {
+            debug = originalDebug;
+        }
     }
 
     private boolean connect() {
