@@ -36,6 +36,12 @@
       <artifactId>mbean-annotation-api</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-shade-plugin</artifactId>
+      <version>2.0</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -65,6 +71,15 @@
                   </includes>
                 </relocation>
               </relocations>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <manifestEntries>
+                    <Export-Package>
+                      org.apache.openejb.api;version=${openejb.osgi.export.version},org.apache.openejb.api.jmx;version=${openejb.osgi.export.version}
+                    </Export-Package>
+                  </manifestEntries>
+                </transformer>
+              </transformers>
             </configuration>
           </execution>
         </executions>
