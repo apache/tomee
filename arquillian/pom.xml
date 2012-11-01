@@ -32,8 +32,8 @@
   <name>OpenEJB :: Arquillian Adaptors Parent</name>
 
   <properties>
-    <version.arquillian>1.0.2.Final</version.arquillian>
-    <version.shrinkwrap.descriptor>2.0.0-alpha-3</version.shrinkwrap.descriptor>
+    <version.arquillian>1.0.3.Final</version.arquillian>
+    <version.shrinkwrap.descriptor>2.0.0-alpha-4</version.shrinkwrap.descriptor>
     <version.shrinkwrap.shrinkwrap>1.0.1</version.shrinkwrap.shrinkwrap>
   </properties>
 

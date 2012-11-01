@@ -26,7 +26,6 @@ import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.test.spi.TestEnricher;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
-import org.jboss.arquillian.transaction.impl.container.TransactionRemoteExtension;
 import org.jboss.arquillian.transaction.spi.provider.TransactionProvider;
 
 import java.util.Enumeration;
@@ -71,9 +70,6 @@ public class OpenEJBExtension implements LoadableExtension {
                 .service(TransactionProvider.class, OpenEJBTransactionProvider.class)
                 .observer(TestObserver.class)
                 .observer(DeploymentExceptionObserver.class);
-
-            // small hack since this extension can't be loaded in embedded mode by default
-            new TransactionRemoteExtension().register(extensionBuilder);
         }
     }
 }
