@@ -26,8 +26,6 @@ import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.test.spi.TestEnricher;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
-import org.jboss.arquillian.transaction.impl.client.TransactionExtension;
-import org.jboss.arquillian.transaction.impl.container.TransactionRemoteExtension;
 import org.jboss.arquillian.transaction.spi.provider.TransactionProvider;
 
 public class EmbeddedTomEEExtension implements LoadableExtension {
@@ -41,8 +39,6 @@ public class EmbeddedTomEEExtension implements LoadableExtension {
                 .service(TestEnricher.class, TomEEInjectionEnricher.class)
                 .service(TransactionProvider.class, OpenEJBTransactionProvider.class)
                 .service(ResourceProvider.class, DeploymentExceptionProvider.class);
-
-            new TransactionRemoteExtension().register(builder);
         }
     }
 }

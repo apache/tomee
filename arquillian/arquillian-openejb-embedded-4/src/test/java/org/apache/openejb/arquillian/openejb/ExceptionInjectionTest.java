@@ -50,8 +50,8 @@ public class ExceptionInjectionTest {
     public static WebArchive war() {
         return ShrinkWrap.create(WebArchive.class)
                 .addAsWebInfResource(new StringAsset(Descriptors.create(BeansDescriptor.class)
-                        .createInterceptors()
-                        .clazz("i.dont.exist.so.i.ll.make.the.deployment.fail")
+                        .getOrCreateInterceptors()
+                            .clazz("i.dont.exist.so.i.ll.make.the.deployment.fail")
                         .up()
                         .exportAsString()), ArchivePaths.create("beans.xml"));
     }

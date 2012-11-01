@@ -46,7 +46,7 @@ public class DeploymentExceptionErrorTest {
     public static WebArchive war() {
         return ShrinkWrap.create(WebArchive.class)
                     .addAsWebInfResource(new StringAsset(Descriptors.create(BeansDescriptor.class)
-                            .createInterceptors()
+                            .getOrCreateInterceptors()
                                 .clazz("i.dont.exist.so.i.ll.make.the.deployment.fail")
                             .up()
                             .exportAsString()), ArchivePaths.create("beans.xml"));
