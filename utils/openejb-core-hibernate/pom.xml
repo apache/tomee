@@ -114,7 +114,7 @@
   </dependencies>
 
   <properties>
-    <hibernate.version>4.1.6.Final</hibernate.version>
+    <hibernate.version>4.1.8.Final</hibernate.version>
     <hibernate-validator.version>4.3.0.Final</hibernate-validator.version>
   </properties>
 </project>
