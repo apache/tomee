@@ -24,16 +24,19 @@ import org.apache.webbeans.component.OwbBean;
 import org.apache.webbeans.component.WebBeansType;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.ejb.common.component.BaseEjbBean;
+import org.apache.webbeans.exception.WebBeansConfigurationException;
 
 import javax.ejb.NoSuchEJBException;
 import javax.ejb.Remove;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.context.spi.Context;
 import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Typed;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.SessionBeanType;
+import javax.persistence.EntityManager;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
@@ -60,6 +63,28 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
         super(beanClass, toSessionType(beanContext.getComponentType()), webBeansContext);
         this.beanContext = beanContext;
         beanContext.set(Bean.class, this);
+    }
+
+    @Override // copied to be able to produce EM (should be fixed in OWB for next CDI spec)
+    public void validatePassivationDependencies() {
+        if(isPassivationCapable()) {
+            final Set<InjectionPoint> beanInjectionPoints = getInjectionPoints();
+            for(InjectionPoint injectionPoint : beanInjectionPoints) {
+                if(!injectionPoint.isTransient()) {
+                    if(!getWebBeansContext().getWebBeansUtil().isPassivationCapableDependency(injectionPoint)) {
+                        if(injectionPoint.getAnnotated().isAnnotationPresent(Disposes.class)
+                                // here is the hack, this is temporary until OWB manages correctly serializable instances
+                                || EntityManager.class.equals(injectionPoint.getAnnotated().getBaseType())) {
+                            continue;
+                        }
+                        throw new WebBeansConfigurationException(
+                                "Passivation capable beans must satisfy passivation capable dependencies. " +
+                                        "Bean : " + toString() + " does not satisfy. Details about the Injection-point: " +
+                                        injectionPoint.toString());
+                    }
+                }
+            }
+        }
     }
 
     @Override
