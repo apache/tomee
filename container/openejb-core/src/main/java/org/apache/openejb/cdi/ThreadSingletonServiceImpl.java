@@ -18,7 +18,6 @@
 
 package org.apache.openejb.cdi;
 
-import java.util.concurrent.ConcurrentHashMap;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.AppInfo;
@@ -45,6 +44,7 @@ import org.apache.webbeans.spi.ScannerService;
 import org.apache.webbeans.spi.SecurityService;
 import org.apache.webbeans.spi.TransactionService;
 import org.apache.webbeans.spi.adaptor.ELAdaptor;
+import org.apache.webbeans.web.intercept.RequestScopedBeanInterceptorHandler;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -52,7 +52,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import org.apache.webbeans.web.intercept.RequestScopedBeanInterceptorHandler;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @version $Rev:$ $Date:$

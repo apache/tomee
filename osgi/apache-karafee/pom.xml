@@ -99,33 +99,6 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.apache.karaf.tooling</groupId>
-        <artifactId>features-maven-plugin</artifactId>
-        <version>${karaf.version}</version>
-        <executions>
-          <execution>
-            <id>add-features-to-repo</id>
-            <phase>generate-resources</phase>
-            <goals>
-              <goal>add-features-to-repo</goal>
-            </goals>
-            <configuration>
-              <descriptors>
-                <descriptor>mvn:org.apache.openejb/openejb-feature/${openejb.version}/xml/features</descriptor>
-                <descriptor>mvn:org.apache.activemq/activemq-karaf/${org.apache.activemq.version}/xml/features</descriptor>
-              </descriptors>
-              <features>
-                <feature>openejb-server</feature>
-                <feature>war</feature>
-                <feature>transaction</feature>
-                <feature>webconsole</feature>
-              </features>
-              <repository>target/repo</repository>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
@@ -165,6 +138,54 @@
                   <outputDirectory>target/dependencies</outputDirectory>
                 </artifactItem>
               </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin> <!-- quick way to update pax-web from karaf which is a buggy version (1.1.3), this should be removed when karaf will be upgraded -->
+        <groupId>org.codehaus.gmaven</groupId>
+        <artifactId>gmaven-plugin</artifactId>
+        <version>1.3</version>
+        <executions>
+          <execution>
+            <id>patch-pax-web</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>execute</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <source>
+            def karafVersion = project.properties['karaf.version']
+            def file = new File(project.basedir, "target/dependencies/apache-karaf-${karafVersion}/system/org/apache/karaf/assemblies/features/standard/${karafVersion}/standard-${karafVersion}-features.xml")
+            file.write(file.text.replace('1.1.3', '1.1.5'))
+          </source>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.karaf.tooling</groupId>
+        <artifactId>features-maven-plugin</artifactId>
+        <version>${karaf.version}</version>
+        <executions>
+          <execution>
+            <id>add-features-to-repo</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>add-features-to-repo</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>mvn:org.apache.openejb/openejb-feature/${openejb.version}/xml/features</descriptor>
+                <descriptor>mvn:org.apache.activemq/activemq-karaf/${org.apache.activemq.version}/xml/features</descriptor>
+              </descriptors>
+              <features>
+                <feature>openejb-server</feature>
+                <feature>war</feature>
+                <feature>transaction</feature>
+                <feature>webconsole</feature>
+              </features>
+              <repository>target/repo</repository>
             </configuration>
           </execution>
         </executions>

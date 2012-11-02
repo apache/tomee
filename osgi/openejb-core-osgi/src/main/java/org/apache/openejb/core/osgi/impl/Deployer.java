@@ -119,11 +119,6 @@ public class Deployer implements BundleListener {
             return;
         }
 
-        final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
-        final ClassLoader osgiCl = new OSGIClassLoader(bundle, OpenEJBBundleContextHolder.get().getBundle());
-
-        Thread.currentThread().setContextClassLoader(osgiCl);
-
         final Set<Bundle> wiredBundles = BundleUtils.getWiredBundles(bundle);
         final Filter filter = new OSGiPrefixFilter(NewLoaderLogic.getExclusions());
         for (Bundle b : wiredBundles) {
@@ -153,6 +148,11 @@ public class Deployer implements BundleListener {
             }
         }
 
+        final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
+        final ClassLoader osgiCl = new OSGIClassLoader(bundle, OpenEJBBundleContextHolder.get().getBundle());
+
+        Thread.currentThread().setContextClassLoader(osgiCl);
+
         try {
             try {
                 try {
@@ -164,7 +164,7 @@ public class Deployer implements BundleListener {
                     }
 
                     LOGGER.info("looking bundle {} in {}", bundle.getBundleId(), bundleDump);
-                    final AppModule appModule = new OSGiDeploymentLoader(bundle).load(bundleDump);
+                    final AppModule appModule = new DeploymentLoader().load(bundleDump);
                     LOGGER.info("deploying bundle #" + bundle.getBundleId() + " as an EJBModule");
 
                     final ConfigurationFactory configurationFactory = new ConfigurationFactory();
@@ -422,25 +422,6 @@ public class Deployer implements BundleListener {
         }
 
         @Override
-        protected Class findClass(final String name) throws ClassNotFoundException {
-            try {
-                return fallbackBundle.loadClass(name);
-            } catch (Exception ignored) {
-                // no-op
-            }
-
-            try {
-                return this.backingBundle.loadClass(name);
-            } catch (ClassNotFoundException cnfe) {
-                throw new ClassNotFoundException(name + " not found from bundle [" + backingBundle.getSymbolicName() + "]", cnfe);
-            } catch (NoClassDefFoundError ncdfe) {
-                final NoClassDefFoundError e = new NoClassDefFoundError(name + " not found from bundle [" + backingBundle + "]");
-                e.initCause(ncdfe);
-                throw e;
-            }
-        }
-
-        @Override
         protected URL findResource(final String name) {
             URL url = fallbackBundle.getResource(name);
             if (url != null) {
@@ -486,12 +467,32 @@ public class Deployer implements BundleListener {
         }
 
         @Override
-        protected Class loadClass(final String name, final boolean resolve) throws ClassNotFoundException {
-            final Class clazz = findClass(name);
-            if (resolve) {
-                resolveClass(clazz);
+        protected Class<?> findClass(final String name) throws ClassNotFoundException {
+            try {
+                return fallbackBundle.loadClass(name);
+            } catch (Exception ignored) {
+                // no-op
             }
-            return clazz;
+
+            try {
+                return this.backingBundle.loadClass(name);
+            } catch (ClassNotFoundException cnfe) {
+                throw new ClassNotFoundException(name + " not found from bundle [" + backingBundle.getSymbolicName() + "]", cnfe);
+            } catch (NoClassDefFoundError ncdfe) {
+                final NoClassDefFoundError e = new NoClassDefFoundError(name + " not found from bundle [" + backingBundle + "]");
+                e.initCause(ncdfe);
+                throw e;
+            }
+        }
+
+        @Override
+        public Class<?> loadClass(final String name) throws ClassNotFoundException {
+            return findClass(name);
+        }
+
+        @Override
+        protected Class<?> loadClass(final String name, final boolean resolve) throws ClassNotFoundException {
+            return findClass(name);
         }
 
         public String toString() {
@@ -507,7 +508,7 @@ public class Deployer implements BundleListener {
         }
 
         @Override
-        protected ClassLoader getOpenEJBClassLoader() {
+        protected ClassLoader getOpenEJBClassLoader() { // TODO: valid it is still mandatory
             return new OSGIClassLoader(bundle, OpenEJBBundleContextHolder.get().getBundle());
         }
     }
