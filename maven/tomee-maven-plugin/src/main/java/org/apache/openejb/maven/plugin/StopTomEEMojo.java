@@ -21,6 +21,9 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.openejb.config.RemoteServer;
+
+import java.util.List;
 
 
 @Mojo(name = "stop", requiresDependencyResolution = ResolutionScope.RUNTIME_PLUS_SYSTEM)
@@ -33,5 +36,14 @@ public class StopTomEEMojo extends AbstractTomEEMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         run(); // skip other processings which are useless for a stop
+    }
+
+    @Override
+    protected void serverCmd(final RemoteServer server, final List<String> strings) {
+        try {
+            server.forceStop();
+        } catch (Exception e) {
+            getLog().error(e.getMessage(), e);
+        }
     }
 }

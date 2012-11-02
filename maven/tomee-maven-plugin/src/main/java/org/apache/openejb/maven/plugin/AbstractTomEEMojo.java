@@ -525,15 +525,21 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
         System.setProperty("server.shutdown.port", Integer.toString(tomeeShutdownPort));
         final RemoteServer server = new RemoteServer(getConnectAttempts(), false);
-        if (!getNoShutdownHook()) {
-            addShutdownHooks(server);
+        addShutdownHooks(server); // some shutdown hooks are always added (see UpdatableTomEEMojo)
+
+        if (getNoShutdownHook()) {
+            Runtime.getRuntime().addShutdownHook(new Thread() {
+                @Override public void run() {
+                    server.stop();
+                }
+            });
         }
 
         getLog().info("Running '" + getClass().getSimpleName().replace("TomEEMojo", "").toLowerCase(Locale.ENGLISH)
                 + "'. Configured TomEE in plugin is " + tomeeHost + ":" + tomeeHttpPort
                 + " (plugin shutdown port is " + tomeeShutdownPort + ")");
 
-        server.start(strings, getCmd(), false);
+        serverCmd(server, strings);
 
         if (!getNoShutdownHook()) {
             try {
@@ -544,12 +550,12 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         }
     }
 
+    protected void serverCmd(final RemoteServer server, final List<String> strings) {
+        server.start(strings, getCmd(), false);
+    }
+
     protected void addShutdownHooks(final RemoteServer server) {
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override public void run() {
-                server.stop();
-            }
-        });
+        // no-op
     }
 
     protected  int getConnectAttempts() {

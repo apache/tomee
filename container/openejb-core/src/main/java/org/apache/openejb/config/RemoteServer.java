@@ -26,7 +26,12 @@ import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * @version $Rev$ $Date$
@@ -423,16 +428,20 @@ public class RemoteServer {
     public void stop() {
         if (!serverHasAlreadyBeenStarted) {
             try {
-                shutdown();
-
-                // check tomcat was effectively shutted down
-                // we can have some concurrent shutdown commands (catalina shutdown hook for instance)
-                // so we can have to wait here since it is important to be synchronous in this method
-                waitForServerShutdown();
+                forceStop();
             } catch (Exception e) {
                 e.printStackTrace(System.err);
             }
         }
+    }
+
+    public void forceStop() throws Exception {
+        shutdown();
+
+        // check tomcat was effectively shutted down
+        // we can have some concurrent shutdown commands (catalina shutdown hook for instance)
+        // so we can have to wait here since it is important to be synchronous in this method
+        waitForServerShutdown();
     }
 
     private void waitForServerShutdown() throws InterruptedException {
