@@ -225,7 +225,7 @@ public class Installer {
             }
         }
 
-        // java 7 doesn't need endorsed folder
+        /* no more needed with the last upgrade of jaxb
         String setClasspathSh = Installers.readAll(paths.getSetClasspathSh(), alerts);
         if (setClasspathSh != null && !setClasspathSh.contains("any endorsed lib for java 7")) {
             if (Installers.backup(paths.getSetClasspathSh(), alerts)) {
@@ -271,6 +271,7 @@ public class Installer {
                 }
             }
         }
+        */
     }
 
     private void copyClasses(File sourceJar, File destinationJar, String pattern) {
