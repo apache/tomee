@@ -192,7 +192,8 @@ public class CxfRsHttpListener implements RsHttpListener {
         jaxb.setMarshallerProperties(jaxbProperties);
 
         final JSONProvider json = new JSONProvider();
-        json.setSerializeAsArray(true);
+        // TOMEE-514
+        // json.setSerializeAsArray(true);
 
         return Arrays.asList((Object) jaxb, json);
     }
