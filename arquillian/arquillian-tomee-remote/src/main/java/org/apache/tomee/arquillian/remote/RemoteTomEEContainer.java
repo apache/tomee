@@ -47,7 +47,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
 
     private RemoteServer container;
     private boolean shutdown = false;
-    private File openejbHome;
+    private File tomeeHome;
 
     @Override
     public void start() throws LifecycleException {
@@ -80,7 +80,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
             }
             container = new RemoteServer();
 
-            container.setAdditionalClasspath(addOneLineFormatter(openejbHome));
+            container.setAdditionalClasspath(addOneLineFormatter(tomeeHome));
             container.start(args(), "start", true);
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Unable to start remote container", e);
@@ -161,32 +161,32 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
         Files.readable(workingDirectory);
         Files.writable(workingDirectory);
 
-        openejbHome = Setup.findHome(workingDirectory);
+        tomeeHome = Setup.findHome(workingDirectory);
 
-        if (openejbHome == null) {
-            openejbHome = Setup.downloadAndUnpack(workingDirectory, configuration.getArtifactName());
+        if (tomeeHome == null) {
+            tomeeHome = Setup.downloadAndUnpack(workingDirectory, configuration.getArtifactName());
 
-            logger.log(Level.INFO, "Downloaded container to: " + openejbHome);
+            logger.log(Level.INFO, "Downloaded container to: " + tomeeHome);
         }
 
-        Files.assertDir(openejbHome);
-        Files.readable(openejbHome);
-        Files.writable(openejbHome);
+        Files.assertDir(tomeeHome);
+        Files.readable(tomeeHome);
+        Files.writable(tomeeHome);
 
-        Setup.configureServerXml(openejbHome, configuration);
+        Setup.configureServerXml(tomeeHome, configuration);
 
-        Setup.synchronizeFolder(openejbHome, configuration.getConf(), "conf");
-        Setup.synchronizeFolder(openejbHome, configuration.getBin(), "bin");
-        Setup.synchronizeFolder(openejbHome, configuration.getLib(), "lib");
+        Setup.synchronizeFolder(tomeeHome, configuration.getConf(), "conf");
+        Setup.synchronizeFolder(tomeeHome, configuration.getBin(), "bin");
+        Setup.synchronizeFolder(tomeeHome, configuration.getLib(), "lib");
 
-        Setup.configureSystemProperties(openejbHome, configuration);
+        Setup.configureSystemProperties(tomeeHome, configuration);
 
         final String opts = configuration.getCatalina_opts();
-        Setup.exportProperties(openejbHome, configuration, opts == null || (!opts.contains("-Xm") && !opts.matches(".*-XX:[^=]*Size=.*")));
-        Setup.installArquillianBeanDiscoverer(openejbHome);
+        Setup.exportProperties(tomeeHome, configuration, opts == null || (!opts.contains("-Xm") && !opts.matches(".*-XX:[^=]*Size=.*")));
+        Setup.installArquillianBeanDiscoverer(tomeeHome);
 
         if (configuration.isRemoveUnusedWebapps()) {
-            Setup.removeUselessWebapps(openejbHome);
+            Setup.removeUselessWebapps(tomeeHome);
         }
 
         if (configuration.isSimpleLog()) {
@@ -201,7 +201,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
             if (doIt) {
                 FileWriter writer = null;
                 try {
-                    writer = new FileWriter(new File(openejbHome, "conf/logging.properties"));
+                    writer = new FileWriter(new File(tomeeHome, "conf/logging.properties"));
                     writer.write("handlers = java.util.logging.ConsoleHandler\n" +
                             ".handlers = java.util.logging.ConsoleHandler\n" +
                             "java.util.logging.ConsoleHandler.level = INFO\n" +
@@ -226,7 +226,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
     public void stop() throws LifecycleException {
         // only stop the container if we started it
         if (shutdown) {
-            Setup.removeArquillianBeanDiscoverer(openejbHome);
+            Setup.removeArquillianBeanDiscoverer(tomeeHome);
             container.stop();
         }
     }
