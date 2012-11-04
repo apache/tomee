@@ -26,6 +26,27 @@ import java.util.List;
  */
 public class Files {
 
+    public static File path(String... parts) {
+        File dir = null;
+        for (String part : parts) {
+            if (dir == null) {
+                dir = new File(part);
+            } else {
+                dir = new File(dir, part);
+            }
+        }
+
+        return dir;
+    }
+
+    public static File path(File dir, String... parts) {
+        for (String part : parts) {
+            dir = new File(dir, part);
+        }
+
+        return dir;
+    }
+
     public static File createTempDir() throws IOException {
         return createTempDir("tomee", ".conf");
     }
