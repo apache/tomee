@@ -71,6 +71,8 @@ public class Deployer implements BundleListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(Deployer.class);
     private static Deployer INSTANCE = null;
 
+    private static final Filter BUNDLE_FILTER = new OSGiPrefixFilter(NewLoaderLogic.getExclusions());
+
     private final Map<Bundle, List<ServiceRegistration>> registrations = new ConcurrentHashMap<Bundle, List<ServiceRegistration>>();
     private final Map<Bundle, String> paths = new ConcurrentHashMap<Bundle, String>();
 
@@ -89,18 +91,19 @@ public class Deployer implements BundleListener {
 
     @Override
     public void bundleChanged(final BundleEvent event) {
-        openejbActivator.checkServiceManager(OpenEJBBundleContextHolder.get());
         switch (event.getType()) {
             case BundleEvent.STARTED:
                 final BundleContext context = event.getBundle().getBundleContext();
                 if (context != null) {
                     deploy(event.getBundle());
                 }
-                break;
+            break;
+
             case BundleEvent.STOPPED:
             case BundleEvent.UNINSTALLED:
                 undeploy(event.getBundle());
-                break;
+            break;
+
             case BundleEvent.UPDATED:
                 try {
                     undeploy(event.getBundle());
@@ -110,20 +113,21 @@ public class Deployer implements BundleListener {
                     LOGGER.warn("can't undeploy bundle #{}", event.getBundle().getBundleId());
                 }
                 deploy(event.getBundle());
-                break;
+            break;
         }
     }
 
     private void deploy(final Bundle bundle) {
-        if (bundle.getBundleContext() == null) {
+        if (bundle.getBundleContext() == null
+                || (bundle.getLocation() != null && !BUNDLE_FILTER.accept(bundle.getLocation()))) {
             return;
         }
 
         final Set<Bundle> wiredBundles = BundleUtils.getWiredBundles(bundle);
-        final Filter filter = new OSGiPrefixFilter(NewLoaderLogic.getExclusions());
+
         for (Bundle b : wiredBundles) {
             final String location = b.getLocation();
-            if (location == null || !filter.accept(location)) {
+            if (location == null || !BUNDLE_FILTER.accept(location)) {
                 continue;
             }
 
@@ -152,6 +156,8 @@ public class Deployer implements BundleListener {
         final ClassLoader osgiCl = new OSGIClassLoader(bundle, OpenEJBBundleContextHolder.get().getBundle());
 
         Thread.currentThread().setContextClassLoader(osgiCl);
+
+        openejbActivator.checkServiceManager(OpenEJBBundleContextHolder.get());
 
         try {
             try {
