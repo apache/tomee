@@ -22,6 +22,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.Map;
 import java.util.TreeMap;
@@ -100,6 +101,17 @@ public class QuickServerXmlParser extends DefaultHandler {
         try {
             final SAXParser parser = FACTORY.newSAXParser();
             parser.parse(serverXml, handler);
+        } catch (Exception e) {
+            // no-op: using defaults
+        }
+        return handler;
+    }
+
+    public static QuickServerXmlParser parse(final String serverXmlContents) {
+        final QuickServerXmlParser handler = new QuickServerXmlParser();
+        try {
+            final SAXParser parser = FACTORY.newSAXParser();
+            parser.parse(new ByteArrayInputStream(serverXmlContents.getBytes()), handler);
         } catch (Exception e) {
             // no-op: using defaults
         }

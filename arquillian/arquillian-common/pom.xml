@@ -47,5 +47,10 @@
       <artifactId>arquillian-container-spi</artifactId>
       <version>${version.arquillian}</version>
     </dependency>
+    <dependency>
+      <groupId>org.codehaus.swizzle</groupId>
+      <artifactId>swizzle-stream</artifactId>
+      <version>1.6.1</version>
+    </dependency>
   </dependencies>
 </project>

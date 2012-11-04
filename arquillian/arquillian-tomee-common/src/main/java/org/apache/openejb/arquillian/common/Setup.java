@@ -20,6 +20,7 @@ import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.JarExtractor;
 import org.apache.tomee.util.QuickServerXmlParser;
+import org.codehaus.swizzle.stream.ReplaceStringsInputStream;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -27,23 +28,16 @@ import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.net.Socket;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -52,10 +46,10 @@ import java.util.logging.Logger;
  */
 public class Setup {
     private static final Logger LOGGER = Logger.getLogger(Setup.class.getName()); // JUL is used by arquillian so that's fine
-    public static final String TOMEE_BEAN_DISCOVERER_JAR = "lib/arquillian-tomee-bean-discoverer.jar";
+    public static final String TOMEE_BEAN_DISCOVERER_JAR = "lib" + File.separator + "arquillian-tomee-bean-discoverer.jar";
     private static final String DEFAULT_MEM_CONFIG = "-Xmx512m -Xms256m -XX:PermSize=64m -XX:MaxPermSize=256m -XX:ReservedCodeCacheSize=64m";
 
-    public static void exportProperties(final File openejbHome, final TomEEConfiguration c, final boolean defaultMem) {
+    public static void exportProperties(final File tomeeHome, final TomEEConfiguration c, final boolean defaultMem) {
         System.setProperty("java.naming.provider.url", "http://" + c.getHost() + ":" + c.getHttpPort() + "/tomee/ejb");
         System.setProperty("connect.tries", "90");
         System.setProperty("server.http.port", String.valueOf(c.getHttpPort()));
@@ -65,19 +59,26 @@ public class Setup {
         } else {
             System.setProperty("java.opts", "-Dtomee.httpPort=" + c.getHttpPort());
         }
-        System.setProperty("openejb.home", openejbHome.getAbsolutePath());
-        System.setProperty("tomee.home", openejbHome.getAbsolutePath());
+        System.setProperty("openejb.home", tomeeHome.getAbsolutePath());
+        System.setProperty("tomee.home", tomeeHome.getAbsolutePath());
     }
 
-    public static void updateServerXml(final File openejbHome, final int httpPort, final int stopPort, final int ajpPort) throws IOException {
-        final File sXml = new File(openejbHome, "conf" + File.separator + "server.xml");
-        final QuickServerXmlParser ports = QuickServerXmlParser.parse(sXml);
+    public static void updateServerXml(File tomeeHome, TomEEConfiguration configuration) throws IOException {
+        final File serverXml = Files.path(tomeeHome, "conf", "server.xml");
+        final QuickServerXmlParser ports = QuickServerXmlParser.parse(serverXml);
 
         final Map<String, String> replacements = new HashMap<String, String>();
-        replacements.put(ports.http(), String.valueOf(httpPort));
-        replacements.put(ports.stop(), String.valueOf(stopPort));
-        replacements.put(ports.ajp(), String.valueOf(ajpPort));
-        replace(replacements, sXml);
+        replacements.put(ports.http(), String.valueOf(configuration.getHttpPort()));
+        replacements.put(ports.stop(), String.valueOf(configuration.getStopPort()));
+        replacements.put(ports.ajp(), String.valueOf(ajpPort(configuration)));
+
+        if (configuration.isUnpackWars()) {
+            replacements.put("unpackWARs=\"false\"", "unpackWARs=\"true\"");
+        } else {
+            replacements.put("unpackWARs=\"true\"", "unpackWARs=\"false\"");
+        }
+
+        replace(replacements, serverXml);
     }
 
     public static File findHome(File directory) {
@@ -164,68 +165,21 @@ public class Setup {
     }
 
     public static void replace(final Map<String, String> replacements, final File file) throws IOException {
-        BufferedReader reader = null;
-        PrintWriter writer = null;
 
-        try {
-            final File tmpFile = copyToTempFile(file);
-            reader = new BufferedReader(new FileReader(tmpFile));
-            writer = new PrintWriter(new FileWriter(file));
-            String line;
+        InputStream in = IO.read(file);
+        in = new ReplaceStringsInputStream(in, replacements);
 
-            while ((line = reader.readLine()) != null) {
-                final Iterator<String> iterator = replacements.keySet().iterator();
-                while (iterator.hasNext()) {
-                    final String pattern = iterator.next();
-                    final String replacement = replacements.get(pattern);
+        final String data = IO.slurp(in);
 
-                    line = line.replaceAll(pattern, replacement);
-                }
+        IO.copy(data.getBytes(), file);
 
-                writer.println(line);
-            }
-        } finally {
-            if (reader != null) {
-                reader.close();
-            }
-
-            if (writer != null) {
-                writer.close();
-            }
-        }
         if (LOGGER.isLoggable(Level.FINE)) {
-            IO.copy(file, System.out);
+            IO.copy(data.getBytes(), System.out);
         }
     }
 
-    private static File copyToTempFile(final File file) throws IOException {
-        InputStream is = null;
-        OutputStream os = null;
-
-        File tmpFile;
-        try {
-            tmpFile = File.createTempFile("oejb", ".fil");
-            tmpFile.deleteOnExit();
-
-            is = new FileInputStream(file);
-            os = new FileOutputStream(tmpFile);
-
-            IO.copy(is, os);
-        } finally {
-            if (is != null) {
-                is.close();
-            }
-
-            if (os != null) {
-                os.close();
-            }
-        }
-
-        return tmpFile;
-    }
-
-    public static void removeUselessWebapps(final File openejbHome) {
-        final File webapps = new File(openejbHome, "webapps");
+    public static void removeUselessWebapps(final File tomeeHome) {
+        final File webapps = new File(tomeeHome, "webapps");
         if (webapps.isDirectory()) {
             final File[] files = webapps.listFiles();
             if (files != null) {
@@ -239,23 +193,26 @@ public class Setup {
         }
     }
 
-    public static void configureServerXml(final File openejbHome, final TomEEConfiguration configuration) throws IOException {
+    public static void configureServerXml(final File tomeeHome, final TomEEConfiguration configuration) throws IOException {
+
         if (configuration.getServerXml() != null) {
-            final File sXml = new File(configuration.getServerXml());
-            if (!sXml.exists()) {
-                LOGGER.severe("provided server.xml doesn't exist: '" + sXml.getPath() + "'");
+
+            final File serverXml = new File(configuration.getServerXml());
+
+            if (!serverXml.exists()) {
+                LOGGER.severe("Provided server.xml doesn't exist: '" + serverXml.getPath() + "'");
             } else {
-                final FileOutputStream fos = new FileOutputStream(new File(openejbHome, "conf/server.xml"));
-                try {
-                    IO.copy(sXml, fos);
-                } finally {
-                    IO.close(fos);
-                }
-                configuration.setStopPort(Integer.parseInt(QuickServerXmlParser.parse(sXml).stop()));
+
+                // Read in the contents to memory so we can avoid re-reading for parsing
+                final String data = IO.slurp(serverXml);
+
+                IO.copy(data.getBytes(), Files.path(tomeeHome, "conf", "server.xml"));
+                configuration.setStopPort(Integer.parseInt(QuickServerXmlParser.parse(data).stop()));
+
                 return; // in this case we don't want to override the conf
             }
         }
-        Setup.updateServerXml(openejbHome, configuration.getHttpPort(), configuration.getStopPort(), ajpPort(configuration));
+        updateServerXml(tomeeHome, configuration);
     }
 
     private static int ajpPort(final TomEEConfiguration config) {
@@ -267,58 +224,57 @@ public class Setup {
         }
     }
 
-    public static void configureSystemProperties(final File openejbHome, final TomEEConfiguration configuration) {
-        final StringBuilder builder = new StringBuilder();
-        final File systemProperties = new File(openejbHome, "conf/system.properties");
-        if (systemProperties.exists()) {
+    public static void configureSystemProperties(final File tomeeHome, final TomEEConfiguration configuration) {
+        final File file = Files.path(tomeeHome, "conf", "system.properties");
+
+        // Must use an actual properties object to avoid duplicate keys
+        final Properties properties = new Properties();
+
+        if (file.exists()) {
             try {
-                builder.append(org.apache.openejb.loader.IO.slurp(systemProperties));
+                IO.readProperties(file, properties);
             } catch (IOException e) {
-                LOGGER.log(Level.SEVERE, "can't read " + systemProperties.getAbsolutePath(), e);
+                LOGGER.log(Level.SEVERE, "Can't read " + file.getAbsolutePath(), e);
             }
         }
-        builder.append("\n").append(configuration.systemProperties());
+
+        if (configuration.getProperties() != null) {
+            try {
+                final InputStream bytes = IO.read(configuration.getProperties().getBytes());
+                IO.readProperties(bytes, properties);
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, "Can't parse <property name=\"properties\"> value '" + configuration.getProperties() + "'", e);
+            }
+        }
 
         if (configuration.isQuickSession()) {
-            builder.append("\nopenejb.session.manager=org.apache.tomee.catalina.session.QuickSessionManager");
+            properties.put("openejb.session.manager", "org.apache.tomee.catalina.session.QuickSessionManager");
         }
-        builder.append("\n");
 
-        FileWriter writer = null;
         try {
-            writer = new FileWriter(systemProperties);
-            writer.write(builder.toString());
+            IO.writeProperties(file, properties);
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "can't save system properties " + systemProperties.getAbsolutePath(), e);
-            return;
-        } finally {
-            try {
-                final IOException ioe = IO.close(writer);
-                if (ioe != null) {
-                    LOGGER.log(Level.SEVERE, "can't save system properties " + systemProperties.getAbsolutePath(), ioe);
-                }
-            } catch (IOException ignored) {
-                // no-op
-            }
+            LOGGER.log(Level.SEVERE, "Can't save system properties " + file.getAbsolutePath(), e);
         }
     }
 
-    public static void synchronizeFolder(final File openejbHome, final String src, final String dir) {
+
+    public static void synchronizeFolder(final File tomeeHome, final String src, final String dir) {
         if (src != null && !src.isEmpty()) {
             final File confSrc = new File(src);
             if (confSrc.exists()) {
-                final File conf = new File(openejbHome, dir);
+                final File conf = new File(tomeeHome, dir);
                 final Collection<File> files = org.apache.openejb.loader.Files.collect(confSrc, new DirectFileOnlyFilter(confSrc));
                 files.remove(confSrc);
                 for (File f : files) {
                     try {
                         org.apache.openejb.loader.IO.copy(f, new File(conf, relativize(f, confSrc)));
                     } catch (Exception e) {
-                        LOGGER.log(Level.WARNING, "ignoring copy of " + f.getAbsolutePath(), e);
+                        LOGGER.log(Level.WARNING, "Ignoring copy of " + f.getAbsolutePath(), e);
                     }
                 }
             } else {
-                LOGGER.warning("can't find " + confSrc.getAbsolutePath());
+                LOGGER.warning("Can't find " + confSrc.getAbsolutePath());
             }
         }
     }
@@ -338,22 +294,6 @@ public class Setup {
     public static void removeArquillianBeanDiscoverer(final File home) {
         final File destination = new File(home, TOMEE_BEAN_DISCOVERER_JAR);
         Files.delete(destination);
-    }
-
-    private static class TrueFileFilter implements FileFilter {
-        private static TrueFileFilter INSTANCE = null;
-
-        public static TrueFileFilter instance() {
-            if (INSTANCE == null) {
-                INSTANCE = new TrueFileFilter();
-            }
-            return INSTANCE;
-        }
-
-        @Override
-        public boolean accept(final File pathname) {
-            return true;
-        }
     }
 
     private static class DirectFileOnlyFilter implements FileFilter {
