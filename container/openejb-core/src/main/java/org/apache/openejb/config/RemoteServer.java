@@ -301,9 +301,14 @@ public class RemoteServer {
 
                 // kill3UNIXDebug();
 
-                server = Runtime.getRuntime().exec(args);
+                final Process process = Runtime.getRuntime().exec(args);
+                Pipe.pipe(process);
 
-                Pipe.pipe(server);
+                if ("start".equals(cmd)) {
+                    server = process;
+                } else if ("stop".equals(cmd)) {
+                    server.waitFor();
+                }
 
             } catch (Exception e) {
                 throw (RuntimeException) new OpenEJBRuntimeException("Cannot start the server.  Exception: "+e.getClass().getName()+": "+e.getMessage()).initCause(e);
@@ -428,7 +433,7 @@ public class RemoteServer {
     public void stop() {
         if (!serverHasAlreadyBeenStarted) {
             try {
-                forceStop();
+                shutdown();
             } catch (Exception e) {
                 e.printStackTrace(System.err);
             }
@@ -525,5 +530,31 @@ public class RemoteServer {
 
     public void setAdditionalClasspath(final String additionalClasspath) {
         this.additionalClasspath = additionalClasspath;
+    }
+
+    public void killOnExit() {
+        if (!serverHasAlreadyBeenStarted && kill.contains(this.server)) return;
+        kill.add(this.server);
+    }
+
+    // Shutdown hook for recursive delete on tmp directories
+    static final List<Process> kill = new ArrayList<Process>();
+
+    static {
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                for (Process server : kill) {
+                    try {
+                        if (server != null) {
+                            server.destroy();
+                            server.waitFor();
+                        }
+                    } catch (Throwable e) {
+                        //Ignore
+                    }
+                }
+            }
+        });
     }
 }
