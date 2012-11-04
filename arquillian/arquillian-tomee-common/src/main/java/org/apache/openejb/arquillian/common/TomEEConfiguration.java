@@ -37,6 +37,15 @@ public class TomEEConfiguration implements ContainerConfiguration {
     protected String properties = "";
     protected String portRange = ""; // only used if port < 0, empty means whatever, can be "1024-65535"
     protected boolean quickSession = true;
+    protected boolean unpackWars = true;
+
+    public boolean isUnpackWars() {
+        return unpackWars;
+    }
+
+    public void setUnpackWars(boolean unpackWars) {
+        this.unpackWars = unpackWars;
+    }
 
     public int getHttpPort() {
         return httpPort;

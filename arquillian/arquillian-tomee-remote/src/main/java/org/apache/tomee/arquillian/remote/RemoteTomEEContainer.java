@@ -26,7 +26,6 @@ import org.jboss.arquillian.container.spi.client.container.LifecycleException;
 
 import javax.naming.NamingException;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -34,6 +33,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -82,6 +82,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
 
             container.setAdditionalClasspath(addOneLineFormatter(tomeeHome));
             container.start(args(), "start", true);
+            container.killOnExit();
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Unable to start remote container", e);
             throw new LifecycleException("Unable to start remote container:" + e.getMessage(), e);
@@ -98,7 +99,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
         final String name = SimpleTomEEFormatter.class.getPackage().getName().replace('.', '/') + "/" + SimpleTomEEFormatter.class.getSimpleName() + ".class";
         final InputStream is = getClass().getResourceAsStream("/" + name);
         if (is != null) {
-            final File parent = new File(home, "bin/classes");
+            final File parent = Files.path(home, "bin", "classes");
             final File destination = new File(parent, name);
             if (!destination.getParentFile().mkdirs()) {
                 LOGGER.warning("Can't create " + destination.getPath());
@@ -179,9 +180,8 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
         Setup.synchronizeFolder(tomeeHome, configuration.getBin(), "bin");
         Setup.synchronizeFolder(tomeeHome, configuration.getLib(), "lib");
 
-        Setup.configureSystemProperties(tomeeHome, configuration);
-
         final String opts = configuration.getCatalina_opts();
+
         Setup.exportProperties(tomeeHome, configuration, opts == null || (!opts.contains("-Xm") && !opts.matches(".*-XX:[^=]*Size=.*")));
         Setup.installArquillianBeanDiscoverer(tomeeHome);
 
@@ -189,29 +189,16 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
             Setup.removeUselessWebapps(tomeeHome);
         }
 
-        if (configuration.isSimpleLog()) {
-            boolean doIt = true;
-            if (configuration.getConf() != null) { // let the user override it
-                final File confFolder = new File(configuration.getConf());
-                if (confFolder.exists() && new File(confFolder, "logging.properties").exists()) {
-                    doIt = false;
-                }
-            }
+        if (configuration.isSimpleLog() && noLoggingConfigProvided()) {
+            final File loggingProperties = Files.path(tomeeHome, "conf", "logging.properties");
 
-            if (doIt) {
-                FileWriter writer = null;
-                try {
-                    writer = new FileWriter(new File(tomeeHome, "conf/logging.properties"));
-                    writer.write("handlers = java.util.logging.ConsoleHandler\n" +
-                            ".handlers = java.util.logging.ConsoleHandler\n" +
-                            "java.util.logging.ConsoleHandler.level = INFO\n" +
-                            "java.util.logging.ConsoleHandler.formatter = " + SimpleTomEEFormatter.class.getName());
-                } catch (IOException ioe) {
-                    // no-op
-                } finally {
-                    IO.closeSilently(writer);
-                }
-            }
+            final Properties logging = new Properties();
+            logging.put("handlers", "java.util.logging.ConsoleHandler");
+            logging.put(".handlers", "java.util.logging.ConsoleHandler");
+            logging.put("java.util.logging.ConsoleHandler.level", "INFO");
+            logging.put("java.util.logging.ConsoleHandler.formatter", SimpleTomEEFormatter.class.getName());
+
+            IO.writeProperties(loggingProperties, logging);
         }
 
         if (logger.isLoggable(Level.FINE)) {
@@ -220,6 +207,14 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
                 logger.log(Level.FINE, String.format("%s = %s\n", entry.getKey(), entry.getValue()));
             }
         }
+    }
+
+    private boolean noLoggingConfigProvided() {
+        if (configuration.getConf() == null) return true;
+
+        final File conf = new File(configuration.getConf());
+
+        return !(conf.exists() && new File(conf, "logging.properties").exists());
     }
 
     @Override
