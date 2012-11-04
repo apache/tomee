@@ -43,4 +43,15 @@
     <karaf.version>2.3.0</karaf.version>
     <karafee.version>1.5.1-SNAPSHOT</karafee.version>
   </properties>
+
+  <!-- for debugging pupose
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.framework</artifactId>
+      <version>4.0.3</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+  -->
 </project>
