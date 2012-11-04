@@ -180,6 +180,8 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
         Setup.synchronizeFolder(tomeeHome, configuration.getBin(), "bin");
         Setup.synchronizeFolder(tomeeHome, configuration.getLib(), "lib");
 
+        Setup.configureSystemProperties(tomeeHome, configuration);
+
         final String opts = configuration.getCatalina_opts();
 
         Setup.exportProperties(tomeeHome, configuration, opts == null || (!opts.contains("-Xm") && !opts.matches(".*-XX:[^=]*Size=.*")));
