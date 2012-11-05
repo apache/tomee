@@ -65,7 +65,9 @@ import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.naming.Context;
 import javax.persistence.EntityManagerFactory;
+import java.io.Serializable;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -1600,6 +1602,12 @@ public class BeanContext extends DeploymentContext {
     }
 
     public void initIsPassivationScope() {
+        // CDI 6.6.4
+        if (BeanType.STATELESS.equals(componentType) || BeanType.SINGLETON.equals(componentType)) {
+            isPassivatingScope = false;
+            return;
+        }
+
         final BeanManagerImpl bm = moduleContext.getAppContext().getWebBeansContext().getBeanManagerImpl();
         if (!bm.isInUse()) {
             isPassivatingScope = true;

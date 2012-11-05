@@ -22,9 +22,14 @@ import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.ProxyInterfaceResolver;
 import org.apache.webbeans.component.OwbBean;
 import org.apache.webbeans.component.WebBeansType;
+import org.apache.webbeans.config.OWBLogConst;
 import org.apache.webbeans.config.WebBeansContext;
+import org.apache.webbeans.decorator.WebBeansDecorator;
 import org.apache.webbeans.ejb.common.component.BaseEjbBean;
 import org.apache.webbeans.exception.WebBeansConfigurationException;
+import org.apache.webbeans.intercept.InterceptorData;
+import org.apache.webbeans.intercept.webbeans.WebBeansInterceptor;
+import org.apache.webbeans.logger.WebBeansLoggerFacade;
 
 import javax.ejb.NoSuchEJBException;
 import javax.ejb.Remove;
@@ -34,21 +39,25 @@ import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Typed;
 import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.Decorator;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.SessionBeanType;
 import javax.persistence.EntityManager;
+import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.rmi.NoSuchObjectException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 
 public class CdiEjbBean<T> extends BaseEjbBean<T> {
     private final Map<Integer, Object> dependentSFSBToBeRemoved = new ConcurrentHashMap<Integer, Object>();
@@ -81,6 +90,42 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
                                 "Passivation capable beans must satisfy passivation capable dependencies. " +
                                         "Bean : " + toString() + " does not satisfy. Details about the Injection-point: " +
                                         injectionPoint.toString());
+                    }
+                }
+            }
+        }
+
+        //Check for interceptors and decorators, copied from parent(s)
+        for (Decorator<?> dec : decorators) {
+            WebBeansDecorator<?> decorator = (WebBeansDecorator<?>) dec;
+            if (!decorator.isPassivationCapable()) {
+                throw new WebBeansConfigurationException(MessageFormat.format(
+                        WebBeansLoggerFacade.getTokenString(OWBLogConst.EXCEPT_0015), toString()));
+            } else {
+                decorator.validatePassivationDependencies();
+            }
+        }
+
+        for (InterceptorData interceptorData : interceptorStack) {
+            if (interceptorData.isDefinedWithWebBeansInterceptor()) {
+                WebBeansInterceptor<?> interceptor = (WebBeansInterceptor<?>) interceptorData.getWebBeansInterceptor();
+                if (!interceptor.isPassivationCapable()) {
+                    throw new WebBeansConfigurationException(MessageFormat.format(
+                            WebBeansLoggerFacade.getTokenString(OWBLogConst.EXCEPT_0016), toString()));
+                } else {
+                    interceptor.validatePassivationDependencies();
+                }
+            } else {
+                if (interceptorData.isDefinedInInterceptorClass()) {
+                    Class<?> interceptorClass = interceptorData.getInterceptorClass();
+                    if (!Serializable.class.isAssignableFrom(interceptorClass)) {
+                        throw new WebBeansConfigurationException(MessageFormat.format(
+                                WebBeansLoggerFacade.getTokenString(OWBLogConst.EXCEPT_0016), toString()));
+                    } else {
+                        if (!getWebBeansContext().getAnnotationManager().checkInjectionPointForInterceptorPassivation(interceptorClass)) {
+                            throw new WebBeansConfigurationException(MessageFormat.format(
+                                    WebBeansLoggerFacade.getTokenString(OWBLogConst.EXCEPT_0017), toString(), interceptorClass));
+                        }
                     }
                 }
             }
@@ -318,7 +363,12 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
     }
 
     private void destroyScopedStateful(final T instance, final CreationalContext<T> cc) {
-        instance.hashCode(); // force the instance to be created - otherwise we'll miss @PreDestroy for instance
+        try {
+            instance.hashCode(); // force the instance to be created - otherwise we'll miss @PreDestroy for instance
+        } catch (NoSuchEJBException e) {
+            logger.log(Level.FINE, "The stateful instance " + instance + " can't be removed since it was invalidated", e);
+            return;
+        }
 
         Object ejbInstance = dependentSFSBToBeRemoved.remove(System.identityHashCode(instance));
         if (ejbInstance != null) {

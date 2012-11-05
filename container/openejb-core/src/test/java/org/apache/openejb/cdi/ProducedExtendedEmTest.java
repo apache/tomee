@@ -38,7 +38,6 @@ import java.util.Properties;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(ApplicationComposer.class)
 public class ProducedExtendedEmTest {
@@ -90,7 +89,6 @@ public class ProducedExtendedEmTest {
         public String getDelegateClassName() {
             return em.getDelegate().getClass().getCanonicalName();
         }
-
     }
 
     @Inject
