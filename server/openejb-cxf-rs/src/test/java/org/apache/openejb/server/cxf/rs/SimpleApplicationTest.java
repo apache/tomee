@@ -19,9 +19,6 @@ package org.apache.openejb.server.cxf.rs;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
-import org.apache.openejb.config.WebModule;
-import org.apache.openejb.jee.ParamValue;
-import org.apache.openejb.jee.Servlet;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.junit.Classes;
@@ -32,8 +29,6 @@ import org.apache.openejb.server.cxf.rs.beans.MyRESTApplication;
 import org.apache.openejb.server.cxf.rs.beans.RestWithInjections;
 import org.apache.openejb.server.cxf.rs.beans.SimpleEJB;
 import org.apache.openejb.web.LightweightWebAppBuilder;
-import org.apache.xbean.finder.AnnotationFinder;
-import org.apache.xbean.finder.archive.ClassesArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -65,20 +60,10 @@ public class SimpleApplicationTest {
     @Module
     @Classes({ RestWithInjections.class, SimpleEJB.class })
     public WebApp war() {
-        final ParamValue config = new ParamValue();
-        config.setParamName("javax.ws.rs.Application");
-        config.setParamValue(MyRESTApplication.class.getName());
-
-        final Servlet servlet = new Servlet();
-        servlet.setServletName("REST Application");
-        servlet.setServletClass(Application.class.getName());
-        servlet.getInitParam().add(config);
-
-        final WebApp webApp = new WebApp();
-        webApp.setContextRoot("foo");
-        webApp.getServlet().add(servlet);
-
-        return webApp;
+        return new WebApp()
+                .contextRoot("foo")
+                .addServlet("REST Application", Application.class.getName())
+                .addInitParam("REST Application", "javax.ws.rs.Application", MyRESTApplication.class.getName());
     }
 
     @Test

@@ -86,7 +86,7 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
     private static final Class[] MODULE_TYPES = { IAnnotationFinder.class, ClassesArchive.class,
             AppModule.class, WebModule.class, EjbModule.class,
             Application.class,
-            EjbJar.class, EnterpriseBean.class,
+            WebApp.class, EjbJar.class, EnterpriseBean.class,
             Persistence.class, PersistenceUnit.class,
             Connector.class, Beans.class,
             Class[].class
