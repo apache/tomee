@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,17 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.junit;
+package org.apache.openejb.server;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.Arrays;
+import java.util.Collection;
 
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface EnableServices {
-    // should contain the list of services to activate
-    // default is empty list which means that all services gonna be activated
-    String[] value () default {};
+/**
+ * This implementation is mainly used in the application composer to get the most from
+ * The EnableServices annotation created
+ */
+public class FilteredServiceManager extends SimpleServiceManager {
+
+    private Collection<String> services;
+
+    public FilteredServiceManager (String[] services) {
+        this.services = Arrays.asList(services);
+    }
+
+    @Override
+    protected boolean accept(String serviceName) {
+        return services.isEmpty() || services.contains(serviceName);
+    }
+
+    public static void initServiceManager(String[] services) {
+        setServiceManager(new FilteredServiceManager(services));
+    }
 }

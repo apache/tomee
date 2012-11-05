@@ -73,6 +73,7 @@ import org.junit.runners.model.TestClass;
 
 import javax.naming.Context;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -485,10 +486,14 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
 
                 assembler.buildContainerSystem(config.getOpenEjbConfiguration());
 
+                EnableServices annotation = testClass.getJavaClass().getAnnotation(EnableServices.class);
                 if ("true".equals(configuration.getProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "false"))
-                        || testClass.getJavaClass().getAnnotation(EnableServices.class) != null) {
+                        || annotation != null) {
                     try {
                         serviceManager = new ServiceManagerProxy();
+                        if (annotation != null) {
+                            initFilteredServiceManager(annotation);
+                        }
                         serviceManager.start();
                     } catch (ServiceManagerProxy.AlreadyStartedException e) {
                         throw new OpenEJBRuntimeException(e);
@@ -612,4 +617,25 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
     private static IAnnotationFinder finderFromClasses(final Class<?>[] value) {
         return new AnnotationFinder(new ClassesArchive(value)).link();
     }
+
+    private void initFilteredServiceManager(EnableServices services) {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        Class serviceManagerClass;
+        try {
+            serviceManagerClass = classLoader.loadClass("org.apache.openejb.server.FilteredServiceManager");
+        } catch (ClassNotFoundException e) {
+            String msg = "Services filtering requires class 'org.apache.openejb.server.FilteredServiceManager' to be available.  " +
+                    "Make sure you have the openejb-server-*.jar in your classpath.";
+            throw new IllegalStateException(msg, e);
+        }
+
+        Method initServiceManager = null;
+        try {
+            initServiceManager = serviceManagerClass.getMethod("initServiceManager", String[].class);
+            initServiceManager.invoke(null, new Object[]{services.value()});
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed initializing FilteredServiceManager with services " + services.value(), e);
+        }
+    }
+
 }
