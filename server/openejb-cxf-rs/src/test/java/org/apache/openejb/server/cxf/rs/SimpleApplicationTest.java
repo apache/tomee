@@ -28,7 +28,7 @@ import org.apache.openejb.junit.Module;
 import org.apache.openejb.server.cxf.rs.beans.MyRESTApplication;
 import org.apache.openejb.server.cxf.rs.beans.RestWithInjections;
 import org.apache.openejb.server.cxf.rs.beans.SimpleEJB;
-import org.apache.openejb.server.web.LightweightWebAppBuilder;
+import org.apache.openejb.web.LightweightWebAppBuilder;
 import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.archive.ClassesArchive;
 import org.junit.Test;
