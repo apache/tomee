@@ -28,6 +28,7 @@ import org.apache.openejb.cdi.ScopeHelper;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.ConnectorModule;
+import org.apache.openejb.config.DeploymentLoader;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.config.PersistenceModule;
 import org.apache.openejb.config.WebModule;
@@ -281,8 +282,8 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
 
                 final Object obj = method.invokeExplosively(testInstance);
 
-                if (obj instanceof WebModule) {
-                    appModule.getWebModules().add((WebModule) obj);
+                if (obj instanceof WebModule) { // will add the ejbmodule too
+                    DeploymentLoader.addWebModule((WebModule) obj, appModule);
                 } else if (obj instanceof EjbModule) {
                     final EjbModule ejbModule = (EjbModule) obj;
                     ejbModule.initAppModule(appModule);
