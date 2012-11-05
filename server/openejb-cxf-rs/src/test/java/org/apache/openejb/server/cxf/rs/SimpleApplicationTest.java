@@ -36,7 +36,7 @@ import java.io.StringWriter;
 
 import static org.junit.Assert.assertEquals;
 
-@EnableServices
+@EnableServices("cxf-rs")
 @RunWith(ApplicationComposer.class)
 public class SimpleApplicationTest {
     public static final String BASE_URL = "http://localhost:4204/foo/my-app";
