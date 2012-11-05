@@ -185,6 +185,10 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory {
     }
 
     public void register() throws OpenEJBException {
+        if (!LocalMBeanServer.isJMXActive()) {
+            return;
+        }
+
         final MBeanServer server = LocalMBeanServer.get();
         try {
             generateObjectName();

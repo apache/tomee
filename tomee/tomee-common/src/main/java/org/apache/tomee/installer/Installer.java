@@ -599,6 +599,7 @@ public class Installer {
 
                 systemPropertiesWriter.write("\n");
                 systemPropertiesWriter.write("# openejb.servicemanager.enabled = true\n");
+                systemPropertiesWriter.write("# openejb.jmx.active = false\n");
                 systemPropertiesWriter.write("# openejb.descriptors.output = false\n");
                 systemPropertiesWriter.write("# openejb.strict.interface.declaration = false\n");
                 systemPropertiesWriter.write("# openejb.conf.file = conf/tomee.xml\n");
@@ -617,7 +618,6 @@ public class Installer {
                 systemPropertiesWriter.write("# openejb.jndiname.failoncollision = true\n");
                 systemPropertiesWriter.write("# openejb.wsAddress.format = /{ejbDeploymentId}\n");
                 systemPropertiesWriter.write("# org.apache.openejb.server.webservices.saaj.provider = \n");
-                systemPropertiesWriter.write("# openejb.jmx.active = true\n");
                 systemPropertiesWriter.write("# openejb.nobanner = true\n");
                 systemPropertiesWriter.write("# openejb.offline = false\n");
                 systemPropertiesWriter.write("# openejb.jmx.active = true\n");

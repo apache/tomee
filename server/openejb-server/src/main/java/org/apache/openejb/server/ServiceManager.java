@@ -162,9 +162,11 @@ public abstract class ServiceManager {
                     registry.addDiscoveryAgent(agent);
                 }
 
-                MBeanServer server = LocalMBeanServer.get();
+                if (LocalMBeanServer.isJMXActive()) {
+                    MBeanServer server = LocalMBeanServer.get();
 
-                register(serviceName, service, server);
+                    register(serviceName, service, server);
+                }
 
                 return service;
             } catch (Throwable t) {

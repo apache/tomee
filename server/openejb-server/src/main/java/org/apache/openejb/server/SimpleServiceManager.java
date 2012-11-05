@@ -228,20 +228,22 @@ public class SimpleServiceManager extends ServiceManager {
         final ServerService[] services = daemons.clone();
 
         final MBeanServer server = LocalMBeanServer.get();
-        for (int i = 0; i < services.length; i++) {
-            final ObjectName on = getObjectName(services[i].getName());
-            if (server.isRegistered(on)) {
-                try {
-                    server.unregisterMBean(on);
-                } catch (Exception ignored) {
-                    // no-op
+        for (ServerService service : services) {
+            if (LocalMBeanServer.isJMXActive()) {
+                final ObjectName on = getObjectName(service.getName());
+                if (server.isRegistered(on)) {
+                    try {
+                        server.unregisterMBean(on);
+                    } catch (Exception ignored) {
+                        // no-op
+                    }
                 }
             }
 
             try {
-                services[i].stop();
+                service.stop();
             } catch (ServiceException e) {
-                logger.fatal("Service Shutdown Failed: " + services[i].getName() + ".  Exception: " + e.getMessage(), e);
+                logger.fatal("Service Shutdown Failed: " + service.getName() + ".  Exception: " + e.getMessage(), e);
             }
         }
 
