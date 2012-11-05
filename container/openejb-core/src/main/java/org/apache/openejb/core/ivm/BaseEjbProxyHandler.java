@@ -311,7 +311,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
             } else if (interfaceType.isComponent() || java.rmi.Remote.class.isAssignableFrom(method.getDeclaringClass())) {
                 throw new NoSuchObjectException("reference is invalid");
             } else {
-                throw new NoSuchEJBException("reference is invalid");
+                throw new NoSuchEJBException("reference is invalid for " + deploymentID);
             }
         }
         if (!(Object.class.equals(method.getDeclaringClass())
