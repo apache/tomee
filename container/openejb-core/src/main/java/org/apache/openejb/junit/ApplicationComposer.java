@@ -44,6 +44,7 @@ import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.ManagedBean;
 import org.apache.openejb.jee.NamedModule;
 import org.apache.openejb.jee.TransactionType;
+import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
@@ -137,6 +138,14 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
         for (FrameworkMethod method : testClass.getAnnotatedMethods(Component.class)) {
             if (method.getMethod().getParameterTypes().length > 0) {
                 errors.add(new Exception("@Component methods shouldn't take any parameters"));
+            }
+        }
+
+        for (FrameworkMethod method : testClass.getAnnotatedMethods(Classes.class)) {
+            final Class<?> returnType = method.getMethod().getReturnType();
+            if (!returnType.equals(WebModule.class) && !returnType.equals(EjbModule.class)
+                    && !returnType.equals(WebApp.class) && !returnType.equals(EjbJar.class)) {
+                errors.add(new Exception("@Classes can't be used on a method returning " + returnType));
             }
         }
 
@@ -285,19 +294,43 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
             for (FrameworkMethod method : testClass.getAnnotatedMethods(Module.class)) {
 
                 final Object obj = method.invokeExplosively(testInstance);
+                final Classes classesAnnotation = method.getAnnotation(Classes.class);
 
-                if (obj instanceof WebModule) { // will add the ejbmodule too
-                    DeploymentLoader.addWebModule((WebModule) obj, appModule);
+                if (obj instanceof WebApp) { // will add the ejbmodule too
+                    final WebApp webapp = (WebApp) obj;
+                    String root = webapp.getContextRoot();
+                    if (root == null) {
+                        root = "/openejb";
+                    }
+
+                    final WebModule webModule = new WebModule(webapp, root, Thread.currentThread().getContextClassLoader(), "", root);
+                    if (classesAnnotation != null) {
+                        webModule.setFinder(finderFromClasses(classesAnnotation.value()));
+                    }
+                    DeploymentLoader.addWebModule(webModule, appModule);
+                } else if (obj instanceof WebModule) { // will add the ejbmodule too
+                    final WebModule webModule = (WebModule) obj;
+                    if (classesAnnotation != null) {
+                        webModule.setFinder(finderFromClasses(classesAnnotation.value()));
+                    }
+                    DeploymentLoader.addWebModule(webModule, appModule);
                 } else if (obj instanceof EjbModule) {
                     final EjbModule ejbModule = (EjbModule) obj;
+                    if (classesAnnotation != null) {
+                        ejbModule.setFinder(finderFromClasses(classesAnnotation.value()));
+                    }
                     ejbModule.initAppModule(appModule);
                     appModule.getEjbModules().add(ejbModule);
                 } else if (obj instanceof EjbJar) {
 
                     final EjbJar ejbJar = (EjbJar) obj;
                     setId(ejbJar, method);
-                    appModule.getEjbModules().add(new EjbModule(ejbJar));
 
+                    final EjbModule ejbModule = new EjbModule(ejbJar);
+                    appModule.getEjbModules().add(ejbModule);
+                    if (classesAnnotation != null) {
+                        ejbModule.setFinder(finderFromClasses(classesAnnotation.value()));
+                    }
                 } else if (obj instanceof EnterpriseBean) {
 
                     final EnterpriseBean bean = (EnterpriseBean) obj;
@@ -334,6 +367,9 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                     final Beans beans = (Beans) obj;
                     final EjbModule ejbModule = new EjbModule(new EjbJar(method.getName()));
                     ejbModule.setBeans(beans);
+                    if (classesAnnotation != null) {
+                        ejbModule.setFinder(finderFromClasses(classesAnnotation.value()));
+                    }
                     appModule.getEjbModules().add(ejbModule);
 
                 } else if (obj instanceof Class[]) {
@@ -508,5 +544,9 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
             module.setId(name);
             return module;
         }
+    }
+
+    private static IAnnotationFinder finderFromClasses(final Class<?>[] value) {
+        return new AnnotationFinder(new ClassesArchive(value)).link();
     }
 }
