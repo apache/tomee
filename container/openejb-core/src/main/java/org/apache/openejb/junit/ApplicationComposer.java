@@ -24,6 +24,7 @@ import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.cdi.ScopeHelper;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
@@ -53,6 +54,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.ServiceManagerProxy;
+import org.apache.openejb.web.LightweightWebAppBuilder;
 import org.apache.webbeans.inject.AbstractInjectable;
 import org.apache.webbeans.inject.OWBInjector;
 import org.apache.webbeans.web.lifecycle.test.MockHttpSession;
@@ -290,6 +292,8 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
 
             Application application = null;
 
+            int webModulesNb = 0;
+
             // Invoke the @Module producer methods to build out the AppModule
             for (FrameworkMethod method : testClass.getAnnotatedMethods(Module.class)) {
 
@@ -297,6 +301,8 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                 final Classes classesAnnotation = method.getAnnotation(Classes.class);
 
                 if (obj instanceof WebApp) { // will add the ejbmodule too
+                    webModulesNb++;
+
                     final WebApp webapp = (WebApp) obj;
                     String root = webapp.getContextRoot();
                     if (root == null) {
@@ -309,6 +315,8 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                     }
                     DeploymentLoader.addWebModule(webModule, appModule);
                 } else if (obj instanceof WebModule) { // will add the ejbmodule too
+                    webModulesNb++;
+
                     final WebModule webModule = (WebModule) obj;
                     if (classesAnnotation != null) {
                         webModule.setFinder(finderFromClasses(classesAnnotation.value()));
@@ -399,9 +407,13 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                     ejbModule.setBeans(new Beans());
                     appModule.getEjbModules().add(ejbModule);
                 } else if (obj instanceof AppModule) {
-
                     // we can probably go further here
                     final AppModule module = (AppModule) obj;
+
+                    if (module.getWebModules().size() > 0) {
+                        webModulesNb++;
+                    }
+
                     appModule.getEjbModules().addAll(module.getEjbModules());
                     appModule.getPersistenceModules().addAll(module.getPersistenceModules());
                     appModule.getAdditionalLibMbeans().addAll(module.getAdditionalLibMbeans());
@@ -424,6 +436,10 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                 newModule.getEjbModules().addAll(appModule.getEjbModules());
                 newModule.getConnectorModules().addAll(appModule.getConnectorModules());
                 appModule = newModule;
+            }
+
+            if (webModulesNb > 0 && SystemInstance.get().getComponent(WebAppBuilder.class) == null) {
+                SystemInstance.get().setComponent(WebAppBuilder.class, new LightweightWebAppBuilder());
             }
 
             try {
