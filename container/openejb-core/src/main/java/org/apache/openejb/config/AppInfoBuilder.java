@@ -377,7 +377,12 @@ class AppInfoBuilder {
             }
 
             webAppInfo.host = webModule.getHost();
-            webAppInfo.contextRoot = webModule.getContextRoot();
+
+            if (!webModule.isStandaloneModule()) {
+                webAppInfo.contextRoot = appModule.getModuleId() + "/" + webModule.getContextRoot();
+            } else {
+                webAppInfo.contextRoot = webModule.getContextRoot();
+            }
 
             jndiEncInfoBuilder.build(webApp, webModule.getJarLocation(), webAppInfo.moduleId, webModule.getModuleUri(), webAppInfo.jndiEnc, webAppInfo.jndiEnc);
 
@@ -866,13 +871,7 @@ class AppInfoBuilder {
     }
 
     private static String getClientModuleId(ClientModule clientModule) {
-        String jarLocation = clientModule.getJarLocation();
-        File file = new File(jarLocation);
-        String name = file.getName();
-        if (name.endsWith(".jar") || name.endsWith(".zip")) {
-            name = name.replaceFirst("....$", "");
-        }
-        return name;
+        return clientModule.getModuleId();
     }
 
 

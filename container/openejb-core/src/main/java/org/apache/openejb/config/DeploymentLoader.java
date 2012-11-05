@@ -47,6 +47,7 @@ import org.apache.openejb.util.AnnotationFinder;
 import org.apache.openejb.util.JarExtractor;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.StringTemplate;
 import org.apache.openejb.util.URLs;
 import org.apache.xbean.finder.IAnnotationFinder;
 import org.apache.xbean.finder.ResourceFinder;
@@ -152,7 +153,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
                 final AppModule appModule;
                 //final Class<? extends DeploymentModule> o = EjbModule.class;
-                final EjbModule ejbModule = createEjbModule(baseUrl, jarPath, classLoader, null);
+                final EjbModule ejbModule = createEjbModule(baseUrl, jarPath, classLoader);
 
                 // wrap the EJB Module with an Application Module
                 appModule = new AppModule(ejbModule);
@@ -451,7 +452,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                     final File ejbFile = toFile(ejbUrl);
                     final String absolutePath = ejbFile.getAbsolutePath();
 
-                    final EjbModule ejbModule = createEjbModule(ejbUrl, absolutePath, appClassLoader, moduleName);
+                    final EjbModule ejbModule = createEjbModule(ejbUrl, absolutePath, appClassLoader);
                     appModule.getEjbModules().add(ejbModule);
                 } catch (OpenEJBException e) {
                     logger.error("Unable to load EJBs from EAR: " + appId + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
@@ -473,7 +474,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                     final File clientFile = toFile(clientUrl);
                     final String absolutePath = clientFile.getAbsolutePath();
 
-                    final ClientModule clientModule = createClientModule(clientUrl, absolutePath, appClassLoader, moduleName);
+                    final ClientModule clientModule = createClientModule(clientUrl, absolutePath, appClassLoader, null);
 
                     appModule.getClientModules().add(clientModule);
                 } catch (Exception e) {
@@ -505,7 +506,7 @@ public class DeploymentLoader implements DeploymentFilterable {
             for (final String moduleName : webModules.keySet()) {
                 try {
                     final URL warUrl = webModules.get(moduleName);
-                    addWebModule(appModule, warUrl, appClassLoader, webContextRoots.get(moduleName), moduleName);
+                    addWebModule(appModule, warUrl, appClassLoader, webContextRoots.get(moduleName), null);
                 } catch (OpenEJBException e) {
                     logger.error("Unable to load WAR: " + appId + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
                 }
@@ -521,6 +522,10 @@ public class DeploymentLoader implements DeploymentFilterable {
             final List<URL> filteredUrls = new ArrayList<URL>();
             DeploymentsResolver.loadFromClasspath(base, filteredUrls, appModule.getClassLoader());
             addPersistenceUnits(appModule, filteredUrls.toArray(new URL[filteredUrls.size()]));
+
+            for (DeploymentModule module : appModule.getDeploymentModule()) {
+                module.setStandaloneModule(false);
+            }
 
             return appModule;
 
@@ -577,7 +582,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         return clientModule;
     }
 
-    protected EjbModule createEjbModule(final URL baseUrl, final String jarPath, final ClassLoader classLoader, final String moduleId) throws OpenEJBException {
+    protected EjbModule createEjbModule(final URL baseUrl, final String jarPath, final ClassLoader classLoader) throws OpenEJBException {
         // read the ejb-jar.xml file
         Map<String, URL> descriptors;
         if (baseUrl != null) {
@@ -601,7 +606,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         }
 
         // create the EJB Module
-        final EjbModule ejbModule = new EjbModule(classLoader, moduleId, jarPath, ejbJar, null);
+        final EjbModule ejbModule = new EjbModule(classLoader, null, jarPath, ejbJar, null);
         ejbModule.getAltDDs().putAll(descriptors);
         if (jarPath != null) {
             ejbModule.getWatchedResources().add(jarPath);
