@@ -17,18 +17,14 @@
 package org.apache.openejb.server.cxf.rs;
 
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.openejb.OpenEjbContainer;
-import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.junit.Classes;
-import org.apache.openejb.junit.Component;
-import org.apache.openejb.junit.Configuration;
+import org.apache.openejb.junit.EnableServices;
 import org.apache.openejb.junit.Module;
 import org.apache.openejb.server.cxf.rs.beans.MyRESTApplication;
 import org.apache.openejb.server.cxf.rs.beans.RestWithInjections;
 import org.apache.openejb.server.cxf.rs.beans.SimpleEJB;
-import org.apache.openejb.web.LightweightWebAppBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -37,25 +33,13 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 
+@EnableServices
 @RunWith(ApplicationComposer.class)
 public class SimpleApplicationTest {
     public static final String BASE_URL = "http://localhost:4204/foo/my-app";
-
-    @Component
-    public WebAppBuilder webAppBuilder() {
-        return new LightweightWebAppBuilder();
-    }
-
-    @Configuration
-    public Properties configuration() {
-        final Properties properties = new Properties();
-        properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
-        return properties;
-    }
 
     @Module
     @Classes({ RestWithInjections.class, SimpleEJB.class })
