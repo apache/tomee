@@ -35,6 +35,7 @@ public class EjbdJmxTest {
 
     @Test
     public void test() throws Exception {
+        System.setProperty("openejb.jmx.active", "true");
         final MBeanServer server = LocalMBeanServer.get();
 
         OpenEJB.init(new Properties());

@@ -48,6 +48,7 @@ public class LocalMBeanServer implements MBeanServer {
     public static final String OPENEJB_JMX_ACTIVE = "openejb.jmx.active";
 
     private static final LocalMBeanServer INSTANCE = new LocalMBeanServer();
+    private static final boolean ACTIVE = SystemInstance.get().getOptions().get(OPENEJB_JMX_ACTIVE, false);
 
     private LocalMBeanServer() {
         // no-op
@@ -58,7 +59,7 @@ public class LocalMBeanServer implements MBeanServer {
     }
 
     public static boolean isJMXActive() {
-        return SystemInstance.get().getOptions().get(OPENEJB_JMX_ACTIVE, true);
+        return ACTIVE;
     }
 
     private static MBeanServer s() {

@@ -966,19 +966,21 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             instance = bm.getReference(bean, clazz, bm.createCreationalContext(bean));
         }
 
-        final MBeanServer server = LocalMBeanServer.get();
-        try {
-            final ObjectName leaf = new ObjectNameBuilder("openejb.user.mbeans")
-                    .set("application", id)
-                    .set("group", clazz.getPackage().getName())
-                    .set("name", clazz.getSimpleName())
-                    .build();
+        if (LocalMBeanServer.isJMXActive()) {
+            final MBeanServer server = LocalMBeanServer.get();
+            try {
+                final ObjectName leaf = new ObjectNameBuilder("openejb.user.mbeans")
+                        .set("application", id)
+                        .set("group", clazz.getPackage().getName())
+                        .set("name", clazz.getSimpleName())
+                        .build();
 
-            server.registerMBean(new DynamicMBeanWrapper(instance), leaf);
-            appMbeans.put(mbeanClass, leaf.getCanonicalName());
-            logger.info("Deployed MBean(" + leaf.getCanonicalName() + ")");
-        } catch (Exception e) {
-            logger.error("the mbean " + mbeanClass + " can't be registered", e);
+                server.registerMBean(new DynamicMBeanWrapper(instance), leaf);
+                appMbeans.put(mbeanClass, leaf.getCanonicalName());
+                logger.info("Deployed MBean(" + leaf.getCanonicalName() + ")");
+            } catch (Exception e) {
+                logger.error("the mbean " + mbeanClass + " can't be registered", e);
+            }
         }
     }
 
@@ -1568,7 +1570,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         logger.getChildLogger("service").debug("createService.success", serviceInfo.service, serviceInfo.id, serviceInfo.className);
 
-        if (service instanceof Container) {
+        if (service instanceof Container && LocalMBeanServer.isJMXActive()) {
             final ObjectName objectName = ObjectNameBuilder.uniqueName("containers", serviceInfo.id, service);
             try {
                 LocalMBeanServer.get().registerMBean(new DynamicMBeanWrapper(new JMXContainer(serviceInfo, (Container) service)), objectName);

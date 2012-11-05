@@ -39,19 +39,25 @@ public class JMXBasicDataSource {
     public JMXBasicDataSource(final String name, final org.apache.commons.dbcp.BasicDataSource ds) {
         this.ds = ds;
 
-        objectName = ObjectNameBuilder.uniqueName("datasources", name, ds);
-        final MBeanServer server = LocalMBeanServer.get();
-        try {
-            if (server.isRegistered(objectName)) {
-                server.unregisterMBean(objectName);
+        if (LocalMBeanServer.isJMXActive()) {
+            objectName = ObjectNameBuilder.uniqueName("datasources", name, ds);
+            final MBeanServer server = LocalMBeanServer.get();
+            try {
+                if (server.isRegistered(objectName)) {
+                    server.unregisterMBean(objectName);
+                }
+                server.registerMBean(new DynamicMBeanWrapper(this), objectName);
+            } catch (Exception e) {
+                e.printStackTrace(); // TODO
             }
-            server.registerMBean(new DynamicMBeanWrapper(this), objectName);
-        } catch (Exception e) {
-            e.printStackTrace(); // TODO
         }
     }
 
     public void unregister() {
+        if (objectName == null) {
+            return;
+        }
+
         try {
             LocalMBeanServer.get().unregisterMBean(objectName);
         } catch (Exception e) {
