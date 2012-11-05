@@ -17,7 +17,6 @@
  */
 package org.apache.openejb.jee;
 
-import java.util.Collections;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -29,9 +28,10 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -635,5 +635,53 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
             }
         }
         return Collections.emptyList();
+    }
+
+    private Servlet findServlet(final String name) {
+        for (Servlet s : getServlet()) {
+            if (name.equals(s.getServletName())) {
+                return s;
+            }
+        }
+        return null;
+    }
+
+    public WebApp addServlet(final String name, final String clazz, final String... mappings) {
+        final Servlet servletToAdd = new Servlet();
+        servletToAdd.setServletName(name);
+        servletToAdd.setServletClass(clazz);
+
+        if (mappings != null && mappings.length > 0) {
+            final ServletMapping sm = new ServletMapping();
+            sm.setServletName(name);
+
+            for (String mapping : mappings) {
+                if (servletMapping == null) {
+                    servletMapping = new ArrayList<ServletMapping>();
+                }
+
+                sm.getUrlPattern().add(mapping);
+            }
+            servletMapping.add(sm);
+        }
+
+        getServlet().add(servletToAdd);
+
+        return this;
+    }
+
+    public WebApp addInitParam(final String servletName, final String name, final String value) {
+        final ParamValue paramValue = new ParamValue();
+        paramValue.setParamName(name);
+        paramValue.setParamValue(value);
+
+        findServlet(servletName).getInitParam().add(paramValue);
+
+        return this;
+    }
+
+    public WebApp contextRoot(final String root) {
+        setContextRoot(root);
+        return this;
     }
 }
