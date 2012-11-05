@@ -265,7 +265,11 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
             }
 
             for (FrameworkMethod method : testClass.getAnnotatedMethods(Component.class)) {
-                final Object value = method.invokeExplosively(testInstance);
+                Object value = method.invokeExplosively(testInstance);
+                if (value instanceof Class<?>) {
+                    value = ((Class<?>) value).newInstance();
+                }
+
                 Class<?> key = method.getMethod().getReturnType();
 
                 if (!key.isInstance(value)) { // we can't do it in validate to avoid to instantiate the value twice
