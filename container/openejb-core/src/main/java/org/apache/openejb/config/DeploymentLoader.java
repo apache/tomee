@@ -628,7 +628,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         addWebModule(webModule, appModule);
     }
 
-    public void addWebModule(final WebModule webModule, final AppModule appModule) throws OpenEJBException {
+    public static void addWebModule(final WebModule webModule, final AppModule appModule) throws OpenEJBException {
         // create and add the WebModule
         appModule.getWebModules().add(webModule);
         if (appModule.isStandaloneModule()) {
@@ -670,14 +670,18 @@ public class DeploymentLoader implements DeploymentFilterable {
             // TODO:  Put our scanning ehnancements back, here
             fillEjbJar(webModule, webEjbModule);
 
-            if (isMetadataComplete(webModule, webEjbModule)) {
-                final IAnnotationFinder finder = new org.apache.xbean.finder.AnnotationFinder(new ClassesArchive());
-                webModule.setFinder(finder);
-                webEjbModule.setFinder(finder);
-            }  else {
-                final IAnnotationFinder finder = FinderFactory.createFinder(webModule);
-                webModule.setFinder(finder);
-                webEjbModule.setFinder(finder);
+            if (webModule.getFinder() == null) {
+                if (isMetadataComplete(webModule, webEjbModule)) {
+                    final IAnnotationFinder finder = new org.apache.xbean.finder.AnnotationFinder(new ClassesArchive());
+                    webModule.setFinder(finder);
+                    webEjbModule.setFinder(finder);
+                }  else {
+                    final IAnnotationFinder finder = FinderFactory.createFinder(webModule);
+                    webModule.setFinder(finder);
+                    webEjbModule.setFinder(finder);
+                }
+            } else if (webEjbModule.getFinder() == null) {
+                webEjbModule.setFinder(webModule.getFinder());
             }
         } catch (Exception e) {
             throw new OpenEJBException("Unable to create annotation scanner for web module " + webModule.getModuleId(), e);
@@ -694,7 +698,7 @@ public class DeploymentLoader implements DeploymentFilterable {
      * @param webModule
      * @param ejbModule
      */
-    private void fillEjbJar(WebModule webModule, EjbModule ejbModule) {
+    private static void fillEjbJar(WebModule webModule, EjbModule ejbModule) {
         final Object o = webModule.getAltDDs().get("ejb-jar.xml");
         if (o != null) return;
         if (ejbModule.getEjbJar() != null) return;
@@ -707,7 +711,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         ejbModule.setEjbJar(ejbJar);
     }
 
-    private boolean isMetadataComplete(WebModule webModule, EjbModule ejbModule) {
+    private static boolean isMetadataComplete(WebModule webModule, EjbModule ejbModule) {
         if (webModule.getWebApp() == null) return false;
         if (!webModule.getWebApp().isMetadataComplete()) return false;
 
@@ -921,7 +925,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         return webClassPath.toArray(new URL[webClassPath.size()]);
     }
 
-    private void addWebservices(final WsModule wsModule) throws OpenEJBException {
+    private static void addWebservices(final WsModule wsModule) throws OpenEJBException {
         final boolean webservicesEnabled = SystemInstance.get().getOptions().get(ConfigurationFactory.WEBSERVICES_ENABLED, true);
         if (!webservicesEnabled) {
             wsModule.getAltDDs().remove("webservices.xml");

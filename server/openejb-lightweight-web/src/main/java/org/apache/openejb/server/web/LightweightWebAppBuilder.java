@@ -20,6 +20,7 @@ import org.apache.openejb.AppContext;
 import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.assembler.classic.InjectionBuilder;
 import org.apache.openejb.assembler.classic.JndiEncBuilder;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
@@ -28,7 +29,6 @@ import org.apache.openejb.core.WebContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 
-import javax.naming.InitialContext;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -46,18 +46,20 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
 
         for (WebAppInfo webAppInfo : appInfo.webApps) {
             final Collection<Injection> injections = appContext.getInjections();
+            injections.addAll(new InjectionBuilder(classLoader).buildInjections(webAppInfo.jndiEnc));
 
             final Map<String, Object> bindings = new HashMap<String, Object>();
             bindings.putAll(appContext.getBindings());
             bindings.putAll(new JndiEncBuilder(webAppInfo.jndiEnc, injections, webAppInfo.moduleId, "Bean", null, webAppInfo.uniqueId, classLoader).buildBindings(JndiEncBuilder.JndiScope.comp));
 
             final WebContext webContext = new WebContext(appContext);
-            webContext.setJndiEnc(new InitialContext());
+            webContext.setBindings(bindings);
+            webContext.setJndiEnc(WebInitialContext.create(bindings, appContext.getGlobalJndiContext()));
             webContext.setClassLoader(classLoader);
             webContext.setId(webAppInfo.moduleId);
             webContext.setContextRoot(webAppInfo.contextRoot);
-            webContext.setBindings(bindings);
             webContext.getInjections().addAll(injections);
+
             appContext.getWebContexts().add(webContext);
             cs.addWebContext(webContext);
         }
