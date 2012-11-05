@@ -70,20 +70,6 @@
               <goal>shade</goal>
             </goals>
             <configuration>
-              <relocations>
-                <relocation>
-                  <pattern>javax.management</pattern>
-                  <shadedPattern>org.apache.openejb.api.jmx</shadedPattern>
-                  <includes>
-                    <include>javax.management.MBean</include>
-                    <include>javax.management.Description</include>
-                    <include>javax.management.ManagedAttribute</include>
-                    <include>javax.management.ManagedOperation</include>
-                    <include>javax.management.NotificationInfo</include>
-                    <include>javax.management.NotificationInfos</include>
-                  </includes>
-                </relocation>
-              </relocations>
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                   <manifestEntries>
