@@ -28,7 +28,7 @@ import org.apache.openejb.junit.Configuration;
 import org.apache.openejb.junit.Module;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.cxf.rs.beans.MyFirstRestClass;
-import org.apache.openejb.server.web.LightweightWebAppBuilder;
+import org.apache.openejb.web.LightweightWebAppBuilder;
 import org.apache.openejb.spi.ContainerSystem;
 import org.junit.Test;
 import org.junit.runner.RunWith;

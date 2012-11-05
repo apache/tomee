@@ -14,7 +14,7 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.openejb.server.web;
+package org.apache.openejb.web;
 
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.config.WebModule;
