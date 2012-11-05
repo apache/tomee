@@ -20,6 +20,7 @@ import java.io.File;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -194,6 +195,9 @@ public class WebModule extends Module implements WsModule, RESTModule {
     }
 
     public List<URL> getScannableUrls() {
+        if (scannableUrls == null) {
+            return Collections.emptyList();
+        }
         return scannableUrls;
     }
 

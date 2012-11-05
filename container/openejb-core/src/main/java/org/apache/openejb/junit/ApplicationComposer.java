@@ -133,6 +133,12 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
             }
         }
 
+        for (FrameworkMethod method : testClass.getAnnotatedMethods(Component.class)) {
+            if (method.getMethod().getParameterTypes().length > 0) {
+                errors.add(new Exception("@Component methods shouldn't take any parameters"));
+            }
+        }
+
         int appModules = 0;
         int modules = 0;
 
@@ -255,6 +261,17 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                 if (o instanceof FallbackPropertyInjector) {
                     SystemInstance.get().setComponent(FallbackPropertyInjector.class, (FallbackPropertyInjector) o);
                 }
+            }
+
+            for (FrameworkMethod method : testClass.getAnnotatedMethods(Component.class)) {
+                final Object value = method.invokeExplosively(testInstance);
+                Class<?> key = method.getMethod().getReturnType();
+
+                if (!key.isInstance(value)) { // we can't do it in validate to avoid to instantiate the value twice
+                    throw new OpenEJBRuntimeException(value + " is not an instance of " + key.getName());
+                }
+
+                SystemInstance.get().setComponent((Class<Object>) key, value);
             }
 
             Application application = null;
