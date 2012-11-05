@@ -73,8 +73,12 @@ import org.junit.runners.model.TestClass;
 
 import javax.naming.Context;
 import java.lang.reflect.Field;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import static org.apache.openejb.config.DeploymentsResolver.DEPLOYMENTS_CLASSPATH_PROPERTY;
@@ -140,6 +144,15 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
         for (FrameworkMethod method : testClass.getAnnotatedMethods(Component.class)) {
             if (method.getMethod().getParameterTypes().length > 0) {
                 errors.add(new Exception("@Component methods shouldn't take any parameters"));
+            }
+        }
+
+        for (FrameworkMethod method : testClass.getAnnotatedMethods(Descriptors.class)) {
+            final Class<?> returnType = method.getMethod().getReturnType();
+            if (!returnType.equals(WebModule.class) && !returnType.equals(EjbModule.class)
+                    && !returnType.equals(WebApp.class) && !returnType.equals(EjbJar.class)
+                    && !returnType.equals(AppModule.class)) {
+                errors.add(new Exception("@Descriptors can't be used on " + returnType.getName()));
             }
         }
 
@@ -290,6 +303,8 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                 SystemInstance.get().setComponent((Class<Object>) key, value);
             }
 
+            final Map<String, URL> additionalDescriptors = descriptorsToMap(testClass.getJavaClass().getAnnotation(Descriptors.class));
+
             Application application = null;
 
             int webModulesNb = 0;
@@ -310,6 +325,10 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                     }
 
                     final WebModule webModule = new WebModule(webapp, root, Thread.currentThread().getContextClassLoader(), "", root);
+
+                    webModule.getAltDDs().putAll(additionalDescriptors);
+                    webModule.getAltDDs().putAll(descriptorsToMap(method.getAnnotation(Descriptors.class)));
+
                     if (classesAnnotation != null) {
                         webModule.setFinder(finderFromClasses(classesAnnotation.value()));
                     }
@@ -318,12 +337,20 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                     webModulesNb++;
 
                     final WebModule webModule = (WebModule) obj;
+
+                    webModule.getAltDDs().putAll(additionalDescriptors);
+                    webModule.getAltDDs().putAll(descriptorsToMap(method.getAnnotation(Descriptors.class)));
+
                     if (classesAnnotation != null) {
                         webModule.setFinder(finderFromClasses(classesAnnotation.value()));
                     }
                     DeploymentLoader.addWebModule(webModule, appModule);
                 } else if (obj instanceof EjbModule) {
                     final EjbModule ejbModule = (EjbModule) obj;
+
+                    ejbModule.getAltDDs().putAll(additionalDescriptors);
+                    ejbModule.getAltDDs().putAll(descriptorsToMap(method.getAnnotation(Descriptors.class)));
+
                     if (classesAnnotation != null) {
                         ejbModule.setFinder(finderFromClasses(classesAnnotation.value()));
                     }
@@ -335,6 +362,10 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                     setId(ejbJar, method);
 
                     final EjbModule ejbModule = new EjbModule(ejbJar);
+
+                    ejbModule.getAltDDs().putAll(additionalDescriptors);
+                    ejbModule.getAltDDs().putAll(descriptorsToMap(method.getAnnotation(Descriptors.class)));
+
                     appModule.getEjbModules().add(ejbModule);
                     if (classesAnnotation != null) {
                         ejbModule.setFinder(finderFromClasses(classesAnnotation.value()));
@@ -409,6 +440,9 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                 } else if (obj instanceof AppModule) {
                     // we can probably go further here
                     final AppModule module = (AppModule) obj;
+
+                    module.getAltDDs().putAll(additionalDescriptors);
+                    module.getAltDDs().putAll(descriptorsToMap(method.getAnnotation(Descriptors.class)));
 
                     if (module.getWebModules().size() > 0) {
                         webModulesNb++;
@@ -561,6 +595,18 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
             module.setId(name);
             return module;
         }
+    }
+
+    private static Map<String, URL> descriptorsToMap(final Descriptors descriptors) {
+        if (descriptors != null) {
+            final Map<String, URL> dds = new HashMap<String, URL>();
+            final ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            for (Descriptor descriptor : descriptors.value()) {
+                dds.put(descriptor.name(), loader.getResource(descriptor.path()));
+            }
+            return dds;
+        }
+        return Collections.emptyMap();
     }
 
     private static IAnnotationFinder finderFromClasses(final Class<?>[] value) {
