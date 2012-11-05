@@ -451,7 +451,8 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
 
                 assembler.buildContainerSystem(config.getOpenEjbConfiguration());
 
-                if ("true".equals(configuration.getProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "false"))) {
+                if ("true".equals(configuration.getProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "false"))
+                        || testClass.getJavaClass().getAnnotation(EnableServices.class) != null) {
                     try {
                         serviceManager = new ServiceManagerProxy();
                         serviceManager.start();
