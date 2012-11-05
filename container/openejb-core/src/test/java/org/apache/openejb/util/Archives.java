@@ -95,20 +95,24 @@ public class Archives {
         return classpath;
     }
 
-    public static File jarArchive(Class[] classes) throws IOException {
+    public static File jarArchive(Class... classes) throws IOException {
         return jarArchive(new HashMap<String, String>(), "temp", classes);
     }
 
 
     public static File jarArchive(Map<String, ?> entries, String archiveNamePrefix, Class... classes) throws IOException {
 
-        ClassLoader loader = Archives.class.getClassLoader();
-
         File classpath = File.createTempFile(archiveNamePrefix, ".jar");
         classpath.deleteOnExit();
 
+        return jarArchive(classpath, entries, classes);
+    }
+
+    public static File jarArchive(File archive, Map<String, ?> entries, Class... classes) throws IOException {
+        final ClassLoader loader = Archives.class.getClassLoader();
+
         // Create the ZIP file
-        ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(classpath)));
+        final ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(archive)));
 
         for (Class clazz : classes) {
             String name = clazz.getName().replace('.', File.separatorChar) + ".class";
@@ -159,6 +163,7 @@ public class Archives {
 
         // Complete the ZIP file
         out.close();
-        return classpath;
+
+        return archive;
     }
 }
