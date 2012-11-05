@@ -94,6 +94,7 @@ import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.resource.jdbc.DataSourceFactory;
 import org.apache.openejb.resource.jdbc.pool.DataSourceCreator;
 import org.apache.openejb.resource.jdbc.pool.DefaultDataSourceCreator;
@@ -145,6 +146,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     public ConfigurationFactory(final boolean offline, final DynamicDeployer preAutoConfigDeployer) {
         this.offline = offline;
         this.deploymentLoader = new DeploymentLoader();
+
+        LocalMBeanServer.reset();
 
         final Options options = SystemInstance.get().getOptions();
         if (SystemInstance.get().getComponent(DataSourceCreator.class) == null) {
