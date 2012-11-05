@@ -60,8 +60,14 @@ public class JarExtractor {
      */
     public static void extract(File file, File destinationDir) throws IOException {
         if (destinationDir.exists()) {
-            // Ear file is already installed
-            return;
+
+            if (destinationDir.lastModified() > file.lastModified()) {
+                // Ear file is already installed
+                // Unpacked dir is newer than archive
+                return;
+            }
+
+            deleteDir(destinationDir);
         }
 
         logger.info("Extracting jar: " + file.getAbsolutePath());
