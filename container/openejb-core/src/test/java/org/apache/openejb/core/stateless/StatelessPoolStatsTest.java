@@ -25,6 +25,7 @@ import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
+import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.test.util.Asserts;
 
 import javax.annotation.PostConstruct;
@@ -50,6 +51,16 @@ import java.util.concurrent.TimeUnit;
 public class StatelessPoolStatsTest extends TestCase {
     private final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
     private ObjectName objectName;
+
+    @Override
+    public void setUp() {
+        System.setProperty(LocalMBeanServer.OPENEJB_JMX_ACTIVE, Boolean.TRUE.toString());
+    }
+
+    @Override
+    public void tearDown() {
+        System.clearProperty(LocalMBeanServer.OPENEJB_JMX_ACTIVE);
+    }
 
     /**
      * @throws Exception On error

@@ -28,6 +28,7 @@ import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.junit.Configuration;
 import org.apache.openejb.junit.Module;
+import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -44,6 +45,8 @@ public class JMXDataSourceTest {
     @Configuration
     public Properties config() {
         final Properties p = new Properties();
+        p.put(LocalMBeanServer.OPENEJB_JMX_ACTIVE, Boolean.TRUE.toString());
+
         p.put("JMXDataSourceTest", "new://Resource?type=DataSource");
         p.put("JMXDataSourceTest.JdbcDriver", "org.hsqldb.jdbcDriver");
         p.put("JMXDataSourceTest.JdbcUrl", "jdbc:hsqldb:mem:bval");
