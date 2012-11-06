@@ -298,7 +298,7 @@ public abstract class ServiceManager {
         fullProps.putAll(props);
     }
 
-    private boolean isEnabled(Properties props) {
+    public static boolean isEnabled(Properties props) {
         // if it should be started, continue
         String disabled = props.getProperty("disabled", "");
 

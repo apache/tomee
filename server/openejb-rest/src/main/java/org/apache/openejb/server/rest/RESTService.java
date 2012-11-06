@@ -38,6 +38,7 @@ import org.apache.openejb.observer.Observes;
 import org.apache.openejb.server.SelfManaging;
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
+import org.apache.openejb.server.ServiceManager;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.httpd.HttpListenerRegistry;
 import org.apache.openejb.spi.ContainerSystem;
@@ -85,6 +86,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
     private RsRegistry rsRegistry;
     private List<DeployedService> services = new ArrayList<DeployedService>();
     private String virtualHost;
+    private boolean enabled = true;
     private String wildcard = SystemInstance.get().getProperty("openejb.rest.wildcard", ".*");
 
     public void afterApplicationCreated(final AppInfo appInfo, final WebAppInfo webApp) {
@@ -275,6 +277,8 @@ public abstract class RESTService implements ServerService, SelfManaging {
     }
 
     public void afterApplicationCreated(@Observes final AssemblerAfterApplicationCreated event) {
+        if (!enabled) return;
+
         final AppInfo appInfo = event.getApp();
         if (deployedApplications.add(appInfo)) {
             if (appInfo.webApps.size() == 0) {
@@ -591,6 +595,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
 
     @Override public void init(Properties props) throws Exception {
         virtualHost = props.getProperty("virtualHost");
+        enabled = ServiceManager.isEnabled(props);
     }
 
     public String getVirtualHost() {
