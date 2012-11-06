@@ -741,7 +741,12 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     }
 
     private static File warPath(final StandardContext standardContext) {
-        final String doc = standardContext.getDocBase();
+        String doc = standardContext.getDocBase();
+        // handle ROOT case
+        if (doc == null || doc.length() == 0) {
+            doc = "ROOT";
+        }
+
         File war = new File(doc);
         if (war.exists()) {
             return war;
@@ -882,7 +887,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         AppContext appContext = null;
         //Look for context info, maybe context is already scanned
         ContextInfo contextInfo = getContextInfo(standardContext);
-        final ClassLoader classLoader = standardContext.getLoader().getClassLoader();
+        ClassLoader classLoader = standardContext.getLoader().getClassLoader();
         if (contextInfo == null) {
             final Collection<String> tomcatResources = getResourcesNames(standardContext.getNamingResources());
             AutoConfig.PROVIDED_RESOURCES.set(tomcatResources);
@@ -899,6 +904,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     contextInfo.appInfo.autoDeploy = autoDeploy == null || autoDeploy;
                     DeployerEjb.AUTO_DEPLOY.remove();
 
+                    if (!appModule.isWebapp()) {
+                    	classLoader = appModule.getClassLoader();
+                    }
                     appContext = a.createApplication(contextInfo.appInfo, classLoader);
                     // todo add watched resources to context
                 } catch (Exception e) {
