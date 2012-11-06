@@ -113,7 +113,6 @@ import org.apache.webbeans.spi.ContextsService;
 import org.apache.webbeans.spi.LoaderService;
 import org.apache.webbeans.spi.ResourceInjectionService;
 import org.apache.webbeans.spi.ScannerService;
-import org.apache.webbeans.spi.SingletonService;
 import org.apache.webbeans.spi.TransactionService;
 import org.apache.webbeans.spi.adaptor.ELAdaptor;
 import org.apache.xbean.finder.ResourceFinder;
@@ -791,6 +790,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             appContext.getBeanContexts().addAll(allDeployments);
 
+            final Collection<BeanContext> alreadyDeployedBeanContexts = Arrays.asList(containerSystem.deployments());
+
             new CdiBuilder().build(appInfo, appContext, allDeployments);
 
             ensureWebBeansContext(appContext);
@@ -802,6 +803,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             if (start) {
                 // deploy
                 for (BeanContext deployment : allDeployments) {
+                    if (alreadyDeployedBeanContexts.contains(deployment)) {
+                        continue;
+                    }
+
                     try {
                         Container container = deployment.getContainer();
                         container.deploy(deployment);
@@ -821,6 +826,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
                 // start
                 for (BeanContext deployment : allDeployments) {
+                    if (alreadyDeployedBeanContexts.contains(deployment)) {
+                        continue;
+                    }
+
                     try {
                         Container container = deployment.getContainer();
                         container.start(deployment);

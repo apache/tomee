@@ -294,7 +294,17 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
     }
 
     protected Object create(Class interfce, Method method, Object[] args, Object proxy) throws Throwable {
-        ProxyInfo proxyInfo = (ProxyInfo) container.invoke(deploymentID, interfaceType, interfce, method, args, null);
+        if (container.getBeanContext(deploymentID) == null) {
+            final BeanContext bc = getBeanContext();
+            synchronized (bc) {
+                if (container.getBeanContext(deploymentID) == null) {
+                    container.deploy(bc);
+                    container.start(bc);
+                }
+            }
+        }
+
+        final ProxyInfo proxyInfo = (ProxyInfo) container.invoke(deploymentID, interfaceType, interfce, method, args, null);
         assert proxyInfo != null : "Container returned a null ProxyInfo: ContainerID=" + container.getContainerID();
         return createProxy(proxyInfo.getPrimaryKey(), getMainInterface());
     }
