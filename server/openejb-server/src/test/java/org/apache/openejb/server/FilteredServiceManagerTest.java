@@ -21,6 +21,7 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.junit.EnableServices;
 import org.apache.openejb.junit.Module;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -40,7 +41,8 @@ public class FilteredServiceManagerTest {
         return new EjbJar();
     }
 
-    @Test
+    //@Test
+    @Ignore
     public void numberOfServices () {
         // when using @EnableServices with the application composer
         // the return value should be a FilteredServiceManager
