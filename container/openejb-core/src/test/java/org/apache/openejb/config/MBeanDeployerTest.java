@@ -57,6 +57,7 @@ public class MBeanDeployerTest {
 
     @Before
     public void startOpenEJB() throws Exception {
+        System.setProperty(LocalMBeanServer.OPENEJB_JMX_ACTIVE, "true");
         config = new ConfigurationFactory();
         assembler = new Assembler();
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
@@ -83,6 +84,7 @@ public class MBeanDeployerTest {
 
     @After
     public void resetList() {
+        System.clearProperty(LocalMBeanServer.OPENEJB_JMX_ACTIVE);
         assembler.destroy();
         SystemInstance.reset();
     }

@@ -23,6 +23,8 @@ import org.apache.openejb.core.singleton.SingletonContainer;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.junit.Module;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -31,6 +33,16 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(ApplicationComposer.class)
 public class JMXContainerTest {
+    @BeforeClass
+    public static void init() {
+        System.setProperty(LocalMBeanServer.OPENEJB_JMX_ACTIVE, "true");
+    }
+
+    @AfterClass
+    public static void reset() {
+        System.clearProperty(LocalMBeanServer.OPENEJB_JMX_ACTIVE);
+    }
+
     @Test
     public void checkContainerIsRegistered() throws Exception {
         final ObjectName on = new ObjectName("openejb.management:ObjectType=containers,DataSource=Default Singleton Container");
