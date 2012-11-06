@@ -91,6 +91,16 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @version $Rev$ $Date$
  */
 public class StatelessInvocationStatsTest extends TestCase {
+    @Override
+    public void setUp() {
+        System.setProperty(LocalMBeanServer.OPENEJB_JMX_ACTIVE, Boolean.TRUE.toString());
+    }
+
+    @Override
+    public void tearDown() {
+        System.clearProperty(LocalMBeanServer.OPENEJB_JMX_ACTIVE);
+    }
+
     /**
      * This whole method is a template, feel free to split it anyway you like
      * Fine to have one big
