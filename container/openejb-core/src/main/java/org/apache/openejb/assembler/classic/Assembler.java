@@ -790,8 +790,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             appContext.getBeanContexts().addAll(allDeployments);
 
-            final Collection<BeanContext> alreadyDeployedBeanContexts = Arrays.asList(containerSystem.deployments());
-
             new CdiBuilder().build(appInfo, appContext, allDeployments);
 
             ensureWebBeansContext(appContext);
@@ -801,23 +799,24 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             // now that everything is configured, deploy to the container
             if (start) {
+                final Collection<BeanContext> toStart = new ArrayList<BeanContext>();
+
                 // deploy
                 for (BeanContext deployment : allDeployments) {
-                    if (alreadyDeployedBeanContexts.contains(deployment)) {
-                        continue;
-                    }
-
                     try {
                         Container container = deployment.getContainer();
-                        container.deploy(deployment);
-                        if (!((String) deployment.getDeploymentID()).endsWith(".Comp")
-                                && !deployment.isHidden()) {
-                            logger.info("createApplication.createdEjb", deployment.getDeploymentID(), deployment.getEjbName(), container.getContainerID());
-                        }
-                        if (logger.isDebugEnabled()) {
-                            for (Map.Entry<Object, Object> entry : deployment.getProperties().entrySet()) {
-                                logger.info("createApplication.createdEjb.property", deployment.getEjbName(), entry.getKey(), entry.getValue());
+                        if (container.getBeanContext(deployment.getDeploymentID()) == null) {
+                            container.deploy(deployment);
+                            if (!((String) deployment.getDeploymentID()).endsWith(".Comp")
+                                    && !deployment.isHidden()) {
+                                logger.info("createApplication.createdEjb", deployment.getDeploymentID(), deployment.getEjbName(), container.getContainerID());
                             }
+                            if (logger.isDebugEnabled()) {
+                                for (Map.Entry<Object, Object> entry : deployment.getProperties().entrySet()) {
+                                    logger.info("createApplication.createdEjb.property", deployment.getEjbName(), entry.getKey(), entry.getValue());
+                                }
+                            }
+                            toStart.add(deployment);
                         }
                     } catch (Throwable t) {
                         throw new OpenEJBException("Error deploying '" + deployment.getEjbName() + "'.  Exception: " + t.getClass() + ": " + t.getMessage(), t);
@@ -825,13 +824,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
 
                 // start
-                for (BeanContext deployment : allDeployments) {
-                    if (alreadyDeployedBeanContexts.contains(deployment)) {
-                        continue;
-                    }
-
+                for (BeanContext deployment : toStart) {
                     try {
-                        Container container = deployment.getContainer();
+                        final Container container = deployment.getContainer();
                         container.start(deployment);
                         if (!((String) deployment.getDeploymentID()).endsWith(".Comp")
                                 && !deployment.isHidden()) {
