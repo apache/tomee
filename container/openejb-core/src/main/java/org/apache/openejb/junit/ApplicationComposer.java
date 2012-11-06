@@ -490,10 +490,10 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                 if ("true".equals(configuration.getProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "false"))
                         || annotation != null) {
                     try {
-                        serviceManager = new ServiceManagerProxy();
                         if (annotation != null) {
                             initFilteredServiceManager(annotation);
                         }
+                        serviceManager = new ServiceManagerProxy(false);
                         serviceManager.start();
                     } catch (ServiceManagerProxy.AlreadyStartedException e) {
                         throw new OpenEJBRuntimeException(e);

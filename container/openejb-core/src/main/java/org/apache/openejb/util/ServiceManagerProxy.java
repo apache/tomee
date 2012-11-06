@@ -40,6 +40,10 @@ public class ServiceManagerProxy {
     }
 
     public ServiceManagerProxy() throws AlreadyStartedException {
+        this(true);
+    }
+
+    public ServiceManagerProxy(boolean checkAlreadyStarted) throws AlreadyStartedException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
         try {
@@ -52,7 +56,7 @@ public class ServiceManagerProxy {
         Method get = getMethod("get");
         Method getManager = getMethod("getManager");
 
-        if (invoke(get, null) != null) throw new AlreadyStartedException("Server services already started");
+        if (checkAlreadyStarted && invoke(get, null) != null) throw new AlreadyStartedException("Server services already started");
 
         serviceManager = invoke(getManager, null);
 

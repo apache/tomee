@@ -16,8 +16,7 @@
  */
 package org.apache.openejb.server;
 
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.*;
 
 /**
  * This implementation is mainly used in the application composer to get the most from
@@ -28,7 +27,28 @@ public class FilteredServiceManager extends SimpleServiceManager {
     private Collection<String> services;
 
     public FilteredServiceManager (String[] services) {
-        this.services = Arrays.asList(services);
+        setServiceManager(this);
+        this.services = convertServices(services);
+
+    }
+
+    private Collection<String> convertServices(String[] services) {
+        Set<String> realServices = new HashSet<String>();
+        Collection<String> rsAliases = Arrays.asList("rest", "jaxrs", "jax-rs", "cxf-rs");
+        Collection<String> wsAliases = Arrays.asList("jaxws", "jax-ws", "cxf");
+
+        for (String service : services) {
+            if (rsAliases.contains(service)) {
+                realServices.addAll(Arrays.asList("cxf-rs", "httpejbd"));
+            }
+            if (wsAliases.contains(service)) {
+                realServices.addAll(Arrays.asList("cxf", "httpejbd"));
+            }
+            if ("ejbd".equals(service)) {
+                realServices.add("httpejbd");
+            }
+        }
+        return realServices;
     }
 
     @Override
