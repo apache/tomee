@@ -71,7 +71,7 @@ import java.lang.reflect.Constructor;
 public class Options {
 
     private final Options parent;
-    private final Properties properties;
+    private final TomEEPropertyAdapter properties;
 
     public Options(Properties properties) {
         this(properties, new NullOptions());
@@ -79,11 +79,11 @@ public class Options {
 
     public Options(Properties properties, Options parent) {
         this.parent = parent;
-        this.properties = properties;
+        this.properties = new TomEEPropertyAdapter(properties);
     }
 
     public Properties getProperties() {
-        return properties;
+        return properties.delegate;
     }
 
     public void setLogger(Log logger) {
@@ -432,6 +432,37 @@ public class Options {
                 }
             }
             return value;
+        }
+    }
+
+    /**
+     * This adapter aims at supporting all configuration properties with tomee. prefix instead of openejb. prefix
+     */
+    public static class TomEEPropertyAdapter {
+        public static final int OPENEJB_PREFIX_LENGHT = "openejb.".length();
+        private Properties delegate;
+
+        public TomEEPropertyAdapter(Properties properties) {
+            this.delegate = properties;
+        }
+
+        public String getProperty(String key) {
+            String value = delegate.getProperty(key);
+
+            if (value == null && key.startsWith("openejb.")) {
+                value = delegate.getProperty(getTomeeKey(key), value);
+            }
+
+            return value;
+        }
+
+        public boolean containsKey(String key) {
+            return delegate.containsKey(key)
+                    || delegate.containsKey(getTomeeKey(key));
+        }
+
+        private String getTomeeKey(String key) {
+            return "tomee." + key.substring(OPENEJB_PREFIX_LENGHT);
         }
     }
 
