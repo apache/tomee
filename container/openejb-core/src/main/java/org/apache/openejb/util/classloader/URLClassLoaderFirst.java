@@ -326,11 +326,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
 
     @Override
     public Enumeration<URL> getResources(final String name) throws IOException {
-        final Enumeration<URL> result = super.getResources(name);
-        if (URLClassLoaderFirst.isFilterableResource(name)) {
-            return URLClassLoaderFirst.filterResources(name, result);
-        }
-        return result;
+        return URLClassLoaderFirst.filterResources(name, super.getResources(name));
     }
 
     public static boolean isFilterableResource(final String name) {
@@ -341,14 +337,17 @@ public class URLClassLoaderFirst extends URLClassLoader {
 
     // useful method for SPI
     public static Enumeration<URL> filterResources(final String name, final Enumeration<URL> result) {
-        final Collection<URL> values = Collections.list(result);
-        if (values.size() > 1) {
-            // remove openejb one
-            final URL url = URLClassLoaderFirst.class.getResource("/" + name);
-            if (url != null) {
-                values.remove(url);
+        if (isFilterableResource(name)) {
+            final Collection<URL> values = Collections.list(result);
+            if (values.size() > 1) {
+                // remove openejb one
+                final URL url = URLClassLoaderFirst.class.getResource("/" + name);
+                if (url != null) {
+                    values.remove(url);
+                }
             }
+            return Collections.enumeration(values);
         }
-        return Collections.enumeration(values);
+        return result;
     }
 }
