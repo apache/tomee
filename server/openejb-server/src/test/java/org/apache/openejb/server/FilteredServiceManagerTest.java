@@ -16,41 +16,34 @@
  */
 package org.apache.openejb.server;
 
-import junit.framework.Assert;
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.junit.EnableServices;
-import org.apache.openejb.junit.Module;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-import javax.ws.rs.core.Application;
+import static org.junit.Assert.assertTrue;
 
-/**
- * This test aims at testing the filtering feature on services.
- * Basically, this test does not do a lot of stuff except declaring only one service
- * and looking through the service if there is only one service.
- */
-@EnableServices("cxf-rs")
-@RunWith(ApplicationComposer.class)
 public class FilteredServiceManagerTest {
-
-    @Module
-    public EjbJar war() {
-        return new EjbJar();
+    @Test
+    public void checkJaxRs() {
+        final FilteredServiceManager fsm = new FilteredServiceManager(new String[] { "jaxrs" });
+        assertTrue(fsm.accept("httpejbd"));
+        assertTrue(fsm.accept("cxf-rs"));
     }
 
-    //@Test
-    @Ignore
-    public void numberOfServices () {
-        // when using @EnableServices with the application composer
-        // the return value should be a FilteredServiceManager
-        Assert.assertEquals(FilteredServiceManager.class, ServiceManager.get().getClass());
-
-        FilteredServiceManager manager = (FilteredServiceManager) ServiceManager.get();
-        Assert.assertEquals(1, manager.getDaemons().length);
-        Assert.assertEquals("jax-rs", manager.getDaemons()[0].getName());
+    @Test
+    public void checkJaxWs() {
+        final FilteredServiceManager fsm = new FilteredServiceManager(new String[] { "jaxws" });
+        assertTrue(fsm.accept("httpejbd"));
+        assertTrue(fsm.accept("cxf"));
     }
 
+    @Test
+    public void checkEjbd() {
+        final FilteredServiceManager fsm = new FilteredServiceManager(new String[] { "ejbd" });
+        assertTrue(fsm.accept("httpejbd"));
+    }
+
+    @Test
+    public void checkDefault() {
+        final FilteredServiceManager fsm = new FilteredServiceManager(new String[] { "foo" });
+        assertTrue(fsm.accept("foo"));
+    }
 }

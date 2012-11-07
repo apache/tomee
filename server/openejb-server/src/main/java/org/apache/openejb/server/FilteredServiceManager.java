@@ -16,7 +16,10 @@
  */
 package org.apache.openejb.server;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * This implementation is mainly used in the application composer to get the most from
@@ -56,6 +59,7 @@ public class FilteredServiceManager extends SimpleServiceManager {
         return services.isEmpty() || services.contains(serviceName);
     }
 
+    // used by reflection
     public static void initServiceManager(String[] services) {
         setServiceManager(new FilteredServiceManager(services));
     }
