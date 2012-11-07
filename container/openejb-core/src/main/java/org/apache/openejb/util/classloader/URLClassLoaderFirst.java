@@ -327,23 +327,24 @@ public class URLClassLoaderFirst extends URLClassLoader {
     @Override
     public Enumeration<URL> getResources(final String name) throws IOException {
         final Enumeration<URL> result = super.getResources(name);
-        if (isSlf4jQuery(name)) {
-            return filterSlf4jImpl(result);
+        if (URLClassLoaderFirst.isFilterableResource(name)) {
+            return URLClassLoaderFirst.filterResources(name, result);
         }
         return result;
     }
 
-    public static final String SLF4J_STATIC_LOGGER_BINDER_CLASS = "org/slf4j/impl/StaticLoggerBinder.class";
-
-    public static boolean isSlf4jQuery(final String name) {
-        return SLF4J_STATIC_LOGGER_BINDER_CLASS.equals(name);
+    public static boolean isFilterableResource(final String name) {
+        // currently bean validation, Slf4j
+        return "META-INF/services/javax.validation.spi.ValidationProvider".equals(name)
+                || "org/slf4j/impl/StaticLoggerBinder.class".equals(name);
     }
 
-    public static Enumeration<URL> filterSlf4jImpl(final Enumeration<URL> result) {
+    // useful method for SPI
+    public static Enumeration<URL> filterResources(final String name, final Enumeration<URL> result) {
         final Collection<URL> values = Collections.list(result);
         if (values.size() > 1) {
             // remove openejb one
-            final URL url = URLClassLoaderFirst.class.getResource("/" + SLF4J_STATIC_LOGGER_BINDER_CLASS);
+            final URL url = URLClassLoaderFirst.class.getResource("/" + name);
             if (url != null) {
                 values.remove(url);
             }

@@ -166,8 +166,8 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
     @Override
     public Enumeration<URL> getResources(final String name) throws IOException {
         final Enumeration<URL> urls = super.getResources(name);
-        if (URLClassLoaderFirst.isSlf4jQuery(name)) {
-            return URLClassLoaderFirst.filterSlf4jImpl(urls);
+        if (URLClassLoaderFirst.isFilterableResource(name)) {
+            return URLClassLoaderFirst.filterResources(name, urls);
         }
         return urls;
     }
