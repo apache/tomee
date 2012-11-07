@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.File;
+import java.io.Writer;
 
 /**
  * Installs OpenEJB into Tomcat.
@@ -72,9 +73,17 @@ public class InstallerServlet extends HttpServlet {
                 paths.reset();
                 installer.reset();
 
-                paths.setCatalinaHomeDir(req.getParameter("catalinaHome"));
-                paths.setCatalinaBaseDir(req.getParameter("catalinaBase"));
-                paths.setServerXmlFile(req.getParameter("serverXml"));
+                if ("true".equalsIgnoreCase(req.getParameter("auto"))) {
+                    paths.setCatalinaHomeDir(System.getProperty("catalina.home"));
+                    paths.setCatalinaBaseDir(System.getProperty("catalina.base"));
+                    paths.setServerXmlFile(System.getProperty("catalina.base") + "/conf/server.xml");
+
+                } else {
+                    paths.setCatalinaHomeDir(req.getParameter("catalinaHome"));
+                    paths.setCatalinaBaseDir(req.getParameter("catalinaBase"));
+                    paths.setServerXmlFile(req.getParameter("serverXml"));
+
+                }
 
                 if (paths.verify()) {
                     installer.installAll();
@@ -88,7 +97,22 @@ public class InstallerServlet extends HttpServlet {
             req.setAttribute("installer", installer);
             req.setAttribute("paths", paths);
             RequestDispatcher rd = servletConfig.getServletContext().getRequestDispatcher("/installer-view.jsp");
-            rd.forward(req,res);
+            try {
+                rd.forward(req,res);
+
+            } catch (Exception e) {
+                res.setContentType("text/plain");
+                Writer writer = res.getWriter();
+                for (String s : installer.getAlerts().getErrors()) {
+                    writer.write("[ERROR] " + s);
+                }
+                for (String s : installer.getAlerts().getWarnings()) {
+                    writer.write("[WARN] " + s);
+                }
+                for (String s : installer.getAlerts().getInfos()) {
+                    writer.write("[INFO] " + s);
+                }
+            }
         }
     }
 

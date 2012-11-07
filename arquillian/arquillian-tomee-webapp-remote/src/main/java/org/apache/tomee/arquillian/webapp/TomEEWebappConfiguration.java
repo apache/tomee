@@ -38,6 +38,7 @@ public class TomEEWebappConfiguration extends TomEEConfiguration {
     private String version = "LATEST";
     private String type = "war";
     private boolean removeUnusedWebapps = true;
+    private boolean useInstallerServlet = false;
     private int ajpPort = 8009;
 
     public String getGroupId() {
@@ -70,6 +71,14 @@ public class TomEEWebappConfiguration extends TomEEConfiguration {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public boolean isUseInstallerServlet() {
+        return useInstallerServlet;
+    }
+
+    public void setUseInstallerServlet(boolean useInstallerServlet) {
+        this.useInstallerServlet = useInstallerServlet;
     }
 
     public String getArtifactName() {
