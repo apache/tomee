@@ -417,9 +417,6 @@ public class JndiBuilder {
                 bind(internalName, ref, bindings, beanInfo, beanClass);
 
                 String name = strategy.getName(beanClass, DEFAULT_NAME_KEY, JndiNameStrategy.Interface.LOCALBEAN);
-                if (BeanContext.Comp.class.equals(bean.getBeanClass())) { // in an ear ejbmodule, webmodule etc can get the same name so avoid Comp binding issue
-                    name = name + Long.toString(System.identityHashCode(ejbJarInfo));
-                }
                 bind("openejb/local/" + name, ref, bindings, beanInfo, beanClass);
                 bindJava(bean, beanClass, ref, bindings, beanInfo);
 
