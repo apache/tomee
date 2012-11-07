@@ -138,12 +138,14 @@ public abstract class TimerData implements Serializable {
         final BeanContext beanContext = SystemInstance.get().getComponent(ContainerSystem.class).getBeanContext(deploymentId);
         for (Iterator<Map.Entry<Method, MethodContext>> it = beanContext.iteratorMethodContext(); it.hasNext(); ) {
             final MethodContext methodContext = it.next().getValue();
+            /* this doesn't work in all cases
             if (methodContext.getSchedules().isEmpty()) {
                 continue;
             }
+            */
 
             final Method method = methodContext.getBeanMethod();
-            if (method.getName().equals(mtd)) {
+            if (method != null && method.getName().equals(mtd)) { // maybe we should check parameters too
                 timeoutMethod = method;
                 break;
             }
