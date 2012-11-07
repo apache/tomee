@@ -62,7 +62,7 @@ public class EarTest {
         System.out.println();
 
         final EnterpriseArchive ear = ShrinkWrap.create(EnterpriseArchive.class, "red.ear").addAsModule(ejbJar).addAsModule(webapp);
-        ear.addAsLibraries(JarLocation.jarLocation(Test.class));
+        //ear.addAsLibraries(JarLocation.jarLocation(Test.class));
 
         System.out.println(ear.toString(true));
         System.out.println();
@@ -74,7 +74,7 @@ public class EarTest {
     public void test() throws Exception {
         System.out.println(url);
 
-        final URL servlet = new URL(url, "/red/green/blue");
+        final URL servlet = new URL(url, "/green/blue");
         final String slurp = IO.slurp(servlet);
         Assert.assertEquals(Test.class.getName(), slurp);
         System.out.println(slurp);

@@ -47,7 +47,6 @@ import org.apache.openejb.util.AnnotationFinder;
 import org.apache.openejb.util.JarExtractor;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.StringTemplate;
 import org.apache.openejb.util.URLs;
 import org.apache.xbean.finder.IAnnotationFinder;
 import org.apache.xbean.finder.ResourceFinder;
@@ -101,6 +100,7 @@ public class DeploymentLoader implements DeploymentFilterable {
     private static final String ddDir = "META-INF/";
     private boolean scanManagedBeans = true;
     private static final Collection<String> KNOWN_DESCRIPTORS = Arrays.asList("app-ctx.xml", "module.properties", "application.properties", "web.xml", "ejb-jar.xml", "openejb-jar.xml", "env-entries.properties", "beans.xml", "ra.xml", "application.xml", "application-client.xml", "persistence-fragment.xml", "persistence.xml", "validation.xml", NewLoaderLogic.EXCLUSION_FILE);
+    private static String ALTDD = SystemInstance.get().getOptions().get(OPENEJB_ALTDD_PREFIX, (String) null);
 
     public AppModule load(final File jarFile) throws OpenEJBException {
         // verify we have a valid file
@@ -1272,11 +1272,9 @@ public class DeploymentLoader implements DeploymentFilterable {
      * @return the same map instance updated with alt dds
      */
     public static Map<String, URL> altDDSources(final Map<String, URL> map, final boolean log) {
-        final String prefixes = SystemInstance.get().getOptions().get(OPENEJB_ALTDD_PREFIX, (String) null);
+        if (ALTDD == null || ALTDD.length() <= 0) return map;
 
-        if (prefixes == null || prefixes.length() <= 0) return map;
-
-        final List<String> list = new ArrayList<String>(Arrays.asList(prefixes.split(",")));
+        final List<String> list = new ArrayList<String>(Arrays.asList(ALTDD.split(",")));
         Collections.reverse(list);
 
         final Map<String, URL> alts = new HashMap<String, URL>();
@@ -1595,4 +1593,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         return baseUrl;
     }
 
+    public static void reloadAltDD() {
+        ALTDD = SystemInstance.get().getOptions().get(OPENEJB_ALTDD_PREFIX, (String) null);
+    }
 }
