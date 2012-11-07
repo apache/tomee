@@ -897,11 +897,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             // bind all global values on global context
             for (Map.Entry<String, Object> value : appContext.getBindings().entrySet()) {
                 String path = value.getKey();
-                if (!path.startsWith("global") || path.equalsIgnoreCase("global/dummy")) { // dummy bound for each app
+                // keep only global bindings
+                // the second part (path contains /) assume short name are openejb 3 ones (XXXLocal...)
+                if ((!path.startsWith("global") || path.equalsIgnoreCase("global/dummy"))
+                        && path.contains("/")) {
                     continue;
                 }
 
-                // a bit weird but just < ></>o be consistent if user doesn't lookup directly the resource
+                // a bit weird but just to be consistent if user doesn't lookup directly the resource
                 Context lastContext = Contexts.createSubcontexts(containerSystemContext, path);
                 try {
                     lastContext.rebind(path.substring(path.lastIndexOf("/") + 1, path.length()), value.getValue());
