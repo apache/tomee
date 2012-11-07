@@ -192,6 +192,11 @@ public class InitEjbDeployments implements DynamicDeployer {
         contextData.put("ejbClass.simpleName", bean.getEjbClass().substring(simpleNameIdx + 1));
 
         contextData.put("ejbName", bean.getEjbName());
-        return template.apply(contextData);
+
+        final String name = template.apply(contextData);
+        if (bean instanceof CompManagedBean) { // avoid conflict in ear between an ejbmodule and a war using the same name
+            return name + System.identityHashCode(bean);
+        }
+        return name;
     }
 }

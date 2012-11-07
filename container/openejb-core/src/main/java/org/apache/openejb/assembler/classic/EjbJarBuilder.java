@@ -17,11 +17,11 @@
 package org.apache.openejb.assembler.classic;
 
 import org.apache.openejb.AppContext;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.Container;
 import org.apache.openejb.Injection;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.BeanContext;
 import org.apache.openejb.ModuleContext;
+import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.util.Messages;
 
 import javax.naming.Context;
@@ -68,7 +68,7 @@ public class EjbJarBuilder {
                 interceptorBindingBuilder.build(bean, ejbInfo);
 
                 methodScheduleBuilder.build(bean, ejbInfo);
-                
+
                 deployments.put(ejbInfo.ejbDeploymentId, bean);
 
                 // TODO: replace with get() on application context or parent
