@@ -17,6 +17,7 @@
 
 package org.superbiz.reloadable.pu;
 
+import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openjpa.persistence.StoreCacheImpl;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -33,6 +34,7 @@ import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 import java.lang.management.ManagementFactory;
+import java.util.Properties;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -51,7 +53,9 @@ public class CacheActivationTest {
 
     @BeforeClass
     public static void start() {
-        container = EJBContainer.createEJBContainer();
+        final Properties properties = new Properties();
+        properties.setProperty(LocalMBeanServer.OPENEJB_JMX_ACTIVE, Boolean.TRUE.toString());
+        container = EJBContainer.createEJBContainer(properties);
     }
 
     @Before
