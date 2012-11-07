@@ -30,6 +30,7 @@
         My\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
         My\ Unmanaged\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
         openejb.classloader.forced-load=org.apache.openejb.arquillian.tests
+        openejb.ear.use-as-webcontext-base=true
       </property>
     </configuration>
   </container>
@@ -46,6 +47,7 @@
         My\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
         My\ Unmanaged\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
         openejb.classloader.forced-load=org.apache.openejb.arquillian.tests
+        openejb.ear.use-as-webcontext-base=true
       </property>
     </configuration>
   </container>
@@ -61,6 +63,7 @@
         My\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
         My\ Unmanaged\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
         openejb.classloader.forced-load=org.apache.openejb.arquillian.tests.
+        openejb.ear.use-as-webcontext-base=true
       </property>
     </configuration>
   </container>

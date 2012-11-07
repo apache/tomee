@@ -96,6 +96,8 @@ class AppInfoBuilder {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, "org.apache.openejb.util.resources");
     private static final Messages messages = new Messages("org.apache.openejb.util.resources");
 
+    private static boolean USE_EAR_AS_CONTEXT_ROOT_BASE = SystemInstance.get().getOptions().get("openejb.ear.use-as-webcontext-base", false);
+
     private final ConfigurationFactory configFactory;
 
     private EjbJarInfoBuilder ejbJarInfoBuilder = new EjbJarInfoBuilder();
@@ -378,7 +380,7 @@ class AppInfoBuilder {
 
             webAppInfo.host = webModule.getHost();
 
-            if (!webModule.isStandaloneModule()) {
+            if (!webModule.isStandaloneModule() && USE_EAR_AS_CONTEXT_ROOT_BASE) {
                 webAppInfo.contextRoot = appModule.getModuleId() + "/" + webModule.getContextRoot();
             } else {
                 webAppInfo.contextRoot = webModule.getContextRoot();

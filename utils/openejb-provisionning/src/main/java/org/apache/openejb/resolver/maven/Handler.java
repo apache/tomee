@@ -16,10 +16,6 @@
  */
 package org.apache.openejb.resolver.maven;
 
-import org.ops4j.pax.url.maven.commons.MavenConfigurationImpl;
-import org.ops4j.pax.url.maven.commons.MavenSettingsImpl;
-import org.ops4j.util.property.PropertiesPropertyResolver;
-
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;

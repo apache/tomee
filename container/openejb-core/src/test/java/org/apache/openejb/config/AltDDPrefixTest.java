@@ -45,6 +45,7 @@ public class AltDDPrefixTest extends TestCase {
         System.out.println("*** testTestOnlyModule ***");
         Assembler assmbler = new Assembler();
         SystemInstance.get().setProperty("openejb.altdd.prefix", "test");
+        DeploymentLoader.reloadAltDD();
         ConfigurationFactory factory = new ConfigurationFactory();
 
         URL resource = AltDDPrefixTest.class.getClassLoader().getResource("altddapp1");
@@ -58,6 +59,7 @@ public class AltDDPrefixTest extends TestCase {
         System.out.println("*** testMultitplePrefixes ***");
         Assembler assmbler = new Assembler();
         SystemInstance.get().setProperty("openejb.altdd.prefix", "footest, test");
+        DeploymentLoader.reloadAltDD();
         ConfigurationFactory factory = new ConfigurationFactory();
 
         URL resource = AltDDPrefixTest.class.getClassLoader().getResource("altddapp2");
@@ -89,6 +91,7 @@ public class AltDDPrefixTest extends TestCase {
         System.out.println("*** testPersistenceUnit ***");
         Assembler assmbler = new Assembler();
         SystemInstance.get().setProperty("openejb.altdd.prefix", "footest, test");
+        DeploymentLoader.reloadAltDD();
         ConfigurationFactory factory = new ConfigurationFactory();
 
         URL resource = AltDDPrefixTest.class.getClassLoader().getResource("altddPU1");
@@ -115,6 +118,7 @@ public class AltDDPrefixTest extends TestCase {
         Assembler assmbler = new Assembler();
         // TODO should be better to add a remove property method
         SystemInstance.get().getProperties().remove("openejb.altdd.prefix");
+        DeploymentLoader.reloadAltDD();
         ConfigurationFactory factory = new ConfigurationFactory();
 
         URL resource = AltDDPrefixTest.class.getClassLoader().getResource("altddPU1");
