@@ -16,6 +16,7 @@
  */
 package org.superbiz.mbean;
 
+import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.junit.Test;
 
 import javax.ejb.embeddable.EJBContainer;
@@ -33,6 +34,7 @@ public class GuessHowManyMBeanTest {
     @Test
     public void play() throws Exception {
         Properties properties = new Properties();
+        properties.setProperty(LocalMBeanServer.OPENEJB_JMX_ACTIVE, Boolean.TRUE.toString());
         EJBContainer container = EJBContainer.createEJBContainer(properties);
 
         MBeanServer server = ManagementFactory.getPlatformMBeanServer();
