@@ -109,6 +109,10 @@ public class Installer {
     }
 
     public void addTomEEAdminConfInTomcatUsers() {
+        addTomEEAdminConfInTomcatUsers(false);
+    }
+
+    public void addTomEEAdminConfInTomcatUsers(boolean securityActivated) {
         // read server.xml
         String tomcatUsersXml = Installers.readAll(paths.getTomcatUsersXml(), alerts);
 
@@ -128,12 +132,25 @@ public class Installer {
         }
 
         // add our listener
-        final String newTomcatUsers = tomcatUsersXml.replace("</tomcat-users>",
-                "  <!-- Activate those lines to get access to TomEE GUI\n" +
+        final String roleUserTags =
                 "  <role rolename=\"tomee-admin\" />\n" +
-                "  <user username=\"tomee\" password=\"tomee\" roles=\"tomee-admin,manager-gui\" />\n" +
+                "  <user username=\"tomee\" password=\"tomee\" roles=\"tomee-admin,manager-gui\" />\n";
+        String content = null;
+        if (!securityActivated) {
+            content =
+                "  <!-- Activate those lines to get access to TomEE GUI -->\n" +
+                "  <!--\n" +
+                roleUserTags +
                 "  -->\n" +
-                "</tomcat-users>\n");
+                "</tomcat-users>\n";
+        } else {
+            content =
+                "  <!-- Activate those lines to get access to TomEE GUI\n -->" +
+                roleUserTags +
+                "</tomcat-users>\n";
+
+        }
+        final String newTomcatUsers = tomcatUsersXml.replace("</tomcat-users>", content);
 
         // overwrite server.xml
         if (Installers.writeAll(paths.getTomcatUsersXml(), newTomcatUsers, alerts)) {
@@ -313,8 +330,8 @@ public class Installer {
         if (annotationApi.exists()) {
             if (!annotationApi.delete()) {
                 annotationApi.deleteOnExit();
-                System.err.println("Please restart the server or delete manually " + name);
             }
+            alerts.addInfo("Please restart the server or delete manually " + name);
         }
     }
 

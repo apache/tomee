@@ -53,7 +53,6 @@ public class SessionScopeTest {
     }
 
     @Test
-    @Ignore
     public void testShouldBeAbleToAccessServletAndEjb() throws Exception {
         String[] sessionResult = new String[2];
         for (int i = 0; i < sessionResult.length; i++) {

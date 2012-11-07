@@ -22,6 +22,7 @@ import org.apache.openejb.arquillian.common.Setup;
 import org.apache.openejb.arquillian.common.TomEEContainer;
 import org.apache.openejb.arquillian.common.Zips;
 import org.apache.openejb.config.RemoteServer;
+import org.apache.openejb.util.Base64;
 import org.apache.tomee.installer.Installer;
 import org.apache.tomee.installer.Paths;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
@@ -30,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
@@ -45,6 +47,7 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
     private RemoteServer container;
     private boolean shutdown = false;
     private File openejbHome;
+    private boolean wereOpenejbHomeSet = true;
 
     @Override
     public void start() throws LifecycleException {
@@ -76,6 +79,7 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
             Files.writable(workingDirectory);
 
             openejbHome = Setup.findHome(workingDirectory);
+            Installer installer = null;
 
             if (openejbHome == null) {
 
@@ -96,8 +100,13 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
                 System.setProperty("openejb.deploymentId.format", "{appId}/{ejbJarId}/{ejbName}");
 
                 Paths paths = new Paths(webapp);
-                Installer installer = new Installer(paths, true);
-                installer.installAll();
+                installer = new Installer(paths, true);
+                if (!configuration.isUseInstallerServlet()) {
+                    installer.installAll();
+
+                }
+
+                wereOpenejbHomeSet = false;
             }
 
             Files.assertDir(openejbHome);
@@ -126,6 +135,32 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
             }
 
             Setup.installArquillianBeanDiscoverer(openejbHome);
+
+            if (!wereOpenejbHomeSet && configuration.isUseInstallerServlet()) {
+                // instead of calling the Installer, let's just do like users do
+                // call the servlet installer instead
+                StringBuilder baseUrl = new StringBuilder("http://")
+                        .append(configuration.getHost())
+                        .append(":")
+                        .append(configuration.getHttpPort())
+                        .append("/tomee/installer?action=install&auto=true");
+
+                installer.addTomEEAdminConfInTomcatUsers(true);
+
+                RemoteServer tmpContainer = new RemoteServer();
+                tmpContainer.start();
+
+                URL url = new URL(baseUrl.toString());
+                URLConnection uc = url.openConnection();
+                // dG9tZWU6dG9tZWU= --> Base64 of tomee:tomee
+                String authorizationString = "Basic dG9tZWU6dG9tZWU=";
+                uc.setRequestProperty ("Authorization", authorizationString);
+                InputStream is = uc.getInputStream();
+                org.apache.openejb.loader.IO.slurp(is);
+                is.close();
+
+                tmpContainer.stop();
+            }
 
             container = new RemoteServer();
             container.start();
