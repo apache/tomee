@@ -282,7 +282,7 @@ public class Installer {
                         "\n" +
                         "rem adjust endorsed lib depending on the java version\n" +
                         "set JAVA_ENDORSED_DIRS=endorsed\n" +
-                        "if \"%JAVA_VERSION%\" == \"7\" set JAVA_ENDORSED_DIRS=endorsed7\n");
+                        "if \"%JAVA_VERSION%\" == \"7\" set JAVA_ENDORSED_DIRS=\"%CATALINA_HOME%\"\\endorsed7\n");
                 if (Installers.writeAll(paths.getSetClasspathBat(), newSetClasspathBat, alerts)) {
                     alerts.addInfo("Endorsed lib set for java 6 and ignored for java 7 (win)");
                 }
