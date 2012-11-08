@@ -79,20 +79,19 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
     private transient TransactionManager transactionManager;
     private transient BeanContext deployment;
     private transient TimerStore timerStore;
-    private transient Scheduler scheduler;
+    private transient Scheduler scheduler = null;
 
     public EjbTimerServiceImpl(BeanContext deployment) {
-        this(deployment, getDefaultTransactionManager(), getDefaultScheduler(deployment), new MemoryTimerStore(getDefaultTransactionManager()), -1);
+        this(deployment, getDefaultTransactionManager(), new MemoryTimerStore(getDefaultTransactionManager()), -1);
     }
 
     public static TransactionManager getDefaultTransactionManager() {
         return SystemInstance.get().getComponent(TransactionManager.class);
     }
 
-    public EjbTimerServiceImpl(BeanContext deployment, TransactionManager transactionManager, Scheduler scheduler, TimerStore timerStore, int retryAttempts) {
+    public EjbTimerServiceImpl(BeanContext deployment, TransactionManager transactionManager, TimerStore timerStore, int retryAttempts) {
         this.deployment = deployment;
         this.transactionManager = transactionManager;
-        this.scheduler = scheduler;
         this.timerStore = timerStore;
         TransactionType transactionType = deployment.getTransactionType(deployment.getEjbTimeout());
         this.transacted = transactionType == TransactionType.Required || transactionType == TransactionType.RequiresNew;
@@ -297,6 +296,8 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
 
     @Override
     public void start() throws TimerStoreException {
+        scheduler = getDefaultScheduler(deployment);
+
         // load saved timers
         Collection<TimerData> timerDatas = timerStore.loadTimers(this, (String) deployment.getDeploymentID());
         // schedule the saved timers
