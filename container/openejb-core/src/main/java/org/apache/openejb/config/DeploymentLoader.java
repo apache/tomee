@@ -193,10 +193,10 @@ public class DeploymentLoader implements DeploymentFilterable {
                 final ResourceFinder finder = new ResourceFinder("", urls.toArray(new URL[urls.size()]));
                 otherDD.putAll(getDescriptors(finder, false));
 
-                // "persistence.xml" is done separately since we mange alist of url and not s single url
+                // "persistence.xml" is done separately since we manage a list of url and not s single url
                 try {
                     final List<URL> persistenceXmls = finder.findAll(ddDir + "persistence.xml");
-                    if (persistenceXmls.size() > 1) {
+                    if (persistenceXmls.size() >= 1) {
                         final URL old = (URL) otherDD.get("persistence.xml");
                         if (old != null && !persistenceXmls.contains(old)) {
                             persistenceXmls.add(old);
@@ -623,9 +623,7 @@ public class DeploymentLoader implements DeploymentFilterable {
     }
 
     private WebModule createWebModule(final String jar, final URL warUrl, final ClassLoader parentClassLoader, final String contextRoot, final String moduleName) throws OpenEJBException {
-        final String warPath = URLs.toFilePath(warUrl);
-        final WebModule webModule = createWebModule(jar, warPath, parentClassLoader, contextRoot, moduleName);
-        return webModule;
+        return createWebModule(jar, URLs.toFilePath(warUrl), parentClassLoader, contextRoot, moduleName);
     }
 
     public void addWebModule(final AppModule appModule, final URL warUrl, final ClassLoader parentClassLoader, final String contextRoot, final String moduleName) throws OpenEJBException {
