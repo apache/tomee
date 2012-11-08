@@ -144,6 +144,7 @@ import javax.sql.DataSource;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 import javax.validation.ValidationException;
+import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -152,6 +153,7 @@ import java.io.InputStream;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -638,7 +640,15 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     ValidatorFactory factory = validatorFactory.getValue();
                     try {
                         containerSystemContext.bind(VALIDATOR_FACTORY_NAMING_CONTEXT + id, factory);
-                        containerSystemContext.bind(VALIDATOR_NAMING_CONTEXT + id, factory.usingContext().getValidator());
+
+                        Validator validator = null;
+                        try {
+                            validator = factory.usingContext().getValidator();
+                        } catch (Exception e) {
+                            validator = (Validator) Proxy.newProxyInstance(appContext.getClassLoader(), new Class<?>[]{ Validator.class }, new LazyValidator(factory));
+                        }
+
+                        containerSystemContext.bind(VALIDATOR_NAMING_CONTEXT + id, validator);
                     } catch (NameAlreadyBoundException e) {
                         throw new OpenEJBException("ValidatorFactory already exists for module " + id, e);
                     } catch (Exception e) {
