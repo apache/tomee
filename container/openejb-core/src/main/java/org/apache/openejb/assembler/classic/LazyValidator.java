@@ -20,10 +20,13 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class LazyValidator implements InvocationHandler {
+
+    private final ReentrantLock lock = new ReentrantLock();
     private final ValidatorFactory factory;
-    private volatile Validator validator = null;
+    private Validator validator = null;
 
     public LazyValidator(final ValidatorFactory factory) {
         this.factory = factory;
@@ -31,13 +34,21 @@ public class LazyValidator implements InvocationHandler {
 
     @Override
     public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+
         if (validator == null) {
-            synchronized (this) {
+
+            final ReentrantLock l = lock;
+            l.lock();
+
+            try {
                 if (validator == null) {
                     validator = factory.usingContext().getValidator();
                 }
+            } finally {
+                l.unlock();
             }
         }
+
         return method.invoke(validator, args);
     }
 }
