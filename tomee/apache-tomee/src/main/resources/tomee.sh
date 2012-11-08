@@ -82,7 +82,5 @@ if [ "$1" = "deploy" ] || [ "$1" = "undeploy" ]; then
         echo "Usage: <tomee.sh> $1 <path>"
     fi
 else
-    echo "Usage:"
-    echo "  deploy   -> <tomee.sh> deploy <path>"
-    echo "  undeploy -> <tomee.sh> undeploy <path>"
+    $JAVA $DEBUG -Dopenejb.base="$TOMEE_HOME" -cp "\"$CP\"" org.apache.openejb.cli.Bootstrap $*
 fi
