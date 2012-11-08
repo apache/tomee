@@ -23,7 +23,7 @@ import java.lang.reflect.Method;
 
 public class LazyValidator implements InvocationHandler {
     private final ValidatorFactory factory;
-    private Validator validator = null;
+    private volatile Validator validator = null;
 
     public LazyValidator(final ValidatorFactory factory) {
         this.factory = factory;
