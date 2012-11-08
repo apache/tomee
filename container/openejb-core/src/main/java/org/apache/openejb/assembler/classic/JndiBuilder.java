@@ -63,6 +63,7 @@ public class JndiBuilder {
     final boolean embeddedEjbContainerApi;
 
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, JndiBuilder.class.getPackage().getName());
+    private static boolean USE_OLD_JNDI_NAMES = SystemInstance.get().getOptions().get("openejb.use-old-jndi-names", false);
 
     private final Context openejbContext;
     private static final String JNDINAME_STRATEGY_CLASS = "openejb.jndiname.strategy.class";
@@ -419,6 +420,9 @@ public class JndiBuilder {
                 String name = strategy.getName(beanClass, DEFAULT_NAME_KEY, JndiNameStrategy.Interface.LOCALBEAN);
                 bind("openejb/local/" + name, ref, bindings, beanInfo, beanClass);
                 bindJava(bean, beanClass, ref, bindings, beanInfo);
+                if (USE_OLD_JNDI_NAMES) {
+                    bean.getModuleContext().getAppContext().getBindings().put(name, ref);
+                }
 
                 simpleNameRef = ref;
             }
@@ -438,9 +442,13 @@ public class JndiBuilder {
                 String internalName = "openejb/Deployment/" + format(id, interfce.getName(), InterfaceType.BUSINESS_LOCAL);
                 bind(internalName, ref, bindings, beanInfo, interfce);
 
-                String externalName = "openejb/local/" + strategy.getName(interfce, DEFAULT_NAME_KEY, JndiNameStrategy.Interface.BUSINESS_LOCAL);
+                final String name = strategy.getName(interfce, DEFAULT_NAME_KEY, JndiNameStrategy.Interface.BUSINESS_LOCAL);
+                final String externalName = "openejb/local/" + name;
                 bind(externalName, ref, bindings, beanInfo, interfce);
                 bindJava(bean, interfce, ref, bindings, beanInfo);
+                if (USE_OLD_JNDI_NAMES) {
+                    bean.getModuleContext().getAppContext().getBindings().put(name, ref);
+                }
                 
                 if (simpleNameRef == null) simpleNameRef = ref;
             }
@@ -464,6 +472,9 @@ public class JndiBuilder {
                 bind("openejb/local/" + name, ref, bindings, beanInfo, interfce);
                 bind("openejb/remote/" + name, ref, bindings, beanInfo, interfce);
                 bindJava(bean, interfce, ref, bindings, beanInfo);
+                if (USE_OLD_JNDI_NAMES) {
+                    bean.getModuleContext().getAppContext().getBindings().put(name, ref);
+                }
                 
                 if (simpleNameRef == null) simpleNameRef = ref;
             }
@@ -479,7 +490,7 @@ public class JndiBuilder {
 
                 String name = strategy.getName(bean.getLocalHomeInterface(), DEFAULT_NAME_KEY, JndiNameStrategy.Interface.LOCAL_HOME);
                 bind("openejb/local/" + name, ref, bindings, beanInfo, localHomeInterface);
-                
+
                 optionalBind(bindings, ref, "openejb/Deployment/" + format(id, localHomeInterface.getName(), InterfaceType.EJB_LOCAL_HOME));
 
                 name = "openejb/Deployment/" + format(id, bean.getLocalInterface().getName());
@@ -504,7 +515,7 @@ public class JndiBuilder {
                 String name = strategy.getName(homeInterface, DEFAULT_NAME_KEY, JndiNameStrategy.Interface.REMOTE_HOME);
                 bind("openejb/local/" + name, ref, bindings, beanInfo, homeInterface);
                 bind("openejb/remote/" + name, ref, bindings, beanInfo, homeInterface);
-                
+
                 optionalBind(bindings, ref, "openejb/Deployment/" + format(id, homeInterface.getName(), InterfaceType.EJB_HOME));
                 
                 name = "openejb/Deployment/" + format(id, bean.getRemoteInterface().getName());
