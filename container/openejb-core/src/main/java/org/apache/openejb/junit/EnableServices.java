@@ -27,4 +27,5 @@ public @interface EnableServices {
     // should contain the list of services to activate
     // default is empty list which means that all services gonna be activated
     String[] value () default {};
+    boolean httpDebug() default false;
 }

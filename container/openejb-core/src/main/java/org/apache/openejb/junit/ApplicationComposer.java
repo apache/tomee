@@ -258,6 +258,13 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
             final Properties configuration = new Properties();
             configuration.put(DEPLOYMENTS_CLASSPATH_PROPERTY, "false");
 
+            final EnableServices annotation = testClass.getJavaClass().getAnnotation(EnableServices.class);
+            if (annotation != null && annotation.httpDebug()) {
+                configuration.setProperty("httpejbd.print", "true");
+                configuration.setProperty("httpejbd.indent.xml", "true");
+                configuration.setProperty("logging.level.OpenEJB.server.http", "FINE");
+            }
+
             final List<FrameworkMethod> methods = testClass.getAnnotatedMethods(Configuration.class);
             for (FrameworkMethod method : methods) {
                 final Object o = method.invokeExplosively(testInstance);
@@ -486,7 +493,6 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
 
                 assembler.buildContainerSystem(config.getOpenEjbConfiguration());
 
-                EnableServices annotation = testClass.getJavaClass().getAnnotation(EnableServices.class);
                 if ("true".equals(configuration.getProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "false"))
                         || annotation != null) {
                     try {
