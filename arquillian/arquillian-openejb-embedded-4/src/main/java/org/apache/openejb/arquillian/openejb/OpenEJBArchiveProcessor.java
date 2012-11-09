@@ -42,7 +42,6 @@ import org.jboss.shrinkwrap.api.asset.Asset;
 import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
 import org.jboss.shrinkwrap.api.asset.FileAsset;
 import org.jboss.shrinkwrap.api.asset.UrlAsset;
-import org.jboss.shrinkwrap.api.classloader.ShrinkWrapClassLoader;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.impl.base.filter.IncludeRegExpPaths;
 
@@ -162,7 +161,10 @@ public class OpenEJBArchiveProcessor {
         appModule.getEjbModules().add(ejbModule);
 
         {
-            final Node beansXml = archive.get(prefix.concat(BEANS_XML));
+            Node beansXml = archive.get(prefix.concat(BEANS_XML));
+            if (beansXml == null && WEB_INF.equals(prefix)) {
+                beansXml = archive.get(WEB_INF_CLASSES.concat(META_INF).concat(BEANS_XML));
+            }
             if (beansXml != null) {
                 ejbModule.getAltDDs().put(BEANS_XML, new AssetSource(beansXml.getAsset()));
             }
@@ -170,8 +172,8 @@ public class OpenEJBArchiveProcessor {
 
         {
             Node persistenceXml = archive.get(prefix.concat(PERSISTENCE_XML));
-            if (persistenceXml == null && prefix.startsWith("WEB-INF")) { // particular case
-                persistenceXml = archive.get(prefix.concat("classes/META-INF/").concat(PERSISTENCE_XML));
+            if (persistenceXml == null && WEB_INF.equals(prefix)) {
+                persistenceXml = archive.get(WEB_INF_CLASSES.concat(META_INF).concat(PERSISTENCE_XML));
             }
             if (persistenceXml != null) {
                 final Asset asset = persistenceXml.getAsset();
