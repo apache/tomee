@@ -38,16 +38,17 @@
     <module>async-methods</module>
     <module>bean-validation-design-by-contract</module>
     <module>cdi-alternative-and-stereotypes</module>
+    <module>cdi-application-scope</module>
     <module>cdi-basic</module>
     <module>cdi-ejbcontext-jaas</module>
     <module>cdi-events</module>
     <module>cdi-interceptors</module>
-    <module>cdi-request-scope</module>
-    <module>cdi-application-scope</module>
     <module>cdi-produces-disposes</module>
     <module>cdi-produces-field</module>
     <module>cdi-query</module>
     <module>cdi-realm</module>
+    <module>cdi-request-scope</module>
+    <module>cdi-session-scope</module>
     <module>change-jaxws-url</module>
     <module>component-interfaces</module>
     <module>client-resource-lookup-preview</module>
@@ -103,6 +104,7 @@
     <module>rest-on-ejb</module>
     <module>rest-example</module>
     <module>rest-example-with-application</module>
+    <module>rest-xml-json</module>
     <module>scala-basic</module>
     <module>schedule-expression</module>
     <module>schedule-events</module>
@@ -115,6 +117,7 @@
     <module>simple-mdb</module>
     <module>simple-mdb-with-descriptor</module>
     <module>simple-osgi</module>
+    <module>simple-rest</module>
     <module>simple-singleton</module>
     <module>simple-stateful</module>
     <module>simple-stateful-callbacks</module>
@@ -122,6 +125,7 @@
     <module>simple-stateless-callbacks</module>
     <module>simple-stateless-with-descriptor</module>
     <module>simple-webservice</module>
+    <module>simple-webservice-without-interface</module>
     <module>spring-data-proxy</module>
     <module>spring-data-proxy-meta</module>
     <module>struts</module>

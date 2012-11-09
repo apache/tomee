@@ -69,9 +69,11 @@ All the examples show code, but some are better documented than others.  Example
 {span-one-third
 ### REST
 
- - [rest-example-with-application](rest-example-with-application/README.html)
+ - [simple-rest](simple-rest/README.html)
  - [rest-example](rest-example/README.html)
+ - [rest-example-with-application](rest-example-with-application/README.html)
  - [rest-on-ejb](rest-on-ejb/README.html)
+ - [rest-xml-json](rest-example/README.html)
 }
 
 {span-one-third
