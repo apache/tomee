@@ -1,20 +1,20 @@
-<% out.print("<!DOCTYPE html>"); %>
+<!DOCTYPE html>
 <!--
 
-    Licensed to the Apache Software Foundation (ASF) under one or more
-    contributor license agreements.  See the NOTICE file distributed with
-    this work for additional information regarding copyright ownership.
-    The ASF licenses this file to You under the Apache License, Version 2.0
-    (the "License"); you may not use this file except in compliance with
-    the License.  You may obtain a copy of the License at
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements. See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License. You may obtain a copy of the License at
 
-       http://www.apache.org/licenses/LICENSE-2.0
+http://www.apache.org/licenses/LICENSE-2.0
 
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
 -->
 
@@ -30,188 +30,204 @@
     Paths paths = (Paths) request.getAttribute("paths");
 %>
 <html>
+
 <head>
-    <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>OpenEJB/Tomcat</title>
-    <link href="default.css" rel="stylesheet">
+    <meta charset="utf-8">
+    <title>TomEE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="lib/bootstrap/2.1.1/css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+        body {
+            padding-top: 60px;
+            padding-bottom: 40px;
+        }
+
+        .sidebar-nav {
+            padding: 9px 0;
+        }
+    </style>
+    <link href="lib/bootstrap/2.1.1/css/bootstrap-responsive.css" rel="stylesheet">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
 </head>
-<body marginwidth="0" marginheight="0" leftmargin="0" bottommargin="0" topmargin="0" vlink="#6763a9" link="#6763a9" bgcolor="#ffffff">
-    <a name="top"></a>
-    <table width="712" cellspacing="0" cellpadding="0" border="0">
-        <tr>
-            <td bgcolor="#5A5CB8" align="left" valign="top" width="7"><img height="9" width="1" border="0" src="images/dotTrans.gif"></td>
-            <td bgcolor="#5A5CB8" align="left" valign="top" width="40"><img border="0" height="6" width="40" src="images/dotTrans.gif"></td>
-            <td bgcolor="#5A5CB8" align="left" valign="top" height="2" width="430"><img border="0" height="6" width="430" src="images/top_2.gif"></td>
-            <td bgcolor="#E24717" align="left" valign="top" height="2" width="120"><img src="images/top_3.gif" width="120" height="6" border="0"></td>
-        </tr>
-        <tr>
-            <td bgcolor="#5A5CB8" align="left" valign="top" bgcolor="#ffffff" width="13"><img border="0" height="15" width="13" src="images/dotTrans.gif"></td>
-            <td align="left" valign="top" width="40"><img border="0" height="1" width="1" src="images/dotTrans.gif"></td>
-            <td align="left" valign="middle" width="430">
-                <a href="http://openejb.apache.org"><span class="menuTopOff">OpenEJB</span></a>
-                <img border="0" height="2" width="20" src="images/dotTrans.gif">
-                <a href="index.jsp"><span class="menuTopOff">Index</span></a>
-                <img border="0" height="2" width="20" src="images/dotTrans.gif">
-                <a href="viewjndi.jsp"><span class="menuTopOff">JNDI</span></a>
-                <img border="0" height="2" width="20" src="images/dotTrans.gif">
-                <a href="viewejb.jsp"><span class="menuTopOff">EJB</span></a>
-                <img border="0" height="2" width="20" src="images/dotTrans.gif">
-                <a href="viewclass.jsp"><span class="menuTopOff">Class</span></a>
-                <img border="0" height="2" width="20" src="images/dotTrans.gif">
-                <a href="invokeobj.jsp"><span class="menuTopOff">Invoke</span></a>
-                <img border="0" height="2" width="20" src="images/dotTrans.gif">
-            </td>
-            <td align="left" valign="top" height="20" width="120"><img border="0" height="2" width="10" src="images/dotTrans.gif"></td>
-        </tr>
-        <tr>
-            <td align="left" valign="top" bgcolor="#a9a5de" width="7"><img border="0" height="3" width="7" src="images/line_sm.gif"></td>
-            <td align="left" valign="top" height="3" width="40"><img border="0" height="3" width="40" src="images/line_light.gif"></td>
-            <td align="left" valign="top" height="3" width="430"><img border="0" height="3" width="430" src="images/line_light.gif"></td>
-            <td align="left" valign="top" height="3" width="120"><img height="1" width="1" border="0" src="images/dotTrans.gif"></td>
-        </tr>
-        <tr>
-            <td align="left" valign="top" bgcolor="#a9a5de" width="7">&nbsp;</td>
-            <td align="left" valign="top" width="40">&nbsp;</td>
-            <td valign="top" width="430" rowspan="4">
-                <table width="430" cellspacing="0" cellpadding="0" border="0" rows="2" cols="1">
-                    <tr>
-                        <td align="left" valign="top"><br>
-                            <img width="200" vspace="0" src="images/logo_ejb2.gif" hspace="0" height="55" border="0">
-                            <br>
-                            <img src="images/dotTrans.gif" hspace="0" height="7" border="0"><br>
-                            <span class="pageTitle">
-                            OpenEJB Installer
-                            </span>
-                            <br>
-                            <img src="images/dotTrans.gif" hspace="0" height="1" border="0"></td>
-                    </tr>
-                </table>
-                <p>
-<%
-    if (installer != null) {
-        if (installer.getStatus() == Installer.Status.REBOOT_REQUIRED) {
-%>
 
-            <FONT SIZE='2'>
-                <img border='0' height='3' width='360' src='images/line_light.gif'><br>
-                <table width='360' cellspacing='4' cellpadding='4' border='0'>
-<%
-    for (String info : installer.getAlerts().getInfos()) {
-%>
-                    <tr>
-                        <td><font size='2'><%= info %></font></td>
-                        <td><font size='2' color='green'><b>DONE</b></font></td>
-                    </tr>
-<%
-        }
-%>
-                </table>
-                <img border='0' height='3' width='360' src='images/line_light.gif'>
-                <br><br>
+<body>
 
-            The installer has completed successfully. <br> 
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container-fluid">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+            <a class="brand" href="http://openejb.apache.org">TomEE</a>
+
+            <div class="nav-collapse">
+                <ul class="nav">
+                    <li class="active"><a href="index.jsp">Index</a></li>
+                    <li><a href="viewjndi.jsp">JNDI</a></li>
+                    <li><a href="viewejb.jsp">EJB</a></li>
+                    <li><a href="viewclass.jsp">Class</a></li>
+                    <li><a href="invokeobj.jsp">Invoke</a></li>
+                </ul>
+
+            </div>
+            <!--/.nav-collapse -->
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+
+            <%
+                if (installer != null) {
+                    if (installer.getStatus() == Installer.Status.REBOOT_REQUIRED) {
+            %>
+
+            <table class='table table-striped table-bordered table-condensed'>
+                <tbody>
+                <%
+                    for (String info : installer.getAlerts().getInfos()) {
+                %>
+                <tr>
+                    <td><%= info %>
+                    </td>
+                    <td><span style="color:green;"><b>DONE</b></span></td>
+                </tr>
+                <%
+                    }
+                %>
+                </tbody>
+            </table>
+            <br><br>
+
+            The installer has completed successfully. <br>
             Please, <b>restart Tomcat</b> and reload this page to verify installation.
-<%
-        } else {
-            List<String> errors = new ArrayList<String>(paths.getErrors());
-            errors.addAll(installer.getAlerts().getErrors());
-            if (!errors.isEmpty()) {
-%>          Installation Failed<br><br>
-            <FONT SIZE='2'>
-                <img border='0' height='3' width='360' src='images/line_light.gif'><br>
-                <table width='300' cellspacing='4' cellpadding='4' border='0'>
-<%
-                for (String error : errors) {
-%>
-                    <tr>
-                        <td><font size='2'><%= error %></font></td>
-                        <!--<td><font size='2' color='green'><b>DONE</b></font></td>-->
-                    </tr>
-<%
+            <%
+            } else {
+                List<String> errors = new ArrayList<String>(paths.getErrors());
+                errors.addAll(installer.getAlerts().getErrors());
+                if (!errors.isEmpty()) {
+            %> Installation Failed<br><br>
+            <table>
+                <%
+                    for (String error : errors) {
+                %>
+                <tr>
+                    <td><%= error %>
+                    </td>
+                    <td><span style="color:green;"><b>DONE</b></span></td>
+                </tr>
+                <%
+                    }
+                %>
+            </table>
+            <br><br>
+            <%
+            } else {
+            %>
+            <table class='table table-striped table-bordered table-condensed'>
+                <tbody>
+                <tr>
+                    <td><font size='2'>Tomcat Listener Installed</font></td>
+                    <% if (installer.isListenerInstalled()) { %>
+                    <td><font size='2' color='green'><b>YES</b></font></td>
+                    <% } else { %>
+                    <td><font size='2' color='red'><b>NO</b></font></td>
+                    <% } %>
+                </tr>
+                <tr>
+                    <td><font size='2'>JavaAgent Installed</font></td>
+                    <% if (installer.isAgentInstalled()) { %>
+                    <td><font size='2' color='green'><b>YES</b></font></td>
+                    <% } else { %>
+                    <td><font size='2' color='red'><b>NO</b></font></td>
+                    <% } %>
+                </tr>
+                </tbody>
+            </table>
+            <br><br>
+            <%
                 }
-%>
-                </table>
-                <img border='0' height='3' width='360' src='images/line_light.gif'>
-                <br><br>
-<%
+            %>
+            <%
+                if (installer.getStatus() == Installer.Status.NONE) {
+                    if (errors.isEmpty()) {
+            %>
+            Please verify the file paths are correct and click the install button.
+            <%
             } else {
-%>
-            <FONT SIZE='2'>
-                <img border='0' height='3' width='360' src='images/line_light.gif'><br>
-                <table width='300' cellspacing='4' cellpadding='4' border='0'>
+            %>
+            Try again?
+            <%
+                }
+            %>
+
+            <br><br>
+
+            <form action='/tomee/installer' method='post'>
+                <table>
+                    <tbody>
                     <tr>
-                        <td><font size='2'>Tomcat Listener Installed</font></td>
-                        <% if (installer.isListenerInstalled()) { %>
-                        <td><font size='2' color='green'><b>YES</b></font></td>
-                        <% } else { %>
-                        <td><font size='2' color='red'><b>NO</b></font></td>
-                        <% } %>
+                        <td>Catalina Home:</td>
+                        <td><input type='text' size='200' style="width:300px" name='catalinaHome'
+                                   value='<%= safeGetAbsolutePath(paths.getCatalinaHomeDir()) %>'></td>
                     </tr>
                     <tr>
-                        <td><font size='2'>JavaAgent Installed</font></td>
-                        <% if (installer.isAgentInstalled()) { %>
-                        <td><font size='2' color='green'><b>YES</b></font></td>
-                        <% } else { %>
-                        <td><font size='2' color='red'><b>NO</b></font></td>
-                        <% } %>
+                        <td>Catalina Base:</td>
+                        <td><input type='text' size='200' style="width:300px" name='catalinaBase'
+                                   value='<%= safeGetAbsolutePath(paths.getCatalinaBaseDir()) %>'></td>
                     </tr>
+                    <tr>
+                        <td>Catalina server.xml:</td>
+                        <td><input type='text' size='200' style="width:300px" name='serverXml'
+                                   value='<%= safeGetAbsolutePath(paths.getServerXmlFile()) %>'></td>
+                    </tr>
+                    <tr>
+                        <td><input type='submit' name='action' value='Install'></td>
+                    </tr>
+                    </tbody>
                 </table>
-                <img border='0' height='3' width='360' src='images/line_light.gif'>
-                <br><br>
-<%
-            }
-%>
-<%
-            if (installer.getStatus() == Installer.Status.NONE) {
-                if (errors.isEmpty()) {
-%>
-                Please verify the file paths are correct and click the install button.
-<%
+            </form>
+            <%
             } else {
-%>
-                Try again?
-<%
-            }
-%>
+            %>
+            Installation Successful!
+            <%
+                        }
 
-                <br><br>
-                <form action='/openejb/installer' method='post'>
-                Catalina Home:
-                <input type='text' size='100' name='catalinaHome' value='<%= safeGetAbsolutePath(paths.getCatalinaHomeDir()) %>'>
-                <br>
-                Catalina Base:
-                <input type='text' size='100' name='catalinaBase' value='<%= safeGetAbsolutePath(paths.getCatalinaBaseDir()) %>'>
-                <br>
-                Catalina server.xml:
-                <input type='text' size='100' name='serverXml' value='<%= safeGetAbsolutePath(paths.getServerXmlFile()) %>'>
-                <br><br>
-                <input type='submit' name='action' value='Install'>
-                </form>
-<%
-            } else {
-%>
-                Installation Successful!
-<%
-            }
-        }
-%>
-                </FONT>
+                    }
+                } %>
+        </div>
+    </div>
+</div>
+<hr>
 
-                </p>
-                <p>
-                </p>
-                <br>
-                <br>
-<% } %>
-            </td>
-            <td align="left" valign="top" height="5" width="120">
+<footer>
+    <p>Copyright &copy; 2012 The Apache Software Foundation, Licensed under the Apache License, Version 2.0. Apache and
+        the Apache feather logo are trademarks of The Apache Software Foundation.</p>
+</footer>
 
 
-                &nbsp;</td>
-        </tr>
-    </table>
-    </body>
+<!-- Le javascript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="lib/jquery/jquery-1.7.2.min.js"></script>
+<script src="lib/bootstrap/2.1.1/js/bootstrap.js"></script>
+
+</body>
 </html>
+
 <%!
     private String safeGetAbsolutePath(File file) {
         if (file == null) return "";
