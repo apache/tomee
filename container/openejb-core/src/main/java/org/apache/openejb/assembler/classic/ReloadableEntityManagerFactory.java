@@ -386,6 +386,14 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory {
         return entityManagerFactoryCallable.getUnitInfo();
     }
 
+    public void setExcludeUnlistedClasses(boolean excludeUnlistedClasses) {
+        entityManagerFactoryCallable.getUnitInfo().setExcludeUnlistedClasses(excludeUnlistedClasses);
+    }
+
+    public boolean getExcludeUnlistedClasses() {
+        return entityManagerFactoryCallable.getUnitInfo().excludeUnlistedClasses();
+    }
+
     @MBean
     @Internal
     @Description("represents a persistence unit managed by OpenEJB")
@@ -476,6 +484,12 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory {
             } catch (Exception iae) {
                 // ignored
             }
+        }
+
+        @ManagedOperation
+        @Description("exclude or not unlisted entities")
+        public void setExcludeUnlistedClasses(boolean value) {
+            reloadableEntityManagerFactory.setExcludeUnlistedClasses(value);
         }
 
         @ManagedOperation

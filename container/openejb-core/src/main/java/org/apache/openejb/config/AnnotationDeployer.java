@@ -77,6 +77,7 @@ import org.apache.openejb.jee.MethodPermission;
 import org.apache.openejb.jee.NamedMethod;
 import org.apache.openejb.jee.OutboundResourceAdapter;
 import org.apache.openejb.jee.ParamValue;
+import org.apache.openejb.jee.Persistence;
 import org.apache.openejb.jee.PersistenceContextRef;
 import org.apache.openejb.jee.PersistenceContextType;
 import org.apache.openejb.jee.PersistenceUnitRef;
@@ -180,6 +181,7 @@ import javax.interceptor.Interceptors;
 import javax.jms.Queue;
 import javax.jws.HandlerChain;
 import javax.jws.WebService;
+import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
@@ -239,6 +241,9 @@ import static org.apache.openejb.util.Join.join;
 public class AnnotationDeployer implements DynamicDeployer {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, AnnotationDeployer.class.getPackage().getName());
     public static final Logger startupLogger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, "org.apache.openejb.util.resources");
+
+    public static final String OPENEJB_JPA_AUTO_SCAN = "openejb.jpa.auto-scan";
+
     private static final ThreadLocal<DeploymentModule> currentModule = new ThreadLocal<DeploymentModule>();
     private static final Set<String> lookupMissing = new HashSet<String>(2);
     private static final String[] JSF_CLASSES = new String[] {
@@ -1203,7 +1208,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                         } catch (ClassNotFoundException e) {
                             // todo log debug warning
                         } catch (java.lang.NoClassDefFoundError e) {
-
+                            // no-op
                         }
                     }
 
@@ -1239,6 +1244,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     final Class<?> clazz = ejbModule.getClassLoader().loadClass(bean.getEjbClass());
                     sessionBean.setSessionType(getSessionType(clazz));
                 } catch (Throwable handledInValidation) {
+                    // no-op
                 }
             }
 
@@ -1469,6 +1475,24 @@ public class AnnotationDeployer implements DynamicDeployer {
             // adding them to app since they should be in the app classloader
             if (ejbModule.getAppModule() != null) {
                 addJaxRsProviders(finder, ejbModule.getAppModule().getJaxRsProviders(), Provider.class);
+            }
+
+            for (PersistenceModule pm : ejbModule.getAppModule().getPersistenceModules()) {
+                for (org.apache.openejb.jee.jpa.unit.PersistenceUnit pu : pm.getPersistence().getPersistenceUnit()) {
+                    if ((pu.isExcludeUnlistedClasses() == null || !pu.isExcludeUnlistedClasses())
+                            && "true".equalsIgnoreCase(pu.getProperties().getProperty(OPENEJB_JPA_AUTO_SCAN))) {
+                        // no need of meta currently since JPA providers doesn't support it
+                        final List<Class<?>> classes = finder.findAnnotatedClasses(Entity.class);
+                        final List<String> existingClasses = pu.getClazz();
+                        for (Class<?> clazz : classes) {
+                            final String name = clazz.getName();
+                            if (!existingClasses.contains(name)) {
+                                pu.getClazz().add(name);
+                            }
+                        }
+                        pu.setScanned(true);
+                    }
+                }
             }
 
             return ejbModule;

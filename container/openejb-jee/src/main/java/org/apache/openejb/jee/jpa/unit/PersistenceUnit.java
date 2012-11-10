@@ -125,6 +125,17 @@ public class PersistenceUnit {
     protected String name;
     @XmlAttribute(name = "transaction-type")
     protected TransactionType transactionType;
+    @XmlTransient
+    protected boolean scanned = false;
+
+    public boolean isScanned() {
+        return scanned;
+    }
+
+    public void setScanned(boolean scanned) {
+        this.scanned = scanned;
+    }
+
 
     public PersistenceUnit(String name, String provider) {
         this.name = name;

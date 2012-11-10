@@ -16,17 +16,14 @@
  */
 package org.apache.openejb.config;
 
-import java.util.HashMap;
-import java.util.List;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 
 import java.io.File;
 import java.net.URI;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.Map;
-import org.apache.openejb.jee.jpa.unit.TransactionType;
 
 public class PersistenceModule implements DeploymentModule {
     private String rootUrl;
