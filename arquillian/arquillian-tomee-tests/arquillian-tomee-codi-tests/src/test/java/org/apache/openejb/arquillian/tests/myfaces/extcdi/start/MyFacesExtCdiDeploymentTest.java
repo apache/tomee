@@ -49,7 +49,6 @@ public class MyFacesExtCdiDeploymentTest {
         // descriptor.contextParam(ProjectStage.PROJECT_STAGE_PARAM_NAME, ProjectStage.SystemTest.name());
 
         return ShrinkWrap.create(WebArchive.class, "MyFacesExtCdiDeploymentTest.war")
-                .addAsLibraries(JarLocation.jarLocation(Test.class)) // junit
                 .addAsLibraries(JarLocation.jarLocation(JsfProjectStageProducer.class)) // codi
                 .setWebXML(new StringAsset(descriptor.exportAsString()))
                 .addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));

@@ -39,7 +39,6 @@
   </dependencies>
 
   <properties>
-    <distribution.under.test>plus</distribution.under.test>
-    <webapp.under.test>${distribution.under.test}-</webapp.under.test>
+    <profile-under-test>plus</profile-under-test>
   </properties>
 </project>
