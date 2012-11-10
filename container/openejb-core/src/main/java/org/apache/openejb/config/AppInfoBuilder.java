@@ -603,7 +603,7 @@ class AppInfoBuilder {
                 info.transactionType = persistenceUnit.getTransactionType().toString();
 
                 Boolean excludeUnlistedClasses = persistenceUnit.isExcludeUnlistedClasses();
-                info.excludeUnlistedClasses = excludeUnlistedClasses != null && excludeUnlistedClasses;
+                info.excludeUnlistedClasses = persistenceUnit.isScanned() || (excludeUnlistedClasses != null && excludeUnlistedClasses);
 
                 info.jtaDataSource = persistenceUnit.getJtaDataSource();
                 info.nonJtaDataSource = persistenceUnit.getNonJtaDataSource();
