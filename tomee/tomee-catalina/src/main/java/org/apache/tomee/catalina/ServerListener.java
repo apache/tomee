@@ -21,22 +21,30 @@ import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.core.StandardServer;
+import org.apache.catalina.util.ServerInfo;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.tomee.loader.TomcatHelper;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+// this listener is the real tomee one (the OpenEJBListener is more tomcat oriented)
+// so it even changes the server info
 public class ServerListener implements LifecycleListener {
     private static final Logger LOGGER = Logger.getLogger(ServerListener.class.getName());
 
     static private boolean listenerInstalled;
 
     public void lifecycleEvent(LifecycleEvent event) {
+        if (Lifecycle.BEFORE_INIT_EVENT.equals(event.getType()) && StandardServer.class.isInstance(event.getSource())) {
+            installServerInfo();
+        }
+
         // only install once
         if (listenerInstalled || !Lifecycle.AFTER_INIT_EVENT.equals(event.getType())) return;
         if (!(event.getSource() instanceof StandardServer)) return;
@@ -116,6 +124,27 @@ public class ServerListener implements LifecycleListener {
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "TomEE Listener can't start OpenEJB", e);
             // e.printStackTrace(System.err);
+        }
+    }
+
+    private void installServerInfo() {
+        // force static init
+        final String value = ServerInfo.getServerInfo();
+
+        Field field = null;
+        boolean acc = true;
+        try {
+            field = ServerInfo.class.getDeclaredField("serverInfo");
+            acc = field.isAccessible();
+            final int slash = value.indexOf('/');
+            field.setAccessible(true);
+            field.set(null, value.substring(0, slash) + " (TomEE)" + value.substring(slash));
+        } catch (Exception e) {
+            // no-op
+        } finally {
+            if (field != null) {
+                field.setAccessible(acc);
+            }
         }
     }
 }
