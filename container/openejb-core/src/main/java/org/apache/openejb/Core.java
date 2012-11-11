@@ -16,6 +16,7 @@
  */
 package org.apache.openejb;
 
+import org.apache.openejb.config.ServiceUtils;
 import org.apache.openejb.util.Messages;
 
 import java.util.concurrent.Semaphore;
@@ -84,6 +85,18 @@ public class Core {
         };
         preloadMessages.start();
 
+        final Thread preloadServiceProviders = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    ServiceUtils.getServiceProviders();
+                } catch (OpenEJBException e) {
+                    // no-op
+                }
+            }
+        };
+        preloadServiceProviders.start();
+
         final int permits = 2 * Runtime.getRuntime().availableProcessors() + 1;
         final Semaphore semaphore = new Semaphore(0);
         final ClassLoader loader = OpenEjbContainer.class.getClassLoader();
@@ -120,6 +133,7 @@ public class Core {
             thread.start();
         }
         try {
+            preloadServiceProviders.join();
             preloadMessages.join();
             semaphore.acquire(permits);
         } catch (InterruptedException e) {
