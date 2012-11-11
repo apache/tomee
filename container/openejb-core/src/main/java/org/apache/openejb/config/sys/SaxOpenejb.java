@@ -17,6 +17,7 @@
 package org.apache.openejb.config.sys;
 
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.Join;
 import org.apache.openejb.util.Saxs;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -32,6 +33,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Plain Java code for parsing a tomee.xml or openejb.xml file
@@ -83,7 +86,8 @@ class SaxOpenejb extends StackHandler {
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
             if (localName.equals("openejb")) push(new Root());
             else if (localName.equals("tomee")) push(new Root());
-            else throw new IllegalStateException("Unsupported Element: " + localName);
+            else throw new SAXException("Unsupported Element: " + localName);
+            checkAttributes(attributes);
         }
     }
 
@@ -95,6 +99,7 @@ class SaxOpenejb extends StackHandler {
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
             deployments.setDir(attributes.getValue("dir"));
             deployments.setJar(attributes.getValue("jar"));
+            checkAttributes(attributes, "dir", "jar");
         }
 
         @Override
@@ -110,7 +115,7 @@ class SaxOpenejb extends StackHandler {
         }
 
         @Override
-        public void startElement(String uri, String localName, String qName, Attributes attributes) {
+        public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
             super.startElement(uri, localName, qName, attributes);
             final String ctype = attributes.getValue("ctype");
             if (ctype != null) service.setType(ctype);
@@ -120,6 +125,13 @@ class SaxOpenejb extends StackHandler {
         public void endElement(String uri, String localName, String qName) {
             openejb.getContainer().add(service);
             super.endElement(uri, localName, qName);
+        }
+
+        @Override
+        protected List<String> getAttributes() {
+            final List<String> attributes = super.getAttributes();
+            attributes.add("ctype");
+            return attributes;
         }
     }
 
@@ -194,6 +206,7 @@ class SaxOpenejb extends StackHandler {
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
             path = attributes.getValue("path");
+            checkAttributes(attributes, "path");
         }
 
         @Override

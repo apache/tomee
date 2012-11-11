@@ -17,10 +17,13 @@
  */
 package org.apache.openejb.config.sys;
 
+import org.apache.openejb.util.Join;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,6 +40,26 @@ public class StackHandler extends DefaultHandler {
     protected DefaultHandler pop() {
         return handlers.remove(0);
     }
+
+    protected void checkAttributes(Attributes attributes, String... allowed) throws SAXException {
+        checkAttributes(attributes, new ArrayList(Arrays.asList(allowed)));
+    }
+
+    protected void checkAttributes(Attributes attributes, List<String> allowed) throws SAXException {
+
+        final List<String> invalid = new ArrayList<String>();
+
+        for (int i = 0; i < attributes.getLength(); i++) {
+            if (!allowed.contains(attributes.getLocalName(i))) {
+                invalid.add(attributes.getLocalName(i));
+            }
+        }
+
+        if (invalid.size() > 0) {
+            throw new SAXException("Unsupported Attribute(s): "+ Join.join(", ", invalid) +".  Supported Attributes are: "+Join.join(", ", allowed) + ".  If the setting is a configuration property it must be placed inside the element body.");
+        }
+    }
+
 
     protected void push(DefaultHandler handler) {
         if (DEBUG) {
@@ -81,7 +104,7 @@ public class StackHandler extends DefaultHandler {
 
         private StringBuilder characters = new StringBuilder();
 
-        public void startElement(String uri, String localName, String qName, Attributes attributes) {
+        public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
             characters = new StringBuilder();
         }
 
@@ -106,7 +129,7 @@ public class StackHandler extends DefaultHandler {
         }
 
         @Override
-        public void startElement(String uri, String localName, String qName, Attributes attributes) {
+        public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException{
             if (attributes.getValue("type") != null) service.setType(attributes.getValue("type"));
             if (attributes.getValue("jar") != null) service.setJar(attributes.getValue("jar"));
             if (attributes.getValue("provider") != null) service.setProvider(attributes.getValue("provider"));
@@ -114,6 +137,19 @@ public class StackHandler extends DefaultHandler {
             if (attributes.getValue("class-name") != null) service.setClassName(attributes.getValue("class-name"));
             if (attributes.getValue("constructor") != null) service.setConstructor(attributes.getValue("constructor"));
             if (attributes.getValue("factory-name") != null) service.setFactoryName(attributes.getValue("factory-name"));
+            checkAttributes(attributes, getAttributes());
+        }
+
+        protected List<String> getAttributes() {
+            List<String> attributes = new ArrayList<String>();
+            attributes.add("type");
+            attributes.add("jar");
+            attributes.add("provider");
+            attributes.add("id");
+            attributes.add("class-name");
+            attributes.add("constructor");
+            attributes.add("factory-name");
+            return attributes;
         }
 
         @Override
@@ -135,7 +171,7 @@ public class StackHandler extends DefaultHandler {
         }
 
         @Override
-        public void startElement(String uri, String localName, String qName, Attributes attributes) {
+        public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
             super.startElement(uri, localName, qName, attributes);
             service.setJndi(attributes.getValue("jndi"));
         }
@@ -144,6 +180,13 @@ public class StackHandler extends DefaultHandler {
         public void endElement(String uri, String localName, String qName) {
             resources.add(service);
             super.endElement(uri, localName, qName);
+        }
+
+        @Override
+        protected List<String> getAttributes() {
+            final List<String> attributes = super.getAttributes();
+            attributes.add("jndi");
+            return attributes;
         }
     }
 
@@ -156,7 +199,7 @@ public class StackHandler extends DefaultHandler {
         }
 
         @Override
-        public void startElement(String uri, String localName, String qName, Attributes attributes) {
+        public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
             super.startElement(uri, localName, qName, attributes);
             service.setClazz(attributes.getValue("class"));
         }
@@ -165,6 +208,13 @@ public class StackHandler extends DefaultHandler {
         public void endElement(String uri, String localName, String qName) {
             services.add(service); // TODO: add it only once
             super.endElement(uri, localName, qName);
+        }
+
+        @Override
+        protected List<String> getAttributes() {
+            final List<String> attributes = super.getAttributes();
+            attributes.add("class");
+            return attributes;
         }
     }
 }
