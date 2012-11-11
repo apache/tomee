@@ -77,11 +77,6 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
     private MessageDrivenContext mdbContext = null;
     private MdbInvoker mdbInvoker;
 
-    @PreDestroy
-    protected void stop() {
-        mdbInvoker.destroy();
-    }
-
     public void setMessageDrivenContext(MessageDrivenContext ctx) throws EJBException {
         this.mdbContext = ctx;
         try {

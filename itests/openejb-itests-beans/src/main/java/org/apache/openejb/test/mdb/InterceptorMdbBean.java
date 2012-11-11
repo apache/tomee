@@ -60,11 +60,6 @@ public class InterceptorMdbBean implements MessageListener, MessageDrivenBean {
     @Resource(name="jms", type=javax.jms.QueueConnectionFactory.class)
     private ConnectionFactory connectionFactory;
 
-    @PreDestroy
-    protected void stop() {
-        mdbInvoker.destroy();
-    }
-
     public void onMessage(Message msg) {
         try {
             classLevelBusinessMethodInterception = msg.getBooleanProperty("ClassLevelBusinessMethodInterception");

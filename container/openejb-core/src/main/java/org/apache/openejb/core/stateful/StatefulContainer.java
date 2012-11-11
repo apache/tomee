@@ -140,6 +140,7 @@ public class StatefulContainer implements RpcContainer {
                     Method method = businessLocal.getMethod(removeMethod.getName(), removeMethod.getParameterTypes());
                     methods.put(method, MethodType.REMOVE);
                 } catch (NoSuchMethodException thatsFine) {
+                    // no-op
                 }
             }
 
@@ -148,6 +149,7 @@ public class StatefulContainer implements RpcContainer {
                     Method method = businessRemote.getMethod(removeMethod.getName(), removeMethod.getParameterTypes());
                     methods.put(method, MethodType.REMOVE);
                 } catch (NoSuchMethodException thatsFine) {
+                    // no-op
                 }
             }
         }

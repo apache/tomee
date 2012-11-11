@@ -36,11 +36,6 @@ public class BasicMdbBean implements BasicMdbObject, MessageDrivenBean, MessageL
     private static Hashtable allowedOperationsTable = new Hashtable();
     protected MdbInvoker mdbInvoker;
 
-    @PreDestroy
-    protected void stop() {
-        mdbInvoker.destroy();
-    }
-
     public void setMessageDrivenContext(MessageDrivenContext ctx) throws EJBException {
         this.mdbContext = ctx;
         testAllowedOperations("setMessageDrivenContext");
