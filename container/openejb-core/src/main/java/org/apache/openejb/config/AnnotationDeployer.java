@@ -77,7 +77,6 @@ import org.apache.openejb.jee.MethodPermission;
 import org.apache.openejb.jee.NamedMethod;
 import org.apache.openejb.jee.OutboundResourceAdapter;
 import org.apache.openejb.jee.ParamValue;
-import org.apache.openejb.jee.Persistence;
 import org.apache.openejb.jee.PersistenceContextRef;
 import org.apache.openejb.jee.PersistenceContextType;
 import org.apache.openejb.jee.PersistenceUnitRef;
