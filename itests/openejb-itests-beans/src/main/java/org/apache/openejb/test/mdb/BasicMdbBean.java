@@ -19,6 +19,7 @@ package org.apache.openejb.test.mdb;
 import org.apache.openejb.test.ApplicationException;
 import org.apache.openejb.test.object.OperationsPolicy;
 
+import javax.annotation.PreDestroy;
 import javax.ejb.EJBException;
 import javax.ejb.MessageDrivenBean;
 import javax.ejb.MessageDrivenContext;
@@ -35,6 +36,10 @@ public class BasicMdbBean implements BasicMdbObject, MessageDrivenBean, MessageL
     private static Hashtable allowedOperationsTable = new Hashtable();
     protected MdbInvoker mdbInvoker;
 
+    @PreDestroy
+    protected void stop() {
+        mdbInvoker.destroy();
+    }
 
     public void setMessageDrivenContext(MessageDrivenContext ctx) throws EJBException {
         this.mdbContext = ctx;
