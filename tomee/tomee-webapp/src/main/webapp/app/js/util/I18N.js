@@ -28,6 +28,7 @@ TOMEE.I18N = (function () {
         'connection.exception.message':'The application is waiting for the server.',
 
         'application.home':'Home',
+	'application.install':'Install listener',
 
         'application.jndi':'JNDI',
         'application.jndi.path':'Path',
