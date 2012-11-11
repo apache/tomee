@@ -62,10 +62,12 @@ public final class HttpUtil {
 
         final ServletListener listener;
         try {
-            listener = new ServletListener((Servlet) wc.newInstance(wc.getClassLoader().loadClass(classname)));
+            listener = new ServletListener((Servlet) wc.newInstance(wc.getClassLoader().loadClass(classname)), wc.getContextRoot());
+            listener.getDelegate().init(null);
         } catch (Exception e) {
             throw new OpenEJBRuntimeException(e);
         }
+
         registry.addHttpListener(listener, pattern(wc.getContextRoot(), mapping));
         return true;
     }
@@ -76,7 +78,9 @@ public final class HttpUtil {
             return;
         }
 
-        wc.destroy(((ServletListener) registry.removeHttpListener(pattern(wc.getContextRoot(), mapping))).getDelegate());
+        final Servlet servlet = ((ServletListener) registry.removeHttpListener(pattern(wc.getContextRoot(), mapping))).getDelegate();
+        servlet.destroy();
+        wc.destroy(servlet);
     }
 
     private static String pattern(final String contextRoot, final String mapping) {

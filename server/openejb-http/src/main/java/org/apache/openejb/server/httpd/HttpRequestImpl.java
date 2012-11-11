@@ -951,6 +951,10 @@ public class HttpRequestImpl implements HttpRequest {
         attributes.remove(s);
     }
 
+    public void setPath(final String path) {
+        this.path = path;
+    }
+
     public String requestRawPath() {
         try {
             return new URI(getRequestURI()).getRawPath();

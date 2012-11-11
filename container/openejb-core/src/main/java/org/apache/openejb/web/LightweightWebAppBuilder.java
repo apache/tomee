@@ -30,6 +30,8 @@ import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.WebContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
 import javax.naming.Binding;
 import javax.naming.Context;
@@ -52,6 +54,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class LightweightWebAppBuilder implements WebAppBuilder {
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, LightweightWebAppBuilder.class);
+
     private static final Method addServletMethod;
     private static final Method removeServletMethod;
 
@@ -106,7 +110,7 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
                         addServletMethod.invoke(null, info.servletClass, webContext, mapping);
                         deployedServlet.mappings.add(mapping);
                     } catch (Exception e) {
-                        // no-op
+                        LOGGER.warning(e.getMessage(), e);
                     }
                 }
             }
@@ -124,7 +128,7 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
                                 addServletMethod.invoke(null, classname, webContext, mapping);
                                 deployedServlet.mappings.add(mapping);
                             } catch (Exception e) {
-                                // no-op
+                                LOGGER.warning(e.getMessage(), e);
                             }
                         }
                     }
