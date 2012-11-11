@@ -51,9 +51,7 @@ import org.apache.openejb.util.URLs;
 import org.apache.xbean.finder.IAnnotationFinder;
 import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.finder.UrlSet;
-import org.apache.xbean.finder.archive.Archive;
 import org.apache.xbean.finder.archive.ClassesArchive;
-import org.apache.xbean.finder.archive.JarArchive;
 import org.apache.xbean.finder.filter.Filter;
 import org.apache.xbean.finder.filter.Filters;
 import org.xml.sax.SAXException;
@@ -868,13 +866,10 @@ public class DeploymentLoader implements DeploymentFilterable {
             return;
         }
 
-        final List<Archive> jars = new ArrayList<Archive>();
-
         Beans complete = null;
         for (final URL url : xmls) {
             if (url == null) continue;
             complete = mergeBeansXml(complete, url);
-            jars.add(new JarArchive(appModule.getClassLoader(), url));
         }
 
         if (complete == null) return;
