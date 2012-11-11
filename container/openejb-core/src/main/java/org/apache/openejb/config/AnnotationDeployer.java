@@ -1476,20 +1476,22 @@ public class AnnotationDeployer implements DynamicDeployer {
                 addJaxRsProviders(finder, ejbModule.getAppModule().getJaxRsProviders(), Provider.class);
             }
 
-            for (PersistenceModule pm : ejbModule.getAppModule().getPersistenceModules()) {
-                for (org.apache.openejb.jee.jpa.unit.PersistenceUnit pu : pm.getPersistence().getPersistenceUnit()) {
-                    if ((pu.isExcludeUnlistedClasses() == null || !pu.isExcludeUnlistedClasses())
-                            && "true".equalsIgnoreCase(pu.getProperties().getProperty(OPENEJB_JPA_AUTO_SCAN))) {
-                        // no need of meta currently since JPA providers doesn't support it
-                        final List<Class<?>> classes = finder.findAnnotatedClasses(Entity.class);
-                        final List<String> existingClasses = pu.getClazz();
-                        for (Class<?> clazz : classes) {
-                            final String name = clazz.getName();
-                            if (!existingClasses.contains(name)) {
-                                pu.getClazz().add(name);
+            if (ejbModule.getAppModule() != null) {
+                for (PersistenceModule pm : ejbModule.getAppModule().getPersistenceModules()) {
+                    for (org.apache.openejb.jee.jpa.unit.PersistenceUnit pu : pm.getPersistence().getPersistenceUnit()) {
+                        if ((pu.isExcludeUnlistedClasses() == null || !pu.isExcludeUnlistedClasses())
+                                && "true".equalsIgnoreCase(pu.getProperties().getProperty(OPENEJB_JPA_AUTO_SCAN))) {
+                            // no need of meta currently since JPA providers doesn't support it
+                            final List<Class<?>> classes = finder.findAnnotatedClasses(Entity.class);
+                            final List<String> existingClasses = pu.getClazz();
+                            for (Class<?> clazz : classes) {
+                                final String name = clazz.getName();
+                                if (!existingClasses.contains(name)) {
+                                    pu.getClazz().add(name);
+                                }
                             }
+                            pu.setScanned(true);
                         }
-                        pu.setScanned(true);
                     }
                 }
             }
