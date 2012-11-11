@@ -27,7 +27,7 @@ import java.util.Set;
  */
 public class FilteredServiceManager extends SimpleServiceManager {
 
-    private Collection<String> services;
+    private final Collection<String> services;
 
     public FilteredServiceManager (String[] services) {
         setServiceManager(this);
@@ -36,19 +36,19 @@ public class FilteredServiceManager extends SimpleServiceManager {
     }
 
     private Collection<String> convertServices(String[] services) {
-        Set<String> realServices = new HashSet<String>();
-        Collection<String> rsAliases = Arrays.asList("rest", "jaxrs", "jax-rs", "cxf-rs");
-        Collection<String> wsAliases = Arrays.asList("jaxws", "jax-ws", "cxf");
+        final Set<String> realServices = new HashSet<String>();
+        final Collection<String> rsAliases = Arrays.asList("rest", "jaxrs", "jax-rs", "cxf-rs");
+        final Collection<String> wsAliases = Arrays.asList("jaxws", "jax-ws", "cxf");
 
         for (String service : services) {
             if (rsAliases.contains(service)) {
                 realServices.addAll(Arrays.asList("cxf-rs", "httpejbd"));
-            }
-            if (wsAliases.contains(service)) {
+            } else if (wsAliases.contains(service)) {
                 realServices.addAll(Arrays.asList("cxf", "httpejbd"));
-            }
-            if ("ejbd".equals(service)) {
+            } else if ("ejbd".equals(service)) {
                 realServices.add("httpejbd");
+            } else {
+                realServices.add(service);
             }
         }
         return realServices;

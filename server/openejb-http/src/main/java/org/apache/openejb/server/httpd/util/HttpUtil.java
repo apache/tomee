@@ -16,6 +16,13 @@
  */
 package org.apache.openejb.server.httpd.util;
 
+import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.core.WebContext;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.server.httpd.HttpListenerRegistry;
+import org.apache.openejb.server.httpd.ServletListener;
+
+import javax.servlet.Servlet;
 import java.util.List;
 
 public final class HttpUtil {
@@ -43,5 +50,51 @@ public final class HttpUtil {
         // just return the first address
         String address = addresses.iterator().next();
         return address;
+    }
+
+    public static boolean addServlet(final String classname, final WebContext wc, final String mapping) {
+        final HttpListenerRegistry registry = SystemInstance.get().getComponent(HttpListenerRegistry.class);
+        if (registry == null || mapping == null) {
+            return false;
+        }
+
+        final ServletListener listener;
+        try {
+            listener = new ServletListener((Servlet) wc.newInstance(wc.getClassLoader().loadClass(classname)));
+        } catch (Exception e) {
+            throw new OpenEJBRuntimeException(e);
+        }
+        registry.addHttpListener(listener, pattern(wc.getContextRoot(), mapping));
+        return true;
+    }
+
+    public static void removeServlet(final String mapping, final WebContext wc) {
+        final HttpListenerRegistry registry = SystemInstance.get().getComponent(HttpListenerRegistry.class);
+        if (registry == null || mapping == null) {
+            return;
+        }
+
+        wc.destroy(((ServletListener) registry.removeHttpListener(pattern(wc.getContextRoot(), mapping))).getDelegate());
+    }
+
+    private static String pattern(final String contextRoot, final String mapping) {
+        String path = "";
+        if (contextRoot != null) {
+            path = contextRoot;
+        }
+
+        if (!path.startsWith("/")) {
+            path = '/' + path;
+        }
+
+        if (!mapping.startsWith("/") && !path.endsWith("/")) {
+            path += '/';
+        }
+        path += mapping;
+
+        if (path.endsWith("*")) {
+            path = path.substring(0, path.length()) + ".*";
+        }
+        return path;
     }
 }
