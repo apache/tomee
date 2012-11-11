@@ -138,7 +138,7 @@ public class MdbInvoker implements MessageListener {
                 e.printStackTrace();
             } finally {
                 MdbUtil.close(producer);
-                // destroy();
+                destroy();
             }
         } catch (Throwable e) {
             e.printStackTrace();
