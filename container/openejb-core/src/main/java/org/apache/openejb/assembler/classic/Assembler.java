@@ -908,7 +908,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             for (Map.Entry<String, Object> value : appContext.getBindings().entrySet()) {
                 String path = value.getKey();
                 // keep only global bindings
-                if (path.startsWith("module/") || path.startsWith("app/") || path.equalsIgnoreCase("global/dummy")) {
+                if (path.startsWith("module/") || path.startsWith("app/") || path.startsWith("comp/") || path.equalsIgnoreCase("global/dummy")) {
                     continue;
                 }
 

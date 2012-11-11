@@ -43,6 +43,7 @@ public class WebContext {
     private Map<Object, CreationalContext<?>> creatonalContexts = new ConcurrentHashMap<Object, CreationalContext<?>>();
     private WebBeansContext webbeansContext;
     private String contextRoot;
+    private Context initialContext;
 
     public Context getInitialContext() {
         if (initialContext != null) return initialContext;
@@ -54,7 +55,9 @@ public class WebContext {
         return initialContext;
     }
 
-    private Context initialContext;
+    public void setInitialContext(final Context initialContext) {
+        this.initialContext = initialContext;
+    }
 
     public WebContext(AppContext appContext) {
         this.appContext = appContext;
