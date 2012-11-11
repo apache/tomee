@@ -26,6 +26,8 @@ import javax.servlet.Servlet;
 import java.util.List;
 
 public final class HttpUtil {
+    private static  final String WILDCARD = SystemInstance.get().getProperty("openejb.http.wildcard", ".*");
+
     private HttpUtil() {
         // no-op
     }
@@ -93,7 +95,7 @@ public final class HttpUtil {
         path += mapping;
 
         if (path.endsWith("*")) {
-            path = path.substring(0, path.length()) + ".*";
+            path = path.substring(0, path.length()) + WILDCARD;
         }
         return path;
     }
