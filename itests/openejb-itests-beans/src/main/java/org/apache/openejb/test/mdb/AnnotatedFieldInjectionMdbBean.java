@@ -26,6 +26,7 @@ import org.apache.openejb.test.stateless.BasicStatelessBusinessLocal;
 import org.apache.openejb.test.stateless.BasicStatelessBusinessRemote;
 import org.apache.openejb.test.TestFailureException;
 
+import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
 import javax.ejb.MessageDriven;
 import javax.ejb.MessageDrivenContext;
@@ -111,6 +112,11 @@ public class AnnotatedFieldInjectionMdbBean implements MessageListener {
         } catch (Exception e) {
             throw new EJBException(e);
         }
+    }
+
+    @PreDestroy
+    protected void stop() {
+        mdbInvoker.destroy();
     }
 
     public void onMessage(Message message) {

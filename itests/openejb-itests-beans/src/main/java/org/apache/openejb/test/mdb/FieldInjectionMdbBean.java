@@ -26,6 +26,7 @@ import org.apache.openejb.test.stateless.BasicStatelessBusinessLocal;
 import org.apache.openejb.test.stateless.BasicStatelessBusinessRemote;
 import org.apache.openejb.test.TestFailureException;
 
+import javax.annotation.PreDestroy;
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.MessageDrivenBean;
@@ -78,6 +79,10 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
     private MessageDrivenContext mdbContext = null;
     private MdbInvoker mdbInvoker;
 
+    @PreDestroy
+    protected void stop() {
+        mdbInvoker.destroy();
+    }
 
     public void setMessageDrivenContext(MessageDrivenContext ctx) throws EJBException {
         this.mdbContext = ctx;

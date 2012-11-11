@@ -19,6 +19,7 @@
 package org.apache.openejb.test.mdb;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.EJBException;
@@ -58,6 +59,11 @@ public class InterceptorMdbBean implements MessageListener, MessageDrivenBean {
     protected MdbInvoker mdbInvoker;
     @Resource(name="jms", type=javax.jms.QueueConnectionFactory.class)
     private ConnectionFactory connectionFactory;
+
+    @PreDestroy
+    protected void stop() {
+        mdbInvoker.destroy();
+    }
 
     public void onMessage(Message msg) {
         try {

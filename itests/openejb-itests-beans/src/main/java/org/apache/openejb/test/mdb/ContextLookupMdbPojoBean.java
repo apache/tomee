@@ -31,6 +31,7 @@ import org.apache.openejb.test.entity.bmp.BasicBmpObject;
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
 
+import javax.annotation.PreDestroy;
 import javax.sql.DataSource;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -53,6 +54,11 @@ import java.rmi.RemoteException;
 
 public class ContextLookupMdbPojoBean implements MessageListener {
     private MdbInvoker mdbInvoker;
+
+    @PreDestroy
+    protected void stop() {
+        mdbInvoker.destroy();
+    }
 
     public ContextLookupMdbPojoBean() {
         try {

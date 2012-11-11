@@ -29,6 +29,7 @@ import org.apache.openejb.test.stateful.BasicStatefulBusinessRemote;
 import org.apache.openejb.test.entity.bmp.BasicBmpHome;
 import org.apache.openejb.test.entity.bmp.BasicBmpObject;
 
+import javax.annotation.PreDestroy;
 import javax.ejb.EJBContext;
 import javax.ejb.EJBException;
 import javax.ejb.MessageDrivenBean;
@@ -54,6 +55,11 @@ import junit.framework.AssertionFailedError;
 public class ContextLookupMdbBean implements EncMdbObject, MessageDrivenBean, MessageListener {
 	private MessageDrivenContext mdbContext = null;
     private MdbInvoker mdbInvoker;
+
+    @PreDestroy
+    protected void stop() {
+        mdbInvoker.destroy();
+    }
 
     public void setMessageDrivenContext(MessageDrivenContext ctx) throws EJBException {
         this.mdbContext = ctx;
