@@ -55,11 +55,6 @@ import java.rmi.RemoteException;
 public class ContextLookupMdbPojoBean implements MessageListener {
     private MdbInvoker mdbInvoker;
 
-    @PreDestroy
-    protected void stop() {
-        mdbInvoker.destroy();
-    }
-
     public ContextLookupMdbPojoBean() {
         try {
             ConnectionFactory connectionFactory = (ConnectionFactory) new InitialContext().lookup("java:comp/env/jms");

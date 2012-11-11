@@ -114,11 +114,6 @@ public class AnnotatedFieldInjectionMdbBean implements MessageListener {
         }
     }
 
-    @PreDestroy
-    protected void stop() {
-        mdbInvoker.destroy();
-    }
-
     public void onMessage(Message message) {
         try {
 //            System.out.println("\n" +
