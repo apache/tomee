@@ -236,7 +236,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 doNotUseClassLoader = null;
 
                 //Really try and flush this classloader out
-                System.gc();
+//                System.gc();
             }
         }
     }
