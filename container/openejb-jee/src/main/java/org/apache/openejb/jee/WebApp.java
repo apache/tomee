@@ -637,6 +637,18 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
         return Collections.emptyList();
     }
 
+    public List<String> getFilterMappings(final String filterName) {
+        if (filterMapping == null || filterName == null) {
+            return Collections.emptyList();
+        }
+        for (FilterMapping mapping : filterMapping) {
+            if (filterName.equals(mapping.getFilterName())) {
+                return mapping.getUrlPattern();
+            }
+        }
+        return Collections.emptyList();
+    }
+
     private Servlet findServlet(final String name) {
         for (Servlet s : getServlet()) {
             if (name.equals(s.getServletName())) {
@@ -680,8 +692,58 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
         return this;
     }
 
+    public WebApp addFilter(final String name, final String clazz, final String... mappings) {
+        final Filter newFilter = new Filter();
+        newFilter.setFilterName(name);
+        newFilter.setFilterClass(clazz);
+
+        if (mappings != null && mappings.length > 0) {
+            final FilterMapping sm = new FilterMapping();
+            sm.setFilterName(name);
+
+            for (String mapping : mappings) {
+                if (filterMapping == null) {
+                    filterMapping = new ArrayList<FilterMapping>();
+                }
+
+                sm.getUrlPattern().add(mapping);
+            }
+            filterMapping.add(sm);
+        }
+
+        getFilter().add(newFilter);
+
+        return this;
+    }
+
+    public WebApp addFilterInitParam(final String filterName, final String name, final String value) {
+        final ParamValue paramValue = new ParamValue();
+        paramValue.setParamName(name);
+        paramValue.setParamValue(value);
+
+        findFilter(filterName).getInitParam().add(paramValue);
+
+        return this;
+    }
+
+    private Filter findFilter(final String filterName) {
+        for (Filter s : getFilter()) {
+            if (filterName.equals(s.getFilterName())) {
+                return s;
+            }
+        }
+        return null;
+    }
+
     public WebApp contextRoot(final String root) {
         setContextRoot(root);
+        return this;
+    }
+
+    public WebApp addListener(final String classname) {
+        final Listener l = new Listener();
+        l.setListenerClass(classname);
+        getListener().add(l);
         return this;
     }
 }

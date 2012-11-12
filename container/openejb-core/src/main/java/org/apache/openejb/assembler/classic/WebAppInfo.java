@@ -42,4 +42,6 @@ public class WebAppInfo extends CommonInfoObject {
     public final List<ServletInfo> servlets = new ArrayList<ServletInfo>();
     public final List<ClassListInfo> jsfAnnotatedClasses = new ArrayList<ClassListInfo>();
     public final Set<String> jaxRsProviders = new TreeSet<String>();
+    public final List<ListenerInfo> listeners = new ArrayList<ListenerInfo>();
+    public final List<FilterInfo> filters = new ArrayList<FilterInfo>();
 }

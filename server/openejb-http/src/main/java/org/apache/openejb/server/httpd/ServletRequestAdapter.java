@@ -397,4 +397,7 @@ public class ServletRequestAdapter implements HttpRequest {
         request.removeAttribute(s);
     }
 
+    public HttpServletRequest getRequest() {
+        return request;
+    }
 }

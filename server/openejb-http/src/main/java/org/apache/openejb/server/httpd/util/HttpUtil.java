@@ -19,10 +19,15 @@ package org.apache.openejb.server.httpd.util;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.core.WebContext;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.server.httpd.FilterListener;
+import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.httpd.HttpListenerRegistry;
 import org.apache.openejb.server.httpd.ServletListener;
 
+import javax.servlet.Filter;
+import javax.servlet.FilterConfig;
 import javax.servlet.Servlet;
+import java.util.Collection;
 import java.util.List;
 
 public final class HttpUtil {
@@ -81,6 +86,39 @@ public final class HttpUtil {
         final Servlet servlet = ((ServletListener) registry.removeHttpListener(pattern(wc.getContextRoot(), mapping))).getDelegate();
         servlet.destroy();
         wc.destroy(servlet);
+    }
+
+    public static boolean addFilter(final String classname, final WebContext wc, final String mapping, final FilterConfig config) {
+        final HttpListenerRegistry registry = SystemInstance.get().getComponent(HttpListenerRegistry.class);
+        if (registry == null || mapping == null) {
+            return false;
+        }
+
+        final FilterListener listener;
+        try {
+            listener = new FilterListener((Filter) wc.newInstance(wc.getClassLoader().loadClass(classname)), wc.getContextRoot());
+            listener.getDelegate().init(config);
+        } catch (Exception e) {
+            throw new OpenEJBRuntimeException(e);
+        }
+
+        registry.addHttpFilter(listener, pattern(wc.getContextRoot(), mapping));
+        return true;
+    }
+
+    public static void removeFilter(final String mapping, final WebContext wc) {
+        final HttpListenerRegistry registry = SystemInstance.get().getComponent(HttpListenerRegistry.class);
+        if (registry == null || mapping == null) {
+            return;
+        }
+
+        final Collection<HttpListener> filters = registry.removeHttpFilter(pattern(wc.getContextRoot(), mapping));
+        for (HttpListener listener : filters) {
+            final Filter filter = ((FilterListener) listener).getDelegate();
+            filter.destroy();
+            wc.destroy(filter);
+        }
+        filters.clear();
     }
 
     private static String pattern(final String contextRoot, final String mapping) {

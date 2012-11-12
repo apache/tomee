@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.server.httpd;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -25,22 +27,52 @@ import java.util.Map;
  */
 public class HttpListenerRegistry implements HttpListener {
     private final Map<String, HttpListener> registry = new LinkedHashMap<String, HttpListener>();
+    private final Map<String, Collection<HttpListener>> filterRegistry = new LinkedHashMap<String, Collection<HttpListener>>();
+    private final ThreadLocal<FilterListener> currentFilterListener = new ThreadLocal<FilterListener>();
 
     public HttpListenerRegistry() {
     }
 
     public void onMessage(HttpRequest request, HttpResponse response) throws Exception {
-        Map<String, HttpListener> listeners;
-        synchronized (registry) {
-            listeners = new HashMap<String, HttpListener>(registry);
+        final String path = request.getURI().getPath();
+        final FilterListener currentFL = currentFilterListener.get();
+
+        // first look filters
+        Map<String, Collection<HttpListener>> filters;
+        synchronized (filterRegistry) {
+            filters = new HashMap<String, Collection<HttpListener>>(filterRegistry);
         }
 
-        String path = request.getURI().getPath();
-        for (Map.Entry<String, HttpListener> entry : listeners.entrySet()) {
-            String pattern = entry.getKey();
-            if (path.matches(pattern)) {
-                entry.getValue().onMessage(request, response);
-                break;
+        try {
+            boolean lastWasCurrent = false;
+            for (Map.Entry<String, Collection<HttpListener>> entry : filters.entrySet()) {
+                String pattern = entry.getKey();
+                for (HttpListener listener : entry.getValue()) {
+                    if ((lastWasCurrent || currentFL == null) && path.matches(pattern)) {
+                        listener.onMessage(request, response);
+                        return;
+                    }
+                    lastWasCurrent = listener == currentFL;
+                }
+            }
+
+
+            // then others
+            Map<String, HttpListener> listeners;
+            synchronized (registry) {
+                listeners = new HashMap<String, HttpListener>(registry);
+            }
+
+            for (Map.Entry<String, HttpListener> entry : listeners.entrySet()) {
+                String pattern = entry.getKey();
+                if (path.matches(pattern)) {
+                    entry.getValue().onMessage(request, response);
+                    break;
+                }
+            }
+        } finally {
+            if (currentFL == null) {
+                currentFilterListener.remove();
             }
         }
     }
@@ -57,5 +89,28 @@ public class HttpListenerRegistry implements HttpListener {
             listener = registry.remove(regex);
         }
         return listener;
+    }
+
+    public void addHttpFilter(HttpListener listener, String regex) {
+        synchronized (filterRegistry) {
+            if (!filterRegistry.containsKey(regex)) {
+                filterRegistry.put(regex, new ArrayList<HttpListener>());
+            }
+            filterRegistry.get(regex).add(listener);
+        }
+    }
+
+    public Collection<HttpListener> removeHttpFilter(String regex) {
+        synchronized (filterRegistry) {
+            return filterRegistry.remove(regex);
+        }
+    }
+
+    public void setOrigin(final FilterListener origin) {
+        if (origin == null) {
+            currentFilterListener.remove();
+        } else {
+            currentFilterListener.set(origin);
+        }
     }
 }
