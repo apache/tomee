@@ -26,9 +26,11 @@ import org.apache.openejb.assembler.classic.ConnectorInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.EntityManagerFactoryCallable;
+import org.apache.openejb.assembler.classic.FilterInfo;
 import org.apache.openejb.assembler.classic.HandlerChainInfo;
 import org.apache.openejb.assembler.classic.IdPropertiesInfo;
 import org.apache.openejb.assembler.classic.JndiEncInfo;
+import org.apache.openejb.assembler.classic.ListenerInfo;
 import org.apache.openejb.assembler.classic.MdbContainerInfo;
 import org.apache.openejb.assembler.classic.MessageDrivenBeanInfo;
 import org.apache.openejb.assembler.classic.PersistenceUnitInfo;
@@ -47,9 +49,12 @@ import org.apache.openejb.jee.ConfigProperty;
 import org.apache.openejb.jee.ConnectionDefinition;
 import org.apache.openejb.jee.Connector;
 import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.Filter;
 import org.apache.openejb.jee.InboundResourceadapter;
+import org.apache.openejb.jee.Listener;
 import org.apache.openejb.jee.MessageListener;
 import org.apache.openejb.jee.OutboundResourceAdapter;
+import org.apache.openejb.jee.ParamValue;
 import org.apache.openejb.jee.PortComponent;
 import org.apache.openejb.jee.ResourceAdapter;
 import org.apache.openejb.jee.ServiceImplBean;
@@ -397,6 +402,23 @@ class AppInfoBuilder {
                 servletInfo.servletClass = servlet.getServletClass();
                 servletInfo.mappings = webModule.getWebApp().getServletMappings(servletInfo.servletName);
                 webAppInfo.servlets.add(servletInfo);
+            }
+
+            for (Listener listener : webModule.getWebApp().getListener()) {
+                final ListenerInfo listenerInfo = new ListenerInfo();
+                listenerInfo.classname = listener.getListenerClass();
+                webAppInfo.listeners.add(listenerInfo);
+            }
+
+            for (Filter filter : webModule.getWebApp().getFilter()) {
+                final FilterInfo filterInfo = new FilterInfo();
+                filterInfo.name = filter.getFilterName();
+                filterInfo.classname = filter.getFilterClass();
+                filterInfo.mappings = webModule.getWebApp().getFilterMappings(filter.getFilterName());
+                for (ParamValue pv : filter.getInitParam()) {
+                    filterInfo.initParams.put(pv.getParamName(), pv.getParamValue());
+                }
+                webAppInfo.filters.add(filterInfo);
             }
 
             appInfo.webApps.add(webAppInfo);

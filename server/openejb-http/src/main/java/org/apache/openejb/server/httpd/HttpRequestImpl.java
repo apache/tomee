@@ -962,4 +962,15 @@ public class HttpRequestImpl implements HttpRequest {
             return getRequestURI();
         }
     }
+
+    public void initPathFromContext(final String context) {
+        if (!"/".equals(path)) { // already done
+            return;
+        }
+
+        final String rawPath = requestRawPath();
+        if (context != null) {
+            setPath(rawPath.substring(1 + context.length(), rawPath.length())); // 1 because of the first /
+        }
+    }
 }
