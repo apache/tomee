@@ -76,9 +76,7 @@ TOMEE.ApplicationController = function () {
     });
 
     channel.bind('server-command-callback', 'RunScript', function (data) {
-        $.meow({
-            message:TOMEE.I18N.get('application.console.done')
-        });
+        //TODO: add growl notification
     });
 
     channel.bind('server-command-callback', 'Logout', function (data) {
