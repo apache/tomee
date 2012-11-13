@@ -19,10 +19,11 @@ package org.apache.openejb.assembler.classic;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
-public class FilterInfo {
+public class FilterInfo extends InfoObject {
     public String classname;
     public List<String> mappings;
-    public Map<String, String> initParams = new HashMap<String, String>();
+    public Properties initParams = new Properties();
     public String name;
 }
