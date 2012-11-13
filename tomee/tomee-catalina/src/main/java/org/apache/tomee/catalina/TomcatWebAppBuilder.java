@@ -616,7 +616,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 final StandardContext standardContext = contextInfo.standardContext;
 
                 undeploy(standardContext, contextInfo);
-                final File extracted = new File(standardContext.getServletContext().getRealPath(""));
+                final File extracted = warPath(standardContext);
                 if (isExtracted(extracted)) {
                     deleteDir(extracted);
                 }
@@ -741,6 +741,22 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     }
 
     private static File warPath(final StandardContext standardContext) {
+        final File file = realWarPath(standardContext);
+        if (file == null) {
+            return file;
+        }
+
+        final String name = file.getName();
+        if (!file.isDirectory() && name.endsWith(".war")) {
+            final File extracted = new File(file.getParentFile(), name.substring(0, name.length() - ".war".length()));
+            if (extracted.exists()) {
+                return extracted;
+            }
+        }
+        return file;
+    }
+
+    private static File realWarPath(final StandardContext standardContext) {
         String doc = standardContext.getDocBase();
         // handle ROOT case
         if (doc == null || doc.length() == 0) {
@@ -1459,9 +1475,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 final StandardContext standardContext = contextInfo.standardContext;
                 final HostConfig deployer = contextInfo.deployer;
                 deployer.unmanageApp(standardContext.getPath());
-                final String realPath = standardContext.getServletContext().getRealPath("");
+                final File realPath = warPath(standardContext);
                 if (realPath != null) {
-                    deleteDir(new File(realPath));
+                    deleteDir(realPath);
                 }
             }
         }
@@ -1635,7 +1651,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         final TomcatDeploymentLoader tomcatDeploymentLoader = new TomcatDeploymentLoader(standardContext, id);
         final AppModule appModule;
         try {
-            appModule = tomcatDeploymentLoader.load(new File(servletContext.getRealPath(".")).getParentFile());
+            appModule = tomcatDeploymentLoader.load(warPath(standardContext));
         } catch (OpenEJBException e) {
             throw new TomEERuntimeException(e);
         }
