@@ -16,6 +16,6 @@
  */
 package org.apache.openejb.assembler.classic;
 
-public class ListenerInfo {
+public class ListenerInfo extends InfoObject {
     public String classname;
 }

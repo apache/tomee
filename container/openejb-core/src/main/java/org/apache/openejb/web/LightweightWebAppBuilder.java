@@ -62,6 +62,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 public class LightweightWebAppBuilder implements WebAppBuilder {
@@ -90,9 +91,6 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
 
     @Override
     public void deployWebApps(final AppInfo appInfo, final ClassLoader classLoader) throws Exception {
-        if (addServletMethod == null) {
-            return;
-        }
 
         final CoreContainerSystem cs = (CoreContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
         final AppContext appContext = cs.getAppContext(appInfo.appId);
@@ -124,9 +122,6 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
             final ServletContextEvent sce = new MockServletContextEvent();
             servletContextEvents.put(webAppInfo, sce);
 
-            // otherwise myfaces can't start at all with our light http layer
-            sce.getServletContext().setAttribute("org.apache.myfaces.DYNAMICALLY_ADDED_FACES_SERVLET", true);
-
             // listeners
             for (ListenerInfo listener : webAppInfo.listeners) {
                 final Class<?> clazz = webContext.getClassLoader().loadClass(listener.classname);
@@ -145,6 +140,11 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
 
             final DeployedWebObjects deployedWebObjects = new DeployedWebObjects();
             deployedWebObjects.webContext = webContext;
+            servletDeploymentInfo.put(webAppInfo, deployedWebObjects);
+
+            if (addServletMethod == null) { // can't manage filter/servlets
+                continue;
+            }
 
             // register filters
             for (FilterInfo info : webAppInfo.filters) {
@@ -166,7 +166,7 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
                     final Class<?> clazz = webContext.getClassLoader().loadClass(classname);
                     final WebFilter annotation = clazz.getAnnotation(WebFilter.class);
                     if (annotation != null) {
-                        final Map<String, String> initParams = new HashMap<String, String>();
+                        final Properties initParams = new Properties();
                         for (WebInitParam param : annotation.initParams()) {
                             initParams.put(param.name(), param.value());
                         }
@@ -214,8 +214,6 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
                     }
                 }
             }
-
-            servletDeploymentInfo.put(webAppInfo, deployedWebObjects);
         }
     }
 
@@ -226,28 +224,26 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
 
     @Override
     public void undeployWebApps(final AppInfo appInfo) throws Exception {
-        if (addServletMethod == null) {
-            return;
-        }
-
         for (WebAppInfo webAppInfo : appInfo.webApps) {
             final DeployedWebObjects context = servletDeploymentInfo.remove(webAppInfo);
             final ServletContextEvent sce = servletContextEvents.remove(webAppInfo);
             final List<Object> listenerInstances = listeners.remove(webAppInfo);
 
-            for (String mapping : context.mappings) {
-                try {
-                    removeServletMethod.invoke(null, mapping, context.webContext);
-                } catch (Exception e) {
-                    // no-op
+            if (addServletMethod != null) {
+                for (String mapping : context.mappings) {
+                    try {
+                        removeServletMethod.invoke(null, mapping, context.webContext);
+                    } catch (Exception e) {
+                        // no-op
+                    }
                 }
-            }
 
-            for (String mapping : context.filterMappings) {
-                try {
-                    removeFilterMethod.invoke(null, mapping, context.webContext);
-                } catch (Exception e) {
-                    // no-op
+                for (String mapping : context.filterMappings) {
+                    try {
+                        removeFilterMethod.invoke(null, mapping, context.webContext);
+                    } catch (Exception e) {
+                        // no-op
+                    }
                 }
             }
 
@@ -432,11 +428,11 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
     }
 
     private static class SimpleFilterConfig implements FilterConfig {
-        private final Map<String, String> params;
+        private final Properties params;
         private final String name;
         private final ServletContext servletContext;
 
-        public SimpleFilterConfig(final ServletContext sc, final String name, final Map<String, String> initParams) {
+        public SimpleFilterConfig(final ServletContext sc, final String name, final Properties initParams) {
             this.name = name;
             params = initParams;
             servletContext = sc;
@@ -454,7 +450,7 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
 
         @Override
         public String getInitParameter(final String name) {
-            return params.get(name);
+            return params.getProperty(name);
         }
 
         @Override
