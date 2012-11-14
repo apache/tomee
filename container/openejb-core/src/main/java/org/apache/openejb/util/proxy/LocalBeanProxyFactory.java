@@ -52,7 +52,6 @@ public class LocalBeanProxyFactory implements Opcodes {
 
     public static Object newProxyInstance(ClassLoader classLoader, InvocationHandler handler, Class classToSubclass, final Class... interfaces) throws IllegalArgumentException {
         try {
-
             final Class proxyClass = createProxy(classToSubclass, classLoader, interfaces);
             return constructProxy(proxyClass, handler);
         } catch (Throwable e) {
