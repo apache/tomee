@@ -113,7 +113,7 @@ public class ActiveMQFactory {
         }
     }
 
-    public BrokerService createBroker(final URI brokerURI) throws Exception {
+    public static BrokerService createBroker(final URI brokerURI) throws Exception {
 
         ActiveMQFactory.init();
 

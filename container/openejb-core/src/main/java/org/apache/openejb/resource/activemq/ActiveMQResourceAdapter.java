@@ -31,11 +31,13 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+@SuppressWarnings("UnusedDeclaration")
 public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQResourceAdapter {
 
     private String dataSource;
     private String useDatabaseLock;
     private String startupTimeout = "60000";
+    private BootstrapContext bootstrapContext = null;
 
     public String getDataSource() {
         return dataSource;
@@ -65,76 +67,14 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
         super.setServerUrl(url);
     }
 
-    //   DMB:  Work in progress.  These all should go into the service-jar.xml
-//   Sources of info:
-//         - http://activemq.apache.org/resource-adapter-properties.html
-//         - http://activemq.apache.org/camel/maven/camel-core/apidocs/org/apache/camel/processor/RedeliveryPolicy.html
-//
-//    /**
-//     * 100	 The maximum number of messages sent to a consumer on a durable topic until acknowledgements are received
-//     * @param integer
-//     */
-//    public void setDurableTopicPrefetch(Integer integer) {
-//        super.setDurableTopicPrefetch(integer);
-//    }
-//
-//    /**
-//     * 1000	 The delay before redeliveries start. Also configurable on the ActivationSpec.
-//     * @param aLong
-//     */
-//    public void setInitialRedeliveryDelay(Long aLong) {
-//        super.setInitialRedeliveryDelay(aLong);
-//    }
-//
-//    /**
-//     * 100	 The maximum number of messages sent to a consumer on a JMS stream until acknowledgements are received
-//     * @param integer
-//     */
-//    public void setInputStreamPrefetch(Integer integer) {
-//        super.setInputStreamPrefetch(integer);
-//    }
-//
-//    /**
-//     * 5	 The maximum number of redeliveries or -1 for no maximum. Also configurable on the ActivationSpec.
-//     * @param integer
-//     */
-//    public void setMaximumRedeliveries(Integer integer) {
-//        super.setMaximumRedeliveries(integer);
-//    }
-//
-//    public void setQueueBrowserPrefetch(Integer integer) {
-//        super.setQueueBrowserPrefetch(integer);
-//    }
-//
-//    /**
-//     * 1000	 The maximum number of messages sent to a consumer on a queue until acknowledgements are received
-//     * @param integer
-//     */
-//    public void setQueuePrefetch(Integer integer) {
-//        super.setQueuePrefetch(integer);
-//    }
-//
-//    /**
-//     * 5	 The multiplier to use if exponential back off is enabled. Also configurable on the ActivationSpec.
-//     * @param aShort
-//     */
-//    public void setRedeliveryBackOffMultiplier(Short aShort) {
-//        super.setRedeliveryBackOffMultiplier(aShort);
-//    }
-//
-//    public void setRedeliveryUseExponentialBackOff(Boolean aBoolean) {
-//        super.setRedeliveryUseExponentialBackOff(aBoolean);
-//    }
-//
-//    /**
-//     * 32766  The maximum number of messages sent to a consumer on a non-durable topic until acknowledgements are received
-//     * @param integer
-//     */
-//    public void setTopicPrefetch(Integer integer) {
-//        super.setTopicPrefetch(integer);
-//    }
     @Override
     public void start(final BootstrapContext bootstrapContext) throws ResourceAdapterInternalException {
+
+        this.bootstrapContext = bootstrapContext;
+        final String brokerXmlConfig = getBrokerXmlConfig();
+        super.setBrokerXmlConfig(null);
+        super.start(bootstrapContext);
+
         final Properties properties = new Properties();
 
         if (null != this.dataSource) {
@@ -150,7 +90,6 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
         }
 
         // prefix server uri with 'broker:' so our broker factory is used
-        final String brokerXmlConfig = getBrokerXmlConfig();
         if (brokerXmlConfig != null) {
 
             try {
@@ -182,7 +121,11 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
         ActiveMQFactory.setThreadProperties(properties);
 
         try {
-            super.start(bootstrapContext);
+
+            ActiveMQFactory.createBroker(URI.create(getBrokerXmlConfig())).start();
+            //super.start(bootstrapContext);
+        } catch (Exception e) {
+            org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQResourceAdapter.class).getChildLogger("service").fatal("Failed to start ActiveMQ", e);
         } finally {
             ActiveMQFactory.setThreadProperties(null);
 
@@ -194,9 +137,14 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
     }
 
     @Override
+    public BootstrapContext getBootstrapContext() {
+        return this.bootstrapContext;
+    }
+
+    @Override
     public void stop() {
 
-        org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, "org.apache.openejb.util.resources").info("Stopping ActiveMQ");
+        org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQResourceAdapter.class).getChildLogger("service").info("Stopping ActiveMQ");
 
         final Thread stopThread = new Thread("ActiveMQResourceAdapter stop") {
 
@@ -205,7 +153,7 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
                 try {
                     stopImpl();
                 } catch (Throwable t) {
-                    org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, "org.apache.openejb.util.resources").error("ActiveMQ shutdown failed", t);
+                    org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQResourceAdapter.class).getChildLogger("service").error("ActiveMQ shutdown failed", t);
                 }
             }
         };
@@ -225,7 +173,7 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
             //Block for a maximum of timeout milliseconds waiting for this thread to die.
             stopThread.join(timeout);
         } catch (InterruptedException ex) {
-            org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, "org.apache.openejb.util.resources").warning("Gave up on ActiveMQ shutdown after " + timeout + "ms", ex);
+            org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQResourceAdapter.class).getChildLogger("service").warning("Gave up on ActiveMQ shutdown after " + timeout + "ms", ex);
         }
     }
 
@@ -254,7 +202,7 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
 
         stopScheduler();
 
-        org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, "org.apache.openejb.util.resources").info("Stopped ActiveMQ broker");
+        org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQResourceAdapter.class).getChildLogger("service").info("Stopped ActiveMQ broker");
     }
 
     private static void stopScheduler() {
