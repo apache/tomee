@@ -50,7 +50,7 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
     @Override
     public synchronized BrokerService createBroker(final URI brokerURI) throws Exception {
 
-        org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, "service").info("ActiveMQ5Factory creating broker: " + Thread.currentThread().getName());
+        org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class).getChildLogger("service").info("ActiveMQ5Factory creating broker");
 
         BrokerService broker = brokers.get(brokerURI);
 
@@ -123,6 +123,8 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
 
                 @Override
                 public void run() {
+
+                    Thread.currentThread().setContextClassLoader(org.apache.activemq.ra.ActiveMQResourceAdapter.class.getClassLoader());
 
                     try {
                         //Start before returning - this is known to be safe.
