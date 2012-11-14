@@ -50,6 +50,8 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
     @Override
     public synchronized BrokerService createBroker(final URI brokerURI) throws Exception {
 
+        org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, "service").info("ActiveMQ5Factory creating broker: " + Thread.currentThread().getName());
+
         BrokerService broker = brokers.get(brokerURI);
 
         if (null == broker || !broker.isStarted()) {
@@ -106,76 +108,82 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
                 disableScheduler(broker);
 
                 //Notify when an error occurs on shutdown.
-                broker.setUseLoggingForShutdownErrors(org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, "org.apache.openejb.util.resources").isErrorEnabled());
+                broker.setUseLoggingForShutdownErrors(org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class).isErrorEnabled());
             }
 
             //We must close the broker
             broker.setUseShutdownHook(false);
             broker.setSystemExitOnShutdown(false);
 
-            if (!broker.isStarted()) {
+            broker.setStartAsync(false);
 
-                final BrokerService bs = broker;
+            final BrokerService bs = broker;
 
-                final Thread start = new Thread("ActiveMQFactory start and checkpoint") {
+            final Thread start = new Thread("ActiveMQFactory start and checkpoint") {
 
-                    @Override
-                    public void run() {
+                @Override
+                public void run() {
 
-                        try {
-                            //Start before returning - this is known to be safe.
+                    try {
+                        //Start before returning - this is known to be safe.
+                        if (!bs.isStarted()) {
+                            org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class).getChildLogger("service").info("Starting ActiveMQ BrokerService");
                             bs.start();
-                            bs.waitUntilStarted();
-
-                            //Force a checkpoint to initialize pools
-                            bs.getPersistenceAdapter().checkpoint(true);
-                            started.set(true);
-                        } catch (Throwable t) {
-                            throwable = t;
                         }
+
+                        bs.waitUntilStarted();
+
+                        //Force a checkpoint to initialize pools
+                        org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class).getChildLogger("service").info("Starting ActiveMQ checkpoint");
+                        bs.getPersistenceAdapter().checkpoint(true);
+                        started.set(true);
+
+                    } catch (Throwable t) {
+                        throwable = t;
                     }
-                };
-
-                /*
-                 * An application may require immediate access to JMS. So we need to block here until the service
-                 * has started. How long ActiveMQ requires to actually create a broker is unpredictable.
-                 *
-                 * A broker in OpenEJB is usually a wrapper for an embedded ActiveMQ server service. The broker configuration
-                 * allows the definition of a remote ActiveMQ server, in which case startup is not an issue as the broker is
-                 * basically a client.
-                 *
-                 * If the broker is local and the message store contains millions of messages then the startup time is obviously going to
-                 * be longer as these need to be indexed by ActiveMQ.
-                 *
-                 * A balanced timeout will always be use case dependent.
-                */
-
-                int timeout = 60000;
-
-                try {
-                    timeout = Integer.parseInt(properties.getProperty("startuptimeout", "60000"));
-                    org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, "org.apache.openejb.util.resources").info("Using ActiveMQ startup timeout of " + timeout + "ms");
-                } catch (Throwable e) {
-                    //Ignore
                 }
+            };
 
-                start.setDaemon(true);
-                start.start();
+            /*
+             * An application may require immediate access to JMS. So we need to block here until the service
+             * has started. How long ActiveMQ requires to actually create a broker is unpredictable.
+             *
+             * A broker in OpenEJB is usually a wrapper for an embedded ActiveMQ server service. The broker configuration
+             * allows the definition of a remote ActiveMQ server, in which case startup is not an issue as the broker is
+             * basically a client.
+             *
+             * If the broker is local and the message store contains millions of messages then the startup time is obviously going to
+             * be longer as these need to be indexed by ActiveMQ.
+             *
+             * A balanced timeout will always be use case dependent.
+            */
 
-                try {
-                    start.join(timeout);
-                } catch (InterruptedException e) {
-                    //Ignore
-                }
+            int timeout = 30000;
 
-                if (null != throwable) {
-                    org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, "org.apache.openejb.util.resources").error("ActiveMQ failed to start broker", throwable);
-                } else if (started.get()) {
-                    org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, "org.apache.openejb.util.resources").info("ActiveMQ broker started");
-                } else {
-                    org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, "org.apache.openejb.util.resources").warning("ActiveMQ failed to start broker within " + timeout + " seconds - It may be unusable");
-                }
+            try {
+                timeout = Integer.parseInt(properties.getProperty("startuptimeout", "30000"));
+                org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class).getChildLogger("service").info("Using ActiveMQ startup timeout of " + timeout + "ms");
+            } catch (Throwable e) {
+                //Ignore
             }
+
+            start.setDaemon(true);
+            start.start();
+
+            try {
+                start.join(timeout);
+            } catch (InterruptedException e) {
+                //Ignore
+            }
+
+            if (null != throwable) {
+                org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class).getChildLogger("service").error("ActiveMQ failed to start broker", throwable);
+            } else if (started.get()) {
+                org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class).getChildLogger("service").info("ActiveMQ broker started");
+            } else {
+                org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class).getChildLogger("service").warning("ActiveMQ failed to start broker within " + timeout + " seconds - It may be unusable");
+            }
+
         }
 
         return broker;
