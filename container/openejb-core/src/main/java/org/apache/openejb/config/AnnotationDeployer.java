@@ -22,6 +22,7 @@ import org.apache.openejb.api.LocalClient;
 import org.apache.openejb.api.Proxy;
 import org.apache.openejb.api.RemoteClient;
 import org.apache.openejb.cdi.CdiBeanInfo;
+import org.apache.openejb.core.EmptyResourcesClassLoader;
 import org.apache.openejb.core.webservices.JaxWsUtils;
 import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.ActivationSpec;
@@ -1581,11 +1582,11 @@ public class AnnotationDeployer implements DynamicDeployer {
             return classes;
         }
 
-        private boolean hasBeansXml(URL url) {
+        public static boolean hasBeansXml(URL url) {
             if (url.getPath().endsWith("WEB-INF/classes/")) return true;
             if (url.getPath().endsWith("!/META-INF/beans.xml")) return true;
             try {
-                final URLClassLoader loader = new URLClassLoader(new URL[]{url});
+                final URLClassLoader loader = new URLClassLoader(new URL[]{ url } , new EmptyResourcesClassLoader());
                 String[] paths = {
                         "META-INF/beans.xml",
                         "WEB-INF/beans.xml",

@@ -83,12 +83,12 @@ public class WebappAggregatedArchive implements Archive, ScanConstants {
         return archive.iterator();
     }
 
-    private static class ScanXmlSaverFilter implements Filter {
+    public static class ScanXmlSaverFilter implements Filter {
         private boolean scanXmlExists;
         private final ScanUtil.ScanHandler handler;
         private final List<String> classes;
 
-        private ScanXmlSaverFilter(boolean scanXmlExists, ScanUtil.ScanHandler handler, List<String> classes) {
+        public ScanXmlSaverFilter(boolean scanXmlExists, ScanUtil.ScanHandler handler, List<String> classes) {
             this.scanXmlExists = scanXmlExists;
             this.handler = handler;
             this.classes = classes;

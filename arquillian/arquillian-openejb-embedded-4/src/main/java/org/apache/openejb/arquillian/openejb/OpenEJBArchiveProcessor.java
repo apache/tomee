@@ -21,7 +21,9 @@ import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.DeploymentLoader;
 import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.config.FinderFactory;
 import org.apache.openejb.config.ReadDescriptors;
+import org.apache.openejb.config.WebappAggregatedArchive;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.ManagedBean;
 import org.apache.openejb.jee.TransactionType;
@@ -32,6 +34,7 @@ import org.apache.openejb.util.classloader.URLClassLoaderFirst;
 import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.archive.ClassesArchive;
 import org.apache.xbean.finder.archive.CompositeArchive;
+import org.apache.xbean.finder.archive.FilteredArchive;
 import org.apache.xbean.finder.archive.JarArchive;
 import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.shrinkwrap.api.Archive;
@@ -55,6 +58,8 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -133,8 +138,6 @@ public class OpenEJBArchiveProcessor {
             appModule.getEjbModules().add(new EjbModule(ejbJar, openejbJar));
         }
 
-        final org.apache.xbean.finder.archive.Archive finderArchive = finderArchive(archive, appModule.getClassLoader(), additionalPaths);
-
         final EjbJar ejbJar;
         final Node ejbJarXml = archive.get(prefix.concat(EJB_JAR_XML));
         if (ejbJarXml != null) {
@@ -157,18 +160,19 @@ public class OpenEJBArchiveProcessor {
         }
 
         final EjbModule ejbModule = new EjbModule(ejbJar);
-        ejbModule.setFinder(new AnnotationFinder(finderArchive));
-        appModule.getEjbModules().add(ejbModule);
 
-        {
-            Node beansXml = archive.get(prefix.concat(BEANS_XML));
-            if (beansXml == null && WEB_INF.equals(prefix)) {
-                beansXml = archive.get(WEB_INF_CLASSES.concat(META_INF).concat(BEANS_XML));
-            }
-            if (beansXml != null) {
-                ejbModule.getAltDDs().put(BEANS_XML, new AssetSource(beansXml.getAsset()));
-            }
+        Node beansXml = archive.get(prefix.concat(BEANS_XML));
+        if (beansXml == null && WEB_INF.equals(prefix)) {
+            beansXml = archive.get(WEB_INF_CLASSES.concat(META_INF).concat(BEANS_XML));
         }
+        if (beansXml != null) {
+            ejbModule.getAltDDs().put(BEANS_XML, new AssetSource(beansXml.getAsset()));
+        }
+
+        final org.apache.xbean.finder.archive.Archive finderArchive = finderArchive(beansXml, archive, appModule.getClassLoader(), additionalPaths);
+
+        ejbModule.setFinder(new FinderFactory.ModuleLimitedFinder(new AnnotationFinder(finderArchive)));
+        appModule.getEjbModules().add(ejbModule);
 
         {
             Node persistenceXml = archive.get(prefix.concat(PERSISTENCE_XML));
@@ -247,7 +251,7 @@ public class OpenEJBArchiveProcessor {
         }
     }
 
-    private static org.apache.xbean.finder.archive.Archive finderArchive(final Archive<?> archive, final ClassLoader cl, final Collection<URL> additionalPaths) {
+    private static org.apache.xbean.finder.archive.Archive finderArchive(final Node beansXml, final Archive<?> archive, final ClassLoader cl, final Collection<URL> additionalPaths) {
         final List<Class<?>> classes = new ArrayList<Class<?>>();
         final Map<ArchivePath, Node> content = archive.getContent(new IncludeRegExpPaths(".*.class"));
         for (Map.Entry<ArchivePath, Node> node : content.entrySet()) {
@@ -259,12 +263,31 @@ public class OpenEJBArchiveProcessor {
             }
         }
 
+        final Map<URL, List<String>> classesByUrl = new HashMap<URL, List<String>>();
+
         final List<org.apache.xbean.finder.archive.Archive> archives = new ArrayList<org.apache.xbean.finder.archive.Archive>();
         for (URL url : DeploymentLoader.filterWebappUrls(additionalPaths.toArray(new URL[additionalPaths.size()]), null)) {
-            archives.add(new JarArchive(cl, url));
+            final List<String> currentClasses = new ArrayList<String>();
+            final org.apache.xbean.finder.archive.Archive newArchive = new FilteredArchive(new JarArchive(cl, url), new WebappAggregatedArchive.ScanXmlSaverFilter(false, null, currentClasses));
+            classesByUrl.put(url, currentClasses);
+            archives.add(newArchive);
         }
+
         archives.add(new ClassesArchive(classes));
-        return new CompositeArchive(archives);
+        if (beansXml != null) {
+            final List<String> mainClasses = new ArrayList<String>();
+            for (Class<?> clazz : classes) {
+                mainClasses.add(clazz.getName());
+            }
+            // look org.apache.openejb.config.AnnotationDeployer.DiscoverAnnotatedBeans.hasBeansXml()
+            try {
+                classesByUrl.put(new URL("file://foo.jar!/WEB-INF/classes/"), mainClasses);
+            } catch (MalformedURLException mue) {
+                // no-op
+            }
+        }
+
+        return new SimpleWebappAggregatedArchive(new CompositeArchive(archives), classesByUrl);
     }
 
     private static String name(final String raw) {
@@ -286,6 +309,39 @@ public class OpenEJBArchiveProcessor {
         @Override
         public InputStream get() throws IOException {
             return asset.openStream();
+        }
+    }
+
+    // mainly extended to be sure to reuse our tip about scanning for CDI
+    private static class SimpleWebappAggregatedArchive extends WebappAggregatedArchive {
+        private final CompositeArchive delegate;
+        private final Map<URL, List<String>> classesMap;
+
+        public SimpleWebappAggregatedArchive(final CompositeArchive archive, final Map<URL, List<String>> map) {
+            super(Thread.currentThread().getContextClassLoader(), new HashMap<String, Object>(), new ArrayList<URL>());
+
+            delegate = archive;
+            classesMap = map;
+        }
+
+        @Override
+        public Map<URL, List<String>> getClassesMap() {
+            return classesMap;
+        }
+
+        @Override
+        public InputStream getBytecode(final String s) throws IOException, ClassNotFoundException {
+            return delegate.getBytecode(s);
+        }
+
+        @Override
+        public Class<?> loadClass(final String s) throws ClassNotFoundException {
+            return delegate.loadClass(s);
+        }
+
+        @Override
+        public Iterator<Entry> iterator() {
+            return delegate.iterator();
         }
     }
 }
