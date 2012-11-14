@@ -16,6 +16,9 @@
  */
 package org.apache.openejb.cdi;
 
+import org.apache.webbeans.component.BeanManagerBean;
+import org.apache.webbeans.component.BuildInOwbBean;
+import org.apache.webbeans.component.ConversationBean;
 import org.apache.webbeans.container.BeanManagerImpl;
 
 import javax.el.ELResolver;
@@ -367,16 +370,6 @@ public class WebappBeanManager extends BeanManagerImpl {
     }
 
     @Override
-    public BeanManager addInternalBean(Bean<?> newBean) {
-        super.addInternalBean(newBean);
-
-        deploymentBeans.clear();
-        deploymentBeans.addAll(getParentBm().getBeans());
-        deploymentBeans.addAll(super.getBeans());
-        return this;
-    }
-
-    @Override
     public Set<Bean<?>> getComponents() {
         return deploymentBeans;
     }
@@ -384,5 +377,17 @@ public class WebappBeanManager extends BeanManagerImpl {
     @Override
     public Set<Bean<?>> getBeans() {
         return deploymentBeans;
+    }
+
+    public void afterStart() {
+        deploymentBeans.clear();
+        for (Bean<?> bean : getParentBm().getBeans()) {
+            if (bean instanceof BeanManagerBean || bean instanceof BuildInOwbBean
+                    || bean instanceof ConversationBean) {
+                continue;
+            }
+            deploymentBeans.add(bean);
+        }
+        deploymentBeans.addAll(super.getBeans());
     }
 }
