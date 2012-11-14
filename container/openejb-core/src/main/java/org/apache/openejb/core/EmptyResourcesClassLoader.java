@@ -26,7 +26,12 @@ public class EmptyResourcesClassLoader extends ClassLoader {
     }
 
     @Override
-    public Enumeration<URL> getResources(String name) throws IOException {
+    protected URL findResource(final String name) {
+        return null;
+    }
+
+    @Override
+    public Enumeration<URL> getResources(final String name) throws IOException {
         return new Enumeration<URL>() {
             @Override
             public boolean hasMoreElements() {
