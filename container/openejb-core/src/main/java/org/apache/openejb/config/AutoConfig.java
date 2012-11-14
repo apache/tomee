@@ -107,6 +107,8 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
     public static Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, AutoConfig.class);
 
+    private static final int MAX_IMPLICIT_POOL_SIZE = 5;
+
     private static Set<String> ignoredReferenceTypes = new TreeSet<String>();
     public static final String AUTOCREATE_JTA_DATASOURCE_FROM_NON_JTA_ONE_KEY = "openejb.autocreate.jta-datasource-from-non-jta-one";
 
@@ -1359,7 +1361,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             required.put("JtaManaged", ANY);
             String possibleJta = findResourceId(replaceJavaAndSlash(unit.getJtaDataSource()), "DataSource", required, null);
             String possibleNonJta = findResourceId(replaceJavaAndSlash(unit.getNonJtaDataSource()), "DataSource", required, null);
-            if (possibleJta != null && possibleJta == possibleNonJta){
+            if (possibleJta != null && possibleJta.equals(possibleNonJta)) {
                 ResourceInfo dataSource = configFactory.getResourceInfo(possibleJta);
 
                 String jtaManaged = (String) dataSource.properties.get("JtaManaged");
@@ -1527,6 +1529,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
                     if (nonJtaDataSourceId == null) {
                         ResourceInfo nonJtaResourceInfo = copy(jtaResourceInfo);
+                        configureImplicitDataSource(nonJtaResourceInfo);
                         nonJtaResourceInfo.id = jtaResourceInfo.id + "NonJta";
                         nonJtaResourceInfo.originAppName = jtaResourceInfo.originAppName;
 
@@ -1582,6 +1585,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
                     if (jtaDataSourceId == null) {
                         ResourceInfo jtaResourceInfo = copy(nonJtaResourceInfo);
+                        configureImplicitDataSource(jtaResourceInfo);
                         jtaResourceInfo.id = nonJtaResourceInfo.id + "Jta";
 
                         Properties overrides = ConfigurationFactory.getSystemProperties(jtaResourceInfo.id, jtaResourceInfo.service);
@@ -1619,6 +1623,26 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
             if (jtaDataSourceId != null) setJtaDataSource(unit, jtaDataSourceId);
             if (nonJtaDataSourceId != null) setNonJtaDataSource(unit, nonJtaDataSourceId);
+        }
+    }
+
+    private static void configureImplicitDataSource(final ResourceInfo copy) {
+        if (copy != null && copy.properties != null) {
+            for (String key : copy.properties.stringPropertyNames()) {
+                if ("InitialSize".equalsIgnoreCase(key)) {
+                    try {
+                        final int value = Integer.parseInt(copy.properties.getProperty("InitialSize"));
+                        if (MAX_IMPLICIT_POOL_SIZE < value) {
+                            copy.properties.setProperty(key, Integer.toString(MAX_IMPLICIT_POOL_SIZE));
+                            logger.warning("Adjusting " + key + " to " + MAX_IMPLICIT_POOL_SIZE + " for " + copy.id
+                                                + " DataSource to avoid too much network bandwidth usage."
+                                                + " If you want to keep it please define the DataSource explicitely.");
+                        }
+                    } catch (NumberFormatException nfe) {
+                        // no-op
+                    }
+                }
+            }
         }
     }
 
