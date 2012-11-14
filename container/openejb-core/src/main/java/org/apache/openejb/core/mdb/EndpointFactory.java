@@ -28,7 +28,6 @@ import javax.resource.spi.endpoint.MessageEndpointFactory;
 import javax.transaction.xa.XAResource;
 import javax.management.ObjectName;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,21 +64,17 @@ public class EndpointFactory implements MessageEndpointFactory {
             xaResource = xaResourceWrapper.wrap(xaResource, container.getContainerID().toString());
         }
         EndpointHandler endpointHandler = new EndpointHandler(container, beanContext, instanceFactory, xaResource);
-        MessageEndpoint messageEndpoint = null;
         try {
-            messageEndpoint = (MessageEndpoint) LocalBeanProxyFactory.newProxyInstance(classLoader, endpointHandler, beanContext.getBeanClass(), interfaces);
-//            messageEndpoint = (MessageEndpoint) Proxy.newProxyInstance(classLoader, interfaces, endpointHandler);
-        } catch (IllegalArgumentException e) {
+            return (MessageEndpoint) LocalBeanProxyFactory.newProxyInstance(classLoader, endpointHandler, beanContext.getBeanClass(), interfaces);
+        } catch (InternalError e) {
             //try to create the proxy with tccl once again.
             ClassLoader tccl = Thread.currentThread().getContextClassLoader();
             if (tccl != null) {
-                messageEndpoint = (MessageEndpoint) LocalBeanProxyFactory.newProxyInstance(tccl, endpointHandler, beanContext.getBeanClass(), interfaces);
-//                messageEndpoint = (MessageEndpoint) Proxy.newProxyInstance(tccl, interfaces, endpointHandler);
+                return (MessageEndpoint) LocalBeanProxyFactory.newProxyInstance(tccl, endpointHandler, beanContext.getBeanClass(), interfaces);
             } else {
                 throw e;
             }
         }
-        return messageEndpoint;
     }
 
     public MessageEndpoint createEndpoint(XAResource xaResource, long timeout)  throws UnavailableException {
