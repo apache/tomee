@@ -44,6 +44,7 @@ import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
 
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
@@ -62,6 +63,7 @@ public class EjbTimerImplSerializableTest {
         final EjbTimerService timerDeserialized = (EjbTimerService) deserialize(serial);
 
         assertThat(timerDeserialized, instanceOf(EjbTimerServiceImpl.class));
+        assertThat(((EjbTimerServiceImpl) timerDeserialized).getScheduler(), notNullValue());
 
         assertEqualsByReflection(timer, timerDeserialized, "deployment");
         assertEqualsByReflection(timer, timerDeserialized, "transacted");
