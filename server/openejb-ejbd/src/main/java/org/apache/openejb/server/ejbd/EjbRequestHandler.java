@@ -497,7 +497,7 @@ class EjbRequestHandler {
 
         //This is fatal for the client, but not the server.
         if (logger.isWarningEnabled()) {
-            logger.warning(message + " - Debug for stacktrace");
+            logger.warning(message + " - Debug for stacktrace: " + error);
         } else if (logger.isDebugEnabled()) {
             logger.debug(message, error);
         }
@@ -512,7 +512,7 @@ class EjbRequestHandler {
             if (logger.isDebugEnabled()) {
                 logger.debug("Failed to write EjbResponse", t);
             } else if (logger.isWarningEnabled()) {
-                logger.warning("Failed to write EjbResponse - Debug for stacktrace");
+                logger.warning("Failed to write EjbResponse - Debug for stacktrace: " + t);
             }
         }
     }
