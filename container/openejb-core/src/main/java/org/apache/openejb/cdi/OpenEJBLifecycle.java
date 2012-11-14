@@ -324,6 +324,10 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             }
             //Start actual starting on sub-classes
             afterStartApplication(startupObject);
+
+            if (beanManager instanceof WebappBeanManager) {
+                ((WebappBeanManager) beanManager).afterStart();
+            }
         } finally {
             Thread.currentThread().setContextClassLoader(oldCl);
 

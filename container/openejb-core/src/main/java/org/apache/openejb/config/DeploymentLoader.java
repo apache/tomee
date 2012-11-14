@@ -298,6 +298,7 @@ public class DeploymentLoader implements DeploymentFilterable {
             final Map<String, String> webContextRoots = new HashMap<String, String>();
 
             final URL applicationXmlUrl = appDescriptors.get("application.xml");
+            final List<URL> extraLibs = new ArrayList<URL>();
 
             final Application application;
             if (applicationXmlUrl != null) {
@@ -309,7 +310,8 @@ public class DeploymentLoader implements DeploymentFilterable {
                             ejbModules.put(module.getEjb(), url);
                         } else if (module.getJava() != null) {
                             final URL url = finder.find(module.getJava().trim());
-                            clientModules.put(module.getConnector(), url);
+                            clientModules.put(module.getJava(), url);
+                            extraLibs.add(url);
                         } else if (module.getConnector() != null) {
                             final URL url = finder.find(module.getConnector().trim());
                             resouceModules.put(module.getConnector(), url);
@@ -367,7 +369,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 final String dir = application.getLibraryDirectory();
                 if (!dir.endsWith("/")) application.setLibraryDirectory(dir + "/");
             }
-            final List<URL> extraLibs = new ArrayList<URL>();
+
             try {
                 final Map<String, URL> libs = finder.getResourcesMap(application.getLibraryDirectory());
                 extraLibs.addAll(libs.values());
@@ -626,6 +628,8 @@ public class DeploymentLoader implements DeploymentFilterable {
 
     public void addWebModule(final AppModule appModule, final URL warUrl, final ClassLoader parentClassLoader, final String contextRoot, final String moduleName) throws OpenEJBException {
         final WebModule webModule = createWebModule(appModule.getJarLocation(), URLs.toFilePath(warUrl), parentClassLoader, contextRoot, moduleName);
+        final List<URL> parentUrls = filterWebappUrls(appModule.getAdditionalLibraries().toArray(new URL[appModule.getAdditionalLibraries().size()]), (URL) webModule.getAltDDs().get(NewLoaderLogic.EXCLUSION_FILE));
+        webModule.getScannableUrls().addAll(parentUrls);
         addWebModule(webModule, appModule);
     }
 
