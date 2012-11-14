@@ -16,12 +16,8 @@
  */
 package org.apache.openejb.cdi;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import org.apache.webbeans.container.BeanManagerImpl;
+
 import javax.el.ELResolver;
 import javax.el.ExpressionFactory;
 import javax.enterprise.context.spi.Context;
@@ -36,7 +32,13 @@ import javax.enterprise.inject.spi.InjectionTarget;
 import javax.enterprise.inject.spi.InterceptionType;
 import javax.enterprise.inject.spi.Interceptor;
 import javax.enterprise.inject.spi.ObserverMethod;
-import org.apache.webbeans.container.BeanManagerImpl;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 public class WebappBeanManager extends BeanManagerImpl {
     private final WebappWebBeansContext webappCtx;
@@ -46,6 +48,7 @@ public class WebappBeanManager extends BeanManagerImpl {
             return false;
         }
     };
+    private final Set<Bean<?>> deploymentBeans = new CopyOnWriteArraySet<Bean<?>>();
 
     public WebappBeanManager(WebappWebBeansContext ctx) {
         super(ctx);
@@ -359,7 +362,27 @@ public class WebappBeanManager extends BeanManagerImpl {
         return super.wrapExpressionFactory(getParentBm().wrapExpressionFactory(expressionFactory));
     }
 
-    public BeanManager getParentBm() {
+    public BeanManagerImpl getParentBm() {
         return webappCtx.getParent().getBeanManagerImpl();
+    }
+
+    @Override
+    public BeanManager addInternalBean(Bean<?> newBean) {
+        super.addInternalBean(newBean);
+
+        deploymentBeans.clear();
+        deploymentBeans.addAll(getParentBm().getBeans());
+        deploymentBeans.addAll(super.getBeans());
+        return this;
+    }
+
+    @Override
+    public Set<Bean<?>> getComponents() {
+        return deploymentBeans;
+    }
+
+    @Override
+    public Set<Bean<?>> getBeans() {
+        return deploymentBeans;
     }
 }
