@@ -24,6 +24,6 @@ public class HibernateEnricher implements AuxiliaryArchiveProcessor {
     @Override
     public void process(final Archive<?> auxiliaryArchive) {
         Enrichers.wrap(auxiliaryArchive)
-            .addAsLibraries(Enrichers.resolve("src/test/resources/hibernate-pom.xml"));
+                .addAsLibraries(Enrichers.resolve("src/test/resources/hibernate-pom.xml"));
     }
 }
