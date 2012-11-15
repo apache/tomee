@@ -16,13 +16,6 @@
  */
 package org.apache.openejb.resource.jdbc.dbcp;
 
-import org.apache.commons.dbcp.PoolingDataSource;
-import org.apache.commons.dbcp.managed.ManagedConnection;
-import org.apache.commons.dbcp.managed.ManagedDataSource;
-import org.apache.commons.dbcp.managed.TransactionRegistry;
-import org.apache.commons.pool.ObjectPool;
-import org.apache.commons.pool.impl.GenericObjectPool;
-import org.apache.openejb.OpenEJB;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.resource.jdbc.BasicDataSourceUtil;
 import org.apache.openejb.resource.jdbc.IsolationLevels;
@@ -31,11 +24,8 @@ import org.apache.openejb.resource.jdbc.plugin.DataSourcePlugin;
 
 import javax.sql.DataSource;
 import java.io.File;
-import java.lang.reflect.Field;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
-import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
@@ -246,14 +236,6 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
         }
     }
 
-    @Override
-    protected void createDataSourceInstance() {
-        final PoolingDataSource pds = new PatchedManagedDataSource(connectionPool, getTransactionRegistry());
-        pds.setAccessToUnderlyingConnectionAllowed(isAccessToUnderlyingConnectionAllowed());
-        pds.setLogWriter(logWriter);
-        dataSource = pds;
-    }
-
     protected void wrapTransactionManager() {
         //TODO?
     }
@@ -295,63 +277,6 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
             throw new SQLFeatureNotSupportedException();
         } finally {
             l.unlock();
-        }
-    }
-
-    private static class PatchedManagedDataSource extends ManagedDataSource {
-        private TransactionRegistry transactionRegistry;
-
-        public PatchedManagedDataSource(final GenericObjectPool connectionPool, final TransactionRegistry transactionRegistry) {
-            super(connectionPool, transactionRegistry);
-            this.transactionRegistry = transactionRegistry;
-        }
-
-        @Override
-        public Connection getConnection() throws SQLException {
-            if (_pool == null) throw new IllegalStateException("Pool has not been set");
-            if (transactionRegistry == null) throw new IllegalStateException("TransactionRegistry has not been set");
-
-            return new PatchedManagedConnection(_pool, transactionRegistry, isAccessToUnderlyingConnectionAllowed());
-        }
-    }
-
-    private static class PatchedManagedConnection extends ManagedConnection {
-        private static final Field CACHES_FIELD;
-
-        static {
-            Field caches = null;
-            try {
-                caches = TransactionRegistry.class.getDeclaredField("caches");
-                caches.setAccessible(true);
-            } catch (NoSuchFieldException e) {
-                // no-op
-            }
-            CACHES_FIELD = caches;
-        }
-
-        private final TransactionRegistry transactionRegistry;
-
-        public PatchedManagedConnection(final ObjectPool pool, final TransactionRegistry transactionRegistry, final boolean accessToUnderlyingConnectionAllowed) throws SQLException {
-            super(pool, transactionRegistry, accessToUnderlyingConnectionAllowed);
-            this.transactionRegistry = transactionRegistry;
-        }
-
-        @Override
-        protected void transactionComplete() {
-            final Connection delegate = getDelegateInternal();
-            try {
-                super.transactionComplete();
-            } finally { // clean up transaction registry
-                transactionRegistry.unregisterConnection(delegate);
-                if (CACHES_FIELD != null) {
-                    try {
-                        final Map<?, ?> caches = (Map<?, ?>) CACHES_FIELD.get(transactionRegistry);
-                        caches.remove(OpenEJB.getTransactionManager().getTransaction());
-                    } catch (Exception e) {
-                        // no-op
-                    }
-                }
-            }
         }
     }
 }
