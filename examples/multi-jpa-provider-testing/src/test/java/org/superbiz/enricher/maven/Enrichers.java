@@ -41,13 +41,13 @@ public final class Enrichers {
             try { // try offline first since it is generally faster
                 CACHE.put(pom, DependencyResolvers.use(MavenDependencyResolver.class)
                         .goOffline()
-                        .loadEffectivePom(pom)
-                        .importAnyDependencies(new ScopeFilter("compile"))
+                        .loadMetadataFromPom(pom)
+                        .scope("compile")
                         .resolveAsFiles());
             } catch (ResolutionException re) { // try on central
                 CACHE.put(pom, DependencyResolvers.use(MavenDependencyResolver.class)
-                        .loadEffectivePom(pom)
-                        .importAnyDependencies(new ScopeFilter("compile"))
+                        .loadMetadataFromPom(pom)
+                        .scope("compile")
                         .resolveAsFiles());
             }
         }
