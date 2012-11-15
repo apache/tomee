@@ -17,12 +17,10 @@
  */
 package org.superbiz.enricher.maven;
 
-import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveProcessor;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.DependencyResolvers;
 import org.jboss.shrinkwrap.resolver.api.maven.MavenDependencyResolver;
-import org.jboss.shrinkwrap.resolver.api.maven.filter.ScopeFilter;
 
 import javax.enterprise.inject.ResolutionException;
 import java.io.File;
@@ -33,7 +31,7 @@ public final class Enrichers {
     private static final Map<String, File[]> CACHE = new HashMap<String, File[]>();
 
     private Enrichers() {
-     // no-op
+        // no-op
     }
 
     public static File[] resolve(final String pom) {
