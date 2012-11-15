@@ -356,6 +356,7 @@
               <skip>true</skip>
               <parallel>none</parallel>
               <threadCount>1</threadCount>
+<includes><include>**/Ear*</include></includes>
             </configuration>
           </plugin>
         </plugins>
