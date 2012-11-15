@@ -121,9 +121,9 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
         ActiveMQFactory.setThreadProperties(properties);
 
         try {
-
+            //The returned broker should be started, but calling start is harmless.
+            //We do not need to track the instance as the factory takes care of this.
             ActiveMQFactory.createBroker(URI.create(getBrokerXmlConfig())).start();
-            //super.start(bootstrapContext);
         } catch (Exception e) {
             org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQResourceAdapter.class).getChildLogger("service").fatal("Failed to start ActiveMQ", e);
         } finally {
@@ -191,8 +191,12 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
         final Iterator<BrokerService> it = brokers.iterator();
 
         while (it.hasNext()) {
+
+            final BrokerService bs = it.next();
+
             try {
-                it.next().waitUntilStopped();
+                bs.stop();
+                bs.waitUntilStopped();
             } catch (Throwable t) {
                 //Ignore
             }
