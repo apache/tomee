@@ -220,8 +220,6 @@ public class OpenEJBContextConfig extends ContextConfig {
                 internalProcessAnnotationsStream(webAnnotated.list, fragment, handlesTypeOnly);
             } catch (MalformedURLException e) {
                 throw new IllegalArgumentException(e);
-            } catch (IOException e) {
-                throw new IllegalArgumentException(e);
             }
         }
     }
