@@ -175,7 +175,7 @@ limitations under the License.
 
             <br><br>
 
-            <form action='/tomee/installer' method='post'>
+            <form action='installer' method='post'>
                 <table>
                     <tbody>
                     <tr>
