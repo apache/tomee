@@ -80,7 +80,9 @@
           <exclude name="tomee/tomee-webapp/src/main/webapp/lib/codemirror/**" /> 
           <exclude name="tomee/tomee-webapp/src/main/webapp/lib/handlebars/**" /> 
           <exclude name="tomee/tomee-webapp/src/main/webapp/lib/jquery/**" /> 
-          <exclude name="tomee/tomee-webapp/src/main/webapp/lib/less/**" /> 
+          <exclude name="tomee/tomee-webapp/src/main/webapp/lib/less/**" />
+          <!-- TODO check if that's really excluded -->
+          <exclude name="tomee/tomee-webapp/src/main/webapp/app/js/templates/**" />
 
           <!-- user-owned config files.  see httpds default.httpd.conf for precident --> 
           <exclude name="**/default.openejb.conf"/> 
