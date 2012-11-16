@@ -53,8 +53,8 @@ public final class Enrichers {
     }
 
     public static WebArchive wrap(final Archive<?> archive) {
-        if (!(archive instanceof WebArchive)) {
-            throw new IllegalArgumentException("not supported kind of archive: " + archive.getClass().getName());
+        if (!(WebArchive.class.isInstance(archive))) {
+            throw new IllegalArgumentException("Unsupported archive type: " + archive.getClass().getName());
         }
         return (WebArchive) archive;
     }
