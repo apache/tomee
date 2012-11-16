@@ -56,7 +56,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
     private static final Map<URI, Pool> connections = new ConcurrentHashMap<URI, Pool>();
     private int size = 5;
     private long timeoutPool = 1000;
-    private int timeoutSocket = 150;
+    private int timeoutSocket = 500;
     private String[] enabledCipherSuites;
 
     public SocketConnectionFactory() {
