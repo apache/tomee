@@ -850,7 +850,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
             // Resource reference
             for (ResourceRef ref : bean.getResourceRef()) {
-                processResourceRef(ref, ejbDeployment, appResources, ejbModule.getClassLoader());
+                processResourceRef(ref, ejbDeployment, appResources, ejbModule);
             }
 
             // Resource env reference
@@ -1084,7 +1084,13 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
     private void processResourceRef(ResourceRef ref, 
                                     EjbDeployment ejbDeployment, 
                                     AppResources appResources,
-                                    ClassLoader classLoader) throws OpenEJBException {
+                                    EjbModule ejbModule) throws OpenEJBException {
+        final Collection<String> ignoredResources = PROVIDED_RESOURCES.get();
+        String ignoredResourcesPrefix = PROVIDED_RESOURCES_PREFIX.get();
+        if (ignoredResourcesPrefix == null) {
+            ignoredResourcesPrefix = "";
+        }
+
         // skip destinations with lookup name
         if (ref.getLookupName() != null) {
             return;
@@ -1096,7 +1102,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         }
 
         String refName = ref.getName();
-        String refType = getType(ref, classLoader); 
+        String refType = getType(ref, ejbModule.getClassLoader());
 
         // skip references such as URLs which are automatically handled by the server
         if (ignoredReferenceTypes.contains(refType)) {
@@ -1104,7 +1110,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         }
 
         try {
-            final Class<?> clazz = classLoader.loadClass(refType);
+            final Class<?> clazz = ejbModule.getClassLoader().loadClass(refType);
             if (clazz.isAnnotationPresent(ManagedBean.class)) {
                 return;
             }
@@ -1116,6 +1122,13 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             ResourceLink link = ejbDeployment.getResourceLink(refName);
             if (link == null) {
                 String id = (mappedName.length() == 0) ? ref.getName() : mappedName;
+                if (ignoredResources != null && (ignoredResources.contains(id) || ignoredResources.contains(correctedId(ignoredResourcesPrefix, id)))) {
+                    final String correctedId = ignoredResourcesPrefix + correctedId(ignoredResourcesPrefix, id);
+                    ref.setLookupName(correctedId);
+                    ref.setName(correctedId);
+                    return;
+                }
+
                 if (id.startsWith("java:")) {
                     id = id.substring("java:".length());
                 }
@@ -1136,6 +1149,25 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 throw ex;
             }
         }
+    }
+
+    private static String correctedId(final String ignoredResourcesPrefix, final String id) {
+        String newId = id;
+        String ignoredId = ignoredResourcesPrefix;
+
+        // first unify beginning of the jndi name (we can get this / after java:)
+        if (newId.startsWith("java:/")) {
+            newId = "java:" + newId.substring("java:/".length());
+        }
+        if (ignoredResourcesPrefix.startsWith("java:/")) {
+            ignoredId = "java:" + ignoredResourcesPrefix.substring("java:/".length());
+        }
+
+        // remove prefix if necessary
+        if (newId.startsWith(ignoredId)) {
+            return newId.substring(ignoredId.length());
+        }
+        return newId;
     }
 
     private void processResourceEnvRef(JndiReference ref, 
