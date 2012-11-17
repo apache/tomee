@@ -48,6 +48,7 @@ public class OpenEJBContextConfig extends ContextConfig {
     private static final String TOMEE_MYFACES_CONTEXT_LISTENER = "org.apache.tomee.myfaces.TomEEMyFacesContextListener";
 
     private TomcatWebAppBuilder.StandardContextInfo info;
+    private boolean configureStartOk = false;
 
     // processAnnotationXXX is called for each folder of WEB-INF
     // since we store all classes in WEB-INF we will do it only once so use this boolean to avoid multiple processing
@@ -56,6 +57,15 @@ public class OpenEJBContextConfig extends ContextConfig {
     public OpenEJBContextConfig(TomcatWebAppBuilder.StandardContextInfo standardContextInfo) {
         logger.debug("OpenEJBContextConfig({0})", standardContextInfo.toString());
         info = standardContextInfo;
+    }
+
+    @Override
+    public void configureStart() {
+        if (configureStartOk) {
+            return;
+        }
+        super.configureStart();
+        configureStartOk = true;
     }
 
     @Override

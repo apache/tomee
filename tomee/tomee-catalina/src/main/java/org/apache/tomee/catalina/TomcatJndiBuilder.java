@@ -68,7 +68,6 @@ import org.omg.CORBA.ORB;
 
 import javax.ejb.spi.HandleDelegate;
 import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.LinkRef;
 import javax.naming.NamingException;
 import javax.naming.RefAddr;
@@ -83,7 +82,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -132,7 +130,7 @@ public class TomcatJndiBuilder {
         this.useCrossClassLoaderRef = useCrossClassLoaderRef;
     }
 
-    public void mergeJndi() throws OpenEJBException {
+    public void mergeJndi(final Collection<String> tomcatResources) throws OpenEJBException {
 
         NamingResources naming = standardContext.getNamingResources();
 
@@ -159,6 +157,17 @@ public class TomcatJndiBuilder {
             mergeRef(naming, ref, moduleUri);
         }
         for (ResourceReferenceInfo ref : webAppInfo.jndiEnc.resourceRefs) {
+            String id = ref.referenceName;
+            if (id == null) {
+                id = ref.resourceID;
+            }
+            if (id != null && id.startsWith("comp/env/")) {
+                id = id.substring("comp/env/".length());
+            }
+            if (id != null && tomcatResources != null && tomcatResources.contains(id)) {
+                continue;
+            }
+
             mergeRef(naming, ref);
         }
         for (ResourceEnvReferenceInfo ref : webAppInfo.jndiEnc.resourceEnvRefs) {
@@ -202,6 +211,16 @@ public class TomcatJndiBuilder {
             }
         }
 
+        final TomcatWebAppBuilder builder = (TomcatWebAppBuilder) SystemInstance.get().getComponent(WebAppBuilder.class);
+        TomcatWebAppBuilder.ContextInfo contextInfo = null;
+        if (builder != null) {
+            contextInfo = builder.getContextInfo(standardContext);
+        }
+        Collection<String> ignoreNames = null;
+        if (contextInfo != null) {
+            ignoreNames = contextInfo.resourceNames;
+        }
+
         if (webContext != null && webContext.getBindings() != null && root != null) {
             for (Map.Entry<String, Object> entry : webContext.getBindings().entrySet()) {
                 try {
@@ -210,7 +229,11 @@ public class TomcatJndiBuilder {
                         continue;
                     }
 
-                    final Object value = normalize(entry.getValue());
+                    Object value = normalize(entry.getValue());
+                    if (ignoreNames.contains(removeCompEnv(key))) {
+                        continue;
+                    }
+
                     Contexts.createSubcontexts(root, key);
                     root.rebind(key, value);
                 } catch (NamingException e) {
@@ -270,6 +293,13 @@ public class TomcatJndiBuilder {
         }
 
         ContextAccessController.setReadOnly(standardContext.getNamingContextListener().getName());
+    }
+
+    private static String removeCompEnv(final String key) {
+        if (key.startsWith("comp/env/")) {
+            return key.substring("comp/env/".length());
+        }
+        return key;
     }
 
     /**
