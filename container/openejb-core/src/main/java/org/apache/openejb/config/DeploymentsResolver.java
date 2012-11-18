@@ -133,7 +133,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
                     final URL url = file.toURI().toURL();
                     if (jarList.contains(url)) continue;
 
-                    if (file.getName().endsWith(".jar") || file.getName().endsWith(".war") || file.getName().endsWith(".rar") || file.getName().endsWith(".ear")) {
+                    if ((file.getName().endsWith(".jar") || file.getName().endsWith(".war") || file.getName().endsWith(".rar") || file.getName().endsWith(".ear")) && !unpackExists(file)) {
                         jarList.add(url);
                         hasNestedArchives = true;
                     } else if (new File(file, "META-INF").exists()) { // Unpacked ear or jar
@@ -170,6 +170,12 @@ public class DeploymentsResolver implements DeploymentFilterable {
                 }
             }
         }
+    }
+
+    private static boolean unpackExists(final File file) {
+        final String name = file.getName();
+        return !(!name.endsWith("ar") || name.length() < 5)
+                && new File(file.getParentFile(), name.substring(0, name.length()  -".war".length())).exists();
     }
 
     /**
