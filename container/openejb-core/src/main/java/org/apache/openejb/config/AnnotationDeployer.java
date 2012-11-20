@@ -244,6 +244,7 @@ public class AnnotationDeployer implements DynamicDeployer {
     public static final Logger startupLogger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, "org.apache.openejb.util.resources");
 
     public static final String OPENEJB_JPA_AUTO_SCAN = "openejb.jpa.auto-scan";
+    public static final String OPENEJB_JPA_AUTO_SCAN_PACKAGE = "openejb.jpa.auto-scan.package";
 
     private static final ThreadLocal<DeploymentModule> currentModule = new ThreadLocal<DeploymentModule>();
     private static final Set<String> lookupMissing = new HashSet<String>(2);
@@ -1497,12 +1498,14 @@ public class AnnotationDeployer implements DynamicDeployer {
                     for (org.apache.openejb.jee.jpa.unit.PersistenceUnit pu : pm.getPersistence().getPersistenceUnit()) {
                         if ((pu.isExcludeUnlistedClasses() == null || !pu.isExcludeUnlistedClasses())
                                 && "true".equalsIgnoreCase(pu.getProperties().getProperty(OPENEJB_JPA_AUTO_SCAN))) {
+                            final String packageName = pu.getProperties().getProperty(OPENEJB_JPA_AUTO_SCAN_PACKAGE);
+
                             // no need of meta currently since JPA providers doesn't support it
                             final List<Class<?>> classes = finder.findAnnotatedClasses(Entity.class);
                             final List<String> existingClasses = pu.getClazz();
                             for (Class<?> clazz : classes) {
                                 final String name = clazz.getName();
-                                if (!existingClasses.contains(name)) {
+                                if ((packageName == null || name.startsWith(packageName)) && !existingClasses.contains(name)) {
                                     pu.getClazz().add(name);
                                 }
                             }
