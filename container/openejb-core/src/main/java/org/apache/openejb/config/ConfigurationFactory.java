@@ -1308,7 +1308,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         return null;
     }
 
-    private boolean isResourceType(final String service, final List<String> types, final String type) {
+    public static boolean isResourceType(final String service, final List<String> types, final String type) {
         return type == null || service != null && types.contains(type);
     }
 
