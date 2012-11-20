@@ -67,6 +67,7 @@ import org.apache.tomee.common.WsFactory;
 import org.omg.CORBA.ORB;
 
 import javax.ejb.spi.HandleDelegate;
+import javax.naming.Binding;
 import javax.naming.Context;
 import javax.naming.LinkRef;
 import javax.naming.NamingException;
@@ -82,6 +83,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -289,6 +291,22 @@ public class TomcatJndiBuilder {
             }
         } catch (Exception ignored) {
             ignored.printStackTrace();
+            // no-op
+        }
+
+        // merge comp/env in app if available (some users are doing it, JBoss habit?)
+        try {
+            final Context app = (Context) ContextBindings.getClassLoader().lookup("app");
+            final Context ctx = (Context) ContextBindings.getClassLoader().lookup("comp/env");
+            final List<Binding> bindings = Collections.list(ctx.listBindings("app"));
+            for (Binding binding : bindings) {
+                try {
+                    app.bind(binding.getName(), binding.getObject());
+                } catch (NamingException ne) { // we don't want to rebind
+                    // no-op
+                }
+            }
+        } catch (Exception ne) {
             // no-op
         }
 

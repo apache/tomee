@@ -18,11 +18,17 @@ package org.apache.tomee.catalina;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.deploy.ContextResource;
+import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.deploy.WebXml;
 import org.apache.catalina.startup.ContextConfig;
 import org.apache.openejb.assembler.classic.ClassListInfo;
+import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
+import org.apache.openejb.assembler.classic.ResourceInfo;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
+import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.config.ServiceUtils;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
@@ -35,9 +41,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 public class OpenEJBContextConfig extends ContextConfig {
@@ -46,6 +55,7 @@ public class OpenEJBContextConfig extends ContextConfig {
 
     private static final String MYFACES_TOMEEM_CONTAINER_INITIALIZER = "org.apache.tomee.myfaces.TomEEMyFacesContainerInitializer";
     private static final String TOMEE_MYFACES_CONTEXT_LISTENER = "org.apache.tomee.myfaces.TomEEMyFacesContextListener";
+    private static final String ADJUST_DATASOURCE_JNDI_NAMES = SystemInstance.get().getProperty("tomee.resources.adjust-web-xml-jndi-name", "true");
 
     private TomcatWebAppBuilder.StandardContextInfo info;
     private boolean configureStartOk = false;
@@ -65,7 +75,66 @@ public class OpenEJBContextConfig extends ContextConfig {
             return;
         }
         super.configureStart();
+
+        adjustDataSourceNameIfNecessary(); // doing it here to potentially factorize resource id resolution
+
         configureStartOk = true;
+    }
+
+    private void adjustDataSourceNameIfNecessary() {
+        if (context == null || "false".equalsIgnoreCase(ADJUST_DATASOURCE_JNDI_NAMES)) {
+            return;
+        }
+
+        final NamingResources resources = context.getNamingResources();
+        if (resources == null) {
+            return;
+        }
+
+        final ContextResource[] foundResources = resources.findResources();
+        String[] ids = null;
+        if (foundResources != null) {
+            for (ContextResource resource : foundResources) {
+                if ("javax.sql.DataSource".equals(resource.getType())) {
+                    String jndiName = (String) resource.getProperty("mappedName");
+                    if (jndiName == null) {
+                        jndiName = resource.getName();
+                    }
+                    if (jndiName == null) {
+                        continue;
+                    }
+
+                    if (ids == null) {
+                        final Properties props = new Properties();
+                        final OpenEjbConfiguration runningConfig = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
+                        final List<String> resourceIds = new ArrayList<String>();
+                        if (runningConfig != null) {
+                            for (final ResourceInfo resourceInfo : runningConfig.facilities.resources) {
+                                if (ConfigurationFactory.isResourceType(resourceInfo.service, resourceInfo.types, "javax.sql.DataSource")
+                                        && ServiceUtils.implies(props, resourceInfo.properties)) {
+                                    resourceIds.add(resourceInfo.id);
+                                }
+                            }
+                        }
+                        ids = resourceIds.toArray(new String[resourceIds.size()]);
+                    }
+
+                    String mostMatchingId = null;
+                    for (String id : ids) {
+                        if (id.equals(jndiName)) {
+                            mostMatchingId = jndiName;
+                            break;
+                        } else if (jndiName.endsWith("/" + id) && mostMatchingId == null) {
+                            mostMatchingId = id;
+                        }
+                    }
+
+                    if (mostMatchingId != null) {
+                        resource.setProperty("mappedName", "java:" + mostMatchingId);
+                    }
+                }
+            }
+        }
     }
 
     @Override
