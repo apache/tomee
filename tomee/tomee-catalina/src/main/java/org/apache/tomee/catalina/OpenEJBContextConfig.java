@@ -22,6 +22,7 @@ import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.deploy.WebXml;
 import org.apache.catalina.startup.ContextConfig;
+import org.apache.naming.factory.Constants;
 import org.apache.openejb.assembler.classic.ClassListInfo;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.ResourceInfo;
@@ -34,6 +35,8 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URLs;
+import org.apache.tomee.common.NamingUtil;
+import org.apache.tomee.common.ResourceFactory;
 
 import javax.servlet.ServletContainerInitializer;
 import java.io.File;
@@ -50,7 +53,6 @@ import java.util.Properties;
 import java.util.Set;
 
 public class OpenEJBContextConfig extends ContextConfig {
-
     private static Logger logger = Logger.getInstance(LogCategory.OPENEJB, OpenEJBContextConfig.class);
 
     private static final String MYFACES_TOMEEM_CONTAINER_INITIALIZER = "org.apache.tomee.myfaces.TomEEMyFacesContainerInitializer";
@@ -131,6 +133,8 @@ public class OpenEJBContextConfig extends ContextConfig {
 
                     if (mostMatchingId != null) {
                         resource.setProperty("mappedName", "java:" + mostMatchingId);
+                        resource.setProperty(NamingUtil.RESOURCE_ID, "java:" + mostMatchingId);
+                        resource.setProperty(Constants.FACTORY, ResourceFactory.class.getName());
                     }
                 }
             }

@@ -153,7 +153,7 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
             converted.setProperty("password", "");
         }
 
-        final String currentUrl = properties.getProperty("url");
+        final String currentUrl = converted.getProperty("url");
         if (currentUrl != null) {
             try {
                 final DataSourcePlugin helper = BasicDataSourceUtil.getDataSourcePlugin(currentUrl);
