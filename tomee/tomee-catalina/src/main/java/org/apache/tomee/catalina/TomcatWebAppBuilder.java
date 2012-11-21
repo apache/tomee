@@ -50,8 +50,11 @@ import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.startup.Constants;
 import org.apache.catalina.startup.ContextConfig;
+import org.apache.catalina.startup.ContextRuleSet;
 import org.apache.catalina.startup.HostConfig;
 import org.apache.catalina.startup.RealmRuleSet;
+import org.apache.catalina.startup.SetAllPropertiesRule;
+import org.apache.catalina.startup.SetNextNamingRule;
 import org.apache.catalina.users.MemoryUserDatabase;
 import org.apache.naming.ContextAccessController;
 import org.apache.naming.ContextBindings;
@@ -92,6 +95,7 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.tomcat.InstanceManager;
 import org.apache.tomcat.util.digester.Digester;
+import org.apache.tomcat.util.digester.RuleSet;
 import org.apache.tomee.catalina.cluster.ClusterObserver;
 import org.apache.tomee.catalina.cluster.TomEEClusterListener;
 import org.apache.tomee.catalina.event.AfterApplicationCreated;
@@ -360,6 +364,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         digester.addSetNext("Context/Manager/Store", "setStore", "org.apache.catalina.Store");
         digester.addRuleSet(new RealmRuleSet("Context/"));
         digester.addCallMethod("Context/WatchedResource", "addWatchedResource", 0);
+        digester.addObjectCreate("Context/Resource","org.apache.catalina.deploy.ContextResource");
+        digester.addRule("Context/Resource", new SetAllPropertiesRule());
+        digester.addRule("Context/Resource", new SetNextNamingRule("addResource", "org.apache.catalina.deploy.ContextResource"));
 
         return digester;
     }
