@@ -20,7 +20,13 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.OWBLogConst;
 import org.apache.webbeans.config.WebBeansContext;
-import org.apache.webbeans.context.*;
+import org.apache.webbeans.context.AbstractContextsService;
+import org.apache.webbeans.context.ApplicationContext;
+import org.apache.webbeans.context.ConversationContext;
+import org.apache.webbeans.context.DependentContext;
+import org.apache.webbeans.context.RequestContext;
+import org.apache.webbeans.context.SessionContext;
+import org.apache.webbeans.context.SingletonContext;
 import org.apache.webbeans.conversation.ConversationImpl;
 import org.apache.webbeans.conversation.ConversationManager;
 import org.apache.webbeans.el.ELContextStore;
@@ -30,7 +36,13 @@ import org.apache.webbeans.web.context.ServletRequestContext;
 import org.apache.webbeans.web.context.SessionContextManager;
 import org.apache.webbeans.web.intercept.RequestScopedBeanInterceptorHandler;
 
-import javax.enterprise.context.*;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.ContextException;
+import javax.enterprise.context.Conversation;
+import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.context.Dependent;
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.enterprise.context.spi.Context;
 import javax.inject.Singleton;
 import javax.servlet.ServletRequestEvent;
@@ -87,12 +99,12 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         startContext(Singleton.class, initializeObject);
     }
 
-    public void destroy(Object destroyObjectUnused) {
-//        //Destroy application context
-//        endContext(ApplicationScoped.class, destroyObject);
+    public void destroy(final Object destroyObject) {
+        //Destroy application context
+        endContext(ApplicationScoped.class, destroyObject);
 //
-//        //Destroy singleton context
-//        endContext(Singleton.class, destroyObject);
+        //Destroy singleton context
+        endContext(Singleton.class, destroyObject);
 
 
         //Remove thread locals
@@ -340,16 +352,14 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     //we don't have initApplicationContext
 
     private void destroyApplicationContext() {
-        // look for thread local
-        // this can be set by initRequestContext
-//        this.currentApplicationContext.destroy();
+        applicationContext.destroy();
     }
 
     private void initSingletonContext() {
     }
 
     private void destroySingletonContext() {
-//        this.currentSingletonContext.destroy();
+        singletonContext.destroy();
     }
 
     /**
