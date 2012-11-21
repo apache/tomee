@@ -17,16 +17,16 @@
  */
 package org.apache.tomee.common;
 
-import static org.apache.tomee.common.NamingUtil.NAME;
-import static org.apache.tomee.common.NamingUtil.RESOURCE_ID;
-import static org.apache.tomee.common.NamingUtil.getProperty;
-
 import javax.naming.Context;
 import javax.naming.Name;
 import javax.naming.NamingException;
 import javax.naming.Reference;
 import java.net.URL;
 import java.util.Hashtable;
+
+import static org.apache.tomee.common.NamingUtil.NAME;
+import static org.apache.tomee.common.NamingUtil.RESOURCE_ID;
+import static org.apache.tomee.common.NamingUtil.getProperty;
 
 public class ResourceFactory extends AbstractObjectFactory {
     public Object getObjectInstance(Object object, Name name, Context context, Hashtable environment) throws Exception {
@@ -58,8 +58,10 @@ public class ResourceFactory extends AbstractObjectFactory {
         if (resourceId == null) throw new NamingException("Resource reference id is null");
 
         // build jndi name using the deploymentId and interface type
-        String jndiName = "java:openejb/Resource/" + resourceId;
-        return jndiName;
+        if (resourceId.startsWith("java:")) {
+            return resourceId;
+        }
+        return "java:openejb/Resource/" + resourceId;
     }
 
 }
