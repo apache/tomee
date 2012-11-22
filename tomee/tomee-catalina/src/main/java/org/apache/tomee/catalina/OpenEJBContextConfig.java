@@ -35,6 +35,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URLs;
+import org.apache.tomcat.util.digester.Digester;
 import org.apache.tomee.common.NamingUtil;
 import org.apache.tomee.common.ResourceFactory;
 
@@ -81,6 +82,24 @@ public class OpenEJBContextConfig extends ContextConfig {
         adjustDataSourceNameIfNecessary(); // doing it here to potentially factorize resource id resolution
 
         configureStartOk = true;
+    }
+
+    @Override
+    protected void contextConfig(final Digester digester) {
+        final NamingResources resources;
+        if (context != null) {
+            resources = context.getNamingResources();
+        } else {
+            resources = null;
+        }
+
+        if (resources instanceof OpenEJBNamingResource) {
+            ((OpenEJBNamingResource) resources).setTomcatResource(true);
+        }
+        super.contextConfig(digester);
+        if (resources instanceof OpenEJBNamingResource) {
+            ((OpenEJBNamingResource) resources).setTomcatResource(false);
+        }
     }
 
     private void adjustDataSourceNameIfNecessary() {
