@@ -39,9 +39,7 @@ import org.apache.catalina.core.StandardWrapper;
 import org.apache.catalina.deploy.ApplicationParameter;
 import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextResource;
-import org.apache.catalina.deploy.ContextResourceEnvRef;
 import org.apache.catalina.deploy.ContextResourceLink;
-import org.apache.catalina.deploy.ContextService;
 import org.apache.catalina.deploy.ContextTransaction;
 import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.ha.CatalinaCluster;
@@ -50,7 +48,6 @@ import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.startup.Constants;
 import org.apache.catalina.startup.ContextConfig;
-import org.apache.catalina.startup.ContextRuleSet;
 import org.apache.catalina.startup.HostConfig;
 import org.apache.catalina.startup.RealmRuleSet;
 import org.apache.catalina.startup.SetAllPropertiesRule;
@@ -77,7 +74,6 @@ import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.cdi.CdiBuilder;
 import org.apache.openejb.config.AppModule;
-import org.apache.openejb.config.AutoConfig;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentLoader;
 import org.apache.openejb.config.WebModule;
@@ -90,12 +86,10 @@ import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.util.LinkResolver;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.tomcat.InstanceManager;
 import org.apache.tomcat.util.digester.Digester;
-import org.apache.tomcat.util.digester.RuleSet;
 import org.apache.tomee.catalina.cluster.ClusterObserver;
 import org.apache.tomee.catalina.cluster.TomEEClusterListener;
 import org.apache.tomee.catalina.event.AfterApplicationCreated;
@@ -114,7 +108,6 @@ import javax.el.ELResolver;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.persistence.EntityManagerFactory;
 import javax.servlet.ServletContext;
 import javax.servlet.SessionTrackingMode;
 import javax.servlet.jsp.JspApplicationContext;
@@ -364,7 +357,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         digester.addSetNext("Context/Manager/Store", "setStore", "org.apache.catalina.Store");
         digester.addRuleSet(new RealmRuleSet("Context/"));
         digester.addCallMethod("Context/WatchedResource", "addWatchedResource", 0);
-        digester.addObjectCreate("Context/Resource","org.apache.catalina.deploy.ContextResource");
+        digester.addObjectCreate("Context/Resource", "org.apache.catalina.deploy.ContextResource");
         digester.addRule("Context/Resource", new SetAllPropertiesRule());
         digester.addRule("Context/Resource", new SetNextNamingRule("addResource", "org.apache.catalina.deploy.ContextResource"));
 
@@ -913,19 +906,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         ContextInfo contextInfo = getContextInfo(standardContext);
         ClassLoader classLoader = standardContext.getLoader().getClassLoader();
 
-        final LifecycleListener[] listeners = standardContext.findLifecycleListeners();
-        if (listeners != null) { // force init of tomcat resources
-            for (LifecycleListener listener : listeners) {
-                if (OpenEJBContextConfig.class.isInstance(listener)) {
-                    ((OpenEJBContextConfig) listener).configureStart();
-                }
-            }
-        }
-
-        final Collection<String> tomcatResources = getResourcesNames(standardContext.getNamingResources());
-        AutoConfig.PROVIDED_RESOURCES.set(tomcatResources);
-        AutoConfig.PROVIDED_RESOURCES_PREFIX.set("java:/comp/env/");
-
         if (contextInfo == null) {
             final AppModule appModule = loadApplication(standardContext);
             if (appModule != null) {
@@ -959,8 +939,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         } else {
             contextInfo.standardContext = standardContext;
         }
-        contextInfo.resourceNames = tomcatResources;
-
 
         final String id = getId(standardContext);
         WebAppInfo webAppInfo = null;
@@ -1019,7 +997,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 final TomcatJndiBuilder jndiBuilder = new TomcatJndiBuilder(standardContext, webAppInfo, injections);
                 NamingUtil.setCurrentContext(standardContext);
                 try {
-                    jndiBuilder.mergeJndi(tomcatResources);
+                    jndiBuilder.mergeJndi();
                 } finally {
                     NamingUtil.setCurrentContext(null);
                 }
@@ -1069,41 +1047,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         }
     }
 
-    private Collection<String> getResourcesNames(final NamingResources namingResources) {
-        final Collection<String> names = new ArrayList<String>();
-        for (ContextResource resource : namingResources.findResources()) {
-            final String name = resource.getName();
-            if (name != null) {
-                names.add(resource.getName());
-            }
-        }
-        for (ContextEnvironment resource : namingResources.findEnvironments()) {
-            final String name = resource.getName();
-            if (name != null) {
-                names.add(resource.getName());
-            }
-        }
-        for (ContextResourceLink resource : namingResources.findResourceLinks()) {
-            final String name = resource.getName();
-            if (name != null) {
-                names.add(resource.getName());
-            }
-        }
-        for (ContextService resource : namingResources.findServices()) {
-            final String name = resource.getName();
-            if (name != null) {
-                names.add(resource.getName());
-            }
-        }
-        for (ContextResourceEnvRef resource : namingResources.findResourceEnvRefs()) {
-            final String name = resource.getName();
-            if (name != null) {
-                names.add(resource.getName());
-            }
-        }
-        return names;
-    }
-
     private static void updateInjections(final Collection<Injection> injections, final ClassLoader classLoader, final boolean keepInjection) {
         final Iterator<Injection> it = injections.iterator();
         final List<Injection> newOnes = new ArrayList<Injection>();
@@ -1144,10 +1087,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 }
                 container = container.getParent();
             }
-            if (container != null) {
-                return undeploy(standardContext, container);
-            }
-            return false;
+            return container != null && undeploy(standardContext, container);
         }
     }
 
@@ -1315,6 +1255,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     }
                 }
             } catch (NamingException e) {
+                // no-op
             }
         }
 
@@ -1657,8 +1598,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      * @return a openejb application module
      */
     private AppModule loadApplication(final StandardContext standardContext) {
-        final ServletContext servletContext = standardContext.getServletContext();
-
         // don't use getId since the app id shouldnt get the host (jndi)
         // final TomcatDeploymentLoader tomcatDeploymentLoader = new TomcatDeploymentLoader(standardContext, getId(standardContext));
 
@@ -1896,7 +1835,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         public StandardContext standardContext;
         public HostConfig deployer;
         public Host host;
-        public LinkResolver<EntityManagerFactory> emfLinkResolver;
         public Collection<String> resourceNames = Collections.emptyList();
 
         @Override
