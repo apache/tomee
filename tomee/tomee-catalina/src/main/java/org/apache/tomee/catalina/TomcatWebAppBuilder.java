@@ -42,6 +42,7 @@ import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.ContextTransaction;
 import org.apache.catalina.deploy.NamingResources;
+import org.apache.catalina.deploy.ResourceBase;
 import org.apache.catalina.ha.CatalinaCluster;
 import org.apache.catalina.loader.WebappClassLoader;
 import org.apache.catalina.loader.WebappLoader;
@@ -78,6 +79,7 @@ import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentLoader;
 import org.apache.openejb.config.WebModule;
 import org.apache.openejb.config.event.BeforeDeploymentEvent;
+import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.core.WebContext;
@@ -781,6 +783,21 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         return new File(new File(System.getProperty("catalina.base"), base), doc); // shouldn't occur
     }
 
+    public ContextInfo getContextInfo(final String appName) {
+        ContextInfo info = null;
+        for (Map.Entry<String, ContextInfo> current : infos.entrySet()) {
+            final String key = current.getKey();
+            if (key.equals(appName)) {
+                info = current.getValue();
+                break;
+            }
+            if (key.endsWith(appName)) {
+                info = current.getValue();
+            }
+        }
+        return info;
+    }
+
     public class StandardContextInfo {
 
         private final StandardContext standardContext;
@@ -908,6 +925,18 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
         if (contextInfo == null) {
             final AppModule appModule = loadApplication(standardContext);
+
+            if (standardContext.getNamingResources() instanceof OpenEJBNamingResource) {
+                // add them to the app as resource
+                for (ResourceBase resource : ((OpenEJBNamingResource) standardContext.getNamingResources()).getTomcatResources()) {
+                    final Resource newResource = new Resource(resource.getName(), resource.getType(), "org.apache.tomee:ProvidedByTomcat");
+                    newResource.getProperties().setProperty("jndiName", newResource.getId());
+                    newResource.getProperties().setProperty("appName", getId(standardContext));
+                    newResource.getProperties().setProperty("factory", (String) resource.getProperty("factory"));
+                    appModule.getResources().add(newResource);
+                }
+            }
+
             if (appModule != null) {
                 try {
                     contextInfo = addContextInfo(standardContext.getHostname(), standardContext);
