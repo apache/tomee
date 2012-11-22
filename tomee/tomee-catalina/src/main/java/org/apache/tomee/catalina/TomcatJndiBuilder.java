@@ -70,6 +70,7 @@ import javax.ejb.spi.HandleDelegate;
 import javax.naming.Binding;
 import javax.naming.Context;
 import javax.naming.LinkRef;
+import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 import javax.naming.RefAddr;
 import javax.persistence.EntityManager;
@@ -132,7 +133,7 @@ public class TomcatJndiBuilder {
         this.useCrossClassLoaderRef = useCrossClassLoaderRef;
     }
 
-    public void mergeJndi(final Collection<String> tomcatResources) throws OpenEJBException {
+    public void mergeJndi() throws OpenEJBException {
 
         NamingResources naming = standardContext.getNamingResources();
 
@@ -159,17 +160,6 @@ public class TomcatJndiBuilder {
             mergeRef(naming, ref, moduleUri);
         }
         for (ResourceReferenceInfo ref : webAppInfo.jndiEnc.resourceRefs) {
-            String id = ref.referenceName;
-            if (id == null) {
-                id = ref.resourceID;
-            }
-            if (id != null && id.startsWith("comp/env/")) {
-                id = id.substring("comp/env/".length());
-            }
-            if (id != null && tomcatResources != null && tomcatResources.contains(id)) {
-                continue;
-            }
-
             mergeRef(naming, ref);
         }
         for (ResourceEnvReferenceInfo ref : webAppInfo.jndiEnc.resourceEnvRefs) {
@@ -232,8 +222,16 @@ public class TomcatJndiBuilder {
                     }
 
                     Object value = normalize(entry.getValue());
-                    if (ignoreNames.contains(removeCompEnv(key))) {
-                        continue;
+                    if (ignoreNames.contains(removeCompEnv(key))) { // keep tomcat resources
+                        try {
+                            // tomcat can get the reference but the bound value
+                            // can come from OpenEJB (ejb-jar.xml for instance)
+                            // so check the lookup can be resolved before skipping it
+                            root.lookup(key);
+                            continue;
+                        } catch (NameNotFoundException nnfe) {
+                            // no-op: let it be rebound or bound
+                        }
                     }
 
                     Contexts.createSubcontexts(root, key);
@@ -346,6 +344,7 @@ public class TomcatJndiBuilder {
             }
 
         } catch (Exception e) {
+            // no-op
         }
 
         return value;
