@@ -318,7 +318,7 @@ With so much going on it can make things look more complex than they are.  It ca
 
 If we look at the jar built by maven, we'll see the application itself is quite small:
 
-    $ jar tvf target/simple-webservice-1.1-SNAPSHOT.jar
+    $ jar tvf target/simple-webservice-1.1.0-SNAPSHOT.jar
          0 Sat Feb 18 19:17:06 PST 2012 META-INF/
        127 Sat Feb 18 19:17:04 PST 2012 META-INF/MANIFEST.MF
          0 Sat Feb 18 19:17:02 PST 2012 org/

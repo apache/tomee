@@ -33,7 +33,7 @@ The parent pom, trimmed to the minimum, looks like so:
       <modelVersion>4.0.0</modelVersion>
       <groupId>org.superbiz</groupId>
       <artifactId>myear</artifactId>
-      <version>1.1-SNAPSHOT</version>
+      <version>1.1.0-SNAPSHOT</version>
 
       <packaging>pom</packaging>
 
@@ -64,7 +64,7 @@ The `business-model/pom.xml` as follows:
       <parent>
         <groupId>org.superbiz</groupId>
         <artifactId>myear</artifactId>
-        <version>1.1-SNAPSHOT</version>
+        <version>1.1.0-SNAPSHOT</version>
       </parent>
 
       <modelVersion>4.0.0</modelVersion>
@@ -94,7 +94,7 @@ And finally, the `business-logic/pom.xml` which is setup to support embedded tes
       <parent>
         <groupId>org.superbiz</groupId>
         <artifactId>myear</artifactId>
-        <version>1.1-SNAPSHOT</version>
+        <version>1.1.0-SNAPSHOT</version>
       </parent>
 
       <modelVersion>4.0.0</modelVersion>
