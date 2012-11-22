@@ -592,15 +592,15 @@
       <groupId>org.javassist</groupId>
       <artifactId>javassist</artifactId>
     </dependency>
-    <dependency>
+    <!--<dependency>
       <groupId>org.apache.openjpa</groupId>
       <artifactId>openjpa</artifactId>
+    </dependency>-->
+    <dependency>
+      <groupId>org.apache.openejb.patch</groupId>
+      <artifactId>openjpa-asm-shaded</artifactId>
+      <version>2.2.0</version>
     </dependency>
-    <!--<dependency>-->
-      <!--<groupId>org.apache.openejb.patch</groupId>-->
-      <!--<artifactId>openjpa-asm-shaded</artifactId>-->
-      <!--<version>2.2.0</version>-->
-    <!--</dependency>-->
     <dependency>
       <groupId>org.apache.bval</groupId>
       <artifactId>bval-core</artifactId>
