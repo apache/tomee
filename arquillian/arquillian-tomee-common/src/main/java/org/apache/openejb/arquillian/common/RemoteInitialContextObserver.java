@@ -28,6 +28,9 @@ import org.jboss.arquillian.test.spi.event.enrichment.BeforeEnrichment;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.Properties;
 
 public class RemoteInitialContextObserver {
@@ -54,11 +57,35 @@ public class RemoteInitialContextObserver {
             props.setProperty(Context.INITIAL_CONTEXT_FACTORY, REMOTE_INITIAL_CONTEXT_FACTORY);
             props.setProperty(Context.PROVIDER_URL, "http://" + httpContext.getHost() + ":" + httpContext.getPort() + "/tomee/ejb");
 
-            context.set(new InitialContext(props));
+            context.set((Context) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[]{ Context.class }, new MultipleContextHandler(new InitialContext(), new InitialContext(props))));
         } catch (ClassNotFoundException e) {
             // no-op
         } catch (NamingException e) {
             // no-op
+        }
+    }
+
+    private static class MultipleContextHandler implements InvocationHandler {
+        private final InitialContext[] contexts;
+
+        public MultipleContextHandler(final InitialContext... initialContexts) {
+            contexts = initialContexts;
+        }
+
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            Exception err = null;
+            for (Context ctx : contexts) {
+                try {
+                    return method.invoke(ctx, args);
+                } catch (Exception e) {
+                    err = e;
+                }
+            }
+            if (err != null) {
+                throw err;
+            }
+            return null;
         }
     }
 }
