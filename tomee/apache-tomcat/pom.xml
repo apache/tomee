@@ -30,7 +30,7 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <artifactId>apache-tomcat</artifactId>
   <name>OpenEJB :: TomEE :: Apache Tomcat</name>
-  <version>7.0.32-SNAPSHOT</version>
+  <version>7.0.33-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <build>
