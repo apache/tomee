@@ -20,11 +20,14 @@ import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.InjectionProcessor;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.arquillian.common.mockito.MockitoEnricher;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.inject.AbstractInjectable;
 import org.apache.webbeans.inject.OWBInjector;
@@ -65,7 +68,14 @@ public final class OpenEJBEnricher {
                     AbstractInjectable.instanceUnderInjection.remove();
                 }
             } catch (Throwable t) {
-                // ignored
+                Logger.getInstance(LogCategory.OPENEJB, OpenEJBEnricher.class).error("Can't inject in " + testInstance.getClass(), t);
+                if (t instanceof RuntimeException) {
+                    throw (RuntimeException) t;
+                }
+                if (t instanceof Exception) {
+                    throw new OpenEJBRuntimeException((Exception) t);
+                }
+                // ignoring other cases for the moment, let manage some OWB API change without making all tests failing
             }
         }
 
