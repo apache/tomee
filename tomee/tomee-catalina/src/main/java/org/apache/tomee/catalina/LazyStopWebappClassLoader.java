@@ -88,7 +88,15 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
 
     public void internalStop() throws LifecycleException {
         if (isStarted()) {
-            super.stop();
+            // reset classloader because of tomcat classloaderlogmanager
+            // to be sure we reset the right loggers
+            final ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            Thread.currentThread().setContextClassLoader(this);
+            try {
+                super.stop();
+            } finally {
+                Thread.currentThread().setContextClassLoader(loader);
+            }
         }
     }
 
