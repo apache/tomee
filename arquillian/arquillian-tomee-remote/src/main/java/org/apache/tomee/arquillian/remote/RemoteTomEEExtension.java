@@ -18,6 +18,7 @@
 package org.apache.tomee.arquillian.remote;
 
 import org.apache.openejb.arquillian.common.ArquillianUtil;
+import org.apache.openejb.arquillian.common.RemoteInitialContextObserver;
 import org.apache.openejb.arquillian.common.deployment.DeploymentExceptionObserver;
 import org.apache.openejb.arquillian.common.deployment.DeploymentExceptionProvider;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
@@ -33,6 +34,7 @@ public class RemoteTomEEExtension implements LoadableExtension {
             builder.service(DeployableContainer.class, RemoteTomEEContainer.class)
                 .service(AuxiliaryArchiveAppender.class, RemoteTomEEEJBEnricherArchiveAppender.class)
                 .observer(DeploymentExceptionObserver.class)
+                .observer(RemoteInitialContextObserver.class)
                 .service(ResourceProvider.class, DeploymentExceptionProvider.class);
         }
     }
