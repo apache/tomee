@@ -23,9 +23,13 @@ import org.apache.tomee.webapp.Application;
 import org.apache.tomee.webapp.command.Command;
 import org.apache.tomee.webapp.command.IsProtected;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 @IsProtected
 public class RunInstaller implements Command {
@@ -66,24 +70,72 @@ public class RunInstaller implements Command {
         json.put("infos", installer.getAlerts().getInfos());
 
         final Map<String, Object> test = new HashMap<String, Object>();
-        test.put("hashHome", false);
-        test.put("doesHomeExist", false);
-        test.put("isHomeDirectory", false);
-        test.put("hasLibDirectory", false);
-
         json.put("test", test);
 
-        final String homePath = System.getProperty("openejb.home");
-        if(homePath != null) {
-            final File homeDir = new File(homePath);
-            test.put("doesHomeExist", homeDir.exists());
-            if(homeDir.exists()) {
-                test.put("isHomeDirectory", homeDir.isDirectory());
-                final File libDir = new File(homeDir, "lib");
-                test.put("hasLibDirectory", libDir.exists());
+        {
+            test.put("hasHome", false);
+            test.put("doesHomeExist", false);
+            test.put("isHomeDirectory", false);
+            test.put("hasLibDirectory", false);
+
+            final String homePath = System.getProperty("openejb.home");
+            if (homePath != null) {
+                test.put("hasHome", true);
+                final File homeDir = new File(homePath);
+                test.put("doesHomeExist", homeDir.exists());
+                if (homeDir.exists()) {
+                    test.put("isHomeDirectory", homeDir.isDirectory());
+                    final File libDir = new File(homeDir, "lib");
+                    test.put("hasLibDirectory", libDir.exists());
+                }
             }
         }
 
+        {
+            test.put("wereTheOpenEJBClassesInstalled", false);
+            test.put("wereTheEjbClassesInstalled", false);
+            test.put("wasOpenEJBStarted", false);
+            test.put("canILookupAnything", false);
+
+            try {
+                final ClassLoader myLoader = this.getClass().getClassLoader();
+                Class.forName("org.apache.openejb.OpenEJB", true, myLoader);
+                test.put("wereTheOpenEJBClassesInstalled", true);
+            } catch (Exception e) {
+                // noop
+            }
+
+            try {
+                Class.forName("javax.ejb.EJBHome", true, this.getClass().getClassLoader());
+                test.put("wereTheEjbClassesInstalled", true);
+            } catch (Exception e) {
+                // noop
+            }
+
+            try {
+                final Class openejb = Class.forName("org.apache.openejb.OpenEJB", true, this.getClass().getClassLoader());
+                final Method isInitialized = openejb.getDeclaredMethod("isInitialized");
+                final Boolean running = (Boolean) isInitialized.invoke(openejb);
+                test.put("wasOpenEJBStarted", running);
+            } catch (Exception e) {
+                // noop
+            }
+
+            try {
+                final Properties p = new Properties();
+                p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
+                p.put("openejb.loader", "embed");
+
+                final InitialContext ctx = new InitialContext(p);
+                final Object obj = ctx.lookup("");
+
+                if (obj.getClass().getName().equals("org.apache.openejb.core.ivm.naming.IvmContext")) {
+                    test.put("canILookupAnything", true);
+                }
+            } catch (Exception e) {
+                // noop
+            }
+        }
         return json;
     }
 }
