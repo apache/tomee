@@ -70,7 +70,7 @@ public class RunInstaller implements Command {
         json.put("infos", installer.getAlerts().getInfos());
 
         final Map<String, Object> test = new HashMap<String, Object>();
-        json.put("test", test);
+        json.put("tests", test);
 
         {
             test.put("hasHome", false);
