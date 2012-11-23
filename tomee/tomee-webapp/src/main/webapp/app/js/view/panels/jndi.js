@@ -19,9 +19,9 @@
 TOMEE.ApplicationTabJndi = function () {
     "use strict";
 
-    var channel = TOMEE.ApplicationChannel,
-        container = $(TOMEE.ApplicationTemplates.getValue('application-tab-jndi', {})),
-        active = false;
+    var channel = TOMEE.ApplicationChannel;
+    var container = $(TOMEE.ApplicationTemplates.getValue('application-tab-jndi', {}));
+    var active = false;
 
     channel.bind('ui-actions', 'window-F5-pressed', function () {
         triggerRefresh();

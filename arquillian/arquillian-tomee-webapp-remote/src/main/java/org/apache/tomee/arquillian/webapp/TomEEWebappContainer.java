@@ -143,7 +143,7 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
                         .append(configuration.getHost())
                         .append(":")
                         .append(configuration.getHttpPort())
-                        .append("/tomee/installer?action=install&auto=true");
+                        .append("/tomee/installer");
 
                 installer.addTomEEAdminConfInTomcatUsers(true);
 

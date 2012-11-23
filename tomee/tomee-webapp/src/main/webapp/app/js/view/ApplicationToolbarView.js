@@ -32,6 +32,19 @@ TOMEE.ApplicationToolbarView = function () {
         });
     });
 
+    channel.bind('ui-actions', 'locked-change', function (data) {
+        el.find('.toolbar-item').each(function (index, htmlElement) {
+            var element = $(htmlElement);
+            if (data.panel === element.attr('tab-key')) {
+                if (data.locked) {
+                    element.addClass('hidden');
+                } else {
+                    element.removeClass('hidden');
+                }
+            }
+        });
+    });
+
     channel.bind('ui-actions', 'panel-switch', function (data) {
         el.find('.toolbar-item').removeClass('active');
         el.find('.toolbar-item').each(function (index, htmlEl) {

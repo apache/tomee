@@ -19,6 +19,7 @@
 
 TOMEE.I18N = (function () {
 
+    var missing = Handlebars.compile('[!{{key}}!]');
     var messages = {
         'application.name':'Apache TomEE',
 
@@ -29,11 +30,18 @@ TOMEE.I18N = (function () {
 
         'application.home':'Home',
 
+        'application.status':'Status',
+        'application.status.install':'install',
+        'application.status.reinstall':'re-install',
+        'application.status.isAgentInstalled':'Is the agent installed? {{message}}',
+        'application.status.isListenerInstalled':'Is the listener installed? {{message}}',
+
         'application.jndi':'JNDI',
         'application.jndi.path':'Path',
 
         'application.console':'Console',
         'application.console.run':'Execute',
+        'application.console.run.error':'Script error.',
         'application.console.clear.output':'Clear output',
         'application.console.done':'Script executed.',
         'application.console.run.time':'Time',
@@ -51,18 +59,29 @@ TOMEE.I18N = (function () {
         'application.sign.in':'Sign In',
         'application.sign.out':'Sign Out',
         'application.log.in':'Login',
+        'application.log.error':'Login error. Please try again.',
+        'application.log.bad':'Bad user or password. Please try again.',
         'application.password':'Password',
 
         'dummy':'dummy'
     };
 
-    var get = function (key) {
-        var result = messages[key];
-        if (!result) {
-            result = '[!' + key + '!]';
+    TOMEE.utils.forEachKey(messages, function (key, value) {
+        var template = Handlebars.compile(value);
+        messages[key] = template;
+    });
+
+    var get = function (key, values) {
+        var template = messages[key];
+        var cfg = values;
+        if (!template) {
+            template = missing;
+            cfg = {
+                key:key
+            };
             console.error('Missing i18n message.', key);
         }
-        return result;
+        return template(cfg);
     };
 
     Handlebars.registerHelper('i18n', function (key) {
