@@ -33,7 +33,7 @@ start-plus: kill-tomee tomee
 	cd target/runnner/ && tar -xvzf apache-tomee-plus-$(TOMEE_VERSION).tar.gz
 	rm target/runnner/apache-tomee-plus-$(TOMEE_VERSION)/conf/tomcat-users.xml 	
 	cp tomee/tomee-webapp/src/test/conf/tomcat-users.xml target/runnner/apache-tomee-plus-$(TOMEE_VERSION)/conf/
-	export JPDA_SUSPEND=y && export CATALINA_PID=target/runnner/tomcat-pid.txt && ./target/runnner/apache-tomee-plus-$(TOMEE_VERSION)/bin/catalina.sh jpda start
+	export JPDA_SUSPEND=n && export CATALINA_PID=target/runnner/tomcat-pid.txt && ./target/runnner/apache-tomee-plus-$(TOMEE_VERSION)/bin/catalina.sh jpda start
 
 start-tomee: kill-tomee tomee
 	mkdir -p target/runnner
@@ -46,7 +46,7 @@ start-tomee: kill-tomee tomee
 	cp tomee/tomee-webapp/src/test/conf/tomcat-users.xml target/runnner/apache-tomcat-7.0.33/conf/
 	chmod +x target/runnner/$(TOMCAT_ZIP_NAME)/bin/startup.sh
 	chmod +x target/runnner/apache-tomcat-7.0.33/bin/catalina.sh
-	export JPDA_SUSPEND=y && export CATALINA_PID=target/runnner/tomcat-pid.txt && ./target/runnner/$(TOMCAT_ZIP_NAME)/bin/catalina.sh jpda start
+	export JPDA_SUSPEND=n && export CATALINA_PID=target/runnner/tomcat-pid.txt && ./target/runnner/$(TOMCAT_ZIP_NAME)/bin/catalina.sh jpda start
 
 reload-tomee: kill-tomee
 	chmod +x target/runnner/$(TOMCAT_ZIP_NAME)/bin/startup.sh
