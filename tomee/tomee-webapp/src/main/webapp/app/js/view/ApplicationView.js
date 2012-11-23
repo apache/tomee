@@ -23,7 +23,8 @@ TOMEE.ApplicationView = function () {
         panelMap = {
             'home':TOMEE.ApplicationTabHome(),
             'console':TOMEE.ApplicationTabConsole(),
-            'log':TOMEE.ApplicationTabLog()
+            'log':TOMEE.ApplicationTabLog(),
+            'status': TOMEE.ApplicationTabStatus()
         },
         selected = null,
         container = $(TOMEE.ApplicationTemplates.getValue('application', {})),
@@ -166,8 +167,8 @@ TOMEE.ApplicationView = function () {
             containerWidth,
             toolbarHeight = toolbar.getEl().outerHeight();
 
-        containerHeight = myWindow.outerHeight();
-        containerWidth = myWindow.outerWidth();
+        containerHeight = Math.max(myWindow.outerHeight(),600);
+        containerWidth = Math.max(myWindow.outerWidth(), 800);
 
         container.css('height', containerHeight + 'px');
         container.css('width', containerWidth + 'px');

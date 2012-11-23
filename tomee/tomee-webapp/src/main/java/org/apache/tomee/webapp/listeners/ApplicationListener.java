@@ -19,21 +19,18 @@ package org.apache.tomee.webapp.listeners;
 
 import org.apache.tomee.webapp.Application;
 
-import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.http.HttpSessionListener;
-import java.util.HashMap;
-import java.util.Map;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 
-public class SessionListener implements HttpSessionListener {
-
+public class ApplicationListener implements ServletContextListener {
     @Override
-    public void sessionCreated(HttpSessionEvent httpSessionEvent) {
-        Map<String, Object> objects = new HashMap<String, Object >();
-        httpSessionEvent.getSession().setAttribute("objects", objects);
+    public void contextInitialized(ServletContextEvent ev) {
+        final String rootPath = ev.getServletContext().getRealPath("/");
+        Application.getInstance().setRootPath(rootPath);
     }
 
     @Override
-    public void sessionDestroyed(HttpSessionEvent event) {
-        Application.getInstance().removeSession(event.getSession().getId());
+    public void contextDestroyed(ServletContextEvent servletContextEvent) {
+        //no-op
     }
 }

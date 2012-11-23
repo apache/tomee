@@ -134,6 +134,17 @@ TOMEE.utils = (function () {
         }
     }
 
+    function forEachKey(obj, callback) {
+        if(!obj) {
+            return;
+        }
+        for (var key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                callback(key, obj[key]);
+            }
+        }
+    }
+
     return {
         keyCodeToString: keyCodeToString,
         isPrimitive:isPrimitive,
@@ -142,6 +153,7 @@ TOMEE.utils = (function () {
         getArray:getArray,
         getObject:getObject,
         stringFormat:stringFormat,
-        forEach:forEach
+        forEach:forEach,
+        forEachKey:forEachKey
     }
 })();

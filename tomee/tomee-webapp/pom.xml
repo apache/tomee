@@ -212,7 +212,7 @@
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-common</artifactId>
       <version>${tomee.version}</version>
-      <scope>runtime</scope>
+      <scope>compile</scope>
       <exclusions>
         <exclusion>
           <groupId>org.apache.openejb</groupId>

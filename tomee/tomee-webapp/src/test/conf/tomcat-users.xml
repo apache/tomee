@@ -21,6 +21,9 @@
 <!-- $Rev: 597221 $ $Date: 2007-11-21 22:51:05 +0100 (Wed, 21 Nov 2007) $ -->
 
 <tomcat-users>
-    <user name="admin" password="admin" roles="manager,user" />
+    <role rolename="manager"/>
+    <role rolename="user"/>
+    <role rolename="tomee-admin"/>
+    <user name="admin" password="admin" roles="manager,user,tomee-admin" />
     <user name="jane" password="doe" roles="user" />
 </tomcat-users>
