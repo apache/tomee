@@ -109,21 +109,11 @@ TOMEE.ApplicationTabStatus = function () {
         buttons.find('.install').each(function (index, element) {
             var btn = $(element);
             if (data.output.isAgentInstalled || data.output.isAgentInstalled) {
-                btn.addClass('hidden');
+                btn.prop('disabled', true);
             } else {
-                btn.removeClass('hidden');
+                btn.prop('disabled', false);
             }
         });
-
-        buttons.find('.reinstall').each(function (index, element) {
-            var btn = $(element);
-            if (!data.output.isAgentInstalled && !data.output.isListenerInstalled) {
-                btn.addClass('hidden');
-            } else {
-                btn.removeClass('hidden');
-            }
-        });
-
 
         showAlert([
             TOMEE.I18N.get('application.status.isAgentInstalled', {

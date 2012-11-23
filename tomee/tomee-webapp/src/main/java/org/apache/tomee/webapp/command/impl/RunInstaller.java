@@ -65,6 +65,25 @@ public class RunInstaller implements Command {
         json.put("warnings", installer.getAlerts().getWarnings());
         json.put("infos", installer.getAlerts().getInfos());
 
+        final Map<String, Object> test = new HashMap<String, Object>();
+        test.put("hashHome", false);
+        test.put("doesHomeExist", false);
+        test.put("isHomeDirectory", false);
+        test.put("hasLibDirectory", false);
+
+        json.put("test", test);
+
+        final String homePath = System.getProperty("openejb.home");
+        if(homePath != null) {
+            final File homeDir = new File(homePath);
+            test.put("doesHomeExist", homeDir.exists());
+            if(homeDir.exists()) {
+                test.put("isHomeDirectory", homeDir.isDirectory());
+                final File libDir = new File(homeDir, "lib");
+                test.put("hasLibDirectory", libDir.exists());
+            }
+        }
+
         return json;
     }
 }
