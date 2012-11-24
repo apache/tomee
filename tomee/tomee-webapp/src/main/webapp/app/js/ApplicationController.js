@@ -104,7 +104,11 @@ TOMEE.ApplicationController = function () {
     });
 
     channel.bind('server-command-callback-success', 'Login', function (params) {
-        if (!params.output.loginSuccess) {
+        if (params.output.loginSuccess) {
+            growl.showNotification(TOMEE.I18N.get('application.log.hello', {
+                userName: params.params.user
+            }), 'success');
+        } else {
             growl.showNotification(TOMEE.I18N.get('application.log.bad'), 'error');
         }
     });

@@ -61,6 +61,7 @@ TOMEE.I18N = (function () {
         'application.log.in':'Login',
         'application.log.error':'Login error. Please try again.',
         'application.log.bad':'Bad user or password. Please try again.',
+        'application.log.hello':'Hello {{userName}}!',
         'application.password':'Password',
 
         'dummy':'dummy'
