@@ -167,8 +167,8 @@ TOMEE.ApplicationView = function () {
             containerWidth,
             toolbarHeight = toolbar.getEl().outerHeight();
 
-        containerHeight = Math.max(myWindow.outerHeight(),600);
-        containerWidth = Math.max(myWindow.outerWidth(), 800);
+        containerHeight = myWindow.outerHeight();
+        containerWidth = myWindow.outerWidth();
 
         container.css('height', containerHeight + 'px');
         container.css('width', containerWidth + 'px');
