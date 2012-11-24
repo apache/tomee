@@ -70,6 +70,8 @@ import org.apache.openejb.assembler.classic.DeploymentExceptionManager;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.InjectionBuilder;
 import org.apache.openejb.assembler.classic.JndiEncBuilder;
+import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
+import org.apache.openejb.assembler.classic.ResourceInfo;
 import org.apache.openejb.assembler.classic.ServletInfo;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
@@ -928,12 +930,27 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
             if (standardContext.getNamingResources() instanceof OpenEJBNamingResource) {
                 // add them to the app as resource
-                for (ResourceBase resource : ((OpenEJBNamingResource) standardContext.getNamingResources()).getTomcatResources()) {
-                    final Resource newResource = new Resource(resource.getName(), resource.getType(), "org.apache.tomee:ProvidedByTomcat");
-                    newResource.getProperties().setProperty("jndiName", newResource.getId());
-                    newResource.getProperties().setProperty("appName", getId(standardContext));
-                    newResource.getProperties().setProperty("factory", (String) resource.getProperty("factory"));
-                    appModule.getResources().add(newResource);
+                final OpenEJBNamingResource nr = (OpenEJBNamingResource) standardContext.getNamingResources();
+                for (ResourceBase resource : nr.getTomcatResources()) {
+                    final String name = resource.getName();
+
+                    boolean found = false;
+                    for (ResourceInfo r : SystemInstance.get().getComponent(OpenEjbConfiguration.class).facilities.resources) {
+                        if (r.id.equals(name)) {
+                            nr.removeResource(name);
+                            found = true;
+                            logger.warning(name + " resource was defined in both tomcat and tomee so removing tomcat one");
+                            break;
+                        }
+                    }
+
+                    if (!found) {
+                        final Resource newResource = new Resource(name, resource.getType(), "org.apache.tomee:ProvidedByTomcat");
+                        newResource.getProperties().setProperty("jndiName", newResource.getId());
+                        newResource.getProperties().setProperty("appName", getId(standardContext));
+                        newResource.getProperties().setProperty("factory", (String) resource.getProperty("factory"));
+                        appModule.getResources().add(newResource);
+                    }
                 }
             }
 
