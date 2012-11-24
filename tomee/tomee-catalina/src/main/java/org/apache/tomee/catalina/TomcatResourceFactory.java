@@ -19,6 +19,7 @@ package org.apache.tomee.catalina;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.loader.SystemInstance;
 
+import javax.naming.CompositeName;
 import javax.naming.NamingException;
 import javax.naming.spi.ObjectFactory;
 
@@ -59,7 +60,7 @@ public class TomcatResourceFactory {
                 if (instance instanceof ObjectFactory) {
                     // not really used as expected but it matches a bit more than before
                     // context is null since it can't be used at this moment (see TomcatWebAppBuilder lifecycle)
-                    return ((ObjectFactory) instance).getObjectInstance(jndiName, null, null, null);
+                    return ((ObjectFactory) instance).getObjectInstance(null, new CompositeName(jndiName), null, null);
                 }
             }
         } catch (Exception e) {
