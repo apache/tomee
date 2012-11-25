@@ -19,6 +19,7 @@ package org.apache.openejb.cdi;
 import org.apache.webbeans.component.BeanManagerBean;
 import org.apache.webbeans.component.BuildInOwbBean;
 import org.apache.webbeans.component.ConversationBean;
+import org.apache.webbeans.component.InjectionPointBean;
 import org.apache.webbeans.container.BeanManagerImpl;
 
 import javax.el.ELResolver;
@@ -383,7 +384,7 @@ public class WebappBeanManager extends BeanManagerImpl {
         deploymentBeans.clear();
         for (Bean<?> bean : getParentBm().getBeans()) {
             if (bean instanceof BeanManagerBean || bean instanceof BuildInOwbBean
-                    || bean instanceof ConversationBean) {
+                    || bean instanceof ConversationBean || bean instanceof InjectionPointBean) {
                 continue;
             }
             deploymentBeans.add(bean);
