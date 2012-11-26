@@ -61,7 +61,6 @@ public class OpenEJBContextConfig extends ContextConfig {
     private static final String ADJUST_DATASOURCE_JNDI_NAMES = SystemInstance.get().getProperty("tomee.resources.adjust-web-xml-jndi-name", "true");
 
     private TomcatWebAppBuilder.StandardContextInfo info;
-    private boolean configureStartOk = false;
 
     // processAnnotationXXX is called for each folder of WEB-INF
     // since we store all classes in WEB-INF we will do it only once so use this boolean to avoid multiple processing
@@ -74,14 +73,8 @@ public class OpenEJBContextConfig extends ContextConfig {
 
     @Override
     public void configureStart() {
-        if (configureStartOk) {
-            return;
-        }
         super.configureStart();
-
         adjustDataSourceNameIfNecessary(); // doing it here to potentially factorize resource id resolution
-
-        configureStartOk = true;
     }
 
     @Override
