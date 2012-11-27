@@ -17,7 +17,17 @@
  */
 package org.apache.openejb.test.mdb;
 
-import javax.annotation.PreDestroy;
+import junit.framework.Assert;
+import junit.framework.AssertionFailedError;
+import org.apache.openejb.test.TestFailureException;
+import org.apache.openejb.test.entity.bmp.BasicBmpHome;
+import org.apache.openejb.test.stateful.BasicStatefulBusinessLocal;
+import org.apache.openejb.test.stateful.BasicStatefulBusinessRemote;
+import org.apache.openejb.test.stateful.BasicStatefulHome;
+import org.apache.openejb.test.stateless.BasicStatelessBusinessLocal;
+import org.apache.openejb.test.stateless.BasicStatelessBusinessRemote;
+import org.apache.openejb.test.stateless.BasicStatelessHome;
+
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.MessageDrivenBean;
@@ -35,17 +45,6 @@ import javax.naming.InitialContext;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-
-import junit.framework.Assert;
-import junit.framework.AssertionFailedError;
-import org.apache.openejb.test.TestFailureException;
-import org.apache.openejb.test.entity.bmp.BasicBmpHome;
-import org.apache.openejb.test.stateful.BasicStatefulBusinessLocal;
-import org.apache.openejb.test.stateful.BasicStatefulBusinessRemote;
-import org.apache.openejb.test.stateful.BasicStatefulHome;
-import org.apache.openejb.test.stateless.BasicStatelessBusinessLocal;
-import org.apache.openejb.test.stateless.BasicStatelessBusinessRemote;
-import org.apache.openejb.test.stateless.BasicStatelessHome;
 
 public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, MessageListener {
     private MessageDrivenContext ejbContextField;
@@ -77,28 +76,25 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
     private MessageDrivenContext mdbContext = null;
     private MdbInvoker mdbInvoker;
 
-    public void setMessageDrivenContext(MessageDrivenContext ctx) throws EJBException {
+    @Override
+    public void setMessageDrivenContext(final MessageDrivenContext ctx) throws EJBException {
         this.mdbContext = ctx;
         try {
-            ConnectionFactory connectionFactory = (ConnectionFactory) new InitialContext().lookup("java:comp/env/jms");
+            final ConnectionFactory connectionFactory = (ConnectionFactory) new InitialContext().lookup("java:comp/env/jms");
             mdbInvoker = new MdbInvoker(connectionFactory, this);
         } catch (Exception e) {
             throw new EJBException(e);
         }
     }
 
-    public void onMessage(Message message) {
+    @Override
+    public void onMessage(final Message message) {
         try {
 //            System.out.println("\n" +
 //                    "***************************************\n" +
 //                    "Got message: " + message + "\n" +
 //                    "***************************************\n\n");
-            try {
-                message.acknowledge();
-            } catch (JMSException e) {
-                e.printStackTrace();
-            }
-            mdbInvoker.onMessage(message);
+             mdbInvoker.onMessage(message);
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -108,7 +104,7 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         return statefulBusinessLocalField;
     }
 
-    public void setStatefulBusinessLocal(BasicStatefulBusinessLocal statefulBusinessLocal) {
+    public void setStatefulBusinessLocal(final BasicStatefulBusinessLocal statefulBusinessLocal) {
         this.statefulBusinessLocalField = statefulBusinessLocal;
     }
 
@@ -116,7 +112,7 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         return statefulBusinessRemoteField;
     }
 
-    public void setStatefulBusinessRemote(BasicStatefulBusinessRemote statefulBusinessRemote) {
+    public void setStatefulBusinessRemote(final BasicStatefulBusinessRemote statefulBusinessRemote) {
         this.statefulBusinessRemoteField = statefulBusinessRemote;
     }
 
@@ -124,7 +120,7 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         return statelessBusinessLocalField;
     }
 
-    public void setStatelessBusinessLocal(BasicStatelessBusinessLocal statelessBusinessLocal) {
+    public void setStatelessBusinessLocal(final BasicStatelessBusinessLocal statelessBusinessLocal) {
         this.statelessBusinessLocalField = statelessBusinessLocal;
     }
 
@@ -132,7 +128,7 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         return statelessBusinessRemoteField;
     }
 
-    public void setStatelessBusinessRemote(BasicStatelessBusinessRemote statelessBusinessRemote) {
+    public void setStatelessBusinessRemote(final BasicStatelessBusinessRemote statelessBusinessRemote) {
         this.statelessBusinessRemoteField = statelessBusinessRemote;
     }
 
@@ -140,7 +136,7 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         return bmpHomeField;
     }
 
-    public void setBmpHome(BasicBmpHome bmpHome) {
+    public void setBmpHome(final BasicBmpHome bmpHome) {
         this.bmpHomeField = bmpHome;
     }
 
@@ -148,7 +144,7 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         return boooleanField;
     }
 
-    public void setBooolean(Boolean booolean) {
+    public void setBooolean(final Boolean booolean) {
         this.boooleanField = booolean;
     }
 
@@ -156,7 +152,7 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         return byyteField;
     }
 
-    public void setByyte(Byte byyte) {
+    public void setByyte(final Byte byyte) {
         this.byyteField = byyte;
     }
 
@@ -164,7 +160,7 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         return chaaracterField;
     }
 
-    public void setChaaracter(Character chaaracter) {
+    public void setChaaracter(final Character chaaracter) {
         this.chaaracterField = chaaracter;
     }
 
@@ -172,7 +168,7 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         return daataSourceField;
     }
 
-    public void setDaataSource(DataSource daataSource) {
+    public void setDaataSource(final DataSource daataSource) {
         this.daataSourceField = daataSource;
     }
 
@@ -180,7 +176,7 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         return coonnectionFactory;
     }
 
-    public void setCoonnectionFactory(ConnectionFactory coonnectionFactory) {
+    public void setCoonnectionFactory(final ConnectionFactory coonnectionFactory) {
         this.coonnectionFactory = coonnectionFactory;
     }
 
@@ -188,7 +184,7 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         return queueCoonnectionFactory;
     }
 
-    public void setQueueCoonnectionFactory(QueueConnectionFactory queueCoonnectionFactory) {
+    public void setQueueCoonnectionFactory(final QueueConnectionFactory queueCoonnectionFactory) {
         this.queueCoonnectionFactory = queueCoonnectionFactory;
     }
 
@@ -196,7 +192,7 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         return topicCoonnectionFactory;
     }
 
-    public void setTopicCoonnectionFactory(TopicConnectionFactory topicCoonnectionFactory) {
+    public void setTopicCoonnectionFactory(final TopicConnectionFactory topicCoonnectionFactory) {
         this.topicCoonnectionFactory = topicCoonnectionFactory;
     }
 
@@ -204,7 +200,7 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         return dooubleField;
     }
 
-    public void setDoouble(Double doouble) {
+    public void setDoouble(final Double doouble) {
         this.dooubleField = doouble;
     }
 
@@ -212,7 +208,7 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         return eemField;
     }
 
-    public void setEem(EntityManager eem) {
+    public void setEem(final EntityManager eem) {
         this.eemField = eem;
     }
 
@@ -220,7 +216,7 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         return ejbContextField;
     }
 
-    public void setEjbContext(MessageDrivenContext ejbContext) {
+    public void setEjbContext(final MessageDrivenContext ejbContext) {
         this.ejbContextField = ejbContext;
     }
 
@@ -228,7 +224,7 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         return emField;
     }
 
-    public void setEm(EntityManager em) {
+    public void setEm(final EntityManager em) {
         this.emField = em;
     }
 
@@ -236,7 +232,7 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         return emfField;
     }
 
-    public void setEmf(EntityManagerFactory emf) {
+    public void setEmf(final EntityManagerFactory emf) {
         this.emfField = emf;
     }
 
@@ -244,7 +240,7 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         return flooatField;
     }
 
-    public void setFlooat(Float flooat) {
+    public void setFlooat(final Float flooat) {
         this.flooatField = flooat;
     }
 
@@ -252,7 +248,7 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         return inteegerField;
     }
 
-    public void setInteeger(Integer inteeger) {
+    public void setInteeger(final Integer inteeger) {
         this.inteegerField = inteeger;
     }
 
@@ -260,7 +256,7 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         return loongField;
     }
 
-    public void setLoong(Long loong) {
+    public void setLoong(final Long loong) {
         this.loongField = loong;
     }
 
@@ -268,7 +264,7 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         return pemField;
     }
 
-    public void setPem(EntityManager pem) {
+    public void setPem(final EntityManager pem) {
         this.pemField = pem;
     }
 
@@ -276,7 +272,7 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         return shoortField;
     }
 
-    public void setShoort(Short shoort) {
+    public void setShoort(final Short shoort) {
         this.shoortField = shoort;
     }
 
@@ -284,7 +280,7 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         return statefulHomeField;
     }
 
-    public void setStatefulHome(BasicStatefulHome statefulHome) {
+    public void setStatefulHome(final BasicStatefulHome statefulHome) {
         this.statefulHomeField = statefulHome;
     }
 
@@ -292,7 +288,7 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         return statelessHomeField;
     }
 
-    public void setStatelessHome(BasicStatelessHome statelessHome) {
+    public void setStatelessHome(final BasicStatelessHome statelessHome) {
         this.statelessHomeField = statelessHome;
     }
 
@@ -300,13 +296,14 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         return striingField;
     }
 
-    public void setStriing(String striing) {
+    public void setStriing(final String striing) {
         this.striingField = striing;
     }
 
     public void ejbCreate() throws CreateException {
     }
 
+    @Override
     public void lookupEntityBean() throws TestFailureException {
         try {
             Assert.assertNotNull("The EJBObject is null", bmpHomeField);
@@ -315,6 +312,7 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         }
     }
 
+    @Override
     public void lookupStatefulBean() throws TestFailureException {
         try {
             Assert.assertNotNull("The EJBObject is null", statefulHomeField);
@@ -323,6 +321,7 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         }
     }
 
+    @Override
     public void lookupStatelessBean() throws TestFailureException {
         try {
             Assert.assertNotNull("The EJBObject is null", statelessHomeField);
@@ -331,42 +330,47 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         }
     }
 
-    public void lookupStatelessBusinessLocal() throws TestFailureException{
-        try{
-            Assert.assertNotNull("The EJB BusinessLocal is null", statelessBusinessLocalField );
-        } catch (AssertionFailedError afe){
+    @Override
+    public void lookupStatelessBusinessLocal() throws TestFailureException {
+        try {
+            Assert.assertNotNull("The EJB BusinessLocal is null", statelessBusinessLocalField);
+        } catch (AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    public void lookupStatelessBusinessRemote() throws TestFailureException{
-        try{
-            Assert.assertNotNull("The EJB BusinessRemote is null", statelessBusinessRemoteField );
-        } catch (AssertionFailedError afe){
+    @Override
+    public void lookupStatelessBusinessRemote() throws TestFailureException {
+        try {
+            Assert.assertNotNull("The EJB BusinessRemote is null", statelessBusinessRemoteField);
+        } catch (AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    public void lookupStatefulBusinessLocal() throws TestFailureException{
-        try{
-            Assert.assertNotNull("The EJB BusinessLocal is null", statefulBusinessLocalField );
-        } catch (AssertionFailedError afe){
+    @Override
+    public void lookupStatefulBusinessLocal() throws TestFailureException {
+        try {
+            Assert.assertNotNull("The EJB BusinessLocal is null", statefulBusinessLocalField);
+        } catch (AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    public void lookupStatefulBusinessRemote() throws TestFailureException{
-        try{
-            Assert.assertNotNull("The EJB BusinessRemote is null", statefulBusinessRemoteField );
-        } catch (AssertionFailedError afe){
+    @Override
+    public void lookupStatefulBusinessRemote() throws TestFailureException {
+        try {
+            Assert.assertNotNull("The EJB BusinessRemote is null", statefulBusinessRemoteField);
+        } catch (AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
 
+    @Override
     public void lookupStringEntry() throws TestFailureException {
         try {
-            String expected = new String("1");
+            final String expected = "1";
             Assert.assertNotNull("The String looked up is null", striingField);
             Assert.assertEquals(expected, striingField);
         } catch (AssertionFailedError afe) {
@@ -374,9 +378,10 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         }
     }
 
+    @Override
     public void lookupDoubleEntry() throws TestFailureException {
         try {
-            Double expected = new Double(1.0D);
+            final Double expected = 1.0D;
 
             Assert.assertNotNull("The Double looked up is null", dooubleField);
             Assert.assertEquals(expected, dooubleField);
@@ -386,9 +391,10 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         }
     }
 
+    @Override
     public void lookupLongEntry() throws TestFailureException {
         try {
-            Long expected = new Long(1L);
+            final Long expected = 1L;
 
             Assert.assertNotNull("The Long looked up is null", loongField);
             Assert.assertEquals(expected, loongField);
@@ -397,9 +403,10 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         }
     }
 
+    @Override
     public void lookupFloatEntry() throws TestFailureException {
         try {
-            Float expected = new Float(1.0F);
+            final Float expected = 1.0F;
 
             Assert.assertNotNull("The Float looked up is null", flooatField);
             Assert.assertEquals(expected, flooatField);
@@ -408,9 +415,10 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         }
     }
 
+    @Override
     public void lookupIntegerEntry() throws TestFailureException {
         try {
-            Integer expected = new Integer(1);
+            final Integer expected = 1;
 
             Assert.assertNotNull("The Integer looked up is null", inteegerField);
             Assert.assertEquals(expected, inteegerField);
@@ -420,9 +428,10 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         }
     }
 
+    @Override
     public void lookupShortEntry() throws TestFailureException {
         try {
-            Short expected = new Short((short) 1);
+            final Short expected = (short) 1;
 
             Assert.assertNotNull("The Short looked up is null", shoortField);
             Assert.assertEquals(expected, shoortField);
@@ -431,9 +440,10 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         }
     }
 
+    @Override
     public void lookupBooleanEntry() throws TestFailureException {
         try {
-            Boolean expected = new Boolean(true);
+            final Boolean expected = true;
 
             Assert.assertNotNull("The Boolean looked up is null", boooleanField);
             Assert.assertEquals(expected, boooleanField);
@@ -442,9 +452,10 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         }
     }
 
+    @Override
     public void lookupByteEntry() throws TestFailureException {
         try {
-            Byte expected = new Byte((byte) 1);
+            final Byte expected = (byte) 1;
 
             Assert.assertNotNull("The Byte looked up is null", byyteField);
             Assert.assertEquals(expected, byyteField);
@@ -453,9 +464,10 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         }
     }
 
+    @Override
     public void lookupCharacterEntry() throws TestFailureException {
         try {
-            Character expected = new Character('D');
+            final Character expected = 'D';
 
             Assert.assertNotNull("The Character looked up is null", chaaracterField);
             Assert.assertEquals(expected, chaaracterField);
@@ -464,6 +476,7 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         }
     }
 
+    @Override
     public void lookupResource() throws TestFailureException {
         try {
             Assert.assertNotNull("The DataSource is null", daataSourceField);
@@ -472,31 +485,33 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         }
     }
 
-    public void lookupJMSConnectionFactory() throws TestFailureException{
-        try{
-            try{
+    @Override
+    public void lookupJMSConnectionFactory() throws TestFailureException {
+        try {
+            try {
                 testJmsConnection(coonnectionFactory.createConnection());
                 testJmsConnection(queueCoonnectionFactory.createConnection());
                 testJmsConnection(topicCoonnectionFactory.createConnection());
-            } catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
-                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+                Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe){
+        } catch (AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    private void testJmsConnection(javax.jms.Connection connection) throws JMSException {
-        Session session = connection.createSession(false, Session.DUPS_OK_ACKNOWLEDGE);
-        Topic topic = session.createTopic("test");
-        MessageProducer producer = session.createProducer(topic);
+    private void testJmsConnection(final javax.jms.Connection connection) throws JMSException {
+        final Session session = connection.createSession(false, Session.DUPS_OK_ACKNOWLEDGE);
+        final Topic topic = session.createTopic("test");
+        final MessageProducer producer = session.createProducer(topic);
         producer.send(session.createMessage());
         producer.close();
         session.close();
         connection.close();
     }
 
+    @Override
     public void lookupPersistenceUnit() throws TestFailureException {
         try {
             Assert.assertNotNull("The EntityManagerFactory is null", emfField);
@@ -505,6 +520,7 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         }
     }
 
+    @Override
     public void lookupPersistenceContext() throws TestFailureException {
         try {
             Assert.assertNotNull("The EntityManager is null", emField);
@@ -520,6 +536,7 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
         }
     }
 
+    @Override
     public void lookupMessageDrivenContext() throws TestFailureException {
         try {
             Assert.assertNotNull("The MessageDrivenContext is null", mdbContext);
@@ -529,6 +546,10 @@ public class SetterInjectionMdbBean implements EncMdbObject, MessageDrivenBean, 
 
     }
 
+    @Override
     public void ejbRemove() throws EJBException {
+        if (null != mdbInvoker) {
+            mdbInvoker.destroy();
+        }
     }
 }

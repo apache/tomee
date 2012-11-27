@@ -17,8 +17,6 @@
  */
 package org.superbiz.enricher.maven;
 
-import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.DependencyResolvers;
 import org.jboss.shrinkwrap.resolver.api.maven.MavenDependencyResolver;
 
@@ -52,10 +50,10 @@ public final class Enrichers {
         return CACHE.get(pom);
     }
 
-    public static WebArchive wrap(final Archive<?> archive) {
-        if (!(WebArchive.class.isInstance(archive))) {
+    public static org.jboss.shrinkwrap.api.spec.WebArchive wrap(final org.jboss.shrinkwrap.api.Archive<?> archive) {
+        if (!(org.jboss.shrinkwrap.api.spec.WebArchive.class.isInstance(archive))) {
             throw new IllegalArgumentException("Unsupported archive type: " + archive.getClass().getName());
         }
-        return (WebArchive) archive;
+        return (org.jboss.shrinkwrap.api.spec.WebArchive) archive.shallowCopy();
     }
 }

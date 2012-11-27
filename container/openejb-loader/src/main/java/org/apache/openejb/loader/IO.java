@@ -16,25 +16,7 @@
  */
 package org.apache.openejb.loader;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.Closeable;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.Flushable;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.Proxy;
 import java.net.ProxySelector;
 import java.net.URI;
@@ -97,6 +79,7 @@ public class IO {
 
     /**
      * Reads and closes the input stream
+     *
      * @param in
      * @param properties
      * @return
@@ -107,7 +90,7 @@ public class IO {
         if (properties == null) throw new NullPointerException("Properties is null");
         try {
             properties.load(in);
-        } finally{
+        } finally {
             close(in);
         }
         return properties;
@@ -183,10 +166,10 @@ public class IO {
         if (destDir == null) {
             throw new NullPointerException("Destination must not be null");
         }
-        if (srcDir.exists() == false) {
+        if (!srcDir.exists()) {
             throw new FileNotFoundException("Source '" + srcDir + "' does not exist");
         }
-        if (srcDir.isDirectory() == false) {
+        if (!srcDir.isDirectory()) {
             throw new IOException("Source '" + srcDir + "' exists but is not a directory");
         }
         if (srcDir.getCanonicalPath().equals(destDir.getCanonicalPath())) {
@@ -214,15 +197,15 @@ public class IO {
             throw new IOException("Failed to list contents of " + srcDir);
         }
         if (destDir.exists()) {
-            if (destDir.isDirectory() == false) {
+            if (!destDir.isDirectory()) {
                 throw new IOException("Destination '" + destDir + "' exists but is not a directory");
             }
         } else {
-            if (destDir.mkdirs() == false) {
+            if (!destDir.mkdirs()) {
                 throw new IOException("Destination '" + destDir + "' directory cannot be created");
             }
         }
-        if (destDir.canWrite() == false) {
+        if (!destDir.canWrite()) {
             throw new IOException("Destination '" + destDir + "' cannot be written to");
         }
         for (File file : files) {
@@ -303,14 +286,16 @@ public class IO {
     public static void close(Closeable closeable) {
         if (closeable == null) return;
         try {
-            if (closeable instanceof Flushable) {
+            if (Flushable.class.isInstance(closeable)) {
                 ((Flushable) closeable).flush();
             }
-        } catch (IOException e) {
+        } catch (Throwable e) {
+            //Ignore
         }
         try {
             closeable.close();
-        } catch (IOException e) {
+        } catch (Throwable e) {
+            //Ignore
         }
     }
 

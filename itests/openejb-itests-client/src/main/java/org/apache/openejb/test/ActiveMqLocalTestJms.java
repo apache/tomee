@@ -25,9 +25,12 @@ import java.util.Properties;
  * @version $Rev: 637368 $ $Date: 2008-03-15 00:04:30 -0700 (Sat, 15 Mar 2008) $
  */
 public class ActiveMqLocalTestJms implements TestJms {
-    public void init(Properties props) {
+
+    @Override
+    public void init(final Properties props) {
     }
 
+    @Override
     public ConnectionFactory getConnectionFactory() {
         return new ActiveMQConnectionFactory("vm://localhost?async=true");
     }
