@@ -499,7 +499,8 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory {
                 ValidationMode mode = ValidationMode.valueOf(value.trim().toUpperCase());
                 reloadableEntityManagerFactory.setValidationMode(mode);
             } catch (Exception iae) {
-                // ignored
+                LOGGER.warning("Can't set validation mode " + value, iae);
+                reloadableEntityManagerFactory.setProperty(JAVAX_PERSISTENCE_VALIDATION_MODE, value);
             }
         }
 
