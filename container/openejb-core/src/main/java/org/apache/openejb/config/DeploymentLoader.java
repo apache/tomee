@@ -1245,7 +1245,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         }
     }
 
-    private static Map<String, URL> mapDescriptors(final ResourceFinder finder)
+    public static Map<String, URL> mapDescriptors(final ResourceFinder finder)
             throws IOException {
         final Map<String, URL> map = finder.getResourcesMap(ddDir);
 
