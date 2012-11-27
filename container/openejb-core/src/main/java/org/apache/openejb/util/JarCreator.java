@@ -50,7 +50,8 @@ public final class JarCreator {
 
     private static void jarFile(final JarOutputStream out, final File f, final String prefix) throws IOException {
         if (f.isDirectory()) {
-            for (File child : f.listFiles()) {
+            final File[] files = f.listFiles();
+            if (null != files) for (File child : files) {
                 jarFile(out, child, prefix);
             }
         } else {
