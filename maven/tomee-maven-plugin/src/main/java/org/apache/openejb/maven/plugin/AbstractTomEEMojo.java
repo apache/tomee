@@ -235,7 +235,8 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     private void removeDefaultWebapps(final boolean removeTomee) {
         final File webapps = new File(catalinaBase, webappDir);
         if (webapps.isDirectory()) {
-            for (File webapp : webapps.listFiles()) {
+			final File[] files = webapps.listFiles();
+            if (null != files) for (File webapp : files) {
                 final String name = webapp.getName();
                 if (webapp.isDirectory() && (removeTomee || !name.equals("tomee"))) {
                     try {

@@ -172,13 +172,20 @@ public class Files {
     public static void delete(File file) {
         if (file.exists()) {
             if (file.isDirectory()) {
-                for (File f : file.listFiles()) {
-                    delete(f);
-                }
+				final File[] files = file.listFiles();
+				if(null != files){
+					for (File f : files) {
+						delete(f);
+					}
+				}
             }
 
             if(!file.delete()){
-                file.deleteOnExit();
+                try{
+					file.deleteOnExit();
+				}catch(Throwable e){
+					//Ignore
+				}
             }
         }
     }
