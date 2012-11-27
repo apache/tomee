@@ -5270,6 +5270,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                     } else {
                         list.add(classLocation(loadedClass).toExternalForm());
                     }
+                } else {
+                    list.add(classLocation(loadedClass).toExternalForm());
                 }
             } catch (Exception e) {
                 list.add(classLocation(loadedClass).toExternalForm());
