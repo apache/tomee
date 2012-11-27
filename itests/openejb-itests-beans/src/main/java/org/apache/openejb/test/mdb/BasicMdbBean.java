@@ -19,7 +19,6 @@ package org.apache.openejb.test.mdb;
 import org.apache.openejb.test.ApplicationException;
 import org.apache.openejb.test.object.OperationsPolicy;
 
-import javax.annotation.PreDestroy;
 import javax.ejb.EJBException;
 import javax.ejb.MessageDrivenBean;
 import javax.ejb.MessageDrivenContext;
@@ -28,26 +27,28 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.naming.InitialContext;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Properties;
 
 public class BasicMdbBean implements BasicMdbObject, MessageDrivenBean, MessageListener {
-	private MessageDrivenContext mdbContext = null;
-    private static Hashtable allowedOperationsTable = new Hashtable();
+    private MessageDrivenContext mdbContext = null;
+    private static final HashMap<String, OperationsPolicy> allowedOperationsTable = new HashMap<String, OperationsPolicy>();
     protected MdbInvoker mdbInvoker;
 
-    public void setMessageDrivenContext(MessageDrivenContext ctx) throws EJBException {
+    @Override
+    public void setMessageDrivenContext(final MessageDrivenContext ctx) throws EJBException {
         this.mdbContext = ctx;
         testAllowedOperations("setMessageDrivenContext");
         try {
-            ConnectionFactory connectionFactory = (ConnectionFactory) new InitialContext().lookup("java:comp/env/jms");
+            final ConnectionFactory connectionFactory = (ConnectionFactory) new InitialContext().lookup("java:comp/env/jms");
             mdbInvoker = new MdbInvoker(connectionFactory, this);
         } catch (Exception e) {
             throw new EJBException(e);
         }
     }
 
-    public void onMessage(Message message) {
+    @Override
+    public void onMessage(final Message message) {
         try {
 //            System.out.println("\n" +
 //                    "***************************************\n" +
@@ -60,7 +61,7 @@ public class BasicMdbBean implements BasicMdbObject, MessageDrivenBean, MessageL
             }
             mdbInvoker.onMessage(message);
         } catch (Throwable e) {
-            e.printStackTrace();  
+            e.printStackTrace();
         }
     }
 
@@ -79,18 +80,19 @@ public class BasicMdbBean implements BasicMdbObject, MessageDrivenBean, MessageL
     /**
      * Maps to BasicStatelessObject.businessMethod
      */
-    public String businessMethod(String text){
+    @Override
+    public String businessMethod(final String text) {
         testAllowedOperations("businessMethod");
-        StringBuffer b = new StringBuffer(text);
+        final StringBuffer b = new StringBuffer(text);
         return b.reverse().toString();
     }
 
 
     /**
      * Throws an ApplicationException when invoked
-     *
      */
-    public void throwApplicationException() throws ApplicationException{
+    @Override
+    public void throwApplicationException() throws ApplicationException {
         throw new ApplicationException("Testing ability to throw Application Exceptions");
     }
 
@@ -99,35 +101,37 @@ public class BasicMdbBean implements BasicMdbObject, MessageDrivenBean, MessageL
      * This is a system exception and should result in the
      * destruction of the instance and invalidation of the
      * remote reference.
-     *
      */
+    @Override
     public void throwSystemException_NullPointer() {
         throw new NullPointerException("Testing ability to throw System Exceptions");
     }
 
     /**
      * Maps to BasicStatelessObject.getPermissionsReport
-     *
+     * <p/>
      * Returns a report of the bean's
      * runtime permissions
      *
      * @return
      */
-    public Properties getPermissionsReport(){
+    @Override
+    public Properties getPermissionsReport() {
         /* TO DO: */
         return null;
     }
 
     /**
      * Maps to BasicStatelessObject.getAllowedOperationsReport
-     *
+     * <p/>
      * Returns a report of the allowed opperations
      * for one of the bean's methods.
      *
      * @param methodName The method for which to get the allowed opperations report
      * @return
      */
-    public OperationsPolicy getAllowedOperationsReport(String methodName){
+    @Override
+    public OperationsPolicy getAllowedOperationsReport(final String methodName) {
         return (OperationsPolicy) allowedOperationsTable.get(methodName);
     }
 
@@ -140,11 +144,17 @@ public class BasicMdbBean implements BasicMdbObject, MessageDrivenBean, MessageL
     // MessageDrivenBean interface methods
     //
 
-    public void ejbCreate() throws javax.ejb.CreateException{
+    public void ejbCreate() throws javax.ejb.CreateException {
         testAllowedOperations("ejbCreate");
     }
 
+    @Override
     public void ejbRemove() throws EJBException {
+
+        if (null != mdbInvoker) {
+            mdbInvoker.destroy();
+        }
+
         testAllowedOperations("ejbRemove");
     }
 
@@ -152,67 +162,67 @@ public class BasicMdbBean implements BasicMdbObject, MessageDrivenBean, MessageL
     // SessionBean interface methods
     //================================
 
-	protected void testAllowedOperations(String methodName) {
-		OperationsPolicy policy = new OperationsPolicy();
+    protected void testAllowedOperations(final String methodName) {
+        final OperationsPolicy policy = new OperationsPolicy();
 
-		/*[0] Test getEJBHome /////////////////*/
-		try {
-			mdbContext.getEJBHome();
-			policy.allow(OperationsPolicy.Context_getEJBHome);
-		} catch (IllegalStateException ignored) {
-		}
+        /*[0] Test getEJBHome /////////////////*/
+        try {
+            mdbContext.getEJBHome();
+            policy.allow(OperationsPolicy.Context_getEJBHome);
+        } catch (IllegalStateException ignored) {
+        }
 
-		/*[1] Test getCallerPrincipal /////////*/
-		try {
-			mdbContext.getCallerPrincipal();
-			policy.allow(OperationsPolicy.Context_getCallerPrincipal);
-		} catch (IllegalStateException ignored) {
-		}
+        /*[1] Test getCallerPrincipal /////////*/
+        try {
+            mdbContext.getCallerPrincipal();
+            policy.allow(OperationsPolicy.Context_getCallerPrincipal);
+        } catch (IllegalStateException ignored) {
+        }
 
-		/*[2] Test isCallerInRole /////////////*/
-		try {
-			mdbContext.isCallerInRole("TheMan");
-			policy.allow(OperationsPolicy.Context_isCallerInRole);
-		} catch (IllegalStateException ignored) {
-		}
+        /*[2] Test isCallerInRole /////////////*/
+        try {
+            mdbContext.isCallerInRole("TheMan");
+            policy.allow(OperationsPolicy.Context_isCallerInRole);
+        } catch (IllegalStateException ignored) {
+        }
 
-		/*[3] Test getRollbackOnly ////////////*/
-		try {
-			mdbContext.getRollbackOnly();
-			policy.allow(OperationsPolicy.Context_getRollbackOnly);
-		} catch (IllegalStateException ignored) {
-		}
+        /*[3] Test getRollbackOnly ////////////*/
+        try {
+            mdbContext.getRollbackOnly();
+            policy.allow(OperationsPolicy.Context_getRollbackOnly);
+        } catch (IllegalStateException ignored) {
+        }
 
-		/*[4] Test setRollbackOnly ////////////*/
+        /*[4] Test setRollbackOnly ////////////*/
         // Rollback causes message redelivery
 
-		/*[5] Test getUserTransaction /////////*/
-		try {
-			mdbContext.getUserTransaction();
-			policy.allow(OperationsPolicy.Context_getUserTransaction);
-		} catch (IllegalStateException ignored) {
-		}
+        /*[5] Test getUserTransaction /////////*/
+        try {
+            mdbContext.getUserTransaction();
+            policy.allow(OperationsPolicy.Context_getUserTransaction);
+        } catch (IllegalStateException ignored) {
+        }
 
-		/*[6] Test getEJBObject ///////////////
-		 *
-		 * MDBs don't have an ejbObject
-		 */
+        /*[6] Test getEJBObject ///////////////
+           *
+           * MDBs don't have an ejbObject
+           */
 
-		/*[7] Test Context_getPrimaryKey ///////////////
-		 *
-		 * Can't really do this
-		 */
+        /*[7] Test Context_getPrimaryKey ///////////////
+           *
+           * Can't really do this
+           */
 
-		/*[8] Test JNDI_access_to_java_comp_env ///////////////*/
-		try {
-			InitialContext jndiContext = new InitialContext();
+        /*[8] Test JNDI_access_to_java_comp_env ///////////////*/
+        try {
+            final InitialContext jndiContext = new InitialContext();
 
-			String actual = (String)jndiContext.lookup("java:comp/env/stateless/references/JNDI_access_to_java_comp_env");
+            final String actual = (String) jndiContext.lookup("java:comp/env/stateless/references/JNDI_access_to_java_comp_env");
 
-			policy.allow(OperationsPolicy.JNDI_access_to_java_comp_env);
-		} catch (IllegalStateException ignored) {
-		} catch (javax.naming.NamingException ignored) {
-		}
+            policy.allow(OperationsPolicy.JNDI_access_to_java_comp_env);
+        } catch (IllegalStateException ignored) {
+        } catch (javax.naming.NamingException ignored) {
+        }
 
         /*[11] Test lookup /////////*/
         try {
@@ -221,7 +231,7 @@ public class BasicMdbBean implements BasicMdbObject, MessageDrivenBean, MessageL
         } catch (IllegalArgumentException ignored) {
         }
 
-		allowedOperationsTable.put(methodName, policy);
+        allowedOperationsTable.put(methodName, policy);
 
     }
 

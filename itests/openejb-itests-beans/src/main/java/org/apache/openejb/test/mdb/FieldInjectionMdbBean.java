@@ -17,36 +17,34 @@
  */
 package org.apache.openejb.test.mdb;
 
+import junit.framework.Assert;
+import junit.framework.AssertionFailedError;
+import org.apache.openejb.test.TestFailureException;
 import org.apache.openejb.test.entity.bmp.BasicBmpHome;
-import org.apache.openejb.test.stateful.BasicStatefulHome;
 import org.apache.openejb.test.stateful.BasicStatefulBusinessLocal;
 import org.apache.openejb.test.stateful.BasicStatefulBusinessRemote;
-import org.apache.openejb.test.stateless.BasicStatelessHome;
+import org.apache.openejb.test.stateful.BasicStatefulHome;
 import org.apache.openejb.test.stateless.BasicStatelessBusinessLocal;
 import org.apache.openejb.test.stateless.BasicStatelessBusinessRemote;
-import org.apache.openejb.test.TestFailureException;
+import org.apache.openejb.test.stateless.BasicStatelessHome;
 
-import javax.annotation.PreDestroy;
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.MessageDrivenBean;
 import javax.ejb.MessageDrivenContext;
-import javax.sql.DataSource;
 import javax.jms.ConnectionFactory;
-import javax.jms.QueueConnectionFactory;
-import javax.jms.TopicConnectionFactory;
 import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+import javax.jms.MessageProducer;
+import javax.jms.QueueConnectionFactory;
 import javax.jms.Session;
 import javax.jms.Topic;
-import javax.jms.MessageProducer;
-import javax.jms.MessageListener;
-import javax.jms.Message;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityManager;
+import javax.jms.TopicConnectionFactory;
 import javax.naming.InitialContext;
-
-import junit.framework.Assert;
-import junit.framework.AssertionFailedError;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
 
 public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, MessageListener {
     private MessageDrivenContext ejbContext;
@@ -79,17 +77,19 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
     private MessageDrivenContext mdbContext = null;
     private MdbInvoker mdbInvoker;
 
-    public void setMessageDrivenContext(MessageDrivenContext ctx) throws EJBException {
+    @Override
+    public void setMessageDrivenContext(final MessageDrivenContext ctx) throws EJBException {
         this.mdbContext = ctx;
         try {
-            ConnectionFactory connectionFactory = (ConnectionFactory) new InitialContext().lookup("java:comp/env/jms");
+            final ConnectionFactory connectionFactory = (ConnectionFactory) new InitialContext().lookup("java:comp/env/jms");
             mdbInvoker = new MdbInvoker(connectionFactory, this);
         } catch (Exception e) {
             throw new EJBException(e);
         }
     }
 
-    public void onMessage(Message message) {
+    @Override
+    public void onMessage(final Message message) {
         try {
 //            System.out.println("\n" +
 //                    "***************************************\n" +
@@ -109,6 +109,7 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
     public void ejbCreate() throws CreateException {
     }
 
+    @Override
     public void lookupEntityBean() throws TestFailureException {
         try {
             Assert.assertNotNull("The EJBObject is null", bmpHome);
@@ -117,6 +118,7 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
         }
     }
 
+    @Override
     public void lookupStatefulBean() throws TestFailureException {
         try {
             Assert.assertNotNull("The EJBObject is null", statefulHome);
@@ -125,6 +127,7 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
         }
     }
 
+    @Override
     public void lookupStatelessBean() throws TestFailureException {
         try {
             Assert.assertNotNull("The EJBObject is null", statelessHome);
@@ -133,41 +136,46 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
         }
     }
 
-    public void lookupStatelessBusinessLocal() throws TestFailureException{
-        try{
-            Assert.assertNotNull("The EJB BusinessLocal is null", statelessBusinessLocal );
-        } catch (AssertionFailedError afe){
+    @Override
+    public void lookupStatelessBusinessLocal() throws TestFailureException {
+        try {
+            Assert.assertNotNull("The EJB BusinessLocal is null", statelessBusinessLocal);
+        } catch (AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    public void lookupStatelessBusinessRemote() throws TestFailureException{
-        try{
-            Assert.assertNotNull("The EJB BusinessRemote is null", statelessBusinessRemote );
-        } catch (AssertionFailedError afe){
+    @Override
+    public void lookupStatelessBusinessRemote() throws TestFailureException {
+        try {
+            Assert.assertNotNull("The EJB BusinessRemote is null", statelessBusinessRemote);
+        } catch (AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    public void lookupStatefulBusinessLocal() throws TestFailureException{
-        try{
-            Assert.assertNotNull("The EJB BusinessLocal is null", statefulBusinessLocal );
-        } catch (AssertionFailedError afe){
+    @Override
+    public void lookupStatefulBusinessLocal() throws TestFailureException {
+        try {
+            Assert.assertNotNull("The EJB BusinessLocal is null", statefulBusinessLocal);
+        } catch (AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    public void lookupStatefulBusinessRemote() throws TestFailureException{
-        try{
-            Assert.assertNotNull("The EJB BusinessRemote is null", statefulBusinessRemote );
-        } catch (AssertionFailedError afe){
+    @Override
+    public void lookupStatefulBusinessRemote() throws TestFailureException {
+        try {
+            Assert.assertNotNull("The EJB BusinessRemote is null", statefulBusinessRemote);
+        } catch (AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
+    @Override
     public void lookupStringEntry() throws TestFailureException {
         try {
-            String expected = new String("1");
+            final String expected = "1";
             Assert.assertNotNull("The String looked up is null", striing);
             Assert.assertEquals(expected, striing);
         } catch (AssertionFailedError afe) {
@@ -175,9 +183,10 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
         }
     }
 
+    @Override
     public void lookupDoubleEntry() throws TestFailureException {
         try {
-            Double expected = new Double(1.0D);
+            final Double expected = 1.0D;
 
             Assert.assertNotNull("The Double looked up is null", doouble);
             Assert.assertEquals(expected, doouble);
@@ -187,9 +196,10 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
         }
     }
 
+    @Override
     public void lookupLongEntry() throws TestFailureException {
         try {
-            Long expected = new Long(1L);
+            final Long expected = 1L;
 
             Assert.assertNotNull("The Long looked up is null", loong);
             Assert.assertEquals(expected, loong);
@@ -198,9 +208,10 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
         }
     }
 
+    @Override
     public void lookupFloatEntry() throws TestFailureException {
         try {
-            Float expected = new Float(1.0F);
+            final Float expected = 1.0F;
 
             Assert.assertNotNull("The Float looked up is null", flooat);
             Assert.assertEquals(expected, flooat);
@@ -209,9 +220,10 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
         }
     }
 
+    @Override
     public void lookupIntegerEntry() throws TestFailureException {
         try {
-            Integer expected = new Integer(1);
+            final Integer expected = 1;
 
             Assert.assertNotNull("The Integer looked up is null", inteeger);
             Assert.assertEquals(expected, inteeger);
@@ -221,9 +233,10 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
         }
     }
 
+    @Override
     public void lookupShortEntry() throws TestFailureException {
         try {
-            Short expected = new Short((short) 1);
+            final Short expected = (short) 1;
 
             Assert.assertNotNull("The Short looked up is null", shoort);
             Assert.assertEquals(expected, shoort);
@@ -232,9 +245,10 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
         }
     }
 
+    @Override
     public void lookupBooleanEntry() throws TestFailureException {
         try {
-            Boolean expected = new Boolean(true);
+            final Boolean expected = true;
 
             Assert.assertNotNull("The Boolean looked up is null", booolean);
             Assert.assertEquals(expected, booolean);
@@ -243,9 +257,10 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
         }
     }
 
+    @Override
     public void lookupByteEntry() throws TestFailureException {
         try {
-            Byte expected = new Byte((byte) 1);
+            final Byte expected = (byte) 1;
 
             Assert.assertNotNull("The Byte looked up is null", byyte);
             Assert.assertEquals(expected, byyte);
@@ -254,9 +269,10 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
         }
     }
 
+    @Override
     public void lookupCharacterEntry() throws TestFailureException {
         try {
-            Character expected = new Character('D');
+            final Character expected = 'D';
 
             Assert.assertNotNull("The Character looked up is null", chaaracter);
             Assert.assertEquals(expected, chaaracter);
@@ -265,6 +281,7 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
         }
     }
 
+    @Override
     public void lookupResource() throws TestFailureException {
         try {
             Assert.assertNotNull("The DataSource is null", daataSource);
@@ -273,31 +290,33 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
         }
     }
 
-    public void lookupJMSConnectionFactory() throws TestFailureException{
-        try{
-            try{
+    @Override
+    public void lookupJMSConnectionFactory() throws TestFailureException {
+        try {
+            try {
                 testJmsConnection(coonnectionFactory.createConnection());
                 testJmsConnection(queueCoonnectionFactory.createConnection());
                 testJmsConnection(topicCoonnectionFactory.createConnection());
-            } catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
-                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+                Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe){
+        } catch (AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    private void testJmsConnection(javax.jms.Connection connection) throws JMSException {
-        Session session = connection.createSession(false, Session.DUPS_OK_ACKNOWLEDGE);
-        Topic topic = session.createTopic("test");
-        MessageProducer producer = session.createProducer(topic);
+    private void testJmsConnection(final javax.jms.Connection connection) throws JMSException {
+        final Session session = connection.createSession(false, Session.DUPS_OK_ACKNOWLEDGE);
+        final Topic topic = session.createTopic("test");
+        final MessageProducer producer = session.createProducer(topic);
         producer.send(session.createMessage());
         producer.close();
         session.close();
         connection.close();
     }
 
+    @Override
     public void lookupPersistenceUnit() throws TestFailureException {
         try {
             Assert.assertNotNull("The EntityManagerFactory is null", emf);
@@ -306,6 +325,7 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
         }
     }
 
+    @Override
     public void lookupPersistenceContext() throws TestFailureException {
         try {
             Assert.assertNotNull("The EntityManager is null", em);
@@ -321,6 +341,7 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
         }
     }
 
+    @Override
     public void lookupMessageDrivenContext() throws TestFailureException {
         try {
             Assert.assertNotNull("The MessageDrivenContext is null", ejbContext);
@@ -330,6 +351,11 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
 
     }
 
+    @Override
     public void ejbRemove() throws EJBException {
+
+        if (null != mdbInvoker) {
+            mdbInvoker.destroy();
+        }
     }
 }
