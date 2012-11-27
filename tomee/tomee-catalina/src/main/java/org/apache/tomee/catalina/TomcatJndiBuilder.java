@@ -207,6 +207,16 @@ public class TomcatJndiBuilder {
         TomcatWebAppBuilder.ContextInfo contextInfo = null;
         if (builder != null) {
             contextInfo = builder.getContextInfo(standardContext);
+            if (webContext == null && contextInfo.appInfo != null) { // can happen if deployed from apps/
+                for (WebAppInfo webAppInfo : contextInfo.appInfo.webApps) {
+                    if (webAppInfo.path != null && webAppInfo.path.equals(standardContext.getDocBase())) {
+                        webContext = cs.getWebContext(webAppInfo.moduleId);
+                        if (webContext != null) {
+                            break;
+                        }
+                    }
+                }
+            }
         }
         Collection<String> ignoreNames = null;
         if (contextInfo != null) {
