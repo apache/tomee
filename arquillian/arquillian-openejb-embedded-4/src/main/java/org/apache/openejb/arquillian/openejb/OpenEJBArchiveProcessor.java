@@ -281,7 +281,8 @@ public class OpenEJBArchiveProcessor {
             }
             // look org.apache.openejb.config.AnnotationDeployer.DiscoverAnnotatedBeans.hasBeansXml()
             try {
-                classesByUrl.put(new URL("file://foo.jar!/WEB-INF/classes/"), mainClasses);
+                final URL key = new URL("jar:file://foo.jar!/WEB-INF/classes/");
+                classesByUrl.put(key, mainClasses);
             } catch (MalformedURLException mue) {
                 // no-op
             }
