@@ -38,6 +38,8 @@ public class ConnectionManager {
         registerFactory("default", ejbdFactory);
         registerFactory("ejbd", ejbdFactory);
         registerFactory("ejbds", ejbdFactory);
+        registerFactory("zejbd", ejbdFactory);
+        registerFactory("zejbds", ejbdFactory);
 
         final HttpConnectionFactory httpFactory = new HttpConnectionFactory();
         registerFactory("http", httpFactory);

@@ -34,7 +34,7 @@ public class Registry<T> {
 
 
     public static <T> Registry<T> create(Class<T> type){
-        return new Registry(type);
+        return new Registry<T>(type);
     }
 
     private Registry(Class<T> type) {
