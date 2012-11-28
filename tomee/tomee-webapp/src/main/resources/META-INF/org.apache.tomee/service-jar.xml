@@ -48,5 +48,6 @@
   <ServiceProvider id="ProvidedByTomcat" service="Resource" class-name="org.apache.tomee.catalina.TomcatResourceFactory" factory-name="create">
     jndiName =
     appName =
+    factory =
   </ServiceProvider>
 </ServiceJar>

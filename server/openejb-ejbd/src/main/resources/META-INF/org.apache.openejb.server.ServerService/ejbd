@@ -5,3 +5,4 @@ disabled    = ${openejb.profile.custom}
 threads     = 200
 backlog     = 200
 discovery   = ejb:ejbd://{bind}:{port}
+gzip        = false

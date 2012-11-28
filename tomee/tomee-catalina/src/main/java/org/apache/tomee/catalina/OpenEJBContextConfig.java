@@ -238,7 +238,6 @@ public class OpenEJBContextConfig extends ContextConfig {
         super.processAnnotations(fragments, handlesTypesOnly);
     }
 
-
     @Override
     protected void processAnnotationsFile(File file, WebXml fragment, boolean handlesTypesOnly) {
         final WebAppInfo webAppInfo = info.get();
