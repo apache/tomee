@@ -329,7 +329,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
                     if (!gzip) {
                         in = new BufferedInputStream(socket.getInputStream());
                     } else {
-                        in = new GZIPInputStream(socket.getInputStream());
+                        in = new GZIPInputStream(new BufferedInputStream(socket.getInputStream()));
                     }
                 }
 
@@ -355,7 +355,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
                     if (!gzip) {
                         out = new BufferedOutputStream(socket.getOutputStream());
                     } else {
-                        out = new FlushableGZIPOutputStream(socket.getOutputStream());
+                        out = new BufferedOutputStream(new FlushableGZIPOutputStream(socket.getOutputStream()));
                     }
                 }
 
