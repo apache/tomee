@@ -94,7 +94,7 @@ public class OpenEJBArchiveProcessor {
             prefix = WEB_INF;
 
             final Map<ArchivePath, Node> content = archive.getContent(new IncludeRegExpPaths("/WEB-INF/lib/.*"));
-            for (Map.Entry<ArchivePath, Node> node : content.entrySet()) {
+            for (final Map.Entry<ArchivePath, Node> node : content.entrySet()) {
                 final Asset asset = node.getValue().getAsset();
                 if (UrlAsset.class.isInstance(asset)) {
                     additionalPaths.add(get(URL.class, "url", asset));
@@ -241,7 +241,7 @@ public class OpenEJBArchiveProcessor {
         return appModule;
     }
 
-    private static <T> T get(Class<T> fileClass, String attr, Asset asset) {
+    private static <T> T get(final Class<T> fileClass, final String attr, final Asset asset) {
         try {
             final Field field = asset.getClass().getDeclaredField(attr);
             field.setAccessible(true);
@@ -254,7 +254,7 @@ public class OpenEJBArchiveProcessor {
     private static org.apache.xbean.finder.archive.Archive finderArchive(final Node beansXml, final Archive<?> archive, final ClassLoader cl, final Collection<URL> additionalPaths) {
         final List<Class<?>> classes = new ArrayList<Class<?>>();
         final Map<ArchivePath, Node> content = archive.getContent(new IncludeRegExpPaths(".*.class"));
-        for (Map.Entry<ArchivePath, Node> node : content.entrySet()) {
+        for (final Map.Entry<ArchivePath, Node> node : content.entrySet()) {
             final String classname = name(node.getKey().get());
             try {
                 classes.add(cl.loadClass(classname));
@@ -266,7 +266,7 @@ public class OpenEJBArchiveProcessor {
         final Map<URL, List<String>> classesByUrl = new HashMap<URL, List<String>>();
 
         final List<org.apache.xbean.finder.archive.Archive> archives = new ArrayList<org.apache.xbean.finder.archive.Archive>();
-        for (URL url : DeploymentLoader.filterWebappUrls(additionalPaths.toArray(new URL[additionalPaths.size()]), null)) {
+        for (final URL url : DeploymentLoader.filterWebappUrls(additionalPaths.toArray(new URL[additionalPaths.size()]), null)) {
             final List<String> currentClasses = new ArrayList<String>();
             final org.apache.xbean.finder.archive.Archive newArchive = new FilteredArchive(new JarArchive(cl, url), new WebappAggregatedArchive.ScanXmlSaverFilter(false, null, currentClasses));
             classesByUrl.put(url, currentClasses);
@@ -276,7 +276,7 @@ public class OpenEJBArchiveProcessor {
         archives.add(new ClassesArchive(classes));
         if (beansXml != null) {
             final List<String> mainClasses = new ArrayList<String>();
-            for (Class<?> clazz : classes) {
+            for (final Class<?> clazz : classes) {
                 mainClasses.add(clazz.getName());
             }
             // look org.apache.openejb.config.AnnotationDeployer.DiscoverAnnotatedBeans.hasBeansXml()
@@ -303,7 +303,7 @@ public class OpenEJBArchiveProcessor {
     private static class AssetSource implements ReadDescriptors.Source {
         private Asset asset;
 
-        private AssetSource(Asset asset) {
+        private AssetSource(final Asset asset) {
             this.asset = asset;
         }
 
