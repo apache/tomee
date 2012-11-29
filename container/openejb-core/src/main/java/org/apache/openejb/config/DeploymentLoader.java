@@ -95,6 +95,8 @@ import static org.apache.openejb.util.URLs.toFile;
 public class DeploymentLoader implements DeploymentFilterable {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, "org.apache.openejb.util.resources");
     public static final String OPENEJB_ALTDD_PREFIX = "openejb.altdd.prefix";
+    public static final String OPENEJB_ORIGIN_WEBAPP = "openejb.webapp.origin";
+
     private static final String ddDir = "META-INF/";
     private boolean scanManagedBeans = true;
     private static final Collection<String> KNOWN_DESCRIPTORS = Arrays.asList("app-ctx.xml", "module.properties", "application.properties", "web.xml", "ejb-jar.xml", "openejb-jar.xml", "env-entries.properties", "beans.xml", "ra.xml", "application.xml", "application-client.xml", "persistence-fragment.xml", "persistence.xml", "validation.xml", NewLoaderLogic.EXCLUSION_FILE);
@@ -668,6 +670,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         // than an ear file, so the ear-style code we were previously
         // using doesn't exactly work anymore.
         final EjbModule webEjbModule = new EjbModule(webModule.getClassLoader(), webModule.getModuleId(), webModule.getJarLocation(), null, null);
+        webEjbModule.getProperties().put(OPENEJB_ORIGIN_WEBAPP, "true");
         webEjbModule.getAltDDs().putAll(webModule.getAltDDs());
         appModule.getEjbModules().add(webEjbModule);
 
