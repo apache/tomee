@@ -383,7 +383,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             InputStream contextXml = null;
             URL contextXmlUrl = null;
             if (war.isDirectory()) {
-                final File cXml = new File(war, Constants.ApplicationContextXml);
+                final File cXml = new File(war, Constants.ApplicationContextXml).getAbsoluteFile();
                 if (cXml.exists()) {
                     contextXml = IO.read(cXml);
                     contextXmlUrl = cXml.toURI().toURL();
@@ -393,7 +393,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 final JarFile warAsJar = new JarFile(war);
                 final JarEntry entry = warAsJar.getJarEntry(Constants.ApplicationContextXml);
                 if (entry != null) {
-                    contextXmlUrl = new URL("jar:file://" + war.getAbsolutePath() + "!/" + Constants.ApplicationContextXml);
+                    contextXmlUrl = new URL("jar:" + war.getAbsoluteFile().toURI().toURL().toExternalForm() + "!/" + Constants.ApplicationContextXml);
                     contextXml = warAsJar.getInputStream(entry);
                 }
             }

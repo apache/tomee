@@ -43,23 +43,24 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
 
     private Container container;
 
+    @Override
     public Class<EmbeddedTomEEConfiguration> getConfigurationClass() {
         return EmbeddedTomEEConfiguration.class;
     }
 
     @Override
-    public void setup(EmbeddedTomEEConfiguration configuration) {
+    public void setup(final EmbeddedTomEEConfiguration configuration) {
         super.setup(configuration);
-        container = new Container();
-        container.setup(convertConfiguration(configuration));
+        this.container = new Container();
+        this.container.setup(this.convertConfiguration(configuration));
     }
 
     /*
      * Not exactly as elegant as I'd like. Maybe we could have the EmbeddedServer configuration in openejb-core so all the adapters can use it.
      * Depending on tomee-embedded is fine in this adapter, but less desirable in the others, as we'd get loads of stuff in the classpath we don't need.
      */
-    private Configuration convertConfiguration(EmbeddedTomEEConfiguration tomeeConfiguration) {
-    	Configuration configuration = new Configuration();
+    private Configuration convertConfiguration(final EmbeddedTomEEConfiguration tomeeConfiguration) {
+    	final Configuration configuration = new Configuration();
     	configuration.setDir(tomeeConfiguration.getDir());
     	configuration.setHttpPort(tomeeConfiguration.getHttpPort());
     	configuration.setStopPort(tomeeConfiguration.getStopPort());
@@ -73,7 +74,7 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
     @Override
     public void start() throws LifecycleException {
         try {
-            container.start();
+            this.container.start();
             SystemInstance.get().setComponent(AdditionalBeanDiscoverer.class, new TestClassDiscoverer());
         } catch (Exception e) {
             e.printStackTrace();
@@ -84,7 +85,7 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
     @Override
     public void stop() throws LifecycleException {
         try {
-            container.stop();
+            this.container.stop();
         } catch (Exception e) {
             throw new LifecycleException("Unable to stop server", e);
         }
@@ -103,17 +104,17 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
             final File file = new File(tempDir, name);
             */
             final String name = archive.getName();
-            final File file = dumpFile(archive);
+            final File file = this.dumpFile(archive);
             ARCHIVES.put(archive, file);
-            archiveWithTestInfo(archive).as(ZipExporter.class).exportTo(file, true);
+            this.archiveWithTestInfo(archive).as(ZipExporter.class).exportTo(file, true);
 
-            container.deploy(name, file);
-            final AppInfo info = container.getInfo(name);
-            final String context = getArchiveNameWithoutExtension(archive);
+            this.container.deploy(name, file);
+            final AppInfo info = this.container.getInfo(name);
+            final String context = this.getArchiveNameWithoutExtension(archive);
 
-            final HTTPContext httpContext = new HTTPContext(configuration.getHost(), configuration.getHttpPort());
+            final HTTPContext httpContext = new HTTPContext(this.configuration.getHost(), this.configuration.getHttpPort());
             httpContext.add(new Servlet("ArquillianServletRunner", "/" + context));
-            addServlets(httpContext, info);
+            this.addServlets(httpContext, info);
 
             return new ProtocolMetaData().addContext(httpContext);
         } catch (Exception e) {
@@ -123,16 +124,16 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
     }
 
     @Override
-    public void undeploy(Archive<?> archive) throws DeploymentException {
+    public void undeploy(final Archive<?> archive) throws DeploymentException {
     	try {
             final String name = archive.getName();
-            container.undeploy(name);
+            this.container.undeploy(name);
         } catch (Exception e) {
             e.printStackTrace();
             throw new DeploymentException("Unable to undeploy", e);
         }
-        File file = ARCHIVES.remove(archive);
-        File folder = new File(file.getParentFile(), file.getName().substring(0, file.getName().length() - 5));
+        final File file = ARCHIVES.remove(archive);
+        final File folder = new File(file.getParentFile(), file.getName().substring(0, file.getName().length() - 5));
         if (folder.exists()) {
             Files.delete(folder);
         }
