@@ -96,11 +96,14 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
     }
 
     @Override
-    public ProtocolMetaData deploy(Archive<?> archive) throws DeploymentException {
+    public ProtocolMetaData deploy(final Archive<?> archive) throws DeploymentException {
     	try {
+            /* don't do it since it should be configurable
             final File tempDir = Files.createTempDir();
-            final String name = archive.getName();
             final File file = new File(tempDir, name);
+            */
+            final String name = archive.getName();
+            final File file = dumpFile(archive);
             ARCHIVES.put(archive, file);
             archiveWithTestInfo(archive).as(ZipExporter.class).exportTo(file, true);
 
