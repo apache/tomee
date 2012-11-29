@@ -124,7 +124,7 @@ public class CdiScanner implements ScannerService {
                     } /* else { don't do it, check is done when we know the beans.xml path --> org.apache.openejb.config.DeploymentLoader.addBeansXmls
                         throw new WebBeansConfigurationException("Interceptor class : " + clazz.getName() + " is already defined");
                     }*/
-                } else if (beans.webapp && startupObject.isFromWebApp()) {
+                } else if ((beans.webapp && startupObject.isFromWebApp()) || !beans.webapp) {
                     throw new WebBeansConfigurationException("Could not load interceptor class: " + className);
                 }
             }
