@@ -21,8 +21,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.DependencyResolvers;
-import org.jboss.shrinkwrap.resolver.api.maven.MavenDependencyResolver;
+import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -32,7 +31,6 @@ import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 @RunWith(Arquillian.class)
@@ -41,10 +39,10 @@ public class SWMavenWarTest {
     public static WebArchive war() {
         return ShrinkWrap.create(WebArchive.class, "sw-mvn.war")
                 .addClass(SWBean.class)
-                .addAsLibraries(DependencyResolvers.use(MavenDependencyResolver.class)
-                        .loadEffectivePom("src/test/resources/a-pom.xml")
-                        .importAllDependencies()
-                        .resolveAsFiles());
+                .addAsLibraries(Maven.resolver()
+                        .loadPomFromFile("src/test/resources/a-pom.xml")
+                        .importRuntimeAndTestDependencies()
+                        .asFile());
     }
 
     @Singleton
