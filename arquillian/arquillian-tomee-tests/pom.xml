@@ -356,7 +356,6 @@
               <skip>true</skip>
               <parallel>none</parallel>
               <threadCount>1</threadCount>
-<includes><include>**/ResourceMergeTest*</include></includes>
             </configuration>
           </plugin>
         </plugins>
