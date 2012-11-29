@@ -30,6 +30,8 @@ import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -97,11 +99,11 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
                 return;
             }
 
-            in = socket.getInputStream();
-            out = socket.getOutputStream();
+            in = new BufferedInputStream(socket.getInputStream());
+            out = new BufferedOutputStream(socket.getOutputStream());
             if (gzip) {
-                in = new GZIPInputStream(socket.getInputStream());
-                out = new FlushableGZIPOutputStream(socket.getOutputStream());
+                in = new GZIPInputStream(new BufferedInputStream(socket.getInputStream()));
+                out = new BufferedOutputStream(new FlushableGZIPOutputStream(socket.getOutputStream()));
             }
 
             service(in, out);
