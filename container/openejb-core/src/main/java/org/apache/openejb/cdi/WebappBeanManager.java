@@ -372,6 +372,12 @@ public class WebappBeanManager extends BeanManagerImpl {
 
     @Override
     public Set<Bean<?>> getComponents() {
+        if (deploymentBeans.isEmpty()) {
+            // probably not yet merged (afterStart())
+            // so reuse parent beans
+            // this can happen for validations
+            return super.getBeans();
+        }
         return deploymentBeans;
     }
 
