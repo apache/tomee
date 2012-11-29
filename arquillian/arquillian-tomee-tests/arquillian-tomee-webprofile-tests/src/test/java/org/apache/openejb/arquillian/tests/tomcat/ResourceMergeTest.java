@@ -26,26 +26,29 @@ import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.annotation.Resource;
 import javax.naming.NamingException;
+
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(Arquillian.class)
 public class ResourceMergeTest {
     @Deployment
     public static WebArchive war() {
         return ShrinkWrap.create(WebArchive.class, "resource.war")
-                .addClasses(SomeResource.class)
-                .setWebXML(new StringAsset(Descriptors.create(WebAppDescriptor.class)
-                        .version("3.0")
-                        .getOrCreateResourceRef()
-                            .resRefName("some-resource")
-                            .mappedName("some-resource")
-                            .resType(SomeResource.class.getName())
-                        .up()
-                        .exportAsString()));
+                .addClasses(SomeResource.class, SomeResourceFactory.class)
+                .add(new StringAsset("<Context>\n" +
+                        "  <Resource name=\"some-resource\"\n" +
+                        "            type=\"" + SomeResource.class.getName() + "\"\n" +
+                        "            factory=\"" + SomeResourceFactory.class.getName() + "\"/>\n" +
+                        "</Context>"), "META-INF/context.xml");
     }
 
+    @Resource(name = "some-resource")
+    private SomeResource sr;
+
     @Test
-    public void noExceptionWereThrownDuringDeployment() throws NamingException {
-        // no-op
+    public void checkResource() throws NamingException {
+        assertNotNull(sr);
     }
 }

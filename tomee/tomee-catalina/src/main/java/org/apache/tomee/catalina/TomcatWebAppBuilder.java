@@ -381,16 +381,19 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             // look for context.xml
             final File war = new File(webApp.path);
             InputStream contextXml = null;
+            URL contextXmlUrl = null;
             if (war.isDirectory()) {
                 final File cXml = new File(war, Constants.ApplicationContextXml);
                 if (cXml.exists()) {
                     contextXml = IO.read(cXml);
+                    contextXmlUrl = cXml.toURI().toURL();
                     logger.info("using context file " + cXml.getAbsolutePath());
                 }
             } else { // war
                 final JarFile warAsJar = new JarFile(war);
                 final JarEntry entry = warAsJar.getJarEntry(Constants.ApplicationContextXml);
                 if (entry != null) {
+                    contextXmlUrl = new URL("jar:file://" + war.getAbsolutePath() + "!/" + Constants.ApplicationContextXml);
                     contextXml = warAsJar.getInputStream(entry);
                 }
             }
@@ -400,6 +403,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 synchronized (CONTEXT_DIGESTER) {
                     try {
                         standardContext = (StandardContext) CONTEXT_DIGESTER.parse(contextXml);
+                        standardContext.setConfigFile(contextXmlUrl);
                     } catch (Exception e) {
                         logger.error("can't parse context xml for webapp " + webApp.path, e);
                         standardContext = new StandardContext();
