@@ -23,7 +23,6 @@ import org.superbiz.enricher.maven.Enrichers;
 public class OpenJPAEnricher implements AuxiliaryArchiveProcessor {
     @Override
     public void process(final Archive<?> auxiliaryArchive) {
-        Enrichers.wrap(auxiliaryArchive)
-                .addAsLibraries(Enrichers.resolve("src/test/resources/openjpa-pom.xml"));
+        Enrichers.wrap(auxiliaryArchive).addAsLibraries(Enrichers.resolve("src/test/resources/openjpa-pom.xml"));
     }
 }
