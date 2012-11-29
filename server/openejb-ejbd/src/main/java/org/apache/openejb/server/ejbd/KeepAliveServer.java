@@ -210,8 +210,8 @@ public class KeepAliveServer implements ServerService {
                     in = new BufferedInputStream(socket.getInputStream());
                     out = new BufferedOutputStream(socket.getOutputStream());
                 } else {
-                    in = new GZIPInputStream(socket.getInputStream());
-                    out = new FlushableGZIPOutputStream(socket.getOutputStream());
+                    in = new GZIPInputStream(new BufferedInputStream(socket.getInputStream()));
+                    out = new BufferedOutputStream(new FlushableGZIPOutputStream(socket.getOutputStream()));
                 }
 
                 while (running.get()) {
