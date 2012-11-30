@@ -124,7 +124,7 @@ public class CdiScanner implements ScannerService {
                     } /* else { don't do it, check is done when we know the beans.xml path --> org.apache.openejb.config.DeploymentLoader.addBeansXmls
                         throw new WebBeansConfigurationException("Interceptor class : " + clazz.getName() + " is already defined");
                     }*/
-                } else if ((beans.webapp && startupObject.isFromWebApp()) || !beans.webapp) {
+                } else if (shouldThrowCouldNotLoadException(beans, startupObject)) {
                     throw new WebBeansConfigurationException("Could not load interceptor class: " + className);
                 }
             }
@@ -137,7 +137,7 @@ public class CdiScanner implements ScannerService {
                         decoratorsManager.addNewDecorator(clazz);
                         classes.add(clazz);
                     } // same than interceptors regarding throw new WebBeansConfigurationException("Decorator class : " + clazz.getName() + " is already defined");
-                } else if (beans.webapp && startupObject.isFromWebApp()) {
+                } else if (shouldThrowCouldNotLoadException(beans, startupObject)) {
                     throw new WebBeansConfigurationException("Could not load decorator class: " + className);
                 }
             }
@@ -148,7 +148,7 @@ public class CdiScanner implements ScannerService {
                 if (clazz != null) {
                     alternativesManager.addStereoTypeAlternative(clazz, null, null);
                     classes.add(clazz);
-                } else if (beans.webapp && startupObject.isFromWebApp()) {
+                } else if (shouldThrowCouldNotLoadException(beans, startupObject)) {
                     throw new WebBeansConfigurationException("Could not load alternativeStereotype class: " + className);
                 }
             }
@@ -158,7 +158,7 @@ public class CdiScanner implements ScannerService {
                 if (clazz != null) {
                     alternativesManager.addClazzAlternative(clazz, null, null);
                     classes.add(clazz);
-                } else if (beans.webapp && startupObject.isFromWebApp()) {
+                } else if (shouldThrowCouldNotLoadException(beans, startupObject)) {
                     throw new WebBeansConfigurationException("Could not load alternative class: " + className);
                 }
             }
@@ -181,6 +181,10 @@ public class CdiScanner implements ScannerService {
             }
         }
 
+    }
+
+    private static boolean shouldThrowCouldNotLoadException(final BeansInfo beans, final StartupObject startupObject) {
+        return (beans.webapp && startupObject.isFromWebApp()) || !beans.webapp;
     }
 
     private void process(final ClassLoader classLoader, final Set<String> ejbClasses, final Iterator<String> it, final StartupObject startupObject, final ClassLoaderComparator comparator, final ClassLoader scl, final boolean filterByClassLoader) {
