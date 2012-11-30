@@ -206,7 +206,6 @@ public class EjbJarInfoBuilder {
 
         if (jar.getBeans() != null) {
             ejbJar.beans = new BeansInfo();
-            ejbJar.beans.webapp = Boolean.TRUE.toString().equals(jar.getProperties().getProperty(DeploymentLoader.OPENEJB_ORIGIN_WEBAPP, Boolean.FALSE.toString()));
 
             ejbJar.beans.interceptors.addAll(jar.getBeans().getInterceptors());
             ejbJar.beans.decorators.addAll(jar.getBeans().getDecorators());
