@@ -443,6 +443,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
             }
         }
+
+        final AutoDeployer autoDeployer = new AutoDeployer(containerSystemInfo.autoDeploy);
+        SystemInstance.get().setComponent(AutoDeployer.class, autoDeployer);
+        autoDeployer.start();
     }
 
     public boolean isDeployed(final String path) {
@@ -1099,6 +1103,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     @Override
     public synchronized void destroy() {
+
+        final AutoDeployer autoDeployer = SystemInstance.get().getComponent(AutoDeployer.class);
+        if (autoDeployer != null) {
+            autoDeployer.stop();
+        }
 
         try {
             EjbTimerServiceImpl.shutdown();

@@ -1488,6 +1488,12 @@ public class DeploymentLoader implements DeploymentFilterable {
             return PersistenceModule.class;
         }
 
+        final File file = URLs.toFile(baseUrl);
+        if (file.isDirectory()) {
+            if (containsEarAssets(file)) return AppModule.class;
+            if (containsWebAssets(file)) return WebModule.class;
+        }
+
         final Class<? extends DeploymentModule> defaultType = (Class<? extends DeploymentModule>) SystemInstance.get().getOptions().get("openejb.default.deployment-module", (Class<?>) null);
         if (defaultType != null) {
             // should we do a better filtering? it seems enough for common cases.
@@ -1500,6 +1506,24 @@ public class DeploymentLoader implements DeploymentFilterable {
         }
         throw new UnknownModuleTypeException("Unknown module type: url=" + path); // baseUrl can be null
     }
+
+    private boolean containsWebAssets(File dir) {
+        for (File file : dir.listFiles()) {
+            if (file.getName().endsWith(".jsp")) return true;
+            if (file.getName().endsWith(".html")) return true;
+        }
+        return false;
+    }
+
+    private boolean containsEarAssets(File dir) {
+        for (File file : dir.listFiles()) {
+            if (file.getName().endsWith(".jar")) return true;
+            if (file.getName().endsWith(".war")) return true;
+            if (file.getName().endsWith(".rar")) return true;
+        }
+        return false;
+    }
+
 
     private Map<String, URL> getDescriptors(final ClassLoader classLoader, final URL pathToScanDescriptors)
             throws IOException {

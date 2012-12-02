@@ -19,6 +19,7 @@ package org.apache.openejb.config;
 import org.apache.openejb.config.sys.Deployments;
 import org.apache.openejb.config.sys.JaxbOpenejb;
 import org.apache.openejb.loader.FileUtils;
+import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Logger;
@@ -37,7 +38,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static org.apache.openejb.util.URLs.toFile;
@@ -52,128 +55,105 @@ public class DeploymentsResolver implements DeploymentFilterable {
 
     public static void loadFrom(final Deployments dep, final FileUtils path, final List<URL> jarList) {
 
-        ////////////////////////////////
-        //
-        //  Expand the path of a jar
-        //
-        ////////////////////////////////
-        if (dep.getDir() == null && dep.getJar() != null) {
-            try {
-                final File jar = path.getFile(dep.getJar(), false);
-                final URL url = jar.toURI().toURL();
-                if (!jarList.contains(url)) {
-                    jarList.add(url);
-                }
-            } catch (Exception ignored) {
-            }
-            return;
-        }
+        if (dep.getDir() != null) {
 
-        File dir = null;
+            try {
+
+                loadFromDir(dep, path, jarList);
+
+            } catch (Files.FileDoesNotExistException e) {
+                logger.warning("<Deployments dir=\"" + dep.getFile() + "\"> - " + e.getMessage());
+
+            } catch (RuntimeException e) {
+                final String message = "<Deployments dir=\"" + dep.getFile() + "\"> - " + e.getMessage();
+
+                logger.error(message);
+                throw new DeploymentsConfigurationException(message);
+            }
+
+        } else if (dep.getFile() != null) {
+
+            try {
+
+                loadFromFile(dep, path, jarList);
+
+            } catch (RuntimeException e) {
+                final String message = "<Deployments file=\"" + dep.getFile() + "\"> - " + e.getMessage();
+                logger.error(message);
+                throw new DeploymentsConfigurationException(message);
+            }
+
+        }
+    }
+
+    public static class DeploymentsConfigurationException extends RuntimeException {
+        public DeploymentsConfigurationException(String message) {
+            super(message);
+        }
+    }
+
+    private static void loadFromFile(Deployments dep, FileUtils path, List<URL> jarList) {
+        final File file = Files.path(path.getDirectory(), dep.getFile());
+
+        Files.exists(file);
+        Files.readable(file);
+        Files.file(file);
+
         try {
-            dir = path.getFile(dep.getDir(), false);
-        } catch (Exception ignored) {
+            final URL url = file.toURI().toURL();
+            if (!jarList.contains(url)) {
+                jarList.add(url);
+            }
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Cannot convert file to URL: file="+file.getAbsolutePath(), e);
+        }
+    }
+
+    private static void loadFromDir(Deployments dep, FileUtils path, List<URL> jarList) {
+        final File dir = Files.path(path.getDirectory(), dep.getDir());
+
+        Files.exists(dir);
+        Files.readable(dir);
+        Files.dir(dir);
+
+        final Map<String, File> files = new LinkedHashMap<String, java.io.File>();
+        for (File file : dir.listFiles()) {
+            files.put(file.getAbsolutePath(), file);
         }
 
-        if (dir == null || !dir.isDirectory()) return;
+        // Ignore any unpacked versions
+        for (File file : dir.listFiles()) {
+            if (!isArchive(file)) continue;
+            final String archive = file.getAbsolutePath();
+            files.remove(archive.substring(0, archive.length() - 4));
+        }
 
-        ////////////////////////////////
-        //
-        //  Unpacked "Jar" directory with descriptor
-        //
-        ////////////////////////////////
-        final File ejbJarXml = new File(dir, "META-INF" + File.separator + "ejb-jar.xml");
-        if (ejbJarXml.exists()) {
+        for (File file : files.values()) {
             try {
-                final URL url = dir.toURI().toURL();
+                final URL url = file.toURI().toURL();
+
                 if (!jarList.contains(url)) {
                     jarList.add(url);
                 }
-            } catch (MalformedURLException ignore) {
-            }
-            return;
-        }
-
-        final File appXml = new File(dir, "META-INF" + File.separator + "application.xml");
-        if (appXml.exists()) {
-            try {
-                final URL url = dir.toURI().toURL();
-                if (!jarList.contains(url)) {
-                    jarList.add(url);
-                }
-            } catch (MalformedURLException ignore) {
-            }
-            return;
-        }
-
-        final File raXml = new File(dir, "META-INF" + File.separator + "ra.xml");
-        if (raXml.exists()) {
-            try {
-                final URL url = dir.toURI().toURL();
-                if (!jarList.contains(url)) {
-                    jarList.add(url);
-                }
-            } catch (MalformedURLException ignore) {
-            }
-            return;
-        }
-
-        ////////////////////////////////
-        //
-        //  Directory contains Jar files
-        //
-        ////////////////////////////////
-        boolean hasNestedArchives = false;
-        final File[] dirFiles = dir.listFiles();
-
-        if (null != dirFiles) {
-            for (final File file : dirFiles) {
-                try {
-
-                    final URL url = file.toURI().toURL();
-                    if (jarList.contains(url)) continue;
-
-                    if ((file.getName().endsWith(".jar") || file.getName().endsWith(".war") || file.getName().endsWith(".rar") || file.getName().endsWith(".ear")) && !unpackExists(file)) {
-                        jarList.add(url);
-                        hasNestedArchives = true;
-                    } else if (new File(file, "META-INF").exists()) { // Unpacked ear or jar
-                        jarList.add(url);
-                        hasNestedArchives = true;
-                    } else if (new File(file, "WEB-INF").exists()) {  // Unpacked webapp
-                        jarList.add(url);
-                        hasNestedArchives = true;
-                    }
-                } catch (Exception e) {
-                    logger.debug("loadFrom", e);
-                }
-            }
-        }
-
-        ////////////////////////////////
-        //
-        //  Unpacked "Jar" directory w/o descriptor
-        //
-        ////////////////////////////////
-        if (!hasNestedArchives) {
-            final HashMap<String, URL> files = new HashMap<String, URL>();
-            DeploymentLoader.scanDir(dir, files, "");
-            for (final String fileName : files.keySet()) {
-                if (fileName.endsWith(".class")) {
-                    try {
-                        final URL url = dir.toURI().toURL();
-                        if (!jarList.contains(url)) {
-                            jarList.add(url);
-                        }
-                    } catch (MalformedURLException ignore) {
-                    }
-                    return;
-                }
+            } catch (MalformedURLException e) {
+                throw new RuntimeException("Cannot convert file to URL: file="+file.getAbsolutePath(), e);
             }
         }
     }
 
+    private static boolean isArchive(File file) {
+        if (!file.isFile()) return false;
+        if (!file.getName().endsWith("ar")) return false;
+
+        final String name = file.getName();
+        final char c = name.charAt(name.length() - 4);
+        return c == '.';
+    }
+
     private static boolean unpackExists(final File file) {
         final String name = file.getName();
+
+
         return !(!name.endsWith("ar") || name.length() < 5)
                 && new File(file.getParentFile(), name.substring(0, name.length()  -".war".length())).exists();
     }
@@ -442,7 +422,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
                             url = new URL(url.getFile().replaceFirst("!.*$", ""));
                             final File file = toFile(url);
                             path = file.getAbsolutePath();
-                            deployment.setJar(path);
+                            deployment.setFile(path);
                         } else if (urlProtocol.equals("file")) {
                             final File file = toFile(url);
                             path = file.getAbsolutePath();

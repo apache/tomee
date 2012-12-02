@@ -528,6 +528,14 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             }
         }
 
+        for (Deployments deployments : openejb.getDeployments()) {
+            if (deployments.isAutoDeploy()) {
+                if (deployments.getDir() != null) {
+                    sys.containerSystem.autoDeploy.add(deployments.getDir());
+                }
+            }
+        }
+
         final OpenEjbConfiguration finished = sys;
         sys = null;
         openejb = null;
@@ -678,7 +686,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             } else if (object instanceof Deployments) {
                 final Deployments deployments = (Deployments) object;
                 deployments.setDir(map.remove("dir"));
-                deployments.setJar(map.remove("jar"));
+                deployments.setFile(map.remove("jar"));
                 final String cp = map.remove("classpath");
                 if (cp != null) {
                     final String[] paths = cp.split(File.pathSeparator);
