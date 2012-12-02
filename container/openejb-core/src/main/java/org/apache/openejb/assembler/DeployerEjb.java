@@ -16,18 +16,10 @@
  */
 package org.apache.openejb.assembler;
 
-import org.apache.openejb.ClassLoaderUtil;
-import org.apache.openejb.NoSuchApplicationException;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.OpenEJBRuntimeException;
-import org.apache.openejb.UndeployException;
+import org.apache.openejb.*;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.config.AppModule;
-import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.config.DeploymentLoader;
-import org.apache.openejb.config.DeploymentModule;
-import org.apache.openejb.config.WebModule;
+import org.apache.openejb.config.*;
 import org.apache.openejb.config.sys.AdditionalDeployments;
 import org.apache.openejb.config.sys.Deployments;
 import org.apache.openejb.config.sys.JaxbOpenejb;
@@ -44,12 +36,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.rmi.dgc.VMID;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
-import java.util.TreeMap;
+import java.math.BigInteger;
+import java.security.SecureRandom;
+import java.util.*;
 
 import static javax.ejb.TransactionManagementType.BEAN;
 import static org.apache.openejb.config.ConfigurationFactory.ADDITIONAL_DEPLOYMENTS;
@@ -65,12 +54,32 @@ public class DeployerEjb implements Deployer {
 
     public static final ThreadLocal<Boolean> AUTO_DEPLOY = new ThreadLocal<Boolean>();
 
+    private final static File uniqueFile;
     private final static boolean oldWarDeployer = "old".equalsIgnoreCase(SystemInstance.get().getOptions().get("openejb.deployer.war", "new"));
 
-    private static final String ID;
-
     static {
-        ID = new VMID().toString();
+        String uniqueName = "OpenEJB-" + new BigInteger(128, new SecureRandom()).toString(Character.MAX_RADIX);
+        String tempDir = System.getProperty("java.io.tmpdir");
+        File unique;
+        try {
+            unique = new File(tempDir, uniqueName).getCanonicalFile();
+            unique.createNewFile();
+        } catch (IOException e) {
+            // same trying in work directory
+            unique = new File(SystemInstance.get().getBase().getDirectory(), "work");
+            if (unique.exists()) {
+                try {
+                    unique = new File(unique, uniqueName).getCanonicalFile();
+                    unique.createNewFile();
+                } catch (IOException e1) {
+                    throw new OpenEJBRuntimeException(e);
+                }
+            } else {
+                throw new OpenEJBRuntimeException("can't create unique file, please set java.io.tmpdir to a writable folder or create work folder", e);
+            }
+        }
+        uniqueFile = unique;
+        uniqueFile.deleteOnExit();
     }
 
     private final DeploymentLoader deploymentLoader;
@@ -83,12 +92,8 @@ public class DeployerEjb implements Deployer {
         assembler = (Assembler) SystemInstance.get().getComponent(org.apache.openejb.spi.Assembler.class);
     }
 
-    public static String id() {
-        return ID;
-    }
-
     public String getUniqueFile() {
-        return ID;
+        return uniqueFile.getAbsolutePath();
     }
 
     public Collection<AppInfo> getDeployedApps() {
