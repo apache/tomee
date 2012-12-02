@@ -21,7 +21,6 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.UndeployException;
 import org.apache.openejb.assembler.Deployer;
-import org.apache.openejb.assembler.DeployerEjb;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.ClientInfo;
 import org.apache.openejb.assembler.classic.ConnectorInfo;
@@ -125,7 +124,7 @@ public class VmDeploymentManager implements DeploymentManager {
 
     private boolean isDeployerLocal() {
         if (deployer == null) {
-            deployerLocal = DeployerEjb.id().equals(getDeployer().getUniqueFile());
+            deployerLocal = new File(getDeployer().getUniqueFile()).exists();            
         }
         return deployerLocal;
     }
