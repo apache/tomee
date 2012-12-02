@@ -444,9 +444,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
         }
 
-        final AutoDeployer autoDeployer = new AutoDeployer(containerSystemInfo.autoDeploy);
-        SystemInstance.get().setComponent(AutoDeployer.class, autoDeployer);
-        autoDeployer.start();
+//        final AutoDeployer autoDeployer = new AutoDeployer(containerSystemInfo.autoDeploy);
+//        SystemInstance.get().setComponent(AutoDeployer.class, autoDeployer);
+//        autoDeployer.start();
     }
 
     public boolean isDeployed(final String path) {
