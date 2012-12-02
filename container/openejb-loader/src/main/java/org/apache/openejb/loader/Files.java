@@ -43,11 +43,21 @@ public class Files {
     }
 
     public static File path(File dir, String... parts) {
-        for (String part : parts) {
-            dir = new File(dir, part);
+        File base = dir;
+        int idx = 0;
+        if (parts.length >= 1) {
+            final File partFile = new File(parts[0]);
+            if (partFile.exists() && partFile.isAbsolute()) {
+                base = partFile;
+                idx = 1;
+            }
         }
 
-        return dir;
+        for (int i = idx; i < parts.length; i++) {
+            base = new File(base, parts[i]);
+        }
+
+        return base;
     }
 
     public static List<File> collect(final File dir, final String regex) {
