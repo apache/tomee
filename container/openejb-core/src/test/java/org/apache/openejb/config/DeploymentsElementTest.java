@@ -533,7 +533,7 @@ public class DeploymentsElementTest extends Assert {
     public void invalidFile_doesNotExist() throws Exception {
         exceptions.expect(RuntimeException.class);
         exceptions.expectMessage("Deployments file=");
-        exceptions.expectMessage("Not exist");
+        exceptions.expectMessage("not exist");
         exceptions.expectMessage("myapp.jar");
 
         final Server server = new Server();
