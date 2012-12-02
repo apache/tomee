@@ -31,17 +31,17 @@ public class DirectoryMonitor {
 
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_DEPLOY, DirectoryMonitor.class.getPackage().getName());
 
-    private final int pollIntervalMillis;
+    private final long pollIntervalMillis;
 
     private final File target;
 
     private final Listener listener;
 
-    private final Map files = new HashMap();
+    private final Map<String, FileInfo> files = new HashMap<String, FileInfo>();
 
     private final Timer timer;
 
-    public DirectoryMonitor(final File target, final Listener listener, final int pollIntervalMillis) {
+    public DirectoryMonitor(final File target, final Listener listener, final long pollIntervalMillis) {
         assert listener == null : "No listener specified";
         assert target.isDirectory() : "File specified is not a directory. " + target.getAbsolutePath();
         assert target.canRead() : "Directory specified cannot be read. " + target.getAbsolutePath();
@@ -59,7 +59,7 @@ public class DirectoryMonitor {
         return logger;
     }
 
-    public int getPollIntervalMillis() {
+    public long getPollIntervalMillis() {
         return pollIntervalMillis;
     }
 
@@ -108,6 +108,17 @@ public class DirectoryMonitor {
                 final FileInfo now = newInfo(file);
                 now.setChanging(false);
             }
+        }
+    }
+
+    public void addFile(final File file) {
+        newInfo(file);
+    }
+
+    public void removeFile(final File file) {
+        final FileInfo fileInfo = oldInfo(file);
+        if (fileInfo != null) {
+            files.remove(fileInfo.getPath());
         }
     }
 

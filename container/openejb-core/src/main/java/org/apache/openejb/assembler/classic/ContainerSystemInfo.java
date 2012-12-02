@@ -25,4 +25,6 @@ public class ContainerSystemInfo extends InfoObject {
 
     public final List<AppInfo> applications = new ArrayList<AppInfo>();
 
+    public final List<String> autoDeploy = new ArrayList<String>();
+
 }

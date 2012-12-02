@@ -77,12 +77,12 @@ public class Files {
     }
 
     public static File exists(File file, String s) {
-        if (!file.exists()) throw new FileRuntimeException(s + " does not exist: " + file.getAbsolutePath());
+        if (!file.exists()) throw new FileDoesNotExistException(s + " does not exist: " + file.getAbsolutePath());
         return file;
     }
 
     public static File exists(File file) {
-        if (!file.exists()) throw new FileRuntimeException("Does not exist: " + file.getAbsolutePath());
+        if (!file.exists()) throw new FileDoesNotExistException("Does not exist: " + file.getAbsolutePath());
         return file;
     }
 
@@ -115,6 +115,10 @@ public class Files {
         if (file.exists()) return file;
         if (!file.mkdirs()) throw new FileRuntimeException("Cannot mkdir: " + file.getAbsolutePath());
         return file;
+    }
+
+    public static File mkdir(File file, String name) {
+        return mkdir(new File(file, name));
     }
 
     public static File tmpdir() {
@@ -217,4 +221,15 @@ public class Files {
             super(e);
         }
     }
+
+    public static class FileDoesNotExistException extends FileRuntimeException {
+        public FileDoesNotExistException(String str) {
+            super(str);
+        }
+
+        public FileDoesNotExistException(Exception e) {
+            super(e);
+        }
+    }
+
 }

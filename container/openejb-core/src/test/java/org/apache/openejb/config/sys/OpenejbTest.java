@@ -80,7 +80,7 @@ public class OpenejbTest extends TestCase {
 
     private Deployments jar(String s) {
         final Deployments deployments = new Deployments();
-        deployments.setJar(s);
+        deployments.setFile(s);
         return deployments;
     }
 
