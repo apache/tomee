@@ -55,6 +55,28 @@ public class URLs {
         }
     }
 
+    public static URL toFileUrl(final URL url) {
+        if ("jar".equals(url.getProtocol())) {
+            try {
+                final String spec = url.getFile();
+
+                int separator = spec.indexOf('!');
+                /*
+                 * REMIND: we don't handle nested JAR URLs
+                 */
+                if (separator == -1) throw new MalformedURLException("no ! found in jar url spec:" + spec);
+
+                return new URL(spec.substring(0, separator++));
+            } catch (MalformedURLException e) {
+                throw new IllegalStateException(e);
+            }
+        } else if ("file".equals(url.getProtocol())) {
+            return url;
+        } else {
+            throw new IllegalArgumentException("Unsupported URL scheme: " + url.toExternalForm());
+        }
+    }
+
     public static String toFilePath(final URL url) {
         return toFile(url).getAbsolutePath();
     }

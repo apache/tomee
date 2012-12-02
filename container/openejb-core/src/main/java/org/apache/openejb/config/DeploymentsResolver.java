@@ -44,6 +44,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.apache.openejb.util.URLs.toFile;
+import static org.apache.openejb.util.URLs.toFileUrl;
 
 /**
  * @version $Rev$ $Date$
@@ -295,7 +296,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
     }
 
     public static void processUrls(final List<URL> urls, final ClassLoader classLoader, final Set<RequireDescriptors> requireDescriptors, final FileUtils base, final List<URL> jarList) {
-        for (URL url : urls) {
+        for (final URL url : urls) {
 
             final String urlProtocol = url.getProtocol();
             //Currently, we only support jar and file protocol
@@ -305,8 +306,6 @@ public class DeploymentsResolver implements DeploymentFilterable {
                 continue;
             }
 
-            final Deployments deployment;
-            String path = "";
             try {
 
                 final DeploymentLoader deploymentLoader = new DeploymentLoader();
@@ -314,30 +313,13 @@ public class DeploymentsResolver implements DeploymentFilterable {
                 final Class<? extends DeploymentModule> moduleType = deploymentLoader.discoverModuleType(url, classLoader, requireDescriptors);
                 if (AppModule.class.isAssignableFrom(moduleType) || EjbModule.class.isAssignableFrom(moduleType) || PersistenceModule.class.isAssignableFrom(moduleType) || ConnectorModule.class.isAssignableFrom(moduleType) || ClientModule.class.isAssignableFrom(moduleType)) {
 
-                    if (AppModule.class.isAssignableFrom(moduleType) || ConnectorModule.class.isAssignableFrom(moduleType)) {
+                    final URL archive = toFileUrl(url);
 
-                        deployment = JaxbOpenejb.createDeployments();
-
-                        if (urlProtocol.equals("jar")) {
-                            url = new URL(url.getFile().replaceFirst("!.*$", ""));
-                            final File file = toFile(url);
-                            path = file.getAbsolutePath();
-                            deployment.setFile(path);
-                        } else if (urlProtocol.equals("file")) {
-                            final File file = toFile(url);
-                            path = file.getAbsolutePath();
-                            deployment.setDir(path);
-                        }
-
-                        logger.info("Found " + moduleType.getSimpleName() + " in classpath: " + path);
-
-                        loadFrom(deployment, base, jarList);
-                    } else {
-                        if (!jarList.contains(url)) {
-                            jarList.add(url);
-                        }
+                    if (!jarList.contains(archive)) {
+                        jarList.add(archive);
+                        final File file = toFile(archive);
+                        logger.info("Found " + moduleType.getSimpleName() + " in classpath: " + file.getAbsolutePath());
                     }
-
                 }
             } catch (IOException e) {
                 logger.warning("Unable to determine the module type of " + url.toExternalForm() + ": Exception: " + e.getMessage(), e);
