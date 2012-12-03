@@ -2182,7 +2182,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
     }
 
-    private static class DeploymentListenerObserver {
+    public static class DeploymentListenerObserver {
         private final DeploymentListener delegate;
 
         public DeploymentListenerObserver(final DeploymentListener deploymentListener) {
