@@ -91,6 +91,8 @@ public class AppValidator {
 
     // START SNIPPET : code2
     public AppModule validate(final AppModule appModule) {
+        final ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(appModule.getClassLoader()); // be sure to not mix classloaders
         try {
             ValidationRule[] rules = getValidationRules();
             for (int i = 0; i < rules.length; i++) {
@@ -102,6 +104,8 @@ public class AppValidator {
             err.setCause(e);
             err.setDetails(e.getMessage());
             appModule.getValidation().addError(err);
+        } finally {
+            Thread.currentThread().setContextClassLoader(loader);
         }
         return appModule;
     }
