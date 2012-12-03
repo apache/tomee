@@ -465,24 +465,14 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
 
 
-        final List<String> declaredApps = getDeclaredApps();
+        final List<File> declaredApps = getDeclaredApps();
 
-        for (final String pathname : declaredApps) {
+        for (final File jarFile : declaredApps) {
             try {
-                try {
-                    final File jarFile;
-                    if (pathname.startsWith("file:/")) {
-                        jarFile = new File(new URI(pathname));
-                    } else {
-                        jarFile = new File(pathname);
-                    }
 
-                    final AppInfo appInfo = configureApplication(jarFile);
-                    sys.containerSystem.applications.add(appInfo);
+                final AppInfo appInfo = configureApplication(jarFile);
+                sys.containerSystem.applications.add(appInfo);
 
-                } catch (URISyntaxException e) {
-                    logger.error("Invalid declaredApp URI '" + pathname + "'", e);
-                }
             } catch (OpenEJBException alreadyHandled) {
                 final DeploymentExceptionManager exceptionManager = SystemInstance.get().getComponent(DeploymentExceptionManager.class);
                 exceptionManager.pushDelpoymentException(alreadyHandled);
@@ -543,71 +533,62 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         return finished;
     }
 
-    private List<String> getDeclaredApps() {
+    private List<File> getDeclaredApps() {
         // make a copy of the list because we update it
         final List<Deployments> deployments = new ArrayList<Deployments>();
+
         if (openejb != null) {
             deployments.addAll(openejb.getDeployments());
         }
-        File additionalDeploymentFile;
+
         try {
-            additionalDeploymentFile = SystemInstance.get().getBase().getFile(ADDITIONAL_DEPLOYMENTS, false);
-        } catch (IOException e) {
-            additionalDeploymentFile = null;
-        }
-        if (additionalDeploymentFile.exists()) {
-            InputStream fis = null;
-            try {
-                fis = IO.read(additionalDeploymentFile);
-                final AdditionalDeployments additionalDeployments = JaxbOpenejb.unmarshal(AdditionalDeployments.class, fis);
-                deployments.addAll(additionalDeployments.getDeployments());
-            } catch (Exception e) {
-                logger.error("can't read " + ADDITIONAL_DEPLOYMENTS, e);
-            } finally {
-                IO.close(fis);
+            final File additionalDeploymentFile = SystemInstance.get().getBase().getFile(ADDITIONAL_DEPLOYMENTS, false);
+
+            if (additionalDeploymentFile.exists()) {
+                InputStream fis = null;
+                try {
+                    fis = IO.read(additionalDeploymentFile);
+                    final AdditionalDeployments additionalDeployments = JaxbOpenejb.unmarshal(AdditionalDeployments.class, fis);
+                    deployments.addAll(additionalDeployments.getDeployments());
+                } catch (Exception e) {
+                    logger.error("can't read " + ADDITIONAL_DEPLOYMENTS, e);
+                } finally {
+                    IO.close(fis);
+                }
             }
+        } catch (IOException e) {
         }
 
         // resolve jar locations //////////////////////////////////////  BEGIN  ///////
 
         final FileUtils base = SystemInstance.get().getBase();
 
-        final List<URL> declaredAppsUrls = new ArrayList<URL>();
+        final List<File> declaredAppsUrls = new ArrayList<File>();
         try {
             for (final Deployments deployment : deployments) {
                 DeploymentsResolver.loadFrom(deployment, base, declaredAppsUrls);
             }
         } catch (SecurityException ignored) {
         }
-        return toString(declaredAppsUrls);
+
+        return declaredAppsUrls;
     }
 
-    public ArrayList<File> getModulesFromClassPath(List<String> declaredApps, final ClassLoader classLoader) {
+    public ArrayList<File> getModulesFromClassPath(List<File> declaredApps, final ClassLoader classLoader) {
         final FileUtils base = SystemInstance.get().getBase();
-        if (declaredApps == null) {
-            declaredApps = getDeclaredApps();
-        }
+
         final List<URL> classpathAppsUrls = new ArrayList<URL>();
         DeploymentsResolver.loadFromClasspath(base, classpathAppsUrls, classLoader);
 
         final ArrayList<File> jarFiles = new ArrayList<File>();
         for (final URL path : classpathAppsUrls) {
-            if (declaredApps.contains(URLs.toFilePath(path))) continue;
+            final File file = URLs.toFile(path);
 
-            jarFiles.add(new File(URLs.toFilePath(path)));
+            if (declaredApps != null && declaredApps.contains(file)) continue;
+
+            jarFiles.add(file);
         }
         return jarFiles;
-    }
-
-    private List<String> toString(final List<URL> urls) {
-        final List<String> toReturn = new ArrayList<String>(urls.size());
-        for (final URL url : urls) {
-            try {
-                toReturn.add(url.toString());
-            } catch (Exception ignore) {
-            }
-        }
-        return toReturn;
     }
 
     public ContainerInfo createContainerInfo(final Container container) throws OpenEJBException {

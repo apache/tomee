@@ -39,7 +39,7 @@ public class Files {
             }
         }
 
-        return dir;
+        return dir.getAbsoluteFile();
     }
 
     public static File path(File dir, String... parts) {
@@ -57,7 +57,7 @@ public class Files {
             base = new File(base, parts[i]);
         }
 
-        return base;
+        return base.getAbsoluteFile();
     }
 
     public static List<File> collect(final File dir, final String regex) {
