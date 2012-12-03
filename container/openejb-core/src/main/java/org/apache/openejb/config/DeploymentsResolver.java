@@ -54,7 +54,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
 
     private static final Logger logger = DeploymentLoader.logger;
 
-    public static void loadFrom(final Deployments dep, final FileUtils path, final List<URL> jarList) {
+    public static void loadFrom(final Deployments dep, final FileUtils path, final List<File> jarList) {
 
         if (dep.getDir() != null) {
 
@@ -93,24 +93,19 @@ public class DeploymentsResolver implements DeploymentFilterable {
         }
     }
 
-    private static void loadFromFile(Deployments dep, FileUtils path, List<URL> jarList) {
+    private static void loadFromFile(Deployments dep, FileUtils path, List<File> jarList) {
         final File file = Files.path(path.getDirectory(), dep.getFile());
 
         Files.exists(file);
         Files.readable(file);
         Files.file(file);
 
-        try {
-            final URL url = file.toURI().toURL();
-            if (!jarList.contains(url)) {
-                jarList.add(url);
-            }
-        } catch (MalformedURLException e) {
-            throw new RuntimeException("Cannot convert file to URL: file="+file.getAbsolutePath(), e);
+        if (!jarList.contains(file)) {
+            jarList.add(file);
         }
     }
 
-    private static void loadFromDir(Deployments dep, FileUtils path, List<URL> jarList) {
+    private static void loadFromDir(Deployments dep, FileUtils path, List<File> jarList) {
         final File dir = Files.path(path.getDirectory(), dep.getDir());
 
         Files.exists(dir);
@@ -130,14 +125,8 @@ public class DeploymentsResolver implements DeploymentFilterable {
         }
 
         for (File file : files.values()) {
-            try {
-                final URL url = file.toURI().toURL();
-
-                if (!jarList.contains(url)) {
-                    jarList.add(url);
-                }
-            } catch (MalformedURLException e) {
-                throw new RuntimeException("Cannot convert file to URL: file="+file.getAbsolutePath(), e);
+            if (!jarList.contains(file)) {
+                jarList.add(file);
             }
         }
     }
