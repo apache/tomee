@@ -40,7 +40,8 @@ import static org.junit.Assert.assertNotNull;
 public class WebServiceWithAnUserInterceptorTest {
     private static EJBContainer container;
 
-    @BeforeClass public static void start() {
+    @BeforeClass
+    public static void start() {
         final Properties properties = new Properties();
         properties.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*openejb-cxf.*");
         properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
@@ -48,11 +49,13 @@ public class WebServiceWithAnUserInterceptorTest {
         container = EJBContainer.createEJBContainer(properties);
     }
 
-    @AfterClass public static void close() {
+    @AfterClass
+    public static void close() {
         container.close();
     }
 
-    @Test public void test() throws Exception {
+    @Test
+    public void test() throws Exception {
         Foo foo = Service.create(
                 new URL("http://localhost:4204/openejb-cxf/FooImpl?wsdl"),
                 new QName("http://cxf.server.openejb.apache.org/", "FooImplService"))
@@ -63,7 +66,7 @@ public class WebServiceWithAnUserInterceptorTest {
 
     @WebService
     @Stateless
-    @Interceptors({ BarInterceptor.class })
+    @Interceptors({BarInterceptor.class})
     public static class FooImpl implements Foo {
         public String hi() {
             return "foo";
@@ -76,7 +79,8 @@ public class WebServiceWithAnUserInterceptorTest {
     }
 
     public static class BarInterceptor {
-        @AroundInvoke public Object around(InvocationContext ic) throws Exception {
+        @AroundInvoke
+        public Object around(InvocationContext ic) throws Exception {
             return "bar";
         }
     }
