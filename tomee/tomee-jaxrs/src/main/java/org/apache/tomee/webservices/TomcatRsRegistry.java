@@ -90,7 +90,7 @@ public class TomcatRsRegistry implements RsRegistry {
         wrapper.setServletClass(RsServlet.class.getName());
 
         context.addChild(wrapper);
-        wrapper.addMapping(completePath);
+        wrapper.addMapping(removeWebContext(webContext, completePath));
         context.addServletMapping(completePath, name);
 
         final String listenerId = wrapper.getName() + RsServlet.class.getName() + listener.hashCode();
@@ -102,6 +102,13 @@ public class TomcatRsRegistry implements RsRegistry {
         listeners.put(key, listener);
 
         return new AddressInfo(path, key);
+    }
+
+    private static String removeWebContext(final String webContext, final String completePath) {
+        if (webContext == null) {
+            return completePath;
+        }
+        return completePath.substring(webContext.length());
     }
 
     private static String address(final Collection<Connector> connectors, final String host, final String path) {
