@@ -53,11 +53,15 @@ import static junit.framework.Assert.fail;
 
 @RunWith(ApplicationComposer.class)
 public class BeanValidationTest {
-    @EJB private PersistManager persistManager;
-    @Resource private Validator validator;
-    @Resource private ValidatorFactory validatorFactory;
+    @EJB
+    private PersistManager persistManager;
+    @Resource
+    private Validator validator;
+    @Resource
+    private ValidatorFactory validatorFactory;
 
-    @Configuration public Properties config() {
+    @Configuration
+    public Properties config() {
         final Properties p = new Properties();
         p.put("bvalDatabase", "new://Resource?type=DataSource");
         p.put("bvalDatabase.JdbcDriver", "org.hsqldb.jdbcDriver");
@@ -65,13 +69,15 @@ public class BeanValidationTest {
         return p;
     }
 
-    @Module public StatelessBean app() throws Exception {
+    @Module
+    public StatelessBean app() throws Exception {
         final StatelessBean bean = new StatelessBean(PersistManager.class);
         bean.setLocalBean(new Empty());
         return bean;
     }
 
-    @Module public Persistence persistence() {
+    @Module
+    public Persistence persistence() {
         PersistenceUnit unit = new PersistenceUnit("foo-unit");
         unit.addClass(EntityToValidate.class);
         unit.setProperty("openjpa.jdbc.SynchronizeMappings", "buildSchema(ForeignKeys=true)");
@@ -86,10 +92,13 @@ public class BeanValidationTest {
     @LocalBean
     @Stateless
     public static class PersistManager {
-        @PersistenceContext private EntityManager em;
+        @PersistenceContext
+        private EntityManager em;
 
-        @Resource private Validator validator;
-        @Resource private ValidatorFactory validatorFactory;
+        @Resource
+        private Validator validator;
+        @Resource
+        private ValidatorFactory validatorFactory;
 
         public void persistValid() {
             EntityToValidate entity = new EntityToValidate();
@@ -101,19 +110,25 @@ public class BeanValidationTest {
             em.persist(new EntityToValidate());
         }
 
-        @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) public Validator getValidator() {
+        @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+        public Validator getValidator() {
             return validator;
         }
 
-        @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) public ValidatorFactory getValidatorFactory() {
+        @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+        public ValidatorFactory getValidatorFactory() {
             return validatorFactory;
         }
     }
 
     @Entity
     public static class EntityToValidate {
-        @Id @GeneratedValue private long id;
-        @NotNull @Size(min = 1, max = 5) private String name;
+        @Id
+        @GeneratedValue
+        private long id;
+        @NotNull
+        @Size(min = 1, max = 5)
+        private String name;
 
         public long getId() {
             return id;
@@ -132,11 +147,13 @@ public class BeanValidationTest {
         }
     }
 
-    @Test public void valid()  {
+    @Test
+    public void valid() {
         persistManager.persistValid();
     }
 
-    @Test public void notValid()  {
+    @Test
+    public void notValid() {
         try {
             persistManager.persistNotValid();
             fail();
@@ -147,31 +164,37 @@ public class BeanValidationTest {
         }
     }
 
-    @Test public void lookupValidatorFactory() throws Exception {
+    @Test
+    public void lookupValidatorFactory() throws Exception {
         ValidatorFactory validatorFactory = (ValidatorFactory) new InitialContext().lookup("java:comp/ValidatorFactory");
         assertNotNull(validatorFactory);
     }
 
-    @Test public void lookupValidator() throws Exception {
-        Validator validator = (Validator)  new InitialContext().lookup("java:comp/Validator");
+    @Test
+    public void lookupValidator() throws Exception {
+        Validator validator = (Validator) new InitialContext().lookup("java:comp/Validator");
         assertNotNull(validator);
     }
 
-    @Test public void injectionValidatorFactory() {
+    @Test
+    public void injectionValidatorFactory() {
         ValidatorFactory validatorFactory = persistManager.getValidatorFactory();
         assertNotNull(validatorFactory);
     }
 
-    @Test public void injectionValidator() {
+    @Test
+    public void injectionValidator() {
         Validator validator = persistManager.getValidator();
         assertNotNull(validator);
     }
 
-    @Test public void injection2ValidatorFactory() {
+    @Test
+    public void injection2ValidatorFactory() {
         assertNotNull(validatorFactory);
     }
 
-    @Test public void injection2Validator() {
+    @Test
+    public void injection2Validator() {
         assertNotNull(validator);
     }
 }

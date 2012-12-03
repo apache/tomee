@@ -17,44 +17,42 @@
 
 package org.apache.openejb.server.cxf.rs;
 
-import java.util.Properties;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.embeddable.EJBContainer;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Request;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.config.DeploymentFilterable;
-import org.apache.openejb.server.cxf.rs.beans.SimpleEJB;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import javax.ejb.Stateless;
+import javax.ejb.embeddable.EJBContainer;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import java.util.Properties;
+
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
 
 public class PathParamAtClassLevelTest {
     private static EJBContainer container;
 
-    @BeforeClass public static void start() throws Exception {
+    @BeforeClass
+    public static void start() throws Exception {
         Properties properties = new Properties();
         properties.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*openejb-cxf-rs.*");
         properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
         container = EJBContainer.createEJBContainer(properties);
     }
 
-    @AfterClass public static void close() throws Exception {
+    @AfterClass
+    public static void close() throws Exception {
         if (container != null) {
             container.close();
         }
     }
 
-    @Test public void rest() {
+    @Test
+    public void rest() {
         String response = WebClient.create("http://localhost:4204/openejb-cxf-rs").path("/match/openejb/test/normal").get(String.class);
         assertEquals("openejb", response);
     }
@@ -62,7 +60,9 @@ public class PathParamAtClassLevelTest {
     @Stateless
     @Path("/match/{name}/test")
     public static class DoesItMatchWithPathParamAtClassLevel {
-        @Path("/normal") @GET public String normal(@PathParam("name") String name) {
+        @Path("/normal")
+        @GET
+        public String normal(@PathParam("name") String name) {
             return name;
         }
     }

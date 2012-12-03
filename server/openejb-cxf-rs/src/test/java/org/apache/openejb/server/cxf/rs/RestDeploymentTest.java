@@ -78,7 +78,8 @@ public class RestDeploymentTest {
     private static ServiceDaemon daemon;
     public static final String BASE_URL = "http://localhost:4204/my-web-app/my-app";
 
-    @BeforeClass public static void start() throws Exception {
+    @BeforeClass
+    public static void start() throws Exception {
         WebApp webApp = new WebApp();
         webApp.setContextRoot("/my-web-app");
         webApp.setId("web");
@@ -116,7 +117,8 @@ public class RestDeploymentTest {
         final AppContext application = assembler.createApplication(appInfo);
 
         Context ctx = (Context) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[]{Context.class}, new InvocationHandler() {
-            @Override public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            @Override
+            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                 if (args.length == 1 && args[0].equals("SimpleEJBLocalBean")) {
                     return new SimpleEJB();
                 }
@@ -154,7 +156,8 @@ public class RestDeploymentTest {
         service.start();
     }
 
-    @AfterClass public static void close() throws ServiceException {
+    @AfterClass
+    public static void close() throws ServiceException {
         if (service != null) {
             service.stop();
         }
@@ -166,17 +169,20 @@ public class RestDeploymentTest {
         }
     }
 
-    @Test public void first() {
+    @Test
+    public void first() {
         String hi = WebClient.create(BASE_URL).path("/first/hi").get(String.class);
         assertEquals("Hi from REST World!", hi);
     }
 
-    @Test public void second() {
+    @Test
+    public void second() {
         String hi = WebClient.create(BASE_URL).path("/second/hi2/2nd").get(String.class);
         assertEquals("hi 2nd", hi);
     }
 
-    @Test public void expert() throws Exception {
+    @Test
+    public void expert() throws Exception {
         Response response = WebClient.create(BASE_URL).path("/expert/still-hi").post("Pink Floyd");
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
 
@@ -191,15 +197,18 @@ public class RestDeploymentTest {
         assertEquals("hi Pink Floyd", writer.toString());
     }
 
-    @Test public void nonListed() { // default handler from openejb-http
+    @Test
+    public void nonListed() { // default handler from openejb-http
         assertEquals("", WebClient.create(BASE_URL).path("/non-listed/yata/foo").get(String.class));
     }
 
-    @Test public void hooked() {
+    @Test
+    public void hooked() {
         assertEquals(true, WebClient.create(BASE_URL).path("/hooked/post").get(Boolean.class).booleanValue());
     }
 
-    @Test public void injectEjb() {
+    @Test
+    public void injectEjb() {
         assertEquals(true, WebClient.create(BASE_URL).path("/inject/ejb").get(Boolean.class).booleanValue());
     }
 }

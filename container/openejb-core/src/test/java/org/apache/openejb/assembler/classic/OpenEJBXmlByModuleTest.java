@@ -16,13 +16,6 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import java.io.IOException;
-import java.util.Properties;
-import javax.annotation.Resource;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
@@ -36,6 +29,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.annotation.Resource;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+import java.io.IOException;
+import java.util.Properties;
+
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
@@ -45,7 +46,8 @@ public class OpenEJBXmlByModuleTest {
 
     private UselessBean bean;
 
-    @Before public void setUp() throws OpenEJBException, NamingException, IOException {
+    @Before
+    public void setUp() throws OpenEJBException, NamingException, IOException {
         ConfigurationFactory config = new ConfigurationFactory();
         Assembler assembler = new Assembler();
 
@@ -71,14 +73,16 @@ public class OpenEJBXmlByModuleTest {
         bean = (UselessBean) context.lookup("UselessBeanLocalBean");
     }
 
-    @After public void close() throws NamingException {
+    @After
+    public void close() throws NamingException {
         if (context != null) {
             context.close();
             OpenEJB.destroy(); // has to be called manually since we start openejb in a custom way
         }
     }
 
-    @Test public void test() throws Exception {
+    @Test
+    public void test() throws Exception {
         assertNotNull(bean.datasource());
         assertTrue(bean.datasource() instanceof BasicDataSource);
         BasicDataSource ds = (BasicDataSource) bean.datasource();
@@ -96,10 +100,17 @@ public class OpenEJBXmlByModuleTest {
     }
 
     public static class UselessBean {
-        @Resource(name = "DS") private DataSource ds;
-        @Resource(name = "My Resource", type = MyResource.class) private MyResource rs;
+        @Resource(name = "DS")
+        private DataSource ds;
+        @Resource(name = "My Resource", type = MyResource.class)
+        private MyResource rs;
 
-        public DataSource datasource() { return ds; }
-        public MyResource resource() { return rs; }
+        public DataSource datasource() {
+            return ds;
+        }
+
+        public MyResource resource() {
+            return rs;
+        }
     }
 }

@@ -116,7 +116,8 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory {
                 || SystemInstance.get().getOptions().get(OPENEJB_JPA_CRITERIA_LOG_JPQL_LEVEL, prop.getProperty(OPENEJB_JPA_CRITERIA_LOG_JPQL_LEVEL, null)) != null;
     }
 
-    @Override public EntityManager createEntityManager() {
+    @Override
+    public EntityManager createEntityManager() {
         EntityManager em;
         try {
             em = delegate.createEntityManager();
@@ -583,7 +584,7 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory {
 
         private TabularData tabularData(String typeName, String typeDescription, String description, List<?> list, Info info) {
             String[] names = new String[list.size()];
-            Object[] values= new Object[names.length];
+            Object[] values = new Object[names.length];
             int i = 0;
             for (Object o : list) {
                 names[i] = o.toString();

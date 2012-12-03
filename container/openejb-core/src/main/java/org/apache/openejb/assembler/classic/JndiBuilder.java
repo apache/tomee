@@ -170,6 +170,7 @@ public class JndiBuilder {
         public void begin(BeanContext beanContext);
 
         public String getName(Class interfce, String key, Interface type);
+
         public Map<String, String> getNames(Class interfce, Interface type);
 
         public void end();
@@ -185,7 +186,7 @@ public class JndiBuilder {
 
         // Set in begin()
         private BeanContext bean;
-        
+
         // Set in begin()
         private HashMap<String, Map<String, StringTemplate>> templates;
 
@@ -243,7 +244,7 @@ public class JndiBuilder {
         private Map<String, StringTemplate> addTemplate(Map<String, StringTemplate> map, String key, StringTemplate template) {
             Map<String, StringTemplate> m = map;
             if (m == null) {
-                m = new TreeMap<String, StringTemplate> ();
+                m = new TreeMap<String, StringTemplate>();
             }
             m.put(key, template);
             return m;
@@ -251,7 +252,7 @@ public class JndiBuilder {
 
         public void begin(BeanContext bean) {
             this.bean = bean;
-            
+
             EnterpriseBeanInfo beanInfo = beanInfos.get(bean.getDeploymentID());
 
             templates = new HashMap<String, Map<String, StringTemplate>>();
@@ -307,22 +308,23 @@ public class JndiBuilder {
             contextData.put("interfaceClass.packageName", packageName(interfce));
 
             StringTemplate stringTemplate = null;
-            
+
             if (template.containsKey(key)) {
                 stringTemplate = template.get(key);
             } else {
                 stringTemplate = template.get(DEFAULT_NAME_KEY);
             }
-            
-            if (stringTemplate == null){
+
+            if (stringTemplate == null) {
                 stringTemplate = template.values().iterator().next();
-            } 
-            
-            return  stringTemplate.apply(contextData);
-          
+            }
+
+            return stringTemplate.apply(contextData);
+
         }
 
-        @Override public Map<String, String> getNames(Class interfce, Interface type) {
+        @Override
+        public Map<String, String> getNames(Class interfce, Interface type) {
             Map<String, String> names = new HashMap<String, String>();
             for (String key : KEYS.split(",")) {
                 names.put(key, getName(interfce, key, type));
@@ -360,7 +362,8 @@ public class JndiBuilder {
             return id;
         }
 
-        @Override public Map<String, String> getNames(Class interfce, Interface type) {
+        @Override
+        public Map<String, String> getNames(Class interfce, Interface type) {
             Map<String, String> names = new HashMap<String, String>();
             names.put("", getName(interfce, DEFAULT_NAME_KEY, type));
             return names;
@@ -409,7 +412,7 @@ public class JndiBuilder {
 
                 // if the user inject the EJB using a parent class
                 if (!bean.getBeanClass().isInterface()) {
-                    for(Class<?> clazz = bean.getBeanClass().getSuperclass(); !clazz.equals(Object.class); clazz = clazz.getSuperclass()) {
+                    for (Class<?> clazz = bean.getBeanClass().getSuperclass(); !clazz.equals(Object.class); clazz = clazz.getSuperclass()) {
                         optionalBind(bindings, ref, "openejb/Deployment/" + format(id, clazz.getName(), InterfaceType.LOCALBEAN));
                     }
                 }
@@ -449,7 +452,7 @@ public class JndiBuilder {
                 if (USE_OLD_JNDI_NAMES) {
                     bean.getModuleContext().getAppContext().getBindings().put(name, ref);
                 }
-                
+
                 if (simpleNameRef == null) simpleNameRef = ref;
             }
         } catch (NamingException e) {
@@ -475,7 +478,7 @@ public class JndiBuilder {
                 if (USE_OLD_JNDI_NAMES) {
                     bean.getModuleContext().getAppContext().getBindings().put(name, ref);
                 }
-                
+
                 if (simpleNameRef == null) simpleNameRef = ref;
             }
         } catch (NamingException e) {
@@ -517,7 +520,7 @@ public class JndiBuilder {
                 bind("openejb/remote/" + name, ref, bindings, beanInfo, homeInterface);
 
                 optionalBind(bindings, ref, "openejb/Deployment/" + format(id, homeInterface.getName(), InterfaceType.EJB_HOME));
-                
+
                 name = "openejb/Deployment/" + format(id, bean.getRemoteInterface().getName());
                 bind(name, ref, bindings, beanInfo, homeInterface);
 
@@ -673,8 +676,7 @@ public class JndiBuilder {
         moduleContext.bind("module/" + beanName, ref);
         application.getBindings().put("module/" + beanName, ref);
     }
-    
-    
+
 
     /**
      * This may not be that performant, but it's certain to be faster than the

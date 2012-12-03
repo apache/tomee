@@ -16,6 +16,13 @@
  */
 package org.apache.openejb.config;
 
+import org.apache.openejb.jee.FacesConfig;
+import org.apache.openejb.jee.TldTaglib;
+import org.apache.openejb.jee.WebApp;
+import org.apache.openejb.jee.Webservices;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.xbean.finder.IAnnotationFinder;
+
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
@@ -26,12 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import org.apache.openejb.jee.FacesConfig;
-import org.apache.openejb.jee.TldTaglib;
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.jee.Webservices;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.xbean.finder.IAnnotationFinder;
 
 /**
  * @version $Rev$ $Date$
@@ -57,7 +58,7 @@ public class WebModule extends Module implements WsModule, RESTModule {
     private final Map<String, Set<String>> webAnnotatedClasses = new HashMap<String, Set<String>>();
 
     private ID id;
-    
+
     // keep the list of filtered URL we got after applying include/exclude pattern (@See DeploymentsResolver.loadFromClasspath)
     private List<URL> urls;
     private List<URL> scannableUrls;
@@ -166,9 +167,10 @@ public class WebModule extends Module implements WsModule, RESTModule {
     public Set<String> getWatchedResources() {
         return watchedResources;
     }
+
     public List<FacesConfig> getFacesConfigs() {
-		return facesConfigs;
-	}
+        return facesConfigs;
+    }
 
     @Override
     public String toString() {
@@ -178,7 +180,8 @@ public class WebModule extends Module implements WsModule, RESTModule {
                 '}';
     }
 
-    @Override public Set<String> getRestClasses() {
+    @Override
+    public Set<String> getRestClasses() {
         return restClasses;
     }
 

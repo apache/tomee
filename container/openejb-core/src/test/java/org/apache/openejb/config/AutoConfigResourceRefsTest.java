@@ -128,12 +128,18 @@ public class AutoConfigResourceRefsTest extends TestCase {
 
     public static class WidgetBean implements Widget {
 
-        @Resource javax.jms.Queue redQueue;
-        @Resource javax.jms.Queue blueQueue;
-        @Resource javax.jms.Queue greenQueue;
+        @Resource
+        javax.jms.Queue redQueue;
+        @Resource
+        javax.jms.Queue blueQueue;
+        @Resource
+        javax.jms.Queue greenQueue;
 
-        @Resource javax.sql.DataSource yellowDataSource;
-        @Resource javax.sql.DataSource orangeDataSource;
-        @Resource javax.sql.DataSource purpleDataSource;
+        @Resource
+        javax.sql.DataSource yellowDataSource;
+        @Resource
+        javax.sql.DataSource orangeDataSource;
+        @Resource
+        javax.sql.DataSource purpleDataSource;
     }
 }
