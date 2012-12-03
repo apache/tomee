@@ -310,7 +310,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
         }
     }
 
-    protected Map<String,EJBRestServiceInfo> getRestEjbs(AppInfo appInfo) {
+    protected Map<String, EJBRestServiceInfo> getRestEjbs(AppInfo appInfo) {
         Map<String, BeanContext> beanContexts = new HashMap<String, BeanContext>();
         for (EjbJarInfo ejbJar : appInfo.ejbJars) {
             for (EnterpriseBeanInfo bean : ejbJar.enterpriseBeans) {
@@ -452,7 +452,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
             if (itfs != null) {
                 for (Class<?> c : itfs) {
                     usedClass = findPath(c);
-                    if (usedClass.getAnnotation(Path.class) != null ) {
+                    if (usedClass.getAnnotation(Path.class) != null) {
                         break;
                     }
                 }
@@ -542,7 +542,8 @@ public abstract class RESTService implements ServerService, SelfManaging {
         }
     }
 
-    @Override public void start() throws ServiceException {
+    @Override
+    public void start() throws ServiceException {
         SystemInstance.get().setComponent(RESTService.class, this);
 
         beforeStart();
@@ -564,7 +565,8 @@ public abstract class RESTService implements ServerService, SelfManaging {
         }
     }
 
-    @Override public void stop() throws ServiceException {
+    @Override
+    public void stop() throws ServiceException {
         if (assembler != null) {
             SystemInstance.get().removeObserver(this);
             for (AppInfo appInfo : new ArrayList<AppInfo>(deployedApplications)) {
@@ -577,23 +579,28 @@ public abstract class RESTService implements ServerService, SelfManaging {
         }
     }
 
-    @Override public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
+    @Override
+    public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
         throw new UnsupportedOperationException(getClass().getName() + " cannot be invoked directly");
     }
 
-    @Override public void service(Socket socket) throws ServiceException, IOException {
+    @Override
+    public void service(Socket socket) throws ServiceException, IOException {
         throw new UnsupportedOperationException(getClass().getName() + " cannot be invoked directly");
     }
 
-    @Override public String getIP() {
+    @Override
+    public String getIP() {
         return IP;
     }
 
-    @Override public int getPort() {
+    @Override
+    public int getPort() {
         return PORT;
     }
 
-    @Override public void init(Properties props) throws Exception {
+    @Override
+    public void init(Properties props) throws Exception {
         virtualHost = props.getProperty("virtualHost");
         enabled = ServiceManager.isEnabled(props);
     }

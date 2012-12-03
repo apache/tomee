@@ -21,12 +21,7 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.apache.cxf.transport.http.DestinationRegistry;
-import org.apache.openejb.server.httpd.HttpRequest;
-import org.apache.openejb.server.httpd.HttpResponse;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.logging.Logger;
 
@@ -35,7 +30,8 @@ public class HttpDestination extends AbstractHTTPDestination {
         super(bus, registry, endpointInfo, path, true);
     }
 
-    @Override public Logger getLogger() {
+    @Override
+    public Logger getLogger() {
         return Logger.getLogger(HttpDestination.class.getName());
     }
 }

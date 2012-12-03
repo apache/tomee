@@ -30,7 +30,8 @@ public class MultipleClassLoader extends ClassLoader implements ClassLoaderCompa
         this.second = second;
     }
 
-    @Override public Class<?> loadClass(String name) throws ClassNotFoundException {
+    @Override
+    public Class<?> loadClass(String name) throws ClassNotFoundException {
         try {
             return super.loadClass(name);
         } catch (ClassNotFoundException cnfe) {

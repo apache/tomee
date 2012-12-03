@@ -16,15 +16,8 @@
  */
 package org.superbiz.moviefun;
 
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.Collection;
-
-import javax.ejb.EJB;
-
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
@@ -40,67 +33,76 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import javax.ejb.EJB;
+import java.io.File;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.Collection;
+
+import static org.junit.Assert.assertTrue;
 
 @RunWith(Arquillian.class)
 public class MoviesArquillianHtmlUnitTest {
-	private static final String WEBAPP_SRC = "src/main/webapp";
+    private static final String WEBAPP_SRC = "src/main/webapp";
 
-	@Deployment public static WebArchive createDeployment() {
-		
-		Collection<String> dependencies = Arrays.asList(new String[] {
-				"javax.servlet:jstl",
-				"taglibs:standard",
-				"commons-lang:commons-lang"
-		});
-		
-		File[] libs = Maven.resolver()
+    @Deployment
+    public static WebArchive createDeployment() {
+
+        Collection<String> dependencies = Arrays.asList(new String[]{
+                "javax.servlet:jstl",
+                "taglibs:standard",
+                "commons-lang:commons-lang"
+        });
+
+        File[] libs = Maven.resolver()
                 .loadPomFromFile("pom.xml").resolve(dependencies)
-                .withTransitivity().asFile(); 
-		
-		WebArchive war = ShrinkWrap.create(WebArchive.class, "test.war")
+                .withTransitivity().asFile();
+
+        WebArchive war = ShrinkWrap.create(WebArchive.class, "test.war")
                 .addClasses(Movie.class, MoviesBean.class, MoviesArquillianHtmlUnitTest.class, ActionServlet.class)
                 .addAsResource(new ClassLoaderAsset("META-INF/ejb-jar.xml"), "META-INF/ejb-jar.xml")
                 .addAsResource(new ClassLoaderAsset("META-INF/persistence.xml"), "META-INF/persistence.xml")
-				.addAsLibraries(libs);
-		
-		war.merge(ShrinkWrap.create(GenericArchive.class).as(ExplodedImporter.class)
-			    .importDirectory(WEBAPP_SRC).as(GenericArchive.class),
-			    "/", Filters.includeAll());
-		
-		return war;
-	}
+                .addAsLibraries(libs);
 
-	@EJB private MoviesBean movies;
-	
-	@ArquillianResource
-	private URL deploymentUrl;
+        war.merge(ShrinkWrap.create(GenericArchive.class).as(ExplodedImporter.class)
+                .importDirectory(WEBAPP_SRC).as(GenericArchive.class),
+                "/", Filters.includeAll());
 
-    @Before @After public void clean() {
+        return war;
+    }
+
+    @EJB
+    private MoviesBean movies;
+
+    @ArquillianResource
+    private URL deploymentUrl;
+
+    @Before
+    @After
+    public void clean() {
         movies.clean();
     }
 
     @Test
-	public void testShouldMakeSureWebappIsWorking() throws Exception {
-		WebClient webClient = new WebClient();
-		HtmlPage page = webClient.getPage(deploymentUrl + "/setup.jsp");
+    public void testShouldMakeSureWebappIsWorking() throws Exception {
+        WebClient webClient = new WebClient();
+        HtmlPage page = webClient.getPage(deploymentUrl + "/setup.jsp");
 
-		assertMoviesPresent(page);
+        assertMoviesPresent(page);
 
-		page = webClient.getPage(deploymentUrl + "/moviefun");
+        page = webClient.getPage(deploymentUrl + "/moviefun");
 
-		assertMoviesPresent(page);
-		webClient.closeAllWindows();
-	}
+        assertMoviesPresent(page);
+        webClient.closeAllWindows();
+    }
 
-	private void assertMoviesPresent(HtmlPage page) {
-		String pageAsText = page.asText();
-		assertTrue(pageAsText.contains("Wedding Crashers"));
-		assertTrue(pageAsText.contains("Starsky & Hutch"));
-		assertTrue(pageAsText.contains("Shanghai Knights"));
-		assertTrue(pageAsText.contains("I-Spy"));
-		assertTrue(pageAsText.contains("The Royal Tenenbaums"));
-	}
+    private void assertMoviesPresent(HtmlPage page) {
+        String pageAsText = page.asText();
+        assertTrue(pageAsText.contains("Wedding Crashers"));
+        assertTrue(pageAsText.contains("Starsky & Hutch"));
+        assertTrue(pageAsText.contains("Shanghai Knights"));
+        assertTrue(pageAsText.contains("I-Spy"));
+        assertTrue(pageAsText.contains("The Royal Tenenbaums"));
+    }
 
 }

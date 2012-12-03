@@ -31,63 +31,78 @@ public class MultivaluedMapWithCaseInsensitiveKeySet<V> implements MultivaluedMa
         delegate = map;
     }
 
-    @Override public void add(String key, V value) {
+    @Override
+    public void add(String key, V value) {
         delegate.add(key, value);
     }
 
-    @Override public V getFirst(String key) {
+    @Override
+    public V getFirst(String key) {
         return delegate.getFirst(realKey(key));
     }
 
-    @Override public void putSingle(String key, V value) {
+    @Override
+    public void putSingle(String key, V value) {
         delegate.putSingle(key, value);
     }
 
-    @Override public int size() {
+    @Override
+    public int size() {
         return delegate.size();
     }
 
-    @Override public boolean isEmpty() {
+    @Override
+    public boolean isEmpty() {
         return delegate.isEmpty();
     }
 
-    @Override public boolean containsKey(Object key) {
+    @Override
+    public boolean containsKey(Object key) {
         return getInsensitiveKeySet(delegate.keySet()).contains(key.toString());
     }
 
-    @Override public boolean containsValue(Object value) {
+    @Override
+    public boolean containsValue(Object value) {
         return delegate.containsValue(value);
     }
 
-    @Override public List<V> get(Object key) {
+    @Override
+    public List<V> get(Object key) {
         return delegate.get(realKey(key));
     }
 
-    @Override public List<V> put(String key, List<V> value) {
+    @Override
+    public List<V> put(String key, List<V> value) {
         return delegate.put(key, value);
     }
 
-    @Override public List<V> remove(Object key) {
+    @Override
+    public List<V> remove(Object key) {
         return delegate.remove(realKey(key));
     }
 
-    @Override public void putAll(Map<? extends String, ? extends List<V>> m) {
+    @Override
+    public void putAll(Map<? extends String, ? extends List<V>> m) {
         delegate.putAll(m);
     }
 
-    @Override public void clear() {
+    @Override
+    public void clear() {
         delegate.clear();
     }
 
-    @Override public Set<String> keySet() {
+    @Override
+    public Set<String> keySet() {
         return getInsensitiveKeySet(delegate.keySet());
     }
 
-    @Override public Collection<List<V>> values() {
+    @Override
+    public Collection<List<V>> values() {
         return delegate.values();
     }
 
-    @Override public Set<Entry<String, List<V>>> entrySet() {
+    @Override
+    public Set<Entry<String, List<V>>> entrySet() {
         return delegate.entrySet();
     }
 
@@ -98,7 +113,7 @@ public class MultivaluedMapWithCaseInsensitiveKeySet<V> implements MultivaluedMa
     }
 
     private static Object lowerCase(Object key) {
-        if (key instanceof String ) {
+        if (key instanceof String) {
             return ((String) key).toLowerCase();
         }
         return key;

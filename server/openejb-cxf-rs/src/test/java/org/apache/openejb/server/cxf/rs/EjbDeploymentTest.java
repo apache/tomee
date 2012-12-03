@@ -42,7 +42,8 @@ public class EjbDeploymentTest {
     private static EJBContainer container;
     private static RESTIsCool service;
 
-    @BeforeClass public static void start() throws Exception {
+    @BeforeClass
+    public static void start() throws Exception {
         Properties properties = new Properties();
         properties.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*openejb-cxf-rs.*");
         properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
@@ -50,23 +51,27 @@ public class EjbDeploymentTest {
         service = (RESTIsCool) container.getContext().lookup("java:/global/openejb-cxf-rs/RESTIsCool");
     }
 
-    @AfterClass public static void close() throws Exception {
+    @AfterClass
+    public static void close() throws Exception {
         if (container != null) {
             container.close();
         }
     }
 
-    @Test public void normal() {
+    @Test
+    public void normal() {
         assertNotNull(service);
         assertEquals("ok", service.normal());
     }
 
-    @Test public void rest() {
+    @Test
+    public void rest() {
         String response = WebClient.create("http://localhost:4204/openejb-cxf-rs").path("/ejb/rest").get(String.class);
         assertEquals("ok", response);
     }
 
-    @Test public void restParameterInjected() {
+    @Test
+    public void restParameterInjected() {
         String response = WebClient.create("http://localhost:4204/openejb-cxf-rs").path("/ejb/param").get(String.class);
         assertEquals("true", response);
 
@@ -74,7 +79,8 @@ public class EjbDeploymentTest {
         assertEquals("foo", response);
     }
 
-    @Test public void restFieldInjected() {
+    @Test
+    public void restFieldInjected() {
         Boolean response = WebClient.create("http://localhost:4204/openejb-cxf-rs").path("/ejb/field").get(Boolean.class);
         assertEquals(true, response.booleanValue());
     }
@@ -82,22 +88,32 @@ public class EjbDeploymentTest {
     @Stateless
     @Path("/ejb")
     public static class RESTIsCool {
-        @EJB private SimpleEJB simpleEJB;
-        @javax.ws.rs.core.Context Request request;
+        @EJB
+        private SimpleEJB simpleEJB;
+        @javax.ws.rs.core.Context
+        Request request;
 
-        @Path("/normal") @GET public String normal() {
+        @Path("/normal")
+        @GET
+        public String normal() {
             return simpleEJB.ok();
         }
 
-        @Path("/rest") @GET public String rest() {
+        @Path("/rest")
+        @GET
+        public String rest() {
             return simpleEJB.ok();
         }
 
-        @Path("/param") @GET public String param(@QueryParam("arg") @DefaultValue("true") String p) {
+        @Path("/param")
+        @GET
+        public String param(@QueryParam("arg") @DefaultValue("true") String p) {
             return p;
         }
 
-        @Path("/field") @GET public boolean field() {
+        @Path("/field")
+        @GET
+        public boolean field() {
             return "GET".equals(request.getMethod());
         }
     }

@@ -16,8 +16,6 @@
  */
 package org.apache.openejb.arquillian.openejb;
 
-import javax.ejb.Singleton;
-import javax.inject.Inject;
 import org.apache.openejb.loader.SystemInstance;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -27,6 +25,9 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import javax.ejb.Singleton;
+import javax.inject.Inject;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -42,8 +43,8 @@ public class CDIArquillianStandaloneTest {
     @Deployment
     public static JavaArchive archive() {
         return ShrinkWrap.create(JavaArchive.class, CDIArquillianStandaloneTest.class.getSimpleName().concat(".jar"))
-                    .addClasses(ABean.class, AnEJB.class)
-                    .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
+                .addClasses(ABean.class, AnEJB.class)
+                .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
     }
 
     @Test
@@ -57,7 +58,10 @@ public class CDIArquillianStandaloneTest {
         assertNotNull(ejbFromCdiAnnotation);
     }
 
-    public static class ABean {}
+    public static class ABean {
+    }
 
-    @Singleton public static class AnEJB {}
+    @Singleton
+    public static class AnEJB {
+    }
 }

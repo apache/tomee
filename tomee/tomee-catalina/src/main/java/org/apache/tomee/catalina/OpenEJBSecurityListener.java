@@ -33,19 +33,23 @@ public class OpenEJBSecurityListener implements AsyncListener {
         request = req;
     }
 
-    @Override public void onComplete(AsyncEvent asyncEvent) throws IOException {
+    @Override
+    public void onComplete(AsyncEvent asyncEvent) throws IOException {
         exit();
     }
 
-    @Override public void onError(AsyncEvent asyncEvent) throws IOException {
+    @Override
+    public void onError(AsyncEvent asyncEvent) throws IOException {
         exit();
     }
 
-    @Override public void onStartAsync(AsyncEvent asyncEvent) throws IOException {
+    @Override
+    public void onStartAsync(AsyncEvent asyncEvent) throws IOException {
         enter();
     }
 
-    @Override public void onTimeout(AsyncEvent asyncEvent) throws IOException {
+    @Override
+    public void onTimeout(AsyncEvent asyncEvent) throws IOException {
         exit();
     }
 

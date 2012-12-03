@@ -30,9 +30,6 @@ import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ejb.EJB;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.net.URL;
 
 @RunWith(Arquillian.class)
@@ -42,16 +39,17 @@ public class TomEEContainerWithInstallerServletTest {
     @Deployment
     public static WebArchive createDeployment() {
         return ShrinkWrap.create(WebArchive.class, "test.war")
-        		.addClass(TestServlet.class).addClass(TestEjb.class).addClass(TomEEContainerWithInstallerServletTest.class)
+                .addClass(TestServlet.class).addClass(TestEjb.class).addClass(TomEEContainerWithInstallerServletTest.class)
                 .setWebXML(new StringAsset(
-                		Descriptors.create(WebAppDescriptor.class)
-                			.version("3.0")
+                        Descriptors.create(WebAppDescriptor.class)
+                                .version("3.0")
                                 .createServlet().servletName("servlet-ejb").servletClass(TestServlet.class.getName()).up()
                                 .createServletMapping().servletName("servlet-ejb").urlPattern("/ejb").up()
                                 .exportAsString()));
     }
 
-    @ArquillianResource private URL url;
+    @ArquillianResource
+    private URL url;
 
     @Test
     public void testShouldBeAbleToAccessServletAndEjb() throws Exception {

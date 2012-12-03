@@ -38,7 +38,8 @@ import static junit.framework.Assert.assertEquals;
 public class CustomExceptionMapperTest {
     private static EJBContainer container;
 
-    @BeforeClass public static void start() throws Exception {
+    @BeforeClass
+    public static void start() throws Exception {
         final Properties properties = new Properties();
         properties.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*openejb-cxf-rs.*");
         properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
@@ -46,13 +47,15 @@ public class CustomExceptionMapperTest {
         container = EJBContainer.createEJBContainer(properties);
     }
 
-    @AfterClass public static void close() throws Exception {
+    @AfterClass
+    public static void close() throws Exception {
         if (container != null) {
             container.close();
         }
     }
 
-    @Test public void exceptionMapper() {
+    @Test
+    public void exceptionMapper() {
         final String response = WebClient.create("http://localhost:4204/openejb-cxf-rs")
                 .path("/exception-mapper/throw").get(String.class);
         assertEquals(FooException.class.getName(), response);

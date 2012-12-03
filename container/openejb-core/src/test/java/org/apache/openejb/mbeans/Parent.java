@@ -24,14 +24,16 @@ public abstract class Parent {
     private int i = -1;
 
     @ManagedAttribute
-    @Description("just a value") public int getValue() {
+    @Description("just a value")
+    public int getValue() {
         if (i < 0) {
             return 2;
         }
         return i;
     }
 
-    @ManagedAttribute public void setValue(int v) {
+    @ManagedAttribute
+    public void setValue(int v) {
         i = v;
     }
 }
