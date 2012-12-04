@@ -30,6 +30,14 @@ TOMEE.ApplicationTabConsole = function () {
     var active = false;
     var locked = true;
     var delayedContainerResize = TOMEE.DelayedTask();
+    var userName = null;
+
+    channel.bind('server-command-callback-success', 'Login', function (params) {
+        userName = params.params.user;
+    });
+    channel.bind('server-command-callback-success', 'session', function (params) {
+        userName = params.data.userName;
+    });
 
     function setLocked(value) {
         locked = value;
@@ -163,7 +171,16 @@ TOMEE.ApplicationTabConsole = function () {
             if (!codeArea) {
                 codeArea = CodeMirror(container.children('.tomee-code').get(0), {
                     lineNumbers:true,
-                    value:TOMEE.ApplicationTemplates.getValue('application-tab-console-sample', {})
+                    value:TOMEE.ApplicationTemplates.getValue('application-tab-console-sample', {
+                        port:window.location.port,
+                        protocol: (function() {
+                            var protocol = window.location.protocol;
+                            protocol = protocol.replace(':', '');
+                            return protocol;
+                        })(),
+                        name: userName,
+                        password:TOMEE.I18N.get('application.console.password')
+                    })
                 });
             }
             codeArea.focus();
