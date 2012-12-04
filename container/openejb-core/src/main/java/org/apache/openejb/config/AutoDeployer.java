@@ -16,10 +16,6 @@
  */
 package org.apache.openejb.config;
 
-import org.apache.openejb.NoSuchApplicationException;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.UndeployException;
-import org.apache.openejb.assembler.DeployerEjb;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.event.ContainerSystemPostCreate;
@@ -45,8 +41,6 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
-
-import static org.apache.openejb.loader.ProvisioningUtil.realLocation;
 
 /**
  * @version $Rev$ $Date$
@@ -241,7 +235,7 @@ public class AutoDeployer {
     }
 
     private FileInfo oldInfo(final File file) {
-        return (FileInfo) files.get(file.getAbsolutePath());
+        return files.get(file.getAbsolutePath());
     }
 
     /**
