@@ -353,6 +353,45 @@
       </modules>
     </profile>
     <profile>
+      <id>style</id>
+      <modules>
+      </modules>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-checkstyle-plugin</artifactId>
+            <version>2.9.1</version>
+            <configuration>
+              <sourceDirectory>${project.build.directory}/../container/openejb-core/src/main/java/org/apache/openejb/config</sourceDirectory>
+              <configLocation>checkstyle.xml</configLocation>
+              <consoleOutput>true</consoleOutput>
+              <enableRulesSummary>false</enableRulesSummary>
+              <failsOnError>true</failsOnError>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+      <repositories>
+        <repository>
+          <releases>
+            <enabled>false</enabled>
+          </releases>
+          <id>Codehaus Snapshots</id>
+          <url>http://snapshots.repository.codehaus.org/</url>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <releases>
+            <enabled>false</enabled>
+          </releases>
+          <id>Codehaus Snapshots</id>
+          <url>http://snapshots.repository.codehaus.org/</url>
+        </pluginRepository>
+      </pluginRepositories>
+    </profile>
+    <profile>
       <id>rat</id>
       <modules>
         <module>deps</module>
