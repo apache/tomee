@@ -4051,6 +4051,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                         consumer.getResourceRef().add(resourceRef);
                     }
 
+                    resourceRef.setOrigin(member.getDeclaringClass() + "#" + member.getName());
+
                     if (resourceRef.getResAuth() == null) {
                         if (resource.authenticationType() == Resource.AuthenticationType.APPLICATION) {
                             resourceRef.setResAuth(ResAuth.APPLICATION);

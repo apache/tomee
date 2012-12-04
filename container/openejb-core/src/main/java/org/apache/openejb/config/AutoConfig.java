@@ -1086,7 +1086,11 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 if (id.startsWith("java:")) {
                     id = id.substring("java:".length());
                 }
-                id = getResourceId(ejbDeployment.getDeploymentId(), id, refType, appResources);
+                try {
+                    id = getResourceId(ejbDeployment.getDeploymentId(), id, refType, appResources);
+                } catch (OpenEJBException e) { // changing the message to be explicit
+                    throw new OpenEJBException("Can't find resource for " + ref.getOrigin() + ". (" + e.getMessage() + ")", e.getCause());
+                }
                 logger.info("Auto-linking resource-ref '" + refName + "' in bean " + ejbDeployment.getDeploymentId() + " to Resource(id=" + id + ")");
 
                 link = new ResourceLink();
