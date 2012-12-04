@@ -220,7 +220,9 @@ public abstract class RESTService implements ServerService, SelfManaging {
             }
 
             if (!useApp) {
-                appPrefix = webApp.contextRoot;
+                if (webApp.restApplications.isEmpty() || webApp.restApplications.size() > 1) {
+                    appPrefix = webApp.contextRoot;
+                } // else keep application prefix
 
                 final Set<String> restClasses = new HashSet<String>(webApp.restClass);
                 restClasses.addAll(webApp.ejbRestServices);
