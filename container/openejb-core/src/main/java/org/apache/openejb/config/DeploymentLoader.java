@@ -339,7 +339,11 @@ public class DeploymentLoader implements DeploymentFilterable {
                             webModules.put(entry.getKey(), entry.getValue());
                         }
                     } catch (UnsupportedOperationException e) {
-                        // Ignore it as per the javaee spec EE.8.4.2 section 1.d.iiilogger.info("Ignoring unknown module type: "+entry.getKey());
+                        // Ignore it as per the javaee spec EE.8.4.2 section 1.d.iii
+                        logger.info("Ignoring unknown module type: " + entry.getKey());
+                    } catch (UnknownModuleTypeException e) {
+                        // Ignore it as per the javaee spec EE.8.4.2 section 1.d.iii
+                        logger.info("Ignoring unknown module type: " + entry.getKey());
                     } catch (Exception e) {
                         throw new OpenEJBException("Unable to determine the module type of " + entry.getKey() + ": Exception: " + e.getMessage(), e);
                     }
@@ -1479,7 +1483,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         }
 
         final File file = URLs.toFile(baseUrl);
-        if (file.isDirectory()) {
+        if (file.isDirectory() && !file.equals(SystemInstance.get().getHome().getDirectory("lib", false))) {
             if (containsEarAssets(file)) return AppModule.class;
             if (containsWebAssets(file)) return WebModule.class;
         }
