@@ -23,7 +23,9 @@ import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Archives;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -46,6 +48,15 @@ import java.util.concurrent.locks.ReentrantLock;
  * @version $Rev$ $Date$
  */
 public class AutoDeployerTest extends Assert {
+    @Before
+    @After
+    public void stopAutoDeployer() {
+        final AutoDeployer autoDeployer = SystemInstance.get().getComponent(AutoDeployer.class);
+        if (autoDeployer != null) {
+            autoDeployer.stop();
+        }
+        SystemInstance.reset();
+    }
 
     @Test
     public void test() throws Exception {
@@ -145,10 +156,13 @@ public class AutoDeployerTest extends Assert {
         assertFalse(Orange.deployed);
 
         final File deployed = Files.path(apps, "colors.ear");
+        deployed.deleteOnExit();
 
         // Hot deploy the EAR
         final File ear = createEar(tmpdir, Orange.class, State.class);
+        ear.deleteOnExit();
         IO.copy(ear, deployed);
+        assertTrue(deployed.exists());
 
         Orange.state.waitForChange(1, TimeUnit.MINUTES);
 
