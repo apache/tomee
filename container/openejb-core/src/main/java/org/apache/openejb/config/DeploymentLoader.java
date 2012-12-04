@@ -24,21 +24,8 @@ import org.apache.openejb.classloader.WebAppEnricher;
 import org.apache.openejb.config.event.BeforeDeploymentEvent;
 import org.apache.openejb.core.EmptyResourcesClassLoader;
 import org.apache.openejb.core.ParentClassLoaderFinder;
-import org.apache.openejb.jee.Application;
-import org.apache.openejb.jee.ApplicationClient;
-import org.apache.openejb.jee.Beans;
-import org.apache.openejb.jee.Connector;
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.FacesConfig;
-import org.apache.openejb.jee.JavaWsdlMapping;
-import org.apache.openejb.jee.JaxbJavaee;
-import org.apache.openejb.jee.JspConfig;
+import org.apache.openejb.jee.*;
 import org.apache.openejb.jee.Module;
-import org.apache.openejb.jee.Taglib;
-import org.apache.openejb.jee.TldTaglib;
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.jee.WebserviceDescription;
-import org.apache.openejb.jee.Webservices;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.IO;
@@ -61,6 +48,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -144,7 +132,7 @@ public class DeploymentLoader implements DeploymentFilterable {
             }
 
             if (EjbModule.class.equals(moduleClass)) {
-                final URL[] urls = new URL[] { baseUrl };
+                final URL[] urls = new URL[]{baseUrl};
 
                 SystemInstance.get().fireEvent(new BeforeDeploymentEvent(urls));
 
@@ -234,7 +222,6 @@ public class DeploymentLoader implements DeploymentFilterable {
             // We can safely destroy this class loader in either case, as it was not use by any modules
             if (null != doNotUseClassLoader) {
                 ClassLoaderUtil.destroyClassLoader(doNotUseClassLoader);
-                doNotUseClassLoader = null;
 
                 //Really try and flush this classloader out
 //                System.gc();
@@ -681,7 +668,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                     final IAnnotationFinder finder = new org.apache.xbean.finder.AnnotationFinder(new ClassesArchive());
                     webModule.setFinder(finder);
                     webEjbModule.setFinder(finder);
-                }  else {
+                } else {
                     final IAnnotationFinder finder = FinderFactory.createFinder(webModule);
                     webModule.setFinder(finder);
                     webEjbModule.setFinder(finder);
@@ -725,9 +712,8 @@ public class DeploymentLoader implements DeploymentFilterable {
         // We need to determine if there are cdi or ejb xml files
         if (webModule.getAltDDs().get("beans.xml") == null) return true;
         if (ejbModule.getEjbJar() == null) return true;
-        if (!ejbModule.getEjbJar().isMetadataComplete()) return false;
+        return ejbModule.getEjbJar().isMetadataComplete();
 
-        return true;
     }
 
     public WebModule createWebModule(final String appId, final String warPath, final ClassLoader parentClassLoader, final String contextRoot, final String moduleName) throws OpenEJBException {
@@ -1362,7 +1348,11 @@ public class DeploymentLoader implements DeploymentFilterable {
             return new File(pathname);
         } else if ("file".equals(warUrl.getProtocol())) {
             final String pathname = warUrl.getPath();
-            return new File(URLDecoder.decode(pathname));
+            try {
+                return new File(URLDecoder.decode(pathname, "UTF8"));
+            } catch (UnsupportedEncodingException e) {
+                return new File(URLDecoder.decode(pathname));
+            }
         } else {
             return null;
         }
@@ -1508,18 +1498,24 @@ public class DeploymentLoader implements DeploymentFilterable {
     }
 
     private boolean containsWebAssets(File dir) {
-        for (File file : dir.listFiles()) {
-            if (file.getName().endsWith(".jsp")) return true;
-            if (file.getName().endsWith(".html")) return true;
+        final File[] files = dir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.getName().endsWith(".jsp")) return true;
+                if (file.getName().endsWith(".html")) return true;
+            }
         }
         return false;
     }
 
     private boolean containsEarAssets(File dir) {
-        for (File file : dir.listFiles()) {
-            if (file.getName().endsWith(".jar")) return true;
-            if (file.getName().endsWith(".war")) return true;
-            if (file.getName().endsWith(".rar")) return true;
+        final File[] files = dir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.getName().endsWith(".jar")) return true;
+                if (file.getName().endsWith(".war")) return true;
+                if (file.getName().endsWith(".rar")) return true;
+            }
         }
         return false;
     }
