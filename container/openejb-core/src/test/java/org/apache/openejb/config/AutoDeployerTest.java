@@ -14,8 +14,10 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.assembler.classic;
+package org.apache.openejb.config;
 
+import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
@@ -46,7 +48,6 @@ import java.util.concurrent.locks.ReentrantLock;
 public class AutoDeployerTest extends Assert {
 
     @Test
-    @Ignore
     public void test() throws Exception {
         final File tmpdir = Files.tmpdir();
         final File apps = Files.mkdir(tmpdir, "myapps");
@@ -54,6 +55,65 @@ public class AutoDeployerTest extends Assert {
 
         final Properties properties = new Properties();
         properties.setProperty("openejb.deployments.classpath", "false");
+        properties.setProperty("openejb.deployment.unpack.location", "false");
+        properties.setProperty("openejb.home", tmpdir.getAbsolutePath());
+        properties.setProperty("openejb.base", tmpdir.getAbsolutePath());
+
+        SystemInstance.init(properties);
+
+        { // Setup the configuration location
+            final File config = new File(conf, "openejb.xml");
+            IO.writeString(config, "<openejb><Deployments autoDeploy=\"true\" dir=\"myapps\"/> </openejb>");
+            SystemInstance.get().setProperty("openejb.configuration", config.getAbsolutePath());
+        }
+
+        final ConfigurationFactory configurationFactory = new ConfigurationFactory();
+        configurationFactory.init(properties);
+        final OpenEjbConfiguration configuration = configurationFactory.getOpenEjbConfiguration();
+
+        { // Check the ContainerSystemInfo
+
+            final List<String> autoDeploy = configuration.containerSystem.autoDeploy;
+            assertEquals(1, autoDeploy.size());
+            assertEquals("myapps", autoDeploy.get(0));
+        }
+
+        final Assembler assembler = new Assembler();
+        assembler.buildContainerSystem(configuration);
+
+        /// start with the testing...
+
+        assertFalse(Yellow.deployed);
+        assertFalse(Orange.deployed);
+
+        final File deployed = Files.path(apps, "colors.ear");
+
+        // Hot deploy the EAR
+        final File ear = createEar(tmpdir, Orange.class, State.class);
+        IO.copy(ear, deployed);
+
+        Orange.state.waitForChange(1, TimeUnit.MINUTES);
+
+        assertFalse(Yellow.deployed);
+        assertTrue(Orange.deployed);
+
+        Files.delete(deployed);
+
+        Orange.state.waitForChange(1, TimeUnit.MINUTES);
+
+        assertFalse(Yellow.deployed);
+        assertFalse(Orange.deployed);
+    }
+
+    @Test
+    public void testAltUnpackDir() throws Exception {
+        final File tmpdir = Files.tmpdir();
+        final File apps = Files.mkdir(tmpdir, "myapps");
+        final File conf = Files.mkdir(tmpdir, "conf");
+
+        final Properties properties = new Properties();
+        properties.setProperty("openejb.deployments.classpath", "false");
+        properties.setProperty("tomee.unpack.dir", "work");
         properties.setProperty("openejb.home", tmpdir.getAbsolutePath());
         properties.setProperty("openejb.base", tmpdir.getAbsolutePath());
 

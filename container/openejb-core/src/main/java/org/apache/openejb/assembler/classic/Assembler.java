@@ -40,6 +40,8 @@ import org.apache.openejb.assembler.classic.event.AssemblerAfterApplicationCreat
 import org.apache.openejb.assembler.classic.event.AssemblerBeforeApplicationDestroyed;
 import org.apache.openejb.assembler.classic.event.AssemblerCreated;
 import org.apache.openejb.assembler.classic.event.AssemblerDestroyed;
+import org.apache.openejb.assembler.classic.event.ContainerSystemPostCreate;
+import org.apache.openejb.assembler.classic.event.ContainerSystemPreDestroy;
 import org.apache.openejb.assembler.monitoring.JMXContainer;
 import org.apache.openejb.async.AsynchronousPool;
 import org.apache.openejb.cdi.CdiAppContextsService;
@@ -444,9 +446,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
         }
 
-//        final AutoDeployer autoDeployer = new AutoDeployer(containerSystemInfo.autoDeploy);
-//        SystemInstance.get().setComponent(AutoDeployer.class, autoDeployer);
-//        autoDeployer.start();
+        SystemInstance.get().fireEvent(new ContainerSystemPostCreate());
     }
 
     public boolean isDeployed(final String path) {
@@ -1104,10 +1104,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     @Override
     public synchronized void destroy() {
 
-        final AutoDeployer autoDeployer = SystemInstance.get().getComponent(AutoDeployer.class);
-        if (autoDeployer != null) {
-            autoDeployer.stop();
-        }
+        SystemInstance.get().fireEvent(new ContainerSystemPreDestroy());
 
         try {
             EjbTimerServiceImpl.shutdown();

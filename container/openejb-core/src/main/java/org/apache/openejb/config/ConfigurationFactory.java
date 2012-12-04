@@ -563,12 +563,19 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         final FileUtils base = SystemInstance.get().getBase();
 
+        final List<Deployments> autoDeploy = new ArrayList<Deployments>();
+
         final List<File> declaredAppsUrls = new ArrayList<File>();
         try {
             for (final Deployments deployment : deployments) {
                 DeploymentsResolver.loadFrom(deployment, base, declaredAppsUrls);
+                if (deployment.isAutoDeploy()) autoDeploy.add(deployment);
             }
         } catch (SecurityException ignored) {
+        }
+
+        if (autoDeploy.size() > 0) {
+            SystemInstance.get().addObserver(new AutoDeployer(this, autoDeploy));
         }
 
         return declaredAppsUrls;
@@ -690,7 +697,12 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         try {
             final AppModule appModule = deploymentLoader.load(jarFile);
-            return configureApplication(appModule);
+            final AppInfo appInfo = configureApplication(appModule);
+
+            // TODO This is temporary -- we need to do this in AppInfoBuilder
+            appInfo.paths.add(appInfo.path);
+            appInfo.paths.add(jarFile.getAbsolutePath());
+            return appInfo;
         } catch (ValidationFailedException e) {
             logger.warning("configureApplication.loadFailed", jarFile.getAbsolutePath(), e.getMessage()); // DO not include the stacktrace in the message
             throw e;
