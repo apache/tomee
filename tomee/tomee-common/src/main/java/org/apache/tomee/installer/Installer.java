@@ -174,9 +174,19 @@ public class Installer {
 
         addTomEELinkToTomcatHome();
 
+        commentDeploymentDir();
+
         if (!alerts.hasErrors()) {
             status = Status.REBOOT_REQUIRED;
         }
+    }
+
+    private void commentDeploymentDir() {
+        Installers.writeAll(new File(paths.getCatalinaConfDir(), "tomee.xml"),
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "<tomee>\n" +
+                "  <!-- see http://tomee.apache.org/containers-and-resources.html -->\n" +
+                "</tomee\n", alerts);
     }
 
     private void addTomEELinkToTomcatHome() {
@@ -615,6 +625,7 @@ public class Installer {
                 systemPropertiesWriter.write("# tomee.jaxws.oldsubcontext = false\n");
 
                 systemPropertiesWriter.write("\n");
+                systemPropertiesWriter.write("# openejb.system.apps = true\n");
                 systemPropertiesWriter.write("# openejb.servicemanager.enabled = true\n");
                 systemPropertiesWriter.write("# openejb.jmx.active = false\n");
                 systemPropertiesWriter.write("# openejb.descriptors.output = false\n");
@@ -645,6 +656,8 @@ public class Installer {
                 systemPropertiesWriter.write("# openejb.jsessionid-support = \n");
                 systemPropertiesWriter.write("# openejb.myfaces.disable-default-values = true\n");
                 systemPropertiesWriter.write("# openejb.web.xml.major = \n");
+                systemPropertiesWriter.write("# openjpa.Log = \n");
+                systemPropertiesWriter.write("# openejb.jdbc.log = false\n");
                 systemPropertiesWriter.write("# javax.persistence.provider = org.apache.openjpa.persistence.PersistenceProviderImpl\n");
                 systemPropertiesWriter.write("# javax.persistence.transactionType = \n");
                 systemPropertiesWriter.write("# javax.persistence.jtaDataSource = \n");
