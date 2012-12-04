@@ -155,7 +155,7 @@ public class OpenEjbContainer extends EJBContainer {
         }
 
         final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
-        if (assembler != null) { // if startup failed
+        if (assembler != null) {
             for (AppInfo info : assembler.getDeployedApplications()) {
                 try {
                     assembler.destroyApplication(info);
