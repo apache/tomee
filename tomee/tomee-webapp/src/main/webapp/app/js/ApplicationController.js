@@ -47,7 +47,13 @@ TOMEE.ApplicationController = function () {
         model.sendMessage({
             cmdName:'Login',
             user:data.user,
-            pass:data.pass
+            pass:data.pass,
+            port:window.location.port,
+            protocol: (function() {
+                var protocol = window.location.protocol;
+                protocol = protocol.replace(':', '');
+                return protocol;
+            })()
         });
     });
 
@@ -91,7 +97,7 @@ TOMEE.ApplicationController = function () {
         growl.showNotification(TOMEE.I18N.get('application.console.run.error'), 'error');
     });
 
-    channel.bind('ui-actions', 'show-notification', function(data) {
+    channel.bind('ui-actions', 'show-notification', function (data) {
         growl.showNotification(data.message, data.messageType);
     });
 
@@ -106,7 +112,7 @@ TOMEE.ApplicationController = function () {
     channel.bind('server-command-callback-success', 'Login', function (params) {
         if (params.output.loginSuccess) {
             growl.showNotification(TOMEE.I18N.get('application.log.hello', {
-                userName: params.params.user
+                userName:params.params.user
             }), 'success');
         } else {
             growl.showNotification(TOMEE.I18N.get('application.log.bad'), 'error');

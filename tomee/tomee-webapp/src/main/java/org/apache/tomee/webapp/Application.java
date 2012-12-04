@@ -88,10 +88,11 @@ public class Application {
             return context;
         }
 
-        public Context login(String user, String pass) {
+        public Context login(String user, String pass, String protocol, String port) {
+            final String addr = protocol + "://127.0.0.1:" + port + "/" + this.rootFolder.getName() + "/ejb";
             final Properties props = new Properties();
             props.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
-            props.put("java.naming.provider.url", "http://127.0.0.1:8080/" + this.rootFolder.getName() + "/ejb");
+            props.put("java.naming.provider.url", addr);
             props.setProperty(Context.SECURITY_PRINCIPAL, user);
             props.setProperty(Context.SECURITY_CREDENTIALS, pass);
             try {

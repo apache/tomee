@@ -44,6 +44,7 @@ TOMEE.I18N = (function () {
         'application.console.run.error':'Script error.',
         'application.console.clear.output':'Clear output',
         'application.console.done':'Script executed.',
+        'application.console.password':'[Your password goes here]',
         'application.console.run.time':'Time',
         'application.console.run.output.empty':'Empty',
 

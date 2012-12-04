@@ -31,10 +31,12 @@ public class Login implements Command {
         final Application.Session session = Application.getInstance().getSession(sessionId);
         final String user = (String) params.get("user");
         final String pass = (String) params.get("pass");
+        final String port = (String) params.get("port");
+        final String protocol = (String) params.get("protocol");
 
         final Map<String, Object> result = new HashMap<String, Object>();
 
-        if (session.login(user, pass) == null) {
+        if (session.login(user, pass, protocol, port) == null) {
             result.put("loginSuccess", Boolean.FALSE);
         } else {
             result.put("loginSuccess", Boolean.TRUE);
