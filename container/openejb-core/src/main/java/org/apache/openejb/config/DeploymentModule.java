@@ -70,7 +70,9 @@ public interface DeploymentModule {
             this.name = name(vendorDd, specDd, uri, location, name, module);
             this.location = location(location, uri);
             this.uri = uri(uri, location, this.name);
-            this.locations.add(location.getAbsolutePath());
+            if (location != null) {
+                this.locations.add(location.getAbsolutePath());
+            }
         }
 
         public Set<String> getLocations() {
