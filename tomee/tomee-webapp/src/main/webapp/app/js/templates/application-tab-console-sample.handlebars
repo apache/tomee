@@ -5,7 +5,6 @@ var myImports = new JavaImporter(
 );
 
 with (myImports) {
-  var port = TomcatHelper.getServer().getPort();
   var p = new Properties();
   p.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
   p.put("java.naming.provider.url", "{{protocol}}://localhost:{{port}}/tomee/ejb");
