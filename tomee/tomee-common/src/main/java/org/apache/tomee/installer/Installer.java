@@ -182,11 +182,14 @@ public class Installer {
     }
 
     private void commentDeploymentDir() {
-        Installers.writeAll(new File(paths.getCatalinaConfDir(), "tomee.xml"),
+        final File tomeeXml = new File(paths.getCatalinaConfDir(), "tomee.xml");
+        if (!tomeeXml.exists()) {
+            Installers.writeAll(tomeeXml,
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "<tomee>\n" +
                 "  <!-- see http://tomee.apache.org/containers-and-resources.html -->\n" +
                 "</tomee\n", alerts);
+        }
     }
 
     private void addTomEELinkToTomcatHome() {
