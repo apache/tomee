@@ -44,6 +44,7 @@ import java.net.URL;
 /**
  * @version $Rev$ $Date$
  */
+@SuppressWarnings("UseOfSystemOutOrSystemErr")
 @RunWith(Arquillian.class)
 public class EarTest {
 
@@ -102,7 +103,7 @@ public class EarTest {
         private Bean bean;
 
         @Override
-        protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        protected void service(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
             resp.getWriter().print(bean.getMessage());
         }
     }
