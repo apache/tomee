@@ -204,6 +204,20 @@ public class Files {
         }
     }
 
+    public static void remove(File file) {
+        if (file == null) return;
+        if (!file.exists()) return;
+
+        if (file.isDirectory()) {
+            for (File child : file.listFiles()) {
+                remove(child);
+            }
+        }
+        if (!file.delete()) {
+            throw new IllegalStateException("Could not delete file: " + file.getAbsolutePath());
+        }
+    }
+
     public static File select(File dir, String pattern) {
         final List<File> matches = collect(dir, pattern);
         if (matches.size() == 0) throw new IllegalStateException(String.format("Missing '%s'", pattern));

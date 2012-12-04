@@ -16,8 +16,10 @@
  */
 package org.apache.openejb.util;
 
+import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.loader.Zips;
 
 import java.io.BufferedOutputStream;
@@ -27,6 +29,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.FileChannel;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * @version $Rev$ $Date$
@@ -45,7 +50,19 @@ public class JarExtractor {
      *                                  during expansion
      */
     public static File extract(File file, String pathname) throws IOException {
-        File docBase = new File(file.getParentFile(), pathname);
+
+        final Properties properties = SystemInstance.get().getProperties();
+        final String key = "tomee.unpack.dir";
+
+        File unpackDir = file.getParentFile();
+
+        if (properties.containsKey(key)) {
+            final FileUtils base = SystemInstance.get().getBase();
+            unpackDir = base.getDirectory(properties.getProperty(key), true);
+        }
+
+        final File docBase = new File(unpackDir, pathname);
+
         extract(file, docBase);
         return docBase;
     }
@@ -148,13 +165,7 @@ public class JarExtractor {
      * @param dir File object representing the directory to be deleted
      */
     public static boolean delete(File dir) {
-        if (dir == null) return true;
-
-        if (dir.isDirectory()) {
-            return deleteDir(dir);
-        } else {
-            return dir.delete();
-        }
+        return deleteDir(dir);
     }
 
 
@@ -167,20 +178,13 @@ public class JarExtractor {
     public static boolean deleteDir(File dir) {
         if (dir == null) return true;
 
-        String fileNames[] = dir.list();
-        if (fileNames == null) {
-            fileNames = new String[0];
-        }
-        for (String fileName : fileNames) {
-            File file = new File(dir, fileName);
-            if (file.isDirectory()) {
+        if (dir.isDirectory()) {
+            for (File file : dir.listFiles()) {
                 deleteDir(file);
-            } else {
-                file.delete();
             }
         }
-        return dir.delete();
 
+        return dir.delete();
     }
 
 

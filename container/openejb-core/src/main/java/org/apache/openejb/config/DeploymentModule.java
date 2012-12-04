@@ -22,6 +22,7 @@ import org.apache.openejb.loader.SystemInstance;
 import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -60,10 +61,20 @@ public interface DeploymentModule {
         private final URI uri;
         private boolean overriden = false;
 
+        /**
+         * The intention of this is to hold the extracted and archived versions
+         */
+        private final Set<String> locations = new LinkedHashSet<String>();
+
         public ID(NamedModule vendorDd, NamedModule specDd, String name, File location, URI uri, DeploymentModule module) {
             this.name = name(vendorDd, specDd, uri, location, name, module);
             this.location = location(location, uri);
             this.uri = uri(uri, location, this.name);
+            this.locations.add(location.getAbsolutePath());
+        }
+
+        public Set<String> getLocations() {
+            return locations;
         }
 
         private URI uri(URI uri, File location, String name) {
