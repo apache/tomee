@@ -16,56 +16,10 @@
  */
 package org.apache.openejb.config;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import javax.ejb.embeddable.EJBContainer;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.Vendor;
 import org.apache.openejb.api.Proxy;
-import org.apache.openejb.assembler.classic.AppInfo;
-import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.BmpEntityContainerInfo;
-import org.apache.openejb.assembler.classic.ClientInfo;
-import org.apache.openejb.assembler.classic.CmpEntityContainerInfo;
-import org.apache.openejb.assembler.classic.ConnectionManagerInfo;
-import org.apache.openejb.assembler.classic.ConnectorInfo;
-import org.apache.openejb.assembler.classic.ContainerInfo;
-import org.apache.openejb.assembler.classic.ContainerSystemInfo;
-import org.apache.openejb.assembler.classic.DeploymentExceptionManager;
-import org.apache.openejb.assembler.classic.EjbJarInfo;
-import org.apache.openejb.assembler.classic.FacilitiesInfo;
-import org.apache.openejb.assembler.classic.HandlerChainInfo;
-import org.apache.openejb.assembler.classic.HandlerInfo;
-import org.apache.openejb.assembler.classic.JndiContextInfo;
-import org.apache.openejb.assembler.classic.ManagedContainerInfo;
-import org.apache.openejb.assembler.classic.MdbContainerInfo;
-import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
-import org.apache.openejb.assembler.classic.OpenEjbConfigurationFactory;
-import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
-import org.apache.openejb.assembler.classic.ResourceInfo;
-import org.apache.openejb.assembler.classic.SecurityServiceInfo;
-import org.apache.openejb.assembler.classic.ServiceInfo;
-import org.apache.openejb.assembler.classic.SingletonSessionContainerInfo;
-import org.apache.openejb.assembler.classic.StatefulSessionContainerInfo;
-import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
-import org.apache.openejb.assembler.classic.TransactionServiceInfo;
-import org.apache.openejb.assembler.classic.WebAppInfo;
+import org.apache.openejb.assembler.classic.*;
 import org.apache.openejb.component.ClassLoaderEnricher;
 import org.apache.openejb.config.sys.AbstractService;
 import org.apache.openejb.config.sys.AdditionalDeployments;
@@ -108,6 +62,25 @@ import org.apache.openejb.util.URLs;
 import org.apache.openejb.util.proxy.QueryProxy;
 import org.apache.xbean.finder.MetaAnnotatedClass;
 import org.apache.xbean.finder.ResourceFinder;
+
+import javax.ejb.embeddable.EJBContainer;
+import java.io.File;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 import static org.apache.openejb.config.DeploymentsResolver.DEPLOYMENTS_CLASSPATH_PROPERTY;
 import static org.apache.openejb.config.ServiceUtils.implies;
@@ -556,7 +529,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                     IO.close(fis);
                 }
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
+            logger.info("No additional deployments found: " + e);
         }
 
         // resolve jar locations //////////////////////////////////////  BEGIN  ///////
@@ -566,12 +540,14 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         final List<Deployments> autoDeploy = new ArrayList<Deployments>();
 
         final List<File> declaredAppsUrls = new ArrayList<File>();
-        try {
-            for (final Deployments deployment : deployments) {
+
+        for (final Deployments deployment : deployments) {
+            try {
                 DeploymentsResolver.loadFrom(deployment, base, declaredAppsUrls);
                 if (deployment.isAutoDeploy()) autoDeploy.add(deployment);
+            } catch (SecurityException se) {
+                logger.warning("Security check failed on deployment: " + deployment.getFile(), se);
             }
-        } catch (SecurityException ignored) {
         }
 
         if (autoDeploy.size() > 0) {
@@ -604,8 +580,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             throw new OpenEJBException(messages.format("unrecognizedContainerType", container.getType()));
         }
 
-        final ContainerInfo info = configureService(container, infoClass);
-        return info;
+        return configureService(container, infoClass);
     }
 
     private void loadPropertiesDeclaredConfiguration(final Openejb openejb) {
@@ -640,8 +615,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         final URI uri = new URI(value);
 
-        final Object service = toConfigDeclaration(name, uri);
-        return service;
+        return toConfigDeclaration(name, uri);
     }
 
     public Object toConfigDeclaration(final String id, final URI uri) throws OpenEJBException {
@@ -1089,8 +1063,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     }
 
     private <T extends ServiceInfo> void specialProcessing(final T info) {
-        final ServiceInfo serviceInfo = info;
-        TopicOrQueueDefaults.process(serviceInfo);
+        TopicOrQueueDefaults.process(info);
     }
 
 
