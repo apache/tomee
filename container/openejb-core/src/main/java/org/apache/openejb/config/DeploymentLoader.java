@@ -1516,8 +1516,9 @@ public class DeploymentLoader implements DeploymentFilterable {
     private static boolean containsWebAssets(final File[] files) {
         if (files != null) {
             for (final File file : files) {
-                if (file.getName().endsWith(".jsp")) return true;
-                if (file.getName().endsWith(".html")) return true;
+                final String fn = file.getName().toLowerCase();
+                if (fn.endsWith(".jsp")) return true;
+                if (fn.endsWith(".html")) return true;
             }
         }
         return false;
@@ -1526,9 +1527,10 @@ public class DeploymentLoader implements DeploymentFilterable {
     private static boolean containsEarAssets(final File[] files) {
         if (files != null) {
             for (final File file : files) {
-                if (file.getName().endsWith(".jar")) return true;
-                if (file.getName().endsWith(".war")) return true;
-                if (file.getName().endsWith(".rar")) return true;
+                final String fn = file.getName().toLowerCase();
+                if (fn.endsWith(".jar")) return true;
+                if (fn.endsWith(".war")) return true;
+                if (fn.endsWith(".rar")) return true;
             }
         }
         return false;
