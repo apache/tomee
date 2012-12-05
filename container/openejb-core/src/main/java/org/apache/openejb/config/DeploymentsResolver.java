@@ -62,7 +62,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
         }
     }
 
-    public static boolean isValidDirectory(final File file) {
+    protected static boolean isValidDirectory(final File file) {
 
         if (file.isDirectory() && !file.isHidden() && !file.equals(lib)) {
 
@@ -74,7 +74,9 @@ public class DeploymentsResolver implements DeploymentFilterable {
                 }
             }
 
-            return true;
+            final String[] files = file.list();
+
+            return (null != files && files.length > 0);
         }
 
         return false;
