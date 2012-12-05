@@ -219,13 +219,13 @@
                   }
                 }
 
-                println("Embedded adapter activated ? " + !props['skip.embedded'])
-                println("Remote webprofile adapter activated ? " + !props['skip.remote.webprofile'])
-                println("Remote jaxrs adapter activated ? " + !props['skip.remote.jaxrs'])
-                println("Remote plus adapter activated ? " + !props['skip.remote.plus'])
-                println("Webapp weprofile adapter activated ? " + !props['skip.webapp.webprofile'])
-                println("Webapp jaxrs adapter activated ? " + !props['skip.webapp.jaxrs'])
-                println("Webapp plus adapter activated ? " + !props['skip.webapp.plus'])
+                println("Embedded adapter activated ? " + !Boolean.parseBoolean(props['skip.embedded']))
+                println("Remote webprofile adapter activated ? " + !Boolean.parseBoolean(props['skip.remote.webprofile']))
+                println("Remote jaxrs adapter activated ? " + !Boolean.parseBoolean(props['skip.remote.jaxrs']))
+                println("Remote plus adapter activated ? " + !Boolean.parseBoolean(props['skip.remote.plus']))
+                println("Webapp weprofile adapter activated ? " + !Boolean.parseBoolean(props['skip.webapp.webprofile']))
+                println("Webapp jaxrs adapter activated ? " + !Boolean.parseBoolean(props['skip.webapp.jaxrs']))
+                println("Webapp plus adapter activated ? " + !Boolean.parseBoolean(props['skip.webapp.plus']))
               </source>
             </configuration>
           </plugin>
