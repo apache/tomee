@@ -165,14 +165,19 @@ public class Files {
     static final List<String> delete = new ArrayList<String>();
 
     static {
-        final Thread deleteShutdownHook = new Thread() {
-            @Override
-            public void run() {
-                delete();
-            }
-        };
-        deleteShutdownHook.setContextClassLoader(Files.class.getClassLoader());
-        Runtime.getRuntime().addShutdownHook(deleteShutdownHook);
+        final ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(Files.class.getClassLoader());
+        try {
+            final Thread deleteShutdownHook = new Thread() {
+                @Override
+                public void run() {
+                    delete();
+                }
+            };
+            Runtime.getRuntime().addShutdownHook(deleteShutdownHook);
+        } finally {
+            Thread.currentThread().setContextClassLoader(loader);
+        }
     }
 
     public static void deleteOnExit(File file) {
