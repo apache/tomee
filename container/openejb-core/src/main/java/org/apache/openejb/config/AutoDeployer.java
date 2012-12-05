@@ -55,7 +55,7 @@ public class AutoDeployer {
     private final Timer timer;
     private final List<Deployments> deployments = new ArrayList<Deployments>();
 
-    public AutoDeployer(ConfigurationFactory factory, List<Deployments> deployments) {
+    public AutoDeployer(final ConfigurationFactory factory, final List<Deployments> deployments) {
         final Options options = SystemInstance.get().getOptions();
         final Duration interval = options.get("openejb.autodeploy.interval", new Duration(2, TimeUnit.SECONDS));
 
@@ -67,13 +67,13 @@ public class AutoDeployer {
         this.timer = new Timer(this.getClass().getSimpleName());
     }
 
-    public synchronized boolean fileAdded(File file) {
+    public synchronized boolean fileAdded(final File file) {
         logger.info("Auto-Deploying: " + file.getAbsolutePath());
         try {
             final AppInfo appInfo = factory.configureApplication(file);
             appInfo.paths.add(file.getAbsolutePath());
             appInfo.paths.add(appInfo.path);
-            for (String path : appInfo.paths) {
+            for (final String path : appInfo.paths) {
                 logger.info("Auto-Deploy: Path " + path);
             }
             getAssembler().createApplication(appInfo);
@@ -87,15 +87,15 @@ public class AutoDeployer {
         return SystemInstance.get().getComponent(Assembler.class);
     }
 
-    public synchronized boolean fileRemoved(File file) {
+    public synchronized boolean fileRemoved(final File file) {
         final String path = file.getAbsolutePath();
         final Collection<AppInfo> apps = getAssembler().getDeployedApplications();
-        for (AppInfo app : apps) {
+        for (final AppInfo app : apps) {
             if (app.paths.contains(path)) {
                 logger.info("Auto-Undeploying: " + app.appId + " - " + file.getAbsolutePath());
                 try {
                     getAssembler().destroyApplication(app);
-                    for (String location : app.paths) {
+                    for (final String location : app.paths) {
                         final File delete = new File(location);
                         Files.remove(delete);
                         logger.info("Auto-Undeploy: Delete " + location);
@@ -109,7 +109,7 @@ public class AutoDeployer {
         return true;
     }
 
-    public void fileUpdated(File file) {
+    public void fileUpdated(final File file) {
         fileRemoved(file);
         fileAdded(file);
     }
@@ -118,11 +118,13 @@ public class AutoDeployer {
         return logger;
     }
 
-    public void observe(@Observes ContainerSystemPostCreate postCreate) {
+    @SuppressWarnings("UnusedParameters")
+    public void observe(@Observes final ContainerSystemPostCreate postCreate) {
         start();
     }
 
-    public void observe(@Observes ContainerSystemPreDestroy preDestroy) {
+    @SuppressWarnings("UnusedParameters")
+    public void observe(@Observes final ContainerSystemPreDestroy preDestroy) {
         stop();
     }
 
@@ -136,6 +138,7 @@ public class AutoDeployer {
         getLogger().debug("Scanner running.  Polling every " + pollIntervalMillis + " milliseconds.");
 
         timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
             public void run() {
                 try {
                     scan();
@@ -227,7 +230,7 @@ public class AutoDeployer {
         { // list all the files associated with hot deploy locations
 
             final FileUtils base = SystemInstance.get().getBase();
-            for (Deployments deployment : deployments) {
+            for (final Deployments deployment : deployments) {
                 DeploymentsResolver.loadFrom(deployment, base, files);
             }
         }
@@ -284,7 +287,7 @@ public class AutoDeployer {
      * Provides details about a file.
      */
     private static class FileInfo implements Serializable {
-        private String path;
+        private final String path;
 
         private long size;
 

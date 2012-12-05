@@ -16,6 +16,13 @@
  */
 package org.apache.openejb;
 
+import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
+import junit.framework.TestResult;
+import org.apache.openejb.loader.IO;
+import org.apache.xbean.asm.ClassReader;
+import org.apache.xbean.asm.ClassWriter;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,12 +31,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
-import junit.framework.TestResult;
-import org.apache.openejb.loader.IO;
-import org.apache.xbean.asm.ClassReader;
-import org.apache.xbean.asm.ClassWriter;
 
 import static org.apache.openejb.util.URLs.toFile;
 
@@ -39,22 +40,23 @@ public class DependenceValidationTest extends TestCase {
 
     private TestResult results;
 
-    public void run(TestResult testResult) {
+    @Override
+    public void run(final TestResult testResult) {
         results = testResult;
         super.run(testResult);
     }
 
     public void testAssembler() throws Exception {
-        DependencyVisitor dependencyVisitor = new DependencyVisitor();
+        final DependencyVisitor dependencyVisitor = new DependencyVisitor();
 
-        URL resource = DependenceValidationTest.class.getResource("/org/apache/openejb/OpenEJB.class");
-        File file = toFile(resource);
+        final URL resource = DependenceValidationTest.class.getResource("/org/apache/openejb/OpenEJB.class");
+        final File file = toFile(resource);
         dir(file.getParentFile(), dependencyVisitor);
 
         depsOfPackages = dependencyVisitor.groups;
 
         // Nothing may depend on the Assembler except the config code and events
-        String dynamicAssembler = "org.apache.openejb.assembler.dynamic";
+        final String dynamicAssembler = "org.apache.openejb.assembler.dynamic";
         assertNotDependentOn("org.apache.openejb", "org.apache.openejb.assembler.classic", "org.apache.openejb.config.typed.util", "org.apache.openejb.assembler", "org.apache.openejb.assembler.classic.util", "org.apache.openejb.config", "org.apache.openejb.assembler.dynamic", "org.apache.openejb.assembler.classic.cmd", "org.apache.openejb.assembler.monitoring", "org.apache.openejb.cdi", "org.apache.openejb.junit", "org.apache.openejb.assembler.classic.event", "org.apache.openejb.web");
 
         // Nothing may depend on the Dynamic Assembler
@@ -77,18 +79,18 @@ public class DependenceValidationTest extends TestCase {
         // assertNotDependentOn("org.apache.openejb", "org.apache.openejb.core.entity", dynamicAssembler);
     }
 
-    private void assertNotDependentOn(String referringPacakge, String referredPackage, String... exemptionsArray) {
+    private void assertNotDependentOn(final String referringPacakge, final String referredPackage, final String... exemptionsArray) {
         if (referringPacakge.equals(referredPackage)) return;
-        List<String> exemptions = new ArrayList<String>(Arrays.asList(exemptionsArray));
+        final List<String> exemptions = new ArrayList<String>(Arrays.asList(exemptionsArray));
         exemptions.add(referredPackage);
 
-        for (Map.Entry<String, Map<String, Integer>> entry : depsOfPackages.entrySet()) {
-            String packageName = entry.getKey();
+        for (final Map.Entry<String, Map<String, Integer>> entry : depsOfPackages.entrySet()) {
+            final String packageName = entry.getKey();
             if (packageName.startsWith(referringPacakge) && !exemptions.contains(packageName)) {
                 try {
-                    Map<String, Integer> deps = entry.getValue();
+                    final Map<String, Integer> deps = entry.getValue();
                     if (deps.containsKey(referredPackage)) {
-                        int references = deps.get(referredPackage);
+                        final int references = deps.get(referredPackage);
                         assertEquals(packageName + " should have no dependencies on " + referredPackage, 0, references);
                     }
                 } catch (AssertionFailedError e) {
@@ -98,10 +100,10 @@ public class DependenceValidationTest extends TestCase {
         }
     }
 
-    private static void dir(File dir, DependencyVisitor dependencyVisitor) {
+    private static void dir(final File dir, final DependencyVisitor dependencyVisitor) {
         final File[] files = dir.listFiles();
         if (files != null) {
-            for (File file : files) {
+            for (final File file : files) {
                 if (file.isDirectory()) {
                     dir(file, dependencyVisitor);
                 } else if (file.getName().endsWith(".class")) {
@@ -111,11 +113,11 @@ public class DependenceValidationTest extends TestCase {
         }
     }
 
-    private static void file(File file, DependencyVisitor dependencyVisitor) {
+    private static void file(final File file, final DependencyVisitor dependencyVisitor) {
         try {
             final InputStream in = IO.read(file);
             try {
-                ClassReader classReader = new ClassReader(in);
+                final ClassReader classReader = new ClassReader(in);
                 classReader.accept(dependencyVisitor, ClassWriter.COMPUTE_MAXS);
             } finally {
                 IO.close(in);
