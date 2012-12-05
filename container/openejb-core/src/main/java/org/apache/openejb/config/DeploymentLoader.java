@@ -88,6 +88,7 @@ public class DeploymentLoader implements DeploymentFilterable {
     private boolean scanManagedBeans = true;
     private static final Collection<String> KNOWN_DESCRIPTORS = Arrays.asList("app-ctx.xml", "module.properties", "application.properties", "web.xml", "ejb-jar.xml", "openejb-jar.xml", "env-entries.properties", "beans.xml", "ra.xml", "application.xml", "application-client.xml", "persistence-fragment.xml", "persistence.xml", "validation.xml", NewLoaderLogic.EXCLUSION_FILE);
     private static String ALTDD = SystemInstance.get().getOptions().get(OPENEJB_ALTDD_PREFIX, (String) null);
+    private static final String[] ignoreDirs = SystemInstance.get().getProperty("openejb.ignore.directories", ".svn,_svn,cvs").split(",");
 
     public AppModule load(final File jarFile) throws OpenEJBException {
         // verify we have a valid file
@@ -1482,10 +1483,24 @@ public class DeploymentLoader implements DeploymentFilterable {
             return PersistenceModule.class;
         }
 
+        //#TOMEE-613
         final File file = URLs.toFile(baseUrl);
-        if (file.isDirectory() && !file.equals(SystemInstance.get().getHome().getDirectory("lib", false))) {
-            if (containsEarAssets(file)) return AppModule.class;
-            if (containsWebAssets(file)) return WebModule.class;
+        if (file.isDirectory() && !file.isHidden() && !file.equals(SystemInstance.get().getHome().getDirectory("lib", false))) {
+
+            final String fn = file.getName();
+            boolean checkEAR = true;
+
+            for (final String dir : ignoreDirs) {
+                if (fn.equalsIgnoreCase(dir)) {
+                    checkEAR = false;
+                    break;
+                }
+            }
+
+            if (checkEAR) {
+                if (containsEarAssets(file)) return AppModule.class;
+                if (containsWebAssets(file)) return WebModule.class;
+            }
         }
 
         final Class<? extends DeploymentModule> defaultType = (Class<? extends DeploymentModule>) SystemInstance.get().getOptions().get("openejb.default.deployment-module", (Class<?>) null);
