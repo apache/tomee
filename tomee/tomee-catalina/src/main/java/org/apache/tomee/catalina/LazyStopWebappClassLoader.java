@@ -20,6 +20,7 @@ import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.loader.WebappClassLoader;
 import org.apache.openejb.ClassLoaderUtil;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.classloader.ClassLoaderConfigurer;
 import org.apache.openejb.classloader.WebAppEnricher;
 import org.apache.openejb.loader.SystemInstance;
@@ -86,7 +87,7 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
 
         // avoid to redefine classes from server in this classloader is it not already loaded
         if (URLClassLoaderFirst.shouldSkip(name)) {
-            return getParent().loadClass(name);
+            return OpenEJB.class.getClassLoader().loadClass(name);
         }
         return super.loadClass(name);
     }

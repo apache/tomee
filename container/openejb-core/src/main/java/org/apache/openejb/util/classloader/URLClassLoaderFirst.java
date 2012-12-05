@@ -317,7 +317,8 @@ public class URLClassLoaderFirst extends URLClassLoader {
     // in org.apache.openejb.
     private static boolean isWebAppEnrichment(final String openejb) {
         return openejb.startsWith("hibernate.") || openejb.startsWith("jpa.integration.")
-                || openejb.startsWith("toplink.") || openejb.startsWith("eclipselink.");
+                || openejb.startsWith("toplink.") || openejb.startsWith("eclipselink.")
+                || openejb.startsWith("arquillian.");
     }
 
     @Override
