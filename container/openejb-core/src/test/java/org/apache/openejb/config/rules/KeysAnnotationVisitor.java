@@ -16,24 +16,25 @@
  */
 package org.apache.openejb.config.rules;
 
-import java.util.HashSet;
-
-import org.apache.openejb.config.rules.ValidationRunner;
 import org.apache.xbean.asm.AnnotationVisitor;
 import org.apache.xbean.asm.MethodVisitor;
 import org.apache.xbean.asm.Type;
 import org.apache.xbean.asm.commons.EmptyVisitor;
 
+import java.util.HashSet;
+
 public class KeysAnnotationVisitor extends EmptyVisitor {
-    private ClassInfo current;;
+    private ClassInfo current;
     private MethodInfo currentMethod;
     public static HashSet<ClassInfo> classInfos = new HashSet<ClassInfo>();
 
-    public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
+    @Override
+    public void visit(final int version, final int access, final String name, final String signature, final String superName, final String[] interfaces) {
         current = new ClassInfo(name);
     }
 
-    public AnnotationVisitor visitAnnotation(String desc, boolean arg1) {
+    @Override
+    public AnnotationVisitor visitAnnotation(final String desc, final boolean arg1) {
         if (desc.contains("RunWith"))
             return this;
         if (desc.contains("Keys")) {
@@ -43,22 +44,24 @@ public class KeysAnnotationVisitor extends EmptyVisitor {
         return null;
     }
 
-    public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
+    @Override
+    public MethodVisitor visitMethod(final int access, final String name, final String desc, final String signature, final String[] exceptions) {
         currentMethod = new MethodInfo(name);
         return this;
     }
 
-    public void visit(String name, Object value) {
+    @Override
+    public void visit(final String name, final Object value) {
         if ("value".equals(name)) {
             if (value instanceof Type) {
-                Type type = (Type) value;
-                int sort = type.getSort();
+                final Type type = (Type) value;
+                final int sort = type.getSort();
                 switch (sort) {
-                case Type.OBJECT:
-                    if (type.getClassName().equals(ValidationRunner.class.getName())) {
-                        classInfos.add(current);
-                    }
-                    break;
+                    case Type.OBJECT:
+                        if (type.getClassName().equals(ValidationRunner.class.getName())) {
+                            classInfos.add(current);
+                        }
+                        break;
                 }
             } else {
                 currentMethod.keys.add((String) value);
@@ -66,14 +69,16 @@ public class KeysAnnotationVisitor extends EmptyVisitor {
         }
     }
 
-    public AnnotationVisitor visitAnnotation(String name, String desc) {
+    @Override
+    public AnnotationVisitor visitAnnotation(final String name, final String desc) {
         if (desc.contains("Key")) {
             return this;
         }
         return null;
     }
 
-    public AnnotationVisitor visitArray(String arg0) {
+    @Override
+    public AnnotationVisitor visitArray(final String arg0) {
         return this;
     }
 
@@ -81,7 +86,7 @@ public class KeysAnnotationVisitor extends EmptyVisitor {
         String clazz;
         HashSet<MethodInfo> methuds;
 
-        public ClassInfo(String clazz) {
+        public ClassInfo(final String clazz) {
             this.clazz = clazz;
             methuds = new HashSet<MethodInfo>();
         }
@@ -95,14 +100,14 @@ public class KeysAnnotationVisitor extends EmptyVisitor {
         }
 
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(final Object obj) {
             if (this == obj)
                 return true;
             if (obj == null)
                 return false;
             if (getClass() != obj.getClass())
                 return false;
-            ClassInfo other = (ClassInfo) obj;
+            final ClassInfo other = (ClassInfo) obj;
             if (clazz == null) {
                 if (other.clazz != null)
                     return false;
@@ -116,7 +121,7 @@ public class KeysAnnotationVisitor extends EmptyVisitor {
         String methud;
         HashSet<String> keys;
 
-        public MethodInfo(String methud) {
+        public MethodInfo(final String methud) {
             this.methud = methud;
             keys = new HashSet<String>();
         }
@@ -130,14 +135,14 @@ public class KeysAnnotationVisitor extends EmptyVisitor {
         }
 
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(final Object obj) {
             if (this == obj)
                 return true;
             if (obj == null)
                 return false;
             if (getClass() != obj.getClass())
                 return false;
-            MethodInfo other = (MethodInfo) obj;
+            final MethodInfo other = (MethodInfo) obj;
             if (methud == null) {
                 if (other.methud != null)
                     return false;

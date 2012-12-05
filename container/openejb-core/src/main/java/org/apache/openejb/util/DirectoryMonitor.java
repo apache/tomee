@@ -80,12 +80,12 @@ public class DirectoryMonitor {
 
         getLogger().debug("Scanner running.  Polling every " + pollIntervalMillis + " milliseconds.");
 
-        timer.scheduleAtFixedRate(new TimerTask(){
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
             public void run() {
                 try {
                     scan();
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     getLogger().error("Scan failed.", e);
                 }
             }
@@ -96,7 +96,7 @@ public class DirectoryMonitor {
     private void initialize() {
         getLogger().debug("Doing initial scan of " + target.getAbsolutePath());
 
-        final File[] files = (target.isDirectory()) ? target.listFiles(): new File[]{target};
+        final File[] files = (target.isDirectory()) ? target.listFiles() : new File[]{target};
 
         if (files != null) {
             for (final File file : files) {
@@ -133,7 +133,7 @@ public class DirectoryMonitor {
      */
     public void scan() {
 
-        final File[] files = (target.isDirectory()) ? target.listFiles(): new File[]{target};
+        final File[] files = (target.isDirectory()) ? target.listFiles() : new File[]{target};
 
         final HashSet<String> missingFilesList = new HashSet<String>(this.files.keySet());
 
@@ -185,7 +185,7 @@ public class DirectoryMonitor {
     }
 
     private FileInfo oldInfo(final File file) {
-        return (FileInfo) files.get(file.getAbsolutePath());
+        return files.get(file.getAbsolutePath());
     }
 
     /**
@@ -245,7 +245,7 @@ public class DirectoryMonitor {
      * Provides details about a file.
      */
     private static class FileInfo implements Serializable {
-        private String path;
+        private final String path;
 
         private long size;
 

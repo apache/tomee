@@ -29,8 +29,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.FileChannel;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -43,13 +41,13 @@ public class JarExtractor {
      * Extract the Jar file into an unpacked directory structure, and
      * return the absolute pathname to the extracted directory.
      *
-     * @param file Jar file to unpack
+     * @param file     Jar file to unpack
      * @param pathname Context path name for web application
      * @throws IllegalArgumentException if this is not a "jar:" URL
-     * @throws java.io.IOException              if an input/output error was encountered
+     * @throws java.io.IOException      if an input/output error was encountered
      *                                  during expansion
      */
-    public static File extract(File file, String pathname) throws IOException {
+    public static File extract(final File file, final String pathname) throws IOException {
 
         final Properties properties = SystemInstance.get().getProperties();
         final String key = "tomee.unpack.dir";
@@ -71,11 +69,11 @@ public class JarExtractor {
      * Extract the jar file into the specifiec destination directory.  If the destination directory
      * already exists, the jar will not be unpacked.
      *
-     * @param file jar file to unpack
+     * @param file           jar file to unpack
      * @param destinationDir the directory in which the jar will be unpacked; must not exist
      * @throws java.io.IOException if an input/output error was encountered during expansion
      */
-    public static void extract(File file, File destinationDir) throws IOException {
+    public static void extract(final File file, final File destinationDir) throws IOException {
         if (destinationDir.exists()) {
 
             if (destinationDir.lastModified() > file.lastModified()) {
@@ -111,7 +109,7 @@ public class JarExtractor {
      * @param src  File object representing the source
      * @param dest File object representing the destination
      */
-    public static boolean copyRecursively(File src, File dest) {
+    public static boolean copyRecursively(final File src, final File dest) {
 
         boolean result = true;
 
@@ -164,7 +162,7 @@ public class JarExtractor {
      *
      * @param dir File object representing the directory to be deleted
      */
-    public static boolean delete(File dir) {
+    public static boolean delete(final File dir) {
         return deleteDir(dir);
     }
 
@@ -175,12 +173,15 @@ public class JarExtractor {
      *
      * @param dir File object representing the directory to be deleted
      */
-    public static boolean deleteDir(File dir) {
+    public static boolean deleteDir(final File dir) {
         if (dir == null) return true;
 
         if (dir.isDirectory()) {
-            for (File file : dir.listFiles()) {
-                deleteDir(file);
+            final File[] files = dir.listFiles();
+            if (files != null) {
+                for (final File file : files) {
+                    deleteDir(file);
+                }
             }
         }
 
@@ -198,17 +199,17 @@ public class JarExtractor {
      * @return A handle to the extracted File
      * @throws java.io.IOException if an input/output error occurs
      */
-    protected static File extract(InputStream input, File docBase, String name)
+    protected static File extract(final InputStream input, final File docBase, final String name)
             throws IOException {
 
-        File file = new File(docBase, name);
+        final File file = new File(docBase, name);
         BufferedOutputStream output = null;
         try {
             output =
                     new BufferedOutputStream(new FileOutputStream(file));
-            byte buffer[] = new byte[2048];
+            final byte[] buffer = new byte[2048];
             while (true) {
-                int n = input.read(buffer);
+                final int n = input.read(buffer);
                 if (n <= 0)
                     break;
                 output.write(buffer, 0, n);

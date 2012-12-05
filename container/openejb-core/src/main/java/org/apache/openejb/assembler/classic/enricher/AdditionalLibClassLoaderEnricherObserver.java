@@ -48,7 +48,7 @@ public class AdditionalLibClassLoaderEnricherObserver {
             final File[] libs = dir.listFiles();
             if (libs != null) {
                 final ClassLoaderEnricher enricher = SystemInstance.get().getComponent(ClassLoaderEnricher.class);
-                for (File lib : libs) {
+                for (final File lib : libs) {
                     try {
                         enricher.addUrl(lib.toURI().toURL());
                     } catch (MalformedURLException e) {

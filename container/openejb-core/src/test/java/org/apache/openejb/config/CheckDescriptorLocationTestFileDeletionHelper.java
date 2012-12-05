@@ -29,30 +29,30 @@ public class CheckDescriptorLocationTestFileDeletionHelper {
 
     @Test
     public void deleteFile() {
-        File fileLocation = new File(System.getProperty("java.io.tmpdir"));
+        final File fileLocation = new File(System.getProperty("java.io.tmpdir"));
         assertTrue(fileLocation.isDirectory());
         final File[] list = fileLocation.listFiles();
-        List<File> asList = null;
+        final List<File> asList;
         if (list != null) {
             asList = Arrays.asList(list);
-        } else{
+        } else {
             asList = new ArrayList<File>();
         }
         deleteTestCreatedFiles(asList);
 
     }
 
-    private void deleteTestCreatedFiles(List<File> asList) {
-        for (File file : asList) {
+    private void deleteTestCreatedFiles(final List<File> asList) {
+        for (final File file : asList) {
             deleteOrMarkForDelete(file);
         }
     }
 
-    private void deleteOrMarkForDelete(File file) {
+    private void deleteOrMarkForDelete(final File file) {
         if (file.getName().contains(
                 CheckDescriptorLocationTest.FILENAME_PREFIX)) {
 
-            boolean deleted = file.delete();
+            final boolean deleted = file.delete();
             if (!deleted) {
                 file.deleteOnExit();
             }
