@@ -29,6 +29,5 @@
 
   <modules>
     <module>mbean-annotation-api</module>
-    <module>webbeans-impl</module>
   </modules>
 </project>
