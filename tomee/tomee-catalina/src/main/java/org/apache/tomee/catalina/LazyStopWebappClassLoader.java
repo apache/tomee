@@ -83,6 +83,11 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
                 }
             }
         }
+
+        // avoid to redefine classes from server in this classloader is it not already loaded
+        if (URLClassLoaderFirst.shouldSkip(name)) {
+            return getParent().loadClass(name);
+        }
         return super.loadClass(name);
     }
 

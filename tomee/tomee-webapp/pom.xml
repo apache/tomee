@@ -168,12 +168,6 @@
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-jsf</artifactId>
       <version>${org.apache.openwebbeans.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.openwebbeans</groupId>
-          <artifactId>openwebbeans-impl</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
