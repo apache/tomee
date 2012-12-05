@@ -30,6 +30,7 @@ import org.apache.xbean.finder.filter.Filters;
 import org.apache.xbean.finder.filter.IncludeExcludeFilter;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -47,9 +48,37 @@ import static org.apache.openejb.util.URLs.toFileUrl;
  * @version $Rev$ $Date$
  */
 public class DeploymentsResolver implements DeploymentFilterable {
-    private static final String EXCLUDE_INCLUDE_ORDER = SystemInstance.get().getOptions().get("openejb.exclude-include.order", "include-exclude");
 
+    private static final String EXCLUDE_INCLUDE_ORDER = SystemInstance.get().getOptions().get("openejb.exclude-include.order", "include-exclude");
+    private static final String[] ignoreDirs = SystemInstance.get().getProperty("openejb.ignore.directories", ".svn,_svn,cvs,.git,.hg").split(",");
     private static final Logger logger = DeploymentLoader.logger;
+    private static File lib = null;
+
+    static {
+        try {
+            lib = SystemInstance.get().getHome().getDirectory("lib", false);
+        } catch (IOException e) {
+            //Ignore
+        }
+    }
+
+    public static boolean isValidDirectory(final File file) {
+
+        if (file.isDirectory() && !file.isHidden() && !file.equals(lib)) {
+
+            final String fn = file.getName();
+
+            for (final String dir : ignoreDirs) {
+                if (fn.equalsIgnoreCase(dir)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        return false;
+    }
 
     public static void loadFrom(final Deployments dep, final FileUtils path, final List<File> jarList) {
 
@@ -85,12 +114,12 @@ public class DeploymentsResolver implements DeploymentFilterable {
     }
 
     public static class DeploymentsConfigurationException extends RuntimeException {
-        public DeploymentsConfigurationException(String message) {
+        public DeploymentsConfigurationException(final String message) {
             super(message);
         }
     }
 
-    private static void loadFromFile(Deployments dep, FileUtils path, List<File> jarList) {
+    private static void loadFromFile(final Deployments dep, final FileUtils path, final List<File> jarList) {
         final File file = Files.path(path.getDirectory(), dep.getFile());
 
         Files.exists(file);
@@ -102,35 +131,49 @@ public class DeploymentsResolver implements DeploymentFilterable {
         }
     }
 
-    private static void loadFromDir(Deployments dep, FileUtils path, List<File> jarList) {
+    private static void loadFromDir(final Deployments dep, final FileUtils path, final List<File> jarList) {
         final File dir = Files.path(path.getDirectory(), dep.getDir());
 
         Files.exists(dir);
         Files.readable(dir);
         Files.dir(dir);
+        Files.notHidden(dir);
 
         final Map<String, File> files = new LinkedHashMap<String, java.io.File>();
-        for (File file : dir.listFiles()) {
-            files.put(file.getAbsolutePath(), file);
+        final File[] list = dir.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(final File f) {
+                if (f.isDirectory()) {
+                    return DeploymentsResolver.isValidDirectory(f);
+                }
+                return true;
+            }
+        });
+
+        if (list != null) {
+            for (final File file : list) {
+
+                files.put(file.getAbsolutePath(), file);
+            }
+
+            // Ignore any unpacked versions
+            for (final File file : list) {
+                if (!isArchive(file)) continue;
+                final String archive = file.getAbsolutePath();
+                files.remove(archive.substring(0, archive.length() - 4));
+            }
         }
 
-        // Ignore any unpacked versions
-        for (File file : dir.listFiles()) {
-            if (!isArchive(file)) continue;
-            final String archive = file.getAbsolutePath();
-            files.remove(archive.substring(0, archive.length() - 4));
-        }
-
-        for (File file : files.values()) {
+        for (final File file : files.values()) {
             if (!jarList.contains(file)) {
                 jarList.add(file);
             }
         }
     }
 
-    private static boolean isArchive(File file) {
+    private static boolean isArchive(final File file) {
         if (!file.isFile()) return false;
-        if (!file.getName().endsWith("ar")) return false;
+        if (!file.getName().toLowerCase().endsWith("ar")) return false;
 
         final String name = file.getName();
         final char c = name.charAt(name.length() - 4);
