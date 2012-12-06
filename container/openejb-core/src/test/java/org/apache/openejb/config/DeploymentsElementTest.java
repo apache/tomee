@@ -26,7 +26,6 @@ import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.loader.Zips;
 import org.apache.openejb.util.Archives;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -45,7 +44,7 @@ import java.util.Properties;
 /**
  * If an app exists in the apps/ directory in both the
  * packed and unpacked states, only deploy the app once
- *
+ * <p/>
  * Do not treat this as two applications and deploy each one separately.
  *
  * @version $Rev$ $Date$
@@ -57,7 +56,7 @@ public class DeploymentsElementTest extends Assert {
 
     /**
      * <Deployments dir="myapps"/>
-     *
+     * <p/>
      * EAR file not extracted
      * Application.xml
      *
@@ -86,7 +85,7 @@ public class DeploymentsElementTest extends Assert {
 
     /**
      * <Deployments dir="myapps"/>
-     *
+     * <p/>
      * EAR file not extracted
      *
      * @throws Exception
@@ -113,7 +112,7 @@ public class DeploymentsElementTest extends Assert {
 
     /**
      * <Deployments dir="myapps"/>
-     *
+     * <p/>
      * EAR file extracted
      * Application.xml
      *
@@ -144,7 +143,7 @@ public class DeploymentsElementTest extends Assert {
 
     /**
      * <Deployments dir="myapps"/>
-     *
+     * <p/>
      * EAR file extracted
      *
      * @throws Exception
@@ -173,7 +172,7 @@ public class DeploymentsElementTest extends Assert {
 
     /**
      * <Deployments dir="myapps"/>
-     *
+     * <p/>
      * EAR file packed
      * EAR file extracted
      * Application.xml
@@ -206,7 +205,7 @@ public class DeploymentsElementTest extends Assert {
 
     /**
      * <Deployments dir="myapps"/>
-     *
+     * <p/>
      * EAR file packed
      * EAR file extracted
      *
@@ -237,10 +236,10 @@ public class DeploymentsElementTest extends Assert {
 
     /**
      * <Deployments dir="myapps"/>
-     *
+     * <p/>
      * EAR file packed
      * EAR file extracted
-     *
+     * <p/>
      * The packed version is newer and an updated version of the packed version
      * We should remove the extracted version and unpack the newer ear
      *
@@ -283,7 +282,7 @@ public class DeploymentsElementTest extends Assert {
 
     /**
      * <Deployments dir="myapps"/>
-     *
+     * <p/>
      * Two ejb jars
      *
      * @throws Exception
@@ -320,12 +319,12 @@ public class DeploymentsElementTest extends Assert {
 
     /**
      * <Deployments dir="myapps"/>
-     *
+     * <p/>
      * Two ejb jars
-     *
+     * <p/>
      * Order should be guaranteed to be the same as
      * they are declared in the openejb.xml
-     *
+     * <p/>
      * To test, the jars are named intentionally in an order
      * that would naturally sort to be the reverse.
      *
@@ -365,10 +364,10 @@ public class DeploymentsElementTest extends Assert {
     /**
      * <Deployments dir="myapps/2000.jar"/>
      * <Deployments dir="myapps"/>
-     *
+     * <p/>
      * Order should be guaranteed to be the same as
      * they are declared in the openejb.xml
-     *
+     * <p/>
      * To test, the jars are named intentionally in an order
      * that would naturally sort to be the reverse.
      *
@@ -414,10 +413,10 @@ public class DeploymentsElementTest extends Assert {
      * <Deployments dir="myapps/2000.jar"/>
      * <Deployments dir="myapps"/>
      * <Deployments dir="myapps"/>
-     *
+     * <p/>
      * Order should be guaranteed to be the same as
      * they are declared in the openejb.xml
-     *
+     * <p/>
      * To test, the jars are named intentionally in an order
      * that would naturally sort to be the reverse.
      *
@@ -497,18 +496,23 @@ public class DeploymentsElementTest extends Assert {
 
     @Test
     public void invalidDir_notReadable() throws Exception {
-        exceptions.expect(RuntimeException.class);
-        exceptions.expectMessage("Deployments dir=");
-        exceptions.expectMessage("Not readable");
-        exceptions.expectMessage("myapps");
-        final Server server = new Server();
 
-        final File dir = server.deploymentsDir("myapps");
-        assertTrue(dir.setReadable(false));
+        if (!System.getProperty("os.name", "unknown").toLowerCase().startsWith("windows")) {
 
-        final OpenEjbConfiguration configuration = server.init();
+            //File.setReadable(false) does nothing on win platforms
 
-        assertEquals(0, configuration.containerSystem.applications.size());
+            exceptions.expect(RuntimeException.class);
+            exceptions.expectMessage("Deployments dir=");
+            exceptions.expectMessage("Not readable");
+            exceptions.expectMessage("myapps");
+            final Server server = new Server();
+
+            final File dir = server.deploymentsDir("myapps");
+
+            assertTrue(dir.setReadable(false));
+            final OpenEjbConfiguration configuration = server.init();
+            assertEquals(0, configuration.containerSystem.applications.size());
+        }
     }
 
     @Test
@@ -548,20 +552,25 @@ public class DeploymentsElementTest extends Assert {
 
     @Test
     public void invalidFile_notReadable() throws Exception {
-        exceptions.expect(RuntimeException.class);
-        exceptions.expectMessage("Deployments file=");
-        exceptions.expectMessage("Not readable");
-        exceptions.expectMessage("myapp.jar");
 
-        final Server server = new Server();
+        if (!System.getProperty("os.name", "unknown").toLowerCase().startsWith("windows")) {
 
-        final File file = server.deploymentsFile("myapp.jar");
-        assertTrue(file.createNewFile());
-        assertTrue(file.setReadable(false));
+            //File.setReadable(false) does nothing on win platforms
 
-        final OpenEjbConfiguration configuration = server.init();
+            exceptions.expect(RuntimeException.class);
+            exceptions.expectMessage("Deployments file=");
+            exceptions.expectMessage("Not readable");
+            exceptions.expectMessage("myapp.jar");
 
-        assertEquals(0, configuration.containerSystem.applications.size());
+            final Server server = new Server();
+
+            final File file = server.deploymentsFile("myapp.jar");
+            assertTrue(file.createNewFile());
+            assertTrue(file.setReadable(false));
+
+            final OpenEjbConfiguration configuration = server.init();
+            assertEquals(0, configuration.containerSystem.applications.size());
+        }
     }
 
     /**
@@ -569,13 +578,14 @@ public class DeploymentsElementTest extends Assert {
      *
      * @throws Exception
      */
-    @Test @Ignore
+    @Test
+    @Ignore
     public void alreadyInDeployProcess() throws Exception {
 
     }
 
-    public AppInfo select(List<AppInfo> appInfos, String id) {
-        for (AppInfo appInfo : appInfos) {
+    public AppInfo select(final List<AppInfo> appInfos, final String id) {
+        for (final AppInfo appInfo : appInfos) {
             if (id.equals(appInfo.appId)) {
                 return appInfo;
             }
@@ -645,12 +655,12 @@ public class DeploymentsElementTest extends Assert {
             return properties;
         }
 
-        public File deploymentsDir(String dir) {
+        public File deploymentsDir(final String dir) {
             openejb.getDeployments().add(new Deployments().dir(dir));
             return Files.mkdir(base, dir);
         }
 
-        public File deploymentsFile(String file) {
+        public File deploymentsFile(final String file) {
             openejb.getDeployments().add(new Deployments().file(file));
             return Files.path(base, file);
         }
