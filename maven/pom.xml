@@ -35,11 +35,8 @@
   <modules>
     <module>tomee-maven-plugin</module>
     <module>tomee-embedded-maven-plugin</module>
-    <module>dd-maven-plugin</module>
     <module>openejb-embedded-maven-plugin</module>
     <module>maven-util</module>
-    <module>spi-helper-maven-plugin</module>
-    <module>spi-helper-jee6-profile</module>
     <module>tomee-webapp-archetype</module>
   </modules>
 
