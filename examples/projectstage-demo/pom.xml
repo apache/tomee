@@ -23,7 +23,7 @@
 
   <groupId>org.superbiz</groupId>
   <artifactId>projectstage-demo</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   <name>OpenEJB :: Examples :: DeltaSpike ProjectStage</name>
 
   <dependencies>
@@ -66,7 +66,7 @@
   </dependencies>
 
   <properties>
-    <tomee.version>1.5.1-SNAPSHOT</tomee.version>
+    <tomee.version>1.5.1</tomee.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 

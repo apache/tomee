@@ -24,13 +24,13 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <artifactId>tomee</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>1.5.1-SNAPSHOT</version>
+    <version>1.5.1</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>apache-tomcat</artifactId>
   <name>OpenEJB :: TomEE :: Apache Tomcat</name>
-  <version>7.0.33-SNAPSHOT</version>
+  <version>7.0.33</version>
   <packaging>pom</packaging>
 
   <build>

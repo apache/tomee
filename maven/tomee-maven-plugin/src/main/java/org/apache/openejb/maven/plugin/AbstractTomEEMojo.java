@@ -89,7 +89,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     @Parameter(property = "tomee-plugin.skipCurrentProject", defaultValue = "false")
     protected boolean skipCurrentProject;
 
-    @Parameter(property = "tomee-plugin.version", defaultValue = "1.5.1-SNAPSHOT")
+    @Parameter(property = "tomee-plugin.version", defaultValue = "1.5.1")
     protected String tomeeVersion;
 
     @Parameter(property = "tomee-plugin.groupId", defaultValue = "org.apache.openejb")

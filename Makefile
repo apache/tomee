@@ -1,6 +1,6 @@
 # This file is used during development only.
 # It has just some handy shortcuts.
-TOMEE_VERSION=1.5.1-SNAPSHOT
+TOMEE_VERSION=1.5.1
 TOMCAT_ZIP_NAME=apache-tomcat-7.0.33
 TOMCAT_ZIP=tomee/apache-tomcat/target/$(TOMCAT_ZIP_NAME)-SNAPSHOT.zip
 TOMEEPLUS_WAR=tomee/tomee-plus-webapp/target/tomee-plus-webapp-$(TOMEE_VERSION).war
