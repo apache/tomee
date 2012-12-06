@@ -362,7 +362,7 @@ public class RemoteServer {
     }
 
     public void kill3UNIX() { // debug purpose only
-        if (System.getProperty("os.name").toLowerCase().contains("win")) {
+        if (System.getProperty("os.name", "unknown").toLowerCase().startsWith("windows")) {
             return;
         }
 
