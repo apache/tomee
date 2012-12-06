@@ -51,7 +51,7 @@ public class MessageDrivenMetaTest {
     @MessageDriven
     public static class ExpectedBean implements MessageListener {
         @Override
-        public void onMessage(Message message) {
+        public void onMessage(final Message message) {
         }
     }
 
@@ -61,7 +61,7 @@ public class MessageDrivenMetaTest {
     @MessageConsumer
     public static class ActualBean implements MessageListener {
         @Override
-        public void onMessage(Message message) {
+        public void onMessage(final Message message) {
         }
     }
 }
