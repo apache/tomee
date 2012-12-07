@@ -78,7 +78,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
     }
 
     private String[] getEnabledCipherSuites() {
-        String property = System.getProperty(ENABLED_CIPHER_SUITES);
+        final String property = System.getProperty(ENABLED_CIPHER_SUITES);
         if (property != null) {
             return property.split(",");
         } else {
@@ -424,7 +424,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
                 Thread.interrupted();
             }
 
-            ConnectionPoolTimeoutException exception = new ConnectionPoolTimeoutException("No connections available in pool (size " + size + ").  Waited for " + timeout + " milliseconds for a connection.");
+            final ConnectionPoolTimeoutException exception = new ConnectionPoolTimeoutException("No connections available in pool (size " + size + ").  Waited for " + timeout + " milliseconds for a connection.");
             exception.fillInStackTrace();
             Client.fireEvent(new ConnectionPoolTimeout(uri, size, timeout, timeUnit, exception));
             throw exception;

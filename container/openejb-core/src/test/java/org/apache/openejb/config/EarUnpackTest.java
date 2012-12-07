@@ -35,28 +35,28 @@ public class EarUnpackTest extends TestCase {
     public void test() throws Exception {
         final File appsDir = Files.tmpdir();
 
-        final Assembler assembler = new Assembler();
+        new Assembler(); //Self register
         final ConfigurationFactory factory = new ConfigurationFactory();
 
         final File ear = new File(appsDir, "colors.ear");
 
         { // First Version of the EAR
-            Map<String, Object> contents = new HashMap<String, Object>();
+            final Map<String, Object> contents = new HashMap<String, Object>();
             contents.put("orange.jar", Archives.jarArchive(Orange.class));
             Archives.jarArchive(ear, contents);
 
             final AppInfo appInfo = factory.configureApplication(ear);
-            assertEquals(appInfo.ejbJars.size(), 1);
+            assertEquals(1, appInfo.ejbJars.size());
             assertEquals("orange", appInfo.ejbJars.get(0).moduleId);
         }
 
         { // First Version of the EAR
-            Map<String, Object> contents = new HashMap<String, Object>();
+            final Map<String, Object> contents = new HashMap<String, Object>();
             contents.put("yellow.jar", Archives.jarArchive(Yellow.class));
             Archives.jarArchive(ear, contents);
 
             final AppInfo appInfo = factory.configureApplication(ear);
-            assertEquals(appInfo.ejbJars.size(), 1);
+            assertEquals(1, appInfo.ejbJars.size());
             assertEquals("yellow", appInfo.ejbJars.get(0).moduleId);
         }
 

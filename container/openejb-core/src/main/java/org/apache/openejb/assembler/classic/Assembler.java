@@ -177,7 +177,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@SuppressWarnings("UnusedDeclaration")
+@SuppressWarnings({"UnusedDeclaration", "UnqualifiedFieldAccess", "UnqualifiedMethodAccess"})
 public class Assembler extends AssemblerTool implements org.apache.openejb.spi.Assembler, JndiConstants {
 
     static {
@@ -188,15 +188,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     public static final String OPENEJB_URL_PKG_PREFIX = IvmContext.class.getPackage().getName();
-
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, Assembler.class);
-
     public static final String OPENEJB_JPA_DEPLOY_TIME_ENHANCEMENT_PROP = "openejb.jpa.deploy-time-enhancement";
-
     private static final String GLOBAL_UNIQUE_ID = "global";
 
     Messages messages = new Messages(Assembler.class.getPackage().getName());
-
     private final CoreContainerSystem containerSystem;
     private final PersistenceClassLoaderHandler persistenceClassLoaderHandler;
     private final JndiBuilder jndiBuilder;
@@ -207,7 +203,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     private final Set<String> moduleIds = new HashSet<String>();
     private final Set<ObjectName> containerObjectNames = new HashSet<ObjectName>();
     private final RemoteResourceMonitor remoteResourceMonitor = new RemoteResourceMonitor();
-
 
     @Override
     public org.apache.openejb.spi.ContainerSystem getContainerSystem() {
@@ -224,12 +219,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         return securityService;
     }
 
-    public synchronized void addDeploymentListener(DeploymentListener deploymentListener) {
+    public synchronized void addDeploymentListener(final DeploymentListener deploymentListener) {
         logger.warning("DeploymentListener API is replaced by @Observes event");
         SystemInstance.get().addObserver(new DeploymentListenerObserver(deploymentListener));
     }
 
-    public synchronized void removeDeploymentListener(DeploymentListener deploymentListener) {
+    public synchronized void removeDeploymentListener(final DeploymentListener deploymentListener) {
         // the wrapping is done here to get the correct equals/hashcode methods
         SystemInstance.get().removeObserver(new DeploymentListenerObserver(deploymentListener));
     }
@@ -241,12 +236,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         this(new IvmJndiFactory());
     }
 
-    public Assembler(JndiFactory jndiFactory) {
+    public Assembler(final JndiFactory jndiFactory) {
         persistenceClassLoaderHandler = new PersistenceClassLoaderHandlerImpl();
 
         installNaming();
 
-        SystemInstance system = SystemInstance.get();
+        final SystemInstance system = SystemInstance.get();
 
         system.setComponent(org.apache.openejb.spi.Assembler.class, this);
         system.setComponent(Assembler.class, this);
@@ -258,7 +253,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         setConfiguration(new OpenEjbConfiguration());
 
-        ApplicationServer appServer = system.getComponent(ApplicationServer.class);
+        final ApplicationServer appServer = system.getComponent(ApplicationServer.class);
         if (appServer == null) {
             system.setComponent(ApplicationServer.class, new org.apache.openejb.core.ServerFederation());
         }
@@ -274,7 +269,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         EventHelper.installExtensions(new ResourceFinder("META-INF"));
     }
 
-    private void setConfiguration(OpenEjbConfiguration config) {
+    private void setConfiguration(final OpenEjbConfiguration config) {
         this.config = config;
         if (config.containerSystem == null) {
             config.containerSystem = new ContainerSystemInfo();
@@ -288,10 +283,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     @Override
-    public void init(Properties props) throws OpenEJBException {
+    public void init(final Properties props) throws OpenEJBException {
         this.props = new Properties(props);
-        Options options = new Options(props, SystemInstance.get().getOptions());
-        String className = options.get("openejb.configurator", "org.apache.openejb.config.ConfigurationFactory");
+        final Options options = new Options(props, SystemInstance.get().getOptions());
+        final String className = options.get("openejb.configurator", "org.apache.openejb.config.ConfigurationFactory");
 
         configFactory = (OpenEjbConfigurationFactory) toolkit.newInstance(className);
         configFactory.init(props);
@@ -305,12 +300,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         /*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
     }
 
-    public static void installNaming(String prefix) {
+    public static void installNaming(final String prefix) {
         installNaming(prefix, false);
     }
 
-    public static synchronized void installNaming(String prefix, boolean clean) {
-        Properties systemProperties = System.getProperties();
+    public static synchronized void installNaming(final String prefix, final boolean clean) {
+        final Properties systemProperties = System.getProperties();
 
         String str = systemProperties.getProperty(Context.URL_PKG_PREFIXES);
         if (str == null || clean) {
@@ -321,9 +316,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         systemProperties.setProperty(Context.URL_PKG_PREFIXES, str);
     }
 
-    private static ThreadLocal<Map<String, Object>> context = new ThreadLocal<Map<String, Object>>();
+    private static final ThreadLocal<Map<String, Object>> context = new ThreadLocal<Map<String, Object>>();
 
-    public static void setContext(Map<String, Object> map) {
+    public static void setContext(final Map<String, Object> map) {
         context.set(map);
     }
 
@@ -340,7 +335,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     public void build() throws OpenEJBException {
         setContext(new HashMap<String, Object>());
         try {
-            OpenEjbConfiguration config = getOpenEjbConfiguration();
+            final OpenEjbConfiguration config = getOpenEjbConfiguration();
             buildContainerSystem(config);
         } catch (OpenEJBException ae) {
             /* OpenEJBExceptions contain useful information and are debbugable.
@@ -403,17 +398,17 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             SystemInstance.get().addObserver(new DeployTimeEnhancer());
         }
 
-        for (ServiceInfo serviceInfo : configInfo.facilities.services) {
+        for (final ServiceInfo serviceInfo : configInfo.facilities.services) {
             createService(serviceInfo);
         }
 
-        ContainerSystemInfo containerSystemInfo = configInfo.containerSystem;
+        final ContainerSystemInfo containerSystemInfo = configInfo.containerSystem;
 
         if (configInfo.facilities.intraVmServer != null) {
             createProxyFactory(configInfo.facilities.intraVmServer);
         }
 
-        for (JndiContextInfo contextInfo : configInfo.facilities.remoteJndiContexts) {
+        for (final JndiContextInfo contextInfo : configInfo.facilities.remoteJndiContexts) {
             createExternalContext(contextInfo);
         }
 
@@ -421,16 +416,16 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         createSecurityService(configInfo.facilities.securityService);
 
-        for (ResourceInfo resourceInfo : configInfo.facilities.resources) {
+        for (final ResourceInfo resourceInfo : configInfo.facilities.resources) {
             createResource(resourceInfo);
         }
 
         // Containers
-        for (ContainerInfo serviceInfo : containerSystemInfo.containers) {
+        for (final ContainerInfo serviceInfo : containerSystemInfo.containers) {
             createContainer(serviceInfo);
         }
 
-        for (AppInfo appInfo : containerSystemInfo.applications) {
+        for (final AppInfo appInfo : containerSystemInfo.applications) {
 
             try {
                 createApplication(appInfo, createAppClassLoader(appInfo));
@@ -457,87 +452,87 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         return new ArrayList<AppInfo>(deployedApplications.values());
     }
 
-    public AppContext createApplication(EjbJarInfo ejbJar) throws NamingException, IOException, OpenEJBException {
+    public AppContext createApplication(final EjbJarInfo ejbJar) throws NamingException, IOException, OpenEJBException {
         return createEjbJar(ejbJar);
     }
 
-    public AppContext createEjbJar(EjbJarInfo ejbJar) throws NamingException, IOException, OpenEJBException {
-        AppInfo appInfo = new AppInfo();
+    public AppContext createEjbJar(final EjbJarInfo ejbJar) throws NamingException, IOException, OpenEJBException {
+        final AppInfo appInfo = new AppInfo();
         appInfo.path = ejbJar.path;
         appInfo.appId = ejbJar.moduleName;
         appInfo.ejbJars.add(ejbJar);
         return createApplication(appInfo);
     }
 
-    public AppContext createApplication(EjbJarInfo ejbJar, ClassLoader classLoader) throws NamingException, IOException, OpenEJBException {
+    public AppContext createApplication(final EjbJarInfo ejbJar, final ClassLoader classLoader) throws NamingException, IOException, OpenEJBException {
         return createEjbJar(ejbJar, classLoader);
     }
 
-    public AppContext createEjbJar(EjbJarInfo ejbJar, ClassLoader classLoader) throws NamingException, IOException, OpenEJBException {
-        AppInfo appInfo = new AppInfo();
+    public AppContext createEjbJar(final EjbJarInfo ejbJar, final ClassLoader classLoader) throws NamingException, IOException, OpenEJBException {
+        final AppInfo appInfo = new AppInfo();
         appInfo.path = ejbJar.path;
         appInfo.appId = ejbJar.moduleName;
         appInfo.ejbJars.add(ejbJar);
         return createApplication(appInfo, classLoader);
     }
 
-    public AppContext createClient(ClientInfo clientInfo) throws NamingException, IOException, OpenEJBException {
-        AppInfo appInfo = new AppInfo();
+    public AppContext createClient(final ClientInfo clientInfo) throws NamingException, IOException, OpenEJBException {
+        final AppInfo appInfo = new AppInfo();
         appInfo.path = clientInfo.path;
         appInfo.appId = clientInfo.moduleId;
         appInfo.clients.add(clientInfo);
         return createApplication(appInfo);
     }
 
-    public AppContext createClient(ClientInfo clientInfo, ClassLoader classLoader) throws NamingException, IOException, OpenEJBException {
-        AppInfo appInfo = new AppInfo();
+    public AppContext createClient(final ClientInfo clientInfo, final ClassLoader classLoader) throws NamingException, IOException, OpenEJBException {
+        final AppInfo appInfo = new AppInfo();
         appInfo.path = clientInfo.path;
         appInfo.appId = clientInfo.moduleId;
         appInfo.clients.add(clientInfo);
         return createApplication(appInfo, classLoader);
     }
 
-    public AppContext createConnector(ConnectorInfo connectorInfo) throws NamingException, IOException, OpenEJBException {
-        AppInfo appInfo = new AppInfo();
+    public AppContext createConnector(final ConnectorInfo connectorInfo) throws NamingException, IOException, OpenEJBException {
+        final AppInfo appInfo = new AppInfo();
         appInfo.path = connectorInfo.path;
         appInfo.appId = connectorInfo.moduleId;
         appInfo.connectors.add(connectorInfo);
         return createApplication(appInfo);
     }
 
-    public AppContext createConnector(ConnectorInfo connectorInfo, ClassLoader classLoader) throws NamingException, IOException, OpenEJBException {
-        AppInfo appInfo = new AppInfo();
+    public AppContext createConnector(final ConnectorInfo connectorInfo, final ClassLoader classLoader) throws NamingException, IOException, OpenEJBException {
+        final AppInfo appInfo = new AppInfo();
         appInfo.path = connectorInfo.path;
         appInfo.appId = connectorInfo.moduleId;
         appInfo.connectors.add(connectorInfo);
         return createApplication(appInfo, classLoader);
     }
 
-    public AppContext createWebApp(WebAppInfo webAppInfo) throws NamingException, IOException, OpenEJBException {
-        AppInfo appInfo = new AppInfo();
+    public AppContext createWebApp(final WebAppInfo webAppInfo) throws NamingException, IOException, OpenEJBException {
+        final AppInfo appInfo = new AppInfo();
         appInfo.path = webAppInfo.path;
         appInfo.appId = webAppInfo.moduleId;
         appInfo.webApps.add(webAppInfo);
         return createApplication(appInfo);
     }
 
-    public AppContext createWebApp(WebAppInfo webAppInfo, ClassLoader classLoader) throws NamingException, IOException, OpenEJBException {
-        AppInfo appInfo = new AppInfo();
+    public AppContext createWebApp(final WebAppInfo webAppInfo, final ClassLoader classLoader) throws NamingException, IOException, OpenEJBException {
+        final AppInfo appInfo = new AppInfo();
         appInfo.path = webAppInfo.path;
         appInfo.appId = webAppInfo.moduleId;
         appInfo.webApps.add(webAppInfo);
         return createApplication(appInfo, classLoader);
     }
 
-    public AppContext createApplication(AppInfo appInfo) throws OpenEJBException, IOException, NamingException {
+    public AppContext createApplication(final AppInfo appInfo) throws OpenEJBException, IOException, NamingException {
         return createApplication(appInfo, createAppClassLoader(appInfo));
     }
 
-    public AppContext createApplication(AppInfo appInfo, ClassLoader classLoader) throws OpenEJBException, IOException, NamingException {
+    public AppContext createApplication(final AppInfo appInfo, final ClassLoader classLoader) throws OpenEJBException, IOException, NamingException {
         return createApplication(appInfo, classLoader, true);
     }
 
-    public AppContext createApplication(AppInfo appInfo, ClassLoader classLoader, boolean start) throws OpenEJBException, IOException, NamingException {
+    public AppContext createApplication(final AppInfo appInfo, ClassLoader classLoader, final boolean start) throws OpenEJBException, IOException, NamingException {
         // The path is used in the UrlCache, command line deployer, JNDI name templates, tomcat integration and a few other places
         if (appInfo.appId == null) throw new IllegalArgumentException("AppInfo.appId cannot be null");
         if (appInfo.path == null) appInfo.path = appInfo.appId;
@@ -553,9 +548,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         // To start out, ensure we don't already have any beans deployed with duplicate IDs.  This
         // is a conflict we can't handle.
-        List<String> used = new ArrayList<String>();
-        for (EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
-            for (EnterpriseBeanInfo beanInfo : ejbJarInfo.enterpriseBeans) {
+        final List<String> used = new ArrayList<String>();
+        for (final EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
+            for (final EnterpriseBeanInfo beanInfo : ejbJarInfo.enterpriseBeans) {
                 if (containerSystem.getBeanContext(beanInfo.ejbDeploymentId) != null) {
                     used.add(beanInfo.ejbDeploymentId);
                 }
@@ -564,7 +559,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         if (used.size() > 0) {
             String message = logger.error("createApplication.appFailedDuplicateIds", appInfo.path);
-            for (String id : used) {
+            for (final String id : used) {
                 logger.debug("createApplication.deploymentIdInUse", id);
                 message += "\n    " + id;
             }
@@ -574,7 +569,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         //Construct the global and app jndi contexts for this app
         final InjectionBuilder injectionBuilder = new InjectionBuilder(classLoader);
 
-        Set<Injection> injections = new HashSet<Injection>();
+        final Set<Injection> injections = new HashSet<Injection>();
         injections.addAll(injectionBuilder.buildInjections(appInfo.globalJndiEnc));
         injections.addAll(injectionBuilder.buildInjections(appInfo.appJndiEnc));
 
@@ -588,8 +583,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         try {
             // Generate the cmp2/cmp1 concrete subclasses
-            CmpJarBuilder cmpJarBuilder = new CmpJarBuilder(appInfo, classLoader);
-            File generatedJar = cmpJarBuilder.getJarFile();
+            final CmpJarBuilder cmpJarBuilder = new CmpJarBuilder(appInfo, classLoader);
+            final File generatedJar = cmpJarBuilder.getJarFile();
             if (generatedJar != null) {
                 classLoader = ClassLoaderUtil.createClassLoader(appInfo.path, new URL[]{generatedJar.toURI().toURL()}, classLoader);
             }
@@ -611,21 +606,21 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 // ValidatorFactory needs to be put in the map sent to the entity manager factory
                 // so it has to be constructed before
                 final List<CommonInfoObject> vfs = new ArrayList<CommonInfoObject>();
-                for (ClientInfo clientInfo : appInfo.clients) {
+                for (final ClientInfo clientInfo : appInfo.clients) {
                     vfs.add(clientInfo);
                 }
-                for (ConnectorInfo connectorInfo : appInfo.connectors) {
+                for (final ConnectorInfo connectorInfo : appInfo.connectors) {
                     vfs.add(connectorInfo);
                 }
-                for (EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
+                for (final EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
                     vfs.add(ejbJarInfo);
                 }
-                for (WebAppInfo webAppInfo : appInfo.webApps) {
+                for (final WebAppInfo webAppInfo : appInfo.webApps) {
                     vfs.add(webAppInfo);
                 }
 
                 final Map<String, ValidatorFactory> validatorFactories = new HashMap<String, ValidatorFactory>();
-                for (CommonInfoObject info : vfs) {
+                for (final CommonInfoObject info : vfs) {
                     ValidatorFactory factory = null;
                     try {
                         factory = ValidatorBuilder.buildFactory(classLoader, info.validationInfo);
@@ -639,17 +634,17 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 moduleIds.addAll(validatorFactories.keySet());
 
                 // validators bindings
-                for (Entry<String, ValidatorFactory> validatorFactory : validatorFactories.entrySet()) {
-                    String id = validatorFactory.getKey();
-                    ValidatorFactory factory = validatorFactory.getValue();
+                for (final Entry<String, ValidatorFactory> validatorFactory : validatorFactories.entrySet()) {
+                    final String id = validatorFactory.getKey();
+                    final ValidatorFactory factory = validatorFactory.getValue();
                     try {
                         containerSystemContext.bind(VALIDATOR_FACTORY_NAMING_CONTEXT + id, factory);
 
-                        Validator validator = null;
+                        Validator validator;
                         try {
                             validator = factory.usingContext().getValidator();
                         } catch (Exception e) {
-                            validator = (Validator) Proxy.newProxyInstance(appContext.getClassLoader(), new Class<?>[]{ Validator.class }, new LazyValidator(factory));
+                            validator = (Validator) Proxy.newProxyInstance(appContext.getClassLoader(), new Class<?>[]{Validator.class}, new LazyValidator(factory));
                         }
 
                         containerSystemContext.bind(VALIDATOR_NAMING_CONTEXT + id, validator);
@@ -663,10 +658,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             // JPA - Persistence Units MUST be processed first since they will add ClassFileTransformers
             // to the class loader which must be added before any classes are loaded
-            Map<String, String> units = new HashMap<String, String>();
-            PersistenceBuilder persistenceBuilder = new PersistenceBuilder(persistenceClassLoaderHandler);
-            for (PersistenceUnitInfo info : appInfo.persistenceUnits) {
-                ReloadableEntityManagerFactory factory;
+            final Map<String, String> units = new HashMap<String, String>();
+            final PersistenceBuilder persistenceBuilder = new PersistenceBuilder(persistenceClassLoaderHandler);
+            for (final PersistenceUnitInfo info : appInfo.persistenceUnits) {
+                final ReloadableEntityManagerFactory factory;
                 try {
                     factory = persistenceBuilder.createEntityManagerFactory(info, classLoader);
                     containerSystem.getJNDIContext().bind(PERSISTENCE_UNIT_NAMING_CONTEXT + info.id, factory);
@@ -683,21 +678,21 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             logger.debug("Loaded peristence units: " + units);
 
             // Connectors
-            for (ConnectorInfo connector : appInfo.connectors) {
-                ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
+            for (final ConnectorInfo connector : appInfo.connectors) {
+                final ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
                 Thread.currentThread().setContextClassLoader(classLoader);
                 try {
                     // todo add undeployment code for these
                     if (connector.resourceAdapter != null) {
                         createResource(connector.resourceAdapter);
                     }
-                    for (ResourceInfo outbound : connector.outbound) {
+                    for (final ResourceInfo outbound : connector.outbound) {
                         createResource(outbound);
                     }
-                    for (MdbContainerInfo inbound : connector.inbound) {
+                    for (final MdbContainerInfo inbound : connector.inbound) {
                         createContainer(inbound);
                     }
-                    for (ResourceInfo adminObject : connector.adminObject) {
+                    for (final ResourceInfo adminObject : connector.adminObject) {
                         createResource(adminObject);
                     }
                 } finally {
@@ -708,27 +703,27 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             List<BeanContext> allDeployments = new ArrayList<BeanContext>();
 
             // EJB
-            EjbJarBuilder ejbJarBuilder = new EjbJarBuilder(props, appContext);
-            for (EjbJarInfo ejbJar : appInfo.ejbJars) {
-                HashMap<String, BeanContext> deployments = ejbJarBuilder.build(ejbJar, injections);
+            final EjbJarBuilder ejbJarBuilder = new EjbJarBuilder(props, appContext);
+            for (final EjbJarInfo ejbJar : appInfo.ejbJars) {
+                final HashMap<String, BeanContext> deployments = ejbJarBuilder.build(ejbJar, injections);
 
-                JaccPermissionsBuilder jaccPermissionsBuilder = new JaccPermissionsBuilder();
-                PolicyContext policyContext = jaccPermissionsBuilder.build(ejbJar, deployments);
+                final JaccPermissionsBuilder jaccPermissionsBuilder = new JaccPermissionsBuilder();
+                final PolicyContext policyContext = jaccPermissionsBuilder.build(ejbJar, deployments);
                 jaccPermissionsBuilder.install(policyContext);
 
-                TransactionPolicyFactory transactionPolicyFactory = createTransactionPolicyFactory(ejbJar, classLoader);
-                for (BeanContext beanContext : deployments.values()) {
+                final TransactionPolicyFactory transactionPolicyFactory = createTransactionPolicyFactory(ejbJar, classLoader);
+                for (final BeanContext beanContext : deployments.values()) {
 
                     beanContext.setTransactionPolicyFactory(transactionPolicyFactory);
                 }
 
-                MethodTransactionBuilder methodTransactionBuilder = new MethodTransactionBuilder();
+                final MethodTransactionBuilder methodTransactionBuilder = new MethodTransactionBuilder();
                 methodTransactionBuilder.build(deployments, ejbJar.methodTransactions);
 
-                MethodConcurrencyBuilder methodConcurrencyBuilder = new MethodConcurrencyBuilder();
+                final MethodConcurrencyBuilder methodConcurrencyBuilder = new MethodConcurrencyBuilder();
                 methodConcurrencyBuilder.build(deployments, ejbJar.methodConcurrency);
 
-                for (BeanContext beanContext : deployments.values()) {
+                for (final BeanContext beanContext : deployments.values()) {
                     containerSystem.addDeployment(beanContext);
                 }
 
@@ -736,9 +731,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 jndiBuilder.build(ejbJar, deployments);
 
                 // setup timers/asynchronous methods - must be after transaction attributes are set
-                for (BeanContext beanContext : deployments.values()) {
+                for (final BeanContext beanContext : deployments.values()) {
                     if (beanContext.getComponentType() != BeanType.STATEFUL) {
-                        Method ejbTimeout = beanContext.getEjbTimeout();
+                        final Method ejbTimeout = beanContext.getEjbTimeout();
                         boolean timerServiceRequired = false;
                         if (ejbTimeout != null) {
                             // If user set the tx attribute to RequiresNew change it to Required so a new transaction is not started
@@ -748,11 +743,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                             timerServiceRequired = true;
                         }
                         for (Iterator<Map.Entry<Method, MethodContext>> it = beanContext.iteratorMethodContext(); it.hasNext(); ) {
-                            Map.Entry<Method, MethodContext> entry = it.next();
-                            MethodContext methodContext = entry.getValue();
+                            final Map.Entry<Method, MethodContext> entry = it.next();
+                            final MethodContext methodContext = entry.getValue();
                             if (methodContext.getSchedules().size() > 0) {
                                 timerServiceRequired = true;
-                                Method method = entry.getKey();
+                                final Method method = entry.getKey();
                                 //TODO Need ?
                                 if (beanContext.getTransactionType(method) == TransactionType.RequiresNew) {
                                     beanContext.setMethodTransactionAttribute(method, TransactionType.Required);
@@ -761,13 +756,13 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                         }
                         if (timerServiceRequired) {
                             // Create the timer
-                            EjbTimerServiceImpl timerService = new EjbTimerServiceImpl(beanContext);
+                            final EjbTimerServiceImpl timerService = new EjbTimerServiceImpl(beanContext);
                             //Load auto-start timers
-                            TimerStore timerStore = timerService.getTimerStore();
+                            final TimerStore timerStore = timerService.getTimerStore();
                             for (Iterator<Map.Entry<Method, MethodContext>> it = beanContext.iteratorMethodContext(); it.hasNext(); ) {
-                                Map.Entry<Method, MethodContext> entry = it.next();
-                                MethodContext methodContext = entry.getValue();
-                                for (ScheduleData scheduleData : methodContext.getSchedules()) {
+                                final Map.Entry<Method, MethodContext> entry = it.next();
+                                final MethodContext methodContext = entry.getValue();
+                                for (final ScheduleData scheduleData : methodContext.getSchedules()) {
                                     timerStore.createCalendarTimer(timerService, (String) beanContext.getDeploymentID(), null, entry.getKey(), scheduleData.getExpression(), scheduleData.getConfig());
                                 }
                             }
@@ -779,17 +774,17 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     //set asynchronous methods transaction
                     //TODO ???
                     for (Iterator<Entry<Method, MethodContext>> it = beanContext.iteratorMethodContext(); it.hasNext(); ) {
-                        Entry<Method, MethodContext> entry = it.next();
+                        final Entry<Method, MethodContext> entry = it.next();
                         if (entry.getValue().isAsynchronous() && beanContext.getTransactionType(entry.getKey()) == TransactionType.RequiresNew) {
                             beanContext.setMethodTransactionAttribute(entry.getKey(), TransactionType.Required);
                         }
                     }
                 }
                 // process application exceptions
-                for (ApplicationExceptionInfo exceptionInfo : ejbJar.applicationException) {
+                for (final ApplicationExceptionInfo exceptionInfo : ejbJar.applicationException) {
                     try {
-                        Class exceptionClass = classLoader.loadClass(exceptionInfo.exceptionClass);
-                        for (BeanContext beanContext : deployments.values()) {
+                        final Class exceptionClass = classLoader.loadClass(exceptionInfo.exceptionClass);
+                        for (final BeanContext beanContext : deployments.values()) {
                             beanContext.addApplicationException(exceptionClass, exceptionInfo.rollback, exceptionInfo.inherited);
                         }
                     } catch (ClassNotFoundException e) {
@@ -816,9 +811,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 final Collection<BeanContext> toStart = new ArrayList<BeanContext>();
 
                 // deploy
-                for (BeanContext deployment : allDeployments) {
+                for (final BeanContext deployment : allDeployments) {
                     try {
-                        Container container = deployment.getContainer();
+                        final Container container = deployment.getContainer();
                         if (container.getBeanContext(deployment.getDeploymentID()) == null) {
                             container.deploy(deployment);
                             if (!((String) deployment.getDeploymentID()).endsWith(".Comp")
@@ -826,7 +821,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                                 logger.info("createApplication.createdEjb", deployment.getDeploymentID(), deployment.getEjbName(), container.getContainerID());
                             }
                             if (logger.isDebugEnabled()) {
-                                for (Map.Entry<Object, Object> entry : deployment.getProperties().entrySet()) {
+                                for (final Map.Entry<Object, Object> entry : deployment.getProperties().entrySet()) {
                                     logger.info("createApplication.createdEjb.property", deployment.getEjbName(), entry.getKey(), entry.getValue());
                                 }
                             }
@@ -838,7 +833,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
 
                 // start
-                for (BeanContext deployment : toStart) {
+                for (final BeanContext deployment : toStart) {
                     try {
                         final Container container = deployment.getContainer();
                         container.start(deployment);
@@ -853,12 +848,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
 
             // App Client
-            for (ClientInfo clientInfo : appInfo.clients) {
+            for (final ClientInfo clientInfo : appInfo.clients) {
                 // determine the injections
-                List<Injection> clientInjections = injectionBuilder.buildInjections(clientInfo.jndiEnc);
+                final List<Injection> clientInjections = injectionBuilder.buildInjections(clientInfo.jndiEnc);
 
                 // build the enc
-                JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(clientInfo.jndiEnc, clientInjections, "Bean", clientInfo.moduleId, null, clientInfo.uniqueId, classLoader);
+                final JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(clientInfo.jndiEnc, clientInjections, "Bean", clientInfo.moduleId, null, clientInfo.uniqueId, classLoader);
                 // if there is at least a remote client classes
                 // or if there is no local client classes
                 // then, we can set the client flag
@@ -867,7 +862,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
                 }
                 jndiEncBuilder.setUseCrossClassLoaderRef(false);
-                Context context = jndiEncBuilder.build(JndiEncBuilder.JndiScope.comp);
+                final Context context = jndiEncBuilder.build(JndiEncBuilder.JndiScope.comp);
 
 //                Debug.printContext(context);
 
@@ -884,40 +879,40 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
                 context.bind("info/injections", clientInjections);
 
-                for (String clientClassName : clientInfo.remoteClients) {
+                for (final String clientClassName : clientInfo.remoteClients) {
                     containerSystemContext.bind("openejb/client/" + clientClassName, clientInfo.moduleId);
                 }
 
-                for (String clientClassName : clientInfo.localClients) {
+                for (final String clientClassName : clientInfo.localClients) {
                     containerSystemContext.bind("openejb/client/" + clientClassName, clientInfo.moduleId);
                     logger.getChildLogger("client").info("createApplication.createLocalClient", clientClassName, clientInfo.moduleId);
                 }
             }
 
-            SystemInstance systemInstance = SystemInstance.get();
+            final SystemInstance systemInstance = SystemInstance.get();
 
             // WebApp
 
-            WebAppBuilder webAppBuilder = systemInstance.getComponent(WebAppBuilder.class);
+            final WebAppBuilder webAppBuilder = systemInstance.getComponent(WebAppBuilder.class);
             if (webAppBuilder != null) {
                 webAppBuilder.deployWebApps(appInfo, classLoader);
             }
 
             if (start) {
-                EjbResolver globalEjbResolver = systemInstance.getComponent(EjbResolver.class);
+                final EjbResolver globalEjbResolver = systemInstance.getComponent(EjbResolver.class);
                 globalEjbResolver.addAll(appInfo.ejbJars);
             }
 
             // bind all global values on global context
-            for (Map.Entry<String, Object> value : appContext.getBindings().entrySet()) {
-                String path = value.getKey();
+            for (final Map.Entry<String, Object> value : appContext.getBindings().entrySet()) {
+                final String path = value.getKey();
                 // keep only global bindings
                 if (path.startsWith("module/") || path.startsWith("app/") || path.startsWith("comp/") || path.equalsIgnoreCase("global/dummy")) {
                     continue;
                 }
 
                 // a bit weird but just to be consistent if user doesn't lookup directly the resource
-                Context lastContext = Contexts.createSubcontexts(containerSystemContext, path);
+                final Context lastContext = Contexts.createSubcontexts(containerSystemContext, path);
                 try {
                     lastContext.rebind(path.substring(path.lastIndexOf("/") + 1, path.length()), value.getValue());
                 } catch (NameAlreadyBoundException nabe) {
@@ -927,16 +922,16 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
 
             // deploy MBeans
-            for (String mbean : appInfo.mbeans) {
+            for (final String mbean : appInfo.mbeans) {
                 deployMBean(appContext.getBeanManager(), classLoader, mbean, appInfo.jmx, appInfo.appId);
             }
-            for (EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
-                for (String mbean : ejbJarInfo.mbeans) {
+            for (final EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
+                for (final String mbean : ejbJarInfo.mbeans) {
                     deployMBean(appContext.getBeanManager(), classLoader, mbean, appInfo.jmx, ejbJarInfo.moduleName);
                 }
             }
-            for (ConnectorInfo connectorInfo : appInfo.connectors) {
-                for (String mbean : connectorInfo.mbeans) {
+            for (final ConnectorInfo connectorInfo : appInfo.connectors) {
+                for (final String mbean : connectorInfo.mbeans) {
                     deployMBean(appContext.getBeanManager(), classLoader, mbean, appInfo.jmx, appInfo.appId + ".add-lib");
                 }
             }
@@ -1003,7 +998,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
     }
 
-    private void ensureWebBeansContext(AppContext appContext) {
+    private void ensureWebBeansContext(final AppContext appContext) {
         WebBeansContext webBeansContext = appContext.get(WebBeansContext.class);
         if (webBeansContext == null) webBeansContext = appContext.getWebBeansContext();
         if (webBeansContext == null) {
@@ -1028,19 +1023,19 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         appContext.setWebBeansContext(webBeansContext);
     }
 
-    private TransactionPolicyFactory createTransactionPolicyFactory(EjbJarInfo ejbJar, ClassLoader classLoader) {
+    private TransactionPolicyFactory createTransactionPolicyFactory(final EjbJarInfo ejbJar, final ClassLoader classLoader) {
         TransactionPolicyFactory factory = null;
 
-        Object value = ejbJar.properties.get(TransactionPolicyFactory.class.getName());
+        final Object value = ejbJar.properties.get(TransactionPolicyFactory.class.getName());
         if (value instanceof TransactionPolicyFactory) {
             factory = (TransactionPolicyFactory) value;
         } else if (value instanceof String) {
             try {
-                String[] parts = ((String) value).split(":", 2);
+                final String[] parts = ((String) value).split(":", 2);
 
-                ResourceFinder finder = new ResourceFinder("META-INF", classLoader);
-                Map<String, Class<? extends TransactionPolicyFactory>> plugins = finder.mapAvailableImplementations(TransactionPolicyFactory.class);
-                Class<? extends TransactionPolicyFactory> clazz = plugins.get(parts[0]);
+                final ResourceFinder finder = new ResourceFinder("META-INF", classLoader);
+                final Map<String, Class<? extends TransactionPolicyFactory>> plugins = finder.mapAvailableImplementations(TransactionPolicyFactory.class);
+                final Class<? extends TransactionPolicyFactory> clazz = plugins.get(parts[0]);
                 if (clazz != null) {
                     if (parts.length == 1) {
                         factory = clazz.getConstructor(String.class).newInstance(parts[1]);
@@ -1065,9 +1060,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         // they are available.
         Collections.sort(deployments, new Comparator<BeanContext>() {
             @Override
-            public int compare(BeanContext a, BeanContext b) {
-                int aa = (a.getComponentType() == BeanType.SINGLETON) ? 1 : 0;
-                int bb = (b.getComponentType() == BeanType.SINGLETON) ? 1 : 0;
+            public int compare(final BeanContext a, final BeanContext b) {
+                final int aa = (a.getComponentType() == BeanType.SINGLETON) ? 1 : 0;
+                final int bb = (b.getComponentType() == BeanType.SINGLETON) ? 1 : 0;
                 return aa - bb;
             }
         });
@@ -1076,12 +1071,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         // without references to ther beans will be deployed first.
         deployments = References.sort(deployments, new References.Visitor<BeanContext>() {
             @Override
-            public String getName(BeanContext t) {
+            public String getName(final BeanContext t) {
                 return (String) t.getDeploymentID();
             }
 
             @Override
-            public Set<String> getReferences(BeanContext t) {
+            public Set<String> getReferences(final BeanContext t) {
                 return t.getDependsOn();
             }
         });
@@ -1091,9 +1086,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         // references to other ejbs that would need to be available first.
         Collections.sort(deployments, new Comparator<BeanContext>() {
             @Override
-            public int compare(BeanContext a, BeanContext b) {
-                int aa = (a.getComponentType() == BeanType.MESSAGE_DRIVEN) ? 1 : 0;
-                int bb = (b.getComponentType() == BeanType.MESSAGE_DRIVEN) ? 1 : 0;
+            public int compare(final BeanContext a, final BeanContext b) {
+                final int aa = (a.getComponentType() == BeanType.MESSAGE_DRIVEN) ? 1 : 0;
+                final int bb = (b.getComponentType() == BeanType.MESSAGE_DRIVEN) ? 1 : 0;
                 return aa - bb;
             }
         });
@@ -1113,8 +1108,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         logger.debug("Undeploying Applications");
-        Assembler assembler = this;
-        for (AppInfo appInfo : assembler.getDeployedApplications()) {
+        final Assembler assembler = this;
+        for (final AppInfo appInfo : assembler.getDeployedApplications()) {
             try {
                 assembler.destroyApplication(appInfo.path);
             } catch (UndeployException e) {
@@ -1147,8 +1142,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             // no resource adapters were created
         }
         while (namingEnumeration != null && namingEnumeration.hasMoreElements()) {
-            Binding binding = namingEnumeration.nextElement();
-            Object object = binding.getObject();
+            final Binding binding = namingEnumeration.nextElement();
+            final Object object = binding.getObject();
             destroyResource(binding.getName(), binding.getClassName(), object);
         }
 
@@ -1168,7 +1163,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     private void destroyResource(final String name, final String className, final Object object) {
         if (object instanceof ResourceAdapter) {
-            ResourceAdapter resourceAdapter = (ResourceAdapter) object;
+            final ResourceAdapter resourceAdapter = (ResourceAdapter) object;
             try {
                 logger.info("Stopping ResourceAdapter: " + name);
 
@@ -1194,23 +1189,23 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
     }
 
-    public synchronized void destroyApplication(String filePath) throws UndeployException, NoSuchApplicationException {
-        AppInfo appInfo = deployedApplications.remove(filePath);
+    public synchronized void destroyApplication(final String filePath) throws UndeployException, NoSuchApplicationException {
+        final AppInfo appInfo = deployedApplications.remove(filePath);
         if (appInfo == null) {
             throw new NoSuchApplicationException(filePath);
         }
         destroyApplication(appInfo);
     }
 
-    public synchronized void destroyApplication(AppContext appContext) throws UndeployException {
-        AppInfo appInfo = deployedApplications.remove(appContext.getId());
+    public synchronized void destroyApplication(final AppContext appContext) throws UndeployException {
+        final AppInfo appInfo = deployedApplications.remove(appContext.getId());
         if (appInfo == null) {
             throw new IllegalStateException(String.format("Cannot find AppInfo for app: %s", appContext.getId()));
         }
         destroyApplication(appInfo);
     }
 
-    public synchronized void destroyApplication(AppInfo appInfo) throws UndeployException {
+    public synchronized void destroyApplication(final AppInfo appInfo) throws UndeployException {
         deployedApplications.remove(appInfo.path);
         logger.info("destroyApplication.start", appInfo.path);
 
@@ -1239,7 +1234,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             // dumpJndiTree(globalContext, "\n\nJndi Tree Before unbinds:\n===================\n\n");
 
-            for (Map.Entry<String, Object> value : cb.entrySet()) {
+            for (final Map.Entry<String, Object> value : cb.entrySet()) {
                 String path = value.getKey();
                 if (path.startsWith("global")) {
                     path = "java:" + path;
@@ -1261,15 +1256,15 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             // dumpJndiTree(globalContext, "\n\nJndi Tree After unbinds:\n======================\n\n");
         }
 
-        EjbResolver globalResolver = new EjbResolver(null, EjbResolver.Scope.GLOBAL);
-        for (AppInfo info : deployedApplications.values()) {
+        final EjbResolver globalResolver = new EjbResolver(null, EjbResolver.Scope.GLOBAL);
+        for (final AppInfo info : deployedApplications.values()) {
             globalResolver.addAll(info.ejbJars);
         }
         SystemInstance.get().setComponent(EjbResolver.class, globalResolver);
 
-        UndeployException undeployException = new UndeployException(messages.format("destroyApplication.failed", appInfo.path));
+        final UndeployException undeployException = new UndeployException(messages.format("destroyApplication.failed", appInfo.path));
 
-        WebAppBuilder webAppBuilder = SystemInstance.get().getComponent(WebAppBuilder.class);
+        final WebAppBuilder webAppBuilder = SystemInstance.get().getComponent(WebAppBuilder.class);
         if (webAppBuilder != null) {
             try {
                 webAppBuilder.undeployWebApps(appInfo);
@@ -1280,10 +1275,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         // get all of the ejb deployments
         List<BeanContext> deployments = new ArrayList<BeanContext>();
-        for (EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
-            for (EnterpriseBeanInfo beanInfo : ejbJarInfo.enterpriseBeans) {
-                String deploymentId = beanInfo.ejbDeploymentId;
-                BeanContext beanContext = containerSystem.getBeanContext(deploymentId);
+        for (final EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
+            for (final EnterpriseBeanInfo beanInfo : ejbJarInfo.enterpriseBeans) {
+                final String deploymentId = beanInfo.ejbDeploymentId;
+                final BeanContext beanContext = containerSystem.getBeanContext(deploymentId);
                 if (beanContext == null) {
                     undeployException.getCauses().add(new Exception("deployment not found: " + deploymentId));
                 } else {
@@ -1306,10 +1301,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         Collections.reverse(deployments);
 
         // stop
-        for (BeanContext deployment : deployments) {
-            String deploymentID = deployment.getDeploymentID() + "";
+        for (final BeanContext deployment : deployments) {
+            final String deploymentID = deployment.getDeploymentID() + "";
             try {
-                Container container = deployment.getContainer();
+                final Container container = deployment.getContainer();
                 container.stop(deployment);
             } catch (Throwable t) {
                 undeployException.getCauses().add(new Exception("bean: " + deploymentID + ": " + t.getMessage(), t));
@@ -1317,10 +1312,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         // undeploy
-        for (BeanContext bean : deployments) {
-            String deploymentID = bean.getDeploymentID() + "";
+        for (final BeanContext bean : deployments) {
+            final String deploymentID = bean.getDeploymentID() + "";
             try {
-                Container container = bean.getContainer();
+                final Container container = bean.getContainer();
                 container.undeploy(bean);
                 bean.setContainer(null);
             } catch (Throwable t) {
@@ -1331,32 +1326,32 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         // get the client ids
-        List<String> clientIds = new ArrayList<String>();
-        for (ClientInfo clientInfo : appInfo.clients) {
+        final List<String> clientIds = new ArrayList<String>();
+        for (final ClientInfo clientInfo : appInfo.clients) {
             clientIds.add(clientInfo.moduleId);
-            for (String className : clientInfo.localClients) {
+            for (final String className : clientInfo.localClients) {
                 clientIds.add(className);
             }
-            for (String className : clientInfo.remoteClients) {
+            for (final String className : clientInfo.remoteClients) {
                 clientIds.add(className);
             }
         }
 
-        if (appContext != null) for (WebContext webContext : appContext.getWebContexts()) {
+        if (appContext != null) for (final WebContext webContext : appContext.getWebContexts()) {
             containerSystem.removeWebContext(webContext);
         }
 
         // Clear out naming for all components first
-        for (BeanContext deployment : deployments) {
-            String deploymentID = deployment.getDeploymentID() + "";
+        for (final BeanContext deployment : deployments) {
+            final String deploymentID = deployment.getDeploymentID() + "";
             try {
                 containerSystem.removeBeanContext(deployment);
             } catch (Throwable t) {
                 undeployException.getCauses().add(new Exception(deploymentID, t));
             }
 
-            JndiBuilder.Bindings bindings = deployment.get(JndiBuilder.Bindings.class);
-            if (bindings != null) for (String name : bindings.getBindings()) {
+            final JndiBuilder.Bindings bindings = deployment.get(JndiBuilder.Bindings.class);
+            if (bindings != null) for (final String name : bindings.getBindings()) {
                 try {
                     globalContext.unbind(name);
                 } catch (Throwable t) {
@@ -1365,7 +1360,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
         }
 
-        for (String sId : moduleIds) {
+        for (final String sId : moduleIds) {
             try {
                 globalContext.unbind(VALIDATOR_FACTORY_NAMING_CONTEXT + sId);
                 globalContext.unbind(VALIDATOR_NAMING_CONTEXT + sId);
@@ -1379,7 +1374,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         try {
             if (globalContext instanceof IvmContext) {
-                IvmContext ivmContext = (IvmContext) globalContext;
+                final IvmContext ivmContext = (IvmContext) globalContext;
                 ivmContext.prune("openejb/Deployment");
                 ivmContext.prune("openejb/local");
                 ivmContext.prune("openejb/remote");
@@ -1391,7 +1386,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         deployments.clear();
 
-        for (String clientId : clientIds) {
+        for (final String clientId : clientIds) {
             try {
                 globalContext.unbind("/openejb/client/" + clientId);
             } catch (Throwable t) {
@@ -1400,10 +1395,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         // mbeans
-        MBeanServer server = LocalMBeanServer.get();
-        for (Object objectName : appInfo.jmx.values()) {
+        final MBeanServer server = LocalMBeanServer.get();
+        for (final Object objectName : appInfo.jmx.values()) {
             try {
-                ObjectName on = new ObjectName((String) objectName);
+                final ObjectName on = new ObjectName((String) objectName);
                 if (server.isRegistered(on)) {
                     server.unregisterMBean(on);
                 }
@@ -1417,13 +1412,13 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         // destroy PUs before resources since the JPA provider can use datasources
-        for (PersistenceUnitInfo unitInfo : appInfo.persistenceUnits) {
+        for (final PersistenceUnitInfo unitInfo : appInfo.persistenceUnits) {
             try {
-                Object object = globalContext.lookup(PERSISTENCE_UNIT_NAMING_CONTEXT + unitInfo.id);
+                final Object object = globalContext.lookup(PERSISTENCE_UNIT_NAMING_CONTEXT + unitInfo.id);
                 globalContext.unbind(PERSISTENCE_UNIT_NAMING_CONTEXT + unitInfo.id);
 
                 // close EMF so all resources are released
-                ReloadableEntityManagerFactory remf = ((ReloadableEntityManagerFactory) object);
+                final ReloadableEntityManagerFactory remf = ((ReloadableEntityManagerFactory) object);
                 remf.close();
                 persistenceClassLoaderHandler.destroy(unitInfo.id);
                 remf.unregister();
@@ -1432,7 +1427,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
         }
 
-        for (String id : appInfo.resourceIds) {
+        for (final String id : appInfo.resourceIds) {
             final String name = OPENEJB_RESOURCE_JNDI_PREFIX + id;
             try {
                 final Object object = globalContext.lookup(name);
@@ -1468,6 +1463,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
     }
 
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     private void dumpJndiTree(final Context containerSystemContext, final String message) {
         System.out.println(message);
         try {
@@ -1477,20 +1473,20 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
     }
 
-    public ClassLoader createAppClassLoader(AppInfo appInfo) throws OpenEJBException, IOException {
-        Set<URL> jars = new HashSet<URL>();
-        for (EjbJarInfo info : appInfo.ejbJars) {
+    public ClassLoader createAppClassLoader(final AppInfo appInfo) throws OpenEJBException, IOException {
+        final Set<URL> jars = new HashSet<URL>();
+        for (final EjbJarInfo info : appInfo.ejbJars) {
             if (info.path != null) jars.add(toUrl(info.path));
         }
-        for (ClientInfo info : appInfo.clients) {
+        for (final ClientInfo info : appInfo.clients) {
             if (info.path != null) jars.add(toUrl(info.path));
         }
-        for (ConnectorInfo info : appInfo.connectors) {
-            for (String jarPath : info.libs) {
+        for (final ConnectorInfo info : appInfo.connectors) {
+            for (final String jarPath : info.libs) {
                 jars.add(toUrl(jarPath));
             }
         }
-        for (String jarPath : appInfo.libs) {
+        for (final String jarPath : appInfo.libs) {
             jars.add(toUrl(jarPath));
         }
 
@@ -1534,7 +1530,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         return ClassLoaderUtil.createClassLoaderFirst(appInfo.path, filtered, parent);
     }
 
-    public void createExternalContext(JndiContextInfo contextInfo) throws OpenEJBException {
+    public void createExternalContext(final JndiContextInfo contextInfo) throws OpenEJBException {
         logger.getChildLogger("service").info("createService", contextInfo.service, contextInfo.id, contextInfo.className);
 
         final InitialContext initialContext;
@@ -1556,9 +1552,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         logger.getChildLogger("service").debug("createService.success", contextInfo.service, contextInfo.id, contextInfo.className);
     }
 
-    public void createContainer(ContainerInfo serviceInfo) throws OpenEJBException {
+    public void createContainer(final ContainerInfo serviceInfo) throws OpenEJBException {
 
-        ObjectRecipe serviceRecipe = createRecipe(serviceInfo);
+        final ObjectRecipe serviceRecipe = createRecipe(serviceInfo);
 
         serviceRecipe.setProperty("id", serviceInfo.id);
         serviceRecipe.setProperty("transactionManager", props.get(TransactionManager.class.getName()));
@@ -1569,11 +1565,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         // must be replaced with the real resource adapter instance
         replaceResourceAdapterProperty(serviceRecipe);
 
-        Object service = serviceRecipe.create();
+        final Object service = serviceRecipe.create();
 
         logUnusedProperties(serviceRecipe, serviceInfo);
 
-        Class interfce = serviceInterfaces.get(serviceInfo.service);
+        final Class interfce = serviceInterfaces.get(serviceInfo.service);
         checkImplementation(interfce, service.getClass(), serviceInfo.service, serviceInfo.id);
 
         bindService(serviceInfo, service);
@@ -1604,7 +1600,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
     }
 
-    private void bindService(ServiceInfo serviceInfo, Object service) throws OpenEJBException {
+    private void bindService(final ServiceInfo serviceInfo, final Object service) throws OpenEJBException {
         try {
             this.containerSystem.getJNDIContext().bind(JAVA_OPENEJB_NAMING_CONTEXT + serviceInfo.service + "/" + serviceInfo.id, service);
         } catch (NamingException e) {
@@ -1612,12 +1608,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
     }
 
-    public void removeContainer(String containerId) {
+    public void removeContainer(final String containerId) {
         containerSystem.removeContainer(containerId);
 
         // Update the config tree
         for (Iterator<ContainerInfo> iterator = config.containerSystem.containers.iterator(); iterator.hasNext(); ) {
-            ContainerInfo containerInfo = iterator.next();
+            final ContainerInfo containerInfo = iterator.next();
             if (containerInfo.id.equals(containerId)) {
                 iterator.remove();
                 try {
@@ -1629,7 +1625,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
     }
 
-    public void createService(ServiceInfo serviceInfo) throws OpenEJBException {
+    public void createService(final ServiceInfo serviceInfo) throws OpenEJBException {
         final ObjectRecipe serviceRecipe = createRecipe(serviceInfo);
 
         final Object service = serviceRecipe.create();
@@ -1650,15 +1646,15 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         logger.getChildLogger("service").debug("createService.success", serviceInfo.service, serviceInfo.id, serviceInfo.className);
     }
 
-    public void createProxyFactory(ProxyFactoryInfo serviceInfo) throws OpenEJBException {
+    public void createProxyFactory(final ProxyFactoryInfo serviceInfo) throws OpenEJBException {
 
-        ObjectRecipe serviceRecipe = createRecipe(serviceInfo);
+        final ObjectRecipe serviceRecipe = createRecipe(serviceInfo);
 
-        Object service = serviceRecipe.create();
+        final Object service = serviceRecipe.create();
 
         logUnusedProperties(serviceRecipe, serviceInfo);
 
-        Class interfce = serviceInterfaces.get(serviceInfo.service);
+        final Class interfce = serviceInterfaces.get(serviceInfo.service);
         checkImplementation(interfce, service.getClass(), serviceInfo.service, serviceInfo.id);
 
         ProxyManager.registerFactory(serviceInfo.id, (ProxyFactory) service);
@@ -1680,8 +1676,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         logger.getChildLogger("service").debug("createService.success", serviceInfo.service, serviceInfo.id, serviceInfo.className);
     }
 
-    private void replaceResourceAdapterProperty(ObjectRecipe serviceRecipe) throws OpenEJBException {
-        Object resourceAdapterId = serviceRecipe.getProperty("ResourceAdapter");
+    private void replaceResourceAdapterProperty(final ObjectRecipe serviceRecipe) throws OpenEJBException {
+        final Object resourceAdapterId = serviceRecipe.getProperty("ResourceAdapter");
         if (resourceAdapterId instanceof String) {
             String id = (String) resourceAdapterId;
             id = id.trim();
@@ -1703,8 +1699,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
     }
 
-    public void createResource(ResourceInfo serviceInfo) throws OpenEJBException {
-        ObjectRecipe serviceRecipe = createRecipe(serviceInfo);
+    public void createResource(final ResourceInfo serviceInfo) throws OpenEJBException {
+        final ObjectRecipe serviceRecipe = createRecipe(serviceInfo);
         serviceRecipe.setProperty("transactionManager", transactionManager);
         serviceRecipe.setProperty("ServiceId", serviceInfo.id);
         serviceRecipe.setProperty("properties", new UnsetPropertiesRecipe());
@@ -1715,7 +1711,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 final InputStream is = new ByteArrayInputStream(serviceInfo.properties.getProperty("Definition").getBytes());
                 final Properties p = new Properties();
                 IO.readProperties(is, p);
-                for (Map.Entry<Object, Object> entry : p.entrySet()) {
+                for (final Map.Entry<Object, Object> entry : p.entrySet()) {
                     final String key = entry.getKey().toString();
                     if (!props.containsKey(key) // never override from Definition, just use it to complete the properties set
                             && !(key.equalsIgnoreCase("url") && props.containsKey("JdbcUrl"))) { // with @DataSource we can get both, see org.apache.openejb.config.ConvertDataSourceDefinitions.rawDefinition()
@@ -1734,11 +1730,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         // Java Connector spec ResourceAdapters and ManagedConnectionFactories need special activation
         if (service instanceof ResourceAdapter) {
-            ResourceAdapter resourceAdapter = (ResourceAdapter) service;
+            final ResourceAdapter resourceAdapter = (ResourceAdapter) service;
 
             // Create a thead pool for work manager
-            int threadPoolSize = getIntProperty(serviceInfo.properties, "threadPoolSize", 30);
-            Executor threadPool;
+            final int threadPoolSize = getIntProperty(serviceInfo.properties, "threadPoolSize", 30);
+            final Executor threadPool;
             if (threadPoolSize <= 0) {
                 threadPool = Executors.newCachedThreadPool(new ResourceAdapterThreadFactory(serviceInfo.id));
             } else {
@@ -1746,18 +1742,18 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
 
             // WorkManager: the resource adapter can use this to dispatch messages or perform tasks
-            WorkManager workManager;
+            final WorkManager workManager;
             if (transactionManager instanceof GeronimoTransactionManager) {
-                GeronimoTransactionManager geronimoTransactionManager = (GeronimoTransactionManager) transactionManager;
-                TransactionContextHandler txWorkContextHandler = new TransactionContextHandler(geronimoTransactionManager);
+                final GeronimoTransactionManager geronimoTransactionManager = (GeronimoTransactionManager) transactionManager;
+                final TransactionContextHandler txWorkContextHandler = new TransactionContextHandler(geronimoTransactionManager);
 
                 // use id as default realm name if realm is not specified in service properties
-                String securityRealmName = getStringProperty(serviceInfo.properties, "realm", serviceInfo.id);
+                final String securityRealmName = getStringProperty(serviceInfo.properties, "realm", serviceInfo.id);
 
-                SecurityContextHandler securityContextHandler = new SecurityContextHandler(securityRealmName);
-                HintsContextHandler hintsContextHandler = new HintsContextHandler();
+                final SecurityContextHandler securityContextHandler = new SecurityContextHandler(securityRealmName);
+                final HintsContextHandler hintsContextHandler = new HintsContextHandler();
 
-                Collection<WorkContextHandler> workContextHandlers = new ArrayList<WorkContextHandler>();
+                final Collection<WorkContextHandler> workContextHandlers = new ArrayList<WorkContextHandler>();
                 workContextHandlers.add(txWorkContextHandler);
                 workContextHandlers.add(securityContextHandler);
                 workContextHandlers.add(hintsContextHandler);
@@ -1769,7 +1765,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
 
             // BootstrapContext: wraps the WorkMananger and XATerminator
-            BootstrapContext bootstrapContext;
+            final BootstrapContext bootstrapContext;
             if (transactionManager instanceof GeronimoTransactionManager) {
                 bootstrapContext = new GeronimoBootstrapContext((GeronimoWorkManager) workManager, (GeronimoTransactionManager) transactionManager, (GeronimoTransactionManager) transactionManager);
             } else if (transactionManager instanceof XATerminator) {
@@ -1786,14 +1782,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 throw new OpenEJBException(e);
             }
 
-            Map<String, Object> unset = serviceRecipe.getUnsetProperties();
+            final Map<String, Object> unset = serviceRecipe.getUnsetProperties();
             unset.remove("threadPoolSize");
             logUnusedProperties(unset, serviceInfo);
         } else if (service instanceof ManagedConnectionFactory) {
-            ManagedConnectionFactory managedConnectionFactory = (ManagedConnectionFactory) service;
+            final ManagedConnectionFactory managedConnectionFactory = (ManagedConnectionFactory) service;
 
             // connection manager is constructed via a recipe so we automatically expose all cmf properties
-            ObjectRecipe connectionManagerRecipe = new ObjectRecipe(GeronimoConnectionManagerFactory.class, "create");
+            final ObjectRecipe connectionManagerRecipe = new ObjectRecipe(GeronimoConnectionManagerFactory.class, "create");
             connectionManagerRecipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
             connectionManagerRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
             connectionManagerRecipe.setAllProperties(serviceInfo.properties);
@@ -1810,15 +1806,15 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             logger.getChildLogger("service").info("createResource.createConnectionManager", serviceInfo.id, service.getClass().getName());
 
             // create the connection manager
-            ConnectionManager connectionManager = (ConnectionManager) connectionManagerRecipe.create();
+            final ConnectionManager connectionManager = (ConnectionManager) connectionManagerRecipe.create();
             if (connectionManager == null) {
                 throw new OpenEJBRuntimeException(messages.format("assembler.invalidConnectionManager", serviceInfo.id));
             }
 
-            Map<String, Object> unsetA = serviceRecipe.getUnsetProperties();
-            Map<String, Object> unsetB = connectionManagerRecipe.getUnsetProperties();
-            Map<String, Object> unset = new HashMap<String, Object>();
-            for (Map.Entry<String, Object> entry : unsetA.entrySet()) {
+            final Map<String, Object> unsetA = serviceRecipe.getUnsetProperties();
+            final Map<String, Object> unsetB = connectionManagerRecipe.getUnsetProperties();
+            final Map<String, Object> unset = new HashMap<String, Object>();
+            for (final Map.Entry<String, Object> entry : unsetA.entrySet()) {
                 if (unsetB.containsKey(entry.getKey())) unset.put(entry.getKey(), entry.getValue());
             }
             logUnusedProperties(unset, serviceInfo);
@@ -1888,7 +1884,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         final int slash = subUrl.indexOf('/');
 
         int end = port;
-        if (end < 0 ||  (slash > 0 && slash < end)) {
+        if (end < 0 || (slash > 0 && slash < end)) {
             end = slash;
         }
         if (end > 0) {
@@ -1898,8 +1894,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         return subUrl;
     }
 
-    private int getIntProperty(Properties properties, String propertyName, int defaultValue) {
-        String propertyValue = getStringProperty(properties, propertyName, Integer.toString(defaultValue));
+    private int getIntProperty(final Properties properties, final String propertyName, final int defaultValue) {
+        final String propertyValue = getStringProperty(properties, propertyName, Integer.toString(defaultValue));
         if (propertyValue == null) {
             return defaultValue;
         }
@@ -1910,8 +1906,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
     }
 
-    private String getStringProperty(Properties properties, String propertyName, String defaultValue) {
-        String propertyValue = properties.getProperty(propertyName);
+    private String getStringProperty(final Properties properties, final String propertyName, final String defaultValue) {
+        final String propertyValue = properties.getProperty(propertyName);
         if (propertyValue == null) {
             return defaultValue;
         }
@@ -1919,18 +1915,18 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         return propertyValue;
     }
 
-    public void createConnectionManager(ConnectionManagerInfo serviceInfo) throws OpenEJBException {
+    public void createConnectionManager(final ConnectionManagerInfo serviceInfo) throws OpenEJBException {
 
-        ObjectRecipe serviceRecipe = createRecipe(serviceInfo);
+        final ObjectRecipe serviceRecipe = createRecipe(serviceInfo);
 
-        Object object = props.get("TransactionManager");
+        final Object object = props.get("TransactionManager");
         serviceRecipe.setProperty("transactionManager", object);
 
-        Object service = serviceRecipe.create();
+        final Object service = serviceRecipe.create();
 
         logUnusedProperties(serviceRecipe, serviceInfo);
 
-        Class interfce = serviceInterfaces.get(serviceInfo.service);
+        final Class interfce = serviceInterfaces.get(serviceInfo.service);
         checkImplementation(interfce, service.getClass(), serviceInfo.service, serviceInfo.id);
 
         bindService(serviceInfo, service);
@@ -1949,16 +1945,16 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         logger.getChildLogger("service").debug("createService.success", serviceInfo.service, serviceInfo.id, serviceInfo.className);
     }
 
-    public void createSecurityService(SecurityServiceInfo serviceInfo) throws OpenEJBException {
+    public void createSecurityService(final SecurityServiceInfo serviceInfo) throws OpenEJBException {
 
         Object service = SystemInstance.get().getComponent(SecurityService.class);
         if (service == null) {
-            ObjectRecipe serviceRecipe = createRecipe(serviceInfo);
+            final ObjectRecipe serviceRecipe = createRecipe(serviceInfo);
             service = serviceRecipe.create();
             logUnusedProperties(serviceRecipe, serviceInfo);
         }
 
-        Class interfce = serviceInterfaces.get(serviceInfo.service);
+        final Class interfce = serviceInterfaces.get(serviceInfo.service);
         checkImplementation(interfce, service.getClass(), serviceInfo.service, serviceInfo.id);
 
         try {
@@ -1983,18 +1979,18 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         logger.getChildLogger("service").debug("createService.success", serviceInfo.service, serviceInfo.id, serviceInfo.className);
     }
 
-    public void createTransactionManager(TransactionServiceInfo serviceInfo) throws OpenEJBException {
+    public void createTransactionManager(final TransactionServiceInfo serviceInfo) throws OpenEJBException {
 
         Object service = SystemInstance.get().getComponent(TransactionManager.class);
         if (service == null) {
-            ObjectRecipe serviceRecipe = createRecipe(serviceInfo);
+            final ObjectRecipe serviceRecipe = createRecipe(serviceInfo);
             service = serviceRecipe.create();
             logUnusedProperties(serviceRecipe, serviceInfo);
         } else {
             logger.info("Reusing provided TransactionManager " + service);
         }
 
-        Class interfce = serviceInterfaces.get(serviceInfo.service);
+        final Class interfce = serviceInterfaces.get(serviceInfo.service);
         checkImplementation(interfce, service.getClass(), serviceInfo.service, serviceInfo.id);
 
         try {
@@ -2021,7 +2017,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         // todo find a better place for this
 
         // TransactionSynchronizationRegistry
-        TransactionSynchronizationRegistry synchronizationRegistry;
+        final TransactionSynchronizationRegistry synchronizationRegistry;
         if (transactionManager instanceof TransactionSynchronizationRegistry) {
             synchronizationRegistry = (TransactionSynchronizationRegistry) transactionManager;
         } else {
@@ -2041,20 +2037,20 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         // JtaEntityManagerRegistry
         // todo this should be built
-        JtaEntityManagerRegistry jtaEntityManagerRegistry = new JtaEntityManagerRegistry(synchronizationRegistry);
+        final JtaEntityManagerRegistry jtaEntityManagerRegistry = new JtaEntityManagerRegistry(synchronizationRegistry);
         Assembler.getContext().put(JtaEntityManagerRegistry.class.getName(), jtaEntityManagerRegistry);
         SystemInstance.get().setComponent(JtaEntityManagerRegistry.class, jtaEntityManagerRegistry);
 
         logger.getChildLogger("service").debug("createService.success", serviceInfo.service, serviceInfo.id, serviceInfo.className);
     }
 
-    public static void logUnusedProperties(ObjectRecipe serviceRecipe, ServiceInfo info) {
-        Map<String, Object> unsetProperties = serviceRecipe.getUnsetProperties();
+    public static void logUnusedProperties(final ObjectRecipe serviceRecipe, final ServiceInfo info) {
+        final Map<String, Object> unsetProperties = serviceRecipe.getUnsetProperties();
         logUnusedProperties(unsetProperties, info);
     }
 
-    private static void logUnusedProperties(Map<String, Object> unsetProperties, ServiceInfo info) {
-        for (String property : unsetProperties.keySet()) {
+    private static void logUnusedProperties(final Map<String, Object> unsetProperties, final ServiceInfo info) {
+        for (final String property : unsetProperties.keySet()) {
             //TODO: DMB: Make more robust later
             if (property.equalsIgnoreCase("JndiName")) return;
             if (property.equalsIgnoreCase("Origin")) return;
@@ -2081,14 +2077,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         return serviceRecipe;
     }
 
-    private ObjectRecipe createRecipe(ServiceInfo info) {
-        Logger serviceLogger = logger.getChildLogger("service");
+    private ObjectRecipe createRecipe(final ServiceInfo info) {
+        final Logger serviceLogger = logger.getChildLogger("service");
         serviceLogger.info("createService", info.service, info.id, info.className);
         final ObjectRecipe serviceRecipe = prepareRecipe(info);
         serviceRecipe.setAllProperties(info.properties);
 
         if (serviceLogger.isDebugEnabled()) {
-            for (Map.Entry<String, Object> entry : serviceRecipe.getProperties().entrySet()) {
+            for (final Map.Entry<String, Object> entry : serviceRecipe.getProperties().entrySet()) {
                 serviceLogger.debug("createService.props", entry.getKey(), entry.getValue());
             }
         }
@@ -2096,11 +2092,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     @SuppressWarnings({"unchecked"})
-    private void setSystemInstanceComponent(Class interfce, Object service) {
+    private void setSystemInstanceComponent(final Class interfce, final Object service) {
         SystemInstance.get().setComponent(interfce, service);
     }
 
-    private URL toUrl(String jarPath) throws OpenEJBException {
+    private URL toUrl(final String jarPath) throws OpenEJBException {
         try {
             return new File(jarPath).toURI().toURL();
         } catch (MalformedURLException e) {
@@ -2112,8 +2108,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         private final Map<String, List<ClassFileTransformer>> transformers = new TreeMap<String, List<ClassFileTransformer>>();
 
         @Override
-        public void addTransformer(String unitId, ClassLoader classLoader, ClassFileTransformer classFileTransformer) {
-            Instrumentation instrumentation = Agent.getInstrumentation();
+        public void addTransformer(final String unitId, final ClassLoader classLoader, final ClassFileTransformer classFileTransformer) {
+            final Instrumentation instrumentation = Agent.getInstrumentation();
             if (instrumentation != null) {
                 instrumentation.addTransformer(classFileTransformer);
 
@@ -2131,12 +2127,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         @Override
-        public void destroy(String unitId) {
-            List<ClassFileTransformer> transformers = this.transformers.remove(unitId);
+        public void destroy(final String unitId) {
+            final List<ClassFileTransformer> transformers = this.transformers.remove(unitId);
             if (transformers != null) {
-                Instrumentation instrumentation = Agent.getInstrumentation();
+                final Instrumentation instrumentation = Agent.getInstrumentation();
                 if (instrumentation != null) {
-                    for (ClassFileTransformer transformer : transformers) {
+                    for (final ClassFileTransformer transformer : transformers) {
                         instrumentation.removeTransformer(transformer);
                     }
                 } else {
@@ -2146,7 +2142,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         @Override
-        public ClassLoader getNewTempClassLoader(ClassLoader classLoader) {
+        public ClassLoader getNewTempClassLoader(final ClassLoader classLoader) {
             return ClassLoaderUtil.createTempClassLoader(classLoader);
         }
     }
@@ -2159,8 +2155,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         private final String namePrefix;
         private final AtomicInteger threadNumber = new AtomicInteger(1);
 
-        ResourceAdapterThreadFactory(String resourceAdapterName) {
-            SecurityManager securityManager = System.getSecurityManager();
+        ResourceAdapterThreadFactory(final String resourceAdapterName) {
+            final SecurityManager securityManager = System.getSecurityManager();
             if (securityManager != null) {
                 group = securityManager.getThreadGroup();
             } else {
@@ -2171,8 +2167,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         @Override
-        public Thread newThread(Runnable runnable) {
-            Thread thread = new Thread(group, runnable, namePrefix + threadNumber.getAndIncrement(), 0);
+        public Thread newThread(final Runnable runnable) {
+            final Thread thread = new Thread(group, runnable, namePrefix + threadNumber.getAndIncrement(), 0);
             if (!thread.isDaemon()) thread.setDaemon(true);
             if (thread.getPriority() != Thread.NORM_PRIORITY) thread.setPriority(Thread.NORM_PRIORITY);
             return thread;
@@ -2186,16 +2182,16 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             delegate = deploymentListener;
         }
 
-        public void afterApplicationCreated(@Observes AssemblerAfterApplicationCreated event) {
+        public void afterApplicationCreated(@Observes final AssemblerAfterApplicationCreated event) {
             delegate.afterApplicationCreated(event.getApp());
         }
 
-        public void beforeApplicationDestroyed(@Observes AssemblerBeforeApplicationDestroyed event) {
+        public void beforeApplicationDestroyed(@Observes final AssemblerBeforeApplicationDestroyed event) {
             delegate.beforeApplicationDestroyed(event.getApp());
         }
 
         @Override
-        public boolean equals(Object o) {
+        public boolean equals(final Object o) {
             if (this == o) {
                 return true;
             }
