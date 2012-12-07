@@ -82,12 +82,18 @@ public class JarExtractor {
                 return;
             }
 
-            deleteDir(destinationDir);
+            if (!deleteDir(destinationDir)) {
+                throw new IOException("Failed to delete: " + destinationDir);
+            }
         }
 
         logger.info("Extracting jar: " + file.getAbsolutePath());
 
-        Files.mkdirs(destinationDir);
+        try {
+            Files.mkdirs(destinationDir);
+        } catch (Files.FileRuntimeException e) {
+            throw new IOException("Failed to create: " + destinationDir);
+        }
 
         try {
             Zips.unzip(file, destinationDir);
