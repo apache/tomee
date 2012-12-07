@@ -109,7 +109,13 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     static final String OFFLINE_PROPERTY = "openejb.offline";
 
     public ConfigurationFactory() {
-        this(SystemInstance.get().getOptions().get(ConfigurationFactory.OFFLINE_PROPERTY, false));
+        this(shouldAutoDeploy());
+    }
+
+    private static boolean shouldAutoDeploy() {
+        final Options options = SystemInstance.get().getOptions();
+        final boolean b = options.get(ConfigurationFactory.OFFLINE_PROPERTY, false);
+        return options.get("tomee.autoconfig", !b);
     }
 
     public ConfigurationFactory(final boolean offline) {
