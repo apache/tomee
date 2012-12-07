@@ -17,9 +17,6 @@
 
 package org.apache.openejb.osgi.test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import javax.inject.Inject;
 import org.apache.felix.service.command.CommandProcessor;
 import org.apache.felix.service.command.CommandSession;
 import org.apache.karaf.tooling.exam.options.KarafDistributionConfigurationFilePutOption;
@@ -34,6 +31,10 @@ import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.ops4j.pax.exam.junit.ProbeBuilder;
+
+import javax.inject.Inject;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 
 import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.karafDistributionConfiguration;
 import static org.junit.Assert.assertNotNull;
@@ -58,7 +59,7 @@ public class OSGiKarafStartupTest {
                         .frameworkUrl(
                                 maven().groupId("org.apache.openejb").artifactId("apache-karafee").versionAsInProject().type("tar.gz"))
                         .name("Apache Karafee")
-                        .karafVersion(System.getProperty("karaf.version")),
+                        .karafVersion(System.getProperty("karaf.version", "2.3.0")),
                 new KarafDistributionConfigurationFilePutOption("etc/org.apache.karaf.management.cfg", "rmiRegistryPort", Integer.toString(NetworkUtil.getNextAvailablePort())),
                 new KarafDistributionConfigurationFilePutOption("etc/org.apache.karaf.management.cfg", "rmiServerPort", Integer.toString(NetworkUtil.getNextAvailablePort())),
                 felix()

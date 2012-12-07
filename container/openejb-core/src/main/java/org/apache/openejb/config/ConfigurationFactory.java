@@ -291,8 +291,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     public static class ProxyBeanClassUpdate implements DynamicDeployer {
         @Override
         public AppModule deploy(final AppModule appModule) throws OpenEJBException {
-            for (EjbModule module : appModule.getEjbModules()) {
-                for (EnterpriseBean eb : module.getEjbJar().getEnterpriseBeans()) {
+            for (final EjbModule module : appModule.getEjbModules()) {
+                for (final EnterpriseBean eb : module.getEjbJar().getEnterpriseBeans()) {
                     if (!(eb instanceof SessionBean)) {
                         continue;
                     }
@@ -320,7 +320,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                         continue;
                     }
 
-                    for (EnvEntry entry : bean.getEnvEntry()) {
+                    for (final EnvEntry entry : bean.getEnvEntry()) {
                         if ("java:comp/env/implementingInterfaceClass".equals(entry.getName())) {
                             entry.setEnvEntryValue(ejbClass.getName());
                         }
@@ -407,7 +407,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         sys.facilities = new FacilitiesInfo();
 
         // listener + some config can be defined as service
-        for (Service service : openejb.getServices()) {
+        for (final Service service : openejb.getServices()) {
             final ServiceInfo info = configureService(service, ServiceInfo.class);
             sys.facilities.services.add(info);
         }
@@ -497,7 +497,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             }
         }
 
-        for (Deployments deployments : openejb.getDeployments()) {
+        for (final Deployments deployments : openejb.getDeployments()) {
             if (deployments.isAutoDeploy()) {
                 if (deployments.getDir() != null) {
                     sys.containerSystem.autoDeploy.add(deployments.getDir());
@@ -563,7 +563,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         return declaredAppsUrls;
     }
 
-    public ArrayList<File> getModulesFromClassPath(List<File> declaredApps, final ClassLoader classLoader) {
+    public ArrayList<File> getModulesFromClassPath(final List<File> declaredApps, final ClassLoader classLoader) {
         final FileUtils base = SystemInstance.get().getBase();
 
         final List<URL> classpathAppsUrls = new ArrayList<URL>();
@@ -625,18 +625,18 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     }
 
     public Object toConfigDeclaration(final String id, final URI uri) throws OpenEJBException {
-        String serviceType = null;
+        final String serviceType;
         try {
             serviceType = uri.getHost();
 
-            Object object = null;
+            final Object object;
             try {
                 object = JaxbOpenejb.create(serviceType);
             } catch (Exception e) {
                 throw new OpenEJBException("Invalid URI '" + uri + "'. " + e.getMessage());
             }
 
-            Map<String, String> map = null;
+            final Map<String, String> map;
             try {
                 map = URISupport.parseParamters(uri);
             } catch (URISyntaxException e) {
@@ -722,6 +722,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         return appInfo;
     }
 
+    @SuppressWarnings("unchecked")
     public AppModule loadApplication(final ClassLoader classLoader, String id, final List<File> jarFiles) throws OpenEJBException {
         final boolean standaloneModule = id == null;
         if (standaloneModule) {
@@ -808,7 +809,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         if (libs != null && libs.size() > 0) {
             EventHelper.installExtensions(new ResourceFinder("META-INF", libs.toArray(new URL[libs.size()])));
         }
-        for (EjbModule ejb : appModule.getEjbModules()) {
+        for (final EjbModule ejb : appModule.getEjbModules()) {
             try {
                 final URL url = ejb.getModuleUri().toURL();
                 if (!libs.contains(url)) {
@@ -822,7 +823,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 logger.error("can't look for server event listener for module " + ejb.getJarLocation());
             }
         }
-        for (WebModule web : appModule.getWebModules()) {
+        for (final WebModule web : appModule.getWebModules()) {
             final List<URL> webLibs = web.getScannableUrls();
             if (webLibs != null && webLibs.size() > 0) {
                 EventHelper.installExtensions(new ResourceFinder("META-INF", webLibs.toArray(new URL[webLibs.size()])));
@@ -936,7 +937,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
             final String providerType = getProviderType(service);
 
-            ServiceProvider provider = resolveServiceProvider(service, infoType);
+            final ServiceProvider provider = resolveServiceProvider(service, infoType);
 
             if (provider == null) {
                 final List<ServiceProvider> providers = ServiceUtils.getServiceProvidersByServiceType(providerType);
@@ -1041,7 +1042,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
     }
 
-    private static String getProviderType(org.apache.openejb.config.Service service) {
+    private static String getProviderType(final org.apache.openejb.config.Service service) {
 
         Class<?> clazz = service.getClass();
 
