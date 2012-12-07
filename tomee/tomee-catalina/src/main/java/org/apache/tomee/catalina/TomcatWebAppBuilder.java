@@ -44,6 +44,7 @@ import org.apache.catalina.deploy.ContextTransaction;
 import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.deploy.ResourceBase;
 import org.apache.catalina.ha.CatalinaCluster;
+import org.apache.catalina.ha.tcp.SimpleTcpCluster;
 import org.apache.catalina.loader.WebappClassLoader;
 import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.session.StandardManager;
@@ -271,9 +272,16 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             return;
         }
 
-        if (cluster instanceof CatalinaCluster) {
-            final CatalinaCluster haCluster = (CatalinaCluster) cluster;
-            haCluster.addClusterListener(new TomEEClusterListener());
+        Cluster current = cluster;
+        if (cluster instanceof SimpleTcpCluster) {
+            final Container container = cluster.getContainer();
+            current = new SimpleTomEETcpCluster((SimpleTcpCluster) cluster);
+            container.setCluster(current);
+        }
+
+        if (current instanceof CatalinaCluster) {
+            final CatalinaCluster haCluster = (CatalinaCluster) current;
+            haCluster.addClusterListener(TomEEClusterListener.INSTANCE); // better to be a singleton
             clusters.add(haCluster);
         }
     }
